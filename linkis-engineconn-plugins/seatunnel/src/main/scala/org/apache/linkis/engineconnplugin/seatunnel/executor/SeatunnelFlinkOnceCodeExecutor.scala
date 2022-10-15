@@ -26,6 +26,7 @@ import org.apache.linkis.engineconn.once.executor.{
   OperableOnceExecutor
 }
 import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelFlinkClient
+import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_FLINK_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelFlinkEnvConfiguration.{
@@ -85,7 +86,7 @@ class SeatunnelFlinkOnceCodeExecutor(
           setResponse(
             ErrorExecuteResponse(
               "Run code failed!",
-              new JobExecutionException("Exec Seatunnel Flink Code Error")
+              new JobExecutionException(EXEC_FLINK_CODE_ERROR.getErrorDesc)
             )
           )
           tryFailed()

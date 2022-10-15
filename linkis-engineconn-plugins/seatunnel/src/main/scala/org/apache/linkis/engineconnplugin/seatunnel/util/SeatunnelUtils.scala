@@ -17,18 +17,16 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.util
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 
 import java.io.{BufferedReader, File, InputStreamReader, PrintWriter}
 
-object SeatunnelUtils {
-  val logger: Log = LogFactory.getLog(getClass)
+object SeatunnelUtils extends Logging {
   private var process: Process = _
 
   def localArray(code: String): Array[String] = {
@@ -48,12 +46,10 @@ object SeatunnelUtils {
 
   def executeLine(code: String): Int = {
     var bufferedReader: BufferedReader = null
-    var errorsReader: BufferedReader = null
     try {
       val processBuilder: ProcessBuilder = new ProcessBuilder(generateRunCode(code): _*)
       process = processBuilder.start()
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
       var line: String = null
       while ({
         line = bufferedReader.readLine(); line != null
@@ -65,7 +61,6 @@ object SeatunnelUtils {
       exitcode
     } finally {
       IOUtils.closeQuietly(bufferedReader)
-      IOUtils.closeQuietly(errorsReader)
     }
   }
 

@@ -29,7 +29,12 @@ import org.apache.linkis.manager.engineplugin.common.resource.{
 import org.apache.linkis.manager.label.entity.Label
 
 class SeatunnelEngineConnPlugin extends EngineConnPlugin {
-  private val EP_CONTEXT_CONSTRUCTOR_LOCK = new Object()
+  private val resourceLocker = new Object()
+
+  private val engineLaunchBuilderLocker = new Object()
+
+  private val engineFactoryLocker = new Object()
+
   private var engineResourceFactory: EngineResourceFactory = _
   private var engineConnLaunchBuilder: EngineConnLaunchBuilder = _
   private var engineConnFactory: EngineConnFactory = _
@@ -37,7 +42,7 @@ class SeatunnelEngineConnPlugin extends EngineConnPlugin {
 
   override def getEngineResourceFactory: EngineResourceFactory = {
 
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    resourceLocker.synchronized {
       if (null == engineResourceFactory) {
         engineResourceFactory = new GenericEngineResourceFactory
       }
@@ -46,7 +51,7 @@ class SeatunnelEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    engineLaunchBuilderLocker.synchronized {
       if (null == engineConnLaunchBuilder) {
         engineConnLaunchBuilder = new SeatunnelEngineConnLaunchBuilder()
       }
@@ -55,7 +60,7 @@ class SeatunnelEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnFactory: EngineConnFactory = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
+    engineFactoryLocker.synchronized {
       if (null == engineConnFactory) {
         engineConnFactory = new SeatunnelEngineConnFactory
       }

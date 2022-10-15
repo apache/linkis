@@ -1,11 +1,12 @@
 /*
- * Copyright 2019 WeBank
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.client;
 
-import org.apache.linkis.engineconnplugin.seatunnel.client.utils.JarLoader;
 
+
+import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 import org.apache.seatunnel.core.spark.SeatunnelSpark;
 
 import java.io.PrintWriter;
@@ -58,14 +60,6 @@ public class LinkisSeatunnelSparkClient {
       Thread.currentThread().setContextClassLoader(jarLoader);
       Method method = seatunnelEngineClass.getDeclaredMethod("main", String[].class);
       return (Integer) method.invoke(null, (Object) args);
-      // String code = "  ${SPARK_HOME}/bin/spark-submit --class
-      // \"org.apache.seatunnel.core.spark.SeatunnelSpark\" --name \"SeaTunnel\" --master
-      // \"local[4]\" --deploy-mode \"client\" --conf \"spark.executor.memory=1g\" --conf
-      // \"spark.executor.cores=1\" --conf \"spark.app.name=SeaTunnel\" --conf
-      // \"spark.executor.instances=2\"
-      // /opt/appcom/tmp/hadoop/20220916/seatunnel/b686dcd0-9d46-44fd-82e7-e93bae086f7e/seatunnel/lib/seatunnel-core-spark.jar --master local[4] --deploy-mode client --config /opt/appcom/tmp/hadoop/20220916/seatunnel/b686dcd0-9d46-44fd-82e7-e93bae086f7e/config_1663326084829";
-      // SeatunnelUtils.executeLine(code);
-      // return 0;
     } catch (Throwable e) {
       logger.error("Run Error Message:" + getLog(e));
       return -1;

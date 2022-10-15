@@ -91,5 +91,5 @@ public class LabelCommonConfig {
       CommonVars.apply("wds.linkis.elasticsearch.engine.version", "7.6.2");
 
   public static final CommonVars<String> SEATUNNEL_ENGINE_CONN_VERSION =
-      CommonVars.apply("wds.linkis.seatunnel.engineconn.version", "2.1.2");
+      CommonVars.apply("linkis.seatunnel.engineconn.version", "2.1.2");
 }

@@ -55,7 +55,7 @@ public interface ResourceManagerMapper {
 
   @Select(
       "select id from linkis_cg_manager_linkis_resources where ticketId is null and id in ( select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance=#{instance})")
-  int getNodeResourceUpdateResourceId(@Param("instance") String instance);
+  Integer getNodeResourceUpdateResourceId(@Param("instance") String instance);
 
   @Delete(
       "delete from linkis_cg_manager_label_resource where label_id in (select label_id from linkis_cg_manager_label_service_instance where service_instance=#{instance})")
@@ -89,7 +89,7 @@ public interface ResourceManagerMapper {
   PersistenceResource getNodeResourceByTicketId(@Param("ticketId") String ticketId);
 
   @Select(
-      "select * from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource A join linkis_manager_lable_user B on A.label_id=B.label_id AND B.user_name=#{userName})")
+      "select * from linkis_cg_manager_linkis_resources where id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_user B on A.label_id=B.label_id AND B.username=#{userName})")
   List<PersistenceResource> getResourceByUserName(@Param("userName") String userName);
 
   @Select(

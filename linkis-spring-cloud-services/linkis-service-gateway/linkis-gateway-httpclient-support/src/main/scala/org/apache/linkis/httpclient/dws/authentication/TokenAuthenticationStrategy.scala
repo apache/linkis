@@ -19,6 +19,7 @@ package org.apache.linkis.httpclient.dws.authentication
 
 import org.apache.linkis.httpclient.authentication._
 import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
+import org.apache.linkis.httpclient.errorcode.LinkisGwHttpclientSupportErrorCodeSummary.TOKEN_AUTHENTICATION
 import org.apache.linkis.httpclient.request.{Action, UserAction}
 
 import org.apache.http.HttpResponse
@@ -53,9 +54,7 @@ class TokenAuthenticationStrategy(override protected val sessionMaxAliveTime: Lo
           override def updateLastAccessTime(): Unit = {}
         }
       case _ =>
-        throw new AuthenticationFailedException(
-          "cannot use token authentication, since no user is found to proxy."
-        )
+        throw new AuthenticationFailedException(TOKEN_AUTHENTICATION.getErrorDesc)
     }
 
   override protected def getAuthenticationAction(

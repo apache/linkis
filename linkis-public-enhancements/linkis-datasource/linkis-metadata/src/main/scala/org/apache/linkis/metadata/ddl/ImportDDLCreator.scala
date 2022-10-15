@@ -22,6 +22,7 @@ import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.metadata.conf.MdqConfiguration
 import org.apache.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
+import org.apache.linkis.metadata.errorcode.LinkisMetadataErrorCodeSummary._
 import org.apache.linkis.metadata.exception.MdqIllegalParamException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -74,13 +75,13 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     val args = importInfo.getArgs
     val _source =
       if (StringUtils.isEmpty(importInfo.getSource)) {
-        throw MdqIllegalParamException("import hive source is null")
+        throw MdqIllegalParamException(IMPORT_HIVE_SOURCE_IS_NULL.getErrorDesc)
       } else {
         importInfo.getSource
       }
     val _destination =
       if (StringUtils.isEmpty(importInfo.getDestination)) {
-        throw MdqIllegalParamException("import hive source is null")
+        throw MdqIllegalParamException(IMPORT_HIVE_SOURCE_IS_NULL.getErrorDesc)
       } else {
         importInfo.getDestination
       }
@@ -173,17 +174,17 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
     val destinationTable = mdqTableBO.getTableBaseInfo.getBase.getName
     if (StringUtils.isEmpty(destinationDatabase) || StringUtils.isEmpty(destinationTable)) {
       logger.error("Hive create table destination database or tablename is null")
-      throw MdqIllegalParamException("Hive create table destination database or tablename is null")
+      throw MdqIllegalParamException(HIVE_CREATE_IS_NULL.getErrorDesc)
     }
     val sourceDatabase =
       if (StringUtils.isEmpty(args.get(DATABASE))) {
-        throw MdqIllegalParamException("hive create table source database is null")
+        throw MdqIllegalParamException(HIVE_CREATE__TABLE_IS_NULL.getErrorDesc)
       } else {
         args.get(DATABASE)
       }
     val sourceTableName =
       if (StringUtils.isEmpty(args.get(TABLE))) {
-        throw MdqIllegalParamException("hive create table source table name is null")
+        throw MdqIllegalParamException(HIVE_CREATE__TABLE_IS_NULL.getErrorDesc)
       } else {
         args.get(TABLE)
       }

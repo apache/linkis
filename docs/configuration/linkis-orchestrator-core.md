@@ -1,6 +1,5 @@
 ## linkis-orchestrator-core 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-orchestrator-core|wds.linkis.orchestrator.builder.class | |orchestrator.builder.class|
@@ -24,5 +23,3 @@
 |linkis-orchestrator-core|wds.linkis.orchestrator.task.schedulis.creator| schedulis,nodeexecution|task.schedulis.creator|
 |linkis-orchestrator-core|wds.linkis.orchestrator.metric.log.enable|true|orchestrator.metric.log.enable|
 |linkis-orchestrator-core|wds.linkis.orchestrator.metric.log.time| 1h |orchestrator.metric.log.time|
- 
-

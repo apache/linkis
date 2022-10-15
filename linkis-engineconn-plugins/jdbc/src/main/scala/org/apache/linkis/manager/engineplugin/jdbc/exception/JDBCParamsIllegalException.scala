@@ -19,10 +19,5 @@ package org.apache.linkis.manager.engineplugin.jdbc.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-case class JDBCParamsIllegalException(errorMsg: String) extends ErrorException(70012, errorMsg)
-
-case class JDBCSQLFeatureNotSupportedException(errorMsg: String)
-    extends ErrorException(70013, errorMsg)
-
-case class JDBCStateMentNotInitialException(errorMsg: String)
-    extends ErrorException(70014, errorMsg)
+case class JDBCParamsIllegalException(errorCode: Int, errorMsg: String)
+    extends ErrorException(errorCode, errorMsg)

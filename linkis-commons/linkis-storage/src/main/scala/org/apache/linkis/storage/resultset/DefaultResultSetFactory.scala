@@ -22,6 +22,10 @@ import org.apache.linkis.common.io.resultset.ResultSet
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.{
+  THE_FILE_IS_EMPTY,
+  UNSUPPORTED_RESULT
+}
 import org.apache.linkis.storage.exception.{StorageErrorException, StorageWarnException}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
@@ -43,7 +47,10 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
   override def getResultSetByType(resultSetType: String): ResultSet[_ <: MetaData, _ <: Record] = {
     if (!resultClasses.contains(resultSetType)) {
-      throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType")
+      throw new StorageErrorException(
+        UNSUPPORTED_RESULT.getErrorCode,
+        s"Unsupported result type(不支持的结果类型)：$resultSetType"
+      )
     }
     resultClasses(resultSetType).newInstance()
   }
@@ -78,7 +85,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     val resultSetType = Dolphin.getType(inputStream)
     if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
-        51000,
+        THE_FILE_IS_EMPTY.getErrorCode,
         s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
       )
     }
@@ -99,7 +106,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     val resultSetType = Dolphin.getType(inputStream)
     if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
-        51000,
+        THE_FILE_IS_EMPTY.getErrorCode,
         s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
       )
     }

@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.math.NumberUtils.isCreatable;
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.INSERT_SERVICE_INSTANCE;
 
 @AdapterMode
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
@@ -406,7 +407,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     try {
       instanceDao.insertOne(new InstanceInfo(serviceInstance));
     } catch (Exception e) {
-      throw new InstanceErrorException("Failed to insert service instance", e);
+      throw new InstanceErrorException(INSERT_SERVICE_INSTANCE.getErrorDesc(), e);
     }
   }
 

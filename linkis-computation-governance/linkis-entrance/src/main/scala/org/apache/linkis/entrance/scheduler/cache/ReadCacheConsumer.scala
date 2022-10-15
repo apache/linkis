@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.scheduler.cache
 
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.CacheNotReadyException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.persistence.PersistenceManager
@@ -71,7 +72,10 @@ class ReadCacheConsumer(
                   "Invalid engineType null, cannot process. jobReq : " + BDPJettyServerHelper.gson
                     .toJson(jobRequest)
                 )
-                throw CacheNotReadyException(20052, "Invalid engineType null, cannot use cache.")
+                throw CacheNotReadyException(
+                  INVALID_ENGINETYPE_NULL.getErrorCode,
+                  INVALID_ENGINETYPE_NULL.getErrorDesc
+                )
               }
               val readCacheBefore = TaskUtils
                 .getRuntimeMap(job.getParams)
@@ -95,7 +99,10 @@ class ReadCacheConsumer(
                       )
                       .getSchemaPath
 //                    persistenceManager.onResultSetCreated(job, new CacheOutputExecuteResponse(alias, output))
-                    throw CacheNotReadyException(20053, "Invalid resultsets, cannot use cache.")
+                    throw CacheNotReadyException(
+                      INVALID_RESULTSETS.getErrorCode,
+                      INVALID_RESULTSETS.getErrorDesc
+                    )
                     // todo check
                   }
 //                  persistenceManager.onResultSizeCreated(job, resultSets.size())

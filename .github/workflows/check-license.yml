@@ -30,9 +30,6 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: mvn -N install
-        run:
-          mvn -N install
       - name: License check with Maven
         run: |
           rat_file=`mvn apache-rat:check  | { grep -oe "\\S\\+/rat.txt" || true; }`

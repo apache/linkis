@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -94,11 +94,6 @@ SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 startApp
 
-#linkis-cg-engineplugin(ecp)
-SERVER_NAME="cg-engineplugin"
-SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
-startApp
-
 echo "start-all shell script executed completely"
 
 echo "Start to check all linkis microservice"
@@ -159,11 +154,6 @@ checkServer
 #linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
-checkServer
-
-#linkis-cg-engineplugin(ecp)
-SERVER_NAME="cg-engineplugin"
-SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 checkServer
 
 echo "Linkis started successfully"

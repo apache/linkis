@@ -23,7 +23,7 @@ import org.apache.linkis.engineconn.computation.executor.creation.ComputationExe
 import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineplugin.elasticsearch.conf.ElasticSearchConfiguration
-import org.apache.linkis.engineplugin.elasticsearch.executer.ElasticSearchEngineConnExecutor
+import org.apache.linkis.engineplugin.elasticsearch.executor.ElasticSearchEngineConnExecutor
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType

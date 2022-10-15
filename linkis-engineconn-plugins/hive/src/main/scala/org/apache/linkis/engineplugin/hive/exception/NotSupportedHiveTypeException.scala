@@ -19,20 +19,8 @@ package org.apache.linkis.engineplugin.hive.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-case class NotSupportedHiveTypeException(errCode: Int, desc: String)
-    extends ErrorException(errCode, desc) {}
-
-case class HadoopConfSetFailedException(errCode: Int, desc: String)
-    extends ErrorException(errCode, desc) {}
-
 case class HiveSessionStartFailedException(erroCode: Int, desc: String)
-    extends ErrorException(erroCode, desc) {}
+    extends ErrorException(erroCode, desc)
 
-/**
- * @param erroCode
- *   41004
- * @param desc
- *   hive query fail
- */
 case class HiveQueryFailedException(erroCode: Int, desc: String)
-    extends ErrorException(erroCode, desc) {}
+    extends ErrorException(erroCode, desc)

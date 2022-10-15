@@ -68,30 +68,32 @@ object VariableParser {
     import scala.collection.JavaConverters._
     val vars = new util.HashMap[String, String]
     val confs = new util.HashMap[String, Object]
-    variables.filter(_.sort == null).foreach(f => vars.asScala += f.key -> f.value)
+    variables.filter(_.sort == null).foreach(f => vars.put(f.key, f.value))
     variables.filter(_.sort != null).foreach { f =>
       f.sort match {
         case STARTUP | RUNTIME | SPECIAL =>
           if (confs.get(f.sort) == null) {
-            confs.asScala += f.sort -> createMap(f)
+            confs.put(f.sort, createMap(f))
           } else {
-            confs.get(f.sort).asInstanceOf[util.HashMap[String, Object]].asScala += f.key -> f.value
+            confs.get(f.sort).asInstanceOf[util.HashMap[String, Object]].put(f.key, f.value)
           }
         case _ =>
           if (confs.get(f.sortParent) == null) {
-            confs.asScala += f.sortParent -> new util.HashMap[String, Object]
+            confs.put(f.sortParent, new util.HashMap[String, Object])
             confs
               .get(f.sortParent)
               .asInstanceOf[util.HashMap[String, Object]]
-              .asScala += f.sort -> createMap(f)
+              .put(f.sort, createMap(f))
           } else {
             val subMap = confs.get(f.sortParent).asInstanceOf[util.HashMap[String, Object]]
-            if (subMap.get(f.sort) == null) subMap.asScala += f.sort -> createMap(f)
-            else
+            if (subMap.get(f.sort) == null) {
+              subMap.put(f.sort, createMap(f))
+            } else {
               subMap
                 .get(f.sort)
                 .asInstanceOf[util.HashMap[String, Object]]
-                .asScala += f.key -> f.value
+                .put(f.key, f.value)
+            }
           }
       }
     }
@@ -101,39 +103,10 @@ object VariableParser {
     params
   }
 
-  import scala.collection.JavaConverters._
-
   private def createMap(variable: Variable): util.Map[String, Object] = {
-
     val map = new util.HashMap[String, Object]
-    map.asScala += variable.key -> variable.value
-  }.asJava
-
-  /* def main(args: Array[String]): Unit = {
-    val a = Array(
-      Variable("variable", null, "a", "b"),
-      Variable("variable", null, "a1", "b1"),
-      Variable("configuration", "startup", "e", "f"),
-      Variable("configuration", "runtime", "a", "b"),
-      Variable("runtime", "env", "g2", "h3"),
-      Variable("startup", "hello", "g2", "h3"))
-    // val a = Array[Variable]()
-    // println(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").serializeNulls.create.toJson(getMap(a)))
-    // val variables: Array[Variable] = getVariables(getMap(a))
-    // val variables: Array[Variable] = getVariables(getMap(a))
-    // print(variables)
-   /* val writer = ScriptFsWriter.getScriptFsWriter(new FsPath("file:///tmp/hello.py"), "utf-8", new FileOutputStream("E:\\aaa.py"))
-
-    writer.addMetaData(new ScriptMetaData(a))
-    writer.addRecord(new ScriptRecord("hello"))
-    writer.addRecord(new ScriptRecord("hello"))
-    writer.addRecord(new ScriptRecord("hello"))
-    writer.addRecord(new ScriptRecord("hello"))*/
-    val reader = ScriptFsReader.getScriptFsReader(new FsPath("file:///tmp/aaa.py"),"utf-8",new FileInputStream("E:\\aaa.py"))
-    reader.getMetaData.asInstanceOf[ScriptMetaData].getMetaData
-    val map = getMap(reader.getMetaData.asInstanceOf[ScriptMetaData].getMetaData)
-    println(new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").serializeNulls.create.toJson(map))
-    print(reader.getRecord.asInstanceOf[ScriptRecord].getLine)
-  } */
+    map.put(variable.key, variable.value)
+    map
+  }
 
 }

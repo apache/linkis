@@ -18,5 +18,7 @@
 package org.apache.linkis.httpclient.dws.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.httpclient.errorcode.LinkisGwHttpclientSupportErrorCodeSummary.AUTHTOKENVALUE_BE_EXISTS
 
-class AuthenticationFailedException(errorDesc: String) extends ErrorException(10901, errorDesc)
+class AuthenticationFailedException(errorDesc: String)
+    extends ErrorException(AUTHTOKENVALUE_BE_EXISTS.getErrorCode, errorDesc)

@@ -28,6 +28,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
+
 public class JdbcParamUtils {
   private static final Logger LOG = LoggerFactory.getLogger(JdbcParamUtils.class);
   private static final String JDBC_MATCH_REGEX = "jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?";
@@ -93,7 +95,8 @@ public class JdbcParamUtils {
     String username =
         JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_USERNAME, "");
     if (StringUtils.isBlank(username)) {
-      throw new JDBCParamsIllegalException("The jdbc username is not empty.");
+      throw new JDBCParamsIllegalException(
+          JDBC_USERNAME_NOT_EMPTY.getErrorCode(), JDBC_USERNAME_NOT_EMPTY.getErrorDesc());
     }
     if (username.contains(AUTO_DESERIALIZE)) {
       LOG.warn("Sensitive param : {} in username field is filtered.", AUTO_DESERIALIZE);
@@ -108,7 +111,8 @@ public class JdbcParamUtils {
     String password =
         JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_PASSWORD, "");
     if (StringUtils.isBlank(password)) {
-      throw new JDBCParamsIllegalException("The jdbc password is not empty.");
+      throw new JDBCParamsIllegalException(
+          JDBC_PASSWORD_NOT_EMPTY.getErrorCode(), JDBC_PASSWORD_NOT_EMPTY.getErrorDesc());
     }
     if (password.contains(AUTO_DESERIALIZE)) {
       LOG.warn("Sensitive param : {} in password field is filtered", AUTO_DESERIALIZE);

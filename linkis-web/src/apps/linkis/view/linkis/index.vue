@@ -25,6 +25,7 @@
     <div class="console-page-content-body">
       <div class="content-body-side-nav">
         <Card
+          style="height:87vh; overflow: auto;"
           :padding="sideNavList.padding"
           :icon="sideNavList.icon"
           shadow
@@ -52,11 +53,13 @@
                     v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
                     :key="index3"
                     @on-click="clickToRoute">
-                    <Cell
-                      :key="index3"
-                      :class="{ crrentItem: crrentItem === item3.key }"
-                      :title="item3.name"
-                      :name="item3.key"/>
+                    <div v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-3'">
+                      <Cell
+                        :key="index3"
+                        :class="{ crrentItem: crrentItem === item3.key }"
+                        :title="item3.name"
+                        :name="item3.key"/>
+                    </div>
                   </CellGroup>
                 </div>
               </div>
@@ -109,10 +112,9 @@ export default {
           { key: '1-4', name: this.$t('message.linkis.sideNavList.function.children.dateReport'), path: '/console/globalValiable' },
           { key: '1-6', name: this.$t('message.linkis.sideNavList.function.children.ECMManage'), path: '/console/ECM' },
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
-          // { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
-          { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: false },
-          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: false},
-          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: false},
+          { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: true },
+          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: true},
+          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
         ],
       },
       datasourceNavList: {
@@ -179,7 +181,6 @@ export default {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');
     })
-    //console.log(this.sideNavList);
   },
   methods: {
     handleCellClick(index) {

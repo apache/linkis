@@ -110,7 +110,7 @@ class VariableServiceImpl extends VariableService with Logging {
         for (ele <- userVariables.asScala) {
           if (f.getKey.equals(ele.getKey)) {
             flag = false
-            updateGlobalVariable(f, ele.getValueID: Long)
+            updateGlobalVariable(f, ele.getValueID)
             break()
           }
         }
@@ -126,7 +126,7 @@ class VariableServiceImpl extends VariableService with Logging {
             break()
           }
         }
-        if (flag) removeGlobalVariable(f.getKeyID: Long)
+        if (flag) removeGlobalVariable(f.getKeyID)
       }
     }
 

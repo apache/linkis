@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.log
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -37,7 +38,7 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
     extends LogWriter(charset) {
 
   if (StringUtils.isBlank(logPath))
-    throw new EntranceErrorException(20301, "logPath cannot be empty.")
+    throw new EntranceErrorException(LOGPATH_NOT_NULL.getErrorCode, LOGPATH_NOT_NULL.getErrorDesc)
 
   protected var fileSystem =
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]

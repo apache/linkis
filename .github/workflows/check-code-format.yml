@@ -31,6 +31,5 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - name: Code format check
-        run: |
-          ./mvnw -N install
+        run:
           ./mvnw spotless:check

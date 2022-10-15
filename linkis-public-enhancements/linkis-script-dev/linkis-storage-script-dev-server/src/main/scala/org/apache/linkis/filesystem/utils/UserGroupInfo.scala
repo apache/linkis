@@ -20,13 +20,14 @@ package org.apache.linkis.filesystem.utils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration
 
+import org.apache.commons.lang3.SystemUtils
+
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 import scala.collection.mutable.ArrayBuffer
 
-import com.sun.jna.Platform
 import oshi.util.{ExecutingCommand, FileUtil}
 
 /**
@@ -61,7 +62,7 @@ class UserGroupInfo extends Logging {
   private def refreshUserMap(): Unit = {
     val tmpUsers = new ArrayBuffer[String]()
     var passwd: util.List[String] = null
-    if (Platform.isAIX) passwd = FileUtil.readFile("/etc/passwd")
+    if (SystemUtils.IS_OS_AIX) passwd = FileUtil.readFile("/etc/passwd")
     else passwd = ExecutingCommand.runNative("getent passwd")
     val iterator = passwd.iterator
     while (iterator.hasNext) {

@@ -19,6 +19,7 @@ package org.apache.linkis.storage
 
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.UNSUPPORTED_FILE
 import org.apache.linkis.storage.exception.StorageFatalException
 import org.apache.linkis.storage.factory.BuildFactory
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
@@ -32,7 +33,10 @@ object FSFactory extends Logging {
 
   def getBuildFactory(fsName: String): BuildFactory = {
     if (!buildClasses.contains(fsName)) {
-      throw new StorageFatalException(50000, s"Unsupported file system type(不支持的文件系统类型)：$fsName")
+      throw new StorageFatalException(
+        UNSUPPORTED_FILE.getErrorCode,
+        s"Unsupported file system type(不支持的文件系统类型)：$fsName"
+      )
     }
     buildClasses(fsName)
   }

@@ -19,9 +19,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis-orchestrator</artifactId>
+    <artifactId>linkis</artifactId>
     <version>1.3.0</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
   <artifactId>linkis-orchestrator-ecm-plugin</artifactId>

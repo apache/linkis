@@ -22,6 +22,7 @@ import org.apache.linkis.cs.client.service.CSTableService
 import org.apache.linkis.cs.common.entity.metadata.CSTable
 import org.apache.linkis.cs.common.utils.CSCommonUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.ExecuteError
 
 import org.apache.commons.lang3.StringUtils
@@ -72,7 +73,10 @@ object CSTableParser extends Logging {
       val table = getCSTable(csTempTable, contextIDValueStr, nodeNameStr)
       if (null == table) {
         // scalastyle:off throwerror
-        throw new ExecuteError(40007, s"The csTable that name is $csTempTable not found in cs")
+        throw new ExecuteError(
+          CSTABLE_NOT_FOUND.getErrorCode,
+          s"The csTable that name is $csTempTable not found in cs"
+        )
       }
       registerTempTable(table)
       parsedTables.append(csTempTable)

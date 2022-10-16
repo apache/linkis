@@ -87,4 +87,19 @@
         WHERE id = #{contextId}
     </update>
 
+    <select id="searchContextID" parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID"
+            resultMap="PersistenceContextID">
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="contextId != null"> AND `id` = #{contextId}</if>
+            <if test="user != null"> AND `user` = #{user}</if>
+            <if test="instance != null"> AND `instance` = #{instance}</if>
+            <if test="backupInstance != null"> AND `backup_instance` = #{backupInstance}</if>
+            <if test="application != null"> AND `application` = #{application}</if>
+            <if test="expireType != null"> AND `expire_type` = #{expireType}</if>
+            <if test="expireTime != null"> AND `expire_time` = #{expireTime}</if>
+            <if test="source != null"> AND `source` = #{source}</if>
+        </where>
+    </select>
+
 </mapper>

@@ -17,8 +17,6 @@
 
 package org.apache.linkis.errorcode.common
 
-import org.apache.linkis.common.utils.Logging
-
 import scala.util.matching.Regex
 
 class LinkisErrorCode extends AbstractErrorCode {

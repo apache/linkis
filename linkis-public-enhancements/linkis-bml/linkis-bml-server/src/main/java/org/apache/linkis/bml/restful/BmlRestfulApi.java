@@ -69,6 +69,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary.*;
+
 @Api(tags = "bml(bigdata material library) opreation")
 @RequestMapping(path = "/bml")
 @RestController
@@ -111,7 +113,7 @@ public class BmlRestfulApi {
                     user,
                     resourceId);
             throw new BmlServerParaErrorException(
-                    "The ResourceID you submitted is invalid (您提交的resourceId无效)");
+                    SUBMITTED_INVALID.getErrorDesc());
         }
 
         Integer current = 0;
@@ -173,7 +175,7 @@ public class BmlRestfulApi {
                     resourceId,
                     e);
             throw new BmlQueryFailException(
-                    "Sorry, the query for version information failed(抱歉，查询版本信息失败)");
+                    QUERY_VERSION_FAILED.getErrorDesc());
         }
 
         return message;
@@ -269,7 +271,7 @@ public class BmlRestfulApi {
                     system,
                     e);
             throw new BmlQueryFailException(
-                    "Failed to get all system resource information(获取系统所有资源信息失败)");
+                    FAILED_ALL_INFORMATION.getErrorDesc());
         }
 
         return message;
@@ -290,7 +292,7 @@ public class BmlRestfulApi {
                 || StringUtils.isEmpty(jsonNode.get("resourceId").textValue())
                 || StringUtils.isEmpty(jsonNode.get("version").textValue())) {
             throw new BmlServerParaErrorException(
-                    "ResourceID and version are required to delete the specified version(删除指定版本，需要指定resourceId 和 version)");
+                    DELETE_SPECIFIED_VERSION.getErrorDesc());
         }
 
         String resourceId = jsonNode.get("resourceId").textValue();
@@ -300,7 +302,7 @@ public class BmlRestfulApi {
                 || !versionService.checkVersion(resourceId, version)
                 || !versionService.canAccess(resourceId, version)) {
             throw new BmlServerParaErrorException(
-                    "The passed ResourceID or version is illegal or has been deleted(传入的resourceId或version非法,或已删除)");
+                    ILLEGAL_OR_DELETED.getErrorDesc());
         }
         Message message = null;
         ResourceTask resourceTask =
@@ -356,7 +358,7 @@ public class BmlRestfulApi {
                     resourceTask.getId(),
                     resourceTask.getResourceId(),
                     TaskState.SUCCESS.getValue());
-            throw new BmlQueryFailException("Failed to delete the resource version(删除资源版本失败)");
+            throw new BmlQueryFailException(DELETE_VERSION_FAILED.getErrorDesc());
         }
         return message;
     }
@@ -374,7 +376,7 @@ public class BmlRestfulApi {
 
         if (null == jsonNode.get("resourceId")) {
             throw new BmlServerParaErrorException(
-                    "You did not pass a valid ResourceID(您未传入有效的resourceId)");
+                    NOT_BALID_RESOURCEID.getErrorDesc());
         }
 
         String resourceId = jsonNode.get("resourceId").textValue();
@@ -435,7 +437,7 @@ public class BmlRestfulApi {
                     resourceTask.getId(),
                     resourceTask.getResourceId(),
                     TaskState.FAILED.getValue());
-            throw new BmlQueryFailException("Delete resource operation failed(删除资源操作失败)");
+            throw new BmlQueryFailException(DELETE_OPERATION_FAILED.getErrorDesc());
         }
 
         return message;
@@ -454,7 +456,7 @@ public class BmlRestfulApi {
 
         if (null == jsonNode.get("resourceIds")) {
             throw new BmlServerParaErrorException(
-                    "Bulk deletion of unpassed resourceIDS parameters(批量删除未传入resourceIds参数)");
+                    BULK_DELETION_PARAMETERS.getErrorDesc());
         }
 
         Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").elements();
@@ -464,7 +466,7 @@ public class BmlRestfulApi {
 
         if (0 == resourceIds.size()) {
             throw new BmlServerParaErrorException(
-                    "Bulk deletion of  resourceIDS parameters is null(批量删除资源操作传入的resourceIds参数为空)");
+                    PARAMETERS_IS_NULL.getErrorDesc());
         } else {
             for (String resourceId : resourceIds) {
                 if (StringUtils.isBlank(resourceId)
@@ -517,7 +519,7 @@ public class BmlRestfulApi {
                     resourceTask.getResourceId(),
                     TaskState.FAILED.getValue());
             throw new BmlQueryFailException(
-                    "The bulk delete resource operation failed(批量删除资源操作失败)");
+                    BULK_DELETE_FAILED.getErrorDesc());
         }
         return message;
     }
@@ -558,7 +560,7 @@ public class BmlRestfulApi {
 
         if (!resourceService.checkAuthority(user, resourceId)) {
             throw new BmlPermissionDeniedException(
-                    "You do not have permission to download this resource (您没有权限下载此资源)");
+                    NOT_HAVE_PERMISSION.getErrorDesc());
         }
         // version is null get NewestVersion
         if (StringUtils.isBlank(version)) {
@@ -602,7 +604,7 @@ public class BmlRestfulApi {
                         resourceId,
                         version);
                 downloadModel.setState(1);
-                throw new BmlQueryFailException("Failed to download the resource(下载资源失败)");
+                throw new BmlQueryFailException(FAILED_DOWNLOAD_RESOURCE.getErrorDesc());
             }
             downloadService.addDownloadRecord(downloadModel);
             logger.info(
@@ -802,7 +804,7 @@ public class BmlRestfulApi {
 
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             throw new BmlServerParaErrorException(
-                    "The basic information of the resource is not passed into the ResourceId parameter or the parameter is illegal(获取资源基本信息未传入resourceId参数或参数非法)");
+                    PARAMETER_IS_ILLEGAL.getErrorDesc());
         }
 
         Message message = null;
@@ -856,7 +858,7 @@ public class BmlRestfulApi {
         } catch (final Exception e) {
             logger.error("用户 {} 获取 {} 资源信息失败", user, resourceId, e);
             throw new BmlQueryFailException(
-                    "Failed to obtain resource basic information (获取资源基本信息失败)");
+                    FAILED_RESOURCE_BASIC.getErrorDesc());
         }
 
         return message;

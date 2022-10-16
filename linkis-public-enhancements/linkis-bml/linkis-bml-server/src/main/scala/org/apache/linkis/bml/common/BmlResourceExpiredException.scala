@@ -17,7 +17,11 @@
 
 package org.apache.linkis.bml.common
 
+import org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary._
 import org.apache.linkis.common.exception.ErrorException
 
 case class BmlResourceExpiredException(resourceId: String)
-    extends ErrorException(78531, resourceId + " has expired and cannot be downloaded(已经过期,不能下载)")
+    extends ErrorException(
+      EXPIRED_CANNOT_DOWNLOADED.getErrorCode,
+      resourceId + EXPIRED_CANNOT_DOWNLOADED.getErrorDesc
+    )

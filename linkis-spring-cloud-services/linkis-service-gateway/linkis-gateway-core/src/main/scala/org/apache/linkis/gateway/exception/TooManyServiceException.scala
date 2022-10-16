@@ -18,5 +18,7 @@
 package org.apache.linkis.gateway.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 
-class TooManyServiceException(message: String) extends ErrorException(11010, message)
+class TooManyServiceException(message: String)
+    extends ErrorException(CANNOT_SERVICEID.getErrorCode, message)

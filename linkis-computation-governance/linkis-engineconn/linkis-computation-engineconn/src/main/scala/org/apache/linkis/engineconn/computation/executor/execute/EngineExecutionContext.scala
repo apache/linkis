@@ -36,8 +36,10 @@ import org.apache.linkis.engineconn.executor.listener.{
   EngineConnSyncListenerBus,
   ExecutorListenerBusContext
 }
+
 import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.UNKNOWN_RESULTSET
 import org.apache.linkis.governance.exception.engineconn.EngineConnExecutorErrorException
+import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorException
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}

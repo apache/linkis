@@ -18,6 +18,7 @@
 package org.apache.linkis.gateway.ujes.route
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 import org.apache.linkis.gateway.exception.GatewayErrorException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.ujes.route.label.RouteLabelParser
@@ -79,10 +80,7 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
   private def roulette(serviceInstances: util.List[ServiceInstance]): ServiceInstance = {
     // Fetch from registry, make sure that the instances are available and the serviceId is right
     if (serviceInstances.size() <= 0) {
-      throw new GatewayErrorException(
-        11011,
-        "There is no route label service with the corresponding app name"
-      )
+      throw new GatewayErrorException(NO_ROUTE_SERVICE.getErrorCode, NO_ROUTE_SERVICE.getErrorDesc)
     }
     val serviceId = serviceInstances.get(0).getApplicationName
     val filteredInstances = retainAllInRegistry(serviceId, serviceInstances)
@@ -90,7 +88,7 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
       filteredInstances.get(Random.nextInt(filteredInstances.size()))
     } else {
       throw new GatewayErrorException(
-        11012,
+        CANNOT_INSTANCE.getErrorCode,
         s"Cannot find an instance in the routing chain of serviceId [" +
           serviceId + "], please retry"
       )

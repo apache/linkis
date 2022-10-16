@@ -34,6 +34,9 @@ import com.fasterxml.jackson.databind.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.CANNOT_BE_SERIALIZATION;
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.SERIALIZATION_FAILED;
+
 /** Json utils */
 public class Json {
   private static final String PREFIX = "[";
@@ -82,7 +85,7 @@ public class Json {
                 + (null != clazz ? clazz.getSimpleName() : "UNKNOWN")
                 + "], parameters size: "
                 + parameters.length;
-        throw new JsonErrorException(-1, message, e);
+        throw new JsonErrorException(SERIALIZATION_FAILED.getErrorCode(), message, e);
       }
     }
     return null;
@@ -105,7 +108,7 @@ public class Json {
               + (null != clazz ? clazz.getSimpleName() : "UNKNOWN")
               + "], parameters size: "
               + parameters.length;
-      throw new JsonErrorException(-1, message, e);
+      throw new JsonErrorException(SERIALIZATION_FAILED.getErrorCode(), message, e);
     }
     return fromJson(builder.toString(), clazz, parameters);
   }
@@ -123,7 +126,7 @@ public class Json {
             "Unable to serialize the object in type: ["
                 + (null != model ? model.getSimpleName() : "UNKNOWN")
                 + "]";
-        throw new JsonErrorException(-1, message, e);
+        throw new JsonErrorException(CANNOT_BE_SERIALIZATION.getErrorCode(), message, e);
       }
     }
     return null;

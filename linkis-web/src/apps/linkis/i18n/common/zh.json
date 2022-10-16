@@ -330,7 +330,9 @@
             },
             "basedata": {
               "add": "新增",
-              "remove": "删除"
+              "remove": "删除",
+              "edit": "编辑",
+              "addUDFAdmin": "新增UDF管理员"
             },
           "EnginePluginManagement": {
             "engineConnType": "引擎类型",

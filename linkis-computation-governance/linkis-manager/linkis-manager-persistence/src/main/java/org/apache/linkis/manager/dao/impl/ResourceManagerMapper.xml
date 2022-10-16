@@ -38,5 +38,4 @@
         SELECT * FROM linkis_cg_manager_linkis_resources WHERE id = #{id}
     </select>
 
-
 </mapper>

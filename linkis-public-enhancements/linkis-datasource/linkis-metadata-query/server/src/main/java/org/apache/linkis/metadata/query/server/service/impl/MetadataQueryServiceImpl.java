@@ -45,6 +45,9 @@ import java.util.function.BiFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.FAILED_METADATA_SERVICE;
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.INVOKE_METHOD_FAIL;
+
 @Service
 public class MetadataQueryServiceImpl implements MetadataQueryService {
   private Sender dataSourceRpcSender;
@@ -374,7 +377,9 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     } catch (Exception e) {
       // TODO ERROR CODE
       throw new MetaMethodInvokeException(
-          -1, "Load meta service for " + dsType + " fail 加载 [" + dsType + "] 元数据服务失败", e);
+          FAILED_METADATA_SERVICE.getErrorCode(),
+          "Load meta service for " + dsType + " fail 加载 [" + dsType + "] 元数据服务失败",
+          e);
     }
     if (Objects.nonNull(invoker)) {
       try {
@@ -390,7 +395,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
         throw new MetaMethodInvokeException(
             method,
             methodArgs,
-            -1,
+            INVOKE_METHOD_FAIL.getErrorCode(),
             "Invoke method [" + method + "] fail, message:[" + e.getMessage() + "]",
             e);
       }

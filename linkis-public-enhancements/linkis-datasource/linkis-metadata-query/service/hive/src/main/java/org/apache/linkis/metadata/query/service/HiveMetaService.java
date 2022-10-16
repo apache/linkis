@@ -46,6 +46,9 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.CANNOT_KEYTAB_PARAMETERS;
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.CANNOT_PARSE_PARAM;
+
 public class HiveMetaService extends AbstractMetaService<HiveConnection> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HiveMetaService.class);
@@ -89,7 +92,7 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         }
         conn = new HiveConnection(uris, principle, keytabFilePath, getExtraHadoopConf(params));
       } else {
-        throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
+        throw new MetaRuntimeException(CANNOT_KEYTAB_PARAMETERS.getErrorDesc(), null);
       }
     } else {
       conn = new HiveConnection(uris, getExtraHadoopConf(params));
@@ -274,7 +277,11 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         }
       } catch (Exception e) {
         throw new MetaRuntimeException(
-            "Cannot parse the param:[" + HiveParamsMapper.PARAM_HADOOP_CONF.getValue() + "]", e);
+            CANNOT_PARSE_PARAM.getErrorDesc()
+                + "["
+                + HiveParamsMapper.PARAM_HADOOP_CONF.getValue()
+                + "]",
+            e);
       }
     }
     return extraHadoopConf;

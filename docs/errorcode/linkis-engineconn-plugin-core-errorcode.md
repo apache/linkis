@@ -16,7 +16,7 @@
 |linkis-engineconn-plugin-core |20001| The `lib` and `conf` dir is necessary in EngineConn dist,engineConnType(`lib` 和 `conf` 目录在 EngineConn dist 中是必需的,engineConnType):|LIB_CONF_DIR_NECESSARY|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20011| Not supported ExecutorFactory(不支持 ExecutorFactory)|NOT_SUPPORTED_EF|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70101| DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)|DERTL_CANNOT_NULL|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |70102|Cannot get label key. labels (无法获取标签密钥,标签):|CANNOT_GET_LABEL_KEY|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |70102|Cannot get label key. labels (无法获取标签key,标签):|CANNOT_GET_LABEL_KEY|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70103|The minResource {} is not the same with the maxResource(minResource {} 与 maxResource 不同)|MINRESOURCE_MAXRESOURCE_NO_SAME|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70062|Failed to init engine conn plugin instance(无法初始化引擎连接插件实例)|FAILED_ENGINE_INSTANCE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70062|No public constructor in pluginClass(pluginClass 中没有公共构造函数)|NO_PUBLIC_CONSTRUCTOR|EngineconnCoreErrorCodeSummary|

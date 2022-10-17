@@ -142,13 +142,13 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
     ) {
       case e: TimeoutException =>
         throw new ECMErrorException(
-          WAIT_FOR_ENGINECONN.getErrorCode,
-          WAIT_FOR_ENGINECONN.getErrorDesc + s" $engineConn ."
+          EC_START_TIME_OUT.getErrorCode,
+          EC_START_TIME_OUT.getErrorDesc + s" $engineConn ."
         )
       case e: InterruptedException => // 比如被ms cancel
         throw new ECMErrorException(
-          WAIT_FOR_INITIAL.getErrorCode,
-          WAIT_FOR_INITIAL.getErrorDesc + s" $engineConn ."
+          EC_INTERRUPT_TIME_OUT.getErrorCode,
+          EC_INTERRUPT_TIME_OUT.getErrorDesc + s" $engineConn ."
         )
       case t: Throwable =>
         logger.error(s"unexpected error, now shutdown it.")

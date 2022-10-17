@@ -18,14 +18,14 @@
 package org.apache.linkis.ecm.errorcode;
 
 public enum EngineconnServerErrorCodeSummary {
-  WAIT_FOR_INITIAL(
-      11100,
-      "wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) ",
-      "wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) "),
-  WAIT_FOR_ENGINECONN(
+  EC_START_TIME_OUT(
       11100,
       "wait for engineConn initial timeout(请求引擎超时，可能是因为队列资源不足导致，请重试)",
       "wait for engineConn initial timeout(请求引擎超时，可能是因为队列资源不足导致，请重试)"),
+  EC_INTERRUPT_TIME_OUT(
+      11101,
+      "wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) ",
+      "wait for initial interrupted(请求引擎被中断，可能是因为你操作了引擎取消操作，请重试) "),
   NOT_SUPPORTED_TYPE(
       11102,
       "Not supported BmlResource visibility type: label(不支持的 BmlResource visibility 类型：label).",

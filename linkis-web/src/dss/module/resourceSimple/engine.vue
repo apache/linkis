@@ -288,6 +288,12 @@ export default {
         this.loading = false;
       });
     },
+    selectAll(isSelectedAll) {
+      this.ideEngineList.forEach(item => item.isActive = !isSelectedAll);
+      this.boardEngineList.forEach(item => item.isActive = !isSelectedAll);
+      this.otherEngineList.forEach(item => item.isActive = !isSelectedAll);
+    
+    },
     getEngineData() {
       if(this.loading) return;
       this.ideEngineList = [];

@@ -21,7 +21,7 @@ import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
-import org.apache.linkis.ecm.core.errorcode.LinkisEnManagerCoreErrorCodeSummary._
+import org.apache.linkis.ecm.core.errorcode.LinkisECMErrorCodeSummary._
 import org.apache.linkis.ecm.core.exception.ECMCoreException
 import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf

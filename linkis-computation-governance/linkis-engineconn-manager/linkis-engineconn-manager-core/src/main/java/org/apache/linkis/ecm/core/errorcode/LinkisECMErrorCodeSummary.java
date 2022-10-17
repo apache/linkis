@@ -17,7 +17,7 @@
 
 package org.apache.linkis.ecm.core.errorcode;
 
-public enum LinkisEnManagerCoreErrorCodeSummary {
+public enum LinkisECMErrorCodeSummary {
   CAN_NOT_GET_INPUTSTREAM(
       20001,
       "process is not be launch, can not get InputStream!(进程未启动，无法获取 InputStream！)",
@@ -34,7 +34,7 @@ public enum LinkisEnManagerCoreErrorCodeSummary {
   /** Possible reasons for the error(错误可能出现的原因) */
   private String comment;
 
-  LinkisEnManagerCoreErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisECMErrorCodeSummary(int errorCode, String errorDesc, String comment) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
     this.comment = comment;

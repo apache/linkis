@@ -17,27 +17,11 @@
 
 package org.apache.linkis.manager;
 
-import org.apache.linkis.DataWorkCloudApplication;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
+import org.mybatis.spring.annotation.MapperScan;
 
-@ComponentScan(
-    value = "org.apache.linkis",
-    excludeFilters =
-        @ComponentScan.Filter(
-            type = FilterType.ASSIGNABLE_TYPE,
-            value = DataWorkCloudApplication.class))
-@Configuration
-@EnableAspectJAutoProxy
-public class Scan {
-  @Autowired private DataSource dataSource;
-
-  @Bean
-  public JdbcTemplate getJdbcTemplate() {
-    return new JdbcTemplate(dataSource);
-  }
-}
+@EnableAutoConfiguration
+@MapperScan("org.apache.linkis.manager")
+public class Scan {}

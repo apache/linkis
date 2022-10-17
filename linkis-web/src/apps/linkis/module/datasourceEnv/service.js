@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const dataSourceEnvBaseUrl = '/basedata-manager/datasource-env'
 
 const getList = (params)=> {
-  console.log(params)
+  //console.log(params)
   return api.fetch(dataSourceEnvBaseUrl, params , 'get')
 }
 
@@ -36,9 +36,14 @@ const del = (params)=> {
   return api.fetch(`${dataSourceEnvBaseUrl}/${params.id}`,'delete')
 }
 
+const getAllEnv = () => {
+  return api.fetch(`/data-source-manager/type/all`, 'get')
+}
+
 export{
   getList,
   add,
   edit,
-  del
+  del,
+  getAllEnv
 }

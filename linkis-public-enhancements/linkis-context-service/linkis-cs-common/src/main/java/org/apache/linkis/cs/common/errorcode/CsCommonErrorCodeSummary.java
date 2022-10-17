@@ -73,13 +73,13 @@ public enum CsCommonErrorCodeSummary {
       "Failed to get ContextValue(获取 ContextValue 失败):"),
   SEARCH_CONTEXTMAP_ERROR(
       70110,
-      "searchUpstreamContextMap error(searchUpstreamContextMap 错误)",
-      "searchUpstreamContextMap error(searchUpstreamContextMap 错误)"),
+      "SearchUpstreamContextMap error(searchUpstreamContextMap 错误)",
+      "SearchUpstreamContextMap error(searchUpstreamContextMap 错误)"),
 
   SEARCH_UPSTREAM_ERROR(
       70110,
-      "search Upstream KeyValue error (搜索上游KeyValue错误):",
-      "search Upstream KeyValue error(搜索上游KeyValue错误):"),
+      "Search Upstream KeyValue error (搜索上游KeyValue错误):",
+      "Search Upstream KeyValue error(搜索上游KeyValue错误):"),
 
   SEARCH_CONTEXT_VALUE_ERROR(70111, "Search value (搜索值):", "Search value (搜索值):"),
   HAID_CANNOT_ECCODEED(
@@ -107,26 +107,26 @@ public enum CsCommonErrorCodeSummary {
       "Failed to construct contextSerializer(构造 contextSerializer 失败)"),
   CANNOT_DUOLICATED(
       70112,
-      "contextSerializer Type cannot be duplicated(contextSerializer 类型不能重复)",
-      "contextSerializer Type cannot be duplicated(contextSerializer 类型不能重复)"),
+      "ContextSerializer Type cannot be duplicated(contextSerializer 类型不能重复)",
+      "ContextSerializer Type cannot be duplicated(contextSerializer 类型不能重复)"),
   GET_UPSTREAM_TABLE_ERROR(
-      70112, "get Upstream Tables error(获取上游表错误)", "get Upstream Tables error(获取上游表错误)"),
+      70112, "Get Upstream Tables error(获取上游表错误)", "Get Upstream Tables error(获取上游表错误)"),
   GET_SUITABLE_ERROR(
       70112,
-      "get UpstreamSuitableTable error(获取 UpstreamSuitableTable 错误)",
-      "get UpstreamSuitableTable error(获取 UpstreamSuitableTable 错误)"),
+      "Get UpstreamSuitableTable error(获取 UpstreamSuitableTable 错误)",
+      "Get UpstreamSuitableTable error(获取 UpstreamSuitableTable 错误)"),
   FAILED_SEARCH(
       70112,
       "Failed to searchUpstreamTableKeyValue(搜索UpstreamTableKeyValue 失败)",
       "Failed to searchUpstreamTableKeyValue(搜索UpstreamTableKeyValue 失败)"),
-  PUTCSTABLE_ERROR(70112, "putCSTable error(putCSTable 错误)", "putCSTable error(putCSTable 错误)"),
-  GETCSTABLE_ERROR(70112, "getCSTable error(getCSTable 错误)", "getCSTable error(getCSTable 错误)"),
+  PUTCSTABLE_ERROR(70112, "PutCSTable error(putCSTable 错误)", "PutCSTable error(putCSTable 错误)"),
+  GETCSTABLE_ERROR(70112, "GetCSTable error(getCSTable 错误)", "GetCSTable error(getCSTable 错误)"),
   FAILED_REGISTER(
       70112,
       "Failed to register cs tmp table(注册cs tmp表失败)",
       "Failed to register cs tmp table(注册cs tmp表失败)"),
   CREATE_HISTORY_ERROR(
-      70112, "createHistory error(createHistory 错误)", "createHistory error(createHistory 错误)"),
+      70112, "CreateHistory error(createHistory 错误)", "CreateHistory error(createHistory 错误)"),
   INITCONTEXTINFO_ERROR(
       70112,
       "InitContextInfo error. contextIDStr(初始化上下文信息错误。上下文IDStr):",
@@ -134,14 +134,14 @@ public enum CsCommonErrorCodeSummary {
   REQUEST_FAILED_ERRORCODE(80015, "", ""),
   DWSRESULT_NOT_INSTANCE(
       80015,
-      "resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)",
-      "resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)"),
+      "Resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)",
+      "Resulet is not instance of DWSResult(resulet 不是 DWSResult 的实例)"),
   INVALID_RESULT_TYPE(80017, "Invalid result type (结果类型无效):", "Invalid result type (结果类型无效):"),
   INVALID_NULL_RESULT(80017, "Invalid null result (无效的结果)", "Invalid null result (无效的结果)"),
   CANNOT_ALL_BLANK(
       97000,
-      "createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd、accessTimeStart、accessTimeEnd 不能全部为空.)",
-      "createTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd、accessTimeStart、accessTimeEnd 不能全部为空.)"),
+      "CreateTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd、accessTimeStart、accessTimeEnd 不能全部为空.)",
+      "CreateTimeStart,  createTimeEnd,  updateTimeStart,  updateTimeEnd,  accessTimeStart,  accessTimeEnd cannot all be blank.(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd、accessTimeStart、accessTimeEnd 不能全部为空.)"),
   FAILED_SERIALIZE_CONTEXTKEYVALUE(
       97000,
       "Failed to serialize contextKeyValue(无法序列化 contextKeyValue)",
@@ -151,25 +151,25 @@ public enum CsCommonErrorCodeSummary {
       "Failed to serialize contextValue(无法序列化 contextValue)",
       "Failed to serialize contextValue(无法序列化 contextValue)"),
   HISTORY_CANNOT_EMPTY(
-      97000, "history source cannot be empty(历史源不能为空)", "history source cannot be empty(历史源不能为空)"),
-  EXECUTE_FAILED(97000, "execute failed,reason(执行失败，原因):", "execute failed,reason(执行失败，原因):"),
-  TRANSFER_BEAN(97000, "transfer bean failed(传输 bean 失败):", "transfer bean failed(传输 bean 失败):"),
+      97000, "History source cannot be empty(历史源不能为空)", "History source cannot be empty(历史源不能为空)"),
+  EXECUTE_FAILED(97000, "Execute failed,reason(执行失败，原因):", "Execute failed,reason(执行失败，原因):"),
+  TRANSFER_BEAN(97000, "Transfer bean failed(传输 bean 失败):", "Transfer bean failed(传输 bean 失败):"),
   CONTEXTID_CANNOT_EMPTY(
-      97000, "contxtId cannot be empty(contxtId 不能为空)", "contxtId cannot be empty(contxtId 不能为空)"),
+      97000, "ContxtId cannot be empty(contxtId 不能为空)", "ContxtId cannot be empty(contxtId 不能为空)"),
   IDLIST_CANNOT_EMPTY(
-      97000, "idList cannot be empty(idList 不能为空)", "idList cannot be empty(idList 不能为空)"),
+      97000, "The idList cannot be empty(idList 不能为空)", "The idList cannot be empty(idList 不能为空)"),
   TYPE_SCOPE_EMPTY(
       97000,
-      "try to create context ,type or scope cannot be empty(尝试创建上下文，类型或范围不能为空)",
-      "try to create context ,type or scope cannot be empty(尝试创建上下文，类型或范围不能为空)"),
+      "Try to create context ,type or scope cannot be empty(尝试创建上下文，类型或范围不能为空)",
+      "Try to create context ,type or scope cannot be empty(尝试创建上下文，类型或范围不能为空)"),
   CANNOT_ALL_BLANK_FOUR(
       97000,
-      "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd 不能全部为空)",
-      "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd 不能全部为空)"),
+      "CreateTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd 不能全部为空)",
+      "CreateTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null(createTimeStart、createTimeEnd、updateTimeStart、updateTimeEnd 不能全部为空)"),
   CANNOT_FIND_METHOD(
       97000,
-      "can not find a method to invoke(找不到调用的方法)",
-      "can not find a method to invoke(找不到调用的方法)"),
+      "Can not find a method to invoke(找不到调用的方法)",
+      "Can not find a method to invoke(找不到调用的方法)"),
   CREATECONTEXTID_EXCEPTION(97000, "", ""),
   DESCRIBE_ID(97001, "", ""),
   FAILED_FIND_SERIALIZER(

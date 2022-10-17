@@ -78,8 +78,8 @@ public enum EngineconnCoreErrorCodeSummary {
       "DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)"),
   CANNOT_GET_LABEL_KEY(
       70102,
-      "Cannot get label key. labels (无法获取标签密钥,标签):",
-      "Cannot get label key. labels (无法获取标签密钥,标签):"),
+      "Cannot get label key. labels (无法获取标签key,标签):",
+      "Cannot get label key. labels (无法获取标签key,标签):"),
   MINRESOURCE_MAXRESOURCE_NO_SAME(
       70103,
       "The minResource {} is not the same with the maxResource(minResource {} 与 maxResource 不同)",

@@ -102,7 +102,9 @@ public class Environment {
       final CatalogEntry catalog = CatalogEntry.create(config);
       if (this.catalogs.containsKey(catalog.getName())) {
         throw new FlinkInitFailedException(
-            String.format(CANNOT_CATALOG_ALREADY.getErrorDesc(), catalog.getName()));
+            String.format(
+                "Cannot create catalog '%s' because a catalog with this name is already registered.",
+                catalog.getName()));
       }
       this.catalogs.put(catalog.getName(), catalog);
     }

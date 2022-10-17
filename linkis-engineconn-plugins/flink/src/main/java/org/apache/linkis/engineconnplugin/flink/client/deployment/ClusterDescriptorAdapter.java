@@ -143,7 +143,8 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
         clusterClient = clusterDescriptor.retrieve(this.clusterID).getClusterClient();
       } catch (ClusterRetrieveException e) {
         LOG.error(String.format("Job: %s could not retrieve or create a cluster.", jobId), e);
-        throw new JobExecutionException(String.format(NOT_CREATE_CLUSTER.getErrorDesc(), jobId), e);
+        throw new JobExecutionException(
+            String.format("Job: %s could not retrieve or create a cluster.", jobId), e);
       }
     }
     try {
@@ -153,7 +154,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
         return null;
       } else {
         LOG.error(String.format("Job: %s operation failed!", jobId), e);
-        throw new JobExecutionException(String.format(OPERATION_FAILED.getErrorDesc(), jobId), e);
+        throw new JobExecutionException(String.format("Job: %s operation failed!", jobId), e);
       }
     }
   }

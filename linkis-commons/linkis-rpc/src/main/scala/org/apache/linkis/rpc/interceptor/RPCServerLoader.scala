@@ -19,6 +19,7 @@ package org.apache.linkis.rpc.interceptor
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 
@@ -61,7 +62,7 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
       serviceInstance: ServiceInstance
   ): Unit = {
     val instanceNotExists = new NoInstanceExistsException(
-      10051,
+      APPLICATION_IS_NOT_EXISTS.getErrorCode,
       "The instance " +
         serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists."
     )

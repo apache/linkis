@@ -1,8 +1,7 @@
 ## linkis-engineconn-plugin-server 配置
 
-
 | 模块名(服务名) | 参数名 | 默认值 | 描述 |
-| -------- | -------- | ----- |----- | 
+| -------- | -------- | ----- |----- |
 | wds.linkis.engineconn.plugin.loader.classname | |plugin.loader.classname|
 | wds.linkis.engineconn.plugin.loader.defaultUser | hadoop |wds.linkis.engineconn.plugin.loader.defaultUser|
 | wds.linkis.engineconn.plugin.loader.store.path | |loader.store.path|
@@ -12,16 +11,3 @@
 | wds.linkis.engineconn.home | |engineconn.home|
 | wds.linkis.engineconn.dist.load.enable |true |dist.load.enable|
 | wds.linkis.engineconn.bml.upload.failed.enable |true |upload.failed.enable|
- 
-
-
- 
- 
- 
-
- 
- 
- 
-
- 
- 

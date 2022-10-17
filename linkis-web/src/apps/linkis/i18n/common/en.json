@@ -329,7 +329,9 @@
       },
       "basedata": {
         "add": "add",
-        "remove": "remove"
+        "remove": "remove",
+        "edit": "edit",
+        "addUDFAdmin": "add UDF administrator"
       }
     }
   }

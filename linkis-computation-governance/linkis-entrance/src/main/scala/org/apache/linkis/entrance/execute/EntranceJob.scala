@@ -21,6 +21,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -284,7 +285,11 @@ abstract class EntranceJob extends Job {
     this.getExecutor match {
       case entranceExecutor: EntranceExecutor =>
         operate(entranceExecutor)
-      case _ => throw new EntranceErrorException(10000, "Unsupported operation")
+      case _ =>
+        throw new EntranceErrorException(
+          UNSUPPORTED_OPERATION.getErrorCode,
+          UNSUPPORTED_OPERATION.getErrorDesc
+        )
     }
 
   }

@@ -17,7 +17,7 @@
 
 <template>
   <div class="function-management">
-    <Form class="function-management-searchbar" :model="searchBar" inline>
+    <Form class="function-management-searchbar" @submit.native.prevent :model="searchBar" inline>
       <FormItem prop="functionName" :label="$t('message.linkis.udfName')">
         <Input
           v-model="searchBar.functionName"
@@ -25,7 +25,7 @@
         ></Input>
       </FormItem>
       <Divider type="vertical" class="divider" />
-      <FormItem prop="functionType" :label="$t('message.linkis.udfName')">
+      <FormItem prop="functionType" :label="$t('message.linkis.udfType')">
         <Select v-model="searchBar.functionType" style="width:120px;">
           <Option :label="$t('message.linkis.all')" value="0,1,2" key="0,1,2" />
           <Option :label="$t('message.linkis.common')" value="0" key="0" />

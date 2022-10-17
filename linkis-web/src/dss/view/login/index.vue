@@ -117,22 +117,22 @@ export default {
           this.loginForm.user = this.loginForm.user.toLocaleLowerCase();
           // 需要判断是否需要给密码加密
           let password = this.loginForm.password;
-           let params = {};
-           if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
-             const key = `-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`;
-             const encryptor = new JSEncrypt()
-             encryptor.setPublicKey(key)
-             password = encryptor.encrypt(this.loginForm.password);
-             params = {
-               userName: this.loginForm.user,
-               password
-             };
-           } else {
-             params = {
-               userName: this.loginForm.user,
-               password
-             };
-           }
+          let params = {};
+          if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
+            const key = `-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`;
+            const encryptor = new JSEncrypt()
+            encryptor.setPublicKey(key)
+            password = encryptor.encrypt(this.loginForm.password);
+            params = {
+              userName: this.loginForm.user,
+              password
+            };
+          } else {
+            params = {
+              userName: this.loginForm.user,
+              password
+            };
+          }
           // 登录清掉本地缓存
           // 连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用
           let tabs = await tab.get() || [];

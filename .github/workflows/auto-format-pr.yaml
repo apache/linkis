@@ -44,8 +44,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Code Format Apply
-        run: |
-          ./mvnw -N install
+        run:
           ./mvnw spotless:apply
 
       - name: Create Pull Request

@@ -144,8 +144,6 @@ Linkis 1.0后提供了cli的方式提交任务，我们只需要指定对应的E
 ```shell
  sh ./bin/linkis-cli -submitUser trino -engineType trino-371 -code 'select * from default.test limit 10' -runtimeMap linkis.es.http.method=GET -runtimeMap linkis.trino.url=127.0.0.1:8080
 ```
-具体使用可以参考： [Linkis CLI Manual](../user-guide/linkiscli-manual.md).
-
 
 ## 4. Trino引擎的用户设置
 

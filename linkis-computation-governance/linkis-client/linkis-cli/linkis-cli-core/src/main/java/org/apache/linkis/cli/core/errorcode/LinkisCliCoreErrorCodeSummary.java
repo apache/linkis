@@ -22,34 +22,34 @@ public enum LinkisCliCoreErrorCodeSummary {
       "BLD0003",
       "Cause: stdVarAccess or sysVarAccess is null(原因：stdVarAccess 或 sysVarAccess 为空)",
       "Cause: stdVarAccess or sysVarAccess is null(原因：stdVarAccess 或 sysVarAccess 为空)"),
-  TEMPLATE_EXISTS(
-      "CMD0022", "template: {} already exists(模板：{}已存在)", "template: {} already exists(模板：{}已存在"),
-  SET_OPTION_VALUE(
-      "CMD0010",
-      "Failed to set option value: optionMap contains objects that is not Option(设置选项值失败：optionMap 包含不是选项的对象)",
-      "Failed to set option value: optionMap contains objects that is not Option(设置选项值失败：optionMap 包含不是选项的对象)"),
   SET_PARAMETRT_VALUE(
       "CMD001",
       "Failed to set param value: parameters contains objects that is not Parameter(设置参数值失败：参数包含不是参数的对象)",
       "Failed to set param value: parameters contains objects that is not Parameter(设置参数值失败：参数包含不是参数的对象)"),
   IMPUT_OR_TEMPLATE(
       "CMD0009", "input or template is null(输入或模板为空)", "input or template is null(输入或模板为空)"),
+  SET_OPTION_VALUE(
+      "CMD0010",
+      "Failed to set option value: optionMap contains objects that is not Option(设置选项值失败：optionMap 包含不是选项的对象)",
+      "Failed to set option value: optionMap contains objects that is not Option(设置选项值失败：optionMap 包含不是选项的对象)"),
   DAILED_TO_INIT_PARSER(
       "CMD0013",
       "failed to init parser: fitter is null(无法初始化解析器：fitter 为空)",
       "failed to init parser: fitter is null(无法初始化解析器：fitter 为空)"),
-  PARAMMAPPER_DIFFERENT_KEY(
-      "CMD0020",
-      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键.)",
-      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键.)"),
   MAKE_DEEP_COPY(
       "CMD0018",
       "failed to make deep copy of template:(未能制作模板的深拷贝:)",
       "failed to make deep copy of template:(未能制作模板的深拷贝:)"),
+  PARAMMAPPER_DIFFERENT_KEY(
+      "CMD0020",
+      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键.)",
+      "ParamMapper should not map different keys into same key. Key is:(ParamMapper 不应将不同的键映射到同一个键.)"),
   DESCRIBED_BY(
       "CMD0021",
       "Input should be a Map-entry described by kv-pairs. e.g. key1=value1(输入应该是由 kv-pairs 描述的 Map-entry. 例如 键1=值1)",
       "Input should be a Map-entry described by kv-pairs. e.g. key1=value1(输入应该是由 kv-pairs 描述的 Map-entry. 例如 键1=值1)"),
+  TEMPLATE_EXISTS(
+      "CMD0022", "template: {} already exists(模板：{}已存在)", "template: {} already exists(模板：{}已存在"),
   GENERATE_TEMPLATE(
       "CODE-001", "Failed to generate template.(无法生成模板.)", "Failed to generate template.(无法生成模板.)"),
   EMPTY_JOBS_IS_SUBMITTED(
@@ -94,15 +94,6 @@ public enum LinkisCliCoreErrorCodeSummary {
       "EXE0028",
       "Failed to get a reusable joboperator, name:{} (获取可重用作业操作符失败，名称:{})",
       "Failed to get a reusable joboperator, name:{} (获取可重用作业操作符失败，名称：{})"),
-  IS_NOT_MODEL(
-      "PST0010",
-      "Input for HelpInfoPresenter is not instance of model (HelpInfoPresenter 的输入不是模型的实例)",
-      "Input for HelpInfoPresenter is not instance of model (HelpInfoPresenter 的输入不是模型的实例)"),
-  DRIVER_IS_NULL("PST0007", "Driver is null (驱动程序为空)", "Driver is null(驱动程序为空)"),
-  DUPLICATE_DISPLAYOPERATOR(
-      "PST0012",
-      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)",
-      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)"),
   INSTANCE_FILEDISPLAYDATA(
       "PST0004",
       "input data is not instance of FileDisplayData(输入数据不是 FileDisplayData 的实例)",
@@ -118,6 +109,26 @@ public enum LinkisCliCoreErrorCodeSummary {
       "PST0008",
       "input data is not instance of StdoutDisplayData(输入数据不是 StdoutDisplayData 的实例)",
       "input data is not instance of StdoutDisplayData(输入数据不是 StdoutDisplayData 的实例)"),
+  IS_NOT_MODEL(
+      "PST0010",
+      "Input for HelpInfoPresenter is not instance of model (HelpInfoPresenter 的输入不是模型的实例)",
+      "Input for HelpInfoPresenter is not instance of model (HelpInfoPresenter 的输入不是模型的实例)"),
+  DRIVER_IS_NULL("PST0007", "Driver is null (驱动程序为空)", "Driver is null(驱动程序为空)"),
+  DUPLICATE_DISPLAYOPERATOR(
+      "PST0012",
+      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)",
+      "Attempting to register a duplicate DisplayOperator, name: (尝试注册重复的 DisplayOperator，名称：)"),
+  IS_NOT_INITED(
+      "PRP0001",
+      "properties reader for source:{}propsPath  is not inited. because of blank propsId or propsPath(source:{}propsPath 的属性读取器未启动. 因为空白的 propsId 或 propsPath)",
+      "properties reader for source:{}propsPath  is not inited. because of blank propsId or propsPath(source:{}propsPath 的属性读取器未启动. 因为空白的 propsId 或 propsPath)"),
+
+  SOURCE_PROPSPATH(
+      "PRP0002", "Source:{}propsPath(来源：{}propsPath)", "Source:{}propsPath(来源：{}propsPath)"),
+  PROPERTIES_LOADER(
+      "PRP0003",
+      "properties loader is not inited because it contains no reader(属性加载器未启动，因为它不包含读取器)",
+      "properties loader is not inited because it contains no reader(属性加载器未启动，因为它不包含读取器)"),
   PROPERTIES_IS_EMPTY(
       "PRP0004",
       "Failed to  properties files because rootPath is empty(属性文件失败，因为 rootPath 为空)",
@@ -130,28 +141,30 @@ public enum LinkisCliCoreErrorCodeSummary {
       "PRP0006",
       "PropsFilesScanner has scanned 0 files given root:{}(PropsFilesScanner 扫描了 0 个给定 root 的文件:{})",
       "PropsFilesScanner has scanned 0 files given root:{}(PropsFilesScanner 扫描了 0 个给定 root 的文件:{})"),
-  PROPERTIES_LOADER(
-      "PRP0003",
-      "properties loader is not inited because it contains no reader(属性加载器未启动，因为它不包含读取器)",
-      "properties loader is not inited because it contains no reader(属性加载器未启动，因为它不包含读取器)"),
-  SOURCE_PROPSPATH(
-      "PRP0002", "Source:{}propsPath(来源：{}propsPath)", "Source:{}propsPath(来源：{}propsPath)"),
-  IS_NOT_INITED(
-      "PRP0001",
-      "properties reader for source:{}propsPath  is not inited. because of blank propsId or propsPath(source:{}propsPath 的属性读取器未启动. 因为空白的 propsId 或 propsPath)",
-      "properties reader for source:{}propsPath  is not inited. because of blank propsId or propsPath(source:{}propsPath 的属性读取器未启动. 因为空白的 propsId 或 propsPath)"),
-  INTO_PARAMITEM(
-      "TFM0012",
-      "Failed to convert option into ParamItem: params contains duplicated identifier: {}(无法将选项转换为 ParamItem：参数包含重复的标识符：)",
-      "Failed to convert option into ParamItem: params contains duplicated identifier: {}(无法将选项转换为 ParamItem：参数包含重复的标识符：)"),
   INIT_HELPINFOMODEL(
       "TFM0010",
       "Failed to init HelpInfoModel: {} is not instance of  CmdTemplate (初始化 HelpInfoModel 失败：{} 不是 CmdTemplate 的实例)",
       "Failed to init HelpInfoModel: {} is not instance of  CmdTemplate (初始化 HelpInfoModel 失败：{} 不是 CmdTemplate 的实例)"),
+  INTO_PARAMITEM(
+      "TFM0012",
+      "Failed to convert option into ParamItem: params contains duplicated identifier: {}(无法将选项转换为 ParamItem：参数包含重复的标识符：)",
+      "Failed to convert option into ParamItem: params contains duplicated identifier: {}(无法将选项转换为 ParamItem：参数包含重复的标识符：)"),
   NOT_A_INSTANCE_CMDTEMPLATE(
       "VLD0006",
       "Input of ParsedTplValidator is not instance of CmdTemplate. (LinkisSubmitValidator 的输入不是 CmdTemplate 的实例.)",
       "Input of ParsedTplValidator is not instance of CmdTemplate. (LinkisSubmitValidator 的输入不是 CmdTemplate 的实例. )"),
+  BOTH_NULL(
+      "VA0001",
+      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)",
+      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)"),
+  SAME_KEY_OCCURRED(
+      "VA0002",
+      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键. 将使用 sys_prop)",
+      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键. 将使用 sys_prop)"),
+  VALUE_IS_NOT_STRING(
+      "VA0002",
+      "Cannot getVar {}KEY  from config. Cause: value is not String (无法从配置中获取 Var {}KEY. 原因：值不是字符串)",
+      "Cannot getVar {}KEY  from config. Cause: value is not String (无法从配置中获取 Var {}KEY. 原因：值不是字符串)"),
   VALUE_CANNOT_BE_EMPTY(
       "VLD0003",
       "CmdOption value cannot be empty: paramName:{}paramName  CmdType: {}CmdType(CmdOption 值不能为空：paramName:{}paramName CmdType:{}CmdType)",
@@ -160,22 +173,10 @@ public enum LinkisCliCoreErrorCodeSummary {
       "VA0003",
       "stdVarAccess is not inited. cmdParams:{}cmdParams defaultConf:{}defaultConf subMapCache:subMapCache (未启动 stdVarAccess. cmdParams:{}cmdParams defaultConf:{}defaultConf subMapCache:subMapCache)",
       "stdVarAccess is not inited. cmdParams:{}cmdParams defaultConf:{}defaultConf subMapCache:subMapCache (未启动 stdVarAccess. cmdParams:{}cmdParams defaultConf:{}defaultConf subMapCache:subMapCache)"),
-  VALUE_IS_NOT_STRING(
-      "VA0002",
-      "Cannot getVar {}KEY  from config. Cause: value is not String (无法从配置中获取 Var {}KEY. 原因：值不是字符串)",
-      "Cannot getVar {}KEY  from config. Cause: value is not String (无法从配置中获取 Var {}KEY. 原因：值不是字符串)"),
   IN_NOT_SUPPORTED(
       "VA0004",
       "Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)",
-      "Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)"),
-  BOTH_NULL(
-      "VA0001",
-      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)",
-      "sys_prop and sys_env are both null(sys_prop 和 sys_env 都为空)"),
-  SAME_KEY_OCCURRED(
-      "VA0002",
-      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键. 将使用 sys_prop)",
-      "same key occurred in sys_prop and sys_env. will use sys_prop(sys_prop 和 sys_env 中出现了相同的键. 将使用 sys_prop)");
+      "Cannot convertStringVal   to  : designated type is not supported(无法将StringVal 转换为：不支持指定类型)");
 
   /** error code(错误码) */
   private String errorCode;

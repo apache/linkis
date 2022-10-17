@@ -18,6 +18,14 @@
 package org.apache.linkis.cli.core.errorcode;
 
 public enum LinkisCliApplicationErrorCodeSummary {
+  SPECIFY_SCRIPT(
+      "BLD0005",
+      "User specified script file does not exist: (用户指定的脚本文件不存在)",
+      "User specified script file does not exist: (用户指定的脚本文件不存在"),
+  UNABLE_TO_READ(
+      "BLD0006",
+      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)",
+      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)"),
   LIENT_FACTORY(
       "BLD0007",
       "Cannot build UjesClientDriverContext: gatewayUrl is empty(无法构建 UjesClientDriverContext：gatewayUrl 为空)",
@@ -38,69 +46,25 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "BLD0011",
       "Authentication strategy  is not supported(不支持认证策略)",
       "Authentication strategy  is not supported (不支持认证策略)"),
-  SPECIFY_SCRIPT(
-      "BLD0005",
-      "User specified script file does not exist: (用户指定的脚本文件不存在)",
-      "User specified script file does not exist: (用户指定的脚本文件不存在"),
-  UNABLE_TO_READ(
-      "BLD0006",
-      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)",
-      "Cannot read user specified script file:(无法读取用户指定的脚本文件:)"),
-  SHOULD_BE_INSTANCE(
-      "EXE0003",
-      "JobOperator of LinkisManageJob should be instance of LinkisJobOperator(LinkisManageJob 的 JobOperator 应该是 LinkisJobOperator 的实例)",
-      "JobOperator of LinkisManageJob should be instance of LinkisJobOperator(LinkisManageJob 的 JobOperator 应该是 LinkisJobOperator 的实例)"),
-  IS_NOT_INSTANCE_OF(
-      "EXE0030",
-      "JobSubType is not instance of JobManSubType(JobSubType 不是 JobManSubType 的实例)",
-      "JobSubType is not instance of JobManSubType(JobSubType 不是 JobManSubType 的实例)"),
   NOT_SUPPORTED(
       "EXE0002",
       "JobSubType is not supported(不支持 JobSubType)",
       "JobSubType is not supported(不支持 JobSubType)"),
-  USER_OR_JOBID_EXECID(
-      "EXE0036",
-      "user or jobID or execID is null(user 或 jobID 或 execID 为 null)",
-      "user or jobID or execID is null(user 或 jobID 或 execID 为 null)"),
-  JIBDATA_IS_NOT_RESU(
-      "EXE0034",
-      "JobData is not LinkisResultData(JobData 不是 LinkisResultData)",
-      "JobData is not LinkisResultData(JobData 不是 LinkisResultData)"),
-  JIBDATA_IS_NOT_LOG(
-      "EXE0034",
-      " JobData is not LinkisLogData(JobData 不是 LinkisLogData)",
-      " JobData is not LinkisLogData(JobData 不是 LinkisLogData)"),
-  JOBSTATUS_IS_NULL("EXE0038", "jobStatus is null(工作状态为空)", "jobStatus is null(工作状态为空)"),
-  GOT_BLANK_RESULTLOCATION(
-      "EXE0037",
-      "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白ResultLocation,作业可能没有结果集,不会尝试检索任何结果)",
-      "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白ResultLocation,作业可能没有结果集,不会尝试检索任何结果)"),
-  GOT_NULL_OR_EMPTY(
-      "EXE0039",
-      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)",
-      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)"),
-  SOMETHING_FOES_WRONG(
-      "EXE0040",
-      "Something foes wrong. Got null as hasNextPage.(可能异常,hasNextPage 可能为null)",
-      "Something foes wrong. Got null as hasNextPage.(可能异常,hasNextPage 可能为null)"),
-  INSTANCE_IS_NULL(
-      "EXE0040",
-      "Instance of is null(实例为空）",
-      "Instance of is null(实例为空)"),
-  CONTINUPUSLY(
-      "EXE0013",
-      "Cannot get jobStatus from server continuously for N seconds. Client aborted! Error message'.(无法连续 N 秒从服务器获取 jobStatus.客户端中止！错误信息)",
-      "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message'.(无法连续 N 秒从服务器获取 jobStatus.客户端中止！错误信息)"),
-  LOGDATA_CLONEABLE(
-      "EXE0035",
-      "logData is not Cloneable(logData 不可克隆)",
-      " logData is not Cloneable(logData 不可克隆)"),
+  SHOULD_BE_INSTANCE(
+      "EXE0003",
+      "JobOperator of LinkisManageJob should be instance of LinkisJobOperator(LinkisManageJob 的 JobOperator 应该是 LinkisJobOperator 的实例)",
+      "JobOperator of LinkisManageJob should be instance of LinkisJobOperator(LinkisManageJob 的 JobOperator 应该是 LinkisJobOperator 的实例)"),
   ABNORMAL_STATUS(
       "EXE0006", "Job is in abnormal status:(作业处于异常状态:)", " Job is in abnormal status:(作业处于异常状态:)"),
-  PROPERLY_INITIATED(
-      "EXE0041",
-      "onceJob is not properly initiated(onceJob 未正确启动)",
-      "onceJob is not properly initiated(onceJob 未正确启动)"),
+
+  CANNOT_INIT_UJE(
+      "EXE0010",
+      " Cannot init UJESClient(无法初始化 UJESClient)",
+      " Cannot init UJESClient(无法初始化 UJESClient)"),
+  CANNOT_INIT_DWS(
+      "EXE0010",
+      " Cannot init DWSClientConfig(无法初始化 DWSClientConfig)",
+      " Cannot init DWSClientConfig(无法初始化 DWSClientConfig)"),
   UJES_CLIENT_DRIVER(
       "EXE0011",
       "UjesClientDriver is null(UjesClientDriver 为空)",
@@ -114,6 +78,11 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "EXE0013",
       "Get job status failed. retry time (获取作业状态失败.重试时间{})",
       "Get job status failed. retry time (获取作业状态失败.重试时间{})"),
+  CONTINUPUSLY(
+      "EXE0013",
+      "Cannot get jobStatus from server continuously for N seconds. Client aborted! Error message'.(无法连续 N 秒从服务器获取 jobStatus.客户端中止！错误信息)",
+      "Cannot get jobStatus from server continuously for {0} seconds. Client aborted! Error message'.(无法连续 N 秒从服务器获取 jobStatus.客户端中止！错误信息)"),
+
   GET_LOG_TIME_TASKID(
       "EXE0015",
       "Get log failed. retry time : {}/{}. taskID={}, Reason:{}(获取日志失败. 重试时间{},任务id={},原因:{})",
@@ -142,14 +111,6 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "EXE0020",
       "Get progress failed. Retry exhausted. taskID={}, Reason: {} (获取进度失败. 重试已用尽. 任务 ID={}，原因：{})",
       "Get progress failed. Retry exhausted. taskID={}, Reason: {} (获取进度失败. 不能重试. 任务 ID={}，原因：{})"),
-  KILL_JOB_FAILED(
-      "EXE0025",
-      "Kill job failed. taskId={} Retry exhausted.(杀死作业失败. taskId={} 重试已用完.)",
-      "Kill job failed. taskId={} Retry exhausted.(杀死作业失败. taskId={} 重试已用完.)"),
-  KILL_JOB_FAILED_REASON(
-      "EXE0025",
-      "Kill job failed. Retry exhausted. taskId={}, Reason: {} (杀死作业失败. 不能重试. taskId={}，原因：{})",
-      "Kill job failed. Retry exhausted. taskId={}, Reason: {} (杀死作业失败. 不能重试. taskId={}，原因：{})"),
   GET_RESULTSET_FAILED(
       "EXE0021",
       "Get ResultSet Failed: Cannot get a valid jobInfo(获取 ResultSet 失败：无法获取有效的 jobInfo)",
@@ -176,18 +137,64 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "EXE0024",
       "Get resultSet failed. Retry exhausted. Path={}, Reason: {}(获取结果集失败. 不能重试. 路径={}，原因：{})",
       "Get resultSet failed. Retry exhausted. Path={}, Reason: {}(获取结果集失败. 不能重试. 路径={}，原因：{})"),
-  CANNOT_INIT_UJE(
-      "EXE0010",
-      " Cannot init UJESClient(无法初始化 UJESClient)",
-      " Cannot init UJESClient(无法初始化 UJESClient)"),
-  CANNOT_INIT_DWS(
-      "EXE0010",
-      " Cannot init DWSClientConfig(无法初始化 DWSClientConfig)",
-      " Cannot init DWSClientConfig(无法初始化 DWSClientConfig)"),
+  KILL_JOB_FAILED(
+      "EXE0025",
+      "Kill job failed. taskId={} Retry exhausted.(杀死作业失败. taskId={} 重试已用完.)",
+      "Kill job failed. taskId={} Retry exhausted.(杀死作业失败. taskId={} 重试已用完.)"),
+  KILL_JOB_FAILED_REASON(
+      "EXE0025",
+      "Kill job failed. Retry exhausted. taskId={}, Reason: {} (杀死作业失败. 不能重试. taskId={}，原因：{})",
+      "Kill job failed. Retry exhausted. taskId={}, Reason: {} (杀死作业失败. 不能重试. taskId={}，原因：{})"),
   COMMAND_TYPE_IS_NOT(
       "EXE0029",
       " Command Type is not supported(不支持命令类型)",
       " Command Type is not supported(不支持命令类型)"),
+  RESULTPRESENTER_TRIGGERED(
+      "EXE0029",
+      " Job is not completed but triggered ResultPresenter(作业未完成但触发 ResultPresenter)",
+      " Job is not completed but triggered ResultPresenter(作业未完成但触发 ResultPresenter)"),
+  IS_NOT_INSTANCE_OF(
+      "EXE0030",
+      "JobSubType is not instance of JobManSubType(JobSubType 不是 JobManSubType 的实例)",
+      "JobSubType is not instance of JobManSubType(JobSubType 不是 JobManSubType 的实例)"),
+
+  JIBDATA_IS_NOT_RESU(
+      "EXE0034",
+      "JobData is not LinkisResultData(JobData 不是 LinkisResultData)",
+      "JobData is not LinkisResultData(JobData 不是 LinkisResultData)"),
+  JIBDATA_IS_NOT_LOG(
+      "EXE0034",
+      " JobData is not LinkisLogData(JobData 不是 LinkisLogData)",
+      " JobData is not LinkisLogData(JobData 不是 LinkisLogData)"),
+  LOGDATA_CLONEABLE(
+      "EXE0035",
+      "logData is not Cloneable(logData 不可克隆)",
+      " logData is not Cloneable(logData 不可克隆)"),
+  USER_OR_JOBID_EXECID(
+      "EXE0036",
+      "user or jobID or execID is null(user 或 jobID 或 execID 为 null)",
+      "user or jobID or execID is null(user 或 jobID 或 execID 为 null)"),
+  GOT_BLANK_RESULTLOCATION(
+      "EXE0037",
+      "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白ResultLocation,作业可能没有结果集,不会尝试检索任何结果)",
+      "Got blank ResultLocation from server. Job may not have result-set. Will not try to retrieve any Result(从服务器获得空白ResultLocation,作业可能没有结果集,不会尝试检索任何结果)"),
+
+  JOBSTATUS_IS_NULL("EXE0038", "jobStatus is null(工作状态为空)", "jobStatus is null(工作状态为空)"),
+  GOT_NULL_OR_EMPTY(
+      "EXE0039",
+      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)",
+      "Got null or empty ResultSetPaths(ResultSetPaths 为null 或者空)"),
+  SOMETHING_FOES_WRONG(
+      "EXE0040",
+      "Something foes wrong. Got null as hasNextPage.(可能异常,hasNextPage 可能为null)",
+      "Something foes wrong. Got null as hasNextPage.(可能异常,hasNextPage 可能为null)"),
+  INSTANCE_IS_NULL("EXE0040", "Instance of is null(实例为空）", "Instance of is null(实例为空)"),
+
+  PROPERLY_INITIATED(
+      "EXE0041",
+      "onceJob is not properly initiated(onceJob 未正确启动)",
+      "onceJob is not properly initiated(onceJob 未正确启动)"),
+
   MODEL_IS_NOT_INSTANCE_JOBINCLOG(
       "PST0001",
       " Input model for LinkisLogPresenter is not instance of LinkisJobIncLogModel(LinkisLogPresenter 的输入模型不是 LinkisJobIncLogModel 的实例)",
@@ -196,10 +203,6 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "PST0001",
       "  Input model for  LinkisResultInfoPresenter is not instance of LinkisResultInfoModel(LinkisResultInfoPresenter 的输入模型不是 LinkisResultInfoModel 的实例)",
       "   Input model for  LinkisResultInfoPresenter is not instance of LinkisResultInfoModel(LinkisResultInfoPresenter 的输入模型不是 LinkisResultInfoModel 的实例)"),
-  RESULTPRESENTER_TRIGGERED(
-      "EXE0029",
-      " Job is not completed but triggered ResultPresenter(作业未完成但触发 ResultPresenter)",
-      " Job is not completed but triggered ResultPresenter(作业未完成但触发 ResultPresenter)"),
   INSTANCE_RESULTIPRESEMTER(
       "PST0001",
       "  Input model for  LinkisResultPresenter is not instance of LinkisResultModel(LinkisResultPresenter 的输入模型不是 LinkisResultModel 的实例)",
@@ -262,8 +265,7 @@ public enum LinkisCliApplicationErrorCodeSummary {
       "VLD0001",
       "has raw-value but failed to convert it into String-array. Raw-value:{}(具有原始值，但未能将其转换为字符串数组. 原始值：{})",
       "has raw-value but failed to convert it into String-array. Raw-value:{}(具有原始值，但未能将其转换为字符串数组. 原始值：{})"),
-  ILLEGAL_ARGUMENT(
-      "CMD0011", "Illegal argument::{}(非法论据：：{})", "Illegal argument::{}(非法论据：：{})"),
+  ILLEGAL_ARGUMENT("CMD0011", "Illegal argument::{}(非法论据：：{})", "Illegal argument::{}(非法论据：：{})"),
   OPTION_ASSUME_SCRIPT(
       "VLD0001",
       "Argument:{} is not a linkis-cli option. Assume it's script file, but no file named  is found (参数：{} 不是 linkis-cli 选项. 假设它是脚本文件，但没有找到名为的文件)",

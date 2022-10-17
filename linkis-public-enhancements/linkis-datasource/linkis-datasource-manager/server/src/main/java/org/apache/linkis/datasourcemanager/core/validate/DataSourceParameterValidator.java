@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.PARAM_VALIDATE_FAILED;
+
 @Component
 public class DataSourceParameterValidator implements ParameterValidator {
   @PostConstruct
@@ -92,7 +94,8 @@ public class DataSourceParameterValidator implements ParameterValidator {
         if (null == keyValue || StringUtils.isBlank(String.valueOf(keyValue))) {
           if (def.isRequire()) {
             throw new ParameterValidateException(
-                "Param Validate Failed[参数校验出错], [the value of key: '"
+                PARAM_VALIDATE_FAILED.getErrorDesc()
+                    + ", [the value of key: '"
                     + keyName
                     + " cannot be blank']");
           }

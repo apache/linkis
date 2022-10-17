@@ -23,7 +23,6 @@ import org.apache.linkis.bml.protocol.BmlDeleteResponse;
 import org.apache.linkis.bml.protocol.BmlUpdateResponse;
 import org.apache.linkis.bml.protocol.BmlUploadResponse;
 import org.apache.linkis.common.exception.ErrorException;
-import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -35,6 +34,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.EXPRESS_IS_NULL;
 
 /** Wrap the communication between Bml service // TODO RPCException defined */
 @Service
@@ -61,7 +62,7 @@ public class BmlAppServiceImpl implements BmlAppService {
     try {
       BmlUploadResponse response = client.uploadResource(userName, fileName, inputStream);
       if (!response.isSuccess()) {
-        throw new ErrorException(ServiceErrorCode.BML_SERVICE_ERROR.getValue(), "");
+        throw new ErrorException(EXPRESS_IS_NULL.getErrorCode(), "");
       }
       return response.resourceId();
     } catch (Exception e) {
@@ -87,7 +88,7 @@ public class BmlAppServiceImpl implements BmlAppService {
     try {
       BmlDeleteResponse response = client.deleteResource(userName, resourceId);
       if (!response.isSuccess()) {
-        throw new ErrorException(ServiceErrorCode.BML_SERVICE_ERROR.getValue(), "");
+        throw new ErrorException(EXPRESS_IS_NULL.getErrorCode(), "");
       }
     } catch (Exception e) {
       LOG.error(
@@ -114,7 +115,7 @@ public class BmlAppServiceImpl implements BmlAppService {
       BmlUpdateResponse response =
           client.updateResource(userName, resourceId, "filename", inputStream);
       if (!response.isSuccess()) {
-        throw new ErrorException(ServiceErrorCode.BML_SERVICE_ERROR.getValue(), "");
+        throw new ErrorException(EXPRESS_IS_NULL.getErrorCode(), "");
       }
       return response.version();
     } catch (Exception e) {

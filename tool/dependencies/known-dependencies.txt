@@ -322,6 +322,7 @@ jta-1.1.jar
 jul-to-slf4j-1.7.30.jar
 kafka-clients-2.5.1.jar
 kafka-clients-2.7.0.jar
+kafka-clients-2.7.2.jar
 knife4j-annotations-2.0.9.jar
 knife4j-core-2.0.9.jar
 knife4j-spring-2.0.9.jar

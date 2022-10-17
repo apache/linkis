@@ -23,6 +23,7 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
+import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
@@ -93,7 +94,9 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
-
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
+            }
             List<String> databases =
                     metadataQueryService.getDatabasesByDsName(
                             dataSourceName, system, SecurityFilter.getLoginUsername(request));
@@ -124,6 +127,12 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is invalid[数据库名称错误]");
             }
             List<String> tables =
                     metadataQueryService.getTablesByDsName(
@@ -163,6 +172,15 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is invalid[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is invalid[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
             Map<String, String> tableProps =
                     metadataQueryService.getTablePropsByDsName(
@@ -207,6 +225,15 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is invalid[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is invalid[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
             MetaPartitionInfo partitionInfo =
                     metadataQueryService.getPartitionsByDsName(
@@ -253,6 +280,18 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is invalid[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is invalid[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
+                return Message.error("'partition' is invalid[partition错误]");
+            }
             Map<String, String> partitionProps =
                     metadataQueryService.getPartitionPropsByDsName(
                             dataSourceName,
@@ -297,6 +336,15 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
+                return Message.error("'database' is invalid[数据库名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(table).matches()) {
+                return Message.error("'table' is invalid[表名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
             List<MetaColumnInfo> columns =
                     metadataQueryService.getColumnsByDsName(

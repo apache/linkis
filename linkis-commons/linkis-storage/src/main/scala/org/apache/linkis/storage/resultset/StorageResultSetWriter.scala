@@ -63,7 +63,9 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   private var closed = false
 
-  private val WRITER_LOCK = new Object()
+  private val WRITER_LOCK_CREATE = new Object()
+
+  private val WRITER_LOCK_CLOSE = new Object()
 
   def getMetaData: MetaData = rMetaData
 
@@ -81,7 +83,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   def createNewFile: Unit = {
     if (!fileCreated) {
-      WRITER_LOCK.synchronized {
+      WRITER_LOCK_CREATE.synchronized {
         if (!fileCreated) {
           if (storePath != null && outputStream == null) {
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
@@ -172,20 +174,20 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   override def close(): Unit = {
+    if (closed) {
+      logger.error("the writer had been closed, but close() was still called.")
+    } else {
+      WRITER_LOCK_CLOSE.synchronized {
+        if (!closed) {
+          closed = true
+        }
+      }
+    }
     Utils.tryFinally(if (outputStream != null) flush()) {
       closeFs
       if (outputStream != null) {
         IOUtils.closeQuietly(outputStream)
         outputStream = null
-      }
-      if (closed) {
-        logger.error("the writer had been closed, but close() was still called.")
-      } else {
-        WRITER_LOCK.synchronized {
-          if (!closed) {
-            closed = true
-          }
-        }
       }
     }
   }

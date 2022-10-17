@@ -19,13 +19,15 @@ package org.apache.linkis.manager.label.errorcode;
 
 public enum LabelCommonErrorCodeSummary {
   UPDATE_LABEL_FAILED(
-      40001, "update label realtion failed(更新标签属性失败)", "update label realtion failed(更新标签属性失败)"),
+      40001, "Update label realtion failed(更新标签属性失败)", "Update label realtion failed(更新标签属性失败)"),
   LABEL_ERROR_CODE(
       40001,
       "The value of the label is set incorrectly, only one value can be set, and the separator symbol '-' cannot be used(标签的值设置错误,只能设置一个值，不能使用分割符符号 '-') ",
-      "The value of the label is set incorrectly, only one value can be set, and the symbol cannot be used(标签的值设置错误,只能设置一个值，符号不能用) "),
+      "The value of the label is set incorrectly, only one value can be set, and the separator symbol '-' cannot be used(标签的值设置错误,只能设置一个值，不能使用分割符符号 '-')  "),
   FAILED_BUILD_COMBINEDLABEL(
-      40001, "Failed to build combinedLabel构建组合标签失败) ", "Failed to build combinedLabel(构建组合标签失败) "),
+      40001,
+      "Failed to build combinedLabel(构建组合标签失败) ",
+      "Failed to build combinedLabel(构建组合标签失败) "),
   FAILED_READ_INPUT_STREAM(
       40001,
       "Fail to read value input stream(读取值输入流失败) ",

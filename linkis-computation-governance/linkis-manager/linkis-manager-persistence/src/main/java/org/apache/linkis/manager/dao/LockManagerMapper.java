@@ -21,13 +21,17 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 
 import org.apache.ibatis.annotations.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Mapper
 public interface LockManagerMapper {
 
+  @Transactional(rollbackFor = Exception.class)
   int lock(PersistenceLock persistenceLock);
 
+  @Transactional(rollbackFor = Exception.class)
   void unlock(@Param("id") Integer id);
 
   List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);

@@ -34,7 +34,7 @@ public interface ResourceDao {
 
   long uploadResource(Resource resource);
 
-  Integer checkExists(@Param("resourceId") String resourceId);
+  int checkExists(@Param("resourceId") String resourceId);
 
   Resource getResource(@Param("resourceId") String resourceId);
 

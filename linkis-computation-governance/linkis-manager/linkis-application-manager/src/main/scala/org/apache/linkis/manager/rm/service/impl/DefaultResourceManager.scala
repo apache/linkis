@@ -63,6 +63,7 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.text.MessageFormat
 import java.util
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -298,7 +299,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           val msg =
             s"Resource label: ${label.getStringValue} has no usedResource, please check, refuse request usedResource"
           logger.info(msg)
-          throw new RMErrorException(REFUSE_REQUEST.getErrorCode, msg)
+          throw new RMErrorException(
+            REFUSE_REQUEST.getErrorCode,
+            MessageFormat.format(REFUSE_REQUEST.getErrorDesc, label.getStringValue)
+          )
         }
         labelResourceList.put(label.getStringValue, usedResource)
       })

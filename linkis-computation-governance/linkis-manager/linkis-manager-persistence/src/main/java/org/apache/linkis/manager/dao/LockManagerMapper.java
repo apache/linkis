@@ -26,11 +26,11 @@ import java.util.List;
 @Mapper
 public interface LockManagerMapper {
 
-  void lock(@Param("jsonObject") String jsonObject, @Param("timeOut") Long timeOut);
+  void lock(@Param("lockObject") String lockObject, @Param("timeOut") Long timeOut);
 
-  void unlock(Integer id);
+  void unlock(@Param("id") Integer id);
 
-  List<PersistenceLock> getLockersByLockObject(String jsonObject);
+  List<PersistenceLock> getLockersByLockObject(@Param("lockObject") String lockObject);
 
   List<PersistenceLock> getAll();
 }

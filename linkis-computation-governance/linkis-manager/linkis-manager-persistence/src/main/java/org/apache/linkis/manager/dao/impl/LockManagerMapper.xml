@@ -71,7 +71,7 @@
 
     <insert id="lock">
         insert into linkis_cg_manager_lock (lock_object, time_out, update_time, create_time)
-        values(#{jsonObject}, #{timeOut}, now(), now())
+        values(#{lockObject}, #{timeOut}, now(), now())
     </insert>
 
     <delete id="unlock">
@@ -79,7 +79,7 @@
     </delete>
 
     <select id="getLockersByLockObject" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLock">
-        select * from  linkis_cg_manager_lock where lock_object = #{jsonObject}
+        select * from  linkis_cg_manager_lock where lock_object = #{lockObject}
     </select>
 
     <select id="getAll" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLock">

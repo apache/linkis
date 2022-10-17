@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -89,7 +89,7 @@ linkisConf(){
             server_name  localhost;
             #charset koi8-r;
             #access_log  /var/log/nginx/host.access.log  main;
-            
+
             location / {
             root   ${linkis_basepath}/dist; #static directory
             index  index.html index.html;

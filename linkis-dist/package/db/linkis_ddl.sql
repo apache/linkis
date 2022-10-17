@@ -290,6 +290,7 @@ CREATE TABLE `linkis_ps_datasource_field` (
   `is_partition_field` tinyint(1) NOT NULL,
   `is_primary` tinyint(1) NOT NULL,
   `length` int(11) DEFAULT NULL,
+  `mode_info` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

@@ -20,6 +20,7 @@ package org.apache.linkis.storage.resultset
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, TableResultSet}
 
@@ -67,8 +68,8 @@ object ResultSetReader {
       val resultSet = rsFactory.getResultSet(res)
       if (ResultSetFactory.TABLE_TYPE != resultSet.resultSetType()) {
         throw new StorageErrorException(
-          52002,
-          "Result sets that are not tables are not supported(不支持不是表格的结果集)"
+          TABLE_ARE_NOT_SUPPORTED.getErrorCode,
+          TABLE_ARE_NOT_SUPPORTED.getErrorDesc
         )
       }
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], res)
@@ -77,8 +78,8 @@ object ResultSetReader {
       val resultSet = rsFactory.getResultSetByPath(resPath)
       if (ResultSetFactory.TABLE_TYPE != resultSet.resultSetType()) {
         throw new StorageErrorException(
-          52002,
-          "Result sets that are not tables are not supported(不支持不是表格的结果集)"
+          TABLE_ARE_NOT_SUPPORTED.getErrorCode,
+          TABLE_ARE_NOT_SUPPORTED.getErrorDesc
         )
       }
       val fs = FSFactory.getFs(resPath)

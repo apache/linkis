@@ -158,7 +158,7 @@
             <if test="instances != null">instances = #{instances},</if>
             <if test="metrics != null">metrics = #{metrics},</if>
             <if test="engineType != null">engine_type = #{engineType},</if>
-            <if test="executionCode != null">and execution_code = #{executionCode},</if>
+            <if test="executionCode != null">execution_code = #{executionCode},</if>
         </trim>
         <![CDATA[
         WHERE id = #{id} AND updated_time <= #{updateTimeMills}
@@ -167,9 +167,9 @@
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
         SELECT
-        bdt.`status`
+        bdt.status
         FROM
-        `linkis_ps_job_history_group_history` bdt
+        linkis_ps_job_history_group_history bdt
         WHERE
         id = #{jobId} FOR UPDATE
     </select>

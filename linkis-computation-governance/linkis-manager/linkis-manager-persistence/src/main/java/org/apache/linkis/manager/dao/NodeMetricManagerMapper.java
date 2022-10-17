@@ -34,7 +34,7 @@ public interface NodeMetricManagerMapper {
   @Select(
       "select count(id) from  linkis_cg_manager_service_instance_metrics met inner join linkis_cg_manager_service_instance ins"
           + " on met.instance = #{instance} and ins.instance = #{instance} and met.instance = ins.instance")
-  int checkInstanceExist(@Param("instance") String instance);
+  Integer checkInstanceExist(@Param("instance") String instance);
 
   @Select(
       "<script>"

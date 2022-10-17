@@ -63,9 +63,9 @@ public interface VersionDao {
   List<ResourceVersion> selectResourcesViaSystemByPage(
       @Param("system") String system, @Param("user") String user);
 
-  Integer checkVersion(@Param("resourceId") String resourceId, @Param("version") String version);
+  int checkVersion(@Param("resourceId") String resourceId, @Param("version") String version);
 
-  Integer selectResourceVersionEnbleFlag(
+  int selectResourceVersionEnbleFlag(
       @Param("resourceId") String resourceId, @Param("version") String version);
 
   /**

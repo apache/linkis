@@ -48,6 +48,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary.*;
+
 public class QueryPersistenceEngine extends AbstractPersistenceEngine {
 
   private Sender sender;
@@ -104,11 +106,13 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       int status = jobRespProtocol.getStatus();
       String message = jobRespProtocol.getMsg();
       if (status != 0) {
-        throw new QueryFailedException(20011, "Request jobHistory failed, reason: " + message);
+        throw new QueryFailedException(
+            REQUEST_JOBHISTORY_FAILED.getErrorCode(),
+            REQUEST_JOBHISTORY_FAILED.getErrorDesc() + message);
       }
     } else {
       throw new QueryFailedException(
-          20011, "Request jobHistory failed, reason: jobRespProtocol is null ");
+          JOBRESP_PROTOCOL_NULL.getErrorCode(), JOBRESP_PROTOCOL_NULL.getErrorDesc());
     }
     return jobRespProtocol;
   }
@@ -116,7 +120,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   @Override
   public void updateIfNeeded(JobRequest jobReq) throws ErrorException, QueryFailedException {
     if (null == jobReq) {
-      throw new EntranceIllegalParamException(20004, "JobReq cannot be null.");
+      throw new EntranceIllegalParamException(
+          JOBREQ_NOT_NULL.getErrorCode(), JOBREQ_NOT_NULL.getErrorDesc());
     }
     JobRequest jobReqForUpdate = new JobRequest();
     BeanUtils.copyProperties(jobReq, jobReqForUpdate);
@@ -138,7 +143,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   public void persist(JobRequest jobReq) throws ErrorException {
     if (null == jobReq) {
       throw new EntranceIllegalParamException(
-          20004, "JobRequest cannot be null, unable to do persist operation");
+          JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
     }
     JobReqInsert jobReqInsert = new JobReqInsert(jobReq);
     JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqInsert, "Insert job");
@@ -162,7 +167,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     List<Task> retList = new ArrayList<>();
 
     if (instance == null || "".equals(instance)) {
-      throw new EntranceIllegalParamException(20004, "instance can not be null");
+      throw new EntranceIllegalParamException(
+          INSTANCE_NOT_NULL.getErrorCode(), INSTANCE_NOT_NULL.getErrorDesc());
     }
 
     RequestReadAllTask requestReadAllTask = new RequestReadAllTask(instance);
@@ -170,13 +176,15 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     try {
       responsePersist = (ResponsePersist) sender.ask(requestReadAllTask);
     } catch (Exception e) {
-      throw new EntranceRPCException(20020, "sender rpc failed ", e);
+      throw new EntranceRPCException(
+          SENDER_RPC_FAILED.getErrorCode(), SENDER_RPC_FAILED.getErrorDesc(), e);
     }
     if (responsePersist != null) {
       int status = responsePersist.getStatus();
       String message = responsePersist.getMsg();
       if (status != 0) {
-        throw new QueryFailedException(20011, "read all tasks failed, reason: " + message);
+        throw new QueryFailedException(
+            READ_TASKS_FAILED.getErrorCode(), READ_TASKS_FAILED.getErrorDesc() + message);
       }
       Map<String, Object> data = responsePersist.getData();
       Object object = data.get(TaskConstant.TASK);

@@ -17,13 +17,17 @@
 
 package org.apache.linkis.udf.excepiton;
 
-public class UDFException extends Exception {
+import org.apache.linkis.common.exception.ErrorException;
 
-  public UDFException() {
-    super();
+import static org.apache.linkis.udf.errorcode.UdfCommonErrorCodeSummary.UDF_EXCEPTION_ID;
+
+public class UDFException extends ErrorException {
+
+  public UDFException(String desc) {
+    super(UDF_EXCEPTION_ID.getErrorCode(), desc);
   }
 
-  public UDFException(String message) {
-    super(message);
+  public UDFException(int errCode, String desc) {
+    super(errCode, desc);
   }
 }

@@ -30,7 +30,7 @@
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
     
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
@@ -102,20 +102,6 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn， 支持 Hadoop MR/YARN application|
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn， 支持用 SparkSQL 查询 TiDB|
 
-
-# 生态组件
-
-| 应用工具     | 描述                                                          | Linkis 1.X(推荐 1.1.1) 兼容版本    | 
-| --------------- | -------------------------------------------------------------------- | ---------- | 
-| [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | **DSS 1.0.1[已发布 ][Linkis 推荐 1.1.1]** |
-| [**Scriptis**](https://github.com/WeBankFinTech/Scriptis)   | 支持在线写 SQL、Pyspark、HiveQL 等脚本，提交给[Linkis](https://github.com/apache/incubator-linkis) 执行的数据分析 Web 工具 | 在 DSS 1.0.1 中[已发布 ] |
-| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性  | **Schedulis0.6.2 [已发布 ]** |
-| [**Qualitis**](https://github.com/WeBankFinTech/Qualitis)   | 数据质量校验工具，提供数据完整性、正确性等数据校验能力  | **Qualitis 0.9.0 [已发布 ]** |
-| [**Streamis**](https://github.com/WeBankFinTech/Streamis)  | 流式应用开发管理工具。支持发布 Flink Jar 和 Flink SQL ，提供流式应用的开发调试和生产管理能力，如：启停、状态监控、checkpoint 等 | **Streamis 0.1.0 [已发布 ][Linkis 推荐 1.1.0]** |
-| [**Exchangis**](https://github.com/WeBankFinTech/Exchangis) | 支持对结构化及无结构化的异构数据源之间的数据传输的数据交换平台，即将发布的 Exchangis1.0，将与 DSS 工作流打通 | **Exchangis 1.0.0 [开发中 ]** |
-| [**Visualis**](https://github.com/WeBankFinTech/Visualis)   | 基于宜信开源项目 Davinci 二次开发的数据可视化 BI 工具，为用户在数据安全方面提供金融级数据可视化能力 | **Visualis 1.0.0[开发中 ]** |
-| [**Prophecis**](https://github.com/WeBankFinTech/Prophecis)     | 一站式机器学习平台，集成多种开源机器学习框架。Prophecis 的 MLFlow 通过 AppConn 可以接入到 DSS 工作流中     | **Prophecis 0.3.0 [已发布 ]** |
-
 # 下载
 
 请前往[Linkis Releases 页面 ](https://linkis.apache.org/download/main) 下载 Linkis 的已编译版本或源码包。
@@ -167,16 +153,6 @@ npm run build
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.0 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
-
-#          build dir: ...
-#         base image: linkis:1.3.0
-# mysql jdbc version: 8.0.28
-...                                                                                                                                                                                                                                                     0.0s
- => exporting to image                                                                                                                                                                                                                                                                                                                                                     0.0s
- => => exporting layers                                                                                                                                                                                                                                                                                                                                                    0.0s
- => => writing image sha256:3870df5500a71fcf879b5b7d5699c3c9804c7e03e33ad842e5d11f3504371fe8                                                                                                                                                                                                                                                                               0.0s
- => => naming to docker.io/library/linkis:with-jdbc                                                                                                                                                                                                                                                                                                                        0.0s
-# done, image: linkis:with-jdbc
 ```
 
 请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
@@ -203,23 +179,6 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 下面是 Linkis 的架构概要图. 更多详细架构文档请见 [Linkis-Doc/Architecture](https://linkis.apache.org/zh-CN/docs/latest/architecture/overview).
 ![architecture](https://user-images.githubusercontent.com/7869972/148767383-f87e84ba-5baa-4125-8b6e-d0aa4f7d3a66.png)
 
-基于 Linkis 计算中间件，我们在大数据平台套件[WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere) 中构建了许多应用和工具系统。下面是目前可用的开源项目。
-
-![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
-
-- [**DataSphere Studio** - 数据应用集成开发框架 ](https://github.com/WeBankFinTech/DataSphereStudio)
-
-- [**Scriptis** - 数据研发 IDE 工具 ](https://github.com/WeBankFinTech/Scriptis)
-
-- [**Visualis** - 数据可视化工具 ](https://github.com/WeBankFinTech/Visualis)
-
-- [**Schedulis** - 工作流调度工具 ](https://github.com/WeBankFinTech/Schedulis)
-
-- [**Qualitis** - 数据质量工具 ](https://github.com/WeBankFinTech/Qualitis)
-
-- [**MLLabis** - 容器化机器学习 notebook 开发环境 ](https://github.com/WeBankFinTech/prophecis)
-
-更多项目开源准备中，敬请期待。
 
 # 贡献
 

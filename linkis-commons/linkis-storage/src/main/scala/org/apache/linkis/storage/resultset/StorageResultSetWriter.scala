@@ -176,10 +176,13 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   override def close(): Unit = {
     if (closed) {
       logger.warn("the writer had been closed, but close() was still called.")
+      return
     } else {
       WRITER_LOCK_CLOSE.synchronized {
         if (!closed) {
           closed = true
+        } else {
+          return
         }
       }
     }

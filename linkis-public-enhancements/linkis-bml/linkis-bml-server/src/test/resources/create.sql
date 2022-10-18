@@ -26,6 +26,8 @@ CREATE TABLE   linkis_ps_bml_project_resource   (
   PRIMARY KEY (  id  )
 );
 
+insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) values(1, '123');
+
 DROP TABLE IF EXISTS linkis_ps_bml_project;
 CREATE TABLE linkis_ps_bml_project (
     id   int(10) NOT NULL AUTO_INCREMENT,
@@ -40,6 +42,8 @@ CREATE TABLE linkis_ps_bml_project (
   UNIQUE KEY   name   (  name  )
 );
 
+insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time)values('testName', 'testSy','test', 'descTest','creCreatorUser', 1, now());
+
 DROP TABLE IF EXISTS linkis_ps_bml_project_user;
 CREATE TABLE   linkis_ps_bml_project_user   (
     id   int(10) NOT NULL AUTO_INCREMENT,
@@ -52,6 +56,9 @@ CREATE TABLE   linkis_ps_bml_project_user   (
   PRIMARY KEY (  id  ),
   UNIQUE KEY   user_project   (  username  ,  project_id  )
 );
+
+
+insert ignore into  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time) values ( 1, 'creCreatorUser', 2, 'creatorTest', now());
 
 DROP TABLE IF EXISTS linkis_ps_bml_resources_version;
 CREATE TABLE   linkis_ps_bml_resources_version   (

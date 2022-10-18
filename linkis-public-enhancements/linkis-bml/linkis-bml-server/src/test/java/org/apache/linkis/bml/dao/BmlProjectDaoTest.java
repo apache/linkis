@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BmlProjectDaoTest extends BaseDaoTest {
+
+  private static final Logger logger = LoggerFactory.getLogger(BmlProjectDaoTest.class);
 
   @Autowired BmlProjectDao bmlProjectDao;
 
@@ -64,13 +67,11 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProjectDao.setProjectPriv(1, usernamesList, priv, "creCreatorUser", new Date());
   }
 
-  @Disabled
   @Test
   void getPrivInProject() {
-    setProjectPriv();
-    createNewProject();
-    Integer i = bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
-    assertTrue(i == 2);
+    Integer privInt = bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
+    logger.info("privInt:" + privInt);
+    assertTrue(privInt == 2);
   }
 
   @Test
@@ -78,12 +79,10 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProjectDao.addProjectResource(1, "123");
   }
 
-  @Disabled
   @Test
   void getProjectNameByResourceId() {
-    createNewProject();
-    addProjectResource();
     String projectName = bmlProjectDao.getProjectNameByResourceId("123");
+    logger.info("projectName:" + projectName);
     assertTrue(projectName.equals("testName"));
   }
 

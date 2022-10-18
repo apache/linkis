@@ -68,7 +68,7 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
     }
 
     LabelParameterParser.labelCheck(labelList);
-    List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(configKeyValue.getKey());
+    List<ConfigKey> configKeys = configMapper.selectKeyByKeyName(configKeyValue.getKey());
     if (null == configKeys || configKeys.isEmpty()) {
       throw new ConfigurationException(
           CONFIG_KEY_NOT_EXISTS.getErrorDesc() + configKeyValue.getKey());
@@ -135,7 +135,7 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
       throw new ConfigurationException(CONFIGKEY_CANNOT_BE_NULL.getErrorDesc());
     }
     LabelParameterParser.labelCheck(labelList);
-    List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(key);
+    List<ConfigKey> configKeys = configMapper.selectKeyByKeyName(key);
 
     if (null == configKeys || configKeys.isEmpty()) {
       throw new ConfigurationException(CONFIG_KEY_NOT_EXISTS.getErrorDesc() + key);

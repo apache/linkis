@@ -18,7 +18,9 @@
 package org.apache.linkis.manager.engineplugin.python.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary.INVALID_PYTHON_SESSION
 
 class NoSupportEngineException(errCode: Int, desc: String) extends ErrorException(errCode, desc)
 
-case class PythonSessionStartFailedExeception(desc: String) extends ErrorException(400201, desc)
+case class PythonSessionStartFailedExeception(desc: String)
+    extends ErrorException(INVALID_PYTHON_SESSION.getErrorCode, desc)

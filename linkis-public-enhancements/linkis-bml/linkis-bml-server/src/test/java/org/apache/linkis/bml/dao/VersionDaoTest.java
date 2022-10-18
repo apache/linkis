@@ -18,6 +18,7 @@
 package org.apache.linkis.bml.dao;
 
 import org.apache.linkis.bml.entity.ResourceVersion;
+import org.apache.linkis.bml.entity.Version;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -100,7 +101,7 @@ class VersionDaoTest extends BaseDaoTest {
     resourceVersion.setEndTime(new Date());
     resourceVersion.setClientIp("132.145.36");
     resourceVersion.setUpdator("testUp");
-    resourceVersion.setEnableFlag(false);
+    resourceVersion.setEnableFlag(true);
     versionDao.insertNewVersion(resourceVersion);
   }
 
@@ -184,12 +185,14 @@ class VersionDaoTest extends BaseDaoTest {
   @Test
   void selectVersionByPage() {
     insertNewVersion();
-    versionDao.selectVersionByPage(resourceId);
+    List<Version> list = versionDao.selectVersionByPage(resourceId);
+    assertTrue(list.size() >= 1);
   }
 
   @Test
   void getResourceVersionsByResourceId() {
     insertNewVersion();
-    versionDao.getResourceVersionsByResourceId(resourceId);
+    List<ResourceVersion> list = versionDao.getResourceVersionsByResourceId(resourceId);
+    assertTrue(list.size() >= 1);
   }
 }

@@ -20,6 +20,7 @@ package org.apache.linkis.server.socket
 import org.apache.linkis.common.conf.Configuration.DEFAULT_DATE_PATTERN
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.conf.ServerConfiguration._
 import org.apache.linkis.server.exception.BDPServerErrorException
@@ -61,7 +62,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     val socket = socketList.get(id)
     if (socket == null) {
       throw new BDPServerErrorException(
-        11004,
+        SERVERSSOCKET_NOT_EXIST.getErrorCode,
         s"ServerSocket($id) does not exist!(ServerSocket($id)不存在！)"
       )
     }

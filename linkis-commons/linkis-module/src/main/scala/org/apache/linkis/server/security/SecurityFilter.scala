@@ -19,6 +19,7 @@ package org.apache.linkis.server.security
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.ILLEGAL_USER_TOKEN
 import org.apache.linkis.server.{Message, _}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{
@@ -201,7 +202,7 @@ object SecurityFilter {
       ServerConfiguration.BDP_TEST_USER.getValue;
     } else {
       getLoginUser(req).getOrElse(
-        throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
+        throw new IllegalUserTicketException(ILLEGAL_USER_TOKEN.getErrorDesc)
       )
     }
 

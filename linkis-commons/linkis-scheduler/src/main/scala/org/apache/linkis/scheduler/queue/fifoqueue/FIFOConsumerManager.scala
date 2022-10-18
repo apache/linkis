@@ -19,6 +19,7 @@ package org.apache.linkis.scheduler.queue.fifoqueue
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.listener.ConsumerListener
 import org.apache.linkis.scheduler.queue.{Consumer, ConsumerManager, Group, LoopArrayQueue}
@@ -43,7 +44,7 @@ class FIFOConsumerManager(groupName: String) extends ConsumerManager {
         Utils.newCachedThreadPool(g.getMaxRunningJobs + 2, groupName + "-Thread-")
       case _ =>
         throw new SchedulerErrorException(
-          13000,
+          NEED_SUPPORTTED_GROUP.getErrorCode,
           s"FIFOConsumerManager need a FIFOGroup, but ${group.getClass} is supported."
         )
     }

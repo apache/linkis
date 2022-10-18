@@ -34,6 +34,8 @@ class LockManagerMapperTest extends BaseDaoTest {
   @Test
   void lock() {
     lockManagerMapper.lock("testjson", 1L);
+    List<PersistenceLock> list = lockManagerMapper.getLockersByLockObject("testjson");
+    assertTrue(list.size() >= 1);
   }
 
   @Test

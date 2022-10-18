@@ -386,44 +386,6 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
 
-metadataquery_conf=$LINKIS_HOME/conf/linkis-ps-metadataquery.properties
-if [ "$METADATA_QUERY_PORT" != "" ]
-then
-  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$METADATA_QUERY_PORT#g" $metadataquery_conf
-fi
-
-
-##datasource
-datasource_conf=$LINKIS_HOME/conf/linkis-ps-data-source-manager.properties
-if [ "$DATASOURCE_MANAGER_PORT" != "" ]
-then
-  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$DATASOURCE_MANAGER_PORT#g" $datasource_conf
-fi
-
-echo "update conf $datasource_conf"
-if [ "$HIVE_META_URL" != "" ]
-then
-  sed -i ${txt}  "s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g" $datasource_conf
-  sed -i ${txt}  "s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g" $publicservice_conf
-fi
-if [ "$HIVE_META_USER" != "" ]
-then
-  sed -i ${txt}  "s#hive.meta.user.*#hive.meta.user=$HIVE_META_USER#g" $datasource_conf
-  sed -i ${txt}  "s#hive.meta.user.*#hive.meta.user=$HIVE_META_USER#g" $publicservice_conf
-fi
-if [ "$HIVE_META_PASSWORD" != "" ]
-then
-  HIVE_META_PASSWORD=$(echo ${HIVE_META_PASSWORD//'#'/'\#'})
-  sed -i ${txt}  "s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g" $datasource_conf
-  sed -i ${txt}  "s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g" $publicservice_conf
-fi
-
-cs_conf=$LINKIS_HOME/conf/linkis-ps-cs.properties
-if [ "$CS_PORT" != "" ]
-then
-  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$CS_PORT#g" $cs_conf
-fi
-
 ##Eanble prometheus for monitoring
 if [ "true" == "$PROMETHEUS_ENABLE" ]
 then

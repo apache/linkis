@@ -56,7 +56,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
-/** Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例 */
+/**
+ * Description: HttpContextClient is the specific implementation of ContextClient for communication
+ * using Http. Generally, it can be made into a singleton(Description:
+ * HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例)
+ */
 public class HttpContextClient extends AbstractContextClient {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(HttpContextClient.class);
@@ -74,7 +78,7 @@ public class HttpContextClient extends AbstractContextClient {
   private HttpContextClient() {}
 
   private HttpContextClient(ContextClientConfig contextClientConfig) {
-    // 初始化dwsHttpClient
+    // Initialize dwsHttpClient(初始化dwsHttpClient)
     this.contextClientConfig = contextClientConfig;
     if (contextClientConfig instanceof HttpContextClientConfig) {
       HttpContextClientConfig httpContextClientConfig =

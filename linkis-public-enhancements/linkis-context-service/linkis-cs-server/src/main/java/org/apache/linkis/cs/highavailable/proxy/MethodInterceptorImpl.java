@@ -41,7 +41,12 @@ import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 /**
  * 基于CGLib库实现的动态代理拦截器，拦截被代理方法的参数，在被代理方法之前和之后进行增强
  * 被代理方法调用前增强场景较多，一般对参数为HAContextID实例、参数名包含contextid的方法参数进行转换
- * 被代理方法调用后，目前只用于将HAContextID的数字型contextID转换为HAIDKey
+ * 被代理方法调用后，目前只用于将HAContextID的数字型contextID转换为HAIDKey (A dynamic proxy interceptor based on the CGLib
+ * library, intercepts the parameters of the proxy method, and enhances it before and after the
+ * proxy method There are many enhancement scenarios before being called by the proxy method.
+ * Generally, the method parameters whose parameters are HAContextID instances and whose parameter
+ * names contain contextid are converted. After being called by the proxy method, it is currently
+ * only used to convert the numeric contextID of HAContextID to HAIDKey)
  */
 public class MethodInterceptorImpl implements MethodInterceptor {
 

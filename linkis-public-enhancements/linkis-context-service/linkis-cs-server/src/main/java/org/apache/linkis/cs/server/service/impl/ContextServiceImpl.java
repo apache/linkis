@@ -51,7 +51,7 @@ import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.TYP
 @Component
 public class ContextServiceImpl extends ContextService {
 
-  // 对接search
+  // Docking search(对接search)
 
   private ContextSearch contextSearch = new DefaultContextSearch();
 
@@ -80,7 +80,8 @@ public class ContextServiceImpl extends ContextService {
 
   @Override
   public ContextValue getContextValue(ContextID contextID, ContextKey contextKey) {
-    // 从缓存取即可,缓存中无会去数据库中拉取
+    // Just take it from the cache, nothing in the cache will go to the database to pull
+    // it(从缓存取即可,缓存中无会去数据库中拉取)
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
     if (keyValue == null) {
       logger.info(
@@ -116,21 +117,24 @@ public class ContextServiceImpl extends ContextService {
   @Override
   public void setValueByKey(ContextID contextID, ContextKey contextKey, ContextValue contextValue)
       throws CSErrorException, ClassNotFoundException, JsonProcessingException {
-    // 1.获取value
+    // 1. Get value( 1.获取value)
     Object value = contextValue.getValue();
-    // 2.解析keywords,放入contextKey的keys中
+    // 2. Parse the keywords and put them into the keys of the
+    // contextKey(2.解析keywords,放入contextKey的keys中)
     Set<String> keys = keywordParser.parse(value);
     keys.add(contextKey.getKey());
     contextValue.setKeywords(jackson.writeValueAsString(keys));
-    // 3.缓存中是否有这个key,没有创建,有就更新
+    // 3. Whether there is this key in the cache, if it is not created, it will be
+    // updated(3.缓存中是否有这个key,没有创建,有就更新)
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
     if (keyValue == null) {
-      // 创建校验scope和tye
+      // Create validation scope and tye(创建校验scope和tye)
       if (contextKey.getContextScope() == null || contextKey.getContextType() == null) {
         throw new CSErrorException(
             TYPE_SCOPE_EMPTY.getErrorCode(), TYPE_SCOPE_EMPTY.getErrorDesc());
       }
-      // 这里没有给出contextKeyvalue的具体实现,给个默认的persistence
+      // There is no specific implementation of contextKeyvalue given here, give a default
+      // persistence(这里没有给出contextKeyvalue的具体实现,给个默认的persistence)
       logger.warn(
           String.format(
               "setValueByKey, keyValue is not exist, csId:%s,key:%s",
@@ -140,7 +144,8 @@ public class ContextServiceImpl extends ContextService {
       keyValue.setContextValue(contextValue);
       getPersistence().create(contextID, keyValue);
     } else {
-      // update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到
+      // For update, if the scope and type are empty, use the value in the database, because the
+      // update cache is used(update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到)
       if (contextKey.getContextScope() == null) {
         contextKey.setContextScope(keyValue.getContextKey().getContextScope());
       }
@@ -151,7 +156,7 @@ public class ContextServiceImpl extends ContextService {
       keyValue.setContextValue(contextValue);
       getPersistence().update(contextID, keyValue);
     }
-    // 4.更新缓存
+    // 4. Update the cache(4.更新缓存)
     contextCacheService.put(contextID, keyValue);
     logger.info(
         String.format(
@@ -162,12 +167,13 @@ public class ContextServiceImpl extends ContextService {
   @Override
   public void setValue(ContextID contextID, ContextKeyValue contextKeyValue)
       throws CSErrorException, ClassNotFoundException, JsonProcessingException {
-    // 1.解析keywords
+    // 1. Parse keywords(1.解析keywords)
     Object value = contextKeyValue.getContextValue().getValue();
     Set<String> keys = keywordParser.parse(value);
     keys.add(contextKeyValue.getContextKey().getKey());
     contextKeyValue.getContextValue().setKeywords(jackson.writeValueAsString(keys));
-    // 2.数据库中是否有这个key,没有就创建,有就更新
+    // 2. Whether there is this key in the database, create it if not, and update it if it
+    // exists(2.数据库中是否有这个key,没有就创建,有就更新)
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKeyValue.getContextKey());
     if (keyValue == null) {
       logger.warn(
@@ -189,7 +195,8 @@ public class ContextServiceImpl extends ContextService {
       }
       getPersistence().create(contextID, contextKeyValue);
     } else {
-      // update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到
+      // For update, if the scope and type are empty, use the value in the database, because the
+      // update cache is used(update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到)
       if (contextKeyValue.getContextKey().getContextScope() == null) {
         contextKeyValue.getContextKey().setContextScope(keyValue.getContextKey().getContextScope());
       }
@@ -208,9 +215,9 @@ public class ContextServiceImpl extends ContextService {
 
   @Override
   public void resetValue(ContextID contextID, ContextKey contextKey) throws CSErrorException {
-    // 1.reset 数据库
+    // 1.Reset database(1.reset 数据库)
     getPersistence().reset(contextID, contextKey);
-    // 2.reset 缓存
+    // 2. reset cache(2.reset 缓存)
     contextCacheService.rest(contextID, contextKey);
     logger.info(
         String.format("resetValue, csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
@@ -222,16 +229,16 @@ public class ContextServiceImpl extends ContextService {
     if (contextKeyValue == null) {
       return;
     }
-    // 如果scope和type 不为空,则从原数据中进行赋值
+    // If scope and type are not empty, assign from the original data(如果scope和type 不为空,则从原数据中进行赋值)
     if (contextKey.getContextScope() == null) {
       contextKey.setContextScope(contextKeyValue.getContextKey().getContextScope());
     }
     if (contextKey.getContextType() == null) {
       contextKey.setContextType(contextKeyValue.getContextKey().getContextType());
     }
-    // 1.remove 数据库
+    // 1.remove database(1.remove 数据库)
     getPersistence().remove(contextID, contextKey);
-    // 2.remove 缓存
+    // 2.remove cache(2.remove 缓存)
     contextCacheService.remove(contextID, contextKey);
     logger.info(
         String.format(
@@ -240,9 +247,9 @@ public class ContextServiceImpl extends ContextService {
 
   @Override
   public void removeAllValue(ContextID contextID) throws CSErrorException {
-    // 移除数据库
+    // remove database(移除数据库)
     getPersistence().removeAll(contextID);
-    // 移除缓存
+    // remove cache(移除缓存)
     contextCacheService.removeAll(contextID);
 
     logger.info(String.format("removeAllValue, csId:%s", contextID.getContextId()));

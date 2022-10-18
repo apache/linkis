@@ -92,6 +92,16 @@
                     #{updator},#{enableFlag})
     </insert>
 
+    <select id="checkExists" resultType="java.lang.Integer">
+        select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )
+    </select>
 
+    <select id="getUserByResourceId"  resultType="java.lang.String">
+        select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId}
+    </select>
+
+    <update id="changeOwner">
+        update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}
+    </update>
 </mapper>
 

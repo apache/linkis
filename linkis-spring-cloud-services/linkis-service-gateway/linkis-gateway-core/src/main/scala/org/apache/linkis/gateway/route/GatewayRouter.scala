@@ -19,6 +19,7 @@ package org.apache.linkis.gateway.route
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.NOT_EXISTS_APPLICATION
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.exception.TooManyServiceException
 import org.apache.linkis.gateway.http.GatewayContext
@@ -52,7 +53,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
     var service = findService
     if (service.isEmpty) {
       val applicationNotExists = new NoApplicationExistsException(
-        10050,
+        NOT_EXISTS_APPLICATION.getErrorCode,
         "Application " +
           serviceId + " is not exists any instances."
       )

@@ -24,6 +24,7 @@ import org.apache.linkis.common.exception.{
   WarnException
 }
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.{BDPServerErrorException, NonLoginException}
 import org.apache.linkis.server.security.SecurityFilter
 
@@ -52,7 +53,7 @@ package object server {
     keys.foreach(k =>
       if (!json.contains(k) || json.get(k) == null || StringUtils.isEmpty(json.get(k).toString)) {
         throw new BDPServerErrorException(
-          11001,
+          VERIFICATION_CANNOT_EMPTY.getErrorCode,
           s"Verification failed, $k cannot be empty!(验证失败，$k 不能为空！)"
         )
       }

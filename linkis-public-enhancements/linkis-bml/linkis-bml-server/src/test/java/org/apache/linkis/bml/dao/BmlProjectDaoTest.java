@@ -68,7 +68,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
     setProjectPriv();
     createNewProject();
     Integer i = bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
-    assertTrue(i != null);
+    assertTrue(i == 2);
   }
 
   @Test
@@ -81,7 +81,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
     createNewProject();
     addProjectResource();
     String projectName = bmlProjectDao.getProjectNameByResourceId("123");
-    assertTrue(projectName != null);
+    assertTrue(projectName.equals("testName"));
   }
 
   @Test

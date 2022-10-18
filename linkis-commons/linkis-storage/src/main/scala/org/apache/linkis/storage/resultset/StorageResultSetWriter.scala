@@ -194,7 +194,9 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   override def flush(): Unit = {
     if (closed) {
-      logger.warn("the writer had been closed, but flush() was still called.")
+      if (logger.isDebugEnabled()) {
+        logger.debug("the writer had been closed, but flush() was still called.")
+      }
       return
     }
     createNewFile

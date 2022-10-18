@@ -1225,14 +1225,6 @@
               </licenseHeader>
             </scala>
           </configuration>
-          <executions>
-            <execution>
-              <id>spotless-check</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
 
         <plugin>

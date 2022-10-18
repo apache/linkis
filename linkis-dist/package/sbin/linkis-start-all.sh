@@ -82,7 +82,7 @@ SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 startApp
 
-sleep 15
+sleep 20
 
 #linkis-cg-entrance
 SERVER_NAME="cg-entrance"
@@ -166,4 +166,4 @@ SERVER_NAME="cg-engineplugin"
 SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 checkServer
 
-echo "Linkis started successfully"
+echo "Apache Linkis started successfully"

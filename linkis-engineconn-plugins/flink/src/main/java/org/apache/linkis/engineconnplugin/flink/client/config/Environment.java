@@ -38,6 +38,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+
 public class Environment {
 
   public static final String SESSION_ENTRY = "session";
@@ -83,9 +85,7 @@ public class Environment {
       final ModuleEntry entry = ModuleEntry.create(config);
       if (this.modules.containsKey(entry.getName())) {
         throw new FlinkInitFailedException(
-            String.format(
-                "Cannot register module '%s' because a module with this name is already registered.",
-                entry.getName()));
+            String.format(CANNOT_MODULE_ALREADY.getErrorDesc(), entry.getName()));
       }
       this.modules.put(entry.getName(), entry);
     }
@@ -120,10 +120,7 @@ public class Environment {
     for (Map<String, Object> config : tables) {
       final TableEntry table = TableEntry.create(config);
       if (this.tables.containsKey(table.getName())) {
-        throw new FlinkInitFailedException(
-            "Cannot create table '"
-                + table.getName()
-                + "' because a table with this name is already registered.");
+        throw new FlinkInitFailedException(CANNOT_TABLE_ALREADY.getErrorDesc() + table.getName());
       }
       this.tables.put(table.getName(), table);
     }
@@ -140,9 +137,7 @@ public class Environment {
       final FunctionEntry function = FunctionEntry.create(config);
       if (this.functions.containsKey(function.getName())) {
         throw new FlinkInitFailedException(
-            "Cannot create function '"
-                + function.getName()
-                + "' because a function with this name is already registered.");
+            CANNOT_FUNCTION_ALREADY.getErrorDesc() + function.getName());
       }
       this.functions.put(function.getName(), function);
     }
@@ -228,8 +223,7 @@ public class Environment {
     try {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(url, Environment.class);
     } catch (JsonMappingException e) {
-      throw new FlinkInitFailedException(
-          "Could not parse environment file. Cause: " + e.getMessage(), e);
+      throw new FlinkInitFailedException(BOT_PARSE_ENVIRONMENT.getErrorDesc() + e.getMessage(), e);
     }
   }
 
@@ -238,8 +232,7 @@ public class Environment {
     try {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(content, Environment.class);
     } catch (JsonMappingException e) {
-      throw new FlinkInitFailedException(
-          "Could not parse environment file. Cause: " + e.getMessage(), e);
+      throw new FlinkInitFailedException(BOT_PARSE_ENVIRONMENT.getErrorDesc() + e.getMessage(), e);
     }
   }
 

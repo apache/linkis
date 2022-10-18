@@ -24,6 +24,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFa
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind.SUCCESS_WITH_CONTENT
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.{
   FlinkInitFailedException,
   SqlParseException
@@ -60,7 +61,7 @@ class FlinkCodeOnceExecutor(
     options(TaskConstant.RUNTYPE) match {
       case "sql" =>
         if (StringUtils.isBlank(codes)) {
-          throw new FlinkInitFailedException(s"The sql code is empty.")
+          throw new FlinkInitFailedException(SQL_CODE_EMPTY.getErrorDesc)
         }
         logger.info(s"Ready to submit flink application, sql is: $codes.")
         val variableMap =
@@ -72,7 +73,7 @@ class FlinkCodeOnceExecutor(
         logger.info(s"After variable replace, sql is: $codes.")
       case runType =>
         // Now, only support sql code.
-        throw new FlinkInitFailedException(s"Not support runType $runType.")
+        throw new FlinkInitFailedException(NOT_SUPPORT_RUNTYPE.getErrorDesc + s" $runType.")
     }
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
@@ -109,7 +110,7 @@ class FlinkCodeOnceExecutor(
     logger.info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
-    if (!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
+    if (!callOpt.isPresent) throw new SqlParseException(UNKNOWN_STATEMENT.getErrorDesc + code)
     val resultSet = callOpt.get().command match {
       case SqlCommand.SET | SqlCommand.USE_CATALOG | SqlCommand.USE | SqlCommand.SHOW_MODULES |
           SqlCommand.DESCRIBE_TABLE | SqlCommand.EXPLAIN =>

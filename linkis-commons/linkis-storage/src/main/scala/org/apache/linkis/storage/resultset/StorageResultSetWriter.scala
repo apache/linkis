@@ -193,12 +193,6 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   override def flush(): Unit = {
-    if (closed) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("the writer had been closed, but flush() was still called.")
-      }
-      return
-    }
     createNewFile
     if (outputStream != null) {
       if (buffer.nonEmpty) {
@@ -213,6 +207,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
             outputStream.flush()
         }
       }(s"Error encounters when flush result set ")
+    }
+    if (closed) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("the writer had been closed, but flush() was still called.")
+      }
     }
   }
 

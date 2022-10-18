@@ -259,8 +259,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           } {
             resourceLockService.unLock(persistenceLock)
           }
-        } { case exception: RMWarnException =>
-          return NotEnoughResource(exception.getMessage)
+        } {
+          case exception: RMWarnException =>
+            return NotEnoughResource(exception.getMessage)
+          case exception: Exception =>
+            throw exception
         }
       }
     )

@@ -51,12 +51,11 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
     if (StringUtils.isBlank(persistenceLock.getLockObject())) {
       return true;
     }
-    String sysLocker = persistenceLock.getLockObject().intern();
-    synchronized (sysLocker) {
+    synchronized (persistenceLock.getLockObject().intern()) {
       Boolean isLocked = tryLock(persistenceLock, timeOut);
       while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
         try {
-          sysLocker.wait(PersistenceManagerConf.Distributed_lock_request_interval.getValue());
+          Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval.getValue());
           isLocked = tryLock(persistenceLock, timeOut);
         } catch (InterruptedException e) {
           logger.warn("lock waiting interrupted", e);

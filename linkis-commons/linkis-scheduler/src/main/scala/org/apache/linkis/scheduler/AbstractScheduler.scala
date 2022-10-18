@@ -18,6 +18,7 @@
 package org.apache.linkis.scheduler
 
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.queue.SchedulerEvent
 
@@ -39,8 +40,8 @@ abstract class AbstractScheduler extends Scheduler {
           .contains(EVENT_ID_SPLIT) || eventId.startsWith(EVENT_ID_SPLIT)
     ) {
       throw new SchedulerErrorException(
-        12011,
-        s"Unrecognized execId $eventId.（不能识别的execId $eventId.)"
+        UNRECOGNIZED_EXECID.getErrorCode,
+        UNRECOGNIZED_EXECID.getErrorDesc + s"$eventId."
       )
     }
     val index = eventId.lastIndexOf(EVENT_ID_SPLIT)
@@ -55,8 +56,8 @@ abstract class AbstractScheduler extends Scheduler {
     index.map(getEventId(_, group.getGroupName)).foreach(event.setId)
     if (index.isEmpty) {
       throw new SchedulerErrorException(
-        12001,
-        "The submission job failed and the queue is full!(提交作业失败，队列已满！)"
+        JOB_QUEUE_IS_FULL.getErrorCode,
+        JOB_QUEUE_IS_FULL.getErrorDesc
       )
     }
   }

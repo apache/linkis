@@ -19,6 +19,7 @@ package org.apache.linkis.rpc
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.FETCH_MAPCACHE_ERROR
 import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.server.exception.FetchMapCacheFailedException
@@ -37,7 +38,7 @@ abstract class RPCMapCache[M, K, V](applicationName: String) {
       case error: ErrorException => error
       case t: Throwable =>
         new FetchMapCacheFailedException(
-          RPCErrorConstants.FETCH_MAPCACHE_ERROR,
+          FETCH_MAPCACHE_ERROR.getErrorCode,
           "Failed to get " +
             "user " +
             "parameters! Reason: RPC request(获取用户参数失败！原因：RPC请求)" + applicationName + "Service failed!(服务失败！)",

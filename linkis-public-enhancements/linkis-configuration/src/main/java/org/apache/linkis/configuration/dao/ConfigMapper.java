@@ -55,7 +55,7 @@ public interface ConfigMapper {
 
   ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-  List<ConfigKey> seleteKeyByKeyName(@Param("keyName") String keyName);
+  List<ConfigKey> selectKeyByKeyName(@Param("keyName") String keyName);
 
   List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 

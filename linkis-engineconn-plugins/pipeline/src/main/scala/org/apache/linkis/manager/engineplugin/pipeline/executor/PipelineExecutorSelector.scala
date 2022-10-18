@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.engineplugin.pipeline.executor
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 
 import java.io.File
@@ -41,11 +42,18 @@ object PipelineExecutorSelector extends Logging {
       getSuffix(destPath) match {
         case ".csv" => PipelineEngineConnExecutor.listPipelineExecutors()(1)
         case ".xlsx" => PipelineEngineConnExecutor.listPipelineExecutors()(2)
-        case _ => throw new PipeLineErrorException(70008, "unsupport output type")
+        case _ =>
+          throw new PipeLineErrorException(
+            UNSUPPORT_OUTPUT_TYPE.getErrorCode,
+            UNSUPPORT_OUTPUT_TYPE.getErrorDesc
+          )
       }
     } { case e: Exception =>
       logger.error("select executor failed", e);
-      throw new PipeLineErrorException(70008, "unsupport output type")
+      throw new PipeLineErrorException(
+        UNSUPPORT_OUTPUT_TYPE.getErrorCode,
+        UNSUPPORT_OUTPUT_TYPE.getErrorDesc
+      )
     }
 
   }

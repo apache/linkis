@@ -58,6 +58,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.udf.errorcode.UdfCommonErrorCodeSummary.*;
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
 @Api(tags = "UDF management")
@@ -421,7 +422,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("UserName is Empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       Boolean boo = udfService.isUDFManager(userName);
       message = Message.ok();
@@ -446,11 +447,11 @@ public class UDFRestfulApi {
     try {
       Long udfId = json.get("udfId").longValue();
       if (StringUtils.isEmpty(udfId)) {
-        throw new UDFException("udfId is Empty!");
+        throw new UDFException(UDFID_EMPTY.getErrorDesc());
       }
       String userName = ModuleUserUtils.getOperationUser(req, "set expire udf " + udfId);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("UserName is Empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
 
       verifyOperationUser(userName, udfId);
@@ -489,14 +490,14 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("UserName is Empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       if (!udfService.isUDFManager(userName)) {
-        throw new UDFException("Only manager can share udf!");
+        throw new UDFException(ONLY_MANAGER_SHARE.getErrorDesc());
       }
       List<String> userList = mapper.treeToValue(json.get("sharedUsers"), List.class);
       if (userList == null) {
-        throw new UDFException("userList cat not be null!");
+        throw new UDFException(USERLIST_NOT_NULL.getErrorDesc());
       }
       Set<String> sharedUserSet = new HashSet<>(userList);
       UDFInfo udfInfo = mapper.treeToValue(json.get("udfInfo"), UDFInfo.class);
@@ -543,7 +544,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("UserName is Empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       long udfId = json.get("udfId").longValue();
       List<String> shareUsers = udfService.getAllSharedUsersByUdfId(userName, udfId);
@@ -586,19 +587,18 @@ public class UDFRestfulApi {
       long udfId = json.get("udfId").longValue();
       String handoverUser = json.get("handoverUser").textValue();
       if (StringUtils.isEmpty(handoverUser)) {
-        throw new UDFException("The handover user can't be null!");
+        throw new UDFException(HANDOVER_NOT_NULL.getErrorDesc());
       }
       String userName =
           ModuleUserUtils.getOperationUser(
               req, String.join(",", "hand over udf", "" + udfId, handoverUser));
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       UDFInfo udfInfo = verifyOperationUser(userName, udfId);
       if (udfService.isUDFManager(udfInfo.getCreateUser())
           && !udfService.isUDFManager(handoverUser)) {
-        throw new UDFException(
-            "Admin users cannot hand over UDFs to regular users.(管理员用户不能移交UDF给普通用户！)");
+        throw new UDFException(ADMIN_NOT_HANDOVER_UDF.getErrorDesc());
       }
       udfService.handoverUdf(udfId, handoverUser);
       message = Message.ok();
@@ -619,11 +619,10 @@ public class UDFRestfulApi {
   private UDFInfo verifyOperationUser(String userName, long udfId) throws UDFException {
     UDFInfo udfInfo = udfService.getUDFById(udfId, userName);
     if (udfInfo == null) {
-      throw new UDFException("can't find udf by this id!");
+      throw new UDFException(NOT_FIND_UDF.getErrorDesc());
     }
     if (!udfInfo.getCreateUser().equals(userName)) {
-      throw new UDFException(
-          "createUser must be consistent with the operation user(创建用户必须和操作用户一致)");
+      throw new UDFException(MUST_OPERATION_USER.getErrorDesc());
     }
     return udfInfo;
   }
@@ -640,10 +639,10 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       if (!udfService.isUDFManager(userName)) {
-        throw new UDFException("only manager can publish udf!");
+        throw new UDFException(ONLY_MANAGER_PUBLISH.getErrorDesc());
       }
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
@@ -679,7 +678,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
@@ -703,7 +702,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       List<UDFVersionVo> versionList = udfService.getUdfVersionList(udfId);
       message = Message.ok();
@@ -752,7 +751,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       String udfName = jsonNode.get("udfName") == null ? null : jsonNode.get("udfName").textValue();
       String udfType = jsonNode.get("udfType").textValue();
@@ -801,7 +800,7 @@ public class UDFRestfulApi {
       String version = json.get("version").textValue();
       String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       String content = udfService.downLoadUDF(udfId, version, userName);
       message = Message.ok();
@@ -843,7 +842,7 @@ public class UDFRestfulApi {
       String version = json.get("version").textValue();
       String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       DownloadVo downloadVo = udfService.downloadToLocal(udfId, version, userName);
       is = downloadVo.getInputStream();
@@ -889,7 +888,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "allUdfUsers ");
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       List<String> udfUsers = udfService.allUdfUsers();
       message = Message.ok();
@@ -913,7 +912,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "userDirectory ");
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException("username is empty!");
+        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
       }
       List<String> userDirectory = udfService.getUserDirectory(userName, category);
       message = Message.ok();

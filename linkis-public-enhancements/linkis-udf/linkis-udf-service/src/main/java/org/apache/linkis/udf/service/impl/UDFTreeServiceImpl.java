@@ -37,6 +37,7 @@ import com.google.common.collect.Iterables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.udf.errorcode.UdfCommonErrorCodeSummary.*;
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
 @Service
@@ -113,8 +114,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
       return udfTree;
     }
     if (first.size() > 1) {
-      throw new UDFException(
-          "user(用户)" + userName + "There are two root directory directories(存在两个根目录目录)");
+      throw new UDFException(DIRECTORY_DIRECTORIES.getErrorDesc() + userName);
     }
     return first.get(0);
   }
@@ -125,23 +125,21 @@ public class UDFTreeServiceImpl implements UDFTreeService {
       try {
         UDFTree parentTree = udfTreeDao.getTreeById(udfTree.getParent());
         if (parentTree != null && !parentTree.getUserName().equals(userName)) {
-          throw new UDFException(
-              "user(用户) " + userName + ", the parent directory is not yours(父目录不是你的)");
+          throw new UDFException(DIRECTORY_PARENT.getErrorDesc() + userName);
         }
 
         logger.info(userName + " to add directory");
         udfTreeDao.addTree(udfTree);
       } catch (Throwable e) {
         if (e instanceof DuplicateKeyException) {
-          throw new UDFException("Duplicate file name(文件名重复)");
+          throw new UDFException(DUPLICATE_FILE_NAME.getErrorDesc());
         } else {
           throw new UDFException(e.getMessage());
         }
       }
 
     } else {
-      throw new UDFException(
-          "Current user must be consistent with the user created(当前用户必须和创建用户一致)");
+      throw new UDFException(CURRENT_MUST_MODIFIED_CREATED.getErrorDesc());
     }
     return udfTree;
   }
@@ -150,21 +148,20 @@ public class UDFTreeServiceImpl implements UDFTreeService {
   public UDFTree updateTree(UDFTree udfTree, String userName) throws UDFException {
     if (userName.equals(udfTree.getUserName())) {
       if (udfTree.getId() == null) {
-        throw new UDFException("id Can not be empty(不能为空)");
+        throw new UDFException(ID_NOT_EMPTY.getErrorDesc());
       }
       try {
         logger.info(userName + " to update directory");
         udfTreeDao.updateTree(udfTree);
       } catch (Throwable e) {
         if (e instanceof DuplicateKeyException) {
-          throw new UDFException("Duplicate file name(文件名重复)");
+          throw new UDFException(DUPLICATE_FILE_NAME.getErrorDesc());
         } else {
           throw new UDFException(e.getMessage());
         }
       }
     } else {
-      throw new UDFException(
-          "Current user must be consistent with the modified user(当前用户必须和修改用户一致)");
+      throw new UDFException(CURRENT_MUST_MODIFIED.getErrorDesc());
     }
     return udfTree;
   }

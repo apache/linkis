@@ -135,7 +135,7 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
   override def flush(): Unit = {
     val sb = new StringBuilder
     sharedCache.cachedLogs.toList
-      .filter(StringUtils.isNotEmpty)
+      .filter(_ != null)
       .foreach(sb.append(_).append("\n"))
     sharedCache.cachedLogs.clear()
     writeToFile(sb.toString())

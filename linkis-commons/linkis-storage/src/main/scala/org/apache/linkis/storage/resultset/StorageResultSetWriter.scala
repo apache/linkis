@@ -102,7 +102,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   def writeLine(bytes: Array[Byte], cache: Boolean = false): Unit = {
     if (closed) {
-      logger.error("the writer had been closed, but writeLine() was still called.")
+      logger.warn("the writer had been closed, but writeLine() was still called.")
       return
     }
     if (bytes.length > LinkisStorageConf.ROW_BYTE_MAX_LEN) {
@@ -175,7 +175,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   override def close(): Unit = {
     if (closed) {
-      logger.error("the writer had been closed, but close() was still called.")
+      logger.warn("the writer had been closed, but close() was still called.")
     } else {
       WRITER_LOCK_CLOSE.synchronized {
         if (!closed) {
@@ -194,7 +194,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   override def flush(): Unit = {
     if (closed) {
-      logger.error("the writer had been closed, but flush() was still called.")
+      logger.warn("the writer had been closed, but flush() was still called.")
       return
     }
     createNewFile

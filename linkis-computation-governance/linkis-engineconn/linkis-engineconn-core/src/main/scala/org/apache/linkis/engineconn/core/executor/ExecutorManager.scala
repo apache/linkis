@@ -32,6 +32,7 @@ import org.apache.linkis.manager.engineplugin.common.exception.{
   EngineConnPluginErrorCode,
   EngineConnPluginErrorException
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 
@@ -87,7 +88,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       case engineConnFactory =>
         val errorMsg = "Not supported ExecutorFactory " + engineConnFactory.getClass.getSimpleName
         logger.error(errorMsg)
-        throw new EngineConnPluginErrorException(20011, errorMsg)
+        throw new EngineConnPluginErrorException(NOT_SUPPORTED_EF.getErrorCode, errorMsg)
     }
 
   protected def tryCreateExecutor(
@@ -167,8 +168,10 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   ): LabelExecutor = {
     val labelKey = getLabelKey(labels)
     if (null == labelKey) {
-      val msg = "Cannot get label key. labels : " + GSON.toJson(labels)
-      throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
+      throw new EngineConnPluginErrorException(
+        CANNOT_GET_LABEL_KEY.getErrorCode,
+        CANNOT_GET_LABEL_KEY.getErrorDesc + GSON.toJson(labels)
+      )
     }
 
     if (!executors.containsKey(labelKey)) executors synchronized {

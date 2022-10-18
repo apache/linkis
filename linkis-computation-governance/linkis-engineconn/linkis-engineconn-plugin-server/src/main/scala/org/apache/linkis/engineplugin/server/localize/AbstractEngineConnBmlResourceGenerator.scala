@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.server.localize
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.server.conf.ServerConfiguration
 
@@ -32,8 +33,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(
-      20001,
-      s"Cannot find the home path(${getEngineConnsHome}) of engineConn."
+      CANNOT_HOME_PATH_EC.getErrorCode,
+      CANNOT_HOME_PATH_EC.getErrorDesc
     )
   }
 
@@ -48,8 +49,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     if (!new File(engineConnDistHome).exists()) {
       throw new EngineConnPluginErrorException(
-        20001,
-        "Cannot find the home path of engineconn dist."
+        CANNOT_HOME_PATH_DIST.getErrorCode,
+        CANNOT_HOME_PATH_DIST.getErrorDesc
       )
     }
     if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
@@ -63,15 +64,15 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHomeFile = new File(engineConnDistHome)
     if (!engineConnDistHomeFile.exists()) {
       throw new EngineConnPluginErrorException(
-        20001,
-        "Cannot find the home path of engineconn dist."
+        CANNOT_HOME_PATH_DIST.getErrorCode,
+        CANNOT_HOME_PATH_DIST.getErrorDesc
       )
     }
     val children = engineConnDistHomeFile.listFiles()
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The dist of ${engineConnType}EngineConn is empty."
+        DIST_IS_EMPTY.getErrorCode,
+        DIST_IS_EMPTY.getErrorDesc + s"${engineConnType}"
       )
     } else if (!children.exists(_.getName.startsWith("v"))) {
       Array(engineConnDistHome)
@@ -79,8 +80,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
       children.map(_.getPath)
     } else {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The dist of ${engineConnType}EngineConn is irregular, both the version dir and non-version dir are exist."
+        DIST_IRREGULAR_EXIST.getErrorCode,
+        DIST_IRREGULAR_EXIST.getErrorDesc + s"${engineConnType}"
       )
     }
   }

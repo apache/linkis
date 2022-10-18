@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.core.execution
 import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.execution.EngineConnExecution
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.CANNOT_INSTANCE_ECE
 
 import scala.collection.convert.decorateAsScala._
 
@@ -39,7 +40,11 @@ object EngineConnExecution extends Logging {
         .toArray
         .sortBy(_.getOrder)
     }(t =>
-      throw new EngineConnBuildFailedException(20000, "Cannot instance EngineConnExecution.", t)
+      throw new EngineConnBuildFailedException(
+        CANNOT_INSTANCE_ECE.getErrorCode,
+        CANNOT_INSTANCE_ECE.getErrorDesc,
+        t
+      )
     )
   }
 

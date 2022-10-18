@@ -46,6 +46,8 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.*;
+
 public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoader {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultEngineConnPluginLoader.class);
@@ -183,7 +185,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
       // Only one method
       plugin.init(props);
     } catch (Exception e) {
-      throw new EngineConnPluginLoadException("Failed to init engine conn plugin instance", e);
+      throw new EngineConnPluginLoadException(FAILED_ENGINE_INSTANCE.getErrorDesc(), e);
     }
   }
 
@@ -217,7 +219,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
       final Constructor<?>[] constructors = pluginClass.getConstructors();
       if (constructors.length == 0) {
         throw new EngineConnPluginLoadException(
-            "No public constructor in pluginClass [" + pluginClass.getName() + "]", null);
+            NO_PUBLIC_CONSTRUCTOR.getErrorDesc() + " [" + pluginClass.getName() + "]", null);
       }
       // Choose the first one
       Constructor<?> constructor = constructors[0];
@@ -229,15 +231,14 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
           return (EngineConnPlugin) constructor.newInstance(props);
         } else {
           throw new EngineConnPluginLoadException(
-              "Illegal arguments in constructor of pluginClass [" + pluginClass.getName() + "]",
-              null);
+              ILLEGAL_ARGUMENTS.getErrorDesc() + " [" + pluginClass.getName() + "]", null);
         }
       } catch (Exception e) {
         if (e instanceof EngineConnPluginLoadException) {
           throw (EngineConnPluginLoadException) e;
         }
         throw new EngineConnPluginLoadException(
-            "Unable to construct pluginClass [" + pluginClass.getName() + "]", null);
+            UNABLE_PLUGINCLASS.getErrorDesc() + " [" + pluginClass.getName() + "]", null);
       }
     } finally {
       Thread.currentThread().setContextClassLoader(storeClassLoader);
@@ -250,7 +251,8 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
     try {
       return classLoader.loadClass(pluginClass).asSubclass(EngineConnPlugin.class);
     } catch (ClassNotFoundException e) {
-      throw new EngineConnPluginLoadException("Unable to load class:[" + pluginClass + "]", e);
+      throw new EngineConnPluginLoadException(
+          UNABLE_CLASS.getErrorDesc() + ":[" + pluginClass + "]", e);
     }
   }
 

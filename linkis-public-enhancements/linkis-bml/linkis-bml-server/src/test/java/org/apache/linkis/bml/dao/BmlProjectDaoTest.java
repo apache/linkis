@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,6 +64,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProjectDao.setProjectPriv(1, usernamesList, priv, "creCreatorUser", new Date());
   }
 
+  @Disabled
   @Test
   void getPrivInProject() {
     setProjectPriv();
@@ -76,6 +78,7 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProjectDao.addProjectResource(1, "123");
   }
 
+  @Disabled
   @Test
   void getProjectNameByResourceId() {
     createNewProject();

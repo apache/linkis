@@ -136,7 +136,7 @@
         WHERE id = #{id}
     </select>
 
-    <select id="seleteKeyByKeyName" resultMap="ConfigKeyMap">
+    <select id="selectKeyByKeyName" resultMap="ConfigKeyMap">
         SELECT <include refid="Config_Key_Column"/>
         FROM linkis_ps_configuration_config_key
         WHERE `key` = #{keyName}

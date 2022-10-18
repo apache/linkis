@@ -36,6 +36,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.{
   FlinkStreamingResultSetListener,
@@ -81,9 +82,7 @@ class FlinkSQLComputationExecutor(
           s"Not support ${adapter.getClass.getSimpleName} for FlinkSQLComputationExecutor."
         )
       case _ =>
-        throw new ExecutorInitException(
-          "Fatal error, ClusterDescriptorAdapter is null, please ask admin for help."
-        )
+        throw new ExecutorInitException(ADAPTER_IS_NULL.getErrorDesc)
     }
     logger.info("Try to start a yarn-session application for interactive query.")
     clusterDescriptor.deployCluster()
@@ -104,7 +103,7 @@ class FlinkSQLComputationExecutor(
   ): ExecuteResponse = {
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     val callSQL =
-      if (!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
+      if (!callOpt.isPresent) throw new SqlParseException(UNKNOWN_STATEMENT.getErrorDesc + code)
       else callOpt.get
     RelMetadataQueryBase.THREAD_PROVIDERS.set(
       JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE)

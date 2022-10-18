@@ -26,6 +26,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.apache.linkis.manager.common.entity.resource._
@@ -75,7 +76,7 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException("Not support method for requestExpectedResource.")
+    throw new JobExecutionException(NOT_SUPPORT_METHOD.getErrorDesc)
 
   protected val flinkEngineConnContext: FlinkEngineConnContext
 

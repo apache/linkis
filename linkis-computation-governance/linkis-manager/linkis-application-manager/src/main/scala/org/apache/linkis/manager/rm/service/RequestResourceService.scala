@@ -20,6 +20,7 @@ package org.apache.linkis.manager.rm.service
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
@@ -102,8 +103,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     } else {
       logger.warn(s"No resource available found for label ${labelContainer.getCurrentLabel}")
       throw new RMWarnException(
-        11201,
-        s"Resource label ${labelContainer.getCurrentLabel} has no resource, please check resource in db."
+        NO_RESOURCE.getErrorCode,
+        NO_RESOURCE.getErrorDesc + s"${labelContainer.getCurrentLabel}"
       )
     }
   }
@@ -136,8 +137,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     } else {
       logger.warn(s"No resource available found for em ${emInstanceLabel.getInstance()} ")
       throw new RMWarnException(
-        11201,
-        s"No resource available found for em ${emInstanceLabel.getInstance()} "
+        NO_RESOURCE_AVAILABLE.getErrorCode,
+        NO_RESOURCE_AVAILABLE.getErrorDesc + s" ${emInstanceLabel.getInstance()} "
       )
     }
   }
@@ -381,9 +382,15 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           (detail._1, { detail._2 })
         }
       case s: SpecialResource =>
-        throw new RMWarnException(11003, " not supported resource type " + s.getClass)
+        throw new RMWarnException(
+          NOT_RESOURCE_TYPE.getErrorCode,
+          NOT_RESOURCE_TYPE.getErrorDesc + s.getClass
+        )
       case r: Resource =>
-        throw new RMWarnException(11003, "not supported resource type " + r.getClass)
+        throw new RMWarnException(
+          NOT_RESOURCE_TYPE.getErrorCode,
+          NOT_RESOURCE_TYPE.getErrorDesc + r.getClass
+        )
     }
   }
 

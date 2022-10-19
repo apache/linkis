@@ -94,6 +94,13 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
 
+    <!-- https://mavenlibs.com/maven/dependency/com.webank.wedatasphere.dss/dss-gateway-support -->
+    <dependency>
+      <groupId>com.webank.wedatasphere.dss</groupId>
+      <artifactId>dss-gateway-support</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>

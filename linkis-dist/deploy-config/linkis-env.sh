@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -144,6 +144,9 @@ export SERVER_HEAP_SIZE="512M"
 
 ##The decompression directory and the installation directory need to be inconsistent
 #LINKIS_HOME=/appcom/Install/LinkisInstall
+
+##The extended lib such mysql-connector-java-*.jar
+#LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
 LINKIS_VERSION=1.3.0
 

@@ -1,6 +1,7 @@
-## linkis-engineconn-manager-server 配置
+## linkis-engineconn-manager-server configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.capacity |500|bus.capacity|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.name|em_async_bus |async.bus.name|
@@ -21,8 +22,8 @@
 |linkis-engineconn-manager-server|wds.linkis.engineconn.root.dir| |root.dir|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.public.dir|   |ngineconn.public.dir|
 |linkis-engineconn-manager-server|wds.linkis.ecm.launch.max.thread.size| 100|thread.size|
-|linkis-engineconn-manager-server|wds.linkis.eureka.defaultZone| <http://127.0.0.1:20303/eureka/> |eureka.defaultZone|
-|linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.create.duration| 1000 *60* 10 |engineconn.create.duration|
+|linkis-engineconn-manager-server|wds.linkis.eureka.defaultZone| http://127.0.0.1:20303/eureka/ |eureka.defaultZone|
+|linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.create.duration| 1000 * 60 * 10 |engineconn.create.duration|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.wait.callback.pid|3s |wait.callback.pid|
 |linkis-engineconn-manager-server|wds.linkis.ecm.engine.start.error.msg.max.len|  500 |msg.max.len|
 |linkis-engineconn-manager-server|wds.linkis.ecm.script.kill.engineconn| true|kill.engineconn|
@@ -31,3 +32,6 @@
 |linkis-engineconn-manager-server|linkis.engineconn.log.tail.start.size|20000 |start.size|
 |linkis-engineconn-manager-server|linkis.engineconn.log.multiline.pattern|    |multiline.pattern|
 |linkis-engineconn-manager-server| linkis.engineconn.log.multiline.max| 500|log.multiline.max|
+
+
+ 

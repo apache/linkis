@@ -32,7 +32,7 @@ class DownloadDaoTest extends BaseDaoTest {
   @Autowired DownloadDao downloadDao;
 
   @Test
-  void insertDownloadModel() {
+  void testInsertDownloadModel() {
     DownloadModel downloadModel = new DownloadModel();
     downloadModel.setDownloader("test");
     downloadModel.setClientIp("192.143.253");

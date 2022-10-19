@@ -18,6 +18,7 @@
 package org.apache.linkis.ecm.server.service.impl
 
 import org.apache.linkis.DataWorkCloudApplication
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
@@ -34,6 +35,8 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
+
+import org.springframework.core.env.Environment
 
 import java.io.File
 import java.nio.file.Paths
@@ -54,8 +57,13 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
 
   private var localDirsHandleService: LocalDirsHandleService = _
 
+  private var springEnv: Environment = _
+
   def setLocalDirsHandleService(localDirsHandleService: LocalDirsHandleService): Unit =
     this.localDirsHandleService = localDirsHandleService
+
+  def setSpringEnv(springEnv: Environment): Unit =
+    this.springEnv = springEnv
 
   override def handleInitEngineConnResources(
       request: EngineConnLaunchRequest,
@@ -87,7 +95,19 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
             override val engineConnWorkDir: String = workDir
             override val engineConnLogDirs: String = logDirs
             override val engineConnTempDirs: String = tmpDirs
-            override val engineConnManagerHost: String = Utils.getComputerName
+            override val engineConnManagerHost: String = {
+              var hostName = Utils.getComputerName
+              val eurekaPreferIp = Configuration.EUREKA_PREFER_IP
+              logger.info("eurekaPreferIp:" + eurekaPreferIp)
+              if (eurekaPreferIp) {
+                hostName = springEnv.getProperty("spring.cloud.client.ip-address")
+                logger.info("hostName:" + hostName)
+                logger.info(
+                  "using ip address replace hostname,beacause eureka.instance.prefer-ip-address:" + eurekaPreferIp
+                )
+              }
+              hostName
+            }
             override val engineConnManagerPort: String =
               DataWorkCloudApplication.getApplicationContext.getEnvironment.getProperty(
                 "server.port"

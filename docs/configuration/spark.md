@@ -1,6 +1,7 @@
-## spark 配置
+## spark configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |spark|linkis.bgservice.store.prefix|hdfs:///tmp/bdp-ide/|bgservice.store.prefix|
 |spark|linkis.bgservice.store.suffix|  |bgservice.store.suffix|

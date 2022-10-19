@@ -251,38 +251,47 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     resource.setLockedResource(resource.getMinResource)
     val resourceLabels = labelContainer.getResourceLabels.asScala
     val persistenceLocks = new ArrayBuffer[PersistenceLock]()
+    val emInstanceLabel = labelContainer.getEMInstanceLabel
+    val userCreatorEngineTypeLabel = labelContainer.getCombinedUserCreatorEngineTypeLabel
 
     Utils.tryFinally {
-      // lock
-      resourceLabels.foreach { label =>
-        persistenceLocks.append(
-          tryLockOneLabel(label, wait, labelContainer.getUserCreatorLabel.getUser)
-        )
+      Utils.tryCatch {
+        labelContainer.setCurrentLabel(emInstanceLabel)
+        if (!requestResourceService.canRequest(labelContainer, resource)) {
+          return NotEnoughResource(s"Labels:${emInstanceLabel.getStringValue} not enough resource")
+        }
+      } {
+        case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
+        case exception: Exception =>
+          throw exception
       }
-      val labelResourceList = new util.HashMap[String, NodeResource]()
-      resourceLabels.foreach(label => {
-        Utils.tryCatch {
-          labelContainer.setCurrentLabel(label)
-          if (!requestResourceService.canRequest(labelContainer, resource)) {
-            return NotEnoughResource(s"Labels:${label.getStringValue} not enough resource")
-          }
-        } {
-          case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
-          case exception: Exception =>
-            throw exception
+      // lock userCreatorEngineTypeLabel
+      persistenceLocks.append(
+        tryLockOneLabel(
+          userCreatorEngineTypeLabel,
+          wait,
+          labelContainer.getUserCreatorLabel.getUser
+        )
+      )
+      Utils.tryCatch {
+        labelContainer.setCurrentLabel(userCreatorEngineTypeLabel)
+        if (!requestResourceService.canRequest(labelContainer, resource)) {
+          return NotEnoughResource(
+            s"Labels:${userCreatorEngineTypeLabel.getStringValue} not enough resource"
+          )
         }
-        val usedResource = labelResourceService.getLabelResource(label)
-        if (usedResource == null) {
-          val msg =
-            s"Resource label: ${label.getStringValue} has no usedResource, please check, refuse request usedResource"
-          logger.info(msg)
-          throw new RMErrorException(110022, msg)
-        }
-        labelResourceList.put(label.getStringValue, usedResource)
-      })
+      } {
+        case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
+        case exception: Exception =>
+          throw exception
+      }
+      // lock ecmLabel
+      persistenceLocks.append(
+        tryLockOneLabel(emInstanceLabel, wait, labelContainer.getUserCreatorLabel.getUser)
+      )
       resourceLabels.foreach { label =>
         labelContainer.setCurrentLabel(label)
-        val labelResource = labelResourceList.get(label.getStringValue)
+        val labelResource = labelResourceService.getLabelResource(label)
         if (labelResource != null) {
           labelResource.setLeftResource(labelResource.getLeftResource - resource.getLockedResource)
           labelResource.setLockedResource(

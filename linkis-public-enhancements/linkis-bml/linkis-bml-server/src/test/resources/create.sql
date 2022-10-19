@@ -26,7 +26,6 @@ CREATE TABLE   linkis_ps_bml_project_resource   (
   PRIMARY KEY (  id  )
 );
 
-insert ignore into linkis_ps_bml_project_resource(project_id, resource_id) values(1, '123');
 
 DROP TABLE IF EXISTS linkis_ps_bml_project;
 CREATE TABLE linkis_ps_bml_project (

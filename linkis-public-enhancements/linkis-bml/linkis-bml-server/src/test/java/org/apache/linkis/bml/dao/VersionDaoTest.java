@@ -35,57 +35,7 @@ class VersionDaoTest extends BaseDaoTest {
   private final String resourceId = "123";
   private final String version = "1.2";
 
-  @Test
-  void getVersion() {
-    insertNewVersion();
-    versionDao.getVersion(resourceId, version);
-  }
-
-  @Test
-  void getVersions() {
-    insertNewVersion();
-    versionDao.getVersions(resourceId);
-  }
-
-  @Test
-  void getResourcesVersions() {
-    insertNewVersion();
-    Map<String, Object> map = new HashMap<>();
-    map.put("system", "testSys");
-    map.put("user", "binbin");
-    List<String> list = new ArrayList<>();
-    list.add("123");
-    list.add("321");
-    map.put("resourceIds", list);
-    versionDao.getResourcesVersions(map);
-  }
-
-  @Test
-  void deleteVersion() {
-    insertNewVersion();
-    versionDao.deleteVersion(resourceId, version);
-  }
-
-  @Test
-  void deleteVersions() {
-    insertNewVersion();
-    versionDao.deleteVersions(resourceId);
-  }
-
-  @Test
-  void bathDeleteVersions() {
-    insertNewVersion();
-    List<String> resourceIdlist = new ArrayList<>();
-    resourceIdlist.add(resourceId);
-    resourceIdlist.add("21");
-    List<String> versionlist = new ArrayList<>();
-    versionlist.add(version);
-    versionlist.add("2.1");
-    versionDao.bathDeleteVersions(resourceIdlist, versionlist);
-  }
-
-  @Test
-  void insertNewVersion() {
+  void insertVersion() {
     ResourceVersion resourceVersion = new ResourceVersion();
     resourceVersion.setResourceId(resourceId);
     resourceVersion.setUser("binbin");
@@ -106,68 +56,45 @@ class VersionDaoTest extends BaseDaoTest {
   }
 
   @Test
-  void getResourcePath() {
-    insertNewVersion();
-    versionDao.getResourcePath(resourceId);
+  void testGetVersion() {
+    insertVersion();
+    versionDao.getVersion(resourceId, version);
   }
 
   @Test
-  void getNewestVersion() {
-    insertNewVersion();
-    versionDao.getNewestVersion(resourceId);
+  void testGetVersions() {
+    insertVersion();
+    versionDao.getVersions(resourceId);
   }
 
   @Test
-  void getStartByteForResource() {
-    insertNewVersion();
-    versionDao.getStartByteForResource(resourceId, version);
+  void testGetResourcesVersions() {
+    insertVersion();
+    Map<String, Object> map = new HashMap<>();
+    map.put("system", "testSys");
+    map.put("user", "binbin");
+    List<String> list = new ArrayList<>();
+    list.add("123");
+    list.add("321");
+    map.put("resourceIds", list);
+    versionDao.getResourcesVersions(map);
   }
 
   @Test
-  void getEndByte() {
-    insertNewVersion();
-    versionDao.getEndByte(resourceId, version);
+  void testDeleteVersion() {
+    insertVersion();
+    versionDao.deleteVersion(resourceId, version);
   }
 
   @Test
-  void findResourceVersion() {
-    insertNewVersion();
-    versionDao.findResourceVersion(resourceId, version);
+  void testDeleteVersions() {
+    insertVersion();
+    versionDao.deleteVersions(resourceId);
   }
 
   @Test
-  void getAllResourcesViaSystem() {
-    insertNewVersion();
-    versionDao.getAllResourcesViaSystem(resourceId, version);
-  }
-
-  @Test
-  void selectResourcesViaSystemByPage() {
-    insertNewVersion();
-    versionDao.selectResourcesViaSystemByPage(resourceId, version);
-  }
-
-  @Test
-  void checkVersion() {
-    insertNewVersion();
-    versionDao.checkVersion(resourceId, version);
-  }
-
-  @Test
-  void selectResourceVersionEnbleFlag() {
-    insertNewVersion();
-    versionDao.selectResourceVersionEnbleFlag(resourceId, version);
-  }
-
-  @Test
-  void deleteResource() {
-    insertNewVersion();
-    versionDao.deleteResource(resourceId);
-  }
-
-  @Test
-  void batchDeleteResources() {
-    insertNewVersion();
+  void testBathDeleteVersions() {
+    insertVersion();
     List<String> resourceIdlist = new ArrayList<>();
     resourceIdlist.add(resourceId);
     resourceIdlist.add("21");
@@ -178,20 +105,113 @@ class VersionDaoTest extends BaseDaoTest {
   }
 
   @Test
-  void getResourceVersion() {
+  void testInsertNewVersion() {
+    ResourceVersion resourceVersion = new ResourceVersion();
+    resourceVersion.setResourceId(resourceId);
+    resourceVersion.setUser("binbin");
+    resourceVersion.setSystem("testSys");
+    resourceVersion.setFileMd5("binbinmd5");
+    resourceVersion.setVersion(version);
+    resourceVersion.setSize(25);
+    resourceVersion.setStartByte(35);
+    resourceVersion.setEndByte(36);
+    resourceVersion.setResource("testreso");
+    resourceVersion.setDescription("testDesc");
+    resourceVersion.setStartTime(new Date());
+    resourceVersion.setEndTime(new Date());
+    resourceVersion.setClientIp("132.145.36");
+    resourceVersion.setUpdator("testUp");
+    resourceVersion.setEnableFlag(true);
+    versionDao.insertNewVersion(resourceVersion);
+  }
+
+  @Test
+  void testGetResourcePath() {
+    insertVersion();
+    versionDao.getResourcePath(resourceId);
+  }
+
+  @Test
+  void testGetNewestVersion() {
+    insertVersion();
+    versionDao.getNewestVersion(resourceId);
+  }
+
+  @Test
+  void testGetStartByteForResource() {
+    insertVersion();
+    versionDao.getStartByteForResource(resourceId, version);
+  }
+
+  @Test
+  void testGetEndByte() {
+    insertVersion();
+    versionDao.getEndByte(resourceId, version);
+  }
+
+  @Test
+  void testFindResourceVersion() {
+    insertVersion();
+    versionDao.findResourceVersion(resourceId, version);
+  }
+
+  @Test
+  void testGetAllResourcesViaSystem() {
+    insertVersion();
+    versionDao.getAllResourcesViaSystem(resourceId, version);
+  }
+
+  @Test
+  void testSelectResourcesViaSystemByPage() {
+    insertVersion();
+    versionDao.selectResourcesViaSystemByPage(resourceId, version);
+  }
+
+  @Test
+  void testCheckVersion() {
+    insertVersion();
+    versionDao.checkVersion(resourceId, version);
+  }
+
+  @Test
+  void testSelectResourceVersionEnbleFlag() {
+    insertVersion();
+    versionDao.selectResourceVersionEnbleFlag(resourceId, version);
+  }
+
+  @Test
+  void testDeleteResource() {
+    insertVersion();
+    versionDao.deleteResource(resourceId);
+  }
+
+  @Test
+  void testBatchDeleteResources() {
+    insertVersion();
+    List<String> resourceIdlist = new ArrayList<>();
+    resourceIdlist.add(resourceId);
+    resourceIdlist.add("21");
+    List<String> versionlist = new ArrayList<>();
+    versionlist.add(version);
+    versionlist.add("2.1");
+    versionDao.bathDeleteVersions(resourceIdlist, versionlist);
+  }
+
+  @Test
+  void testGetResourceVersion() {
     versionDao.getResourceVersion(resourceId, version);
   }
 
   @Test
-  void selectVersionByPage() {
-    insertNewVersion();
+  void testSelectVersionByPage() {
+    insertVersion();
     List<Version> list = versionDao.selectVersionByPage(resourceId);
     assertTrue(list.size() >= 1);
   }
 
   @Test
-  void getResourceVersionsByResourceId() {
-    insertNewVersion();
+  void testGetResourceVersionsByResourceId() {
+    insertVersion();
     List<ResourceVersion> list = versionDao.getResourceVersionsByResourceId(resourceId);
     assertTrue(list.size() >= 1);
   }

@@ -25,6 +25,7 @@ import org.apache.linkis.engineconn.once.executor.{
   OperableOnceExecutor
 }
 import org.apache.linkis.engineconnplugin.sqoop.client.LinkisSqoopClient
+import org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.EXEC_SQOOP_CODE_ERROR
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.{
   SqoopEngineConnContext,
@@ -42,6 +43,7 @@ import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
 
 import java.util
+import java.util.Locale
 import java.util.concurrent.{Future, TimeUnit}
 
 class SqoopOnceCodeExecutor(
@@ -72,7 +74,7 @@ class SqoopOnceCodeExecutor(
           setResponse(
             ErrorExecuteResponse(
               "Run code failed!",
-              new JobExecutionException("Exec Sqoop Code Error")
+              new JobExecutionException(EXEC_SQOOP_CODE_ERROR.getErrorDesc)
             )
           )
         }
@@ -86,10 +88,7 @@ class SqoopOnceCodeExecutor(
     })
   }
 
-  protected def runSqoop(
-      params: util.Map[String, String],
-      context: EngineCreationContext
-  ): Int = {
+  protected def runSqoop(params: util.Map[String, String], context: EngineCreationContext): Int = {
     Utils.tryCatch {
       val finalParams = paramsResolvers.foldLeft(params) { case (newParam, resolver) =>
         resolver.resolve(newParam, context)
@@ -103,7 +102,7 @@ class SqoopOnceCodeExecutor(
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           override def run(): Unit = {
@@ -116,21 +115,17 @@ class SqoopOnceCodeExecutor(
         SqoopEnvConfiguration.SQOOP_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def getCurrentNodeResource(): NodeResource = {
     val memorySuffix = "g"
     val properties = EngineConnObject.getEngineCreationContext.getOptions
-    Option(properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)).foreach(
-      memory => {
-        if (!memory.toLowerCase.endsWith(memorySuffix)) {
-          properties.put(
-            EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-            memory + memorySuffix
-          )
-        }
+    Option(properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)).foreach(memory => {
+      if (!memory.toLowerCase(Locale.getDefault()).endsWith(memorySuffix)) {
+        properties.put(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key, memory + memorySuffix)
       }
-    )
+    })
     val resource = new DriverAndYarnResource(
       new LoadInstanceResource(
         EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,

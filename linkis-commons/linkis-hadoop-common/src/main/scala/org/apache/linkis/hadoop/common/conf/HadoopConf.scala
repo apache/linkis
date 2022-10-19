@@ -38,10 +38,8 @@ object HadoopConf {
   val hadoopConfDir =
     CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue
 
-  val HADOOP_EXTERNAL_CONF_DIR_PREFIX = CommonVars(
-    "wds.linkis.hadoop.external.conf.dir.prefix",
-    "/appcom/config/external-conf/hadoop"
-  )
+  val HADOOP_EXTERNAL_CONF_DIR_PREFIX =
+    CommonVars("wds.linkis.hadoop.external.conf.dir.prefix", "/appcom/config/external-conf/hadoop")
 
   val HDFS_ENABLE_CACHE = CommonVars("wds.linkis.hadoop.hdfs.cache.enable", false).getValue
 

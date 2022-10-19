@@ -49,6 +49,7 @@ import org.apache.spark.sql.{SparkSession, SQLContext}
 import org.apache.spark.util.SparkUtils
 
 import java.io.{BufferedReader, File}
+import java.util.Locale
 
 import scala.tools.nsc.interpreter.{
   isReplPower,
@@ -177,10 +178,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     res
   }
 
-  def executeLine(
-      code: String,
-      engineExecutionContext: EngineExecutionContext
-  ): ExecuteResponse = {
+  def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
     if (sparkContext.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(
@@ -249,7 +247,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   private def matchFatalLog(errorMsg: String): Boolean = {
     var flag = false
     if (StringUtils.isNotBlank(errorMsg)) {
-      val errorMsgLowCase = errorMsg.toLowerCase
+      val errorMsgLowCase = errorMsg.toLowerCase(Locale.getDefault())
       fatalLogs.foreach(fatalLog =>
         if (errorMsgLowCase.contains(fatalLog)) {
           logger.error(s"match engineConn log fatal logs,is $fatalLog")
@@ -370,9 +368,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       sparkILoop.interpret("import org.apache.spark.sql.SparkSession")
       sparkILoop.interpret("import org.apache.spark.sql.SQLContext")
       sparkILoop.interpret("import org.apache.spark.sql.DataFrame")
-      sparkILoop.interpret(
-        "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF"
-      )
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF")
       sparkILoop.interpret(
         "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showHTML"
       )

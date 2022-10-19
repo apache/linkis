@@ -20,8 +20,8 @@ package org.apache.linkis.common.utils
 import org.slf4j.LoggerFactory
 
 /**
- * use the class's method will miss the real info line number, so deprecated all the method and
- * this trait will be deprecated too
+ * use the class's method will miss the real info line number, so deprecated all the method and this
+ * trait will be deprecated too
  */
 trait Logging {
 

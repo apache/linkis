@@ -24,18 +24,19 @@ import org.apache.linkis.ujes.client.request.UserAction
 import java.util
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/getDirFileTrees")
 class ResultSetListResult extends DWSResult with UserAction {
 
   @BeanProperty var dirFileTrees: util.Map[String, Object] = _
 
-  def getResultSetList = if (dirFileTrees != null) dirFileTrees.get("children") match {
-    case list: util.List[util.Map[String, Object]] =>
-      list.map(_.get("path").asInstanceOf[String]).toArray
-    case _ => Array.empty[String]
-  }
+  def getResultSetList: Array[String] = if (dirFileTrees != null)
+    dirFileTrees.get("children") match {
+      case list: util.List[util.Map[String, Object]] =>
+        list.asScala.map(_.get("path").asInstanceOf[String]).toArray
+      case _ => Array.empty[String]
+    }
   else Array.empty[String]
 
 }

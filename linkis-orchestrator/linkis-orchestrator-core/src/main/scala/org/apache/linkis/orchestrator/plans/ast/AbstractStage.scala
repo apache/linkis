@@ -23,6 +23,6 @@ abstract class AbstractStage extends Stage {
 
   override def getASTContext: ASTContext = this.astContext
 
-  def setAstContext(astContext: ASTContext) = this.astContext = astContext
+  def setAstContext(astContext: ASTContext): Unit = this.astContext = astContext
 
 }

@@ -23,10 +23,10 @@ import scala.concurrent.duration.Duration
 
 class BmlReceiver extends Receiver {
 
-  override def receive(message: Any, sender: Sender): Unit = ???
+  override def receive(message: Any, sender: Sender): Unit = {}
 
-  override def receiveAndReply(message: Any, sender: Sender): Any = ???
+  override def receiveAndReply(message: Any, sender: Sender): Any = null
 
-  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = ???
+  override def receiveAndReply(message: Any, duration: Duration, sender: Sender): Any = null
 
 }

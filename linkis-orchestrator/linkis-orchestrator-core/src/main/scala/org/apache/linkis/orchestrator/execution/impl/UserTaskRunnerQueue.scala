@@ -68,9 +68,9 @@ class UserTaskRunnerPriorityQueue extends UserTaskRunnerQueue {
     val user = astContext.getExecuteUser
     val labels = astContext.getLabels
     val maxRunningNumber =
-      if (userParallelOrchestratorPlugin.isDefined)
+      if (userParallelOrchestratorPlugin.isDefined) {
         userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels)
-      else {
+      } else {
         DEFAULT_MAX_RUNNING
       }
     val runningNumber = userRunningNumber.getRunningNumber(user, labels)
@@ -87,9 +87,9 @@ class UserTaskRunnerPriorityQueue extends UserTaskRunnerQueue {
         val user = astContext.getExecuteUser
         val labels = astContext.getLabels
         val maxRunningNumber =
-          if (userParallelOrchestratorPlugin.isDefined)
+          if (userParallelOrchestratorPlugin.isDefined) {
             userParallelOrchestratorPlugin.get.getUserMaxRunningJobs(user, labels)
-          else {
+          } else {
             DEFAULT_MAX_RUNNING
           }
         UserTaskRunner(

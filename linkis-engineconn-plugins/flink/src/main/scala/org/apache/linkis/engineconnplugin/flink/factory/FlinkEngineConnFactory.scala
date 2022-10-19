@@ -25,10 +25,7 @@ import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
-import org.apache.linkis.engineconnplugin.flink.context.{
-  EnvironmentContext,
-  FlinkEngineConnContext
-}
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
@@ -52,7 +49,7 @@ import java.io.File
 import java.net.URL
 import java.time.Duration
 import java.util
-import java.util.Collections
+import java.util.{Collections, Locale}
 
 import scala.collection.JavaConverters._
 
@@ -135,8 +132,9 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val flinkProvidedLibPathList =
       Lists.newArrayList(flinkProvidedLibPath.split(",").filter(StringUtils.isNotBlank): _*)
     // Add the global lib path to user lib path list
-    if (flinkProvidedLibPathList != null && flinkProvidedLibPathList.size() > 0)
+    if (flinkProvidedLibPathList != null && flinkProvidedLibPathList.size() > 0) {
       providedLibDirList.addAll(flinkProvidedLibPathList)
+    }
     // if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
     flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
     // construct jar-dependencies
@@ -205,10 +203,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       )
       flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
-      flinkConfig.setBoolean(
-        DeploymentOptions.ATTACHED,
-        FLINK_EXECUTION_ATTACHED.getValue(options)
-      )
+      flinkConfig.setBoolean(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
       context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
       addApplicationLabels(engineCreationContext)
     } else if (isOnceEngineConn(engineCreationContext.getLabels())) {
@@ -238,14 +233,16 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         pathArray
           .filter(StringUtils.isNotBlank)
           .map(dir => {
-            if (new File(dir).exists()) dir
-            else
+            if (new File(dir).exists()) {
+              dir
+            } else {
               Option(getClass.getClassLoader.getResource(dir)) match {
                 case Some(url) => url.getPath
                 case _ =>
                   logger.warn(s"Local file/directory [$dir] not found")
                   null
               }
+            }
           })
           .dropWhile(StringUtils.isBlank)
       case _ => new Array[String](0)
@@ -297,14 +294,18 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val environment = environmentContext.getDeploymentTarget match {
       case YarnDeploymentTarget.PER_JOB | YarnDeploymentTarget.SESSION =>
         val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
-        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase)) {
+        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase(Locale.getDefault))) {
           throw new FlinkInitFailedException(
             "Planner must be one of these: " + String
               .join(", ", ExecutionEntry.AVAILABLE_PLANNERS)
           )
         }
         val executionType = FlinkEnvConfiguration.FLINK_SQL_EXECUTION_TYPE.getValue(options)
-        if (!ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(executionType.toLowerCase)) {
+        if (
+            !ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(
+              executionType.toLowerCase(Locale.getDefault)
+            )
+        ) {
           throw new FlinkInitFailedException(
             "Execution type must be one of these: " + String
               .join(", ", ExecutionEntry.AVAILABLE_EXECUTION_TYPES)

@@ -35,11 +35,7 @@ abstract class LabelResourceService {
    * @param label
    * @param nodeResource
    */
-  def setEngineConnLabelResource(
-      label: Label[_],
-      nodeResource: NodeResource,
-      source: String
-  ): Unit
+  def setEngineConnLabelResource(label: Label[_], nodeResource: NodeResource, source: String): Unit
 
   def getResourcesByUser(user: String): Array[NodeResource]
 

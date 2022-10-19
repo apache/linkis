@@ -32,7 +32,7 @@ class RsOutputStream extends OutputStream with Logging {
   private var isReady = false
   private var writer: ResultSetWriter[_ <: MetaData, _ <: Record] = _
 
-  override def write(b: Int) = if (isReady) synchronized {
+  override def write(b: Int): Unit = if (isReady) synchronized {
     if (writer != null) {
       if (b == '\n') {
         val outStr = new String(line.toArray, "UTF-8")
@@ -44,12 +44,12 @@ class RsOutputStream extends OutputStream with Logging {
     }
   }
 
-  def reset(engineExecutionContext: EngineExecutionContext) = {
+  def reset(engineExecutionContext: EngineExecutionContext): Unit = {
     writer = engineExecutionContext.createDefaultResultSetWriter()
     writer.addMetaData(null)
   }
 
-  def ready() = isReady = true
+  def ready(): Unit = isReady = true
 
   override def flush(): Unit = if (writer != null && line.nonEmpty) {
     val outStr = new String(line.toArray, "UTF-8")
@@ -57,9 +57,9 @@ class RsOutputStream extends OutputStream with Logging {
     line.clear()
   }
 
-  override def toString = if (writer != null) writer.toString() else null
+  override def toString: String = if (writer != null) writer.toString() else null
 
-  override def close() = if (writer != null) {
+  override def close(): Unit = if (writer != null) {
     flush()
     writer.close()
     writer = null

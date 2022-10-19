@@ -19,6 +19,7 @@ package org.apache.linkis.common.variable;
 import org.apache.linkis.common.exception.VariableOperationFailedException;
 import org.apache.linkis.common.utils.VariableOperationUtils;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +32,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class VariableOperationTest {
 
   private static final Date date = new Date(1648892107169L);
-  private static final ZonedDateTime zonedDateTime = VariableOperationUtils.toZonedDateTime(date);
+  private static final ZonedDateTime zonedDateTime =
+      VariableOperationUtils.toZonedDateTime(date, ZoneId.of("Asia/Shanghai"));
+
+  @Test
+  public void testSqlFormat() throws VariableOperationFailedException {
+    String jsonOld =
+        "select \n"
+            + "\"&{yyyy-MM}\",\n"
+            + "\"&{yyyy-MM-dd HHmmss}\",\n"
+            + "\"&yyyyMMddHH\",\n"
+            + "\"&{yyyy-MM-dd-HH}\"";
+    String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
+    System.out.println(jsonNew);
+    assertEquals(
+        jsonNew,
+        "select \n"
+            + "\"2022-04\",\n"
+            + "\"2022-04-02 173507\",\n"
+            + "\"&yyyyMMddHH\",\n"
+            + "\"2022-04-02-17\"");
+  }
 
   @Test
   public void testJsonFormat() throws VariableOperationFailedException {

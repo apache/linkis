@@ -21,11 +21,7 @@ import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.executor.entity.{
-  LabelExecutor,
-  ResourceExecutor,
-  YarnExecutor
-}
+import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
@@ -119,9 +115,7 @@ object FlinkExecutor {
       resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
   ): Unit = {
     val columns = resultSet.getColumns
-      .map(columnInfo =>
-        Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null)
-      )
+      .map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
       .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {
@@ -141,10 +135,8 @@ object FlinkExecutor {
   ): Unit = {
     val resultSetWriter =
       engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally {
-      writeResultSet(resultSet, resultSetWriter)
-      engineExecutionContext.sendResultSet(resultSetWriter)
-    }(IOUtils.closeQuietly(resultSetWriter))
+    writeResultSet(resultSet, resultSetWriter)
+    engineExecutionContext.sendResultSet(resultSetWriter)
   }
 
 }

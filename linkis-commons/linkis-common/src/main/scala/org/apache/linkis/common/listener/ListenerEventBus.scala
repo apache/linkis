@@ -41,8 +41,8 @@ trait ListenerBus[L <: EventListener, E <: Event] extends Logging {
   }
 
   /**
-   * Remove a listener and it won't receive any events. This method is thread-safe and can be
-   * called in any thread.
+   * Remove a listener and it won't receive any events. This method is thread-safe and can be called
+   * in any thread.
    */
   final def removeListener(listener: L): Unit = {
     listeners.remove(listener)
@@ -103,8 +103,8 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
    * Start sending events to attached listeners.
    *
    * This first sends out all buffered events posted before this listener bus has started, then
-   * listens for any additional events asynchronously while the listener bus is still running.
-   * This should only be called once.
+   * listens for any additional events asynchronously while the listener bus is still running. This
+   * should only be called once.
    */
   def start(): Unit = {
     if (started.compareAndSet(false, true)) {
@@ -135,9 +135,9 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
   }
 
   /**
-   * For testing only. Wait until there are no more events in the queue, or until the specified
-   * time has elapsed. Throw `TimeoutException` if the specified time elapsed before the queue
-   * emptied. Exposed for testing.
+   * For testing only. Wait until there are no more events in the queue, or until the specified time
+   * has elapsed. Throw `TimeoutException` if the specified time elapsed before the queue emptied.
+   * Exposed for testing.
    */
   @throws(classOf[TimeoutException])
   def waitUntilEmpty(timeoutMillis: Long): Unit = {
@@ -230,8 +230,8 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
     })
 
     /**
-     * If the event queue exceeds its capacity, the new events will be dropped. The subclasses
-     * will be notified with the dropped events.
+     * If the event queue exceeds its capacity, the new events will be dropped. The subclasses will
+     * be notified with the dropped events.
      *
      * Note: `onDropEvent` can be called in any thread.
      */
@@ -277,8 +277,9 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
 
     def isRunning: Boolean = event.isDefined
 
-    def putEvent(event: E): Boolean = if (this.event.isDefined) false
-    else
+    def putEvent(event: E): Boolean = if (this.event.isDefined) {
+      false
+    } else {
       synchronized {
         if (this.event.isDefined) false
         else {
@@ -289,6 +290,7 @@ abstract class ListenerEventBus[L <: EventListener, E <: Event](
           true
         }
       }
+    }
 
     override def run(): Unit = {
       val threadName = Thread.currentThread().getName

@@ -23,8 +23,7 @@ import org.apache.linkis.orchestrator.execution.ArrayResultSetTaskResponse
 /**
  */
 
-class DefaultResultSetTaskResponse(resultSet: Array[ResultSet])
-    extends ArrayResultSetTaskResponse {
+class DefaultResultSetTaskResponse(resultSet: Array[ResultSet]) extends ArrayResultSetTaskResponse {
 
   override def getResultSets: Array[ResultSet] = resultSet
 

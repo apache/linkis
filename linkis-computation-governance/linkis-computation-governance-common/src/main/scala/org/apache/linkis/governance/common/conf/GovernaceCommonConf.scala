@@ -50,6 +50,8 @@ object GovernanceCommonConf {
 
   val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 
+  val SKIP_PYTHON_PARSER = CommonVars("linkis.code.parser.skip.python", true, "skip python parser")
+
   val RESULT_SET_STORE_PATH = CommonVars(
     "wds.linkis.resultSet.store.path",
     CommonVars[String]("wds.linkis.filesystem.hdfs.root.path", "hdfs:///tmp/linkis/").getValue
@@ -62,11 +64,8 @@ object GovernanceCommonConf {
 
   val ENGINECONN_ENVKEYS = CommonVars("wds.linkis.engineconn.env.keys", "").getValue
 
-  val ERROR_CODE_DESC_LEN = CommonVars(
-    "linkis.error.code.desc.len",
-    512,
-    "Error code description maximum length"
-  ).getValue
+  val ERROR_CODE_DESC_LEN =
+    CommonVars("linkis.error.code.desc.len", 512, "Error code description maximum length").getValue
 
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue

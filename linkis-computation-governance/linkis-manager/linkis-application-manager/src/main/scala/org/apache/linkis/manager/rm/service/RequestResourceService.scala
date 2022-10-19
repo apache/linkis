@@ -26,8 +26,7 @@ import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 
-abstract class RequestResourceService(labelResourceService: LabelResourceService)
-    extends Logging {
+abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
 
   val resourceType: ResourceType = ResourceType.Default
 
@@ -49,9 +48,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     val requestResource = resource.getMinResource
     // for configuration resource
     if (
-        labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(
-          labelContainer.getCurrentLabel
-        )
+        labelContainer.getCombinedUserCreatorEngineTypeLabel.equals(labelContainer.getCurrentLabel)
     ) {
       if (labelResource == null) {
         labelResource = new CommonNodeResource
@@ -89,7 +86,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       val labelMaxResource = labelResource.getMaxResource
       if (labelAvailableResource < requestResource && enableRequest) {
         logger.info(
-          s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > label available resource[${labelAvailableResource}]"
+          s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
+            s"label available resource[${labelAvailableResource}]"
         )
         // TODO sendAlert(moduleInstance, user, creator, requestResource, moduleAvailableResource.resource, moduleLeftResource)
         val notEnoughMessage =
@@ -97,7 +95,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
       }
       logger.debug(
-        s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= label available resource[${labelAvailableResource}]"
+        s"Passed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] <= " +
+          s"label available resource[${labelAvailableResource}]"
       )
       true
     } else {
@@ -377,11 +376,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
           (detail._1, { detail._2 })
         } else {
-          val detail = generateNotEnoughMessage(
-            dy.yarnResource,
-            dyAvailable.yarnResource,
-            dyMax.yarnResource
-          )
+          val detail =
+            generateNotEnoughMessage(dy.yarnResource, dyAvailable.yarnResource, dyMax.yarnResource)
           (detail._1, { detail._2 })
         }
       case s: SpecialResource =>

@@ -32,7 +32,7 @@
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
         <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -53,7 +53,7 @@
 <br/>
 
 ---
-[English](README.md) | [中文 ](README_CN.md)
+[English](README.md) | [中文](README_CN.md)
 
 # 介绍
 
@@ -66,14 +66,14 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 
 ![没有 Linkis 之前 ](https://user-images.githubusercontent.com/7869972/148767370-06025750-090e-4fd6-bd32-aab2fbb01352.png)
 
-
 ![有了 Linkis 之后 ](https://user-images.githubusercontent.com/7869972/148767358-b02ae982-4080-4efa-aa0f-768ca27902b7.png)
 
 ## 核心特点
+
 - **丰富的底层计算存储引擎支持**  
-    - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
-    - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
-    - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等   
+  - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
+  - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
+  - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等
 - **强大的计算治理能力** 基于 Orchestrator、Label Manager 和定制的 Spring Cloud Gateway 等服务，Linkis 能够提供基于多级标签的跨集群/跨 IDC 细粒度路由、负载均衡、多租户、流量控制、资源控制和编排策略 (如双活、主备等) 支持能力  
 - **全栈计算存储引擎架构支持** 能够接收、执行和管理针对各种计算存储引擎的任务和请求，包括离线批量任务、交互式查询任务、实时流式任务和存储型任务
 - **资源管理能力** ResourceManager 不仅具备对 Yarn 和 Linkis EngineManager 的资源管理能力，还将提供基于标签的多级资源分配和回收能力，让 ResourceManager 具备跨集群、跨计算资源类型的强大资源管理能力
@@ -102,11 +102,10 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn， 支持 Hadoop MR/YARN application|
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn， 支持用 SparkSQL 查询 TiDB|
 
-
 # 生态组件
 
-| 应用工具     | 描述                                                          | Linkis 1.X(推荐 1.1.1) 兼容版本    | 
-| --------------- | -------------------------------------------------------------------- | ---------- | 
+| 应用工具     | 描述                                                          | Linkis 1.X(推荐 1.1.1) 兼容版本    |
+| --------------- | -------------------------------------------------------------------- | ---------- |
 | [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | **DSS 1.0.1[已发布 ][Linkis 推荐 1.1.1]** |
 | [**Scriptis**](https://github.com/WeBankFinTech/Scriptis)   | 支持在线写 SQL、Pyspark、HiveQL 等脚本，提交给[Linkis](https://github.com/apache/incubator-linkis) 执行的数据分析 Web 工具 | 在 DSS 1.0.1 中[已发布 ] |
 | [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性  | **Schedulis0.6.2 [已发布 ]** |
@@ -118,13 +117,14 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 
 # 下载
 
-请前往[Linkis Releases 页面 ](https://linkis.apache.org/download/main) 下载 Linkis 的已编译版本或源码包。
+请前往[Linkis Releases 页面](https://linkis.apache.org/download/main) 下载 Linkis 的已编译版本或源码包。
 
 # 编译和安装部署
 
 > 更详细的步骤参见:
->- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>
+>- [后端编译打包](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
+>- [管理台编译](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
 
 ```shell script
 ## 后端编译
@@ -143,23 +143,24 @@ npm install
 npm run build
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
+请参考[快速安装部署](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
 
 # 示例和使用指引
 
-- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/overview),
-- [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview) 
-- [API 文档 ](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
+- [用户手册](https://linkis.apache.org/zh-CN/docs/latest/user-guide/overview),
+- [各引擎使用指引](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview)
+- [API 文档](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
 
 # 文档&视频
 
-- 完整的 Linkis 文档代码存放在[linkis-website 仓库中 ](https://github.com/apache/incubator-linkis-website)  
+- 完整的 Linkis 文档代码存放在[linkis-website 仓库中](https://github.com/apache/incubator-linkis-website)  
 
 - Meetup 视频 [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
-
 # 架构概要
+
 Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服务、公共增强服务和微服务治理服务。  
+
 - 计算治理服务，支持计算任务/请求处理流程的 3 个主要阶段:提交-> 准备-> 执行
 - 公共增强服务，包括上下文服务、物料管理服务及数据源服务等
 - 微服务治理服务，包括定制化的 Spring Cloud Gateway、Eureka、Open Feign
@@ -171,34 +172,32 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 
 ![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
 
-- [**DataSphere Studio** - 数据应用集成开发框架 ](https://github.com/WeBankFinTech/DataSphereStudio)
+- [DataSphere Studio - 数据应用集成开发框架](https://github.com/WeBankFinTech/DataSphereStudio)
 
-- [**Scriptis** - 数据研发 IDE 工具 ](https://github.com/WeBankFinTech/Scriptis)
+- [Scriptis - 数据研发 IDE 工具](https://github.com/WeBankFinTech/Scriptis)
 
-- [**Visualis** - 数据可视化工具 ](https://github.com/WeBankFinTech/Visualis)
+- [Visualis - 数据可视化工具](https://github.com/WeBankFinTech/Visualis)
 
-- [**Schedulis** - 工作流调度工具 ](https://github.com/WeBankFinTech/Schedulis)
+- [Schedulis - 工作流调度工具](https://github.com/WeBankFinTech/Schedulis)
 
-- [**Qualitis** - 数据质量工具 ](https://github.com/WeBankFinTech/Qualitis)
+- [Qualitis - 数据质量工具](https://github.com/WeBankFinTech/Qualitis)
 
-- [**MLLabis** - 容器化机器学习 notebook 开发环境 ](https://github.com/WeBankFinTech/prophecis)
+- [MLLabis - 容器化机器学习 notebook 开发环境](https://github.com/WeBankFinTech/prophecis)
 
 更多项目开源准备中，敬请期待。
 
 # 贡献
 
 我们非常欢迎和期待更多的贡献者参与共建 Linkis, 不论是代码、文档，或是其他能够帮助到社区的贡献形式。  
-代码和文档相关的贡献请参照[贡献指引 ](https://linkis.apache.org/zh-CN/community/how-to-contribute).
+代码和文档相关的贡献请参照[贡献指引](https://linkis.apache.org/zh-CN/community/how-to-contribute).
 
 # 联系我们
 
 - 对 Linkis 的任何问题和建议，可以提交 issue，以便跟踪处理和经验沉淀共享
-- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org) 
+- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - 可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
-
 
 # 谁在使用 Linkis
 

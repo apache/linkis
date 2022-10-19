@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.scheduler.cache
 
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.CacheNotReadyException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.persistence.PersistenceManager
@@ -41,7 +42,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.util.concurrent.ExecutorService
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.google.common.collect.Lists
 
@@ -59,17 +60,22 @@ class ReadCacheConsumer(
         job.getJobRequest match {
           case jobRequest: JobRequest =>
             Utils.tryCatch {
-              val engineTpyeLabel = jobRequest.getLabels
+              val engineTpyeLabel = jobRequest.getLabels.asScala
                 .filter(l => l.getLabelKey.equalsIgnoreCase(LabelKeyConstant.ENGINE_TYPE_KEY))
                 .headOption
                 .getOrElse(null)
-              val labelStrList = jobRequest.getLabels.map { case l => l.getStringValue }.toList
+              val labelStrList = jobRequest.getLabels.asScala.map { case l =>
+                l.getStringValue
+              }.toList
               if (null == engineTpyeLabel) {
                 logger.error(
                   "Invalid engineType null, cannot process. jobReq : " + BDPJettyServerHelper.gson
                     .toJson(jobRequest)
                 )
-                throw CacheNotReadyException(20052, "Invalid engineType null, cannot use cache.")
+                throw CacheNotReadyException(
+                  INVALID_ENGINETYPE_NULL.getErrorCode,
+                  INVALID_ENGINETYPE_NULL.getErrorDesc
+                )
               }
               val readCacheBefore = TaskUtils
                 .getRuntimeMap(job.getParams)
@@ -78,13 +84,13 @@ class ReadCacheConsumer(
               val cacheResult = JobHistoryHelper.getCache(
                 jobRequest.getExecutionCode,
                 jobRequest.getExecuteUser,
-                labelStrList,
+                labelStrList.asJava,
                 readCacheBefore
               )
               if (cacheResult != null && StringUtils.isNotBlank(cacheResult.getResultLocation)) {
                 val resultSets = listResults(cacheResult.getResultLocation, job.getUser)
                 if (resultSets.size() > 0) {
-                  for (resultSet: FsPath <- resultSets) {
+                  for (resultSet: FsPath <- resultSets.asScala) {
                     val alias = FilenameUtils.getBaseName(resultSet.getPath)
                     val output = FsPath
                       .getFsPath(
@@ -93,7 +99,10 @@ class ReadCacheConsumer(
                       )
                       .getSchemaPath
 //                    persistenceManager.onResultSetCreated(job, new CacheOutputExecuteResponse(alias, output))
-                    throw CacheNotReadyException(20053, "Invalid resultsets, cannot use cache.")
+                    throw CacheNotReadyException(
+                      INVALID_RESULTSETS.getErrorCode,
+                      INVALID_RESULTSETS.getErrorDesc
+                    )
                     // todo check
                   }
 //                  persistenceManager.onResultSizeCreated(job, resultSets.size())
@@ -137,11 +146,12 @@ class ReadCacheConsumer(
     val consumer = schedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(groupName)
     val index = consumer.getConsumeQueue.offer(job)
     // index.map(getEventId(_, groupName)).foreach(job.setId)
-    if (index.isEmpty)
+    if (index.isEmpty) {
       throw new SchedulerErrorException(
         12001,
         "The submission job failed and the queue is full!(提交作业失败，队列已满！)"
       )
+    }
   }
 
 }

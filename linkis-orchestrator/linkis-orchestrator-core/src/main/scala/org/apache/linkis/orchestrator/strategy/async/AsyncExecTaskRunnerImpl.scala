@@ -147,10 +147,7 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
    * @param fromStatus
    * @param toStatus
    */
-  def beforeStatusChanged(
-      fromStatus: ExecutionNodeStatus,
-      toStatus: ExecutionNodeStatus
-  ): Unit = {
+  def beforeStatusChanged(fromStatus: ExecutionNodeStatus, toStatus: ExecutionNodeStatus): Unit = {
     task match {
       case asyncExecTask: AsyncExecTask =>
         if (
@@ -167,7 +164,6 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
             )
               resultSets.wait(1000)
           }
-          // if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
         }
       case _ =>
     }

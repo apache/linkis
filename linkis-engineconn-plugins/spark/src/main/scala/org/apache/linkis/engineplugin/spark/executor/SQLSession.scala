@@ -34,6 +34,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.{StructField, StructType}
 
 import java.text.NumberFormat
+import java.util.Locale
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -99,7 +100,7 @@ object SQLSession extends Logging {
       .map(c =>
         Column(
           c.name,
-          DataType.toDataType(c.dataType.typeName.toLowerCase),
+          DataType.toDataType(c.dataType.typeName.toLowerCase(Locale.getDefault())),
           c.getComment().orNull
         )
       )
@@ -108,9 +109,9 @@ object SQLSession extends Logging {
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer =
-      if (StringUtils.isNotBlank(alias))
+      if (StringUtils.isNotBlank(alias)) {
         engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE, alias)
-      else engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
+      } else engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     writer.addMetaData(metaData)
     var index = 0
     Utils.tryThrow({

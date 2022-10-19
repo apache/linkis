@@ -65,8 +65,9 @@ object DataSourceTestConnectAction {
     }
 
     def build(): DataSourceTestConnectAction = {
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
       if (version == null) throw new DataSourceClientBuilderException("version is needed!")
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 

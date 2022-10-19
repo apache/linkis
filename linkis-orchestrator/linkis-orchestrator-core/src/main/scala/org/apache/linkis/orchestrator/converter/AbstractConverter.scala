@@ -23,10 +23,7 @@ import org.apache.linkis.orchestrator.exception.{
   OrchestratorErrorCodeSummary,
   OrchestratorErrorException
 }
-import org.apache.linkis.orchestrator.extensions.catalyst.{
-  ConverterCheckRuler,
-  ConverterTransform
-}
+import org.apache.linkis.orchestrator.extensions.catalyst.{ConverterCheckRuler, ConverterTransform}
 import org.apache.linkis.orchestrator.plans.ast.{ASTContext, Job}
 
 /**

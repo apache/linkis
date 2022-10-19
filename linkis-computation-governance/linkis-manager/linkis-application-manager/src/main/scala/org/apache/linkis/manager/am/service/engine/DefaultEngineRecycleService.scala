@@ -20,10 +20,7 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.am.recycle.RecyclingRuleExecutor
-import org.apache.linkis.manager.common.protocol.engine.{
-  EngineRecyclingRequest,
-  EngineStopRequest
-}
+import org.apache.linkis.manager.common.protocol.engine.{EngineRecyclingRequest, EngineStopRequest}
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,7 +28,7 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEngineRecycleService
@@ -57,9 +54,9 @@ class DefaultEngineRecycleService
     // 1. 规则解析
     val ruleList = engineRecyclingRequest.getRecyclingRuleList
     // 2. 返回一系列待回收Engine，
-    val recyclingNodeSet = ruleList
+    val recyclingNodeSet = ruleList.asScala
       .flatMap { rule =>
-        val ruleExecutorOption = ruleExecutorList.find(_.ifAccept(rule))
+        val ruleExecutorOption = ruleExecutorList.asScala.find(_.ifAccept(rule))
         if (ruleExecutorOption.isDefined) {
           ruleExecutorOption.get.executeRule(rule)
         } else {

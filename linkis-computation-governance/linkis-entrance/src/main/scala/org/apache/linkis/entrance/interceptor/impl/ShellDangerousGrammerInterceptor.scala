@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.DangerousGramsCheckException
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -84,15 +85,14 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
   }
 
   /**
-   * The apply function is to supplement the information of the incoming parameter task, making
-   * the content of this task more complete.   * Additional information includes: database
-   * information supplement, custom variable substitution, code check, limit limit, etc.
+   * The apply function is to supplement the information of the incoming parameter task, making the
+   * content of this task more complete.   * Additional information includes: database information
+   * supplement, custom variable substitution, code check, limit limit, etc.
    * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
    *
    * @param jobRequest
    * @param logAppender
-   *   Used to cache the necessary reminder logs and pass them to the upper
-   *   layer(用于缓存必要的提醒日志，传给上层)
+   *   Used to cache the necessary reminder logs and pass them to the upper layer(用于缓存必要的提醒日志，传给上层)
    * @return
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
@@ -107,10 +107,8 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
     ) {
       logger.info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
       if (shellContainDangerUsage(jobRequest.getExecutionCode)) {
-        throw DangerousGramsCheckException("Shell code contains blacklisted code(shell中包含黑名单代码)")
-      } /*else if (!shellWhiteUsage(jobRequest.getExecutionCode)) {
-        throw  DangerousGramsCheckException("The shell code is not in the whitelist code(shell代码不在白名单中)")
-      }*/
+        throw DangerousGramsCheckException(SHELL_BLACKLISTED_CODE.getErrorDesc)
+      }
       jobRequest
     } else {
       jobRequest

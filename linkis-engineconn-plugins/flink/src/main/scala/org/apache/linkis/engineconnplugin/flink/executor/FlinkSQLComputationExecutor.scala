@@ -36,10 +36,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.exception.{
-  ExecutorInitException,
-  SqlParseException
-}
+import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.{
   FlinkStreamingResultSetListener,
   InteractiveFlinkStatusListener
@@ -184,13 +181,15 @@ class FlinkSQLComputationExecutor(
   }
 
   // TODO wait for completed.
-  override def progress(taskID: String): Float = if (operation == null) 0
-  else
+  override def progress(taskID: String): Float = if (operation == null) {
+    0
+  } else {
     operation.getJobStatus match {
       case jobState if jobState.isGloballyTerminalState => 1
       case RUNNING => 0.5f
       case _ => 0
     }
+  }
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty
 
@@ -320,7 +319,8 @@ class DevFlinkSQLStreamingListener(
       override def run(): Unit =
         if (System.currentTimeMillis - lastPulledTime >= maxWaitForResultTime) {
           logger.warn(
-            s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill."
+            s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. " +
+              s"Notice: only the dev environment will touch off the automatic kill."
           )
           stopJobOperation()
         }

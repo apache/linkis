@@ -27,7 +27,7 @@
       <div class="engine-header-bar">
         <h3 class="data-type-title">{{ $t('message.common.resourceSimple.YS') }}</h3>
         <div class="classify">
-          <span>{{ $t('message.common.resourceSimple.FL') }}</span>
+          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
           <Select v-model="ideSelectData">
             <Option
               v-for="item in typeList"
@@ -70,7 +70,7 @@
       <div class="engine-header-bar">
         <h3 class="data-type-title">{{ $t('message.common.resourceSimple.ZH') }}</h3>
         <div class="classify">
-          <span>{{ $t('message.common.resourceSimple.FL') }}</span>
+          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
           <Select v-model="boardSelectData">
             <Option
               v-for="item in typeList"
@@ -113,7 +113,7 @@
       <div class="engine-header-bar">
         <h3 class="data-type-title">Other</h3>
         <div class="classify">
-          <span>{{ $t('message.common.resourceSimple.FL') }}</span>
+          <span style="width: auto; white-space: nowrap;">{{ $t('message.common.resourceSimple.FL') }}</span>
           <Select v-model="otherSelectData">
             <Option
               v-for="item in typeList"

@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.utils
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.JobHistoryFailedException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -91,7 +92,7 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * 对于一个在内存中找不到这个任务的话，可以直接干掉
+   * If the task cannot be found in memory, you can directly kill it
    *
    * @param taskID
    */
@@ -106,7 +107,7 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * 批量强制kill
+   * Batch forced kill
    *
    * @param taskIdList
    */
@@ -136,7 +137,7 @@ object JobHistoryHelper extends Logging {
           val status = responsePersist.getStatus
           if (status != SUCCESS_FLAG) {
             logger.error(s"query from jobHistory status failed, status is $status")
-            throw JobHistoryFailedException("query from jobHistory status failed")
+            throw JobHistoryFailedException(QUERY_STATUS_FAILED.getErrorDesc)
           } else {
             val data = responsePersist.getData
             data.get(JobRequestConstants.JOB_HISTORY_LIST) match {
@@ -144,19 +145,17 @@ object JobHistoryHelper extends Logging {
                 if (tasks.size() > 0) tasks.get(0)
                 else null
               case _ =>
-                throw JobHistoryFailedException(
-                  s"query from jobhistory not a correct List type taskId is $taskID"
-                )
+                throw JobHistoryFailedException(CORRECT_LIST_TYPR.getErrorDesc + s"$taskID")
             }
           }
         case _ =>
           logger.error("get query response incorrectly")
-          throw JobHistoryFailedException("get query response incorrectly")
+          throw JobHistoryFailedException(GET_QUERY_RESPONSE.getErrorDesc)
       }
     } {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
-        val e1 = JobHistoryFailedException(s"query taskId $taskID error")
+        val e1 = JobHistoryFailedException(QUERY_TASKID_ERROR.getErrorDesc + s"$taskID")
         e1.initCause(e)
         throw e
     }

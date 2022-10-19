@@ -24,7 +24,12 @@ public enum LinkisErrorCodeSummary {
    * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
    * linkis-extensions 26000-29999 linkis-engineconn-plugins
    */
-  EngineManagerErrorException(321, "引擎启动失败", "在某种情况下启动失败", "hadoop", "EngineConnManager");
+  EngineManagerErrorException(
+      321,
+      "Engine start failed(引擎启动失败)",
+      "Failed to start under certain circumstances(在某种情况下启动失败)",
+      "hadoop",
+      "EngineConnManager");
   /** 错误码 */
   private int errorCode;
   /** 错误描述 */

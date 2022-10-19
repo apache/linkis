@@ -114,7 +114,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
             </if>
             <if test="startId != null">and id >= #{startId}</if>
         </where>
@@ -130,7 +130,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like '%"${userCreatorKey}":"%-${creator}%'
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
             <if test="startId != null">and id >= #{startId}</if>
         </where>
@@ -158,7 +158,7 @@
             <if test="instances != null">instances = #{instances},</if>
             <if test="metrics != null">metrics = #{metrics},</if>
             <if test="engineType != null">engine_type = #{engineType},</if>
-            <if test="executionCode != null">and execution_code = #{executionCode},</if>
+            <if test="executionCode != null">execution_code = #{executionCode},</if>
         </trim>
         <![CDATA[
         WHERE id = #{id} AND updated_time <= #{updateTimeMills}
@@ -167,9 +167,9 @@
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
         SELECT
-        bdt.`status`
+        bdt.status
         FROM
-        `linkis_ps_job_history_group_history` bdt
+        linkis_ps_job_history_group_history bdt
         WHERE
         id = #{jobId} FOR UPDATE
     </select>
@@ -194,7 +194,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and userCreatorValue != null">
-                and  LOCATE('"${userCreatorKey}":"${userCreatorValue}', labels) > 0
+                and  LOCATE(CONCAT('"', #{userCreatorKey}, '":"', #{userCreatorValue}), labels) > 0
             </if>
         </where>
     </select>
@@ -208,7 +208,7 @@
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
             <if test="userCreatorKey != null and creator != null">
-                and labels like '%"${userCreatorKey}":"%-${creator}%'
+                and labels like CONCAT('%"', #{userCreatorKey}, '":"%-', #{creator}, '%')
             </if>
         </where>
     </select>

@@ -51,11 +51,12 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
 
   def init(): Unit = {
     val resType = Dolphin.getType(inputStream)
-    if (resultSet.resultSetType != resType)
+    if (resultSet.resultSetType != resType) {
       throw new IOException(
         "File type does not match(文件类型不匹配): " + ResultSetFactory.resultSetType
           .getOrElse(resType, "TABLE")
       )
+    }
   }
 
   /**
@@ -96,10 +97,11 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
   @scala.throws[IOException]
   override def getRecord: Record = {
     if (metaData == null) throw new IOException("Must read metadata first(必须先读取metadata)")
-    if (row == null)
+    if (row == null) {
       throw new IOException(
         "Can't get the value of the field, maybe the IO stream has been read or has been closed!(拿不到字段的值，也许IO流已读取完毕或已被关闭！)"
       )
+    }
     row
   }
 

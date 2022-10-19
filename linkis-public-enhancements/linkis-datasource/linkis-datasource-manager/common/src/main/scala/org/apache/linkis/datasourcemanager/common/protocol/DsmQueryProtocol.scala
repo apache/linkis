@@ -17,18 +17,26 @@
 
 package org.apache.linkis.datasourcemanager.common.protocol
 
+import org.apache.linkis.protocol.message.RequestProtocol
+
 import java.util
 
 /**
  * Store error code map
  */
-trait DsmQueryProtocol {}
+trait DsmQueryProtocol extends RequestProtocol {}
 
 /**
  * Query request of Data Source Information
  * @param id
  */
-case class DsInfoQueryRequest(id: String, name: String, system: String) extends DsmQueryProtocol
+case class DsInfoQueryRequest(id: String, name: String, system: String) extends DsmQueryProtocol {
+
+  def isValid: Boolean = {
+    (Option(id).isDefined || Option(name).isDefined) && Option(system).isDefined
+  }
+
+}
 
 /**
  * Response of parameter map

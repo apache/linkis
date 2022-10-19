@@ -21,6 +21,6 @@ abstract class LockJob extends Job {
 
   private var lock: String = _
 
-  def setLock(lock: String) = this.lock = lock
-  def getLock = lock
+  def setLock(lock: String): Unit = this.lock = lock
+  def getLock: String = lock
 }

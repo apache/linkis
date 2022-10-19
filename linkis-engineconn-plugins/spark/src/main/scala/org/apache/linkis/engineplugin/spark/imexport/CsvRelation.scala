@@ -82,7 +82,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
       transfer(spark.sparkContext, path, encoding)
     }
     val indexs = getFilterColumnIndex(rdd, fieldDelimiter, columns, hasHeader)
-    // header处理
+    // header
     val tokenRdd = if (hasHeader) {
       rdd
         .mapPartitionsWithIndex((index, iter) => if (index == 0) iter.drop(1) else iter)
@@ -106,13 +106,6 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
       columns: List[Map[String, Any]],
       hasHeader: Boolean
   ): Array[Int] = {
-    /*if(hasHeader){
-      val columnNames: List[String] = columns.map(_.getOrElse("name",null).toString)
-      val split: Array[String] = rdd.first().split(fieldDelimiter)
-      split.indices.filter(i =>columnNames.contains(split(i))).toArray
-    }else{
-      columns.map(_.getOrElse("name",null).toString.split("_")(1).toInt -1).toArray
-    }*/
     columns.map(_.getOrElse("index", 0).toString.toInt).toArray
   }
 
@@ -132,9 +125,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
         }
         val data = if (nanValue.equalsIgnoreCase(field)) {
           null
-        } else if (
-            schema(i).dataType != StringType && (field.isEmpty || nullValue.equals(field))
-        ) {
+        } else if (schema(i).dataType != StringType && (field.isEmpty || nullValue.equals(field))) {
           null
         } else {
           val dateFormat = columns(i).getOrElse("dateFormat", "yyyy-MM-dd").toString
@@ -204,7 +195,9 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
       isOverwrite: Boolean = false
   ): Boolean = {
     val filesystemPath = new Path(path)
+    // scalastyle:off hadoopconfiguration
     spark.sparkContext.hadoopConfiguration.setBoolean("fs.hdfs.impl.disable.cache", true)
+    // scalastyle:off hadoopconfiguration
     val fs = filesystemPath.getFileSystem(spark.sparkContext.hadoopConfiguration)
     fs.setVerifyChecksum(false)
     fs.setWriteChecksum(false)
@@ -269,12 +262,12 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
     val msg = new StringBuilder
     schema.indices.foreach { i =>
       val data = row(i) match {
-        case value: String => {
-          if (("NULL".equals(value) || "".equals(value)) && !"SHUFFLEOFF".equals(exportNullValue))
+        case value: String =>
+          if (("NULL".equals(value) || "".equals(value)) && !"SHUFFLEOFF".equals(exportNullValue)) {
             exportNullValue
-          else
+          } else {
             value.replaceAll("\n|\t", " ")
-        }
+          }
         case value: Any => value.toString
         case _ => if ("SHUFFLEOFF".equals(exportNullValue)) "NULL" else exportNullValue
       }

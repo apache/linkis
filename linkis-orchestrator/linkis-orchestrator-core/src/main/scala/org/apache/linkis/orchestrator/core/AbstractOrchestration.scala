@@ -115,6 +115,7 @@ abstract class AbstractOrchestration(
 
   protected def getFileSystem(fsPath: FsPath): Fs
 
+  // scalastyle:off println
   override def collectAndPrint(): Unit = println(collectAsString())
 
   override def asyncExecute(): OrchestrationFuture = {
@@ -142,8 +143,7 @@ abstract class AbstractOrchestration(
 
   protected def createOrchestration(logicalPlan: Task): Orchestration
 
-  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse)
-      extends OrchestrationFuture {
+  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse) extends OrchestrationFuture {
 
     private val waitLock = new Array[Byte](0)
 

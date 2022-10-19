@@ -18,7 +18,8 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisCommonsErrorCodeSummary {
-  ENGINE_FAILED_STARTED(11000, "引擎启动失败", "引擎启动失败", "hiveEngineConn");
+  ENGINE_FAILED_STARTED(
+      11000, "Engine start failed(引擎启动失败)", "Engine start failed(引擎启动失败)", "hiveEngineConn");
 
   /** 错误码 */
   private int errorCode;

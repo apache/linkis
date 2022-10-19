@@ -25,6 +25,7 @@ import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
+import org.apache.commons.io.IOUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 
 import java.io.{IOException, OutputStream}
@@ -145,15 +146,18 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   def closeFs: Unit = {
-    if (fs != null)
-      fs.close()
+    if (fs != null) {
+      IOUtils.closeQuietly(fs)
+      fs = null
+    }
   }
 
   override def close(): Unit = {
     Utils.tryFinally(if (outputStream != null) flush()) {
       closeFs
       if (outputStream != null) {
-        outputStream.close()
+        IOUtils.closeQuietly(outputStream)
+        outputStream = null
       }
     }
   }
@@ -172,7 +176,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
           case _ =>
             outputStream.flush()
         }
-      }(s"$toString Error encounters when flush result set ")
+      }(s"Error encounters when flush result set ")
     }
   }
 

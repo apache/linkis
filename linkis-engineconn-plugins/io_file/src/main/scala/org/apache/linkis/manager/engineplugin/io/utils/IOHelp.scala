@@ -20,6 +20,10 @@ package org.apache.linkis.manager.engineplugin.io.utils
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
+import org.apache.linkis.storage.errorcode.LinkisIoFileErrorCodeSummary.{
+  CANNOT_BE_EMPTY,
+  PARAMETER_CALLS
+}
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
@@ -38,11 +42,9 @@ object IOHelp {
    * @return
    */
   def read(fs: Fs, method: MethodEntity): String = {
-    if (method.params == null || method.params.isEmpty)
-      throw new StorageErrorException(
-        53002,
-        "The read method parameter cannot be empty(read方法参数不能为空)"
-      )
+    if (method.params == null || method.params.isEmpty) {
+      throw new StorageErrorException(CANNOT_BE_EMPTY.getErrorCode, CANNOT_BE_EMPTY.getErrorDesc)
+    }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
       method.params(0).asInstanceOf[String],
       classOf[FsPath]
@@ -72,7 +74,8 @@ object IOHelp {
         writer.addMetaData(ioMetaData)
         writer.addRecord(ioRecord)
         writer.toString()
-      } else throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
+      } else
+        throw new StorageErrorException(PARAMETER_CALLS.getErrorCode, PARAMETER_CALLS.getErrorDesc)
     }(IOUtils.closeQuietly(inputStream))
   }
 
@@ -82,8 +85,9 @@ object IOHelp {
    * @param method
    */
   def write(fs: Fs, method: MethodEntity): Unit = {
-    if (method.params == null || method.params.isEmpty)
-      throw new StorageErrorException(53003, "Unsupported parameter call(不支持的参数调用)")
+    if (method.params == null || method.params.isEmpty) {
+      throw new StorageErrorException(PARAMETER_CALLS.getErrorCode, PARAMETER_CALLS.getErrorDesc)
+    }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
       method.params(0).asInstanceOf[String],
       classOf[FsPath]

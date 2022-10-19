@@ -17,7 +17,7 @@
 
 package org.apache.linkis.ujes.client.response.image
 
-import javax.swing.{ImageIcon, JFrame}
+import javax.swing.{ImageIcon, JFrame, WindowConstants}
 
 import java.util
 import java.util.Base64
@@ -82,7 +82,7 @@ object ShowImage {
 
       val frame = new JFrame
       frame.setContentPane(new ImagePanel(new ImageIcon(data).getImage))
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+      frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       frame.setBounds(100, 100, width, height)
       frame.setVisible(true)
 

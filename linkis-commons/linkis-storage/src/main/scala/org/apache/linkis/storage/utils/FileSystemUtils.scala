@@ -69,8 +69,9 @@ object FileSystemUtils extends Logging {
   ): Unit = {
     if (!fileSystem.exists(filePath)) {
       if (!fileSystem.exists(filePath.getParent)) {
-        if (!createParentWhenNotExists)
+        if (!createParentWhenNotExists) {
           throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
+        }
         mkdirs(fileSystem, filePath.getParent, user)
       }
       fileSystem.createNewFile(filePath)

@@ -54,11 +54,7 @@ class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStre
       ParserFactory.listParsers().filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
     lineText = bufferedReader.readLine()
     while (
-        hasNext && parser.length > 0 && isMetadata(
-          lineText,
-          parser(0).prefix,
-          parser(0).prefixConf
-        )
+        hasNext && parser.length > 0 && isMetadata(lineText, parser(0).prefix, parser(0).prefixConf)
     ) {
       variables += parser(0).parse(lineText)
       lineText = bufferedReader.readLine()
@@ -105,13 +101,12 @@ class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStre
     val regex = ("\\s*" + prefix + "\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*").r
     line match {
       case regex(_, _) => true
-      case _ => {
+      case _ =>
         val split: Array[String] = line.split("=")
         if (split.size != 2) return false
         if (split(0).split(" ").filter(_ != "").size != 4) return false
         if (!split(0).split(" ").filter(_ != "")(0).equals(prefixConf)) return false
         true
-      }
     }
   }
 

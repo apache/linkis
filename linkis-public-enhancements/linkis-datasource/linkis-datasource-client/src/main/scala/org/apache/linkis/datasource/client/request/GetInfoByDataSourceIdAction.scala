@@ -58,8 +58,9 @@ object GetInfoByDataSourceIdAction {
     }
 
     def build(): GetInfoByDataSourceIdAction = {
-      if (dataSourceId == null)
+      if (dataSourceId == null) {
         throw new DataSourceClientBuilderException("dataSourceId is needed!")
+      }
       if (system == null) throw new DataSourceClientBuilderException("system is needed!")
       if (user == null) throw new DataSourceClientBuilderException("user is needed!")
 

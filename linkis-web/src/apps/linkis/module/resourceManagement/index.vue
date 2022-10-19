@@ -481,7 +481,7 @@ export default {
         this.currentParentsData = item;
         this.tagTitle = Object.assign(this.tagTitle, [item.userCreator])
       } else {
-        this.tagTitle = Object.assign(this.tagTitle, [this.currentParentsData.userCreator, item.engineType])
+        this.tagTitle = Object.assign(this.tagTitle, [parentData.userCreator, item.engineType])
       }
       let parameter = {
         userCreator: isChildren ? parentData.userCreator : this.currentParentsData.userCreator,

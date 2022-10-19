@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DefaultResourceLabelService extends ResourceLabelService with Logging {
@@ -52,22 +52,22 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
    * @return
    */
   override def getResourceLabels(labels: util.List[Label[_]]): util.List[Label[_]] = {
-    val labelKeyValueList = labels
+    val labelKeyValueList = labels.asScala
       .flatMap { label =>
         val persistenceLabel = LabelManagerUtils.convertPersistenceLabel(label)
-        persistenceLabel.getValue.map { keyValue =>
+        persistenceLabel.getValue.asScala.map { keyValue =>
           new LabelKeyValue(keyValue._1, keyValue._2)
         }
       }
       .filter(null != _)
       .toList
-    val resourceLabels = resourceLabelPersistence.getResourceLabels(labelKeyValueList)
-    resourceLabels.map { label =>
+    val resourceLabels = resourceLabelPersistence.getResourceLabels(labelKeyValueList.asJava)
+    resourceLabels.asScala.map { label =>
       val realyLabel: Label[_] =
         labelBuilderFactory.createLabel(label.getLabelKey, label.getValue)
       realyLabel
     }
-  }
+  }.asJava
 
   /**
    * 设置某个Label的资源数值，如果不存在add，存在对应的Label update lABEL 不存在需要插入Label先
@@ -75,11 +75,7 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
    * @param label
    * @param resource
    */
-  override def setResourceToLabel(
-      label: Label[_],
-      resource: NodeResource,
-      source: String
-  ): Unit = {
+  override def setResourceToLabel(label: Label[_], resource: NodeResource, source: String): Unit = {
     val persistResource = ResourceUtils.toPersistenceResource(resource)
     persistResource.setUpdator(source)
     resourceLabelPersistence.setResourceToLabel(
@@ -138,14 +134,12 @@ class DefaultResourceLabelService extends ResourceLabelService with Logging {
    * @param label
    */
   override def removeResourceByLabel(label: Label[_]): Unit = {
-    resourceLabelPersistence.removeResourceByLabel(
-      LabelManagerUtils.convertPersistenceLabel(label)
-    )
+    resourceLabelPersistence.removeResourceByLabel(LabelManagerUtils.convertPersistenceLabel(label))
   }
 
   override def removeResourceByLabels(labels: util.List[Label[_]]): Unit = {
     resourceLabelPersistence.removeResourceByLabels(
-      labels.map(LabelManagerUtils.convertPersistenceLabel)
+      labels.asScala.map(LabelManagerUtils.convertPersistenceLabel).asJava
     )
   }
 

@@ -44,22 +44,22 @@ class ComputationJobReq extends AbstractJobReq {
 
   override def getName: String = s"ComputationJobReq_$id"
 
-  def getCodeLogicalUnit = codeLogicalUnit
+  def getCodeLogicalUnit: CodeLogicalUnit = codeLogicalUnit
 
-  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit) = this.codeLogicalUnit =
+  def setCodeLogicalUnit(codeLogicalUnit: CodeLogicalUnit): Unit = this.codeLogicalUnit =
     codeLogicalUnit
 
   def getCodeLanguageLabel: CodeLanguageLabel = {
     codeLogicalUnit.getLabel
   }
 
-  def getErrorCode = errorCode
+  def getErrorCode: Int = errorCode
 
-  def setErrorCode(errorCode: Int) = this.errorCode = errorCode
+  def setErrorCode(errorCode: Int): Unit = this.errorCode = errorCode
 
-  def getErrorDesc = errorDesc
+  def getErrorDesc: String = errorDesc
 
-  def setErrorDesc(errorDesc: String) = this.errorDesc = errorDesc
+  def setErrorDesc(errorDesc: String): Unit = this.errorDesc = errorDesc
 
 }
 

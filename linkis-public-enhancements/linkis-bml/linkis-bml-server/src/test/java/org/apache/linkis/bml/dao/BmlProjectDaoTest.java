@@ -27,6 +27,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class BmlProjectDaoTest extends BaseDaoTest {
 
   @Autowired BmlProjectDao bmlProjectDao;
@@ -41,8 +43,9 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProject.setCreator("creCreatorUser");
     bmlProject.setEnabled(1);
     bmlProject.setCreateTime(new Date());
-    bmlProject.setId(1);
     bmlProjectDao.createNewProject(bmlProject);
+    BmlProject bmlProjects = bmlProjectDao.getBmlProject("testName");
+    assertTrue(bmlProjects != null);
   }
 
   @Test
@@ -64,7 +67,8 @@ class BmlProjectDaoTest extends BaseDaoTest {
   void getPrivInProject() {
     setProjectPriv();
     createNewProject();
-    bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
+    Integer i = bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
+    assertTrue(i != null);
   }
 
   @Test
@@ -74,14 +78,18 @@ class BmlProjectDaoTest extends BaseDaoTest {
 
   @Test
   void getProjectNameByResourceId() {
-    setProjectPriv();
-    bmlProjectDao.getProjectNameByResourceId("123");
+    createNewProject();
+    addProjectResource();
+    String projectName = bmlProjectDao.getProjectNameByResourceId("123");
+    assertTrue(projectName != null);
   }
 
   @Test
   void getProjectIdByName() {
     createNewProject();
     bmlProjectDao.getProjectIdByName("testName");
+    Integer i = bmlProjectDao.getProjectIdByName("testName");
+    assertTrue(i != null);
   }
 
   @Test
@@ -93,7 +101,8 @@ class BmlProjectDaoTest extends BaseDaoTest {
   @Test
   void checkIfExists() {
     setProjectPriv();
-    bmlProjectDao.checkIfExists(1, "123");
+    Integer i = bmlProjectDao.checkIfExists(1, "123");
+    assertTrue(i != null);
   }
 
   @Test

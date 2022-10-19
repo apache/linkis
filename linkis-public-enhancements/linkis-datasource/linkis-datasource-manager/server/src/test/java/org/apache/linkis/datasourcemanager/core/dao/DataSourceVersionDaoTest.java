@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 class DataSourceVersionDaoTest extends BaseDaoTest {
   private static final Logger logger = LoggerFactory.getLogger(DataSourceVersionDaoTest.class);
 
@@ -74,6 +76,7 @@ class DataSourceVersionDaoTest extends BaseDaoTest {
     assertTrue(dataSourceVersionDao.getLatestVersion(1l) == 2l);
   }
 
+  @Disabled
   @Test
   void testSelectOneVersion() {
     insertOne();

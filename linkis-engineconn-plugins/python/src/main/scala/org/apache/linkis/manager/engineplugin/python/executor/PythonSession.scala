@@ -87,9 +87,9 @@ class PythonSession extends Logging {
     val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
     logger.info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
     val pythonExec =
-      if ("python3".equalsIgnoreCase(userDefinePythonVersion))
+      if ("python3".equalsIgnoreCase(userDefinePythonVersion)) {
         PythonEngineConfiguration.PYTHON_VERSION.getValue
-      else "python"
+      } else { "python" }
     logger.info(s"pythonExec => ${pythonExec}")
     val port = {
       val socket = new ServerSocket(0)
@@ -152,15 +152,12 @@ class PythonSession extends Logging {
     )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error(
-              "initialize python executor failed, please ask administrator for help!",
-              t
-            )
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
             throw t
           }
@@ -179,6 +176,7 @@ class PythonSession extends Logging {
     this.code = Kind.getRealCode(code)
     queryLock synchronized queryLock.notify()
     try {
+      // scalastyle:off awaitresult
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>

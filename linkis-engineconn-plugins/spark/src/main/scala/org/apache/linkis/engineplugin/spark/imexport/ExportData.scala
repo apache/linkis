@@ -60,11 +60,11 @@ object ExportData extends Logging {
 
     val pathType = LoadData.getMapValue[String](dest, "pathType", "share")
     val path =
-      if ("share".equals(pathType))
+      if ("share".equals(pathType)) {
         "file://" + LoadData.getMapValue[String](dest, "path")
-      else if (SparkConfiguration.IS_VIEWFS_ENV.getValue)
+      } else if (SparkConfiguration.IS_VIEWFS_ENV.getValue) {
         LoadData.getMapValue[String](dest, "path")
-      else "hdfs://" + LoadData.getMapValue[String](dest, "path")
+      } else "hdfs://" + LoadData.getMapValue[String](dest, "path")
 
     val hasHeader = LoadData.getMapValue[Boolean](dest, "hasHeader", false)
     val isCsv = LoadData.getMapValue[Boolean](dest, "isCsv", true)

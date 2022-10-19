@@ -46,8 +46,9 @@ class LinkisDataSourceRemoteClient(clientConfig: DWSClientConfig, clientName: St
 
   def createClientConfig(): DWSClientConfig = {
     val serverUrl = Configuration.getGateWayURL()
-    if (StringUtils.isEmpty(serverUrl))
+    if (StringUtils.isEmpty(serverUrl)) {
       throw new DataSourceClientBuilderException("serverUrl cannot be null.")
+    }
 
     val maxConnection: Int = CONNECTION_MAX_SIZE.getValue
     val connectTimeout: Int = CONNECTION_TIMEOUT.getValue

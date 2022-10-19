@@ -54,11 +54,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util
 import java.util.Date
 
-class DefaultEntranceExecutor(
-    id: Long,
-    mark: MarkReq,
-    entranceExecutorManager: EntranceExecutorManager
-) extends EntranceExecutor(id, mark)
+class DefaultEntranceExecutor(id: Long)
+    extends EntranceExecutor(id)
     with SingleTaskOperateSupport
     with Logging {
 
@@ -142,18 +139,16 @@ class DefaultEntranceExecutor(
                     entranceExecuteRequest.getJob,
                     AliasOutputExecuteResponse(firstResultSet.alias, firstResultSet.result)
                   )
-              } {
-                case e: Exception => {
-                  val msg = s"Persist resultSet error. ${e.getMessage}"
-                  logger.error(msg)
-                  val errorExecuteResponse = new DefaultFailedTaskResponse(
-                    msg,
-                    EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
-                    e
-                  )
-                  dealResponse(errorExecuteResponse, entranceExecuteRequest, orchestration)
-                  return
-                }
+              } { case e: Exception =>
+                val msg = s"Persist resultSet error. ${e.getMessage}"
+                logger.error(msg)
+                val errorExecuteResponse = new DefaultFailedTaskResponse(
+                  msg,
+                  EntranceErrorCode.RESULT_NOT_PERSISTED_ERROR.getErrCode,
+                  e
+                )
+                dealResponse(errorExecuteResponse, entranceExecuteRequest, orchestration)
+                return
               }
             }
           case _ =>
@@ -204,9 +199,7 @@ class DefaultEntranceExecutor(
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
     jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(
-      entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]]
-    )
+    jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
     jobReqBuilder.build()
   }
 

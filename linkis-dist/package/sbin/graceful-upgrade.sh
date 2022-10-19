@@ -45,9 +45,6 @@ function getPort(){
     "cg-linkismanager")
       export SERVER_PORT=$MANAGER_PORT
       ;;
-    "ps-cs")
-      export SERVER_PORT=$CS_PORT
-      ;;
     "cg-engineconnmanager")
       export SERVER_PORT=$ENGINECONNMANAGER_PORT
       ;;
@@ -56,12 +53,6 @@ function getPort(){
       ;;
     "cg-engineplugin")
       export SERVER_PORT=$ENGINECONN_PLUGIN_SERVER_PORT
-      ;;
-    "ps-data-source-manager")
-      export SERVER_PORT=$DATASOURCE_MANAGER_PORT
-      ;;
-    "ps-metadataquery")
-      export SERVER_PORT=$METADATA_QUERY_PORT
       ;;
   esac
 }

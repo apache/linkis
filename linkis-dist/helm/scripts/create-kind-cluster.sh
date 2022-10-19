@@ -27,11 +27,17 @@ set -e
 echo "# Creating KinD cluster ..."
 # create data dir for KinD cluster
 KIND_CLUSTER_HOST_PATH=${TMP_DIR}/data
+
+# Shared storage of some common dependent packages such as mysql-connector-java-*.jar
+# Values.linkis.locations.commonDir -> kind docker /opt/data/common -> vm  ${KIND_COMMON_PATH}
+KIND_COMMON_PATH=/opt/data/common/
+
 mkdir -p ${KIND_CLUSTER_HOST_PATH}
 # create kind cluster conf
 KIND_CLUSTER_CONF_TPL=${RESOURCE_DIR}/kind-cluster.yaml
 KIND_CLUSTER_CONF_FILE=${TMP_DIR}/kind-cluster.yaml
-KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} envsubst < ${KIND_CLUSTER_CONF_TPL} > ${KIND_CLUSTER_CONF_FILE}
+KIND_COMMON_PATH=${KIND_COMMON_PATH} KIND_CLUSTER_HOST_PATH=${KIND_CLUSTER_HOST_PATH} \
+envsubst < ${KIND_CLUSTER_CONF_TPL} > ${KIND_CLUSTER_CONF_FILE}
 
 echo "- kind cluster config: ${KIND_CLUSTER_CONF_FILE}"
 cat ${KIND_CLUSTER_CONF_FILE}

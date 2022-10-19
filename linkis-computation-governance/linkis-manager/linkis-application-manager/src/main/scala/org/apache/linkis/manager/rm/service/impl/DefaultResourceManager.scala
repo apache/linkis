@@ -73,6 +73,7 @@ import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 import com.google.common.collect.Lists
 
@@ -245,87 +246,65 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     // check resource with lock
     val requestResourceService = getRequestResourceService(resource.getResourceType)
     resource.setLockedResource(resource.getMinResource)
-    labelContainer.getResourceLabels.asScala.foreach(label =>
-      if (label.isInstanceOf[ResourceLabel]) {
-        // check all resource of label
+    val resourceLabels = labelContainer.getResourceLabels.asScala
+    val persistenceLocks = new ArrayBuffer[PersistenceLock]()
+
+    Utils.tryFinally {
+      // lock
+      resourceLabels.foreach { label =>
+        persistenceLocks.append(
+          tryLockOneLabel(label, wait, labelContainer.getUserCreatorLabel.getUser)
+        )
+      }
+      val labelResourceList = new util.HashMap[String, NodeResource]()
+      resourceLabels.foreach(label => {
         Utils.tryCatch {
           labelContainer.setCurrentLabel(label)
-          val persistenceLock =
-            tryLockOneLabel(label, wait, labelContainer.getUserCreatorLabel.getUser)
-          Utils.tryFinally {
-            if (!requestResourceService.canRequest(labelContainer, resource)) {
-              return NotEnoughResource(s"Labels:${label.getStringValue} not enough resource")
-            }
-          } {
-            resourceLockService.unLock(persistenceLock)
+          if (!requestResourceService.canRequest(labelContainer, resource)) {
+            return NotEnoughResource(s"Labels:${label.getStringValue} not enough resource")
           }
         } {
-          case exception: RMWarnException =>
-            return NotEnoughResource(exception.getMessage)
+          case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
           case exception: Exception =>
             throw exception
         }
-      }
-    )
-    val tickedId = UUID.randomUUID().toString
-    val labelResourceSet = new mutable.HashSet[LabelResourceMapping]()
-    Utils.tryCatch {
-      labelContainer.getResourceLabels.asScala.foreach { label =>
+        val usedResource = labelResourceService.getLabelResource(label)
+        if (usedResource == null) {
+          val msg =
+            s"Resource label: ${label.getStringValue} has no usedResource, please check, refuse request usedResource"
+          logger.info(msg)
+          throw new RMErrorException(110022, msg)
+        }
+        labelResourceList.put(label.getStringValue, usedResource)
+      })
+      resourceLabels.foreach { label =>
         labelContainer.setCurrentLabel(label)
-        val persistenceLock =
-          tryLockOneLabel(label, wait, labelContainer.getUserCreatorLabel.getUser)
-        Utils.tryFinally {
-          val labelResource = labelResourceService.getLabelResource(label)
-          if (labelResource == null) {
-            val msg =
-              s"Resource label: ${label.getStringValue} has no usedResource, please check, refuse request usedResource"
-            logger.info(msg)
-            throw new RMWarnException(RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode, msg)
-          }
-          if (labelResource != null) {
-            labelResource.setLeftResource(
-              labelResource.getLeftResource - resource.getLockedResource
-            )
-            labelResource.setLockedResource(
-              labelResource.getLockedResource + resource.getLockedResource
-            )
-            labelResourceService.setLabelResource(
-              label,
-              labelResource,
-              labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
-            )
-            labelResourceSet.add(
-              new LabelResourceMapping(
-                label,
-                resource.getLockedResource,
-                ResourceOperationType.LOCK
-              )
-            )
-          }
+        val labelResource = labelResourceList.get(label.getStringValue)
+        if (labelResource != null) {
+          labelResource.setLeftResource(labelResource.getLeftResource - resource.getLockedResource)
+          labelResource.setLockedResource(
+            labelResource.getLockedResource + resource.getLockedResource
+          )
+          labelResourceService.setLabelResource(
+            label,
+            labelResource,
+            labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+          )
           logger.info(s"ResourceChanged:${label.getStringValue} --> ${labelResource}")
           resourceCheck(label, labelResource)
-        } {
-          resourceLockService.unLock(persistenceLock)
-        }
-        if (
-            label.getClass.isAssignableFrom(
-              labelContainer.getCombinedUserCreatorEngineTypeLabel.getClass
-            )
-        ) {
-          resourceLogService.recordUserResourceAction(
-            labelContainer,
-            tickedId,
-            ChangeType.ENGINE_REQUEST,
-            resource.getLockedResource
-          )
         }
       }
-    } { case e: Exception =>
-      resourceRollback(labelResourceSet, labelContainer.getUserCreatorLabel.getUser)
-      throw e
+    } {
+      persistenceLocks.foreach(resourceLockService.unLock)
     }
-
     // record engine locked resource
+    val tickedId = UUID.randomUUID().toString
+    resourceLogService.recordUserResourceAction(
+      labelContainer,
+      tickedId,
+      ChangeType.ENGINE_REQUEST,
+      resource.getLockedResource
+    )
     val emNode = new AMEMNode
     emNode.setServiceInstance(labelContainer.getEMInstanceLabel.getServiceInstance)
     val engineNode = new AMEngineNode
@@ -507,7 +486,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           labelResource.getUsedResource < resourceInit ||
           labelResource.getLeftResource < resourceInit
       ) {
-        logger.error(
+        logger.info(
           s"found error resource! resource label:${label.getStringValue}, resource:${labelResource}, please check!"
         )
       }
@@ -713,7 +692,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
               )
             }
           } { case exception: Exception =>
-            logger.warn(
+            logger.error(
               s"Failed to release resource label ${labelContainer.getEngineInstanceLabel.getStringValue}",
               exception
             )

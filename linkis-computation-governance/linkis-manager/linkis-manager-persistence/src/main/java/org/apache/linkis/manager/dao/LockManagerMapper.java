@@ -23,6 +23,7 @@ import org.apache.ibatis.annotations.*;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -34,7 +35,11 @@ public interface LockManagerMapper {
   @Transactional(rollbackFor = Exception.class)
   void unlock(@Param("id") Integer id);
 
+  Integer getMinimumOrder(@Param("lockObject") String lockObject, @Param("id") Integer id);
+
   List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);
 
   List<PersistenceLock> getAll();
+
+  public List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
 }

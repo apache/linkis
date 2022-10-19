@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.util.Date
+
 import scala.collection.JavaConverters._
 
 @Component
@@ -62,17 +64,16 @@ class ResourceLockService extends Logging {
       logger.info("unlocked " + persistenceLock.getLockObject)
     } { case t: Throwable =>
       logger.error(s"failed to unlock label [${persistenceLock.getLockObject}]", t)
-      throw t
     }
   }
 
   def clearTimeoutLock(timeout: Long): Unit = {
-    val currentTime = System.currentTimeMillis
-    lockManagerPersistence.getAll.asScala.foreach { lock =>
-      if (currentTime - lock.getCreateTime.getTime > timeout) {
-        lockManagerPersistence.unlock(lock)
-        logger.warn("timeout force unlock " + lock.getLockObject)
-      }
+    val endDate = new Date(System.currentTimeMillis() - timeout)
+    val locks = lockManagerPersistence.getTimeOutLocks(endDate)
+    if (null == locks) return
+    locks.asScala.foreach { lock =>
+      Utils.tryAndWarn(lockManagerPersistence.unlock(lock))
+      logger.warn("timeout force unlock " + lock.getLockObject)
     }
   }
 

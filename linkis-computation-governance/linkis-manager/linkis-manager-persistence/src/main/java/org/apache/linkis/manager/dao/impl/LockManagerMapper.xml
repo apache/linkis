@@ -53,8 +53,16 @@
         select * from  linkis_cg_manager_lock where lock_object = #{lock_object}
     </select>
 
+    <select id="getMinimumOrder" resultType="java.lang.Integer">
+        select min(id) from  linkis_cg_manager_lock where id <![CDATA[<=]]> #{id} and lock_object = #{lockObject}
+    </select>
+
     <select id="getAll" resultMap="persistenceLockResultMap">
         select * from  linkis_cg_manager_lock
+    </select>
+
+    <select id="getTimeOutLocks" resultMap="persistenceLockResultMap">
+        select * from  linkis_cg_manager_lock where create_time <![CDATA[<=]]> #{startDate}
     </select>
 
 </mapper>

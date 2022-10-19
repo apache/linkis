@@ -124,7 +124,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       new Runnable {
         override def run(): Unit = {
           logger.info("Start force release timeout locks")
-          resourceLockService.clearTimeoutLock(RMConfiguration.LOCK_RELEASE_TIMEOUT.getValue.toLong)
+          Utils.tryAndWarn(
+            resourceLockService
+              .clearTimeoutLock(RMConfiguration.LOCK_RELEASE_TIMEOUT.getValue.toLong)
+          )
         }
       },
       RMConfiguration.LOCK_RELEASE_CHECK_INTERVAL.getValue.toLong,

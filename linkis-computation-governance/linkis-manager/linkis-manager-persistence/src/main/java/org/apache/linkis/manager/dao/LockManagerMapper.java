@@ -41,5 +41,5 @@ public interface LockManagerMapper {
 
   List<PersistenceLock> getAll();
 
-  public List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
+  List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
 }

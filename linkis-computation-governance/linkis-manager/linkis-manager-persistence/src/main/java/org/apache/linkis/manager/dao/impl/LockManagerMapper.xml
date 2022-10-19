@@ -62,7 +62,7 @@
     </select>
 
     <select id="getTimeOutLocks" resultMap="persistenceLockResultMap">
-        select * from  linkis_cg_manager_lock where create_time <![CDATA[<=]]> #{startDate}
+        select * from  linkis_cg_manager_lock where create_time <![CDATA[<=]]> #{endDate}
     </select>
 
 </mapper>

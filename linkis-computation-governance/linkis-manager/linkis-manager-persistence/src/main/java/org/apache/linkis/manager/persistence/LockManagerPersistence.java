@@ -19,8 +19,6 @@ package org.apache.linkis.manager.persistence;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 
-import org.apache.ibatis.annotations.Param;
-
 import java.util.Date;
 import java.util.List;
 
@@ -31,5 +29,5 @@ public interface LockManagerPersistence {
 
   List<PersistenceLock> getAll();
 
-  List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
+  List<PersistenceLock> getTimeOutLocks(Date endDate);
 }

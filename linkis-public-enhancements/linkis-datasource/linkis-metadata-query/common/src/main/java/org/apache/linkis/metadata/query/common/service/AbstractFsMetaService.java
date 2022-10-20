@@ -18,30 +18,21 @@
 package org.apache.linkis.metadata.query.common.service;
 
 import java.io.Closeable;
-import java.util.Collections;
 import java.util.Map;
 
-public interface BaseMetadataService {
+/**
+ * Filesystem meta service
+ *
+ * @param <C>
+ */
+public abstract class AbstractFsMetaService<C extends Closeable> extends AbstractCacheMetaService<C>
+    implements MetadataFsService {
+  @Override
+  public String getSchema(String operator, Map<String, Object> params) {
+    return this.getConnAndRun(operator, params, this::getSchema);
+  }
 
-  /**
-   * Get connection
-   *
-   * @param params connect params
-   * @return
-   */
-  MetadataConnection<? extends Closeable> getConnection(String operator, Map<String, Object> params)
-      throws Exception;
-
-  /**
-   * Get connection information (default empty)
-   *
-   * @param operator operator
-   * @param params connect params
-   * @param queryParams query params
-   * @return information
-   */
-  default Map<String, String> getConnectionInfo(
-      String operator, Map<String, Object> params, Map<String, String> queryParams) {
-    return Collections.emptyMap();
+  public String getSchema(C connection) {
+    return "";
   }
 }

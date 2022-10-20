@@ -15,33 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.common.service;
+package org.apache.linkis.metadata.query.service;
 
-import java.io.Closeable;
-import java.util.Collections;
-import java.util.Map;
+import org.apache.linkis.common.conf.CommonVars;
 
-public interface BaseMetadataService {
+public class HdfsParamsMapper {
 
-  /**
-   * Get connection
-   *
-   * @param params connect params
-   * @return
-   */
-  MetadataConnection<? extends Closeable> getConnection(String operator, Map<String, Object> params)
-      throws Exception;
+  public static final CommonVars<String> PARAM_HADOOP_CONF =
+      CommonVars.apply("wds.linkis.server.mdm.service.hadoop.conf", "hadoopConf");
 
-  /**
-   * Get connection information (default empty)
-   *
-   * @param operator operator
-   * @param params connect params
-   * @param queryParams query params
-   * @return information
-   */
-  default Map<String, String> getConnectionInfo(
-      String operator, Map<String, Object> params, Map<String, String> queryParams) {
-    return Collections.emptyMap();
-  }
+  public static final CommonVars<String> PARAM_HADOOP_LABEL_CLUSTER =
+      CommonVars.apply("wds.linkis.server.mdm.service.hadoop.label.cluster", "hadoopCluster");
 }

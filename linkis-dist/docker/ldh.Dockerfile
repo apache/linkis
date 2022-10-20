@@ -81,11 +81,8 @@ RUN mkdir -p /etc/ldh \
     && ln -s /opt/ldh/${LINKIS_VERSION}/apache-zookeeper-${ZOOKEEPER_VERSION}-bin /opt/ldh/current/zookeeper
 
 # after create soft link
-ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hive/lib/
-ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
-
-
-
+#ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/hive/lib/
+#ADD ldh-tars/mysql-connector-java-${MYSQL_JDBC_VERSION}.jar /opt/ldh/current/spark/jars/
 
 ENV JAVA_HOME /etc/alternatives/jre
 ENV PATH /opt/ldh/current/hadoop/bin:/opt/ldh/current/hive/bin:/opt/ldh/current/spark/bin:/opt/ldh/current/flink/bin:/opt/ldh/current/zookeeper/bin:$PATH

@@ -19,7 +19,7 @@ spring:
   profiles: eureka
 
 server:
-  port: 20303
+  port: 8761
   enable-self-preservation: false
   eviction-interval-timer-in-ms: 3000
   response-cache-update-interval-ms: 2000
@@ -33,10 +33,10 @@ eureka:
 #    register-with-eureka: false
 #    fetch-registry: false
     serviceUrl:
-      defaultZone: http://127.0.0.1:20303/eureka/
+      defaultZone: http://bigd-sit-linkis-mgr1:8761/eureka/,http://bigd-sit-linkis-mgr2:8761/eureka/
 
 management:
   endpoints:
     web:
       exposure:
-        include: refresh,info,health,metrics
+        include: refresh,info,health,metrics,prometheus

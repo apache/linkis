@@ -27,7 +27,8 @@
   <artifactId>linkis-engineplugin-hive</artifactId>
 
   <properties>
-    <hive.version>2.3.3</hive.version>
+    <hive.version>2.1.1-cdh6.2.0</hive.version>
+    <hive.dist.version>2.1.1</hive.dist.version>
   </properties>
 
   <dependencies>
@@ -282,10 +283,16 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
         </exclusion>
+        <!-- hadoop 3.X 修改包 start -->
+        <!--        <exclusion>-->
+        <!--          <groupId>org.apache.hadoop</groupId>-->
+        <!--          <artifactId>hadoop-hdfs</artifactId>-->
+        <!--        </exclusion>-->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
+          <artifactId>hadoop-hdfs-client</artifactId>
         </exclusion>
+        <!-- hadoop 3.X 修改包 end -->
       </exclusions>
     </dependency>
 

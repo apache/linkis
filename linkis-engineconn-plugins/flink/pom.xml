@@ -26,8 +26,7 @@
 
   <artifactId>linkis-engineconn-plugin-flink</artifactId>
   <properties>
-    <flink.version>1.12.2</flink.version>
-    <hive.version>2.3.3</hive.version>
+    <flink.version>1.12.7</flink.version>
   </properties>
 
   <dependencies>
@@ -159,10 +158,16 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
         </exclusion>
+        <!-- hadoop 3.X 修改包 start -->
+        <!--        <exclusion>-->
+        <!--          <groupId>org.apache.hadoop</groupId>-->
+        <!--          <artifactId>hadoop-hdfs</artifactId>-->
+        <!--        </exclusion>-->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
+          <artifactId>hadoop-hdfs-client</artifactId>
         </exclusion>
+        <!-- hadoop 3.X 修改包 end -->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-yarn-client</artifactId>
@@ -358,12 +363,16 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
         </exclusion>
-
+        <!-- hadoop 3.X 修改包 start -->
+        <!--        <exclusion>-->
+        <!--          <groupId>org.apache.hadoop</groupId>-->
+        <!--          <artifactId>hadoop-hdfs</artifactId>-->
+        <!--        </exclusion>-->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
+          <artifactId>hadoop-hdfs-client</artifactId>
         </exclusion>
-
+        <!-- hadoop 3.X 修改包 end -->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-auth</artifactId>

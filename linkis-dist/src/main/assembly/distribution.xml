@@ -149,6 +149,38 @@
             </includes>
         </fileSet>
 
+        <!--jdbc-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/jdbc/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <!--flink-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/flink/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+        <!--pipeline-->
+        <fileSet>
+            <directory>
+                ../linkis-engineconn-plugins/pipeline/target/out/
+            </directory>
+            <outputDirectory>linkis-package/lib/linkis-engineconn-plugins/</outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
 
         <!--lib-->
         <!--linkis-spring-cloud-services-->

@@ -109,10 +109,10 @@
   </distributionManagement>
   <properties>
     <jedis.version>2.9.2</jedis.version>
-    <hadoop.version>2.7.2</hadoop.version>
+    <hadoop.version>3.0.0-cdh6.2.0</hadoop.version>
     <zookeeper.version>3.5.9</zookeeper.version>
     <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
-    <curator.version>2.7.1</curator.version>
+    <curator.version>4.2.0</curator.version>
     <spring.version>5.2.22.RELEASE</spring.version>
     <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
     <guava.version>30.0-jre</guava.version>
@@ -349,7 +349,6 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql.connector.version}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.junit</groupId>
@@ -636,49 +635,56 @@
           </exclusion>
         </exclusions>
       </dependency>
+      <!-- hadoop 3.X 修改包 start -->
+      <!--      <dependency>-->
+      <!--        <groupId>org.apache.hadoop</groupId>-->
+      <!--        <artifactId>hadoop-hdfs</artifactId>-->
+      <!--        <version>${hadoop.version}</version>-->
+      <!--        <exclusions>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>log4j</groupId>-->
+      <!--            <artifactId>log4j</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>org.slf4j</groupId>-->
+      <!--            <artifactId>slf4j-log4j12</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>netty</groupId>-->
+      <!--            <artifactId>io.netty</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>javax.servlet</groupId>-->
+      <!--            <artifactId>servlet-api</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>com.google.guava</groupId>-->
+      <!--            <artifactId>guava</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>com.sun.jersey</groupId>-->
+      <!--            <artifactId>*</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>org.codehaus.jackson</groupId>-->
+      <!--            <artifactId>*</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>org.eclipse.jetty</groupId>-->
+      <!--            <artifactId>*</artifactId>-->
+      <!--          </exclusion>-->
+      <!--          <exclusion>-->
+      <!--            <groupId>org.mortbay.jetty</groupId>-->
+      <!--            <artifactId>*</artifactId>-->
+      <!--          </exclusion>-->
+      <!--        </exclusions>-->
+      <!--      </dependency>-->
       <dependency>
         <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
+        <artifactId>hadoop-hdfs-client</artifactId>
         <version>${hadoop.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>netty</groupId>
-            <artifactId>io.netty</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
+      <!-- hadoop 3.X 修改包 end -->
       <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-auth</artifactId>

@@ -20,8 +20,7 @@
 
 export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-publicservice"
 
-
-#export DEBUG_PORT=
+export DEBUG_PORT=5105
 
 export SERVER_CLASS=org.apache.linkis.filesystem.LinkisPublicServiceApp
 

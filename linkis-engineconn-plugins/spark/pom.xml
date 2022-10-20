@@ -26,7 +26,8 @@
 
   <artifactId>linkis-engineplugin-spark</artifactId>
   <properties>
-    <spark.version>2.4.3</spark.version>
+    <spark.version>2.4.0-cdh6.2.0</spark.version>
+    <spark.dist.version>2.4.0</spark.dist.version>
   </properties>
 
   <dependencies>
@@ -97,12 +98,16 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-common</artifactId>
         </exclusion>
-
+        <!-- hadoop 3.X 修改包 start -->
+        <!--        <exclusion>-->
+        <!--          <groupId>org.apache.hadoop</groupId>-->
+        <!--          <artifactId>hadoop-hdfs</artifactId>-->
+        <!--        </exclusion>-->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
+          <artifactId>hadoop-hdfs-client</artifactId>
         </exclusion>
-
+        <!-- hadoop 3.X 修改包 end -->
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-auth</artifactId>

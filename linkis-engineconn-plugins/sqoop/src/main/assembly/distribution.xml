@@ -158,6 +158,9 @@
                 <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
                 <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
+                <!-- hadoop 3.X 修改包 start -->
+                <exclude>org.apache.hadoop:hadoop-hdfs-client:jar</exclude>
+                <!-- hadoop 3.X 修改包 end -->
                 <exclude>org.apache.htrace:htrace-core:jar</exclude>
                 <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
                 <exclude>org.apache.httpcomponents:httpcore:jar</exclude>

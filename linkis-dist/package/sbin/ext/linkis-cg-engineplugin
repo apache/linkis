@@ -22,7 +22,7 @@ export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-engineplugin"
 
 export SERVER_CLASS=org.apache.linkis.engineplugin.server.LinkisEngineConnPluginServer
 
-#export DEBUG_PORT=
+export DEBUG_PORT=5103
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

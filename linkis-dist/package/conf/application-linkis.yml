@@ -19,12 +19,12 @@ eureka:
       prometheus.path: ${prometheus.path:${prometheus.endpoint}}
   client:
     serviceUrl:
-      defaultZone: http://127.0.0.1:20303/eureka/
+      defaultZone: http://bigd-sit-linkis-mgr1:8761/eureka/,http://bigd-sit-linkis-mgr2:8761/eureka/
 management:
   endpoints:
     web:
       exposure:
-        include: refresh,info,health,metrics
+        include: refresh,info,health,metrics,prometheus
 
 logging:
   config: classpath:log4j2.xml

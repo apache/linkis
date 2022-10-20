@@ -22,7 +22,7 @@ export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-entrance"
 
 export SERVER_CLASS=org.apache.linkis.entrance.LinkisEntranceApplication
 
-#export DEBUG_PORT=
+export DEBUG_PORT=5104
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
 if [[ ! -f "${COMMON_START_BIN}" ]]; then

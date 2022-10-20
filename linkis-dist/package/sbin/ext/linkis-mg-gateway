@@ -22,7 +22,7 @@
 source $LINKIS_CONF_DIR/linkis-env.sh
 SERVER_SUFFIX="linkis-spring-cloud-services/linkis-mg-gateway"
 
-#export DEBUG_PORT=
+export DEBUG_PORT=5111
 
 if [ "$LINKIS_LOG_DIR" = "" ]; then
   export LINKIS_LOG_DIR="$LINKIS_HOME/logs"

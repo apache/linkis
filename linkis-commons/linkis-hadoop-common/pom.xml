@@ -52,10 +52,16 @@
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
     </dependency>
+    <!-- hadoop 3.X 修改包 start -->
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.hadoop</groupId>-->
+    <!--      <artifactId>hadoop-hdfs</artifactId>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-hdfs</artifactId>
+      <artifactId>hadoop-hdfs-client</artifactId>
     </dependency>
+    <!-- hadoop 3.X 修改包 end -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-auth</artifactId>

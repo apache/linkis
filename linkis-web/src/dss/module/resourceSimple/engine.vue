@@ -399,9 +399,9 @@ export default {
     color: #2d8cf0;
   }
   .ellipsis {
-    overflow: hidden; 
-    text-overflow:ellipsis; 
-    display: inline-block; 
+    overflow: hidden;
+    text-overflow:ellipsis;
+    display: inline-block;
     white-space: nowrap;
   }
 </style>

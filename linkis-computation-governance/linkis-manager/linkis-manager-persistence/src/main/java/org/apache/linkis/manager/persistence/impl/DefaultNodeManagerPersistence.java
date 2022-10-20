@@ -297,25 +297,22 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<EngineNode> getEngineNodeByInstanceList(List<ServiceInstance> serviceInstanceList)
+  public List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstanceList)
       throws PersistenceErrorException {
     List<EngineNode> amEngineNodeList = new ArrayList<>();
-    // 限制每次查询数据库大小
+    // Limit database size per query
     List<List<ServiceInstance>> partition = Lists.partition(serviceInstanceList, 100);
-    // 分批查询
+    // Batch query
     partition.forEach(
         instanceList -> {
-          // 获取每批次ServiceInstance
+          // Get each batch of ServiceInstances
           List<String> collect =
               instanceList.stream().map(ServiceInstance::getInstance).collect(Collectors.toList());
           if (CollectionUtils.isNotEmpty(collect)) {
-            // 通过ServiceInstance 批量获取engineNode
+            // Get engineNodes in batches through ServiceInstance
             List<PersistenceNode> engineNodeList = nodeManagerMapper.getNodesByInstances(collect);
-            // 通过ServiceInstance 批量获取emNode
-            List<PersistenceNode> emNodeList =
-                nodeManagerMapper.getEMNodeInstanceByEngineNodeList(collect);
             if (CollectionUtils.isNotEmpty(engineNodeList)) {
-              // 组装数据amEngineNodeList
+              // Assembly data amEngineNodeList
               instanceList.forEach(
                   serviceInstance -> {
                     PersistenceNode engineNode =
@@ -327,29 +324,11 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
                                         .equals(serviceInstance.getInstance()))
                             .findFirst()
                             .orElse(new PersistenceNode());
-                    PersistenceNode emNode =
-                        emNodeList.stream()
-                            .filter(
-                                emNodeInfo ->
-                                    emNodeInfo.getInstance().equals(serviceInstance.getInstance()))
-                            .findFirst()
-                            .orElse(null);
                     AMEngineNode amEngineNode = new AMEngineNode();
                     amEngineNode.setServiceInstance(serviceInstance);
                     amEngineNode.setOwner(engineNode.getOwner());
                     amEngineNode.setMark(engineNode.getMark());
                     amEngineNode.setStartTime(engineNode.getCreateTime());
-                    if (emNode != null) {
-                      ServiceInstance emServiceInstance = new ServiceInstance();
-                      emServiceInstance.setApplicationName(emNode.getName());
-                      emServiceInstance.setInstance(emNode.getInstance());
-                      AMEMNode amemNode = new AMEMNode();
-                      amemNode.setMark(emNode.getMark());
-                      amemNode.setOwner(emNode.getOwner());
-                      amemNode.setServiceInstance(emServiceInstance);
-                      amemNode.setStartTime(emNode.getCreateTime());
-                      amEngineNode.setEMNode(amemNode);
-                    }
                     amEngineNodeList.add(amEngineNode);
                   });
             }

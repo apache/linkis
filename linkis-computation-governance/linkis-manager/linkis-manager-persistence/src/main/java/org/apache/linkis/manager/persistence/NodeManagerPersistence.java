@@ -116,17 +116,18 @@ public interface NodeManagerPersistence {
       throws PersistenceErrorException;
 
   /**
-   * 1. 通过Engine的ServiceInstance，获取Engine的信息和EM信息(批量查询)
+   * Get the information of the Engine and EM information through the ServiceInstance of the Engine
+   * (batch query)
    *
-   * @param serviceInstanceList
+   * @param serviceInstances
    * @return
    * @throws PersistenceErrorException
    */
-  List<EngineNode> getEngineNodeByInstanceList(List<ServiceInstance> serviceInstanceList)
+  List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstances)
       throws PersistenceErrorException;
 
   /**
-   * 根据 ownerList 获取node列表
+   * Get the node list according to ownerList
    *
    * @param owner
    * @return

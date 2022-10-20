@@ -468,10 +468,10 @@ class RMMonitorRest extends Logging {
       val record = new mutable.HashMap[String, Any]
       record.put("applicationName", node.getServiceInstance.getApplicationName)
       record.put("engineInstance", node.getServiceInstance.getInstance)
-      if (null != node.getEMNode) {
-        record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
-        record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
-      }
+//      if (null != node.getEMNode) {
+//        record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
+//        record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
+//      }
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
       if (node.getNodeResource != null) {
@@ -537,16 +537,16 @@ class RMMonitorRest extends Logging {
     val userResourceRecords = new ArrayBuffer[mutable.HashMap[String, Any]]()
     val yarnAppsInfo =
       externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier)
-    val userNameList =
+    val userList =
       yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).keys.toList.asJava
     Utils.tryCatch {
-      val nodess = getEngineNodesByUserNameList(userNameList, true)
+      val nodesList = getEngineNodesByUserList(userList, true)
       yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).foreach { userAppInfo =>
         var busyResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         var idleResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         val appIdToEngineNode = new mutable.HashMap[String, EngineNode]()
-        val nodesplus = nodess.get(userAppInfo._1)
-        if (null != nodesplus) {
+        val nodesplus = nodesList.get(userAppInfo._1)
+        if (nodesplus.isDefined) {
           nodesplus.get.foreach(node => {
             if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null) {
               node.getNodeResource.getUsedResource match {
@@ -663,10 +663,9 @@ class RMMonitorRest extends Logging {
   private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
     val serviceInstancelist = nodeManagerPersistence
       .getNodes(user)
-      .asScala
       .map(_.getServiceInstance)
       .asJava
-    val nodes = nodeManagerPersistence.getEngineNodeByInstanceList(serviceInstancelist)
+    val nodes = nodeManagerPersistence.getEngineNodeByServiceInstance(serviceInstancelist)
     val metrics = nodeMetricManagerPersistence
       .getNodeMetrics(nodes)
       .asScala
@@ -735,16 +734,13 @@ class RMMonitorRest extends Logging {
       .toArray
   }
 
-  private def getEngineNodesByUserNameList(
-      userNameList: List[String],
+  private def getEngineNodesByUserList(
+      userList: List[String],
       withResource: Boolean = false
   ): Map[String, Array[EngineNode]] = {
-    val serviceInstanceList = nodeManagerPersistence
-      .getNodesByOwnerList(userNameList)
-      .asScala
-      .map(_.getServiceInstance)
-      .asJava
-    val engineNodesList = nodeManagerPersistence.getEngineNodeByInstanceList(serviceInstanceList)
+    val serviceInstance =
+      nodeManagerPersistence.getNodesByOwnerList(userList).map(_.getServiceInstance).asJava
+    val engineNodesList = nodeManagerPersistence.getEngineNodeByServiceInstance(serviceInstance)
     val metrics = nodeMetricManagerPersistence
       .getNodeMetrics(engineNodesList)
       .asScala

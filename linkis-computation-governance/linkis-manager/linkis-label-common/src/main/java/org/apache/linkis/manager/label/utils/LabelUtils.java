@@ -28,12 +28,22 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,24 +64,12 @@ public class LabelUtils {
    * @return
    */
   public static boolean isBasicType(Class<?> clz) {
-    return clz.equals(String.class)
-        || clz.equals(Enum.class)
-        || clz.isPrimitive()
-        || isWrapClass(clz);
-  }
-
-  /**
-   * If is wrap class
-   *
-   * @param clz class
-   * @return
-   */
-  private static boolean isWrapClass(Class<?> clz) {
-    try {
-      return ((Class<?>) clz.getField("TYPE").get(null)).isPrimitive();
-    } catch (Exception e) {
+    if (clz == null) {
       return false;
     }
+    return clz.equals(String.class)
+        || clz.equals(Enum.class)
+        || org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper(clz);
   }
 
   /**

@@ -77,6 +77,9 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
           synchronized (syncLocker) {
             syncLocker.wait(PersistenceManagerConf.Distributed_lock_request_interval);
             isLocked = isAcquireLock(persistenceLock);
+            if (isLocked) {
+              syncLocker.notifyAll();
+            }
           }
         } else {
           Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval);

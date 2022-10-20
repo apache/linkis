@@ -17,11 +17,15 @@
 
 package org.apache.linkis.manager.util;
 
-import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.CommonVars$;
 
 public class PersistenceManagerConf {
 
-  public static final CommonVars<Integer> Distributed_lock_request_interval =
-      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 1000);
+  public static final Integer Distributed_lock_request_interval =
+      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 200).getValue();
+
+  public static final Boolean Distributed_lock_request_sync_enabled =
+      CommonVars$.MODULE$
+          .apply("linkis.master.distributed.lock.request.sync.enabled", true)
+          .getValue();
 }

@@ -255,6 +255,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val userCreatorEngineTypeLabel = labelContainer.getCombinedUserCreatorEngineTypeLabel
 
     Utils.tryFinally {
+      // check ecm resource if not enough return
       Utils.tryCatch {
         labelContainer.setCurrentLabel(emInstanceLabel)
         if (!requestResourceService.canRequest(labelContainer, resource)) {

@@ -235,7 +235,7 @@
                     <exec executable="docker" failonerror="true">
                       <arg value="build"/>
                       <arg value="-f"/>
-                      <arg value="${project.basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="${basedir}/docker/linkis.Dockerfile"/>
                       <arg value="-t"/>
                       <arg value="${project.parent.artifactId}:${project.version}"/>
                       <arg value="--target"/>
@@ -288,7 +288,7 @@
                     <exec executable="docker" failonerror="true">
                       <arg value="build"/>
                       <arg value="-f"/>
-                      <arg value="${project.basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="${basedir}/docker/linkis.Dockerfile"/>
                       <arg value="-t"/>
                       <arg value="${project.parent.artifactId}-web:${project.version}"/>
                       <arg value="--target"/>
@@ -330,7 +330,7 @@
                     <exec executable="docker" failonerror="true">
                       <arg value="build"/>
                       <arg value="-f"/>
-                      <arg value="${project.basedir}/docker/ldh.Dockerfile"/>
+                      <arg value="${basedir}/docker/ldh.Dockerfile"/>
                       <arg value="-t"/>
                       <arg value="${project.parent.artifactId}-ldh:${project.version}"/>
                       <arg value="--target"/>

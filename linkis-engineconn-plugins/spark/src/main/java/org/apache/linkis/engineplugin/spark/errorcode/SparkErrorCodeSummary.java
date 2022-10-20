@@ -37,8 +37,8 @@ public enum SparkErrorCodeSummary {
 
   CSTABLE_NOT_FOUND(
       40007,
-      "The csTable that name is {} not found in cs(在 cs 中找不到名称为 {} 的 csTable)",
-      "The csTable that name is {} not found in cs(在 cs 中找不到名称为 {} 的 csTable)"),
+      "The csTable that name is {0} not found in cs(在 cs 中找不到名称为 {0} 的 csTable)",
+      "The csTable that name is {0} not found in cs(在 cs 中找不到名称为 {0 的 csTable)"),
   PYSPARK_STOPPED(
       40007,
       "Pyspark process  has stopped, query failed!(Pyspark 进程已停止，查询失败！)",

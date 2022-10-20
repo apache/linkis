@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, RandomAccessFile}
 import java.nio.charset.Charset
+import java.text.MessageFormat
 import java.util
 import java.util.Collections
 
@@ -56,7 +57,10 @@ class EngineConnLogOperator extends Operator with Logging {
     if (lastRows > EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue) {
       throw new ECMErrorException(
         CANNOT_FETCH_MORE_THAN.getErrorCode,
-        s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue} lines of logs."
+        MessageFormat.format(
+          CANNOT_FETCH_MORE_THAN.getErrorDesc,
+          EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue
+        )
       )
     } else if (lastRows > 0) {
       val logs = Utils.exec(Array("tail", "-n", lastRows + "", logPath.getPath), 5000).split("\n")
@@ -140,7 +144,7 @@ class EngineConnLogOperator extends Operator with Logging {
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(
         LOGFILE_IS_NOT_EXISTS.getErrorCode,
-        s"LogFile $logPath is not exists or is not a file."
+        MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc, logPath)
       )
     }
     logger.info(

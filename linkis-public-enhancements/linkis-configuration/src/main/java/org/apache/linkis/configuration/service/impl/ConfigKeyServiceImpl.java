@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
     List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(configKeyValue.getKey());
     if (null == configKeys || configKeys.isEmpty()) {
       throw new ConfigurationException(
-          CONFIG_KEY_NOT_EXISTS.getErrorDesc() + configKeyValue.getKey());
+          MessageFormat.format(CONFIG_KEY_NOT_EXISTS.getErrorDesc(), configKeyValue.getKey()));
     }
     ConfigKey configKey = configKeys.get(0);
     EngineTypeLabel engineTypeLabel = LabelUtil.getEngineTypeLabel(labelList);
@@ -138,7 +139,8 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
     List<ConfigKey> configKeys = configMapper.seleteKeyByKeyName(key);
 
     if (null == configKeys || configKeys.isEmpty()) {
-      throw new ConfigurationException(CONFIG_KEY_NOT_EXISTS.getErrorDesc() + key);
+      throw new ConfigurationException(
+          MessageFormat.format(CONFIG_KEY_NOT_EXISTS.getErrorDesc(), key));
     }
     CombinedLabel combinedLabel = getCombinedLabel(labelList);
 
@@ -146,7 +148,7 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
         labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey(), combinedLabel.getStringValue());
     if (null == configLabel || configLabel.getId() < 0) {
       throw new ConfigurationException(
-          LABEL_NOT_EXISTS.getErrorDesc() + combinedLabel.getStringValue());
+          MessageFormat.format(LABEL_NOT_EXISTS.getErrorDesc(), combinedLabel.getStringValue()));
     }
     List<ConfigValue> configValues = new ArrayList<>();
     for (ConfigKey configKey : configKeys) {

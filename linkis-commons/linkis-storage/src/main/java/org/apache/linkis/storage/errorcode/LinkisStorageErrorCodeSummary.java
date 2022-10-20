@@ -20,16 +20,16 @@ package org.apache.linkis.storage.errorcode;
 public enum LinkisStorageErrorCodeSummary {
   UNSUPPORTED_FILE(
       50000,
-      "Unsupported file system type(不支持的文件系统类型)：{}",
-      "Unsupported file system type(不支持的文件系统类型)：{}"),
+      "Unsupported file system type(不支持的文件系统类型):{0}",
+      "Unsupported file system type(不支持的文件系统类型):{0}"),
   UNSUPPORTED_RESULT(
-      50000, "Unsupported result type(不支持的结果类型)：{}", "Unsupported result type(不支持的结果类型)：{}"),
+      50000, "Unsupported result type(不支持的结果类型)：{0}", "Unsupported result type(不支持的结果类型)：{0}"),
   CONFIGURATION_NOT_READ(
       50001,
       "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR(HDFS 配置未读取，请配置 hadoop.config.dir 或添加 env:HADOOP_CONF_DIR)",
       "HDFS configuration was not read, please configure hadoop.config.dir or add env:HADOOP_CONF_DIR(HDFS 配置未读取，请配置 hadoop.config.dir 或添加 env:HADOOP_CONF_DIR)"),
   FAILED_TO_READ_INTEGER(51000, "failed to read integer(读取整数失败)", "failed to read integer(读取整数失败)"),
-  THE_FILE_IS_EMPTY(51000, "The file{}is empty(文件{}为空)", "The file{}is empty(文件{}为空)"),
+  THE_FILE_IS_EMPTY(51000, "The file{0}is empty(文件{0}为空)", "The file{0}is empty(文件{0}为空)"),
   TO_BE_UNKNOW(51001, "", ""),
   FSN_NOT_INIT_EXCEPTION(52000, "FSNotInitException", "FSNotInitException"),
   PARSING_METADATA_FAILED(

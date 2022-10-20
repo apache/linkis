@@ -37,8 +37,8 @@ public enum DatasourceClientErrorCodeSummary {
   SYSTEM_NEEDED(31000, "system is needed!(系统为空！)", "system is needed!(系统为空！)"),
   CANNOT_SOURCE(
       31000,
-      "Cannot encode the name of data source:{} for request(无法对请求的数据源名称进行编码：{})",
-      "Cannot encode the name of data source:{} for request(无法对请求的数据源名称进行编码：{})"),
+      "Cannot encode the name of data source:{0} for request(无法对请求的数据源名称进行编码：{0})",
+      "Cannot encode the name of data source:{0} for request(无法对请求的数据源名称进行编码：{0})"),
   DATABASE_NEEDED(31000, "database is needed!(数据库为空！)", "database is needed!(数据库为空！)"),
   TABLE_NEEDED(31000, "table is needed!(表为空！)", "table is needed!(表为空！)");
   /** (errorCode)错误码 */

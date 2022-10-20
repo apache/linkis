@@ -60,23 +60,23 @@ public enum EntranceErrorCodeSummary {
       "Only code with runtype supported (仅支持运行类型的代码)"),
   REQUEST_JOBHISTORY_FAILED(
       20011,
-      "Request jobHistory failed, reason (请求jobHistory失败,原因):",
-      "Request jobHistory failed, reason (请求jobHistory失败,原因):"),
+      "Request jobHistory failed, reason (请求jobHistory失败,原因):{0}",
+      "Request jobHistory failed, reason (请求jobHistory失败,原因):{0}"),
   JOBRESP_PROTOCOL_NULL(
       20011,
       "Request jobHistory failed, reason: jobRespProtocol is null (请求jobHistory失败,原因:jobRespProtocol为null)",
       "Request jobHistory failed, reason: jobRespProtocol is null (请求jobHistory失败,原因:jobRespProtocol为null)"),
   READ_TASKS_FAILED(
       20011,
-      "Read all tasks failed, reason (读取所有任务失败，原因):",
-      "Read all tasks failed, reason (读取所有任务失败，原因):"),
+      "Read all tasks failed, reason (读取所有任务失败，原因):{0}",
+      "Read all tasks failed, reason (读取所有任务失败，原因):{0}"),
 
   SENDER_RPC_FAILED(20020, "Sender rpc failed(发件人 RPC 失败)", "Sender rpc failed(发件人 RPC 失败)"),
 
   FAILED_ANALYSIS_TASK(
       20039,
-      "Failed to analysis task ! the reason is(分析任务失败！原因是):",
-      "Failed to analysis task ! the reason is(分析任务失败！原因是):"),
+      "Failed to analysis task ! the reason is(分析任务失败！原因是):{0}",
+      "Failed to analysis task ! the reason is(分析任务失败！原因是):{0}"),
 
   INVALID_ENGINETYPE_NULL(
       20052,
@@ -103,12 +103,12 @@ public enum EntranceErrorCodeSummary {
       "Get query response incorrectly(错误地获取查询响应)"),
   QUERY_TASKID_ERROR(
       50081,
-      "Query taskId  error,taskId(查询 taskId 错误,taskId):",
-      "Query taskId  error,taskId(查询 taskId 错误,taskId):"),
+      "Query taskId  error,taskId(查询 taskId 错误,taskId):{0}",
+      "Query taskId  error,taskId(查询 taskId 错误,taskId):{0}"),
   CORRECT_LIST_TYPR(
       50081,
-      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):",
-      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):"),
+      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):{0}",
+      "Query from jobhistory with incorrect list type of taskId, the taskId is ( 从jobhistory 中查询的参数类型不正确,taskId为):{0}"),
   SHELL_BLACKLISTED_CODE(
       50081,
       "Shell code contains blacklisted code(shell中包含黑名单代码)",

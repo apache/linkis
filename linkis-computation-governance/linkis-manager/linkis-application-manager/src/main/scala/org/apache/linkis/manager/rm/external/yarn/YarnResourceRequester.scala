@@ -41,6 +41,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
@@ -214,7 +215,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         )
         throw new RMWarnException(
           ONLY_SUPPORT_FAIRORCAPA.getErrorCode,
-          ONLY_SUPPORT_FAIRORCAPA.getErrorDesc + s" $schedulerType"
+          MessageFormat.format(ONLY_SUPPORT_FAIRORCAPA.getErrorDesc(), schedulerType)
         )
       }
     }

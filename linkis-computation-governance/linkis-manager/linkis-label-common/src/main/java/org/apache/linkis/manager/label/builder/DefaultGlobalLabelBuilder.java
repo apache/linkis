@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -288,7 +289,7 @@ public class DefaultGlobalLabelBuilder extends AbstractGenericLabelBuilder {
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new LabelErrorException(
           FAILED_CONSTRUCT_INSTANCE.getErrorCode(),
-          FAILED_CONSTRUCT_INSTANCE.getErrorDesc() + labelType.getSimpleName(),
+          MessageFormat.format(FAILED_CONSTRUCT_INSTANCE.getErrorDesc(), labelType.getSimpleName()),
           e);
     }
   }

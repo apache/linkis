@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.execution.datasources.csv.DolphinToSpark
 
+import java.text.MessageFormat
 import java.util.regex.Pattern
 
 import scala.collection.mutable.ArrayBuffer
@@ -75,7 +76,7 @@ object CSTableParser extends Logging {
         // scalastyle:off throwerror
         throw new ExecuteError(
           CSTABLE_NOT_FOUND.getErrorCode,
-          s"The csTable that name is $csTempTable not found in cs"
+          MessageFormat.format(CSTABLE_NOT_FOUND.getErrorDesc, csTempTable)
         )
       }
       registerTempTable(table)

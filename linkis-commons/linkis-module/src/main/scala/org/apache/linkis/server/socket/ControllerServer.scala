@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -63,7 +64,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     if (socket == null) {
       throw new BDPServerErrorException(
         SERVERSSOCKET_NOT_EXIST.getErrorCode,
-        s"ServerSocket($id) does not exist!(ServerSocket($id)不存在！)"
+        MessageFormat.format(SERVERSSOCKET_NOT_EXIST.getErrorDesc, id)
       )
     }
     socket.sendMessage(message)

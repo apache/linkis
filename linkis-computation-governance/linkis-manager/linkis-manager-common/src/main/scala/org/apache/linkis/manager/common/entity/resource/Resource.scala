@@ -24,6 +24,8 @@ import org.apache.linkis.manager.common.exception.ResourceWarnException
 
 import org.apache.commons.lang3.StringUtils
 
+import java.text.MessageFormat
+
 import scala.collection.JavaConversions
 
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
@@ -121,7 +123,7 @@ object Resource extends Logging {
     case r: Resource =>
       throw new ResourceWarnException(
         NOT_RESOURCE_TYPE.getErrorCode,
-        NOT_RESOURCE_TYPE.getErrorDesc + r.getClass
+        MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
       )
   }
 
@@ -595,7 +597,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case _ =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v1.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
           )
       }
   )
@@ -612,7 +614,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case _ =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v1.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
           )
       }
   )
@@ -629,7 +631,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case _ =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v1.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
           )
       }
   )
@@ -646,7 +648,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
       .toMap[String, AnyVal]
@@ -664,7 +666,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case _ =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v1.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
           )
       }
   )
@@ -681,7 +683,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
       .toMap[String, AnyVal]
@@ -699,7 +701,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
     case _ => true
@@ -723,7 +725,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
     case _ => true
@@ -741,7 +743,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
     case _ => true
@@ -759,7 +761,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, v) =>
           throw new ResourceWarnException(
             NOT_RESOURCE_TYPE.getErrorCode,
-            NOT_RESOURCE_TYPE.getErrorDesc + v.getClass
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
           )
       }
     case _ => true
@@ -854,7 +856,7 @@ object ResourceSerializer
           case r: Resource =>
             throw new ResourceWarnException(
               NOT_RESOURCE_TYPE.getErrorCode,
-              NOT_RESOURCE_TYPE.getErrorDesc + r.getClass
+              MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
             )
         }
       )

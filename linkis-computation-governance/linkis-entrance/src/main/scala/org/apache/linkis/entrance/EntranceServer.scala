@@ -35,6 +35,7 @@ import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import java.text.MessageFormat
 import java.util
 
 abstract class EntranceServer extends Logging {
@@ -87,14 +88,20 @@ abstract class EntranceServer extends Logging {
         case t1: Throwable =>
           val exception = new EntranceErrorException(
             FAILED_ANALYSIS_TASK.getErrorCode,
-            FAILED_ANALYSIS_TASK.getErrorDesc + ExceptionUtils.getRootCauseMessage(t)
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
           )
           exception.initCause(t1)
           exception
         case _ =>
           new EntranceErrorException(
             FAILED_ANALYSIS_TASK.getErrorCode,
-            FAILED_ANALYSIS_TASK.getErrorDesc + ExceptionUtils.getRootCauseMessage(t)
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
           )
       }
       jobRequest match {

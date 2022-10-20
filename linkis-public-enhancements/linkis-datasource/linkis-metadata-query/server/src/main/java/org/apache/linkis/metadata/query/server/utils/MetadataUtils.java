@@ -29,6 +29,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
@@ -57,7 +58,8 @@ public class MetadataUtils {
       final Constructor<?>[] constructors = metaServiceClass.getConstructors();
       if (constructors.length <= 0) {
         throw new MetaRuntimeException(
-            NO_CONSTRUCTOR_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", null);
+            MessageFormat.format(NO_CONSTRUCTOR_SERVICE.getErrorDesc(), metaServiceClass.getName()),
+            null);
       }
       List<Constructor<?>> acceptConstructor =
           Arrays.stream(constructors)
@@ -70,11 +72,13 @@ public class MetadataUtils {
           return (MetadataService) constructor.newInstance();
         } catch (Exception e) {
           throw new MetaRuntimeException(
-              UNABLE_META_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", e);
+              MessageFormat.format(UNABLE_META_SERVICE.getErrorDesc(), metaServiceClass.getName()),
+              e);
         }
       } else {
         throw new MetaRuntimeException(
-            ILLEGAL_META_SERVICE.getErrorDesc() + "[" + metaServiceClass.getName() + "]", null);
+            MessageFormat.format(ILLEGAL_META_SERVICE.getErrorDesc(), metaServiceClass.getName()),
+            null);
       }
     } finally {
       Thread.currentThread().setContextClassLoader(storeClassLoader);

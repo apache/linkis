@@ -20,31 +20,31 @@ package org.apache.linkis.engineconnplugin.flink.errorcode;
 public enum FlinkErrorCodeSummary {
   CANNOT_MODULE_ALREADY(
       16020,
-      "Cannot register module   because a module with this name is already registered.(无法注册模块,因为已注册具有此名称的模块.)",
-      "Cannot register module   because a module with this name is already registered.(无法注册模块,因为已注册具有此名称的模块.)"),
+      "Cannot register module  {0} because a module with this name is already registered.(无法注册模块 {0},因为已注册具有此名称的模块.)",
+      "Cannot register module {0}  because a module with this name is already registered.(无法注册模块 {0},因为已注册具有此名称的模块.)"),
   CANNOT_CATALOG_ALREADY(
       16020,
-      "Cannot create catalog   because a catalog with this name is already registered.(无法创建目录，因为同名的目录已注册.)",
-      "Cannot create catalog   because a catalog with this name is already registered.(无法创建目录，因为同名的目录已注册.)"),
+      "Cannot create catalog {0}  because a catalog with this name is already registered.(无法创建目录 {0},因为同名的目录已注册.)",
+      "Cannot create catalog  {0} because a catalog with this name is already registered.(无法创建目录 {0},因为同名的目录已注册.)"),
   CANNOT_TABLE_ALREADY(
       16020,
-      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):",
-      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):"),
+      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):{0}",
+      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):{0}"),
   CANNOT_FUNCTION_ALREADY(
       16020,
-      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):",
-      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):"),
+      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):{0}",
+      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):{0}"),
   SQL_CODE_EMPTY(16020, "The sql code is empty.(sql代码为空.)", "The sql code is empty.(sql代码为空.)"),
   NOT_SUPPORT_RUNTYPE(
       16020, "Not support runType (不支持 runType)", "Not support runType (不支持 runType)"),
   PLANNER_MUST_THESE(
       16020,
-      "Planner must be one of these:(规划师必须是以下之一:)",
-      "Planner must be one of these:(规划师必须是以下之一:)"),
+      "Planner must be one of these(规划师必须是以下之一){0}",
+      "Planner must be one of these(规划师必须是以下之一){0}"),
   EXECUTION_MUST_THESE(
       16020,
-      "Execution must be one of these:(执行类型必须是以下之一:)",
-      "Execution must be one of these:(执行类型必须是以下之一:)"),
+      "Execution must be one of these(执行类型必须是以下之一):{0}",
+      "Execution must be one of these(执行类型必须是以下之一):{0}"),
   NOT_SUPPORTED_YARNTARGET(
       16020,
       "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)",
@@ -57,12 +57,12 @@ public enum FlinkErrorCodeSummary {
       "hudi jars is not exists.(hudi jars 不存在.)"),
   PATH_NOT_EXIST(
       16020,
-      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):",
-      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):"),
+      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):{0}",
+      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):{0}"),
   BOT_PARSE_ENVIRONMENT(
       16020,
-      "Could not parse environment file. Cause(无法解析环境文件.原因):",
-      "Could not parse environment file. Cause(无法解析环境文件.原因):"),
+      "Could not parse environment file. Cause(无法解析环境文件.原因):{0}",
+      "Could not parse environment file. Cause(无法解析环境文件.原因):{0}"),
   CONFIGURATION_ENTRY_INVALID(
       16020, "Invalid configuration entry.(配置条目无效.)", "Invalid configuration entry.(配置条目无效.)"),
   FLINK_INIT_EXCEPTION_ID(16020, "", ""),
@@ -76,7 +76,7 @@ public enum FlinkErrorCodeSummary {
       16021,
       "Only single statement is supported now(现在只支持单个语句) ",
       "Only single statement is supported now(现在只支持单个语句) "),
-  UNKNOWN_STATEMENT(16021, "Unknown statement(未知声明):", "Unknown statement(未知声明):"),
+  UNKNOWN_STATEMENT(16021, "Unknown statement(未知声明):{0}", "Unknown statement(未知声明):{0}"),
   FAILED_PARSE_STATEMENT(
       16021, "Failed to parse statement.(解析语句失败.)", "Failed to parse statement.(解析语句失败.)"),
   FAILED_DROP_STATEMENT(
@@ -93,7 +93,7 @@ public enum FlinkErrorCodeSummary {
       "Unsupported execution type for sinks.(接收器不支持的执行类型.)",
       "Unsupported execution type for sinks.(接收器不支持的执行类型.)"),
   SUPPORTED_FUNCTION_TYPE(
-      16022, "Unsupported function type(不支持的函数类型):", "Unsupported function type(不支持的函数类型):"),
+      16022, "Unsupported function type(不支持的函数类型):{0}", "Unsupported function type(不支持的函数类型):{0}"),
   NOT_SUPPORT_TRANSFORM(
       16022,
       "Not support to transform this resultSet to JobId.(不支持将此 resultSet 转换为 JobId.)",
@@ -134,14 +134,16 @@ public enum FlinkErrorCodeSummary {
   NO_TABLE_FOUND(
       16022,
       "No table with this name could be found.(找不到具有此名称的表.)",
-      "No table with this name could be found.(找不到具有此名称的表。.)"),
+      "No table with this name could be found.(找不到具有此名称的表.)"),
   INVALID_SQL_QUERY(16022, "Invalid SQL query.(无效的 SQL 查询.)", "Invalid SQL query.(无效的 SQL 查询.)"),
   FAILED_SWITCH_DATABASE(
-      16022, "Failed to switch to catalog (无法切换到目录):", "Failed to switch to catalog (无法切换到目录):"),
+      16022,
+      "Failed to switch to catalog (无法切换到目录):{0}",
+      "Failed to switch to catalog (无法切换到目录):{0}"),
   FAILED_SWITCH_CATALOG(
       16022,
-      "Failed to switch to database (无法切换到数据库):",
-      "Failed to switch to database (无法切换到数据库):"),
+      "Failed to switch to database (无法切换到数据库):{0}",
+      "Failed to switch to database (无法切换到数据库):{0}"),
   SQL_EXECUTION_ID(16022, "", ""),
   NO_JOB_SUBMITTED(
       16023,
@@ -169,12 +171,12 @@ public enum FlinkErrorCodeSummary {
       "Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法.)"),
   NOT_SUPPORT_SAVEPOTION(
       16023,
-      "Not support to do savepoint for  (不支持为保存点):",
-      "Not support to do savepoint for (不支持为保存点):"),
+      "Not support to do savepoint for  (不支持为保存点):{0}",
+      "Not support to do savepoint for (不支持为保存点):{0}"),
   CREATE_INSTANCE_FAILURE(
       16023,
-      "Create a new instance of failure, the instance is(新建失败实例,实例为):",
-      "Create a new instance of failure, the instance is(新建失败实例,实例为):"),
+      "Create a new instance of failure, the instance is(新建失败实例,实例为):{0}",
+      "Create a new instance of failure, the instance is(新建失败实例,实例为):{0}"),
   NOT_CREATE_CLUSTER(
       16023,
       "Job:could not retrieve or create a cluster.(作业：无法检索或创建集群.)",
@@ -199,8 +201,8 @@ public enum FlinkErrorCodeSummary {
       "The application start failed, since yarn applicationId is null.(应用程序启动失败，因为 yarn applicationId 为 null.)"),
   NOT_SUPPORT_SIMPLENAME(
       20001,
-      "Not support {} for FlinkSQLComputationExecutor.(不支持 FlinkSQLComputationExecutor 的 {}.)",
-      "Not support {} for FlinkSQLComputationExecutor.(不支持 FlinkSQLComputationExecutor 的 {}.)"),
+      "Not support {0} for FlinkSQLComputationExecutor.(不支持 FlinkSQLComputationExecutor 的 {0}.)",
+      "Not support {0} for FlinkSQLComputationExecutor.(不支持 FlinkSQLComputationExecutor 的 {0}.)"),
   ADAPTER_IS_NULL(
       20001,
       "Fatal error, ClusterDescriptorAdapter is null, please ask admin for help.(致命错误，ClusterDescriptorAdapter 为空，请向管理员寻求帮助.)",

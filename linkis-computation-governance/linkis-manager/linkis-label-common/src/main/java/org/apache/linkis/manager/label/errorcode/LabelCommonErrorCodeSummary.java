@@ -34,10 +34,10 @@ public enum LabelCommonErrorCodeSummary {
       "Fail to read value input stream(读取值输入流失败) "),
   FAILED_CONSTRUCT_INSTANCE(
       40001,
-      "Fail to construct a label instance of(未能构建标签实例):",
-      "Fail to construct a label instance of(未能构建标签实例):"),
+      "Fail to construct a label instance of(未能构建标签实例):{0}",
+      "Fail to construct a label instance of(未能构建标签实例):{0}"),
   NOT_SUPPORT_ENVTYPE(
-      40001, "Not support envType(不支持 envType):", "Not support envType(不支持 envType):"),
+      40001, "Not support envType(不支持 envType):{0}", "Not support envType(不支持 envType):{0}"),
   CHECK_LABEL_REMOVE_REQUEST(
       130001,
       "ServiceInstance in request is null, please check label remove request(请求中的 ServiceInstance 为空，请检查标签删除请求)",

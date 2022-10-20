@@ -2,7 +2,7 @@
 
 | module name(模块名) | error code(错误码)  | describe(描述) |enumeration name(枚举)| Exception Class(类名)|
 | -------- | -------- | ----- |-----|-----|
-|linkis-metadata-query |199604|Invoke method {} fail,message:{}(调用方法 {} 失败,信息:{})|INVOKE_METHOD_FAIL|LinkisMetadataQueryErrorCodeSummary|
+|linkis-metadata-query |199604|Invoke method {0} fail,message:{1}(调用方法 {0} 失败,信息:{1})|INVOKE_METHOD_FAIL|LinkisMetadataQueryErrorCodeSummary|
 |linkis-metadata-query |199611|Failed to load metadata service(加载元数据服务失败)|FAILED_METADATA_SERVICE|LinkisMetadataQueryErrorCodeSummary|
 |linkis-metadata-query |99900|Fail to close connection(关闭连接失败)|FAIL_CLOSE_CONNECTION|LinkisMetadataQueryErrorCodeSummary|
 |linkis-metadata-query |99900|Error in creating classloader of type(创建类型的类加载器时出错)|ERROR_IN_CREATING|LinkisMetadataQueryErrorCodeSummary|

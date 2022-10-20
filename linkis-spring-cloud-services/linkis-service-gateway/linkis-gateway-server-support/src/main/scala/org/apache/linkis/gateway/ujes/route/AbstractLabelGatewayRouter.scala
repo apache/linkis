@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils
 
 import javax.annotation.Resource
 
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -73,8 +74,12 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
       if (null == candidateServices || candidateServices.isEmpty) {
         throw new GatewayErrorException(
           CANNOT_ROETE_SERVICE.getErrorCode,
-          s"Cannot route to the corresponding service, URL: ${gatewayContext.getRequest.getRequestURI} RouteLabel: ${LabelUtils.Jackson
-            .toJson(routeLabels, null)}"
+          MessageFormat.format(
+            CANNOT_ROETE_SERVICE.getErrorDesc,
+            gatewayContext.getRequest.getRequestURI,
+            LabelUtils.Jackson
+              .toJson(routeLabels, null)
+          )
         )
       } else {
         candidateServices

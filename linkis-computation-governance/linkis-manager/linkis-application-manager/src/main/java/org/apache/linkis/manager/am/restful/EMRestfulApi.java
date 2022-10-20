@@ -65,6 +65,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Api(tags = "ECM(engineconnmanager) operation")
 @RequestMapping(
@@ -110,48 +111,22 @@ public class EMRestfulApi {
             @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
             @RequestParam(value = "owner", required = false) String owner)
             throws AMErrorException {
-        String userName = ModuleUserUtils.getOperationUser(req, "listAllEMs");
-        checkAdmin(userName);
-        EMNode[] allEM = emInfoService.getAllEM();
-        ArrayList<EMNodeVo> allEMVo = AMUtils.copyToEMVo(allEM);
-        ArrayList<EMNodeVo> allEMVoFilter1 = allEMVo;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter1) && !StringUtils.isEmpty(instance)) {
-            allEMVoFilter1 =
-                    (ArrayList<EMNodeVo>)
-                            allEMVoFilter1.stream()
-                                    .filter(
-                                            em -> {
-                                                return em.getInstance().contains(instance);
-                                            })
-                                    .collect(Collectors.toList());
+        checkAdmin(ModuleUserUtils.getOperationUser(req, "listAllEMs"));
+        List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
+        if (CollectionUtils.isNotEmpty(emNodeVos)){
+            Stream<EMNodeVo> stream = emNodeVos.stream();
+            if (StringUtils.isNotBlank(instance)){
+                stream = stream.filter(em -> em.getInstance().contains(instance));
+            }
+            if (StringUtils.isNotBlank(nodeHealthy)){
+                stream = stream.filter(em -> em.getNodeHealthy() == null || em.getNodeHealthy().equals(NodeHealthy.valueOf(nodeHealthy)));
+            }
+            if (StringUtils.isNotBlank(owner)){
+                stream = stream.filter(em -> em.getOwner().equalsIgnoreCase(owner));
+            }
+            emNodeVos = stream.collect(Collectors.toList());
         }
-        ArrayList<EMNodeVo> allEMVoFilter2 = allEMVoFilter1;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter2) && !StringUtils.isEmpty(nodeHealthy)) {
-            allEMVoFilter2 =
-                    (ArrayList<EMNodeVo>)
-                            allEMVoFilter2.stream()
-                                    .filter(
-                                            em -> {
-                                                return em.getNodeHealthy() == null
-                                                        || em.getNodeHealthy()
-                                                                .equals(
-                                                                        NodeHealthy.valueOf(
-                                                                                nodeHealthy));
-                                            })
-                                    .collect(Collectors.toList());
-        }
-        ArrayList<EMNodeVo> allEMVoFilter3 = allEMVoFilter2;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter3) && !StringUtils.isEmpty(owner)) {
-            allEMVoFilter3 =
-                    (ArrayList<EMNodeVo>)
-                            allEMVoFilter3.stream()
-                                    .filter(
-                                            em -> {
-                                                return em.getOwner().equalsIgnoreCase(owner);
-                                            })
-                                    .collect(Collectors.toList());
-        }
-        return Message.ok().data("EMs", allEMVoFilter3);
+        return Message.ok().data("EMs", emNodeVos);
     }
 
     @ApiOperation(value = "listAllECMHealthyStatus", notes = "get all ECM healthy status", response = Message.class)

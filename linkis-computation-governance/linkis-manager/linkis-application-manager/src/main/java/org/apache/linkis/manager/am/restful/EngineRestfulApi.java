@@ -54,7 +54,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import org.json4s.jackson.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,6 +73,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Api(tags = "EC(engineconn) operation")
 @RequestMapping(
@@ -264,67 +264,24 @@ public class EngineRestfulApi {
         JsonNode engineType = jsonNode.get("engineType");
         JsonNode owner = jsonNode.get("owner");
         List<EngineNode> engineNodes = engineInfoService.listEMEngines(amemNode);
-        ArrayList<AMEngineNodeVo> allengineNodes = AMUtils.copyToAMEngineNodeVo(engineNodes);
-        ArrayList<AMEngineNodeVo> allEMVoFilter1 = allengineNodes;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter1) && emInstace != null) {
-            allEMVoFilter1 =
-                    (ArrayList<AMEngineNodeVo>)
-                            allEMVoFilter1.stream()
-                                    .filter(
-                                            em ->
-                                                    em.getInstance() != null
-                                                            && em.getInstance()
-                                                                    .contains(emInstace.asText()))
-                                    .collect(Collectors.toList());
+        List<AMEngineNodeVo> allengineNodes = AMUtils.copyToAMEngineNodeVo(engineNodes);
+        if (CollectionUtils.isNotEmpty(allengineNodes)) {
+            Stream<AMEngineNodeVo> stream = allengineNodes.stream();
+            if (null != emInstace) {
+                stream = stream.filter(em -> StringUtils.isNotBlank(em.getInstance()) && em.getInstance().contains(emInstace.asText()));
+            }
+            if (null != nodeStatus && StringUtils.isNotBlank(nodeStatus.asText())) {
+                stream = stream.filter(em -> null != em.getNodeStatus() && em.getNodeStatus().equals(NodeStatus.valueOf(nodeStatus.asText())));
+            }
+            if (null != owner && StringUtils.isNotBlank(owner.asText())) {
+                stream = stream.filter(em -> StringUtils.isNotBlank(em.getOwner()) && em.getOwner().equalsIgnoreCase(owner.asText()));
+            }
+            if (null != engineType && StringUtils.isNotBlank(engineType.asText())) {
+                stream = stream.filter(em -> StringUtils.isNotBlank(em.getEngineType()) && em.getEngineType().equalsIgnoreCase(engineType.asText()));
+            }
+            allengineNodes = stream.collect(Collectors.toList());
         }
-        ArrayList<AMEngineNodeVo> allEMVoFilter2 = allEMVoFilter1;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter2)
-                && nodeStatus != null
-                && !StringUtils.isEmpty(nodeStatus.asText())) {
-            allEMVoFilter2 =
-                    (ArrayList<AMEngineNodeVo>)
-                            allEMVoFilter2.stream()
-                                    .filter(
-                                            em ->
-                                                    em.getNodeStatus() != null
-                                                            && em.getNodeStatus()
-                                                                    .equals(
-                                                                            NodeStatus.valueOf(
-                                                                                    nodeStatus
-                                                                                            .asText())))
-                                    .collect(Collectors.toList());
-        }
-        ArrayList<AMEngineNodeVo> allEMVoFilter3 = allEMVoFilter2;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter3)
-                && owner != null
-                && !StringUtils.isEmpty(owner.asText())) {
-            allEMVoFilter3 =
-                    (ArrayList<AMEngineNodeVo>)
-                            allEMVoFilter3.stream()
-                                    .filter(
-                                            em ->
-                                                    em.getOwner() != null
-                                                            && em.getOwner()
-                                                                    .equalsIgnoreCase(
-                                                                            owner.asText()))
-                                    .collect(Collectors.toList());
-        }
-        ArrayList<AMEngineNodeVo> allEMVoFilter4 = allEMVoFilter3;
-        if (CollectionUtils.isNotEmpty(allEMVoFilter4)
-                && engineType != null
-                && !StringUtils.isEmpty(engineType.asText())) {
-            allEMVoFilter4 =
-                    (ArrayList<AMEngineNodeVo>)
-                            allEMVoFilter4.stream()
-                                    .filter(
-                                            em ->
-                                                    em.getEngineType() != null
-                                                            && em.getEngineType()
-                                                                    .equalsIgnoreCase(
-                                                                            engineType.asText()))
-                                    .collect(Collectors.toList());
-        }
-        return Message.ok().data("engines", allEMVoFilter4);
+        return Message.ok().data("engines", allengineNodes);
     }
 
     @ApiOperation(value = "modifyEngineInfo", notes = "modify engineconn info", response = Message.class)

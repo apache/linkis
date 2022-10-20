@@ -779,7 +779,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
   override def getResourceInfo(serviceInstances: Array[ServiceInstance]): ResourceInfo = {
     val resourceInfo = new ResourceInfo(Lists.newArrayList())
-    serviceInstances.map { serviceInstance =>
+    serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
       var aggregatedResource: NodeResource = null
       serviceInstance.getApplicationName match {
@@ -800,7 +800,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       rmNode.setServiceInstance(serviceInstance)
       rmNode.setNodeResource(aggregatedResource)
       resourceInfo.resourceInfo.add(rmNode)
-    }
+    })
     resourceInfo
   }
 

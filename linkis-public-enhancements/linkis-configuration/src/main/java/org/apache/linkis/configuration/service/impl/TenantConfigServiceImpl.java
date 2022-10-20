@@ -164,9 +164,9 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     if (StringUtils.isBlank(user)) {
       throw new ConfigurationException("user couldn't be empty ");
     }
-    if (StringUtils.isBlank(tenantValue)) {
-      throw new ConfigurationException("tenant couldn't be empty ");
-    }
+    //    if (StringUtils.isBlank(tenantValue)) {
+    //      throw new ConfigurationException("tenant couldn't be empty ");
+    //    }
     return CollectionUtils.isNotEmpty(queryTenantList(user, creator, tenantValue));
   }
 

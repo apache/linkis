@@ -36,11 +36,7 @@ public enum BmlClientErrorCodeSummary {
       "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
       "",
       "bmlClient"),
-  SERVER_URL_NOT_NULL(
-      20062,
-      "serverUrl cannot be null(serverUrl 不能为空)",
-      "",
-      "bmlClient");
+  SERVER_URL_NOT_NULL(20062, "serverUrl cannot be null(serverUrl 不能为空)", "", "bmlClient");
 
   private int errorCode;
 

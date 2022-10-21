@@ -28,8 +28,11 @@ import org.apache.linkis.instance.label.service.InsLabelService
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+
 import org.apache.commons.lang3.StringUtils
+
 import javax.annotation.Resource
+
 import java.text.MessageFormat
 import java.util
 
@@ -87,7 +90,10 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     if (null == instance || StringUtils.isBlank(instance.getInstance)) {
       throw new GatewayErrorException(
         NO_SERVICES_REGISTRY.getErrorCode,
-        MessageFormat.format(NO_SERVICES_REGISTRY.getErrorDesc, gatewayContext.getRequest.getRequestURI)
+        MessageFormat.format(
+          NO_SERVICES_REGISTRY.getErrorDesc,
+          gatewayContext.getRequest.getRequestURI
+        )
       )
     }
     instance

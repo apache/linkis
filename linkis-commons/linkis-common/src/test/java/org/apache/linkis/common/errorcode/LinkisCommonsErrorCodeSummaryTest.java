@@ -57,7 +57,6 @@ class LinkisCommonsErrorCodeSummaryTest {
     linkisCommonsErrorCodeSummary.setErrorDesc("Engine start failed(引擎启动失败)");
   }
 
-
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testToString(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {

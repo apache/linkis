@@ -19,29 +19,21 @@ package org.apache.linkis.datasource.client.errorcode;
 
 public enum DatasourceClientErrorCodeSummary {
   CLIENT_ERROR_CODE(31000, ""),
-  SERVERURL_CANNOT_NULL(
-      31000,
-      "serverUrl cannot be null.(serverUrl 不能为空.)"),
+  SERVERURL_CANNOT_NULL(31000, "serverUrl cannot be null.(serverUrl 不能为空.)"),
   VERSION_NEEDED(31000, "version is needed(版本为空)!"),
   VERSIONID_NEEDED(31000, "version is needed(需要版本ID)!"),
-  DATASOURCEID_NEEDED(
-      31000,
-      "dataSourceId is needed(需要dataSourceId)!"),
-  DATASOURCENAME_NEEDED(
-      31000,
-      "dataSourceName is needed(需要dataSourceName)!"),
+  DATASOURCEID_NEEDED(31000, "dataSourceId is needed(需要dataSourceId)!"),
+  DATASOURCENAME_NEEDED(31000, "dataSourceName is needed(需要dataSourceName)!"),
   USER_NEEDED(31000, "user is needed(用户为空)!"),
   SYSTEM_NEEDED(31000, "system is needed(系统为空)!"),
   CANNOT_SOURCE(
-      31000,
-      "Cannot encode the name of data source:{0} for request(无法对请求的数据源名称进行编码：{0})"),
+      31000, "Cannot encode the name of data source:{0} for request(无法对请求的数据源名称进行编码：{0})"),
   DATABASE_NEEDED(31000, "database is needed(数据库为空)!"),
   TABLE_NEEDED(31000, "table is needed(表为空)!");
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-
 
   DatasourceClientErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
@@ -63,7 +55,6 @@ public enum DatasourceClientErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

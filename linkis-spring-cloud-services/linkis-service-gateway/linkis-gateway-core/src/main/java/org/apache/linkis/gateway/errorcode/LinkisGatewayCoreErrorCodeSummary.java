@@ -25,22 +25,17 @@ public enum LinkisGatewayCoreErrorCodeSummary {
       11011,
       "Cannot route to the corresponding service, URL:{0} RouteLabel:{1}(无法路由到相应的服务，URL：{0} RouteLabel: {1})"),
   NO_SERVICES_REGISTRY(
-      11011,
-      "There are no services available in the registry URL:{0} (注册表 URL 中没有可用的服务)"),
+      11011, "There are no services available in the registry URL:{0} (注册表 URL 中没有可用的服务)"),
   NO_ROUTE_SERVICE(
-      11011,
-      "There is no route label service with the corresponding app name (没有对应app名称的路由标签服务)"),
+      11011, "There is no route label service with the corresponding app name (没有对应app名称的路由标签服务)"),
   CANNOT_INSTANCE(
       11012,
       "Cannot find an instance in the routing chain of serviceId:{0} , please retry (在 serviceId:{0} 的路由链中找不到实例，请重试)"),
-  GET_REQUESTBODY_FAILED(
-      18000,
-      "get requestBody failed!(获取 requestBody 失败！)");
+  GET_REQUESTBODY_FAILED(18000, "get requestBody failed!(获取 requestBody 失败！)");
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-
 
   LinkisGatewayCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
@@ -62,7 +57,6 @@ public enum LinkisGatewayCoreErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

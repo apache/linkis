@@ -216,10 +216,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     if (null == engineNode.getEMNode()) {
       throw new PersistenceErrorException(
           THE_EMNODE_IS_NULL.getErrorCode(),
-          MessageFormat.format(THE_EMNODE_IS_NULL.getErrorDesc(),engineNode.getServiceInstance())
-      );
-
-
+          MessageFormat.format(THE_EMNODE_IS_NULL.getErrorDesc(), engineNode.getServiceInstance()));
     }
     String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
     nodeManagerMapper.addEngineNode(engineNodeInstance, emNodeInstance);

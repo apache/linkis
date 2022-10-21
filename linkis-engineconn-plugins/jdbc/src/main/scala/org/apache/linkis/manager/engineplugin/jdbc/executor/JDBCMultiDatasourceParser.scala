@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.executor
 
-
-import java.text.MessageFormat
-
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.datasource.client.impl.LinkisDataSourceRemoteClient
 import org.apache.linkis.datasource.client.request.GetInfoPublishedByDataSourceNameAction
@@ -28,7 +25,10 @@ import org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
 import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException
+
 import org.apache.commons.lang3.StringUtils
+
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -67,14 +67,14 @@ object JDBCMultiDatasourceParser extends Logging {
     if (strObjIsBlank(dataSource)) {
       throw JDBCParamsIllegalException(
         DATA_SOURCE_INFO_NOT_FOUND.getErrorCode,
-        MessageFormat.format(DATA_SOURCE_INFO_NOT_FOUND.getErrorDesc,datasourceName)
+        MessageFormat.format(DATA_SOURCE_INFO_NOT_FOUND.getErrorDesc, datasourceName)
       )
     }
 
     if (dataSource.getPublishedVersionId == null || dataSource.getPublishedVersionId <= 0) {
       throw JDBCParamsIllegalException(
         DATA_SOURCE_NOT_PUBLISHED.getErrorCode,
-        MessageFormat.format(DATA_SOURCE_NOT_PUBLISHED.getErrorDesc,datasourceName)
+        MessageFormat.format(DATA_SOURCE_NOT_PUBLISHED.getErrorDesc, datasourceName)
       )
     }
 
@@ -87,7 +87,7 @@ object JDBCMultiDatasourceParser extends Logging {
     if (dataSource.isExpire) {
       throw JDBCParamsIllegalException(
         DATA_SOURCE_EXPIRED.getErrorCode,
-        MessageFormat.format(DATA_SOURCE_EXPIRED.getErrorDesc,datasourceName)
+        MessageFormat.format(DATA_SOURCE_EXPIRED.getErrorDesc, datasourceName)
       )
     }
 
@@ -233,7 +233,7 @@ object JDBCMultiDatasourceParser extends Logging {
       case _ =>
         throw JDBCParamsIllegalException(
           UNSUPPORTED_AUTHENTICATION_TYPE.getErrorCode,
-          MessageFormat.format(UNSUPPORTED_AUTHENTICATION_TYPE.getErrorDesc,authType.getAuthType)
+          MessageFormat.format(UNSUPPORTED_AUTHENTICATION_TYPE.getErrorDesc, authType.getAuthType)
         )
 
     }

@@ -25,21 +25,15 @@ public enum HiveErrorCodeSummary {
    * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
    * linkis-extensions 26000-29999 linkis-engineconn-plugins
    */
-  CREATE_HIVE_EXECUTOR_ERROR(
-      26040,
-      "failed to create hive executor(创建hive执行器失败)"),
+  CREATE_HIVE_EXECUTOR_ERROR(26040, "failed to create hive executor(创建hive执行器失败)"),
   HIVE_EXEC_JAR_ERROR(
-      26041,
-      "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)"),
-  GET_FIELD_SCHEMAS_ERROR(
-      26042,
-      "cannot get the field schemas(无法获取字段 schemas)"),
+      26041, "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)"),
+  GET_FIELD_SCHEMAS_ERROR(26042, "cannot get the field schemas(无法获取字段 schemas)"),
   INVALID_VALUE(26043, "invalid value(无效值)");
 
   private int errorCode;
 
   private String errorDesc;
-
 
   HiveErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
@@ -62,7 +56,6 @@ public enum HiveErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

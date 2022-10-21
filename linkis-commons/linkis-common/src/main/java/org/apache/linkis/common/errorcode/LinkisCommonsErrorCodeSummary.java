@@ -18,8 +18,7 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisCommonsErrorCodeSummary {
-  ENGINE_FAILED_STARTED(
-      11000, "Engine start failed(引擎启动失败)");
+  ENGINE_FAILED_STARTED(11000, "Engine start failed(引擎启动失败)");
 
   /** 错误码 */
   private int errorCode;
@@ -50,7 +49,6 @@ public enum LinkisCommonsErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

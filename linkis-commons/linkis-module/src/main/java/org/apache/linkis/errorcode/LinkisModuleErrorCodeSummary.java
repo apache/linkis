@@ -24,26 +24,16 @@ public enum LinkisModuleErrorCodeSummary {
   FETCH_MAPCACHE_ERROR(
       10021,
       "Failed to get user parameters,because RPC request{0} Service failed(获取用户参数失败！因为 RPC 请求{0}服务失败)!"),
-  NOT_EXISTS_APPLICATION(
-      10050,
-      "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
+  NOT_EXISTS_APPLICATION(10050, "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
   HAVE_NOT_SET(
       11000,
       "The wds.linkis.server.home或BDP_SERVER_HOME haven't set(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置)!"),
-  VERIFICATION_CANNOT_EMPTY(
-      11001,
-      "Verification failed,{0} cannot be empty!(验证失败,{0} 不能为空！)"),
+  VERIFICATION_CANNOT_EMPTY(11001, "Verification failed,{0} cannot be empty!(验证失败,{0} 不能为空！)"),
   LOGGED_ID(11002, ""),
-  NOT_LOGGED(
-      11002,
-      "Login has expired, please log in again!(登录已过期，请重新登录！)"),
+  NOT_LOGGED(11002, "Login has expired, please log in again!(登录已过期，请重新登录！)"),
   ILLEGAL_ID(11003, ""),
-  ILLEGAL_USER_TOKEN(
-      11003,
-      "Illegal user token information(非法的用户token信息)."),
-  SERVERSSOCKET_NOT_EXIST(
-      11004,
-      "ServerSocket:{0} does not exist!(ServerSocket:{0}不存在！)"),
+  ILLEGAL_USER_TOKEN(11003, "Illegal user token information(非法的用户token信息)."),
+  SERVERSSOCKET_NOT_EXIST(11004, "ServerSocket:{0} does not exist!(ServerSocket:{0}不存在！)"),
   WEBSOCKET_IS_FULL(
       11005,
       "The receive queue for WebSocket is full, please try again later(WebSocket的接收队列已满，请稍后重试)!"),
@@ -55,7 +45,6 @@ public enum LinkisModuleErrorCodeSummary {
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-
 
   LinkisModuleErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
@@ -77,8 +66,6 @@ public enum LinkisModuleErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
-
 
   @Override
   public String toString() {

@@ -191,7 +191,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(
             YARN_NOT_EXISTS_QUEUE.getErrorCode,
-            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc,queueName)
+            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
         (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
@@ -202,7 +202,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(
             YARN_NOT_EXISTS_QUEUE.getErrorCode,
-            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc,queueName)
+            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
         (

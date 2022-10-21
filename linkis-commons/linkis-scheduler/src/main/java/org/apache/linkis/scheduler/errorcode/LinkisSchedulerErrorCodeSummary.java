@@ -24,11 +24,8 @@ public enum LinkisSchedulerErrorCodeSummary {
   TASK_STATUS_FLIP_ERROR(
       12000,
       "Task status flip error，because: failed to flip from:{0} to:{1}(任务状态翻转出错，原因：不允许从{0} 翻转为{1})."),
-  JOB_QUEUE_IS_FULL(
-      12001,
-      "The submission job failed and the queue is full!(提交作业失败，队列已满！)"),
-  UNRECOGNIZED_EXECID(
-      12011, "Unrecognized execId (不能识别的execId):"),
+  JOB_QUEUE_IS_FULL(12001, "The submission job failed and the queue is full!(提交作业失败，队列已满！)"),
+  UNRECOGNIZED_EXECID(12011, "Unrecognized execId (不能识别的execId):"),
   NEED_SUPPORTTED_GROUP(
       13000,
       "FIFOConsumerManager just support FIFO group, {0} is not FIFO group.(FIFOConsumerManager只支持FIFO类型的消费组，{0} 不是这类消费组.)"),
@@ -38,7 +35,6 @@ public enum LinkisSchedulerErrorCodeSummary {
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-
 
   LinkisSchedulerErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
@@ -60,7 +56,6 @@ public enum LinkisSchedulerErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

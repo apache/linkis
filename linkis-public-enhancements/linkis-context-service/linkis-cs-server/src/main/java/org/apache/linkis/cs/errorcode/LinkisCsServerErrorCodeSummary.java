@@ -18,8 +18,7 @@
 package org.apache.linkis.cs.errorcode;
 
 public enum LinkisCsServerErrorCodeSummary {
-  UNKNOWN_CONDITION_TYPE(
-      1200001, "Unknown Condition Type(未知条件类型)");
+  UNKNOWN_CONDITION_TYPE(1200001, "Unknown Condition Type(未知条件类型)");
 
   /** (errorCode)错误码 */
   private int errorCode;
@@ -46,7 +45,6 @@ public enum LinkisCsServerErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

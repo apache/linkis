@@ -34,75 +34,47 @@ public enum EntranceErrorCodeSummary {
   JOBREQUEST_NOT_NULL(
       20004,
       "JobRequest cannot be null, unable to do persist operation(JobRequest 不能为空，无法进行持久化操作)"),
-  INSTANCE_NOT_NULL(
-      20004, "The instance cannot be null(实例不能为空)"),
-  EXECUTEUSER_NOT_NULL(
-      20005,
-      "The execute user cannot be null(执行用户不能为空)"),
+  INSTANCE_NOT_NULL(20004, "The instance cannot be null(实例不能为空)"),
+  EXECUTEUSER_NOT_NULL(20005, "The execute user cannot be null(执行用户不能为空)"),
 
-  PARAM_NOT_NULL(
-      20007,
-      "The param executionCode cannot be empty (参数 executionCode 不能为空)"),
+  PARAM_NOT_NULL(20007, "The param executionCode cannot be empty (参数 executionCode 不能为空)"),
   EXEC_SCRIP_NOT_NULL(
       20007,
       "The param executionCode and scriptPath cannot be empty at the same time(参数 executionCode 和 scriptPath 不能同时为空)"),
 
-  ONLY_CODE_SUPPORTED(
-      20010,
-      "Only code with runtype supported (仅支持运行类型的代码)"),
-  REQUEST_JOBHISTORY_FAILED(
-      20011,
-      "Request jobHistory failed,because:{0} (请求jobHistory失败)"),
+  ONLY_CODE_SUPPORTED(20010, "Only code with runtype supported (仅支持运行类型的代码)"),
+  REQUEST_JOBHISTORY_FAILED(20011, "Request jobHistory failed,because:{0} (请求jobHistory失败)"),
   JOBRESP_PROTOCOL_NULL(
       20011,
       "Request jobHistory failed, because:jobRespProtocol is null (请求jobHistory失败,因为jobRespProtocol为null)"),
-  READ_TASKS_FAILED(
-      20011,
-      "Read all tasks failed, because:{0}(获取所有任务失败)"),
+  READ_TASKS_FAILED(20011, "Read all tasks failed, because:{0}(获取所有任务失败)"),
 
   SENDER_RPC_FAILED(20020, "Sender rpc failed"),
 
-  FAILED_ANALYSIS_TASK(
-      20039,
-      "Failed to analysis task,because:{0}(分析任务失败)!"),
+  FAILED_ANALYSIS_TASK(20039, "Failed to analysis task,because:{0}(分析任务失败)!"),
 
   INVALID_ENGINETYPE_NULL(
-      20052,
-      "Invalid engineType null, cannot use cache(无效的 engineType null，无法使用 cache)"),
+      20052, "Invalid engineType null, cannot use cache(无效的 engineType null，无法使用 cache)"),
   PERSIST_JOBREQUEST_ERROR(
-      20052,
-      "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)"),
+      20052, "Persist jobRequest error, please submit again later(存储Job异常，请稍后重新提交任务)"),
 
-  INVALID_RESULTSETS(
-      20053,
-      "Invalid resultsets, cannot use cache(结果集无效，无法使用 cache)"),
-  SUBMITTING_QUERY_FAILED(
-      30009, "Submitting the query failed(提交查询失败)!"),
-  QUERY_STATUS_FAILED(
-      50081,
-      "Query from jobHistory status failed(从 jobHistory 状态查询失败)"),
-  GET_QUERY_RESPONSE(
-      50081,
-      "Get query response incorrectly(获取查询响应结果不正确)"),
-  QUERY_TASKID_ERROR(
-      50081,
-      "Query task of taskId:{0} error(查询任务id：{}的任务出错)"),
+  INVALID_RESULTSETS(20053, "Invalid resultsets, cannot use cache(结果集无效，无法使用 cache)"),
+  SUBMITTING_QUERY_FAILED(30009, "Submitting the query failed(提交查询失败)!"),
+  QUERY_STATUS_FAILED(50081, "Query from jobHistory status failed(从 jobHistory 状态查询失败)"),
+  GET_QUERY_RESPONSE(50081, "Get query response incorrectly(获取查询响应结果不正确)"),
+  QUERY_TASKID_ERROR(50081, "Query task of taskId:{0} error(查询任务id：{}的任务出错)"),
   CORRECT_LIST_TYPR(
       50081,
       "Query from jobhistory with incorrect list type of taskId, the taskId is：{0} (从jobhistory 中查询的参数类型不正确)"),
-  SHELL_BLACKLISTED_CODE(
-      50081,
-      "Shell code contains blacklisted code(shell中包含黑名单代码)"),
+  SHELL_BLACKLISTED_CODE(50081, "Shell code contains blacklisted code(shell中包含黑名单代码)"),
   JOB_HISTORY_FAILED_ID(50081, ""),
 
-  LOGPATH_NOT_NULL(
-      20301, "The logPath cannot be empty(日志路径不能为空)");
+  LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-
 
   EntranceErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
@@ -124,7 +96,6 @@ public enum EntranceErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

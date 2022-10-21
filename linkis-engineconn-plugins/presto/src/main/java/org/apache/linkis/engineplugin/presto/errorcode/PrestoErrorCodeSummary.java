@@ -26,11 +26,8 @@ public enum PrestoErrorCodeSummary {
    * linkis-extensions 26000-29999 linkis-engineconn-plugins
    */
   PRESTO_STATE_INVALID(
-      26001,
-      "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)"),
-  PRESTO_CLIENT_ERROR(
-      26002,
-      "Presto client error(Presto客户端异常)");
+      26001, "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)"),
+  PRESTO_CLIENT_ERROR(26002, "Presto client error(Presto客户端异常)");
 
   private int errorCode;
 
@@ -61,7 +58,6 @@ public enum PrestoErrorCodeSummary {
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
   }
-
 
   @Override
   public String toString() {

@@ -20,20 +20,13 @@ package org.apache.linkis.engineconnplugin.sqoop.client.errorcode;
 public enum SqoopErrorCodeSummary {
   NOT_SUPPORT_METHON_ID(16023, ""),
   NOT_SUPPORT_METHON(
-      16023,
-      "Not support method for requestExpectedResource(不支持 requestExpectedResource 的方法)."),
-  EXEC_SQOOP_CODE_ERROR(
-      16023, "Exec Sqoop Code Error(执行 Sqoop 代码错误)"),
-  NEW_A_INSTANCE_OF(
-      16023,
-      "New a instance of:{0} failed!(新建:{0} 实例失败！)"),
+      16023, "Not support method for requestExpectedResource(不支持 requestExpectedResource 的方法)."),
+  EXEC_SQOOP_CODE_ERROR(16023, "Exec Sqoop Code Error(执行 Sqoop 代码错误)"),
+  NEW_A_INSTANCE_OF(16023, "New a instance of:{0} failed!(新建:{0} 实例失败！)"),
   ERROR_IN_CLOSING_ID(16025, ""),
   UNABLE_TO_CLOSE(
-      16025,
-      "Unable to close the mapReduce job related to cluster(无法关闭与集群相关的 mapReduce 作业)"),
-  ERROR_IN_CLOSING(
-      16025,
-      "Error in closing sqoop client(关闭 sqoop 客户端时出错)");
+      16025, "Unable to close the mapReduce job related to cluster(无法关闭与集群相关的 mapReduce 作业)"),
+  ERROR_IN_CLOSING(16025, "Error in closing sqoop client(关闭 sqoop 客户端时出错)");
 
   /** (errorCode)错误码 */
   private int errorCode;

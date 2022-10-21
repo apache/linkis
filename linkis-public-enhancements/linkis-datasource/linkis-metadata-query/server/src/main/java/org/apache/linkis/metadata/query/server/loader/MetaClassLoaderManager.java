@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.ERROR_IN_CREATING;
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.INIT_META_SERVICE;
 
 /** Class Loader for metaClass // TODO used interface class */
 public class MetaClassLoaderManager {
@@ -120,7 +124,7 @@ public class MetaClassLoaderManager {
                         });
                 if (Objects.isNull(metaClassLoader)) {
                   throw new MetaRuntimeException(
-                      "Error in creating classloader of type: [" + dsType + "]", null);
+                      MessageFormat.format(ERROR_IN_CREATING.getErrorDesc(), dsType), null);
                 }
                 String expectClassName = null;
                 if (dsType.length() > 0) {
@@ -131,7 +135,7 @@ public class MetaClassLoaderManager {
                     searchForLoadMetaServiceClass(metaClassLoader, expectClassName, true);
                 if (Objects.isNull(metaServiceClass)) {
                   throw new MetaRuntimeException(
-                      "Fail to init and load meta service class for type: [" + dsType + "]", null);
+                      MessageFormat.format(INIT_META_SERVICE.getErrorDesc(), dsType), null);
                 }
                 MetadataService metadataService =
                     MetadataUtils.loadMetaService(metaServiceClass, metaClassLoader);

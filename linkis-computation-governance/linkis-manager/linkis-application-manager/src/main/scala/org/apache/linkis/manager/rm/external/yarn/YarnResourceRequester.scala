@@ -25,6 +25,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType,
   YarnResource
 }
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.rm.external.domain.{
   ExternalAppInfo,
@@ -40,6 +41,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
@@ -187,7 +189,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val queue = getQueueOfCapacity(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(
+            YARN_NOT_EXISTS_QUEUE.getErrorCode,
+            YARN_NOT_EXISTS_QUEUE.getErrorDesc + s" $queueName"
+          )
         }
         (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
       } else if ("fairScheduler".equals(schedulerType)) {
@@ -195,7 +200,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val queue = getQueue(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(
+            YARN_NOT_EXISTS_QUEUE.getErrorCode,
+            YARN_NOT_EXISTS_QUEUE.getErrorDesc + s" $queueName"
+          )
         }
         (
           getYarnResource(queue.map(_ \ "maxResources")).get,
@@ -206,8 +214,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp
         )
         throw new RMWarnException(
-          11006,
-          s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType"
+          ONLY_SUPPORT_FAIRORCAPA.getErrorCode,
+          MessageFormat.format(ONLY_SUPPORT_FAIRORCAPA.getErrorDesc(), schedulerType)
         )
       }
     }
@@ -220,8 +228,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       nodeResource
     }(t => {
       throw new RMErrorException(
-        11006,
-        "Get the Yarn queue information exception" + ".(获取Yarn队列信息异常)",
+        YARN_QUEUE_EXCEPTION.getErrorCode,
+        YARN_QUEUE_EXCEPTION.getErrorDesc,
         t
       )
     })
@@ -274,8 +282,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     Utils.tryCatch(getAppInfos().toList.asJava)(t => {
       throw new RMErrorException(
-        11006,
-        "Get the Yarn Application information exception.(获取Yarn Application信息异常)",
+        YARN_APPLICATION_EXCEPTION.getErrorCode,
+        YARN_APPLICATION_EXCEPTION.getErrorDesc,
         t
       )
     })
@@ -354,7 +362,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           rmAddressMap.put(haAddress, activeAddress)
         } else {
           throw new RMErrorException(
-            11007,
+            GET_YARN_EXCEPTION.getErrorCode,
             s"Get active Yarn resourcemanager from : ${haAddress} exception.(从 ${haAddress} 获取主Yarn resourcemanager异常)"
           )
         }

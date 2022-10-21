@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.DeleteAction
 
@@ -53,9 +54,9 @@ object DeleteDataSourceAction {
     }
 
     def builder(): DeleteDataSourceAction = {
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
       if (dataSourceId == null) {
-        throw new DataSourceClientBuilderException("dataSourceId is needed!")
+        throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
 
       val action = new DeleteDataSourceAction

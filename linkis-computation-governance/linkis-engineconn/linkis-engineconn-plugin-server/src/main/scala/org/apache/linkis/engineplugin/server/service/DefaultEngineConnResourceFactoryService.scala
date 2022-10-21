@@ -25,6 +25,7 @@ import org.apache.linkis.manager.engineplugin.common.resource.{
   EngineResourceFactory,
   EngineResourceRequest
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.ETL_REQUESTED
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -53,7 +54,10 @@ class DefaultEngineConnResourceFactoryService
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
       getResourceFactoryBy(engineTypeLabel).createEngineResource(engineResourceRequest)
     } else {
-      throw new EngineConnPluginErrorException(10001, "EngineTypeLabel are requested")
+      throw new EngineConnPluginErrorException(
+        ETL_REQUESTED.getErrorCode,
+        ETL_REQUESTED.getErrorDesc
+      )
     }
   }
 

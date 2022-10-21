@@ -45,6 +45,8 @@ import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.FAIL_CLOSE_CONNECTION;
+
 public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);
   private static final String CONN_CACHE_REQ = "_STORED";
@@ -203,7 +205,7 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
       connection.close();
     } catch (IOException e) {
       throw new MetaRuntimeException(
-          "Fail to close connection[关闭连接失败], [" + e.getMessage() + "]", e);
+          FAIL_CLOSE_CONNECTION.getErrorDesc() + "[" + e.getMessage() + "]", e);
     }
   }
 

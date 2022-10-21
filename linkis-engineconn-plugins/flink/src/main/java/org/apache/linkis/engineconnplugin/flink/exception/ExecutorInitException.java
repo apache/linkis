@@ -19,6 +19,8 @@ package org.apache.linkis.engineconnplugin.flink.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.EXECUTORINIT_ID;
+
 public class ExecutorInitException extends ErrorException {
 
   public static final int ERROR_CODE = 16021;
@@ -30,14 +32,14 @@ public class ExecutorInitException extends ErrorException {
   }
 
   public ExecutorInitException(String desc) {
-    super(20001, desc);
+    super(EXECUTORINIT_ID.getErrorCode(), desc);
   }
 
   public ExecutorInitException(Exception e) {
-    super(20001, e.getMessage());
+    super(EXECUTORINIT_ID.getErrorCode(), e.getMessage());
   }
 
   public ExecutorInitException() {
-    super(20001, "argument illegal");
+    super(EXECUTORINIT_ID.getErrorCode(), "argument illegal");
   }
 }

@@ -26,7 +26,9 @@ public enum LinkisGwAuthenticationErrorCodeSummary {
   TOKEN_VALID_OR_STALE(
       15201, "Token is not valid or stale!(令牌无效或陈旧！)", "Token is not valid or stale!(令牌无效或陈旧！)"),
   ILLEGAL_TOKENUSER(
-      15202, "Illegal TokenUser for Token!(代币非法用户！)", "Illegal TokenUser for Token!(代币非法用户！)"),
+      15202,
+      "Illegal TokenUser for Token!(Token非法用户！)",
+      "Illegal TokenUser for Token!(Token非法用户！)"),
   ILLEGAL_HOST(15203, "Illegal Host for Token!(Token非法主机！)", "Illegal Host for Token!(Token非法主机！)"),
   INVALID_TOKEN(15204, "Invalid Token(令牌无效)", "Invalid Token(令牌无效)");
 

@@ -20,24 +20,20 @@ package org.apache.linkis.ecm.core.errorcode;
 public enum LinkisECMErrorCodeSummary {
   CAN_NOT_GET_INPUTSTREAM(
       20001,
-      "process is not be launch, can not get InputStream!(进程未启动，无法获取 InputStream！)",
-      "process is not be launch, can not get InputStream!(进程未启动，无法获取 InputStream！)"),
+      "process is not be launch, can not get InputStream(进程未启动，无法获取 InputStream)!"),
   CAN_NOT_GET_TERMINATED(
       20001,
-      "process is not be launch, can not get terminated code by wait!(进程未启动，无法通过等待获得终止代码！)",
-      "process is not be launch, can not get terminated code by wait!(进程未启动，无法通过等待获得终止代码！)");
+      "process is not be launch, can not get terminated code by wait(进程未启动，无法获得 terminated code)");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisECMErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+
+  LinkisECMErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -56,13 +52,6 @@ public enum LinkisECMErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 
   @Override
   public String toString() {

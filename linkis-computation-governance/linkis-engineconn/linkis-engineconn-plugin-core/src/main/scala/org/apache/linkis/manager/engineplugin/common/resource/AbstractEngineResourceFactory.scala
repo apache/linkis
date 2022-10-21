@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.engineplugin.common.resource
 
+import java.text.MessageFormat
+
 import org.apache.linkis.manager.common.entity.resource.{NodeResource, Resource}
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
@@ -40,7 +42,7 @@ trait AbstractEngineResourceFactory extends EngineResourceFactory {
     if (minResource.getClass != maxResource.getClass) {
       throw new EngineConnPluginErrorException(
         MINRESOURCE_MAXRESOURCE_NO_SAME.getErrorCode,
-        s"The minResource ${minResource.getClass.getSimpleName} is not the same with the maxResource${maxResource.getClass.getSimpleName}."
+        MessageFormat.format(MINRESOURCE_MAXRESOURCE_NO_SAME.getErrorDesc, minResource.getClass.getSimpleName, maxResource.getClass.getSimpleName)
       )
     }
     engineResource.setUser(user)

@@ -20,24 +20,19 @@ package org.apache.linkis.engineconn.core.errorcode;
 public enum LinkisEngineconnCoreErrorCodeSummary {
   NEED_ENGINE_BEFORE_CALL(
       12100,
-      "You need to wait for engine conn to be initialized before starting to call(在开始调用之前，您需要等待 engine conn 初始化)",
       "You need to wait for engine conn to be initialized before starting to call(在开始调用之前，您需要等待 engine conn 初始化)"),
   CANNOT_PARSE_FOR_NODE(
       12101,
-      "Cannot parse cs table for node(无法解析节点的 cs 表):{0}",
-      "Cannot parse cs table for node(无法解析节点的 cs 表):{0}");
+      "Cannot parse cs table for node：{0}(无法解析节点：{0} 的 cs 表)");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisEngineconnCoreErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisEngineconnCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -56,13 +51,6 @@ public enum LinkisEngineconnCoreErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 
   @Override
   public String toString() {

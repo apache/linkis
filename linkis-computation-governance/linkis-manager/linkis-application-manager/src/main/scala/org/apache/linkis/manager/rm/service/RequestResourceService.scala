@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.rm.service
 
+import java.text
+
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
@@ -26,7 +28,6 @@ import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
-
 import java.text.MessageFormat
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
@@ -140,7 +141,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       logger.warn(s"No resource available found for em ${emInstanceLabel.getInstance()} ")
       throw new RMWarnException(
         NO_RESOURCE_AVAILABLE.getErrorCode,
-        NO_RESOURCE_AVAILABLE.getErrorDesc + s" ${emInstanceLabel.getInstance()} "
+        MessageFormat.format(NO_RESOURCE_AVAILABLE.getErrorDesc,emInstanceLabel.getInstance())
       )
     }
   }

@@ -233,7 +233,8 @@ public class Environment {
     try {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(content, Environment.class);
     } catch (JsonMappingException e) {
-      throw new FlinkInitFailedException(BOT_PARSE_ENVIRONMENT.getErrorDesc() + e.getMessage(), e);
+      throw new FlinkInitFailedException(
+          MessageFormat.format(BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()), e);
     }
   }
 

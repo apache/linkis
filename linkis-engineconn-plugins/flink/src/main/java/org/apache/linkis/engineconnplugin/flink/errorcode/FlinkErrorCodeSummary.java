@@ -20,103 +20,53 @@ package org.apache.linkis.engineconnplugin.flink.errorcode;
 public enum FlinkErrorCodeSummary {
   CANNOT_MODULE_ALREADY(
       16020,
-      "Cannot register module  {0} because a module with this name is already registered.(无法注册模块 {0},因为已注册具有此名称的模块.)",
-      "Cannot register module {0}  because a module with this name is already registered.(无法注册模块 {0},因为已注册具有此名称的模块.)"),
+      "Cannot register module:{0}, because a module with this name is already registered(无法注册模块：{0},因为已注册具有此名称的模块).",
+      ""),
   CANNOT_CATALOG_ALREADY(
       16020,
-      "Cannot create catalog {0}  because a catalog with this name is already registered.(无法创建目录 {0},因为同名的目录已注册.)",
-      "Cannot create catalog  {0} because a catalog with this name is already registered.(无法创建目录 {0},因为同名的目录已注册.)"),
+      "Cannot create catalog:{0}, because a catalog with this name is already registered(无法创建目录：{0},因为同名的目录已注册).",
+      ""),
   CANNOT_TABLE_ALREADY(
       16020,
-      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):{0}",
-      "Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为):{0}"),
+      "Cannot create table:{0}, because a table with this name is already registered(无法创建表：{0}，因为同名的表已注册).",
+      ""),
   CANNOT_FUNCTION_ALREADY(
       16020,
-      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):{0}",
-      "Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称):{0}"),
-  SQL_CODE_EMPTY(16020, "The sql code is empty.(sql代码为空.)", "The sql code is empty.(sql代码为空.)"),
-  NOT_SUPPORT_RUNTYPE(
-      16020, "Not support runType (不支持 runType)", "Not support runType (不支持 runType)"),
-  PLANNER_MUST_THESE(
-      16020,
-      "Planner must be one of these(规划师必须是以下之一){0}",
-      "Planner must be one of these(规划师必须是以下之一){0}"),
-  EXECUTION_MUST_THESE(
-      16020,
-      "Execution must be one of these(执行类型必须是以下之一):{0}",
-      "Execution must be one of these(执行类型必须是以下之一):{0}"),
+      "Cannot create function:{}, because a function with this name is already registered(无法创建函数：{0}，因为同名函数已注册).",
+      ""),
+  SQL_CODE_EMPTY(16020, "The sql code is empty(sql 代码为空)", ""),
+  NOT_SUPPORT_RUNTYPE(16020, "Not support the runType:{}(不支持的runType：{}).", ""),
+  PLANNER_MUST_THESE(16020, "Planner must be one of:{}(Planner 必须是以下之一).", ""),
+  EXECUTION_MUST_THESE(16020, "Execution type must be one of:{}(Execution 类型必须是以下之一).", ""),
   NOT_SUPPORTED_YARNTARGET(
-      16020,
-      "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)",
-      "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)"),
-  UNKNOWN_CHECKPOINT_MODE(
-      16020, "Unknown checkpoint mode(未知检查点模式)", "Unknown checkpoint mode(未知检查点模式)"),
-  HUDIJARS_NOT_EXISTS(
-      16020,
-      "hudi jars is not exists.(hudi jars 不存在.)",
-      "hudi jars is not exists.(hudi jars 不存在.)"),
-  PATH_NOT_EXIST(
-      16020,
-      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):{0}",
-      "Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):{0}"),
+      16020, "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)", ""),
+  UNKNOWN_CHECKPOINT_MODE(16020, "Unknown checkpoint mode:{0}(未知的 checkpoint 模式).", ""),
+  HUDIJARS_NOT_EXISTS(16020, "hudi jars is not exists(hudi jars 不存在).", ""),
+  PATH_NOT_EXIST(16020, "The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)", ""),
   BOT_PARSE_ENVIRONMENT(
-      16020,
-      "Could not parse environment file. Cause(无法解析环境文件.原因):{0}",
-      "Could not parse environment file. Cause(无法解析环境文件.原因):{0}"),
-  CONFIGURATION_ENTRY_INVALID(
-      16020, "Invalid configuration entry.(配置条目无效.)", "Invalid configuration entry.(配置条目无效.)"),
+      16020, "Could not parse environment file，because:{0}(无法解析 environment 文件)", ""),
+  CONFIGURATION_ENTRY_INVALID(16020, "Invalid configuration entry(无效的配置项)", ""),
+
   FLINK_INIT_EXCEPTION_ID(16020, "", ""),
-  ONLY_RESET_ALL(
-      16021,
-      "Only RESET ALL is supported now(现在只支持 RESET ALL)",
-      "Only RESET ALL is supported now(现在只支持 RESET ALL)"),
-  SUPPORTED_COMMAND_CALL(
-      16021, "Unsupported command call(不支持的命令调用) ", "Unsupported command call(不支持的命令调用) "),
-  ONLY_SINGLE_STATEMENT(
-      16021,
-      "Only single statement is supported now(现在只支持单个语句) ",
-      "Only single statement is supported now(现在只支持单个语句) "),
-  UNKNOWN_STATEMENT(16021, "Unknown statement(未知声明):{0}", "Unknown statement(未知声明):{0}"),
-  FAILED_PARSE_STATEMENT(
-      16021, "Failed to parse statement.(解析语句失败.)", "Failed to parse statement.(解析语句失败.)"),
-  FAILED_DROP_STATEMENT(
-      16021,
-      "Failed to parse drop view statement.(无法解析 drop view 语句.)",
-      "Failed to parse drop view statement.(无法解析 drop view 语句.)"),
+
+  ONLY_RESET_ALL(16021, "Only RESET ALL is supported now(当前只支持 RESET ALL)", ""),
+  SUPPORTED_COMMAND_CALL(16021, "Unsupported command call:{0}(不支持该命令调用)", ""),
+  ONLY_SINGLE_STATEMENT(16021, "Only single statement is supported now(当前只支持单个语句)", ""),
+  UNKNOWN_STATEMENT(16021, "Unknown statement:{0}", ""),
+  FAILED_PARSE_STATEMENT(16021, "Failed to parse statement(解析语句失败).", ""),
+  FAILED_DROP_STATEMENT(16021, "Failed to parse drop view statement(无法解析 drop view 语句).", ""),
   SQL_PARSE_ID(16021, "", ""),
-  SUPPORTED_SOURCES(
-      16022,
-      "Unsupported execution type for sources.(不支持的源执行类型.)",
-      "Unsupported execution type for sources.(不支持的源执行类型.)"),
-  SUPPORTED_SINKS(
-      16022,
-      "Unsupported execution type for sinks.(接收器不支持的执行类型.)",
-      "Unsupported execution type for sinks.(接收器不支持的执行类型.)"),
-  SUPPORTED_FUNCTION_TYPE(
-      16022, "Unsupported function type(不支持的函数类型):{0}", "Unsupported function type(不支持的函数类型):{0}"),
+  SUPPORTED_SOURCES(16022, "Unsupported execution type for sources(不支持的源执行类型).", ""),
+  SUPPORTED_SINKS(16022, "Unsupported execution type for sinks(接收器不支持的执行类型).", ""),
+  SUPPORTED_FUNCTION_TYPE(16022, "Unsupported function type:{0}(不支持的函数类型).", ""),
   NOT_SUPPORT_TRANSFORM(
-      16022,
-      "Not support to transform this resultSet to JobId.(不支持将此 resultSet 转换为 JobId.)",
-      "Not support to transform this resultSet to JobId.(不支持将此 resultSet 转换为 JobId.)"),
-  ALREADY_CURRENT_SESSION(
-      16022,
-      "has already been defined in the current session.(已在当前会话中定义.)",
-      "has already been defined in the current session.(已在当前会话中定义.)"),
-  NOT_EXIST_SESSION(
-      16022,
-      "does not exist in the current session.(当前会话中不存在.)",
-      "does not exist in the current session.(当前会话中不存在.)"),
-  QUERY_CANCELED(
-      16022,
-      "The job for this query has been canceled.(此查询的作业已取消.)",
-      "The job for this query has been canceled.(此查询的作业已取消.)"),
-  NOT_JOB_ASD_ADMIN(
-      16022,
-      "No job is generated, please ask admin for help!(未生成作业，请向管理员寻求帮助！)",
-      "No job is generated, please ask admin for help!(未生成作业，请向管理员寻求帮助！)"),
-  NOT_SUPPORT_GRAMMAR(16022, "Not support grammar(不支持语法)", "Not support grammar(不支持语法)"),
-  ERROR_SUBMITTING_JOB(
-      16022, "Error while submitting job.(提交作业时出错.)", "Error while submitting job.(提交作业时出错.)"),
+      16022, "Not support to transform this resultSet to JobId(不支持将此 resultSet 转换为 JobId).", ""),
+  ALREADY_CURRENT_SESSION(16022, "has already been defined in the current session.", ""),
+  NOT_EXIST_SESSION(16022, "does not exist in the current session.", ""),
+  QUERY_CANCELED(16022, "The job for this query has been canceled(此查询的作业已取消).", ""),
+  NOT_JOB_ASD_ADMIN(16022, "No job is generated, please ask admin for help(未生成作业，请向管理员寻求帮助)!", ""),
+  NOT_SUPPORT_GRAMMAR(16022, "Not support this grammar{0}(不支持该语法：{0})", ""),
+  ERROR_SUBMITTING_JOB(16022, "Error while submitting job(提交作业时出错).", ""),
   NOT_SOCKET_RETRIEVAL(
       16022,
       "Result The retrieved gateway address is invalid, the address is(结果 检索到的网关地址无效，地址为):",

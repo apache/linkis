@@ -27,35 +27,24 @@ public enum HiveErrorCodeSummary {
    */
   CREATE_HIVE_EXECUTOR_ERROR(
       26040,
-      "failed to create hive executor(创建hive执行器失败)",
-      "failed to create hive executor(创建hive执行器失败)",
-      "hiveEngine"),
+      "failed to create hive executor(创建hive执行器失败)"),
   HIVE_EXEC_JAR_ERROR(
       26041,
-      "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)",
-      "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)",
-      "hiveEngine"),
+      "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)"),
   GET_FIELD_SCHEMAS_ERROR(
       26042,
-      "cannot get the field schemas(无法获取字段模式)",
-      "cannot get the field schemas(无法获取字段模式)",
-      "hiveEngine"),
-  INVALID_VALUE(26043, "invalid value(无效值)", "invalid value(无效值)", "hiveEngine");
+      "cannot get the field schemas(无法获取字段 schemas)"),
+  INVALID_VALUE(26043, "invalid value(无效值)");
 
   private int errorCode;
 
   private String errorDesc;
 
-  private String comment;
 
-  private String module;
-
-  HiveErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  HiveErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -74,21 +63,6 @@ public enum HiveErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
-  }
 
   @Override
   public String toString() {

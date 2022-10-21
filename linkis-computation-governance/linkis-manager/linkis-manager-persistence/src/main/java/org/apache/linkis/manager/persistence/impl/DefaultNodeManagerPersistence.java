@@ -34,6 +34,7 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 
 import org.springframework.dao.DuplicateKeyException;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -215,7 +216,10 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     if (null == engineNode.getEMNode()) {
       throw new PersistenceErrorException(
           THE_EMNODE_IS_NULL.getErrorCode(),
-          THE_EMNODE_IS_NULL.getErrorDesc() + engineNode.getServiceInstance());
+          MessageFormat.format(THE_EMNODE_IS_NULL.getErrorDesc(),engineNode.getServiceInstance())
+      );
+
+
     }
     String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
     nodeManagerMapper.addEngineNode(engineNodeInstance, emNodeInstance);

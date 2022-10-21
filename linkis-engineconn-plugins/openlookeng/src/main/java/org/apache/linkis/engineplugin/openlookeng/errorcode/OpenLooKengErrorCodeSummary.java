@@ -27,15 +27,11 @@ public enum OpenLooKengErrorCodeSummary {
    */
   OPENLOOKENG_CLIENT_ERROR(
       26030,
-      "openlookeng client error(openlookeng客户端异常)",
-      "openlookeng client is abnormal due to some circumstances(openlookeng client由于某些情况异常)",
-      "jdbcEngineConnExecutor"),
+      "openlookeng client error(openlookeng客户端异常)"),
 
   OPENLOOKENG_STATUS_ERROR(
       26031,
-      "openlookeng status error,Statement is not finished(openlookeng状态异常, 查询语句未完成)",
-      "The status of openlookeng is abnormal, and the query statement cannot be executed and ended(openlookeng状态出现异常，查询语句无法执行结束)",
-      "jdbcEngineConnExecutor");
+      "openlookeng status error,statement is not finished(openlookeng状态异常, 查询语句未完成)");
 
   private int errorCode;
 
@@ -45,12 +41,10 @@ public enum OpenLooKengErrorCodeSummary {
 
   private String module;
 
-  OpenLooKengErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  OpenLooKengErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -69,21 +63,6 @@ public enum OpenLooKengErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
-  }
 
   @Override
   public String toString() {

@@ -22,6 +22,8 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException
 
+import java.text.MessageFormat
+
 import scala.collection.convert.WrapAsScala._
 
 object GrammarFactory {
@@ -35,7 +37,9 @@ object GrammarFactory {
   def getGrammars: Array[Grammar] = grammars
 
   def apply(sql: String, context: FlinkEngineConnContext): Grammar = getGrammar(sql, context)
-    .getOrElse(throw new SqlExecutionException(NOT_SUPPORT_GRAMMAR.getErrorDesc + sql))
+    .getOrElse(
+      throw new SqlExecutionException(MessageFormat.format(NOT_SUPPORT_GRAMMAR.getErrorDesc, sql))
+    )
 
   def getGrammar(sql: String, context: FlinkEngineConnContext): Option[Grammar] =
     grammars.find(_.canParse(sql)).map(_.copy(context, sql))

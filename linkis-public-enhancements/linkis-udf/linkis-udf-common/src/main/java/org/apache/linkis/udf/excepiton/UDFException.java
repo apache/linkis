@@ -19,12 +19,10 @@ package org.apache.linkis.udf.excepiton;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-import static org.apache.linkis.udf.errorcode.UdfCommonErrorCodeSummary.UDF_EXCEPTION_ID;
-
 public class UDFException extends ErrorException {
 
   public UDFException(String desc) {
-    super(UDF_EXCEPTION_ID.getErrorCode(), desc);
+    super(202011, desc);
   }
 
   public UDFException(int errCode, String desc) {

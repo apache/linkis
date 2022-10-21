@@ -19,34 +19,28 @@ package org.apache.linkis.metadata.errorcode;
 
 public enum LinkisMetadataErrorCodeSummary {
   UNRECOGNIZED_IMPORT_TYPE(
-      57895, "unrecognized import type(无法识别的导入类型)", "unrecognized import type(无法识别的导入类型)"),
+      57895, "unrecognized import type(无法识别的导入类型)"),
   IMPORT_HIVE_SOURCE_IS_NULL(
-      57895, "import hive source is null(导入配置单元源为空)", "import hive source is null(导入配置单元源为空)"),
+      57895, "import hive source is null(导入配置单元源为空)"),
   HIVE_CREATE_IS_NULL(
       57895,
-      "Hive create table destination database or tablename is null(Hive 创建表目标数据库或表名为空)",
-      "Hive create table destination database or tablename is null(Hive 创建表目标数据库或表名为空)"),
+      "Hive create table destination database or tablename is null(hive 创建表目标数据库或表名为空)"),
   HIVE_CREATE__TABLE_IS_NULL(
       57895,
-      "hive create table source table name is null(hive 创建表源表名为空)",
       "hive create table source table name is null(hive 创建表源表名为空)"),
   PARTITION_IS_NULL(
       57895,
-      "partition name or type is null(分区名称或类型为空)",
       "partition name or type is null(分区名称或类型为空)"),
-  EXPRESS_CODE(57895, "", "");
+  EXPRESS_CODE(57895, "");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisMetadataErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisMetadataErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -65,13 +59,7 @@ public enum LinkisMetadataErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-  public String getComment() {
-    return comment;
-  }
 
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
 
   @Override
   public String toString() {

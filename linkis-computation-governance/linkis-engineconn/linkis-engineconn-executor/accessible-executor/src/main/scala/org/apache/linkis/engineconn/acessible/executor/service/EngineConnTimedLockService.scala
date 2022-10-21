@@ -27,13 +27,11 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
 import org.apache.linkis.engineconn.acessible.executor.lock.EngineConnTimedLock
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
-
-import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.INVALID_EXECUTOR_OR_NOT_INSTANCE
-
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
   EngineConnExecutorErrorException
 }
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.INVALID_EXECUTOR_OR_NOT_INSTANCE
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.{
   RequestEngineLock,

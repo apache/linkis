@@ -147,7 +147,7 @@ object JobHistoryHelper extends Logging {
                 else null
               case _ =>
                 throw JobHistoryFailedException(
-                  MessageFormat.format(CORRECT_LIST_TYPR.getErrorDesc, taskID)
+                  MessageFormat.format(CORRECT_LIST_TYPR.getErrorDesc, taskID.toString)
                 )
             }
           }
@@ -159,7 +159,7 @@ object JobHistoryHelper extends Logging {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
         val e1 =
-          JobHistoryFailedException(MessageFormat.format(QUERY_TASKID_ERROR.getErrorDesc, taskID))
+          JobHistoryFailedException(MessageFormat.format(QUERY_TASKID_ERROR.getErrorDesc, taskID.toString))
         e1.initCause(e)
         throw e
     }

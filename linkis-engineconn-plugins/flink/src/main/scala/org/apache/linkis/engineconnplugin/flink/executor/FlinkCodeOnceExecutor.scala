@@ -111,8 +111,9 @@ class FlinkCodeOnceExecutor(
     logger.info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
-    if (!callOpt.isPresent)
+    if (!callOpt.isPresent) {
       throw new SqlParseException(MessageFormat.format(UNKNOWN_STATEMENT.getErrorDesc, code))
+    }
     val resultSet = callOpt.get().command match {
       case SqlCommand.SET | SqlCommand.USE_CATALOG | SqlCommand.USE | SqlCommand.SHOW_MODULES |
           SqlCommand.DESCRIBE_TABLE | SqlCommand.EXPLAIN =>

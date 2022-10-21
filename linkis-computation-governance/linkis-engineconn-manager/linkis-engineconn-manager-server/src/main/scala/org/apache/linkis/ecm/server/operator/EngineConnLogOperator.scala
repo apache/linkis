@@ -59,7 +59,7 @@ class EngineConnLogOperator extends Operator with Logging {
         CANNOT_FETCH_MORE_THAN.getErrorCode,
         MessageFormat.format(
           CANNOT_FETCH_MORE_THAN.getErrorDesc,
-          EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue
+          EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue.toString
         )
       )
     } else if (lastRows > 0) {

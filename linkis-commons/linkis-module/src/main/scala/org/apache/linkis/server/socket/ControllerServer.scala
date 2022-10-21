@@ -64,7 +64,7 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     if (socket == null) {
       throw new BDPServerErrorException(
         SERVERSSOCKET_NOT_EXIST.getErrorCode,
-        MessageFormat.format(SERVERSSOCKET_NOT_EXIST.getErrorDesc, id)
+        MessageFormat.format(SERVERSSOCKET_NOT_EXIST.getErrorDesc, id.toString)
       )
     }
     socket.sendMessage(message)

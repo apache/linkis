@@ -18,7 +18,9 @@
 package org.apache.linkis.metadata.query.server.service.impl;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.DataSources;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
+import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
@@ -200,6 +202,21 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   @Override
+  public Map<String, String> getConnectionInfoByDsName(
+      String dataSourceName, Map<String, String> queryParams, String system, String userName)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getConnectionInfo",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), queryParams},
+          Map.class);
+    }
+    return new HashMap<>();
+  }
+
+  @Override
   public List<String> getTablesByDsName(
       String dataSourceName, String database, String system, String userName)
       throws ErrorException {
@@ -336,8 +353,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   public DsInfoResponse queryDataSourceInfoByName(
       String dataSourceName, String system, String userName) throws ErrorException {
     Object rpcResult = null;
+    boolean useDefault = false;
     try {
-      rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system));
+      rpcResult = reqGetDefaultDataSource(dataSourceName);
+      if (Objects.isNull(rpcResult)) {
+        rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system));
+      } else {
+        useDefault = true;
+      }
     } catch (Exception e) {
       throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
     }
@@ -352,13 +375,30 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
                   && userName.equals(response.creator())));
       if (!hasPermission) {
         throw new ErrorException(-1, "Don't have query permission for data source [没有数据源的查询权限]");
-      } else if (response.params().isEmpty()) {
+      } else if (!useDefault && response.params().isEmpty()) {
         throw new ErrorException(-1, "Have you published the data source? [数据源未发布或者参数为空]");
       }
       return response;
     } else {
       throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
     }
+  }
+
+  /**
+   * Request to get default data source
+   *
+   * @param dataSourceName data source name
+   * @return response
+   */
+  private DsInfoResponse reqGetDefaultDataSource(String dataSourceName) {
+    DataSource dataSource = DataSources.getDefault(dataSourceName);
+    return (Objects.nonNull(dataSource))
+        ? new DsInfoResponse(
+            true,
+            dataSource.getDataSourceType().getName(),
+            dataSource.getConnectParams(),
+            dataSource.getCreateUser())
+        : null;
   }
 
   /**

@@ -1,7 +1,8 @@
-## linkis-engineconn-plugin-server 配置
+## linkis-engineconn-plugin-server configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 |
-| -------- | -------- | ----- |----- |
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |
+| -------- | -------- | ----- |----- | 
 | wds.linkis.engineconn.plugin.loader.classname | |plugin.loader.classname|
 | wds.linkis.engineconn.plugin.loader.defaultUser | hadoop |wds.linkis.engineconn.plugin.loader.defaultUser|
 | wds.linkis.engineconn.plugin.loader.store.path | |loader.store.path|

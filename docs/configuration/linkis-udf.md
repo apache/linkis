@@ -1,6 +1,7 @@
-## linkis-udf 配置
+## linkis-udf configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-udf|wds.linkis.udf.hive.exec.path |/appcom/Install/DataWorkCloudInstall/linkis-linkis-Udf-0.0.3-SNAPSHOT/lib/hive-exec-1.2.1.jar|udf.hive.exec.path|
 |linkis-udf|wds.linkis.udf.tmp.path|/tmp/udf/|udf.tmp.path|

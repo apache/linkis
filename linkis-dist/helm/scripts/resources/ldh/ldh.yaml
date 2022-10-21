@@ -82,77 +82,39 @@ spec:
         - name: data-dir
           emptyDir: {}
         - name: hadoop-conf
-          configMap:
-            name: hadoop-conf
-            items:
-              - key: hadoop-env.sh
-                path: hadoop-env.sh
-              - key: core-site.xml
-                path: core-site.xml
-              - key: hdfs-site.xml
-                path: hdfs-site.xml
-              - key: yarn-env.sh
-                path: yarn-env.sh
-              - key: yarn-site.xml
-                path: yarn-site.xml
-              - key: capacity-scheduler.xml
-                path: capacity-scheduler.xml
-              - key: log4j.properties
-                path: log4j.properties
+          projected:
+            sources:
+            - configMap:
+                name: hadoop-conf
         - name: hive-conf
-          configMap:
-            name: hive-conf
-            items:
-              - key: hive-env.sh
-                path: hive-env.sh
-              - key: hive-site.xml
-                path: hive-site.xml
-              - key: hive-log4j2.properties
-                path: hive-log4j2.properties
-              - key: beeline-log4j2.properties
-                path: beeline-log4j2.properties
-              - key: hive-exec-log4j2.properties
-                path: hive-exec-log4j2.properties
+          projected:
+            sources:
+            - configMap:
+                name: hive-conf
         - name: spark-conf
-          configMap:
-            name: spark-conf
-            items:
-              - key: spark-env.sh
-                path: spark-env.sh
-              - key: hive-site.xml
-                path: hive-site.xml
-              - key: spark-defaults.conf
-                path: spark-defaults.conf
-              - key: log4j2.properties
-                path: log4j2.properties
+          projected:
+            sources:
+            - configMap:
+                name: spark-conf
+            - configMap:
+                name: hive-conf
+                items:
+                - key: hive-site.xml
+                  path: hive-site.xml
         - name: flink-conf
-          configMap:
-            name: flink-conf
-            items:
-              - key: flink-conf.yaml
-                path: flink-conf.yaml
-              - key: log4j-cli.properties
-                path: log4j-cli.properties
-              - key: log4j-console.properties
-                path: log4j-console.properties
-              - key: log4j-session.properties
-                path: log4j-session.properties
-              - key: log4j.properties
-                path: log4j.properties
-              - key: logback-console.xml
-                path: logback-console.xml
-              - key: logback-session.xml
-                path: logback-session.xml
-              - key: logback.xml
-                path: logback.xml
+          projected:
+            sources:
+            - configMap:
+                name: flink-conf
         - name: zookeeper-conf
-          configMap:
-            name: zookeeper-conf
-            items:
-              - key: zoo.cfg
-                path: zoo.cfg
-              - key: log4j.properties
-                path: log4j.properties
+          projected:
+            sources:
+            - configMap:
+                name: zookeeper-conf
+        - name: mysql-jar
+          hostPath:
+            path: /opt/common/extendlib
+            type: DirectoryOrCreate
       containers:
         - name: ldh
           image: linkis-ldh:${LDH_VERSION}
@@ -214,3 +176,5 @@ spec:
               mountPath: /etc/ldh/flink
             - name: zookeeper-conf
               mountPath: /etc/ldh/zookeeper
+            - name: mysql-jar
+              mountPath: /opt/common/extendlib

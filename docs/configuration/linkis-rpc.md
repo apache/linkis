@@ -1,6 +1,7 @@
-## linkis-rpc 配置
+## linkis-rpc configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-rpc|wds.linkis.rpc.broadcast.thread.num| 25 | thread.num |true|
 |linkis-rpc|wds.linkis.rpc.eureka.client.refresh.interval| 1s |refresh.interval|true|

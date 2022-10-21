@@ -202,7 +202,6 @@
     <profile>
       <id>docker</id>
       <properties>
-        <image.build.type>dev</image.build.type>
         <image.base>centos:7</image.base>
         <image.base.web>nginx:1.19.6</image.base.web>
         <jdk.version>1.8.0-openjdk</jdk.version>

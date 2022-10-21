@@ -26,6 +26,7 @@ import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 import org.apache.commons.lang3.StringUtils
 
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConversions._
@@ -89,8 +90,7 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
     } else {
       throw new GatewayErrorException(
         CANNOT_INSTANCE.getErrorCode,
-        s"Cannot find an instance in the routing chain of serviceId [" +
-          serviceId + "], please retry"
+        MessageFormat.format(CANNOT_INSTANCE.getErrorDesc, serviceId)
       )
     }
   }

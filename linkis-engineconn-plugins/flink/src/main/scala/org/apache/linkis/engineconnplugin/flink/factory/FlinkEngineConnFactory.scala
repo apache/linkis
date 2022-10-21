@@ -48,6 +48,7 @@ import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTar
 
 import java.io.File
 import java.net.URL
+import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
@@ -297,8 +298,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
         if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase(Locale.getDefault))) {
           throw new FlinkInitFailedException(
-            PLANNER_MUST_THESE.getErrorDesc + String
-              .join(", ", ExecutionEntry.AVAILABLE_PLANNERS)
+            MessageFormat.format(
+              PLANNER_MUST_THESE.getErrorDesc,
+              String.join(", ", ExecutionEntry.AVAILABLE_PLANNERS)
+            )
           )
         }
         val executionType = FlinkEnvConfiguration.FLINK_SQL_EXECUTION_TYPE.getValue(options)
@@ -308,8 +311,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
             )
         ) {
           throw new FlinkInitFailedException(
-            EXECUTION_MUST_THESE.getErrorDesc + String
-              .join(", ", ExecutionEntry.AVAILABLE_EXECUTION_TYPES)
+            MessageFormat.format(
+              EXECUTION_MUST_THESE.getErrorDesc,
+              String.join(", ", ExecutionEntry.AVAILABLE_EXECUTION_TYPES)
+            )
           )
         }
         val properties = new util.HashMap[String, String]

@@ -33,6 +33,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import javax.servlet.http.HttpServletRequest
 
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -54,7 +55,7 @@ package object server {
       if (!json.contains(k) || json.get(k) == null || StringUtils.isEmpty(json.get(k).toString)) {
         throw new BDPServerErrorException(
           VERIFICATION_CANNOT_EMPTY.getErrorCode,
-          s"Verification failed, $k cannot be empty!(验证失败，$k 不能为空！)"
+          MessageFormat.format(VERIFICATION_CANNOT_EMPTY.getErrorDesc, k)
         )
       }
     )

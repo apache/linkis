@@ -22,6 +22,8 @@ import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
 
+import java.text.MessageFormat
+
 trait SchedulerEvent extends Logging {
 
   private[queue] var id: String = _
@@ -89,8 +91,8 @@ trait SchedulerEvent extends Logging {
     if (state.id < this.state.id && state != WaitForRetry) {
       throw new SchedulerErrorException(
         TASK_STATUS_FLIP_ERROR.getErrorCode,
-        s"Task status flip error! Cause: Failed to flip from ${this.state} to $state.（任务状态翻转出错！原因：不允许从${this.state} 翻转为$state.）"
-      ) // 抛异常
+        MessageFormat.format(TASK_STATUS_FLIP_ERROR.getErrorDesc, this.state, state)
+      )
     }
     logger.info(s"$toString change status ${this.state} => $state.")
     val oldState = this.state

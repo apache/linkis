@@ -20,6 +20,7 @@ package org.apache.linkis.httpclient.discovery
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.HttpClientConstant
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.CONNECT_TO_SERVERURL
 import org.apache.linkis.httpclient.exception.DiscoveryException
 
 import org.apache.commons.lang3.StringUtils
@@ -27,6 +28,7 @@ import org.apache.http.HttpResponse
 
 import java.io.Closeable
 import java.net.ConnectException
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.ScheduledFuture
 
@@ -100,7 +102,7 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
       case heartbeat: HeartbeatResult =>
         if (!heartbeat.isHealthy) {
           throw new DiscoveryException(
-            s"connect to serverUrl $serverUrl failed! Reason: gateway server is unhealthy!"
+            MessageFormat.format(CONNECT_TO_SERVERURL.getErrorDesc, serverUrl)
           )
         } else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
     }

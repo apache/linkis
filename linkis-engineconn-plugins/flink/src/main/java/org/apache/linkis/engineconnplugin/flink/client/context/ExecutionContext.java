@@ -61,6 +61,7 @@ import javax.annotation.Nullable;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -537,7 +538,7 @@ public class ExecutionContext {
           streamTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
           throw new SqlExecutionException(
-              SUPPORTED_FUNCTION_TYPE.getErrorDesc() + v.getClass().getName());
+              MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
         }
       }
     } else {
@@ -553,7 +554,7 @@ public class ExecutionContext {
           batchTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
           throw new SqlExecutionException(
-              SUPPORTED_FUNCTION_TYPE.getErrorDesc() + v.getClass().getName());
+              MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
         }
       }
     }

@@ -20,8 +20,8 @@ package org.apache.linkis.httpclient.errorcode;
 public enum LinkisHttpclientErrorCodeSummary {
   CONNECT_TO_SERVERURL(
           10901,
-          "connect to serverUrl failed! Reason: gateway server is unhealthy!(连接到 serverUrl 失败！ 原因：网关服务器请求失败！)",
-          "connect to serverUrl failed! Reason: gateway server is unhealthy!(连接到 serverUrl 失败！ 原因：网关服务器请求失败！)"),
+          "connect to serverUrl {0} failed! Reason: gateway server is unhealthy!(连接到 serverUrl {0} 失败！ 原因：网关服务器请求失败！)",
+          "connect to serverUrl {0} failed! Reason: gateway server is unhealthy!(连接到 serverUrl {0} 失败！ 原因：网关服务器请求失败！)"),
   REQUEST_FAILED_HTTP(
           10905,
           "URL request failed!(URL 请求失败)",

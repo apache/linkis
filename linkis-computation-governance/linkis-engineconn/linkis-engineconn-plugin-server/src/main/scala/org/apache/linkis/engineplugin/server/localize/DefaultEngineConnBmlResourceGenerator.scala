@@ -23,6 +23,7 @@ import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginE
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
 import java.io.{File, FileInputStream, InputStream}
+import java.text.MessageFormat
 
 class DefaultEngineConnBmlResourceGenerator
     extends AbstractEngineConnBmlResourceGenerator
@@ -70,7 +71,7 @@ class DefaultEngineConnBmlResourceGenerator
         if (newFile.exists() && !newFile.delete()) {
           throw new EngineConnPluginErrorException(
             NO_PERMISSION_FILE.getErrorCode,
-            NO_PERMISSION_FILE.getErrorCode + s"$newFile"
+            MessageFormat.format(NO_PERMISSION_FILE.getErrorDesc, newFile)
           )
         }
         ZipUtils.fileToZip(file.getPath, path, file.getName + ".zip")

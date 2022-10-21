@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.ConnectException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -191,12 +192,14 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     } catch (ExecutionException e) {
       throw new RMErrorException(
           NO_SUITABLE_CLUSTER.getErrorCode(),
-          NO_SUITABLE_CLUSTER.getErrorDesc() + realClusterLabel.getClusterName(),
+          MessageFormat.format(
+              NO_SUITABLE_CLUSTER.getErrorDesc(), realClusterLabel.getClusterName()),
           e);
     }
     throw new RMErrorException(
         NO_SUITABLE_CLUSTER.getErrorCode(),
-        NO_SUITABLE_CLUSTER.getErrorDesc() + realClusterLabel.getClusterName());
+        MessageFormat.format(
+            NO_SUITABLE_CLUSTER.getErrorDesc(), realClusterLabel.getClusterName()));
   }
 
   private ExternalResourceRequester getRequester(ResourceType resourceType)
@@ -208,7 +211,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     }
     throw new RMErrorException(
         NO_FOUND_RESOURCE_TYPE.getErrorCode(),
-        NO_FOUND_RESOURCE_TYPE.getErrorDesc() + resourceType);
+        MessageFormat.format(NO_FOUND_RESOURCE_TYPE.getErrorDesc(), resourceType));
   }
 
   private ExternalResourceIdentifierParser getIdentifierParser(ResourceType resourceType)
@@ -220,6 +223,6 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     }
     throw new RMErrorException(
         NO_FOUND_RESOURCE_TYPE.getErrorCode(),
-        NO_FOUND_RESOURCE_TYPE.getErrorDesc() + resourceType);
+        MessageFormat.format(NO_FOUND_RESOURCE_TYPE.getErrorDesc(), resourceType));
   }
 }

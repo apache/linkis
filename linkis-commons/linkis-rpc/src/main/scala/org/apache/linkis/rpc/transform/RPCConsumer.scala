@@ -25,6 +25,8 @@ import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, JMap, Message}
 
+import java.text.MessageFormat
+
 import scala.runtime.BoxedUnit
 
 import org.slf4j.LoggerFactory
@@ -53,12 +55,12 @@ private[linkis] object RPCConsumer {
             case _: ClassNotFoundException =>
               new DWCURIException(
                 CORRESPONDING_NOT_FOUND.getErrorCode,
-                s"The corresponding anti-sequence class $objectClass was not found.(找不到对应的反序列类$objectClass.)"
+                MessageFormat.format(CORRESPONDING_NOT_FOUND.getErrorDesc, objectClass)
               )
             case t: ExceptionInInitializerError =>
               val exception = new DWCURIException(
                 CORRESPONDING_TO_INITIALIZE.getErrorCode,
-                s"The corresponding anti-sequence class ${objectClass} failed to initialize.(对应的反序列类${objectClass}初始化失败.)"
+                MessageFormat.format(CORRESPONDING_TO_INITIALIZE.getErrorDesc, objectClass)
               )
               exception.initCause(t)
               exception

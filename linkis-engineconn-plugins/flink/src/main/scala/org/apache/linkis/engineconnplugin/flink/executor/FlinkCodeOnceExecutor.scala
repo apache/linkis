@@ -41,6 +41,7 @@ import org.apache.flink.table.api.{ResultKind, TableResult}
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
 import org.apache.hadoop.yarn.api.records.ApplicationId
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.Future
 import java.util.function.Supplier
@@ -110,7 +111,9 @@ class FlinkCodeOnceExecutor(
     logger.info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
-    if (!callOpt.isPresent) throw new SqlParseException(UNKNOWN_STATEMENT.getErrorDesc + code)
+    if (!callOpt.isPresent) {
+      throw new SqlParseException(MessageFormat.format(UNKNOWN_STATEMENT.getErrorDesc, code))
+    }
     val resultSet = callOpt.get().command match {
       case SqlCommand.SET | SqlCommand.USE_CATALOG | SqlCommand.USE | SqlCommand.SHOW_MODULES |
           SqlCommand.DESCRIBE_TABLE | SqlCommand.EXPLAIN =>

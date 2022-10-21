@@ -59,6 +59,7 @@ import org.apache.flink.yarn.configuration.YarnConfigOptions
 import org.apache.hadoop.yarn.util.ConverterUtils
 
 import java.io.Closeable
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.TimeUnit
 
@@ -79,7 +80,8 @@ class FlinkSQLComputationExecutor(
       case adapter: YarnSessionClusterDescriptorAdapter => clusterDescriptor = adapter
       case adapter if adapter != null =>
         throw new ExecutorInitException(
-          s"Not support ${adapter.getClass.getSimpleName} for FlinkSQLComputationExecutor."
+          MessageFormat
+            .format(NOT_SUPPORT_SIMPLENAME.getErrorDesc(), adapter.getClass.getSimpleName)
         )
       case _ =>
         throw new ExecutorInitException(ADAPTER_IS_NULL.getErrorDesc)
@@ -103,7 +105,8 @@ class FlinkSQLComputationExecutor(
   ): ExecuteResponse = {
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     val callSQL =
-      if (!callOpt.isPresent) throw new SqlParseException(UNKNOWN_STATEMENT.getErrorDesc + code)
+      if (!callOpt.isPresent)
+        throw new SqlParseException(MessageFormat.format(UNKNOWN_STATEMENT.getErrorDesc, code))
       else callOpt.get
     RelMetadataQueryBase.THREAD_PROVIDERS.set(
       JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE)

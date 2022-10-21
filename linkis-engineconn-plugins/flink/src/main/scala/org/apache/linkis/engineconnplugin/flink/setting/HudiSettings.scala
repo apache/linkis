@@ -32,6 +32,7 @@ import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 
 import java.io.File
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -142,7 +143,7 @@ object HudiSettings {
     }
     val lib = new File(EngineConnConf.getWorkHome, "lib")
     if (!lib.exists() || !lib.isDirectory) {
-      throw new FlinkInitFailedException(PATH_NOT_EXIST.getErrorDesc + s"$lib")
+      throw new FlinkInitFailedException(MessageFormat.format(PATH_NOT_EXIST.getErrorDesc, lib))
     }
     lib
       .listFiles()

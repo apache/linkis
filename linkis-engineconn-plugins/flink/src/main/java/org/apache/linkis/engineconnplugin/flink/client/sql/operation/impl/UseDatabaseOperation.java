@@ -27,6 +27,8 @@ import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.catalog.exceptions.CatalogException;
 
+import java.text.MessageFormat;
+
 import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.FAILED_SWITCH_DATABASE;
 
 /** Operation for USE DATABASE command. */
@@ -50,7 +52,8 @@ public class UseDatabaseOperation implements NonJobOperation {
             return null;
           });
     } catch (CatalogException e) {
-      throw new SqlExecutionException(FAILED_SWITCH_DATABASE.getErrorDesc() + databaseName, e);
+      throw new SqlExecutionException(
+          MessageFormat.format(FAILED_SWITCH_DATABASE.getErrorDesc(), databaseName), e);
     }
     return OperationUtil.OK;
   }

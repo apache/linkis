@@ -24,6 +24,7 @@ import org.apache.linkis.httpclient.request.GetAction
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.text.MessageFormat
 
 /**
  * Get version parameters from data source
@@ -77,7 +78,7 @@ object GetConnectParamsByDataSourceNameAction {
       } catch {
         case e: Exception =>
           throw new DataSourceClientBuilderException(
-            s"Cannot encode the name of data source:[$dataSourceName] for request",
+            MessageFormat.format(CANNOT_SOURCE.getErrorDesc, dataSourceName),
             e
           )
       }

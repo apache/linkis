@@ -28,6 +28,8 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 
+import java.text.MessageFormat
+
 @Component
 class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
 
@@ -62,7 +64,7 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
       logger.info("Failed to parser cs table because : ", msg)
       throw new ExecutorHookFatalException(
         CANNOT_PARSE_FOR_NODE.getErrorCode,
-        CANNOT_PARSE_FOR_NODE.getErrorDesc + s"${nodeNameStr}."
+        MessageFormat.format(CANNOT_PARSE_FOR_NODE.getErrorDesc, nodeNameStr)
       )
     }
     logger.info(

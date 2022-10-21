@@ -24,8 +24,8 @@ public enum LinkisEngineconnCoreErrorCodeSummary {
       "You need to wait for engine conn to be initialized before starting to call(在开始调用之前，您需要等待 engine conn 初始化)"),
   CANNOT_PARSE_FOR_NODE(
       12101,
-      "Cannot parse cs table for node(无法解析节点的 cs 表):",
-      "Cannot parse cs table for node(无法解析节点的 cs 表):");
+      "Cannot parse cs table for node(无法解析节点的 cs 表):{0}",
+      "Cannot parse cs table for node(无法解析节点的 cs 表):{0}");
 
   /** (errorCode)错误码 */
   private int errorCode;

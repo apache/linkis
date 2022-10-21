@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -123,7 +124,7 @@ public class MetaClassLoaderManager {
                         });
                 if (Objects.isNull(metaClassLoader)) {
                   throw new MetaRuntimeException(
-                      ERROR_IN_CREATING.getErrorDesc() + "[" + dsType + "]", null);
+                      MessageFormat.format(ERROR_IN_CREATING.getErrorDesc(), dsType), null);
                 }
                 String expectClassName = null;
                 if (dsType.length() > 0) {
@@ -134,7 +135,7 @@ public class MetaClassLoaderManager {
                     searchForLoadMetaServiceClass(metaClassLoader, expectClassName, true);
                 if (Objects.isNull(metaServiceClass)) {
                   throw new MetaRuntimeException(
-                      INIT_META_SERVICE.getErrorDesc() + "[" + dsType + "]", null);
+                      MessageFormat.format(INIT_META_SERVICE.getErrorDesc(), dsType), null);
                 }
                 MetadataService metadataService =
                     MetadataUtils.loadMetaService(metaServiceClass, metaClassLoader);

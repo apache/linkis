@@ -27,6 +27,8 @@ import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 
+import java.text.MessageFormat
+
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
 
   val resourceType: ResourceType = ResourceType.Default
@@ -104,7 +106,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       logger.warn(s"No resource available found for label ${labelContainer.getCurrentLabel}")
       throw new RMWarnException(
         NO_RESOURCE.getErrorCode,
-        NO_RESOURCE.getErrorDesc + s"${labelContainer.getCurrentLabel}"
+        MessageFormat.format(NO_RESOURCE.getErrorDesc(), labelContainer.getCurrentLabel)
       )
     }
   }
@@ -384,12 +386,12 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       case s: SpecialResource =>
         throw new RMWarnException(
           NOT_RESOURCE_TYPE.getErrorCode,
-          NOT_RESOURCE_TYPE.getErrorDesc + s.getClass
+          MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, s.getClass)
         )
       case r: Resource =>
         throw new RMWarnException(
           NOT_RESOURCE_TYPE.getErrorCode,
-          NOT_RESOURCE_TYPE.getErrorDesc + r.getClass
+          MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
         )
     }
   }

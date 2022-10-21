@@ -24,20 +24,20 @@ public enum LinkisModuleErrorCodeSummary {
       "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.(DataWorkCloud 服务必须设置版本，请将属性 [[wds.linkis.server.version]] 添加到属性文件.)"),
   FETCH_MAPCACHE_ERROR(
       10021,
-      "Failed to get user parameters! Reason: RPC request Service failed!(获取用户参数失败！原因：RPC请求服务失败！)",
-      "Failed to get user parameters! Reason: RPC request Service failed!(获取用户参数失败！原因：RPC请求服务失败！)"),
+      "Failed to get user parameters! Reason: RPC request{0} Service failed!(获取用户参数失败！原因：RPC请求{0}服务失败！)",
+      "Failed to get user parameters! Reason: RPC request{0} Service failed!(获取用户参数失败！原因：RPC请求{0}服务失败！)"),
   NOT_EXISTS_APPLICATION(
       10050,
-      "Application {} is not exists any instances(应用程序 {} 不存在任何实例)",
-      "Application {} is not exists any instances(应用程序 {} 不存在任何实例)"),
+      "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)",
+      "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
   HAVE_NOT_SET(
       11000,
       "The wds.linkis.server.home或BDP_SERVER_HOME haven't set!(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置！)",
       "The wds.linkis.server.home或BDP_SERVER_HOME haven't set!(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置！)"),
   VERIFICATION_CANNOT_EMPTY(
       11001,
-      "Verification failed,{} cannot be empty!(验证失败，{} 不能为空！)",
-      "Verification failed,{} cannot be empty!(验证失败，{}不能为空！)"),
+      "Verification failed,{0} cannot be empty!(验证失败,{0} 不能为空！)",
+      "Verification failed,{0} cannot be empty!(验证失败,{0}不能为空！)"),
   LOGGED_ID(11002, "", ""),
   NOT_LOGGED(
       11002,
@@ -50,8 +50,8 @@ public enum LinkisModuleErrorCodeSummary {
       "Illegal user token information(非法的用户token信息)."),
   SERVERSSOCKET_NOT_EXIST(
       11004,
-      "ServerSocket{} does not exist!(ServerSocket{}不存在！)",
-      "ServerSocket{} does not exist!(ServerSocket{}不存在！)"),
+      "ServerSocket{0} does not exist!(ServerSocket{0}不存在！)",
+      "ServerSocket{0} does not exist!(ServerSocket{0}不存在！)"),
   WEBSOCKET_IS_FULL(
       11005,
       "The receive queue for WebSocket is full, please try again later!(WebSocket的接收队列已满，请稍后重试！)",

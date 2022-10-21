@@ -53,20 +53,20 @@ public enum EngineconnCoreErrorCodeSummary {
       "Cannot find the home path of engineconn dist(找不到 engineconn dist 的home路径)"),
   DIST_IS_EMPTY(
       20001,
-      "The dist of EngineConn is empty,engineConnType(EngineConn 的 dist 为空,engineConnType):",
-      "The dist of EngineConn is empty,engineConnType(EngineConn 的 dist 为空,engineConnType):"),
+      "The dist of EngineConn is empty,engineConnType(EngineConn 的 dist 为空,engineConnType):{0}",
+      "The dist of EngineConn is empty,engineConnType(EngineConn 的 dist 为空,engineConnType):{0}"),
   DIST_IRREGULAR_EXIST(
       20001,
-      "The dist of EngineConn is irregular, both the version dir and non-version dir are exist,engineConnType(EngineConn的dist是不规则的，版本目录和非版本目录都存在,engineConnType):",
-      "The dist of EngineConn is irregular, both the version dir and non-version dir are exist,engineConnType(EngineConn的dist是不规则的，版本目录和非版本目录都存在,engineConnType):"),
+      "The dist of EngineConn is irregular, both the version dir and non-version dir are exist,engineConnType(EngineConn的dist是不规则的，版本目录和非版本目录都存在,engineConnType):{0}",
+      "The dist of EngineConn is irregular, both the version dir and non-version dir are exist,engineConnType(EngineConn的dist是不规则的，版本目录和非版本目录都存在,engineConnType):{0}"),
   NO_PERMISSION_FILE(
       20001,
-      "System have no permission to delete old engineConn file,File(系统无权删除旧的engineConn文件,File):",
-      "System have no permission to delete old engineConn file,File(系统无权删除旧的engineConn文件,File):"),
+      "System have no permission to delete old engineConn file,File(系统无权删除旧的engineConn文件,File):{0}",
+      "System have no permission to delete old engineConn file,File(系统无权删除旧的engineConn文件,File):{0}"),
   LIB_CONF_DIR_NECESSARY(
       20001,
-      "The `lib` and `conf` dir is necessary in EngineConn dist,engineConnType(`lib` 和 `conf` 目录在 EngineConn dist 中是必需的,engineConnType):",
-      "The `lib` and `conf` dir is necessary in EngineConn dist,engineConnType(`lib` 和 `conf` 目录在 EngineConn dist 中是必需的,engineConnType):"),
+      "The `lib` and `conf` dir is necessary in EngineConn dist,engineConnType(`lib` 和 `conf` 目录在 EngineConn dist 中是必需的,engineConnType):{0}",
+      "The `lib` and `conf` dir is necessary in EngineConn dist,engineConnType(`lib` 和 `conf` 目录在 EngineConn dist 中是必需的,engineConnType):{0}"),
 
   NOT_SUPPORTED_EF(
       20011,
@@ -78,8 +78,8 @@ public enum EngineconnCoreErrorCodeSummary {
       "DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)"),
   CANNOT_GET_LABEL_KEY(
       70102,
-      "Cannot get label key. labels (无法获取标签key,标签):",
-      "Cannot get label key. labels (无法获取标签key,标签):"),
+      "Cannot get label key. labels (无法获取标签key,标签):{0}",
+      "Cannot get label key. labels (无法获取标签key,标签):{0}"),
   MINRESOURCE_MAXRESOURCE_NO_SAME(
       70103,
       "The minResource {} is not the same with the maxResource(minResource {} 与 maxResource 不同)",

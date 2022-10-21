@@ -36,6 +36,7 @@ import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeS
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -170,7 +171,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
     if (null == labelKey) {
       throw new EngineConnPluginErrorException(
         CANNOT_GET_LABEL_KEY.getErrorCode,
-        CANNOT_GET_LABEL_KEY.getErrorDesc + GSON.toJson(labels)
+        MessageFormat.format(CANNOT_GET_LABEL_KEY.getErrorDesc, GSON.toJson(labels))
       )
     }
 

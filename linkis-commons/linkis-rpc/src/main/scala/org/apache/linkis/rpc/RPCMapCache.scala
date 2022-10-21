@@ -24,6 +24,7 @@ import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.server.exception.FetchMapCacheFailedException
 
+import java.text.MessageFormat
 import java.util
 
 abstract class RPCMapCache[M, K, V](applicationName: String) {
@@ -39,9 +40,7 @@ abstract class RPCMapCache[M, K, V](applicationName: String) {
       case t: Throwable =>
         new FetchMapCacheFailedException(
           FETCH_MAPCACHE_ERROR.getErrorCode,
-          "Failed to get " +
-            "user " +
-            "parameters! Reason: RPC request(获取用户参数失败！原因：RPC请求)" + applicationName + "Service failed!(服务失败！)",
+          MessageFormat.format(FETCH_MAPCACHE_ERROR.getErrorDesc, applicationName),
           t
         )
     }

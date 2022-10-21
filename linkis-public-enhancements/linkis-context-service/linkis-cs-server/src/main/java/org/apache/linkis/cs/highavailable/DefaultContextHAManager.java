@@ -31,12 +31,13 @@ import org.springframework.cglib.proxy.Callback;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
+
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.HACONTEXTID_CANNOT_NULL;
-import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.INVALID_HACONTEXTID;
+import static org.apache.linkis.cs.common.errorcode.CsCommonErrorCodeSummary.*;
 
 /** ContextService高可用管理器默认实现 采用CGLib动态代理，一般用于CS持久层存储转换，将HAContextID实例进行转换 */
 @Component
@@ -89,7 +90,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
       } else {
         throw new CSErrorException(
             INVALID_HACONTEXTID.getErrorCode(),
-            INVALID_HACONTEXTID.getErrorDesc() + gson.toJson(haContextID));
+            MessageFormat.format(INVALID_HACONTEXTID.getErrorDesc(), gson.toJson(haContextID)));
       }
       return haContextID;
     } else {
@@ -106,7 +107,7 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
       } else {
         throw new CSErrorException(
             INVALID_HACONTEXTID.getErrorCode(),
-            INVALID_HACONTEXTID.getErrorDesc() + gson.toJson(haContextID));
+            MessageFormat.format(INVALID_HACONTEXTID.getErrorDesc(), gson.toJson(haContextID)));
       }
       // todo debug
       if (contextHAChecker.isHAContextIDValid(haContextID)) {

@@ -28,6 +28,7 @@ import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,7 +150,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                 logger.error("Invalid HAContextID : " + gson.toJson(haContextID));
                 throw new CSErrorException(
                     INVAID_HA_CONTEXTID.getErrorCode(),
-                    INVAID_HA_CONTEXTID.getErrorDesc() + gson.toJson(haContextID));
+                    MessageFormat.format(
+                        INVAID_HA_CONTEXTID.getErrorDesc(), gson.toJson(haContextID)));
               }
             }
           }
@@ -176,7 +178,7 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                 + gson.toJson(contextID));
         throw new CSErrorException(
             INVALID_CONTEXTID.getErrorCode(),
-            INVALID_CONTEXTID.getErrorDesc() + gson.toJson(contextID));
+            MessageFormat.format(INVALID_CONTEXTID.getErrorDesc(), gson.toJson(contextID)));
       }
     } else {
       if (HAContextID.class.isInstance(contextID)) {
@@ -193,7 +195,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
           logger.error("Invalid haContextId. contextId : " + gson.toJson(contextID));
           throw new CSErrorException(
               INVALID_HACONTEXTID_CONTEXTID.getErrorCode(),
-              INVALID_HACONTEXTID_CONTEXTID.getErrorDesc() + gson.toJson(contextID));
+              MessageFormat.format(
+                  INVALID_HACONTEXTID_CONTEXTID.getErrorDesc(), gson.toJson(contextID)));
         }
       }
     }
@@ -255,10 +258,8 @@ public class MethodInterceptorImpl implements MethodInterceptor {
                   + gson.toJson(result));
           throw new CSErrorException(
               GET_CONTEXTID_METHON.getErrorCode(),
-              "GetContextID method : "
-                  + method.getName()
-                  + " returns invalid haContextID : "
-                  + gson.toJson(result));
+              MessageFormat.format(
+                  GET_CONTEXTID_METHON.getErrorDesc(), method.getName(), gson.toJson(result)));
         }
       }
     }

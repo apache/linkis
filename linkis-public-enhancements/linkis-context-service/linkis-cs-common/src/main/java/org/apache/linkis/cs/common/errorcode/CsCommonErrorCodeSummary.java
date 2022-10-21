@@ -26,20 +26,20 @@ public enum CsCommonErrorCodeSummary {
       "HaContextID cannot be null.(HaContextID 不能为空.)"),
   GET_CONTEXTID_METHON(
       70011,
-      "GetContextID method{} returns invalid haContextID :{} (GetContextID 方法{}返回无效的 haContextID ：{})",
-      "GetContextID method{} returns invalid haContextID :{} (GetContextID 方法{}返回无效的 haContextID ：{}):"),
+      "GetContextID method{0} returns invalid haContextID :{1} (GetContextID 方法{0}返回无效的 haContextID ：{1})",
+      "GetContextID method{0} returns invalid haContextID :{1} (GetContextID 方法{0}返回无效的 haContextID ：{1})"),
   INVALID_HACONTEXTID(
       70011,
-      "Invalid contextID in haContextID (haContextID 中的 contextID 无效):",
-      "Invalid contextID in haContextID (haContextID 中的 contextID 无效):"),
+      "Invalid contextID in haContextID (haContextID 中的 contextID 无效):{0}",
+      "Invalid contextID in haContextID (haContextID 中的 contextID 无效):{0}"),
   INVALID_HACONTEXTID_CONTEXTID(
       70011,
-      "Invalid haContextId. contextId (haContextId 无效,上下文 ID):",
-      "Invalid haContextId. contextId (haContextId 无效,上下文 ID):"),
+      "Invalid haContextId. contextId (haContextId 无效,上下文 ID):{0}",
+      "Invalid haContextId. contextId (haContextId 无效,上下文 ID):{0}"),
   INVALID_CONTEXTID(
       70013,
-      "ContextId of HAContextID instance cannot be numberic, contextId (HAContextID 实例的 ContextId 不能是数字,上下文标识):",
-      "ContextId of HAContextID instance cannot be numberic, contextId (HAContextID 实例的 ContextId 不能是数字,上下文标识):"),
+      "ContextId of HAContextID instance cannot be numberic, contextId (HAContextID 实例的 ContextId 不能是数字,上下文标识):{0}",
+      "ContextId of HAContextID instance cannot be numberic, contextId (HAContextID 实例的 ContextId 不能是数字,上下文标识):{0}"),
   GENERATE_BACKUP_INSTANCE_ERROR(
       70014,
       "Generate backupInstance cannot be null.(生成备份实例不能为空.)",
@@ -50,7 +50,9 @@ public enum CsCommonErrorCodeSummary {
       "MainInstance alias cannot be null.(MainInstance 别名不能为空)"),
   INVALID_INSTANCE_CODE(70015, "", ""),
   INVAID_HA_CONTEXTID(
-      70016, "Invalid HAContextID (无效的 HAContextID):", "Invalid HAContextID (无效的 HAContextID):"),
+      70016,
+      "Invalid HAContextID (无效的 HAContextID):{0}",
+      "Invalid HAContextID (无效的 HAContextID):{0}"),
   CS_RPC_ERROR(70017, "", ""),
   INVALID_NULL_STRING(
       70102,
@@ -63,10 +65,10 @@ public enum CsCommonErrorCodeSummary {
       "Cannot encodeHAIDKey, contextID(无法编码HAIDKey、contextID):",
       "Cannot encodeHAIDKey, contextID(无法编码HAIDKey、contextID):"),
 
-  INVALID_HAID(70108, "Invalid haid(无效的 haid):", "Invalid haid(无效的 haid):"),
+  INVALID_HAID(70108, "Invalid haid(无效的 haid)", "Invalid haid(无效的 haid)"),
   INVALID_CONTEXT_TYPE(70109, "Invalid Context Type(无效的上下文类型):", "Invalid Context Type(无效的上下文类型):"),
   GET_CONTEXT_VALUE_ERROR(
-      70110, "Search context value error(搜索上下文值错误):", "Search context value error(搜索上下文值错误):"),
+      70110, "Search context value error(搜索上下文值错误)", "Search context value error(搜索上下文值错误)"),
   GET_CONTEXTVALUE_FAILED(
       70110,
       "Failed to get ContextValue(获取 ContextValue 失败):",
@@ -78,8 +80,8 @@ public enum CsCommonErrorCodeSummary {
 
   SEARCH_UPSTREAM_ERROR(
       70110,
-      "Search Upstream KeyValue error (搜索上游KeyValue错误):",
-      "Search Upstream KeyValue error(搜索上游KeyValue错误):"),
+      "Search Upstream KeyValue error (搜索上游KeyValue错误)",
+      "Search Upstream KeyValue error(搜索上游KeyValue错误)"),
 
   SEARCH_CONTEXT_VALUE_ERROR(70111, "Search value (搜索值):", "Search value (搜索值):"),
   HAID_CANNOT_ECCODEED(
@@ -88,9 +90,9 @@ public enum CsCommonErrorCodeSummary {
       "Incomplete HAID Object cannot be encoded. mainInstance(无法对不完整的 HAID 对象进行编码主实例):"),
   CONVER_ERROT_INVALD_HAID(
       70111,
-      "ConvertHAIDToHAKey error, invald HAID (ConvertHAIDToHAKey 错误，无效的 HAID):",
-      "ConvertHAIDToHAKey error, invald HAID (ConvertHAIDToHAKey 错误，无效的 HAID):"),
-  INVALID_HAIDKEY(70111, "Invalid haIDKey (haIDKey 无效):", "Invalid haIDKey (haIDKey 无效):"),
+      "ConvertHAIDToHAKey error, invald HAID (ConvertHAIDToHAKey 错误，无效的 HAID):{0}",
+      "ConvertHAIDToHAKey error, invald HAID (ConvertHAIDToHAKey 错误，无效的 HAID):{0}"),
+  INVALID_HAIDKEY(70111, "Invalid haIDKey (haIDKey 无效)", "Invalid haIDKey (haIDKey 无效)"),
 
   DESERIALIZD_FAILED(
       70112,

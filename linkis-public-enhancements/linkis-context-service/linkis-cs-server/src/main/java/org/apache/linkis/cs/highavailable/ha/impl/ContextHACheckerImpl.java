@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +116,8 @@ public class ContextHACheckerImpl implements ContextHAChecker {
       logger.error("ConvertHAIDToHAKey error, invald HAID : " + haContextID.getContextId());
       throw new CSErrorException(
           CONVER_ERROT_INVALD_HAID.getErrorCode(),
-          CONVER_ERROT_INVALD_HAID.getErrorDesc() + haContextID.getContextId());
+          MessageFormat.format(
+              CONVER_ERROT_INVALD_HAID.getErrorDesc(), haContextID.getContextId()));
     }
   }
 

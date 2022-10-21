@@ -21,6 +21,7 @@ import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.exception.LabelRuntimeException;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import static org.apache.linkis.manager.label.constant.LabelKeyConstant.ENV_TYPE_KEY;
@@ -44,7 +45,8 @@ public class EnvLabel extends GenericLabel {
   public void setEnvType(String envType) {
     if (!envType.equals(DEV) && !envType.equals(TEST) && !envType.equals(PROD)) {
       throw new LabelRuntimeException(
-          NOT_SUPPORT_ENVTYPE.getErrorCode(), NOT_SUPPORT_ENVTYPE.getErrorDesc() + envType);
+          NOT_SUPPORT_ENVTYPE.getErrorCode(),
+          MessageFormat.format(NOT_SUPPORT_ENVTYPE.getErrorDesc(), envType));
     }
     if (null == getValue()) {
       setValue(new HashMap<>());

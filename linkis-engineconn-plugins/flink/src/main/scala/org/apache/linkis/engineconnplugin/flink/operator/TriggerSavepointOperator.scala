@@ -24,6 +24,8 @@ import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
 import org.apache.linkis.manager.common.operator.Operator
 
+import java.text.MessageFormat
+
 class TriggerSavepointOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("doSavepoint")
@@ -39,7 +41,7 @@ class TriggerSavepointOperator extends Operator with Logging {
         Map("writtenSavepoint" -> writtenSavepoint)
       case executor =>
         throw new JobExecutionException(
-          NOT_SUPPORT_SAVEPOTION.getErrorDesc + executor.getClass.getSimpleName
+          MessageFormat.format(NOT_SUPPORT_SAVEPOTION.getErrorDesc, executor.getClass.getSimpleName)
         )
     }
   }

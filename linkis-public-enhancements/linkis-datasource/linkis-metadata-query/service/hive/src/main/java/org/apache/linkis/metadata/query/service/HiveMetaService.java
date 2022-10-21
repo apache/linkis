@@ -40,6 +40,7 @@ import org.apache.hadoop.hive.ql.metadata.Table;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -277,10 +278,8 @@ public class HiveMetaService extends AbstractMetaService<HiveConnection> {
         }
       } catch (Exception e) {
         throw new MetaRuntimeException(
-            CANNOT_PARSE_PARAM.getErrorDesc()
-                + "["
-                + HiveParamsMapper.PARAM_HADOOP_CONF.getValue()
-                + "]",
+            MessageFormat.format(
+                CANNOT_PARSE_PARAM.getErrorDesc(), HiveParamsMapper.PARAM_HADOOP_CONF.getValue()),
             e);
       }
     }

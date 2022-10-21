@@ -20,8 +20,8 @@ package org.apache.linkis.metadata.query.common.errorcode;
 public enum LinkisMetadataQueryErrorCodeSummary {
   INVOKE_METHOD_FAIL(
       199604,
-      "Invoke method {} fail,message:{}(调用方法 {} 失败,信息:{})",
-      "Invoke method {} fail,message:{}(调用方法 {} 失败,信息:{})"),
+      "Invoke method {0} fail,message:{1}(调用方法 {0} 失败,信息:{1})",
+      "Invoke method {0} fail,message:{1}(调用方法 {0} 失败,信息:{1})"),
   FAILED_METADATA_SERVICE(
       199611,
       "Failed to load metadata service(加载元数据服务失败)",
@@ -31,31 +31,32 @@ public enum LinkisMetadataQueryErrorCodeSummary {
       99900, "Fail to close connection(关闭连接失败),", "Fail to close connection(关闭连接失败),"),
   ERROR_IN_CREATING(
       99900,
-      "Error in creating classloader of type(创建类型的类加载器时出错):",
-      "Error in creating classloader of type(创建类型的类加载器时出错):"),
+      "Error in creating classloader of type(创建类型的类加载器时出错):{0}",
+      "Error in creating classloader of type(创建类型的类加载器时出错):{0}"),
   INIT_META_SERVICE(
       99900,
-      "Fail to init and load meta service class for type (无法为以下类型初始化和加载元服务类):",
-      "Fail to init and load meta service class for type (无法为以下类型初始化和加载元服务类):"),
+      "Fail to init and load meta service class for type (无法为以下类型初始化和加载元服务类):{0}",
+      "Fail to init and load meta service class for type (无法为以下类型初始化和加载元服务类):{0}"),
   NO_CONSTRUCTOR_SERVICE(
       99900,
-      "No public constructor in meta service class (元服务类中没有公共构造函数):",
-      "No public constructor in meta service class (元服务类中没有公共构造函数):"),
+      "No public constructor in meta service class (元服务类中没有公共构造函数):{0}",
+      "No public constructor in meta service class (元服务类中没有公共构造函数):{0}"),
   UNABLE_META_SERVICE(
       99900,
-      "Unable to construct meta service class(无法构建元服务类):",
-      "Unable to construct meta service class(无法构建元服务类):"),
+      "Unable to construct meta service class(无法构建元服务类):{0}",
+      "Unable to construct meta service class(无法构建元服务类):{0}"),
   ILLEGAL_META_SERVICE(
       99900,
-      "Illegal arguments in constructor of meta service class(元服务类的构造函数中的非法参数):",
-      "Illegal arguments in constructor of meta service class(元服务类的构造函数中的非法参数):"),
+      "Illegal arguments in constructor of meta service class(元服务类的构造函数中的非法参数):{0}",
+      "Illegal arguments in constructor of meta service class(元服务类的构造函数中的非法参数):{0}"),
   FAIL_DOWNLOAD_RESOURCE(
       99900, "Fail to download resource (无法下载资源 )", "Fail to download resource (无法下载资源 )"),
   CANNOT_KEYTAB_PARAMETERS(
       99900,
       "Cannot find the keytab file in connect parameters(在连接参数中找不到密钥表文件)",
       "Cannot find the keytab file in connect parameters(在连接参数中找不到密钥表文件)"),
-  CANNOT_PARSE_PARAM(99900, "Cannot parse the param(无法解析参数):", "Cannot parse the param(无法解析参数):");
+  CANNOT_PARSE_PARAM(
+      99900, "Cannot parse the param(无法解析参数):{0}", "Cannot parse the param(无法解析参数):{0}");
 
   /** (errorCode)错误码 */
   private int errorCode;

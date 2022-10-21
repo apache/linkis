@@ -40,6 +40,7 @@ import org.apache.linkis.rpc.Sender;
 import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -108,7 +109,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       if (status != 0) {
         throw new QueryFailedException(
             REQUEST_JOBHISTORY_FAILED.getErrorCode(),
-            REQUEST_JOBHISTORY_FAILED.getErrorDesc() + message);
+            MessageFormat.format(REQUEST_JOBHISTORY_FAILED.getErrorDesc(), message));
       }
     } else {
       throw new QueryFailedException(
@@ -184,7 +185,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       String message = responsePersist.getMsg();
       if (status != 0) {
         throw new QueryFailedException(
-            READ_TASKS_FAILED.getErrorCode(), READ_TASKS_FAILED.getErrorDesc() + message);
+            READ_TASKS_FAILED.getErrorCode(),
+            MessageFormat.format(READ_TASKS_FAILED.getErrorDesc(), message));
       }
       Map<String, Object> data = responsePersist.getData();
       Object object = data.get(TaskConstant.TASK);

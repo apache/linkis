@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.nio.file.Paths
+import java.text.MessageFormat
 
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
 
@@ -72,7 +73,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
         DIST_IS_EMPTY.getErrorCode,
-        DIST_IS_EMPTY.getErrorDesc + s"${engineConnType}"
+        MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
     } else if (!children.exists(_.getName.startsWith("v"))) {
       Array(engineConnDistHome)
@@ -81,7 +82,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     } else {
       throw new EngineConnPluginErrorException(
         DIST_IRREGULAR_EXIST.getErrorCode,
-        DIST_IRREGULAR_EXIST.getErrorDesc + s"${engineConnType}"
+        MessageFormat.format(DIST_IRREGULAR_EXIST.getErrorDesc, engineConnType)
       )
     }
   }

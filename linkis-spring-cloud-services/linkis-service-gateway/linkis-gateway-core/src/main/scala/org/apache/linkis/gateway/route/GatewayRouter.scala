@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.NOT_EXISTS_APPLICATION
 import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 import org.apache.linkis.gateway.exception.TooManyServiceException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
@@ -31,8 +32,9 @@ import org.apache.linkis.server.exception.NoApplicationExistsException
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import java.text.MessageFormat
 import java.util
-import java.util.Locale
+import java.util.Locale;
 
 trait GatewayRouter {
 
@@ -54,8 +56,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
     if (service.isEmpty) {
       val applicationNotExists = new NoApplicationExistsException(
         NOT_EXISTS_APPLICATION.getErrorCode,
-        "Application " +
-          serviceId + " is not exists any instances."
+        MessageFormat.format(NOT_EXISTS_APPLICATION.getErrorDesc, serviceId)
       )
       if (enabledRefresh) {
         Utils.tryThrow(
@@ -142,7 +143,7 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends Abs
     parsedServiceId,
     services => {
       val errorMsg = new TooManyServiceException(
-        s"Cannot find a correct serviceId for parsedServiceId $parsedServiceId, service list is: " + services
+        MessageFormat.format(CANNOT_SERVICEID.getErrorDesc, parsedServiceId, services)
       )
       logger.warn("", errorMsg)
       throw errorMsg

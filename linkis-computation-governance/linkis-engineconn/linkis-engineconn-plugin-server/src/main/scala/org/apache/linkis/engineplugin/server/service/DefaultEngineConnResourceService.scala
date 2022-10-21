@@ -43,6 +43,7 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 
+import java.text.MessageFormat
 import java.util.Date
 
 import scala.collection.JavaConverters._
@@ -176,7 +177,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     ) {
       throw new EngineConnPluginErrorException(
         LIB_CONF_DIR_NECESSARY.getErrorCode,
-        LIB_CONF_DIR_NECESSARY.getErrorDesc + s"${engineConnType}"
+        MessageFormat.format(LIB_CONF_DIR_NECESSARY.getErrorDesc, engineConnType)
       )
     }
     localize.foreach { localizeResource =>

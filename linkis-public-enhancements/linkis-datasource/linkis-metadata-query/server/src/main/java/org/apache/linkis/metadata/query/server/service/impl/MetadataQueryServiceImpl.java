@@ -39,6 +39,7 @@ import javax.annotation.PostConstruct;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -396,7 +397,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             method,
             methodArgs,
             INVOKE_METHOD_FAIL.getErrorCode(),
-            "Invoke method [" + method + "] fail, message:[" + e.getMessage() + "]",
+            MessageFormat.format(INVOKE_METHOD_FAIL.getErrorDesc(), method, e.getMessage()),
             e);
       }
     }

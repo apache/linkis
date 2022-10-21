@@ -24,6 +24,7 @@ import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.listener.ConsumerListener
 import org.apache.linkis.scheduler.queue.{Consumer, ConsumerManager, Group, LoopArrayQueue}
 
+import java.text.MessageFormat
 import java.util.concurrent.{ExecutorService, ThreadPoolExecutor}
 
 class FIFOConsumerManager(groupName: String) extends ConsumerManager {
@@ -45,7 +46,7 @@ class FIFOConsumerManager(groupName: String) extends ConsumerManager {
       case _ =>
         throw new SchedulerErrorException(
           NEED_SUPPORTTED_GROUP.getErrorCode,
-          s"FIFOConsumerManager need a FIFOGroup, but ${group.getClass} is supported."
+          MessageFormat.format(NEED_SUPPORTTED_GROUP.getErrorDesc, group.getClass)
         )
     }
     consumerQueue = new LoopArrayQueue(

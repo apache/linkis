@@ -24,6 +24,7 @@ import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 
 import java.io.File
+import java.text.MessageFormat
 import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
@@ -58,7 +59,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     if (!rootLogDir.exists() || !rootLogDir.isDirectory) {
       throw new ECMErrorException(
         LOG_IS_NOT_EXISTS.getErrorCode,
-        s"Log directory $rootLogDir is not exists."
+        MessageFormat.format(LOG_IS_NOT_EXISTS.getErrorDesc, rootLogDir)
       )
     }
     val creator = getAsThrow[String]("creator")
@@ -99,7 +100,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(
         LOGFILE_IS_NOT_EXISTS.getErrorCode,
-        s"LogFile $logPath is not exists or is not a file."
+        MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc, logPath)
       )
     }
     logger.info(

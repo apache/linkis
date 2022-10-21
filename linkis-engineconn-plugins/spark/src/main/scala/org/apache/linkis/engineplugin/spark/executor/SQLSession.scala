@@ -24,6 +24,7 @@ import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.SparkEngineException
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary._
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
@@ -55,9 +56,7 @@ object SQLSession extends Logging {
     //
     if (sc.isStopped) {
       logger.error("Spark application has already stopped in showDF, please restart it.")
-      throw new LinkisJobRetryException(
-        "Spark application sc has already stopped, please restart it."
-      )
+      throw new LinkisJobRetryException(SPARK_HAS_STOPPED_RESTART.getErrorDesc)
     }
     val startTime = System.currentTimeMillis()
     //    sc.setJobGroup(jobGroup, "Get IDE-SQL Results.", false)

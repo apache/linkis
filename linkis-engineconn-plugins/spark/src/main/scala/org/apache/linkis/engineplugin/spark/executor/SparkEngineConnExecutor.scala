@@ -35,6 +35,7 @@ import org.apache.linkis.engineplugin.spark.extension.{
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
 import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.SPARK_HAS_STOPPED_RESTART
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
@@ -84,9 +85,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     if (sc.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
       transition(NodeStatus.Failed)
-      throw new LinkisJobRetryException(
-        "Spark application sc has already stopped, please restart it."
-      )
+      throw new LinkisJobRetryException(SPARK_HAS_STOPPED_RESTART.getErrorDesc)
     }
     val kind: Kind = getKind
     var preCode = code

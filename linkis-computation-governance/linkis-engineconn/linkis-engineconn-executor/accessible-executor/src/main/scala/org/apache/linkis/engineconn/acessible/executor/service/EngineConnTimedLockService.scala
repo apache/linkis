@@ -31,6 +31,7 @@ import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
   EngineConnExecutorErrorException
 }
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.INVALID_EXECUTOR_OR_NOT_INSTANCE
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.{
   RequestEngineLock,
@@ -140,10 +141,10 @@ class EngineConnTimedLockService extends LockService with Logging {
           Some(lockString)
         } else None
       case _ =>
-        val msg = s"Invalid executor or not instance of SensibleEngine."
+        val msg = INVALID_EXECUTOR_OR_NOT_INSTANCE.getErrorDesc
         logger.error(msg)
         throw new EngineConnExecutorErrorException(
-          EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE,
+          INVALID_EXECUTOR_OR_NOT_INSTANCE.getErrorCode,
           msg
         )
     }

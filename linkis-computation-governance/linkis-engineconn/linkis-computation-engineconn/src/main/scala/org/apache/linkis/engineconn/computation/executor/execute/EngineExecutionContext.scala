@@ -37,6 +37,7 @@ import org.apache.linkis.engineconn.executor.listener.{
   ExecutorListenerBusContext
 }
 import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.UNKNOWN_RESULTSET
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
@@ -47,6 +48,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
+import java.text.MessageFormat
 import java.util
 
 class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser)
@@ -123,7 +125,12 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
         listenerBus.postToAll(TaskResultCreateEvent(jId, output, alias))
         resultSize += 1
       })
-    } else throw new EngineConnExecutorErrorException(50050, "unknown resultSet: " + output)
+    } else {
+      throw new EngineConnExecutorErrorException(
+        UNKNOWN_RESULTSET.getErrorCode,
+        MessageFormat.format(UNKNOWN_RESULTSET.getErrorDesc, output)
+      )
+    }
   }
 
   def sendResultSet(outputExecuteResponse: OutputExecuteResponse): Unit =

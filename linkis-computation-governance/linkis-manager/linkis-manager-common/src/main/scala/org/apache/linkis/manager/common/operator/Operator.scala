@@ -18,6 +18,9 @@
 package org.apache.linkis.manager.common.operator
 
 import org.apache.linkis.governance.common.exception.GovernanceErrorException
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary._
+
+import java.text.MessageFormat
 
 trait Operator {
 
@@ -29,16 +32,26 @@ trait Operator {
     parameters.getOrElse(key, defaultVal) match {
       case t: T => t
       case null => null.asInstanceOf[T]
-      case v => throw new GovernanceErrorException(20305, s"Unknown $v for key $key.")
+      case v =>
+        throw new GovernanceErrorException(
+          UNKNOWN_FOR_KEY.getErrorCode,
+          MessageFormat.format(UNKNOWN_FOR_KEY.getErrorDesc, v.toString, key)
+        )
     }
 
   protected def getAsThrow[T](key: String)(implicit parameters: Map[String, Any]): T =
     parameters.get(key) match {
       case Some(t: T) => t
       case Some(t: Any) =>
-        throw new GovernanceErrorException(20305, s"Unknown class type, cannot cast $t.")
+        throw new GovernanceErrorException(
+          UNKNOWN_CLASS_TYPE_CANNOT_CAST.getErrorCode,
+          MessageFormat.format(UNKNOWN_CLASS_TYPE_CANNOT_CAST.getErrorDesc, t.toString)
+        )
       case None =>
-        throw new GovernanceErrorException(20305, s"The parameter of $key is not exists.")
+        throw new GovernanceErrorException(
+          PARAMETER_OF_IS_NOT_EXISTS.getErrorCode,
+          MessageFormat.format(PARAMETER_OF_IS_NOT_EXISTS.getErrorDesc, key)
+        )
     }
 
 }

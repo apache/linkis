@@ -56,6 +56,7 @@ import org.apache.linkis.governance.common.exception.engineconn.{
 }
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
@@ -83,6 +84,7 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
@@ -158,10 +160,7 @@ class TaskExecutionServiceImpl
     } { t =>
       val errorMsg = s"SendToEntrance error. $msg" + t.getCause
       logger.error(errorMsg, t)
-      throw new EngineConnExecutorErrorException(
-        EngineConnExecutorErrorCode.SEND_TO_ENTRANCE_ERROR,
-        errorMsg
-      )
+      throw new EngineConnExecutorErrorException(SENDTOENTRANCE_ERROR.getErrorCode, errorMsg)
     }
   }
 
@@ -175,8 +174,8 @@ class TaskExecutionServiceImpl
       return ErrorExecuteResponse(
         s"Invalid lock : ${requestTask.getLock}.",
         new EngineConnExecutorErrorException(
-          EngineConnExecutorErrorCode.INVALID_PARAMS,
-          "Invalid lock or code(请获取到锁后再提交任务.)"
+          INVALID_LOCK_OR_CODE.getErrorCode,
+          INVALID_LOCK_OR_CODE.getErrorDesc
         )
       )
     }
@@ -185,8 +184,8 @@ class TaskExecutionServiceImpl
       return ErrorExecuteResponse(
         "Lock not exixt",
         new EngineConnExecutorErrorException(
-          EngineConnExecutorErrorCode.INVALID_LOCK,
-          "Lock : " + requestTask.getLock + " not exist(您的锁无效，请重新获取后再提交)."
+          INVALID_LOCK.getErrorCode,
+          MessageFormat.format(INVALID_LOCK.getErrorDesc, requestTask.getLock)
         )
       )
     }
@@ -260,7 +259,7 @@ class TaskExecutionServiceImpl
         logger.error(msg)
         ErrorExecuteResponse(
           "Invalid computationExecutor(生成无效的计算引擎，请联系管理员).",
-          new EngineConnExecutorErrorException(EngineConnExecutorErrorCode.INVALID_ENGINE_TYPE, msg)
+          new EngineConnExecutorErrorException(INVALID_COMPUTATION_EXECUTOR.getErrorCode, msg)
         )
     }
   }

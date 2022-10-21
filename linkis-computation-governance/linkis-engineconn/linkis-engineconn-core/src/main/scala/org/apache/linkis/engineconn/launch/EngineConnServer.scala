@@ -40,6 +40,7 @@ import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorException
 }
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
+import org.apache.linkis.governance.errorcode.ComputationCommonErrorCodeSummary.INIT_EXECUTORS_FAILED
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
@@ -89,8 +90,8 @@ object EngineConnServer extends Logging {
       Utils.tryThrow(executeEngineConn(engineConn)) { t =>
         logger.error(s"Init executors error. Reason: ${ExceptionUtils.getRootCauseMessage(t)}", t)
         throw new EngineConnExecutorErrorException(
-          EngineConnExecutorErrorCode.INIT_EXECUTOR_FAILED,
-          "Init executors failed. ",
+          INIT_EXECUTORS_FAILED.getErrorCode,
+          INIT_EXECUTORS_FAILED.getErrorDesc,
           t
         )
       }

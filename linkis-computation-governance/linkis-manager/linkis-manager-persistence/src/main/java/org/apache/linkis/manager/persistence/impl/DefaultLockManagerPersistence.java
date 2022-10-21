@@ -63,7 +63,8 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
       return true;
     }
     persistenceLock.setTimeOut(timeOut);
-    synchronized (persistenceLock.getLockObject().intern()) {
+    String syncLocker = persistenceLock.getLockObject().intern();
+    synchronized (syncLocker) {
       // insert lock The order is determined by the id auto-incrementing number
       do {
         lockManagerMapper.lock(persistenceLock);
@@ -72,8 +73,18 @@ public class DefaultLockManagerPersistence implements LockManagerPersistence {
     boolean isLocked = isAcquireLock(persistenceLock);
     while (!isLocked && System.currentTimeMillis() - startTime < timeOut) {
       try {
-        Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval.getValue());
-        isLocked = isAcquireLock(persistenceLock);
+        if (PersistenceManagerConf.Distributed_lock_request_sync_enabled) {
+          synchronized (syncLocker) {
+            syncLocker.wait(PersistenceManagerConf.Distributed_lock_request_interval);
+            isLocked = isAcquireLock(persistenceLock);
+            if (isLocked) {
+              syncLocker.notifyAll();
+            }
+          }
+        } else {
+          Thread.sleep(PersistenceManagerConf.Distributed_lock_request_interval);
+          isLocked = isAcquireLock(persistenceLock);
+        }
       } catch (Exception e) {
         logger.info("lock waiting failed", e);
       }

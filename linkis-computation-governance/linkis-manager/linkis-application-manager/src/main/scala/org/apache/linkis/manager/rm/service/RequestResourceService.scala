@@ -386,7 +386,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       case s: SpecialResource =>
         throw new RMWarnException(
           NOT_RESOURCE_TYPE.getErrorCode,
-          MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+          MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, s.getClass)
         )
       case r: Resource =>
         throw new RMWarnException(

@@ -32,7 +32,12 @@ fi
 
 # deploy LDH
 echo "# Deploying LDH ..."
-kubectl create ns ldh
+set +e
+x=`kubectl get ns ldh 2> /dev/null`
+set -e
+if [ "X${x}" == "X" ]; then
+  kubectl create ns ldh
+fi
 kubectl apply -n ldh -f ${RESOURCE_DIR}/ldh/configmaps
 
 LDH_VERSION=${LDH_VERSION} envsubst < ${RESOURCE_DIR}/ldh/ldh.yaml | kubectl apply -n ldh -f -

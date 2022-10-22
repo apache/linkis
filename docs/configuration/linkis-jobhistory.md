@@ -1,6 +1,7 @@
-## linkis-jobhistory 配置
+## linkis-jobhistory configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-jobhistory|wds.linkis.jobhistory.safe.trigger |true|jobhistory.safe.trigger|
 |linkis-jobhistory|wds.linkis.entrance.spring.name| linkis-cg-entrance |entrance.spring.name|

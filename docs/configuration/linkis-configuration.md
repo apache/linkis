@@ -1,7 +1,9 @@
-## linkis-configuration 配置
+## linkis-configuration configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 |
-| -------- | -------- | ----- |----- |
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |
+| -------- | -------- | ----- |----- | 
 | linkis-configuration |wds.linkis.configuration.engine.type| |configuration.engine.type|
 | linkis-configuration |wds.linkis.engineconn.manager.name|linkis-cg-linkismanager |engineconn.manager.name|
 | linkis-configuration |wds.linkis.configuration.use.creator.default.value|true |configuration.use.creator.default.value|
+ 

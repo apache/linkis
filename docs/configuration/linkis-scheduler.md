@@ -1,6 +1,7 @@
-## linkis-scheduler 配置
+## linkis-scheduler configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-scheduler|wds.linkis.fifo.consumer.auto.clear.enabled|true | auto.clear.enabled|true|
 |linkis-scheduler|wds.linkis.fifo.consumer.max.idle.time|1h |max.idle.time|true|

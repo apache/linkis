@@ -22,7 +22,7 @@ import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
+import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 
 import org.apache.commons.io.FileUtils;
@@ -44,9 +44,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.CANNOT_KEYTAB_PARAMETERS;
-
-public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
+public class KafkaMetaService extends AbstractDbMetaService<KafkaConnection> {
 
   private static final Logger LOG = LoggerFactory.getLogger(KafkaMetaService.class);
   private static final CommonVars<String> TMP_FILE_STORE_LOCATION =
@@ -86,7 +84,7 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
         }
         conn = new KafkaConnection(brokers, principle, keytabFilePath);
       } else {
-        throw new MetaRuntimeException(CANNOT_KEYTAB_PARAMETERS.getErrorDesc(), null);
+        throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
       }
     } else {
       conn = new KafkaConnection(brokers);

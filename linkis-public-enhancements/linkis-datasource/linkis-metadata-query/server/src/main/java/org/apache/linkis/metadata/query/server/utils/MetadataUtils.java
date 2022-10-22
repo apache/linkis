@@ -17,8 +17,9 @@
 
 package org.apache.linkis.metadata.query.server.utils;
 
+import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
-import org.apache.linkis.metadata.query.common.service.MetadataService;
+import org.apache.linkis.metadata.query.common.service.BaseMetadataService;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -50,8 +52,36 @@ public class MetadataUtils {
 
   private static final Logger LOG = LoggerFactory.getLogger(MetadataUtils.class);
 
-  public static MetadataService loadMetaService(
-      Class<? extends MetadataService> metaServiceClass, ClassLoader metaServiceClassLoader) {
+  public static final String NAME_REGEX =
+      CommonVars.apply("wds.linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/:]+$").getValue();
+
+  public static final Pattern nameRegexPattern = Pattern.compile(NAME_REGEX);
+
+  /**
+   * Get the primitive class
+   *
+   * @param clazz class
+   * @return return
+   */
+  public static Class<?> getPrimitive(Class<?> clazz) {
+    try {
+      Class<?> primitive = null;
+      if (clazz.isPrimitive()) {
+        primitive = clazz;
+      } else {
+        Class<?> innerType = ((Class<?>) clazz.getField("TYPE").get(null));
+        if (innerType.isPrimitive()) {
+          primitive = innerType;
+        }
+      }
+      return primitive;
+    } catch (NoSuchFieldException | IllegalAccessException e) {
+      return null;
+    }
+  }
+
+  public static BaseMetadataService loadMetaService(
+      Class<? extends BaseMetadataService> metaServiceClass, ClassLoader metaServiceClassLoader) {
     ClassLoader storeClassLoader = Thread.currentThread().getContextClassLoader();
     Thread.currentThread().setContextClassLoader(metaServiceClassLoader);
     try {
@@ -69,7 +99,7 @@ public class MetadataUtils {
         // Choose the first one
         Constructor<?> constructor = acceptConstructor.get(0);
         try {
-          return (MetadataService) constructor.newInstance();
+          return (BaseMetadataService) constructor.newInstance();
         } catch (Exception e) {
           throw new MetaRuntimeException(
               MessageFormat.format(UNABLE_META_SERVICE.getErrorDesc(), metaServiceClass.getName()),
@@ -105,13 +135,14 @@ public class MetadataUtils {
     return classNameList.toArray(new String[] {});
   }
 
-  public static Class<? extends MetadataService> loadMetaServiceClass(
+  public static Class<? extends BaseMetadataService> loadMetaServiceClass(
       ClassLoader classLoader, String className, boolean initialize, String notFoundMessage) {
     // Try to load use expectClassName
     try {
-      return Class.forName(className, initialize, classLoader).asSubclass(MetadataService.class);
+      return Class.forName(className, initialize, classLoader)
+          .asSubclass(BaseMetadataService.class);
     } catch (ClassNotFoundException ne) {
-      LOG.warn(notFoundMessage, ne);
+      LOG.warn(notFoundMessage);
     }
     return null;
   }
@@ -167,6 +198,6 @@ public class MetadataUtils {
       LOG.trace("Class: {} can not be found", className, t);
       return false;
     }
-    return MetadataService.class.isAssignableFrom(clazz);
+    return BaseMetadataService.class.isAssignableFrom(clazz);
   }
 }

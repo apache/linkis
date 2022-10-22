@@ -34,7 +34,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -45,10 +45,17 @@ import com.google.common.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.FAIL_CLOSE_CONNECTION;
-
 public abstract class AbstractMetaService<C extends Closeable> implements MetadataService {
   private static final Logger LOG = LoggerFactory.getLogger(AbstractMetaService.class);
+/**
+ * Meta service use cache manager
+ *
+ * @param <C>
+ */
+public abstract class AbstractCacheMetaService<C extends Closeable> implements BaseMetadataService {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractCacheMetaService.class);
+
   private static final String CONN_CACHE_REQ = "_STORED";
 
   private CacheManager connCacheManager;
@@ -64,140 +71,40 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
   /**
    * If want to use cache component, you should invoke this in constructor method
    *
-   * @param cacheManager
+   * @param cacheManager cache manage
    */
   protected void initCache(CacheManager cacheManager) {
-    String prefix = this.getClass().getSimpleName();
-    reqCache =
-        cacheManager.buildCache(
-            prefix + CONN_CACHE_REQ,
-            notification -> {
-              assert notification.getValue() != null;
-              close(notification.getValue().getConnection());
-            });
-    // Clean up the req cache
-    reqCache.cleanUp();
+    if (useCache()) {
+      String prefix = this.getClass().getSimpleName();
+      reqCache =
+          cacheManager.buildCache(
+              prefix + CONN_CACHE_REQ,
+              notification -> {
+                assert notification.getValue() != null;
+                close(notification.getValue().getConnection());
+              });
+      // Clean up the req cache
+      reqCache.cleanUp();
+    }
+  }
+
+  /**
+   * If use the cache
+   *
+   * @return boolean
+   */
+  protected boolean useCache() {
+    return true;
   }
 
   @Override
   public abstract MetadataConnection<C> getConnection(String operator, Map<String, Object> params)
       throws Exception;
 
-  @Override
-  public List<String> getDatabases(String operator, Map<String, Object> params) {
-    return this.getConnAndRun(operator, params, this::queryDatabases);
-  }
-
-  @Override
-  public List<String> getTables(String operator, Map<String, Object> params, String database) {
-    return this.getConnAndRun(operator, params, conn -> this.queryTables(conn, database));
-  }
-
-  @Override
-  public Map<String, String> getTableProps(
-      String operator, Map<String, Object> params, String database, String table) {
+  public Map<String, String> getConnectionInfo(
+      String operator, Map<String, Object> params, Map<String, String> queryParams) {
     return this.getConnAndRun(
-        operator, params, conn -> this.queryTableProps(conn, database, table));
-  }
-
-  @Override
-  public MetaPartitionInfo getPartitions(
-      String operator,
-      Map<String, Object> params,
-      String database,
-      String table,
-      boolean traverse) {
-    return this.getConnAndRun(
-        operator, params, conn -> this.queryPartitions(conn, database, table, traverse));
-  }
-
-  @Override
-  public List<MetaColumnInfo> getColumns(
-      String operator, Map<String, Object> params, String database, String table) {
-    return this.getConnAndRun(operator, params, conn -> this.queryColumns(conn, database, table));
-  }
-
-  @Override
-  public Map<String, String> getPartitionProps(
-      String operator,
-      Map<String, Object> params,
-      String database,
-      String table,
-      String partition) {
-    return this.getConnAndRun(
-        operator, params, conn -> this.queryPartitionProps(conn, database, table, partition));
-  }
-
-  /**
-   * Get database list by connection
-   *
-   * @param connection metadata connection
-   * @return
-   */
-  public List<String> queryDatabases(C connection) {
-    throw new WarnException(-1, "This method is no supported");
-  }
-
-  /**
-   * Get table list by connection and database
-   *
-   * @param connection metadata connection
-   * @param database database
-   * @return
-   */
-  public List<String> queryTables(C connection, String database) {
-    throw new WarnException(-1, "This method is no supported");
-  }
-
-  /**
-   * Get partitions by connection, database and table
-   *
-   * @param connection metadata connection
-   * @param database database
-   * @param table table
-   * @return
-   */
-  public MetaPartitionInfo queryPartitions(
-      C connection, String database, String table, boolean traverse) {
-    throw new WarnException(-1, "This method is no supported");
-  }
-
-  /**
-   * Get columns by connection, database and table
-   *
-   * @param connection metadata connection
-   * @param database database
-   * @param table table
-   * @return
-   */
-  public List<MetaColumnInfo> queryColumns(C connection, String database, String table) {
-    throw new WarnException(-1, "This method is no supported");
-  }
-
-  /**
-   * Get the properties of partition
-   *
-   * @param connection
-   * @param database
-   * @param table
-   * @param partition
-   * @return
-   */
-  public Map<String, String> queryPartitionProps(
-      C connection, String database, String table, String partition) {
-    throw new WarnException(-1, "This method is no supported");
-  }
-
-  /**
-   * Get table properties
-   *
-   * @param connection metadata connection
-   * @param database database
-   * @param table table
-   * @return
-   */
-  public Map<String, String> queryTableProps(C connection, String database, String table) {
-    throw new WarnException(-1, "This method is no supported");
+        operator, params, connection -> this.queryConnectionInfo(connection, queryParams));
   }
 
   public void close(C connection) {
@@ -205,8 +112,19 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
       connection.close();
     } catch (IOException e) {
       throw new MetaRuntimeException(
-          FAIL_CLOSE_CONNECTION.getErrorDesc() + "[" + e.getMessage() + "]", e);
+          "Fail to close connection[关闭连接失败], [" + e.getMessage() + "]", e);
     }
+  }
+
+  /**
+   * Get connection information
+   *
+   * @param connection connection
+   * @param queryParams query params
+   * @return map
+   */
+  public Map<String, String> queryConnectionInfo(C connection, Map<String, String> queryParams) {
+    return Collections.emptyMap();
   }
 
   protected <R> R getConnAndRun(
@@ -215,6 +133,8 @@ public abstract class AbstractMetaService<C extends Closeable> implements Metada
     MetadataConnection<C> connection = null;
     try {
       cacheKey = md5String(Json.toJson(params, null), "", 2);
+      // Dive the cache by operator/creator
+      cacheKey = operator + "_" + md5String(Json.toJson(params, null), "", 2);
       if (null != reqCache) {
         ConnectionCache<C> connectionCache =
             getConnectionInCache(reqCache, cacheKey, () -> getConnection(operator, params));

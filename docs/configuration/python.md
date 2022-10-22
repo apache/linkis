@@ -1,6 +1,7 @@
-## python 配置
+## python configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |python|wds.linkis.python.line.limit|10|python.line.limit|
 |python|wds.linkis.python.py4j.home |getPy4jHome  |python.py4j.home|

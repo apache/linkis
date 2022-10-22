@@ -48,7 +48,6 @@ public enum LinkisPythonErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
-
   @Override
   public String toString() {
     return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;

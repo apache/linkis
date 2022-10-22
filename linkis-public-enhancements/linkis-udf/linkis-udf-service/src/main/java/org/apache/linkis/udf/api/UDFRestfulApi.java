@@ -421,7 +421,7 @@ public class UDFRestfulApi {
     try {
       String userName = ModuleUserUtils.getOperationUser(req);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
+        throw new UDFException("UserName is Empty!");
       }
       Boolean boo = udfService.isUDFManager(userName);
       message = Message.ok();
@@ -446,11 +446,11 @@ public class UDFRestfulApi {
     try {
       Long udfId = json.get("udfId").longValue();
       if (StringUtils.isEmpty(udfId)) {
-        throw new UDFException(UDFID_EMPTY.getErrorDesc());
+        throw new UDFException("udfId is Empty!");
       }
       String userName = ModuleUserUtils.getOperationUser(req, "set expire udf " + udfId);
       if (StringUtils.isEmpty(userName)) {
-        throw new UDFException(USER_NAME_EMPTY.getErrorDesc());
+        throw new UDFException("UserName is Empty!");
       }
 
       verifyOperationUser(userName, udfId);

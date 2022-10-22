@@ -29,10 +29,8 @@ public class LinkisCsServerErrorCodeSummaryTest {
 
     int errorCode = LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE.getErrorCode();
     String errorDesc = LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE.getErrorDesc();
-    String comment = LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE.getComment();
 
     Assertions.assertTrue(errorCode == 1200001);
     Assertions.assertNotNull(errorDesc);
-    Assertions.assertNotNull(comment);
   }
 }

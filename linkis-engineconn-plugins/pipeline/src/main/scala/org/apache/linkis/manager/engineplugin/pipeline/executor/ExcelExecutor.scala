@@ -65,8 +65,8 @@ class ExcelExecutor extends PipeLineExecutor {
       // TODO: fs 加目录判断
       if (!FileSource.isResultSet(sourcePath)) {
         throw new PipeLineErrorException(
-          NOT_A_RESULT_SET_FILE3.getErrorCode,
-          NOT_A_RESULT_SET_FILE3.getErrorDesc
+          NOT_A_RESULT_SET_FILE.getErrorCode,
+          NOT_A_RESULT_SET_FILE.getErrorDesc
         )
       }
       fileSource = FileSource.create(sourceFsPath, sourceFs)

@@ -63,7 +63,6 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.udf.errorcode.UdfCommonErrorCodeSummary.*;
 import static org.apache.linkis.udf.utils.ConstantVar.*;
 
 @Service
@@ -119,10 +118,11 @@ public class UDFServiceImpl implements UDFService {
     try {
       commonLockService.lock(commonLock, LOCK_TIMEOUT);
       if (validateDuplicateUDFName(udfVo.getUdfName(), userName)) {
-        throw new UDFException(UDF_SAME_NAME.getErrorDesc());
+        throw new UDFException(
+            "The name of udf is the same name. Please rename it and rebuild it.(udf的名字重名，请改名后重建)");
       }
       if (StringUtils.isEmpty(udfVo.getDirectory())) {
-        throw new UDFException(CATEGORY_NOT_EMPTY.getErrorDesc());
+        throw new UDFException("分类名不能为空！");
       }
       // 支持hdfs path
       FsPath fsPath = new FsPath(udfVo.getPath());
@@ -145,7 +145,7 @@ public class UDFServiceImpl implements UDFService {
         response = uploadToBml(userName, fsPath.getPath(), is2);
         logger.info("bml resourceId:" + response.resourceId());
       } catch (IOException e) {
-        throw new UDFException(FILE_READ_EXCEPTION.getErrorDesc() + e.getMessage());
+        throw new UDFException("文件读取异常：" + e.getMessage());
       } finally {
         IOUtils.closeQuietly(is2);
         IOUtils.closeQuietly(is);
@@ -154,7 +154,7 @@ public class UDFServiceImpl implements UDFService {
         }
       }
       if (!response.isSuccess()) {
-        throw new UDFException(UPLOAD_BML_FAILED.getErrorDesc() + udfVo.getPath());
+        throw new UDFException("上传到bml失败，文件路径为：" + udfVo.getPath());
       }
       // 判断分类不存在则创建
       String category =
@@ -223,7 +223,7 @@ public class UDFServiceImpl implements UDFService {
   private void validateJarFileName(String jarPath, String userName) throws UDFException {
     int cnt = udfVersionDao.getSameJarCount(userName, jarPath);
     if (cnt > 0) {
-      throw new UDFException(JAR_SAME_NAME.getErrorDesc());
+      throw new UDFException("用户的udf已存在同名jar！");
     }
   }
 
@@ -283,20 +283,21 @@ public class UDFServiceImpl implements UDFService {
   public void updateUDF(UDFUpdateVo udfUpdateVo, String userName) throws Exception {
     logger.info(userName + "start to update udfInfo, udfName:" + udfUpdateVo.getUdfName());
     if (udfUpdateVo.getId() == null) {
-      throw new UDFException(ID_NOT_EMPTY.getErrorDesc());
+      throw new UDFException("id Can not be empty(不能为空)");
     }
     UDFInfo oldUdfInfo = udfDao.getUDFById(udfUpdateVo.getId());
     if (oldUdfInfo == null) {
-      throw new UDFException(OLD_UDF_FOUND.getErrorDesc());
+      throw new UDFException("No old UDF found by this ID.");
     }
     if (!userName.equals(oldUdfInfo.getCreateUser())) {
-      throw new UDFException(CURRENT_MUST_MODIFIED.getErrorDesc());
+      throw new UDFException(
+          "Current user must be consistent with the modified user(当前用户必须和修改用户一致)");
     }
     if (!oldUdfInfo.getUdfType().equals(udfUpdateVo.getUdfType())) {
-      throw new UDFException(UDF_MODIFICATION_NOT_ALLOWED.getErrorDesc());
+      throw new UDFException("UDF type modification is not allowed.");
     }
     if (!udfUpdateVo.getUdfName().equals(oldUdfInfo.getUdfName())) {
-      throw new UDFException(NOT_ALLOWED_MODIFIED.getErrorDesc());
+      throw new UDFException("The name of udf is not allowed modified.(udf的名字禁止修改！)");
     }
     // 不考虑jar共享
     if (udfUpdateVo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(udfUpdateVo.getPath())) {
@@ -306,7 +307,7 @@ public class UDFServiceImpl implements UDFService {
               udfUpdateVo.getPath().substring(udfUpdateVo.getPath().lastIndexOf("/") + 1),
               udfUpdateVo.getId());
       if (cnt > 0) {
-        throw new UDFException(JAR_SAME_NAME.getErrorDesc());
+        throw new UDFException("用户的udf已存在同名jar");
       }
     }
     oldUdfInfo.setUpdateTime(new Date());
@@ -319,7 +320,7 @@ public class UDFServiceImpl implements UDFService {
       commonLockService.lock(persistenceLock, LOCK_TIMEOUT);
       UDFVersion latestVersion = udfVersionDao.selectLatestByUdfId(udfUpdateVo.getId());
       if (null == latestVersion) {
-        throw new UDFException(NOT_FOUND_VERSION.getErrorDesc());
+        throw new UDFException("can't found latestVersion for the udf");
       }
       // 支持hdfs path
       FsPath fsPath = new FsPath(udfUpdateVo.getPath());
@@ -343,9 +344,9 @@ public class UDFServiceImpl implements UDFService {
         is2 = fileSystem.read(fsPath);
         response = uploadToBml(userName, fsPath.getPath(), is2, latestVersion.getBmlResourceId());
       } catch (IOException e) {
-        throw new UDFException(FILE_READ_EXCEPTION.getErrorDesc() + e.getMessage());
+        throw new UDFException("文件读取异常：" + e.getMessage());
       } catch (Exception e) {
-        throw new UDFException(UPLOAD_BML_FAILED_MSG.getErrorDesc() + e.getMessage());
+        throw new UDFException("上传到bml异常！msg:" + e.getMessage());
       } finally {
         IOUtils.closeQuietly(is);
         IOUtils.closeQuietly(is2);
@@ -354,7 +355,7 @@ public class UDFServiceImpl implements UDFService {
         }
       }
       if (!response.isSuccess()) {
-        throw new UDFException(UPLOAD_BML_FAILED.getErrorDesc() + udfUpdateVo.getPath());
+        throw new UDFException("上传到bml失败，文件路径为：" + udfUpdateVo.getPath());
       }
       UDFVersion newVersion = new UDFVersion();
       newVersion.setUdfId(udfUpdateVo.getId());
@@ -405,7 +406,7 @@ public class UDFServiceImpl implements UDFService {
               }
             });
     if (selfTree == null || selfTree.size() == 0) {
-      throw new UDFException(NOT_FUNCTION_DIRECTORY.getErrorDesc());
+      throw new UDFException("该用户没有个人函数目录!");
     }
     List<UDFTree> selfTreeChildren =
         udfTreeDao.getTreesByParentId(
@@ -446,7 +447,7 @@ public class UDFServiceImpl implements UDFService {
         udfDao.getShareSameNameCountExcludeUser(
             udfInfo.getUdfName(), handoverUser, udfInfo.getCreateUser());
     if (count > 0 || sharedCount > 0) {
-      throw new UDFException(HANDOVER_SAME_NAME_UDF.getErrorDesc());
+      throw new UDFException("The handoverUser has same name udf.(被移交用户包含重名udf)");
     }
     // 只考虑校验最新版本的jar是否同名，否则需要校验移交udf的所有版本的jar
     if (udfInfo.getUdfType() == UDF_JAR && StringUtils.isNotBlank(latestVersion.getPath())) {
@@ -500,7 +501,7 @@ public class UDFServiceImpl implements UDFService {
         bmlClient.copyResourceToAnotherUser(
             latestVersion.getBmlResourceId(), handoverUser, oldUser);
     if (!response.isSuccess()) {
-      throw new UDFException(FAILED_COPY_RESOURCE.getErrorDesc() + handoverUser);
+      throw new UDFException("failed to copy resource to anotherUser:" + handoverUser);
     }
     udfVersionDao.updateResourceIdByUdfId(udfId, response.resourceId(), oldUser, handoverUser);
 
@@ -512,7 +513,7 @@ public class UDFServiceImpl implements UDFService {
     logger.info("begin to publish udf, udfId: " + udfId);
     UDFInfo udfInfo = udfDao.getUDFById(udfId);
     if (!Boolean.TRUE.equals(udfInfo.getShared())) {
-      throw new UDFException(OPERATION_NOT_SUPPORTED.getErrorDesc());
+      throw new UDFException("非共享udf不支持发布操作！");
     }
     udfVersionDao.updatePublishStatus(udfId, version, true);
     logger.info("end to publish udf, udfId: " + udfId);
@@ -550,7 +551,7 @@ public class UDFServiceImpl implements UDFService {
         bmlClient.rollbackVersion(
             udfVersion.getBmlResourceId(), udfVersion.getBmlResourceVersion(), userName);
     if (!response.isSuccess()) {
-      throw new UDFException(ROLLBACK_VERSION_ABNORMAL.getErrorDesc());
+      throw new UDFException("bml rollback version 异常！");
     }
     UDFVersion newVersion =
         new UDFVersion(
@@ -621,7 +622,7 @@ public class UDFServiceImpl implements UDFService {
     logger.info("user " + user + " begin to downLoad udf, udfId: " + udfId);
     UDFInfo udfInfo = udfDao.getUDFById(udfId);
     if (udfInfo.getUdfType() == UDF_JAR) {
-      throw new UDFException(JAR_NOT_DOWNLOADING.getErrorDesc());
+      throw new UDFException("jar类型的udf不支持下载查看内容");
     }
     UDFVersion udfVersion = udfVersionDao.selectByUdfIdAndVersion(udfId, version);
     BmlDownloadResponse downloadResponse =
@@ -712,7 +713,7 @@ public class UDFServiceImpl implements UDFService {
     if (Boolean.TRUE.equals(udfInfo.getShared())) {
       long loadCount = udfDao.getUserLoadCountByUdfId(udfId, userName);
       if (loadCount > 0) {
-        throw new UDFException(CANNOT_DELETED.getErrorDesc());
+        throw new UDFException("该共享udf被用户加载，不能删除");
       } else {
         udfDao.deleteAllSharedUser(udfId);
       }
@@ -754,7 +755,9 @@ public class UDFServiceImpl implements UDFService {
         /*long sysCount = udfDao.getSameSysCount(udfInfo.getUdfName());*/
         long loadCount = udfDao.getSameLoadCount(userName, udfInfo.getUdfName());
         if (loadCount > 0) {
-          throw new UDFException(SAME_NAME_FUNCTION.getErrorDesc() + udfInfo.getUdfName());
+          throw new UDFException(
+              "There is a Jar package function with the same name(存在同名的Jar包函数)： "
+                  + udfInfo.getUdfName());
         }
         // 校验jar包名字
         //                String path = udfInfo.getPath();
@@ -944,20 +947,20 @@ public class UDFServiceImpl implements UDFService {
   public void checkSharedUsers(Set<String> sharedUsers, String userName, String udfName)
       throws UDFException {
     if (sharedUsers.contains(userName)) {
-      throw new UDFException(NOT_SHARING_YOURSELF.getErrorDesc());
+      throw new UDFException("Do not support sharing to yourself!(不支持分享给自己!)");
     }
     // 校验共享用户是否包含同名udf
     for (String shareduser : sharedUsers) {
       if (StringUtils.isEmpty(shareduser)) {
-        throw new UDFException(SHARED_USERS_NOT_EMPTY.getErrorDesc());
+        throw new UDFException("共享用户不能包含空用户名！");
       }
       if (!pattern.matcher(shareduser).matches()) {
-        throw new UDFException(CONTAIN_NUMERIC_SCORES.getErrorDesc());
+        throw new UDFException("用户名只能包含字母数字下划线！");
       }
       long count = udfDao.getSameNameCountByUser(udfName, shareduser);
       long sharedCount = udfDao.getShareSameNameCountExcludeUser(udfName, shareduser, userName);
       if (count > 0 || sharedCount > 0) {
-        throw new UDFException(CONTAINS_SAME_NAME.getErrorDesc() + shareduser);
+        throw new UDFException("用户：" + shareduser + "包含同名udf！");
       }
     }
     //        List<String> notExistUsers = Lists.newArrayList();
@@ -980,7 +983,10 @@ public class UDFServiceImpl implements UDFService {
         udfDao.getShareSameNameCountByUser(
             sharedUDFInfo.getUdfName(), sharedUDFInfo.getCreateUser());
     if (count > 0) {
-      throw new UDFException(ALREADY_EXISTS_SHARE.getErrorDesc());
+      throw new UDFException(
+          "Shared udf name(分享的udf的名字)("
+              + sharedUDFInfo.getUdfName()
+              + ")Already exists, please edit the name and re-share(已存在，请修改名字后重新进行分享)");
     }
     udfDao.addUDF(sharedUDFInfo);
     return sharedUDFInfo;
@@ -1009,7 +1015,7 @@ public class UDFServiceImpl implements UDFService {
         return;
       }
     }
-    throw new UDFException(SHARED_USER_EXPIRE.getErrorDesc());
+    throw new UDFException("只有被共享用户加载的udf可以设置过期");
   }
 
   @Override

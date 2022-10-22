@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -472,12 +473,7 @@ public class BmlRestfulApi {
                 if (StringUtils.isBlank(resourceId)
                         || !resourceService.checkResourceId(resourceId)) {
                     Message message =
-                            Message.error(
-                                    "ResourceID :"
-                                            + resourceId
-                                            + " is empty, illegal or has been deleted(resourceId:"
-                                            + resourceId
-                                            + "为空,非法或已被删除)");
+                            Message.error(MessageFormat.format(RESOURCEID_BEEN_DELETED.getErrorDesc(),resourceId));
                     message.setMethod(URL_PREFIX + "deleteResources");
                     message.setStatus(1);
                     return message;
@@ -569,7 +565,7 @@ public class BmlRestfulApi {
         // check version
         if (!versionService.checkVersion(resourceId, version)) {
             throw new BmlQueryFailException(
-                    "version:" + version + "is empty, illegal or has been deleted");
+                    MessageFormat.format(VERSION_BEEN_DELETED.getErrorDesc(),version));
         }
         // checkExpire
         if (!resourceService.checkExpire(resourceId, version)) {

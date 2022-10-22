@@ -30,6 +30,7 @@ import javax.sql.DataSource;
 
 import java.security.PrivilegedExceptionAction;
 import java.sql.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -135,10 +136,8 @@ public class ConnectionManager {
       default:
         throw new JDBCParamsIllegalException(
             UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
-            UNSUPPORT_JDBC_AUTHENTICATION_TYPES
-                .getErrorDesc()
-                .concat("  ")
-                .concat(jdbcAuthType.getAuthType()));
+            MessageFormat.format(
+                UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc(), jdbcAuthType.getAuthType()));
     }
 
     boolean testOnBorrow =
@@ -224,7 +223,7 @@ public class ConnectionManager {
         JDBCPropertiesParser.getString(
             properties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
     if (StringUtils.isBlank(execUser)) {
-      LOG.warn("No such execUser: {}", execUser);
+      LOG.warn("execUser is empty!");
       throw new JDBCParamsIllegalException(
           NO_EXEC_USER_ERROR.getErrorCode(), NO_EXEC_USER_ERROR.getErrorDesc());
     }
@@ -288,7 +287,8 @@ public class ConnectionManager {
       default:
         throw new JDBCParamsIllegalException(
             UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
-            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc() + jdbcAuthType.getAuthType());
+            MessageFormat.format(
+                UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc(), jdbcAuthType.getAuthType()));
     }
     return connection;
   }

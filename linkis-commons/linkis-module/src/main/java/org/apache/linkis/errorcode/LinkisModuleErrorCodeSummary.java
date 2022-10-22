@@ -20,58 +20,35 @@ package org.apache.linkis.errorcode;
 public enum LinkisModuleErrorCodeSummary {
   DATAWORKCLOUD_MUST_VERSION(
       10010,
-      "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.(DataWorkCloud 服务必须设置版本，请将属性 [[wds.linkis.server.version]] 添加到属性文件.)",
-      "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file.(DataWorkCloud 服务必须设置版本，请将属性 [[wds.linkis.server.version]] 添加到属性文件.)"),
+      "DataWorkCloud service must set the version, please add property [wds.linkis.server.version] to properties file(DataWorkCloud 服务必须设置版本，请将属性 [wds.linkis.server.version] 添加到属性文件)."),
   FETCH_MAPCACHE_ERROR(
       10021,
-      "Failed to get user parameters! Reason: RPC request{0} Service failed!(获取用户参数失败！原因：RPC请求{0}服务失败！)",
-      "Failed to get user parameters! Reason: RPC request{0} Service failed!(获取用户参数失败！原因：RPC请求{0}服务失败！)"),
-  NOT_EXISTS_APPLICATION(
-      10050,
-      "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)",
-      "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
+      "Failed to get user parameters,because RPC request{0} Service failed(获取用户参数失败！因为 RPC 请求{0}服务失败)!"),
+  NOT_EXISTS_APPLICATION(10050, "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
   HAVE_NOT_SET(
       11000,
-      "The wds.linkis.server.home或BDP_SERVER_HOME haven't set!(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置！)",
-      "The wds.linkis.server.home或BDP_SERVER_HOME haven't set!(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置！)"),
-  VERIFICATION_CANNOT_EMPTY(
-      11001,
-      "Verification failed,{0} cannot be empty!(验证失败,{0} 不能为空！)",
-      "Verification failed,{0} cannot be empty!(验证失败,{0}不能为空！)"),
-  LOGGED_ID(11002, "", ""),
-  NOT_LOGGED(
-      11002,
-      "Login has expired, please log in again!(登录已过期，请重新登录！)",
-      "Login has expired, please log in again!(登录已过期，请重新登录！)"),
-  ILLEGAL_ID(11003, "", ""),
-  ILLEGAL_USER_TOKEN(
-      11003,
-      "Illegal user token information(非法的用户token信息).",
-      "Illegal user token information(非法的用户token信息)."),
-  SERVERSSOCKET_NOT_EXIST(
-      11004,
-      "ServerSocket{0} does not exist!(ServerSocket{0}不存在！)",
-      "ServerSocket{0} does not exist!(ServerSocket{0}不存在！)"),
+      "The wds.linkis.server.home或BDP_SERVER_HOME haven't set(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置)!"),
+  VERIFICATION_CANNOT_EMPTY(11001, "Verification failed,{0} cannot be empty!(验证失败,{0} 不能为空！)"),
+  LOGGED_ID(11002, ""),
+  NOT_LOGGED(11002, "Login has expired, please log in again!(登录已过期，请重新登录！)"),
+  ILLEGAL_ID(11003, ""),
+  ILLEGAL_USER_TOKEN(11003, "Illegal user token information(非法的用户token信息)."),
+  SERVERSSOCKET_NOT_EXIST(11004, "ServerSocket:{0} does not exist!(ServerSocket:{0}不存在！)"),
   WEBSOCKET_IS_FULL(
       11005,
-      "The receive queue for WebSocket is full, please try again later!(WebSocket的接收队列已满，请稍后重试！)",
-      "The receive queue for WebSocket is full, please try again later!(WebSocket的接收队列已满，请稍后重试！)"),
+      "The receive queue for WebSocket is full, please try again later(WebSocket的接收队列已满，请稍后重试)!"),
   WEBSOCKET_STOPPED(
       11035,
-      "WebSocket consumer has stopped, please contact the administrator to handle!(WebSocket的消费器已停止，请联系管理员处理！)",
-      "WebSocket consumer has stopped, please contact the administrator to handle!(WebSocket的消费器已停止，请联系管理员处理！)");
+      "WebSocket consumer has stopped, please contact the administrator to handle(WebSocket的消费器已停止，请联系管理员处理)!");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisModuleErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisModuleErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -88,14 +65,6 @@ public enum LinkisModuleErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   @Override

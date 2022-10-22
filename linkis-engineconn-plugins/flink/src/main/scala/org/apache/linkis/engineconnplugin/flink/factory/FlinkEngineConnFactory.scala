@@ -373,7 +373,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
           checkpointConfig.setCheckpointingMode(CheckpointingMode.AT_LEAST_ONCE)
         case _ =>
           throw new FlinkInitFailedException(
-            UNKNOWN_CHECKPOINT_MODE.getErrorDesc + s" $checkpointMode."
+            MessageFormat.format(UNKNOWN_CHECKPOINT_MODE.getErrorDesc, checkpointMode)
           )
       }
       checkpointConfig.setCheckpointTimeout(checkpointTimeout)

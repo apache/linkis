@@ -74,7 +74,9 @@ class FlinkCodeOnceExecutor(
         logger.info(s"After variable replace, sql is: $codes.")
       case runType =>
         // Now, only support sql code.
-        throw new FlinkInitFailedException(NOT_SUPPORT_RUNTYPE.getErrorDesc + s" $runType.")
+        throw new FlinkInitFailedException(
+          MessageFormat.format(NOT_SUPPORT_RUNTYPE.getErrorDesc, runType)
+        )
     }
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {

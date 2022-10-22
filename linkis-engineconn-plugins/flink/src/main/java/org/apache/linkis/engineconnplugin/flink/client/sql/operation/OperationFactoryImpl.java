@@ -23,6 +23,8 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
+import java.text.MessageFormat;
+
 import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ONLY_RESET_ALL;
 import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.SUPPORTED_COMMAND_CALL;
 
@@ -112,7 +114,8 @@ public class OperationFactoryImpl implements OperationFactory {
         operation = new ExplainOperation(context, call.operands[0]);
         break;
       default:
-        throw new SqlParseException(SUPPORTED_COMMAND_CALL.getErrorDesc() + call);
+        throw new SqlParseException(
+            MessageFormat.format(SUPPORTED_COMMAND_CALL.getErrorDesc(), call));
     }
     return operation;
   }

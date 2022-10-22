@@ -18,11 +18,11 @@
 package org.apache.linkis.engineplugin.elasticsearch.errorcode;
 
 public enum EasticsearchErrorCodeSummary {
-  CLUSTER_IS_BLANK(70112, "cluster is blank!(集群是空白的！)", "cluster is blank!(集群是空白的！)"),
+  CLUSTER_IS_BLANK(70112, "The elasticsearch cluster is empty(es集群为空)!", ""),
   RESPONSE_FAIL_IS_EMPTY(
       70113,
-      "EsEngineExecutor convert response fail, response content is empty.(EsEngineExecutor 转换响应失败，响应内容为空.)",
-      "EsEngineExecutor convert response fail, response content is empty.(EsEngineExecutor 转换响应失败，响应内容为空.)");
+      "EsEngineExecutor convert response fail, response content is empty(EsEngineExecutor response解析失败，response 内容为空).",
+      "");
 
   /** (errorCode)错误码 */
   private int errorCode;

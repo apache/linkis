@@ -22,6 +22,8 @@ import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
+import java.text.MessageFormat
+
 trait AbstractEngineResourceFactory extends EngineResourceFactory {
 
   protected def getRequestResource(properties: java.util.Map[String, String]): Resource
@@ -40,7 +42,11 @@ trait AbstractEngineResourceFactory extends EngineResourceFactory {
     if (minResource.getClass != maxResource.getClass) {
       throw new EngineConnPluginErrorException(
         MINRESOURCE_MAXRESOURCE_NO_SAME.getErrorCode,
-        s"The minResource ${minResource.getClass.getSimpleName} is not the same with the maxResource${maxResource.getClass.getSimpleName}."
+        MessageFormat.format(
+          MINRESOURCE_MAXRESOURCE_NO_SAME.getErrorDesc,
+          minResource.getClass.getSimpleName,
+          maxResource.getClass.getSimpleName
+        )
       )
     }
     engineResource.setUser(user)

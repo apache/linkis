@@ -18,27 +18,19 @@
 package org.apache.linkis.manager.errorcode;
 
 public enum LinkisManagerPersistenceErrorCodeSummary {
-  BEANUTILS_POPULATE_FAILED(
-      10000,
-      "beanutils populate failed (beanutils 填充失败)",
-      "beanutils populate failed (beanutils 填充失败)"),
-  NODE_INSTANCE_ALREADY_EXISTS(
-      41001, "Node instance already exists(Node实例已存在)", "Node instance already exists(Node实例已存在)"),
-  NODE_INSTANCE_DOES_NOT_EXIST(
-      41002, "Node instance does not exist(Node实例不存在)", "Node instance does not exist(Node实例不存在)"),
-  THE_EMNODE_IS_NULL(410002, "The emNode  is null (emNode 为空)", "The emNode  is null (emNode 为空)");
+  BEANUTILS_POPULATE_FAILED(10000, "beanutils populate failed (beanutils 填充失败)"),
+  NODE_INSTANCE_ALREADY_EXISTS(41001, "Node instance already exists(Node实例已存在)"),
+  NODE_INSTANCE_DOES_NOT_EXIST(41002, "Node instance does not exist(Node实例不存在)"),
+  THE_EMNODE_IS_NULL(410002, "The emNode:{0} is null (emNode:{0} 为空)");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisManagerPersistenceErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisManagerPersistenceErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -55,14 +47,6 @@ public enum LinkisManagerPersistenceErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   @Override

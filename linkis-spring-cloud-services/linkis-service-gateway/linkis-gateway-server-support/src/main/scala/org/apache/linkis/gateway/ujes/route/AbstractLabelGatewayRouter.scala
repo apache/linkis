@@ -90,7 +90,10 @@ abstract class AbstractLabelGatewayRouter extends AbstractGatewayRouter with Log
     if (null == instance || StringUtils.isBlank(instance.getInstance)) {
       throw new GatewayErrorException(
         NO_SERVICES_REGISTRY.getErrorCode,
-        NO_SERVICES_REGISTRY.getErrorDesc + s" ${gatewayContext.getRequest.getRequestURI}"
+        MessageFormat.format(
+          NO_SERVICES_REGISTRY.getErrorDesc,
+          gatewayContext.getRequest.getRequestURI
+        )
       )
     }
     instance

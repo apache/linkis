@@ -17,48 +17,48 @@
 
 package org.apache.linkis.engineplugin.trino.conf
 
-import org.apache.linkis.common.conf.{ByteType, CommonVars}
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.storage.utils.StorageConfiguration
 
 import java.lang
 
 object TrinoConfiguration {
 
-  val ENGINE_CONCURRENT_LIMIT = CommonVars[Int]("wds.linkis.engineconn.concurrent.limit", 100)
+  val ENGINE_CONCURRENT_LIMIT = CommonVars[Int]("linkis.engineconn.concurrent.limit", 100)
 
-  val DEFAULT_LIMIT = CommonVars[Int]("wds.linkis.trino.default.limit", 5000)
+  val DEFAULT_LIMIT = CommonVars[Int]("linkis.trino.default.limit", 5000)
 
   val TRINO_HTTP_CONNECT_TIME_OUT =
-    CommonVars[java.lang.Long]("wds.linkis.trino.http.connectTimeout.seconds", new lang.Long(60))
+    CommonVars[java.lang.Long]("linkis.trino.http.connectTimeout.seconds", new lang.Long(60))
 
   val TRINO_HTTP_READ_TIME_OUT =
-    CommonVars[java.lang.Long]("wds.linkis.trino.http.readTimeout.seconds", new lang.Long(60))
+    CommonVars[java.lang.Long]("linkis.trino.http.readTimeout.seconds", new lang.Long(60))
 
-  val TRINO_URL = CommonVars[String]("wds.linkis.trino.url", "http://127.0.0.1:8080")
+  val TRINO_URL = CommonVars[String]("linkis.trino.url", "http://127.0.0.1:8080")
 
-  val TRINO_PASSWORD = CommonVars[String]("wds.linkis.trino.password", null)
-  val TRINO_PASSWORD_CMD = CommonVars[String]("wds.linkis.trino.password.cmd", null)
-  val TRINO_CATALOG = CommonVars[String]("wds.linkis.trino.catalog", "system")
-  val TRINO_SCHEMA = CommonVars[String]("wds.linkis.trino.schema", "")
-  val TRINO_SOURCE = CommonVars[String]("wds.linkis.trino.source", "global")
+  val TRINO_PASSWORD = CommonVars[String]("linkis.trino.password", null)
+  val TRINO_PASSWORD_CMD = CommonVars[String]("linkis.trino.password.cmd", null)
+  val TRINO_CATALOG = CommonVars[String]("linkis.trino.catalog", "system")
+  val TRINO_SCHEMA = CommonVars[String]("linkis.trino.schema", "")
+  val TRINO_SOURCE = CommonVars[String]("linkis.trino.source", "global")
 
-  val TRINO_SSL_INSECURED = CommonVars[Boolean]("wds.linkis.trino.ssl.insecured", true)
-  val TRINO_SSL_KEYSTORE = CommonVars[String]("wds.linkis.trino.ssl.keystore", null)
-  val TRINO_SSL_KEYSTORE_TYPE = CommonVars[String]("wds.linkis.trino.ssl.keystore.type", null)
+  val TRINO_SSL_INSECURED = CommonVars[Boolean]("linkis.trino.ssl.insecured", true)
+  val TRINO_SSL_KEYSTORE = CommonVars[String]("linkis.trino.ssl.keystore", null)
+  val TRINO_SSL_KEYSTORE_TYPE = CommonVars[String]("linkis.trino.ssl.keystore.type", null)
 
   val TRINO_SSL_KEYSTORE_PASSWORD =
-    CommonVars[String]("wds.linkis.trino.ssl.keystore.password", null)
+    CommonVars[String]("linkis.trino.ssl.keystore.password", null)
 
-  val TRINO_SSL_TRUSTSTORE = CommonVars[String]("wds.linkis.trino.ssl.truststore", null)
-  val TRINO_SSL_TRUSTSTORE_TYPE = CommonVars[String]("wds.linkis.trino.ssl.truststore.type", null)
+  val TRINO_SSL_TRUSTSTORE = CommonVars[String]("linkis.trino.ssl.truststore", null)
+  val TRINO_SSL_TRUSTSTORE_TYPE = CommonVars[String]("linkis.trino.ssl.truststore.type", null)
 
   val TRINO_SSL_TRUSTSTORE_PASSWORD =
-    CommonVars[String]("wds.linkis.trino.ssl.truststore.password", null)
+    CommonVars[String]("linkis.trino.ssl.truststore.password", null)
 
-  val TRINO_FORBID_GRANT = CommonVars[Boolean]("wds.linkis.trino.forbid.grant", true)
+  val TRINO_FORBID_GRANT = CommonVars[Boolean]("linkis.trino.forbid.grant", true)
 
   val TRINO_FORBID_MODIFY_SCHEMA =
-    CommonVars[Boolean]("wds.linkis.trino.forbid.modifySchema", true)
+    CommonVars[Boolean]("linkis.trino.forbid.modifySchema", true)
 
   val TRINO_USER_ISOLATION_MODE =
     CommonVars[Boolean]("linkis.trino.user.isolation.mode", false)

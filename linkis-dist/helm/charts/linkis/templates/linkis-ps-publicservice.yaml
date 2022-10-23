@@ -98,6 +98,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: common
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
         - name: runtime
           {{- if .Values.linkis.featureGates.localMode }}
           hostPath:
@@ -106,6 +110,18 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if eq .Values.linkis.featureGates.localMode false }}
+        - name: hadoop-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hadoop.configMapName }}
+        - name: hive-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hive.configMapName }}
+        {{- end }}
       serviceAccountName: {{ include "linkis.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.psPublicService.podSecurityContext | nindent 8 }}
@@ -119,7 +135,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start ps-publicservice
+              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start ps-publicservice
           ports:
             - name: "http"
               containerPort: {{ .Values.psPublicService.port }}
@@ -142,6 +158,12 @@ spec:
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: HADOOP_CONF_DIR
+              value: /etc/hadoop-conf
+            - name: HIVE_CONF_DIR
+              value: /etc/hive-conf
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.psPublicService.jvmHeapSize }}
             - name: EUREKA_URL
@@ -162,12 +184,20 @@ spec:
 {{ toYaml .Values.psPublicService.envs.froms | indent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: hadoop-conf
+              mountPath: /etc/hadoop-conf
+            - name: hive-conf
+              mountPath: /etc/hive-conf
+            {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
               mountPath: {{ .Values.linkis.locations.logDir }}
             - name: runtime
               mountPath: {{ .Values.linkis.locations.runtimeDir }}
+            - name: common
+              mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.psPublicService.resources | nindent 12 }}
       {{- with .Values.psPublicService.nodeSelector }}

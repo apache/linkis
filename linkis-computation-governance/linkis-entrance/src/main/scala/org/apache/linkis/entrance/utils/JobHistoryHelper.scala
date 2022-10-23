@@ -20,7 +20,6 @@ package org.apache.linkis.entrance.utils
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
-import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.JobHistoryFailedException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
@@ -36,7 +35,6 @@ import org.apache.commons.lang3.StringUtils
 
 import javax.servlet.http.HttpServletRequest
 
-import java.text.MessageFormat
 import java.util
 import java.util.Date
 
@@ -138,7 +136,7 @@ object JobHistoryHelper extends Logging {
           val status = responsePersist.getStatus
           if (status != SUCCESS_FLAG) {
             logger.error(s"query from jobHistory status failed, status is $status")
-            throw JobHistoryFailedException(QUERY_STATUS_FAILED.getErrorDesc)
+            throw JobHistoryFailedException("query from jobHistory status failed")
           } else {
             val data = responsePersist.getData
             data.get(JobRequestConstants.JOB_HISTORY_LIST) match {
@@ -147,21 +145,18 @@ object JobHistoryHelper extends Logging {
                 else null
               case _ =>
                 throw JobHistoryFailedException(
-                  MessageFormat.format(CORRECT_LIST_TYPR.getErrorDesc, String.valueOf(taskID))
+                  s"query from jobhistory not a correct List type taskId is $taskID"
                 )
             }
           }
         case _ =>
           logger.error("get query response incorrectly")
-          throw JobHistoryFailedException(GET_QUERY_RESPONSE.getErrorDesc)
+          throw JobHistoryFailedException("get query response incorrectly")
       }
     } {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
-        val e1 =
-          JobHistoryFailedException(
-            MessageFormat.format(QUERY_TASKID_ERROR.getErrorDesc, String.valueOf(taskID))
-          )
+        val e1 = JobHistoryFailedException(s"query taskId $taskID error")
         e1.initCause(e)
         throw e
     }

@@ -1,6 +1,7 @@
-## linkis-module 配置
+## linkis-module configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-module|wds.linkis.server.component.exclude.packages| | exclude.packages |true|
 |linkis-module|wds.linkis.server.component.exclude.classes| |exclude.classes|true|

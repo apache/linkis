@@ -44,8 +44,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.CANNOT_KEYTAB_PARAMETERS;
-
 public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
 
   private static final Logger LOG = LoggerFactory.getLogger(KafkaMetaService.class);
@@ -86,7 +84,7 @@ public class KafkaMetaService extends AbstractMetaService<KafkaConnection> {
         }
         conn = new KafkaConnection(brokers, principle, keytabFilePath);
       } else {
-        throw new MetaRuntimeException(CANNOT_KEYTAB_PARAMETERS.getErrorDesc(), null);
+        throw new MetaRuntimeException("Cannot find the keytab file in connect parameters", null);
       }
     } else {
       conn = new KafkaConnection(brokers);

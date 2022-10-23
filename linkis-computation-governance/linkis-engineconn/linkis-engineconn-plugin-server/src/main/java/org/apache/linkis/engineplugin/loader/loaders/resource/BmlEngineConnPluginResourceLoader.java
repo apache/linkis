@@ -43,8 +43,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.NO_WRITE_PERMISSION;
-
 public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResourceLoader {
 
   private static final Logger LOG =
@@ -142,7 +140,7 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
       }
       if (!parentFile.exists() || !parentFile.canWrite()) {
         throw new EngineConnPluginLoadResourceException(
-            NO_WRITE_PERMISSION.getErrorDesc() + ":[" + parentFile.getAbsolutePath() + "]", null);
+            "Have no write permission to directory:[" + parentFile.getAbsolutePath() + "]", null);
       }
       String tmpPath = parentFile.getAbsolutePath();
       if (!tmpPath.endsWith(String.valueOf(IOUtils.DIR_SEPARATOR))) {

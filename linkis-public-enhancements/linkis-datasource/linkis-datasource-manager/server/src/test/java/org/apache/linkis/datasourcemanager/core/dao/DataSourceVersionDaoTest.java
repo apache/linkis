@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Ignore
+@Disabled
 class DataSourceVersionDaoTest extends BaseDaoTest {
   private static final Logger logger = LoggerFactory.getLogger(DataSourceVersionDaoTest.class);
 

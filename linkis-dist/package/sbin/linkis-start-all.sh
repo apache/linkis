@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -82,7 +82,7 @@ SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 startApp
 
-sleep 15
+sleep 20
 
 #linkis-cg-entrance
 SERVER_NAME="cg-entrance"
@@ -156,4 +156,4 @@ SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 checkServer
 
-echo "Linkis started successfully"
+echo "Apache Linkis started successfully"

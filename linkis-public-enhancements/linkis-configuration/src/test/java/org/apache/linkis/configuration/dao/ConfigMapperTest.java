@@ -123,10 +123,10 @@ public class ConfigMapperTest extends BaseDaoTest {
   }
 
   @Test
-  void testSeleteKeyByKeyName() {
+  void testSelectKeyByKeyName() {
     // TODO 查询结果转换异常
     //                ConfigKey configKey =
-    // configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
+    // configMapper.selectKeyByKeyName("wds.linkis.rm.yarnqueue");
     //                assertEquals("ide", configKey.getDefaultValue());
     //                System.out.println(configKey.getDefaultValue());
   }

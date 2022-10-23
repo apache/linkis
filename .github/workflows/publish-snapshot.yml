@@ -42,11 +42,11 @@ jobs:
           distribution: 'adopt'
           java-version: 8
 
-        - name: Get Version
-          run: |
-            BRANCE= ${{ matrix.branch }}
-            echo "::set-output name=version::${BRANCE#*-}-SNAPSHOT"
-          id: get_version
+      - name: Get Version
+        run: |
+          BRANCE= ${{ matrix.branch }}
+          echo "::set-output name=version::${BRANCE#*-}-SNAPSHOT"
+        id: get_version
 
       - name: Publish snapshot - ${{ matrix.branch }}
         env:

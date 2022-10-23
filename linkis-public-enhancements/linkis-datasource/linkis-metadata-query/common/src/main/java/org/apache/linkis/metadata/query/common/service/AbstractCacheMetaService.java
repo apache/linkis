@@ -17,13 +17,10 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.cache.CacheManager;
 import org.apache.linkis.metadata.query.common.cache.ConnCacheManager;
-import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 
 import org.apache.commons.lang3.StringUtils;

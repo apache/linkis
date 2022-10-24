@@ -153,7 +153,9 @@
             "udfFunctionTitle": "UDF Function",
             "udfFunctionManage": "UDF Management",
             "dataSourceManage": "DataSource Manage",
-            "userResourceManagement": "User Resource Management"
+            "userResourceManagement": "User Resource Management",
+            "tenantTagManagement": "Tenant Tag Management",
+            "ipListManagement": "IP List Management"
           }
         }
       },
@@ -316,6 +318,52 @@
         "used": "Available",
         "commentValue": "Roll back from version {text}",
         "undefinedVersion": "Cannot find the version of DataSource"
+      },
+      "tenantTagManagement": {
+        "userName": "User Name",
+        "appName": "Application Name",
+        "tenantTag": "Tenant Tag",
+        "search": "Search",
+        "clear": "Clear",
+        "create": "Create",
+        "userCreator": "User-Creator",
+        "createUser": "Creat User",
+        "createTime": "Create Time",
+        "desc": "Description",
+        "inputUser": "Please Input User",
+        "inputApp": "Please Input Application",
+        "inputTenant": "Please Input Tenant Tag",
+        "inputDesc": "Please Input Description",
+        "inputCreateUser": "Please Input Creare User",
+        "yourTagMapping": "Your Tag Mapping",
+        "notEmpty": "Cannot be empty",
+        "contentError": "English, numbers, decimal point and underline only",
+        "check": "Check",
+        "OK": "OK",
+        "Cancel": "Cancel"
+      },
+      "ipListManagement": {
+        "userName": "User Name",
+        "appName": "Application Name",
+        "ipList": "IP List",
+        "search": "Search",
+        "clear": "Clear",
+        "create": "Create",
+        "userCreator": "User-Creator",
+        "createUser": "Creat User",
+        "createTime": "Create Time",
+        "desc": "Description",
+        "inputUser": "Please Input User",
+        "inputApp": "Please Input Application",
+        "inputIpList": "Please Input IP List",
+        "inputDesc": "Please Input Description",
+        "inputCreateUser": "Please Input Creare User",
+        "yourTagMapping": "Your Tag Mapping",
+        "notEmpty": "Cannot be empty",
+        "contentError": "English, numbers, decimal point and underline only",
+        "check": "Check",
+        "OK": "OK",
+        "Cancel": "Cancel"
       }
     }
   }

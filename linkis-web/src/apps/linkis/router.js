@@ -157,7 +157,27 @@ export default [
         title: 'datasourceManagement',
         publicPage: true,
       },
-    }
+    },
+    {
+      name: 'tenantTagManagement',
+      path: 'tenantTagManagement',
+      component: () =>
+        import('./module/tenantTagManagement/index.vue'),
+      meta: {
+        title: 'tenantTagManagement',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'ipListManagement',
+      path: 'ipListManagement',
+      component: () =>
+        import('./module/ipListManagement/index.vue'),
+      meta: {
+        title: 'ipListManagement',
+        publicPage: true,
+      },
+    },
     ],
   },
 ]

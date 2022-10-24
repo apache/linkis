@@ -155,7 +155,9 @@
                         "udfFunctionManage": "UDF管理",
                         "functionManagement": "函数管理",
                         "dataSourceManage": "数据源管理",
-                        "userResourceManagement": "用户资源管理"
+                        "userResourceManagement": "用户资源管理",
+                        "tenantTagManagement": "租户标签管理",
+                        "ipListManagement": "IP列表管理"
                     }
                 }
             },
@@ -317,6 +319,52 @@
                 "cannotPublish": "不可发布",
                 "used": "可用",
                 "commentValue": "从版本 {text} 回滚"
+            },
+            "tenantTagManagement": {
+                "userName": "用户名",
+                "appName": "应用名",
+                "tenantTag": "租户标签",
+                "search": "搜索",
+                "clear": "清空",
+                "create": "新增",
+                "userCreator": "用户-应用",
+                "createUser": "创建人",
+                "createTime": "创建时间",
+                "desc": "业务来源",
+                "inputUser": "请输入用户名",
+                "inputApp": "请输入应用名",
+                "inputTenant": "请输入租户标签",
+                "inputDesc": "请输入业务来源",
+                "inputCreateUser": "请输入创建者",
+                "yourTagMapping": "您的标签映射",
+                "notEmpty": "不能为空",
+                "contentError": "仅限英文、数字、小数点和下划线",
+                "check": "检查",
+                "OK": "确定",
+                "Cancel": "取消"
+            },
+            "ipListManagement": {
+                "userName": "用户名",
+                "appName": "应用名",
+                "ipList": "IP列表",
+                "search": "搜索",
+                "clear": "清空",
+                "create": "新增",
+                "userCreator": "用户-应用",
+                "createUser": "创建人",
+                "createTime": "创建时间",
+                "desc": "业务来源",
+                "inputUser": "请输入用户名",
+                "inputApp": "请输入应用名",
+                "inputIpList": "请输入IP列表",
+                "inputDesc": "请输入业务来源",
+                "inputCreateUser": "请输入创建者",
+                "yourTagMapping": "您的标签映射",
+                "notEmpty": "不能为空",
+                "contentError": "仅限英文、数字、小数点和下划线",
+                "check": "检查",
+                "OK": "确定",
+                "Cancel": "取消"
             }
         }
     }

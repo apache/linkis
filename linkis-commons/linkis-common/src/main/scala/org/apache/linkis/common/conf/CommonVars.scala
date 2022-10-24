@@ -21,7 +21,13 @@ import java.util.Properties
 
 import scala.collection.JavaConverters._
 
-case class CommonVars[T](key: String, defaultValue: T, value: T, description: String = null) {
+case class CommonVars[T](
+    key: String,
+    defaultValue: T,
+    value: T,
+    description: String = null,
+    hotload: Boolean = false
+) {
   val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 
   def getValue(properties: java.util.Map[String, String]): T = {
@@ -30,7 +36,10 @@ case class CommonVars[T](key: String, defaultValue: T, value: T, description: St
     } else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
   }
 
-  def getValue(properties: Map[String, String]): T = getValue(properties.asJava)
+  def getValue(properties: Map[String, String], hotload: Boolean = false): T = getValue(
+    properties.asJava
+  )
+
   def acquireNew: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 }
 
@@ -46,4 +55,5 @@ object CommonVars {
 
   def properties: Properties = BDPConfiguration.properties
 
+  def hotProperties: Properties = BDPConfiguration.hotProperties
 }

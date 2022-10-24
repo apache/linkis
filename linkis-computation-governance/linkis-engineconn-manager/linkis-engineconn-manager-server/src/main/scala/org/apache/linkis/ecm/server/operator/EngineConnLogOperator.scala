@@ -21,6 +21,7 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHandleService}
@@ -33,6 +34,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, RandomAccessFile}
 import java.nio.charset.Charset
+import java.text.MessageFormat
 import java.util
 import java.util.Collections
 
@@ -54,8 +56,11 @@ class EngineConnLogOperator extends Operator with Logging {
     val enableTail = getAs("enableTail", false)
     if (lastRows > EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"Cannot fetch more than ${EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue} lines of logs."
+        CANNOT_FETCH_MORE_THAN.getErrorCode,
+        MessageFormat.format(
+          CANNOT_FETCH_MORE_THAN.getErrorDesc,
+          EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue.toString
+        )
       )
     } else if (lastRows > 0) {
       val logs = Utils.exec(Array("tail", "-n", lastRows + "", logPath.getPath), 5000).split("\n")
@@ -138,8 +143,8 @@ class EngineConnLogOperator extends Operator with Logging {
       new File(engineConnLogDir, getAs("logType", EngineConnLogOperator.LOG_FILE_NAME.getValue));
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"LogFile $logPath is not exists or is not a file."
+        LOGFILE_IS_NOT_EXISTS.getErrorCode,
+        MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc, logPath)
       )
     }
     logger.info(
@@ -185,7 +190,7 @@ class EngineConnLogOperator extends Operator with Logging {
             val ticketId = getAs("ticketId", "")
             if (StringUtils.isBlank(ticketId)) {
               throw new ECMErrorException(
-                ECMErrorCode.EC_FETCH_LOG_FAILED,
+                BOTH_NOT_EXISTS.getErrorCode,
                 s"the parameters of ${ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY}, engineConnInstance and ticketId are both not exists."
               )
             }

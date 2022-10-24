@@ -33,6 +33,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
   EngineConnResource,
   LaunchConstants
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.apache.commons.lang3.StringUtils
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 
+import java.text.MessageFormat
 import java.util.Date
 
 import scala.collection.JavaConverters._
@@ -174,8 +176,8 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         ) < 2
     ) {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The `lib` and `conf` dir is necessary in ${engineConnType}EngineConn dist."
+        LIB_CONF_DIR_NECESSARY.getErrorCode,
+        MessageFormat.format(LIB_CONF_DIR_NECESSARY.getErrorDesc, engineConnType)
       )
     }
     localize.foreach { localizeResource =>

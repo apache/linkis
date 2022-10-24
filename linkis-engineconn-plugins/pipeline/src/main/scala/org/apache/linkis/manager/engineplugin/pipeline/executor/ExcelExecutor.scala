@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
 import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration.PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
 import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant._
+import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.linkis.storage.FSFactory
@@ -63,7 +64,10 @@ class ExcelExecutor extends PipeLineExecutor {
       // sourcePaht 是文件形式
       // TODO: fs 加目录判断
       if (!FileSource.isResultSet(sourcePath)) {
-        throw new PipeLineErrorException(70003, "Not a result set file(不是结果集文件)")
+        throw new PipeLineErrorException(
+          NOT_A_RESULT_SET_FILE.getErrorCode,
+          NOT_A_RESULT_SET_FILE.getErrorDesc
+        )
       }
       fileSource = FileSource.create(sourceFsPath, sourceFs)
       excelFsWriter = ExcelFsWriter.getExcelFsWriter(
@@ -78,15 +82,15 @@ class ExcelExecutor extends PipeLineExecutor {
       excelFsWriter = new StorageMultiExcelWriter(outputStream, excelAutoFormat)
       val fsPathListWithError = sourceFs.asInstanceOf[FileSystem].listPathWithError(sourceFsPath)
       if (fsPathListWithError == null) {
-        throw new PipeLineErrorException(70005, "empty dir!")
+        throw new PipeLineErrorException(EMPTY_DIR.getErrorCode, EMPTY_DIR.getErrorDesc)
       }
       fileSource =
         FileSource.create(fsPathListWithError.getFsPaths.toArray(Array[FsPath]()), sourceFs)
     }
     if (!FileSource.isTableResultSet(fileSource)) {
       throw new PipeLineErrorException(
-        70004,
-        "Only result sets of type Table can be converted to Excel(只有table类型的结果集才能转为excel)"
+        ONLY_RESULT_CONVERTED_TO_EXCEL.getErrorCode,
+        ONLY_RESULT_CONVERTED_TO_EXCEL.getErrorDesc
       )
     }
     var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")

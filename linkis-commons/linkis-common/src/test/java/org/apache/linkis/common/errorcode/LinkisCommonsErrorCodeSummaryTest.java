@@ -59,36 +59,6 @@ class LinkisCommonsErrorCodeSummaryTest {
 
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getComment());
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("testSetComment");
-    assertEquals("testSetComment", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("Engine start failed(引擎启动失败)");
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("testSetModule");
-    assertEquals("testSetModule", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("hiveEngineConn");
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testToString(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
     linkisCommonsErrorCodeSummary.setErrorCode(0);
     linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");

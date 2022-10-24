@@ -31,6 +31,7 @@ import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 import org.apache.commons.lang3.StringUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.Locale
 
@@ -49,7 +50,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     if (!resultClasses.contains(resultSetType)) {
       throw new StorageErrorException(
         UNSUPPORTED_RESULT.getErrorCode,
-        s"Unsupported result type(不支持的结果类型)：$resultSetType"
+        MessageFormat.format(UNSUPPORTED_RESULT.getErrorDesc, resultSetType)
       )
     }
     resultClasses(resultSetType).newInstance()
@@ -86,7 +87,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
         THE_FILE_IS_EMPTY.getErrorCode,
-        s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
+        MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc, fsPath.getPath)
       )
     }
     Utils.tryQuietly(inputStream.close())

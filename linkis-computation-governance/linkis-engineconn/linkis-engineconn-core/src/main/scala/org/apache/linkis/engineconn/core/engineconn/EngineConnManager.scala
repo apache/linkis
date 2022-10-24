@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.core.engineconn
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.core.errorcode.LinkisEngineconnCoreErrorCodeSummary.NEED_ENGINE_BEFORE_CALL
 import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, EngineConnFatalException}
 
 trait EngineConnManager {
@@ -51,8 +52,8 @@ class DefaultEngineConnManager extends EngineConnManager {
   override def getEngineConn: EngineConn = {
     if (null == this.engineConn) {
       throw new EngineConnFatalException(
-        EngineConnErrorCode.ENGINE_CONN_UN_INIT_CODE,
-        "You need to wait for engine conn to be initialized before starting to call"
+        NEED_ENGINE_BEFORE_CALL.getErrorCode,
+        NEED_ENGINE_BEFORE_CALL.getErrorDesc
       )
     }
     this.engineConn

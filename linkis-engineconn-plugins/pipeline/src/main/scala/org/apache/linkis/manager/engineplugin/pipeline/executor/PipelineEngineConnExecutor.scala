@@ -29,6 +29,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -73,7 +74,10 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
             .select(sourcePath, destPath, newOptions.asInstanceOf[util.Map[String, String]])
             .execute(sourcePath, destPath, engineExecutorContext)
         case _ =>
-          throw new PipeLineErrorException(70007, "非法的out脚本语句（Illegal out script statement）")
+          throw new PipeLineErrorException(
+            ILLEGAL_OUT_SCRIPT.getErrorCode,
+            ILLEGAL_OUT_SCRIPT.getErrorDesc
+          )
       }
     } catch {
       case e: Exception => failedTasks = 1; succeedTasks = 0; throw e

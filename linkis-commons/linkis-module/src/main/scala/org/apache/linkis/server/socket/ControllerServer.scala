@@ -20,6 +20,7 @@ package org.apache.linkis.server.socket
 import org.apache.linkis.common.conf.Configuration.DEFAULT_DATE_PATTERN
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.Message
 import org.apache.linkis.server.conf.ServerConfiguration._
 import org.apache.linkis.server.exception.BDPServerErrorException
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -61,8 +63,8 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     val socket = socketList.get(id)
     if (socket == null) {
       throw new BDPServerErrorException(
-        11004,
-        s"ServerSocket($id) does not exist!(ServerSocket($id)不存在！)"
+        SERVERSSOCKET_NOT_EXIST.getErrorCode,
+        MessageFormat.format(SERVERSSOCKET_NOT_EXIST.getErrorDesc, id.toString)
       )
     }
     socket.sendMessage(message)

@@ -27,6 +27,7 @@ import org.apache.linkis.engineplugin.spark.Interpreter.PythonInterpreter._
 import org.apache.linkis.engineplugin.spark.common.{Kind, PySpark}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.ExecuteError
 import org.apache.linkis.engineplugin.spark.imexport.CsvRelation
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
@@ -229,7 +230,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       //      close
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
-          promise.failure(new ExecuteError(40007, "Pyspark process  has stopped, query failed!"))
+          promise.failure(
+            new ExecuteError(PYSPARK_STOPPED.getErrorCode, PYSPARK_STOPPED.getErrorDesc)
+          )
         }
       }) {
         close
@@ -329,7 +332,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
         logger.info("promise is completed and should start another python gateway")
         close
       } else {
-        promise.failure(ExecuteError(40003, out))
+        promise.failure(ExecuteError(OUT_ID.getErrorCode, out))
       }
     }
   }

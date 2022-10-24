@@ -23,6 +23,7 @@ import org.apache.linkis.engineconn.common.engineconn.{DefaultEngineConn, Engine
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary.INVALID_PYTHON_SESSION
 import org.apache.linkis.manager.engineplugin.python.exception.PythonSessionStartFailedExeception
 import org.apache.linkis.manager.engineplugin.python.executor.{
   PythonEngineConnExecutor,
@@ -47,7 +48,7 @@ class PythonEngineConnFactory extends ComputationSingleExecutorEngineConnFactory
           PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
         )
       case _ =>
-        throw PythonSessionStartFailedExeception("Invalid python session.")
+        throw PythonSessionStartFailedExeception(INVALID_PYTHON_SESSION.getErrorDesc)
     }
   }
 

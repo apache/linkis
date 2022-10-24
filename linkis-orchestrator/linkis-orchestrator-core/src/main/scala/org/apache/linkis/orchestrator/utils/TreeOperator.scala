@@ -36,11 +36,11 @@ object TreeOperator {
       func: PartialFunction[TreeType, TreeType]
   ): TreeType = {
     val afterTransform = func.applyOrElse(this.asInstanceOf[TreeType], identity[TreeType])
-    /*if (this eq afterTransform) {
+    /* if (this eq afterTransform) {
       mapChildren(node,transformChildren(node, func))
     } else {
       afterTransform.mapChildren(_.transformChildren(func))
-    }*/
+    } */
     node
   }
 

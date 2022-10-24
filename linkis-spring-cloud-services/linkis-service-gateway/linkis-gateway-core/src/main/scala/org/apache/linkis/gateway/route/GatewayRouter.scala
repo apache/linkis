@@ -42,7 +42,7 @@ trait GatewayRouter {
 }
 
 abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
   protected val enabledRefresh = GatewayConfiguration.GATEWAY_SERVER_REFRESH_ENABLED.getValue
 
   protected def findAndRefreshIfNotExists(
@@ -88,7 +88,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
       parsedServiceId: String,
       tooManyDeal: List[String] => Option[String]
   ): Option[String] = {
-    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices
+    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala
       .filter(
         _.toLowerCase(Locale.getDefault())
           .contains(parsedServiceId.toLowerCase(Locale.getDefault()))
@@ -105,10 +105,10 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
   ): util.List[ServiceInstance] = {
     val instancesInRegistry =
       ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
-    serviceInstances.filter(instance => {
+    serviceInstances.asScala.filter(instance => {
       instancesInRegistry.contains(instance)
     })
-  }
+  }.asJava
 
   protected def removeAllFromRegistry(
       serviceId: String,
@@ -116,14 +116,14 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
   ): util.List[ServiceInstance] = {
     var serviceInstancesInRegistry =
       ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
-    serviceInstances.foreach(serviceInstance => {
+    serviceInstances.asScala.foreach(serviceInstance => {
       serviceInstancesInRegistry = serviceInstancesInRegistry.filterNot(_.equals(serviceInstance))
     })
     if (null == serviceInstancesInRegistry) {
       new util.ArrayList[ServiceInstance]()
     } else {
       serviceInstancesInRegistry.toList
-    }
+    }.asJava
   }
 
 }

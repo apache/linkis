@@ -114,14 +114,14 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (StringUtils.isBlank(userIpVo.getBussinessUser())) {
       throw new ConfigurationException("bussiness_user couldn't be empty ");
     }
-    if (StringUtils.isBlank(userIpVo.getIps())) {
+    if (StringUtils.isBlank(userIpVo.getIpList())) {
       throw new ConfigurationException("ipList couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getDesc())) {
       throw new ConfigurationException("desc couldn't be empty ");
     }
     // Ip rule verification
-    String ipList = userIpVo.getIps();
+    String ipList = userIpVo.getIpList();
     if (!ipList.equals("*")) {
       String[] split = ipList.split(",");
       StringJoiner joiner = new StringJoiner(",");

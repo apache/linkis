@@ -41,6 +41,6 @@ public class UserIpServiceImpl implements UserIpService {
   @Override
   public UserIpResponse getUserIpData(UserIpRequest request, Sender sender) {
     UserIpVo userIpVo = userIpConfigService.queryUserIP(request.user(), request.creator());
-    return new UserIpResponse(userIpVo.getUser(), userIpVo.getCreator(), userIpVo.getIps());
+    return new UserIpResponse(userIpVo.getUser(), userIpVo.getCreator(), userIpVo.getIpList());
   }
 }

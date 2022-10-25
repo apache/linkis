@@ -42,6 +42,7 @@ import javax.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.google.common.cache.Cache;
@@ -74,7 +75,10 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
     this.cache =
         CacheBuilder.newBuilder()
             .maximumSize(ContextCacheConf.MAX_CACHE_SIZE)
-            .expireAfterWrite(Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
+                // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 start
+//            .expireAfterWrite(Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
+            .expireAfterWrite(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS, TimeUnit.NANOSECONDS)
+                // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 end
             .removalListener(contextIDRemoveListener)
             .recordStats()
             .build();

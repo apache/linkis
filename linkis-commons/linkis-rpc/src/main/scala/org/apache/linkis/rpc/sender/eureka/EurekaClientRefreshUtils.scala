@@ -41,8 +41,9 @@ class EurekaClientRefreshUtils {
   private[eureka] def refreshEurekaClient(): Unit =
     if (System.currentTimeMillis - eurekaClientLastRefreshTime > serviceRefreshInterval) {
       synchronized {
-        if (System.currentTimeMillis - eurekaClientLastRefreshTime < serviceRefreshInterval)
+        if (System.currentTimeMillis - eurekaClientLastRefreshTime < serviceRefreshInterval) {
           return
+        }
         eurekaClientLastRefreshTime = System.currentTimeMillis
         eurekaClient match {
           case disClient: NetflixDiscoveryClient =>

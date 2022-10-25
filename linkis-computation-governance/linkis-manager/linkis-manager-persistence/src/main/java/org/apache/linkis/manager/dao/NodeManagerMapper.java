@@ -57,18 +57,6 @@ public interface NodeManagerMapper {
   List<PersistenceNode> getNodeInstances(@Param("instance") String instance);
 
   List<PersistenceNode> getNodesByInstances(@Param("instances") List<String> instances);
-  @Select(
-      "<script>"
-          + "select * from linkis_cg_manager_service_instance where instance in("
-          + "<foreach collection='instances' separator=',' item='instance'>"
-          + "#{instance} "
-          + "</foreach> "
-          + ")</script>")
-  @Results({
-    @Result(property = "updateTime", column = "update_time"),
-    @Result(property = "createTime", column = "create_time")
-  })
-  List<PersistenceNode> getNodesByInstances(@Param("instances") List<String> instances);
 
   void addEngineNode(
       @Param("engineNodeInstance") String engineNodeInstance,
@@ -85,16 +73,5 @@ public interface NodeManagerMapper {
   void updateNodeLabelRelation(
       @Param("tickedId") String tickedId, @Param("instance") String instance);
 
-  @Select(
-      "<script>"
-          + "select * from linkis_cg_manager_service_instance where owner in("
-          + "<foreach collection='owner' separator=',' item='owner'>"
-          + "#{owner} "
-          + "</foreach> "
-          + ")</script>")
-  @Results({
-    @Result(property = "updateTime", column = "update_time"),
-    @Result(property = "createTime", column = "create_time")
-  })
   List<PersistenceNode> getNodeInstancesByOwnerList(@Param("owner") List<String> owner);
 }

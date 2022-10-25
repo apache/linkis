@@ -33,9 +33,9 @@ import org.apache.commons.io.input.ReversedLinesFileReader
 import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, RandomAccessFile}
+import java.nio.charset.{Charset, StandardCharsets}
 import java.nio.charset.Charset
 import java.text.MessageFormat
-import java.nio.charset.{Charset, StandardCharsets}
 import java.util
 import java.util.Collections
 

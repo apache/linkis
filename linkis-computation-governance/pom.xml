@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.0</version>
+    <version>1.1.7-webank</version>
   </parent>
 
   <artifactId>linkis-computation-governance</artifactId>

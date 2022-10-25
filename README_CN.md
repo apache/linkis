@@ -151,7 +151,7 @@ npm run build
 我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 
+$> LINKIS_IMAGE=linkis:1.1.7-webank 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 

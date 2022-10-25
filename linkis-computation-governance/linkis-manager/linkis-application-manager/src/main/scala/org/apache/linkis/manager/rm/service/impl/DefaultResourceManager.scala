@@ -30,11 +30,12 @@ import org.apache.linkis.manager.common.entity.persistence.{
   PersistenceResource
 }
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.common.utils.{ManagerUtils, ResourceUtils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.manager.label.entity.{Label, ResourceLabel}
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
@@ -61,7 +62,6 @@ import org.apache.linkis.manager.rm.service.{
   ResourceManager
 }
 import org.apache.linkis.manager.rm.utils.RMUtils
-import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -744,7 +744,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     if (labelResource.getCreateTime != null && usedResource.getCreateTime != null) {
       if (labelResource.getCreateTime.getTime > usedResource.getCreateTime.getTime) {
         throw new RMErrorException(
-          10022,
+          ManagerCommonErrorCodeSummary.RESOURCE_LATER_CREATED.getErrorCode,
           s"no need to clear this labelResource, labelResource:${labelResource} created time is after than usedResource:${usedResource}" +
             s"无需清理该标签的资源,该标签资源的创建时间晚于已用资源的创建时间"
         )

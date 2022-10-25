@@ -43,9 +43,6 @@
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
    </a>
-   <a target="_blank" href="https://codecov.io/gh/apache/incubator-linkis">
-        <img src="https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg" />
-   </a>
   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
        <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
   </a>

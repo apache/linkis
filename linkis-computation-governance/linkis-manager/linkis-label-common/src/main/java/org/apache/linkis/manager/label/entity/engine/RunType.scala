@@ -43,4 +43,6 @@ object RunType extends Enumeration {
 
   val TRINO_SQL = Value("tsql")
 
+  val DATA_CALC = Value("data_calc") // spark datacalc (ETL)
+
 }

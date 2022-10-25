@@ -223,6 +223,6 @@ object EntranceConfiguration {
     CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")
 
   val CREATOR_IP_SWITCH =
-    CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", true)
+    CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
 }

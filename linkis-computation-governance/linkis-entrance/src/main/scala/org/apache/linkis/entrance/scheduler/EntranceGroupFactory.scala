@@ -23,26 +23,36 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
-import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
+import org.apache.linkis.governance.common.protocol.conf.{
+  RequestQueryEngineConfigWithGlobalConfig,
+  ResponseQueryConfig
+}
+import org.apache.linkis.instance.label.client.InstanceLabelClient
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{ConcurrentEngineConnLabel, EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.engine.{
+  ConcurrentEngineConnLabel,
+  EngineTypeLabel,
+  UserCreatorLabel
+}
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
+
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+
 import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
-import org.apache.linkis.instance.label.client.InstanceLabelClient
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
-import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 class EntranceGroupFactory extends GroupFactory with Logging {
 
@@ -155,8 +165,14 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     val offlineRouteLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
       .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
     labelList.add(offlineRouteLabel)
-    val offlineIns = InstanceLabelClient.getInstance.getInstanceFromLabel(labelList)
-      .asScala.filter(l => null != l && l.getApplicationName.equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)).toArray
+    val offlineIns = InstanceLabelClient.getInstance
+      .getInstanceFromLabel(labelList)
+      .asScala
+      .filter(l =>
+        null != l && l.getApplicationName
+          .equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)
+      )
+      .toArray
     if (null != offlineIns) {
       logger.info(s"There are ${offlineIns.length} offlining instance.")
       entranceNum = entranceNum - offlineIns.length
@@ -165,7 +181,9 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
      */
     if (0 >= entranceNum) {
-      logger.error(s"Got ${entranceNum} ${Sender.getThisServiceInstance.getApplicationName} instances.")
+      logger.error(
+        s"Got ${entranceNum} ${Sender.getThisServiceInstance.getApplicationName} instances."
+      )
       entranceNum = 1
     }
     Math.max(

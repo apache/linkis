@@ -18,6 +18,11 @@
 package org.apache.linkis.bml.client.impl
 
 import org.apache.linkis.bml.client.AbstractBmlClient
+import org.apache.linkis.bml.client.errorcode.BmlClientErrorCodeSummary.{
+  BML_CLIENT_FAILED,
+  POST_REQUEST_RESULT_NOT_MATCH,
+  SERVER_URL_NOT_NULL
+}
 import org.apache.linkis.bml.common._
 import org.apache.linkis.bml.conf.BmlConfiguration._
 import org.apache.linkis.bml.http.HttpConf
@@ -69,7 +74,12 @@ class HttpBmlClient(
 
   private def createClientConfig(): DWSClientConfig = {
     val _serverUrl = if (StringUtils.isEmpty(serverUrl)) HttpConf.gatewayInstance else serverUrl
-    if (StringUtils.isEmpty(_serverUrl)) throw BmlClientFailException("serverUrl cannot be null.")
+    if (StringUtils.isEmpty(_serverUrl)) {
+      throw BmlClientFailException(
+        SERVER_URL_NOT_NULL.getErrorCode,
+        SERVER_URL_NOT_NULL.getErrorDesc
+      )
+    }
     val config = if (properties == null) {
       new util.HashMap[String, Object]()
     } else {
@@ -198,9 +208,8 @@ class HttpBmlClient(
           "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
           e
         )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
-        )
+        val exception =
+          BmlClientFailException(BML_CLIENT_FAILED.getErrorCode, BML_CLIENT_FAILED.getErrorDesc)
         exception.initCause(e)
         throw exception
       case t: Throwable =>
@@ -246,9 +255,8 @@ class HttpBmlClient(
           "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
           e
         )
-        val exception = BmlClientFailException(
-          "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"
-        )
+        val exception =
+          BmlClientFailException(BML_CLIENT_FAILED.getErrorCode, BML_CLIENT_FAILED.getErrorDesc)
         exception.initCause(e)
         throw e
       case t: Throwable =>
@@ -309,8 +317,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -354,8 +369,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -412,8 +434,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -445,8 +474,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -480,8 +516,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlCreateBmlProjectResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -514,8 +557,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -576,8 +626,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlResourceDownloadResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -615,8 +672,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlCreateBmlProjectResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -645,8 +709,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlUpdateProjectResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -690,8 +761,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlCopyResourceResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 
@@ -720,8 +798,15 @@ class HttpBmlClient(
         }
       case r: BmlResult =>
         logger.error(s"result type ${r.getResultType} not match BmlRollbackVersionResult")
-        throw POSTResultNotMatchException()
-      case _ => throw POSTResultNotMatchException()
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
+      case _ =>
+        throw POSTResultNotMatchException(
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorCode,
+          POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc
+        )
     }
   }
 

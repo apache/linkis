@@ -20,7 +20,8 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.6-webank</version>
+    <version>1.1.7-webank</version>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
   <artifactId>linkis-instance-label-client</artifactId>

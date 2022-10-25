@@ -26,6 +26,7 @@ import App from './dss/view/app.vue'
 import router from './router'
 import i18n from './common/i18n'
 import mixinDispatch from './common/service/moduleMixin'
+import VJsoneditor from 'v-jsoneditor'
 
 import 'iview/dist/styles/iview.css'
 
@@ -55,6 +56,7 @@ Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
 Vue.use(formCreate)
+Vue.use(VJsoneditor)
 
 Vue.config.productionTip = false
 Vue.prototype.$Message.config({

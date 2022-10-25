@@ -18,5 +18,7 @@
 package org.apache.linkis.metadata.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.metadata.errorcode.LinkisMetadataErrorCodeSummary.EXPRESS_CODE
 
-case class MdqIllegalParamException(errMsg: String) extends ErrorException(57895, errMsg)
+case class MdqIllegalParamException(errMsg: String)
+    extends ErrorException(EXPRESS_CODE.getErrorCode, errMsg)

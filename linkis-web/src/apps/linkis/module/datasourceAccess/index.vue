@@ -19,7 +19,7 @@
   <div>
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索错误信息"></Input>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
@@ -34,39 +34,50 @@
       <Col span="15">
       </Col>
     </Row>
-    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"
-      class="table-content">
-      <template slot-scope="{ row,index }" slot="action">
-        <ButtonGroup size="small">
-          <Button
-            :disabled="row.expire"
-            size="small"
-            type="primary"
-            @click="onTableEdit(row, index)"
-          >{{ $t('message.linkis.edit') }}
-          </Button
-          >
-          <Button
-            :disabled="row.expire"
-            size="small"
-            type="primary"
-            @click="onTableDelete(row, index)"
-          >
-            {{ $t('message.linkis.basedata.remove') }}
-          </Button>
-        </ButtonGroup>
-      </template>
-    </Table>
-    <div style="margin: 10px; overflow: hidden">
-      <div style="float: right">
-        <Page :page-size="page.pageSize" :total="page.totalSize" :current="page.pageNow" @on-change="changePage"></Page>
+    <div style="height: 600px">
+      <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"
+        class="table-content">
+        <template slot-scope="{ row,index }" slot="action">
+          <ButtonGroup size="small">
+            <Button
+              :disabled="row.expire"
+              size="small"
+              type="primary"
+              @click="onTableEdit(row, index)"
+            >{{ $t('message.linkis.edit') }}
+            </Button
+            >
+            <Button
+              :disabled="row.expire"
+              size="small"
+              type="primary"
+              @click="onTableDelete(row, index)"
+            >
+              {{ $t('message.linkis.basedata.remove') }}
+            </Button>
+          </ButtonGroup>
+        </template>
+      </Table>
+    </div>
+    <div style="margin: 10px; overflow: hidden; textAlign: center">
+      <div>
+        <Page
+          :page-size="page.pageSize"
+          :total="page.totalSize"
+          :current="page.pageNow"
+          @on-change="changePage"
+          size="small"
+          show-total
+          show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+        ></Page>
       </div>
     </div>
     <Modal
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'?'新增':'编辑'"
+      :title="modalAddMode=='add' ? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">

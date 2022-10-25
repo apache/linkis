@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.scheduler.cache
 
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.CacheNotReadyException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.persistence.PersistenceManager
@@ -28,6 +29,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse
 import org.apache.linkis.scheduler.queue.Group
@@ -71,7 +73,10 @@ class ReadCacheConsumer(
                   "Invalid engineType null, cannot process. jobReq : " + BDPJettyServerHelper.gson
                     .toJson(jobRequest)
                 )
-                throw CacheNotReadyException(20052, "Invalid engineType null, cannot use cache.")
+                throw CacheNotReadyException(
+                  INVALID_ENGINETYPE_NULL.getErrorCode,
+                  INVALID_ENGINETYPE_NULL.getErrorDesc
+                )
               }
               val readCacheBefore = TaskUtils
                 .getRuntimeMap(job.getParams)
@@ -95,7 +100,10 @@ class ReadCacheConsumer(
                       )
                       .getSchemaPath
 //                    persistenceManager.onResultSetCreated(job, new CacheOutputExecuteResponse(alias, output))
-                    throw CacheNotReadyException(20053, "Invalid resultsets, cannot use cache.")
+                    throw CacheNotReadyException(
+                      INVALID_RESULTSETS.getErrorCode,
+                      INVALID_RESULTSETS.getErrorDesc
+                    )
                     // todo check
                   }
 //                  persistenceManager.onResultSizeCreated(job, resultSets.size())
@@ -141,8 +149,8 @@ class ReadCacheConsumer(
     // index.map(getEventId(_, groupName)).foreach(job.setId)
     if (index.isEmpty) {
       throw new SchedulerErrorException(
-        12001,
-        "The submission job failed and the queue is full!(提交作业失败，队列已满！)"
+        JOB_QUEUE_IS_FULL.getErrorCode,
+        JOB_QUEUE_IS_FULL.getErrorDesc
       )
     }
   }

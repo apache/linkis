@@ -167,9 +167,9 @@
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">
         SELECT
-        bdt.`status`
+        bdt.status
         FROM
-        `linkis_ps_job_history_group_history` bdt
+        linkis_ps_job_history_group_history bdt
         WHERE
         id = #{jobId} FOR UPDATE
     </select>

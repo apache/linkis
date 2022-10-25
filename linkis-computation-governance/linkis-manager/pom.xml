@@ -20,7 +20,8 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.6-webank</version>
+    <version>1.1.7-webank</version>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
   <artifactId>linkis-manager</artifactId>
 
@@ -32,6 +33,19 @@
     <module>linkis-manager-persistence</module>
     <module>linkis-application-manager</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-engineconn-plugin-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-application-manager</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
@@ -53,13 +67,34 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
-          <!--<excludes>-->
-          <!--<exclude>**/*.yml</exclude>-->
-          <!--<exclude>**/*.properties</exclude>-->
-          <!--<exclude>**/*.sh</exclude>-->
-          <!--</excludes>-->
+          <skipAssembly>false</skipAssembly>
+          <finalName>out</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+          <attach>false</attach>
+          <descriptors>
+            <descriptor>distribution.xml</descriptor>
+          </descriptors>
         </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>distribution.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

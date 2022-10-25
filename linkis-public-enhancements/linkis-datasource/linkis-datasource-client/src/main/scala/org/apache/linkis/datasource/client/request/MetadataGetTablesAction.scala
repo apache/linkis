@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADATA_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
@@ -65,11 +66,11 @@ object MetadataGetTablesAction {
 
     def build(): MetadataGetTablesAction = {
       if (dataSourceName == null) {
-        throw new DataSourceClientBuilderException("dataSourceName is needed!")
+        throw new DataSourceClientBuilderException(DATASOURCENAME_NEEDED.getErrorDesc)
       }
-      if (database == null) throw new DataSourceClientBuilderException("database is needed!")
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (database == null) throw new DataSourceClientBuilderException(DATABASE_NEEDED.getErrorDesc)
+      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
+      if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val metadataGetTablesAction = new MetadataGetTablesAction
       metadataGetTablesAction.dataSourceName = this.dataSourceName

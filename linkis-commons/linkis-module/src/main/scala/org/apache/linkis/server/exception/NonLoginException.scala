@@ -16,5 +16,7 @@
  */
 
 package org.apache.linkis.server.exception
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 
-class NonLoginException(message: String) extends BDPServerErrorException(11002, message)
+class NonLoginException(message: String)
+    extends BDPServerErrorException(LOGGED_ID.getErrorCode, message)

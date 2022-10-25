@@ -25,6 +25,7 @@
     <div class="console-page-content-body">
       <div class="content-body-side-nav">
         <Card
+          style="height:87vh; overflow: auto;"
           :padding="sideNavList.padding"
           :icon="sideNavList.icon"
           shadow
@@ -34,23 +35,33 @@
             :key="index2"
             @on-click="handleCellClick">
             <Cell
-              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService'):true"
+              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&item.key !== '1-11':true"
               :key="index2"
               :class="{ crrentItem: crrentItem === item.key }"
               :title="item.name"
               :name="item.key">
-              <div>{{item.name}}</div>
-              <div v-if="item.key === '1-9'" >
-                <CellGroup
-                  v-for="(item3, index3) in urmSideNavList.children"
-                  :key="index3"
-                  @on-click="handleCellClick2">
-                  <Cell
+              <div>
+                <span>{{item.name}}</span>
+                <div class="sub-menu-row">
+                  <Icon v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-11')" type="ios-arrow-down" class="user-icon"/>
+                  <Icon v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-11')" type="ios-arrow-up" class="user-icon"/>
+                </div>
+              </div>
+              <div v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-11') && !item.showSubMenu">
+                <div @click.stop="">
+                  <CellGroup
+                    v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
                     :key="index3"
-                    :class="{ crrentItem: crrentItem === item3.key }"
-                    :title="item3.name"
-                    :name="item3.key"/>
-                </CellGroup>
+                    @on-click="clickToRoute">
+                    <div v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-3'">
+                      <Cell
+                        :key="index3"
+                        :class="{ crrentItem: crrentItem === item3.key }"
+                        :title="item3.name"
+                        :name="item3.key"/>
+                    </div>
+                  </CellGroup>
+                </div>
               </div>
             </Cell>
           </CellGroup>
@@ -101,18 +112,34 @@ export default {
           { key: '1-4', name: this.$t('message.linkis.sideNavList.function.children.dateReport'), path: '/console/globalValiable' },
           { key: '1-6', name: this.$t('message.linkis.sideNavList.function.children.ECMManage'), path: '/console/ECM' },
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
-          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement'},
-          { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
-          { key: '1-10', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
-          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken' },
-          { key: '1-12', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider' },
-          { key: '1-13', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
-          { key: '1-14', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
-          { key: '1-15', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
-          { key: '1-16', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
-          { key: '1-17', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
-          { key: '1-18', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
+          { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: true },
+          { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: true},
+          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
         ],
+      },
+      datasourceNavList: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.name'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {key: '1-8-1', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
+          {key: '1-8-2', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
+          {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
+          {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+        ]
+      },
+      basedataNavList: {
+        key: '1',
+        name: this.$t('message.linkis.sideNavList.function.name'),
+        padding: 0,
+        icon: 'ios-options',
+        children: [
+          {key: '1-11-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
+          {key: '1-11-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
+          {key: '1-11-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
+          {key: '1-11-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
+        ]
       },
       urmSideNavList: {
         key: '1',
@@ -121,7 +148,9 @@ export default {
         icon: 'ios-options',
         children: [
           {key: '1-9-1', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/console/urm/udfManagement'},
-          {key: '1-9-2', name: this.$t('message.linkis.sideNavList.function.children.functionManagement'), path: '/console/urm/functionManagement'}
+          {key: '1-9-2', name: this.$t('message.linkis.sideNavList.function.children.functionManagement'), path: '/console/urm/functionManagement'},
+          {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
+          {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
         ]
       },
       breadcrumbSecondName: this.$t('message.linkis.sideNavList.function.children.globalHistory')
@@ -155,7 +184,19 @@ export default {
   },
   methods: {
     handleCellClick(index) {
-      if (index === '1-9') return
+      if (index === '1-8') {
+        this.sideNavList.children[6].showSubMenu = !this.sideNavList.children[6].showSubMenu;
+        return;
+      }
+      if (index === '1-9') {
+        this.sideNavList.children[7].showSubMenu = !this.sideNavList.children[7].showSubMenu;
+        return;
+      }
+      if (index === '1-11') {
+        this.sideNavList.children[8].showSubMenu = !this.sideNavList.children[8].showSubMenu;
+        return;
+      }
+      index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
       const activedCellParent = this.sideNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
@@ -169,8 +210,8 @@ export default {
         },
       });
     },
-    handleCellClick2(index) {
-      const activedCellParent = this.urmSideNavList;
+    clickToRoute(index) {
+      const activedCellParent = index.split('-').slice(0, 2).join('-') === '1-9' ? this.urmSideNavList :index.split('-').slice(0, 2).join('-') === '1-8'?this.datasourceNavList: this.basedataNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
       this.breadcrumbFirstName = activedCellParent.name;
@@ -200,7 +241,7 @@ export default {
       next((vm) => {
         if (lastActiveConsole) {
           if (lastActiveConsole.key === '1-9-1' || lastActiveConsole.key === '1-9-2') {
-            vm.handleCellClick2(lastActiveConsole.key);
+            vm.clickToRoute(lastActiveConsole.key);
           } else {
             vm.handleCellClick(lastActiveConsole.key);
           }
@@ -213,17 +254,22 @@ export default {
   },
 };
 </script>
-<style lang="scss" src="@/apps/linkis/assets/styles/console.scss"></style>
-<style lang="scss" scoped>
-  .crrentItem {
-    color: #338cf0;
+  <style lang="scss" src="@/apps/linkis/assets/styles/console.scss"></style>
+  <style lang="scss" scoped>
+    .crrentItem {
+      color: #338cf0;
+    }
+  </style>
+  <style lang="scss">
+  .resource-tab {
+    top: -6px;
+    .ivu-tabs-bar {
+      border-bottom: 0;
+    }
   }
-</style>
-<style lang="scss">
-.resource-tab {
-  top: -6px;
-  .ivu-tabs-bar {
-    border-bottom: 0;
+  .sub-menu-row{
+    position: absolute;
+    top: 5px;
+    right: 10px;
   }
-}
-</style>
+  </style>

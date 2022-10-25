@@ -18,8 +18,10 @@
 package org.apache.linkis.manager.engineplugin.shell.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.manager.engineplugin.shell.errorcode.LinkisCommonsErrorCodeSummary._
 
 case class NoCorrectUserException()
-    extends ErrorException(50036, "No illegal user holds this process")
+    extends ErrorException(NO_ILLEGAL_USER_HOLDS.getErrorCode, NO_ILLEGAL_USER_HOLDS.getErrorDesc)
 
-case class ShellCodeErrorException() extends ErrorException(50037, "shell code is wrong")
+case class ShellCodeErrorException()
+    extends ErrorException(SHELL_CODE_IS_WRONG.getErrorCode, SHELL_CODE_IS_WRONG.getErrorDesc)

@@ -18,8 +18,10 @@
 package org.apache.linkis.datasource.client.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary.CLIENT_ERROR_CODE
 
-class DataSourceClientBuilderException(errorDesc: String) extends ErrorException(31000, errorDesc) {
+class DataSourceClientBuilderException(errorDesc: String)
+    extends ErrorException(CLIENT_ERROR_CODE.getErrorCode, errorDesc) {
 
   def this(errorDesc: String, t: Throwable) = {
     this(errorDesc)

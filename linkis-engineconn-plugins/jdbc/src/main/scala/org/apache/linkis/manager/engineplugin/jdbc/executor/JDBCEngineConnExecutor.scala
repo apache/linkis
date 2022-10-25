@@ -38,6 +38,7 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
+import org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.JDBC_GET_DATASOURCEINFO_ERROR
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCGetDatasourceInfoException
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.entity.Label
@@ -221,7 +222,8 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         )
       } { e: Throwable =>
         throw new JDBCGetDatasourceInfoException(
-          s"Failed to get datasource info about [$dataSourceName] from datasource server.",
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode,
+          JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc.concat(" ").concat(s"[$dataSourceName]"),
           e
         )
       }

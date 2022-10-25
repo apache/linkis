@@ -47,6 +47,9 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_SOCKET_RETRIEVAL;
+
 public class ChangelogResult extends AbstractResult<ApplicationId, Tuple2<Boolean, Row>> {
 
   private static final Logger LOG = LoggerFactory.getLogger(ChangelogResult.class);
@@ -78,7 +81,7 @@ public class ChangelogResult extends AbstractResult<ApplicationId, Tuple2<Boolea
       // pass gateway port and address such that iterator knows where to bind to
       iterator = new SocketStreamIterator<>(gatewayPort, gatewayAddress, serializer);
     } catch (IOException e) {
-      throw new SqlExecutionException("Could not start socket for result retrieval.", e);
+      throw new SqlExecutionException(NOT_SOCKET_RETRIEVAL.getErrorDesc(), e);
     }
 
     // create table sink
@@ -106,7 +109,8 @@ public class ChangelogResult extends AbstractResult<ApplicationId, Tuple2<Boolea
                   if (throwable != null) {
                     LOG.warn("throwable is not null", throwable);
                     executionException.compareAndSet(
-                        null, new SqlExecutionException("Error while submitting job.", throwable));
+                        null,
+                        new SqlExecutionException(ERROR_SUBMITTING_JOB.getErrorDesc(), throwable));
                   } else {
                     LOG.warn("throwable is null");
                   }

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -34,6 +34,18 @@ hdfs dfs -mkdir -p /spark2-history
 hdfs dfs -chmod -R 777 /spark2-history
 hdfs dfs -mkdir -p /completed-jobs
 hdfs dfs -chmod -R 777 /completed-jobs
+hdfs dfs -chmod 777 /
+
+#copy mysql-connector-java-*.jar from shared directory
+mysql_connector_jar_path=/opt/ldh/current/hive/lib/mysql-connector-java-*.jar
+jar_files=$(ls $mysql_connector_jar_path  2> /dev/null | wc -l);
+
+if [ "$jar_files" == "0" ] ;then  #if not exist
+  echo "try to copy mysql-connector-java-*.jar to /opt/ldh/current/hive/lib/ and /opt/ldh/current/spark/jars/"
+  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/hive/lib/
+  cp /opt/common/extendlib/mysql-connector-java-*.jar /opt/ldh/current/spark/jars/
+fi
+
 
 # - hive
 /opt/ldh/current/hive/bin/schematool -initSchema -dbType mysql
@@ -44,7 +56,7 @@ hdfs dfs -chmod -R 777 /completed-jobs
 /opt/ldh/current/spark/sbin/start-history-server.sh
 
 # flink
-/opt/ldh/current/flink/bin/yarn-session.sh --detached
+HADOOP_CLASSPATH=`hadoop classpath` /opt/ldh/current/flink/bin/yarn-session.sh --detached
 
 # zookeeper
 /opt/ldh/current/zookeeper/bin/zkServer.sh start

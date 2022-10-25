@@ -21,7 +21,7 @@
   <parent>
     <artifactId>linkis</artifactId>
     <groupId>org.apache.linkis</groupId>
-    <version>1.1.6-webank</version>
+    <version>1.1.7-webank</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

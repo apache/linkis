@@ -28,6 +28,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, _}
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
 import org.apache.commons.lang3.StringUtils
@@ -173,7 +174,12 @@ abstract class JavaProcessEngineConnLaunchBuilder
     val engineType = engineConnBuildRequest.labels.asScala
       .find(_.isInstanceOf[EngineTypeLabel])
       .map { case engineTypeLabel: EngineTypeLabel => engineTypeLabel }
-      .getOrElse(throw new EngineConnBuildFailedException(20000, "EngineTypeLabel is not exists."))
+      .getOrElse(
+        throw new EngineConnBuildFailedException(
+          ETL_NOT_EXISTS.getErrorCode,
+          ETL_NOT_EXISTS.getErrorDesc
+        )
+      )
     val engineConnResource = engineConnResourceGenerator.getEngineConnBMLResources(engineType)
     Array(
       engineConnResource.getConfBmlResource,

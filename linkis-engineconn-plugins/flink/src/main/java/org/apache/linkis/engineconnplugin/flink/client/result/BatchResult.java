@@ -42,6 +42,9 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_RETRIEVE_RESULT;
+
 public class BatchResult<C> extends AbstractResult<C, Row> {
 
   private Logger LOG = LoggerFactory.getLogger(getClass());
@@ -73,7 +76,8 @@ public class BatchResult<C> extends AbstractResult<C, Row> {
             (unused, throwable) -> {
               if (throwable != null) {
                 executionException.compareAndSet(
-                    null, new SqlExecutionException("Error while submitting job.", throwable));
+                    null,
+                    new SqlExecutionException(ERROR_SUBMITTING_JOB.getErrorDesc(), throwable));
               }
             });
   }
@@ -117,7 +121,7 @@ public class BatchResult<C> extends AbstractResult<C, Row> {
         final ArrayList<byte[]> accResult =
             jobExecutionResult.getAccumulatorResult(accumulatorName);
         if (accResult == null) {
-          throw new JobExecutionException("The accumulator could not retrieve the result.");
+          throw new JobExecutionException(NOT_RETRIEVE_RESULT.getErrorDesc());
         }
         final List<Row> resultTable =
             SerializedListAccumulator.deserializeList(accResult, tableSink.getSerializer());

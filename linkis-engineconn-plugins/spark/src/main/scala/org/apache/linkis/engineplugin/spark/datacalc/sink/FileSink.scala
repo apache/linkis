@@ -30,8 +30,6 @@ class FileSink extends DataCalcSink[FileSinkConfig] {
 
   private val log: Logger = LoggerFactory.getLogger(classOf[FileSink])
 
-  val defaultUriSchema = "hdfs://"
-
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     val writer = ds.write.mode(config.getSaveMode)
 
@@ -44,11 +42,7 @@ class FileSink extends DataCalcSink[FileSinkConfig] {
       writer.options(config.getOptions)
     }
     val substitutor = new StringSubstitutor(config.getVariables)
-    val path = if (config.getPath.startsWith("/")) {
-      defaultUriSchema + substitutor.replace(config.getPath)
-    } else {
-      substitutor.replace(config.getPath)
-    }
+    val path = substitutor.replace(config.getPath)
     log.info(s"Save data to file, path: $path")
 
     config.getSerializer match {

@@ -27,7 +27,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineplugin.spark.datacalc.{DataCalcExecution, DataCalcTempData}
-import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcArrayData
+import org.apache.linkis.engineplugin.spark.datacalc.model.{DataCalcArrayData, DataCalcGroupData}
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.extension.SparkPostExecutionHook
 import org.apache.linkis.engineplugin.spark.utils.{EngineUtils, JobProgressUtil}
@@ -78,11 +78,11 @@ class SparkDataCalcExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   }
 
   override def executeLine(
-      engineExecutorContext: EngineExecutionContext,
+      engineExecutionContext: EngineExecutionContext,
       code: String
   ): ExecuteResponse = Utils.tryFinally {
     val sc = sparkEngineSession.sparkContext
-    this.engineExecutionContext = engineExecutorContext
+    this.engineExecutionContext = engineExecutionContext
     thread = Thread.currentThread()
     if (sc.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
@@ -91,35 +91,42 @@ class SparkDataCalcExecutor(sparkEngineSession: SparkEngineSession, id: Long)
         "Spark application sc has already stopped, please restart it."
       )
     }
-    engineExecutorContext.appendStdout(
+    engineExecutionContext.appendStdout(
       LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
     )
     logger.info(s"Ready to run code with kind spark data-calc.")
-    jobGroup = String.valueOf("linkis-spark-mix-code-" + queryNum.incrementAndGet())
+    jobGroup = String.valueOf("linkis-spark-data_calc-code-" + queryNum.incrementAndGet())
     logger.info("Set jobGroup to " + jobGroup)
     sc.setJobGroup(jobGroup, code, true)
 
-    val response = Utils.tryFinally(runCode(code)) {
+    val execType =
+      engineExecutionContext.getProperties.getOrDefault("exec-type", "array").toString
+    val response = Utils.tryFinally(runCode(code, execType, jobGroup)) {
       jobGroup = null
       sc.clearJobGroup()
     }
     Utils.tryQuietly(
       SparkPostExecutionHook
         .getSparkPostExecutionHooks()
-        .foreach(_.callPostExecutionHook(engineExecutorContext, response, code))
+        .foreach(_.callPostExecutionHook(engineExecutionContext, response, code))
     )
     response
   } {
     this.engineExecutionContext = null
   }
 
-  def runCode(code: String): ExecuteResponse = {
-
+  def runCode(code: String, execType: String, jobGroup: String): ExecuteResponse = {
     logger.info("DataCalcExecutor run query: " + code)
     engineExecutionContext.appendStdout(s"${EngineUtils.getName} >> $code")
     Utils.tryCatch {
-      val plugins = DataCalcExecution.getPlugins(DataCalcArrayData.getData(code))
-      DataCalcExecution.execute(sparkEngineSession.sparkSession, plugins)
+      if ("group" == execType) {
+        val (sources, transformations, sinks) =
+          DataCalcExecution.getPlugins(DataCalcGroupData.getData(code))
+        DataCalcExecution.execute(sparkEngineSession.sparkSession, sources, transformations, sinks)
+      } else {
+        val plugins = DataCalcExecution.getPlugins(DataCalcArrayData.getData(code))
+        DataCalcExecution.execute(sparkEngineSession.sparkSession, plugins)
+      }
       SuccessExecuteResponse().asInstanceOf[CompletedExecuteResponse]
     } {
       case e: InvocationTargetException =>

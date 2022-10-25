@@ -28,8 +28,6 @@ class FileSource extends DataCalcSource[FileSourceConfig] {
 
   private val log: Logger = LoggerFactory.getLogger(classOf[FileSource])
 
-  val defaultUriSchema = "hdfs://"
-
   override def getData(spark: SparkSession): Dataset[Row] = {
     val reader = spark.read
 
@@ -37,12 +35,7 @@ class FileSource extends DataCalcSource[FileSourceConfig] {
       reader.options(config.getOptions)
     }
     val substitutor = new StringSubstitutor(config.getVariables)
-    val path = if (config.getPath.startsWith("/")) {
-      defaultUriSchema + substitutor.replace(config.getPath)
-    } else {
-      substitutor.replace(config.getPath)
-    }
-
+    val path = substitutor.replace(config.getPath)
     log.info(s"Load data from file <$path>")
 
     var df = config.getSerializer match {

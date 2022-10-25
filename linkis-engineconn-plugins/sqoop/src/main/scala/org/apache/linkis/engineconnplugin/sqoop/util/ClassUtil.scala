@@ -18,7 +18,10 @@
 package org.apache.linkis.engineconnplugin.sqoop.util
 
 import org.apache.linkis.common.utils.{ClassUtils, Utils}
+import org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
+
+import java.text.MessageFormat
 
 import scala.collection.convert.wrapAsScala._
 
@@ -33,7 +36,10 @@ object ClassUtil {
     else if (classes.length == 2) {
       val realClass = if (classes(0) == defaultValue.getClass) classes(1) else classes(0);
       Utils.tryThrow(realClass.newInstance) { t =>
-        new JobExecutionException(s"New a instance of ${clazz.getSimpleName} failed!", t);
+        new JobExecutionException(
+          MessageFormat.format(NEW_A_INSTANCE_OF.getErrorDesc, clazz.getSimpleName),
+          t
+        );
       }
     } else {
       throw new JobExecutionException(

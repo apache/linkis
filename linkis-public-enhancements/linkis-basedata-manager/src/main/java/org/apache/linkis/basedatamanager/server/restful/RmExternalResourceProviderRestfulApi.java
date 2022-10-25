@@ -16,20 +16,26 @@
  */
 package org.apache.linkis.basedatamanager.server.restful;
 
+import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity;
+import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
+import org.apache.linkis.server.Message;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity;
-import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
-import org.apache.linkis.server.Message;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @Api(tags = "RmExternalResourceProviderRestfulApi")
 @RestController
-@RequestMapping(path = "/basedata-manager/rm-external-resource-provier")
+@RequestMapping(path = "/basedata-manager/rm-external-resource-provider")
 public class RmExternalResourceProviderRestfulApi {
 
     @Autowired

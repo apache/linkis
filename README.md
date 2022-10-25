@@ -3,8 +3,8 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines, 
-  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.), 
+  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines,
+  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.),
   while enables cross engine context sharing, unified job& engine governance and orchestration.</strong>
 </p>
 <p align="center">
@@ -33,7 +33,7 @@
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
         <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -64,7 +64,6 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
-
 ![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 
 ![linkis-intro-03](https://user-images.githubusercontent.com/7869972/148767380-c34f44b2-9320-4633-9ec8-662701f41d15.png)
@@ -72,11 +71,11 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 # Features
 
 - **Support for diverse underlying computation storage engines**  
-   - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc     
-   - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
-   - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
+  - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc
+  - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
+  - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
 
-- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc 
+- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc
 
 - **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
 
@@ -107,19 +106,6 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
 
 
-# Ecosystem
-
-| Component | Description | Linkis 1.x(recommend 1.1.1) Compatible |
-| --------------- | -------------------------------------------------------------------- | --------- |
-| [**DataSphereStudio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README.md) | DataSphere Studio (DSS for short) is WeDataSphere, a one-stop data application development management portal  | **DSS 1.0.1[released][Linkis recommend 1.1.1]** |
-| [**Scriptis**](https://github.com/WeBankFinTech/Scriptis) | Support online script writing such as SQL, Pyspark, HiveQL, etc., submit to [Linkis](https://github.com/apache/incubator-linkis) to perform data analysis web tools  | **In DSS 1.0.1[released]** |
-| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | Workflow task scheduling system based on Azkaban secondary development, with financial-grade features such as high performance, high availability and multi-tenant resource isolation | **Schedulis0.6.2 [released]** |
-| [**Qualitis**](https://github.com/WeBankFinTech/Qualitis) | Data quality verification tool, providing data verification capabilities such as data integrity and correctness  |**Qualitis 0.9.1 [released]** |
-| [**Streamis**](https://github.com/WeBankFinTech/Streamis) | Streaming application development management tool. It supports the release of Flink Jar and Flink SQL, and provides the development, debugging and production management capabilities of streaming applications, such as: start-stop, status monitoring, checkpoint, etc| **Streamis 0.1.0 [released][Linkis recommend 1.1.0]** |
-| [**Exchangis**](https://github.com/WeBankFinTech/Exchangis) | A data exchange platform that supports data transmission between structured and unstructured heterogeneous data sources, the upcoming Exchangis1. 0, will be connected with DSS workflow | **Exchangis 1.0.0 [developing]**|
-| [**Visualis**](https://github.com/WeBankFinTech/Visualis) | A data visualization BI tool based on the second development of Davinci, an open source project of CreditEase, provides users with financial-level data visualization capabilities in terms of data security |  **Visualis 1.0.0[developing]**|
-| [**Prophecis**](https://github.com/WeBankFinTech/Prophecis) | A one-stop machine learning platform that integrates multiple open source machine learning frameworks. Prophecis' MLFlow can be connected to DSS workflow through AppConn | **Prophecis 0.3.0 [released]** |
-
 # Download
 
 Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main) to download a compiled distribution or a source code package of Linkis.
@@ -132,20 +118,29 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 
 ```shell
 
+Note: If you want use `-Dlinkis.build.web=true` to build  linkis-web image, you need to compile linkis-web first.
+
 ## compile backend
 ### Mac OS/Linux
+
 # 1. When compiling for the first time, execute the following command first
 ./mvnw -N install
+
 # 2. make the linkis distribution package
 # - Option 1: make the linkis distribution package only
 ./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
 # - Option 2: make the linkis distribution package and docker image
+#   - Option 2.1: image without mysql jdbc jars
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+#   - Option 2.2: image with mysql jdbc jars
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.with.jdbc=true
+
 # - Option 3: linkis distribution package and docker image (included web)
 ./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
-# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
-./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true
 
+# - Option 4: linkis distribution package and docker image (included web and ldh (hadoop all in one for test))
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true -Dlinkis.build.with.jdbc=true
 
 ### Windows
 mvnw.cmd -N install
@@ -156,7 +151,19 @@ cd incubator-linkis/linkis-web
 npm install
 npm run build
 ```
- 
+
+### Bundled with MySQL JDBC Driver
+Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the 
+official released linkis image by default. However, at current stage, linkis still relies on this library to work properly.
+To solve this problem, we provide a script which can help to creating an custom image with mysql jdbc from the official 
+linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
+
+```shell
+$> LINKIS_IMAGE=linkis:1.3.0 
+$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+```
+
+
 Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
 
 # Examples and Guidance
@@ -178,10 +185,6 @@ Linkis services could be divided into three categories: computation governance s
 Below is the Linkis architecture diagram. You can find more detailed architecture docs in [Linkis-Doc/Architecture](https://linkis.apache.org/docs/latest/architecture/overview).
 ![architecture](https://user-images.githubusercontent.com/7869972/148767383-f87e84ba-5baa-4125-8b6e-d0aa4f7d3a66.png)
 
-Based on Linkis the computation middleware, we've built a lot of applications and tools on top of it in the big data platform suite [WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere). Below are the currently available open-source projects. More projects upcoming, please stay tuned.
-
-![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
-
 # Contributing
 
 Contributions are always welcomed, we need more contributors to build Linkis together. either code, or doc, or other supports that could help the community.  
@@ -195,7 +198,6 @@ For code and documentation contributions, please follow the [contribution guide]
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
 
 
 # Who is Using Linkis

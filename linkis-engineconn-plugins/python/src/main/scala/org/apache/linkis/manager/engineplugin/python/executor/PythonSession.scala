@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
   ExecuteException,
   PythonExecuteError
@@ -138,7 +139,10 @@ class PythonSession extends Logging {
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
           promise.failure(
-            new ExecuteException(60003, "Pyspark process  has stopped, query failed!")
+            new ExecuteException(
+              PYSPARK_PROCESSS_STOPPED.getErrorCode,
+              PYSPARK_PROCESSS_STOPPED.getErrorDesc
+            )
           )
         }
       }) {
@@ -152,7 +156,7 @@ class PythonSession extends Logging {
     )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
@@ -226,7 +230,7 @@ class PythonSession extends Logging {
         close
         null
       } else {
-        promise.failure(new PythonExecuteError(41001, out))
+        promise.failure(new PythonExecuteError(PYTHON_EXECUTE_ERROR.getErrorCode, out))
       }
     }
   }

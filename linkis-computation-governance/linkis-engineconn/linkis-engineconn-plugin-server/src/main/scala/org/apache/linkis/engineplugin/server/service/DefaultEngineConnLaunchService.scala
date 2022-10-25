@@ -29,6 +29,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
   EngineConnResourceGenerator,
   JavaProcessEngineConnLaunchBuilder
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -72,12 +73,15 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
             t
           )
           throw new EngineConnPluginErrorException(
-            10001,
-            s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}"
+            FAILED_CREATE_ELR.getErrorCode,
+            FAILED_CREATE_ELR.getErrorDesc + s", ${ExceptionUtils.getRootCauseMessage(t)}"
           )
       }
     } else {
-      throw new EngineConnPluginErrorException(10001, "EngineTypeLabel are requested")
+      throw new EngineConnPluginErrorException(
+        ETL_REQUESTED.getErrorCode,
+        ETL_REQUESTED.getErrorDesc
+      )
     }
   }
 

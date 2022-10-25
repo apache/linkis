@@ -756,8 +756,6 @@ public class UDFRestfulApi {
       }
       String udfName = jsonNode.get("udfName") == null ? null : jsonNode.get("udfName").textValue();
       String udfType = jsonNode.get("udfType").textValue();
-      String createUser =
-          jsonNode.get("createUser") == null ? null : jsonNode.get("createUser").textValue();
       int curPage = jsonNode.get("curPage").intValue();
       int pageSize = jsonNode.get("pageSize").intValue();
       Collection<Integer> udfTypes = null;

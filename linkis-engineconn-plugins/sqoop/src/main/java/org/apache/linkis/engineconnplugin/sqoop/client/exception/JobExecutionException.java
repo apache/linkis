@@ -19,17 +19,17 @@ package org.apache.linkis.engineconnplugin.sqoop.client.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.NOT_SUPPORT_METHON_ID;
+
 public class JobExecutionException extends ErrorException {
   private static final long serialVersionUID = 1L;
 
-  public static final int ERROR_CODE = 16023;
-
   public JobExecutionException(String message) {
-    super(ERROR_CODE, message);
+    super(NOT_SUPPORT_METHON_ID.getErrorCode(), message);
   }
 
   public JobExecutionException(String message, Throwable e) {
-    super(ERROR_CODE, message);
+    super(NOT_SUPPORT_METHON_ID.getErrorCode(), message);
     this.initCause(e);
   }
 }

@@ -30,9 +30,9 @@
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -53,7 +53,7 @@
 <br/>
 
 ---
-[English](README.md) | [中文 ](README_CN.md)
+[English](README.md) | [中文](README_CN.md)
 
 # 介绍
 
@@ -66,14 +66,14 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 
 ![没有 Linkis 之前 ](https://user-images.githubusercontent.com/7869972/148767370-06025750-090e-4fd6-bd32-aab2fbb01352.png)
 
-
 ![有了 Linkis 之后 ](https://user-images.githubusercontent.com/7869972/148767358-b02ae982-4080-4efa-aa0f-768ca27902b7.png)
 
 ## 核心特点
+
 - **丰富的底层计算存储引擎支持**  
-    - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
-    - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
-    - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等   
+  - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
+  - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
+  - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等
 - **强大的计算治理能力** 基于 Orchestrator、Label Manager 和定制的 Spring Cloud Gateway 等服务，Linkis 能够提供基于多级标签的跨集群/跨 IDC 细粒度路由、负载均衡、多租户、流量控制、资源控制和编排策略 (如双活、主备等) 支持能力  
 - **全栈计算存储引擎架构支持** 能够接收、执行和管理针对各种计算存储引擎的任务和请求，包括离线批量任务、交互式查询任务、实时流式任务和存储型任务
 - **资源管理能力** ResourceManager 不仅具备对 Yarn 和 Linkis EngineManager 的资源管理能力，还将提供基于标签的多级资源分配和回收能力，让 ResourceManager 具备跨集群、跨计算资源类型的强大资源管理能力
@@ -102,20 +102,6 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn， 支持 Hadoop MR/YARN application|
 |TiSpark|1.1|ongoing|-|TiSpark EngineConn， 支持用 SparkSQL 查询 TiDB|
 
-
-# 生态组件
-
-| 应用工具     | 描述                                                          | Linkis 1.X(推荐 1.1.1) 兼容版本    | 
-| --------------- | -------------------------------------------------------------------- | ---------- | 
-| [**DataSphere Studio**](https://github.com/WeBankFinTech/DataSphereStudio/blob/master/README-ZH.md)  | DataSphere Studio（简称 DSS）数据应用开发管理集成框架    | **DSS 1.0.1[已发布 ][Linkis 推荐 1.1.1]** |
-| [**Scriptis**](https://github.com/WeBankFinTech/Scriptis)   | 支持在线写 SQL、Pyspark、HiveQL 等脚本，提交给[Linkis](https://github.com/apache/incubator-linkis) 执行的数据分析 Web 工具 | 在 DSS 1.0.1 中[已发布 ] |
-| [**Schedulis**](https://github.com/WeBankFinTech/Schedulis) | 基于 Azkaban 二次开发的工作流任务调度系统,具备高性能，高可用和多租户资源隔离等金融级特性  | **Schedulis0.6.2 [已发布 ]** |
-| [**Qualitis**](https://github.com/WeBankFinTech/Qualitis)   | 数据质量校验工具，提供数据完整性、正确性等数据校验能力  | **Qualitis 0.9.0 [已发布 ]** |
-| [**Streamis**](https://github.com/WeBankFinTech/Streamis)  | 流式应用开发管理工具。支持发布 Flink Jar 和 Flink SQL ，提供流式应用的开发调试和生产管理能力，如：启停、状态监控、checkpoint 等 | **Streamis 0.1.0 [已发布 ][Linkis 推荐 1.1.0]** |
-| [**Exchangis**](https://github.com/WeBankFinTech/Exchangis) | 支持对结构化及无结构化的异构数据源之间的数据传输的数据交换平台，即将发布的 Exchangis1.0，将与 DSS 工作流打通 | **Exchangis 1.0.0 [开发中 ]** |
-| [**Visualis**](https://github.com/WeBankFinTech/Visualis)   | 基于宜信开源项目 Davinci 二次开发的数据可视化 BI 工具，为用户在数据安全方面提供金融级数据可视化能力 | **Visualis 1.0.0[开发中 ]** |
-| [**Prophecis**](https://github.com/WeBankFinTech/Prophecis)     | 一站式机器学习平台，集成多种开源机器学习框架。Prophecis 的 MLFlow 通过 AppConn 可以接入到 DSS 工作流中     | **Prophecis 0.3.0 [已发布 ]** |
-
 # 下载
 
 请前往[Linkis Releases 页面 ](https://linkis.apache.org/download/main) 下载 Linkis 的已编译版本或源码包。
@@ -126,21 +112,47 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 >- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
 >- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
 
+
+
 ```shell script
 ## 后端编译
+注意:如果使用 -Dlinkis.build.web=true 来构建web镜像，需要首先执行 管理台 linkis-web 的编译
 
 ### Mac OS/Linux 系统
+# 1. 首次编译，请执行如下命令
 ./mvnw -N install
-./mvnw  clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# 2. 构建 Linkis 部署包
+# - 选项 1: 仅构建 Linkis 服务部署包
+./mvnw clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+# - 选项 2: 构建 Linkis 服务部署包和 Docker 镜像
+#   - 选项 2.1: 构建的镜像中不包含 mysql jdbc 包
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+#   - 选项 2.2: 构建的镜像中包含 mysql jdbc 包
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.with.jdbc=true
+# - 选项 3: 构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台）
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true
+# - 选项 4: 仅构建 Linkis 服务部署包和 Docker 镜像（包括 Web 控制台和 LDH 镜像，LDH 镜像包换了多个预先配置和部署好的 Hadoop 组件，主要面向测试用途）
+./mvnw clean install -Pdocker -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dlinkis.build.web=true -Dlinkis.build.ldh=true -Dlinkis.build.with.jdbc=true
 
 ### Windows 系统
 mvnw.cmd -N install
 mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
+
 ## 管理台编译
 cd incubator-linkis/linkis-web
 npm install
 npm run build
+```
+
+### 集成 MySQL JDBC 驱动
+
+由于MySQL的许可协议限制，官方发布的 Linkis 镜像没有集成 MySQL JDBC 驱动。 然而，在现阶段，Linkis 仍然依赖这个库才能正常运行。 为了解决这个问题，
+我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
+
+```shell
+$> LINKIS_IMAGE=linkis:1.3.0 
+$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
 请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
@@ -157,9 +169,9 @@ npm run build
 
 - Meetup 视频 [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
-
 # 架构概要
 Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服务、公共增强服务和微服务治理服务。  
+
 - 计算治理服务，支持计算任务/请求处理流程的 3 个主要阶段:提交-> 准备-> 执行
 - 公共增强服务，包括上下文服务、物料管理服务及数据源服务等
 - 微服务治理服务，包括定制化的 Spring Cloud Gateway、Eureka、Open Feign
@@ -167,38 +179,19 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 下面是 Linkis 的架构概要图. 更多详细架构文档请见 [Linkis-Doc/Architecture](https://linkis.apache.org/zh-CN/docs/latest/architecture/overview).
 ![architecture](https://user-images.githubusercontent.com/7869972/148767383-f87e84ba-5baa-4125-8b6e-d0aa4f7d3a66.png)
 
-基于 Linkis 计算中间件，我们在大数据平台套件[WeDataSphere](https://github.com/WeBankFinTech/WeDataSphere) 中构建了许多应用和工具系统。下面是目前可用的开源项目。
-
-![wedatasphere_stack_Linkis](https://user-images.githubusercontent.com/7869972/148767389-049361df-3609-4c2f-a4e2-c904c273300e.png)
-
-- [**DataSphere Studio** - 数据应用集成开发框架 ](https://github.com/WeBankFinTech/DataSphereStudio)
-
-- [**Scriptis** - 数据研发 IDE 工具 ](https://github.com/WeBankFinTech/Scriptis)
-
-- [**Visualis** - 数据可视化工具 ](https://github.com/WeBankFinTech/Visualis)
-
-- [**Schedulis** - 工作流调度工具 ](https://github.com/WeBankFinTech/Schedulis)
-
-- [**Qualitis** - 数据质量工具 ](https://github.com/WeBankFinTech/Qualitis)
-
-- [**MLLabis** - 容器化机器学习 notebook 开发环境 ](https://github.com/WeBankFinTech/prophecis)
-
-更多项目开源准备中，敬请期待。
 
 # 贡献
 
 我们非常欢迎和期待更多的贡献者参与共建 Linkis, 不论是代码、文档，或是其他能够帮助到社区的贡献形式。  
-代码和文档相关的贡献请参照[贡献指引 ](https://linkis.apache.org/zh-CN/community/how-to-contribute).
+代码和文档相关的贡献请参照[贡献指引](https://linkis.apache.org/zh-CN/community/how-to-contribute).
 
 # 联系我们
 
 - 对 Linkis 的任何问题和建议，可以提交 issue，以便跟踪处理和经验沉淀共享
-- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org) 
+- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - 可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
-
 
 # 谁在使用 Linkis
 

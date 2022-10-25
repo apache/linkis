@@ -155,13 +155,15 @@
             "dataSourceManage": "DataSource Manage",
             "userResourceManagement": "User Resource Management",
             "errorCode": "Error Manage",
-            "gatewayAuthToken": "Gateway Auth Token Manage",
+            "gatewayAuthToken": "Token Manage",
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
-            "datasourceType": "Datasource Type"
+            "datasourceType": "Datasource Type",
+            "EnginePluginManagement": "Engine Plugin Management",
+            "basedataManagement": "Base data management"
           }
         }
       },
@@ -327,7 +329,9 @@
       },
       "basedata": {
         "add": "add",
-        "remove": "remove"
+        "remove": "remove",
+        "edit": "edit",
+        "addUDFAdmin": "add UDF administrator"
       }
     }
   }

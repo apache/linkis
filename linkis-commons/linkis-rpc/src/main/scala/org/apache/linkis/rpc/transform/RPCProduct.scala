@@ -20,6 +20,7 @@ package org.apache.linkis.rpc.transform
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.TRANSMITTED_BEAN_IS_NULL
 import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
@@ -67,8 +68,12 @@ private[linkis] object RPCProduct extends Logging {
     }
 
     override def toMessage(t: Any): Message = {
-      if (t == null)
-        throw new DWCURIException(10001, "The transmitted bean is Null.(传输的bean为Null.)")
+      if (t == null) {
+        throw new DWCURIException(
+          TRANSMITTED_BEAN_IS_NULL.getErrorCode,
+          TRANSMITTED_BEAN_IS_NULL.getErrorDesc
+        )
+      }
       val message = Message.ok("RPC Message.")
       if (isRequestProtocol(t)) {
         message.data(IS_REQUEST_PROTOCOL_CLASS, "true")

@@ -57,6 +57,8 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary.GET_REQUESTBODY_FAILED;
+
 public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
   private static final Logger logger = LoggerFactory.getLogger(GatewayAuthorizationFilter.class);
 
@@ -83,7 +85,9 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
     try {
       requestBody = serverRequest.bodyToMono(String.class).toFuture().get();
     } catch (Exception e) {
-      GatewayWarnException exception = new GatewayWarnException(18000, "get requestBody failed!");
+      GatewayWarnException exception =
+          new GatewayWarnException(
+              GET_REQUESTBODY_FAILED.getErrorCode(), GET_REQUESTBODY_FAILED.getErrorDesc());
       exception.initCause(e);
       throw exception;
     }

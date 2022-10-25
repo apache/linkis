@@ -55,6 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.*;
+
 @Api(tags = "parameter configuration")
 @RestController
 @RequestMapping(path = "/configuration")
@@ -90,11 +92,11 @@ public class ConfigurationRestfulApi {
         if (StringUtils.isBlank(engineType)
                 || StringUtils.isBlank(version)
                 || StringUtils.isBlank(token)) {
-            throw new ConfigurationException("params cannot be empty!");
+            throw new ConfigurationException(PARAMS_CANNOT_BE_EMPTY.getErrorDesc());
         }
         // todo 检验token
         if (!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)) {
-            throw new ConfigurationException("token is error");
+            throw new ConfigurationException(TOKEN_IS_ERROR.getErrorDesc());
         }
         ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
         configurationService.addKeyForEngine(engineType, version, configKey);
@@ -150,10 +152,10 @@ public class ConfigurationRestfulApi {
         String categoryName = jsonNode.get("categoryName").asText();
         String description = jsonNode.get("description").asText();
         if (StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)) {
-            throw new ConfigurationException("categoryName is null, cannot be added");
+            throw new ConfigurationException(IS_NULL_CANNOT_BE_ADDED.getErrorDesc());
         }
         if (StringUtils.isEmpty(categoryName) || categoryName.contains("-")) {
-            throw new ConfigurationException("categoryName cannot be included '-'");
+            throw new ConfigurationException(CANNOT_BE_INCLUDED.getErrorDesc());
         }
         categoryService.createFirstCategory(categoryName, description);
         return Message.ok();
@@ -192,10 +194,10 @@ public class ConfigurationRestfulApi {
         String version = jsonNode.get("version").asText();
         String description = jsonNode.get("description").asText();
         if (categoryId <= 0) {
-            throw new ConfigurationException("creator is null, cannot be added");
+            throw new ConfigurationException(CREATOR_IS_NULL_CANNOT_BE_ADDED.getErrorDesc());
         }
         if (StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)) {
-            throw new ConfigurationException("engine type is null, cannot be added");
+            throw new ConfigurationException(ENGINE_TYPE_IS_NULL.getErrorDesc());
         }
         if (StringUtils.isEmpty(version) || version.toLowerCase().equals(NULL)) {
             version = LabelUtils.COMMON_VALUE;
@@ -242,7 +244,7 @@ public class ConfigurationRestfulApi {
             String[] tmpString = engineType.split("-");
             if (tmpString.length != 2) {
                 throw new ConfigurationException(
-                        "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)");
+                        INCORRECT_FIXED_SUCH.getErrorDesc());
             }
             engine = tmpString[0];
             version = tmpString[1];
@@ -277,7 +279,7 @@ public class ConfigurationRestfulApi {
             description = jsonNode.get("description").asText();
             categoryId = jsonNode.get("categoryId").asInt();
         } catch (Exception e) {
-            throw new ConfigurationException("请求参数不完整，请重新确认");
+            throw new ConfigurationException(INCOMPLETE_RECONFIRM.getErrorDesc());
         }
         if (description != null) {
             categoryService.updateCategory(categoryId, description);
@@ -313,7 +315,7 @@ public class ConfigurationRestfulApi {
 
     private void checkAdmin(String userName) throws ConfigurationException {
         if (!Configuration.isAdmin(userName)) {
-            throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
+            throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
         }
     }
 

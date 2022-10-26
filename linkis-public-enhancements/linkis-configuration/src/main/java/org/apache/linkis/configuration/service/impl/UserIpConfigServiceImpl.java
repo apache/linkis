@@ -16,9 +16,7 @@
  */
 package org.apache.linkis.configuration.service.impl;
 
-import com.github.pagehelper.PageHelper;
 import org.apache.linkis.configuration.dao.UserIpMapper;
-import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
@@ -36,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringJoiner;
 
+import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,11 +102,12 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
    * @param pageSize
    */
   @Override
-  public List<UserIpVo> queryUserIPList(String user, String creator, Integer pageNow, Integer pageSize) {
+  public List<UserIpVo> queryUserIPList(
+      String user, String creator, Integer pageNow, Integer pageSize) {
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
-    if (null== pageNow)  pageNow = 1;
-    if (null== pageSize) pageSize = 20;
+    if (null == pageNow) pageNow = 1;
+    if (null == pageSize) pageSize = 20;
     List<UserIpVo> userIpVos = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
@@ -115,7 +115,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     } finally {
       PageHelper.clearPage();
     }
-    return userIpVos ;
+    return userIpVos;
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
@@ -162,7 +162,8 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (creator.equals("*")) {
       throw new ConfigurationException("creator couldn't be '*' ");
     }
-    return CollectionUtils.isNotEmpty(queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null));
+    return CollectionUtils.isNotEmpty(
+        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null));
   }
 
   @Override
@@ -170,8 +171,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     return userIpMapper.queryUserIP(user, creator);
   }
 
-
-  private UserIpVo toLowerCase(UserIpVo userIpVo){
+  private UserIpVo toLowerCase(UserIpVo userIpVo) {
     userIpVo.setCreator(userIpVo.getCreator().toLowerCase());
     userIpVo.setUser(userIpVo.getUser().toLowerCase());
     return userIpVo;

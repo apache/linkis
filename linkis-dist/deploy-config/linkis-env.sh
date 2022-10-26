@@ -158,9 +158,15 @@ LINKIS_VERSION=1.3.0
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
-## If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
-SKYWALKING_AGENT_PATH=/opt/skywalking-agent/skywalking-agent.jar
-export SW_AGENT_COLLECTOR_BACKEND_SERVICES=bigd-sit-monitor:11800
+## modify by jiangkun0928 for change skywalking -> pinpoint start
+### If SKYWALKING_AGENT_PATH is set, the Linkis components will be started with Skywalking agent
+#SKYWALKING_AGENT_PATH=/opt/skywalking-agent/skywalking-agent.jar
+#export SW_AGENT_COLLECTOR_BACKEND_SERVICES=bigd-sit-monitor:11800
+
+## the Linkis components will be started with pinpoint agent
+PINPOINT_AGENT_PATH=/opt/pinpoint-agent/pinpoint-bootstrap.jar
+export PP_APPLICATION_NAME=apache-linkis
+## modify by jiangkun0928 for change skywalking -> pinpoint end
 
 ##If you want to enable prometheus for monitoring linkis, you can set this export PROMETHEUS_ENABLE=true
 export PROMETHEUS_ENABLE=true

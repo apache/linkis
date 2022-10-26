@@ -36,11 +36,16 @@ if [ "$DEBUG_PORT" ];
 then
    export DEBUG_CMD="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$DEBUG_PORT"
 fi
-
-if [[ -e "$SKYWALKING_AGENT_PATH" && -e $SKYWALKING_AGENT_PATH ]]; then
-    export JAVA_AGENT_OPTS="-javaagent:$SKYWALKING_AGENT_PATH=agent.service_name=$SERVER_NAME"
+## modify by jiangkun0928 for change skywalking -> pinpoint start
+#if [[ -e "$SKYWALKING_AGENT_PATH" && -e $SKYWALKING_AGENT_PATH ]]; then
+#    export JAVA_AGENT_OPTS="-javaagent:$SKYWALKING_AGENT_PATH=agent.service_name=$SERVER_NAME"
+#fi
+if [[ -e "$PINPOINT_AGENT_PATH" && -e $PINPOINT_AGENT_PATH ]]; then
+  HOST_NAME="`hostname --fqdn`"
+  PP_AGENT_ID="${HOST_NAME##*-}-${SERVER_NAME#*-}"
+  export JAVA_AGENT_OPTS="-javaagent:$PINPOINT_AGENT_PATH -Dpinpoint.agentId=$PP_AGENT_ID -Dpinpoint.applicationName=$PP_APPLICATION_NAME"
 fi
-
+## modify by jiangkun0928 for change skywalking -> pinpoint end
 if test -z "$SERVER_JAVA_OPTS"
 then
   export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD "

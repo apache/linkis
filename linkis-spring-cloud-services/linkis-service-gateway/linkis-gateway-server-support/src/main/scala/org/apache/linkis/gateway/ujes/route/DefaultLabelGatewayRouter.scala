@@ -83,14 +83,19 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
     if (serviceInstances.size() <= 0) {
       throw new GatewayErrorException(NO_ROUTE_SERVICE.getErrorCode, NO_ROUTE_SERVICE.getErrorDesc)
     }
-    val serviceId = serviceInstances.get(0).getApplicationName
-    val filteredInstances = retainAllInRegistry(serviceId, serviceInstances)
+
+    val serviceIds = serviceInstances.map(_.getApplicationName).distinct
+    val filteredInstances = new util.ArrayList[ServiceInstance]()
+    for (serviceId <- serviceIds) {
+      filteredInstances.addAll(retainAllInRegistry(serviceId, serviceInstances))
+    }
+
     if (filteredInstances.size() > 0) {
       filteredInstances.get(Random.nextInt(filteredInstances.size()))
     } else {
       throw new GatewayErrorException(
         CANNOT_INSTANCE.getErrorCode,
-        MessageFormat.format(CANNOT_INSTANCE.getErrorDesc, serviceId)
+        MessageFormat.format(CANNOT_INSTANCE.getErrorDesc, serviceIds.mkString(","))
       )
     }
   }

@@ -289,9 +289,15 @@ export default {
       });
     },
     selectAll(isSelectedAll) {
-      this.ideEngineList.forEach(item => item.isActive = !isSelectedAll);
-      this.boardEngineList.forEach(item => item.isActive = !isSelectedAll);
-      this.otherEngineList.forEach(item => item.isActive = !isSelectedAll);
+      this.ideEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
+      this.boardEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
+      this.otherEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
     
     },
     getEngineData() {

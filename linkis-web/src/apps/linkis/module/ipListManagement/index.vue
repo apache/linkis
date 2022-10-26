@@ -147,7 +147,7 @@ export default {
           align: 'center',
         },
         {
-          title: 'Action',
+          title: this.$t('message.linkis.ipListManagement.action'),
           key: 'action',
           width: 200,
           align: 'center',
@@ -195,22 +195,24 @@ export default {
       modalDataRule: {
         user: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
         ],
         ipList: [
-          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'}
+          {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
+          {validator: this.ipListValidator, trigger: 'blur'}
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
         ],
       },
-      tagIsExist: false,
+      tagIsExist: true,
       mode: 'create',
+      editData: {},
     }
   },
   computed: {
@@ -261,10 +263,6 @@ export default {
       this.showCreateModal = true;
       this.mode = 'create'
     },
-    async editTenant () {
-      this.showCreateModal = true;
-      this.mode = 'edit'
-    },
     async checkUserTag() {
       try {
         const {user, creator} = this.modalData;
@@ -297,6 +295,13 @@ export default {
         bussinessUser: '',
         desc: ''
       }
+      this.editData = {
+        user: '',
+        creator: '',
+        ipList: '',
+        bussinessUser: '',
+        desc: ''
+      }
     },
     addTenantTag() {
       const target = this.mode === 'edit' ? '/configuration/user-ip-mapping/update-user-ip' : '/configuration/user-ip-mapping/create-user-ip'
@@ -321,8 +326,17 @@ export default {
       
     },
     edit(data) {
-      this.editTenant();
-      this.modalData = data;
+      const {
+        user, creator, ipList, bussinessUser, desc
+      } = data
+      this.modalData = {
+        user, creator, ipList, bussinessUser, desc
+      };
+      this.editData = {
+        user, creator, ipList, bussinessUser, desc
+      }
+      this.showCreateModal = true;
+      this.mode = 'edit';
     },
     delete(data) {
       this.$Modal.confirm({
@@ -346,6 +360,18 @@ export default {
     },
     async handleChange() {
       this.tagIsExist = true;
+    },
+    ipListValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.ipListManagement.notEmpty')));
+      }
+      const ipArr = val.split(/[,;]/);
+      ipArr.forEach(ip => {
+        if(!/(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])(\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])){3}$/.test(ip)) {
+          cb(new Error(this.$t('message.linkis.ipListManagement.ipContentError')));
+        }
+      })
+      cb();
     }
   },
   created() {

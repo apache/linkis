@@ -157,7 +157,7 @@
                         "dataSourceManage": "数据源管理",
                         "userResourceManagement": "用户资源管理",
                         "tenantTagManagement": "租户标签管理",
-                        "ipListManagement": "IP列表管理"
+                        "ipListManagement": "白名单管理"
                     }
                 }
             },
@@ -338,10 +338,11 @@
                 "inputCreateUser": "请输入创建者",
                 "yourTagMapping": "您的标签映射",
                 "notEmpty": "不能为空",
-                "contentError": "仅限英文、数字、小数点和下划线",
+                "contentError": "仅限英文、数字、小数点、星号和下划线",
                 "check": "检查",
                 "OK": "确定",
-                "Cancel": "取消"
+                "Cancel": "取消",
+                "action": "操作"
             },
             "ipListManagement": {
                 "userName": "用户名",
@@ -361,10 +362,12 @@
                 "inputCreateUser": "请输入创建者",
                 "yourTagMapping": "您的标签映射",
                 "notEmpty": "不能为空",
-                "contentError": "仅限英文、数字、小数点和下划线",
+                "contentError": "仅限英文、数字、小数点、星号和下划线",
+                "ipContentError": "请输入正确格式的IP地址",
                 "check": "检查",
                 "OK": "确定",
-                "Cancel": "取消"
+                "Cancel": "取消",
+                "action": "操作"
             }
         }
     }

@@ -155,7 +155,7 @@
             "dataSourceManage": "DataSource Manage",
             "userResourceManagement": "User Resource Management",
             "tenantTagManagement": "Tenant Tag Management",
-            "ipListManagement": "IP List Management"
+            "ipListManagement": "White List Management"
           }
         }
       },
@@ -337,10 +337,11 @@
         "inputCreateUser": "Please Input Creare User",
         "yourTagMapping": "Your Tag Mapping",
         "notEmpty": "Cannot be empty",
-        "contentError": "English, numbers, decimal point and underline only",
+        "contentError": "English, numbers, decimal point, asterisk and underline only",
         "check": "Check",
         "OK": "OK",
-        "Cancel": "Cancel"
+        "Cancel": "Cancel",
+        "action": "Action"
       },
       "ipListManagement": {
         "userName": "User Name",
@@ -360,10 +361,12 @@
         "inputCreateUser": "Please Input Creare User",
         "yourTagMapping": "Your Tag Mapping",
         "notEmpty": "Cannot be empty",
-        "contentError": "English, numbers, decimal point and underline only",
+        "contentError": "English, numbers, decimal point, asterisk and underline only",
+        "ipContentError": "Please enter IP addresses in correct format.",
         "check": "Check",
         "OK": "OK",
-        "Cancel": "Cancel"
+        "Cancel": "Cancel",
+        "action": "Action"
       }
     }
   }

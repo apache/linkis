@@ -158,7 +158,7 @@ export default {
           align: 'center',
         },
         {
-          title: 'Action',
+          title: this.$t('message.linkis.ipListManagement.action'),
           key: 'action',
           width: 200,
           align: 'center',
@@ -206,23 +206,25 @@ export default {
       modalDataRule: {
         user: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
       },
-      tagIsExist: false,
+      tagIsExist: true,
       mode: 'create',
+      // 缓存，用于校验
+      editData: {},
     }
   },
   computed: {
@@ -274,15 +276,10 @@ export default {
       this.showCreateModal = true;
       this.mode = 'create'
     },
-    async editTenant () {
-      this.showCreateModal = true;
-      this.mode = 'edit';
-      this.modalData
-    },
     async checkUserTag() {
       try {
         const {user, creator} = this.modalData;
-        if(this.mode === 'edit' && user === this.modalData.user && creator === this.modalData.creator) {
+        if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
           this.tagIsExist = false;
           return;
         }
@@ -310,7 +307,14 @@ export default {
         tenantValue: '',
         bussinessUser: '',
         desc: ''
-      }
+      };
+      this.editData = {
+        user: '',
+        creator: '',
+        tenantValue: '',
+        bussinessUser: '',
+        desc: ''
+      };
     },
     addTenantTag() {
       const target = this.mode === 'edit' ? '/configuration/tenant-mapping/update-tenant' : '/configuration/tenant-mapping/create-tenant'
@@ -335,8 +339,17 @@ export default {
       
     },
     edit(data) {
-      this.editTenant();
-      this.modalData = data;
+      const {
+        user, creator, tenantValue, bussinessUser, desc
+      } = data
+      this.modalData = {
+        user, creator, tenantValue, bussinessUser, desc
+      };
+      this.editData = {
+        user, creator, tenantValue, bussinessUser, desc
+      };
+      this.showCreateModal = true;
+      this.mode = 'edit';
     },
     delete(data) {
       this.$Modal.confirm({

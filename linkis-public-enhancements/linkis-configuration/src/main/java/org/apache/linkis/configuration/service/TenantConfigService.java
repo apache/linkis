@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface TenantConfigService {
 
-  List<TenantVo> queryTenantList(String user, String creator, String tenantValue);
+  List<TenantVo> queryTenantList(String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
 
   void deleteTenant(Integer id) throws ConfigurationException;
 

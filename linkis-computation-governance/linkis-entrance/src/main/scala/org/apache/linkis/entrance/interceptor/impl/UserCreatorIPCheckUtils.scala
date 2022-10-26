@@ -75,8 +75,12 @@ object UserCreatorIPCheckUtils extends Logging {
             )
           }
           // Obtain the IP address in the cache through user creator
-          val cacheIp =
+          var cacheIp = ""
+          cacheIp =
             configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
+          if (StringUtils.isBlank(cacheIp)) {
+            cacheIp = configCache.get("*-" + LabelUtil.getUserCreator(jobRequest.getLabels)._2)
+          }
           logger.info("get cache cacheIp:" + cacheIp + ",jobRequest:" + jobRequest.getId)
           // Judge if the cached data is not empty
           if (StringUtils.isNotBlank(cacheIp)) {

@@ -29,7 +29,7 @@ public interface UserIpConfigService {
 
   void deleteUserIP(Integer id) throws ConfigurationException;
 
-  List<UserIpVo> queryUserIPList(String user, String creator);
+  List<UserIpVo> queryUserIPList(String user, String creator, Integer pageNow, Integer pageSize);
 
   Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
 

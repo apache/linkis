@@ -31,10 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -94,7 +91,8 @@ public class UserIpConfigrationRestfulApi {
     })
     @ApiOperation(value = "delete-user-ip", notes = "delete user ip", httpMethod = "GET")
     @RequestMapping(path = "/delete-user-ip", method = RequestMethod.GET)
-    public Message deleteUserIp(HttpServletRequest req, Integer id) {
+    public Message deleteUserIp(HttpServletRequest req,
+                                @RequestParam(value = "id", required = false) Integer id) {
         try {
             String userName = ModuleUserUtils.getOperationUser(req, "delete-user-ip");
             if (!Configuration.isAdmin(userName)) {
@@ -114,12 +112,16 @@ public class UserIpConfigrationRestfulApi {
     })
     @ApiOperation(value = "query-user-ip-list", notes = "query user ip list", httpMethod = "GET")
     @RequestMapping(path = "/query-user-ip-list", method = RequestMethod.GET)
-    public Message queryUserIpList(HttpServletRequest req, String user, String creator) {
+    public Message queryUserIpList(HttpServletRequest req,
+                                   @RequestParam(value = "user", required = false) String user,
+                                   @RequestParam(value = "creator", required = false) String creator,
+                                   @RequestParam(value = "pageNow", required = false) Integer pageNow,
+                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
         }
-        return Message.ok().data("userIpList", userIpConfigService.queryUserIPList(user, creator));
+        return Message.ok().data("userIpList", userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize));
     }
 
     @ApiImplicitParams({
@@ -129,7 +131,9 @@ public class UserIpConfigrationRestfulApi {
     })
     @ApiOperation(value = "check-user-creator", notes = " check user creator", httpMethod = "GET")
     @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
-    public Message checkUserCreator(HttpServletRequest req, String user, String creator) {
+    public Message checkUserCreator(HttpServletRequest req,
+                                    @RequestParam(value = "user", required = false) String user,
+                                    @RequestParam(value = "creator", required = false) String creator) {
         Boolean result = false;
         try {
             String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");

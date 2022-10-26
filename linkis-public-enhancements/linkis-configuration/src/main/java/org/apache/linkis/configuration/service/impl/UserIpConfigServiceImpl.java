@@ -16,7 +16,9 @@
  */
 package org.apache.linkis.configuration.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import org.apache.linkis.configuration.dao.UserIpMapper;
+import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
@@ -53,9 +55,10 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   @Override
   public void createUserIP(UserIpVo userIpVo) throws ConfigurationException {
     dataProcessing(userIpVo);
-    userIpVo.setCreateTime(new Date());
-    userIpVo.setUpdateTime(new Date());
-    userIpMapper.createUserIP(userIpVo);
+    UserIpVo userIpVoLowerCase = toLowerCase(userIpVo);
+    userIpVoLowerCase.setCreateTime(new Date());
+    userIpVoLowerCase.setUpdateTime(new Date());
+    userIpMapper.createUserIP(userIpVoLowerCase);
   }
 
   /**
@@ -69,9 +72,10 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
       throw new ConfigurationException("id couldn't be empty ");
     }
     dataProcessing(userIpVo);
-    userIpVo.setUpdateTime(new Date());
-    logger.info("updateUserIP : {}", userIpVo);
-    userIpMapper.updateUserIP(userIpVo);
+    UserIpVo userIpVoLowerCase = toLowerCase(userIpVo);
+    userIpVoLowerCase.setUpdateTime(new Date());
+    logger.info("updateUserIP : {}", userIpVoLowerCase);
+    userIpMapper.updateUserIP(userIpVoLowerCase);
   }
 
   /**
@@ -95,12 +99,23 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
    * @return List<UserIpVo>
    * @param user
    * @param creator
+   * @param pageNow
+   * @param pageSize
    */
   @Override
-  public List<UserIpVo> queryUserIPList(String user, String creator) {
+  public List<UserIpVo> queryUserIPList(String user, String creator, Integer pageNow, Integer pageSize) {
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
-    return userIpMapper.queryUserIPList(user, creator);
+    if (null== pageNow)  pageNow = 1;
+    if (null== pageSize) pageSize = 20;
+    List<UserIpVo> userIpVos = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      userIpVos = userIpMapper.queryUserIPList(user, creator);
+    } finally {
+      PageHelper.clearPage();
+    }
+    return userIpVos ;
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
@@ -144,11 +159,21 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (StringUtils.isBlank(user)) {
       throw new ConfigurationException("user couldn't be empty ");
     }
-    return CollectionUtils.isNotEmpty(queryUserIPList(user, creator));
+    if (creator.equals("*")) {
+      throw new ConfigurationException("creator couldn't be '*' ");
+    }
+    return CollectionUtils.isNotEmpty(queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null));
   }
 
   @Override
   public UserIpVo queryUserIP(String user, String creator) {
     return userIpMapper.queryUserIP(user, creator);
+  }
+
+
+  private UserIpVo toLowerCase(UserIpVo userIpVo){
+    userIpVo.setCreator(userIpVo.getCreator().toLowerCase());
+    userIpVo.setUser(userIpVo.getUser().toLowerCase());
+    return userIpVo;
   }
 }

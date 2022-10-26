@@ -26,7 +26,7 @@
         <div class="logo">
           <img
             class="logo-img"
-            src="../../assets/images/Linkis.png"
+            src="../../assets/images/Linkis.svg"
             :alt="$t('message.common.logoName')"
           >
           <span class="version">{{sysVersion}}</span>

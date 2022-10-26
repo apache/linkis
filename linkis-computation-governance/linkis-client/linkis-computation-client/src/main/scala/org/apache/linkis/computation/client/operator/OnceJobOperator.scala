@@ -65,6 +65,7 @@ trait OnceJobOperator[T] extends Operator[T] with Logging {
       .setUser(user)
       .setApplicationName(serviceInstance.getApplicationName)
       .setInstance(serviceInstance.getInstance)
+      .setTicketId(ticketId)
     addParameters(builder)
     val engineConnOperateAction = builder.build()
     if (OnceJobOperator.ONCE_JOB_OPERATOR_LOG_ENABLE.getValue) {

@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,127 +15,75 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.label.utils; 
- 
-import org.apache.linkis.manager.label.entity.CombinedLabelImpl;
+package org.apache.linkis.manager.label.utils;
+
 import org.apache.linkis.manager.label.entity.Label;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.protocol.util.ImmutablePair;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/** 
- * LabelUtils Tester
-*/ 
-public class LabelUtilsTest { 
- 
+import org.junit.jupiter.api.*;
 
- 
- 
-    @Test
-    public void testIsBasicType() throws Exception {
-        boolean flag=LabelUtils.isBasicType(String.class);
-        Assertions.assertTrue(flag);
-    } 
- 
+/** LabelUtils Tester */
+public class LabelUtilsTest {
 
-    @Test
-    public void testGetOrderedValueNameInLabelClass() throws Exception {
-        String[] VALUE_METHOD_PREFIX = new String[] {"is", "get", "set"};
-        List<String> list=LabelUtils.getOrderedValueNameInLabelClass(this.getClass(),VALUE_METHOD_PREFIX);
-        Assertions.assertTrue(list.isEmpty());
-    }
- 
- 
-    @Test
-    public void testDistinctLabel() throws Exception {
+  @Test
+  public void testIsBasicType() throws Exception {
+    boolean flag = LabelUtils.isBasicType(String.class);
+    Assertions.assertTrue(flag);
+  }
 
+  @Test
+  public void testGetOrderedValueNameInLabelClass() throws Exception {
+    String[] VALUE_METHOD_PREFIX = new String[] {"is", "get", "set"};
+    List<String> list =
+        LabelUtils.getOrderedValueNameInLabelClass(this.getClass(), VALUE_METHOD_PREFIX);
+    Assertions.assertTrue(list.isEmpty());
+  }
 
-    } 
- 
- 
-    @Test
-    public void testLabelsToMap() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testLabelsToPairList() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testListAllUserModifiableLabel() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testCompareTo() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testEquals() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testToString() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testToJson() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testFromJsonForJsonTClassParameters() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testFromJsonForJsonJavaType() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testConvertForSimpleObjTClassParameters() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testConvertForSimpleObjJavaType() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
+  @Test
+  public void testDistinctLabel() throws Exception {
+    UserCreatorLabel userCreatorLabel1 = new UserCreatorLabel();
+    userCreatorLabel1.setLabelKey("testLabelKey1");
+    UserCreatorLabel userCreatorLabel2 = new UserCreatorLabel();
+    userCreatorLabel2.setLabelKey("testLabelKey1");
+    List<Label<?>> labels1 = new ArrayList<>();
+    labels1.add(userCreatorLabel1);
+    List<Label<?>> labels2 = new ArrayList<>();
+    labels2.add(userCreatorLabel2);
+    List<Label<?>> labels3 = LabelUtils.distinctLabel(labels1, labels2);
+    Assertions.assertTrue(labels3.size() == 1);
+  }
 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testIsWrapClass() throws Exception { 
-        //TODO: Test goes here... 
+  @Test
+  public void testLabelsToMap() throws Exception {
+    UserCreatorLabel userCreatorLabel = new UserCreatorLabel();
+    userCreatorLabel.setLabelKey("testLabelKey");
+    Map<String, String> map = new HashMap<>();
+    map.put("test", "test1");
+    userCreatorLabel.setValue(map);
+    List<Label<?>> labels1 = new ArrayList<>();
+    labels1.add(userCreatorLabel);
+    Map<String, Object> labelsToMap = LabelUtils.labelsToMap(labels1);
+    Map<String, String> maps = (Map<String, String>) labelsToMap.get("testLabelKey");
+    Assertions.assertNull(maps);
+  }
 
-        } 
- 
-} 
+  @Test
+  public void testLabelsToPairList() throws Exception {
+    UserCreatorLabel userCreatorLabel = new UserCreatorLabel();
+    userCreatorLabel.setLabelKey("testLabelKey");
+    Map<String, String> map = new HashMap<>();
+    map.put("test", "test1");
+    userCreatorLabel.setValue(map);
+    List<Label<?>> labels1 = new ArrayList<>();
+    labels1.add(userCreatorLabel);
+    List<ImmutablePair<String, String>> immutablePairList = LabelUtils.labelsToPairList(labels1);
+    ImmutablePair<String, String> immutablePair = immutablePairList.get(0);
+    Assertions.assertNull(immutablePair.getValue());
+  }
+}

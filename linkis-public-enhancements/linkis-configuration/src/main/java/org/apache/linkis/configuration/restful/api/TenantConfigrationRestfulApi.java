@@ -26,6 +26,7 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.slf4j.Logger;
@@ -35,6 +36,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @Api
 @RestController
@@ -124,7 +127,9 @@ public class TenantConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Failed to query-tenant-list,msg: only administrators can configure");
         }
-        return Message.ok().data("tenantList", tenantConfigService.queryTenantList(user, creator, tenantValue,pageNow,pageSize));
+        Map<String,Object> resultMap = tenantConfigService.queryTenantList(user, creator, tenantValue, pageNow, pageSize);
+        return Message.ok().data("tenantList",resultMap.get("tenantList"))
+                .data(JobRequestConstants.TOTAL_PAGE(),resultMap.get(JobRequestConstants.TOTAL_PAGE()));
     }
 
     @ApiImplicitParams({

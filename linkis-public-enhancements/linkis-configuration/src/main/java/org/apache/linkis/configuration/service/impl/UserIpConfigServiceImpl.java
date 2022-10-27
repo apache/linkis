@@ -16,26 +16,23 @@
  */
 package org.apache.linkis.configuration.service.impl;
 
-import com.github.pagehelper.PageHelper;
 import org.apache.linkis.configuration.dao.UserIpMapper;
-import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
 import org.apache.linkis.configuration.util.CommonUtils;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,11 +100,13 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
    * @param pageSize
    */
   @Override
-  public List<UserIpVo> queryUserIPList(String user, String creator, Integer pageNow, Integer pageSize) {
+  public Map<String, Object> queryUserIPList(
+      String user, String creator, Integer pageNow, Integer pageSize) {
+    Map<String, Object> result = new HashMap<>(2);
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
-    if (null== pageNow)  pageNow = 1;
-    if (null== pageSize) pageSize = 20;
+    if (null == pageNow) pageNow = 1;
+    if (null == pageSize) pageSize = 20;
     List<UserIpVo> userIpVos = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
@@ -115,7 +114,10 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     } finally {
       PageHelper.clearPage();
     }
-    return userIpVos ;
+    PageInfo<UserIpVo> pageInfo = new PageInfo<>(userIpVos);
+    result.put("userIpList", userIpVos);
+    result.put(JobRequestConstants.TOTAL_PAGE(), pageInfo.getTotal());
+    return result;
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
@@ -152,6 +154,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
 
   @Override
   public Boolean checkUserCteator(String user, String creator) throws ConfigurationException {
+    boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
       throw new ConfigurationException("creator couldn't be empty ");
@@ -162,7 +165,12 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (creator.equals("*")) {
       throw new ConfigurationException("creator couldn't be '*' ");
     }
-    return CollectionUtils.isNotEmpty(queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null));
+    Map<String, Object> resultMap =
+        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null);
+    Object userIpList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
+    int total = Integer.parseInt(userIpList.toString());
+    if (total == 0) result = false;
+    return result;
   }
 
   @Override
@@ -170,8 +178,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     return userIpMapper.queryUserIP(user, creator);
   }
 
-
-  private UserIpVo toLowerCase(UserIpVo userIpVo){
+  private UserIpVo toLowerCase(UserIpVo userIpVo) {
     userIpVo.setCreator(userIpVo.getCreator().toLowerCase());
     userIpVo.setUser(userIpVo.getUser().toLowerCase());
     return userIpVo;

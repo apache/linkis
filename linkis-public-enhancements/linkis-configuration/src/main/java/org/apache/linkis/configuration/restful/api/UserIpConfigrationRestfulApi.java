@@ -34,6 +34,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Api
 @RestController
@@ -121,6 +122,7 @@ public class UserIpConfigrationRestfulApi {
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
         }
+        Map<String,Object> resultMap = userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize);
         return Message.ok().data("userIpList", userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize));
     }
 

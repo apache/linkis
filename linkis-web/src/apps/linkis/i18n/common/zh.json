@@ -169,6 +169,10 @@
                     "label": "起始时间",
                     "placeholder": "请选择起始日期"
                 },
+                "instance": {
+                    "label": "实例",
+                    "placeholder": "请输入实例"
+                },
                 "creator": {
                     "label": "应用",
                     "placeholder": "请输入应用搜索"

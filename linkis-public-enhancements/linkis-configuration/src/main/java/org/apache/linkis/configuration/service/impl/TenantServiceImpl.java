@@ -41,6 +41,13 @@ public class TenantServiceImpl implements TenantService {
   @Override
   public TenantResponse getTenantData(TenantRequest request, Sender sender) {
     TenantVo tenantVo = tenantConfigService.queryTenant(request.user(), request.creator());
-    return new TenantResponse(tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
+    if (null == tenantVo) {
+      logger.warn(
+          "TenantCache user {} creator {} data loading failed", request.user(), request.creator());
+      return new TenantResponse(tenantVo.getUser(), tenantVo.getCreator(), "");
+    } else {
+      return new TenantResponse(
+          tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());
+    }
   }
 }

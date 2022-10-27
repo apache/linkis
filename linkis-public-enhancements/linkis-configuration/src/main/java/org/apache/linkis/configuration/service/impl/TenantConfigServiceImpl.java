@@ -22,8 +22,8 @@ import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
 import org.apache.linkis.configuration.util.HttpsUtil;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -35,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +57,9 @@ public class TenantConfigServiceImpl implements TenantConfigService {
    * @return List<TenantVo>
    */
   @Override
-  public List<TenantVo> queryTenantList(
+  public Map<String, Object> queryTenantList(
       String user, String creator, String tenantValue, Integer pageNow, Integer pageSize) {
+    Map<String, Object> result = new HashMap<>(2);
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
     if (StringUtils.isBlank(tenantValue)) tenantValue = null;
@@ -70,7 +72,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     } finally {
       PageHelper.clearPage();
     }
-    return tenantVos;
+    PageInfo<TenantVo> pageInfo = new PageInfo<>(tenantVos);
+    result.put("tenantList", tenantVos);
+    result.put(JobRequestConstants.TOTAL_PAGE(), pageInfo.getTotal());
+    return result;
   }
 
   /**
@@ -184,11 +189,11 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     if (creator.equals("*")) {
       throw new ConfigurationException("creator couldn't be '*' ");
     }
-    List<TenantVo> tenantVos =
+    Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);
-    if (CollectionUtils.isEmpty(tenantVos)) {
-      result = false;
-    }
+    Object tenantList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
+    int total = Integer.parseInt(tenantList.toString());
+    if (total == 0) result = false;
     return result;
   }
 

@@ -19,11 +19,11 @@ package org.apache.linkis.configuration.service;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 
-import java.util.List;
+import java.util.Map;
 
 public interface TenantConfigService {
 
-  List<TenantVo> queryTenantList(
+  Map<String, Object> queryTenantList(
       String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
 
   void deleteTenant(Integer id) throws ConfigurationException;

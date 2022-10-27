@@ -58,10 +58,7 @@ object CommonVars {
     new CommonVars(key, defaultValue, null.asInstanceOf[T], null, hotload)
 
   implicit def apply[T](key: String): CommonVars[T] =
-    apply(key, null.asInstanceOf[T])
-
-  implicit def apply[T](key: String, hotload: Boolean): CommonVars[T] =
-    apply(key, null.asInstanceOf[T], hotload)
+    apply(key, null.asInstanceOf[T], null.asInstanceOf[T], null, false)
 
   def properties: Properties = BDPConfiguration.properties
 

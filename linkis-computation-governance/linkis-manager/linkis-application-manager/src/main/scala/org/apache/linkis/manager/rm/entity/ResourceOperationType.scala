@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,19 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.persistence;
+package org.apache.linkis.manager.rm.entity
 
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+object ResourceOperationType extends Enumeration {
 
-import java.util.Date;
-import java.util.List;
+  type ResourceOperationType = Value
 
-public interface LockManagerPersistence {
-  Boolean lock(PersistenceLock persistenceLock, Long timeOut);
+  val LOCK, USED, USED_RELEASE, LOCKER_RELEASE = Value
 
-  void unlock(PersistenceLock persistenceLock);
-
-  List<PersistenceLock> getAll();
-
-  List<PersistenceLock> getTimeOutLocks(Date endDate);
 }

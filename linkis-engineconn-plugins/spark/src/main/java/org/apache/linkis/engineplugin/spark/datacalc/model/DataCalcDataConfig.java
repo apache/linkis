@@ -19,13 +19,13 @@ package org.apache.linkis.engineplugin.spark.datacalc.model;
 
 import java.io.Serializable;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonElement;
 
 public class DataCalcDataConfig implements Serializable {
 
   private String type;
   private String name;
-  private JSONObject config;
+  private JsonElement config;
 
   public String getType() {
     return type;
@@ -43,11 +43,11 @@ public class DataCalcDataConfig implements Serializable {
     this.name = name;
   }
 
-  public JSONObject getConfig() {
+  public JsonElement getConfig() {
     return config;
   }
 
-  public void setConfig(JSONObject config) {
+  public void setConfig(JsonElement config) {
     this.config = config;
   }
 }

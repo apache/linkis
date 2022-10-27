@@ -17,21 +17,17 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.exception;
 
-public class ConfigRuntimeException extends RuntimeException {
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 
-  public ConfigRuntimeException() {
-    super();
+public class ConfigRuntimeException extends LinkisRuntimeException {
+
+  public ConfigRuntimeException(int errCode, String desc) {
+    super(errCode, desc);
   }
 
-  public ConfigRuntimeException(String message) {
-    super(message);
-  }
-
-  public ConfigRuntimeException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public ConfigRuntimeException(Throwable cause) {
-    super(cause);
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

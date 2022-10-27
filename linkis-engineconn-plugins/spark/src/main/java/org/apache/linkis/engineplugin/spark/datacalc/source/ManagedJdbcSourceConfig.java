@@ -25,18 +25,18 @@ import java.util.Map;
 
 public class ManagedJdbcSourceConfig extends SourceConfig {
 
-  @NotBlank private String database;
+  @NotBlank private String datasource;
 
   @NotBlank private String query;
 
   private Map<String, String> options;
 
-  public String getDatabase() {
-    return database;
+  public String getDatasource() {
+    return datasource;
   }
 
-  public void setDatabase(String database) {
-    this.database = database;
+  public void setDatasource(String datasource) {
+    this.datasource = datasource;
   }
 
   public String getQuery() {

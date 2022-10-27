@@ -26,6 +26,8 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.{
 import org.apache.linkis.engineplugin.spark.datacalc.exception.ConfigRuntimeException
 import org.apache.linkis.engineplugin.spark.datacalc.model._
 import org.apache.linkis.engineplugin.spark.datacalc.util.PluginUtil
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
@@ -33,10 +35,11 @@ import org.apache.spark.storage.StorageLevel
 
 import javax.validation.{Validation, Validator}
 
+import java.text.MessageFormat
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-import com.alibaba.fastjson.JSON
 import org.slf4j.{Logger, LoggerFactory}
 
 object DataCalcExecution {
@@ -111,7 +114,13 @@ object DataCalcExecution {
           checkResult.checkPluginConfig(sink)
           plugins(i) = sink
         case t: String =>
-          throw new ConfigRuntimeException(s"[$t] is not a valid type")
+          throw new ConfigRuntimeException(
+            SparkErrorCodeSummary.DATA_CALC_CONFIG_TYPE_NOT_VALID.getErrorCode,
+            MessageFormat.format(
+              SparkErrorCodeSummary.DATA_CALC_CONFIG_TYPE_NOT_VALID.getErrorDesc,
+              t
+            )
+          )
       }
     }
     checkResult.check()
@@ -198,7 +207,9 @@ object DataCalcExecution {
       val violations = validator.validate(plugin.getConfig)
       if (!violations.isEmpty) {
         success = false
-        log.error(s"Configuration check error, ${JSON.toJSON(plugin.getConfig)}")
+        log.error(
+          s"Configuration check error, ${BDPJettyServerHelper.gson.toJson(plugin.getConfig)}"
+        )
         for (violation <- violations) {
           if (
               violation.getMessageTemplate
@@ -214,7 +225,10 @@ object DataCalcExecution {
 
     def check(): Unit = {
       if (!success) {
-        throw new ConfigRuntimeException("Config data valid failed")
+        throw new ConfigRuntimeException(
+          SparkErrorCodeSummary.DATA_CALC_CONFIG_VALID_FAILED.getErrorCode,
+          SparkErrorCodeSummary.DATA_CALC_CONFIG_VALID_FAILED.getErrorDesc
+        )
       }
     }
 

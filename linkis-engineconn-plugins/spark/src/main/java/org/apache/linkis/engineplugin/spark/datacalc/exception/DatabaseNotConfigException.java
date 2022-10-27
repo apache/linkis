@@ -17,8 +17,17 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.exception;
 
-public class DatabaseNotConfigException extends RuntimeException {
-  public DatabaseNotConfigException(String message) {
-    super(message);
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
+
+public class DatabaseNotConfigException extends LinkisRuntimeException {
+
+  public DatabaseNotConfigException(int errCode, String desc) {
+    super(errCode, desc);
+  }
+
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

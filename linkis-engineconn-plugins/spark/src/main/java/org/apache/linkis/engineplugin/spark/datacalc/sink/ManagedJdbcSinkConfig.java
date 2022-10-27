@@ -28,7 +28,9 @@ import java.util.Map;
 
 public class ManagedJdbcSinkConfig extends SinkConfig {
 
-  @NotBlank private String targetDatabase;
+  @NotBlank private String targetDatasource;
+
+  private String targetDatabase;
 
   @NotBlank private String targetTable;
 
@@ -44,6 +46,14 @@ public class ManagedJdbcSinkConfig extends SinkConfig {
   private Integer numPartitions = 10;
 
   private Map<String, String> options;
+
+  public String getTargetDatasource() {
+    return targetDatasource;
+  }
+
+  public void setTargetDatasource(String targetDatasource) {
+    this.targetDatasource = targetDatasource;
+  }
 
   public String getTargetDatabase() {
     return targetDatabase;

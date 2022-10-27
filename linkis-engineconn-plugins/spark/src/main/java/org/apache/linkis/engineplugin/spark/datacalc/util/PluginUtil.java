@@ -21,12 +21,14 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.*;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SinkConfig;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
 import org.apache.linkis.engineplugin.spark.datacalc.model.TransformConfig;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonElement;
 
 public class PluginUtil {
 
@@ -60,28 +62,34 @@ public class PluginUtil {
   }
 
   public static <T extends SourceConfig> DataCalcSource<T> createSource(
-      String name, JSONObject config) throws InstantiationException, IllegalAccessException {
+      String name, JsonElement config)
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NoSuchMethodException {
     return createPlugin(SOURCE_PLUGINS, name, config);
   }
 
   public static <T extends TransformConfig> DataCalcTransform<T> createTransform(
-      String name, JSONObject config) throws InstantiationException, IllegalAccessException {
+      String name, JsonElement config)
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NoSuchMethodException {
     return createPlugin(TRANSFORM_PLUGINS, name, config);
   }
 
-  public static <T extends SinkConfig> DataCalcSink<T> createSink(String name, JSONObject config)
-      throws InstantiationException, IllegalAccessException {
+  public static <T extends SinkConfig> DataCalcSink<T> createSink(String name, JsonElement config)
+      throws InstantiationException, IllegalAccessException, InvocationTargetException,
+          NoSuchMethodException {
     return createPlugin(SINK_PLUGINS, name, config);
   }
 
   static <T extends DataCalcPlugin> T createPlugin(
-      Map<String, Class<?>> pluginMap, String name, JSONObject config)
-      throws InstantiationException, IllegalAccessException {
+      Map<String, Class<?>> pluginMap, String name, JsonElement config)
+      throws InstantiationException, IllegalAccessException, NoSuchMethodException,
+          InvocationTargetException {
     Class<?> type = pluginMap.get(name);
     ParameterizedType genericSuperclass = (ParameterizedType) type.getGenericInterfaces()[0];
     Class<?> configType = (Class<?>) genericSuperclass.getActualTypeArguments()[0];
-    T plugin = (T) type.newInstance();
-    plugin.setConfig(config.toJavaObject(configType));
+    T plugin = (T) type.getDeclaredConstructor().newInstance();
+    plugin.setConfig(BDPJettyServerHelper.gson().fromJson(config, configType));
     return plugin;
   }
 }

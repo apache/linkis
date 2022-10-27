@@ -36,6 +36,8 @@ public class JdbcSinkConfig extends SinkConfig {
 
   @NotBlank private String password;
 
+  private String targetDatabase;
+
   @NotBlank private String targetTable;
 
   @NotBlank
@@ -81,6 +83,14 @@ public class JdbcSinkConfig extends SinkConfig {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getTargetDatabase() {
+    return targetDatabase;
+  }
+
+  public void setTargetDatabase(String targetDatabase) {
+    this.targetDatabase = targetDatabase;
   }
 
   public String getTargetTable() {

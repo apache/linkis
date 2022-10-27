@@ -34,12 +34,15 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
   private val log: Logger = LoggerFactory.getLogger(classOf[JdbcSink])
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
+    val targetTable =
+      if (StringUtils.isBlank(config.getTargetDatabase)) config.getTargetTable
+      else config.getTargetDatabase + "." + config.getTargetTable
     var options = Map(
       "url" -> config.getUrl,
       "driver" -> config.getDriver,
       "user" -> config.getUser,
       "password" -> config.getPassword,
-      "dbtable" -> config.getTargetTable,
+      "dbtable" -> targetTable,
       "connectionCollation" -> "utf8mb4_unicode_ci"
     )
 
@@ -77,7 +80,7 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
       writer.mode(config.getSaveMode)
     }
     log.info(
-      s"Save data to jdbc url: ${config.getUrl}, driver: ${config.getDriver}, username: ${config.getUser}, table: ${config.getTargetTable}"
+      s"Save data to jdbc url: ${config.getUrl}, driver: ${config.getDriver}, username: ${config.getUser}, table: $targetTable"
     )
     writer.options(options).save()
   }

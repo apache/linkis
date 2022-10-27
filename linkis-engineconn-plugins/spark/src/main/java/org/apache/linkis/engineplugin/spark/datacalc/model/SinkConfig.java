@@ -23,8 +23,6 @@ import javax.validation.constraints.AssertTrue;
 
 import java.io.Serializable;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 public abstract class SinkConfig extends DataCalcPluginConfig implements Serializable {
 
   protected String sourceTable;
@@ -47,7 +45,6 @@ public abstract class SinkConfig extends DataCalcPluginConfig implements Seriali
     this.sourceQuery = sourceQuery;
   }
 
-  @JSONField(serialize = false)
   @AssertTrue(message = "[sourceTable, sourceQuery] cannot be blank at the same time.")
   public boolean isSourceOK() {
     return StringUtils.isNotBlank(sourceTable) || StringUtils.isNotBlank(sourceQuery);

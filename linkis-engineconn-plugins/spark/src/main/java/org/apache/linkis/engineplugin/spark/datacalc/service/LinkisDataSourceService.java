@@ -33,7 +33,7 @@ public class LinkisDataSourceService {
   private static final LinkisDataSourceRemoteClient dataSourceClient =
       new LinkisDataSourceRemoteClient();
 
-  public static DataCalcDataSource getDatabase(String datasourceName) {
+  public static DataCalcDataSource getDatasource(String datasourceName) {
     GetInfoPublishedByDataSourceNameAction action =
         GetInfoPublishedByDataSourceNameAction.builder()
             .setDataSourceName(datasourceName)

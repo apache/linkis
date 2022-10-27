@@ -18,14 +18,11 @@
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
-import org.apache.linkis.engineplugin.spark.datacalc.exception.{
-  DatabaseNotConfigException,
-  HiveSinkException
-}
-import org.apache.linkis.engineplugin.spark.datacalc.service.LinkisDataSourceService
+import org.apache.linkis.engineplugin.spark.datacalc.exception.HiveSinkException
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.spark.sql.{DataFrame, DataFrameWriter, Dataset, Row, SparkSession}
+import org.apache.spark.sql._
 import org.apache.spark.sql.catalyst.catalog.HiveTableRelation
 import org.apache.spark.sql.execution.datasources.{HadoopFsRelation, LogicalRelation}
 import org.apache.spark.sql.functions.col
@@ -39,14 +36,9 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
   private val log: Logger = LoggerFactory.getLogger(classOf[HiveSink])
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
-    val db = LinkisDataSourceService.getDatabase(config.getTargetDatabase)
-    if (db == null) {
-      throw new DatabaseNotConfigException(
-        s"Database ${config.getTargetDatabase} is not configured!"
-      )
-    }
-
-    val targetTable = db.getDatabaseName + "." + config.getTargetTable
+    val targetTable =
+      if (StringUtils.isBlank(config.getTargetDatabase)) config.getTargetTable
+      else config.getTargetDatabase + "." + config.getTargetTable
     val targetFields = spark.table(targetTable).schema.fields
     if (config.getWriteAsFile != null && config.getWriteAsFile) {
       val partitionsColumns = spark.catalog
@@ -94,7 +86,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
     val dsSource = sequenceFields(ds, ds.schema.fields, targetFields, targetTable)
     val sourceFields = dsSource.schema.fields
 
-    // 开启强校验时，校验字段类型是否匹配
+    // Compare column's data type when [strongCheck] is true
     if (config.getStrongCheck != null && config.getStrongCheck) {
       for (i <- sourceFields.indices) {
         val targetField = targetFields(i)
@@ -102,6 +94,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
         if (!targetField.dataType.equals(sourceField.dataType)) {
           logFields(sourceFields, targetFields)
           throw new HiveSinkException(
+            SparkErrorCodeSummary.DATA_CALC_COLUMN_NOT_MATCH.getErrorCode,
             s"${i + 1}st column (${sourceField.name}[${sourceField.dataType}]) name or data type does not match target table column (${targetField.name}[${targetField.dataType}])"
           )
         }
@@ -129,37 +122,37 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
     if (targetFields.length != sourceFields.length) {
       logFields(sourceFields, targetFields)
       throw new HiveSinkException(
+        SparkErrorCodeSummary.DATA_CALC_COLUMN_NUM_NOT_MATCH.getErrorCode,
         s"$targetTable requires that the data to be inserted have the same number of columns as the target table: target table has ${targetFields.length} column(s) but the inserted data has ${sourceFields.length} column(s)"
       )
     }
 
-    // 这里字段名都转小写，spark 元数据的字段里有大小写混合的，但hive的都是小写
+    // hive columns is lowercase
     val sourceFieldMap = sourceFields.map(field => field.name.toLowerCase -> field).toMap
     val targetFieldMap = targetFields.map(field => field.name.toLowerCase -> field).toMap
 
     val subSet = targetFieldMap.keySet -- sourceFieldMap.keySet
     if (subSet.isEmpty) {
-      // 重排字段顺序，防止字段顺序不一致
+      // sort column
       dsSource.select(targetFields.map(field => col(field.name)): _*)
     } else if (subSet.size == targetFieldMap.size) {
-      // 字段名都无法对应时，字段按顺序重命名为目标表字段
       log.info("None target table fields match with source fields, write in order")
       dsSource.toDF(targetFields.map(field => field.name): _*)
     } else {
       throw new HiveSinkException(
+        SparkErrorCodeSummary.DATA_CALC_FIELD_NOT_EXIST.getErrorCode,
         s"$targetTable fields(${subSet.mkString(",")}) are not exist in source fields"
       )
     }
   }
 
   /**
-   * 获取hive表存储位置
+   * get hive table location
    *
    * @param spark
    * @param targetTable
-   *   表名 database.table
    * @return
-   *   表路径
+   *   hive table location
    */
   def getLocation(
       spark: SparkSession,
@@ -175,6 +168,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
           StringUtils.isBlank(config.getVariables.get(partitionColName))
       ) {
         throw new HiveSinkException(
+          SparkErrorCodeSummary.DATA_CALC_VARIABLE_NOT_EXIST.getErrorCode,
           s"Please set [${partitionsColumns.mkString(", ")}] in variables"
         )
       }

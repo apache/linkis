@@ -21,10 +21,11 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 import org.apache.linkis.engineplugin.spark.datacalc.exception.DatabaseNotConfigException
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcDataSource
 import org.apache.linkis.engineplugin.spark.datacalc.service.LinkisDataSourceService
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-import scala.collection.JavaConverters._
+import java.text.MessageFormat
 
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -33,10 +34,14 @@ class ManagedJdbcSink extends DataCalcSink[ManagedJdbcSinkConfig] {
   private val log: Logger = LoggerFactory.getLogger(classOf[ManagedJdbcSink])
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
-    val db: DataCalcDataSource = LinkisDataSourceService.getDatabase(config.getTargetDatabase)
+    val db: DataCalcDataSource = LinkisDataSourceService.getDatasource(config.getTargetDatasource)
     if (db == null) {
       throw new DatabaseNotConfigException(
-        s"Database ${config.getTargetDatabase} is not configured!"
+        SparkErrorCodeSummary.DATA_CALC_DATASOURCE_NOT_CONFIG.getErrorCode,
+        MessageFormat.format(
+          SparkErrorCodeSummary.DATA_CALC_DATASOURCE_NOT_CONFIG.getErrorDesc,
+          config.getTargetDatasource
+        )
       )
     }
 
@@ -45,6 +50,7 @@ class ManagedJdbcSink extends DataCalcSink[ManagedJdbcSinkConfig] {
     jdbcConfig.setDriver(db.getDriver)
     jdbcConfig.setUser(db.getUser)
     jdbcConfig.setPassword(db.getPassword)
+    jdbcConfig.setTargetDatabase(config.getTargetDatabase)
     jdbcConfig.setTargetTable(config.getTargetTable)
     jdbcConfig.setSaveMode(config.getSaveMode)
     jdbcConfig.setPreQueries(config.getPreQueries)

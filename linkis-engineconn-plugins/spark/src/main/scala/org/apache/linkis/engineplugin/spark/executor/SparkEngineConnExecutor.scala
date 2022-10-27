@@ -26,7 +26,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
-import org.apache.linkis.engineplugin.spark.common.Kind
+import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{
   SparkPostExecutionHook,
@@ -89,30 +89,35 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       )
     }
     val kind: Kind = getKind
-    var preCode = code
-    engineExecutorContext.appendStdout(
-      LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
-    )
-    // Pre-execution hook
-    var executionHook: SparkPreExecutionHook = null
-    Utils.tryCatch {
-      SparkPreExecutionHook
-        .getSparkPreExecutionHooks()
-        .foreach(hook => {
-          executionHook = hook
-          preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)
-        })
-    } {
-      case fatalException: ExecutorHookFatalException =>
-        val hookName = getHookName(executionHook)
-        logger.error(s"execute preExecution hook : ${hookName} failed.")
-        throw fatalException
-      case e: Exception =>
-        val hookName = getHookName(executionHook)
-        logger.error(s"execute preExecution hook : ${hookName} failed.")
+    val _code = kind match {
+      case _: SparkDataCalc => code
+      case _ =>
+        var preCode = code
+        engineExecutorContext.appendStdout(
+          LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
+        )
+        // Pre-execution hook
+        var executionHook: SparkPreExecutionHook = null
+        Utils.tryCatch {
+          SparkPreExecutionHook
+            .getSparkPreExecutionHooks()
+            .foreach(hook => {
+              executionHook = hook
+              preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)
+            })
+        } {
+          case fatalException: ExecutorHookFatalException =>
+            val hookName = getHookName(executionHook)
+            logger.error(s"execute preExecution hook : ${hookName} failed.")
+            throw fatalException
+          case e: Exception =>
+            val hookName = getHookName(executionHook)
+            logger.error(s"execute preExecution hook : ${hookName} failed.")
+        }
+        Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
+        Kind.getRealCode(preCode)
     }
-    Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
-    val _code = Kind.getRealCode(preCode)
+
     logger.info(s"Ready to run code with kind $kind.")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {

@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.model;
 
-import java.io.Serializable;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
-import com.alibaba.fastjson.JSON;
+import java.io.Serializable;
 
 public class DataCalcGroupData extends DataCalcPluginConfig implements Serializable {
 
@@ -52,6 +52,6 @@ public class DataCalcGroupData extends DataCalcPluginConfig implements Serializa
   }
 
   public static DataCalcGroupData getData(String data) {
-    return JSON.parseObject(data, DataCalcGroupData.class);
+    return BDPJettyServerHelper.gson().fromJson(data, DataCalcGroupData.class);
   }
 }

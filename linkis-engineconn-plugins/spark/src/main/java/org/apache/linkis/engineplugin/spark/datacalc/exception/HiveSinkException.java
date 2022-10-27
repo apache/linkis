@@ -17,8 +17,17 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.exception;
 
-public class HiveSinkException extends RuntimeException {
-  public HiveSinkException(String message) {
-    super(message);
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
+
+public class HiveSinkException extends LinkisRuntimeException {
+
+  public HiveSinkException(int errCode, String desc) {
+    super(errCode, desc);
+  }
+
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

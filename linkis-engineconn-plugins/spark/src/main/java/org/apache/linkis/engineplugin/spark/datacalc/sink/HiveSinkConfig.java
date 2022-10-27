@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class HiveSinkConfig extends SinkConfig {
 
-  @NotBlank private String targetDatabase;
+  private String targetDatabase;
 
   @NotBlank private String targetTable;
 

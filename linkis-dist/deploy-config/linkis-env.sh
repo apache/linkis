@@ -97,7 +97,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #PYTHON_VERSION=python2
 
 ## Hadoop env version
-#HADOOP_VERSION=2.7.2
+HADOOP_VERSION=2.7.2
 
 ################### The install Configuration of all Micro-Services #####################
 #

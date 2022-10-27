@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 import scala.collection.JavaConverters._
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
@@ -155,8 +156,11 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     val offlineRouteLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
       .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
     labelList.add(offlineRouteLabel)
-    val offlineIns = InstanceLabelClient.getInstance.getInstanceFromLabel(labelList)
-      .asScala.filter(l => null != l && l.getApplicationName.equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)).toArray
+    var offlineIns: Array[ServiceInstance] = null
+    Utils.tryAndWarn {
+      offlineIns = InstanceLabelClient.getInstance.getInstanceFromLabel(labelList)
+        .asScala.filter(l => null != l && l.getApplicationName.equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)).toArray
+    }
     if (null != offlineIns) {
       logger.info(s"There are ${offlineIns.length} offlining instance.")
       entranceNum = entranceNum - offlineIns.length

@@ -25,6 +25,7 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.slf4j.Logger;
@@ -123,7 +124,8 @@ public class UserIpConfigrationRestfulApi {
             return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
         }
         Map<String,Object> resultMap = userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize);
-        return Message.ok().data("userIpList", userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize));
+        return Message.ok().data("userIpList", resultMap.get("userIpList"))
+                .data(JobRequestConstants.TOTAL_PAGE(),resultMap.get(JobRequestConstants.TOTAL_PAGE()));
     }
 
     @ApiImplicitParams({

@@ -48,7 +48,7 @@ fi
 ## modify by jiangkun0928 for change skywalking -> pinpoint end
 if test -z "$SERVER_JAVA_OPTS"
 then
-  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD "
+  export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}.gc $DEBUG_CMD "
 fi
 
 #SPRING_ARGS

@@ -327,13 +327,13 @@ export default {
     },
     edit(data) {
       const {
-        user, creator, ipList, bussinessUser, desc
+        id, user, creator, ipList, bussinessUser, desc
       } = data
       this.modalData = {
-        user, creator, ipList, bussinessUser, desc
+        id, user, creator, ipList, bussinessUser, desc
       };
       this.editData = {
-        user, creator, ipList, bussinessUser, desc
+        id, user, creator, ipList, bussinessUser, desc
       }
       this.showCreateModal = true;
       this.mode = 'edit';

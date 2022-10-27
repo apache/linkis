@@ -340,13 +340,13 @@ export default {
     },
     edit(data) {
       const {
-        user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc
       } = data
       this.modalData = {
-        user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc
       };
       this.editData = {
-        user, creator, tenantValue, bussinessUser, desc
+        id, user, creator, tenantValue, bussinessUser, desc
       };
       this.showCreateModal = true;
       this.mode = 'edit';

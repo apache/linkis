@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, FileInputStream, InputStream, IOException}
 import java.util.Properties
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 import scala.collection.JavaConverters._
@@ -34,6 +35,8 @@ private[conf] object BDPConfiguration extends Logging {
   val DEFAULT_PROPERTY_FILE_NAME = "linkis.properties"
 
   val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
+
+  val DEFAULT_CONFIG_HOT_LOAD_DELAY_MILLS = 3 * 60 * 1000L
 
   private val extractConfig = new Properties
   private val config = new Properties
@@ -127,6 +130,13 @@ private[conf] object BDPConfiguration extends Logging {
         writeLock.unlock()
       }
     }
+    Utils.defaultScheduler.scheduleWithFixedDelay(
+      hotLoadTask,
+      3000L,
+      DEFAULT_CONFIG_HOT_LOAD_DELAY_MILLS,
+      TimeUnit.MILLISECONDS
+    )
+    logger.info("hotload config task inited.")
   }
 
   Utils.tryCatch {

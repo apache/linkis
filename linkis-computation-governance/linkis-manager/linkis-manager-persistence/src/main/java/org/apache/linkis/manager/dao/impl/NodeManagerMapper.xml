@@ -29,7 +29,11 @@
         update linkis_cg_manager_label_service_instance set service_instance = #{instance} where service_instance = #{tickedId}
     </update>
 
-
-
+    <select id="getNodeInstancesByOwnerList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
+        select * from linkis_cg_manager_service_instance where owner in(
+          <foreach collection='owner' separator=',' item='owner'>
+            #{owner}
+          </foreach>)
+    </select>
 
 </mapper>

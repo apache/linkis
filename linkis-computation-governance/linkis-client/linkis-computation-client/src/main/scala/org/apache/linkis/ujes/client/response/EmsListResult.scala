@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.label.constant;
+package org.apache.linkis.ujes.client.response
 
-public class LabelValueConstant {
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
+import org.apache.linkis.httpclient.dws.response.DWSResult
 
-  public static final String OFFLINE_VALUE = "offline";
+import java.util
+
+import scala.beans.BeanProperty
+
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/listAllEMs")
+class EmsListResult extends DWSResult {
+
+  @BeanProperty
+  var tasks: util.ArrayList[util.Map[String, Object]] = _
+
+  @BeanProperty
+  var totalPage: Int = _
+
 }

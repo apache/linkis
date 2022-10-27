@@ -15,9 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.label.constant;
+package org.apache.linkis.configuration.dao;
 
-public class LabelValueConstant {
+import org.apache.linkis.configuration.entity.UserIpVo;
 
-  public static final String OFFLINE_VALUE = "offline";
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface UserIpMapper {
+
+  List<UserIpVo> queryUserIPList(@Param("user") String user, @Param("creator") String creator);
+
+  void deleteUserIP(Integer id);
+
+  void updateUserIP(UserIpVo userIpVo);
+
+  void createUserIP(UserIpVo userIpVo);
+
+  UserIpVo queryUserIP(@Param("user") String user, @Param("creator") String creator);
 }

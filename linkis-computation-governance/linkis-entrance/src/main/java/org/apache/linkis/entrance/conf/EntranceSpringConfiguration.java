@@ -27,19 +27,7 @@ import org.apache.linkis.entrance.event.EntranceEventListenerBus;
 import org.apache.linkis.entrance.execute.impl.EntranceExecutorManagerImpl;
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor;
 import org.apache.linkis.entrance.interceptor.OnceJobInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.CSEntranceInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.CommentInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.CompatibleInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.LabelCheckInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.LogPathCreateInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.ParserVarLabelInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.SQLCodeCheckInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.SQLLimitEntranceInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.ScalaCodeInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.ShellDangerousGrammerInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.SparkCodeCheckInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.StorePathEntranceInterceptor;
-import org.apache.linkis.entrance.interceptor.impl.VarSubstitutionInterceptor;
+import org.apache.linkis.entrance.interceptor.impl.*;
 import org.apache.linkis.entrance.log.CacheLogManager;
 import org.apache.linkis.entrance.log.ErrorCodeListener;
 import org.apache.linkis.entrance.log.ErrorCodeManager;
@@ -161,7 +149,9 @@ public class EntranceSpringConfiguration {
       new StorePathEntranceInterceptor(),
       new ScalaCodeInterceptor(),
       new SQLLimitEntranceInterceptor(),
-      new CommentInterceptor()
+      new CommentInterceptor(),
+      new SetTenantLabelInterceptor(),
+      new UserCreatorIPCheckInterceptor()
     };
   }
 

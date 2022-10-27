@@ -14,10 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.configuration.dao;
 
-package org.apache.linkis.manager.label.constant;
+import org.apache.linkis.configuration.entity.TenantVo;
 
-public class LabelValueConstant {
+import org.apache.ibatis.annotations.Param;
 
-  public static final String OFFLINE_VALUE = "offline";
+import java.util.List;
+
+public interface UserTenantMapper {
+
+  List<TenantVo> queryTenantList(
+      @Param("user") String user,
+      @Param("creator") String creator,
+      @Param("tenant_value") String tenant);
+
+  void deleteTenant(@Param("id") Integer id);
+
+  void updateTenant(TenantVo tenantVo);
+
+  void createTenant(TenantVo tenantVo);
+
+  TenantVo queryTenant(@Param("user") String user, @Param("creator") String creator);
 }

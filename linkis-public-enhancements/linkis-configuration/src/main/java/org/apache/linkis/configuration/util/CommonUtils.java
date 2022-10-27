@@ -14,10 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.configuration.util;
 
-package org.apache.linkis.manager.label.constant;
-
-public class LabelValueConstant {
-
-  public static final String OFFLINE_VALUE = "offline";
+public class CommonUtils {
+  public static boolean ipCheck(String str) {
+    if (str != null && !str.isEmpty()) {
+      String pattern = ConfigurationConfiguration.IPCHECK;
+      if (str.matches(pattern)) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.linkis.configuration.util;
 
 import org.apache.linkis.common.conf.CommonVars$;
@@ -30,6 +29,12 @@ public class ConfigurationConfiguration {
 
   public static final String COPYKEYTOKEN =
       CommonVars$.MODULE$.apply("wds.linkis.configuration.copykey.token", "e8724-e").getValue();
+  public static final String IPCHECK =
+      CommonVars$.MODULE$
+          .apply(
+              "linkis.configuration.ipcheck.pattern",
+              "^(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}$")
+          .getValue();
 
   static {
     PERMIT_LABEL_TYPE.add(new UserCreatorLabel());

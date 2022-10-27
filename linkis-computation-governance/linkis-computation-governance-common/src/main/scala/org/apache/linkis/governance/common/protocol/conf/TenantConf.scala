@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.label.constant;
+package org.apache.linkis.governance.common.protocol.conf
 
-public class LabelValueConstant {
+import org.apache.linkis.protocol.message.RequestProtocol
 
-  public static final String OFFLINE_VALUE = "offline";
-}
+trait TenantConf extends RequestProtocol
+
+case class TenantRequest(user: String, creator: String) extends TenantConf
+
+case class TenantResponse(user: String, creator: String, tenant: String)

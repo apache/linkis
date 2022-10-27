@@ -14,10 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.configuration.service;
 
-package org.apache.linkis.manager.label.constant;
+import org.apache.linkis.configuration.entity.UserIpVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 
-public class LabelValueConstant {
+import java.util.List;
 
-  public static final String OFFLINE_VALUE = "offline";
+public interface UserIpConfigService {
+
+  void createUserIP(UserIpVo userIpVo) throws ConfigurationException;
+
+  void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
+
+  void deleteUserIP(Integer id) throws ConfigurationException;
+
+  List<UserIpVo> queryUserIPList(String user, String creator, Integer pageNow, Integer pageSize);
+
+  Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
+
+  UserIpVo queryUserIP(String user, String creator);
 }

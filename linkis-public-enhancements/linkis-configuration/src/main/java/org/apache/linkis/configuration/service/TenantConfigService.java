@@ -14,10 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.linkis.configuration.service;
 
-package org.apache.linkis.manager.label.constant;
+import org.apache.linkis.configuration.entity.TenantVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 
-public class LabelValueConstant {
+import java.util.List;
 
-  public static final String OFFLINE_VALUE = "offline";
+public interface TenantConfigService {
+
+  List<TenantVo> queryTenantList(String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
+
+  void deleteTenant(Integer id) throws ConfigurationException;
+
+  void updateTenant(TenantVo tenantVo) throws ConfigurationException;
+
+  void createTenant(TenantVo tenantVo) throws ConfigurationException;
+
+  Boolean checkUserCteator(String user, String creator, String tenantValue)
+      throws ConfigurationException;
+
+  TenantVo queryTenant(String user, String creator);
 }

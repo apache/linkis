@@ -44,7 +44,7 @@ public class UserIpServiceImpl implements UserIpService {
     if (null == userIpVo) {
       logger.warn(
           "UserIpCache user {} creator {} data loading failed", request.user(), request.creator());
-      return new UserIpResponse(userIpVo.getUser(), userIpVo.getCreator(), "");
+      return new UserIpResponse(request.user(), request.creator(), "");
     } else {
       return new UserIpResponse(userIpVo.getUser(), userIpVo.getCreator(), userIpVo.getIpList());
     }

@@ -44,7 +44,7 @@ public class TenantServiceImpl implements TenantService {
     if (null == tenantVo) {
       logger.warn(
           "TenantCache user {} creator {} data loading failed", request.user(), request.creator());
-      return new TenantResponse(tenantVo.getUser(), tenantVo.getCreator(), "");
+      return new TenantResponse(request.user(), request.creator(), "");
     } else {
       return new TenantResponse(
           tenantVo.getUser(), tenantVo.getCreator(), tenantVo.getTenantValue());

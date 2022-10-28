@@ -46,7 +46,10 @@ class SpringRestfulCatchAOP extends Logging {
       }
     }
     // convert http status code
-    getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
+    val response = getCurrentHttpResponse
+    if (response != null) {
+      getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
+    }
     resp
   }
 
@@ -54,8 +57,7 @@ class SpringRestfulCatchAOP extends Logging {
     val requestAttributes = RequestContextHolder.getRequestAttributes
     requestAttributes match {
       case attributes: ServletRequestAttributes =>
-        val response = attributes.getResponse
-        response
+        attributes.getResponse
       case _ => null
     }
   }

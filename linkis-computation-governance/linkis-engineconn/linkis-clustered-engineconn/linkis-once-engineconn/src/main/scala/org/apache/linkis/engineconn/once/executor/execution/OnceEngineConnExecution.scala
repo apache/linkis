@@ -132,11 +132,12 @@ class OnceExecutorManagerEngineConnExecution extends EngineConnExecution {
         shouldSet = OnceEngineConnExecution.getSupportedEngineConnModes.contains(mode)
       case _ =>
     }
-    if (shouldSet)
+    if (shouldSet) {
       DataWorkCloudApplication.setProperty(
         EngineConnExecutorConfiguration.EXECUTOR_MANAGER_CLASS.key,
         "org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManagerImpl"
       )
+    }
   }
 
   /**

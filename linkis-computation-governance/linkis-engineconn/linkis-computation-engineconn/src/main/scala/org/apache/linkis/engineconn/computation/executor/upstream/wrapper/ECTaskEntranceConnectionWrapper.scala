@@ -35,7 +35,7 @@ class ECTaskEntranceConnectionWrapper(
 ) extends ConnectionInfoWrapper
     with Logging {
 
-  /* delete if time for any entry being in map exceeds threshold*/
+  /* delete if time for any entry being in map exceeds threshold */
   private val wrapperEntriesSurviveThresholdSec =
     ComputationExecutorConf.UPSTREAM_MONITOR_WRAPPER_ENTRIES_SURVIVE_THRESHOLD_SEC
 
@@ -52,7 +52,7 @@ class ECTaskEntranceConnectionWrapper(
   def getExecutor(): ComputationExecutor = executor
 
   override def updateConnectionInfo(newInfo: UpstreamConnection): Unit = newInfo match {
-    case newInfo2: ECTaskEntranceConnection => {
+    case newInfo2: ECTaskEntranceConnection =>
       if (connectionInfo == null || StringUtils.isBlank(connectionInfo.getKey)) {
         connectionInfo = newInfo2
       } else if (!connectionInfo.isSameConnectionAs(newInfo2)) {
@@ -65,7 +65,6 @@ class ECTaskEntranceConnectionWrapper(
         connectionInfo = newInfo2
       }
       lastUpdateTime = System.currentTimeMillis
-    }
     case _ =>
       logger.error("wrong data-type for UpstreamConnection:" + newInfo.getClass.getCanonicalName)
   }

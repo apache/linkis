@@ -37,6 +37,6 @@ object LinkisPreFilter extends Logging {
     preFilters.add(linkisPreFilter)
   }
 
-  def getLinkisPreFilters = preFilters
+  def getLinkisPreFilters: java.util.List[LinkisPreFilter] = preFilters
 
 }

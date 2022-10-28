@@ -137,9 +137,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   //  override def getName: String = ComputationExecutorConf.DEFAULT_COMPUTATION_NAME
 
-  protected def ensureOp[A](f: => A): A = if (!isEngineInitialized)
+  protected def ensureOp[A](f: => A): A = if (!isEngineInitialized) {
     f
-  else ensureIdle(f)
+  } else ensureIdle(f)
 
   protected def beforeExecute(engineConnTask: EngineConnTask): Unit = {}
 
@@ -194,15 +194,14 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         }
       engineExecutionContext.setTotalParagraph(codes.length)
       codes.indices.foreach({ index =>
-        if (ExecutionNodeStatus.Cancelled == engineConnTask.getStatus)
+        if (ExecutionNodeStatus.Cancelled == engineConnTask.getStatus) {
           return ErrorExecuteResponse("Job is killed by user!", null)
+        }
         val code = codes(index)
         engineExecutionContext.setCurrentParagraph(index + 1)
-        response = Utils.tryCatch(
-          if (incomplete.nonEmpty)
-            executeCompletely(engineExecutionContext, code, incomplete.toString())
-          else executeLine(engineExecutionContext, code)
-        ) { t =>
+        response = Utils.tryCatch(if (incomplete.nonEmpty) {
+          executeCompletely(engineExecutionContext, code, incomplete.toString())
+        } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
         }
         // info(s"Finished to execute task ${engineConnTask.getTaskId}")
@@ -218,9 +217,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           case e: OutputExecuteResponse =>
             incomplete.setLength(0)
             val output =
-              if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit)
+              if (StringUtils.isNotEmpty(e.getOutput) && e.getOutput.length > outputPrintLimit) {
                 e.getOutput.substring(0, outputPrintLimit)
-              else e.getOutput
+              } else e.getOutput
             engineExecutionContext.appendStdout(output)
             if (StringUtils.isNotBlank(e.getOutput)) engineExecutionContext.sendResultSet(e)
           case _: IncompleteExecuteResponse =>

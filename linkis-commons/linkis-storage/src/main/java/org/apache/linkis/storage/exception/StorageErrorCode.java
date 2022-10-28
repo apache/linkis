@@ -20,7 +20,7 @@ package org.apache.linkis.storage.exception;
 public enum StorageErrorCode {
 
   /** */
-  FS_NOT_INIT(53001, "please init first");
+  FS_NOT_INIT(53001, "please init first(请先初始化)");
 
   StorageErrorCode(int errorCode, String message) {
     this.code = errorCode;

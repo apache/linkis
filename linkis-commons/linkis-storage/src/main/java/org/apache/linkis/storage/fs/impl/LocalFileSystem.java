@@ -57,6 +57,8 @@ import java.util.Stack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.TO_BE_UNKNOW;
+
 public class LocalFileSystem extends FileSystem {
 
   private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystem.class);
@@ -233,7 +235,7 @@ public class LocalFileSystem extends FileSystem {
 
       } catch (NoSuchFileException e) {
         LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
-        throw new StorageWarnException(51001, e.getMessage());
+        throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
       }
       return true;
     }
@@ -285,6 +287,9 @@ public class LocalFileSystem extends FileSystem {
     } else {
       this.properties = new HashMap<String, String>();
     }
+    if (FsPath.WINDOWS) {
+      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+    }
     if (StringUtils.isEmpty(group)) {
       String groupInfo;
       try {
@@ -323,7 +328,7 @@ public class LocalFileSystem extends FileSystem {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
     } catch (NoSuchFileException e) {
       LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
-      throw new StorageWarnException(51001, e.getMessage());
+      throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
     }
 
     fsPath.setIsdir(attr.isDirectory());
@@ -438,6 +443,7 @@ public class LocalFileSystem extends FileSystem {
     throw new IOException("only owner can rename path " + path);
   }
 
+  @Override
   public void close() throws IOException {}
 
   /** Utils method start */
@@ -458,7 +464,8 @@ public class LocalFileSystem extends FileSystem {
       return true;
     }
     String pathGroup = attr.group().getName();
-    if ((pathGroup.equals(user) || group.contains(pathGroup))
+    LOG.debug("pathGroup: {}, group: {}, permissions: {}", pathGroup, group, permissions);
+    if ((pathGroup.equals(user) || (group != null && group.contains(pathGroup)))
         && permissions.contains(groupPermission)) {
       return true;
     } else if (permissions.contains(otherPermission)) {

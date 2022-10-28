@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEngineRecycleService
@@ -54,9 +54,9 @@ class DefaultEngineRecycleService
     // 1. 规则解析
     val ruleList = engineRecyclingRequest.getRecyclingRuleList
     // 2. 返回一系列待回收Engine，
-    val recyclingNodeSet = ruleList
+    val recyclingNodeSet = ruleList.asScala
       .flatMap { rule =>
-        val ruleExecutorOption = ruleExecutorList.find(_.ifAccept(rule))
+        val ruleExecutorOption = ruleExecutorList.asScala.find(_.ifAccept(rule))
         if (ruleExecutorOption.isDefined) {
           ruleExecutorOption.get.executeRule(rule)
         } else {

@@ -55,9 +55,9 @@
             <if test="pHistory.source != null">`source` = #{pHistory.source},</if>
             <if test="pHistory.contextType != null">`context_type` = #{pHistory.contextType},</if>
             <if test="pHistory.keyword != null">`keyword` = #{pHistory.keyword},</if>
-            <if test="updateTime != null">`update_time` = #{updateTime},</if>
-            <if test="createTime != null">`create_time` = #{createTime},</if>
-            <if test="accessTime != null">`access_time` = #{accessTime},</if>
+            <if test="pHistory.updateTime != null">`update_time` = #{pHistory.updateTime},</if>
+            <if test="pHistory.createTime != null">`create_time` = #{pHistory.createTime},</if>
+            <if test="pHistory.accessTime != null">`access_time` = #{pHistory.accessTime},</if>
         </trim>
         WHERE id = #{pHistory.id}
     </update>

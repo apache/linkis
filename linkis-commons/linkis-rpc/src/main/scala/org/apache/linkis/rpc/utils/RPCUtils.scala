@@ -27,8 +27,9 @@ import org.apache.commons.lang3.StringUtils
 
 import java.lang.reflect.UndeclaredThrowableException
 import java.net.ConnectException
+import java.util.Locale
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.netflix.client.ClientException
 import feign.RetryableException
@@ -66,8 +67,11 @@ object RPCUtils {
       parsedServiceId: String,
       tooManyDeal: List[String] => Option[String]
   ): Option[String] = {
-    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices
-      .filter(_.toLowerCase.contains(parsedServiceId.toLowerCase))
+    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala
+      .filter(
+        _.toLowerCase(Locale.getDefault)
+          .contains(parsedServiceId.toLowerCase(Locale.getDefault()))
+      )
       .toList
     if (services.length == 1) Some(services.head)
     else if (services.length > 1) tooManyDeal(services)
@@ -93,6 +97,20 @@ object RPCUtils {
     if (appNameLower.startsWith(RPCConfiguration.PUBLIC_SERVICE_APP_PREFIX)) {
       val serviceName = appNameLower.replaceFirst(RPCConfiguration.PUBLIC_SERVICE_APP_PREFIX, "")
       RPCConfiguration.PUBLIC_SERVICE_LIST.exists(_.equalsIgnoreCase(serviceName))
+    } else {
+      false
+    }
+  }
+
+  def isLinkisManageMerged(appName: String): Boolean = {
+    if (!RPCConfiguration.LINKIS_MANAGER_SERVICE_MERGED.getValue || StringUtils.isBlank(appName)) {
+      return false
+    }
+    val appNameLower = appName.toLowerCase()
+    if (appNameLower.startsWith(RPCConfiguration.COMPUTATION_GOVERNANCE_APP_PREFIX)) {
+      val serviceName =
+        appNameLower.replaceFirst(RPCConfiguration.COMPUTATION_GOVERNANCE_APP_PREFIX, "")
+      RPCConfiguration.LINKIS_MANAGER_SERVICE_LIST.exists(_.equalsIgnoreCase(serviceName))
     } else {
       false
     }

@@ -81,13 +81,14 @@ class ResultSetCacheGatewayParser extends AbstractGatewayParser {
       case RESULT_SET_CACHE_URI_REGEX(version, _) =>
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
         val requestBody =
-          if (StringUtils.isEmpty(gatewayContext.getRequest.getRequestBody))
+          if (StringUtils.isEmpty(gatewayContext.getRequest.getRequestBody)) {
             new util.HashMap[String, Object]
-          else
+          } else {
             BDPJettyServerHelper.jacksonJson.readValue(
               gatewayContext.getRequest.getRequestBody,
               classOf[util.Map[String, Object]]
             )
+          }
         val serviceInstance = getServiceInstance(gatewayContext, requestBody)
         if (serviceInstance == null) return
         gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)

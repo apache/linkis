@@ -43,7 +43,7 @@ class CsExecutor extends Executor {
 
   override def state: ExecutorState.ExecutorState = this._state
 
-  override def getExecutorInfo = new ExecutorInfo(id, state)
+  override def getExecutorInfo: ExecutorInfo = new ExecutorInfo(id, state)
 
   @throws[IOException]
   override def close(): Unit = {}

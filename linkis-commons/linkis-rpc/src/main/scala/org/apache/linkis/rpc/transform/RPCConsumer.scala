@@ -19,9 +19,13 @@ package org.apache.linkis.rpc.transform
 
 import org.apache.linkis.common.exception.ExceptionManager
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_NOT_FOUND
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.CORRESPONDING_TO_INITIALIZE
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, JMap, Message}
+
+import java.text.MessageFormat
 
 import scala.runtime.BoxedUnit
 
@@ -50,13 +54,13 @@ private[linkis] object RPCConsumer {
           val clazz = Utils.tryThrow(Class.forName(objectClass)) {
             case _: ClassNotFoundException =>
               new DWCURIException(
-                10003,
-                s"The corresponding anti-sequence class $objectClass was not found.(找不到对应的反序列类$objectClass.)"
+                CORRESPONDING_NOT_FOUND.getErrorCode,
+                MessageFormat.format(CORRESPONDING_NOT_FOUND.getErrorDesc, objectClass)
               )
             case t: ExceptionInInitializerError =>
               val exception = new DWCURIException(
-                10004,
-                s"The corresponding anti-sequence class ${objectClass} failed to initialize.(对应的反序列类${objectClass}初始化失败.)"
+                CORRESPONDING_TO_INITIALIZE.getErrorCode,
+                MessageFormat.format(CORRESPONDING_TO_INITIALIZE.getErrorDesc, objectClass)
               )
               exception.initCause(t)
               exception

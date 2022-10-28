@@ -26,7 +26,7 @@ class FSInfo(
     var lastAccessTime: Long = System.currentTimeMillis()
 ) {
 
-  def timeout = System
+  def timeout: Boolean = System
     .currentTimeMillis() - lastAccessTime > (StorageConfiguration.IO_FS_EXPIRE_TIME.getValue - 120 * 1000)
 
 }

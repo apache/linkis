@@ -18,5 +18,7 @@
 package org.apache.linkis.engineplugin.elasticsearch.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.RESPONSE_FAIL_IS_EMPTY
 
-case class EsConvertResponseException(errorMsg: String) extends ErrorException(70113, errorMsg)
+case class EsConvertResponseException(errorMsg: String)
+    extends ErrorException(RESPONSE_FAIL_IS_EMPTY.getErrorCode, errorMsg)

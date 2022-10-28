@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component
 import java.util
 import java.util.function.BiFunction
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  * Default scorer to traversal the network between node and label
@@ -73,15 +73,15 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
           count0
         }
       }
-    val labelIdToEntity = labels
+    val labelIdToEntity = labels.asScala
       .map(label => {
         ftCounts.compute(label.getFeature, countFunction)
         (String.valueOf(label.getId), label)
       })
       .toMap
-    outNodeDegree.foreach { case (node, outLabels) =>
+    outNodeDegree.asScala.foreach { case (node, outLabels) =>
       // expression: base_core / feature_count * feature_boost
-      val scoreOutDegree = outLabels
+      val scoreOutDegree = outLabels.asScala
         .map(label => {
           if (labelIdToEntity.contains(String.valueOf(label.getId))) {
             val feature = Option(label.getFeature).getOrElse(Feature.OPTIONAL)
@@ -92,7 +92,7 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
       nodeScores.put(node, scoreOutDegree)
     }
     labelIdToEntity
-  }
+  }.asJava
 
   private def traversalAndScoreOnInDegree(
       baseCore: Double,
@@ -104,7 +104,7 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
     val relateLimit = LabelCommonConfig.LABEL_SCORER_RELATE_LIMIT.getValue;
     var relateSum = 0d
     var relateCount = 0
-    inNodeDegree
+    inNodeDegree.asScala
       .map { case (label, nodes) =>
         if (nodes.size() <= relateLimit) {
           (label, 0d)
@@ -128,7 +128,7 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
             Feature.UNKNOWN.getBoost * nodes.size().asInstanceOf[Double] / relateCount
               .asInstanceOf[Double]
           )
-          nodes.foreach(node => {
+          nodes.asScala.foreach(node => {
             val nodeScore = nodeScores.get(node)
             if (Option(nodeScore).isDefined) {
               nodeScores.put(node, nodeScore + minScore)
@@ -148,16 +148,18 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
       outNodeDegree: util.Map[ServiceInstance, util.List[PersistenceLabel]]
   ): util.Map[ScoreServiceInstance, util.List[PersistenceLabel]] = {
     // Average value
-    val average = nodeScores.values().foldLeft(0d)(_ + _) / nodeScores.size.asInstanceOf[Double]
+    val average =
+      nodeScores.values().asScala.foldLeft(0d)(_ + _) / nodeScores.size.asInstanceOf[Double]
     val deviation = math.sqrt(
       nodeScores
         .values()
+        .asScala
         .foldLeft(0d)((sum, score) => {
           sum + math.pow(score - average, 2)
         }) * (1.0d / nodeScores.size.asInstanceOf[Double])
     )
     var offset = 0d
-    val rawOutput = nodeScores.map { case (node, score) =>
+    val rawOutput = nodeScores.asScala.map { case (node, score) =>
       val labelScoreServiceInstance: ScoreServiceInstance = new LabelScoreServiceInstance(node)
       val scoreCalculate = if (deviation != 0) { (score - average) / deviation }
       else score
@@ -165,13 +167,13 @@ class DefaultNodeLabelScorer extends NodeLabelScorer {
         offset = scoreCalculate
       }
       labelScoreServiceInstance.setScore(scoreCalculate)
-      (labelScoreServiceInstance, outNodeDegree(node))
+      (labelScoreServiceInstance, outNodeDegree.get(node))
     }
     rawOutput.foreach { case (instance, _) =>
       instance.setScore(instance.getScore + math.abs(offset))
     }
     if (null != rawOutput && rawOutput.nonEmpty) {
-      new util.HashMap[ScoreServiceInstance, util.List[PersistenceLabel]](rawOutput.toMap)
+      new util.HashMap[ScoreServiceInstance, util.List[PersistenceLabel]](rawOutput.toMap.asJava)
     } else {
       new util.HashMap[ScoreServiceInstance, util.List[PersistenceLabel]]()
     }

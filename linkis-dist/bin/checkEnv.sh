@@ -124,15 +124,11 @@ check_service_port
 SERVER_PORT=$ENGINECONNMANAGER_PORT
 check_service_port
 
-SERVER_PORT=$ENGINECONN_PLUGIN_SERVER_PORT
-check_service_port
-
 SERVER_PORT=$ENTRANCE_PORT
 check_service_port
 
 SERVER_PORT=$PUBLICSERVICE_PORT
 check_service_port
-
 
 if [ "$portIsOccupy" = true ];then
   echo "The port is already in use, please check before installing"

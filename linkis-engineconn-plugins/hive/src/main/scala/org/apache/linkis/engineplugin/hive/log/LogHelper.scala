@@ -66,7 +66,9 @@ object LogHelper {
 
   def main(args: Array[String]): Unit = {
     val log = "ssssx"
+    // scalastyle:off println
     println(matchCompletedPattern(log))
+    // scalastyle:on println
   }
 
 }

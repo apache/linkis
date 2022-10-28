@@ -27,15 +27,17 @@ import java.io.File
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 
+import scala.collection.JavaConverters._
+
 object ProxyUserUtils extends Logging {
 
   private val (props, file) =
-    if (ENABLE_PROXY_USER.getValue)
+    if (ENABLE_PROXY_USER.getValue) {
       (
         new Properties,
         new File(this.getClass.getClassLoader.getResource(PROXY_USER_CONFIG.getValue).toURI.getPath)
       )
-    else (null, null)
+    } else (null, null)
 
   private var lastModified = 0L
 
@@ -57,7 +59,7 @@ object ProxyUserUtils extends Logging {
     val newProps = new Properties
     val input = FileUtils.openInputStream(file)
     Utils.tryFinally(newProps.load(input))(IOUtils.closeQuietly(input))
-    props.putAll(newProps)
+    newProps.asScala.foreach { case (k, v) => props.put(k, v) }
   }
 
   def getProxyUser(umUser: String): String = if (ENABLE_PROXY_USER.getValue) {

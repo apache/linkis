@@ -21,40 +21,43 @@ import org.apache.linkis.scheduler.queue.{AbstractGroup, SchedulerEvent}
 
 import java.util.concurrent.TimeUnit
 
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, FiniteDuration}
 
 class FIFOGroup(groupName: String, initCapacity: Int, maxCapacity: Int) extends AbstractGroup {
 
   private var maxAskInterval = 30000L
   private var minAskInterval = 10000L
 
-  def getMaxAskInterval = maxAskInterval
-  def setMaxAskInterval(maxAskInterval: Long) = this.maxAskInterval = maxAskInterval
-  def getMinAskInterval = minAskInterval
-  def setMinAskInterval(minAskInterval: Long) = this.minAskInterval = minAskInterval
+  def getMaxAskInterval: Long = maxAskInterval
+  def setMaxAskInterval(maxAskInterval: Long): Unit = this.maxAskInterval = maxAskInterval
+  def getMinAskInterval: Long = minAskInterval
+  def setMinAskInterval(minAskInterval: Long): Unit = this.minAskInterval = minAskInterval
 
-  def getMaxAskExecutorDuration = if (getMaxAskExecutorTimes <= 0) Duration.Inf
-  else Duration(getMaxAskExecutorTimes, TimeUnit.MILLISECONDS)
+  def getMaxAskExecutorDuration: Duration = if (getMaxAskExecutorTimes <= 0) {
+    Duration.Inf
+  } else {
+    Duration(getMaxAskExecutorTimes, TimeUnit.MILLISECONDS)
+  }
 
-  def getAskExecutorInterval = if (getMaxAskExecutorTimes <= 0)
+  def getAskExecutorInterval: Duration = if (getMaxAskExecutorTimes <= 0) {
     Duration(maxAskInterval, TimeUnit.MILLISECONDS)
-  else if (getMaxAskExecutorTimes > maxAskInterval)
+  } else if (getMaxAskExecutorTimes > maxAskInterval) {
     Duration(
       math.min(math.max(getMaxAskExecutorTimes / 10, minAskInterval), maxAskInterval),
       TimeUnit.MILLISECONDS
     )
-  else if (getMaxAskExecutorTimes > minAskInterval)
+  } else if (getMaxAskExecutorTimes > minAskInterval) {
     Duration(minAskInterval, TimeUnit.MILLISECONDS)
-  else Duration(getMaxAskExecutorTimes, TimeUnit.MILLISECONDS)
+  } else Duration(getMaxAskExecutorTimes, TimeUnit.MILLISECONDS)
 
-  override def getGroupName = groupName
+  override def getGroupName: String = groupName
 
   /**
    * The percentage of waiting Jobs in the entire ConsumeQueue(等待的Job占整个ConsumeQueue的百分比)
    *
    * @return
    */
-  override def getInitCapacity = initCapacity
+  override def getInitCapacity: Int = initCapacity
 
   /**
    * The waiting Job accounts for the largest percentage of the entire
@@ -62,6 +65,6 @@ class FIFOGroup(groupName: String, initCapacity: Int, maxCapacity: Int) extends 
    *
    * @return
    */
-  override def getMaximumCapacity = maxCapacity
-  override def belongTo(event: SchedulerEvent) = true
+  override def getMaximumCapacity: Int = maxCapacity
+  override def belongTo(event: SchedulerEvent): Boolean = true
 }

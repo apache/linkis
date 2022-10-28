@@ -18,6 +18,8 @@
 package org.apache.linkis.configuration.util
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary._
+import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.THE_LABEL_PARAMETER_IS_EMPTY
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -26,7 +28,9 @@ import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabe
 
 import org.springframework.util.CollectionUtils
 
+import java.text.MessageFormat
 import java.util
+import java.util.Locale
 
 import scala.collection.JavaConverters._
 
@@ -36,21 +40,21 @@ object LabelParameterParser {
   def getDefaultEngineVersion(engineType: String): String = {
     var returnType: CommonVars[String] = null
     EngineType.values.foreach(DefinedEngineType => {
-      if (DefinedEngineType.toString.equals(engineType.toLowerCase)) {
-        returnType = engineType.toLowerCase match {
+      if (DefinedEngineType.toString.equals(engineType.toLowerCase(Locale.ROOT))) {
+        returnType = engineType.toLowerCase(Locale.ROOT) match {
           case "spark" => GovernanceCommonConf.SPARK_ENGINE_VERSION
           case "hive" => GovernanceCommonConf.HIVE_ENGINE_VERSION
           case "python" => GovernanceCommonConf.PYTHON_ENGINE_VERSION
           case _ =>
             throw new ConfigurationException(
-              s"Configuration does not support engine type:${engineType}(配置暂不支持${engineType}引擎类型)"
+              MessageFormat.format(CONFIGURATION_NOT_TYPE.getErrorDesc(), engineType)
             )
         }
       }
     })
     if (returnType == null) {
       throw new ConfigurationException(
-        s"The corresponding engine type is not matched:${engineType}(没有匹配到对应的引擎类型:${engineType})"
+        MessageFormat.format(CORRESPONDING_ENGINE_TYPE.getErrorDesc(), engineType)
       )
     }
 
@@ -84,11 +88,13 @@ object LabelParameterParser {
         case a: UserCreatorLabel => Unit
         case a: EngineTypeLabel => Unit
         case label =>
-          throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
+          throw new ConfigurationException(
+            MessageFormat.format(TYPE_OF_LABEL_NOT_SUPPORTED.getErrorDesc(), label.getClass)
+          )
       }
       true
     } else {
-      throw new ConfigurationException("The label parameter is empty")
+      throw new ConfigurationException(THE_LABEL_PARAMETER_IS_EMPTY.getErrorDesc())
     }
   }
 

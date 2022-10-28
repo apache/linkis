@@ -23,7 +23,7 @@ import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.exception.JobHistoryFailedException
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail, SubJobInfo}
+import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.protocol.constants.TaskConstant
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest
 import java.util
 import java.util.Date
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import sun.net.util.IPAddressUtil
 
@@ -91,17 +91,11 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * 对于一个在内存中找不到这个任务的话，可以直接干掉
+   * If the task cannot be found in memory, you can directly kill it
    *
    * @param taskID
    */
   def forceKill(taskID: Long): Unit = {
-    val subJobInfo = new SubJobInfo
-    val subJobDetail = new SubJobDetail
-    subJobDetail.setId(taskID)
-    subJobDetail.setStatus(SchedulerEventState.Cancelled.toString)
-    subJobInfo.setSubJobDetail(subJobDetail)
-    val jobDetailReqUpdate = JobDetailReqUpdate(subJobInfo)
     val jobRequest = new JobRequest
     jobRequest.setId(taskID)
     jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
@@ -109,24 +103,16 @@ object JobHistoryHelper extends Logging {
     jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()))
     val jobReqUpdate = JobReqUpdate(jobRequest)
     sender.ask(jobReqUpdate)
-    sender.ask(jobDetailReqUpdate)
   }
 
   /**
-   * 批量强制kill
+   * Batch forced kill
    *
    * @param taskIdList
    */
   def forceBatchKill(taskIdList: util.ArrayList[java.lang.Long]): Unit = {
-    val subJobInfoList = new util.ArrayList[SubJobInfo]()
     val jobReqList = new util.ArrayList[JobRequest]()
-    taskIdList.foreach(taskID => {
-      val subJobInfo = new SubJobInfo
-      val subJobDetail = new SubJobDetail
-      subJobDetail.setId(taskID)
-      subJobDetail.setStatus(SchedulerEventState.Cancelled.toString)
-      subJobInfo.setSubJobDetail(subJobDetail)
-      subJobInfoList.add(subJobInfo)
+    taskIdList.asScala.foreach(taskID => {
       val jobRequest = new JobRequest
       jobRequest.setId(taskID)
       jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
@@ -134,9 +120,7 @@ object JobHistoryHelper extends Logging {
       jobRequest.setUpdatedTime(new Date(System.currentTimeMillis()))
       jobReqList.add(jobRequest)
     })
-    val jobDetailReqBatchUpdate = JobDetailReqBatchUpdate(subJobInfoList)
     val jobReqBatchUpdate = JobReqBatchUpdate(jobReqList)
-    sender.ask(jobDetailReqBatchUpdate)
     sender.ask(jobReqBatchUpdate)
   }
 

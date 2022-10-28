@@ -52,9 +52,9 @@ object CSTableRegister extends Logging {
       logger.info(s"Start to register TempTable nodeName:$nodeNameStr")
       writer.flush()
       val tableName =
-        if (StringUtils.isNotBlank(alias))
+        if (StringUtils.isNotBlank(alias)) {
           s"${CSCommonUtils.CS_TMP_TABLE_PREFIX}${nodeNameStr}_${alias}"
-        else {
+        } else {
           var i = 1;
           var rsName: String = null;
           while (StringUtils.isEmpty(rsName)) {

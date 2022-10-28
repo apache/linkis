@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executor with Logging {
+abstract class EntranceExecutor(val id: Long) extends Executor with Logging {
 
   private implicit var userWithCreator: UserWithCreator = _
 
@@ -78,7 +78,6 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
   protected def callExecute(request: ExecuteRequest): ExecuteResponse
 
-  //  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
   override def toString: String = "${getId}"
 
   override def getId: Long = this.id
@@ -141,10 +140,6 @@ class EngineExecuteAsyncReturn(
 
   private var progressProcessor: ProgressProcessor = _
 
-  private var resourceReportProcessor: ResourceReportProcessor = _
-
-  private var subJobId: String = _
-
   def getLastNotifyTime: Long = lastNotifyTime
 
   def setOrchestrationObjects(
@@ -174,10 +169,6 @@ class EngineExecuteAsyncReturn(
     getProgressProcessor().foreach(IOUtils.closeQuietly(_))
   }
 
-  def setSubJobId(subJobId: String): Unit = {
-    this.subJobId = subJobId
-  }
-
   private[execute] def notifyStatus(responseEngineStatus: ResponseTaskStatus): Unit = {
     lastNotifyTime = System.currentTimeMillis()
     val response = responseEngineStatus.status match {
@@ -193,8 +184,7 @@ class EngineExecuteAsyncReturn(
               case ErrorExecuteResponse(errorMsg, error) =>
                 val errorStackTrace =
                   if (error != null) ExceptionUtils.getStackTrace(error) else StringUtils.EMPTY
-                val msg =
-                  s"Job with execId-$id + subJobId : $subJobId  execute failed,$errorMsg \n $errorStackTrace"
+                val msg = s"jobRequest($id)  execute failed,$errorMsg \n ${errorStackTrace}"
                 entranceExecuteRequest.getJob.getLogListener.foreach(
                   _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
                 )
@@ -245,7 +235,6 @@ class EngineExecuteAsyncReturn(
 
   override def notify(rs: ExecuteResponse => Unit): Unit = {
     notifyJob = rs
-    //    this synchronized notify()
   }
 
 }

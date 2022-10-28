@@ -26,6 +26,7 @@ import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfig
   PIPELINE_OUTPUT_ISOVERWRITE_SWITCH
 }
 import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant._
+import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.scheduler.executer.ExecuteResponse
 import org.apache.linkis.storage.FSFactory
@@ -46,12 +47,15 @@ class CSVExecutor extends PipeLineExecutor {
   ): ExecuteResponse = {
     if (!sourcePath.contains(STORAGE_RS_FILE_SUFFIX.getValue)) {
       throw new PipeLineErrorException(
-        70006,
-        "Exporting multiple result sets to CSV is not supported（不支持多结果集导出为CSV）"
+        EXPROTING_MULTIPLE.getErrorCode,
+        EXPROTING_MULTIPLE.getErrorDesc
       )
     }
     if (!FileSource.isResultSet(sourcePath)) {
-      throw new PipeLineErrorException(70001, "Not a result set file（不是结果集文件）")
+      throw new PipeLineErrorException(
+        NOT_A_RESULT_SET_FILE.getErrorCode,
+        NOT_A_RESULT_SET_FILE.getErrorDesc
+      )
     }
     val sourceFsPath = new FsPath(sourcePath)
     val destFsPath = new FsPath(destPath)
@@ -62,8 +66,8 @@ class CSVExecutor extends PipeLineExecutor {
     val fileSource = FileSource.create(sourceFsPath, sourceFs)
     if (!FileSource.isTableResultSet(fileSource)) {
       throw new PipeLineErrorException(
-        70002,
-        "Only result sets of type TABLE can be converted to CSV(只有table类型的结果集才能转为csv)"
+        ONLY_RESULT_CONVERTED_TO_CSV.getErrorCode,
+        ONLY_RESULT_CONVERTED_TO_CSV.getErrorDesc
       )
     }
     var nullValue = options.getOrDefault(PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE, "NULL")

@@ -28,6 +28,8 @@ import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.flink.table.client.config.entries.TableEntry;
 import org.apache.flink.table.client.config.entries.ViewEntry;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_EXIST_SESSION;
+
 /** Operation for DROP VIEW command. */
 public class DropViewOperation implements NonJobOperation {
   private final FlinkEngineConnContext context;
@@ -45,7 +47,7 @@ public class DropViewOperation implements NonJobOperation {
     Environment env = context.getExecutionContext().getEnvironment();
     TableEntry tableEntry = env.getTables().get(viewName);
     if (!(tableEntry instanceof ViewEntry) && !ifExists) {
-      throw new SqlExecutionException("'" + viewName + "' does not exist in the current session.");
+      throw new SqlExecutionException("'" + viewName + "' " + NOT_EXIST_SESSION.getErrorDesc());
     }
 
     // Here we rebuild the ExecutionContext because we want to ensure that all the remaining

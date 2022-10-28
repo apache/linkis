@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADATA_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
@@ -79,11 +80,12 @@ object MetadataGetPartitionsAction {
     }
 
     def build(): MetadataGetPartitionsAction = {
-      if (dataSourceName == null)
-        throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if (database == null) throw new DataSourceClientBuilderException("database is needed!")
-      if (table == null) throw new DataSourceClientBuilderException("table is needed!")
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
+      if (dataSourceName == null) {
+        throw new DataSourceClientBuilderException(DATASOURCENAME_NEEDED.getErrorDesc)
+      }
+      if (database == null) throw new DataSourceClientBuilderException(DATABASE_NEEDED.getErrorDesc)
+      if (table == null) throw new DataSourceClientBuilderException(TABLE_NEEDED.getErrorDesc)
+      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
 
       val metadataGetPartitionsAction = new MetadataGetPartitionsAction
       metadataGetPartitionsAction.dataSourceName = this.dataSourceName

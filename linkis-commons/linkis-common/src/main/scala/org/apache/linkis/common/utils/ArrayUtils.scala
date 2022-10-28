@@ -24,7 +24,7 @@ import scala.reflect.ClassTag
 object ArrayUtils {
 
   def newArray[T](newLength: Int, clazz: Class[_ <: Array[T]]): Array[T] =
-    reflect.Array.newInstance(clazz.getComponentType, newLength) match {
+    java.lang.reflect.Array.newInstance(clazz.getComponentType, newLength) match {
       case destArray: Array[T] => destArray
     }
 
@@ -39,7 +39,7 @@ object ArrayUtils {
     copyArray[T](array, array.length)
 
   def copyArrayWithClass[T](array: Seq[T], clazz: Class[_ <: T]): Array[T] = {
-    val destArray = reflect.Array.newInstance(clazz, array.length) match {
+    val destArray = java.lang.reflect.Array.newInstance(clazz, array.length) match {
       case destArray: Array[T] => destArray
     }
     if (null == array || array.isEmpty) return destArray

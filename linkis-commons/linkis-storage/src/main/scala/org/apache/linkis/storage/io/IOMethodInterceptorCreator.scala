@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.io
 
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.MUST_REGISTER_TOM
 import org.apache.linkis.storage.exception.StorageErrorException
 
 import org.springframework.cglib.proxy.MethodInterceptor
@@ -40,11 +41,12 @@ object IOMethodInterceptorCreator {
   }
 
   def getIOMethodInterceptor(fsName: String): MethodInterceptor = {
-    if (interceptorCreator == null)
+    if (interceptorCreator == null) {
       throw new StorageErrorException(
-        52004,
-        "You must register IOMethodInterceptorCreator before you can use proxy mode.(必须先注册IOMethodInterceptorCreator，才能使用代理模式)"
+        MUST_REGISTER_TOM.getErrorCode,
+        MUST_REGISTER_TOM.getErrorDesc
       )
+    }
     interceptorCreator.createIOMethodInterceptor(fsName)
   }
 

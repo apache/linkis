@@ -41,13 +41,6 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   private val codeExecTaskExecutorManager =
     CodeExecTaskExecutorManager.getCodeExecTaskExecutorManager
 
-  // private val asyncListenerBus: OrchestratorAsyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorAsyncListenerBus
-
-  // private val syncListenerBus: OrchestratorSyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorSyncListenerBus
-
-  // TODO ListenerBus should to split into OrchestratorSessions.
-  // TODO Two whole ListenerBus will cause the consume problem.
-
   @PostConstruct
   private def init(): Unit = {
     EngineConnMonitor.addEngineExecutorStatusMonitor(

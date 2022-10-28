@@ -27,8 +27,6 @@ import java.io.{ByteArrayInputStream, InputStream}
 import java.util
 import java.util.UUID
 
-import scala.collection.JavaConversions._
-
 @Component
 class BMLHelper {
 
@@ -38,8 +36,9 @@ class BMLHelper {
     val resource: BmlUploadResponse = client.uploadResource(userName, fileName, inputStream)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
     val map = new util.HashMap[String, Object]
-    map += "resourceId" -> resource.resourceId
-    map += "version" -> resource.version
+    map.put("resourceId", resource.resourceId)
+    map.put("version", resource.version)
+    map
   }
 
   def upload(
@@ -53,8 +52,9 @@ class BMLHelper {
       client.uploadShareResource(userName, projectName, fileName, inputStream)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
     val map = new util.HashMap[String, Object]
-    map += "resourceId" -> resource.resourceId
-    map += "version" -> resource.version
+    map.put("resourceId", resource.resourceId)
+    map.put("version", resource.version)
+    map
   }
 
   def upload(
@@ -66,8 +66,9 @@ class BMLHelper {
     val resource: BmlUploadResponse = client.uploadResource(userName, fileName, inputStream)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80021)
     val map = new util.HashMap[String, Object]
-    map += "resourceId" -> resource.resourceId
-    map += "version" -> resource.version
+    map.put("resourceId", resource.resourceId)
+    map.put("version", resource.version)
+    map
   }
 
   def update(
@@ -80,8 +81,9 @@ class BMLHelper {
       client.updateShareResource(userName, resourceId, "", inputStream)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80022)
     val map = new util.HashMap[String, Object]
-    map += "resourceId" -> resource.resourceId
-    map += "version" -> resource.version
+    map.put("resourceId", resource.resourceId)
+    map.put("version", resource.version)
+    map
   }
 
   def update(userName: String, resourceId: String, content: String): util.Map[String, Object] = {
@@ -95,8 +97,9 @@ class BMLHelper {
     )
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80022)
     val map = new util.HashMap[String, Object]
-    map += "resourceId" -> resource.resourceId
-    map += "version" -> resource.version
+    map.put("resourceId", resource.resourceId)
+    map.put("version", resource.version)
+    map
   }
 
   def query(userName: String, resourceId: String, version: String): util.Map[String, Object] = {
@@ -106,16 +109,18 @@ class BMLHelper {
     else resource = client.downloadShareResource(userName, resourceId, version)
     if (!resource.isSuccess) throw WorkspaceExceptionManager.createException(80023)
     val map = new util.HashMap[String, Object]
-    map += "path" -> resource.fullFilePath
-    map += "stream" -> resource.inputStream
+    map.put("path", resource.fullFilePath)
+    map.put("stream", resource.inputStream)
+    map
   }
 
   private def inputstremToString(inputStream: InputStream): String =
     scala.io.Source.fromInputStream(inputStream).mkString
 
-  private def createBMLClient(userName: String): BmlClient = if (userName == null)
+  private def createBMLClient(userName: String): BmlClient = if (userName == null) {
     BmlClientFactory.createBmlClient()
-  else
+  } else {
     BmlClientFactory.createBmlClient(userName)
+  }
 
 }

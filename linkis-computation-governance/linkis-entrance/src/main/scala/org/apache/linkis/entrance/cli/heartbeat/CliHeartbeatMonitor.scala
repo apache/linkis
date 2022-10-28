@@ -90,9 +90,9 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
       case entranceJob: EntranceJob =>
         if (isCliJob(entranceJob)) {
           val id = entranceJob.getJobRequest.getId.toString
-          if (!infoMap.containsKey(id))
+          if (!infoMap.containsKey(id)) {
             logger.error(s"heartbeat on non-existing job!! job id: $id")
-          else infoMap.get(id).updateNewestAccessByClientTimestamp()
+          } else infoMap.get(id).updateNewestAccessByClientTimestamp()
         }
       case _ =>
     }

@@ -57,11 +57,15 @@ object ExecTaskRunner extends Logging {
     if (execTaskRunnerFactory == null) synchronized {
       if (execTaskRunnerFactory == null) {
         val factory =
-          if (StringUtils.isNotBlank(OrchestratorConfiguration.EXEC_RUNNER_FACTORY_CLASS.getValue))
+          if (
+              StringUtils.isNotBlank(OrchestratorConfiguration.EXEC_RUNNER_FACTORY_CLASS.getValue)
+          ) {
             ClassUtils.getClassInstance[ExecTaskRunnerFactory](
               OrchestratorConfiguration.EXEC_RUNNER_FACTORY_CLASS.getValue
             )
-          else new DefaultExecTaskRunnerFactory
+          } else {
+            new DefaultExecTaskRunnerFactory
+          }
         logger.info("Use " + factory.getClass.getName + " to instance a new execTaskRunnerFactory.")
         execTaskRunnerFactory = factory
       }

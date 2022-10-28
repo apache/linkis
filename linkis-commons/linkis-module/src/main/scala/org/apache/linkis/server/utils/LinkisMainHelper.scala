@@ -39,7 +39,7 @@ object LinkisMainHelper {
   }
 
   // TODO wait for linkis re-written
-  @Deprecated
+  @deprecated
   def addExtraPropertyFiles(filePaths: String*): Unit = {
     sys.props.put("wds.linkis.server.confs", filePaths.mkString(","))
   }
@@ -56,8 +56,9 @@ object LinkisMainHelper {
         .toArray
     if (Configuration.IS_PROMETHEUS_ENABLE.getValue) {
       var prometheusEndpoint = Configuration.PROMETHEUS_ENDPOINT.getValue
-      if (ServerConfiguration.IS_GATEWAY.getValue.equals("false"))
+      if (ServerConfiguration.IS_GATEWAY.getValue.equals("false")) {
         prometheusEndpoint = servletPath + prometheusEndpoint
+      }
       resArr = resArr :+ s"--prometheus.endpoint=$prometheusEndpoint"
     }
     return resArr

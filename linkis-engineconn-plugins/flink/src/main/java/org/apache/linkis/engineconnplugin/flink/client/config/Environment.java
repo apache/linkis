@@ -32,11 +32,14 @@ import org.apache.flink.table.client.config.entries.ViewEntry;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class Environment {
 
@@ -83,9 +86,7 @@ public class Environment {
       final ModuleEntry entry = ModuleEntry.create(config);
       if (this.modules.containsKey(entry.getName())) {
         throw new FlinkInitFailedException(
-            String.format(
-                "Cannot register module '%s' because a module with this name is already registered.",
-                entry.getName()));
+            MessageFormat.format(CANNOT_MODULE_ALREADY.getErrorDesc(), entry.getName()));
       }
       this.modules.put(entry.getName(), entry);
     }
@@ -102,9 +103,7 @@ public class Environment {
       final CatalogEntry catalog = CatalogEntry.create(config);
       if (this.catalogs.containsKey(catalog.getName())) {
         throw new FlinkInitFailedException(
-            String.format(
-                "Cannot create catalog '%s' because a catalog with this name is already registered.",
-                catalog.getName()));
+            MessageFormat.format(CANNOT_CATALOG_ALREADY.getErrorDesc(), catalog.getName()));
       }
       this.catalogs.put(catalog.getName(), catalog);
     }
@@ -121,9 +120,7 @@ public class Environment {
       final TableEntry table = TableEntry.create(config);
       if (this.tables.containsKey(table.getName())) {
         throw new FlinkInitFailedException(
-            "Cannot create table '"
-                + table.getName()
-                + "' because a table with this name is already registered.");
+            MessageFormat.format(CANNOT_TABLE_ALREADY.getErrorDesc(), table.getName()));
       }
       this.tables.put(table.getName(), table);
     }
@@ -140,9 +137,7 @@ public class Environment {
       final FunctionEntry function = FunctionEntry.create(config);
       if (this.functions.containsKey(function.getName())) {
         throw new FlinkInitFailedException(
-            "Cannot create function '"
-                + function.getName()
-                + "' because a function with this name is already registered.");
+            MessageFormat.format(CANNOT_FUNCTION_ALREADY.getErrorDesc(), function.getName()));
       }
       this.functions.put(function.getName(), function);
     }
@@ -229,7 +224,7 @@ public class Environment {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(url, Environment.class);
     } catch (JsonMappingException e) {
       throw new FlinkInitFailedException(
-          "Could not parse environment file. Cause: " + e.getMessage(), e);
+          MessageFormat.format(BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()), e);
     }
   }
 
@@ -239,7 +234,7 @@ public class Environment {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(content, Environment.class);
     } catch (JsonMappingException e) {
       throw new FlinkInitFailedException(
-          "Could not parse environment file. Cause: " + e.getMessage(), e);
+          MessageFormat.format(BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()), e);
     }
   }
 

@@ -18,6 +18,7 @@
 package org.apache.linkis.configuration.validate
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.ERROR_VALIDATOR_RANGE
 import org.apache.linkis.configuration.exception.ConfigurationException
 
 import com.google.gson.GsonBuilder
@@ -29,7 +30,7 @@ class NumericalValidator extends Validator with Logging {
       val rangArray = new GsonBuilder().create().fromJson(range, classOf[Array[Int]])
       val valueInt = Integer.parseInt(value)
       if (rangArray.size != 2) {
-        throw new ConfigurationException("error validator range！")
+        throw new ConfigurationException(ERROR_VALIDATOR_RANGE.getErrorDesc)
       }
       valueInt >= rangArray.sorted.apply(0) && valueInt <= rangArray.sorted.apply(1)
     } {
@@ -38,7 +39,7 @@ class NumericalValidator extends Validator with Logging {
           s"${value} cannot be converted to int, validation failed(${value}不能转换为int，校验失败)"
         ); return false
       // If there is a problem with range, then an exception is thrown.(如果range出问题，那么还是抛出异常)
-      /*case e:JsonSyntaxException =>info(s"${range}Cannot convert to int, check failed(不能转换为int，校验失败)"); return false*/
+      /* case e:JsonSyntaxException =>info(s"${range}Cannot convert to int, check failed(不能转换为int，校验失败)"); return false */
       case e: Exception => throw e
     }
   }
@@ -46,8 +47,8 @@ class NumericalValidator extends Validator with Logging {
   override var kind: String = "NumInterval"
 }
 
-/*object NumericalValidator {
+/* object NumericalValidator {
   def main(args: Array[String]): Unit = {
     print(new NumericalValidator().validate("22.5", "[17.5,150]"))
   }
-}*/
+} */

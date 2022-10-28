@@ -24,7 +24,7 @@ import org.apache.commons.math3.util.Pair
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class TextFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSource(fileSplits) {
 
@@ -39,7 +39,7 @@ class TextFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSource(fi
     val snds: Array[util.ArrayList[Array[String]]] = collects.map(_.getSecond)
     snds.foreach { snd =>
       val str = new StringBuilder
-      snd.foreach {
+      snd.asScala.foreach {
         case Array("\n") => str.append("\n")
         case Array(y) => str.append(y).append("\n")
       }

@@ -32,7 +32,7 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
       logger.error("illegal input for handler: null")
     } else {
       request match {
-        case _: ECTaskKillHandlerRequest => {
+        case _: ECTaskKillHandlerRequest =>
           val toBeKilled = request.asInstanceOf[ECTaskKillHandlerRequest].getData
           if (toBeKilled != null && toBeKilled.size() != 0) {
             val elements = toBeKilled.iterator
@@ -48,7 +48,6 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
               }
             }
           }
-        }
         case _ => logger.error("illegal input for handler: " + request.getClass.getCanonicalName)
       }
     }
@@ -57,7 +56,7 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
   private def doKill(wrapper: ConnectionInfoWrapper): Unit = {
     if (wrapper != null) {
       wrapper match {
-        case eCTaskEntranceConnectionWrapper: ECTaskEntranceConnectionWrapper => {
+        case eCTaskEntranceConnectionWrapper: ECTaskEntranceConnectionWrapper =>
           if (
               eCTaskEntranceConnectionWrapper.getExecutor == null || eCTaskEntranceConnectionWrapper.getEngineConnTask == null
           ) {
@@ -77,7 +76,6 @@ class ECTaskKillHandler extends MonitorHandler with Logging {
               ExecutorManager.getInstance.getReportExecutor.tryShutdown()
             }
           }
-        }
         case _ => logger.error("invalid data-type: " + wrapper.getClass.getCanonicalName)
       }
     } else {

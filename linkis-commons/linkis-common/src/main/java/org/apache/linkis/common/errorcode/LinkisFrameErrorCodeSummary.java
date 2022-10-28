@@ -18,7 +18,11 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisFrameErrorCodeSummary {
-  VALIDATE_ERROR_CODE_FAILED(10000, "错误码定义有误", "错误码定义超过最大值或者小于最小值", "linkis-frame");
+  VALIDATE_ERROR_CODE_FAILED(
+      10000,
+      "Error code definition is incorrect(错误码定义有误)",
+      "Error code definition exceeds the maximum value or is less than the minimum value(错误码定义超过最大值或者小于最小值)",
+      "linkis-frame");
 
   private int errorCode;
 

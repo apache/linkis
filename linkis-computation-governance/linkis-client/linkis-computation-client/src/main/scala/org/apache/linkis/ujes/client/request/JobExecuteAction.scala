@@ -143,8 +143,9 @@ object JobExecuteAction {
     }
 
     private def getEngineType: String = {
-      if (engineType == null && engineTypeStr == null)
+      if (engineType == null && engineTypeStr == null) {
         throw new UJESClientBuilderException("engineType is needed!")
+      }
       if (engineType != null) return engineType.toString
       engineTypeStr
     }
@@ -164,8 +165,9 @@ object JobExecuteAction {
       if (formatCode) executeAction.addRequestPayload(TaskConstant.FORMATCODE, true)
       if (StringUtils.isBlank(creator)) throw new UJESClientBuilderException("creator is needed!")
       executeAction.addRequestPayload(TaskConstant.REQUESTAPPLICATIONNAME, creator)
-      if (StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode) && params == null)
+      if (StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode) && params == null) {
         throw new UJESClientBuilderException("scriptPath or executeCode is needed!")
+      }
       if (StringUtils.isEmpty(scriptPath) && StringUtils.isEmpty(executeCode)) {
         addExecuteCode(params.toString)
       }
@@ -258,6 +260,16 @@ object JobExecuteAction {
       }
 
       override def getDefaultRunType: RunType = PSQL
+    }
+
+    val TRINO = new EngineType {
+      override val toString: String = "trino"
+
+      val TSQL = new RunType {
+        override val toString: String = "tsql"
+      }
+
+      override def getDefaultRunType: RunType = TSQL
     }
 
   }

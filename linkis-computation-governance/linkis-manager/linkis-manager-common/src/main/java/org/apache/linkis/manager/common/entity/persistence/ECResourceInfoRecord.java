@@ -54,6 +54,8 @@ public class ECResourceInfoRecord {
 
   private String logDirSuffix;
 
+  private String status;
+
   public ECResourceInfoRecord() {}
 
   public ECResourceInfoRecord(
@@ -197,6 +199,14 @@ public class ECResourceInfoRecord {
 
   public void setCreateUser(String createUser) {
     this.createUser = createUser;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   @Override

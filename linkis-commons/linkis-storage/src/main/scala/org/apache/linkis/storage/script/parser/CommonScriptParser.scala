@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.script.parser
 
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.INCALID_CUSTOM_PARAMETER
 import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.script.{Parser, Variable, VariableParser}
 
@@ -28,21 +29,32 @@ abstract class CommonScriptParser extends Parser {
     line match {
       case variableReg(key, value) =>
         Variable(VariableParser.VARIABLE, null, key.trim, value.trim)
-      case _ => {
+      case _ =>
         val split = line.split("=")
-        if (split.length != 2)
-          throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
+        if (split.length != 2) {
+          throw new StorageErrorException(
+            INCALID_CUSTOM_PARAMETER.getErrorCode(),
+            INCALID_CUSTOM_PARAMETER.getErrorDesc
+          )
+        }
         val value = split(1).trim
         val subSplit = split(0).split(" ")
-        if (subSplit.filter(_ != "").size != 4)
-          throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
-        if (!subSplit.filter(_ != "")(0).equals(prefixConf))
-          throw new StorageErrorException(65000, "Invalid custom parameter(不合法的自定义参数)")
+        if (subSplit.filter(_ != "").size != 4) {
+          throw new StorageErrorException(
+            INCALID_CUSTOM_PARAMETER.getErrorCode(),
+            INCALID_CUSTOM_PARAMETER.getErrorDesc
+          )
+        }
+        if (!subSplit.filter(_ != "")(0).equals(prefixConf)) {
+          throw new StorageErrorException(
+            INCALID_CUSTOM_PARAMETER.getErrorCode(),
+            INCALID_CUSTOM_PARAMETER.getErrorDesc
+          )
+        }
         val sortParent = subSplit.filter(_ != "")(1).trim
         val sort = subSplit.filter(_ != "")(2).trim
         val key = subSplit.filter(_ != "")(3).trim
         Variable(sortParent, sort, key, value)
-      }
     }
   }
 

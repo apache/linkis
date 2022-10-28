@@ -17,8 +17,11 @@
 
 package org.apache.linkis.bml.common
 
+import org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary._
 import org.apache.linkis.common.exception.ErrorException
 
-case class BmlPermissionDeniedException(errorMsg: String) extends ErrorException(75569, errorMsg)
+case class BmlPermissionDeniedException(errorMsg: String)
+    extends ErrorException(NOT_HAVE_PERMISSION.getErrorCode, errorMsg)
 
-case class BmlProjectNoEditException(errorMsg: String) extends ErrorException(75570, errorMsg);
+case class BmlProjectNoEditException(errorMsg: String)
+    extends ErrorException(NOT_PROJECT_PERMISSION.getErrorCode, errorMsg);

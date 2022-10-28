@@ -746,6 +746,7 @@ export default {
   border: 0;
   height: calc(100% - 110px);
   width: 100%;
+  overflow-y: auto;
 
   .ivu-table:before {
     height: 0

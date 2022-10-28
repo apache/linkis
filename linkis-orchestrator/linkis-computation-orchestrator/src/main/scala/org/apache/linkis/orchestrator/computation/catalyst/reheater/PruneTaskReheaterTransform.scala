@@ -52,7 +52,7 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging {
         s"task:${in.getIDInfo()} has ${failedTasks.size} child tasks which execute failed, some of them may be retried"
       )
       TreeNodeUtil.getTaskResponse(task) match {
-        case response: FailedTaskResponse => {
+        case response: FailedTaskResponse =>
           val exception = response.getCause
           if (exception.isInstanceOf[LinkisRetryException]) {
             val parents = task.getParents
@@ -62,7 +62,7 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging {
                 val otherChildren = parent.getChildren.filter(_ != task)
                 Utils.tryCatch {
                   task match {
-                    case retryExecTask: RetryExecTask => {
+                    case retryExecTask: RetryExecTask =>
                       if (retryExecTask.getAge() < retryExecTask.getMaxRetryCount()) {
                         val newTask =
                           new RetryExecTask(retryExecTask.getOriginTask, retryExecTask.getAge() + 1)
@@ -79,18 +79,16 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging {
                         )
                         task.getPhysicalContext.pushLog(logEvent)
                       }
-                    }
-                    case _ => {
+                    case _ =>
                       val retryExecTask = new RetryExecTask(task)
                       retryExecTask.initialize(task.getPhysicalContext)
                       TreeNodeUtil.insertNode(parent, task, retryExecTask)
                       context.set(OrchestratorConfiguration.REHEATER_KEY, true)
                       pushInfoLog(task, retryExecTask)
-                    }
                   }
                 } {
                   // restore task node when retry task construction failed
-                  case e: Exception => {
+                  case e: Exception =>
                     val logEvent = TaskLogEvent(
                       task,
                       LogUtils.generateWarn(
@@ -110,12 +108,10 @@ class PruneTaskRetryTransform extends ReheaterTransform with Logging {
                       LogUtils.generateWarn(s"restore task success! task node: ${task.getIDInfo}")
                     )
                     task.getPhysicalContext.pushLog(downLogEvent)
-                  }
                 }
               })
             }
           }
-        }
         case _ =>
       }
     })

@@ -29,10 +29,11 @@ import org.springframework.stereotype.Component
 class TaskInfoNodeSelectRule extends NodeSelectRule with Logging {
 
   override def ruleFiltering(nodes: Array[Node]): Array[Node] = {
-    if (null != nodes)
+    if (null != nodes) {
       nodes.sortWith(sortByTaskInfo)
-    else
+    } else {
       nodes
+    }
   }
 
   /**

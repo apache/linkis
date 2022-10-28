@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.engineplugin.shell.executor
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   EngineExecutionContext
@@ -44,10 +43,10 @@ import org.apache.linkis.scheduler.executer.{
 
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-import org.apache.hadoop.util.Shell
 
-import java.io.{BufferedReader, File, InputStreamReader}
+import java.io.{BufferedReader, File, FileReader, InputStreamReader, IOException}
 import java.util
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 
 import scala.collection.JavaConverters._
@@ -92,7 +91,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
     var errorsReader: BufferedReader = null
 
     val completed = new AtomicBoolean(false)
-    var errReaderThread: ErrorStreamReaderThread = null
+    var errReaderThread: ReaderThread = null
+    var inputReaderThread: ReaderThread = null
 
     try {
       engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
@@ -172,58 +172,44 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       processBuilder.redirectErrorStream(false)
-      process = processBuilder.start()
-      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
-      /*
-        Prepare to extract yarn application id
-       */
       extractor = new YarnAppIdExtractor
       extractor.startExtraction()
-      /*
-        Read stderr with another thread
-       */
-      errReaderThread = new ErrorStreamReaderThread(engineExecutionContext, errorsReader, extractor)
+      process = processBuilder.start()
+
+      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
+      errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+      val counter: CountDownLatch = new CountDownLatch(2)
+      inputReaderThread =
+        new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
+      errReaderThread =
+        new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter)
+
+      inputReaderThread.start()
       errReaderThread.start()
 
-      /*
-      Read stdout
-       */
-      var line: String = null
-      while ({
-        line = bufferedReader.readLine(); line != null
-      }) {
-        logger.debug(s"$getId() >>> $line")
-        LogHelper.logCache.cacheLog(line)
-        engineExecutionContext.appendTextResultSet(line)
-        extractor.appendLineToExtractor(line)
-      }
-
       val exitCode = process.waitFor()
-      joinThread(errReaderThread)
+      counter.await()
+
       completed.set(true)
 
       if (exitCode != 0) {
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       } else SuccessExecuteResponse()
     } catch {
-      case e: Exception => {
+      case e: Exception =>
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
-      }
-      case t: Throwable =>
-        ErrorExecuteResponse("Internal error executing shell process(执行shell进程内部错误)", t)
     } finally {
       if (!completed.get()) {
-        errReaderThread.interrupt()
-        joinThread(errReaderThread)
+        Utils.tryAndWarn(errReaderThread.interrupt())
+        Utils.tryAndWarn(inputReaderThread.interrupt())
       }
-
-      extractor.onDestroy()
-      errReaderThread.onDestroy()
-
+      Utils.tryAndWarn {
+        extractor.onDestroy()
+        inputReaderThread.onDestroy()
+        errReaderThread.onDestroy()
+      }
       IOUtils.closeQuietly(bufferedReader)
-
       IOUtils.closeQuietly(errorsReader)
     }
   }
@@ -238,23 +224,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   private def generateRunCodeWithArgs(code: String, args: Array[String]): Array[String] = {
-    Array(
-      "sh",
-      "-c",
-      "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'"
-    ) // pass args by pipeline
-  }
-
-  private def joinThread(thread: Thread) = {
-    while ({
-      thread.isAlive
-    }) {
-      Utils.tryCatch {
-        thread.join()
-      } { t =>
-        logger.warn("Exception thrown while joining on: " + thread, t)
-      }
-    }
+    Array("sh", "-c", "echo \"dummy " + args.mkString(" ") + "\" | xargs sh -c \'" + code + "\'")
   }
 
   override def getId(): String = Sender.getThisServiceInstance.getInstance + "_" + id

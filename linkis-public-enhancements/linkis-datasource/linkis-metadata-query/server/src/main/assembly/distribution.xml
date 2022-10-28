@@ -16,10 +16,8 @@
   ~ limitations under the License.
   -->
 
-<assembly
-        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
     <id>linkis-metadata-query-server</id>
     <formats>
         <format>zip</format>
@@ -90,6 +88,17 @@
             <directory>${basedir}/../service/tdsql/target/out/lib</directory>
             <fileMode>0755</fileMode>
             <outputDirectory>lib/service/tdsql</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/hdfs/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/hdfs</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

@@ -54,6 +54,8 @@ public class ECResourceInfoRecordVo {
 
   private String engineType;
 
+  private String status;
+
   public ECResourceInfoRecordVo() {}
 
   public Integer getId() {
@@ -190,6 +192,14 @@ public class ECResourceInfoRecordVo {
 
   public void setEngineType(String engineType) {
     this.engineType = engineType;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 
   @Override

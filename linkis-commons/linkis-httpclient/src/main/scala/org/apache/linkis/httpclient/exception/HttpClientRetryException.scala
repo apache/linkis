@@ -18,8 +18,10 @@
 package org.apache.linkis.httpclient.exception
 
 import org.apache.linkis.common.exception.LinkisRetryException
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.RETRY_EXCEPTION
 
-class HttpClientRetryException(errorDesc: String) extends LinkisRetryException(10900, errorDesc) {
+class HttpClientRetryException(errorDesc: String)
+    extends LinkisRetryException(RETRY_EXCEPTION.getErrorCode, errorDesc) {
 
   def this(errorDesc: String, throwable: Throwable) = {
     this(errorDesc)

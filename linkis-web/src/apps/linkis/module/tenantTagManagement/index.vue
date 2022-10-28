@@ -22,7 +22,7 @@
       size="large"
       fix/>
     <Row class="search-bar">
-      <Col span="4" class="search-item">
+      <Col span="6" class="search-item">
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.userName')}}</span>
         <Input
           v-model="queryData.user"
@@ -32,7 +32,7 @@
           @on-enter="getTableData"
         ></Input>
       </Col>
-      <Col span="4" class="search-item">
+      <Col span="6" class="search-item">
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
@@ -42,7 +42,7 @@
           @on-enter="getTableData"
         ></Input>
       </Col>
-      <Col span="4" class="search-item">
+      <Col span="6" class="search-item">
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.tenantTag')}}</span>
         <Input
           v-model="queryData.tenantValue"
@@ -52,7 +52,7 @@
           @on-enter="getTableData"
         ></Input>
       </Col>
-      <Col span="9">
+      <Col span="6">
         <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="getTableData(true)">{{
           $t('message.linkis.tenantTagManagement.search')
         }}</Button>
@@ -74,6 +74,16 @@
       class="table-content data-source-table">
 
     </Table>
+    <Page
+      :page-size="page.pageSize"
+      :current="page.pageNow"
+      :total="page.totalPage"
+      @on-change="changePage"
+      size="small"
+      show-elevator
+      :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+      style="margin: 10px; overflow: hidden; text-align: center;"
+    ></Page>
     <Modal
       v-model="showCreateModal"
       class="modal"
@@ -225,6 +235,11 @@ export default {
       mode: 'create',
       // 缓存，用于校验
       editData: {},
+      page: {
+        pageSize: 10,
+        pageNow: 1,
+        totalPage: 0,
+      },
     }
   },
   computed: {
@@ -245,18 +260,21 @@ export default {
             }
           }
         }
-        
+        params.pageNow = this.page.pageNow;
+        params.pageSize = this.page.pageSize;
         await api.fetch("/configuration/tenant-mapping/query-tenant-list", params, "get")
           .then((res) => {
             this.datalist = res.tenantList.map((item) => {
               item.userCreator = item.user + "-" + item.creator;
               item.createTime = new Date(item.createTime).toLocaleString();
               return item;
-            })
+            });
+            page.totalPage = res.totalPage;
           })
         this.tableLoading = false;
       } catch(err) {
         console.log(err);
+        this.tableLoading = false;
       }
       
     },
@@ -322,6 +340,9 @@ export default {
         if(valid) {
           this.clearSearch();
           try {
+            if(this.mode !== 'edit') {
+              this.page.pageNow = 1;
+            }
             await api.fetch(target, this.modalData, "post").then(async (res) => {
               console.log(res);
               await this.getTableData();
@@ -373,6 +394,10 @@ export default {
     },
     async handleChange() {
       this.tagIsExist = true;
+    },
+    async changePage(val) {
+      this.page.pageNow = val;
+      await this.getTableData();
     }
   },
   created() {

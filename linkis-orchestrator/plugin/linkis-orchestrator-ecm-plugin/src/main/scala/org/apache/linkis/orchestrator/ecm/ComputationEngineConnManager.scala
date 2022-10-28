@@ -22,32 +22,22 @@ import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.{
-  EngineAskAsyncResponse,
-  EngineAskRequest,
-  EngineCreateError,
-  EngineCreateSuccess
-}
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskAsyncResponse, EngineAskRequest, EngineCreateError, EngineCreateSuccess}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{DefaultMark, Mark, MarkReq, Policy}
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
-import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
-import org.apache.linkis.orchestrator.ecm.service.impl.{
-  ComputationConcurrentEngineConnExecutor,
-  ComputationEngineConnExecutor
-}
+import org.apache.linkis.orchestrator.ecm.service.{AbstractEngineConnExecutor, EngineConnExecutor}
+import org.apache.linkis.orchestrator.ecm.service.impl.{ComputationConcurrentEngineConnExecutor, ComputationEngineConnExecutor}
 import org.apache.linkis.rpc.Sender
-
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import java.net.{ConnectException, SocketException, SocketTimeoutException}
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
-
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
@@ -108,7 +98,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       count = count - 1
       val start = System.currentTimeMillis()
       try {
-        val engineNode = getEngineNodeAskManager(engineAskRequest, mark)
+        val (engineNode, reuse) = getEngineNodeAskManager(engineAskRequest, mark)
         if (null != engineNode) {
           val engineConnExecutor =
             if (
@@ -122,6 +112,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           if (null != engineNode.getLabels) {
             engineConnExecutor.setLabels(engineNode.getLabels.asScala.toList.toArray)
           }
+          engineConnExecutor.setReuse(reuse)
           return engineConnExecutor
         }
       } catch {
@@ -150,7 +141,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
   private def getEngineNodeAskManager(
       engineAskRequest: EngineAskRequest,
       mark: Mark
-  ): EngineNode = {
+  ): (EngineNode, Boolean) = {
     val response = Utils.tryCatch(getManagerSender().ask(engineAskRequest)) { t: Throwable =>
       val baseMsg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried "
       ExceptionUtils.getRootCause(t) match {
@@ -169,8 +160,8 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
     }
     response match {
       case engineNode: EngineNode =>
-        logger.debug(s"Succeed to get engineNode $engineNode mark ${mark.getMarkId()}")
-        engineNode
+        logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
+        (engineNode, true)
       case EngineAskAsyncResponse(id, serviceInstance) =>
         logger.info(
           s"${mark.getMarkId()} received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance "
@@ -183,7 +174,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             logger.info(
               s"${mark.getMarkId()} async id:$id success to async get EngineNode $engineNode"
             )
-            engineNode
+            (engineNode, false)
           case EngineCreateError(id, exception, retry) =>
             logger.debug(
               s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception"
@@ -204,7 +195,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         logger.info(
           s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest, response is not engineNode"
         )
-        null
+        (null, false)
     }
   }
 

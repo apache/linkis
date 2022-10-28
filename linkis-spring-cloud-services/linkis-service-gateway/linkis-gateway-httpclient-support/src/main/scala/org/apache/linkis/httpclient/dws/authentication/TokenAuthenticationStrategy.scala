@@ -38,14 +38,17 @@ class TokenAuthenticationStrategy(override protected val sessionMaxAliveTime: Lo
       case action: UserAction =>
         new HttpAuthentication {
 
-          import scala.collection.JavaConversions._
+          import scala.collection.JavaConverters._
 
           import TokenAuthenticationStrategy._
 
           override def authToCookies: Array[Cookie] = Array.empty
 
           override def authToHeaders: util.Map[String, String] =
-            Map(TOKEN_USER_KEY -> action.getUser, TOKEN_KEY -> getClientConfig.getAuthTokenValue)
+            Map(
+              TOKEN_USER_KEY -> action.getUser,
+              TOKEN_KEY -> getClientConfig.getAuthTokenValue
+            ).asJava
 
           override def authToMap: util.Map[String, String] = new util.HashMap[String, String]()
 

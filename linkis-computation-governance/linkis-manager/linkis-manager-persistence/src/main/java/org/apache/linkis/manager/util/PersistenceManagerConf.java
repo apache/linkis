@@ -22,7 +22,7 @@ import org.apache.linkis.common.conf.CommonVars$;
 public class PersistenceManagerConf {
 
   public static final Integer Distributed_lock_request_interval =
-      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 200).getValue();
+      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 500).getValue();
 
   public static final Boolean Distributed_lock_request_sync_enabled =
       CommonVars$.MODULE$

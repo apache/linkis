@@ -21,19 +21,18 @@ import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.UserIpConfigService;
 import org.apache.linkis.configuration.util.CommonUtils;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +52,10 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   @Override
   public void createUserIP(UserIpVo userIpVo) throws ConfigurationException {
     dataProcessing(userIpVo);
-    userIpVo.setCreateTime(new Date());
-    userIpVo.setUpdateTime(new Date());
-    userIpMapper.createUserIP(userIpVo);
+    UserIpVo userIpVoLowerCase = toLowerCase(userIpVo);
+    userIpVoLowerCase.setCreateTime(new Date());
+    userIpVoLowerCase.setUpdateTime(new Date());
+    userIpMapper.createUserIP(userIpVoLowerCase);
   }
 
   /**
@@ -69,9 +69,10 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
       throw new ConfigurationException("id couldn't be empty ");
     }
     dataProcessing(userIpVo);
-    userIpVo.setUpdateTime(new Date());
-    logger.info("updateUserIP : {}", userIpVo);
-    userIpMapper.updateUserIP(userIpVo);
+    UserIpVo userIpVoLowerCase = toLowerCase(userIpVo);
+    userIpVoLowerCase.setUpdateTime(new Date());
+    logger.info("updateUserIP : {}", userIpVoLowerCase);
+    userIpMapper.updateUserIP(userIpVoLowerCase);
   }
 
   /**
@@ -95,12 +96,28 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
    * @return List<UserIpVo>
    * @param user
    * @param creator
+   * @param pageNow
+   * @param pageSize
    */
   @Override
-  public List<UserIpVo> queryUserIPList(String user, String creator) {
+  public Map<String, Object> queryUserIPList(
+      String user, String creator, Integer pageNow, Integer pageSize) {
+    Map<String, Object> result = new HashMap<>(2);
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
-    return userIpMapper.queryUserIPList(user, creator);
+    if (null == pageNow) pageNow = 1;
+    if (null == pageSize) pageSize = 20;
+    List<UserIpVo> userIpVos = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      userIpVos = userIpMapper.queryUserIPList(user, creator);
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<UserIpVo> pageInfo = new PageInfo<>(userIpVos);
+    result.put("userIpList", userIpVos);
+    result.put(JobRequestConstants.TOTAL_PAGE(), pageInfo.getTotal());
+    return result;
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
@@ -137,6 +154,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
 
   @Override
   public Boolean checkUserCteator(String user, String creator) throws ConfigurationException {
+    boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
       throw new ConfigurationException("creator couldn't be empty ");
@@ -144,11 +162,25 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     if (StringUtils.isBlank(user)) {
       throw new ConfigurationException("user couldn't be empty ");
     }
-    return CollectionUtils.isNotEmpty(queryUserIPList(user, creator));
+    if (creator.equals("*")) {
+      throw new ConfigurationException("creator couldn't be '*' ");
+    }
+    Map<String, Object> resultMap =
+        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null);
+    Object userIpList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
+    int total = Integer.parseInt(userIpList.toString());
+    if (total == 0) result = false;
+    return result;
   }
 
   @Override
   public UserIpVo queryUserIP(String user, String creator) {
     return userIpMapper.queryUserIP(user, creator);
+  }
+
+  private UserIpVo toLowerCase(UserIpVo userIpVo) {
+    userIpVo.setCreator(userIpVo.getCreator().toLowerCase());
+    userIpVo.setUser(userIpVo.getUser().toLowerCase());
+    return userIpVo;
   }
 }

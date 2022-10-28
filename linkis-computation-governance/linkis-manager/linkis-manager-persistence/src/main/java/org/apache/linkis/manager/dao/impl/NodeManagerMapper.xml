@@ -113,7 +113,7 @@
         select * from linkis_cg_manager_service_instance where owner in(
           <foreach collection='owner' separator=',' item='owner'>
             #{owner}
-          </foreach>
+          </foreach>)
     </select>
 
 </mapper>

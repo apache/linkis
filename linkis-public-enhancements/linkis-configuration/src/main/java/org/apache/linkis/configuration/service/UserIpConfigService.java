@@ -19,7 +19,7 @@ package org.apache.linkis.configuration.service;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 
-import java.util.List;
+import java.util.Map;
 
 public interface UserIpConfigService {
 
@@ -29,7 +29,8 @@ public interface UserIpConfigService {
 
   void deleteUserIP(Integer id) throws ConfigurationException;
 
-  List<UserIpVo> queryUserIPList(String user, String creator);
+  Map<String, Object> queryUserIPList(
+      String user, String creator, Integer pageNow, Integer pageSize);
 
   Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
 

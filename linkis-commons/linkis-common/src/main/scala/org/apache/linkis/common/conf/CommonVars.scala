@@ -46,12 +46,19 @@ case class CommonVars[T](
 object CommonVars {
 
   def apply[T](key: String, defaultValue: T, description: String): CommonVars[T] =
-    CommonVars(key, defaultValue, null.asInstanceOf[T], description)
+    CommonVars(key, defaultValue, null.asInstanceOf[T], description, false)
+
+  def apply[T](key: String, defaultValue: T, description: String, hotload: Boolean): CommonVars[T] =
+    CommonVars(key, defaultValue, null.asInstanceOf[T], description, hotload)
 
   implicit def apply[T](key: String, defaultValue: T): CommonVars[T] =
-    new CommonVars(key, defaultValue, null.asInstanceOf[T], null)
+    new CommonVars(key, defaultValue, null.asInstanceOf[T], null, false)
 
-  implicit def apply[T](key: String): CommonVars[T] = apply(key, null.asInstanceOf[T])
+  implicit def apply[T](key: String, defaultValue: T, hotload: Boolean): CommonVars[T] =
+    new CommonVars(key, defaultValue, null.asInstanceOf[T], null, hotload)
+
+  implicit def apply[T](key: String): CommonVars[T] =
+    apply(key, null.asInstanceOf[T], null.asInstanceOf[T], null, false)
 
   def properties: Properties = BDPConfiguration.properties
 

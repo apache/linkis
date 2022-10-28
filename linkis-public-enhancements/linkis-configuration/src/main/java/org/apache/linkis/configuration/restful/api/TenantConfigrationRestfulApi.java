@@ -26,18 +26,18 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @Api
 @RestController
@@ -95,7 +95,8 @@ public class TenantConfigrationRestfulApi {
     })
     @ApiOperation(value = "delete-tenant", notes = "delete tenant", httpMethod = "GET", response = Message.class)
     @RequestMapping(path = "/delete-tenant", method = RequestMethod.GET)
-    public Message deleteTenant(HttpServletRequest req, Integer id) {
+    public Message deleteTenant(HttpServletRequest req,
+                                @RequestParam(value = "id", required = false) Integer id) {
         try {
             String userName = ModuleUserUtils.getOperationUser(req, "deleteTenant");
             if (!Configuration.isAdmin(userName)) {
@@ -116,12 +117,19 @@ public class TenantConfigrationRestfulApi {
     })
     @ApiOperation(value = "query-tenant-list", notes = "query tenant list", httpMethod = "GET", response = Message.class)
     @RequestMapping(path = "/query-tenant-list", method = RequestMethod.GET)
-    public Message queryTenantList(HttpServletRequest req, String user, String creator, String tenantValue) {
+    public Message queryTenantList(HttpServletRequest req,
+                                   @RequestParam(value = "user", required = false) String user,
+                                   @RequestParam(value = "creator", required = false) String creator,
+                                   @RequestParam(value = "tenantValue", required = false) String tenantValue,
+                                   @RequestParam(value = "pageNow", required = false) Integer pageNow,
+                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         String userName = ModuleUserUtils.getOperationUser(req, "queryTenantList");
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Failed to query-tenant-list,msg: only administrators can configure");
         }
-        return Message.ok().data("tenantList", tenantConfigService.queryTenantList(user, creator, tenantValue));
+        Map<String,Object> resultMap = tenantConfigService.queryTenantList(user, creator, tenantValue, pageNow, pageSize);
+        return Message.ok().data("tenantList",resultMap.get("tenantList"))
+                .data(JobRequestConstants.TOTAL_PAGE(),resultMap.get(JobRequestConstants.TOTAL_PAGE()));
     }
 
     @ApiImplicitParams({
@@ -132,7 +140,10 @@ public class TenantConfigrationRestfulApi {
     })
     @ApiOperation(value = "check-user-creator", notes = "check user creator", httpMethod = "GET", response = Message.class)
     @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
-    public Message checkUserCreator(HttpServletRequest req, String user, String creator, String tenantValue) {
+    public Message checkUserCreator(HttpServletRequest req,
+                                    @RequestParam(value = "user", required = false) String user,
+                                    @RequestParam(value = "creator", required = false) String creator,
+                                    @RequestParam(value = "tenantValue", required = false) String tenantValue) {
         Boolean result = false;
         try {
             String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");

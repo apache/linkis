@@ -22,8 +22,8 @@ import org.apache.linkis.configuration.entity.TenantVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TenantConfigService;
 import org.apache.linkis.configuration.util.HttpsUtil;
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,14 +52,30 @@ public class TenantConfigServiceImpl implements TenantConfigService {
    * @param user
    * @param creator
    * @param tenantValue
+   * @param pageNow
+   * @param pageSize
    * @return List<TenantVo>
    */
   @Override
-  public List<TenantVo> queryTenantList(String user, String creator, String tenantValue) {
+  public Map<String, Object> queryTenantList(
+      String user, String creator, String tenantValue, Integer pageNow, Integer pageSize) {
+    Map<String, Object> result = new HashMap<>(2);
     if (StringUtils.isBlank(user)) user = null;
     if (StringUtils.isBlank(creator)) creator = null;
     if (StringUtils.isBlank(tenantValue)) tenantValue = null;
-    return userTenantMapper.queryTenantList(user, creator, tenantValue);
+    if (null == pageNow) pageNow = 1;
+    if (null == pageSize) pageSize = 20;
+    List<TenantVo> tenantVos = null;
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      tenantVos = userTenantMapper.queryTenantList(user, creator, tenantValue);
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<TenantVo> pageInfo = new PageInfo<>(tenantVos);
+    result.put("tenantList", tenantVos);
+    result.put(JobRequestConstants.TOTAL_PAGE(), pageInfo.getTotal());
+    return result;
   }
 
   /**
@@ -85,9 +103,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
       throw new ConfigurationException("id couldn't be empty ");
     }
     dataProcessing(tenantVo);
-    tenantVo.setUpdateTime(new Date());
-    logger.info("updateTenant : {}", tenantVo);
-    userTenantMapper.updateTenant(tenantVo);
+    TenantVo tenantVoLowerCase = toLowerCase(tenantVo);
+    tenantVoLowerCase.setUpdateTime(new Date());
+    logger.info("updateTenant : {}", tenantVoLowerCase);
+    userTenantMapper.updateTenant(tenantVoLowerCase);
   }
 
   /**
@@ -98,8 +117,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   @Override
   public void createTenant(TenantVo tenantVo) throws ConfigurationException {
     dataProcessing(tenantVo);
-    tenantVo.setCreateTime(new Date());
-    tenantVo.setUpdateTime(new Date());
+    TenantVo tenantVoLowerCase = toLowerCase(tenantVo);
+    tenantVoLowerCase.setUpdateTime(new Date());
+    tenantVoLowerCase.setCreateTime(new Date());
+    logger.info("updateTenant : {}", tenantVoLowerCase);
     userTenantMapper.createTenant(tenantVo);
   }
 
@@ -157,6 +178,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   @Override
   public Boolean checkUserCteator(String user, String creator, String tenantValue)
       throws ConfigurationException {
+    boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
       throw new ConfigurationException("creator couldn't be empty ");
@@ -164,14 +186,26 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     if (StringUtils.isBlank(user)) {
       throw new ConfigurationException("user couldn't be empty ");
     }
-    //    if (StringUtils.isBlank(tenantValue)) {
-    //      throw new ConfigurationException("tenant couldn't be empty ");
-    //    }
-    return CollectionUtils.isNotEmpty(queryTenantList(user, creator, tenantValue));
+    if (creator.equals("*")) {
+      throw new ConfigurationException("creator couldn't be '*' ");
+    }
+    Map<String, Object> resultMap =
+        queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);
+    Object tenantList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
+    int total = Integer.parseInt(tenantList.toString());
+    if (total == 0) result = false;
+    return result;
   }
 
   @Override
   public TenantVo queryTenant(String user, String creator) {
     return userTenantMapper.queryTenant(user, creator);
+  }
+
+  public TenantVo toLowerCase(TenantVo tenantVo) {
+    tenantVo.setTenantValue(tenantVo.getTenantValue().toLowerCase());
+    tenantVo.setCreator(tenantVo.getCreator().toLowerCase());
+    tenantVo.setUser(tenantVo.getUser().toLowerCase());
+    return tenantVo;
   }
 }

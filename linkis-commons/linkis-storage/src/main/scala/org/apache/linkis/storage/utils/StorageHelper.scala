@@ -17,14 +17,19 @@
 
 package org.apache.linkis.storage.utils
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
-object StorageHelper {
+/**
+ * 工具类,用于做storage jar包打出来做测试用 Tool class, which is used to print the storage jar package for testing
+ */
+
+object StorageHelper extends Logging {
 
   def main(args: Array[String]): Unit = {
-    if (args.length < 2) println("Usage method params eg:getTableResLines path")
+    if (args.length < 2) logger.info("Usage method params eg:getTableResLines path")
     val method = args(0)
     val params = args.slice(1, args.length)
     Thread.sleep(10000L)
@@ -33,7 +38,7 @@ object StorageHelper {
       case "getTableResLines" => getTableResLines(params)
       case "getTableRes" => getTableRes(params)
       case "createNewFile" => createNewFile(params)
-      case _ => println("There is no such method")
+      case _ => logger.info("There is no such method")
     }
   }
 
@@ -50,14 +55,14 @@ object StorageHelper {
     fs.init(null)
     val reader = ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
     val rmetaData = reader.getMetaData
-    rmetaData.asInstanceOf[TableMetaData].columns.foreach(println)
+    rmetaData.asInstanceOf[TableMetaData].columns.foreach(column => logger.info(column.toString))
     var num = 0
     Thread.sleep(10000L)
     while (reader.hasNext) {
       reader.getRecord
       num = num + 1
     }
-    println(num)
+    logger.info(num.toString)
     reader.close()
   }
 
@@ -71,8 +76,12 @@ object StorageHelper {
     fs.init(null)
     val reader = ResultSetReader.getResultSetReader(resultSet, fs.read(resPath))
     val rmetaData = reader.getMetaData
-    rmetaData.asInstanceOf[TableMetaData].columns.foreach(println)
-    rmetaData.asInstanceOf[TableMetaData].columns.map(_.columnName + ",").foreach(print)
+    rmetaData.asInstanceOf[TableMetaData].columns.foreach(column => logger.info(column.toString))
+    rmetaData
+      .asInstanceOf[TableMetaData]
+      .columns
+      .map(_.columnName + ",")
+      .foreach(column => logger.info(column))
     var num = 0
     while (reader.hasNext) {
       num = num + 1
@@ -80,10 +89,10 @@ object StorageHelper {
       if (num > len) {
         val record = reader.getRecord
         record.asInstanceOf[TableRecord].row.foreach { value =>
-          print(value.toString)
-          print(",")
+          logger.info(value.toString)
+          logger.info(",")
         }
-        println()
+        logger.info("\n")
       }
     }
   }
@@ -92,7 +101,7 @@ object StorageHelper {
     val resPath = StorageUtils.getFsPath(args(0))
     val proxyUser = StorageUtils.getJvmUser
     FileSystemUtils.createNewFile(resPath, proxyUser, true)
-    println("success")
+    logger.info("success")
   }
 
 }

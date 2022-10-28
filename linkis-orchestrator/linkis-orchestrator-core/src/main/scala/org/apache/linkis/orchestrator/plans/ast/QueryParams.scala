@@ -104,10 +104,10 @@ object QueryParams {
 
   val CONTEXT_KEY = "context" // TaskConstant.PARAMS_CONTEXT
 
-  @Deprecated
+  @deprecated
   val CONTEXT_KEY_FOR_ID = "contextID"
 
-  @Deprecated
+  @deprecated
   val CONTEXT_KEY_FOR_NODE_NAME = "nodeName"
 
   val JOB_KEY = "job" // in runtime map

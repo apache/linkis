@@ -19,13 +19,13 @@ package org.apache.linkis.scheduler.queue
 
 case class UserJob() extends Job {
 
-  override def init() = {}
+  override def init(): Unit = {}
 
   override protected def jobToExecuteRequest = null
 
-  override def getName = null
+  override def getName: String = null
 
-  override def getJobInfo = null
+  override def getJobInfo: JobInfo = null
 
-  override def close() = {}
+  override def close(): Unit = {}
 }

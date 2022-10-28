@@ -19,9 +19,12 @@ package org.apache.linkis.engineconnplugin.flink.operator
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
 import org.apache.linkis.manager.common.operator.Operator
+
+import java.text.MessageFormat
 
 class TriggerSavepointOperator extends Operator with Logging {
 
@@ -38,7 +41,7 @@ class TriggerSavepointOperator extends Operator with Logging {
         Map("writtenSavepoint" -> writtenSavepoint)
       case executor =>
         throw new JobExecutionException(
-          "Not support to do savepoint for " + executor.getClass.getSimpleName
+          MessageFormat.format(NOT_SUPPORT_SAVEPOTION.getErrorDesc, executor.getClass.getSimpleName)
         )
     }
   }

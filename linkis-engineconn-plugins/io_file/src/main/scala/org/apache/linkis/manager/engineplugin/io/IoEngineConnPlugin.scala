@@ -46,14 +46,7 @@ class IoEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {
-    /*val engineTypeLabel = new EngineTypeLabel()
-    engineTypeLabel.setEngineType(EngineType.IO_ENGINE.toString)
-    engineTypeLabel.setVersion(IOEngineConnConfiguration.DEFAULT_VERSION.getValue)
-    this.defaultLabels.add(engineTypeLabel)
-    val runTypeLabel = new EngineRunTypeLabel()
-    runTypeLabel.setRunType(RunType.IO.toString)*/
-  }
+  override def init(params: util.Map[String, Any]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker synchronized {

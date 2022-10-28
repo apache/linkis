@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils
 import java.io.{File, FileInputStream, InputStream, IOException}
 import java.util.Properties
 
-import scala.collection.JavaConverters.mapAsJavaMapConverter
+import scala.collection.JavaConverters._
 
 private[conf] object BDPConfiguration extends Logging {
 
@@ -127,11 +127,15 @@ private[conf] object BDPConfiguration extends Logging {
 
   def properties: Properties = {
     val props = new Properties
-    props.putAll(env.asJava)
-    props.putAll(sysProps.asJava)
-    props.putAll(config)
-    props.putAll(extractConfig)
+    mergePropertiesFromMap(props, env)
+    mergePropertiesFromMap(props, sysProps.toMap)
+    mergePropertiesFromMap(props, config.asScala.toMap)
+    mergePropertiesFromMap(props, extractConfig.asScala.toMap)
     props
+  }
+
+  def mergePropertiesFromMap(props: Properties, mapProps: Map[String, String]): Unit = {
+    mapProps.foreach { case (k, v) => props.put(k, v) }
   }
 
   def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) {

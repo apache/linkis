@@ -43,18 +43,17 @@ class ECTaskEntranceConnection(
 
   override def isSameConnectionAs(upstreamConnection: UpstreamConnection): Boolean =
     upstreamConnection match {
-      case upstreamConnection2: ECTaskEntranceConnection => {
+      case upstreamConnection2: ECTaskEntranceConnection =>
         StringUtils.equals(upstreamConnection2.getKey, this.getKey) &&
-        StringUtils.equals(upstreamConnection2.getTaskID, this.getTaskID) &&
-        StringUtils.equals(
-          upstreamConnection2.getCurrentServiceInstanceName,
-          this.getCurrentServiceInstanceName
-        ) &&
-        StringUtils.equals(
-          upstreamConnection2.getUpstreamServiceInstanceName,
-          this.getUpstreamServiceInstanceName
-        )
-      }
+          StringUtils.equals(upstreamConnection2.getTaskID, this.getTaskID) &&
+          StringUtils.equals(
+            upstreamConnection2.getCurrentServiceInstanceName,
+            this.getCurrentServiceInstanceName
+          ) &&
+          StringUtils.equals(
+            upstreamConnection2.getUpstreamServiceInstanceName,
+            this.getUpstreamServiceInstanceName
+          )
       case _ => false
     }
 

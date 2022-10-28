@@ -80,4 +80,7 @@ object StorageConfiguration {
   val FS_CACHE_DISABLE =
     CommonVars[java.lang.Boolean]("wds.linkis.fs.hdfs.impl.disable.cache", false)
 
+  val FS_CHECKSUM_DISBALE =
+    CommonVars[java.lang.Boolean]("linkis.fs.hdfs.impl.disable.checksum", false)
+
 }

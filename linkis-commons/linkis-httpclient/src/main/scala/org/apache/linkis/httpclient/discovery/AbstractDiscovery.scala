@@ -20,6 +20,7 @@ package org.apache.linkis.httpclient.discovery
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.httpclient.Client
 import org.apache.linkis.httpclient.config.HttpClientConstant
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.CONNECT_TO_SERVERURL
 import org.apache.linkis.httpclient.exception.DiscoveryException
 
 import org.apache.commons.lang3.StringUtils
@@ -27,6 +28,7 @@ import org.apache.http.HttpResponse
 
 import java.io.Closeable
 import java.net.ConnectException
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.ScheduledFuture
 
@@ -98,11 +100,11 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
     logger.info("start Discovery thread")
     client.execute(getHeartbeatAction(serverUrl), 3000) match {
       case heartbeat: HeartbeatResult =>
-        if (!heartbeat.isHealthy)
+        if (!heartbeat.isHealthy) {
           throw new DiscoveryException(
-            s"connect to serverUrl $serverUrl failed! Reason: gateway server is unhealthy!"
+            MessageFormat.format(CONNECT_TO_SERVERURL.getErrorDesc, serverUrl)
           )
-        else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
+        } else discoveryListeners.asScala.foreach(_.onServerDiscovered(serverUrl))
     }
 
     Utils.defaultScheduler.scheduleAtFixedRate(
@@ -133,8 +135,9 @@ abstract class AbstractDiscovery extends Discovery with Closeable with Logging {
                   unhealthyServerInstances synchronized unhealthyServerInstances.remove(serverUrl)
                   discoveryListeners.asScala.foreach(_.onServerHealthy(serverUrl))
                   serverInstances synchronized serverInstances.add(serverUrl)
-                } else if (serverInstances.contains(serverUrl))
+                } else if (serverInstances.contains(serverUrl)) {
                   serverInstances synchronized serverInstances.remove(serverUrl)
+                }
             }) { case _: ConnectException =>
               unhealthyServerInstances synchronized unhealthyServerInstances.remove(serverUrl)
               serverInstances synchronized serverInstances.remove(serverUrl)

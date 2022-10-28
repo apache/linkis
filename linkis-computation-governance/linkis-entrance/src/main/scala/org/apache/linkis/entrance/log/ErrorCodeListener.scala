@@ -39,11 +39,11 @@ class PersistenceErrorCodeListener extends ErrorCodeListener {
   def setPersistenceManager(persistenceManager: PersistenceManager): Unit =
     this.persistenceManager = persistenceManager
 
-  def getPersistenceManager = persistenceManager
+  def getPersistenceManager: PersistenceManager = persistenceManager
 
   def setEntranceParser(entranceParser: EntranceParser): Unit = this.entranceParser = entranceParser
 
-  def getEntranceParser = entranceParser
+  def getEntranceParser: EntranceParser = entranceParser
 
   /**
    * onErrorCodeCreated: When a job is running, it terminates unexpectedly or generates an error,

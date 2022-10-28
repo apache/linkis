@@ -32,8 +32,8 @@ class ErrorCodeGetAllResult extends ErrorCodeResult {
   def getErrorCodes: java.util.List[LinkisErrorCode] = errorCodes
 
   def setErrorCodes(errorCodes: java.util.List[util.LinkedHashMap[String, Object]]): Unit = {
-    import scala.collection.JavaConversions._
-    errorCodes.foreach(map => {
+    import scala.collection.JavaConverters._
+    errorCodes.asScala.foreach(map => {
       val errorCode = map.get("errorCode").asInstanceOf[String]
       val errorDesc = map.get("errorDesc").asInstanceOf[String]
       val errorType = map.get("errorType").asInstanceOf[Int]

@@ -25,6 +25,7 @@ import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
 
+import org.apache.commons.io.IOUtils
 import org.apache.hadoop.hdfs.client.HdfsDataOutputStream
 
 import java.io.{IOException, OutputStream}
@@ -58,6 +59,14 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   private var proxyUser: String = StorageUtils.getJvmUser
 
+  private var fileCreated = false
+
+  private var closed = false
+
+  private val WRITER_LOCK_CREATE = new Object()
+
+  private val WRITER_LOCK_CLOSE = new Object()
+
   def getMetaData: MetaData = rMetaData
 
   def setProxyUser(proxyUser: String): Unit = {
@@ -73,16 +82,29 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
   }
 
   def createNewFile: Unit = {
-    if (storePath != null && outputStream == null) {
-      fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
-      fs.init(null)
-      FileSystemUtils.createNewFile(storePath, proxyUser, true)
-      outputStream = fs.write(storePath, true)
-      logger.info(s"Succeed to create a new file:$storePath")
+    if (!fileCreated) {
+      WRITER_LOCK_CREATE.synchronized {
+        if (!fileCreated) {
+          if (storePath != null && outputStream == null) {
+            fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
+            fs.init(null)
+            FileSystemUtils.createNewFile(storePath, proxyUser, true)
+            outputStream = fs.write(storePath, true)
+            logger.info(s"Succeed to create a new file:$storePath")
+            fileCreated = true
+          }
+        }
+      }
+    } else if (null != storePath && null == outputStream) {
+      logger.warn("outputStream had been set null, but createNewFile() was called again.")
     }
   }
 
   def writeLine(bytes: Array[Byte], cache: Boolean = false): Unit = {
+    if (closed) {
+      logger.warn("the writer had been closed, but writeLine() was still called.")
+      return
+    }
     if (bytes.length > LinkisStorageConf.ROW_BYTE_MAX_LEN) {
       throw new IOException(
         s"A single row of data cannot exceed ${LinkisStorageConf.ROW_BYTE_MAX_LEN_STR}"
@@ -146,15 +168,29 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
 
   def closeFs: Unit = {
     if (fs != null) {
-      fs.close()
+      IOUtils.closeQuietly(fs)
+      fs = null
     }
   }
 
   override def close(): Unit = {
+    if (closed) {
+      logger.warn("the writer had been closed, but close() was still called.")
+      return
+    } else {
+      WRITER_LOCK_CLOSE.synchronized {
+        if (!closed) {
+          closed = true
+        } else {
+          return
+        }
+      }
+    }
     Utils.tryFinally(if (outputStream != null) flush()) {
       closeFs
       if (outputStream != null) {
-        outputStream.close()
+        IOUtils.closeQuietly(outputStream)
+        outputStream = null
       }
     }
   }
@@ -174,6 +210,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
             outputStream.flush()
         }
       }(s"Error encounters when flush result set ")
+    }
+    if (closed) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("the writer had been closed, but flush() was still called.")
+      }
     }
   }
 

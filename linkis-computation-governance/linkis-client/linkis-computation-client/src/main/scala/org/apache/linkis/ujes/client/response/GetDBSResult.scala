@@ -26,7 +26,7 @@ import org.apache.commons.collections.CollectionUtils
 import java.util
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/dbs")
 class GetDBSResult extends DWSResult with UserAction {
@@ -35,7 +35,7 @@ class GetDBSResult extends DWSResult with UserAction {
   def getDBSName(): util.List[String] = {
     val dbsList = new util.ArrayList[String]()
     if (CollectionUtils.isNotEmpty(dbs)) {
-      dbs.foreach { db =>
+      dbs.asScala.foreach { db =>
         dbsList.add(db.get("dbName"))
       }
     }

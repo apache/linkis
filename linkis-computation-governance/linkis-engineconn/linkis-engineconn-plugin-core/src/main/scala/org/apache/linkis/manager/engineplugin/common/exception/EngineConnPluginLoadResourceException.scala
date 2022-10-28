@@ -19,8 +19,9 @@ package org.apache.linkis.manager.engineplugin.common.exception
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.manager.engineplugin.common.loader.conf.PluginLoaderConstant
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
 class EngineConnPluginLoadResourceException(desc: String, t: Throwable)
-    extends ErrorException(PluginLoaderConstant.PLUGIN_FAIL_TO_LOAD_RES, desc) {
+    extends ErrorException(PLUGIN_FAIL_TO_LOAD_RES.getErrorCode, desc) {
   super.initCause(t)
 }

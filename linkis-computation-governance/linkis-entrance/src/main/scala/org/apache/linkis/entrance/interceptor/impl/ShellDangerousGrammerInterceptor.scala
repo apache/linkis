@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.DangerousGramsCheckException
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -106,10 +107,8 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
     ) {
       logger.info(s"GET REQUEST CODE_TYPE ${codeType} and ENGINE_TYPE ${EngineType}")
       if (shellContainDangerUsage(jobRequest.getExecutionCode)) {
-        throw DangerousGramsCheckException("Shell code contains blacklisted code(shell中包含黑名单代码)")
-      } /*else if (!shellWhiteUsage(jobRequest.getExecutionCode)) {
-        throw  DangerousGramsCheckException("The shell code is not in the whitelist code(shell代码不在白名单中)")
-      }*/
+        throw DangerousGramsCheckException(SHELL_BLACKLISTED_CODE.getErrorDesc)
+      }
       jobRequest
     } else {
       jobRequest

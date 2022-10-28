@@ -20,9 +20,11 @@ package org.apache.linkis.ecm.server.operator
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 
 import java.io.File
+import java.text.MessageFormat
 import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
@@ -38,7 +40,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
       result
     } {
       result.get("logPath") match {
-        case Some(path: String) => {
+        case Some(path: String) =>
           val logFile = new File(path)
           if (logFile.exists() && logFile.getName.startsWith(".")) {
             // If is a temporary file, drop it
@@ -47,7 +49,6 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
               logger.warn(s"Fail to delete the temporary yarn log file: [$path]")
             }
           }
-        }
       }
     }
   }
@@ -57,8 +58,8 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     val rootLogDir = new File(engineConnLogDir)
     if (!rootLogDir.exists() || !rootLogDir.isDirectory) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"Log directory $rootLogDir is not exists."
+        LOG_IS_NOT_EXISTS.getErrorCode,
+        MessageFormat.format(LOG_IS_NOT_EXISTS.getErrorDesc, rootLogDir)
       )
     }
     val creator = getAsThrow[String]("creator")
@@ -98,8 +99,8 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     }
     if (!logPath.exists() || !logPath.isFile) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"LogFile $logPath is not exists or is not a file."
+        LOGFILE_IS_NOT_EXISTS.getErrorCode,
+        MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc, logPath)
       )
     }
     logger.info(

@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
   </parent>
 
   <artifactId>linkis-public-enhancements</artifactId>
@@ -42,6 +42,7 @@
     <module>linkis-instance-label/linkis-instance-label-server</module>
     <module>linkis-script-dev/linkis-storage-script-dev-client</module>
     <module>linkis-script-dev/linkis-storage-script-dev-server</module>
+    <module>linkis-basedata-manager</module>
     <module>linkis-error-code</module>
     <module>linkis-ps-common-lock</module>
   </modules>
@@ -105,6 +106,11 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-error-code-server</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-basedata-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

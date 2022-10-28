@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
@@ -58,10 +59,11 @@ object GetInfoPublishedByDataSourceNameAction {
     }
 
     def build(): GetInfoPublishedByDataSourceNameAction = {
-      if (dataSourceName == null)
-        throw new DataSourceClientBuilderException("dataSourceName is needed!")
-      if (system == null) throw new DataSourceClientBuilderException("system is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceName == null) {
+        throw new DataSourceClientBuilderException(DATASOURCENAME_NEEDED.getErrorDesc)
+      }
+      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
+      if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val getPublishedInfoByDataSourceNameAction = new GetInfoPublishedByDataSourceNameAction
       getPublishedInfoByDataSourceNameAction.dataSourceName = this.dataSourceName

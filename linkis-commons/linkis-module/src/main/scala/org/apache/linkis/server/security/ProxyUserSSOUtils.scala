@@ -75,11 +75,12 @@ object ProxyUserSSOUtils extends Logging {
 
   def removeProxyUser(getCookies: => Array[Cookie]): Unit = {
     val cookies = getCookies
-    if (cookies != null)
+    if (cookies != null) {
       cookies.find(_.getName == PROXY_USER_TICKET_ID_STRING).foreach { cookie =>
         cookie.setValue(null)
         cookie.setMaxAge(0)
       }
+    }
   }
 
   def removeLoginUserByAddCookie(addEmptyCookie: Cookie => Unit): Unit = {

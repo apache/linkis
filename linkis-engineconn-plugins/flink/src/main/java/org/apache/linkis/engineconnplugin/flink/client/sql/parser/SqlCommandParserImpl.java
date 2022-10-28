@@ -36,6 +36,8 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+
 public class SqlCommandParserImpl implements SqlCommandParser {
 
   @Override
@@ -80,10 +82,10 @@ public class SqlCommandParserImpl implements SqlCommandParser {
       sqlNodes = sqlParser.parseStmtList();
       // no need check the statement is valid here
     } catch (org.apache.calcite.sql.parser.SqlParseException e) {
-      throw new SqlParseException("Failed to parse statement.", e);
+      throw new SqlParseException(FAILED_PARSE_STATEMENT.getErrorDesc(), e);
     }
     if (sqlNodes.size() != 1) {
-      throw new SqlParseException("Only single statement is supported now");
+      throw new SqlParseException(ONLY_SINGLE_STATEMENT.getErrorDesc());
     }
 
     final String[] operands;
@@ -132,14 +134,14 @@ public class SqlCommandParserImpl implements SqlCommandParser {
       try {
         ifExistsField = SqlDrop.class.getDeclaredField("ifExists");
       } catch (NoSuchFieldException e) {
-        throw new SqlParseException("Failed to parse drop view statement.", e);
+        throw new SqlParseException(FAILED_DROP_STATEMENT.getErrorDesc(), e);
       }
       ifExistsField.setAccessible(true);
       boolean ifExists;
       try {
         ifExists = ifExistsField.getBoolean(dropViewNode);
       } catch (IllegalAccessException e) {
-        throw new SqlParseException("Failed to parse drop view statement.", e);
+        throw new SqlParseException(FAILED_DROP_STATEMENT.getErrorDesc(), e);
       }
 
       cmd = SqlCommand.DROP_VIEW;

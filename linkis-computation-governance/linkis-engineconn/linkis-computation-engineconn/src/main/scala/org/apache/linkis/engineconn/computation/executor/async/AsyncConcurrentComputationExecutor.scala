@@ -165,8 +165,8 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
           logger.info(s"kill job${job.getId()} task is ${task.getTaskId}")
           job.kill()
         }
-        /*task.setStatus(ExecutionNodeStatus.Cancelled)
-        transformTaskStatus(task, ExecutionNodeStatus.Cancelled)*/
+        /* task.setStatus(ExecutionNodeStatus.Cancelled)
+        transformTaskStatus(task, ExecutionNodeStatus.Cancelled) */
       }
     }
   }

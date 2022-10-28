@@ -18,6 +18,7 @@
 package org.apache.linkis.jobhistory.service.impl
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
 import org.apache.linkis.governance.common.entity.job.{
   JobRequest,
@@ -26,6 +27,7 @@ import org.apache.linkis.governance.common.entity.job.{
   SubJobDetail
 }
 import org.apache.linkis.governance.common.protocol.job._
+import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
@@ -56,9 +58,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   @Autowired
   private var jobHistoryMapper: JobHistoryMapper = _
-
-  @Autowired
-  private var jobDetailMapper: JobDetailMapper = _
 
   private val unDoneTaskCache: Cache[String, Integer] = CacheBuilder
     .newBuilder()
@@ -103,9 +102,11 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
       if (jobReq.getErrorDesc != null) {
-        if (jobReq.getErrorDesc.length > 256) {
+        if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
           logger.info(s"errorDesc is too long,we will cut some message")
-          jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+          jobReq.setErrorDesc(
+            jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN)
+          )
           logger.info(s"${jobReq.getErrorDesc}")
         }
       }
@@ -160,31 +161,34 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         val jobResp = new JobRespProtocol
         Utils.tryCatch {
           if (jobReq.getErrorDesc != null) {
-            if (jobReq.getErrorDesc.length > 256) {
+            if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
               logger.info(s"errorDesc is too long,we will cut some message")
-              jobReq.setErrorDesc(jobReq.getErrorDesc.substring(0, 256))
+              jobReq.setErrorDesc(
+                jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN)
+              )
               logger.info(s"${jobReq.getErrorDesc}")
             }
           }
           if (jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
-            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus))
+            if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
               throw new QueryException(
                 120001,
                 s"jobId:${jobReq.getId}，在数据库中的task状态为：${oldStatus}，更新的task状态为：${jobReq.getStatus}，更新失败！"
               )
+            }
           }
           val jobUpdate = jobRequest2JobHistory(jobReq)
           jobUpdate.setUpdatedTime(new Timestamp(System.currentTimeMillis()))
           jobHistoryMapper.updateJobHistory(jobUpdate)
 
           // todo
-          /*//to write cache
+          /* //to write cache
             if (TaskStatus.Succeed.toString.equals(jobReq.getStatus) && queryCacheService.needCache(jobReq)) {
               info("Write cache for task: " + jobReq.getId)
               jobReq.setExecutionCode(executionCode)
               queryCacheService.writeCache(jobReq)
-            }*/
+            } */
 
           val map = new util.HashMap[String, Object]
           map.put(JobRequestConstants.JOB_ID, jobReq.getId.asInstanceOf[Object])
@@ -214,10 +218,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       val tasksWithDetails = new util.ArrayList[JobRequestWithDetail]
       task.asScala.foreach(job => {
         val subJobDetails = new util.ArrayList[SubJobDetail]()
-        jobDetailMapper
-          .selectJobDetailByJobHistoryId(job.getId)
-          .asScala
-          .foreach(job => subJobDetails.add(jobdetail2SubjobDetail(job)))
+        val subJobDetail = new SubJobDetail
+        subJobDetail.setResultLocation(job.getResultLocation)
+        subJobDetails.add(subJobDetail)
         tasksWithDetails.add(
           new JobRequestWithDetail(jobHistory2JobRequest(job)).setSubJobDetailList(subJobDetails)
         )
@@ -234,13 +237,13 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobResp
   }
 
-  /*private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
+  /* private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
     import scala.collection.JavaConversions._
     val tasks = new util.ArrayList[RequestPersistTask]
     import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
     queryTask.foreach(f => tasks.add(f))
     tasks
-  }*/
+  } */
 
   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory

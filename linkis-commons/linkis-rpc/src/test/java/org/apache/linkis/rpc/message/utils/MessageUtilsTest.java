@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MessageUtilsTest {
+public class MessageUtilsTest {
 
   private List<ServiceMethod> notRepeatedServiceMethods;
   private List<ServiceMethod> repeatedServiceMethods;

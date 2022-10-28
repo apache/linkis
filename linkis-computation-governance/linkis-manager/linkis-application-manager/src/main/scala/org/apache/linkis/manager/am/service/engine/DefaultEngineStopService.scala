@@ -94,11 +94,10 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     Utils.tryCatch {
       resourceManager.resourceReleased(ecNode.getLabels)
     } {
-      case exception: RMErrorException => {
+      case exception: RMErrorException =>
         if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode) {
           throw exception
         }
-      }
       case exception: Exception => throw exception
     }
 

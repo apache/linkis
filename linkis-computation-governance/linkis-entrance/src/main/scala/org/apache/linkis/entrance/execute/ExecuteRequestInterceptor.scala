@@ -20,7 +20,7 @@ package org.apache.linkis.entrance.execute
 import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTaskExecute}
 import org.apache.linkis.scheduler.executer.{ExecuteRequest, JobExecuteRequest}
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 trait ExecuteRequestInterceptor {
 
@@ -96,7 +96,7 @@ object RuntimePropertiesExecuteRequestInterceptor extends ExecuteRequestIntercep
   override def apply(requestTask: RequestTask, executeRequest: ExecuteRequest): RequestTask =
     executeRequest match {
       case runtime: RuntimePropertiesExecuteRequest =>
-        JavaConversions.mapAsScalaMap(runtime.properties).foreach { case (k, v) =>
+        runtime.properties.asScala.foreach { case (k, v) =>
           requestTask.data(k, v)
         }
         requestTask

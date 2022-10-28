@@ -17,6 +17,8 @@
 
 package org.apache.linkis.bml.common
 
+import org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary._
 import org.apache.linkis.common.exception.ErrorException
 
-case class BmlQueryFailException(errorMsg: String) extends ErrorException(70068, errorMsg)
+case class BmlQueryFailException(errorMsg: String)
+    extends ErrorException(BML_QUERY_FAILEXCEPTION.getErrorCode, errorMsg)

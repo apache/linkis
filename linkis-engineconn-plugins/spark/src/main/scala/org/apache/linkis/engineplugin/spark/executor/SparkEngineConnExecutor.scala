@@ -159,25 +159,25 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     executeLine(engineExecutorContext, newcode)
   }
 
-  override def progress(taskID: String): Float = if (
-      jobGroup == null || engineExecutionContext.getTotalParagraph == 0
-  ) ProgressUtils.getOldProgress(this.engineExecutionContext)
-  else {
-    val newProgress =
-      (engineExecutionContext.getCurrentParagraph * 1f - 1f) / engineExecutionContext.getTotalParagraph + JobProgressUtil
-        .progress(sc, jobGroup) / engineExecutionContext.getTotalParagraph
-    val normalizedProgress = if (newProgress >= 1) newProgress - 0.1f else newProgress
-    val oldProgress = ProgressUtils.getOldProgress(this.engineExecutionContext)
-    if (normalizedProgress < oldProgress) oldProgress
-    else {
-      ProgressUtils.putProgress(normalizedProgress, this.engineExecutionContext)
-      normalizedProgress
+  override def progress(taskID: String): Float =
+    if (jobGroup == null || engineExecutionContext.getTotalParagraph == 0) {
+      ProgressUtils.getOldProgress(this.engineExecutionContext)
+    } else {
+      val newProgress =
+        (engineExecutionContext.getCurrentParagraph * 1f - 1f) / engineExecutionContext.getTotalParagraph + JobProgressUtil
+          .progress(sc, jobGroup) / engineExecutionContext.getTotalParagraph
+      val normalizedProgress = if (newProgress >= 1) newProgress - 0.1f else newProgress
+      val oldProgress = ProgressUtils.getOldProgress(this.engineExecutionContext)
+      if (normalizedProgress < oldProgress) oldProgress
+      else {
+        ProgressUtils.putProgress(normalizedProgress, this.engineExecutionContext)
+        normalizedProgress
+      }
     }
-  }
 
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = if (jobGroup == null)
+  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = if (jobGroup == null) {
     Array.empty
-  else {
+  } else {
     logger.debug("request new progress info for jobGroup is " + jobGroup)
     val progressInfoArray = ArrayBuffer[JobProgressInfo]()
     progressInfoArray ++= JobProgressUtil.getActiveJobProgressInfo(sc, jobGroup)
@@ -220,20 +220,10 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
   override def getCurrentNodeResource(): NodeResource = {
     logger.info("Begin to get actual used resources!")
     Utils.tryCatch({
-      //      val driverHost: String = sc.getConf.get("spark.driver.host")
-      //      val executorMemList = sc.getExecutorMemoryStatus.filter(x => !x._1.split(":")(0).equals(driverHost)).map(x => x._2._1)
       val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
       val executorMem: Long =
         ByteTimeUtils.byteStringAsBytes(sc.getConf.get("spark.executor.memory")) * executorNum
-
-      //      if(executorMemList.size>0) {
-      //        executorMem = executorMemList.reduce((x, y) => x + y)
-      //      }
       val driverMem: Long = ByteTimeUtils.byteStringAsBytes(sc.getConf.get("spark.driver.memory"))
-      //      val driverMemList = sc.getExecutorMemoryStatus.filter(x => x._1.split(":")(0).equals(driverHost)).map(x => x._2._1)
-      //      if(driverMemList.size > 0) {
-      //          driverMem = driverMemList.reduce((x, y) => x + y)
-      //      }
       val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt * executorNum
       val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
       val queue = sc.getConf.get("spark.yarn.queue")

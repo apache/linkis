@@ -99,5 +99,5 @@ class DefaultEngineConn extends EngineConn {
 
   override def setEngineConnManagerEnv(env: EngineConnManagerEnv): Unit = this.ecmEnv = env
 
-  override def toString = s"DefaultEngineConn($status, $tickedId, $instance, $pid)"
+  override def toString: String = s"DefaultEngineConn($status, $tickedId, $instance, $pid)"
 }

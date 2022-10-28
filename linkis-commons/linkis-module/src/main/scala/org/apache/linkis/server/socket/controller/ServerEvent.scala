@@ -29,16 +29,16 @@ class ServerEvent() extends Event {
   private var data: util.Map[String, Object] = _
   private var user: String = _
   private var websocketTag: String = _
-  def setId(id: Int) = this.id = id
-  def getId = id
-  def setUser(user: String) = this.user = user
-  def setMethod(method: String) = this.method = method
-  def getMethod = method
-  def setData(data: util.Map[String, Object]) = this.data = data
-  def getData = data
-  def getUser = user
-  def setWebsocketTag(websocketTag: String) = this.websocketTag = websocketTag
-  def getWebsocketTag = websocketTag
+  def setId(id: Int): Unit = this.id = id
+  def getId: Int = id
+  def setUser(user: String): Unit = this.user = user
+  def setMethod(method: String): Unit = this.method = method
+  def getMethod: String = method
+  def setData(data: util.Map[String, Object]): Unit = this.data = data
+  def getData: util.Map[String, Object] = data
+  def getUser: String = user
+  def setWebsocketTag(websocketTag: String): Unit = this.websocketTag = websocketTag
+  def getWebsocketTag: String = websocketTag
 }
 
 class SocketServerEvent(private[controller] val socket: ServerSocket, val message: String)

@@ -28,8 +28,6 @@ import org.apache.commons.lang3.StringUtils
 
 object TokenAuthentication extends Logging {
 
-  //  @Autowired
-  //  private var tokenService: TokenService = _ //Not working
   private var tokenService: TokenService = _
 
   def setTokenService(tokenService: TokenService): Unit = {

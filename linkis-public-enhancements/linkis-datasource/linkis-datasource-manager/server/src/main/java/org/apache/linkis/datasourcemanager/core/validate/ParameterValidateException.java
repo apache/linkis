@@ -19,14 +19,14 @@ package org.apache.linkis.datasourcemanager.core.validate;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.PARAM_VALIDATE_ERROR;
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.IS_NULL_MS;
 
 public class ParameterValidateException extends ErrorException {
   public ParameterValidateException(String desc) {
-    super(PARAM_VALIDATE_ERROR.getValue(), desc);
+    super(IS_NULL_MS.getErrorCode(), desc);
   }
 
   public ParameterValidateException(String desc, String ip, int port, String serviceKind) {
-    super(PARAM_VALIDATE_ERROR.getValue(), desc, ip, port, serviceKind);
+    super(IS_NULL_MS.getErrorCode(), desc, ip, port, serviceKind);
   }
 }

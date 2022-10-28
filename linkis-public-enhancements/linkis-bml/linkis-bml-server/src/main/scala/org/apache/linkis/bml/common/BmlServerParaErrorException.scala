@@ -17,6 +17,8 @@
 
 package org.apache.linkis.bml.common
 
+import org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary._
 import org.apache.linkis.common.exception.ErrorException
 
-case class BmlServerParaErrorException(errorMsg: String) extends ErrorException(78361, errorMsg)
+case class BmlServerParaErrorException(errorMsg: String)
+    extends ErrorException(BML_SERVER_PARA_ID.getErrorCode, errorMsg)

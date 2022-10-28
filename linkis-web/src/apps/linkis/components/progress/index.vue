@@ -44,6 +44,10 @@ export default {
     children: {
       type: Boolean,
       default: false
+    },
+    parentData: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -55,7 +59,7 @@ export default {
     expandChange() {
       // 返回父组件更改展开状态
       if(!this.children) this.progressData.expand = !this.progressData.expand;
-      this.$emit('expandChange', this.progressData, this.children)
+      this.$emit('expandChange', this.progressData, this.children, this.parentData)
     }
   }
 }

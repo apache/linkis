@@ -21,9 +21,10 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
-import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobInfo}
+import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -55,9 +56,6 @@ abstract class EntranceJob extends Job {
   var jobRequest: JobRequest = _
 
   @BeanProperty
-  var jobGroups: Array[SubJobInfo] = new Array[SubJobInfo](0)
-
-  @BeanProperty
   var codeParser: CodeParser = _
 
   private var entranceListenerBus
@@ -65,7 +63,7 @@ abstract class EntranceJob extends Job {
 
   private var progressInfo: Array[JobProgressInfo] = Array.empty
   private val persistedResultSets = new AtomicInteger(0)
-  //  private var resultSize = -1
+
   private var entranceContext: EntranceContext = _
 
   private var updateMetrisFlag: Boolean = false
@@ -78,7 +76,7 @@ abstract class EntranceJob extends Job {
    * Record newest time that a client access status of this job Can be used to monitor client
    * status. e.g. server can detect if linkis-cli process has abnormally ended then kill the job
    */
-  private val newestAccessByClientTimestamp: AtomicLong = new AtomicLong(-1L) // volatile
+  private val newestAccessByClientTimestamp: AtomicLong = new AtomicLong(-1L)
 
   def setEntranceListenerBus(
       entranceListenerBus: EntranceEventListenerBus[EntranceEventListener, EntranceEvent]
@@ -101,18 +99,7 @@ abstract class EntranceJob extends Job {
     newestAccessByClientTimestamp.set(newTime)
   }
 
-  def getRunningSubJobIndex: Int
-
-  def getRunningSubJob: SubJobInfo = {
-    if (null != jobGroups && jobGroups.size > 0) {
-      jobGroups(0)
-    } else {
-      null
-    }
-  }
-
   def setResultSize(resultSize: Int): Unit = {
-    //    this.resultSize = resultSize
     if (resultSize >= 0) {
       persistedResultSets.set(resultSize)
     }
@@ -129,7 +116,7 @@ abstract class EntranceJob extends Job {
     }
   }
 
-  @Deprecated
+  @deprecated
   def incrementResultSetPersisted(): Unit = {
     //    persistedResultSets.incrementAndGet()
   }
@@ -141,19 +128,6 @@ abstract class EntranceJob extends Job {
       fromState: SchedulerEventState,
       toState: SchedulerEventState
   ): Unit = {
-    //    if (SchedulerEventState.isCompleted(toState) && (resultSize < 0 || persistedResultSets.get() < resultSize)) {
-    /*val startWaitForPersistedTime = System.currentTimeMillis
-    persistedResultSets synchronized {
-      while ((resultSize < 0 || persistedResultSets.get() < resultSize) && getErrorResponse == null && !isWaitForPersistedTimeout(startWaitForPersistedTime))
-        persistedResultSets.wait(3000)
-    }
-    if (isWaitForPersistedTimeout(startWaitForPersistedTime)) onFailure("persist resultSets timeout!", new EntranceErrorException(20305, "persist resultSets timeout!"))
-    if (isSucceed && getErrorResponse != null) {
-      val _toState = if (getErrorResponse.t == null) Cancelled else Failed
-      transition(_toState)
-      return
-    }*/
-    //    }
     super.beforeStateChanged(fromState, toState)
   }
 
@@ -161,11 +135,9 @@ abstract class EntranceJob extends Job {
       fromState: SchedulerEventState,
       toState: SchedulerEventState
   ): Unit = {
-    // updateJobRequestStatus(toState.toString)
     super.afterStateChanged(fromState, toState)
     toState match {
       case Scheduled =>
-        // Entrance指标：任务排队结束时间
         if (getJobRequest.getMetrics == null) {
           getLogListener.foreach(
             _.onLogUpdate(this, LogUtils.generateWarn("Job Metrics has not been initialized."))
@@ -205,24 +177,25 @@ abstract class EntranceJob extends Job {
             LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")
           )
         )
-      // TODO job start event
+
       case _ if SchedulerEventState.isCompleted(toState) =>
         endTime = System.currentTimeMillis()
-        // Entrance指标，任务完成时间
+
         getJobRequest.getMetrics.put(
           TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
           new Date(System.currentTimeMillis())
         )
-        if (getJobInfo != null)
+        if (getJobInfo != null) {
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
-        if (isSucceed)
+        }
+        if (isSucceed) {
           getLogListener.foreach(
             _.onLogUpdate(
               this,
               LogUtils.generateInfo("Congratulations. Your job completed with status Success.")
             )
           )
-        else
+        } else {
           getLogListener.foreach(
             _.onLogUpdate(
               this,
@@ -231,6 +204,7 @@ abstract class EntranceJob extends Job {
               )
             )
           )
+        }
         this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS)
         entranceListenerBus.foreach(
           _.post(
@@ -250,7 +224,7 @@ abstract class EntranceJob extends Job {
           .updateIfNeeded(getJobRequest)
       case _ =>
     }
-    entranceListenerBus.foreach(_.post(EntranceJobEvent(this.getId)))
+    entranceListenerBus.foreach(_.post(EntranceJobEvent(this.getId())))
   }
 
   override def onFailure(errorMsg: String, t: Throwable): Unit = {
@@ -294,7 +268,6 @@ abstract class EntranceJob extends Job {
       (if (RPCUtils.isReceiverNotExists(errorExecuteResponse.t)) {
          getExecutor match {
            case e: EntranceExecutor =>
-             //          val instance = e.getInstance.getInstance
              getLogListener.foreach(
                _.onLogUpdate(
                  this,
@@ -312,7 +285,11 @@ abstract class EntranceJob extends Job {
     this.getExecutor match {
       case entranceExecutor: EntranceExecutor =>
         operate(entranceExecutor)
-      case _ => throw new EntranceErrorException(10000, "Unsupported operation (不支持的操作)")
+      case _ =>
+        throw new EntranceErrorException(
+          UNSUPPORTED_OPERATION.getErrorCode,
+          UNSUPPORTED_OPERATION.getErrorDesc
+        )
     }
 
   }
@@ -362,6 +339,6 @@ abstract class EntranceJob extends Job {
 
 object EntranceJob {
 
-  def JOB_COMPLETED_PROGRESS = 1.0f
+  def JOB_COMPLETED_PROGRESS: Float = 1.0f
 
 }

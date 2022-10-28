@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.parser
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalParamException}
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
@@ -39,7 +40,6 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 import java.util.Date
 
-import scala.collection.JavaConversions.mapAsScalaMap
 import scala.collection.JavaConverters._
 
 class CommonEntranceParser(val persistenceManager: PersistenceManager)
@@ -95,11 +95,18 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     if (executionContent.containsKey(TaskConstant.CODE)) {
       code = executionContent.get(TaskConstant.CODE).asInstanceOf[String]
       runType = executionContent.get(TaskConstant.RUNTYPE).asInstanceOf[String]
-      if (StringUtils.isEmpty(code))
-        throw new EntranceIllegalParamException(20007, "param executionCode can not be empty ")
+      if (StringUtils.isBlank(code)) {
+        throw new EntranceIllegalParamException(
+          PARAM_NOT_NULL.getErrorCode,
+          PARAM_NOT_NULL.getErrorDesc
+        )
+      }
     } else {
       // todo check
-      throw new EntranceIllegalParamException(20010, "Only code with runtype supported !")
+      throw new EntranceIllegalParamException(
+        ONLY_CODE_SUPPORTED.getErrorCode,
+        PARAM_NOT_NULL.getErrorDesc
+      )
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
     if (formatCode) code = format(code)
@@ -114,7 +121,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobRequest.setLabels(new util.ArrayList[Label[_]](labels.values()))
     jobRequest.setSource(source)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
-    // Entrance指标：任务提交时间
+    // Entry indicator: task submission time
     jobRequest.setMetrics(new util.HashMap[String, Object]())
     jobRequest.getMetrics.put(
       TaskConstant.ENTRANCEJOB_SUBMIT_TIME,
@@ -125,7 +132,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   }
 
   private def checkEngineTypeLabel(labels: util.Map[String, Label[_]]): Unit = {
-    val engineTypeLabel = labels.getOrElse(LabelKeyConstant.ENGINE_TYPE_KEY, null)
+    val engineTypeLabel = labels.getOrDefault(LabelKeyConstant.ENGINE_TYPE_KEY, null)
     if (null == engineTypeLabel) {
       val msg = s"You need to specify engineTypeLabel in labels, such as spark-2.4.3"
       throw new EntranceIllegalParamException(
@@ -145,7 +152,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       runType: String,
       labels: util.Map[String, Label[_]]
   ): Unit = {
-    val engineRunTypeLabel = labels.getOrElse(LabelKeyConstant.CODE_TYPE_KEY, null)
+    val engineRunTypeLabel = labels.getOrDefault(LabelKeyConstant.CODE_TYPE_KEY, null)
     if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
       val msg = s"You need to specify runType in execution content, such as sql"
       logger.warn(msg)
@@ -172,7 +179,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       labels: util.Map[String, Label[_]]
   ): Unit = {
     var userCreatorLabel = labels
-      .getOrElse(LabelKeyConstant.USER_CREATOR_TYPE_KEY, null)
+      .getOrDefault(LabelKeyConstant.USER_CREATOR_TYPE_KEY, null)
       .asInstanceOf[UserCreatorLabel]
     if (null == userCreatorLabel) {
       userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
@@ -193,8 +200,12 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     if (StringUtils.isBlank(submitUser)) {
       jobReq.setSubmitUser(umUser)
     }
-    if (umUser == null)
-      throw new EntranceIllegalParamException(20005, "execute user can not be null")
+    if (umUser == null) {
+      throw new EntranceIllegalParamException(
+        EXECUTEUSER_NOT_NULL.getErrorCode,
+        EXECUTEUSER_NOT_NULL.getErrorDesc
+      )
+    }
     jobReq.setExecuteUser(umUser)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)
@@ -209,21 +220,21 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       .asInstanceOf[util.Map[String, String]]
     val executeApplicationName =
       params.get(TaskConstant.EXECUTEAPPLICATIONNAME).asInstanceOf[String]
-    if (StringUtils.isEmpty(creator))
+    if (StringUtils.isBlank(creator)) {
       creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
-    // if (StringUtils.isEmpty(executeApplicationName)) throw new EntranceIllegalParamException(20006, "param executeApplicationName can not be empty or null")
-    /* When the execution type is IDE, executionCode and scriptPath cannot be empty at the same time*/
-    /*当执行类型为IDE的时候，executionCode和scriptPath不能同时为空*/
+    }
+    // When the execution type is IDE, executioncode and scriptpath cannot be empty at the same time
     if (
         EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(
           creator
         ) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
         StringUtils.isEmpty(executionCode)
-    )
+    ) {
       throw new EntranceIllegalParamException(
-        20007,
-        "param executionCode and scriptPath can not be empty at the same time"
+        EXEC_SCRIP_NOT_NULL.getErrorCode,
+        EXEC_SCRIP_NOT_NULL.getErrorDesc
       )
+    }
     var runType: String = null
     if (StringUtils.isNotEmpty(executionCode)) {
       runType = params.get(TaskConstant.RUNTYPE).asInstanceOf[String]
@@ -254,9 +265,9 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     }
     jobReq.setProgress("0.0")
     jobReq.setSource(source)
-    // 为了兼容代码，让engineType和runType都有同一个属性
+    // In order to be compatible with the code, let enginetype and runtype have the same attribute
     jobReq.setStatus(SchedulerEventState.Inited.toString)
-    // 封装Labels
+    // Package labels
     jobReq.setLabels(labelList)
     jobReq.setMetrics(new util.HashMap[String, Object]())
     jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))

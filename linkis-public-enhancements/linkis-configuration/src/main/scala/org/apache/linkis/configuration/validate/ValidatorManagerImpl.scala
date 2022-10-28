@@ -29,7 +29,7 @@ class ValidatorManagerImpl extends ValidatorManager with Logging {
   private var validators: Array[Validator] = _
 
   @PostConstruct
-  def init() = {
+  def init(): Unit = {
     validators = Array(
       new NumericalValidator,
       new OneOfValidator,

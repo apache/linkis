@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.common.service;
 
 import java.io.Closeable;
+import java.util.Collections;
 import java.util.Map;
 
 public interface BaseMetadataService {
@@ -30,4 +31,17 @@ public interface BaseMetadataService {
    */
   MetadataConnection<? extends Closeable> getConnection(String operator, Map<String, Object> params)
       throws Exception;
+
+  /**
+   * Get connection information (default empty)
+   *
+   * @param operator operator
+   * @param params connect params
+   * @param queryParams query params
+   * @return information
+   */
+  default Map<String, String> getConnectionInfo(
+      String operator, Map<String, Object> params, Map<String, String> queryParams) {
+    return Collections.emptyMap();
+  }
 }

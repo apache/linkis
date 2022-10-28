@@ -89,10 +89,10 @@ class ComputationExecutorManagerImpl
     }
   }
 
-  /*override def getReportExecutor: ComputationExecutor = if(getExecutors.isEmpty) getDefaultExecutor
+  /* override def getReportExecutor: ComputationExecutor = if(getExecutors.isEmpty) getDefaultExecutor
   else getExecutors.maxBy {
     case computationExecutor: ComputationExecutor => computationExecutor.getStatus.ordinal()
-  }.asInstanceOf[ComputationExecutor]*/
+  }.asInstanceOf[ComputationExecutor] */
 
   override protected def getLabelKey(labels: Array[Label[_]]): String = {
     labels.foreach {

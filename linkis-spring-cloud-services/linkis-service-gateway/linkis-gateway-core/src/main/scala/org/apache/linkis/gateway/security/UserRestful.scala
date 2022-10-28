@@ -36,9 +36,9 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.net.util.Base64
 
 import java.nio.charset.StandardCharsets
-import java.util.Random
+import java.util.{Locale, Random}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.google.gson.Gson
 
@@ -93,7 +93,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     val validationCode = gatewayContext.getRequest.getQueryParams.get("validationCode")(0)
     // validate
     if (ProxyUserUtils.validate(proxyUser, validationCode)) {
-      val lowerCaseUserName = proxyUser.toString.toLowerCase
+      val lowerCaseUserName = proxyUser.toString.toLowerCase(Locale.getDefault)
       GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
       "代理成功".data("proxyUser", proxyUser)
     } else {
@@ -119,8 +119,9 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
 
   def logout(gatewayContext: GatewayContext): Message = {
     GatewaySSOUtils.removeLoginUser(gatewayContext)
-    if (GatewayConfiguration.ENABLE_SSO_LOGIN.getValue)
+    if (GatewayConfiguration.ENABLE_SSO_LOGIN.getValue) {
       SSOInterceptor.getSSOInterceptor.logout(gatewayContext)
+    }
     if (securityHooks != null) securityHooks.foreach(_.preLogout(gatewayContext))
     "Logout successful(退出登录成功)！"
   }
@@ -177,9 +178,9 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       if (
           userNameArray != null && userNameArray.nonEmpty &&
           passwordArray != null && passwordArray.nonEmpty
-      )
+      ) {
         (userNameArray.head, passwordArray.head)
-      else if (StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
+      } else if (StringUtils.isNotBlank(gatewayContext.getRequest.getRequestBody)) {
         val json = BDPJettyServerHelper.gson.fromJson(
           gatewayContext.getRequest.getRequestBody,
           classOf[java.util.Map[String, Object]]
@@ -220,7 +221,8 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   }
 
   def clearExpireCookie(gatewayContext: GatewayContext): Unit = {
-    val cookies = gatewayContext.getRequest.getCookies.values().flatMap(cookie => cookie).toArray
+    val cookies =
+      gatewayContext.getRequest.getCookies.values().asScala.flatMap(cookie => cookie).toArray
     val expireCookies = cookies.filter(cookie =>
       cookie.getName.equals(ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue)
     )
@@ -268,7 +270,7 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
         message = userControlLogin(userName, password, gatewayContext)
       } else {
         // standard login
-        val lowerCaseUserName = userName.toLowerCase
+        val lowerCaseUserName = userName.toLowerCase(Locale.getDefault())
         message = login(lowerCaseUserName, password)
         clearExpireCookie(gatewayContext)
         if (message.getStatus == 0) {
@@ -283,27 +285,6 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
       message
     }
   }
-
-  //  private def getWorkspaceIdFromDSS(userName: String): util.List[Integer] = {
-  //    val sender: Sender = Sender.getSender(GatewayConfiguration.DSS_QUERY_WORKSPACE_SERVICE_NAME.getValue)
-  //    val requestUserWorkspace: RequestUserWorkspace = new RequestUserWorkspace(userName)
-  //    var resp: Any = null
-  //    var workspaceId: util.List[Integer] = null
-  //    Utils.tryCatch {
-  //      resp = sender.ask(requestUserWorkspace)
-  //    } {
-  //      case e: Exception =>
-  //        error(s"Call dss workspace rpc failed, ${e.getMessage}", e)
-  //        throw new GatewayErrorException(40010, s"向DSS工程服务请求工作空间ID失败, ${e.getMessage}")
-  //    }
-  //    resp match {
-  //      case s: ResponseUserWorkspace => workspaceId = s.getUserWorkspaceIds
-  //      case _ =>
-  //        throw new GatewayErrorException(40012, s"向DSS工程服务请求工作空间ID返回值失败,")
-  //    }
-  //    logger.info("Get userWorkspaceIds  is " + workspaceId + ",and user is " + userName)
-  //    workspaceId
-  //  }
 
   protected def login(userName: String, password: String): Message
 

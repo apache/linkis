@@ -66,7 +66,7 @@ abstract class ShellProcessEngineCommandBuilder extends ProcessEngineCommandBuil
 
 class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
 
-  newLine("#!/bin/bash")
+  newLine("#!/usr/bin/env bash")
 
   if (ECPCoreConf.CORE_DUMP_DISABLE) {
     newLine("ulimit -c 0")

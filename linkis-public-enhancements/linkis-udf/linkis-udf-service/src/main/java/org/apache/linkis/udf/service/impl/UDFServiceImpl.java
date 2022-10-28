@@ -441,7 +441,6 @@ public class UDFServiceImpl implements UDFService {
   public void handoverUdf(Long udfId, String handoverUser) throws UDFException {
     logger.info("begin to handover udf, udfId: " + udfId);
     UDFInfo udfInfo = udfDao.getUDFById(udfId);
-    List<UDFVersion> udfVersionList = udfVersionDao.getAllVersions(udfId);
     UDFVersion latestVersion = udfVersionDao.selectLatestByUdfId(udfId);
     long count = udfDao.getSameNameCountByUser(udfInfo.getUdfName(), handoverUser);
     long sharedCount =

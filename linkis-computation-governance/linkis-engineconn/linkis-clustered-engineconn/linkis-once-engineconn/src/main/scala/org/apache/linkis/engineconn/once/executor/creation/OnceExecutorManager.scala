@@ -47,14 +47,14 @@ class OnceExecutorManagerImpl extends LabelExecutorManagerImpl with OnceExecutor
 
   override def getReportExecutor: OnceExecutor = if (getExecutors.isEmpty) {
     val labels =
-      if (null == engineConn.getEngineCreationContext.getLabels())
+      if (null == engineConn.getEngineCreationContext.getLabels()) {
         throw new OnceEngineConnErrorException(12560, "No labels is exists.")
-      else engineConn.getEngineCreationContext.getLabels()
+      } else engineConn.getEngineCreationContext.getLabels()
     createExecutor(
       engineConn.getEngineCreationContext,
       labels.toArray[Label[_]](Array.empty[Label[_]])
     ).asInstanceOf[OnceExecutor]
-  } else
+  } else {
     getExecutors
       .filter(_.isInstanceOf[OnceExecutor])
       .maxBy {
@@ -62,5 +62,6 @@ class OnceExecutorManagerImpl extends LabelExecutorManagerImpl with OnceExecutor
         case executor: Executor => executor.getId.hashCode
       }
       .asInstanceOf[OnceExecutor]
+  }
 
 }

@@ -71,10 +71,9 @@ class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
     action.setParameter("fileName", fileName)
     val result: Result = dwsClient.execute(action)
     result match {
-      case r: ScriptFromBMLResult => {
+      case r: ScriptFromBMLResult =>
         if (r.getStatus != 0) throw new IllegalArgumentException(r.getMessage)
         ScriptFromBMLResponse(r.scriptContent, r.metadata)
-      }
       case _ => null
     }
   }
@@ -93,10 +92,9 @@ class WorkspaceClientImpl extends WorkspaceClient with WorkspaceHttpConf {
     action.setParameter("fileName", fileName)
     val result: Result = dwsClient.execute(action)
     result match {
-      case r: ScriptFromBMLResult => {
+      case r: ScriptFromBMLResult =>
         if (r.getStatus != 0) throw new IllegalArgumentException(r.getMessage)
         ScriptFromBMLResponse(r.scriptContent, r.metadata)
-      }
       case _ => null
     }
   }

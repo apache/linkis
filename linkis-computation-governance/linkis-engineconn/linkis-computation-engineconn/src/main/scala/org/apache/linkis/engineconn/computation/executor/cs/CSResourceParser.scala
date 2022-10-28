@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 import java.util.regex.Pattern
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 class CSResourceParser {
@@ -58,7 +58,8 @@ class CSResourceParser {
     val parsedNames = new ArrayBuffer[String]()
     preFixResourceNames.foreach { preFixResourceName =>
       val resourceName = preFixResourceName.replace(PREFIX, "").trim
-      val bmlResourceOption = bmlResourceList.find(_.getDownloadedFileName.equals(resourceName))
+      val bmlResourceOption =
+        bmlResourceList.asScala.find(_.getDownloadedFileName.equals(resourceName))
       if (bmlResourceOption.isDefined) {
         val bmlResource = bmlResourceOption.get
         val map = new util.HashMap[String, Object]()

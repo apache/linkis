@@ -33,6 +33,8 @@ trait EngineNodeManager {
 
   def getEngineNodeInfo(engineNode: EngineNode): EngineNode
 
+  def getEngineNodeInfo(serviceInstance: ServiceInstance): EngineNode
+
   def getEngineNodeInfoByDB(engineNode: EngineNode): EngineNode
 
   /**

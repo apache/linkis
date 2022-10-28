@@ -25,6 +25,8 @@ import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.hive.common.HiveUtils
 import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration
 import org.apache.linkis.engineplugin.hive.entity.HiveSession
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.CREATE_HIVE_EXECUTOR_ERROR
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.HIVE_EXEC_JAR_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
 import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
@@ -40,7 +42,7 @@ import org.apache.hadoop.hive.ql.session.SessionState
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
@@ -62,7 +64,10 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
           hiveSession.baos
         )
       case _ =>
-        throw HiveSessionStartFailedException(40012, "Failed to create hive executor")
+        throw HiveSessionStartFailedException(
+          CREATE_HIVE_EXECUTOR_ERROR.getErrorCode,
+          CREATE_HIVE_EXECUTOR_ERROR.getErrorDesc
+        )
     }
   }
 
@@ -77,13 +82,13 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
         .jarOfClass(classOf[Driver])
         .getOrElse(
           throw HiveSessionStartFailedException(
-            40012,
-            "cannot find hive-exec.jar, start session failed!"
+            HIVE_EXEC_JAR_ERROR.getErrorCode,
+            HIVE_EXEC_JAR_ERROR.getErrorDesc
           )
         )
     )
-    options.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
-    options
+    options.asScala.foreach { case (k, v) => logger.info(s"key is $k, value is $v") }
+    options.asScala
       .filter { case (k, v) =>
         k.startsWith("hive.") || k.startsWith("mapreduce.") || k.startsWith("mapred.reduce.") || k
           .startsWith("wds.linkis.")
@@ -108,7 +113,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       hiveConf.setVar(HiveConf.ConfVars.HIVEAUXJARS, HiveEngineConfiguration.HIVE_AUX_JARS_PATH)
     }
 
-    /* //add hook to HiveDriver
+    /*
+    //add hook to HiveDriver
      if (StringUtils.isNotBlank(EnvConfiguration.LINKIS_HIVE_POST_HOOKS)) {
        val hooks = if (StringUtils.isNotBlank(hiveConf.get("hive.exec.post.hooks"))) {
          hiveConf.get("hive.exec.post.hooks") + "," + EnvConfiguration.LINKIS_HIVE_POST_HOOKS
@@ -116,7 +122,8 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
          EnvConfiguration.LINKIS_HIVE_POST_HOOKS
        }
        hiveConf.set("hive.exec.post.hooks", hooks)
-     }*/
+     }
+     */
     // enable hive.stats.collect.scancols
     hiveConf.setBoolean("hive.stats.collect.scancols", true)
     val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)

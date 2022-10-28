@@ -42,7 +42,7 @@ class RMMessageService extends Logging {
     logger.info(s"Start to deal with resourceUsedProtocol $resourceUsedProtocol")
     val labels = nodeLabelService.getNodeLabels(resourceUsedProtocol.serviceInstance)
     Utils.tryCatch(resourceManager.resourceUsed(labels, resourceUsedProtocol.engineResource)) {
-      case exception: Exception => {
+      case exception: Exception =>
         val nodeLabels = new RMLabelContainer(labels)
         val value: String = Option(nodeLabels.getCombinedUserCreatorEngineTypeLabel)
           .map(_.getStringValue)
@@ -52,7 +52,6 @@ class RMMessageService extends Logging {
             s"reason:${exception.getMessage}"
         )
         throw exception
-      }
     }
   }
 

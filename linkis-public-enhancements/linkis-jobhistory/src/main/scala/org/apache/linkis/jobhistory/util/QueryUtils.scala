@@ -49,7 +49,7 @@ object QueryUtils extends Logging {
   private val CHARSET = "utf-8"
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
-  private val NAME_REGEX = "^[a-zA-Z\\d_\\.]+$"
+  private val NAME_REGEX = "^[a-zA-Z\\-\\d_\\.]+$"
   private val nameRegexPattern = Pattern.compile(NAME_REGEX)
 
   private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
@@ -103,7 +103,9 @@ object QueryUtils extends Logging {
         queryTask.getExecutionCode == null || !queryTask.getExecutionCode.startsWith(
           StorageUtils.HDFS_SCHEMA
         )
-    ) return
+    ) {
+      return
+    }
     val codePath = queryTask.getExecutionCode
     val path = codePath.substring(0, codePath.lastIndexOf(CODE_SPLIT))
     val codeInfo = codePath.substring(codePath.lastIndexOf(CODE_SPLIT) + 1)

@@ -53,7 +53,7 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
   }
 
   protected def initJobDaemon(): Unit = if (future == null) jobListeners synchronized {
-    if (future == null)
+    if (future == null) {
       future = LinkisJobBuilder.getThreadPoolExecutor.scheduleAtFixedRate(
         new Runnable {
           private var failedNum = 0
@@ -84,6 +84,7 @@ trait AbstractLinkisJob extends LinkisJob with Logging {
         getPeriod,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override final def getOperator(operatorName: String): Operator[_] = {

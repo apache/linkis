@@ -56,16 +56,15 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
 
   def buildStageTaskTree(taskDesc: StageTaskDesc, startJobTask: Task = null): (Task, Task) = {
     taskDesc match {
-      case endStageTask: EndStageTaskDesc => {
+      case endStageTask: EndStageTaskDesc =>
         val (task, newStartJobTask) = buildCodeLogicTaskTree(
           taskDesc.stage.getJob match {
             case codeJob: CodeJob => codeJob.getCodeLogicalUnit
-            case job: Job => {
+            case job: Job =>
               logger.error(
                 s"jobId:${job.getId}-----jobType:${job.getName}, job type mismatch, only support CodeJob"
               )
               null
-            }
           },
           taskDesc.stage,
           startJobTask
@@ -73,9 +72,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
         val stageTaskTmp = new StageTask(Array(), Array(task))
         stageTaskTmp.setTaskDesc(endStageTask)
         (rebuildTreeNode(stageTaskTmp), newStartJobTask)
-      }
-      case startStageTask: StartStageTaskDesc => {
-
+      case startStageTask: StartStageTaskDesc =>
         /**
          * when the construction node arrives at stage-task-start check whether this stage has child
          * nodes if true -> use the same way to build another stage tasks if false -> build or reuse
@@ -102,7 +99,6 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
           stageTaskTmp.setTaskDesc(taskDesc)
           (rebuildTreeNode(stageTaskTmp), newStartJobTask)
         }
-      }
     }
   }
 
@@ -123,20 +119,17 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
 
   def buildJobTaskTree(taskDesc: TaskDesc): Task = {
     taskDesc match {
-      case startTask: StartJobTaskDesc => {
-
+      case startTask: StartJobTaskDesc =>
         /**
          * The end of recursion
          */
         val jobTask = new JobTask(Array(), Array())
         jobTask.setTaskDesc(startTask)
         jobTask
-      }
-      case endTask: EndJobTaskDesc => {
+      case endTask: EndJobTaskDesc =>
         val jobTaskTmp = new JobTask(Array(), buildAllStageTaskTree(endTask.job.getAllStages)._1)
         jobTaskTmp.setTaskDesc(endTask)
         rebuildTreeNode(jobTaskTmp)
-      }
     }
   }
 

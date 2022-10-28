@@ -104,19 +104,6 @@ class CodeExecTaskTransform extends ComputePhysicalTransform with Logging {
 
 object ComputePhysicalTransform {
 
-  def main(args: Array[String]): Unit = {
-    /*val jobStartExec = new JobTask(null, null)
-    jobStartExec.setTaskDesc(new StartJobTaskDesc(null))
-    val stage1 = new StageTask(Array(jobStartExec), null)
-    val stage2 = new StageTask(Array(jobStartExec), null)
-    jobStartExec.withNewChildren(Array(stage1, stage2))
-    val jobEndTask = new JobTask(Array(stage1, stage2), null)
-    stage1.withNewChildren(Array(jobEndTask))
-    stage2.withNewChildren(Array(jobEndTask))
-    val transform = new ComputePhysicalTransform()
-    val result = transform.apply(stage1, null)
-    println(result)
-    println(result.getChildren.length)*/
-  }
+  def main(args: Array[String]): Unit = {}
 
 }

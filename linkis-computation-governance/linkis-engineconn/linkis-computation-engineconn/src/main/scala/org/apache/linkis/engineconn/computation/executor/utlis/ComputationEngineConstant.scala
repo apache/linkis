@@ -19,12 +19,12 @@ package org.apache.linkis.engineconn.computation.executor.utlis
 
 object ComputationEngineConstant {
 
-  def RETRYABLE_TYPE_NAME = "taskRetryable"
+  def RETRYABLE_TYPE_NAME: String = "taskRetryable"
 
-  def LOCK_TYPE_NAME = "lock"
+  def LOCK_TYPE_NAME: String = "lock"
 
-  def JOB_IN_RUNTIME_MAP_KEY = "job"
+  def JOB_IN_RUNTIME_MAP_KEY: String = "job"
 
-  def CS_HOOK_ORDER = -1
+  def CS_HOOK_ORDER: Int = -1
 
 }

@@ -29,6 +29,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.pipeline.errorcode.PopelineErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.pipeline.exception.PipeLineErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -37,7 +38,7 @@ import org.apache.linkis.scheduler.executer.ExecuteResponse
 
 import java.util
 
-import scala.collection.JavaConversions.mapAsScalaMap
+import scala.collection.JavaConverters._
 
 class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with Logging {
 
@@ -60,10 +61,10 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
     var succeedTasks = 1
     val newOptions = new util.HashMap[String, String]()
     newOptions.putAll(EngineConnObject.getEngineCreationContext.getOptions)
-    engineExecutorContext.getProperties.foreach { keyAndValue =>
+    engineExecutorContext.getProperties.asScala.foreach { keyAndValue =>
       newOptions.put(keyAndValue._1, keyAndValue._2.toString)
     }
-    newOptions.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
+    newOptions.asScala.foreach({ case (k, v) => logger.info(s"key is $k, value is $v") })
     val regex = "(?i)\\s*from\\s+(\\S+)\\s+to\\s+(\\S+)\\s?".r
     try {
       thread = Thread.currentThread()
@@ -73,7 +74,10 @@ class PipelineEngineConnExecutor(val id: Int) extends ComputationExecutor with L
             .select(sourcePath, destPath, newOptions.asInstanceOf[util.Map[String, String]])
             .execute(sourcePath, destPath, engineExecutorContext)
         case _ =>
-          throw new PipeLineErrorException(70007, "非法的out脚本语句（Illegal out script statement）")
+          throw new PipeLineErrorException(
+            ILLEGAL_OUT_SCRIPT.getErrorCode,
+            ILLEGAL_OUT_SCRIPT.getErrorDesc
+          )
       }
     } catch {
       case e: Exception => failedTasks = 1; succeedTasks = 0; throw e

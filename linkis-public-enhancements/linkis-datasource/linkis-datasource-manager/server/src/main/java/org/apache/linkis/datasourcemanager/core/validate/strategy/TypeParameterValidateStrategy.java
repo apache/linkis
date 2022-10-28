@@ -26,6 +26,7 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateStrate
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.PARAM_VALIDATE_FAILED;
 import static org.apache.linkis.datasourcemanager.core.formdata.CustomMultiPartFormDataTransformer.PrimitiveUtils;
 
 /** Type validate strategy */
@@ -44,7 +45,8 @@ public class TypeParameterValidateStrategy implements ParameterValidateStrategy 
     if (valueType == DataSourceParamKeyDefinition.ValueType.FILE) {
       if (!actualValue.getClass().equals(FormStreamContent.class)) {
         throw new ParameterValidateException(
-            "Param Validate Failed[参数校验出错], [the value of '"
+            PARAM_VALIDATE_FAILED.getErrorDesc()
+                + ", [the value of '"
                 + keyDefinition.getKey()
                 + "' must be 'File']");
       }
@@ -61,14 +63,16 @@ public class TypeParameterValidateStrategy implements ParameterValidateStrategy 
         }
       } catch (Exception e) {
         throw new ParameterValidateException(
-            "Param Validate Failed[参数校验出错], [type of value: '"
+            PARAM_VALIDATE_FAILED.getErrorDesc()
+                + ", [type of value: '"
                 + actualValue
                 + "' is not '"
                 + javaType.getSimpleName()
                 + "']");
       }
       throw new ParameterValidateException(
-          "Param Validate Failed[参数校验出错], [type of value: '"
+          PARAM_VALIDATE_FAILED.getErrorDesc()
+              + ", [type of value: '"
               + actualValue
               + "' is not '"
               + javaType.getSimpleName()

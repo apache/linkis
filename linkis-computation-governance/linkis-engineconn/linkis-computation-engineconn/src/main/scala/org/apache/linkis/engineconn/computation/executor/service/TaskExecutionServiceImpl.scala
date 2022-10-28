@@ -360,16 +360,14 @@ class TaskExecutionServiceImpl
                   Utils.tryCatch {
                     logger.info(s"Start to run task ${task.getTaskId}")
                     executeTask(task, executor)
-                  } {
-                    case t: Throwable => {
-                      errCount += 1
-                      logger.error(s"Execute task ${task.getTaskId} failed  :", t)
-                      if (errCount > ERR_COUNT_MAX) {
-                        logger.error(
-                          s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown."
-                        )
-                        executor.transition(NodeStatus.ShuttingDown)
-                      }
+                  } { case t: Throwable =>
+                    errCount += 1
+                    logger.error(s"Execute task ${task.getTaskId} failed  :", t)
+                    if (errCount > ERR_COUNT_MAX) {
+                      logger.error(
+                        s"Executor run failed for ${errCount} times over ERROR_COUNT_MAX : ${ERR_COUNT_MAX}, will shutdown."
+                      )
+                      executor.transition(NodeStatus.ShuttingDown)
                     }
                   }
                 }
@@ -425,7 +423,7 @@ class TaskExecutionServiceImpl
             val progressResponse = taskProgress(task.getTaskId)
             val resourceResponse: ResponseTaskYarnResource =
               taskYarnResource(task.getTaskId) match {
-                case responseTaskYarnResource: ResponseTaskYarnResource => {
+                case responseTaskYarnResource: ResponseTaskYarnResource =>
                   if (
                       responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty
                   ) {
@@ -433,7 +431,6 @@ class TaskExecutionServiceImpl
                   } else {
                     null
                   }
-                }
                 case _ =>
                   null
               }
@@ -517,14 +514,16 @@ class TaskExecutionServiceImpl
     val executor = taskIdCache.getIfPresent(taskID)
     if (null != executor) {
       executor.killTask(taskID)
+      logger.info(s"TaskId : ${taskID} was killed by user.")
     } else {
-      logger.error(s"Executor of taskId : $taskID is not cached.")
+      logger.error(s"Kill failed, got invalid executor : null for taskId : ${taskID}")
     }
-    Utils.tryAndWarn(Thread.sleep(50))
     if (null != lastTask && lastTask.getTaskId.equalsIgnoreCase(taskID)) {
       if (null != lastTaskFuture && !lastTaskFuture.isDone) {
         Utils.tryAndWarn {
           lastTaskFuture.cancel(true)
+        }
+        Utils.tryAndWarn {
           // Close the daemon also
           lastTaskDaemonFuture.cancel(true)
         }
@@ -532,9 +531,9 @@ class TaskExecutionServiceImpl
     }
   }
 
-  /*override def resumeTask(taskID: String): Unit = {
+  /* override def resumeTask(taskID: String): Unit = {
     // todo
-  }*/
+  } */
 
   @Receiver
   override def dealRequestTaskStatus(requestTaskStatus: RequestTaskStatus): ResponseTaskStatus = {
@@ -557,15 +556,7 @@ class TaskExecutionServiceImpl
   @Receiver
   override def dealRequestTaskKill(requestTaskKill: RequestTaskKill): Unit = {
     logger.warn(s"Requested to kill task : ${requestTaskKill.execId}")
-    val executor = taskIdCache.getIfPresent(requestTaskKill.execId)
-    if (null != executor) {
-      executor.killTask(requestTaskKill.execId)
-      logger.info(s"TaskId : ${requestTaskKill.execId} was killed by user.")
-    } else {
-      logger.error(
-        s"Kill failed, got invalid executor : null for taskId : ${requestTaskKill.execId}"
-      )
-    }
+    killTask(requestTaskKill.execId)
   }
 
   @Receiver

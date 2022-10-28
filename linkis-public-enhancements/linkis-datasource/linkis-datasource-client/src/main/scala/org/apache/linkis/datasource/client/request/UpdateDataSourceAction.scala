@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.PutAction
@@ -72,9 +73,10 @@ object UpdateDataSourceAction {
     }
 
     def build(): UpdateDataSourceAction = {
-      if (dataSourceId == null)
-        throw new DataSourceClientBuilderException("dataSourceId is needed!")
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (dataSourceId == null) {
+        throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
+      }
+      if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val action = new UpdateDataSourceAction()
       action.dataSourceId = dataSourceId

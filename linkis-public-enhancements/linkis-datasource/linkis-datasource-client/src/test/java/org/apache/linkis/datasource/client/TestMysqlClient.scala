@@ -84,7 +84,7 @@ object TestMysqlClient {
     val dataSourceId = createDataSourceResult.getInsertId
 
 
-    //set connectParams
+    // set connectParams
     val params = new util.HashMap[String, Any]
 
     val connectParams = new util.HashMap[String, Any]
@@ -105,7 +105,7 @@ object TestMysqlClient {
 
     val version: Long = updateParameterResult.getVersion
 
-    //publist dataSource version
+    // publist dataSource version
     dataSourceclient.publishDataSourceVersion(
       PublishDataSourceVersionAction.builder()
         .setDataSourceId(dataSourceId)
@@ -113,7 +113,7 @@ object TestMysqlClient {
         .setVersion(version)
         .build())
 
-    //example of use
+    // example of use
     val metadataGetDatabasesAction: MetadataGetDatabasesAction = MetadataGetDatabasesAction.builder()
       .setUser(user)
       .setDataSourceName(dataSourceName)

@@ -20,7 +20,7 @@ package org.apache.linkis.gateway.springcloud.websocket
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.gateway.exception.GatewayErrorException
-import org.apache.linkis.gateway.springcloud.errorcode.GatewayErrorConstants
+import org.apache.linkis.gateway.springcloud.errorcode.GatewayErrorCodeSummary
 import org.apache.linkis.gateway.springcloud.websocket.SpringCloudGatewayWebsocketUtils._
 import org.apache.linkis.server.conf.ServerConfiguration
 
@@ -65,7 +65,7 @@ class GatewayWebSocketSessionConnection(
     ) {
       proxySession.close(CloseStatus.SERVER_ERROR)
       throw new GatewayErrorException(
-        GatewayErrorConstants.WEBSOCKET_CONNECT_ERROR,
+        GatewayErrorCodeSummary.WEBSOCKET_CONNECT_ERROR.getErrorCode,
         s"Create a " +
           s"WebSocket connection for" +
           s" ${serviceInstance.getApplicationName} repeatedly!(重复地为${serviceInstance.getApplicationName}创建WebSocket连接！)"
@@ -145,7 +145,7 @@ case class ProxyGatewayWebSocketSession(
 ) extends GatewayWebSocketSession(webSocketSession) {
   private var lastPingTime = System.currentTimeMillis
 
-  override def equals(obj: scala.Any): Boolean = if (obj == null) false
+  override def equals(obj: Any): Boolean = if (obj == null) false
   else {
     obj match {
       case w: ProxyGatewayWebSocketSession =>

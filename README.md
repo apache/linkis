@@ -3,8 +3,8 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines, 
-  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.), 
+  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines,
+  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.),
   while enables cross engine context sharing, unified job& engine governance and orchestration.</strong>
 </p>
 <p align="center">
@@ -31,9 +31,9 @@
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -42,9 +42,6 @@
    </a>
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
-   </a>
-   <a target="_blank" href="https://codecov.io/gh/apache/incubator-linkis">
-        <img src="https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg" />
    </a>
   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
        <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
@@ -64,7 +61,6 @@ As a computation middleware, Linkis provides powerful connectivity, reuse, orche
 
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on. Lots of companies have already used Linkis as a unified entrance for the underlying computation and storage engines of the big data platform.
 
-
 ![linkis-intro-01](https://user-images.githubusercontent.com/7869972/148767375-aeb11b93-16ca-46d7-a30e-92fbefe2bd5e.png)
 
 ![linkis-intro-03](https://user-images.githubusercontent.com/7869972/148767380-c34f44b2-9320-4633-9ec8-662701f41d15.png)
@@ -72,11 +68,11 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 # Features
 
 - **Support for diverse underlying computation storage engines**  
-   - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc     
-   - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
-   - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
+  - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc
+  - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
+  - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
 
-- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc 
+- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc
 
 - **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
 
@@ -160,7 +156,7 @@ To solve this problem, we provide a script which can help to creating an custom 
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 
+$> LINKIS_IMAGE=linkis:1.3.1 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 

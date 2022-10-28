@@ -1,7 +1,7 @@
 EN:
 This docs folder is only used to temporarily store some version documents.
-For detailed documentation, please visit the official website 
-https://linkis.apache.org/docs/latest/introduction
+For detailed documentation, please visit the official website
+<https://linkis.apache.org/docs/latest/introduction>
 
 ------
 ZH:

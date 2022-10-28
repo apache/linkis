@@ -33,6 +33,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
   EngineConnResource,
   LaunchConstants
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.apache.commons.lang3.StringUtils
@@ -42,9 +43,10 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 
+import java.text.MessageFormat
 import java.util.Date
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DefaultEngineConnResourceService extends EngineConnResourceService with Logging {
@@ -164,7 +166,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
       engineConnType: String,
       version: String
   ): Unit = {
-    val engineConnBmlResources = asScalaBuffer(
+    val engineConnBmlResources = asScalaBufferConverter(
       engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, version)
     )
     if (
@@ -172,13 +174,14 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
           localizeResource.fileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||
             localizeResource.fileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip"
         ) < 2
-    )
+    ) {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The `lib` and `conf` dir is necessary in ${engineConnType}EngineConn dist."
+        LIB_CONF_DIR_NECESSARY.getErrorCode,
+        MessageFormat.format(LIB_CONF_DIR_NECESSARY.getErrorDesc, engineConnType)
       )
+    }
     localize.foreach { localizeResource =>
-      val resource = engineConnBmlResources.find(_.getFileName == localizeResource.fileName)
+      val resource = engineConnBmlResources.asScala.find(_.getFileName == localizeResource.fileName)
       if (resource.isEmpty) {
         logger.info(
           s"Ready to upload a new bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName
@@ -210,10 +213,11 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setFileSize(localizeResource.fileSize)
         engineConnBmlResource.setLastModified(localizeResource.lastModified)
         engineConnBmlResourceDao.update(engineConnBmlResource)
-      } else
+      } else {
         logger.info(
           s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName
         )
+      }
     }
   }
 
@@ -223,18 +227,18 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   ): EngineConnResource = {
     val engineConnType = engineConnBMLResourceRequest.getEngineConnType
     val version = engineConnBMLResourceRequest.getVersion
-    val engineConnBmlResources = asScalaBuffer(
+    val engineConnBmlResources = asScalaBufferConverter(
       engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
     )
-    val confBmlResource = engineConnBmlResources
+    val confBmlResource = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip")
       .map(parseToBmlResource)
       .get
-    val libBmlResource = engineConnBmlResources
+    val libBmlResource = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip")
       .map(parseToBmlResource)
       .get
-    val otherBmlResources = engineConnBmlResources
+    val otherBmlResources = engineConnBmlResources.asScala
       .filterNot(r =>
         r.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||
           r.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip"

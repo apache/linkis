@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
   ExecuteException,
   PythonExecuteError
@@ -87,9 +88,9 @@ class PythonSession extends Logging {
     val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
     logger.info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
     val pythonExec =
-      if ("python3".equalsIgnoreCase(userDefinePythonVersion))
+      if ("python3".equalsIgnoreCase(userDefinePythonVersion)) {
         PythonEngineConfiguration.PYTHON_VERSION.getValue
-      else "python"
+      } else { "python" }
     logger.info(s"pythonExec => ${pythonExec}")
     val port = {
       val socket = new ServerSocket(0)
@@ -138,7 +139,10 @@ class PythonSession extends Logging {
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
           promise.failure(
-            new ExecuteException(60003, "Pyspark process  has stopped, query failed!")
+            new ExecuteException(
+              PYSPARK_PROCESSS_STOPPED.getErrorCode,
+              PYSPARK_PROCESSS_STOPPED.getErrorDesc
+            )
           )
         }
       }) {
@@ -176,6 +180,7 @@ class PythonSession extends Logging {
     this.code = Kind.getRealCode(code)
     queryLock synchronized queryLock.notify()
     try {
+      // scalastyle:off awaitresult
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>
@@ -225,7 +230,7 @@ class PythonSession extends Logging {
         close
         null
       } else {
-        promise.failure(new PythonExecuteError(41001, out))
+        promise.failure(new PythonExecuteError(PYTHON_EXECUTE_ERROR.getErrorCode, out))
       }
     }
   }

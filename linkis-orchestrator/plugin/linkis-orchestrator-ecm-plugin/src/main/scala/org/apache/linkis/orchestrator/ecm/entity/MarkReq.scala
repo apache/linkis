@@ -101,6 +101,21 @@ class DefaultMarkReq extends MarkReq with Logging {
         return flag
       }
       if (other.getLabels != null && getLabels != null) {
+        if (null != labelKeySet) {
+          labelKeySet.foreach(key => {
+            var found = false
+            getLabels
+              .keySet()
+              .foreach(k => {
+                if (key.equals(k)) {
+                  found = true
+                }
+              })
+            if (!found) {
+              return flag
+            }
+          })
+        }
         val iterator = other.getLabels.iterator
         while (iterator.hasNext) {
           val next = iterator.next()
@@ -121,8 +136,11 @@ class DefaultMarkReq extends MarkReq with Logging {
             }
           }
         }
+      } else if (null == getLabels && null == other.getLabels) {
+        flag = true
+      } else {
+        flag = false
       }
-      flag = true
     }
     flag
   }

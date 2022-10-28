@@ -13,12 +13,12 @@
       "saveSuccess": "Successfully saved",
       "detail": "Details",
       "FAQ": "FAQ",
-      "clearCache": "Clear cache",
+      "clearCache": "Clear Cache",
       "logOut": "Log out",
       "action": "Action",
       "path": "Please choose the path",
       "resultList": "Resultset",
-      "process": "Execution time:",
+      "process": "Execution Time:",
       "ok": "OK",
       "cancel": "Cancel",
       "delete": "Delete",
@@ -45,7 +45,7 @@
           "render": "Start to execute the script"
         },
         "querySuccess": {
-          "title": "Execution result notice",
+          "title": "Execution Result Notice",
           "render": "Successfully executed script, time elapsed:"
         },
         "notice": {
@@ -108,14 +108,14 @@
         }
       },
       "progress": {
-        "title": "Execution progress",
+        "title": "Execution Progress",
         "watingList": "{num} jobs wating in front",
         "columns": {
           "id": {
             "title": "Name"
           },
           "progress": {
-            "title": "Progress bar"
+            "title": "Progress Bar"
           },
           "taskNum": {
             "title": "Number of Tasks",
@@ -146,18 +146,18 @@
       },
       "functionView": {
         "formItems": {
-          "name": "Funtion name",
+          "name": "Funtion Name",
           "createUser": "Creator/Department",
           "updateTime": "Updated At",
-          "useFormat": "Using format",
-          "description": "Funtion description"
+          "useFormat": "Using Format",
+          "description": "Funtion Description"
         }
       },
       "navBar": {
-        "addTitle": "New directory",
+        "addTitle": "New Directory",
         "dataStudio": {
-          "outTable": "Export table",
-          "importHive": "Import to hive",
+          "outTable": "Export Table",
+          "importHive": "Import to Hive",
           "addTitle": "New directory",
           "searchPlaceholder": "Please enter file or directory name to search"
         },
@@ -175,64 +175,64 @@
         }
       },
       "monacoMenu": {
-        "YXJB": "Run script",
+        "YXJB": "Run Script",
         "GSH": "Format",
         "CZ": "Search",
         "TH": "Replace",
-        "HZS": "Line comment",
+        "HZS": "Line Comment",
         "ZT": "Paste",
         "HBQWJCFZWB": "Sorry, no copied text detected by IDE, if you performed the copy operation outside IDE, please use ctrl+v to paste!",
-        "TDZDH": "Jump to line",
-        "GBYFJC": "Close syntax check",
-        "DKYFJC": "Open syntax check",
+        "TDZDH": "Jump to Line",
+        "GBYFJC": "Close Syntax Check",
+        "DKYFJC": "Open Syntax Check",
         "GYFSYGWYF": "This is highly dangerous syntax, please be cautious!"
       },
       "resourceSimple": {
         "YS": "Scriptis",
         "FL": "Category",
         "ZH": "Visualis",
-        "FLOW1": "flowexecution",
+        "FLOW1": "Flowexecution",
         "FLOW2": "Scheduler",
         "ZWSJ": "No data yet",
         "KX": "Idle",
         "FM": "Busy",
         "QD": "Starting",
-        "LX": "By category",
-        "AZT": "By status",
+        "LX": "By Category",
+        "AZT": "By Status",
         "DDJK": "Waiting for API response!",
         "QDYQWFJS": "Cannot shut down an engine with starting status!",
         "WXZYQ": "No engine selected!",
         "RWGLQ": "Task Management",
-        "YQGLQ": "Engine management",
-        "DLGLQ": "Queue management",
+        "YQGLQ": "Engine Management",
+        "DLGLQ": "Queue Management",
         "SX": "Refresh",
-        "JSRW": "Cancel task",
-        "JSYQ": "Shut down engine",
+        "JSRW": "Cancel Task",
+        "JSYQ": "Shut Down Engine",
         "PDZ": "Queueing",
-        "ZYSQ": "Applying resources",
+        "ZYSQ": "Applying Resources",
         "YX": "Running",
         "YQ": "Engine",
         "RW": "Task",
-        "WZJBMC": "Unknown script name",
-        "ZHJB": "Visualis script",
-        "GZLJB": "workflow script",
-        "YQRW": "Engine and task",
-        "JSYQRW": "Terminate engine and tasks",
-        "CKJBXX": "View script information",
-        "FZJBXX": "Copy script information",
+        "WZJBMC": "Unknown Script Name",
+        "ZHJB": "Visualis Script",
+        "GZLJB": "Workflow Script",
+        "YQRW": "Engine And Task",
+        "JSYQRW": "Terminate Engine And Tasks",
+        "CKJBXX": "View Script Information",
+        "FZJBXX": "Copy Script Information",
         "QXZYTJL": "Please choose a record!",
         "WHQD": "The task is initializing. The end operation cannot be performed. Please wait until the task initialization is complete",
         "WHQDENGINE": "Failed to get engineInstance, please contact admin for investigation or waiting!",
-        "YXTS": "Execution hints",
-        "YJTZZXJB": "Stopped executing script",
-        "JSYQHRWCG": "Successfully terminated engine and tasks",
-        "DKCG": "Successfully open",
+        "YXTS": "Execution Hints",
+        "YJTZZXJB": "Stopped Executing Script",
+        "JSYQHRWCG": "Successfully Terminated Engine And Tasks",
+        "DKCG": "Successfully Open",
         "JBFZDZTRB": "Copied script information to clipboard, please use ctrl+v to paste!",
         "XZDL": "Please choose a queue",
-        "ZYSYL": "Resource consumption rate",
+        "ZYSYL": "Resource Consumption Rate",
         "H": "Cores",
         "NC": "Memory",
-        "ZYSYPHB": "Ranking of resource consumption",
+        "ZYSYPHB": "Ranking Of Resource Consumption",
         "ZW": "No data yet"
       },
       "headerNavBar": {
@@ -304,7 +304,7 @@
         "success": {
           "download": "Successfully downloaded, please check from the local download directory!"
         },
-        "rowToColumn": "switch row to column",
+        "rowToColumn": "Switch row to column",
         "rowToColumnTitle": "View current row details"
       },
       "tableRow": {

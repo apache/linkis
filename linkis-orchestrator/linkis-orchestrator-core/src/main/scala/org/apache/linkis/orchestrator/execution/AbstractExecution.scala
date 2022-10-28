@@ -81,12 +81,12 @@ abstract class AbstractExecution extends Execution with Logging {
   class ExecutionClearListener(rootExecTask: ExecTask) extends NotifyListener {
 
     override def apply(taskResponse: TaskResponse): Unit = taskResponse match {
-      case t: CompletedTaskResponse => {
+      case t: CompletedTaskResponse =>
         logger.info(
           s"${rootExecTask.getIDInfo()} completed, Now to remove from execTaskToExecutionTasks"
         )
         execTaskToExecutionTasks.remove(rootExecTask)
-      }
+
       case _ =>
     }
 

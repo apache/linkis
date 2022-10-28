@@ -115,6 +115,7 @@ abstract class AbstractOrchestration(
 
   protected def getFileSystem(fsPath: FsPath): Fs
 
+  // scalastyle:off println
   override def collectAndPrint(): Unit = println(collectAsString())
 
   override def asyncExecute(): OrchestrationFuture = {

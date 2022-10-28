@@ -24,6 +24,7 @@ import org.apache.linkis.common.exception.{
   WarnException
 }
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.{BDPServerErrorException, NonLoginException}
 import org.apache.linkis.server.security.SecurityFilter
 
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import javax.servlet.http.HttpServletRequest
 
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -52,8 +54,8 @@ package object server {
     keys.foreach(k =>
       if (!json.contains(k) || json.get(k) == null || StringUtils.isEmpty(json.get(k).toString)) {
         throw new BDPServerErrorException(
-          11001,
-          s"Verification failed, $k cannot be empty!(验证失败，$k 不能为空！)"
+          VERIFICATION_CANNOT_EMPTY.getErrorCode,
+          MessageFormat.format(VERIFICATION_CANNOT_EMPTY.getErrorDesc, k)
         )
       }
     )
@@ -66,7 +68,7 @@ package object server {
   implicit def error(msg: String, t: Throwable): Message = Message.error(msg -> t)
 
   //  def tryCatch[T](tryOp: => T)(catchOp: Throwable => T): T = Utils.tryCatch(tryOp)(catchOp)
-//  def tryCatch(tryOp: => Message)(catchOp: Throwable => Message): Message = Utils.tryCatch(tryOp){
+//  def tryCatch(tryOp: => Message)(catchOp: Throwable => Message): Message = Utils.tryCatch(tryOp) {
 //    case nonLogin: NonLoginException => Message.noLogin(msg = nonLogin.getMessage)
 //    case t => catchOp(t)
 //  }
@@ -103,9 +105,9 @@ package object server {
         log.error(msg, t)
         val errorMsg = ExceptionUtils.getRootCauseMessage(t)
         val message =
-          if (StringUtils.isNotEmpty(errorMsg) && "operation failed(操作失败)" != msg)
+          if (StringUtils.isNotEmpty(errorMsg) && "operation failed(操作失败)" != msg) {
             error(msg + "！the reason(原因)：" + errorMsg)
-          else if (StringUtils.isNotEmpty(errorMsg)) error(errorMsg)
+          } else if (StringUtils.isNotEmpty(errorMsg)) error(errorMsg)
           else error(msg)
         message.data(EXCEPTION_MSG, ExceptionManager.unknownException(message.getMessage))
     }

@@ -33,7 +33,7 @@ class ShowDataViewReq private () extends AbstractJobReq with DataViewReq {
 
   override def getDataView: String = dataView
 
-  override def getId: String = ???
+  override def getId: String = null
 
 }
 

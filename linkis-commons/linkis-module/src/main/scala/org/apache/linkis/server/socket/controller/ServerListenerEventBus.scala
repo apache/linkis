@@ -18,6 +18,7 @@
 package org.apache.linkis.server.socket.controller
 
 import org.apache.linkis.common.listener.ListenerEventBus
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.BDPServerErrorException
 
 import org.apache.commons.lang3.StringUtils
@@ -41,9 +42,9 @@ class ServerListenerEventBus(
       event: SocketServerEvent
   ): Unit = {
     val serverEvent = event.serverEvent
-    if (StringUtils.isEmpty(serverEvent.getMethod))
+    if (StringUtils.isEmpty(serverEvent.getMethod)) {
       logger.info("ignore empty method with " + serverEvent.getData)
-    else if (serverEvent.getMethod.startsWith(listener.serviceName)) {
+    } else if (serverEvent.getMethod.startsWith(listener.serviceName)) {
       val response = listener.onEvent(serverEvent)
       if (response != null) {
         response.setMethod(serverEvent.getMethod)
@@ -55,13 +56,13 @@ class ServerListenerEventBus(
   override protected val dropEvent: DropEvent = new DropEvent {
 
     override def onDropEvent(event: SocketServerEvent): Unit = throw new BDPServerErrorException(
-      11035,
-      "WebSocket consumer has stopped, please contact the administrator to handle!(WebSocket的消费器已停止，请联系管理员处理！)"
+      WEBSOCKET_STOPPED.getErrorCode,
+      WEBSOCKET_STOPPED.getErrorDesc
     )
 
     override def onBusStopped(event: SocketServerEvent): Unit = throw new BDPServerErrorException(
-      11005,
-      "The receive queue for WebSocket is full, please try again later!(WebSocket的接收队列已满，请稍后重试！)"
+      WEBSOCKET_IS_FULL.getErrorCode,
+      WEBSOCKET_IS_FULL.getErrorDesc
     )
 
   }

@@ -42,7 +42,7 @@ object EngineUtils extends Logging {
 
   def getName: String = Sender.getThisServiceInstance.getInstance
 
-  def findAvailPort = {
+  def findAvailPort: Int = {
     val socket = new ServerSocket(0)
     Utils.tryFinally(socket.getLocalPort) { Utils.tryQuietly(socket.close()) }
   }

@@ -19,10 +19,13 @@ package org.apache.linkis.rpc.interceptor
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS
 import org.apache.linkis.rpc.exception.NoInstanceExistsException
 import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 
-import scala.collection.JavaConversions._
+import java.text.MessageFormat
+
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
 import com.netflix.loadbalancer.{DynamicServerListLoadBalancer, ILoadBalancer, Server}
@@ -61,20 +64,24 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
       serviceInstance: ServiceInstance
   ): Unit = {
     val instanceNotExists = new NoInstanceExistsException(
-      10051,
-      "The instance " +
-        serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists."
+      APPLICATION_IS_NOT_EXISTS.getErrorCode,
+      MessageFormat.format(
+        APPLICATION_IS_NOT_EXISTS.getErrorDesc,
+        serviceInstance.getInstance,
+        serviceInstance.getApplicationName
+      )
     )
-    if (!refreshed)
+    if (!refreshed) {
       Utils.tryThrow(
         Utils.waitUntil(
           () => {
             refresh
             val isRefreshed = refreshed
-            if (!isRefreshed)
+            if (!isRefreshed) {
               logger.info(
                 s"Need a $serviceInstance, but cannot find in DiscoveryClient refresh list."
               )
+            }
             isRefreshed
           },
           refreshMaxWaitTime,
@@ -85,6 +92,7 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
         instanceNotExists.initCause(t)
         instanceNotExists
       }
+    }
   }
 
   override def getOrRefreshServiceInstance(serviceInstance: ServiceInstance): Unit = getOrRefresh(
@@ -96,10 +104,10 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
   override def getServer(lb: ILoadBalancer, serviceInstance: ServiceInstance): Server = {
     getOrRefresh(
       refreshServerList(lb),
-      lb.getAllServers.exists(_.getHostPort == serviceInstance.getInstance),
+      lb.getAllServers.asScala.exists(_.getHostPort == serviceInstance.getInstance),
       serviceInstance
     )
-    lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
+    lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
 //    {
 //      var servers = lb.getAllServers
 //      val instanceNotExists = new NoInstanceExistsException(10051, "The instance " +
@@ -125,6 +133,7 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
     SpringCloudFeignConfigurationCache.getDiscoveryClient
       .getInstances(applicationName)
       .iterator()
+      .asScala
       .map { s =>
         val serviceInstance = getDWCServiceInstance(s)
         serviceInstance.setApplicationName(

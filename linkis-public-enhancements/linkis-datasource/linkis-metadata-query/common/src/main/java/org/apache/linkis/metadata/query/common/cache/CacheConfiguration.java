@@ -30,4 +30,9 @@ public class CacheConfiguration {
   /** Make a pool for each cache element */
   public static final CommonVars<Integer> CACHE_IN_POOL_SIZE =
       CommonVars.apply("wds.linkis.server.mdm.service.cache.in-pool.size", 5);
+
+  public static final CommonVars<String> MYSQL_RELATIONSHIP_LIST =
+      CommonVars.apply(
+          "wds.linkis.server.mdq.mysql.relationship",
+          "oracle,kingbase,postgresql,sqlserver,db2,greenplum,dm,mysql");
 }

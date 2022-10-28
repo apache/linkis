@@ -364,12 +364,6 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf
 fi
 
-ecp_conf=$LINKIS_HOME/conf/linkis-cg-engineplugin.properties
-if [ "$ENGINECONN_PLUGIN_SERVER_PORT" != "" ]
-then
-  sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONN_PLUGIN_SERVER_PORT#g" $ecp_conf
-fi
-
 entrance_conf=$LINKIS_HOME/conf/linkis-cg-entrance.properties
 if [ "$ENTRANCE_PORT" != "" ]
 then
@@ -384,6 +378,21 @@ publicservice_conf=$LINKIS_HOME/conf/linkis-ps-publicservice.properties
 if [ "$PUBLICSERVICE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
+fi
+
+echo "update conf $publicservice_conf"
+if [ "$HIVE_META_URL" != "" ]
+then
+  sed -i ${txt}  "s#hive.meta.url.*#hive.meta.url=$HIVE_META_URL#g" $publicservice_conf
+fi
+if [ "$HIVE_META_USER" != "" ]
+then
+  sed -i ${txt}  "s#hive.meta.user.*#hive.meta.user=$HIVE_META_USER#g" $publicservice_conf
+fi
+if [ "$HIVE_META_PASSWORD" != "" ]
+then
+  HIVE_META_PASSWORD=$(echo ${HIVE_META_PASSWORD//'#'/'\#'})
+  sed -i ${txt}  "s#hive.meta.password.*#hive.meta.password=$HIVE_META_PASSWORD#g" $publicservice_conf
 fi
 
 ##Eanble prometheus for monitoring

@@ -43,6 +43,11 @@ import org.apache.linkis.scheduler.executer.{
 }
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.domain.{MethodEntity, MethodEntitySerializer}
+import org.apache.linkis.storage.errorcode.LinkisIoFileErrorCodeSummary.{
+  FS_CAN_NOT_PROXY_TO,
+  NOT_EXISTS_METHOD,
+  PARAMETER_CALLS
+}
 import org.apache.linkis.storage.exception.{StorageErrorCode, StorageErrorException}
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.StorageUtils
@@ -84,7 +89,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
   }
 
   /*
-   * 定时清理空闲的FS
+   * Regularly clean up idle FS
    */
   private val cleanupThread = new Thread("IOEngineExecutor-Cleanup-Scanner") {
     setDaemon(true)
@@ -136,8 +141,12 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         AliasOutputExecuteResponse(method.id.toString, IOHelp.read(fs, method))
       case "available" =>
         val fs = getUserFS(method)
-        if (method.params == null || method.params.length != 2)
-          throw new StorageErrorException(53003, "Unsupported parameter calls")
+        if (method.params == null || method.params.length != 2) {
+          throw new StorageErrorException(
+            PARAMETER_CALLS.getErrorCode,
+            PARAMETER_CALLS.getErrorDesc
+          )
+        }
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
           classOf[FsPath]
@@ -157,8 +166,12 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         SuccessExecuteResponse()
       case "renameTo" =>
         val fs = getUserFS(method)
-        if (method.params == null || method.params.length != 2)
-          throw new StorageErrorException(53003, "Unsupported parameter calls")
+        if (method.params == null || method.params.length != 2) {
+          throw new StorageErrorException(
+            PARAMETER_CALLS.getErrorCode,
+            PARAMETER_CALLS.getErrorDesc
+          )
+        }
         fs.renameTo(
           MethodEntitySerializer
             .deserializerToJavaObject(method.params(0).asInstanceOf[String], classOf[FsPath]),
@@ -169,8 +182,12 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
         )
         SuccessExecuteResponse()
       case "list" =>
-        if (method.params == null || method.params.length != 1)
-          throw new StorageErrorException(53003, "Unsupported parameter calls")
+        if (method.params == null || method.params.length != 1) {
+          throw new StorageErrorException(
+            PARAMETER_CALLS.getErrorCode,
+            PARAMETER_CALLS.getErrorDesc
+          )
+        }
         val fs = getUserFS(method)
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
@@ -183,8 +200,12 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
           )
         )
       case "listPathWithError" =>
-        if (method.params == null || method.params.length != 1)
-          throw new StorageErrorException(53003, "Unsupported parameter calls")
+        if (method.params == null || method.params.length != 1) {
+          throw new StorageErrorException(
+            PARAMETER_CALLS.getErrorCode,
+            PARAMETER_CALLS.getErrorDesc
+          )
+        }
         val fs = getUserFS(method).asInstanceOf[FileSystem]
         val dest = MethodEntitySerializer.deserializerToJavaObject(
           method.params(0).asInstanceOf[String],
@@ -301,7 +322,10 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
     val proxyUser = methodEntity.proxyUser
     if (!fsProxyService.canProxyUser(methodEntity.creatorUser, proxyUser, methodEntity.fsType)) {
-      throw new StorageErrorException(52002, s"FS Can not proxy to：$proxyUser")
+      throw new StorageErrorException(
+        FS_CAN_NOT_PROXY_TO.getErrorCode,
+        s"FS Can not proxy to：$proxyUser"
+      )
     }
     if (!userFSInfos.containsKey(proxyUser)) {
       userFSInfos synchronized {
@@ -355,16 +379,18 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     val realMethod = fs.getClass.getMethods
       .filter(_.getName == methodName)
       .find(_.getGenericParameterTypes.length == parameterSize)
-    if (realMethod.isEmpty)
+    if (realMethod.isEmpty) {
       throw new StorageErrorException(
-        53003,
+        NOT_EXISTS_METHOD.getErrorCode,
         s"not exists method $methodName in fs ${fs.getClass.getSimpleName}."
       )
-    if (parameterSize > 0)
+    }
+    if (parameterSize > 0) {
       method.params(0) = MethodEntitySerializer.deserializerToJavaObject(
         method.params(0).asInstanceOf[String],
         methodParamType
       )
+    }
     val res = MethodEntitySerializer.serializerJavaObject(
       ReflectionUtils.invoke(fs, realMethod.get, method.params)
     )

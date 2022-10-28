@@ -39,17 +39,17 @@
         `label_key`, `label_value`, `label_feature`,
         `label_value_size`
     </sql>
-    <select id="selectForUpdate" parameterType="Integer">
+    <select id="selectForUpdate" parameterType="Integer" resultMap="insPersistenceLabelMap">
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns" />
         <![CDATA[ FROM `linkis_ps_instance_label` WHERE `id` = #{labelId} FOR UPDATE;]]>
     </select>
 
-    <select id="searchForUpdate">
+    <select id="searchForUpdate" resultMap="insPersistenceLabelMap">
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns"/>
         <![CDATA[ FROM `linkis_ps_instance_label` WHERE `label_key` = #{labelKey}
-        AND `label_value` = #{stringValue} FOR UPDATE;]]>
+        AND `label_value` = #{labelValue} FOR UPDATE;]]>
     </select>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
@@ -64,8 +64,8 @@
     <insert id="insert">
         <![CDATA[INSERT INTO `linkis_ps_instance_label`(]]>
         <include refid="label_insert_columns"/>
-        <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
-             #{item.feature}, #{item.labelValueSize});]]>
+        <![CDATA[) VALUES(#{labelKey}, #{stringValue},
+             #{feature}, #{labelValueSize});]]>
     </insert>
 
     <update id="updateForLock">

@@ -45,7 +45,7 @@ import org.springframework.stereotype.Service
 import java.util
 import java.util.concurrent.{TimeoutException, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
 @Service
@@ -71,10 +71,12 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   override def reuseEngine(engineReuseRequest: EngineReuseRequest, sender: Sender): EngineNode = {
     logger.info(s"Start to reuse Engine for request: $engineReuseRequest")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
-    var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
-      labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
-      userLabelService.getUserLabels(engineReuseRequest.getUser)
-    )
+    val labelList = LabelUtils
+      .distinctLabel(
+        labelBuilderFactory.getLabels(engineReuseRequest.getLabels),
+        userLabelService.getUserLabels(engineReuseRequest.getUser)
+      )
+      .asScala
 
     val exclusionInstances: Array[String] =
       labelList.find(_.isInstanceOf[ReuseExclusionLabel]) match {
@@ -84,23 +86,23 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           Array.empty[String]
       }
 
-    labelList = labelList.filter(_.isInstanceOf[EngineNodeLabel])
+    var filterLabelList = labelList.filter(_.isInstanceOf[EngineNodeLabel]).asJava
 
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
-    labelList.add(engineConnAliasLabel)
+    filterLabelList.add(engineConnAliasLabel)
 
     // label chooser
     if (null != engineReuseLabelChoosers) {
-      engineReuseLabelChoosers.foreach { chooser =>
-        labelList = chooser.chooseLabels(labelList)
+      engineReuseLabelChoosers.asScala.foreach { chooser =>
+        filterLabelList = chooser.chooseLabels(filterLabelList)
       }
     }
 
-    val instances = nodeLabelService.getScoredNodeMapsByLabels(labelList)
+    val instances = nodeLabelService.getScoredNodeMapsByLabels(filterLabelList)
 
     if (null != instances && null != exclusionInstances && exclusionInstances.nonEmpty) {
-      val instancesKeys = instances.keys.toArray
+      val instancesKeys = instances.asScala.keys.toArray
       instancesKeys
         .filter { instance =>
           exclusionInstances.exists(_.equalsIgnoreCase(instance.getServiceInstance.getInstance))
@@ -118,14 +120,15 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         s"No engine can be reused, cause from db is null"
       )
     }
-    var engineScoreList = getEngineNodeManager.getEngineNodes(instances.map(_._1).toSeq.toArray)
+    var engineScoreList =
+      getEngineNodeManager.getEngineNodes(instances.asScala.map(_._1).toSeq.toArray)
 
     var engine: EngineNode = null
     var count = 1
     val timeout =
-      if (engineReuseRequest.getTimeOut <= 0)
+      if (engineReuseRequest.getTimeOut <= 0) {
         AMConfiguration.ENGINE_REUSE_MAX_TIME.getValue.toLong
-      else engineReuseRequest.getTimeOut
+      } else engineReuseRequest.getTimeOut
     val reuseLimit =
       if (engineReuseRequest.getReuseCount <= 0) AMConfiguration.ENGINE_REUSE_COUNT_LIMIT.getValue
       else engineReuseRequest.getReuseCount
@@ -184,7 +187,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         .currentTimeMillis() - startTime}"
     )
     val engineServiceLabelList =
-      instances.filter(kv => kv._1.getServiceInstance.equals(engine.getServiceInstance))
+      instances.asScala.filter(kv => kv._1.getServiceInstance.equals(engine.getServiceInstance))
     if (null != engineServiceLabelList && engineServiceLabelList.nonEmpty) {
       engine.setLabels(engineServiceLabelList.head._2)
     } else {

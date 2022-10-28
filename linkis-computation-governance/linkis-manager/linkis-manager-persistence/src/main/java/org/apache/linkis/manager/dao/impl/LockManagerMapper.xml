@@ -69,7 +69,21 @@
 <!--        SELECT id FROM  linkis_cg_manager_service_instance where instance = #{instance} and name = #{name}-->
 <!--    </select>-->
 
+    <insert id="lock">
+        insert into linkis_cg_manager_lock (lock_object, time_out, update_time, create_time)
+        values(#{lockObject}, #{timeOut}, now(), now())
+    </insert>
 
+    <delete id="unlock">
+        delete  from linkis_cg_manager_lock where id = #{id}
+    </delete>
 
+    <select id="getLockersByLockObject" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLock">
+        select * from  linkis_cg_manager_lock where lock_object = #{lockObject}
+    </select>
+
+    <select id="getAll" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLock">
+        select * from  linkis_cg_manager_lock
+    </select>
 
 </mapper>

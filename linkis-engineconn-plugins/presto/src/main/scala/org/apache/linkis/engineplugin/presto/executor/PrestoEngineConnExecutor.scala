@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
+import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary
 import org.apache.linkis.engineplugin.presto.exception.{
   PrestoClientException,
   PrestoStateInvalidException
@@ -216,7 +217,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       cacheMap: util.Map[String, String]
   ): ClientSession = {
     val configMap = new util.HashMap[String, String]()
-    // 运行时指定的参数优先级大于管理台配置优先级
+    // The parameter priority specified at runtime is higher than the configuration priority of the management console
     if (!CollectionUtils.isEmpty(cacheMap)) configMap.putAll(cacheMap)
     taskParams.asScala.foreach {
       case (key: String, value: Object) if value != null =>
@@ -299,7 +300,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var columnCount = 0
     var rows = 0
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally({
+    Utils.tryCatch {
       var results: QueryStatusInfo = null
       if (statement.isRunning) {
         results = statement.currentStatusInfo()
@@ -324,14 +325,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
         statement.advance()
       }
-    })(IOUtils.closeQuietly(resultSetWriter))
-
+    } { case e: Exception =>
+      IOUtils.closeQuietly(resultSetWriter)
+      throw e
+    }
     logger.info(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     engineExecutorContext.appendStdout(
       LogUtils.generateInfo(s"Fetched $columnCount col(s) : $rows row(s) in presto")
     );
     engineExecutorContext.sendResultSet(resultSetWriter)
-    IOUtils.closeQuietly(resultSetWriter)
   }
 
   // check presto error
@@ -359,9 +361,15 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       logger.warn(s"Presto statement is killed.")
       null
     } else if (statement.isClientError) {
-      throw PrestoClientException("Presto client error.")
+      throw PrestoClientException(
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc
+      )
     } else {
-      throw PrestoStateInvalidException("Presto status error. Statement is not finished.")
+      throw PrestoStateInvalidException(
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode,
+        PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc
+      )
     }
   }
 

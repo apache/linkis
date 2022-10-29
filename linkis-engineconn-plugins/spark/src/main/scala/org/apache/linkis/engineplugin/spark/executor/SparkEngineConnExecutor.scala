@@ -26,7 +26,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
-import org.apache.linkis.engineplugin.spark.common.Kind
+import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{
   SparkPostExecutionHook,
@@ -112,7 +112,10 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         logger.error(s"execute preExecution hook : ${hookName} failed.")
     }
     Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
-    val _code = Kind.getRealCode(preCode)
+    val _code = kind match {
+      case _: SparkDataCalc => preCode
+      case _ => Kind.getRealCode(preCode)
+    }
     logger.info(s"Ready to run code with kind $kind.")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {

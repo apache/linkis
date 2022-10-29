@@ -19,19 +19,13 @@ package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
-  EngineExecutionContext
-}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
-import org.apache.linkis.engineplugin.spark.extension.{
-  SparkPostExecutionHook,
-  SparkPreExecutionHook
-}
+import org.apache.linkis.engineplugin.spark.extension.{SparkPostExecutionHook, SparkPreExecutionHook}
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
 import org.apache.linkis.governance.common.utils.JobUtils
@@ -42,13 +36,11 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ExecuteResponse
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 
 import java.util
 import java.util.concurrent.atomic.AtomicLong
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
@@ -89,35 +81,33 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       )
     }
     val kind: Kind = getKind
-    val _code = kind match {
-      case _: SparkDataCalc => code
-      case _ =>
-        var preCode = code
-        engineExecutorContext.appendStdout(
-          LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
-        )
-        // Pre-execution hook
-        var executionHook: SparkPreExecutionHook = null
-        Utils.tryCatch {
-          SparkPreExecutionHook
-            .getSparkPreExecutionHooks()
-            .foreach(hook => {
-              executionHook = hook
-              preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)
-            })
-        } {
-          case fatalException: ExecutorHookFatalException =>
-            val hookName = getHookName(executionHook)
-            logger.error(s"execute preExecution hook : ${hookName} failed.")
-            throw fatalException
-          case e: Exception =>
-            val hookName = getHookName(executionHook)
-            logger.error(s"execute preExecution hook : ${hookName} failed.")
-        }
-        Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
-        Kind.getRealCode(preCode)
+    var preCode = code
+    engineExecutorContext.appendStdout(
+      LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
+    )
+    // Pre-execution hook
+    var executionHook: SparkPreExecutionHook = null
+    Utils.tryCatch {
+      SparkPreExecutionHook
+        .getSparkPreExecutionHooks()
+        .foreach(hook => {
+          executionHook = hook
+          preCode = hook.callPreExecutionHook(engineExecutorContext, preCode)
+        })
+    } {
+      case fatalException: ExecutorHookFatalException =>
+        val hookName = getHookName(executionHook)
+        logger.error(s"execute preExecution hook : ${hookName} failed.")
+        throw fatalException
+      case e: Exception =>
+        val hookName = getHookName(executionHook)
+        logger.error(s"execute preExecution hook : ${hookName} failed.")
     }
-
+    Utils.tryAndWarn(CSSparkHelper.setContextIDInfoToSparkConf(engineExecutorContext, sc))
+    val _code = kind match {
+      case _: SparkDataCalc => preCode
+      case _ => Kind.getRealCode(preCode)
+    }
     logger.info(s"Ready to run code with kind $kind.")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
     val jobGroupId = if (StringUtils.isNotBlank(jobId)) {

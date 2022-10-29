@@ -28,9 +28,6 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 
-/**
- * xishihao_modify 添加 data_calc 类型
- */
 class SparkDataCalcExecutorFactory extends ComputationExecutorFactory {
 
   override protected def newExecutor(

@@ -40,7 +40,23 @@ public enum SparkErrorCodeSummary {
       "Invalid EngineConn engine session obj, failed to create sparkSql executor(EngineConn 引擎会话 obj 无效，无法创建 sparkSql 执行程序)"),
   INVALID_CREATE_SPARKPYTHON(
       420002,
-      "Invalid EngineConn engine session obj, failed to create sparkPython executor(EngineConn 引擎会话 obj 无效，无法创建 sparkPython 执行程序)");
+      "Invalid EngineConn engine session obj, failed to create sparkPython executor(EngineConn 引擎会话 obj 无效，无法创建 sparkPython 执行程序)"),
+
+  DATA_CALC_CONFIG_VALID_FAILED(43001, "Config data validate failed"),
+  DATA_CALC_CONFIG_TYPE_NOT_VALID(43002, "[{0}] is not a valid type"),
+
+  DATA_CALC_DATASOURCE_NOT_CONFIG(43011, "Datasource {0} is not configured!"),
+
+  DATA_CALC_COLUMN_NOT_MATCH(
+      43021,
+      "{0}st column ({1}[{2}]) name or data type does not match target table column ({3}[{4}])"),
+  DATA_CALC_COLUMN_NUM_NOT_MATCH(
+      43022,
+      "{0} requires that the data to be inserted have the same number of columns as the target table: target table has {1} column(s) but the inserted data has {2} column(s)"),
+  DATA_CALC_FIELD_NOT_EXIST(43023, "{0} columns({1}) are not exist in source columns"),
+  DATA_CALC_VARIABLE_NOT_EXIST(43024, "Please set [{0}] in variables"),
+  ;
+
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */

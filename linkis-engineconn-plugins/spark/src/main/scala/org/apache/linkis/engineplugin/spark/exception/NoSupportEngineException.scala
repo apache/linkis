@@ -35,3 +35,5 @@ case class NotSupportSparkPythonTypeException(desc: String)
     extends ErrorException(INVALID_CREATE_SPARKPYTHON.getErrorCode, desc)
 
 case class NotSupportSparkScalaTypeException(desc: String) extends ErrorException(420003, desc)
+
+case class NotSupportSparkDataCalcTypeException(desc: String) extends ErrorException(420004, desc)

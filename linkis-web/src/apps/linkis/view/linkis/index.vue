@@ -35,7 +35,7 @@
             :key="index2"
             @on-click="handleCellClick">
             <Cell
-              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&item.key !== '1-10':true"
+              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10'):true"
               :key="index2"
               :class="{ crrentItem: crrentItem === item.key }"
               :title="item.name"

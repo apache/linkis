@@ -296,26 +296,33 @@ export default {
       this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
-      try {
-        const {user, creator} = this.modalData;
-        if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
-          this.tagIsExist = false;
-          return;
-        }
-        await api.fetch("/configuration/tenant-mapping/check-user-creator",
-          {
-            user,
-            creator
-          }, "get").then((res) => {
-          if (res.exist) {
-            this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
+      this.$refs.createTenantForm.validate(async (valid) => {
+        if(valid) {
+          const {user, creator} = this.modalData;
+          if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
+            this.tagIsExist = false;
+            return;
           }
-          this.tagIsExist = res.exist;
-        })
-      } catch(err) {
-        console.log(err);
-      }
-      
+          try {
+            await api.fetch("/configuration/tenant-mapping/check-user-creator",
+              {
+                user,
+                creator
+              }, "get").then((res) => {
+              if (res.exist) {
+                this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
+              }
+              this.tagIsExist = res.exist;
+            })
+          } catch (err) {
+            console.log(err);
+            this.cancel();
+          }
+        }
+        else {
+          this.$Message.error(this.$t('message.linkis.error.validate'));
+        }
+      })
     },
     cancel() {
       this.showCreateModal = false;
@@ -334,6 +341,7 @@ export default {
         bussinessUser: '',
         desc: ''
       };
+      this.$refs.createTenantForm.resetFields();
     },
     addTenantTag() {
       const target = this.mode === 'edit' ? '/configuration/tenant-mapping/update-tenant' : '/configuration/tenant-mapping/create-tenant'

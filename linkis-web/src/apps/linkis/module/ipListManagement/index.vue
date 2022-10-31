@@ -284,26 +284,33 @@ export default {
       this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
-      try {
-        const {user, creator} = this.modalData;
-        if(this.mode === 'edit' && user === this.modalData.user && creator === this.modalData.creator) {
-          this.tagIsExist = false;
-          return;
-        }
-        await api.fetch("/configuration/user-ip-mapping/check-user-creator",
-          {
-            user,
-            creator
-          }, "get").then((res) => {
-          if (res.exist) {
-            this.$Message.error(this.$t('message.linkis.ipListManagement.userIsExisted'))
+      this.$refs.createTenantForm.validate(async (valid) => {
+        if(valid) {
+          const {user, creator} = this.modalData;
+          if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
+            this.tagIsExist = false;
+            return;
           }
-          this.tagIsExist = res.exist;
-        })
-      } catch(err) {
-        console.log(err);
-      }
-      
+          try {
+            await api.fetch("/configuration/user-ip-mapping/check-user-creator",
+              {
+                user,
+                creator
+              }, "get").then((res) => {
+              if (res.exist) {
+                this.$Message.error(this.$t('message.linkis.ipListManagement.userIsExisted'))
+              }
+              this.tagIsExist = res.exist;
+            })
+          } catch (err) {
+            console.log(err);
+            this.cancel();
+          }
+        }
+        else {
+          this.$Message.error(this.$t('message.linkis.error.validate'));
+        }
+      })
     },
     cancel() {
       this.showCreateModal = false;

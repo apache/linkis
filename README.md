@@ -31,7 +31,7 @@
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
 
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>

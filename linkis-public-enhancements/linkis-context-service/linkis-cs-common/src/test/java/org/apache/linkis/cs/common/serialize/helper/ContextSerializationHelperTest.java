@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.cs.common.serialize.test;
+package org.apache.linkis.cs.common.serialize.helper;
 
 import org.apache.linkis.cs.common.entity.enumeration.ContextScope;
 import org.apache.linkis.cs.common.entity.enumeration.ContextType;
@@ -28,16 +28,21 @@ import org.apache.linkis.cs.common.entity.metadata.Table;
 import org.apache.linkis.cs.common.entity.object.CSFlowInfos;
 import org.apache.linkis.cs.common.entity.resource.LinkisBMLResource;
 import org.apache.linkis.cs.common.entity.source.*;
-import org.apache.linkis.cs.common.serialize.helper.ContextSerializationHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 public class ContextSerializationHelperTest {
 
-  public static void main(String[] args) throws Exception {
+  @Test
+  @DisplayName("initTest")
+  public void initTest() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
 
@@ -55,11 +60,12 @@ public class ContextSerializationHelperTest {
     csTableMetadataContextHistory.setSource("SparkEngine");
     String serialize = contextSerializationHelper.serialize(csTableMetadataContextHistory);
     Object deserialize = contextSerializationHelper.deserialize(serialize);
-    System.out.println("test");
-    testLineageHistory();
+    Assertions.assertNotNull(deserialize);
   }
 
-  public static void testLineageHistory() throws Exception {
+  @Test
+  @DisplayName("testLineageHistoryTest")
+  public void testLineageHistoryTest() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
     List<Table> tables = new ArrayList<>();
@@ -80,11 +86,14 @@ public class ContextSerializationHelperTest {
     Object deserialize = contextSerializationHelper.deserialize(serialize);
     CSTableLineageHistory deserialize1 = (CSTableLineageHistory) deserialize;
     List<Table> sourceTables = deserialize1.getSourceTables();
-    System.out.println(sourceTables.get(0).getName());
-    System.out.println(serialize);
+
+    Assertions.assertTrue(sourceTables.size() > 0);
+    Assertions.assertNotNull(serialize);
   }
 
-  public static void testCommonResourceHistory() throws Exception {
+  @Test
+  @DisplayName("testCommonResourceHistory")
+  public void testCommonResourceHistory() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
     LinkisBMLResource resource = new LinkisBMLResource();
@@ -99,10 +108,13 @@ public class ContextSerializationHelperTest {
     history.setResource(resource);
     String serialize = contextSerializationHelper.serialize(history);
     Object deserialize = contextSerializationHelper.deserialize(serialize);
-    System.out.println("test");
+
+    Assertions.assertNotNull(deserialize);
   }
 
-  public static void testHAContextID() throws Exception {
+  @Test
+  @DisplayName("testHAContextID")
+  public void testHAContextID() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
     LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
@@ -115,10 +127,14 @@ public class ContextSerializationHelperTest {
     String objstr =
         "{\"type\": \"HAWorkFlowContextID\",\"value\": \"{\\n  \\\"instance\\\": null,\\n  \\\"backupInstance\\\": null,\\n  \\\"user\\\": \\\"hadoop\\\",\\n  \\\"workspaceID\\\": null,\\n  \\\"project\\\": \\\"test01_neiljianliu\\\",\\n  \\\"flow\\\": \\\"dedede\\\",\\n  \\\"contextId\\\": \\\"24-24--YmRwZHdzMTEwMDAxOjkxMTY\\\\u003dYmRwZHdzMTEwMDAxOjkxMTY\\\\u003d85197\\\",\\n  \\\"version\\\": \\\"v000001\\\",\\n  \\\"env\\\": null\\n}\"}\n";
     Object deserialize = contextSerializationHelper.deserialize(objstr);
-    System.out.println(json);
+
+    Assertions.assertNotNull(json);
+    Assertions.assertNotNull(deserialize);
   }
 
-  public static void testCSFlowInfos() throws Exception {
+  @Test
+  @DisplayName("testCSFlowInfos")
+  public void testCSFlowInfos() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
     CommonContextValue contextValue = new CommonContextValue();
@@ -142,25 +158,20 @@ public class ContextSerializationHelperTest {
     CSFlowInfos csFlowInfos = new CSFlowInfos();
     csFlowInfos.setInfos(infos);
     contextValue.setValue(csFlowInfos);
-    System.out.println(contextSerializationHelper.serialize(contextValue));
     Object deserialize =
         contextSerializationHelper.deserialize(contextSerializationHelper.serialize(contextValue));
     ContextValue contextValue1 = (ContextValue) deserialize;
     CSFlowInfos value1 = (CSFlowInfos) contextValue1.getValue();
-    System.out.println(value1.getInfos());
+
+    Assertions.assertNotNull(value1);
   }
 
-  private static void testSrialzer() throws Exception {
+  @Test
+  @DisplayName("testSrialzer")
+  public void testSrialzer() throws Exception {
     ContextSerializationHelper contextSerializationHelper =
         ContextSerializationHelper.getInstance();
-    /* LinkisHAWorkFlowContextID haWorkFlowContextID = new LinkisHAWorkFlowContextID();
-    haWorkFlowContextID.setBackupInstance("test123");
-    haWorkFlowContextID.setInstance("test1234");
-    haWorkFlowContextID.setUser("hadoop");
-    haWorkFlowContextID.setContextId("hello");
-    haWorkFlowContextID.setFlow("hellof");
-    String json = contextSerializationHelper.serialize(haWorkFlowContextID);
-    */
+
     CommonContextKey contextKey = new CommonContextKey();
     contextKey.setContextScope(ContextScope.FRIENDLY);
     contextKey.setContextType(ContextType.OBJECT);
@@ -180,8 +191,9 @@ public class ContextSerializationHelperTest {
     contextKeyValue.setContextValue(contextValue);
 
     String json = contextSerializationHelper.serialize(contextKeyValue);
-    System.out.println(json);
     Object obj = contextSerializationHelper.deserialize(json);
-    System.out.println("hello");
+
+    Assertions.assertNotNull(json);
+    Assertions.assertNotNull(obj);
   }
 }

@@ -110,8 +110,8 @@
         </div>
       </div>
       <div slot="footer">
-        <Button @click="cancel">取消</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag">确定</Button>
+        <Button @click="cancel">{{$t('message.linkis.tenantTagManagement.Cancel')}}</Button>
+        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag">{{$t('message.linkis.tenantTagManagement.OK')}}</Button>
       </div>
     </Modal>
   </div>
@@ -131,7 +131,7 @@ export default {
       },
       tableColumns: [
         {
-          title: "id",
+          title: "ID",
           key: 'id',
           width: 150,
           tooltip: true,
@@ -166,7 +166,7 @@ export default {
           align: 'center',
         },
         {
-          title: this.$t('message.linkis.ipListManagement.action'),
+          title: this.$t('message.linkis.tenantTagManagement.action'),
           key: 'action',
           width: 200,
           align: 'center',
@@ -185,7 +185,7 @@ export default {
                     this.edit(params.row)
                   }
                 }
-              }, '编辑'),
+              }, this.$t('message.linkis.tenantTagManagement.edit')),
               h('Button', {
                 props: {
                   type: 'error',
@@ -196,7 +196,7 @@ export default {
                     this.delete(params.row)
                   }
                 }
-              }, '删除')
+              }, this.$t('message.linkis.tenantTagManagement.delete'))
             ]);
           }
         }
@@ -307,7 +307,7 @@ export default {
             creator
           }, "get").then((res) => {
           if (res.exist) {
-            this.$Message.error('用户标签已存在！')
+            this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
           }
           this.tagIsExist = res.exist;
         })
@@ -347,7 +347,7 @@ export default {
               console.log(res);
               await this.getTableData();
               this.cancel();
-              this.$Message.success('添加成功');
+              this.$Message.success(this.$t('message.linkis.tenantTagManagement.addSuccessful'));
             });
           } catch(err) {
             this.cancel();
@@ -374,8 +374,8 @@ export default {
     },
     delete(data) {
       this.$Modal.confirm({
-        title: '确认删除',
-        content: '确定要删除这条数据吗',
+        title: this.$t('message.linkis.tenantTagManagement.confirmDel'),
+        content: this.$t('message.linkis.tenantTagManagement.isConfirmDel'),
         onOk: async () => {
           await this.confirmDelete(data);
           await this.getTableData();

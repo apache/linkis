@@ -346,7 +346,13 @@
                 "check": "检查",
                 "OK": "确定",
                 "Cancel": "取消",
-                "action": "操作"
+                "action": "操作",
+                "edit": "编辑",
+                "delete": "删除",
+                "userIsExisted": "用户标签已存在",
+                "addSuccessful": "添加成功",
+                "confirmDel": "确认删除",
+                "isConfirmDel": "确定要删除这条数据吗"
             },
             "ipListManagement": {
                 "userName": "用户名",
@@ -371,7 +377,13 @@
                 "check": "检查",
                 "OK": "确定",
                 "Cancel": "取消",
-                "action": "操作"
+                "action": "操作",
+                "edit": "编辑",
+                "delete": "删除",
+                "userIsExisted": "用户标签已存在",
+                "addSuccessful": "添加成功",
+                "confirmDel": "确认删除",
+                "isConfirmDel": "确定要删除这条数据吗"
             }
         }
     }

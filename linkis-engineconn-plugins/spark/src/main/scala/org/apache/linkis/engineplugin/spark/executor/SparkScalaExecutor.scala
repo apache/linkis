@@ -24,6 +24,7 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkScala}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.{
   ApplicationAlreadyStoppedException,
   ExecuteError,
@@ -49,6 +50,7 @@ import org.apache.spark.sql.{SparkSession, SQLContext}
 import org.apache.spark.util.SparkUtils
 
 import java.io.{BufferedReader, File}
+import java.util.Locale
 
 import scala.tools.nsc.interpreter.{
   isReplPower,
@@ -126,7 +128,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
         }
       }
     } else {
-      throw new SparkSessionNullException(40006, "sparkILoop is null")
+      throw new SparkSessionNullException(SPARK_IS_NULL.getErrorCode, SPARK_IS_NULL.getErrorDesc)
     }
     Utils.waitUntil(
       () => sparkILoopInited && sparkILoop.intp != null,
@@ -177,15 +179,12 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
     res
   }
 
-  def executeLine(
-      code: String,
-      engineExecutionContext: EngineExecutionContext
-  ): ExecuteResponse = {
+  def executeLine(code: String, engineExecutionContext: EngineExecutionContext): ExecuteResponse = {
     if (sparkContext.isStopped) {
       logger.error("Spark application has already stopped, please restart it.")
       throw new ApplicationAlreadyStoppedException(
-        40004,
-        "Spark application has already stopped, please restart it."
+        SPARK_STOPPED.getErrorCode,
+        SPARK_STOPPED.getErrorDesc
       )
     }
     executeCount += 1
@@ -238,7 +237,13 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           } else {
             logger.error("No error message is captured, please see the detailed log")
           }
-          ErrorExecuteResponse(errorMsg, ExecuteError(40005, "execute sparkScala failed!"))
+          ErrorExecuteResponse(
+            errorMsg,
+            ExecuteError(
+              EXECUTE_SPARKSCALA_FAILED.getErrorCode,
+              EXECUTE_SPARKSCALA_FAILED.getErrorDesc
+            )
+          )
       }
     }
     // reset the java stdout
@@ -249,7 +254,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
   private def matchFatalLog(errorMsg: String): Boolean = {
     var flag = false
     if (StringUtils.isNotBlank(errorMsg)) {
-      val errorMsgLowCase = errorMsg.toLowerCase
+      val errorMsgLowCase = errorMsg.toLowerCase(Locale.getDefault())
       fatalLogs.foreach(fatalLog =>
         if (errorMsgLowCase.contains(fatalLog)) {
           logger.error(s"match engineConn log fatal logs,is $fatalLog")
@@ -370,9 +375,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       sparkILoop.interpret("import org.apache.spark.sql.SparkSession")
       sparkILoop.interpret("import org.apache.spark.sql.SQLContext")
       sparkILoop.interpret("import org.apache.spark.sql.DataFrame")
-      sparkILoop.interpret(
-        "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF"
-      )
+      sparkILoop.interpret("import org.apache.linkis.engineplugin.spark.executor.SQLSession.showDF")
       sparkILoop.interpret(
         "import org.apache.linkis.engineplugin.spark.executor.SQLSession.showHTML"
       )

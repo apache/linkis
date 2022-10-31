@@ -32,8 +32,8 @@ import javax.annotation.PostConstruct
 import java.util
 
 /**
- * Set sys.argv[] if: 1. it is a pyspark task. 2. user provide with args in runtimeMap. 3. it is
- * at the beginning of the code
+ * Set sys.argv[] if: 1. it is a pyspark task. 2. user provide with args in runtimeMap. 3. it is at
+ * the beginning of the code
  */
 @Component
 class SparkPythonArgsPreExecutionHook extends SparkPreExecutionHook with Logging {
@@ -64,7 +64,9 @@ class SparkPythonArgsPreExecutionHook extends SparkPreExecutionHook with Logging
         engineExecutionContext.getTotalParagraph != 1 || StringUtils.isEmpty(
           runType
         ) || !StringUtils.equals(RunType.PYSPARK.toString, runType)
-    ) return code
+    ) {
+      return code
+    }
 
     val argsArr =
       if (

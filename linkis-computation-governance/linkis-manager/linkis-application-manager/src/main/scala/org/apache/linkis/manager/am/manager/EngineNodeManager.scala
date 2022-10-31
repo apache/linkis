@@ -33,6 +33,8 @@ trait EngineNodeManager {
 
   def getEngineNodeInfo(engineNode: EngineNode): EngineNode
 
+  def getEngineNodeInfo(serviceInstance: ServiceInstance): EngineNode
+
   def getEngineNodeInfoByDB(engineNode: EngineNode): EngineNode
 
   /**
@@ -75,9 +77,6 @@ trait EngineNodeManager {
 
   def useEngine(engineNode: EngineNode, timeout: Long): EngineNode
 
-  def executeOperation(
-      engineNode: EngineNode,
-      request: EngineOperateRequest
-  ): EngineOperateResponse
+  def executeOperation(engineNode: EngineNode, request: EngineOperateRequest): EngineOperateResponse
 
 }

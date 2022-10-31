@@ -26,8 +26,7 @@ trait RPCInterceptorExchange {
 
 }
 
-class BaseRPCInterceptorExchange(protocol: Protocol, op: () => Any)
-    extends RPCInterceptorExchange {
+class BaseRPCInterceptorExchange(protocol: Protocol, op: () => Any) extends RPCInterceptorExchange {
   override def invoke(): Any = op()
 
   override def getProtocol: Protocol = protocol

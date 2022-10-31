@@ -21,15 +21,12 @@ import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.executor.entity.{
-  LabelExecutor,
-  ResourceExecutor,
-  YarnExecutor
-}
+import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.apache.linkis.manager.common.entity.resource._
@@ -79,7 +76,7 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException("Not support method for requestExpectedResource.")
+    throw new JobExecutionException(NOT_SUPPORT_METHOD.getErrorDesc)
 
   protected val flinkEngineConnContext: FlinkEngineConnContext
 
@@ -119,9 +116,7 @@ object FlinkExecutor {
       resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
   ): Unit = {
     val columns = resultSet.getColumns
-      .map(columnInfo =>
-        Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null)
-      )
+      .map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
       .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {
@@ -141,10 +136,8 @@ object FlinkExecutor {
   ): Unit = {
     val resultSetWriter =
       engineExecutionContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
-    Utils.tryFinally {
-      writeResultSet(resultSet, resultSetWriter)
-      engineExecutionContext.sendResultSet(resultSetWriter)
-    }(IOUtils.closeQuietly(resultSetWriter))
+    writeResultSet(resultSet, resultSetWriter)
+    engineExecutionContext.sendResultSet(resultSetWriter)
   }
 
 }

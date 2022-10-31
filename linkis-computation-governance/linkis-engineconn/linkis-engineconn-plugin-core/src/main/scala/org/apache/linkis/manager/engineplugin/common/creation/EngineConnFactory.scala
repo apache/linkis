@@ -21,13 +21,14 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.{DefaultEngineConn, EngineConn}
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnBuildFailedException
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineConnModeLabel
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import java.util
 
-import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.JavaConverters._
 
 trait EngineConnFactory {
 
@@ -71,13 +72,16 @@ trait MultiExecutorEngineConnFactory extends AbstractEngineConnFactory with Logg
     getExecutorFactories
       .find(_.getClass == getDefaultExecutorFactoryClass)
       .getOrElse(
-        throw new EngineConnBuildFailedException(20000, "Cannot find default ExecutorFactory.")
+        throw new EngineConnBuildFailedException(
+          CANNOT_DEFAULT_EF.getErrorCode,
+          CANNOT_DEFAULT_EF.getErrorDesc
+        )
       )
 
   protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory]
 
   protected def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel =
-    labels
+    labels.asScala
       .find(_.isInstanceOf[EngineConnModeLabel])
       .map(_.asInstanceOf[EngineConnModeLabel])
       .orNull

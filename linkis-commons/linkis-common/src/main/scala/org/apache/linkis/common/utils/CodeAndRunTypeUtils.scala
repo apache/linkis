@@ -39,19 +39,21 @@ object CodeAndRunTypeUtils {
 
   private def codeTypeAndRunTypeRelationMapParser(configV: String): Map[String, List[String]] = {
     val confDelimiter = ","
-    if (configV == null || "".equals(configV)) Map()
-    else
+    if (configV == null || "".equals(configV)) {
+      Map()
+    } else {
       configV
         .split(confDelimiter)
         .filter(x => x != null && !"".equals(x))
         .map(x => {
           val confArr = x.split("=>")
-          if (confArr.length == 2)
+          if (confArr.length == 2) {
             (confArr(0), for (x <- confArr(1).split("\\|").toList) yield x.trim)
-          else null
+          } else null
         })
         .filter(x => x != null)
         .toMap
+    }
   }
 
   def getCodeTypeAndRunTypeRelationMap: Map[String, List[String]] = {

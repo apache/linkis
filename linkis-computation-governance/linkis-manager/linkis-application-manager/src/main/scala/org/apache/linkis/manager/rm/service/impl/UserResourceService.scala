@@ -17,11 +17,7 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  Resource,
-  ResourceType
-}
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, Resource, ResourceType}
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.Label
@@ -43,7 +39,7 @@ import org.springframework.util.CollectionUtils
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class UserResourceService {
@@ -84,11 +80,8 @@ class UserResourceService {
       val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])
       engineTypeLabel.setEngineType(userCreatorEngineType.getEngineType)
       engineTypeLabel.setVersion(userCreatorEngineType.getVersion)
-      val configuredResource = UserConfiguration.getUserConfiguredResource(
-        resourceType,
-        userCreatorLabel,
-        engineTypeLabel
-      )
+      val configuredResource =
+        UserConfiguration.getUserConfiguredResource(resourceType, userCreatorLabel, engineTypeLabel)
       labelResource.setMaxResource(configuredResource)
       labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
       labelResource.setLeftResource(
@@ -113,9 +106,9 @@ class UserResourceService {
   @Transactional
   def resetAllUserResource(combinedLabelKey: String): Unit = {
     val userLabels = labelManagerPersistence.getLabelByPattern("%", combinedLabelKey, 0, 0)
-    val resourceIdList = userLabels.map(_.getResourceId)
-    resourceManagerPersistence.deleteResourceById(resourceIdList)
-    resourceManagerPersistence.deleteResourceRelByResourceId(resourceIdList)
+    val resourceIdList = userLabels.asScala.map(_.getResourceId)
+    resourceManagerPersistence.deleteResourceById(resourceIdList.asJava)
+    resourceManagerPersistence.deleteResourceRelByResourceId(resourceIdList.asJava)
   }
 
 }

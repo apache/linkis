@@ -75,7 +75,7 @@ This file is divided into 3 sections:
 
   <check level="error" class="org.scalastyle.file.FileLineLengthChecker" enabled="true">
     <parameters>
-      <parameter name="maxLineLength"><![CDATA[100]]></parameter>
+      <parameter name="maxLineLength"><![CDATA[200]]></parameter>
       <parameter name="tabSize"><![CDATA[2]]></parameter>
       <parameter name="ignoreImports">true</parameter>
     </parameters>
@@ -94,7 +94,7 @@ This file is divided into 3 sections:
   </check>
 
   <check customId="argcount" level="error" class="org.scalastyle.scalariform.ParameterNumberChecker" enabled="true">
-    <parameters><parameter name="maxParameters"><![CDATA[10]]></parameter></parameters>
+    <parameters><parameter name="maxParameters"><![CDATA[15]]></parameter></parameters>
   </check>
 
   <check level="error" class="org.scalastyle.scalariform.NoFinalizeChecker" enabled="true"></check>
@@ -116,7 +116,7 @@ This file is divided into 3 sections:
 
   <check level="error" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"></check>
 
-  <check customId="nonascii" level="error" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true"></check>
+  <check customId="nonascii" level="warning" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true"></check>
 
   <check level="error" class="org.scalastyle.scalariform.SpaceAfterCommentStartChecker" enabled="true"></check>
 
@@ -188,6 +188,7 @@ This file is divided into 3 sections:
     ]]></customMessage>
   </check>
 
+  <!--
   <check customId="classforname" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">Class\.forName</parameter></parameters>
     <customMessage><![CDATA[
@@ -198,7 +199,7 @@ This file is divided into 3 sections:
       // scalastyle:on classforname
     ]]></customMessage>
   </check>
-
+-->
   <check customId="awaitresult" level="error" class="org.scalastyle.file.RegexChecker" enabled="true">
     <parameters><parameter name="regex">Await\.result</parameter></parameters>
     <customMessage><![CDATA[

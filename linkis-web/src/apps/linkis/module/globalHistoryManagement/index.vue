@@ -469,7 +469,7 @@ export default {
             progress: item.progress,
             failedReason: getFailedReason(item),
             runType: item.runType,
-            instance: item.instance,
+            instance: item.instance
           }
         })
       }

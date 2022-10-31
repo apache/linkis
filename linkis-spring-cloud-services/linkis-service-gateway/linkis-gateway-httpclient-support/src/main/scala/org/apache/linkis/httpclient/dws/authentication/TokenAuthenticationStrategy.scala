@@ -19,6 +19,7 @@ package org.apache.linkis.httpclient.dws.authentication
 
 import org.apache.linkis.httpclient.authentication._
 import org.apache.linkis.httpclient.dws.exception.AuthenticationFailedException
+import org.apache.linkis.httpclient.errorcode.LinkisGwHttpclientSupportErrorCodeSummary.TOKEN_AUTHENTICATION
 import org.apache.linkis.httpclient.request.{Action, UserAction}
 
 import org.apache.http.HttpResponse
@@ -37,14 +38,17 @@ class TokenAuthenticationStrategy(override protected val sessionMaxAliveTime: Lo
       case action: UserAction =>
         new HttpAuthentication {
 
-          import scala.collection.JavaConversions._
+          import scala.collection.JavaConverters._
 
           import TokenAuthenticationStrategy._
 
           override def authToCookies: Array[Cookie] = Array.empty
 
           override def authToHeaders: util.Map[String, String] =
-            Map(TOKEN_USER_KEY -> action.getUser, TOKEN_KEY -> getClientConfig.getAuthTokenValue)
+            Map(
+              TOKEN_USER_KEY -> action.getUser,
+              TOKEN_KEY -> getClientConfig.getAuthTokenValue
+            ).asJava
 
           override def authToMap: util.Map[String, String] = new util.HashMap[String, String]()
 
@@ -53,9 +57,7 @@ class TokenAuthenticationStrategy(override protected val sessionMaxAliveTime: Lo
           override def updateLastAccessTime(): Unit = {}
         }
       case _ =>
-        throw new AuthenticationFailedException(
-          "cannot use token authentication, since no user is found to proxy."
-        )
+        throw new AuthenticationFailedException(TOKEN_AUTHENTICATION.getErrorDesc)
     }
 
   override protected def getAuthenticationAction(

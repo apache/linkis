@@ -24,14 +24,7 @@ import org.apache.linkis.storage.resultset.ResultSetReader
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import org.apache.spark.sql.types.{
-  DecimalType,
-  IntegerType,
-  ShortType,
-  StructField,
-  StructType,
-  _
-}
+import org.apache.spark.sql.types.{DecimalType, IntegerType, ShortType, StructField, StructType, _}
 
 import java.util
 

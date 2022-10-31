@@ -56,10 +56,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     .newBuilder()
     .maximumSize(1000)
     .expireAfterAccess(1, TimeUnit.HOURS)
-    .refreshAfterWrite(
-      EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue,
-      TimeUnit.MINUTES
-    )
+    .expireAfterWrite(EntranceConfiguration.USER_PARALLEL_REFLESH_TIME.getValue, TimeUnit.MINUTES)
     .build(new CacheLoader[String, Integer]() {
 
       override def load(key: String): Integer = {
@@ -118,10 +115,8 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     else {
       val labelStringValues = key.split(SPLIT)
       if (labelStringValues.length < 2) return (null, null)
-      val userCreatorLabel = labelFactory.createLabel[UserCreatorLabel](
-        LabelKeyConstant.USER_CREATOR_TYPE_KEY,
-        labelStringValues(0)
-      )
+      val userCreatorLabel = labelFactory
+        .createLabel[UserCreatorLabel](LabelKeyConstant.USER_CREATOR_TYPE_KEY, labelStringValues(0))
       val engineTypeLabel = labelFactory
         .createLabel[EngineTypeLabel](LabelKeyConstant.ENGINE_TYPE_KEY, labelStringValues(1))
       (userCreatorLabel, engineTypeLabel)

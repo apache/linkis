@@ -29,6 +29,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
   EngineConnResourceGenerator,
   JavaProcessEngineConnLaunchBuilder
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.rpc.message.annotation.Receiver
 
@@ -37,7 +38,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DefaultEngineConnLaunchService extends EngineConnLaunchService with Logging {
@@ -45,9 +46,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
   @Autowired
   private var engineConnResourceGenerator: EngineConnResourceGenerator = _
 
-  private def getEngineLaunchBuilder(
-      engineTypeLabel: EngineTypeLabel
-  ): EngineConnLaunchBuilder = {
+  private def getEngineLaunchBuilder(engineTypeLabel: EngineTypeLabel): EngineConnLaunchBuilder = {
     val engineConnPluginInstance =
       EngineConnPluginsLoader.getEngineConnPluginsLoader().getEngineConnPlugin(engineTypeLabel)
     val builder = engineConnPluginInstance.plugin.getEngineConnLaunchBuilder
@@ -64,23 +63,25 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
   override def createEngineConnLaunchRequest(
       engineBuildRequest: EngineConnBuildRequest
   ): EngineConnLaunchRequest = {
-    val engineTypeOption = engineBuildRequest.labels.find(_.isInstanceOf[EngineTypeLabel])
+    val engineTypeOption = engineBuildRequest.labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
-      Utils.tryCatch(
-        getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)
-      ) { t =>
-        logger.error(
-          s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
-          t
-        )
-        throw new EngineConnPluginErrorException(
-          10001,
-          s"Failed to createEngineConnLaunchRequest, ${ExceptionUtils.getRootCauseMessage(t)}"
-        )
+      Utils.tryCatch(getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)) {
+        t =>
+          logger.error(
+            s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
+            t
+          )
+          throw new EngineConnPluginErrorException(
+            FAILED_CREATE_ELR.getErrorCode,
+            FAILED_CREATE_ELR.getErrorDesc + s", ${ExceptionUtils.getRootCauseMessage(t)}"
+          )
       }
     } else {
-      throw new EngineConnPluginErrorException(10001, "EngineTypeLabel are requested")
+      throw new EngineConnPluginErrorException(
+        ETL_REQUESTED.getErrorCode,
+        ETL_REQUESTED.getErrorDesc
+      )
     }
   }
 

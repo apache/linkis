@@ -101,6 +101,21 @@ class DefaultMarkReq extends MarkReq with Logging {
         return flag
       }
       if (other.getLabels != null && getLabels != null) {
+        if (null != labelKeySet) {
+          labelKeySet.foreach(key => {
+            var found = false
+            getLabels
+              .keySet()
+              .foreach(k => {
+                if (key.equals(k)) {
+                  found = true
+                }
+              })
+            if (!found) {
+              return flag
+            }
+          })
+        }
         val iterator = other.getLabels.iterator
         while (iterator.hasNext) {
           val next = iterator.next()
@@ -121,8 +136,11 @@ class DefaultMarkReq extends MarkReq with Logging {
             }
           }
         }
+      } else if (null == getLabels && null == other.getLabels) {
+        flag = true
+      } else {
+        flag = false
       }
-      flag = true
     }
     flag
   }
@@ -133,9 +151,9 @@ class DefaultMarkReq extends MarkReq with Logging {
 
   /**
    * Register labelKey that override the equals method, so when compair label in new request with
-   * cached labels in markReq, the label with labelKey contained in labelKeySet, would be convert
-   * to Label object , and call it's equals method. If you didn't override the equalis method in
-   * the label class, please do not register labelKey here.
+   * cached labels in markReq, the label with labelKey contained in labelKeySet, would be convert to
+   * Label object , and call it's equals method. If you didn't override the equalis method in the
+   * label class, please do not register labelKey here.
    * @param labelKey
    *   in LabelKeyConstants
    */

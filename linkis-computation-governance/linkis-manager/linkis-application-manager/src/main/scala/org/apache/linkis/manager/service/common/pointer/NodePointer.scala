@@ -66,4 +66,5 @@ trait NodePointer {
     case _ => false
   }
 
+  override def hashCode(): Int = super.hashCode()
 }

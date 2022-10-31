@@ -22,6 +22,7 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary._
 import org.apache.linkis.manager.label.exception.LabelRuntimeException
 import org.apache.linkis.manager.label.service.{NodeLabelRemoveService, NodeLabelService}
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
@@ -47,8 +48,8 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
     logger.info(s"Start to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
     if (nodeLabelRemoveRequest.getServiceInstance == null) {
       throw new LabelRuntimeException(
-        130001,
-        "ServiceInstance in request is null, please check label remove request!"
+        CHECK_LABEL_REMOVE_REQUEST.getErrorCode,
+        CHECK_LABEL_REMOVE_REQUEST.getErrorDesc
       )
     }
     nodeLabelService.removeLabelsFromNode(nodeLabelRemoveRequest.getServiceInstance)
@@ -65,9 +66,7 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
     }
 
     labelPersistence.removeLabel(persistenceLabel)
-    logger.info(
-      s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}"
-    )
+    logger.info(s"Finished to remove labels from node ${nodeLabelRemoveRequest.getServiceInstance}")
   }
 
 }

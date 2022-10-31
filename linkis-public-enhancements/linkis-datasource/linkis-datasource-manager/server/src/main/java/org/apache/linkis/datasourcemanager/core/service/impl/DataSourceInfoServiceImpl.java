@@ -28,10 +28,12 @@ import org.apache.linkis.datasourcemanager.core.dao.*;
 import org.apache.linkis.datasourcemanager.core.formdata.FormStreamContent;
 import org.apache.linkis.datasourcemanager.core.service.BmlAppService;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
+import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.apache.linkis.datasourcemanager.core.service.hooks.DataSourceParamsHook;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,8 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
 
   @Autowired private DataSourceVersionDao dataSourceVersionDao;
 
+  @Autowired private DataSourceRelateService dataSourceRelateService;
+
   @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
   @Override
@@ -90,9 +94,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   public DataSource getDataSourceInfo(Long dataSourceId) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getVersionId());
-      dataSource.setParameter(parameter);
+      mergeVersionParams(dataSource, dataSource.getVersionId());
     }
     return dataSource;
   }
@@ -101,9 +103,23 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   public DataSource getDataSourceInfo(String dataSourceName) {
     DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
     if (Objects.nonNull(dataSource)) {
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(dataSource.getId(), dataSource.getVersionId());
-      dataSource.setParameter(parameter);
+      mergeVersionParams(dataSource, dataSource.getVersionId());
+    }
+    return dataSource;
+  }
+
+  @Override
+  public DataSource getDataSourcePublishInfo(String dataSourceName) {
+    DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+    if (Objects.nonNull(dataSource)) {
+      Long publishedVersionId = dataSource.getPublishedVersionId();
+      if (publishedVersionId == null) {
+        LOG.warn("Datasource name:{} is not published. ", dataSourceName);
+      } else {
+        String parameter =
+            dataSourceVersionDao.selectOneVersion(dataSource.getId(), publishedVersionId);
+        dataSource.setParameter(parameter);
+      }
     }
     return dataSource;
   }
@@ -112,8 +128,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   public DataSource getDataSourceInfo(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
-      String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-      dataSource.setParameter(parameter);
+      mergeVersionParams(dataSource, version);
     }
     return dataSource;
   }
@@ -121,58 +136,47 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   /**
    * get datasource info for connect for published version, if there is a dependency environment,
    * merge datasource parameter and environment parameter.
-   *
-   * @param dataSourceId
-   * @return
    */
   @Override
   public DataSource getDataSourceInfoForConnect(Long dataSourceId) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
-      // TODO dataSource.getPublishedVersionId() NullPoint Exception
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(dataSourceId, dataSource.getPublishedVersionId());
-      return mergeParams(dataSource, parameter);
+      mergeVersionParams(dataSource, dataSource.getPublishedVersionId());
+      mergeEnvParams(dataSource);
     }
-    return null;
+    return dataSource;
   }
 
   @Override
   public DataSource getDataSourceInfoForConnect(String dataSourceName) {
     DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
     if (Objects.nonNull(dataSource)) {
-      String parameter =
-          dataSourceVersionDao.selectOneVersion(
-              dataSource.getId(), dataSource.getPublishedVersionId());
-      return mergeParams(dataSource, parameter);
-    }
-    return null;
-  }
-
-  private DataSource mergeParams(DataSource dataSource, String parameter) {
-    dataSource.setParameter(parameter);
-    if (StringUtils.isNotBlank(parameter)) {
-      Map<String, String> connectParams = new HashMap<>();
-      try {
-        connectParams = Objects.requireNonNull(Json.fromJson(parameter, Map.class));
-      } catch (JsonErrorException e) {
-        LOG.warn(
-            "Unrecognized the parameter: "
-                + parameter
-                + " in data source, id: ["
-                + dataSource.getId()
-                + "]",
-            e);
-        // TODO throws Exception defined Exception
-      }
-      if (connectParams.containsKey("envId")) {
-        Long envId = Long.valueOf(connectParams.get("envId"));
-        // remove envId for connect
-        dataSource.getConnectParams().remove("envId");
-        addEnvParamsToDataSource(envId, dataSource);
-      }
+      mergeVersionParams(dataSource, dataSource.getPublishedVersionId());
+      mergeEnvParams(dataSource);
     }
     return dataSource;
+  }
+
+  private void mergeEnvParams(DataSource dataSource) {
+    Map<String, Object> connectParams = dataSource.getConnectParams();
+    if (connectParams.containsKey("envId")) {
+      Long envId = Long.valueOf(connectParams.get("envId").toString());
+      // remove envId for connect
+      connectParams.remove("envId");
+      addEnvParamsToDataSource(envId, dataSource);
+    }
+    //    if exists multi env
+    if (connectParams.containsKey("envIdArray")) {
+      Object envIdArray = connectParams.get("envIdArray");
+      if (envIdArray instanceof List) {
+        List<String> envIdList = (List<String>) envIdArray;
+        if (CollectionUtils.isNotEmpty(envIdList)) {
+          addEnvParamsToDataSource(Long.valueOf(envIdList.get(0)), dataSource);
+        }
+        // remove envIdArray for connect
+        connectParams.remove("envIdArray");
+      }
+    }
   }
 
   /**
@@ -187,10 +191,10 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
   public DataSource getDataSourceInfoForConnect(Long dataSourceId, Long version) {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
-      String parameter = dataSourceVersionDao.selectOneVersion(dataSourceId, version);
-      return mergeParams(dataSource, parameter);
+      mergeVersionParams(dataSource, version);
+      mergeEnvParams(dataSource);
     }
-    return null;
+    return dataSource;
   }
 
   @Override
@@ -198,6 +202,15 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     if (StringUtils.isNotBlank(dataSourceName)) {
       DataSource dataSource = dataSourceDao.selectOneByName(dataSourceName);
       return Objects.nonNull(dataSource);
+    }
+    return false;
+  }
+
+  @Override
+  public boolean existDataSourceEnv(String dataSourceEnvName) {
+    if (StringUtils.isNotBlank(dataSourceEnvName)) {
+      DataSourceEnv dataSourceEnv = dataSourceEnvDao.selectOneByName(dataSourceEnvName);
+      return Objects.nonNull(dataSourceEnv);
     }
     return false;
   }
@@ -253,6 +266,22 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
           // Save environment into database
           dataSourceEnvDao.insertOne(dataSourceEnv);
         });
+  }
+
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void saveBatchDataSourceEnv(List<DataSourceEnv> dataSourceEnvList) throws ErrorException {
+    for (DataSourceEnv dataSourceEnv : dataSourceEnvList) {
+      storeConnectParams(
+          dataSourceEnv.getCreateUser(),
+          dataSourceEnv.getKeyDefinitions(),
+          dataSourceEnv.getConnectParams(),
+          parameter -> {
+            dataSourceEnv.setParameter(parameter);
+            // Save environment into database
+            dataSourceEnvDao.insertOne(dataSourceEnv);
+          });
+    }
   }
 
   @Override
@@ -314,6 +343,25 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
           // Update environment into database
           dataSourceEnvDao.updateOne(updatedOne);
         });
+  }
+
+  @Transactional(rollbackFor = Exception.class)
+  @Override
+  public void updateBatchDataSourceEnv(List<DataSourceEnv> dataSourceEnvList)
+      throws ErrorException {
+    for (DataSourceEnv updatedOne : dataSourceEnvList) {
+      DataSourceEnv storedOne = getDataSourceEnv(updatedOne.getId());
+      updateConnectParams(
+          updatedOne.getCreateUser(),
+          updatedOne.getKeyDefinitions(),
+          updatedOne.getConnectParams(),
+          storedOne.getConnectParams(),
+          parameter -> {
+            updatedOne.setParameter(parameter);
+            // Update environment into database
+            dataSourceEnvDao.updateOne(updatedOne);
+          });
+    }
   }
 
   @Override
@@ -593,6 +641,21 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
           // ignore
           // TODO throws RPC Exception
         }
+      }
+    }
+  }
+
+  private void mergeVersionParams(DataSource dataSource, Long version) {
+    if (Objects.isNull(version)) {
+      return;
+    }
+    Map<String, Object> connectParams = dataSource.getConnectParams();
+    String versionParameter = dataSourceVersionDao.selectOneVersion(dataSource.getId(), version);
+    if (StringUtils.isNotBlank(versionParameter)) {
+      try {
+        connectParams.putAll(Objects.requireNonNull(Json.fromJson(versionParameter, Map.class)));
+      } catch (JsonErrorException e) {
+        LOG.warn("Parameter is not json string");
       }
     }
   }

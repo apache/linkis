@@ -24,6 +24,7 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFa
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind.SUCCESS_WITH_CONTENT
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.{
   FlinkInitFailedException,
   SqlParseException
@@ -40,6 +41,7 @@ import org.apache.flink.table.api.{ResultKind, TableResult}
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
 import org.apache.hadoop.yarn.api.records.ApplicationId
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.Future
 import java.util.function.Supplier
@@ -59,19 +61,22 @@ class FlinkCodeOnceExecutor(
     codes = options(TaskConstant.CODE)
     options(TaskConstant.RUNTYPE) match {
       case "sql" =>
-        if (StringUtils.isBlank(codes))
-          throw new FlinkInitFailedException(s"The sql code is empty.")
+        if (StringUtils.isBlank(codes)) {
+          throw new FlinkInitFailedException(SQL_CODE_EMPTY.getErrorDesc)
+        }
         logger.info(s"Ready to submit flink application, sql is: $codes.")
         val variableMap =
-          if (onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null)
+          if (onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap != null) {
             onceExecutorExecutionContext.getOnceExecutorContent.getVariableMap
               .asInstanceOf[util.Map[String, Any]]
-          else new util.HashMap[String, Any]
+          } else new util.HashMap[String, Any]
         codes = VariableUtils.replace(codes, variableMap)
         logger.info(s"After variable replace, sql is: $codes.")
       case runType =>
         // Now, only support sql code.
-        throw new FlinkInitFailedException(s"Not support runType $runType.")
+        throw new FlinkInitFailedException(
+          MessageFormat.format(NOT_SUPPORT_RUNTYPE.getErrorDesc, runType)
+        )
     }
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
@@ -108,7 +113,9 @@ class FlinkCodeOnceExecutor(
     logger.info(s"$getId >> " + trimmedCode)
     val startTime = System.currentTimeMillis
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
-    if (!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
+    if (!callOpt.isPresent) {
+      throw new SqlParseException(MessageFormat.format(UNKNOWN_STATEMENT.getErrorDesc, code))
+    }
     val resultSet = callOpt.get().command match {
       case SqlCommand.SET | SqlCommand.USE_CATALOG | SqlCommand.USE | SqlCommand.SHOW_MODULES |
           SqlCommand.DESCRIBE_TABLE | SqlCommand.EXPLAIN =>

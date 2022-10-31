@@ -19,6 +19,7 @@ package org.apache.linkis.server.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.BDPInitServerException
 
 import org.apache.commons.lang3.StringUtils
@@ -41,8 +42,8 @@ object ServerConfiguration extends Logging {
 
   if (StringUtils.isBlank(BDP_SERVER_VERSION)) {
     throw new BDPInitServerException(
-      10010,
-      "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file."
+      DATAWORKCLOUD_MUST_VERSION.getErrorCode,
+      DATAWORKCLOUD_MUST_VERSION.getErrorDesc
     )
   }
 
@@ -52,9 +53,9 @@ object ServerConfiguration extends Logging {
 
   private val ticketHeader = CommonVars("wds.linkis.ticket.header", "bfs_").getValue
 
-  def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId))
+  def getUsernameByTicket(ticketId: String): Option[String] = if (StringUtils.isEmpty(ticketId)) {
     None
-  else {
+  } else {
     val userName = DESUtil.decrypt(ticketId, ServerConfiguration.cryptKey)
     if (userName.startsWith(ticketHeader)) Some(userName.substring(ticketHeader.length))
     else None
@@ -84,7 +85,7 @@ object ServerConfiguration extends Logging {
     CommonVars("wds.linkis.server.distinct.mode", lang.Boolean.TRUE)
 
   if (!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue)) {
-    throw new BDPInitServerException(11000, "wds.linkis.server.home或BDP_SERVER_HOME haven't set!")
+    throw new BDPInitServerException(HAVE_NOT_SET.getErrorCode, HAVE_NOT_SET.getErrorDesc)
   }
 
   val BDP_SERVER_SOCKET_MODE: CommonVars[lang.Boolean] =
@@ -131,10 +132,8 @@ object ServerConfiguration extends Logging {
   val BDP_SERVER_RESTFUL_URI: CommonVars[String] =
     CommonVars("wds.linkis.server.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION)
 
-  val BDP_SERVER_USER_URI = CommonVars(
-    "wds.linkis.server.user.restful.uri",
-    "/api/rest_j/" + BDP_SERVER_VERSION + "/user"
-  )
+  val BDP_SERVER_USER_URI =
+    CommonVars("wds.linkis.server.user.restful.uri", "/api/rest_j/" + BDP_SERVER_VERSION + "/user")
 
   val BDP_SERVER_RESTFUL_LOGIN_URI = CommonVars(
     "wds.linkis.server.user.restful.login.uri",
@@ -205,9 +204,7 @@ object ServerConfiguration extends Logging {
   val LINKIS_SERVER_SESSION_TICKETID_KEY =
     CommonVars("wds.linkis.session.ticket.key", "linkis_user_session_ticket_id_v1")
 
-  val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY = CommonVars(
-    "wds.linkis.session.proxy.user.ticket.key",
-    "linkis_user_session_proxy_ticket_id_v1"
-  )
+  val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY =
+    CommonVars("wds.linkis.session.proxy.user.ticket.key", "linkis_user_session_proxy_ticket_id_v1")
 
 }

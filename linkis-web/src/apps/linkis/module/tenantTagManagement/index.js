@@ -17,7 +17,7 @@
  
 
 export default {
-  name: 'Explorer',
+  name: 'tenantTagManagement',
   events: [],
   component: () => import('./index.vue'),
 };

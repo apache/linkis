@@ -19,6 +19,7 @@ package org.apache.linkis.server.security
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, RSAUtils, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.ILLEGAL_USER_TOKEN
 import org.apache.linkis.server.{Message, _}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.server.exception.{
@@ -64,7 +65,7 @@ class SecurityFilter extends Filter {
         return false
       }
       // Security certification support, solving verb tampering(安全认证支持，解决动词篡改)
-      request.getMethod.toUpperCase match {
+      request.getMethod.toUpperCase(Locale.getDefault) match {
         case "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "TRACE" | "CONNECT" | "OPTIONS" =>
         case _ =>
           filterResponse(validateFailed("Do not use HTTP verbs to tamper with!(不可使用HTTP动词篡改！)"))
@@ -76,9 +77,7 @@ class SecurityFilter extends Filter {
       if (SSOUtils.sslEnable) message.data("publicKey", RSAUtils.getDefaultPublicKey())
       filterResponse(message)
       false
-    } else if (
-        request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue
-    ) {
+    } else if (request.getRequestURI == ServerConfiguration.BDP_SERVER_RESTFUL_LOGIN_URI.getValue) {
       true
     } else if (
         ServerConfiguration.BDP_SERVER_RESTFUL_PASS_AUTH_REQUEST_URI
@@ -123,8 +122,9 @@ class SecurityFilter extends Filter {
     val request = servletRequest.asInstanceOf[HttpServletRequest]
     implicit val response = servletResponse.asInstanceOf[HttpServletResponse]
     if (doFilter(request)) filterChain.doFilter(servletRequest, servletResponse)
-    if (SecurityFilter.isRequestIgnoreTimeout(request))
+    if (SecurityFilter.isRequestIgnoreTimeout(request)) {
       SecurityFilter.removeIgnoreTimeoutSignal(response)
+    }
   }
 
   protected def addAccessHeaders(response: HttpServletResponse) {
@@ -202,7 +202,7 @@ object SecurityFilter {
       ServerConfiguration.BDP_TEST_USER.getValue;
     } else {
       getLoginUser(req).getOrElse(
-        throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
+        throw new IllegalUserTicketException(ILLEGAL_USER_TOKEN.getErrorDesc)
       )
     }
 

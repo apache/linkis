@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -69,8 +69,16 @@ if [ ! -r "$SERVER_LIB" ] ; then
     exit 1
 fi
 
+##The extended lib such mysql-connector-java-*.jar
+export LINKIS_EXTENDED_LIB=$LINKIS_EXTENDED_LIB
+if [ -r "$LINKIS_EXTENDED_LIB" ] ; then
+    echo "add extended lib $LINKIS_EXTENDED_LIB"
+fi
+
+
+
 ## set class path
-export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*
+export SERVER_CLASS_PATH=$SERVER_CONF_PATH:$LINKIS_COMMONS_LIB/*:$SERVER_LIB/*:$LINKIS_EXTENDED_LIB/*
 
 echo  "=====Java Start Command====="
 

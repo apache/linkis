@@ -20,6 +20,7 @@ package org.apache.linkis.manager.engineplugin.jdbc;
 import org.apache.linkis.hadoop.common.utils.KerberosUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
+import org.apache.linkis.manager.engineplugin.jdbc.utils.JdbcParamUtils;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import javax.sql.DataSource;
 
 import java.security.PrivilegedExceptionAction;
 import java.sql.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -40,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.manager.engineplugin.jdbc.JdbcAuthType.*;
+import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCodeSummary.*;
 
 public class ConnectionManager {
-
   private static final Logger LOG = LoggerFactory.getLogger(ConnectionManager.class);
 
   private final Map<String, DataSource> dataSourceFactories;
@@ -109,27 +111,21 @@ public class ConnectionManager {
 
   protected DataSource buildDataSource(String dbUrl, Map<String, String> properties)
       throws JDBCParamsIllegalException {
+
     String driverClassName =
         JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_DRIVER, "");
-
     if (StringUtils.isBlank(driverClassName)) {
       LOG.error("The driver class name is required.");
-      throw new JDBCParamsIllegalException("The driver class name is required.");
+      throw new JDBCParamsIllegalException(
+          DRIVER_CLASS_NAME_ERROR.getErrorCode(), DRIVER_CLASS_NAME_ERROR.getErrorDesc());
     }
 
-    String username =
-        JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_USERNAME, "");
-    String password =
-        JDBCPropertiesParser.getString(properties, JDBCEngineConnConstant.JDBC_PASSWORD, "");
+    String username = JdbcParamUtils.getJdbcUsername(properties);
+    String password = JdbcParamUtils.getJdbcPassword(properties);
     JdbcAuthType jdbcAuthType = getJdbcAuthType(properties);
     switch (jdbcAuthType) {
       case USERNAME:
-        if (StringUtils.isBlank(username)) {
-          throw new JDBCParamsIllegalException("The jdbc username is not empty.");
-        }
-        if (StringUtils.isBlank(password)) {
-          throw new JDBCParamsIllegalException("The jdbc password is not empty.");
-        }
+        LOG.info("The jdbc auth type is username and password.");
         break;
       case SIMPLE:
         LOG.info("The jdbc auth type is simple.");
@@ -139,7 +135,9 @@ public class ConnectionManager {
         break;
       default:
         throw new JDBCParamsIllegalException(
-            "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
+            MessageFormat.format(
+                UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc(), jdbcAuthType.getAuthType()));
     }
 
     boolean testOnBorrow =
@@ -225,8 +223,9 @@ public class ConnectionManager {
         JDBCPropertiesParser.getString(
             properties, JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER, "");
     if (StringUtils.isBlank(execUser)) {
-      LOG.warn("No such execUser: {}", execUser);
-      throw new JDBCParamsIllegalException("No execUser");
+      LOG.warn("execUser is empty!");
+      throw new JDBCParamsIllegalException(
+          NO_EXEC_USER_ERROR.getErrorCode(), NO_EXEC_USER_ERROR.getErrorDesc());
     }
     Connection connection = null;
     final String jdbcUrl = getJdbcUrl(properties);
@@ -268,7 +267,8 @@ public class ConnectionManager {
                     execUser, UserGroupInformation.getCurrentUser());
           } catch (Exception e) {
             LOG.error("Error in getCurrentUser", e);
-            throw new JDBCParamsIllegalException("Error in getCurrentUser");
+            throw new JDBCParamsIllegalException(
+                GET_CURRENT_USER_ERROR.getErrorCode(), GET_CURRENT_USER_ERROR.getErrorDesc());
           }
 
           try {
@@ -278,13 +278,17 @@ public class ConnectionManager {
                         () ->
                             getConnectionFromDataSource(dataSourceIdentifier, jdbcUrl, properties));
           } catch (Exception e) {
-            throw new JDBCParamsIllegalException("Error in doAs to get one connection.");
+            throw new JDBCParamsIllegalException(
+                DOAS_FOR_GET_CONNECTION_ERROR.getErrorCode(),
+                DOAS_FOR_GET_CONNECTION_ERROR.getErrorDesc());
           }
         }
         break;
       default:
         throw new JDBCParamsIllegalException(
-            "Unsupported jdbc authentication types " + jdbcAuthType.getAuthType());
+            UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorCode(),
+            MessageFormat.format(
+                UNSUPPORT_JDBC_AUTHENTICATION_TYPES.getErrorDesc(), jdbcAuthType.getAuthType()));
     }
     return connection;
   }
@@ -294,26 +298,10 @@ public class ConnectionManager {
     if (StringUtils.isBlank(url)) {
       throw new SQLException(JDBCEngineConnConstant.JDBC_URL + " is not empty.");
     }
-    url = clearJDBCUrl(url);
-    validateJDBCUrl(url);
+    url = JdbcParamUtils.clearJdbcUrl(url);
+    url = JdbcParamUtils.filterJdbcUrl(url);
+    JdbcParamUtils.validateJdbcUrl(url);
     return url.trim();
-  }
-
-  private String clearJDBCUrl(String url) {
-    if (url.startsWith("\"") && url.endsWith("\"")) {
-      url = url.trim();
-      return url.substring(1, url.length() - 1);
-    }
-    return url;
-  }
-
-  private void validateJDBCUrl(String url) {
-    if (StringUtils.isEmpty(url)) {
-      throw new NullPointerException(JDBCEngineConnConstant.JDBC_URL + " cannot be null.");
-    }
-    if (!url.matches("jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?") && !url.startsWith("jdbc:h2")) {
-      throw new IllegalArgumentException("JDBC url format error!" + url);
-    }
   }
 
   private String appendProxyUserToJDBCUrl(

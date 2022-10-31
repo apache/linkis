@@ -49,10 +49,8 @@ import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.util
 
-class EngineExecutionContext(
-    executor: ComputationExecutor,
-    executorUser: String = Utils.getJvmUser
-) extends ExecutorExecutionContext
+class EngineExecutionContext(executor: ComputationExecutor, executorUser: String = Utils.getJvmUser)
+    extends ExecutorExecutionContext
     with Logging {
 
   private val resultSetFactory = ResultSetFactory.getInstance
@@ -85,6 +83,10 @@ class EngineExecutionContext(
       })
     }
 
+  /**
+   * Note: the writer will be closed at the end of the method
+   * @param resultSetWriter
+   */
   def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
     logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName
@@ -209,7 +211,7 @@ class EngineExecutionContext(
 
   def getExecutor: Executor = executor
 
-  def getEnableResultsetMetaWithTableName = enableResultsetMetaWithTableName
+  def getEnableResultsetMetaWithTableName: Boolean = enableResultsetMetaWithTableName
 
   def setEnableResultsetMetaWithTableName(withTableName: Boolean): Unit =
     this.enableResultsetMetaWithTableName = withTableName

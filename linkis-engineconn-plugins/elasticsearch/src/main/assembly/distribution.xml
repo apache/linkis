@@ -16,10 +16,8 @@
   ~ limitations under the License.
   -->
 
-<assembly
-        xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/2.3 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
     <id>linkis-engineplugin-elasticsearch</id>
     <formats>
         <format>dir</format>
@@ -51,7 +49,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/dist/v${elasticsearch.version}/conf</outputDirectory>
+            <outputDirectory>dist/v${elasticsearch.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -64,7 +62,7 @@
                 <exclude>*doc.jar</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>/plugin/${elasticsearch.version}</outputDirectory>
+            <outputDirectory>plugin/${elasticsearch.version}</outputDirectory>
         </fileSet>
 
     </fileSets>

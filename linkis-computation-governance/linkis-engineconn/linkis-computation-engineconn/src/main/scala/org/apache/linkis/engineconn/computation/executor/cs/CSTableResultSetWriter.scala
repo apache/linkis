@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconn.computation.executor.cs
 
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.service.CSTableService
 import org.apache.linkis.cs.common.entity.metadata.{CSColumn, CSTable}
 import org.apache.linkis.storage.resultset.StorageResultSetWriter
@@ -39,14 +39,13 @@ class CSTableResultSetWriter(
 ) extends StorageResultSetWriter[TableMetaData, TableRecord](tableResult, maxCacheSize, storePath)
     with Logging {
 
-  override def toString: String = {
-    try {
+  override def close(): Unit = {
+    Utils.tryCatch {
       registerToCS
-    } catch {
-      case t: Throwable =>
-        logger.info("Failed to register tmp table", t)
+    } { case t: Throwable =>
+      logger.info("Failed to register tmp table", t)
     }
-    super.toString
+    super.close()
   }
 
   private def registerToCS: Unit = {

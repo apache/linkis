@@ -32,9 +32,11 @@ import org.apache.linkis.manager.engineplugin.common.exception.{
   EngineConnPluginErrorCode,
   EngineConnPluginErrorException
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
@@ -87,7 +89,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       case engineConnFactory =>
         val errorMsg = "Not supported ExecutorFactory " + engineConnFactory.getClass.getSimpleName
         logger.error(errorMsg)
-        throw new EngineConnPluginErrorException(20011, errorMsg)
+        throw new EngineConnPluginErrorException(NOT_SUPPORTED_EF.getErrorCode, errorMsg)
     }
 
   protected def tryCreateExecutor(
@@ -98,7 +100,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
     logger.info(s"Try to create a executor with labels $labelStr.")
     val labelExecutor = if (null == labels || labels.isEmpty) {
       defaultFactory.createExecutor(engineCreationContext, engineConn).asInstanceOf[LabelExecutor]
-    } else
+    } else {
       factories
         .find {
           case labelExecutorFactory: LabelExecutorFactory =>
@@ -117,6 +119,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
             .createExecutor(engineCreationContext, engineConn)
             .asInstanceOf[LabelExecutor]
         }
+    }
     val codeType = LabelUtil.getCodeType(labelExecutor.getExecutorLabels())
     logger.info(
       s"Finished to create ${labelExecutor.getClass.getSimpleName}(${labelExecutor.getId}) with labels $labelStr."
@@ -166,8 +169,10 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   ): LabelExecutor = {
     val labelKey = getLabelKey(labels)
     if (null == labelKey) {
-      val msg = "Cannot get label key. labels : " + GSON.toJson(labels)
-      throw new EngineConnPluginErrorException(EngineConnPluginErrorCode.INVALID_LABELS, msg)
+      throw new EngineConnPluginErrorException(
+        CANNOT_GET_LABEL_KEY.getErrorCode,
+        MessageFormat.format(CANNOT_GET_LABEL_KEY.getErrorDesc, GSON.toJson(labels))
+      )
     }
 
     if (!executors.containsKey(labelKey)) executors synchronized {
@@ -222,9 +227,11 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
       case labelExecutorFactory: CodeLanguageLabelExecutorFactory =>
         Array[Label[_]](labelExecutorFactory.getDefaultCodeLanguageLabel)
       case _ =>
-        if (null == engineConn.getEngineCreationContext.getLabels()) Array.empty[Label[_]]
-        else
+        if (null == engineConn.getEngineCreationContext.getLabels()) {
+          Array.empty[Label[_]]
+        } else {
           engineConn.getEngineCreationContext.getLabels().toArray[Label[_]](Array.empty[Label[_]])
+        }
     }
     createExecutor(engineConn.getEngineCreationContext, labels)
   } else {

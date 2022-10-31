@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executor with Logging {
+abstract class EntranceExecutor(val id: Long) extends Executor with Logging {
 
   private implicit var userWithCreator: UserWithCreator = _
 
@@ -78,7 +78,6 @@ abstract class EntranceExecutor(val id: Long, val mark: MarkReq) extends Executo
 
   protected def callExecute(request: ExecuteRequest): ExecuteResponse
 
-  //  override def toString: String = s"${getInstance.getApplicationName}Engine($getId, $getUser, $getCreator, ${getInstance.getInstance})"
   override def toString: String = "${getId}"
 
   override def getId: Long = this.id

@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.log
 
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary.LOGPATH_NOT_NULL
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -74,8 +75,9 @@ abstract class LogWriter(charset: String) extends Closeable with Flushable with 
 abstract class AbstractLogWriter(logPath: String, user: String, charset: String)
     extends LogWriter(charset) {
 
-  if (StringUtils.isBlank(logPath))
-    throw new EntranceErrorException(20301, "logPath cannot be empty.")
+  if (StringUtils.isBlank(logPath)) {
+    throw new EntranceErrorException(LOGPATH_NOT_NULL.getErrorCode, LOGPATH_NOT_NULL.getErrorDesc)
+  }
 
   protected var fileSystem =
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]

@@ -17,7 +17,7 @@
  
 
 export default {
-  name: 'Explorer',
+  name: 'ipListManagement',
   events: [],
   component: () => import('./index.vue'),
 };

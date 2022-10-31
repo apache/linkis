@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.execute
 import org.apache.linkis.common.exception.WarnException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -46,16 +47,6 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
     }
   }
 
-  protected def createMarkReq(jobReq: JobRequest): MarkReq = {
-    val markReq = new MarkReq
-    markReq.setCreateService(EntranceConfiguration.DEFAULT_CREATE_SERVICE.getValue)
-    // todo get default config from db
-    markReq.setProperties(jobReq.getParams)
-    markReq.setUser(jobReq.getExecuteUser)
-    markReq.setLabels(LabelUtils.labelsToMap(jobReq.getLabels))
-    markReq
-  }
-
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] =
     schedulerEvent match {
       case job: Job =>
@@ -72,10 +63,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
 
     }
 
-  // todo 提交任务逻辑调整：将job切分成多条语句，塞到jobGroup队列中。任务提交后，按照队列先后顺序，依次执行任务；
-  // 没个子任务运行后，更新整体的Job运行状态
-  // 直到所有任务都完毕，或者存在任务异常退出，则结束整体的Job
-
+  // Update the overall job running status after no subtask runs
+  // Until all the tasks are completed, or the task exits abnormally, the overall job ends
   override def askExecutor(schedulerEvent: SchedulerEvent, wait: Duration): Option[Executor] =
     schedulerEvent match {
       case job: Job =>
@@ -89,14 +78,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
               warnException = warn
               None
             case t: Throwable => throw t
-          } /*match {
-          case Some(e) => executor = Option(e)
-          case _ =>
-            if (System.currentTimeMillis - startTime < wait.toMillis) {
-              val interval = math.min(3000, wait.toMillis - System.currentTimeMillis + startTime)
-              //getOrCreateEngineManager().waitForIdle(interval)
-            }
-        }*/
+          }
         // todo check
         if (warnException != null && executor.isEmpty) throw warnException
         executor
@@ -118,11 +100,8 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
       case job: EntranceJob =>
         job.getJobRequest match {
           case jobRequest: JobRequest =>
-            // CreateMarkReq
-            val markReq = createMarkReq(jobRequest)
-            // getMark
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(idGenerator.incrementAndGet(), markReq, this)
+              new DefaultEntranceExecutor(idGenerator.incrementAndGet())
             // getEngineConn Executor
             job.getLogListener.foreach(
               _.onLogUpdate(job, "Your job is being scheduled by orchestrator.")
@@ -137,14 +116,14 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
             entranceEntranceExecutor
           case _ =>
             throw new EntranceErrorException(
-              20001,
-              "Task is not requestPersistTask, cannot to create Executor"
+              NOT_CREATE_EXECUTOR.getErrorCode,
+              NOT_CREATE_EXECUTOR.getErrorDesc
             )
         }
       case _ =>
         throw new EntranceErrorException(
-          20001,
-          "Task is not EntranceJob, cannot to create Executor"
+          ENTRA_NOT_CREATE_EXECUTOR.getErrorCode,
+          ENTRA_NOT_CREATE_EXECUTOR.getErrorDesc
         )
     }
 

@@ -20,15 +20,15 @@ package org.apache.linkis.engineplugin.spark.cs
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.core.exception.{
-  EngineConnErrorCode,
-  ExecutorHookFatalException
-}
+import org.apache.linkis.engineconn.core.errorcode.LinkisEngineconnCoreErrorCodeSummary.CANNOT_PARSE_FOR_NODE
+import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, ExecutorHookFatalException}
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+
+import java.text.MessageFormat
 
 @Component
 class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
@@ -63,8 +63,8 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
       }
       logger.info("Failed to parser cs table because : ", msg)
       throw new ExecutorHookFatalException(
-        EngineConnErrorCode.ENGINE_CONN_EXECUTOR_INIT_ERROR,
-        s"Cannot parse cs table for node : ${nodeNameStr}."
+        CANNOT_PARSE_FOR_NODE.getErrorCode,
+        MessageFormat.format(CANNOT_PARSE_FOR_NODE.getErrorDesc, nodeNameStr)
       )
     }
     logger.info(

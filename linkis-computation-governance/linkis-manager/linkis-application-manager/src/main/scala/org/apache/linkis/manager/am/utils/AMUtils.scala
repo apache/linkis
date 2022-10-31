@@ -54,84 +54,97 @@ object AMUtils {
       EMNodeVo.setInstance(node.getServiceInstance.getInstance)
       if (node.getStartTime != null) EMNodeVo.setStartTime(node.getStartTime)
       if (node.getNodeResource != null) {
-        if (node.getNodeResource.getResourceType != null)
+        if (node.getNodeResource.getResourceType != null) {
           EMNodeVo.setResourceType(node.getNodeResource.getResourceType)
-        if (node.getNodeResource.getMaxResource != null)
+        }
+        if (node.getNodeResource.getMaxResource != null) {
           EMNodeVo.setMaxResource(
-            mapper.readValue(
-              write(node.getNodeResource.getMaxResource),
-              classOf[util.Map[String, Any]]
-            )
+            mapper
+              .readValue(write(node.getNodeResource.getMaxResource), classOf[util.Map[String, Any]])
           )
-        if (node.getNodeResource.getMinResource != null)
+        }
+        if (node.getNodeResource.getMinResource != null) {
           EMNodeVo.setMinResource(
-            mapper.readValue(
-              write(node.getNodeResource.getMinResource),
-              classOf[util.Map[String, Any]]
-            )
+            mapper
+              .readValue(write(node.getNodeResource.getMinResource), classOf[util.Map[String, Any]])
           )
-        if (node.getNodeResource.getUsedResource != null)
+        }
+        if (node.getNodeResource.getUsedResource != null) {
           EMNodeVo.setUsedResource(
             mapper.readValue(
               write(node.getNodeResource.getUsedResource),
               classOf[util.Map[String, Any]]
             )
           )
-        else
+        } else {
           EMNodeVo.setUsedResource(
             mapper.readValue(
               write(Resource.initResource(ResourceType.Default)),
               classOf[util.Map[String, Any]]
             )
           )
-        if (node.getNodeResource.getLockedResource != null)
+        }
+        if (node.getNodeResource.getLockedResource != null) {
           EMNodeVo.setLockedResource(
             mapper.readValue(
               write(node.getNodeResource.getLockedResource),
               classOf[util.Map[String, Any]]
             )
           )
-        if (node.getNodeResource.getExpectedResource != null)
+        }
+        if (node.getNodeResource.getExpectedResource != null) {
           EMNodeVo.setExpectedResource(
             mapper.readValue(
               write(node.getNodeResource.getExpectedResource),
               classOf[util.Map[String, Any]]
             )
           )
-        if (node.getNodeResource.getLeftResource != null)
+        }
+        if (node.getNodeResource.getLeftResource != null) {
           EMNodeVo.setLeftResource(
             mapper.readValue(
               write(node.getNodeResource.getLeftResource),
               classOf[util.Map[String, Any]]
             )
           )
+        }
       }
       EMNodeVo.setOwner(node.getOwner)
       if (node.getNodeTaskInfo != null) {
-        if (node.getNodeTaskInfo.getRunningTasks != null)
+        if (node.getNodeTaskInfo.getRunningTasks != null) {
           EMNodeVo.setRunningTasks(node.getNodeTaskInfo.getRunningTasks)
-        if (node.getNodeTaskInfo.getPendingTasks != null)
+        }
+        if (node.getNodeTaskInfo.getPendingTasks != null) {
           EMNodeVo.setPendingTasks(node.getNodeTaskInfo.getPendingTasks)
-        if (node.getNodeTaskInfo.getSucceedTasks != null)
+        }
+        if (node.getNodeTaskInfo.getSucceedTasks != null) {
           EMNodeVo.setSucceedTasks(node.getNodeTaskInfo.getSucceedTasks)
-        if (node.getNodeTaskInfo.getFailedTasks != null)
+        }
+        if (node.getNodeTaskInfo.getFailedTasks != null) {
           EMNodeVo.setFailedTasks(node.getNodeTaskInfo.getFailedTasks)
+        }
       }
       if (node.getNodeOverLoadInfo != null) {
-        if (node.getNodeOverLoadInfo.getMaxMemory != null)
+        if (node.getNodeOverLoadInfo.getMaxMemory != null) {
           EMNodeVo.setMaxMemory(node.getNodeOverLoadInfo.getMaxMemory)
-        if (node.getNodeOverLoadInfo.getUsedMemory != null)
+        }
+        if (node.getNodeOverLoadInfo.getUsedMemory != null) {
           EMNodeVo.setUsedMemory(node.getNodeOverLoadInfo.getUsedMemory)
-        if (node.getNodeOverLoadInfo.getSystemCPUUsed != null)
+        }
+        if (node.getNodeOverLoadInfo.getSystemCPUUsed != null) {
           EMNodeVo.setSystemCPUUsed(node.getNodeOverLoadInfo.getSystemCPUUsed)
-        if (node.getNodeOverLoadInfo.getSystemLeftMemory != null)
+        }
+        if (node.getNodeOverLoadInfo.getSystemLeftMemory != null) {
           EMNodeVo.setSystemLeftMemory(node.getNodeOverLoadInfo.getSystemLeftMemory)
+        }
       }
       if (node.getNodeHealthyInfo != null) {
-        if (node.getNodeHealthyInfo.getNodeHealthy != null)
+        if (node.getNodeHealthyInfo.getNodeHealthy != null) {
           EMNodeVo.setNodeHealthy(node.getNodeHealthyInfo.getNodeHealthy)
-        if (node.getNodeHealthyInfo.getMsg != null)
+        }
+        if (node.getNodeHealthyInfo.getMsg != null) {
           EMNodeVo.setMsg(node.getNodeHealthyInfo.getMsg)
+        }
       }
       EMNodeVos.add(EMNodeVo)
     })
@@ -169,12 +182,15 @@ object AMUtils {
         }
         if (node.getLock != null) AMEngineNodeVo.setLock(node.getLock)
         if (node.getNodeResource != null) {
-          if (node.getNodeResource.getResourceType != null)
+          if (node.getNodeResource.getResourceType != null) {
             AMEngineNodeVo.setResourceType(node.getNodeResource.getResourceType)
-          if (node.getNodeResource.getMaxResource != null)
+          }
+          if (node.getNodeResource.getMaxResource != null) {
             AMEngineNodeVo.setMaxResource(createUnlimitedResource)
-          if (node.getNodeResource.getMinResource != null)
+          }
+          if (node.getNodeResource.getMinResource != null) {
             AMEngineNodeVo.setMinResource(createZeroResource)
+          }
           if (node.getNodeResource.getUsedResource != null) {
             val realResource = node.getNodeResource.getUsedResource match {
               case dy: DriverAndYarnResource => dy.loadInstanceResource
@@ -191,54 +207,67 @@ object AMUtils {
               )
             )
           }
-          if (node.getNodeResource.getLockedResource != null)
+          if (node.getNodeResource.getLockedResource != null) {
             AMEngineNodeVo.setLockedResource(
               mapper.readValue(
                 write(node.getNodeResource.getLockedResource),
                 classOf[util.Map[String, Any]]
               )
             )
-          if (node.getNodeResource.getExpectedResource != null)
+          }
+          if (node.getNodeResource.getExpectedResource != null) {
             AMEngineNodeVo.setExpectedResource(
               mapper.readValue(
                 write(node.getNodeResource.getExpectedResource),
                 classOf[util.Map[String, Any]]
               )
             )
-          if (node.getNodeResource.getLeftResource != null)
+          }
+          if (node.getNodeResource.getLeftResource != null) {
             AMEngineNodeVo.setLeftResource(
               mapper.readValue(
                 write(node.getNodeResource.getLeftResource),
                 classOf[util.Map[String, Any]]
               )
             )
+          }
         }
         AMEngineNodeVo.setOwner(node.getOwner)
         if (node.getNodeTaskInfo != null) {
-          if (node.getNodeTaskInfo.getRunningTasks != null)
+          if (node.getNodeTaskInfo.getRunningTasks != null) {
             AMEngineNodeVo.setRunningTasks(node.getNodeTaskInfo.getRunningTasks)
-          if (node.getNodeTaskInfo.getPendingTasks != null)
+          }
+          if (node.getNodeTaskInfo.getPendingTasks != null) {
             AMEngineNodeVo.setPendingTasks(node.getNodeTaskInfo.getPendingTasks)
-          if (node.getNodeTaskInfo.getSucceedTasks != null)
+          }
+          if (node.getNodeTaskInfo.getSucceedTasks != null) {
             AMEngineNodeVo.setSucceedTasks(node.getNodeTaskInfo.getSucceedTasks)
-          if (node.getNodeTaskInfo.getFailedTasks != null)
+          }
+          if (node.getNodeTaskInfo.getFailedTasks != null) {
             AMEngineNodeVo.setFailedTasks(node.getNodeTaskInfo.getFailedTasks)
+          }
         }
         if (node.getNodeOverLoadInfo != null) {
-          if (node.getNodeOverLoadInfo.getMaxMemory != null)
+          if (node.getNodeOverLoadInfo.getMaxMemory != null) {
             AMEngineNodeVo.setMaxMemory(node.getNodeOverLoadInfo.getMaxMemory)
-          if (node.getNodeOverLoadInfo.getUsedMemory != null)
+          }
+          if (node.getNodeOverLoadInfo.getUsedMemory != null) {
             AMEngineNodeVo.setUsedMemory(node.getNodeOverLoadInfo.getUsedMemory)
-          if (node.getNodeOverLoadInfo.getSystemCPUUsed != null)
+          }
+          if (node.getNodeOverLoadInfo.getSystemCPUUsed != null) {
             AMEngineNodeVo.setSystemCPUUsed(node.getNodeOverLoadInfo.getSystemCPUUsed)
-          if (node.getNodeOverLoadInfo.getSystemLeftMemory != null)
-            AMEngineNodeVo.setSystemLeftMemory(node.getNodeOverLoadInfo.getSystemLeftMemory)
+          }
+          if (node.getNodeOverLoadInfo.getSystemLeftMemory != null) {
+            AMEngineNodeVo.setSystemCPUUsed(node.getNodeOverLoadInfo.getSystemCPUUsed)
+          }
         }
         if (node.getNodeHealthyInfo != null) {
-          if (node.getNodeHealthyInfo.getNodeHealthy != null)
+          if (node.getNodeHealthyInfo.getNodeHealthy != null) {
             AMEngineNodeVo.setNodeHealthy(node.getNodeHealthyInfo.getNodeHealthy)
-          if (node.getNodeHealthyInfo.getMsg != null)
+          }
+          if (node.getNodeHealthyInfo.getMsg != null) {
             AMEngineNodeVo.setMsg(node.getNodeHealthyInfo.getMsg)
+          }
         }
         AMEngineNodeVos.add(AMEngineNodeVo)
       })

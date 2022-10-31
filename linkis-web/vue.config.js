@@ -157,7 +157,7 @@ module.exports = {
             copy: [
               { source: './config.sh', destination: `./dist/config.sh`,toType: 'file'},
               { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
-              { source: './release-docs/LICENSE', destination: `./dist/NOTICE`,toType: 'file'},
+              { source: './release-docs/LICENSE', destination: `./dist/LICENSE`,toType: 'file'},
               { source: './release-docs/NOTICE', destination: `./dist/NOTICE`,toType: 'file'},
               { source: './release-docs/licenses', destination: `./dist/licenses`},
               { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'}
@@ -202,7 +202,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8080', // linkis
+        target: 'http://127.0.0.1:9001', // linkis
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'

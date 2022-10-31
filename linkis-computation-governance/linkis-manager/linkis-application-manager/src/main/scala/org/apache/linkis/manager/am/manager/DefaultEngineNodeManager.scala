@@ -21,20 +21,18 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, RetryHandler, Utils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.{
-  AMEngineNode,
-  EngineNode,
-  ScoreServiceInstance
-}
+import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
   EngineOperateResponse
 }
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{
   LabelManagerPersistence,
@@ -51,7 +49,7 @@ import org.springframework.stereotype.Service
 import java.lang.reflect.UndeclaredThrowableException
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
@@ -83,10 +81,12 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     // TODO: user 应该是除了root，hadoop
     val nodes = nodeManagerPersistence
       .getNodes(user)
+      .asScala
       .map(_.getServiceInstance)
       .map(nodeManagerPersistence.getEngineNode)
     val metricses = nodeMetricManagerPersistence
-      .getNodeMetrics(nodes)
+      .getNodeMetrics(nodes.asJava)
+      .asScala
       .map(m => (m.getServiceInstance.toString, m))
       .toMap
     nodes.map { node =>
@@ -95,7 +95,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
         .foreach(metricsConverter.fillMetricsToNode(node, _))
       node
     }
-  }
+  }.asJava
 
   override def getEngineNodeInfo(engineNode: EngineNode): EngineNode = {
 
@@ -208,13 +208,15 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     // 1. add nodeMetrics 2 add RM info
     val resourceInfo =
       resourceManager.getResourceInfo(scoreServiceInstances.map(_.getServiceInstance))
-    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodes.toList)
+    val nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodes.toList.asJava)
     engineNodes.map { engineNode =>
       val optionMetrics =
-        nodeMetrics.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
+        nodeMetrics.asScala.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
 
       val optionRMNode =
-        resourceInfo.resourceInfo.find(_.getServiceInstance.equals(engineNode.getServiceInstance))
+        resourceInfo.resourceInfo.asScala.find(
+          _.getServiceInstance.equals(engineNode.getServiceInstance)
+        )
 
       optionMetrics.foreach(metricsConverter.fillMetricsToNode(engineNode, _))
       optionRMNode.foreach(rmNode => engineNode.setNodeResource(rmNode.getNodeResource))
@@ -258,10 +260,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
    * @param serviceInstance
    * @param engineNode
    */
-  override def updateEngineNode(
-      serviceInstance: ServiceInstance,
-      engineNode: EngineNode
-  ): Unit = {
+  override def updateEngineNode(serviceInstance: ServiceInstance, engineNode: EngineNode): Unit = {
     nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode)
     Utils.tryAndWarnMsg(nodeMetricManagerPersistence.deleteNodeMetrics(engineNode))(
       "Failed to clear old metrics"
@@ -290,6 +289,24 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   ): EngineOperateResponse = {
     val engine = nodePointerBuilder.buildEngineNodePointer(engineNode)
     engine.executeOperation(request)
+  }
+
+  override def getEngineNodeInfo(serviceInstance: ServiceInstance): EngineNode = {
+    val engineNode = getEngineNode(serviceInstance)
+    if (engineNode != null) {
+      if (engineNode.getNodeStatus == null) {
+        val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
+        engineNode.setNodeStatus(
+          if (Option(nodeMetric).isDefined) NodeStatus.values()(nodeMetric.getStatus)
+          else NodeStatus.Starting
+        )
+      }
+      return engineNode
+    }
+    throw new AMErrorException(
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getCode,
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getMessage
+    )
   }
 
 }

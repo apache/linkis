@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
   ExecuteException,
   PythonExecuteError
@@ -62,8 +63,16 @@ class PythonSession extends Logging {
   private var code: String = _
   private var pid: Option[String] = None
 
-  private val pythonDefaultVersion: String =
-    EngineConnServer.getEngineCreationContext.getOptions.getOrDefault("python.version", "python")
+  private val pythonDefaultVersion: String = getPyVersion
+
+  private def getPyVersion(): String = {
+    if (null != EngineConnServer.getEngineCreationContext.getOptions) {
+      EngineConnServer.getEngineCreationContext.getOptions
+        .getOrDefault("python.version", "python")
+    } else {
+      PythonEngineConfiguration.PYTHON_VERSION.getValue
+    }
+  }
 
   def init(): Unit = {}
 
@@ -79,9 +88,9 @@ class PythonSession extends Logging {
     val userDefinePythonVersion = Some(pythonDefaultVersion).getOrElse("python")
     logger.info(s"System userDefinePythonVersion => ${userDefinePythonVersion}")
     val pythonExec =
-      if ("python3".equalsIgnoreCase(userDefinePythonVersion))
+      if ("python3".equalsIgnoreCase(userDefinePythonVersion)) {
         PythonEngineConfiguration.PYTHON_VERSION.getValue
-      else "python"
+      } else { "python" }
     logger.info(s"pythonExec => ${pythonExec}")
     val port = {
       val socket = new ServerSocket(0)
@@ -130,7 +139,10 @@ class PythonSession extends Logging {
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
           promise.failure(
-            new ExecuteException(60003, "Pyspark process  has stopped, query failed!")
+            new ExecuteException(
+              PYSPARK_PROCESSS_STOPPED.getErrorCode,
+              PYSPARK_PROCESSS_STOPPED.getErrorDesc
+            )
           )
         }
       }) {
@@ -144,15 +156,12 @@ class PythonSession extends Logging {
     )
   }
 
-  def lazyInitGageWay(): Unit = {
+  def lazyInitGateway(): Unit = {
     if (process == null) synchronized {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error(
-              "initialize python executor failed, please ask administrator for help!",
-              t
-            )
+            logger.error("initialize python executor failed, please ask administrator for help!", t)
             Utils.tryAndWarn(close)
             throw t
           }
@@ -171,6 +180,7 @@ class PythonSession extends Logging {
     this.code = Kind.getRealCode(code)
     queryLock synchronized queryLock.notify()
     try {
+      // scalastyle:off awaitresult
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>
@@ -220,7 +230,7 @@ class PythonSession extends Logging {
         close
         null
       } else {
-        promise.failure(new PythonExecuteError(41001, out))
+        promise.failure(new PythonExecuteError(PYTHON_EXECUTE_ERROR.getErrorCode, out))
       }
     }
   }

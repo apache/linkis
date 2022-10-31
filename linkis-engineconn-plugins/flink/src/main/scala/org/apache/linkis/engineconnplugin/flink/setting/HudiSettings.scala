@@ -21,10 +21,8 @@ import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
-import org.apache.linkis.engineconnplugin.flink.context.{
-  EnvironmentContext,
-  FlinkEngineConnContext
-}
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 
 import org.apache.commons.collections.CollectionUtils
@@ -34,6 +32,7 @@ import org.apache.hadoop.yarn.api.ApplicationConstants.Environment
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 
 import java.io.File
+import java.text.MessageFormat
 import java.util
 
 import scala.collection.JavaConverters._
@@ -68,7 +67,7 @@ class HudiSettings extends Settings with Logging {
     val hudiJarPaths =
       Lists.newArrayList(HudiSettings.getHudiJarPaths(engineCreationContext.getOptions): _*)
     if (CollectionUtils.isEmpty(hudiJarPaths)) {
-      throw new FlinkInitFailedException(s"hudi jars is not exists.")
+      throw new FlinkInitFailedException(HUDIJARS_NOT_EXISTS.getErrorDesc)
     }
     logger.info(s"hudi jar is in $hudiJarPaths.")
     context.getDependencies.addAll(
@@ -144,7 +143,7 @@ object HudiSettings {
     }
     val lib = new File(EngineConnConf.getWorkHome, "lib")
     if (!lib.exists() || !lib.isDirectory) {
-      throw new FlinkInitFailedException(s"Path $lib is not exist or is not a directory.")
+      throw new FlinkInitFailedException(MessageFormat.format(PATH_NOT_EXIST.getErrorDesc, lib))
     }
     lib
       .listFiles()

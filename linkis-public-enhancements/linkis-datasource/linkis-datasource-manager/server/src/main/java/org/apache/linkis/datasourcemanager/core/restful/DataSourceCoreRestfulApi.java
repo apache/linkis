@@ -24,6 +24,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -58,6 +59,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.*;
+
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.DATASOURCE_NOT_FOUND;
 
 @Api(tags = "data source core restful api")
 @RestController
@@ -216,6 +219,14 @@ public class DataSourceCoreRestfulApi {
                                         + dataSourceName
                                         + " 已经存在]");
                     }
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+                    dataSource.setKeyDefinitions(keyDefinitionList);
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+                    }
+                    String parameter = Json.toJson(dataSource.getConnectParams(), null);
+                    dataSource.setParameter(parameter);
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
                     return Message.ok().data("updateId", dataSourceId);
                 },
@@ -249,8 +260,8 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
                     if (null == dataSource) {
                         throw new ErrorException(
-                                ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(),
-                                "datasource not found ");
+                                DATASOURCE_NOT_FOUND.getErrorCode(),
+                                DATASOURCE_NOT_FOUND.getErrorDesc());
                     }
                     if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
@@ -340,6 +351,39 @@ public class DataSourceCoreRestfulApi {
                 },
                 "Fail to access data source[获取数据源信息失败]");
     }
+
+
+    @ApiOperation(value = "getPublishedInfoByDataSourceName", notes = "get published info by data source name", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "dataSourceName", required = true, dataType = "String", value = "data source name")
+    })
+    @RequestMapping(value = "/publishedInfo/name/{dataSourceName}", method = RequestMethod.GET)
+    public Message getPublishedInfoByDataSourceName(
+        @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
+        throws UnsupportedEncodingException {
+        return RestfulApiHelper.doAndResponse(
+            () -> {
+                DataSource dataSource = dataSourceInfoService.getDataSourcePublishInfo(dataSourceName);
+
+                if (dataSource == null) {
+                    return Message.error("No Exists The DataSource [不存在该数据源]");
+                }
+
+                if (!AuthContext.hasPermission(dataSource, request)) {
+                    return Message.error(
+                        "Don't have query permission for data source [没有数据源的查询权限]");
+                }
+                // Decrypt
+                RestfulApiHelper.decryptPasswordKey(
+                    dataSourceRelateService.getKeyDefinitionsByType(
+                        dataSource.getDataSourceTypeId()),
+                    dataSource.getConnectParams());
+
+                return Message.ok().data("info", dataSource);
+            },
+            "Fail to access data source[获取数据源信息失败]");
+    }
+
 
     /**
      * get datasource detail
@@ -695,6 +739,11 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList =
                 dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+        }
+        String parameter = Json.toJson(dataSource.getConnectParams(), null);
+        dataSource.setParameter(parameter);
         dataSourceInfoService.saveDataSourceInfo(dataSource);
     }
 }

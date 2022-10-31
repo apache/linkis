@@ -22,6 +22,7 @@ import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
@@ -158,44 +159,45 @@ class RMMonitorRest extends Logging {
             applicationList.put("usedResource", Resource.initResource(ResourceType.LoadInstance))
             applicationList.put("maxResource", Resource.initResource(ResourceType.LoadInstance))
             applicationList.put("minResource", Resource.initResource(ResourceType.LoadInstance))
-            applicationList.put(
-              "lockedResource",
-              Resource.initResource(ResourceType.LoadInstance)
-            )
+            applicationList.put("lockedResource", Resource.initResource(ResourceType.LoadInstance))
             creatorToApplicationList.put(userCreatorLabel.getCreator, applicationList)
           }
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
           applicationList.put(
             "usedResource",
-            (if (applicationList("usedResource") == null)
+            (if (applicationList("usedResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("usedResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getUsedResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getUsedResource
           )
           applicationList.put(
             "maxResource",
-            (if (applicationList("maxResource") == null)
+            (if (applicationList("maxResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("maxResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getMaxResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getMaxResource
           )
           applicationList.put(
             "minResource",
-            (if (applicationList("minResource") == null)
+            (if (applicationList("minResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("minResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getMinResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getMinResource
           )
           applicationList.put(
             "lockedResource",
-            (if (applicationList("lockedResource") == null)
+            (if (applicationList("lockedResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("lockedResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getLockedResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getLockedResource
           )
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
@@ -238,7 +240,7 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120011, "only admin can reset user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_RESET.getErrorCode, ONLY_ADMIN_RESET.getErrorDesc)
     }
     if (resourceId == null || resourceId <= 0) {
       userResourceService.resetAllUserResource(COMBINED_USERCREATOR_ENGINETYPE)
@@ -269,7 +271,7 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120010, "only admin can read all user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_READ.getErrorCode, ONLY_ADMIN_READ.getErrorDesc)
     }
     // 1. Construct a string for SQL LIKE query, query the label_value of the label table
     val searchUsername = if (StringUtils.isEmpty(username)) "" else username
@@ -346,10 +348,7 @@ class RMMonitorRest extends Logging {
         .asInstanceOf[EngineTypeLabel]
       val userCreator = getUserCreator(userCreatorLabel)
       if (!userCreatorEngineTypeResourceMap.contains(userCreator)) {
-        userCreatorEngineTypeResourceMap.put(
-          userCreator,
-          new mutable.HashMap[String, NodeResource]
-        )
+        userCreatorEngineTypeResourceMap.put(userCreator, new mutable.HashMap[String, NodeResource])
       }
       val engineTypeResourceMap = userCreatorEngineTypeResourceMap.get(userCreator).get
       val engineType = getEngineType(engineTypeLabel)
@@ -378,70 +377,69 @@ class RMMonitorRest extends Logging {
         case _ =>
       }
     }
-    val userCreatorEngineTypeResources = userCreatorEngineTypeResourceMap.map {
-      userCreatorEntry =>
-        val userCreatorEngineTypeResource = new mutable.HashMap[String, Any]
-        userCreatorEngineTypeResource.put("userCreator", userCreatorEntry._1)
-        var totalUsedMemory: Long = 0L
-        var totalUsedCores: Int = 0
-        var totalUsedInstances = 0
-        var totalLockedMemory: Long = 0L
-        var totalLockedCores: Int = 0
-        var totalLockedInstances: Int = 0
-        var totalMaxMemory: Long = 0L
-        var totalMaxCores: Int = 0
-        var totalMaxInstances: Int = 0
-        val engineTypeResources = userCreatorEntry._2.map { engineTypeEntry =>
-          val engineTypeResource = new mutable.HashMap[String, Any]
-          engineTypeResource.put("engineType", engineTypeEntry._1)
-          val engineResource = engineTypeEntry._2
-          val usedResource = engineResource.getUsedResource.asInstanceOf[LoadInstanceResource]
-          val lockedResource = engineResource.getLockedResource.asInstanceOf[LoadInstanceResource]
-          val maxResource = engineResource.getMaxResource.asInstanceOf[LoadInstanceResource]
-          val usedMemory = usedResource.memory
-          val usedCores = usedResource.cores
-          val usedInstances = usedResource.instances
-          totalUsedMemory += usedMemory
-          totalUsedCores += usedCores
-          totalUsedInstances += usedInstances
-          val lockedMemory = lockedResource.memory
-          val lockedCores = lockedResource.cores
-          val lockedInstances = lockedResource.instances
-          totalLockedMemory += lockedMemory
-          totalLockedCores += lockedCores
-          totalLockedInstances += lockedInstances
-          val maxMemory = maxResource.memory
-          val maxCores = maxResource.cores
-          val maxInstances = maxResource.instances
-          totalMaxMemory += maxMemory
-          totalMaxCores += maxCores
-          totalMaxInstances += maxInstances
+    val userCreatorEngineTypeResources = userCreatorEngineTypeResourceMap.map { userCreatorEntry =>
+      val userCreatorEngineTypeResource = new mutable.HashMap[String, Any]
+      userCreatorEngineTypeResource.put("userCreator", userCreatorEntry._1)
+      var totalUsedMemory: Long = 0L
+      var totalUsedCores: Int = 0
+      var totalUsedInstances = 0
+      var totalLockedMemory: Long = 0L
+      var totalLockedCores: Int = 0
+      var totalLockedInstances: Int = 0
+      var totalMaxMemory: Long = 0L
+      var totalMaxCores: Int = 0
+      var totalMaxInstances: Int = 0
+      val engineTypeResources = userCreatorEntry._2.map { engineTypeEntry =>
+        val engineTypeResource = new mutable.HashMap[String, Any]
+        engineTypeResource.put("engineType", engineTypeEntry._1)
+        val engineResource = engineTypeEntry._2
+        val usedResource = engineResource.getUsedResource.asInstanceOf[LoadInstanceResource]
+        val lockedResource = engineResource.getLockedResource.asInstanceOf[LoadInstanceResource]
+        val maxResource = engineResource.getMaxResource.asInstanceOf[LoadInstanceResource]
+        val usedMemory = usedResource.memory
+        val usedCores = usedResource.cores
+        val usedInstances = usedResource.instances
+        totalUsedMemory += usedMemory
+        totalUsedCores += usedCores
+        totalUsedInstances += usedInstances
+        val lockedMemory = lockedResource.memory
+        val lockedCores = lockedResource.cores
+        val lockedInstances = lockedResource.instances
+        totalLockedMemory += lockedMemory
+        totalLockedCores += lockedCores
+        totalLockedInstances += lockedInstances
+        val maxMemory = maxResource.memory
+        val maxCores = maxResource.cores
+        val maxInstances = maxResource.instances
+        totalMaxMemory += maxMemory
+        totalMaxCores += maxCores
+        totalMaxInstances += maxInstances
 
-          val memoryPercent =
-            if (maxMemory > 0) (usedMemory + lockedMemory) / maxMemory.toDouble else 0
-          val coresPercent =
-            if (maxCores > 0) (usedCores + lockedCores) / maxCores.toDouble else 0
-          val instancePercent =
-            if (maxInstances > 0) (usedInstances + lockedInstances) / maxInstances.toDouble else 0
-          val maxPercent = Math.max(Math.max(memoryPercent, coresPercent), instancePercent)
-          engineTypeResource.put("percent", maxPercent.formatted("%.2f"))
-          engineTypeResource
-        }
-        val totalMemoryPercent =
-          if (totalMaxMemory > 0) (totalUsedMemory + totalLockedMemory) / totalMaxMemory.toDouble
-          else 0
-        val totalCoresPercent =
-          if (totalMaxCores > 0) (totalUsedCores + totalLockedCores) / totalMaxCores.toDouble
-          else 0
-        val totalInstancePercent =
-          if (totalMaxInstances > 0)
-            (totalUsedInstances + totalLockedInstances) / totalMaxInstances.toDouble
-          else 0
-        val totalPercent =
-          Math.max(Math.max(totalMemoryPercent, totalCoresPercent), totalInstancePercent)
-        userCreatorEngineTypeResource.put("engineTypes", engineTypeResources)
-        userCreatorEngineTypeResource.put("percent", totalPercent.formatted("%.2f"))
-        userCreatorEngineTypeResource
+        val memoryPercent =
+          if (maxMemory > 0) (usedMemory + lockedMemory) / maxMemory.toDouble else 0
+        val coresPercent =
+          if (maxCores > 0) (usedCores + lockedCores) / maxCores.toDouble else 0
+        val instancePercent =
+          if (maxInstances > 0) (usedInstances + lockedInstances) / maxInstances.toDouble else 0
+        val maxPercent = Math.max(Math.max(memoryPercent, coresPercent), instancePercent)
+        engineTypeResource.put("percent", maxPercent.formatted("%.2f"))
+        engineTypeResource
+      }
+      val totalMemoryPercent =
+        if (totalMaxMemory > 0) (totalUsedMemory + totalLockedMemory) / totalMaxMemory.toDouble
+        else 0
+      val totalCoresPercent =
+        if (totalMaxCores > 0) (totalUsedCores + totalLockedCores) / totalMaxCores.toDouble
+        else 0
+      val totalInstancePercent =
+        if (totalMaxInstances > 0) {
+          (totalUsedInstances + totalLockedInstances) / totalMaxInstances.toDouble
+        } else 0
+      val totalPercent =
+        Math.max(Math.max(totalMemoryPercent, totalCoresPercent), totalInstancePercent)
+      userCreatorEngineTypeResource.put("engineTypes", engineTypeResources)
+      userCreatorEngineTypeResource.put("percent", totalPercent.formatted("%.2f"))
+      userCreatorEngineTypeResource
     }
     appendMessageData(message, "userResources", userCreatorEngineTypeResources)
     message
@@ -477,10 +475,12 @@ class RMMonitorRest extends Logging {
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
       if (node.getNodeResource != null) {
-        if (node.getNodeResource.getLockedResource != null)
+        if (node.getNodeResource.getLockedResource != null) {
           record.put("preUsedResource", node.getNodeResource.getLockedResource)
-        if (node.getNodeResource.getUsedResource != null)
+        }
+        if (node.getNodeResource.getUsedResource != null) {
           record.put("usedResource", node.getNodeResource.getUsedResource)
+        }
       }
       if (node.getNodeStatus == null) {
         record.put("engineStatus", "Busy")
@@ -547,7 +547,7 @@ class RMMonitorRest extends Logging {
           nodes = new Array[EngineNode](0)
         }
         nodes.foreach { node =>
-          if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null)
+          if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null) {
             node.getNodeResource.getUsedResource match {
               case driverYarn: DriverAndYarnResource
                   if driverYarn.yarnResource.queueName.equals(yarnIdentifier.getQueueName) =>
@@ -556,6 +556,7 @@ class RMMonitorRest extends Logging {
                 appIdToEngineNode.put(yarn.applicationId, node)
               case _ =>
             }
+          }
         }
         userAppInfo._2.foreach { appInfo =>
           appIdToEngineNode.get(appInfo.asInstanceOf[YarnAppInfo].id) match {
@@ -621,8 +622,9 @@ class RMMonitorRest extends Logging {
       override def compare(o1: mutable.Map[String, Any], o2: mutable.Map[String, Any]): Int = if (
           o1.getOrElse("totalPercentage", 0.0)
             .asInstanceOf[Double] > o2.getOrElse("totalPercentage", 0.0).asInstanceOf[Double]
-      ) -1
-      else 1
+      ) {
+        -1
+      } else 1
     })
     appendMessageData(message, "userResources", userResourceRecords)
   }
@@ -680,44 +682,46 @@ class RMMonitorRest extends Logging {
             .get(node.getServiceInstance.toString)
             .foreach(metricsConverter.fillMetricsToNode(node, _))
           if (withResource) {
-            val userCreatorLabel = node.getLabels.asScala
-              .find(_.isInstanceOf[UserCreatorLabel])
-              .get
-              .asInstanceOf[UserCreatorLabel]
-            val engineTypeLabel = node.getLabels.asScala
-              .find(_.isInstanceOf[EngineTypeLabel])
-              .get
-              .asInstanceOf[EngineTypeLabel]
-            val engineInstanceLabel = node.getLabels.asScala
-              .find(_.isInstanceOf[EngineInstanceLabel])
-              .get
-              .asInstanceOf[EngineInstanceLabel]
-            engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
-            engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
-            val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
-            val configurationKey =
-              getUserCreator(userCreatorLabel) + getEngineType(engineTypeLabel)
-            val configuredResource = configurationMap.get(configurationKey) match {
-              case Some(resource) => resource
-              case None =>
-                if (nodeResource != null) {
-                  val resource = UserConfiguration.getUserConfiguredResource(
-                    nodeResource.getResourceType,
-                    userCreatorLabel,
-                    engineTypeLabel
-                  )
-                  configurationMap.put(configurationKey, resource)
-                  resource
-                } else null
-            }
-            if (nodeResource != null) {
-              nodeResource.setMaxResource(configuredResource)
-              if (null == nodeResource.getUsedResource)
-                nodeResource.setUsedResource(nodeResource.getLockedResource)
-              if (null == nodeResource.getMinResource)
-                nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
-//            node.setNodeResource(ResourceUtils.convertTo(nodeResource, ResourceType.LoadInstance))
-              node.setNodeResource(nodeResource)
+            val userCreatorLabelOption =
+              node.getLabels.asScala.find(_.isInstanceOf[UserCreatorLabel])
+            val engineTypeLabelOption =
+              node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel])
+            val engineInstanceOption =
+              node.getLabels.asScala.find(_.isInstanceOf[EngineInstanceLabel])
+            if (
+                userCreatorLabelOption.isDefined && engineTypeLabelOption.isDefined && engineInstanceOption.isDefined
+            ) {
+              val userCreatorLabel = userCreatorLabelOption.get.asInstanceOf[UserCreatorLabel]
+              val engineTypeLabel = engineTypeLabelOption.get.asInstanceOf[EngineTypeLabel]
+              val engineInstanceLabel = engineInstanceOption.get.asInstanceOf[EngineInstanceLabel]
+              engineInstanceLabel.setServiceName(node.getServiceInstance.getApplicationName)
+              engineInstanceLabel.setInstance(node.getServiceInstance.getInstance)
+              val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
+              val configurationKey =
+                getUserCreator(userCreatorLabel) + getEngineType(engineTypeLabel)
+              val configuredResource = configurationMap.get(configurationKey) match {
+                case Some(resource) => resource
+                case None =>
+                  if (nodeResource != null) {
+                    val resource = UserConfiguration.getUserConfiguredResource(
+                      nodeResource.getResourceType,
+                      userCreatorLabel,
+                      engineTypeLabel
+                    )
+                    configurationMap.put(configurationKey, resource)
+                    resource
+                  } else null
+              }
+              if (nodeResource != null) {
+                nodeResource.setMaxResource(configuredResource)
+                if (null == nodeResource.getUsedResource) {
+                  nodeResource.setUsedResource(nodeResource.getLockedResource)
+                }
+                if (null == nodeResource.getMinResource) {
+                  nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
+                }
+                node.setNodeResource(nodeResource)
+              }
             }
           }
           node

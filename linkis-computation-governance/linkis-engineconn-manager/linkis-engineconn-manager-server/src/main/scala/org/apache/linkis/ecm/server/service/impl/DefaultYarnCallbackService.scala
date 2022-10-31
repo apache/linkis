@@ -34,9 +34,7 @@ class DefaultYarnCallbackService extends YarnCallbackService {
 
   @Receiver
   override def dealApplicationURI(protocol: YarnInfoCallbackProtocol): Unit = {
-    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-      YarnInfoCallbackEvent(protocol)
-    )
+    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(YarnInfoCallbackEvent(protocol))
   }
 
 }

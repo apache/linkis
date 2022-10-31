@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -40,7 +40,6 @@ if [ "$LINKIS_CONF_DIR" = "" ]; then
 fi
 source $LINKIS_CONF_DIR/linkis-env.sh
 
-
 function stopApp(){
 echo "<-------------------------------->"
 echo "Begin to stop $SERVER_NAME"
@@ -55,45 +54,19 @@ executeCMD $SERVER_IP "$SERVER_STOP_CMD"
 echo "<-------------------------------->"
 }
 
-
-
 #linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP
 stopApp
-
-#linkis-ps-cs
-SERVER_NAME="ps-cs"
-SERVER_IP=$CS_INSTALL_IP
-stopApp
-
-if [ "$ENABLE_METADATA_QUERY" == "true" ]; then
-  #linkis-ps-data-source-manager
-  SERVER_NAME="ps-data-source-manager"
-  SERVER_IP=$DATASOURCE_MANAGER_INSTALL_IP
-  stopApp
-
-  #linkis-ps-metadataquery
-  SERVER_NAME="ps-metadataquery"
-  SERVER_IP=$METADATA_QUERY_INSTALL_IP
-  stopApp
-fi
-
 
 #linkis-cg-engineconnmanager(ecm)
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 stopApp
 
-
 #linkis-cg-entrance
 SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
-stopApp
-
-#linkis-cg-engineplugin(ecp)
-SERVER_NAME="cg-engineplugin"
-SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
 stopApp
 
 #linkis-ps-publicservice

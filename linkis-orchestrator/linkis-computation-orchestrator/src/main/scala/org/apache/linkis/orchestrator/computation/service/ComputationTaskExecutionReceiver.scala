@@ -41,13 +41,6 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   private val codeExecTaskExecutorManager =
     CodeExecTaskExecutorManager.getCodeExecTaskExecutorManager
 
-  // private val asyncListenerBus: OrchestratorAsyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorAsyncListenerBus
-
-  // private val syncListenerBus: OrchestratorSyncListenerBus = OrchestratorListenerBusContext.getListenerBusContext().getOrchestratorSyncListenerBus
-
-  // TODO ListenerBus should to split into OrchestratorSessions.
-  // TODO Two whole ListenerBus will cause the consume problem.
-
   @PostConstruct
   private def init(): Unit = {
     EngineConnMonitor.addEngineExecutorStatusMonitor(
@@ -165,10 +158,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   }
 
   @Receiver
-  override def taskResultSetReceiver(
-      taskResultSet: ResponseTaskResultSet,
-      sender: Sender
-  ): Unit = {
+  override def taskResultSetReceiver(taskResultSet: ResponseTaskResultSet, sender: Sender): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     var isExist = false
     codeExecTaskExecutorManager
@@ -206,9 +196,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         isExist = true
       }
     if (!isExist) {
-      logger.warn(
-        s"from $serviceInstance received $responseTaskError cannot find execTask to deal"
-      )
+      logger.warn(s"from $serviceInstance received $responseTaskError cannot find execTask to deal")
     }
 
   }

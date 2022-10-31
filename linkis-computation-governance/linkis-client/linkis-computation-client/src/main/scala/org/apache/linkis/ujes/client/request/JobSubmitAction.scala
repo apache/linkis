@@ -136,8 +136,9 @@ object JobSubmitAction {
       submitAction.setUser(user)
       submitAction.addRequestPayload(TaskConstant.EXECUTE_USER, executeUser)
       if (formatCode) submitAction.addRequestPayload(TaskConstant.FORMATCODE, true)
-      if (executionContent == null && params == null)
+      if (executionContent == null && params == null) {
         throw new UJESClientBuilderException("executionContent is needed!")
+      }
       submitAction.addRequestPayload(TaskConstant.EXECUTION_CONTENT, executionContent)
       if (params == null) params = new util.HashMap[String, Any]()
       submitAction.addRequestPayload(TaskConstant.PARAMS, params)

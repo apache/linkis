@@ -22,6 +22,7 @@ import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelConstant
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary._
 import org.apache.linkis.manager.label.exception.LabelErrorException
 import org.apache.linkis.manager.label.service.UserLabelService
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Service
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Service
 class DefaultUserLabelService extends UserLabelService with Logging {
@@ -43,7 +44,7 @@ class DefaultUserLabelService extends UserLabelService with Logging {
 
   override def addLabelToUser(user: String, labels: util.List[Label[_]]): Unit = {
     // 逻辑基本同 addLabelsToNode
-    labels.foreach(addLabelToUser(user, _))
+    labels.asScala.foreach(addLabelToUser(user, _))
   }
 
   override def addLabelToUser(user: String, label: Label[_]): Unit = {
@@ -54,16 +55,18 @@ class DefaultUserLabelService extends UserLabelService with Logging {
     // 2.查询出当前label的id
     val dbLabel = labelManagerPersistence
       .getLabelsByKey(label.getLabelKey)
+      .asScala
       .find(_.getStringValue.equals(persistenceLabel.getStringValue))
       .get
     // 3.根据usr 找出当前关联当前user的所有labels,看下有没和当前key重复的
     // TODO: persistence 这里最好提供个一次查询的方法
     val userRelationLabels = labelManagerPersistence.getLabelsByUser(user)
-    val duplicatedKeyLabel = userRelationLabels.find(_.getLabelKey.equals(dbLabel.getLabelKey))
+    val duplicatedKeyLabel =
+      userRelationLabels.asScala.find(_.getLabelKey.equals(dbLabel.getLabelKey))
     // 4.找出重复key,删除这个relation
     duplicatedKeyLabel.foreach(l => {
       labelManagerPersistence.removeLabelFromUser(user, util.Arrays.asList(l.getId))
-      userRelationLabels.toList.remove(duplicatedKeyLabel.get)
+      userRelationLabels.remove(duplicatedKeyLabel.get)
     })
     // 5.插入新的relation 需要抛出duplicateKey异常，回滚
     labelManagerPersistence.addLabelToUser(user, util.Arrays.asList(dbLabel.getId))
@@ -73,11 +76,14 @@ class DefaultUserLabelService extends UserLabelService with Logging {
 
     if (
         newUserRelationLabels.size != userRelationLabels.size
-        || !newUserRelationLabels.map(_.getId).containsAll(userRelationLabels.map(_.getId))
+        || !newUserRelationLabels.asScala
+          .map(_.getId)
+          .asJava
+          .containsAll(userRelationLabels.asScala.map(_.getId).asJava)
     ) {
       throw new LabelErrorException(
-        LabelConstant.LABEL_BUILDER_ERROR_CODE,
-        "update label realtion failed"
+        UPDATE_LABEL_FAILED.getErrorCode,
+        UPDATE_LABEL_FAILED.getErrorDesc
       )
     }
   }
@@ -85,10 +91,10 @@ class DefaultUserLabelService extends UserLabelService with Logging {
   override def removeLabelFromUser(user: String, labels: util.List[Label[_]]): Unit = {
     // 这里前提是表中保证了同个key，只会有最新的value保存在数据库中
     val dbLabels =
-      labelManagerPersistence.getLabelsByUser(user).map(l => (l.getLabelKey, l)).toMap
+      labelManagerPersistence.getLabelsByUser(user).asScala.map(l => (l.getLabelKey, l)).toMap
     labelManagerPersistence.removeLabelFromUser(
       user,
-      labels.map(l => dbLabels(l.getLabelKey).getId)
+      labels.asScala.map(l => dbLabels(l.getLabelKey).getId).asJava
     )
   }
 
@@ -97,20 +103,21 @@ class DefaultUserLabelService extends UserLabelService with Logging {
     // 1.找出当前label 对应的数据库的label
     val labels = labelManagerPersistence
       .getLabelsByKey(label.getLabelKey)
+      .asScala
       .filter(_.getStringValue.equals(label.getStringValue))
     // 2.获取用户并且去重
-    labelManagerPersistence.getUserByLabels(labels.map(_.getId)).distinct
-  }
+    labelManagerPersistence.getUserByLabels(labels.map(_.getId).asJava).asScala.distinct
+  }.asJava
 
   override def getUserByLabels(labels: util.List[Label[_]]): util.List[String] = {
     // 去重
-    labels.flatMap(getUserByLabel).distinct
-  }
+    labels.asScala.flatMap(label => getUserByLabel(label).asScala).distinct
+  }.asJava
 
   override def getUserLabels(user: String): util.List[Label[_]] = {
-    labelManagerPersistence.getLabelsByUser(user).map { label =>
+    labelManagerPersistence.getLabelsByUser(user).asScala.map { label =>
       labelFactory.createLabel(label.getLabelKey, label.getValue)
     }
-  }
+  }.toList.asJava
 
 }

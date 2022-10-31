@@ -16,8 +16,13 @@
  */
 package org.apache.linkis.manager.am.util;
 
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.am.vo.ResourceVo;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
+import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.AMEngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
@@ -55,18 +60,55 @@ public class ECResourceInfoUtils {
           Map<String, Object> divermap = MapUtils.getMap(map, "driver");
           resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
           resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
-          resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
+          String memoryStr = String.valueOf(map.get("memory"));
+          long memorylong = 0;
+          if (!getScientific(memoryStr)) {
+            memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+          }
+          resourceVo.setMemory(memorylong);
           return resourceVo;
         } else {
           logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
           return null; // Compatible with old data
         }
       }
+      String memoryStr = String.valueOf(map.get("memory"));
+      long memorylong = 0;
+      if (!getScientific(memoryStr)) {
+        memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+      }
       resourceVo.setInstance(((Double) map.get("instance")).intValue());
-      resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes((map.get("memory").toString())));
+      resourceVo.setMemory(memorylong);
       Double core = null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
       resourceVo.setCores(core.intValue());
     }
     return resourceVo;
+  }
+
+  public static AMEngineNode convertECInfoTOECNode(ECResourceInfoRecord ecInfo) {
+    AMEngineNode engineNode = new AMEngineNode();
+    AMEMNode ecmNode = new AMEMNode();
+    ServiceInstance ecmInstance = new ServiceInstance();
+    ecmInstance.setApplicationName(
+        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue());
+    ecmInstance.setInstance(ecInfo.getEcmInstance());
+    ecmNode.setServiceInstance(ecmInstance);
+    engineNode.setEMNode(ecmNode);
+    ServiceInstance ecInstance = new ServiceInstance();
+    ecInstance.setInstance(ecInfo.getServiceInstance());
+    ecInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue());
+    engineNode.setServiceInstance(ecInstance);
+    engineNode.setOwner(ecInfo.getCreateUser());
+    engineNode.setNodeStatus(NodeStatus.valueOf(ecInfo.getStatus()));
+    engineNode.setTicketId(ecInfo.getTicketId());
+    engineNode.setStartTime(ecInfo.getCreateTime());
+    engineNode.setUpdateTime(ecInfo.getReleaseTime());
+    return engineNode;
+  }
+
+  public static boolean getScientific(String input) {
+    String regx = "^((-?\\d+.?\\d*)[Ee]{1}(-?\\d+))$";
+    Pattern pattern = Pattern.compile(regx);
+    return pattern.matcher(input).matches();
   }
 }

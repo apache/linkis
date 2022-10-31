@@ -708,7 +708,6 @@ export default {
       align-items: center;
       .page {
         display: inline-block;
-
       }
       .hint-text {
         display: inline-block;

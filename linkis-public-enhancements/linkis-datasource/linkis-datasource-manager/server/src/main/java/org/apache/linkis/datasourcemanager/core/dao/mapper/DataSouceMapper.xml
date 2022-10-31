@@ -187,6 +187,7 @@
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
                 <![CDATA[`datasource_type_id` = #{dataSourceTypeId},]]>
             </if>
+            <![CDATA[`parameter` = #{parameter},]]>
             <![CDATA[`create_identify` = #{createIdentify,jdbcType=VARCHAR},]]>
             <![CDATA[`create_system` = #{createSystem,jdbcType=VARCHAR},]]>
             <choose>

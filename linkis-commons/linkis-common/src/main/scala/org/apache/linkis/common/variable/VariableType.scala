@@ -76,10 +76,7 @@ case class QuarterType(value: CustomQuarterType) extends VariableType {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
       case _ =>
-        throw new LinkisCommonErrorException(
-          20046,
-          s"QuarterType is not supported to use:$signal"
-        )
+        throw new LinkisCommonErrorException(20046, s"QuarterType is not supported to use:$signal")
     }
   }
 
@@ -93,10 +90,7 @@ case class HalfYearType(value: CustomHalfYearType) extends VariableType {
       case "+" => value + bValue.toInt
       case "-" => value - bValue.toInt
       case _ =>
-        throw new LinkisCommonErrorException(
-          20046,
-          s"HalfYearType is not supported to use:$signal"
-        )
+        throw new LinkisCommonErrorException(20046, s"HalfYearType is not supported to use:$signal")
     }
   }
 
@@ -142,10 +136,7 @@ case class DoubleValue(value: Double) extends VariableType {
       case "*" => val res = value * bValue.toDouble; doubleOrLong(res).toString
       case "/" => val res = value / bValue.toDouble; doubleOrLong(res).toString
       case _ =>
-        throw new LinkisCommonErrorException(
-          20047,
-          s"Double class is not supported to use:$signal"
-        )
+        throw new LinkisCommonErrorException(20047, s"Double class is not supported to use:$signal")
     }
   }
 
@@ -165,10 +156,7 @@ case class FloatType(value: Float) extends VariableType {
       case "*" => val res = value * bValue.toFloat; floatOrLong(res).toString
       case "/" => val res = value / bValue.toLong; floatOrLong(res).toString
       case _ =>
-        throw new LinkisCommonErrorException(
-          20048,
-          s"Float class is not supported to use:$signal"
-        )
+        throw new LinkisCommonErrorException(20048, s"Float class is not supported to use:$signal")
     }
   }
 
@@ -185,10 +173,7 @@ case class StringType(value: String) extends VariableType {
     signal match {
       case "+" => value + bValue
       case _ =>
-        throw new LinkisCommonErrorException(
-          20049,
-          s"String class is not supported to use:$signal"
-        )
+        throw new LinkisCommonErrorException(20049, s"String class is not supported to use:$signal")
     }
   }
 

@@ -66,7 +66,7 @@ object PythonInterpreter {
     new PythonInterpreter(process, gatewayServer)
   }
 
-  def pythonPath = {
+  def pythonPath: String = {
     val pythonPath = new ArrayBuffer[String]
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
@@ -156,6 +156,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     val iterable = initOut.iterator
     while (continue && iterable.hasNext) {
       iterable.next match {
+        // scalastyle:off println
         case "READY" => println("Start python application succeed."); continue = false
         case str: String => println(str)
         case _ =>
@@ -182,16 +183,15 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
   }
 
   private def sendRequest(request: Map[String, Any]): Option[JValue] = {
+    // scalastyle:off println
     stdin.println(Serialization.write(request))
     stdin.flush()
 
     Option(stdout.readLine()).map { line => parse(line) }
   }
 
-  def pythonPath = {
+  def pythonPath: String = {
     val pythonPath = new ArrayBuffer[String]
-    //    sys.env.get("SPARK_HOME").foreach { sparkHome =>
-    //    }
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
     pythonPath += pythonHomePath
@@ -231,12 +231,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
 
 object SQLSession extends Logging {
 
-  def showDF(
-      sc: SparkContext,
-      jobGroup: String,
-      df: Any,
-      maxResult: Int = Int.MaxValue
-  ): String = {
+  def showDF(sc: SparkContext, jobGroup: String, df: Any, maxResult: Int = Int.MaxValue): String = {
     val startTime = System.currentTimeMillis()
 
     val iterator = Utils.tryThrow(df.asInstanceOf[DataFrame].toLocalIterator)(t => {

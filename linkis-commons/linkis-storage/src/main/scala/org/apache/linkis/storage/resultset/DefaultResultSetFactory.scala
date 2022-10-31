@@ -22,12 +22,18 @@ import org.apache.linkis.common.io.resultset.ResultSet
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.domain.Dolphin
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.{
+  THE_FILE_IS_EMPTY,
+  UNSUPPORTED_RESULT
+}
 import org.apache.linkis.storage.exception.{StorageErrorException, StorageWarnException}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 import org.apache.commons.lang3.StringUtils
 
+import java.text.MessageFormat
 import java.util
+import java.util.Locale
 
 class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
@@ -35,16 +41,18 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     StorageUtils.loadClasses(
       StorageConfiguration.STORAGE_RESULT_SET_CLASSES.getValue,
       StorageConfiguration.STORAGE_RESULT_SET_PACKAGE.getValue,
-      t => t.newInstance().resultSetType().toLowerCase
+      t => t.newInstance().resultSetType().toLowerCase(Locale.getDefault)
     )
 
   val resultTypes = ResultSetFactory.resultSetType.keys.toArray
 
-  override def getResultSetByType(
-      resultSetType: String
-  ): ResultSet[_ <: MetaData, _ <: Record] = {
-    if (!resultClasses.contains(resultSetType))
-      throw new StorageErrorException(50000, s"Unsupported result type(不支持的结果类型)：$resultSetType")
+  override def getResultSetByType(resultSetType: String): ResultSet[_ <: MetaData, _ <: Record] = {
+    if (!resultClasses.contains(resultSetType)) {
+      throw new StorageErrorException(
+        UNSUPPORTED_RESULT.getErrorCode,
+        MessageFormat.format(UNSUPPORTED_RESULT.getErrorDesc, resultSetType)
+      )
+    }
     resultClasses(resultSetType).newInstance()
   }
 
@@ -73,17 +81,15 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
 
   override def getResultSetType: Array[String] = resultTypes
 
-  override def getResultSetByPath(
-      fsPath: FsPath,
-      fs: Fs
-  ): ResultSet[_ <: MetaData, _ <: Record] = {
+  override def getResultSetByPath(fsPath: FsPath, fs: Fs): ResultSet[_ <: MetaData, _ <: Record] = {
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
-    if (StringUtils.isEmpty(resultSetType))
+    if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
-        51000,
-        s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
+        THE_FILE_IS_EMPTY.getErrorCode,
+        MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc, fsPath.getPath)
       )
+    }
     Utils.tryQuietly(inputStream.close())
     // Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)
@@ -99,11 +105,12 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     fs.init(new util.HashMap[String, String]())
     val inputStream = fs.read(fsPath)
     val resultSetType = Dolphin.getType(inputStream)
-    if (StringUtils.isEmpty(resultSetType))
+    if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
-        51000,
+        THE_FILE_IS_EMPTY.getErrorCode,
         s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
       )
+    }
     Utils.tryQuietly(inputStream.close())
     Utils.tryQuietly(fs.close())
     getResultSetByType(resultSetType)

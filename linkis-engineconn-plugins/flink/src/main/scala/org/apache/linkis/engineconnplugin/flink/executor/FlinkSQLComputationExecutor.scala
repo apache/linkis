@@ -36,10 +36,8 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.Resu
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.exception.{
-  ExecutorInitException,
-  SqlParseException
-}
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.{
   FlinkStreamingResultSetListener,
   InteractiveFlinkStatusListener
@@ -61,6 +59,7 @@ import org.apache.flink.yarn.configuration.YarnConfigOptions
 import org.apache.hadoop.yarn.util.ConverterUtils
 
 import java.io.Closeable
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.TimeUnit
 
@@ -81,12 +80,11 @@ class FlinkSQLComputationExecutor(
       case adapter: YarnSessionClusterDescriptorAdapter => clusterDescriptor = adapter
       case adapter if adapter != null =>
         throw new ExecutorInitException(
-          s"Not support ${adapter.getClass.getSimpleName} for FlinkSQLComputationExecutor."
+          MessageFormat
+            .format(NOT_SUPPORT_SIMPLENAME.getErrorDesc(), adapter.getClass.getSimpleName)
         )
       case _ =>
-        throw new ExecutorInitException(
-          "Fatal error, ClusterDescriptorAdapter is null, please ask admin for help."
-        )
+        throw new ExecutorInitException(ADAPTER_IS_NULL.getErrorDesc)
     }
     logger.info("Try to start a yarn-session application for interactive query.")
     clusterDescriptor.deployCluster()
@@ -107,7 +105,8 @@ class FlinkSQLComputationExecutor(
   ): ExecuteResponse = {
     val callOpt = SqlCommandParser.getSqlCommandParser.parse(code.trim, true)
     val callSQL =
-      if (!callOpt.isPresent) throw new SqlParseException("Unknown statement: " + code)
+      if (!callOpt.isPresent)
+        throw new SqlParseException(MessageFormat.format(UNKNOWN_STATEMENT.getErrorDesc, code))
       else callOpt.get
     RelMetadataQueryBase.THREAD_PROVIDERS.set(
       JaninoRelMetadataProvider.of(FlinkDefaultRelMetadataProvider.INSTANCE)
@@ -184,13 +183,15 @@ class FlinkSQLComputationExecutor(
   }
 
   // TODO wait for completed.
-  override def progress(taskID: String): Float = if (operation == null) 0
-  else
+  override def progress(taskID: String): Float = if (operation == null) {
+    0
+  } else {
     operation.getJobStatus match {
       case jobState if jobState.isGloballyTerminalState => 1
       case RUNNING => 0.5f
       case _ => 0
     }
+  }
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = Array.empty
 
@@ -320,7 +321,8 @@ class DevFlinkSQLStreamingListener(
       override def run(): Unit =
         if (System.currentTimeMillis - lastPulledTime >= maxWaitForResultTime) {
           logger.warn(
-            s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. Notice: only the dev environment will touch off the automatic kill."
+            s"Job killed since reached the max time ${ByteTimeUtils.msDurationToString(maxWaitForResultTime)} of waiting for resultSet. " +
+              s"Notice: only the dev environment will touch off the automatic kill."
           )
           stopJobOperation()
         }

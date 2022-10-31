@@ -19,6 +19,7 @@ package org.apache.linkis.ecm.server.util
 
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.bml.protocol.BmlDownloadResponse
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary.FAILED_TO_DOWNLOAD
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.rpc.Sender
@@ -29,7 +30,7 @@ import org.apache.commons.io.{FileUtils, IOUtils}
 import java.io.{File, InputStream}
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object ECMUtils {
 
@@ -42,13 +43,14 @@ object ECMUtils {
     if (resource.getVersion == null) {
       response = client.downloadShareResource(userName, resource.getResourceId)
     } else {
-      response =
-        client.downloadShareResource(userName, resource.getResourceId, resource.getVersion)
+      response = client.downloadShareResource(userName, resource.getResourceId, resource.getVersion)
     }
-    if (!response.isSuccess) throw new ECMErrorException(911115, "failed to downLoad(下载失败)")
+    if (!response.isSuccess)
+      throw new ECMErrorException(FAILED_TO_DOWNLOAD.getErrorCode, FAILED_TO_DOWNLOAD.getErrorDesc)
     val map = new util.HashMap[String, Object]
-    map += "path" -> response.fullFilePath
-    map += "is" -> response.inputStream
+    map.put("path", response.fullFilePath)
+    map.put("is", response.inputStream)
+    map
   }
 
   def downLoadBmlResourceToLocal(resource: BmlResource, userName: String, path: String)(implicit

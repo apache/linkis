@@ -25,6 +25,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   ResourceType,
   YarnResource
 }
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.rm.external.domain.{
   ExternalAppInfo,
@@ -40,11 +41,12 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
+import java.text.MessageFormat
 import java.util
 import java.util.Base64
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 import org.json4s.JsonAST._
@@ -99,15 +101,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           case _ =>
             0d
         }
-        val absoluteUsedCapacity = r \ "absoluteUsedCapacity" match {
-          case jDecimal: JDecimal =>
-            jDecimal.values.toDouble
-          case jDouble: JDouble =>
-            jDouble.values
-          case _ =>
-            0d
-        }
-        val effectiveResource = absoluteCapacity - absoluteUsedCapacity
+        val effectiveResource = absoluteCapacity
         new YarnResource(
           math
             .floor(effectiveResource * totalResouceInfoResponse._1 * 1024L * 1024L / 100)
@@ -126,8 +120,9 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         queue.foreach { q =>
           val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
           if (yarnQueueName == realQueueName) return Some(q)
-          else if (realQueueName.startsWith(yarnQueueName + "."))
+          else if (realQueueName.startsWith(yarnQueueName + ".")) {
             return getQueue(getChildQueues(q))
+          }
         }
         None
       case JObject(queue) =>
@@ -135,13 +130,14 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             queue
               .find(_._1 == "queueName")
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
-        ) Some(queues)
-        else {
+        ) {
+          Some(queues)
+        } else {
           val childQueues = queue.find(_._1 == "childQueues")
           if (childQueues.isEmpty) None
           else getQueue(childQueues.map(_._2).get)
         }
-      case JNull | JNothing => None
+      case _ => None
     }
 
     def getChildQueues(resp: JValue): JValue = {
@@ -171,13 +167,14 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             queue
               .find(_._1 == "queueName")
               .exists(_._2.asInstanceOf[JString].values == realQueueName)
-        ) return Some(queues)
-        else if ((queues \ "queues").toOption.nonEmpty) {
+        ) {
+          return Some(queues)
+        } else if ((queues \ "queues").toOption.nonEmpty) {
           val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
           if (matchQueue.nonEmpty) return matchQueue
         }
         None
-      case JNull | JNothing => None
+      case _ => None
     }
 
     def getChildQueuesOfCapacity(resp: JValue) = resp \ "queues" \ "queue"
@@ -192,7 +189,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val queue = getQueueOfCapacity(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(
+            YARN_NOT_EXISTS_QUEUE.getErrorCode,
+            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
+          )
         }
         (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
       } else if ("fairScheduler".equals(schedulerType)) {
@@ -200,7 +200,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val queue = getQueue(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(11006, s"queue $queueName is not exists in YARN.")
+          throw new RMWarnException(
+            YARN_NOT_EXISTS_QUEUE.getErrorCode,
+            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
+          )
         }
         (
           getYarnResource(queue.map(_ \ "maxResources")).get,
@@ -211,8 +214,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp
         )
         throw new RMWarnException(
-          11006,
-          s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType"
+          ONLY_SUPPORT_FAIRORCAPA.getErrorCode,
+          MessageFormat.format(ONLY_SUPPORT_FAIRORCAPA.getErrorDesc(), schedulerType)
         )
       }
     }
@@ -225,8 +228,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       nodeResource
     }(t => {
       throw new RMErrorException(
-        11006,
-        "Get the Yarn queue information exception" + ".(获取Yarn队列信息异常)",
+        YARN_QUEUE_EXCEPTION.getErrorCode,
+        YARN_QUEUE_EXCEPTION.getErrorDesc,
         t
       )
     })
@@ -253,7 +256,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     val realQueueName = "root." + queueName
 
-    def getAppInfos() = {
+    def getAppInfos(): Array[ExternalAppInfo] = {
       val resp = getResponseByUrl("apps", rmWebAddress)
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
@@ -273,20 +276,20 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             }
           }
           appInfoBuffer.toArray
-        case JNull | JNothing => new Array[YarnAppInfo](0)
+        case _ => new ArrayBuffer[YarnAppInfo](0).toArray
       }
     }
 
-    Utils.tryCatch(getAppInfos().toList)(t => {
+    Utils.tryCatch(getAppInfos().toList.asJava)(t => {
       throw new RMErrorException(
-        11006,
-        "Get the Yarn Application information exception.(获取Yarn Application信息异常)",
+        YARN_APPLICATION_EXCEPTION.getErrorCode,
+        YARN_APPLICATION_EXCEPTION.getErrorDesc,
         t
       )
     })
   }
 
-  override def getResourceType = ResourceType.Yarn
+  override def getResourceType: ResourceType = ResourceType.Yarn
 
   private def getResponseByUrl(url: String, rmWebAddress: String) = {
     val httpGet = new HttpGet(rmWebAddress + "/ws/v1/cluster/" + url)
@@ -359,8 +362,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           rmAddressMap.put(haAddress, activeAddress)
         } else {
           throw new RMErrorException(
-            11007,
-            s"Get active Yarn resourcemanager from : ${haAddress} exception.(从 ${haAddress} 获取主Yarn resourcemanager异常)"
+            GET_YARN_EXCEPTION.getErrorCode,
+            MessageFormat.format(GET_YARN_EXCEPTION.getErrorDesc(), haAddress)
           )
         }
       }

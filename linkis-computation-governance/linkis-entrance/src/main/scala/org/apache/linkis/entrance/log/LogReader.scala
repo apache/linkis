@@ -43,12 +43,12 @@ abstract class LogReader(charset: String) extends Closeable with Logging {
    * @param fromLine
    * @param size
    * @return
-   *   The index of 0-3 means the following:(0-3的index表示意思如下：) 0 ERROR level log(ERROR级别的日志) 1
-   *   Warn level log(Warn级别的日志) 2 INFO level log(INFO级别的日志) 3 All logs(所有的日志)
+   *   The index of 0-3 means the following:(0-3的index表示意思如下：) 0 ERROR level log(ERROR级别的日志) 1 Warn
+   *   level log(Warn级别的日志) 2 INFO level log(INFO级别的日志) 3 All logs(所有的日志)
    */
   def readArray(logs: Array[String], fromLine: Int, size: Int = 100): Int = {
     if (logs.length != 4) {
-      throw new LogReadFailedException(" logs的长度必须为4！")
+      throw new LogReadFailedException(" The length of the log must be 4(logs的长度必须为4)")
     }
     val error = new StringBuilder
     val warning = new StringBuilder
@@ -90,12 +90,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging {
     read
   }
 
-  private def concatLog(
-      length: Int,
-      log: String,
-      flag: StringBuilder,
-      all: StringBuilder
-  ): Unit = {
+  private def concatLog(length: Int, log: String, flag: StringBuilder, all: StringBuilder): Unit = {
     if (length == 1) {
       flag ++= log ++= "\n"
       all ++= log ++= "\n"

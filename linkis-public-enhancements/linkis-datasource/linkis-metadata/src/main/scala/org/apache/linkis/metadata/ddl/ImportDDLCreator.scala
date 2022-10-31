@@ -22,6 +22,7 @@ import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.metadata.conf.MdqConfiguration
 import org.apache.linkis.metadata.domain.mdq.bo.{MdqTableBO, MdqTableFieldsInfoBO}
+import org.apache.linkis.metadata.errorcode.LinkisMetadataErrorCodeSummary._
 import org.apache.linkis.metadata.exception.MdqIllegalParamException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -36,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 object ImportDDLCreator extends DDLCreator {
@@ -73,13 +74,17 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     val importInfo = mdqTableBO.getImportInfo
     val args = importInfo.getArgs
     val _source =
-      if (StringUtils.isEmpty(importInfo.getSource))
-        throw MdqIllegalParamException("import hive source is null")
-      else importInfo.getSource
+      if (StringUtils.isEmpty(importInfo.getSource)) {
+        throw MdqIllegalParamException(IMPORT_HIVE_SOURCE_IS_NULL.getErrorDesc)
+      } else {
+        importInfo.getSource
+      }
     val _destination =
-      if (StringUtils.isEmpty(importInfo.getDestination))
-        throw MdqIllegalParamException("import hive source is null")
-      else importInfo.getDestination
+      if (StringUtils.isEmpty(importInfo.getDestination)) {
+        throw MdqIllegalParamException(IMPORT_HIVE_SOURCE_IS_NULL.getErrorDesc)
+      } else {
+        importInfo.getDestination
+      }
     val source = "val source = \"\"\"" + _source + "\"\"\"\n"
     createTableCode.append(source)
     val storePath = storeExecutionCode(_destination, user)
@@ -102,7 +107,7 @@ object FileImportDDLHelper extends ImportHelper with Logging {
       s"end to generate code for ${mdqTableBO.getTableBaseInfo.getBase.getName} code is $resultCode"
     )
     resultCode
-    //    if(storePath == null){
+    //    if(storePath == null) {
     //      newExecutionCode += "org.apache.linkis.engine.imexport.LoadData.loadDataToTable(spark,source,destination)"
     //    }else{
     //      newExecutionCode += "org.apache.linkis.engine.imexport.LoadData.loadDataToTableByFile(spark,destination,source)"
@@ -169,18 +174,20 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
     val destinationTable = mdqTableBO.getTableBaseInfo.getBase.getName
     if (StringUtils.isEmpty(destinationDatabase) || StringUtils.isEmpty(destinationTable)) {
       logger.error("Hive create table destination database or tablename is null")
-      throw MdqIllegalParamException(
-        "Hive create table destination database or tablename is null"
-      )
+      throw MdqIllegalParamException(HIVE_CREATE_IS_NULL.getErrorDesc)
     }
     val sourceDatabase =
-      if (StringUtils.isEmpty(args.get(DATABASE)))
-        throw MdqIllegalParamException("hive create table source database is null")
-      else args.get(DATABASE)
+      if (StringUtils.isEmpty(args.get(DATABASE))) {
+        throw MdqIllegalParamException(HIVE_CREATE__TABLE_IS_NULL.getErrorDesc)
+      } else {
+        args.get(DATABASE)
+      }
     val sourceTableName =
-      if (StringUtils.isEmpty(args.get(TABLE)))
-        throw MdqIllegalParamException("hive create table source table name is null")
-      else args.get(TABLE)
+      if (StringUtils.isEmpty(args.get(TABLE))) {
+        throw MdqIllegalParamException(HIVE_CREATE__TABLE_IS_NULL.getErrorDesc)
+      } else {
+        args.get(TABLE)
+      }
     // 判断目标表是否是分区表，如果是分区表，先建表
     val isPartitionTable = mdqTableBO.getTableBaseInfo.getBase.getPartitionTable
     if (isPartitionTable != null && isPartitionTable == true) {
@@ -199,7 +206,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
       var dsCount = 0
       var partitionValue: String = null
       // 建表
-      fields foreach { field =>
+      fields.asScala foreach { field =>
         val name = field.getName
         val _type = field.getType
         val desc = field.getComment
@@ -213,8 +220,9 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
           }
         } else {
           dsCount += 1
-          if (StringUtils.isNotBlank(field.getPartitionsValue))
+          if (StringUtils.isNotBlank(field.getPartitionsValue)) {
             partitionValue = field.getPartitionsValue
+          }
         }
       }
       executeCode
@@ -227,9 +235,11 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
       // 判断源表是否是分区表
       val isSourceTablePartition: Boolean = checkPartitionTable(fields)
       val standardDs =
-        if (StringUtils.isNotBlank(partitionValue)) partitionValue
-        else
+        if (StringUtils.isNotBlank(partitionValue)) {
+          partitionValue
+        } else {
           new SimpleDateFormat("yyyyMMdd").format(new java.util.Date(System.currentTimeMillis()))
+        }
       if (!isSourceTablePartition) {
         // 插入数据
         executeCode.append(SPARK_SQL).append(LEFT_PARENTHESES).append(MARKS)
@@ -318,7 +328,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
         executeCode.append("*").append(SPACE)
       } else {
         val fieldArr = new ArrayBuffer[String]()
-        fields filter (_ != null) foreach (fieldArr += _.getName)
+        fields.asScala filter (_ != null) foreach (fieldArr += _.getName)
         executeCode.append(fieldArr.mkString(", ")).append(SPACE)
       }
       executeCode
@@ -338,7 +348,7 @@ object HiveImportDDLHelper extends ImportHelper with SQLConst with Logging {
 
   def checkPartitionTable(fields: util.List[MdqTableFieldsInfoBO]): Boolean = {
     var count = 0
-    fields foreach { field =>
+    fields.asScala foreach { field =>
       if (field.getPartitionField != null && field.getPartitionField) count += 1
     }
     count >= 2

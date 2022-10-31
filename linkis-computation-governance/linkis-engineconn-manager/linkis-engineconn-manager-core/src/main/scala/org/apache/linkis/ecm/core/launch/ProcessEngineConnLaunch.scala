@@ -21,6 +21,7 @@ import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.core.errorcode.LinkisECMErrorCodeSummary._
 import org.apache.linkis.ecm.core.exception.ECMCoreException
 import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -132,12 +133,12 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   override def launch(): Unit = {
     request.necessaryEnvironments.foreach { e =>
       val env = CommonVars(e, "")
-      if (StringUtils.isEmpty(env.getValue))
+      if (StringUtils.isEmpty(env.getValue)) {
         throw new ErrorException(
           30000,
           s"Necessary environment $e is not exists!(必须的环境变量 $e 不存在！)"
         ) // TODO exception
-      else request.environment.put(e, env.getValue)
+      } else request.environment.put(e, env.getValue)
     }
     prepareCommand()
     val exec = newProcessEngineConnCommandExec(
@@ -259,8 +260,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     // execCommand = sudoCommand(request.user, execCommand.mkString(" "))
     execCommand.foreach(setMoreAvailPort)
     processBuilder.setCommand(execCommand)
-    preparedExecFile =
-      new File(engineConnManagerEnv.engineConnWorkDir, "engineConnExec.sh").getPath
+    preparedExecFile = new File(engineConnManagerEnv.engineConnWorkDir, "engineConnExec.sh").getPath
     val output = getFileOutputStream
     Utils.tryFinally(processBuilder.writeTo(output))(output.close())
   }
@@ -277,8 +277,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       process.getInputStream
     } else {
       throw new ECMCoreException(
-        ECMErrorCode.PROCESS_WAITFOR_ERROR,
-        "process is not be launch, can not get InputStream!"
+        CAN_NOT_GET_INPUTSTREAM.getErrorCode,
+        CAN_NOT_GET_INPUTSTREAM.getErrorDesc
       )
     }
   }
@@ -288,8 +288,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       process.waitFor
     } else {
       throw new ECMCoreException(
-        ECMErrorCode.PROCESS_WAITFOR_ERROR,
-        "process is not be launch, can not get terminated code by wait!"
+        CAN_NOT_GET_TERMINATED.getErrorCode,
+        CAN_NOT_GET_TERMINATED.getErrorDesc
       )
     }
   }

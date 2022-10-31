@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.2.0</version>
+    <version>1.3.1</version>
   </parent>
 
   <artifactId>linkis-dist</artifactId>
@@ -147,7 +147,6 @@
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
-      <version>1.9.4</version>
     </dependency>
 
   </dependencies>
@@ -203,7 +202,6 @@
     <profile>
       <id>docker</id>
       <properties>
-        <image.build.type>dev</image.build.type>
         <image.base>centos:7</image.base>
         <image.base.web>nginx:1.19.6</image.base.web>
         <jdk.version>1.8.0-openjdk</jdk.version>
@@ -235,41 +233,41 @@
                 <configuration>
                   <target name="linkis-image">
                     <exec executable="docker" failonerror="true">
-                      <arg value="build"></arg>
-                      <arg value="-f"></arg>
-                      <arg value="${project.basedir}/docker/linkis.Dockerfile"></arg>
-                      <arg value="-t"></arg>
-                      <arg value="${project.parent.artifactId}:${project.version}"></arg>
-                      <arg value="--target"></arg>
-                      <arg value="linkis"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="IMAGE_BASE=${image.base}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="JDK_VERSION=${jdk.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_VERSION=${project.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="BUILD_TYPE=${image.build.type}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_HOME=${linkis.home}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"></arg>
-                      <arg value="${project.build.directory}"></arg>
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${project.basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE=${image.base}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_VERSION=${jdk.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="BUILD_TYPE=${image.build.type}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"/>
+                      <arg value="${project.build.directory}"/>
                     </exec>
                     <exec executable="docker" failonerror="true">
-                      <arg value="tag"></arg>
-                      <arg value="${project.parent.artifactId}:${project.version}"></arg>
-                      <arg value="${project.parent.artifactId}:dev"></arg>
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}:${project.version}"/>
+                      <arg value="${project.parent.artifactId}:dev"/>
                     </exec>
                   </target>
                 </configuration>
@@ -282,31 +280,31 @@
                 <phase>install</phase>
                 <configuration>
                   <target if="linkis.build.web" name="linkis-web-image">
-                    <echo message="Building linkis web image ..."></echo>
-                    <mkdir dir="${basedir}/target/apache-linkis-web-${project.version}-dist"></mkdir>
+                    <echo message="Building linkis web image ..."/>
+                    <mkdir dir="${basedir}/target/apache-linkis-web-${project.version}-dist"/>
                     <copy todir="${basedir}/target/apache-linkis-web-${project.version}-dist">
-                      <fileset dir="${basedir}/../web/dist" includes="**"></fileset>
+                      <fileset dir="${basedir}/../linkis-web/dist" includes="**"/>
                     </copy>
                     <exec executable="docker" failonerror="true">
-                      <arg value="build"></arg>
-                      <arg value="-f"></arg>
-                      <arg value="${project.basedir}/docker/linkis.Dockerfile"></arg>
-                      <arg value="-t"></arg>
-                      <arg value="${project.parent.artifactId}-web:${project.version}"></arg>
-                      <arg value="--target"></arg>
-                      <arg value="linkis-web"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="IMAGE_BASE_WEB=${image.base.web}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_VERSION=${project.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_HOME=${linkis.home}"></arg>
-                      <arg value="${project.build.directory}"></arg>
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${project.basedir}/docker/linkis.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}-web:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis-web"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE_WEB=${image.base.web}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="${project.build.directory}"/>
                     </exec>
                     <exec executable="docker" failonerror="true">
-                      <arg value="tag"></arg>
-                      <arg value="${project.parent.artifactId}-web:${project.version}"></arg>
-                      <arg value="${project.parent.artifactId}-web:dev"></arg>
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}-web:${project.version}"/>
+                      <arg value="${project.parent.artifactId}-web:dev"/>
                     </exec>
                   </target>
                 </configuration>
@@ -319,58 +317,64 @@
                 <phase>install</phase>
                 <configuration>
                   <target if="linkis.build.ldh" name="linkis-ldh-image">
-                    <echo message="Building linkis ldh (hadoop all in one) image ..."></echo>
+                    <echo message="Building linkis ldh (hadoop all in one) image ..."/>
                     <exec executable="sh" failonerror="true">
-                      <arg value="${basedir}/docker/scripts/prepare-ldh-image.sh"></arg>
+                      <env key="HADOOP_VERSION" value="${ldh.hadoop.version}"/>
+                      <env key="HIVE_VERSION" value="${ldh.hive.version}"/>
+                      <env key="SPARK_VERSION" value="${ldh.spark.version}"/>
+                      <env key="SPARK_HADOOP_VERSION" value="${ldh.spark.hadoop.version}"/>
+                      <env key="FLINK_VERSION" value="${ldh.flink.version}"/>
+                      <env key="ZOOKEEPER_VERSION" value="${ldh.zookeeper.version}"/>
+                      <arg value="${basedir}/docker/scripts/prepare-ldh-image.sh"/>
                     </exec>
                     <exec executable="docker" failonerror="true">
-                      <arg value="build"></arg>
-                      <arg value="-f"></arg>
-                      <arg value="${project.basedir}/docker/ldh.Dockerfile"></arg>
-                      <arg value="-t"></arg>
-                      <arg value="${project.parent.artifactId}-ldh:${project.version}"></arg>
-                      <arg value="--target"></arg>
-                      <arg value="linkis-ldh"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="IMAGE_BASE=${image.base}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="JDK_VERSION=${jdk.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_VERSION=${project.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="BUILD_TYPE=${image.build.type}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_HOME=${linkis.home}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="HADOOP_VERSION=${ldh.hadoop.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="HIVE_VERSION=${ldh.hive.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="SPARK_VERSION=${ldh.spark.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="SPARK_HADOOP_VERSION=${ldh.spark.hadoop.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="ZOOKEEPER_VERSION=${ldh.zookeeper.version}"></arg>
-                      <arg value="--build-arg"></arg>
-                      <arg value="FLINK_VERSION=${ldh.flink.version}"></arg>
-                      <arg value="${project.build.directory}"></arg>
+                      <arg value="build"/>
+                      <arg value="-f"/>
+                      <arg value="${project.basedir}/docker/ldh.Dockerfile"/>
+                      <arg value="-t"/>
+                      <arg value="${project.parent.artifactId}-ldh:${project.version}"/>
+                      <arg value="--target"/>
+                      <arg value="linkis-ldh"/>
+                      <arg value="--build-arg"/>
+                      <arg value="IMAGE_BASE=${image.base}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_VERSION=${jdk.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="JDK_BUILD_REVISION=${jdk.build.revision}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_VERSION=${project.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="MYSQL_JDBC_VERSION=${mysql.connector.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="BUILD_TYPE=${image.build.type}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_USER=${linkis.system.user}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_SYSTEM_UID=${linkis.system.uid}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_HOME=${linkis.home}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_CONF_DIR=${linkis.conf.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="LINKIS_LOG_DIR=${linkis.log.dir}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="HADOOP_VERSION=${ldh.hadoop.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="HIVE_VERSION=${ldh.hive.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="SPARK_VERSION=${ldh.spark.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="SPARK_HADOOP_VERSION=${ldh.spark.hadoop.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="ZOOKEEPER_VERSION=${ldh.zookeeper.version}"/>
+                      <arg value="--build-arg"/>
+                      <arg value="FLINK_VERSION=${ldh.flink.version}"/>
+                      <arg value="${project.build.directory}"/>
                     </exec>
                     <exec executable="docker" failonerror="true">
-                      <arg value="tag"></arg>
-                      <arg value="${project.parent.artifactId}-ldh:${project.version}"></arg>
-                      <arg value="${project.parent.artifactId}-ldh:dev"></arg>
+                      <arg value="tag"/>
+                      <arg value="${project.parent.artifactId}-ldh:${project.version}"/>
+                      <arg value="${project.parent.artifactId}-ldh:dev"/>
                     </exec>
                   </target>
                 </configuration>

@@ -26,13 +26,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BmlProjectDaoTest extends BaseDaoTest {
 
+  private static final Logger logger = LoggerFactory.getLogger(BmlProjectDaoTest.class);
+
   @Autowired BmlProjectDao bmlProjectDao;
 
-  @Test
-  void createNewProject() {
+  void insertNewProject() {
     BmlProject bmlProject = new BmlProject();
     bmlProject.setName("testName");
     bmlProject.setSystem("testSy");
@@ -41,18 +46,32 @@ class BmlProjectDaoTest extends BaseDaoTest {
     bmlProject.setCreator("creCreatorUser");
     bmlProject.setEnabled(1);
     bmlProject.setCreateTime(new Date());
-    bmlProject.setId(1);
     bmlProjectDao.createNewProject(bmlProject);
   }
 
   @Test
-  void getBmlProject() {
-    createNewProject();
+  void testCreateNewProject() {
+    BmlProject bmlProject = new BmlProject();
+    bmlProject.setName("testName");
+    bmlProject.setSystem("testSy");
+    bmlProject.setSource("test");
+    bmlProject.setDescription("descTest");
+    bmlProject.setCreator("creCreatorUser");
+    bmlProject.setEnabled(1);
+    bmlProject.setCreateTime(new Date());
+    bmlProjectDao.createNewProject(bmlProject);
+    BmlProject bmlProjects = bmlProjectDao.getBmlProject("testName");
+    assertTrue(bmlProjects != null);
+  }
+
+  @Test
+  void testGetBmlProject() {
+    insertNewProject();
     bmlProjectDao.getBmlProject("testName");
   }
 
   @Test
-  void setProjectPriv() {
+  void testSetProjectPriv() {
     List<String> usernamesList = new ArrayList<>();
     usernamesList.add("creCreatorUser");
     usernamesList.add("creCreatorUser1");
@@ -61,44 +80,48 @@ class BmlProjectDaoTest extends BaseDaoTest {
   }
 
   @Test
-  void getPrivInProject() {
-    setProjectPriv();
-    createNewProject();
-    bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
+  void testGetPrivInProject() {
+    Integer privInt = bmlProjectDao.getPrivInProject("testName", "creCreatorUser");
+    logger.info("privInt:" + privInt);
+    assertTrue(privInt == 2);
   }
 
   @Test
-  void addProjectResource() {
+  void testAddProjectResource() {
     bmlProjectDao.addProjectResource(1, "123");
   }
 
   @Test
-  void getProjectNameByResourceId() {
-    setProjectPriv();
-    bmlProjectDao.getProjectNameByResourceId("123");
+  void testGetProjectNameByResourceId() {
+    String projectName = bmlProjectDao.getProjectNameByResourceId("123");
+    logger.info("projectName:" + projectName);
+    assertTrue(projectName.equals("testName"));
   }
 
   @Test
-  void getProjectIdByName() {
-    createNewProject();
+  void testGetProjectIdByName() {
+    insertNewProject();
     bmlProjectDao.getProjectIdByName("testName");
+    Integer i = bmlProjectDao.getProjectIdByName("testName");
+    assertTrue(i != null);
   }
 
   @Test
-  void attachResourceAndProject() {
-    createNewProject();
+  void testAttachResourceAndProject() {
+    insertNewProject();
     bmlProjectDao.attachResourceAndProject(1, "123");
   }
 
   @Test
-  void checkIfExists() {
-    setProjectPriv();
-    bmlProjectDao.checkIfExists(1, "123");
+  void testCheckIfExists() {
+    insertNewProject();
+    Integer i = bmlProjectDao.checkIfExists(1, "123");
+    assertTrue(i != null);
   }
 
   @Test
-  void deleteAllPriv() {
-    setProjectPriv();
+  void testDeleteAllPriv() {
+    insertNewProject();
     bmlProjectDao.deleteAllPriv(1);
   }
 }

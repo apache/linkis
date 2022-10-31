@@ -103,10 +103,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             s"Failed to submit ${getIDInfo()} to ${codeExecutor.getEngineConnExecutor.getServiceInstance}",
             t
           )
-          throw new LinkisRetryException(
-            ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE,
-            t.getMessage
-          )
+          throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, t.getMessage)
       }
       response match {
         case SubmitResponse(engineConnExecId) =>
@@ -151,7 +148,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       }
     } else if (null != retryException) {
       new DefaultFailedTaskResponse(
-        s"ask Engine failed + ${retryException.getMessage}",
+        s"ask Engine failed ${retryException.getMessage}",
         OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
         retryException
       )
@@ -167,28 +164,10 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
   private def toRequestTask: RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
-    // getLabels.add(getCodeLogicalUnit.getLabel)
     requestTask.setLabels(getLabels)
-    // Map
-//    if (null != getParams.getRuntimeParams.getDataSources ) {
-//      requestTask.getProperties.putAll(getParams.getRuntimeParams.getDataSources)
-//    }
-
-//    if (null != getParams.getRuntimeParams.getContext) {
-//      requestTask.getProperties.putAll(getParams.getRuntimeParams.getContext)
-//    }
-
-//    if (null != getParams.getRuntimeParams.getSpecials) {
-//      requestTask.getProperties.putAll(getParams.getRuntimeParams.getSpecials)
-//    }
-
     if (null != getParams.getRuntimeParams.getJobs) {
       requestTask.getProperties.putAll(getParams.getRuntimeParams.getJobs)
     }
-//    requestTask.getProperties.put(GovernanceConstant.TASK_SOURCE_MAP_KEY, getParams.getRuntimeParams.get(GovernanceConstant.TASK_SOURCE_MAP_KEY) match {
-//      case o: Object => o
-//      case _ => null
-//    })
     requestTask.getProperties.putAll(getParams.getRuntimeParams.toMap)
     requestTask.setSourceID(getIDInfo())
     requestTask
@@ -268,12 +247,6 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     task
   }
 
-  /*override def close(): Unit = {
-    codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>
-      info(s"ExecTask(${getIDInfo()}) be closed.")
-      Utils.tryAndWarn(codeExecTaskExecutorManager.delete(this, codeEngineConnExecutor))
-    }
-  }*/
   override def clear(isSucceed: Boolean): Unit = {
 
     codeExecTaskExecutorManager.getByExecTaskId(this.getId).foreach { codeEngineConnExecutor =>

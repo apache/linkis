@@ -26,15 +26,21 @@ trait DataSourceRemoteClient extends RemoteClient {
   def queryDataSourceEnv(action: QueryDataSourceEnvAction): QueryDataSourceEnvResult
   def getInfoByDataSourceId(action: GetInfoByDataSourceIdAction): GetInfoByDataSourceIdResult
 
-  def getInfoByDataSourceName(
-      action: GetInfoByDataSourceNameAction
-  ): GetInfoByDataSourceNameResult
+  def getInfoByDataSourceName(action: GetInfoByDataSourceNameAction): GetInfoByDataSourceNameResult
+
+  def getInfoPublishedByDataSourceName(
+      action: GetInfoPublishedByDataSourceNameAction
+  ): GetInfoPublishedByDataSourceNameResult
 
   def queryDataSource(action: QueryDataSourceAction): QueryDataSourceResult
 
   def getConnectParams(
       action: GetConnectParamsByDataSourceIdAction
   ): GetConnectParamsByDataSourceIdResult
+
+  def getConnectParamsByName(
+      action: GetConnectParamsByDataSourceNameAction
+  ): GetConnectParamsByDataSourceNameResult
 
   def createDataSource(action: CreateDataSourceAction): CreateDataSourceResult
 

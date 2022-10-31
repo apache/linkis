@@ -228,6 +228,7 @@ export default {
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
           {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
+        desc: [{required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'}]
       },
       tagIsExist: true,
       mode: 'create',

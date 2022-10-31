@@ -113,22 +113,18 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'v-jsoneditor',
           title: "配置信息",
           field: 'config',
           value: '',
           props: {
-            placeholder: "",
+            type: 'form-create',
+            height: "280px",
+            options: {
+              mode: "code",
+              modes: ['code','tree'],
+            }
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"配置信息"`,
-              trigger: 'blur',
-            },
-          ],
         }
       ]
     }
@@ -139,6 +135,7 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
+      this.formData.config = JSON.parse(this.formData.config)
     }
   },
   watch: {

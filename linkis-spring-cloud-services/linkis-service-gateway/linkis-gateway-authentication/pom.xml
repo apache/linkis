@@ -19,8 +19,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.linkis</groupId>
-    <artifactId>linkis-service-gateway</artifactId>
-    <version>1.2.0</version>
+    <artifactId>linkis</artifactId>
+    <version>1.3.1</version>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
   <artifactId>linkis-gateway-authentication</artifactId>

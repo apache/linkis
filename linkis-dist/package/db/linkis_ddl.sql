@@ -290,6 +290,7 @@ CREATE TABLE `linkis_ps_datasource_field` (
   `is_partition_field` tinyint(1) NOT NULL,
   `is_primary` tinyint(1) NOT NULL,
   `length` int(11) DEFAULT NULL,
+  `mode_info` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -754,6 +755,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ec instance info',
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ecm instance info ',
     `ticket_id` VARCHAR(100) NOT NULL COMMENT 'ec ticket id',
+    `status` varchar(50) DEFAULT NULL COMMENT 'EC status: Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success',
     `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'log path',
     `request_times` INT(8) COMMENT 'resource request times',
     `request_resource` VARCHAR(1020) COMMENT 'request resource',

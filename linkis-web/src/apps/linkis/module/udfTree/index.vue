@@ -19,7 +19,7 @@
   <div>
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索错误信息"></Input>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
@@ -66,7 +66,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'?'新增':'编辑'"
+      :title="modalAddMode=='add'? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">

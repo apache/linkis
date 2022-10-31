@@ -38,7 +38,7 @@ import org.apache.commons.net.util.Base64
 import java.nio.charset.StandardCharsets
 import java.util.{Locale, Random}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.google.gson.Gson
 
@@ -93,7 +93,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     val validationCode = gatewayContext.getRequest.getQueryParams.get("validationCode")(0)
     // validate
     if (ProxyUserUtils.validate(proxyUser, validationCode)) {
-      val lowerCaseUserName = proxyUser.toString.toLowerCase
+      val lowerCaseUserName = proxyUser.toString.toLowerCase(Locale.getDefault)
       GatewaySSOUtils.setLoginUser(gatewayContext, lowerCaseUserName)
       "代理成功".data("proxyUser", proxyUser)
     } else {
@@ -221,7 +221,8 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   }
 
   def clearExpireCookie(gatewayContext: GatewayContext): Unit = {
-    val cookies = gatewayContext.getRequest.getCookies.values().flatMap(cookie => cookie).toArray
+    val cookies =
+      gatewayContext.getRequest.getCookies.values().asScala.flatMap(cookie => cookie).toArray
     val expireCookies = cookies.filter(cookie =>
       cookie.getName.equals(ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue)
     )

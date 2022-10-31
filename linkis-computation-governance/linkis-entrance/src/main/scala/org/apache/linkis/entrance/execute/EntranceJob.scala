@@ -21,6 +21,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.EntranceContext
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.event._
 import org.apache.linkis.entrance.exception.EntranceErrorException
 import org.apache.linkis.governance.common.entity.job.JobRequest
@@ -64,6 +65,12 @@ abstract class EntranceJob extends Job {
   private val persistedResultSets = new AtomicInteger(0)
 
   private var entranceContext: EntranceContext = _
+
+  private var updateMetrisFlag: Boolean = false
+
+  def getUpdateMetrisFlag: Boolean = this.updateMetrisFlag
+
+  def setUpdateMetrisFlag(updateDbFlag: Boolean): Unit = this.updateMetrisFlag = updateDbFlag
 
   /**
    * Record newest time that a client access status of this job Can be used to monitor client
@@ -109,7 +116,7 @@ abstract class EntranceJob extends Job {
     }
   }
 
-  @Deprecated
+  @deprecated
   def incrementResultSetPersisted(): Unit = {
     //    persistedResultSets.incrementAndGet()
   }
@@ -178,8 +185,9 @@ abstract class EntranceJob extends Job {
           TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
           new Date(System.currentTimeMillis())
         )
-        if (getJobInfo != null)
+        if (getJobInfo != null) {
           getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
+        }
         if (isSucceed) {
           getLogListener.foreach(
             _.onLogUpdate(
@@ -277,7 +285,11 @@ abstract class EntranceJob extends Job {
     this.getExecutor match {
       case entranceExecutor: EntranceExecutor =>
         operate(entranceExecutor)
-      case _ => throw new EntranceErrorException(10000, "Unsupported operation")
+      case _ =>
+        throw new EntranceErrorException(
+          UNSUPPORTED_OPERATION.getErrorCode,
+          UNSUPPORTED_OPERATION.getErrorDesc
+        )
     }
 
   }
@@ -327,6 +339,6 @@ abstract class EntranceJob extends Job {
 
 object EntranceJob {
 
-  def JOB_COMPLETED_PROGRESS = 1.0f
+  def JOB_COMPLETED_PROGRESS: Float = 1.0f
 
 }

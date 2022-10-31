@@ -168,8 +168,8 @@ class StorageExcelWriter(
         case VarcharType => cell.setCellValue(DataType.valueToString(elem))
         case DateType => cell.setCellValue(getDate(elem))
         case TimestampType => cell.setCellValue(getDate(elem))
-        case DecimalType => cell.setCellValue(DataType.valueToString(elem))
-        case BigDecimalType => cell.setCellValue(DataType.valueToString(elem))
+        case DecimalType => cell.setCellValue(DataType.valueToString(elem).toDouble)
+        case BigDecimalType => cell.setCellValue(DataType.valueToString(elem).toDouble)
         case _ =>
           val value = DataType.valueToString(elem)
           cell.setCellValue(value)

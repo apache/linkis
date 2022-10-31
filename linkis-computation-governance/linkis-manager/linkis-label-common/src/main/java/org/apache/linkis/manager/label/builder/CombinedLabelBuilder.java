@@ -19,7 +19,6 @@ package org.apache.linkis.manager.label.builder;
 
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import org.apache.linkis.manager.label.constant.LabelConstant;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.CombinedLabelImpl;
 import org.apache.linkis.manager.label.entity.Label;
@@ -29,6 +28,8 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.FAILED_BUILD_COMBINEDLABEL;
 
 public class CombinedLabelBuilder implements LabelBuilder {
 
@@ -51,7 +52,9 @@ public class CombinedLabelBuilder implements LabelBuilder {
         return new CombinedLabelImpl(labels);
       } catch (Throwable e) {
         throw new LabelErrorException(
-            LabelConstant.LABEL_BUILDER_ERROR_CODE, "Failed to build combinedLabel", e);
+            FAILED_BUILD_COMBINEDLABEL.getErrorCode(),
+            FAILED_BUILD_COMBINEDLABEL.getErrorDesc(),
+            e);
       }
     }
     return null;

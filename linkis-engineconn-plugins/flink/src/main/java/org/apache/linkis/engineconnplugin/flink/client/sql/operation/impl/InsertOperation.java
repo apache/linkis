@@ -41,6 +41,8 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
+
 /** Operation for INSERT command. */
 public class InsertOperation extends AbstractJobOperation {
   private static final Logger LOG = LoggerFactory.getLogger(InsertOperation.class);
@@ -88,7 +90,7 @@ public class InsertOperation extends AbstractJobOperation {
     } catch (Exception t) {
       LOG.error(String.format("Invalid SQL query, sql is: %s.", statement), t);
       // catch everything such that the statement does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+      throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }
     asyncNotify(tableResult);
     return tableResult.getJobClient().get().getJobID();

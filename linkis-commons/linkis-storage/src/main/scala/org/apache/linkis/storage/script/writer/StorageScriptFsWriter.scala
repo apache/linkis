@@ -71,7 +71,9 @@ class StorageScriptFsWriter(
   }
 
   override def close(): Unit = {
-    IOUtils.closeQuietly(outputStream)
+    if (outputStream != null) {
+      IOUtils.closeQuietly(outputStream)
+    }
   }
 
   override def flush(): Unit = if (outputStream != null) {

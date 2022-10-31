@@ -18,5 +18,7 @@
 package org.apache.linkis.httpclient.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.REQUEST_FAILED_HTTP
 
-class HttpClientResultException(errorDesc: String) extends ErrorException(10905, errorDesc)
+class HttpClientResultException(errorDesc: String)
+    extends ErrorException(REQUEST_FAILED_HTTP.getErrorCode, errorDesc)

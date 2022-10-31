@@ -110,6 +110,7 @@
   </div>
 </template>
 <script>
+import storage from "@/common/helper/storage";
 import api from '@/common/service/api'
 export default {
   name: 'ipListManagement',
@@ -228,6 +229,7 @@ export default {
         pageNow: 1,
         totalPage: 0,
       },
+      userName: '',
     }
   },
   computed: {
@@ -280,6 +282,7 @@ export default {
     async createTenant () {
       this.showCreateModal = true;
       this.mode = 'create'
+      this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
       try {
@@ -400,6 +403,7 @@ export default {
     }
   },
   created() {
+    this.userName = storage.get('userName');
     this.init();
   }
 

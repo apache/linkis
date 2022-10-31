@@ -168,7 +168,7 @@
           "placeholder": "Please choose the start date"
         },
         "instance": {
-          "label": "instance",
+          "label": "Instance",
           "placeholder": "Please search by entering the instance"
       },
         "creator": {

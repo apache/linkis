@@ -26,7 +26,6 @@
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.userName')}}</span>
         <Input
           v-model="queryData.user"
-          suffix="ios-search"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputUser')"
           @on-enter="getTableData"
@@ -36,7 +35,6 @@
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
-          suffix="ios-search"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputApp')"
           @on-enter="getTableData"
@@ -46,7 +44,6 @@
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.tenantTagManagement.tenantTag')}}</span>
         <Input
           v-model="queryData.tenantValue"
-          suffix="ios-search"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputTenant')"
           @on-enter="getTableData"
@@ -120,6 +117,7 @@
   </div>
 </template>
 <script>
+import storage from "@/common/helper/storage";
 import api from '@/common/service/api'
 export default {
   name: 'tenantTagManagement',
@@ -240,6 +238,7 @@ export default {
         pageNow: 1,
         totalPage: 0,
       },
+      userName: '',
     }
   },
   computed: {
@@ -269,7 +268,7 @@ export default {
               item.createTime = new Date(item.createTime).toLocaleString();
               return item;
             });
-            page.totalPage = res.totalPage;
+            this.page.totalPage = res.totalPage;
           })
         this.tableLoading = false;
       } catch(err) {
@@ -292,7 +291,8 @@ export default {
     },
     async createTenant () {
       this.showCreateModal = true;
-      this.mode = 'create'
+      this.mode = 'create';
+      this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
       try {
@@ -401,6 +401,7 @@ export default {
     }
   },
   created() {
+    this.userName = storage.get('userName') || storage.get('baseinfo', 'local').username || '';
     this.init();
   }
 

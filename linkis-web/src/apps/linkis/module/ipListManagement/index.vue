@@ -26,7 +26,6 @@
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.ipListManagement.userName')}}</span>
         <Input
           v-model="queryData.user"
-          suffix="ios-search"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputUser')"
           @on-enter="getTableData"
@@ -36,7 +35,6 @@
         <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.ipListManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
-          suffix="ios-search"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputApp')"
           @on-enter="getTableData"
@@ -403,7 +401,7 @@ export default {
     }
   },
   created() {
-    this.userName = storage.get('userName');
+    this.userName = storage.get('userName') || storage.get('baseinfo', 'local').username || '';
     this.init();
   }
 

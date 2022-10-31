@@ -42,8 +42,10 @@ class SpringRestfulCatchAOP extends Logging {
     val resp: Message = catchIt {
       return proceedingJoinPoint.proceed()
     }
-    // convert http status code
-    getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
+    val response = getCurrentHttpResponse
+    if (response != null) {
+      getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
+    }
     resp
   }
 

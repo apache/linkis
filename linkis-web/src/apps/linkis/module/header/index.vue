@@ -112,7 +112,7 @@ export default {
       this.$router.push({path: '/console',query: Object.assign({}, this.$route.query)});
     },
     goRolesPath() {
-      // 根据接口getWorkspaceBaseInfo渲染跳转不同路径
+      // Rendering and jumping to different paths according to the interface getWorkspaceBaseInfo(根据接口getWorkspaceBaseInfo渲染跳转不同路径)
       this.$router.push({path: this.homeRoles.path, query: Object.assign({}, this.$route.query)});
     },
   }

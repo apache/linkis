@@ -5,32 +5,32 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 export const subAppRoutes = {
   path: '',
   name: 'layout',
   component: () => import('./view/layout.vue'),
   // redirect: '/newHome',
-  // 重定向到 管理台页面
+  // Redirects to the management console page(重定向到 管理台页面)
   redirect: '/console',
   meta: {
     title: 'Linkis',
-    publicPage: true, // 权限公开
+    publicPage: true, // Permission disclosure(权限公开)
   },
   children: []
 }
 
 export default [
-  // 日志查看
+  // log view(日志查看)
   {
     path: '/log',
     name: 'log',
@@ -61,7 +61,7 @@ export default [
     component: () =>
       import('./view/login/index.vue'),
   },
-  // 公用页面，不受权限控制
+  // Public pages, not subject to permission control(公用页面，不受权限控制)
   {
     path: '/500',
     name: 'serverErrorPage',
@@ -92,7 +92,7 @@ export default [
     component: () =>
       import('./view/403.vue'),
   },
-  // svg可用图标预览
+  // svg available icon preview(svg可用图标预览)
   {
     path: '/icon',
     name: 'icon',

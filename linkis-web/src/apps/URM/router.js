@@ -22,7 +22,7 @@ export const subAppRoutes = {
   redirect: '/urm',
   meta: {
     title: 'Linkis',
-    publicPage: true, // 权限公开
+    publicPage: true, // Permission disclosure(权限公开)
   },
   children: []
 }

@@ -137,32 +137,32 @@ export default {
   name: "WbTable",
   props: {
     loadNum: {
-      //默认加载行数
+      //Default number of rows to load(默认加载行数)
       type: [Number, String],
       default() {
         return 50;
       }
     },
     tdHeight: {
-      //表格行高
+      //table row height(表格行高)
       type: [Number, String],
       default() {
         return 40;
       }
     },
     tableHeight: {
-      //表格高度
+      //table height(表格高度)
       type: [Number, String],
     },
     tableList: {
-      //所有表格数据
+      //All tabular data(所有表格数据)
       type: Array,
       default() {
         return [];
       }
     },
     columns: {
-      //所有表格匹配规则
+      //All table matching rules(所有表格匹配规则)
       type: Array,
       default() {
         return [];
@@ -173,7 +173,7 @@ export default {
       default: true
     },
     highlightRow: {},
-    outerSort: {}, // 若外部排序则点击表头排序图标只触发事件
+    outerSort: {}, // If external sorting, clicking the sorting icon in the header only triggers the event(若外部排序则点击表头排序图标只触发事件)
     scrollBarWidth: {
       type: Number,
       default(){
@@ -184,14 +184,14 @@ export default {
   data() {
     return {
       showLoad: false,
-      showTableList: [], //实际显示的表格数据
-      loadedNum: 0, //实际渲染的数据数量
-      dataTotal: 0, //总数据条数
-      dataTop: 0, //渲染数据顶部的高度
-      scrollTop: 0, //滚动上下的距离
-      scrollHeight: 0, //数据滚动的高度
+      showTableList: [], //table data actually displayed(实际显示的表格数据)
+      loadedNum: 0, //The amount of data actually rendered(实际渲染的数据数量)
+      dataTotal: 0, //total data(总数据条数)
+      dataTop: 0, //The height of the top of the rendered data(渲染数据顶部的高度)
+      scrollTop: 0, //scroll up and down distance(滚动上下的距离)
+      scrollHeight: 0, //The height of the data scroll(数据滚动的高度)
       handleScroll: null,
-      selectIndex: -1, //选择的行
+      selectIndex: -1, //selected row(选择的行)
       sortType: {},
       noDataStyle: {
         width: '100%'
@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     tableOtherBottom() {
-      //表格剩余数据底部高度
+      //The bottom height of the remaining data in the table(表格剩余数据底部高度)
       return (
         this.dataTotal * this.tdHeight -
         this.dataTop -
@@ -214,9 +214,9 @@ export default {
         return this.columns;
       }
     },
-    // 计算表格实际数据低于渲染条数时的高度
+    // Calculate the height when the actual data of the table is lower than the number of rendered bars(计算表格实际数据低于渲染条数时的高度)
     tableHeightCalc() {
-      let dataHeightt = (this.tdHeight + 1) * this.loadedNum + 43;// 43为表头和预留高度, +1 为border
+      let dataHeightt = (this.tdHeight + 1) * this.loadedNum + 43;// 43 is the header and reserved height, +1 is the border(43为表头和预留高度, +1 为border)
       if(this.tableHeight) return this.tableHeight;
       if(this.tableList.length <= 0) return 100;
       return dataHeightt
@@ -224,11 +224,11 @@ export default {
   },
   methods: {
     /**
-     * @typedef {Object} Options -配置项
-     * @property {Boolean} leading -开始是否需要额外触发一次
-     * @property {this} context -上下文
+     * @typedef {Object} Options -configuration item(配置项)
+     * @property {Boolean} leading -Whether an additional trigger is required to start(开始是否需要额外触发一次)
+     * @property {this} context -context(上下文)
      **/
-    //使用Proxy实现函数防抖
+    //Use Proxy to implement function anti-shake(使用Proxy实现函数防抖)
     proxy(
       func,
       time,
@@ -241,15 +241,15 @@ export default {
       let _this = this;
       let handler = {
         apply(target, _, args) {
-          //代理函数调用
+          //proxy function call(代理函数调用)
           let bottomScroll = document.getElementById("bottomDiv");
           let topScroll = document.getElementById("topDiv");
           if (bottomScroll.scrollTop == _this.scrollTop) {
-            //左右滚动
+            //scroll left and right(左右滚动)
             _this.handleScrollLeft(topScroll, bottomScroll);
             return;
           }
-          // 和闭包实现核心逻辑相同
+          // The same as the core logic of closure implementation(和闭包实现核心逻辑相同)
           if (!options.leading) {
             if (timer) return;
             timer = setTimeout(() => {
@@ -269,42 +269,42 @@ export default {
       };
       return new Proxy(func, handler);
     },
-    //是否显示加载中
+    //Whether to show loading(是否显示加载中)
     needLoad(bottomScroll) {
       if (
         Math.abs(bottomScroll.scrollTop - this.scrollTop) >
         this.tdHeight * this.loadNum
       ) {
-        this.showLoad = true; //显示加载中
+        this.showLoad = true; //show loading(显示加载中)
         this.scrollTop = bottomScroll.scrollTop;
       }
     },
-    //滚动处理
+    //scroll processing(滚动处理)
     scrollProcessing() {
       // const last = $event && $event.last;
       const bottomScroll = document.getElementById("bottomDiv");
       // const topScroll = document.getElementById("topDiv");
-      const direction = bottomScroll.scrollTop >= this.scrollTop; //滚动方向
+      const direction = bottomScroll.scrollTop >= this.scrollTop; //scroll direction(滚动方向)
       // if(this.needLoad(last,bottomScroll))return;
-      //记录上一次向下滚动的位置
+      //Record the last scroll down position(记录上一次向下滚动的位置)
       this.scrollTop = bottomScroll.scrollTop;
       direction ? this.handleScrollBottom() : this.handleScrollTop();
       this.showLoad = false;
     },
-    //滚动条向上滚动
+    //scroll bar up(滚动条向上滚动)
     handleScrollTop() {
       if (this.dataTop < this.scrollTop) {
-        //如果最后滚动位置在数据上方应该调用向下滚动
+        //scroll down should be called if the last scroll position is above the data(如果最后滚动位置在数据上方应该调用向下滚动)
         this.handleScrollBottom();
         return;
       }
-      //如果加载的数据小于默认加载的数据量
+      //If the loaded data is less than the default amount of data loaded(如果加载的数据小于默认加载的数据量)
       if (this.dataTotal > this.loadNum) {
-        const computeHeight = this.dataTop; //数据需要处理的时候的高度
-        const maxHeigth = computeHeight - this.loadNum * this.tdHeight; //不需要清除所有数据的高度
+        const computeHeight = this.dataTop; //The height at which the data needs to be processed(数据需要处理的时候的高度)
+        const maxHeigth = computeHeight - this.loadNum * this.tdHeight; //No need to clear all data height(不需要清除所有数据的高度)
         if (this.scrollTop < computeHeight && this.scrollTop >= maxHeigth) {
-          //如果数据总数大于已经渲染的数据
-          const dataTopNum = parseInt(this.dataTop / this.tdHeight); //数据顶部条数
+          //If the total data is greater than the already rendered data(如果数据总数大于已经渲染的数据)
+          const dataTopNum = parseInt(this.dataTop / this.tdHeight); //Number of top bars of data(数据顶部条数)
           dataTopNum - this.loadNum >= 0
             ? this.dataProcessing(
               this.loadNum,
@@ -324,19 +324,19 @@ export default {
         }
       }
     },
-    //滚动条向下滚动
+    //scroll bar scroll down(滚动条向下滚动)
     handleScrollBottom() {
       if (this.dataTop > this.scrollTop) {
         this.handleScrollTop();
         return;
       }
       const computeHeight =
-        this.dataTop + this.loadedNum * this.tdHeight - this.tableHeightCalc; //数据需要处理的时候的高度
-      const maxHeight = computeHeight + this.tdHeight * this.loadNum; //不需要清除所有数据的高度
+        this.dataTop + this.loadedNum * this.tdHeight - this.tableHeightCalc; //The height at which the data needs to be processed(数据需要处理的时候的高度)
+      const maxHeight = computeHeight + this.tdHeight * this.loadNum; //No need to clear all data height(不需要清除所有数据的高度)
       if (this.scrollTop > computeHeight && this.scrollTop <= maxHeight) {
-        //如果滚动高度到达数据显示底部高度
+        //If the scroll height reaches the bottom height of the data display(如果滚动高度到达数据显示底部高度)
         if (this.dataTotal > this.loadedNum) {
-          const dataTopNum = parseInt(this.dataTop / this.tdHeight); //数据顶部条数
+          const dataTopNum = parseInt(this.dataTop / this.tdHeight); //Number of top bars of data(数据顶部条数)
           const total = dataTopNum + this.loadedNum + this.loadNum;
           const otherTotal = this.dataTotal - (dataTopNum + this.loadedNum);
           total <= this.dataTotal
@@ -348,7 +348,7 @@ export default {
             : this.dataProcessing(otherTotal, otherTotal, "bottom");
         }
       } else if (this.scrollTop > maxHeight) {
-        let scrollNum = parseInt(this.scrollTop / this.tdHeight); //滚动的位置在第几条数据
+        let scrollNum = parseInt(this.scrollTop / this.tdHeight); //The scroll position is in the first few data(滚动的位置在第几条数据)
         scrollNum + this.loadNum <= this.dataTotal
           ? this.dataProcessing(scrollNum, this.loadNum * 2, "bottomAll")
           : this.dataProcessing(
@@ -358,61 +358,61 @@ export default {
           );
       }
     },
-    //滚动条左右滚动
+    //scroll bar scroll left and right(滚动条左右滚动)
     handleScrollLeft(topScroll, bottomScroll) {
-      //顶部表头跟随底部滚动
+      //The top header scrolls with the bottom(顶部表头跟随底部滚动)
       topScroll.scrollTo(bottomScroll.scrollLeft, topScroll.pageYOffset);
     },
-    //上下滚动时数据处理
+    //Data processing when scrolling up and down(上下滚动时数据处理)
     dataProcessing(topNum, bottomNum, type) {
       const topPosition = parseInt(this.dataTop / this.tdHeight);
       if (type === "top") {
         this.showTableList.splice(this.loadedNum - bottomNum, bottomNum); //减去底部数据
         for (let i = 1; i <= topNum; i++) {
-          //加上顶部数据
+          //plus top data(加上顶部数据)
           const indexNum = topPosition - i;
           this.showTableList.unshift(this.tableList[indexNum]);
         }
-        this.loadedNum = this.loadedNum + topNum - bottomNum; //重新计算实际渲染数据条数
-        this.dataTop = this.dataTop - topNum * this.tdHeight; //重新计算渲染数据的高度
+        this.loadedNum = this.loadedNum + topNum - bottomNum; //Recalculate the actual number of rendered data(重新计算实际渲染数据条数)
+        this.dataTop = this.dataTop - topNum * this.tdHeight; //Recalculate the height of the rendered data(重新计算渲染数据的高度)
         document.getElementById("bottomDiv").scrollTop =
           document.getElementById("bottomDiv").scrollTop +
           bottomNum * this.tdHeight;
         // this.scrollTop = document.getElementById("bottomDiv").scrollTop;
       } else if (type == "bottom") {
-        this.showTableList.splice(0, topNum); //减去顶部数据
+        this.showTableList.splice(0, topNum); //minus top data(减去顶部数据)
         for (let i = 0; i < bottomNum; i++) {
-          //加上底部数据
+          //plus bottom data(加上底部数据)
           const indexNum = topPosition + this.loadedNum + i;
           this.showTableList.push(this.tableList[indexNum]);
         }
-        this.loadedNum = this.loadedNum - topNum + bottomNum; //重新计算实际渲染数据条数
-        this.dataTop = this.dataTop + topNum * this.tdHeight; //重新计算渲染数据的高度
+        this.loadedNum = this.loadedNum - topNum + bottomNum; //Recalculate the actual number of rendered data(重新计算实际渲染数据条数)
+        this.dataTop = this.dataTop + topNum * this.tdHeight; //Recalculate the height of the rendered data(重新计算渲染数据的高度)
         document.getElementById("bottomDiv").scrollTop =
           document.getElementById("bottomDiv").scrollTop -
           topNum * this.tdHeight;
         // this.scrollTop = document.getElementById("bottomDiv").scrollTop;
       } else if (type == "bottomAll") {
-        this.showTableList = []; //减去顶部数据
+        this.showTableList = []; //minus top data(减去顶部数据)
         let scrollNum = topNum;
         for (let i = 0; i < bottomNum; i++) {
-          //加上底部数据
+          //plus bottom data(加上底部数据)
           let indexNum = scrollNum - this.loadNum + i;
           this.showTableList.push(this.tableList[indexNum]);
         }
-        this.loadedNum = bottomNum; //重新计算实际渲染数据条数
-        this.dataTop = (scrollNum - this.loadNum) * this.tdHeight; //重新计算渲染数据的高度
+        this.loadedNum = bottomNum; //Recalculate the actual number of rendered data(重新计算实际渲染数据条数)
+        this.dataTop = (scrollNum - this.loadNum) * this.tdHeight; //Recalculate the height of the rendered data(重新计算渲染数据的高度)
         // this.scrollTop = document.getElementById("bottomDiv").scrollTop;
       } else if (type == "topAll") {
-        this.showTableList = []; //减去顶部数据
+        this.showTableList = []; //minus top data(减去顶部数据)
         let scrollNum = bottomNum;
         for (let i = 0; i < topNum; i++) {
-          //加上底部数据
+          //plus bottom data(加上底部数据)
           let indexNum = scrollNum - topNum + this.loadNum + i;
           this.showTableList.push(this.tableList[indexNum]);
         }
-        this.loadedNum = topNum; //重新计算实际渲染数据条数
-        this.dataTop = (scrollNum - topNum + this.loadNum) * this.tdHeight; //重新计算渲染数据的高度
+        this.loadedNum = topNum; //Recalculate the actual number of rendered data(重新计算实际渲染数据条数)
+        this.dataTop = (scrollNum - topNum + this.loadNum) * this.tdHeight; //Recalculate the height of the rendered data(重新计算渲染数据的高度)
         // this.scrollTop = document.getElementById("bottomDiv").scrollTop;
       }
       this.showLoad = false;
@@ -436,7 +436,7 @@ export default {
         window.getSelection().removeAllRanges();
       }
     },
-    //排序
+    //sort(排序)
     handleSort(index, type) {
       let column = this.columns[index];
       let key = column.key;
@@ -471,19 +471,19 @@ export default {
     initTable() {
       document.getElementById("bottomDiv") &&
         (document.getElementById("bottomDiv").scrollTop = 0);
-      // 后面如果要做切换tab保存滚动条状态，得记录滚动距离再赋值
+      // Later, if you want to switch the tab to save the scroll bar state, you have to record the scroll distance and assign it again.(后面如果要做切换tab保存滚动条状态，得记录滚动距离再赋值)
       // document.getElementById("bottomDiv") &&
       //   (document.getElementById("bottomDiv").scrollLeft = 0);
-      this.loadedNum = 0; //实际渲染的数据数量
-      this.dataTotal = 0; //总数据条数
-      this.dataTop = 0; //渲染数据顶部的高度
-      this.scrollTop = 0; //滚动上下的距离
+      this.loadedNum = 0; //The amount of data actually rendered(实际渲染的数据数量)
+      this.dataTotal = 0; //total data(总数据条数)
+      this.dataTop = 0; //The height of the top of the rendered data(渲染数据顶部的高度)
+      this.scrollTop = 0; //scroll up and down distance(滚动上下的距离)
       this.showTableList = [];
       if (this.tableList.length > 0) {
-        this.dataTotal = this.tableList.length; //获取数据长度
+        this.dataTotal = this.tableList.length; //get data length(获取数据长度)
         if (this.dataTotal >= this.loadNum) {
-          //判断数据长度是否大于设置的每次渲染长度
-          this.loadedNum = this.loadNum; //设置实际渲染条数
+          //Determine whether the data length is greater than the set length of each rendering(判断数据长度是否大于设置的每次渲染长度)
+          this.loadedNum = this.loadNum; //Set the actual number of rendered bars(设置实际渲染条数)
           for (var i = 0; i < this.loadNum; i++) {
             let data = this.tableList[i];
             this.showTableList.push(data);
@@ -509,7 +509,7 @@ export default {
         this.noDataStyle.width =  topTable.clientWidth + 'px'
       }
     },
-    // 判断是否出现竖直滚动条
+    // Determine whether a vertical scroll bar appears(判断是否出现竖直滚动条)
     scrollBarWidthCalc() {
       let bottomDiv = document.getElementById("bottomDiv");
       return  bottomDiv && bottomDiv.scrollHeight > bottomDiv.clientHeight ? this.scrollBarWidth : 0
@@ -535,7 +535,7 @@ export default {
     },
     tableHeight(newValue) {
       if (newValue) {
-        this.scrollProcessing(); //表格高度改变重新计算
+        this.scrollProcessing(); //table height change recalculation(表格高度改变重新计算)
       }
     }
   }

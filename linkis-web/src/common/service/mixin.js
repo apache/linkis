@@ -25,7 +25,7 @@ export default {
       SUPPORTED_LANG_MODES,
     };
   },
-  
+
   created: function () {},
   mounted: function () {},
   beforeDestroy: function () {},
@@ -38,7 +38,7 @@ export default {
       return vsBi.url;
     },
     getProjectJsonResult(key, name = 'visualis') {
-      // 用于判断返回什么样的返回值
+      // Used to determine what kind of return value to return(用于判断返回什么样的返回值)
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) return true;
       const vsBi = baseInfo.applications ? (baseInfo.applications.find((item) => item.name === name) || {}) : {};
@@ -61,13 +61,13 @@ export default {
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) return;
       const info = baseInfo.applications.find((item) => item.name === type) || {};
-      // 根据是否有projectid来确定是走首页还是工程页
+      // Determine whether to go to the home page or the project page according to whether there is a projectid(根据是否有projectid来确定是走首页还是工程页)
       let url = '';
       if (!query.projectID) {
         localStorage.removeItem('appJointProjectId')
         url = info.homepageUrl
       }
-      // 如果没有提示用户功能暂未开发
+      // If there is no prompt for the user, the function has not been developed yet(如果没有提示用户功能暂未开发)
       if (Object.keys(info).length === 0) {
         this.$Message.warning(this.$t('message.common.warning.comingSoon'));
       } else {

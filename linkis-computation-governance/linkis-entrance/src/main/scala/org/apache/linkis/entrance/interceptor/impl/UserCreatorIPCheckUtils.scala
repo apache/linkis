@@ -76,10 +76,13 @@ object UserCreatorIPCheckUtils extends Logging {
           }
           // Obtain the IP address in the cache through user creator
           var cacheIp = ""
-          cacheIp =
-            configCache.get(LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue)
+          cacheIp = configCache.get(
+            LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getStringValue.toLowerCase()
+          )
           if (StringUtils.isBlank(cacheIp)) {
-            cacheIp = configCache.get("*-" + LabelUtil.getUserCreator(jobRequest.getLabels)._2)
+            cacheIp = configCache.get(
+              "*-" + LabelUtil.getUserCreator(jobRequest.getLabels)._2.toLowerCase()
+            )
           }
           logger.info("get cache cacheIp:" + cacheIp + ",jobRequest:" + jobRequest.getId)
           // Judge if the cached data is not empty

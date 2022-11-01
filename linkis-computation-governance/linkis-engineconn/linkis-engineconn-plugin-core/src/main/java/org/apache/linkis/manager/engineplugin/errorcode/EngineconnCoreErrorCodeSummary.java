@@ -25,12 +25,15 @@ public enum EngineconnCoreErrorCodeSummary {
   CANNOT_DEFAULT_EF(20000, "Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)"),
   ETL_NOT_EXISTS(20000, "EngineTypeLabel is not exists(EngineTypeLabel 不存在)"),
   UCL_NOT_EXISTS(20000, "UserCreatorLabel is not exists(UserCreatorLabel 不存在)"),
-  CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineCon n的 home 路径)"),
+  CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
   CANNOT_HOME_PATH_DIST(
       20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
   DIST_IS_EMPTY(
       20001,
       "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})"),
+  ENGIN_VERSION_NOT_FOUND(
+      20001,
+      "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
   DIST_IRREGULAR_EXIST(
       20001,
       "The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在}"),

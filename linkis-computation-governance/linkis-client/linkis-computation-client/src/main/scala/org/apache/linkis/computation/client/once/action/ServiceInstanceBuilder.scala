@@ -21,6 +21,7 @@ abstract class ServiceInstanceBuilder[T <: GetEngineConnAction] private[action] 
   private var applicationName: String = _
   private var instance: String = _
   private var user: String = _
+  private var ticketId: String = _
 
   def setApplicationName(applicationName: String): this.type = {
     this.applicationName = applicationName
@@ -37,6 +38,11 @@ abstract class ServiceInstanceBuilder[T <: GetEngineConnAction] private[action] 
     this
   }
 
+  def setTicketId(ticketId: String): this.type = {
+    this.ticketId = ticketId
+    this
+  }
+
   protected def createGetEngineConnAction(): T
 
   def build(): T = {
@@ -44,6 +50,7 @@ abstract class ServiceInstanceBuilder[T <: GetEngineConnAction] private[action] 
     getEngineConnAction.setUser(user)
     getEngineConnAction.addRequestPayload("applicationName", applicationName)
     getEngineConnAction.addRequestPayload("instance", instance)
+    getEngineConnAction.addRequestPayload("ticketId", ticketId)
     getEngineConnAction
   }
 

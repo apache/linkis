@@ -40,11 +40,6 @@ public class RouteLabel extends InheritableLabel<String> implements UserModifiab
   }
 
   @Override
-  public Boolean getModifiable() {
-    return modifiable;
-  }
-
-  @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {

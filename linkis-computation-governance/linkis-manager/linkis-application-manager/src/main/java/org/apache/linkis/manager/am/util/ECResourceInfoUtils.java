@@ -60,7 +60,7 @@ public class ECResourceInfoUtils {
           Map<String, Object> divermap = MapUtils.getMap(map, "driver");
           resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
           resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
-          String memoryStr = String.valueOf(map.get("memory"));
+          String memoryStr = String.valueOf(map.getOrDefault("memory", "0k"));
           long memorylong = 0;
           if (!getScientific(memoryStr)) {
             memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
@@ -72,7 +72,8 @@ public class ECResourceInfoUtils {
           return null; // Compatible with old data
         }
       }
-      String memoryStr = String.valueOf(map.get("memory"));
+
+      String memoryStr = String.valueOf(map.getOrDefault("memory", "0k"));
       long memorylong = 0;
       if (!getScientific(memoryStr)) {
         memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);

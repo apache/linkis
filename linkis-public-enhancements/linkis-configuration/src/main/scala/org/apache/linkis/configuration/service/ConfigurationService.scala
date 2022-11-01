@@ -17,6 +17,8 @@
 
 package org.apache.linkis.configuration.service
 
+import com.google.common.collect.Lists
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.configuration.conf.Configuration
 import org.apache.linkis.configuration.dao.{ConfigMapper, LabelMapper}
@@ -24,26 +26,19 @@ import org.apache.linkis.configuration.entity._
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.configuration.util.{LabelEntityParser, LabelParameterParser}
 import org.apache.linkis.configuration.validate.ValidatorManager
-import org.apache.linkis.governance.common.protocol.conf.{
-  RemoveCacheConfRequest,
-  ResponseQueryConfig
-}
+import org.apache.linkis.governance.common.protocol.conf.{RemoveCacheConfRequest, ResponseQueryConfig}
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label}
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+import org.apache.linkis.manager.label.entity.{CombinedLabel, CombinedLabelImpl, Label}
 import org.apache.linkis.manager.label.utils.{EngineTypeLabelCreator, LabelUtils}
 import org.apache.linkis.rpc.Sender
-
-import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 
 import java.util
-
 import scala.collection.JavaConverters._
 
 @Service
@@ -382,6 +377,15 @@ class ConfigurationService extends Logging {
       useDefaultConfig: Boolean = true
   ): util.ArrayList[ConfigTree] = {
     val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    buildTreeResult(configs, defaultEngineConfigs)
+  }
+
+  def getConfigurationTemplateByLabelList(
+                              labelList: java.util.List[Label[_]],
+                              useDefaultConfig: Boolean = true
+                            ): util.ArrayList[ConfigTree] = {
+    var (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    configs = Lists.newArrayList()
     buildTreeResult(configs, defaultEngineConfigs)
   }
 

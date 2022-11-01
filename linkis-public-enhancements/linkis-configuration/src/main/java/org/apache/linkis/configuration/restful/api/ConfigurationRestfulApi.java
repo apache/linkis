@@ -17,6 +17,14 @@
 
 package org.apache.linkis.configuration.restful.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -32,24 +40,12 @@ import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
-
-import org.apache.commons.lang3.StringUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,6 +124,32 @@ public class ConfigurationRestfulApi {
                         username, creator, engineType, version);
         ArrayList<ConfigTree> configTrees =
                 configurationService.getFullTreeByLabelList(labelList, true);
+        return Message.ok().data("fullTree", configTrees);
+    }
+
+    @ApiOperation(value = "getConfigurationTemplateByAppName", notes = "get configuration template by app name", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
+            @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+            @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
+    })
+    @RequestMapping(path = "/getConfigurationTemplateByAppName", method = RequestMethod.GET)
+    public Message getConfigurationTemplateByAppName(
+            HttpServletRequest req,
+            @RequestParam(value = "engineType", required = false) String engineType,
+            @RequestParam(value = "version", required = false) String version,
+            @RequestParam(value = "creator", required = false) String creator)
+            throws ConfigurationException {
+        String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
+        if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
+            engineType = "*";
+            version = "*";
+            creator = "*";
+        }
+        List labelList = LabelEntityParser.generateUserCreatorEngineTypeLabelList(
+                username, creator, engineType, version);
+        ArrayList<ConfigTree> configTrees =
+                configurationService.getConfigurationTemplateByLabelList(labelList, true);
         return Message.ok().data("fullTree", configTrees);
     }
 

@@ -28,7 +28,7 @@
           v-model="queryData.user"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputUser')"
-          @on-enter="getTableData"
+          @on-enter="search"
         ></Input>
       </Col>
       <Col span="6" class="search-item">
@@ -37,7 +37,7 @@
           v-model="queryData.creator"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputApp')"
-          @on-enter="getTableData"
+          @on-enter="search"
         ></Input>
       </Col>
       <Col span="6" class="search-item">
@@ -46,11 +46,11 @@
           v-model="queryData.tenantValue"
           class="input"
           :placeholder="$t('message.linkis.tenantTagManagement.inputTenant')"
-          @on-enter="getTableData"
+          @on-enter="search"
         ></Input>
       </Col>
       <Col span="6">
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="getTableData(true)">{{
+        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="search">{{
           $t('message.linkis.tenantTagManagement.search')
         }}</Button>
         <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
@@ -125,6 +125,11 @@ export default {
     return {
       loading: false,
       queryData: {
+        user: '',
+        creator: '',
+        tenantValue: '',
+      },
+      confirmQuery: {
         user: '',
         creator: '',
         tenantValue: '',
@@ -248,18 +253,17 @@ export default {
     }
   },
   methods: {
-    async getTableData(isSearch = false) {
+    async getTableData() {
       try {
         this.tableLoading = true;
         let params = {};
-        if (isSearch){
-          const keys = Object.keys(this.queryData);
-          for (let i = 0; i< keys.length; i++) {
-            if(this.queryData[keys[i]]) {
-              params[[keys[i]]] = this.queryData[keys[i]];
-            }
+        const keys = Object.keys(this.confirmQuery);
+        for (let i = 0; i< keys.length; i++) {
+          if(this.confirmQuery[keys[i]]) {
+            params[[keys[i]]] = this.confirmQuery[keys[i]];
           }
         }
+        
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
         await api.fetch("/configuration/tenant-mapping/query-tenant-list", params, "get")
@@ -288,7 +292,13 @@ export default {
         user: '',
         creator: '',
         tenantValue: '',
+      };
+      this.confirmQuery = {
+        user: '',
+        creator: ''
       }
+      this.page.pageNow = 1;
+      await this.getTableData()
     },
     async createTenant () {
       this.showCreateModal = true;
@@ -407,6 +417,12 @@ export default {
     async changePage(val) {
       this.page.pageNow = val;
       await this.getTableData();
+    },
+    async search() {
+      const { user, creator, tenantValue } = this.queryData;
+      this.confirmQuery = { user, creator, tenantValue };
+      this.page.pageNow = 1;
+      await this.getTableData()
     }
   },
   created() {

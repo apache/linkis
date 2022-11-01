@@ -28,7 +28,7 @@
           v-model="queryData.user"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputUser')"
-          @on-enter="getTableData"
+          @on-enter="search"
         ></Input>
       </Col>
       <Col span="6" class="search-item">
@@ -37,11 +37,11 @@
           v-model="queryData.creator"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputApp')"
-          @on-enter="getTableData"
+          @on-enter="search"
         ></Input>
       </Col>
       <Col span="9">
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="getTableData(true)">{{
+        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="search">{{
           $t('message.linkis.ipListManagement.search')
         }}</Button>
         <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
@@ -118,6 +118,10 @@ export default {
       queryData: {
         user: '',
         creator: ''
+      },
+      confirmQuery: {
+        user: '',
+        creator: '',
       },
       tableColumns: [
         {
@@ -237,16 +241,14 @@ export default {
     }
   },
   methods: {
-    async getTableData(isSearch = false) {
+    async getTableData() {
       try {
         this.tableLoading = true;
         let params = {};
-        if (isSearch){
-          const keys = Object.keys(this.queryData);
-          for (let i = 0; i< keys.length; i++) {
-            if(this.queryData[keys[i]]) {
-              params[[keys[i]]] = this.queryData[keys[i]];
-            }
+        const keys = Object.keys(this.confirmQuery);
+        for (let i = 0; i< keys.length; i++) {
+          if(this.confirmQuery[keys[i]]) {
+            params[[keys[i]]] = this.confirmQuery[keys[i]];
           }
         }
         params.pageNow = this.page.pageNow;
@@ -258,7 +260,7 @@ export default {
               item.createTime = new Date(item.createTime).toLocaleString();
               return item;
             })
-            this.page.totalPage = res.totalPage
+            this.page.totalPage = res.totalPage;
           })
         this.tableLoading = false;
       } catch(err) {
@@ -276,7 +278,13 @@ export default {
       this.queryData = {
         user: '',
         creator: ''
+      };
+      this.confirmQuery = {
+        user: '',
+        creator: ''
       }
+      this.page.pageNow = 1;
+      await this.getTableData()
     },
     async createTenant () {
       this.showCreateModal = true;
@@ -406,6 +414,12 @@ export default {
     async changePage(val) {
       this.page.pageNow = val;
       await this.getTableData();
+    },
+    async search() {
+      const { user, creator } = this.queryData;
+      this.confirmQuery = { user, creator };
+      this.page.pageNow = 1;
+      await this.getTableData()
     }
   },
   created() {

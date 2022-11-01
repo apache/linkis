@@ -26,8 +26,6 @@
 
   <artifactId>linkis-engineplugin-seatunnel</artifactId>
   <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
     <seatunnel.version>2.1.2</seatunnel.version>
   </properties>
 

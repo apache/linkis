@@ -157,16 +157,10 @@ public class LabelUtils {
       // Enum
       mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
       mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-      //
-      // mapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(),
-      // true);
       // Empty beans allowed
       mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
       // Ignore unknown properties
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-      // Cancel to scape no ascii
-      //            mapper.configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(),
-      // false);
     }
 
     /**
@@ -340,9 +334,6 @@ public class LabelUtils {
       if (!labelMap.containsKey(label.getLabelKey())) {
         labelMap.put(label.getLabelKey(), label.getStringValue());
       }
-      /*else {
-          throw new LabelRuntimeException(LabelConstant.LABEL_UTIL_CONVERT_ERROR_CODE, "Got more than one " + label.getLabelKey() + " label, some will be dropped, use labelsToPairList instead.");
-      }*/
     }
     return labelMap;
   }
@@ -354,7 +345,7 @@ public class LabelUtils {
     List<ImmutablePair<String, String>> rsList = new ArrayList<>(labelList.size());
     for (Label<?> label : labelList) {
       if (null != label) {
-        rsList.add(new ImmutablePair<String, String>(label.getLabelKey(), label.getStringValue()));
+        rsList.add(new ImmutablePair<>(label.getLabelKey(), label.getStringValue()));
       } else {
         logger.warn("LabelList contans empty label.");
       }

@@ -55,11 +55,6 @@ public class TenantLabel extends GenericLabel
   }
 
   @Override
-  public Boolean getModifiable() {
-    return true;
-  }
-
-  @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {

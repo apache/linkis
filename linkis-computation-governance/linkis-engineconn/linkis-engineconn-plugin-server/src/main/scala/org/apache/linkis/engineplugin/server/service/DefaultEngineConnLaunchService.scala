@@ -74,7 +74,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
           )
           throw new EngineConnPluginErrorException(
             FAILED_CREATE_ELR.getErrorCode,
-            FAILED_CREATE_ELR.getErrorDesc + s", ${ExceptionUtils.getRootCauseMessage(t)}"
+            s"${FAILED_CREATE_ELR.getErrorDesc}, ${ExceptionUtils.getRootCauseMessage(t)}"
           )
       }
     } else {

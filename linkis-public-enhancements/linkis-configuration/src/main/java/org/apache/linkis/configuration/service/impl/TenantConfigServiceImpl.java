@@ -160,7 +160,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
               .forEach(
                   map -> {
                     String tenant = map.get("tenant").toString();
-                    if (tenant.equals(tenantVo.getTenantValue())) {
+                    if (tenant.toLowerCase().equals(tenantVo.getTenantValue())) {
                       tenantResult.set(true);
                     }
                   });

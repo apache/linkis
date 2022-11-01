@@ -112,6 +112,14 @@ public interface DataSourceInfoService {
   PageInfo<DataSource> queryDataSourceInfoPage(DataSourceVo dataSourceVo);
 
   /**
+   * Find by id list
+   *
+   * @param ids
+   * @return
+   */
+  List<DataSource> queryDataSourceInfo(List ids);
+
+  /**
    * Save data source environment
    *
    * @param dataSourceEnv data source environment

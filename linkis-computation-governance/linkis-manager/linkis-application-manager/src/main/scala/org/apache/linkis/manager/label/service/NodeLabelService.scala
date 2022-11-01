@@ -58,7 +58,7 @@ trait NodeLabelService {
    */
   def removeLabelsFromNode(instance: ServiceInstance, labels: util.List[Label[_]]): Unit
 
-  def removeLabelsFromNode(instance: ServiceInstance): Unit
+  def removeLabelsFromNode(instance: ServiceInstance, isEngine: Boolean): Unit
 
   /**
    * Get node instances by labels

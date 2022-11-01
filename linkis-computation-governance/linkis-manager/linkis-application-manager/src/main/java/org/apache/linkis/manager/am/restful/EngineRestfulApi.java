@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
@@ -125,6 +126,12 @@ public class EngineRestfulApi {
         EngineNode engineNode;
         try {
             engineNode = engineCreateService.createEngine(engineCreateRequest, sender);
+        } catch (LinkisRetryException e) {
+            logger.error("User {} create engineConn failed get retry  exception. can be Retry", userName, e);
+            return Message.error(
+                    String.format(
+                            "Create engineConn failed, caused by %s.",
+                            ExceptionUtils.getRootCauseMessage(e))).data("canRetry", true);
         } catch (Exception e) {
             logger.error(String.format("User %s create engineConn failed.", userName), e);
             return Message.error(
@@ -155,9 +162,25 @@ public class EngineRestfulApi {
             throws AMErrorException {
         String userName = ModuleUserUtils.getOperationUser(req, "getEngineConn");
         ServiceInstance serviceInstance = getServiceInstance(jsonNode);
-        EngineNode engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
+        JsonNode ticketIdNode = jsonNode.get("ticketId");
+        EngineNode engineNode = null;
+        try {
+            engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
+        } catch (Exception e) {
+            logger.info("Instances {} is not exists", serviceInstance.getInstance());
+        }
         if (null == engineNode) {
-            ECResourceInfoRecord ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
+            ECResourceInfoRecord ecInfo = null;
+            if (null != ticketIdNode) {
+                try{
+                    ecInfo = ecResourceInfoService.getECResourceInfoRecord(ticketIdNode.asText());
+                } catch (Exception e) {
+                    logger.info("TicketId  {} is not exists", ticketIdNode.asText());
+                }
+            }
+            if (null == ecInfo) {
+                ecInfo = ecResourceInfoService.getECResourceInfoRecordByInstance(serviceInstance.getInstance());
+            }
             if (null == ecInfo) {
                 return Message.error("Instance does not exist " + serviceInstance);
             }

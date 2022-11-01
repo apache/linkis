@@ -25,7 +25,7 @@ import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
+import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 
 import org.apache.commons.io.FileUtils;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HiveMetaService extends AbstractMetaService<HiveConnection> {
+public class HiveMetaService extends AbstractDbMetaService<HiveConnection> {
 
   private static final Logger LOG = LoggerFactory.getLogger(HiveMetaService.class);
   private static final CommonVars<String> TMP_FILE_STORE_LOCATION =

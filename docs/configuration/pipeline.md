@@ -1,7 +1,8 @@
-## pipeline  配置
+## pipeline  configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 |
-| -------- | -------- | ----- |----- |
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |
+| -------- | -------- | ----- |----- | 
 |pipeline| pipeline.output.isoverwtite | true  | isoverwtite |
 |pipeline|pipeline.output.charset|UTF-8|charset|
 |pipeline|pipeline.field.split| , |split|

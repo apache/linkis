@@ -24,6 +24,8 @@ import org.apache.linkis.storage.exception.StorageFatalException
 import org.apache.linkis.storage.factory.BuildFactory
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
+import java.text.MessageFormat
+
 object FSFactory extends Logging {
 
   private val buildClasses: Map[String, BuildFactory] = StorageUtils.loadClass[BuildFactory](
@@ -35,7 +37,7 @@ object FSFactory extends Logging {
     if (!buildClasses.contains(fsName)) {
       throw new StorageFatalException(
         UNSUPPORTED_FILE.getErrorCode,
-        s"Unsupported file system type(不支持的文件系统类型)：$fsName"
+        MessageFormat.format(UNSUPPORTED_FILE.getErrorDesc, fsName)
       )
     }
     buildClasses(fsName)

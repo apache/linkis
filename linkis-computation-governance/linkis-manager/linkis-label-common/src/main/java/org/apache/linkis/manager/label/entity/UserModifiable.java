@@ -21,9 +21,9 @@ import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 public interface UserModifiable {
 
-  Boolean modifiable = true;
-
-  Boolean getModifiable();
+  default Boolean getModifiable() {
+    return true;
+  }
 
   void valueCheck(String stringValue) throws LabelErrorException;
 }

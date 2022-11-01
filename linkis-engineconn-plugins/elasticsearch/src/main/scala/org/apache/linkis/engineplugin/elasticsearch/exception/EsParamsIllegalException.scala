@@ -18,5 +18,7 @@
 package org.apache.linkis.engineplugin.elasticsearch.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.CLUSTER_IS_BLANK
 
-case class EsParamsIllegalException(errorMsg: String) extends ErrorException(70112, errorMsg)
+case class EsParamsIllegalException(errorMsg: String)
+    extends ErrorException(CLUSTER_IS_BLANK.getErrorCode, errorMsg)

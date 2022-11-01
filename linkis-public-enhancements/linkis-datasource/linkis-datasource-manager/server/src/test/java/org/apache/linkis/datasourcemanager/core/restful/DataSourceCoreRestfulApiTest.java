@@ -39,6 +39,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -567,5 +568,29 @@ class DataSourceCoreRestfulApiTest {
     assertTrue(
         MessageStatus.SUCCESS() == res.getStatus()
             && "10".equals(res.getData().get("totalPage").toString()));
+  }
+
+  @Test
+  void queryDataSourceByIds() throws Exception {
+    long id = 10l;
+    MvcUtils mvcUtils = new MvcUtils(mockMvc);
+    String url = String.format("/data-source-manager/info/ids");
+    StringWriter dsJsonWriter = new StringWriter();
+    JsonUtils.jackson().writeValue(dsJsonWriter, Arrays.asList(id));
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    params.add("ids", dsJsonWriter.toString());
+
+    List<DataSource> dataSourceList = new ArrayList<>();
+    DataSource dataSource = new DataSource();
+    dataSource.setId(id);
+    dataSourceList.add(dataSource);
+    Mockito.when(dataSourceInfoService.queryDataSourceInfo(any())).thenReturn(dataSourceList);
+    Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
+    assertTrue(MessageStatus.SUCCESS() == res.getStatus());
+
+    List<Map<String, Object>> queryList =
+        (List<Map<String, Object>>) res.getData().get("queryList");
+    assertTrue(!CollectionUtils.isEmpty(queryList));
+    assertEquals(10, queryList.get(0).get("id"));
   }
 }

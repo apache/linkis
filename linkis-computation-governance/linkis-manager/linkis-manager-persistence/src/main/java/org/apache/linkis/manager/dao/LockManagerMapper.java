@@ -25,21 +25,12 @@ import java.util.List;
 
 @Mapper
 public interface LockManagerMapper {
-  @Insert(
-      "insert into linkis_cg_manager_lock (lock_object, time_out, update_time, create_time)"
-          + "values(#{jsonObject}, #{timeOut}, now(), now())")
-  void lock(@Param("jsonObject") String jsonObject, @Param("timeOut") Long timeOut);
 
-  @Delete("delete  from linkis_cg_manager_lock where id = #{id}")
-  void unlock(Integer id);
+  void lock(@Param("lockObject") String lockObject, @Param("timeOut") Long timeOut);
 
-  @Select("select * from  linkis_cg_manager_lock where lock_object = #{jsonObject}")
-  List<PersistenceLock> getLockersByLockObject(String jsonObject);
+  void unlock(@Param("id") Integer id);
 
-  @Select("select * from  linkis_cg_manager_lock")
-  @Results({
-    @Result(property = "updateTime", column = "update_time"),
-    @Result(property = "createTime", column = "create_time")
-  })
+  List<PersistenceLock> getLockersByLockObject(@Param("lockObject") String lockObject);
+
   List<PersistenceLock> getAll();
 }

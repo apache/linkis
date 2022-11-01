@@ -23,6 +23,11 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
+import java.text.MessageFormat;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ONLY_RESET_ALL;
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.SUPPORTED_COMMAND_CALL;
+
 public class OperationFactoryImpl implements OperationFactory {
 
   private OperationFactoryImpl() {}
@@ -64,7 +69,7 @@ public class OperationFactoryImpl implements OperationFactory {
         break;
       case RESET:
         if (call.operands.length > 0) {
-          throw new SqlParseException("Only RESET ALL is supported now");
+          throw new SqlParseException(ONLY_RESET_ALL.getErrorDesc());
         }
         operation = new ResetOperation(context);
         break;
@@ -109,7 +114,8 @@ public class OperationFactoryImpl implements OperationFactory {
         operation = new ExplainOperation(context, call.operands[0]);
         break;
       default:
-        throw new SqlParseException("Unsupported command call " + call + ". This is a bug.");
+        throw new SqlParseException(
+            MessageFormat.format(SUPPORTED_COMMAND_CALL.getErrorDesc(), call));
     }
     return operation;
   }

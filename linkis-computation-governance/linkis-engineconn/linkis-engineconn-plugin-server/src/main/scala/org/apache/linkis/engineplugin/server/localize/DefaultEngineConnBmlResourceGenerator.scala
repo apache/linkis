@@ -20,8 +20,10 @@ package org.apache.linkis.engineplugin.server.localize
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
 import java.io.{File, FileInputStream, InputStream}
+import java.text.MessageFormat
 
 class DefaultEngineConnBmlResourceGenerator
     extends AbstractEngineConnBmlResourceGenerator
@@ -68,8 +70,8 @@ class DefaultEngineConnBmlResourceGenerator
         val newFile = new File(path, file.getName + ".zip")
         if (newFile.exists() && !newFile.delete()) {
           throw new EngineConnPluginErrorException(
-            20001,
-            s"System have no permission to delete old engineConn file $newFile."
+            NO_PERMISSION_FILE.getErrorCode,
+            MessageFormat.format(NO_PERMISSION_FILE.getErrorDesc, newFile)
           )
         }
         ZipUtils.fileToZip(file.getPath, path, file.getName + ".zip")

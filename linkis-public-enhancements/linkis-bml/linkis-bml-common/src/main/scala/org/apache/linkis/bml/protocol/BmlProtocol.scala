@@ -25,13 +25,13 @@ trait BmlRequest extends BmlProtocol
 
 abstract class BmlResponse(isSuccess: Boolean) extends BmlProtocol
 
-//case class BmlUploadRequest() extends BmlRequest
+// case class BmlUploadRequest() extends BmlRequest
 //
-//case class BmlDownloadRequest(resourceId:String,
+// case class BmlDownloadRequest(resourceId:String,
 //                              version:String
 //                              ) extends BmlRequest
 //
-//case class BmlUpdateRequest(resourceID:String) extends BmlRequest
+// case class BmlUpdateRequest(resourceID:String) extends BmlRequest
 
 case class BmlUploadResponse(isSuccess: Boolean, resourceId: String, version: String)
     extends BmlResponse(isSuccess)

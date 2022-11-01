@@ -34,6 +34,7 @@
     <sql id="Tenant_Column_List">
         id,user,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
     </sql>
+
     <sql id="Tenant_insert_Column_List">
         `user`,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
     </sql>

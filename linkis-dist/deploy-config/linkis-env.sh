@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -96,6 +96,9 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 #PYTHON_VERSION=python2
 
+## Hadoop env version
+HADOOP_VERSION=2.7.2
+
 ################### The install Configuration of all Micro-Services #####################
 #
 #    NOTICE:
@@ -145,7 +148,10 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 #LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.3.0
+##The extended lib such mysql-connector-java-*.jar
+#LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
+
+LINKIS_VERSION=1.3.1
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

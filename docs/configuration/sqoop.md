@@ -1,6 +1,7 @@
-## sqoop 配置
+## sqoop configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |sqoop|wds.linkis.hadoop.site.xml |core-site.xml;hdfs-site.xml;yarn-site.xml;mapred-site.xml| hadoop.site.xml|
 |sqoop|sqoop.fetch.status.interval|5s |status.interval|
@@ -12,3 +13,5 @@
 |sqoop|sqoop.params.name.data-source| sqoop.args.datasource.name |params.name.data-source|
 |sqoop|sqoop.params.name.prefix| sqoop.args. | params.name.prefix |
 |sqoop|sqoop.params.name.env.prefix| sqoop.env. |params.name.env.prefix|
+ 
+ 

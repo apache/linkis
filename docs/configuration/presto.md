@@ -1,6 +1,7 @@
-## presto 配置
+## presto configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |presto|wds.linkis.engineconn.concurrent.limit|100|engineconn.concurrent.limit|
 |presto|wds.linkis.entrance.max.job.instance|100|entrance.max.job.instance|
@@ -9,7 +10,7 @@
 |presto|wds.linkis.presto.http.connectTimeout|60 |presto.http.connectTimeout|
 |presto|wds.linkis.presto.http.readTimeout| 60|presto.http.readTimeout  |
 |presto|wds.linkis.presto.default.limit|5000| presto.default.limit |
-|presto|wds.linkis.presto.url|  <http://127.0.0.1:8080>   |presto.url|
+|presto|wds.linkis.presto.url|  http://127.0.0.1:8080   |presto.url|
 |presto|wds.linkis.presto.resource.config|  | presto.resource.config |
 |presto|wds.linkis.presto.username|default|presto.username|
 |presto|wds.linkis.presto.password| | presto.password |

@@ -18,20 +18,16 @@
 package org.apache.linkis.cs.errorcode;
 
 public enum LinkisCsServerErrorCodeSummary {
-  UNKNOWN_CONDITION_TYPE(
-      1200001, "Unknown Condition Type(未知条件类型)", "Unknown Condition Type(未知条件类型)");
+  UNKNOWN_CONDITION_TYPE(1200001, "Unknown Condition Type(未知条件类型)");
 
   /** (errorCode)错误码 */
   private int errorCode;
   /** (errorDesc)错误描述 */
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
 
-  LinkisCsServerErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisCsServerErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -48,14 +44,6 @@ public enum LinkisCsServerErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
   @Override

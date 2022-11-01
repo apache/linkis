@@ -29,6 +29,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.scheduler.SchedulerContext
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse
 import org.apache.linkis.scheduler.queue.Group
@@ -148,8 +149,8 @@ class ReadCacheConsumer(
     // index.map(getEventId(_, groupName)).foreach(job.setId)
     if (index.isEmpty) {
       throw new SchedulerErrorException(
-        12001,
-        "The submission job failed and the queue is full!(提交作业失败，队列已满！)"
+        JOB_QUEUE_IS_FULL.getErrorCode,
+        JOB_QUEUE_IS_FULL.getErrorDesc
       )
     }
   }

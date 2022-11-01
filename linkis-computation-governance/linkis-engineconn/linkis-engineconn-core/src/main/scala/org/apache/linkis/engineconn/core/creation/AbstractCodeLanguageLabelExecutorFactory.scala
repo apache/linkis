@@ -26,6 +26,7 @@ import org.apache.linkis.manager.engineplugin.common.exception.{
   EngineConnPluginErrorCode,
   EngineConnPluginErrorException
 }
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
@@ -37,8 +38,8 @@ trait AbstractCodeLanguageLabelExecutorFactory extends CodeLanguageLabelExecutor
     if (null == codeLanguageLabel) {
       logger.error("DefaultEngineRunTypeLabel must not be null!")
       throw new EngineConnPluginErrorException(
-        EngineConnPluginErrorCode.INVALID_RUNTYPE,
-        "DefaultEngineRunTypeLabel cannot be null."
+        DERTL_CANNOT_NULL.getErrorCode,
+        DERTL_CANNOT_NULL.getErrorDesc
       )
     }
     labels.exists {

@@ -19,9 +19,10 @@ package org.apache.linkis.manager.engineplugin.common.loader.exception
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.manager.engineplugin.common.loader.conf.PluginLoaderConstant
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
 class EngineConnPluginNotFoundException(desc: String, t: Throwable)
-    extends ErrorException(PluginLoaderConstant.PLUGIN_NOT_FOUND, desc) {
+    extends ErrorException(PLUGIN_NOT_FOUND.getErrorCode, desc) {
   super.initCause(t)
 
 }

@@ -203,7 +203,7 @@ class ConfigurationService extends Logging {
       if (setting.getId != null) {
         key = configMapper.selectKeyByKeyID(setting.getId)
       } else {
-        val keys = configMapper.seleteKeyByKeyName(setting.getKey)
+        val keys = configMapper.selectKeyByKeyName(setting.getKey)
         if (null != keys && !keys.isEmpty) {
           key = keys.get(0)
         }

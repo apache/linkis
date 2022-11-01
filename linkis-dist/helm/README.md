@@ -1,4 +1,4 @@
-Helm charts for Linkis
+Helm charts for Linkis 
 ==========
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -78,14 +78,14 @@ REVISION: 1
 TEST SUITE: None
 NOTES:
 ---
-Welcome to Apache Linkis (v1.3.0)!
+Welcome to Apache Linkis (v1.3.1)!
 
 .___    .___ .______  .____/\ .___ .________
 |   |   : __|:      \ :   /  \: __||    ___/
 |   |   | : ||       ||.  ___/| : ||___    \
 |   |/\ |   ||   |   ||     \ |   ||       /
 |   /  \|   ||___|   ||      \|   ||__:___/
-|______/|___|    |___||___\  /|___|   : v1.3.0
+|______/|___|    |___||___\  /|___|   : v1.3.1
                            \/
 
 Linkis builds a layer of computation middleware between upper applications and underlying engines.

@@ -20,7 +20,6 @@ package org.apache.linkis.engineplugin.trino.executor
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
-import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -70,7 +69,7 @@ import javax.security.auth.callback.PasswordCallback
 import java.net.URI
 import java.util
 import java.util._
-import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+import java.util.concurrent.{Callable, ConcurrentHashMap, TimeUnit}
 import java.util.function.Supplier
 
 import scala.collection.JavaConverters._
@@ -144,26 +143,6 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     super.init
   }
 
-  override def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
-    val user = getCurrentUser(engineConnTask.getLables)
-    val userCreatorLabel = engineConnTask.getLables.find(_.isInstanceOf[UserCreatorLabel]).get
-    val engineTypeLabel = engineConnTask.getLables.find(_.isInstanceOf[EngineTypeLabel]).get
-    var configMap: util.Map[String, String] = null
-    if (userCreatorLabel != null && engineTypeLabel != null) {
-      configMap = TrinoEngineConfig.getCacheMap(
-        (
-          userCreatorLabel.asInstanceOf[UserCreatorLabel],
-          engineTypeLabel.asInstanceOf[EngineTypeLabel]
-        )
-      )
-    }
-    clientSessionCache.put(
-      engineConnTask.getTaskId,
-      getClientSession(user, engineConnTask.getProperties, configMap)
-    )
-    super.execute(engineConnTask)
-  }
-
   override def executeLine(
       engineExecutorContext: EngineExecutionContext,
       code: String
@@ -180,13 +159,36 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
 
+    val currentUser = getCurrentUser(engineExecutorContext.getLabels)
     val trinoUser = Optional
       .ofNullable(TRINO_DEFAULT_USER.getValue)
       .orElseGet(new Supplier[String] {
-        override def get(): String = getCurrentUser(engineExecutorContext.getLabels)
+        override def get(): String = currentUser
       })
     val taskId = engineExecutorContext.getJobId.get
-    val clientSession = clientSessionCache.getIfPresent(taskId)
+    val clientSession = clientSessionCache.get(
+      taskId,
+      new Callable[ClientSession] {
+        override def call(): ClientSession = {
+          val userCreatorLabel =
+            engineExecutorContext.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get
+          val engineTypeLabel =
+            engineExecutorContext.getLabels.find(_.isInstanceOf[EngineTypeLabel]).get
+          var configMap: util.Map[String, String] = null
+          if (userCreatorLabel != null && engineTypeLabel != null) {
+            configMap = Utils.tryAndError(
+              TrinoEngineConfig.getCacheMap(
+                (
+                  userCreatorLabel.asInstanceOf[UserCreatorLabel],
+                  engineTypeLabel.asInstanceOf[EngineTypeLabel]
+                )
+              )
+            )
+          }
+          getClientSession(currentUser, engineExecutorContext.getProperties, configMap)
+        }
+      }
+    )
     val statement = StatementClientFactory.newStatementClient(
       okHttpClientCache.computeIfAbsent(trinoUser, buildOkHttpClient),
       clientSession,

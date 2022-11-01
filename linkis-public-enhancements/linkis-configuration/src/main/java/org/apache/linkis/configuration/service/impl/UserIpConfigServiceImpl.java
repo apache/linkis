@@ -123,19 +123,19 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
     // Parameter verification
     if (StringUtils.isBlank(userIpVo.getCreator())) {
-      throw new ConfigurationException("creator couldn't be empty ");
+      throw new ConfigurationException("Application Name couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getUser())) {
-      throw new ConfigurationException("user couldn't be empty ");
+      throw new ConfigurationException("User Name couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getBussinessUser())) {
-      throw new ConfigurationException("bussiness_user couldn't be empty ");
+      throw new ConfigurationException("Creat User couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getIpList())) {
-      throw new ConfigurationException("ipList couldn't be empty ");
+      throw new ConfigurationException("Ip List couldn't be empty ");
     }
     if (StringUtils.isBlank(userIpVo.getDesc())) {
-      throw new ConfigurationException("desc couldn't be empty ");
+      throw new ConfigurationException("Description couldn't be empty ");
     }
     // Ip rule verification
     String ipList = userIpVo.getIpList();
@@ -157,13 +157,13 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
     boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
-      throw new ConfigurationException("creator couldn't be empty ");
+      throw new ConfigurationException("Application Name couldn't be empty ");
     }
     if (StringUtils.isBlank(user)) {
-      throw new ConfigurationException("user couldn't be empty ");
+      throw new ConfigurationException("User Name couldn't be empty ");
     }
     if (creator.equals("*")) {
-      throw new ConfigurationException("creator couldn't be '*' ");
+      throw new ConfigurationException("Application Name couldn't be '*' ");
     }
     Map<String, Object> resultMap =
         queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null);

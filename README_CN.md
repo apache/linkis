@@ -106,8 +106,8 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 # 编译和安装部署
 
 > 更详细的步骤参见:
->- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/build)
+>- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/build-console)
 
 
 
@@ -152,7 +152,7 @@ $> LINKIS_IMAGE=linkis:1.3.1
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
+请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/deploy-quick/) 来部署 Linkis
 
 # 示例和使用指引
 

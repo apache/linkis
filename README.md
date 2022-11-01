@@ -110,8 +110,8 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # Compile and Deploy
 
 > For more detailed guidance see:
->- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/linkis-compile-and-package)
->- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/web-build)
+>- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/build)
+>- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/build-console)
 
 ```shell
 
@@ -161,7 +161,7 @@ $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
 
-Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
+Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/deploy-quick/) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)

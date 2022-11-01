@@ -29,18 +29,9 @@ import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
-import org.apache.linkis.manager.label.entity.engine.{
-  EngineInstanceLabel,
-  EngineTypeLabel,
-  UserCreatorLabel
-}
+import org.apache.linkis.manager.label.entity.engine.{EngineInstanceLabel, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.service.NodeLabelService
-import org.apache.linkis.manager.persistence.{
-  LabelManagerPersistence,
-  NodeManagerPersistence,
-  NodeMetricManagerPersistence,
-  ResourceManagerPersistence
-}
+import org.apache.linkis.manager.persistence.{LabelManagerPersistence, NodeManagerPersistence, NodeMetricManagerPersistence, ResourceManagerPersistence}
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.{YarnAppInfo, YarnResourceIdentifier}
@@ -52,22 +43,17 @@ import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.server.{BDPJettyServerHelper, Message}
 import org.apache.linkis.server.security.SecurityFilter
 import org.apache.linkis.server.utils.ModuleUserUtils
-
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
-
 import javax.servlet.http.HttpServletRequest
-
-import java.text.SimpleDateFormat
+import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
 import java.util.{Comparator, TimeZone}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
@@ -277,8 +263,9 @@ class RMMonitorRest extends Logging {
     val searchUsername = if (StringUtils.isEmpty(username)) "" else username
     val searchCreator = if (StringUtils.isEmpty(creator)) "" else creator
     val searchEngineType = if (StringUtils.isEmpty(engineType)) "" else engineType
-    val labelValuePattern =
-      "%" + searchCreator + "%" + "," + "%" + searchUsername + "%" + "," + "%" + searchEngineType + "%" + "," + "%"
+    // label value in db as :{"creator":"nodeexecution","user":"hadoop","engineType":"appconn","version":"1"}
+    val labelValuePattern = MessageFormat.format("%{0}%,%{1}%,%{2}%,%", searchCreator, searchUsername, searchEngineType)
+
     if (COMBINED_USERCREATOR_ENGINETYPE == null) {
       val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
       val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])

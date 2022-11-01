@@ -35,7 +35,6 @@ fi
 source $LINKIS_CONF_DIR/linkis-env.sh
 
 export ENGINE_MANAGER=cg-engineconnmanager
-export ENGINEPLUGIN=cg-engineplugin
 export ENTRANCE=cg-entrance
 export LINKISMANAGER=cg-linkismanager
 export GATEWAY=mg-gateway
@@ -71,13 +70,12 @@ help() {
   echo "    restart [service-name],  restart [service-name] service" 
   echo ""
   echo "SERVICE-NAME"
-  echo "    cg-engineconnmanager    alias 1" 
-  echo "    cg-engineplugin         alias 2" 
-  echo "    cg-entrance             alias 3"
-  echo "    cg-linkismanager        alias 4"
-  echo "    mg-eureka               alias 5"
-  echo "    mg-gateway              alias 6"
-  echo "    ps-publicservice        alias 7"
+  echo "    cg-engineconnmanager    alias 1"
+  echo "    cg-entrance             alias 2"
+  echo "    cg-linkismanager        alias 3"
+  echo "    mg-eureka               alias 4"
+  echo "    mg-gateway              alias 5"
+  echo "    ps-publicservice        alias 6"
   echo "<----------------------------------------------------------->"
   exit 1  
 }  
@@ -103,8 +101,7 @@ fi
 }
 
 status_all(){
-  checkServer cg-engineconnmanager 
-  checkServer cg-engineplugin 
+  checkServer cg-engineconnmanager
   checkServer cg-entrance 
   checkServer cg-linkismanager 
   checkServer mg-gateway  
@@ -139,29 +136,26 @@ restart_all(){
 }
 
 
-#根据输入参数，选择执行对应方法，不输入则执行使用说明  
+#Select an execution method based on the input parameters. If you do not enter this parameter, follow the instructions
 case "$1" in
   "start")
     case "$2" in
       "$ENGINE_MANAGER" | 1)
          start $ENGINE_MANAGER
-         ;; 
-      "$ENGINEPLUGIN" | 2)
-         start $ENGINEPLUGIN
          ;;
-      "$ENTRANCE" | 3)
+      "$ENTRANCE" | 2)
          start $ENTRANCE
          ;; 
-      "$LINKISMANAGER" | 4)
+      "$LINKISMANAGER" | 3)
          start $LINKISMANAGER
          ;; 
-      "$EUREKA" | 5)
+      "$EUREKA" | 4)
          start $EUREKA
          ;; 
-      "$GATEWAY" | 6)
+      "$GATEWAY" | 5)
          start $GATEWAY
          ;; 
-      "$PUBLICSERVICE" | 7)
+      "$PUBLICSERVICE" | 6)
          start $PUBLICSERVICE
          ;; 
       *)
@@ -178,23 +172,20 @@ case "$1" in
     case "$2" in
       "$ENGINE_MANAGER" | 1)
          stop $ENGINE_MANAGER
-         ;; 
-      "$ENGINEPLUGIN" | 2)
-         stop $ENGINEPLUGIN
          ;;
-      "$ENTRANCE" | 3)
+      "$ENTRANCE" | 2)
          stop $ENTRANCE
          ;; 
-      "$LINKISMANAGER" | 4)
+      "$LINKISMANAGER" | 3)
          stop $LINKISMANAGER
          ;; 
-      "$EUREKA" | 5)
+      "$EUREKA" | 4)
          stop $EUREKA
          ;; 
-      "$GATEWAY" | 6)
+      "$GATEWAY" | 5)
          stop $GATEWAY
          ;; 
-      "$PUBLICSERVICE" | 7)
+      "$PUBLICSERVICE" | 6)
          stop $PUBLICSERVICE
          ;; 
       *)
@@ -211,23 +202,20 @@ case "$1" in
     case "$2" in
       "$ENGINE_MANAGER" | 1)
          status $ENGINE_MANAGER
-         ;; 
-      "$ENGINEPLUGIN" | 2)
-         status $ENGINEPLUGIN
          ;;
-      "$ENTRANCE" | 3)
+      "$ENTRANCE" | 2)
          status $ENTRANCE
          ;; 
-      "$LINKISMANAGER" | 4)
+      "$LINKISMANAGER" | 3)
          status $LINKISMANAGER
          ;; 
-      "$EUREKA" | 5)
+      "$EUREKA" | 4)
          status $EUREKA
          ;; 
-      "$GATEWAY" | 6)
+      "$GATEWAY" | 5)
          status $GATEWAY
          ;; 
-      "$PUBLICSERVICE" | 7)
+      "$PUBLICSERVICE" | 6)
          status $PUBLICSERVICE
          ;; 
       *)
@@ -244,23 +232,20 @@ case "$1" in
     case "$2" in
       "$ENGINE_MANAGER" | 1)
          restart $ENGINE_MANAGER
-         ;; 
-      "$ENGINEPLUGIN" | 2)
-         restart $ENGINEPLUGIN
          ;;
-      "$ENTRANCE" | 3)
+      "$ENTRANCE" | 2)
          restart $ENTRANCE
          ;; 
-      "$LINKISMANAGER" | 4)
+      "$LINKISMANAGER" | 3)
          restart $LINKISMANAGER
          ;; 
-      "$EUREKA" | 5)
+      "$EUREKA" | 4)
          restart $EUREKA
          ;; 
-      "$GATEWAY" | 6)
+      "$GATEWAY" | 5)
          restart $GATEWAY
          ;; 
-      "$PUBLICSERVICE" | 7)
+      "$PUBLICSERVICE" | 6)
          restart $PUBLICSERVICE
          ;; 
       *)

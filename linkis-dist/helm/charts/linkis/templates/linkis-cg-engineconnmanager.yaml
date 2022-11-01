@@ -59,7 +59,7 @@ spec:
   publishNotReadyAddresses: true
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "linkis.fullname" . }}-cg-engineconnmanager
   labels:
@@ -71,22 +71,50 @@ metadata:
     {{- toYaml .Values.cgEngineConnManager.annotations | nindent 4 }}
   {{- end }}
 spec:
-  replicas: {{ .Values.cgEngineConnManager.replicas }}
+  serviceName: {{ include "linkis.fullname" . }}-cg-engineconnmanager-headless
   selector:
     matchLabels:
       {{- include "linkis.cgEngineConnManager.selectorLabels" . | nindent 6 }}
       app: {{ include "linkis.fullname" . }}-cg-engineconnmanager
+  replicas: {{ .Values.cgEngineConnManager.replicas }}
+  podManagementPolicy: {{ .Values.cgEngineConnManager.podManagementPolicy }}
+  updateStrategy:
+    type: {{ .Values.cgEngineConnManager.updateStrategy }}
   template:
     metadata:
-      {{- with .Values.cgEngineConnManager.annotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       labels:
         app: {{ include "linkis.fullname" . }}-cg-engineconnmanager
         version: {{ .Chart.AppVersion }}
         {{- include "linkis.cgEngineConnManager.selectorLabels" . | nindent 8 }}
+      {{- with .Values.cgEngineConnManager.annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
+      {{- if .Values.schedulerName }}
+      schedulerName: "{{ .Values.schedulerName }}"
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
+      securityContext:
+{{ toYaml .Values.podSecurityContext | indent 8 }}
+      {{- end }}
+      {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
+      serviceAccountName: "{{ template "linkis.serviceAccountName" . }}"
+      {{- end }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountToken }}
+      terminationGracePeriodSeconds: {{ .Values.mgEureka.terminationGracePeriod }}
+      {{- with .Values.cgEngineConnManager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgEngineConnManager.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.cgEngineConnManager.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       subdomain: {{ include "linkis.fullname" . }}-cg-engineconnmanager-headless
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -98,6 +126,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: common
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
         - name: runtime
           {{- if .Values.linkis.featureGates.localMode }}
           hostPath:
@@ -106,9 +138,24 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
-      serviceAccountName: {{ include "linkis.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.cgEngineConnManager.podSecurityContext | nindent 8 }}
+
+        {{- if eq .Values.linkis.featureGates.localMode false }}
+        - name: hadoop-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hadoop.configMapName }}
+        - name: hive-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.hive.configMapName }}
+        - name: spark-conf
+          projected:
+            sources:
+              - configMap:
+                  name: {{ .Values.linkis.deps.spark.configMapName }}
+        {{- end }}
       containers:
         - name: "engineconnmanager"
           securityContext:
@@ -119,7 +166,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineconnmanager
+              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineconnmanager
           ports:
             - name: "http"
               containerPort: {{ .Values.cgEngineConnManager.port }}
@@ -142,6 +189,14 @@ spec:
             - name: DEBUG_PORT
               value: "5005"
             {{- end }}
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: HADOOP_CONF_DIR
+              value: /etc/hadoop-conf
+            - name: HIVE_CONF_DIR
+              value: /etc/hive-conf
+            - name: SPARK_CONF_DIR
+              value: /etc/spark-conf
+            {{- end }}
             - name: SERVER_HEAP_SIZE
               value: {{ .Values.cgEngineConnManager.jvmHeapSize }}
             - name: EUREKA_URL
@@ -162,23 +217,21 @@ spec:
 {{ toYaml .Values.cgEngineConnManager.envs.froms | indent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if eq .Values.linkis.featureGates.localMode false }}
+            - name: hadoop-conf
+              mountPath: /etc/hadoop-conf
+            - name: hive-conf
+              mountPath: /etc/hive-conf
+            - name: spark-conf
+              mountPath: /etc/spark-conf
+            {{- end }}
             - name: conf
               mountPath: {{ .Values.linkis.locations.confDir }}
             - name: log
               mountPath: {{ .Values.linkis.locations.logDir }}
             - name: runtime
               mountPath: {{ .Values.linkis.locations.runtimeDir }}
+            - name: common
+              mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.cgEngineConnManager.resources | nindent 12 }}
-      {{- with .Values.cgEngineConnManager.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.cgEngineConnManager.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.cgEngineConnManager.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}

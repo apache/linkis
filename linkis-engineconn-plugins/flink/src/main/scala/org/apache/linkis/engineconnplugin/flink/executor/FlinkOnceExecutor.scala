@@ -30,6 +30,7 @@ import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
   FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX,
   FLINK_ONCE_APP_STATUS_FETCH_INTERVAL
 }
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.ExecutorInitException
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
@@ -50,9 +51,7 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
     ClusterDescriptorAdapterFactory.create(flinkEngineConnContext.getExecutionContext) match {
       case adapter: T => clusterDescriptor = adapter
       case _ =>
-        throw new ExecutorInitException(
-          "Not support ClusterDescriptorAdapter for flink application."
-        )
+        throw new ExecutorInitException(NOT_SUPPORT_FLINK.getErrorDesc)
     }
     val options = onceExecutorExecutionContext.getOnceExecutorContent.getJobContent.map {
       case (k, v: String) => k -> v
@@ -62,9 +61,7 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
     doSubmit(onceExecutorExecutionContext, options)
     if (isCompleted) return
     if (null == clusterDescriptor.getClusterID) {
-      throw new ExecutorInitException(
-        "The application start failed, since yarn applicationId is null."
-      )
+      throw new ExecutorInitException(YARN_IS_NULL.getErrorDesc)
     }
     setApplicationId(clusterDescriptor.getClusterID.toString)
     setApplicationURL(clusterDescriptor.getWebInterfaceUrl)

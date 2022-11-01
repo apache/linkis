@@ -47,13 +47,10 @@ public class LocalEngineConnPluginResourceLoader implements EngineConnPluginsRes
         List<URL> urls = EngineConnPluginUtils.getJarsUrlsOfPath(savePath);
         if (urls.size() > 0) {
           LOG.info(
-              "Load local resource of engine conn plugin: [name: "
-                  + typeLabel.getEngineType()
-                  + ", version: "
-                  + typeLabel.getVersion()
-                  + "] uri: ["
-                  + savePath
-                  + "]");
+              "Load local resource of engine conn plugin: [name: {}, version: {}] uri: [{}]",
+              typeLabel.getEngineType(),
+              typeLabel.getVersion(),
+              savePath);
         }
         return new PluginResource(null, null, modifyTime, urls.toArray(new URL[0]));
       }

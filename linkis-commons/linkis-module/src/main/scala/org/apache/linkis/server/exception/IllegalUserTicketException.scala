@@ -18,5 +18,7 @@
 package org.apache.linkis.server.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.ILLEGAL_ID
 
-class IllegalUserTicketException(message: String) extends ErrorException(11003, message)
+class IllegalUserTicketException(message: String)
+    extends ErrorException(ILLEGAL_ID.getErrorCode, message)

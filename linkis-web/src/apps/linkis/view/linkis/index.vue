@@ -184,7 +184,6 @@ export default {
   },
   methods: {
     handleCellClick(index) {
-      console.log("test");
       if (index === '1-8') {
         this.sideNavList.children[6].showSubMenu = !this.sideNavList.children[6].showSubMenu;
         return;

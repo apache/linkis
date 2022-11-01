@@ -91,7 +91,7 @@ class LineBufferedStream(inputStream: InputStream) extends Logging {
     new LinesIterator
   }
 
-  def close = {
+  def close: Unit = {
     //    thread.continue = false
     //    thread.interrupt()
     //    thread.join()
@@ -100,12 +100,12 @@ class LineBufferedStream(inputStream: InputStream) extends Logging {
     IOUtils.closeQuietly(inputStream)
   }
 
-  def waitForClose(atMost: Duration) = {
+  def waitForClose(atMost: Duration): Unit = {
     Utils.tryQuietly(Utils.waitUntil(() => future.isCompleted, atMost))
     close
   }
 
-  def waitForComplete = {
+  def waitForComplete: Unit = {
     Utils.tryQuietly(Await.result(future, Duration.Inf))
     close
   }

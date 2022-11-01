@@ -70,11 +70,6 @@ public class UserCreatorLabel extends GenericLabel implements EngineNodeLabel, U
   }
 
   @Override
-  public Boolean getModifiable() {
-    return modifiable;
-  }
-
-  @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 2) {

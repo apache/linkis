@@ -22,19 +22,16 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
-import org.apache.linkis.metadata.query.service.oracle.SqlConnection;
+import org.apache.linkis.metadata.query.service.mysql.SqlConnection;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
-  private static final Logger LOG = LoggerFactory.getLogger(OracleMetaService.class);
-
+public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
   @Override
   public MetadataConnection<SqlConnection> getConnection(
       String operator, Map<String, Object> params) throws Exception {
@@ -56,21 +53,16 @@ public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
-        extraParams =
-            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+        String paramStr = String.valueOf(sqlParamObj);
+        if (StringUtils.isNotBlank(paramStr)) {
+          extraParams = Json.fromJson(paramStr, Map.class, String.class, Object.class);
+        }
+
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }
     }
     assert extraParams != null;
-    LOG.info("oracle connection params:{}", params.toString());
-    LOG.info(
-        "oracle connection host:{},port:{},username:{},password:{},database:{}",
-        host,
-        port,
-        username,
-        password,
-        database);
     return new MetadataConnection<>(
         new SqlConnection(host, port, username, password, database, extraParams));
   }
@@ -85,9 +77,9 @@ public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
   }
 
   @Override
-  public List<String> queryTables(SqlConnection connection, String schemaname) {
+  public List<String> queryTables(SqlConnection connection, String database) {
     try {
-      return connection.getAllTables(schemaname);
+      return connection.getAllTables(database);
     } catch (SQLException e) {
       throw new RuntimeException("Fail to get Sql tables(获取表列表失败)", e);
     }
@@ -95,9 +87,9 @@ public class OracleMetaService extends AbstractDbMetaService<SqlConnection> {
 
   @Override
   public List<MetaColumnInfo> queryColumns(
-      SqlConnection connection, String schemaname, String table) {
+      SqlConnection connection, String database, String table) {
     try {
-      return connection.getColumns(schemaname, table);
+      return connection.getColumns(database, table);
     } catch (SQLException | ClassNotFoundException e) {
       throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
     }

@@ -37,4 +37,7 @@ public class SqlParamsMapper {
 
   public static final CommonVars<String> PARAM_SQL_EXTRA_PARAMS =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.params", "params");
+
+  public static final CommonVars<String> PARAM_SQL_SERVICE_NAME =
+      CommonVars.apply("wds.linkis.server.mdm.service.sql.service.name", "servicename");
 }

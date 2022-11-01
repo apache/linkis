@@ -39,7 +39,12 @@ public class SqlConnection implements Closeable {
           "wds.linkis.server.mdm.service.oracle.driver", "oracle.jdbc.driver.OracleDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.oracle.url", "jdbc:oracle:thin:@%s:%s:%s");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.oracle.sid.url", "jdbc:oracle:thin:@%s:%s:%s");
+
+  private static final CommonVars<String> SQL_CONNECT_SERVICE_URL =
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.oracle.service.url", "jdbc:oracle:thin:@//%s:%s/%s");
 
   private Connection conn;
 
@@ -51,10 +56,11 @@ public class SqlConnection implements Closeable {
       String username,
       String password,
       String database,
+      String serviceName,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, database);
+    conn = getDBConnection(connectMessage, database, serviceName);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
@@ -206,16 +212,28 @@ public class SqlConnection implements Closeable {
    * @return
    * @throws ClassNotFoundException
    */
-  private Connection getDBConnection(ConnectMessage connectMessage, String database)
+  private Connection getDBConnection(
+      ConnectMessage connectMessage, String database, String serviceName)
       throws ClassNotFoundException, SQLException {
     String extraParamString =
         connectMessage.extraParams.entrySet().stream()
             .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
             .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
-    String url =
-        String.format(
-            SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    String url = "";
+    if (StringUtils.isNotBlank(database)) {
+      url =
+          String.format(
+              SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    } else if (StringUtils.isNotBlank(serviceName)) {
+      url =
+          String.format(
+              SQL_CONNECT_SERVICE_URL.getValue(),
+              connectMessage.host,
+              connectMessage.port,
+              database);
+    }
+
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }

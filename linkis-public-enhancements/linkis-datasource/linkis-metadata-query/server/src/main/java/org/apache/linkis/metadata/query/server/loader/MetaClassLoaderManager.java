@@ -65,7 +65,7 @@ public class MetaClassLoaderManager {
   private static final String META_CLASS_NAME =
       "org.apache.linkis.metadata.query.service.%sMetaService";
 
-  private static final String MYSQL_BASE_DIR = "mysql";
+  private static final String MYSQL_BASE_DIR = "jdbc";
 
   private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 

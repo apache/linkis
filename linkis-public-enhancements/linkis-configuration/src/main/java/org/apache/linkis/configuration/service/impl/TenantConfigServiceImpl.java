@@ -128,19 +128,19 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
     // Parameter verification
     if (StringUtils.isBlank(tenantVo.getCreator())) {
-      throw new ConfigurationException("creator couldn't be empty ");
+      throw new ConfigurationException("Application Name couldn't be empty ");
     }
     if (StringUtils.isBlank(tenantVo.getUser())) {
-      throw new ConfigurationException("user couldn't be empty ");
+      throw new ConfigurationException("User Name couldn't be empty ");
     }
     if (StringUtils.isBlank(tenantVo.getBussinessUser())) {
-      throw new ConfigurationException("bussiness_user couldn't be empty ");
+      throw new ConfigurationException("Creat User couldn't be empty ");
     }
     if (StringUtils.isBlank(tenantVo.getDesc())) {
-      throw new ConfigurationException("desc couldn't be empty ");
+      throw new ConfigurationException("Description couldn't be empty ");
     }
     if (StringUtils.isBlank(tenantVo.getTenantValue())) {
-      throw new ConfigurationException("tenant couldn't be empty ");
+      throw new ConfigurationException("Tenant Tag couldn't be empty ");
     }
     // Obtain the tenant information of the ECM list
     Map<String, Object> resultmap = null;
@@ -181,13 +181,13 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
-      throw new ConfigurationException("creator couldn't be empty ");
+      throw new ConfigurationException("Application Name couldn't be empty ");
     }
     if (StringUtils.isBlank(user)) {
-      throw new ConfigurationException("user couldn't be empty ");
+      throw new ConfigurationException("User Name couldn't be empty ");
     }
     if (creator.equals("*")) {
-      throw new ConfigurationException("creator couldn't be '*' ");
+      throw new ConfigurationException("Application Name couldn't be '*' ");
     }
     Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);

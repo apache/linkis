@@ -108,7 +108,10 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     true
   }
 
-  override def trySucceed(): Boolean = false
+  override def trySucceed(): Boolean = {
+    transition(NodeStatus.Success)
+    true
+  }
 
   def getSucceedNum: Int = succeedTasks.getCount()
 

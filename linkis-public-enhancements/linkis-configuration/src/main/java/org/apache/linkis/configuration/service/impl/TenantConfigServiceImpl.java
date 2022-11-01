@@ -160,7 +160,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
               .forEach(
                   map -> {
                     String tenant = map.get("tenant").toString();
-                    if (tenant.equals(tenantVo.getTenantValue())) {
+                    if (tenant.toLowerCase().equals(tenantVo.getTenantValue())) {
                       tenantResult.set(true);
                     }
                   });
@@ -181,13 +181,13 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     boolean result = true;
     // Parameter verification
     if (StringUtils.isBlank(creator)) {
-      throw new ConfigurationException("creator couldn't be empty ");
+      throw new ConfigurationException("Application Name couldn't be empty ");
     }
     if (StringUtils.isBlank(user)) {
-      throw new ConfigurationException("user couldn't be empty ");
+      throw new ConfigurationException("User Name couldn't be empty ");
     }
     if (creator.equals("*")) {
-      throw new ConfigurationException("creator couldn't be '*' ");
+      throw new ConfigurationException("Application Name couldn't be '*' ");
     }
     Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);

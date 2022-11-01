@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 
 /**
  */
@@ -27,8 +28,10 @@ case class NoSupportEngineException(errCode: Int, desc: String)
 case class NotSupportSparkTypeException(errorCode: Int, desc: String)
     extends ErrorException(errorCode, desc)
 
-case class NotSupportSparkSqlTypeException(desc: String) extends ErrorException(420001, desc)
+case class NotSupportSparkSqlTypeException(desc: String)
+    extends ErrorException(INVALID_CREATE_SPARKSQL.getErrorCode, desc)
 
-case class NotSupportSparkPythonTypeException(desc: String) extends ErrorException(420002, desc)
+case class NotSupportSparkPythonTypeException(desc: String)
+    extends ErrorException(INVALID_CREATE_SPARKPYTHON.getErrorCode, desc)
 
 case class NotSupportSparkScalaTypeException(desc: String) extends ErrorException(420003, desc)

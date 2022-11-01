@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary.BEANUTILS_POPULATE_FAILED;
+
 public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -310,7 +312,8 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
                   Map.Entry::getKey,
                   f -> f.getValue().stream().map(Tunple::getValue).collect(Collectors.toList())));
     } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new PersistenceWarnException(10000, "beanutils populate failed", e);
+      throw new PersistenceWarnException(
+          BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
     }
   }
 
@@ -347,7 +350,8 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
                   Map.Entry::getKey,
                   f -> f.getValue().stream().map(Tunple::getValue).collect(Collectors.toList())));
     } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new PersistenceWarnException(10000, "beanutils populate failed", e);
+      throw new PersistenceWarnException(
+          BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
     }
   }
 

@@ -26,15 +26,8 @@ public enum PrestoErrorCodeSummary {
    * linkis-extensions 26000-29999 linkis-engineconn-plugins
    */
   PRESTO_STATE_INVALID(
-      26001,
-      "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)",
-      "The presto service is abnormal, resulting in the query statement not being completed(presto服务出现异常，导致查询语句未执行完成)",
-      "prestoEngine"),
-  PRESTO_CLIENT_ERROR(
-      26002,
-      "Presto client error(Presto客户端异常)",
-      "Presto client is abnormal for some reason(presto客户端由于某些原因异常)",
-      "prestoEngine");
+      26001, "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)"),
+  PRESTO_CLIENT_ERROR(26002, "Presto client error(Presto客户端异常)");
 
   private int errorCode;
 
@@ -44,12 +37,10 @@ public enum PrestoErrorCodeSummary {
 
   private String module;
 
-  PrestoErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  PrestoErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -66,22 +57,6 @@ public enum PrestoErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
   }
 
   @Override

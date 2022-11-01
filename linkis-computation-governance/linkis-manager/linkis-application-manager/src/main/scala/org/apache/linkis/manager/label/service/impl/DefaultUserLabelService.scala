@@ -22,6 +22,7 @@ import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelConstant
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary._
 import org.apache.linkis.manager.label.exception.LabelErrorException
 import org.apache.linkis.manager.label.service.UserLabelService
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
@@ -81,8 +82,8 @@ class DefaultUserLabelService extends UserLabelService with Logging {
           .containsAll(userRelationLabels.asScala.map(_.getId).asJava)
     ) {
       throw new LabelErrorException(
-        LabelConstant.LABEL_BUILDER_ERROR_CODE,
-        "update label realtion failed"
+        UPDATE_LABEL_FAILED.getErrorCode,
+        UPDATE_LABEL_FAILED.getErrorDesc
       )
     }
   }

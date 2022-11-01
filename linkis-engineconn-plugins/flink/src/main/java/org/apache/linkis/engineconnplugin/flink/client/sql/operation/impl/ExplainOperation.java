@@ -31,6 +31,8 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.types.Row;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
+
 /** Operation for EXPLAIN command. */
 public class ExplainOperation implements NonJobOperation {
   private final ExecutionContext context;
@@ -59,7 +61,7 @@ public class ExplainOperation implements NonJobOperation {
       throw t;
     } catch (Exception t) {
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+      throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }
   }
 
@@ -71,7 +73,7 @@ public class ExplainOperation implements NonJobOperation {
       return context.wrapClassLoader(() -> tableEnv.sqlQuery(selectQuery));
     } catch (Exception t) {
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+      throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }
   }
 }

@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.{
   SparkCreateFileException,
   SparkSessionNullException
@@ -86,7 +87,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     )
     val sparkSession = createSparkSession(outputDir, sparkConf)
     if (sparkSession == null) {
-      throw new SparkSessionNullException(40009, "sparkSession can not be null")
+      throw new SparkSessionNullException(CAN_NOT_NULL.getErrorCode, CAN_NOT_NULL.getErrorDesc)
     }
 
     val sc = sparkSession.sparkContext
@@ -174,7 +175,11 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       output
     }(t => {
       logger.warn("create spark repl classdir failed", t)
-      throw new SparkCreateFileException(80002, s"spark repl classdir create exception", t)
+      throw new SparkCreateFileException(
+        SPARK_CREATE_EXCEPTION.getErrorCode,
+        SPARK_CREATE_EXCEPTION.getErrorDesc,
+        t
+      )
       null
     })
   }

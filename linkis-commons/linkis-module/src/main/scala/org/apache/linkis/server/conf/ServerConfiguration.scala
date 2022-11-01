@@ -19,6 +19,7 @@ package org.apache.linkis.server.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
 import org.apache.linkis.common.utils.{DESUtil, Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary._
 import org.apache.linkis.server.exception.BDPInitServerException
 
 import org.apache.commons.lang3.StringUtils
@@ -41,8 +42,8 @@ object ServerConfiguration extends Logging {
 
   if (StringUtils.isBlank(BDP_SERVER_VERSION)) {
     throw new BDPInitServerException(
-      10010,
-      "DataWorkCloud service must set the version, please add property [[wds.linkis.server.version]] to properties file."
+      DATAWORKCLOUD_MUST_VERSION.getErrorCode,
+      DATAWORKCLOUD_MUST_VERSION.getErrorDesc
     )
   }
 
@@ -84,7 +85,7 @@ object ServerConfiguration extends Logging {
     CommonVars("wds.linkis.server.distinct.mode", lang.Boolean.TRUE)
 
   if (!BDP_SERVER_DISTINCT_MODE.getValue && StringUtils.isEmpty(BDP_SERVER_HOME.getValue)) {
-    throw new BDPInitServerException(11000, "wds.linkis.server.home或BDP_SERVER_HOME haven't set!")
+    throw new BDPInitServerException(HAVE_NOT_SET.getErrorCode, HAVE_NOT_SET.getErrorDesc)
   }
 
   val BDP_SERVER_SOCKET_MODE: CommonVars[lang.Boolean] =

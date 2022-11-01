@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -186,6 +186,11 @@ echo "======= Step 4: Create linkis table =========="
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
+
+if [ "$HADOOP_VERSION" != "" ]
+then
+  sed -i ${txt}  "s#@HADOOP_VERSION#$HADOOP_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
 if [ "$YARN_AUTH_ENABLE" != "" ]

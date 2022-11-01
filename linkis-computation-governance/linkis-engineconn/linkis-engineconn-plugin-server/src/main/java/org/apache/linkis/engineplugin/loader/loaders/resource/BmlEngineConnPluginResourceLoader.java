@@ -84,35 +84,28 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
             versions.stream().map(Version::version).max(Comparator.naturalOrder()).orElse(null);
         if (null == maxVersion) {
           LOG.trace(
-              "Unable to find the versions of resourceId:["
-                  + resourceId
-                  + "] for engine conn plugin:[name: "
-                  + typeLabel.getEngineType()
-                  + ", version: "
-                  + typeLabel.getVersion()
-                  + "] in BML");
+              "Unable to find the versions of resourceId:[{}"
+                  + "] for engine conn plugin:[name: {}, version: {}] in BML",
+              resourceId,
+              typeLabel.getEngineType(),
+              typeLabel.getVersion());
           return null;
         }
         // Has the same version
         if (maxVersion.equals(resourceVersion)) {
           LOG.trace(
-              "The version:["
-                  + versions
-                  + "] of resourceId:["
-                  + resourceId
-                  + "] for engine conn plugin:[name: "
-                  + typeLabel.getEngineType()
-                  + ", version: "
-                  + typeLabel.getVersion()
-                  + "] must be latest");
+              "The version:[{}] of resourceId:[{}] for engine conn plugin:[name: {}, version: {}"
+                  + "] must be latest",
+              versions,
+              resourceId,
+              typeLabel.getEngineType(),
+              typeLabel.getVersion());
           return null;
         }
         LOG.trace(
-            "Start to download resource of engine conn plugin:[name: "
-                + typeLabel.getEngineType()
-                + ", version: "
-                + typeLabel.getVersion()
-                + "]");
+            "Start to download resource of engine conn plugin:[name: {}, version: {}]",
+            typeLabel.getEngineType(),
+            typeLabel.getVersion());
         // Try to download
         downloadResource(typeLabel, resourceId, maxVersion, savePath);
         // Bml doesn't need to provide urls
@@ -171,11 +164,10 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
               null);
         } else {
           LOG.info(
-              "Success to download resource of plugin:[name: "
-                  + typeLabel.getEngineType()
-                  + ", version: "
-                  + typeLabel.getVersion()
-                  + "], start to load temp resource directory");
+              "Success to download resource of plugin:[name: {}, version: {}"
+                  + "], start to load temp resource directory",
+              typeLabel.getEngineType(),
+              typeLabel.getVersion());
           // Load tmp directory
           loadTempResourceFile(tmpFile, savePos);
         }
@@ -203,7 +195,7 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
   private void loadTempResourceFile(File tempFile, File saveDir)
       throws EngineConnPluginLoadResourceException {
     if (saveDir.exists()) {
-      LOG.info("Clean out-of-date files in saving directory:[" + saveDir.getAbsolutePath() + "]");
+      LOG.info("Clean out-of-date files in saving directory:[{}]", saveDir.getAbsolutePath());
       try {
         FileUtils.cleanDirectory(saveDir);
       } catch (IOException e) {
@@ -220,7 +212,7 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
     }
     // TODO has a problem, we don't know the source file name or suffix name of tmp file
     // downloaded from BML
-    LOG.info("Move tempFile:[" + tempFile.getPath() + "] to saveDir:[" + saveDir.getPath() + "]");
+    LOG.info("Move tempFile:[{}] to saveDir:[{}]", tempFile.getPath(), saveDir.getPath());
     try {
       FileUtils.moveDirectory(tempFile, saveDir);
     } catch (IOException e) {

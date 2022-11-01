@@ -20,38 +20,31 @@ package org.apache.linkis.httpclient.errorcode;
 public enum LinkisHttpclientErrorCodeSummary {
   CONNECT_TO_SERVERURL(
           10901,
-          "connect to serverUrl failed! Reason: gateway server is unhealthy!(连接到 serverUrl 失败！ 原因：网关服务器请求失败！)",
-          "connect to serverUrl failed! Reason: gateway server is unhealthy!(连接到 serverUrl 失败！ 原因：网关服务器请求失败！)"),
+          "connect to serverUrl:{0} failed! because gateway server is unhealthy(连接到 serverUrl {0} 失败，因为网关服务器请求失败)!"),
   REQUEST_FAILED_HTTP(
           10905,
-          "URL request failed!(URL 请求失败)",
           "URL request failed!(URL 请求失败)"),
   RETRY_EXCEPTION(
           10900,
-          "",
           ""),
   MESSAGE_PARSE_EXCEPTION(
           10900,
-          "Discovery is not enable(未启用发现！)",
-          "Discovery is not enable(未启用发现！)"),
+          "Discovery is not enable(未启用发现)!"),
 
   METHOD_NOT_SUPPORT_EXCEPTION(
           10902,
-          "Not supported client method!(不支持客户端方法！)",
-          "Not supported client method!(不支持客户端方法！)");
+          "Not supported client method(不支持客户端方法)!");
 
 
   /** error code(错误码) */
   private int errorCode;
   /** wrong description(错误描述 )*/
   private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因 )*/
-  private String comment;
 
-  LinkisHttpclientErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+
+  LinkisHttpclientErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
   public int getErrorCode() {
@@ -68,14 +61,6 @@ public enum LinkisHttpclientErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
   }
 
 

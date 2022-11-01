@@ -76,7 +76,6 @@ public class EngineConnPluginClassLoader extends URLClassLoader {
       // First, check if the class has already been loaded
       Class<?> c = findLoadedClass(name);
       if (c == null) {
-        long t0 = System.nanoTime();
         try {
           // invoke findClass in this class
           c = findClass(name);

@@ -18,6 +18,7 @@
 package org.apache.linkis.datasource.client.request
 
 import org.apache.linkis.datasource.client.config.DatasourceClientConfig.DATA_SOURCE_SERVICE_MODULE
+import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
@@ -59,9 +60,9 @@ object GetConnectParamsByDataSourceIdAction {
 
     def build(): GetConnectParamsByDataSourceIdAction = {
       if (dataSourceId == null) {
-        throw new DataSourceClientBuilderException("dataSourceId is needed!")
+        throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
-      if (user == null) throw new DataSourceClientBuilderException("user is needed!")
+      if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val getConnectParamsByDataSourceIdAction = new GetConnectParamsByDataSourceIdAction
       getConnectParamsByDataSourceIdAction.dataSourceId = this.dataSourceId

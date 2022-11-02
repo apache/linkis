@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.common.entity.enumeration;
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum NodeStatus {
 
   /**
@@ -67,33 +69,11 @@ public enum NodeStatus {
   }
 
   public static NodeStatus toNodeStatus(String status) throws IllegalArgumentException {
-    if (null == status || "".equals(status)) {
+    if (StringUtils.isBlank(status)) {
       throw new IllegalArgumentException(
           "Invalid status : " + status + " cannot be matched in NodeStatus");
     }
-    switch (status) {
-      case "Starting":
-        return NodeStatus.Starting;
-      case "ShuttingDown":
-        return NodeStatus.ShuttingDown;
-      case "Failed":
-        return NodeStatus.Failed;
-      case "Success":
-        return NodeStatus.Success;
-      case "Idle":
-        return NodeStatus.Idle;
-      case "Busy":
-        return NodeStatus.Busy;
-      case "Locked":
-        return NodeStatus.Locked;
-      case "Unlock":
-        return NodeStatus.Unlock;
-      case "Running":
-        return NodeStatus.Running;
-      default:
-        throw new IllegalArgumentException(
-            "Invalid status : " + status + " in all values in NodeStatus");
-    }
+    return NodeStatus.valueOf(status);
   }
 
   public static NodeHealthy isEngineNodeHealthy(NodeStatus status) {

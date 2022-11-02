@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.text.MessageFormat
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 import org.json4s.JsonAST.JObject
@@ -60,25 +60,25 @@ abstract class Resource {
 
   def notLess(r: Resource): Boolean
 
-  def +(r: Resource) = add(r)
+  def +(r: Resource): Resource = add(r)
 
-  def -(r: Resource) = minus(r)
+  def -(r: Resource): Resource = minus(r)
 
-  def *(rate: Float) = multiplied(rate)
+  def *(rate: Float): Resource = multiplied(rate)
 
-  def *(rate: Double) = multiplied(rate.toFloat)
+  def *(rate: Double): Resource = multiplied(rate.toFloat)
 
-  def /(rate: Int) = divide(rate)
+  def /(rate: Int): Resource = divide(rate)
 
-  def ==(r: Resource) = equalsTo(r)
+  def ==(r: Resource): Boolean = equalsTo(r)
 
-  def >(r: Resource) = moreThan(r)
+  def >(r: Resource): Boolean = moreThan(r)
 
-  def >=(r: Resource) = notLess(r)
+  def >=(r: Resource): Boolean = notLess(r)
 
-  def <(r: Resource) = ! >=(r)
+  def <(r: Resource): Boolean = ! >=(r)
 
-  def <=(r: Resource) = ! >(r)
+  def <=(r: Resource): Boolean = ! >(r)
 
   def toJson: String
 }
@@ -445,15 +445,17 @@ class DriverAndYarnResource(
     ) {
       logger.debug(s"Not module operate this:$this other:$r")
       false
-    } else
+    } else {
       false
+    }
   }
 
   def isModuleOperate: Boolean = {
-    if (this.yarnResource != null && StringUtils.isNotEmpty(this.yarnResource.queueName))
+    if (this.yarnResource != null && StringUtils.isNotEmpty(this.yarnResource.queueName)) {
       false
-    else
+    } else {
       true
+    }
   }
 
   override def add(r: Resource): DriverAndYarnResource = {
@@ -565,7 +567,7 @@ class DriverAndYarnResource(
 }
 
 class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Resource {
-  def this(resources: Map[String, AnyVal]) = this(JavaConversions.mapAsJavaMap(resources))
+  def this(resources: Map[String, AnyVal]) = this(resources.asJava)
 
   private def specialResourceOperator(
       r: Resource,
@@ -573,15 +575,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   ): SpecialResource = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      new SpecialResource(
-        JavaConversions
-          .mapAsScalaMap(resources)
-          .map { case (k, v) =>
-            val v1 = rs.get(k)
-            k -> op(v, v1)
-          }
-          .toMap
-      )
+      new SpecialResource(resources.asScala.map { case (k, v) =>
+        val v1 = rs.get(k)
+        k -> op(v, v1)
+      }.toMap)
     case _ => new SpecialResource(Map.empty[String, AnyVal])
   }
 
@@ -637,8 +634,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   )
 
   override def multiplied(rate: Float): Resource = new SpecialResource(
-    JavaConversions
-      .mapAsScalaMap(resources)
+    resources.asScala
       .map {
         case (k, i: Int) => k -> (i * rate).toInt
         case (k, d: Double) => k -> d * rate
@@ -672,8 +668,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   )
 
   override def divide(rate: Int): Resource = new SpecialResource(
-    JavaConversions
-      .mapAsScalaMap(resources)
+    resources.asScala
       .map {
         case (k, i: Int) => k -> i / rate
         case (k, d: Double) => k -> d / rate
@@ -692,7 +687,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def moreThan(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i <= rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d <= rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l <= rs.get(k).asInstanceOf[Long]
@@ -716,7 +711,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def caseMore(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      JavaConversions.mapAsScalaMap(resources).exists {
+      resources.asScala.exists {
         case (k, i: Int) => i > rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d > rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l > rs.get(k).asInstanceOf[Long]
@@ -734,7 +729,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def equalsTo(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i != rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d != rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l != rs.get(k).asInstanceOf[Long]
@@ -752,7 +747,7 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def notLess(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i < rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d < rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l < rs.get(k).asInstanceOf[Long]
@@ -852,7 +847,7 @@ object ResourceSerializer
               )
             )
           case s: SpecialResource =>
-            ("resources", Serialization.write(JavaConversions.mapAsScalaMap(s.resources).toMap))
+            ("resources", Serialization.write(s.resources.asScala.toMap))
           case r: Resource =>
             throw new ResourceWarnException(
               NOT_RESOURCE_TYPE.getErrorCode,

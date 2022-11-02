@@ -78,6 +78,16 @@ object EngineUtils extends Logging {
     sparkVersion
   }
 
+  /**
+   * Get the path of the class
+   * @param cls
+   *   class type
+   * @return
+   *   the resource path of cls
+   * @deprecated
+   *   use org.apache.linkis.common.utils.ClassUtils::jarOfClass
+   */
+  @deprecated
   def jarOfClass(cls: Class[_]): Option[String] = {
     val uri = cls.getResource("/" + cls.getName.replace('.', '/') + ".class")
     if (uri != null) {

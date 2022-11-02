@@ -98,7 +98,7 @@ public class EngineTypeLabelCreator {
     EngineTypeLabel label = labelBuilderFactory.createLabel(EngineTypeLabel.class);
     label.setEngineType(type);
     String version = defaultVersion.get(type);
-    if (!StringUtils.isEmpty(version)) {
+    if (StringUtils.isNotBlank(version)) {
       label.setVersion(version);
     } else {
       label.setVersion("*");

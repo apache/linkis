@@ -63,28 +63,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
 
   override def applyMark(markReq: MarkReq): Mark = {
     if (null == markReq) return null
-    val mark = MARK_CACHE_LOCKER.synchronized {
-      val markCache = getMarkCache().asScala.keys
-      val maybeMark = markCache.find(_.getMarkReq.equals(markReq))
-      maybeMark.orNull
-    }
-    if (null == mark) {
-      if (markReq.getLabels.containsKey(LabelKeyConstant.BIND_ENGINE_KEY)) {
-        val bindEngineLabel = MarkReq.getLabelBuilderFactory.createLabel[BindEngineLabel](
-          LabelKeyConstant.BIND_ENGINE_KEY,
-          markReq.getLabels.get(LabelKeyConstant.BIND_ENGINE_KEY)
-        )
-        if (!bindEngineLabel.getIsJobGroupHead) {
-          val msg =
-            s"Cannot find mark related to bindEngineLabel : ${bindEngineLabel.getStringValue}"
-          logger.error(msg)
-          throw new ECMPluginErrorException(ECMPluginConf.ECM_MARK_CACHE_ERROR_CODE, msg)
-        }
-      }
-      createMark(markReq)
-    } else {
-      mark
-    }
+    createMark(markReq)
   }
 
   override def createMark(markReq: MarkReq): Mark = {

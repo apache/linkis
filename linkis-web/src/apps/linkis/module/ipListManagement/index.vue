@@ -208,11 +208,11 @@ export default {
       modalDataRule: {
         user: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_]$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
         ],
         ipList: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
@@ -220,9 +220,12 @@ export default {
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.ipListManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_]$/, message: this.$t('message.linkis.ipListManagement.contentError1'), type: 'string'}
         ],
-        desc: [{required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'}]
+        desc: [
+          {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
+          {type: 'string', max: 100, message: this.$t('message.linkis.ipListManagement.maxLen')}
+        ]
       },
       tagIsExist: true,
       mode: 'create',

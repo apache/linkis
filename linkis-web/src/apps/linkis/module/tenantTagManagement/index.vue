@@ -219,21 +219,24 @@ export default {
       modalDataRule: {
         user: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_]$/, message: this.$t('message.linkis.tenantTagManagement.contentError1'), type: 'string'}
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_\*\-]$/, message: this.$t('message.linkis.tenantTagManagement.contentError2'), type: 'string'}
         ],
         bussinessUser: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /[a-zA-Z\d_\.\*]$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
+          {pattern: /[0-9a-zA-Z_]$/, message: this.$t('message.linkis.tenantTagManagement.contentError1'), type: 'string'}
         ],
-        desc: [{required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'}]
+        desc: [
+          {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
+          {type: 'string', max: 100, message: this.$t('message.linkis.tenantTagManagement.maxLen')}
+        ]
       },
       tagIsExist: true,
       mode: 'create',

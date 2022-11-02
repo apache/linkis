@@ -17,31 +17,7 @@
 
 package org.apache.linkis.udf.api.rpc
 
-import org.apache.linkis.rpc.{Receiver, ReceiverChooser, RPCMessageEvent}
-import org.apache.linkis.udf.service.{UDFService, UDFTreeService}
+import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-
-import javax.annotation.PostConstruct
-
-@Component
-class UdfReceiverChooser extends ReceiverChooser {
-
-  @Autowired
-  private var udfTreeService: UDFTreeService = _
-
-  @Autowired
-  private var udfService: UDFService = _
-
-  private var udfReceiver: Option[UdfReceiver] = None
-
-  @PostConstruct
-  def init(): Unit = udfReceiver = Some(new UdfReceiver(udfTreeService, udfService))
-
-  override def chooseReceiver(event: RPCMessageEvent): Option[Receiver] = event.message match {
-    case _: UdfProtocol => udfReceiver
-    case _ => None
-  }
-
-}
+case class RequestUdfIds(userName: String, udfIds: Array[Long], treeCategory: String)
+  extends RetryableProtocol with CacheableProtocol with UdfProtocol

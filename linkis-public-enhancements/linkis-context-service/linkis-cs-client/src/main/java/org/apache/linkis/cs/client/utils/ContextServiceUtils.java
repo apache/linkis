@@ -185,12 +185,4 @@ public class ContextServiceUtils {
     }
     return null;
   }
-
-  /* public static String[] getContextIDAndNodeName(Map<String, Object> map){
-      String contextIDStr = getContextIDStrByMap(map);
-      if (StringUtils.isBlank(contextIDStr)) {
-          return  null;
-      }
-
-  }*/
 }

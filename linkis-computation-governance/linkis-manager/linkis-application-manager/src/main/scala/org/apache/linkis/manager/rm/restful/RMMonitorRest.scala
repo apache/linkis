@@ -60,7 +60,7 @@ import org.springframework.web.bind.annotation._
 
 import javax.servlet.http.HttpServletRequest
 
-import java.text.SimpleDateFormat
+import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
 import java.util.{Comparator, TimeZone}
 
@@ -277,8 +277,10 @@ class RMMonitorRest extends Logging {
     val searchUsername = if (StringUtils.isEmpty(username)) "" else username
     val searchCreator = if (StringUtils.isEmpty(creator)) "" else creator
     val searchEngineType = if (StringUtils.isEmpty(engineType)) "" else engineType
+    // label value in db as :{"creator":"nodeexecution","user":"hadoop","engineType":"appconn","version":"1"}
     val labelValuePattern =
-      "%" + searchCreator + "%" + "," + "%" + searchUsername + "%" + "," + "%" + searchEngineType + "%" + "," + "%"
+      MessageFormat.format("%{0}%,%{1}%,%{2}%,%", searchCreator, searchUsername, searchEngineType)
+
     if (COMBINED_USERCREATOR_ENGINETYPE == null) {
       val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
       val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])

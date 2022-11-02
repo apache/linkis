@@ -108,9 +108,6 @@ object SparkConfiguration extends Logging {
   val ENGINE_SHUTDOWN_LOGS =
     CommonVars("wds.linkis.spark.engineconn.fatal.log", "error writing class;OutOfMemoryError")
 
-  val PYSPARK_PYTHON3_PATH =
-    CommonVars[String]("pyspark.python3.path", "/appcom/Install/anaconda3/bin/python")
-
   val ENABLE_REPLACE_PACKAGE_NAME =
     CommonVars("wds.linkis.spark.engine.scala.replace_package_header.enable", true)
 

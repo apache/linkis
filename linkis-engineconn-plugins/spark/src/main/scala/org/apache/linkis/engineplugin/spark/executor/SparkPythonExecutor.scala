@@ -145,18 +145,31 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       .toString
       .toLowerCase()
     val sparkPythonVersion =
-      if (
-          StringUtils
-            .isNotBlank(userDefinePythonVersion) && userDefinePythonVersion.equals("python3")
-      ) {
-        SparkConfiguration.PYSPARK_PYTHON3_PATH.getValue
-      } else {
-        userDefinePythonVersion
-      }
-    val pythonExec = CommonVars("PYSPARK_DRIVER_PYTHON", sparkPythonVersion).getValue
+      if (StringUtils.isNotBlank(userDefinePythonVersion)) userDefinePythonVersion else "python"
+    val pySparkDriverPythonFromVersion =
+      if (new File(sparkPythonVersion).exists()) sparkPythonVersion else ""
+
+    // extra pyspark driver Python
+    val pySparkDriverPythonConf = "spark.pyspark.driver.python"
+    val userDefinePySparkDriverPython =
+      sc.getConf.getOption(pySparkDriverPythonConf).getOrElse(pySparkDriverPythonFromVersion)
+    val defaultPySparkDriverPython = CommonVars("PYSPARK_DRIVER_PYTHON", "").getValue
+    // spark.pyspark.driver.python > spark.python.version > PYSPARK_DRIVER_PYTHON
+    val pySparkDriverPython =
+      if (StringUtils.isNotBlank(userDefinePySparkDriverPython)) userDefinePySparkDriverPython
+      else defaultPySparkDriverPython
+    logger.info(s"PYSPARK_DRIVER_PYTHON => $pySparkDriverPython")
+
+    // extra pyspark Python
+    val pySparkPythonConf = "spark.pyspark.python"
+    val userDefinePySparkPython = sc.getConf.getOption(pySparkPythonConf).getOrElse("")
+    val defaultPySparkPython = CommonVars("PYSPARK_PYTHON", "").getValue
+    val pySparkPython =
+      if (StringUtils.isNotBlank(userDefinePySparkPython)) userDefinePySparkPython
+      else defaultPySparkPython
+    logger.info(s"PYSPARK_PYTHON => $pySparkPython")
 
     val pythonScriptPath = CommonVars("python.script.path", "python/mix_pyspark.py").getValue
-
     val port: Int = EngineUtils.findAvailPort
     gatewayServer = gwBuilder.entryPoint(this).javaPort(port).build()
     gatewayServer.start()
@@ -168,6 +181,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     )
     val pythonClasspath = new StringBuilder(pythonPath)
 
+    // extra spark files
     val files = sc.getConf.get("spark.files", "")
     logger.info(s"output spark files ${files}")
     if (StringUtils.isNotEmpty(files)) {
@@ -186,7 +200,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       .filter(_.endsWith(".zip"))
       .foreach(pythonClasspath ++= File.pathSeparator ++= _)
 
-    val cmd = CommandLine.parse(pythonExec)
+    val cmd = CommandLine.parse(pySparkDriverPython)
     cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
     cmd.addArgument(port.toString, false)
     cmd.addArgument(EngineUtils.sparkSubmitVersion().replaceAll("\\.", ""), false)
@@ -195,19 +209,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     cmd.addArgument(pyFiles, false)
 
     val builder = new ProcessBuilder(cmd.toStrings.toSeq.toList.asJava)
-
     val env = builder.environment()
-    if (StringUtils.isBlank(sc.getConf.get("spark.pyspark.python", ""))) {
-      logger.info("spark.pyspark.python is null")
-      if (userDefinePythonVersion.equals("python3")) {
-        logger.info(s"userDefinePythonVersion is $pythonExec will be set to PYSPARK_PYTHON")
-        env.put("PYSPARK_PYTHON", pythonExec)
-      }
-    } else {
-      val executorPython = sc.getConf.get("spark.pyspark.python")
-      logger.info(s"set PYSPARK_PYTHON spark.pyspark.python is $executorPython")
-      env.put("PYSPARK_PYTHON", executorPython)
-    }
+    if (StringUtils.isNotBlank(pySparkPython)) env.put("PYSPARK_PYTHON", pySparkPython)
     env.put("PYTHONPATH", pythonClasspath.toString())
     env.put("PYTHONUNBUFFERED", "YES")
     env.put("PYSPARK_GATEWAY_PORT", "" + port)

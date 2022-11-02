@@ -85,17 +85,6 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../service/tdsql/target/out/lib</directory>
-            <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/tdsql</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-            <excludes>
-                <exclude>*-javadoc.jar</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
             <directory>${basedir}/../service/hdfs/target/out/lib</directory>
             <fileMode>0755</fileMode>
             <outputDirectory>lib/service/hdfs</outputDirectory>

@@ -79,12 +79,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--<dependency>
-            <groupId>org.apache.linkis</groupId>
-            <artifactId>linkis-orchestrator-ecm-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>-->
-
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-computation-orchestrator</artifactId>

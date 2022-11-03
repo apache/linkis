@@ -40,7 +40,7 @@ import scala.collection.JavaConverters._
 class DefaultManagerService extends ManagerService with Logging {
 
   protected def getManagerSender: Sender = {
-    Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+    Sender.getSender(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
   }
 
   protected def getEngineConnManagerSender: Sender = {
@@ -75,10 +75,17 @@ class DefaultManagerService extends ManagerService with Logging {
 
   override def heartbeatReport(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     getManagerSender.send(nodeHeartbeatMsg)
-    logger.info(s"success to send engine heartbeat report to ${Sender
-      .getInstances(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
-      .map(_.getInstance)
-      .mkString(",")},status:${nodeHeartbeatMsg.getStatus},msg:${nodeHeartbeatMsg.getHeartBeatMsg}")
+    logger.info(
+      "success to send engine heartbeat report to {},status: {},msg: {}",
+      Array(
+        Sender
+          .getInstances(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
+          .map(_.getInstance)
+          .mkString(","),
+        nodeHeartbeatMsg.getStatus,
+        nodeHeartbeatMsg.getHeartBeatMsg
+      ): _*
+    )
   }
 
   override def reportUsedResource(resourceUsedProtocol: ResourceUsedProtocol): Unit = {

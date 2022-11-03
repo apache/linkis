@@ -43,10 +43,10 @@ object GovernanceCommonConf {
 
   val ENGINE_CONN_PORT_RANGE = CommonVars("wds.linkis.engineconn.port.range", "-")
 
-  val MANAGER_SPRING_NAME =
+  val MANAGER_SERVICE_NAME =
     CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
 
-  val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.name", "linkis-cg-entrance")
+  val ENTRANCE_SERVICE_NAME = CommonVars("wds.linkis.entrance.name", "linkis-cg-entrance")
 
   val ENGINE_DEFAULT_LIMIT = CommonVars("wds.linkis.engine.default.limit", 5000)
 

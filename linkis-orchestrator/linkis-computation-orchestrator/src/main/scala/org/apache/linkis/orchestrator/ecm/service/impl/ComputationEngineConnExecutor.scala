@@ -47,12 +47,12 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   private def getEngineConnSender: Sender = Sender.getSender(getServiceInstance)
 
   override def close(): Unit = {
-    logger.info(s"Start to release engineConn $getServiceInstance")
+    logger.info("Start to release engineConn {}", getServiceInstance)
     val requestManagerUnlock =
       RequestManagerUnlock(getServiceInstance, locker, Sender.getThisServiceInstance)
     killAll()
     getManagerSender.send(requestManagerUnlock)
-    logger.debug(s"Finished to release engineConn $getServiceInstance")
+    logger.debug("Finished to release engineConn {}", getServiceInstance)
   }
 
   override def useEngineConn: Boolean = {
@@ -72,32 +72,43 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
 
   override def execute(requestTask: RequestTask): ExecuteResponse = {
     logger.debug(
-      s"Start to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance)"
+      "Start to submit task {} to engineConn({})",
+      requestTask.getSourceID(): Any,
+      getServiceInstance: Any
     )
     requestTask.setLabels(ECMPUtils.filterJobStrategyLabel(requestTask.getLabels))
     requestTask.setLock(this.locker)
     getEngineConnSender.ask(requestTask) match {
       case submitResponse: SubmitResponse =>
         logger.info(
-          s"Succeed to submit task${requestTask.getSourceID()} to engineConn($getServiceInstance), Get asyncResponse execID is ${submitResponse}"
+          "Succeed to submit task {} to engineConn({}), Get asyncResponse execID is {}",
+          Array(requestTask.getSourceID(), getServiceInstance, submitResponse): _*
         )
         getRunningTasks.put(submitResponse.taskId, requestTask)
         submitResponse
       case outPutResponse: OutputExecuteResponse =>
         logger.info(
-          s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, and get Res"
+          "engineConn({}) Succeed to execute task {}, and get Res",
+          getServiceInstance: Any,
+          requestTask.getSourceID(): Any
         )
         outPutResponse
       case errorExecuteResponse: ErrorExecuteResponse =>
         logger.error(
-          s"engineConn($getServiceInstance) Failed to execute task${requestTask
-            .getSourceID()} ,error msg ${errorExecuteResponse.message}",
-          errorExecuteResponse.t
+          "engineConn({}) Failed to execute task {} ,error msg {}",
+          Array(
+            getServiceInstance,
+            requestTask.getSourceID(),
+            errorExecuteResponse.message,
+            errorExecuteResponse.t
+          ): _*
         )
         errorExecuteResponse
       case successExecuteResponse: SuccessExecuteResponse =>
         logger.info(
-          s" engineConn($getServiceInstance) Succeed to execute task${requestTask.getSourceID()}, no res"
+          "engineConn({}) Succeed to execute task {}, no res",
+          getServiceInstance: Any,
+          requestTask.getSourceID(): Any
         )
         successExecuteResponse
       case _ =>
@@ -111,15 +122,22 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   override def killTask(execId: String): Boolean = {
     Utils.tryCatch {
       logger.info(
-        s"begin to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId"
+        "begin to send RequestTaskKill to engineConn({}), execID: {}",
+        getServiceInstance: Any,
+        execId: Any
       )
       getEngineConnSender.send(RequestTaskKill(execId))
       logger.info(
-        s"Finished to send RequestTaskKill to engineConn($getServiceInstance), execID: $execId"
+        "Finished to send RequestTaskKill to engineConn({}), execID: {}",
+        getServiceInstance: Any,
+        execId: Any
       )
       true
     } { t: Throwable =>
-      logger.error(s"Failed to kill task $execId engineConn($getServiceInstance)", t)
+      logger.error(
+        "Failed to kill task {} engineConn({})",
+        Array(execId, getServiceInstance, t): _*
+      )
       false
     }
   }
@@ -170,7 +188,7 @@ class ComputationEngineConnExecutor(engineNode: EngineNode) extends AbstractEngi
   }
 
   private def getManagerSender: Sender =
-    Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+    Sender.getSender(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
 
 }
 

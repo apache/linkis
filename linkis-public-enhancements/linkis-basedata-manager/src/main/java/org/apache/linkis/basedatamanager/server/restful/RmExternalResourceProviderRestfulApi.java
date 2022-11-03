@@ -60,7 +60,7 @@ public class RmExternalResourceProviderRestfulApi {
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
         RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
-        return Message.ok("").data("dbs", rmExternalResourceProvider);
+        return Message.ok("").data("item", rmExternalResourceProvider);
     }
 
     @ApiImplicitParams({
@@ -70,7 +70,7 @@ public class RmExternalResourceProviderRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -80,7 +80,7 @@ public class RmExternalResourceProviderRestfulApi {
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(@PathVariable("id") Long id) {
         boolean result = rmExternalResourceProviderService.removeById(id);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -90,7 +90,7 @@ public class RmExternalResourceProviderRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.PUT)
     public Message update(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
 

@@ -20,4 +20,6 @@ package org.apache.linkis.udf.api.rpc
 import org.apache.linkis.protocol.{CacheableProtocol, RetryableProtocol}
 
 case class RequestUdfIds(userName: String, udfIds: Array[Long], treeCategory: String)
-  extends RetryableProtocol with CacheableProtocol with UdfProtocol
+    extends RetryableProtocol
+    with CacheableProtocol
+    with UdfProtocol

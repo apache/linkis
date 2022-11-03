@@ -18,12 +18,7 @@
 package org.apache.linkis.udf
 
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.udf.api.rpc.{
-  RequestUdfIds,
-  RequestUdfTree,
-  ResponseUdfTree,
-  ResponseUdfs
-}
+import org.apache.linkis.udf.api.rpc.{RequestUdfIds, RequestUdfTree, ResponseUdfs, ResponseUdfTree}
 import org.apache.linkis.udf.entity.UDFTree
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.linkis.udf.vo.UDFInfoVo
@@ -57,15 +52,22 @@ object UDFClient {
     udfInfoBuilder
   }
 
-  def getUdfInfosByUdfIds(userName: String, udfIds: Array[Long], category: String, udfType: BigInt): ArrayBuffer[UDFInfoVo] = {
+  def getUdfInfosByUdfIds(
+      userName: String,
+      udfIds: Array[Long],
+      category: String,
+      udfType: BigInt
+  ): ArrayBuffer[UDFInfoVo] = {
     val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
 
-    val udfTree = Sender.getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
+    val udfTree = Sender
+      .getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
       .ask(RequestUdfIds(userName, udfIds, category))
       .asInstanceOf[ResponseUdfs]
 
     if (CollectionUtils.isNotEmpty(udfTree.udfInfos)) {
-      udfTree.udfInfos.filter(infoVo => infoVo.getUdfType == udfType)
+      udfTree.udfInfos
+        .filter(infoVo => infoVo.getUdfType == udfType)
         .foreach(infoVo => udfInfoBuilder.append(infoVo))
     }
     udfInfoBuilder

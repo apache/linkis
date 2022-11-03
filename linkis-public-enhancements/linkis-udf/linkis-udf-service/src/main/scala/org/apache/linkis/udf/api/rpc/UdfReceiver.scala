@@ -21,6 +21,7 @@ import org.apache.linkis.rpc.{Receiver, Sender}
 import org.apache.linkis.udf.service.{UDFService, UDFTreeService}
 
 import java.lang
+
 import scala.concurrent.duration.Duration
 
 class UdfReceiver extends Receiver {

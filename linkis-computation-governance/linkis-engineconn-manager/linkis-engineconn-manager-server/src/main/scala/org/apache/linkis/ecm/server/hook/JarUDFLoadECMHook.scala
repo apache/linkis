@@ -57,7 +57,8 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
         val user = pel.user
         val ticketId = pel.ticketId
 
-        val udfAllLoad = pel.creationDesc.properties.getOrDefault("linkis.user.udf.all.load", "true").toBoolean
+        val udfAllLoad =
+          pel.creationDesc.properties.getOrDefault("linkis.user.udf.all.load", "true").toBoolean
         val udfIdStr = pel.creationDesc.properties.getOrDefault("linkis.user.udf.custom.ids", "")
         val udfIds = udfIdStr.split(",").filter(StringUtils.isNotBlank).map(s => s.toLong)
 
@@ -71,7 +72,9 @@ class JarUDFLoadECMHook extends ECMHook with Logging {
           fs.setPermission(fsPath, "rwxrwxrwx")
         }
 
-        val udfInfos = if (udfAllLoad) UDFClient.getJarUdf(pel.user) else UDFClient.getJarUdfByIds(pel.user, udfIds)
+        val udfInfos =
+          if (udfAllLoad) UDFClient.getJarUdf(pel.user)
+          else UDFClient.getJarUdfByIds(pel.user, udfIds)
         val fileNameSet: mutable.HashSet[String] = new mutable.HashSet[String]()
         import util.control.Breaks._
         udfInfos.foreach { udfInfo =>

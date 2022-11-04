@@ -20,8 +20,8 @@ package org.apache.linkis.orchestrator.ecm.entity
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
 import org.apache.linkis.manager.label.builder.factory.{
-  LabelBuilderFactoryContext,
-  StdLabelBuilderFactory
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
 }
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 /**
  */
@@ -102,10 +102,11 @@ class DefaultMarkReq extends MarkReq with Logging {
       }
       if (other.getLabels != null && getLabels != null) {
         if (null != labelKeySet) {
-          labelKeySet.foreach(key => {
+          labelKeySet.asScala.foreach(key => {
             var found = false
             getLabels
               .keySet()
+              .asScala
               .foreach(k => {
                 if (key.equals(k)) {
                   found = true
@@ -116,7 +117,7 @@ class DefaultMarkReq extends MarkReq with Logging {
             }
           })
         }
-        val iterator = other.getLabels.iterator
+        val iterator = other.getLabels.asScala.iterator
         while (iterator.hasNext) {
           val next = iterator.next()
           if (!getLabels.containsKey(next._1)) {
@@ -209,6 +210,6 @@ object MarkReq {
 
   lazy val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  def getLabelBuilderFactory = labelBuilderFactory
+  def getLabelBuilderFactory: LabelBuilderFactory = labelBuilderFactory
 
 }

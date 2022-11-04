@@ -46,7 +46,7 @@ trait SimpleOnceJob extends OnceJob {
   }
 
   protected def isCompleted(status: String): Boolean = status.toLowerCase(Locale.getDefault) match {
-    case "success" | "failed" =>
+    case "success" | "failed" | "shuttingdown" =>
       finalEngineConnState = status
       getJobListeners.foreach(_.onJobFinished(this))
       true

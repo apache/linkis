@@ -38,7 +38,7 @@ import javax.annotation.{PostConstruct, Resource}
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 @Service
@@ -67,9 +67,9 @@ class DefaultInsLabelRpcService extends InsLabelRpcService with Logging {
     val instance = Option(insLabelAttachRequest.getServiceInstance).getOrElse(
       throw new ErrorException(-1, "field 'serviceInstance' in attachRequest cannot be blank")
     )
-    val labels = getLabels(labelMap).filter(_ != null)
+    val labels = getLabels(labelMap).asScala.filter(_ != null)
     logger.info(s"Start to attach labels[$labels] to instance[$instance]")
-    insLabelService.attachLabelsToInstance(labels, instance)
+    insLabelService.attachLabelsToInstance(labels.asJava, instance)
     logger.info(s"Success to attach labels[$labels] to instance[$instance]")
   }
 

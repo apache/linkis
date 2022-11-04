@@ -148,7 +148,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       }
     } else if (null != retryException) {
       new DefaultFailedTaskResponse(
-        s"ask Engine failed + ${retryException.getMessage}",
+        s"ask Engine failed ${retryException.getMessage}",
         OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
         retryException
       )

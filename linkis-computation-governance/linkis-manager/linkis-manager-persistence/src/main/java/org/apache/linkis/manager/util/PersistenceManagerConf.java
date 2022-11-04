@@ -15,31 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.dao;
+package org.apache.linkis.manager.util;
 
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+import org.apache.linkis.common.conf.CommonVars$;
 
-import org.apache.ibatis.annotations.*;
+public class PersistenceManagerConf {
 
-import org.springframework.transaction.annotation.Transactional;
+  public static final Integer Distributed_lock_request_interval =
+      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 500).getValue();
 
-import java.util.Date;
-import java.util.List;
-
-@Mapper
-public interface LockManagerMapper {
-
-  @Transactional(rollbackFor = Exception.class)
-  int lock(PersistenceLock persistenceLock);
-
-  @Transactional(rollbackFor = Exception.class)
-  void unlock(@Param("id") Integer id);
-
-  Integer getMinimumOrder(@Param("lockObject") String lockObject, @Param("id") Integer id);
-
-  List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);
-
-  List<PersistenceLock> getAll();
-
-  List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
+  public static final Boolean Distributed_lock_request_sync_enabled =
+      CommonVars$.MODULE$
+          .apply("linkis.master.distributed.lock.request.sync.enabled", true)
+          .getValue();
 }

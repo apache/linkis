@@ -15,31 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.dao;
+package org.apache.linkis.manager.rm.exception;
 
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+import org.apache.linkis.common.exception.LinkisRetryException;
 
-import org.apache.ibatis.annotations.*;
+public class RMLockFailedRetryException extends LinkisRetryException {
 
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
-
-@Mapper
-public interface LockManagerMapper {
-
-  @Transactional(rollbackFor = Exception.class)
-  int lock(PersistenceLock persistenceLock);
-
-  @Transactional(rollbackFor = Exception.class)
-  void unlock(@Param("id") Integer id);
-
-  Integer getMinimumOrder(@Param("lockObject") String lockObject, @Param("id") Integer id);
-
-  List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);
-
-  List<PersistenceLock> getAll();
-
-  List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
+  public RMLockFailedRetryException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 }

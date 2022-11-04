@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.persistence;
+package org.apache.linkis.manager.util;
 
-import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
+import org.apache.linkis.common.conf.CommonVars$;
 
-import java.util.Date;
-import java.util.List;
+public class PersistenceManagerConf {
 
-public interface LockManagerPersistence {
-  Boolean lock(PersistenceLock persistenceLock, Long timeOut);
+  public static final Integer Distributed_lock_request_interval =
+      CommonVars$.MODULE$.apply("linkis.master.distributed.lock.request.interval", 500).getValue();
 
-  void unlock(PersistenceLock persistenceLock);
-
-  List<PersistenceLock> getAll();
-
-  List<PersistenceLock> getTimeOutLocks(Date endDate);
+  public static final Boolean Distributed_lock_request_sync_enabled =
+      CommonVars$.MODULE$
+          .apply("linkis.master.distributed.lock.request.sync.enabled", true)
+          .getValue();
 }

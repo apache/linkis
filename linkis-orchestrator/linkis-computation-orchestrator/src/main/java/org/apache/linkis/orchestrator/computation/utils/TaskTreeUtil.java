@@ -27,10 +27,11 @@ public class TaskTreeUtil {
 
   public static <T> List<T> getAllTask(List<Object> list, Class<T> classT)
       throws IllegalArgumentException {
-    List<T> rsList = new ArrayList<T>();
     if (null == classT) {
       throw new IllegalArgumentException("classT cannot be null.");
     }
+
+    List<T> rsList = new ArrayList<T>();
 
     for (Object o : list) {
       if (classT.isInstance(o)) {

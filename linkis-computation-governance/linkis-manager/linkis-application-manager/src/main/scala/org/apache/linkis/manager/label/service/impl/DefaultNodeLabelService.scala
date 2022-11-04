@@ -199,11 +199,15 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
   }
 
   @Transactional(rollbackFor = Array(classOf[Exception]))
-  override def removeLabelsFromNode(instance: ServiceInstance): Unit = {
-    val removeLabels = labelManagerPersistence
+  override def removeLabelsFromNode(instance: ServiceInstance, isEngine: Boolean): Unit = {
+    val labels = labelManagerPersistence
       .getLabelByServiceInstance(instance)
       .asScala
-      .filter(label => !LabelManagerConf.LONG_LIVED_LABEL.contains(label.getLabelKey))
+    val removeLabels = if (isEngine) {
+      labels
+    } else {
+      labels.filter(label => !LabelManagerConf.LONG_LIVED_LABEL.contains(label.getLabelKey))
+    }
     labelManagerPersistence.removeNodeLabels(instance, removeLabels.map(_.getId).asJava)
   }
 

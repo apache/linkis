@@ -17,7 +17,11 @@
 
 package org.apache.linkis.datasourcemanager.core.restful;
 
-import com.google.common.collect.Lists;
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -28,8 +32,7 @@ import org.apache.linkis.datasourcemanager.core.service.DataSourceRelateService;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceEnvVo;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
-
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,13 +42,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-
 import java.util.*;
 
 @Api(tags = "data source admin restful api")
@@ -78,7 +74,7 @@ public class DataSourceAdminRestfulApi {
             throws ErrorException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = SecurityFilter.getLoginUsername(req);
+                    String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnv");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }
@@ -111,7 +107,7 @@ public class DataSourceAdminRestfulApi {
             @RequestParam("system") String system,
             HttpServletRequest req)
             throws ErrorException {
-        String userName = SecurityFilter.getLoginUsername(req);
+        String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnvBatch");
         if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
         }
@@ -147,7 +143,7 @@ public class DataSourceAdminRestfulApi {
                 "Fail to insert data source environment[新增数据源环境失败]");
     }
 
-    @ApiOperation(value = "insertJsonEnvBatch", notes = "update batch json env", response = Message.class)
+    @ApiOperation(value = "updateJsonEnvBatch", notes = "update batch json env", response = Message.class)
     @ApiOperationSupport(ignoreParameters = {"dataSourceEnvList", "system"})
     @RequestMapping(value = "/env/json/batch", method = RequestMethod.PUT)
     public Message updateEnvBatch(
@@ -155,7 +151,7 @@ public class DataSourceAdminRestfulApi {
             @RequestParam("system") String system,
             HttpServletRequest request)
             throws ErrorException {
-        String userName = SecurityFilter.getLoginUsername(request);
+        String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnvBatch");
         if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
         }
@@ -245,7 +241,7 @@ public class DataSourceAdminRestfulApi {
     public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = SecurityFilter.getLoginUsername(request);
+                    String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }
@@ -274,7 +270,7 @@ public class DataSourceAdminRestfulApi {
             throws ErrorException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = SecurityFilter.getLoginUsername(request);
+                    String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv");
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }

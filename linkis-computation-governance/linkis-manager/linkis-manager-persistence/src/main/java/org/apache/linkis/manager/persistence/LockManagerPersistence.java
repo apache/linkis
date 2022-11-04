@@ -19,6 +19,7 @@ package org.apache.linkis.manager.persistence;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 
+import java.util.Date;
 import java.util.List;
 
 public interface LockManagerPersistence {
@@ -27,4 +28,6 @@ public interface LockManagerPersistence {
   void unlock(PersistenceLock persistenceLock);
 
   List<PersistenceLock> getAll();
+
+  List<PersistenceLock> getTimeOutLocks(Date endDate);
 }

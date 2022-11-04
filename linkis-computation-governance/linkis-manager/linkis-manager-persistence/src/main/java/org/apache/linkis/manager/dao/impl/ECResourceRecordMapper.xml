@@ -25,7 +25,7 @@
     </select>
 
     <select id="getECResourceInfoRecordByInstance" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance}
+        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance} ORDER BY id DESC LIMIT 1
     </select>
 
 

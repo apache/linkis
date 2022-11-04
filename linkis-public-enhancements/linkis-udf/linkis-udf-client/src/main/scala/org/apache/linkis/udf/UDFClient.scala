@@ -25,8 +25,7 @@ import org.apache.linkis.udf.vo.UDFInfoVo
 
 import org.apache.commons.collections.CollectionUtils
 
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ArrayBuffer
 
 object UDFClient {
@@ -66,7 +65,7 @@ object UDFClient {
       .asInstanceOf[ResponseUdfs]
 
     if (CollectionUtils.isNotEmpty(udfTree.udfInfos)) {
-      udfTree.udfInfos
+      udfTree.udfInfos.asScala
         .filter(infoVo => infoVo.getUdfType == udfType)
         .foreach(infoVo => udfInfoBuilder.append(infoVo))
     }

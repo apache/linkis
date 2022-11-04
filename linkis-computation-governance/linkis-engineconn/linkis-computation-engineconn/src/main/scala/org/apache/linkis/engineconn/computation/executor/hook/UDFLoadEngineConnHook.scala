@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ArrayBuffer
 
 abstract class UDFLoad extends Logging {
@@ -58,15 +58,11 @@ abstract class UDFLoad extends Logging {
 
   protected def constructCode(udfInfo: UDFInfoVo): String
 
-  protected def generateCode(
-      user: String,
-      udfAllLoad: Boolean,
-      udfIds: Array[Long]
-  ): Array[String] = {
+  protected def generateCode(): Array[String] = {
     val codeBuffer = new ArrayBuffer[String]
     val statementBuffer = new ArrayBuffer[String]
     var accept = true
-    getLoadUdfCode(user, udfAllLoad, udfIds).split("\n").foreach {
+    getLoadUdfCode.split("\n").foreach {
       case "" =>
       case l if l.startsWith("%") =>
         if (acceptCodeType(l)) {
@@ -87,10 +83,19 @@ abstract class UDFLoad extends Logging {
     line.startsWith("%" + runType.toString)
   }
 
-  protected def getLoadUdfCode(user: String, udfAllLoad: Boolean, udfIds: Array[Long]): String = {
+  protected def getLoadUdfCode: String = {
+    val engineCreationContext =
+      EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
+    val user = engineCreationContext.getUser
+    val udfAllLoad =
+      engineCreationContext.getOptions.getOrDefault("linkis.user.udf.all.load", "true").toBoolean
+    val udfIdStr = engineCreationContext.getOptions.getOrDefault("linkis.user.udf.custom.ids", "")
+    val udfIds = udfIdStr.split(",").filter(StringUtils.isNotBlank).map(s => s.toLong)
+
     logger.info(
-      s"start loading UDFs, load all: $udfAllLoad, udfIds: ${udfIds.mkString("Array(", ", ", ")")}"
+      s"start loading UDFs, user: $user, load all: $udfAllLoad, udfIds: ${udfIds.mkString("Array(", ", ", ")")}"
     )
+
     val udfInfos = if (udfAllLoad) {
       UDFClient.getUdfInfosByUdfType(user, category, udfType)
     } else {
@@ -139,18 +144,13 @@ abstract class UDFLoad extends Logging {
     }
   }
 
-  private def getFunctionCode(udfAllLoad: Boolean, udfIds: Array[Long]): Array[String] = {
-    val engineCreationContext =
-      EngineConnManager.getEngineConnManager.getEngineConn.getEngineCreationContext
-    val user = engineCreationContext.getUser
-    Utils.tryCatch(generateCode(user, udfAllLoad, udfIds)) { case t: Throwable =>
-      if (!ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
-        logger.error("Failed to load function, executor close ")
-        throw t
-      } else {
-        logger.error("Failed to load function", t)
-        Array.empty[String]
-      }
+  private def getFunctionCode: Array[String] = Utils.tryCatch(generateCode()) { t: Throwable =>
+    if (!ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
+      logger.error("Failed to load function, executor close ")
+      throw t
+    } else {
+      logger.error("Failed to load function", t)
+      Array.empty[String]
     }
   }
 
@@ -161,7 +161,7 @@ abstract class UDFLoad extends Logging {
     codes.foreach { code =>
       logger.info("Submit function registration to engine, code: " + code)
       Utils.tryCatch(executor.executeLine(new EngineExecutionContext(executor), code)) {
-        case t: Throwable =>
+        t: Throwable =>
           if (!ComputationExecutorConf.UDF_LOAD_FAILED_IGNORE.getValue) {
             Utils.tryQuietly(executor.close())
             logger.error("Failed to load function, executor close ")
@@ -176,7 +176,7 @@ abstract class UDFLoad extends Logging {
 
   protected def loadFunctions(executor: Executor): Unit = {
 
-    val codes = getFunctionCode(true, null)
+    val codes = getFunctionCode
     if (null != codes && codes.nonEmpty) {
       executor match {
         case computationExecutor: ComputationExecutor =>
@@ -187,9 +187,9 @@ abstract class UDFLoad extends Logging {
     logger.info(s"Successful to execute function code ${runType}, type : ${udfType}")
   }
 
-  protected def loadUDF(labels: Array[Label[_]], udfAllLoad: Boolean, udfIds: Array[Long]): Unit = {
+  protected def loadUDF(labels: Array[Label[_]]): Unit = {
 
-    val codes = getFunctionCode(udfAllLoad, udfIds)
+    val codes = getFunctionCode
     if (null != codes && codes.nonEmpty) {
       val executor = ExecutorManager.getInstance.getExecutorByLabels(labels)
       executor match {
@@ -219,14 +219,8 @@ abstract class UDFLoadEngineConnHook extends UDFLoad with EngineConnHook with Lo
         codeLanguageLabel.setCodeType(runType.toString)
         logger.warn("no EngineTypeLabel found, use default runType")
     }
-
-    val udfAllLoad =
-      engineCreationContext.getOptions.getOrDefault("linkis.user.udf.all.load", "true").toBoolean
-    val udfIdStr = engineCreationContext.getOptions.getOrDefault("linkis.user.udf.custom.ids", "")
-    val udfIds = udfIdStr.split(",").filter(StringUtils.isNotBlank).map(s => s.toLong)
-
     val labels = Array[Label[_]](codeLanguageLabel)
-    loadUDF(labels, udfAllLoad, udfIds)
+    loadUDF(labels)
   }
 
   override def afterEngineServerStartFailed(

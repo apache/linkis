@@ -29,7 +29,6 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineCreateSuccess
 }
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
-import org.apache.linkis.manager.label.entity.entrance.BindEngineLabel
 import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{DefaultMark, Mark, MarkReq, Policy}
@@ -43,7 +42,7 @@ import org.apache.linkis.rpc.Sender
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
-import java.net.{ConnectException, SocketException, SocketTimeoutException}
+import java.net.{SocketException, SocketTimeoutException}
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -134,13 +133,10 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       val baseMsg = s"mark ${mark.getMarkId()}  failed to ask linkis Manager Can be retried "
       ExceptionUtils.getRootCause(t) match {
         case socketTimeoutException: SocketTimeoutException =>
-          val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
+          val msg = baseMsg + ExceptionUtils.getMessage(socketTimeoutException)
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
         case socketException: SocketException =>
-          val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
-          throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
-        case connectException: ConnectException =>
-          val msg = baseMsg + ExceptionUtils.getRootCauseMessage(t)
+          val msg = baseMsg + ExceptionUtils.getMessage(socketException)
           throw new LinkisRetryException(ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE, msg)
         case _ =>
           throw t
@@ -148,11 +144,12 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
     }
     response match {
       case engineNode: EngineNode =>
-        logger.debug(s"Succeed to get engineNode $engineNode mark ${mark.getMarkId()}")
+        logger.debug("Succeed to get engineNode {} mark {}", engineNode: Any, mark.getMarkId(): Any)
         engineNode
       case EngineAskAsyncResponse(id, serviceInstance) =>
         logger.info(
-          s"${mark.getMarkId()} received EngineAskAsyncResponse id: ${id} serviceInstance: $serviceInstance "
+          "{} received EngineAskAsyncResponse id: {} serviceInstance: {}",
+          Array(mark.getMarkId(), id, serviceInstance): _*
         )
         cacheMap.getAndRemove(
           id,
@@ -160,12 +157,14 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         ) match {
           case EngineCreateSuccess(id, engineNode) =>
             logger.info(
-              s"${mark.getMarkId()} async id:$id success to async get EngineNode $engineNode"
+              "{} async id: {} success to async get EngineNode {}",
+              Array(mark.getMarkId(), id, engineNode): _*
             )
             engineNode
           case EngineCreateError(id, exception, retry) =>
             logger.debug(
-              s"${mark.getMarkId()} async id:$id Failed  to async get EngineNode, $exception"
+              "{} async id: {} Failed  to async get EngineNode, {}",
+              Array(mark.getMarkId(), id, exception): _*
             )
             if (retry) {
               throw new LinkisRetryException(
@@ -181,14 +180,16 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         }
       case _ =>
         logger.info(
-          s"${mark.getMarkId()} Failed to ask engineAskRequest $engineAskRequest, response is not engineNode"
+          "{} Failed to ask engineAskRequest {}, response is not engineNode",
+          mark.getMarkId(): Any,
+          engineAskRequest: Any
         )
         null
     }
   }
 
   private def getManagerSender(): Sender = {
-    Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+    Sender.getSender(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
   }
 
 }

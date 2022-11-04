@@ -74,20 +74,9 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../service/mysql/target/out/lib</directory>
+            <directory>${basedir}/../service/jdbc/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/mysql</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-            <excludes>
-                <exclude>*-javadoc.jar</exclude>
-            </excludes>
-        </fileSet>
-        <fileSet>
-            <directory>${basedir}/../service/tdsql/target/out/lib</directory>
-            <fileMode>0755</fileMode>
-            <outputDirectory>lib/service/tdsql</outputDirectory>
+            <outputDirectory>lib/service/jdbc</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

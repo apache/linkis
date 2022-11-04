@@ -138,6 +138,8 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
       msg,
       EngineConnObject.getEngineCreationContext.getTicketId
     )
+    Utils.tryAndWarn(Thread.sleep(100))
+    logger.info("To send release request to linkis manager")
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
   }
 

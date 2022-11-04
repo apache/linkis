@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,16 +21,25 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 
 import org.apache.ibatis.annotations.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 import java.util.List;
 
 @Mapper
 public interface LockManagerMapper {
 
-  void lock(@Param("lockObject") String lockObject, @Param("timeOut") Long timeOut);
+  @Transactional(rollbackFor = Exception.class)
+  int lock(PersistenceLock persistenceLock);
 
+  @Transactional(rollbackFor = Exception.class)
   void unlock(@Param("id") Integer id);
 
-  List<PersistenceLock> getLockersByLockObject(@Param("lockObject") String lockObject);
+  Integer getMinimumOrder(@Param("lockObject") String lockObject, @Param("id") Integer id);
+
+  List<PersistenceLock> getLockersByLockObject(@Param("lock_object") String lock_object);
 
   List<PersistenceLock> getAll();
+
+  List<PersistenceLock> getTimeOutLocks(@Param("endDate") Date endDate);
 }

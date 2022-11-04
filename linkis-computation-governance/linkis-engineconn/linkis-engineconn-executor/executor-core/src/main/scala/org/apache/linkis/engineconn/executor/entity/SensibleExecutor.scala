@@ -51,7 +51,7 @@ trait SensibleExecutor extends Executor {
       case _ =>
 
     }
-    if (NodeStatus.ShuttingDown != toStatus) {
+    if (!NodeStatus.isCompleted(toStatus)) {
       logger.info(s"Waitiing lock release, to change status $status=>$toStatus.")
       this synchronized {
         logger.info(s"Finished wait lock release, to change status $status=>$toStatus.")

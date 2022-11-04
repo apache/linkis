@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,8 @@ import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,9 +76,19 @@ public class RMLabelContainer {
 
   public List<Label<?>> getResourceLabels() {
     if (null != labels) {
-      return labels.stream()
-          .filter(label -> label instanceof ResourceLabel)
-          .collect(Collectors.toList());
+      List<Label<?>> resourceLabels =
+          labels.stream()
+              .filter(label -> label instanceof ResourceLabel)
+              .sorted(
+                  new Comparator<Label<?>>() {
+                    @Override
+                    public int compare(Label<?> label1, Label<?> label12) {
+                      return label1.getLabelKey().compareTo(label12.getLabelKey());
+                    }
+                  })
+              .collect(Collectors.toList());
+      Collections.reverse(resourceLabels);
+      return resourceLabels;
     }
     return new ArrayList<>();
   }

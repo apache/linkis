@@ -156,6 +156,6 @@ class EngineAsyncResponseCacheMap extends EngineAsyncResponseCache with Logging 
   }
 
   private def getManagerSender: Sender =
-    Sender.getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+    Sender.getSender(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
 
 }

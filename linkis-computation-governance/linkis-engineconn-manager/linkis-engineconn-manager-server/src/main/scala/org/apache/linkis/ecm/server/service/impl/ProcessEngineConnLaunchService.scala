@@ -25,7 +25,7 @@ import org.apache.linkis.ecm.core.launch.ProcessEngineConnLaunch
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
-import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
+import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SERVICE_NAME
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.ecm.server.listener.EngineConnStatusChangeEvent
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
@@ -88,7 +88,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
             e
           )
           Sender
-            .getSender(MANAGER_SPRING_NAME)
+            .getSender(MANAGER_SERVICE_NAME)
             .send(
               EngineConnStatusCallbackToAM(
                 conn.getServiceInstance,

@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.JavaConverters.asScalaBufferConverter
 
 class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with Logging {
@@ -138,7 +138,7 @@ class JobHistoryDetailQueryServiceImpl extends JobHistoryDetailQueryService with
     val subJobInfoList = jobReqUpdate.jobInfo
     val jobRespList = new util.ArrayList[JobRespProtocol]()
     if (subJobInfoList != null) {
-      subJobInfoList.foreach(subJobInfo => {
+      subJobInfoList.asScala.foreach(subJobInfo => {
         val jobDetail = subJobInfo.getSubJobDetail()
         if (null != jobDetail && null != jobDetail.getId) {
           logger.info("Update data to the database(往数据库中更新数据)：" + jobDetail.getId.toString)

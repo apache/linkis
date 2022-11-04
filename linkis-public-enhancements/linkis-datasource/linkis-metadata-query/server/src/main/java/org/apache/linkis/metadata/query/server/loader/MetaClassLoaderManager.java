@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -65,7 +65,7 @@ public class MetaClassLoaderManager {
   private static final String META_CLASS_NAME =
       "org.apache.linkis.metadata.query.service.%sMetaService";
 
-  private static final String MYSQL_BASE_DIR = "mysql";
+  private static final String MYSQL_BASE_DIR = "jdbc";
 
   private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 

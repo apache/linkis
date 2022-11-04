@@ -33,7 +33,11 @@ class LockManagerMapperTest extends BaseDaoTest {
 
   @Test
   void lock() {
-    lockManagerMapper.lock("testjson", 1L);
+    PersistenceLock persistenceLock = new PersistenceLock();
+    persistenceLock.setTimeOut(1L);
+    persistenceLock.setLockObject("testjson");
+    persistenceLock.setCreator("hadoop");
+    lockManagerMapper.lock(persistenceLock);
     List<PersistenceLock> list = lockManagerMapper.getLockersByLockObject("testjson");
     assertTrue(list.size() >= 1);
   }

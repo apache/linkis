@@ -20,19 +20,13 @@ package org.apache.linkis.orchestrator.computation.operation.progress
 import org.apache.linkis.common.listener.Event
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.orchestrator.{Orchestration, OrchestratorSession}
-import org.apache.linkis.orchestrator.computation.operation.progress.ProgressProcessor
 import org.apache.linkis.orchestrator.core.AbstractOrchestration
 import org.apache.linkis.orchestrator.extensions.operation.Operation
 import org.apache.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
-import org.apache.linkis.orchestrator.listener.{
-  OrchestratorAsyncEvent,
-  OrchestratorListenerBusContext
-}
+import org.apache.linkis.orchestrator.listener.OrchestratorAsyncEvent
 import org.apache.linkis.orchestrator.listener.task.{TaskProgressListener, TaskRunningInfoEvent}
 
 import java.util.concurrent.ConcurrentHashMap
-
-import scala.collection.mutable
 
 /**
  * Abstract class of progress operation

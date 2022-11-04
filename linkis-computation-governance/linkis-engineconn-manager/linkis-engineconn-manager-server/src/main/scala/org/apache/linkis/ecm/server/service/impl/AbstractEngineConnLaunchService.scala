@@ -63,7 +63,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
   override def launchEngineConn(request: EngineConnLaunchRequest, duration: Long): EngineNode = {
     // 1.创建engineConn和runner,launch 并设置基础属性
     val taskId = JobUtils.getJobIdFromStringMap(request.creationDesc.properties)
-    logger.info(s"TaskId: $taskId try to launch a new EngineConn with $request.")
+    logger.info("TaskId: {} try to launch a new EngineConn with {}.", taskId: Any, request: Any)
     val conn = createEngineConn
     val runner = createEngineConnLaunchRunner
     val launch = createEngineConnLaunch
@@ -97,33 +97,53 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       afterLaunch(request, conn, duration)
 
       val future = Future {
-        logger.info(s"wait engineConn  ${conn.getServiceInstance} start")
+        logger.info("wait engineConn {} start", conn.getServiceInstance)
         waitEngineConnStart(request, conn, duration)
       }
 
       future onComplete {
         case Failure(t) =>
           logger.error(
-            s"TaskId: $taskId init ${conn.getServiceInstance} failed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}"
+            "TaskId: {} init {} failed. {}",
+            Array(
+              taskId,
+              conn.getServiceInstance,
+              conn.getEngineConnLaunchRunner.getEngineConnLaunch
+                .getEngineConnManagerEnv()
+                .engineConnWorkDir
+            ): _*
           )
           LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
             EngineConnStatusChangeEvent(conn.getTickedId, Failed)
           )
         case Success(_) =>
           logger.info(
-            s"TaskId: $taskId init ${conn.getServiceInstance} succeed.${conn.getEngineConnLaunchRunner.getEngineConnLaunch.getEngineConnManagerEnv().engineConnWorkDir}"
+            "TaskId: {} init {} succeed. {}",
+            Array(
+              taskId,
+              conn.getServiceInstance,
+              conn.getEngineConnLaunchRunner.getEngineConnLaunch
+                .getEngineConnManagerEnv()
+                .engineConnWorkDir
+            ): _*
           )
       }
     } { t =>
       logger.error(
-        s"TaskId: $taskId init ${conn.getServiceInstance} failed, ${conn.getEngineConnLaunchRunner.getEngineConnLaunch
-          .getEngineConnManagerEnv()
-          .engineConnWorkDir}, now stop and delete it. message: ${t.getMessage}",
-        t
+        "TaskId: {} init {} failed, {}, now stop and delete it. message: {}",
+        Array(
+          taskId,
+          conn.getServiceInstance,
+          conn.getEngineConnLaunchRunner.getEngineConnLaunch
+            .getEngineConnManagerEnv()
+            .engineConnWorkDir,
+          t.getMessage,
+          t
+        ): _*
       )
       conn.getEngineConnLaunchRunner.stop()
       Sender
-        .getSender(MANAGER_SPRING_NAME)
+        .getSender(MANAGER_SERVICE_NAME)
         .send(
           EngineConnStatusCallbackToAM(
             conn.getServiceInstance,

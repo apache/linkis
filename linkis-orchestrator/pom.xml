@@ -30,7 +30,6 @@
     <module>linkis-orchestrator-core</module>
     <module>linkis-code-orchestrator</module>
     <module>linkis-computation-orchestrator</module>
-    <module>plugin/linkis-orchestrator-ecm-plugin</module>
   </modules>
 
 </project>

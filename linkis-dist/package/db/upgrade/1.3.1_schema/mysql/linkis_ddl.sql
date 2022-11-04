@@ -32,3 +32,16 @@ ALTER TABLE `linkis_ps_dm_datasource` MODIFY COLUMN `parameter` varchar(1024) CH
 -- Alter table structure for linkis_ps_dm_datasource_type_key
 -- ----------------------------
 ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD CONSTRAINT  `data_source_type_id_key` UNIQUE (`data_source_type_id`, `key`);
+
+-- ----------------------------
+-- Rebuild linkis_cg_manager_lock and remove the unique key. Because the table data will be cleaned up, it is better to rebuild here
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_cg_manager_lock`;
+CREATE TABLE `linkis_cg_manager_lock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `time_out` longtext COLLATE utf8_bin,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

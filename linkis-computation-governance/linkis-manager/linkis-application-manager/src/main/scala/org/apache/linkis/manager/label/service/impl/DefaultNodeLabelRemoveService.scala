@@ -52,7 +52,10 @@ class DefaultNodeLabelRemoveService extends NodeLabelRemoveService with Logging 
         CHECK_LABEL_REMOVE_REQUEST.getErrorDesc
       )
     }
-    nodeLabelService.removeLabelsFromNode(nodeLabelRemoveRequest.getServiceInstance)
+    nodeLabelService.removeLabelsFromNode(
+      nodeLabelRemoveRequest.getServiceInstance,
+      nodeLabelRemoveRequest.isEngine
+    )
     val persistenceLabel = if (nodeLabelRemoveRequest.isEngine) {
       val engineLabel = labelFactory.createLabel(classOf[EngineInstanceLabel])
       engineLabel.setInstance(nodeLabelRemoveRequest.getServiceInstance.getInstance)

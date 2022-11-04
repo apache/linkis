@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,13 +47,10 @@ public class LocalEngineConnPluginResourceLoader implements EngineConnPluginsRes
         List<URL> urls = EngineConnPluginUtils.getJarsUrlsOfPath(savePath);
         if (urls.size() > 0) {
           LOG.info(
-              "Load local resource of engine conn plugin: [name: "
-                  + typeLabel.getEngineType()
-                  + ", version: "
-                  + typeLabel.getVersion()
-                  + "] uri: ["
-                  + savePath
-                  + "]");
+              "Load local resource of engine conn plugin: [name: {}, version: {}] uri: [{}]",
+              typeLabel.getEngineType(),
+              typeLabel.getVersion(),
+              savePath);
         }
         return new PluginResource(null, null, modifyTime, urls.toArray(new URL[0]));
       }

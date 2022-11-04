@@ -234,13 +234,14 @@ class HiveEngineConnExecutor(
 
         val fieldSchemas =
           if (hiveResponse.getSchema != null) hiveResponse.getSchema.getFieldSchemas
-          else if (driver.getSchema != null) driver.getSchema.getFieldSchemas
-          else
+          else if (driver.getSchema != null) {
+            driver.getSchema.getFieldSchemas
+          } else {
             throw HiveQueryFailedException(
               GET_FIELD_SCHEMAS_ERROR.getErrorCode,
               GET_FIELD_SCHEMAS_ERROR.getErrorDesc
             )
-
+          }
         LOG.debug("fieldSchemas are " + fieldSchemas)
         if (fieldSchemas == null || isNoResultSql(realCode)) {
           // IOUtils.closeQuietly(resultSetWriter)

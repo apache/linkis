@@ -687,8 +687,7 @@ CREATE TABLE `linkis_cg_manager_lock` (
   `time_out` longtext COLLATE utf8_bin,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `lock_object` (`lock_object`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_rm_external_resource_provider`;

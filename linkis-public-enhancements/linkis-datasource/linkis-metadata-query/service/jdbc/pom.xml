@@ -24,12 +24,13 @@
     <relativePath>../../../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-metadata-query-service-mysql</artifactId>
+  <artifactId>linkis-metadata-query-service-jdbc</artifactId>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mysql.version>8.0.28</mysql.version>
     <postgresql.version>42.3.1</postgresql.version>
+    <clickhouse.version>0.3.2-patch11</clickhouse.version>
   </properties>
 
   <dependencies>
@@ -56,6 +57,22 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>com.clickhouse</groupId>
+      <artifactId>clickhouse-jdbc</artifactId>
+      <version>${clickhouse.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -82,6 +99,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.2.0</version>
         <inherited>false</inherited>
         <configuration>
           <skipAssembly>false</skipAssembly>

@@ -19,10 +19,9 @@ package org.apache.linkis.engineplugin.spark.Interpreter
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.spark.common.LineBufferedStream
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
-import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.storage.FSFactory
 
 import org.apache.commons.io.IOUtils
@@ -76,7 +75,7 @@ object PythonInterpreter {
         override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
       })
       .foreach(f => pythonPath += f.getPath)
-    EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
+    ClassUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
 
@@ -200,7 +199,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
         override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
       })
       .foreach(f => pythonPath += f.getPath)
-    EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
+    ClassUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
 

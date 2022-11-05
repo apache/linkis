@@ -19,7 +19,7 @@ package org.apache.linkis.ecm.server.service.impl
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ecm.server.LinkisECMApplication
-import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SPRING_NAME
+import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SERVICE_NAME
 import org.apache.linkis.ecm.server.listener.EngineConnStatusChangeEvent
 import org.apache.linkis.ecm.server.service.EngineConnStatusCallbackService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -48,7 +48,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
     } else {
 
       Sender
-        .getSender(MANAGER_SPRING_NAME)
+        .getSender(MANAGER_SERVICE_NAME)
         .send(
           EngineConnStatusCallbackToAM(
             protocol.serviceInstance,

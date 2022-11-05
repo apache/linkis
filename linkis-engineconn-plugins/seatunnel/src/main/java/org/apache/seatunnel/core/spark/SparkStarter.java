@@ -20,8 +20,6 @@ package org.apache.seatunnel.core.spark;
 import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.apis.base.env.RuntimeEnv;
 import org.apache.seatunnel.common.Constants;
 import org.apache.seatunnel.common.config.Common;
@@ -47,11 +45,13 @@ import java.util.stream.Stream;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.UnixStyleUsageFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
 public class SparkStarter implements Starter {
-  private static final Log logger = LogFactory.getLog(SparkStarter.class);
+  private static Logger logger = LoggerFactory.getLogger(SparkStarter.class);
   private static final int USAGE_EXIT_CODE = 234;
 
   private static final int PLUGIN_LIB_DIR_DEPTH = 3;

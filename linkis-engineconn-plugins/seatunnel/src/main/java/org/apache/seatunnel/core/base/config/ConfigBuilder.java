@@ -17,17 +17,17 @@
 
 package org.apache.seatunnel.core.base.config;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.apis.base.env.RuntimeEnv;
 import org.apache.seatunnel.common.config.ConfigRuntimeException;
-import org.apache.seatunnel.core.spark.SparkStarter;
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
 import org.apache.seatunnel.shade.com.typesafe.config.ConfigFactory;
 import org.apache.seatunnel.shade.com.typesafe.config.ConfigRenderOptions;
 import org.apache.seatunnel.shade.com.typesafe.config.ConfigResolveOptions;
 
 import java.nio.file.Path;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Used to build the {@link Config} from file.
@@ -36,7 +36,7 @@ import java.nio.file.Path;
  */
 public class ConfigBuilder<ENVIRONMENT extends RuntimeEnv> {
 
-  private static final Log LOGGER = LogFactory.getLog(SparkStarter.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(ConfigBuilder.class);
 
   private static final String PLUGIN_NAME_KEY = "plugin_name";
   private final Path configFile;

@@ -19,8 +19,6 @@ package org.apache.seatunnel.core.sql;
 
 import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.common.config.Common;
 import org.apache.seatunnel.core.base.Starter;
 import org.apache.seatunnel.core.flink.args.FlinkCommandArgs;
@@ -29,8 +27,11 @@ import org.apache.seatunnel.core.flink.utils.CommandLineUtils;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FlinkSqlStarter implements Starter {
-  private static final Log logger = LogFactory.getLog(FlinkSqlStarter.class);
+  private static Logger logger = LoggerFactory.getLogger(FlinkSqlStarter.class);
   private static final String APP_JAR_NAME = "seatunnel-core-flink-sql.jar";
   private static final String CLASS_NAME = SeatunnelSql.class.getName();
 

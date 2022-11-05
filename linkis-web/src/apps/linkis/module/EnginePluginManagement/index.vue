@@ -372,6 +372,10 @@ export default {
           reqList.push(it.bmlResourceId);
         }
       })
+      if(!reqList || reqList.length<1){
+        this.$Message.info("请选择引擎类型及版本");
+        return
+      }
       api.fetch('/bml/deleteResources', {'resourceIds': reqList}, 'post').then(response => {
         console.log(response);
         api.fetch('/engineplugin/deleteEnginePluginBML', {'ecType': th.ecType, 'version': th.version}, 'get').then(response2 => {
@@ -397,6 +401,12 @@ export default {
       // })
     },
     createOrUpdate(num) {
+
+      if(!this.ecType || !this.version){
+        this.$Message.info("请选择引擎类型及版本");
+        return
+      }
+
       this.actionNum = num
       if(num === 0){
         this.actionType=this.$t('message.linkis.EnginePluginManagement.create')

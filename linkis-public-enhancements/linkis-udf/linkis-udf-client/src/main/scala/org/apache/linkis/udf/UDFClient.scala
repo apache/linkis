@@ -18,14 +18,14 @@
 package org.apache.linkis.udf
 
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.udf.api.rpc.{RequestUdfTree, ResponseUdfTree}
-import org.apache.linkis.udf.entity.{UDFInfo, UDFTree}
+import org.apache.linkis.udf.api.rpc.{RequestUdfIds, RequestUdfTree, ResponseUdfs, ResponseUdfTree}
+import org.apache.linkis.udf.entity.UDFTree
 import org.apache.linkis.udf.utils.ConstantVar
 import org.apache.linkis.udf.vo.UDFInfoVo
 
 import org.apache.commons.collections.CollectionUtils
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.collection.mutable.ArrayBuffer
 
 object UDFClient {
@@ -51,8 +51,33 @@ object UDFClient {
     udfInfoBuilder
   }
 
+  def getUdfInfosByUdfIds(
+      userName: String,
+      udfIds: Array[Long],
+      category: String,
+      udfType: BigInt
+  ): ArrayBuffer[UDFInfoVo] = {
+    val udfInfoBuilder = new ArrayBuffer[UDFInfoVo]
+
+    val udfTree = Sender
+      .getSender(UDFClientConfiguration.UDF_SERVICE_NAME.getValue)
+      .ask(RequestUdfIds(userName, udfIds, category))
+      .asInstanceOf[ResponseUdfs]
+
+    if (CollectionUtils.isNotEmpty(udfTree.udfInfos)) {
+      udfTree.udfInfos.asScala
+        .filter(infoVo => infoVo.getUdfType == udfType)
+        .foreach(infoVo => udfInfoBuilder.append(infoVo))
+    }
+    udfInfoBuilder
+  }
+
   def getJarUdf(userName: String): ArrayBuffer[UDFInfoVo] = {
     getUdfInfosByUdfType(userName, ConstantVar.UDF, ConstantVar.UDF_JAR)
+  }
+
+  def getJarUdfByIds(userName: String, udfIds: Array[Long]): ArrayBuffer[UDFInfoVo] = {
+    getUdfInfosByUdfIds(userName, udfIds, ConstantVar.UDF, ConstantVar.UDF_JAR)
   }
 
   def getPyUdf(userName: String): ArrayBuffer[UDFInfoVo] = {

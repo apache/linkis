@@ -18,12 +18,9 @@
 package org.apache.seatunnel.core.base.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.apis.base.env.RuntimeEnv;
 import org.apache.seatunnel.apis.base.plugin.Plugin;
 import org.apache.seatunnel.common.config.Common;
-import org.apache.seatunnel.core.spark.SparkStarter;
 import org.apache.seatunnel.flink.BaseFlinkSink;
 import org.apache.seatunnel.flink.BaseFlinkSource;
 import org.apache.seatunnel.flink.BaseFlinkTransform;
@@ -43,6 +40,9 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Used to load the plugins.
  *
@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  */
 public class PluginFactory<ENVIRONMENT extends RuntimeEnv> {
 
-  private static final Log LOGGER = LogFactory.getLog(SparkStarter.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(PluginFactory.class);
   private final Config config;
   private final EngineType engineType;
   private static final Map<EngineType, Map<PluginType, Class<?>>> PLUGIN_BASE_CLASS_MAP;

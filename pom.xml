@@ -1238,6 +1238,11 @@
               </excludes>
 
               <removeUnusedImports/>
+
+              <licenseHeader>
+                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>
+                <delimiter>package</delimiter>
+              </licenseHeader>
             </java>
             <scala>
               <scalafmt>
@@ -1249,6 +1254,15 @@
               </licenseHeader>
             </scala>
           </configuration>
+          <executions>
+            <execution>
+              <id>spotless-apply</id>
+              <goals>
+                <goal>apply</goal>
+              </goals>
+              <phase>validate</phase>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>

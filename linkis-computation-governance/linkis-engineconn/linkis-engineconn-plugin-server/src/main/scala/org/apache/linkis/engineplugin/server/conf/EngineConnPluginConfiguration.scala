@@ -21,7 +21,7 @@ import org.apache.linkis.common.conf.{CommonVars, Configuration}
 
 object EngineConnPluginConfiguration {
 
-  val ENGINE_CONN_HOME = CommonVars(
+  val ENGINE_CONN_HOME: CommonVars[String] = CommonVars(
     "wds.linkis.engineconn.home",
     CommonVars[String](
       "ENGINE_CONN_HOME",
@@ -29,9 +29,10 @@ object EngineConnPluginConfiguration {
     ).getValue
   )
 
-  val ENGINE_CONN_DIST_LOAD_ENABLE = CommonVars("wds.linkis.engineconn.dist.load.enable", true)
+  val ENGINE_CONN_DIST_LOAD_ENABLE: CommonVars[Boolean] =
+    CommonVars("wds.linkis.engineconn.dist.load.enable", true)
 
-  val ENABLED_BML_UPLOAD_FAILED_EXIT =
+  val ENABLED_BML_UPLOAD_FAILED_EXIT: CommonVars[Boolean] =
     CommonVars("wds.linkis.engineconn.bml.upload.failed.enable", true)
 
 }

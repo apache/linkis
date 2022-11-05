@@ -28,8 +28,16 @@ object ClassUtils {
   lazy val reflections =
     new Reflections(Configuration.REFLECT_SCAN_PACKAGE, this.getClass.getClassLoader)
 
+  /**
+   * Get the path of the class
+   * @param cls
+   *   class type
+   * @return
+   *   the resource path of cls
+   */
   def jarOfClass(cls: Class[_]): Option[String] = {
-    val uri = cls.getResource("/" + cls.getName.replace('.', '/') + ".class")
+    val uri =
+      cls.getResource("/" + cls.getName.replace('.', '/') + ".class")
     if (uri != null) {
       val uriStr = uri.toString
       if (uriStr.startsWith("jar:file:")) {

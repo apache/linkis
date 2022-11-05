@@ -806,6 +806,14 @@ public class UDFServiceImpl implements UDFService {
     return udfDao.getUDFInfoByTreeId(treeId, userName, categoryToCodes.get(category));
   }
 
+  @Override
+  public List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) {
+    if (ids == null || ids.length == 0) {
+      return new ArrayList<>(0);
+    }
+    return udfDao.getUDFInfoByIds(ids, categoryToCodes.get(category));
+  }
+
   /**
    * Generate sql needs content: divided into jar, python, scala Save Path and registration syntax
    * separately 生成sql需要内容： 分为jar，python，scala 分别保存Path和注册语法

@@ -103,10 +103,7 @@ class EngineConnLogOperator extends Operator with Logging {
     var readLine, skippedLine, lineNum = 0
     var rowIgnore = false
     var ignoreLine = 0
-    val linePattern = Option(EngineConnLogOperator.MULTILINE_PATTERN.getValue) match {
-      case Some(pattern) => pattern.r
-      case _ => null
-    }
+    val linePattern = getLinePattern
     val maxMultiline = EngineConnLogOperator.MULTILINE_MAX.getValue
     Utils.tryFinally {
       var line = randomAndReversedReadLine()
@@ -161,6 +158,13 @@ class EngineConnLogOperator extends Operator with Logging {
       s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) logs from ${logPath.getPath}."
     )
     logPath
+  }
+
+  protected def getLinePattern: Regex = {
+    Option(EngineConnLogOperator.MULTILINE_PATTERN.getValue) match {
+      case Some(pattern) => pattern.r
+      case _ => null
+    }
   }
 
   protected def getEngineConnInfo(implicit

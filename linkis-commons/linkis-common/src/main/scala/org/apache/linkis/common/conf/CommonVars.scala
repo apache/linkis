@@ -28,7 +28,7 @@ case class CommonVars[T](
     description: String = null,
     hotload: Boolean = false
 ) {
-  val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
+  def getValue(): T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 
   def getValue(properties: java.util.Map[String, String]): T = {
     if (properties == null || !properties.containsKey(key) || properties.get(key) == null) {

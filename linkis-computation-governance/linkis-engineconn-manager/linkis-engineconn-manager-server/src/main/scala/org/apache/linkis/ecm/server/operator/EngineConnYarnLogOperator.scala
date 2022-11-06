@@ -29,12 +29,12 @@ import org.apache.linkis.storage.utils.StorageUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.{Callable, ConcurrentHashMap, ExecutorService, Future, TimeUnit}
 
 import scala.collection.JavaConverters._
 import scala.util.matching.Regex
-import java.text.MessageFormat
 
 class EngineConnYarnLogOperator extends EngineConnLogOperator {
 

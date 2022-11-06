@@ -18,17 +18,27 @@
 package org.apache.linkis.ecm.server.operator
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.server.exception.ECMErrorException
+import org.apache.linkis.storage.FSFactory
+import org.apache.linkis.storage.fs.FileSystem
+import org.apache.linkis.storage.utils.StorageUtils
+
+import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.util
 import java.util.concurrent.{Callable, ConcurrentHashMap, ExecutorService, Future, TimeUnit}
 
 import scala.collection.JavaConverters._
+import scala.util.matching.Regex
 
 class EngineConnYarnLogOperator extends EngineConnLogOperator {
+
+  private implicit val fs: FileSystem =
+    FSFactory.getFs(StorageUtils.FILE).asInstanceOf[FileSystem]
 
   /**
    * Yarn log fetchers
@@ -47,33 +57,44 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
   }
 
   override def getLogPath(implicit parameters: Map[String, Any]): File = {
+    val applicationId = getAsThrow[String]("yarnApplicationId")
     val (ticketId, engineConnInstance, engineConnLogDir) = getEngineConnInfo(parameters)
-    val rootLogDir = new File(engineConnLogDir)
-    if (!rootLogDir.exists() || !rootLogDir.isDirectory) {
+    val rootLogPath = EngineConnYarnLogOperator.YARN_LOG_STORAGE_PATH.getValue match {
+      case storePath if StringUtils.isNotBlank(storePath) =>
+        val logPath = new FsPath(StorageUtils.FILE_SCHEMA + storePath + "/" + applicationId)
+        // Invoke to create directory
+        fs.mkdir(logPath)
+        // 777 permission
+        fs.setPermission(logPath, "rwxrwxrwx")
+        logPath
+      case _ => new FsPath(StorageUtils.FILE_SCHEMA + engineConnLogDir)
+    }
+    if (!fs.exists(rootLogPath) || !rootLogPath.toFile.isDirectory) {
       throw new ECMErrorException(
         ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"Log directory $rootLogDir is not exists."
+        s"Log directory ${rootLogPath.getPath} is not exists."
       )
     }
     val creator = getAsThrow[String]("creator")
-    val applicationId = getAsThrow[String]("yarnApplicationId")
-    var logPath = new File(engineConnLogDir, "yarn_" + applicationId)
-    if (!logPath.exists()) {
+    var logPath = new FsPath(
+      StorageUtils.FILE_SCHEMA + rootLogPath.getPath + "/yarn_" + applicationId
+    )
+    if (!fs.exists(logPath)) {
       val fetcher = yarnLogFetchers.computeIfAbsent(
         applicationId,
         new util.function.Function[String, Future[String]] {
           override def apply(v1: String): Future[String] =
-            requestToFetchYarnLogs(creator, applicationId, engineConnLogDir)
+            requestToFetchYarnLogs(creator, applicationId, rootLogPath.getPath)
         }
       )
       // Just wait 5 seconds
       Option(fetcher.get(5, TimeUnit.SECONDS)) match {
-        case Some(path) => logPath = new File(path)
+        case Some(path) => logPath = new FsPath(StorageUtils.FILE_SCHEMA + path)
         case _ =>
       }
 
     }
-    if (!logPath.exists() || !logPath.isFile) {
+    if (!fs.exists(logPath) || logPath.toFile.isDirectory) {
       throw new ECMErrorException(
         ECMErrorCode.EC_FETCH_LOG_FAILED,
         s"LogFile $logPath is not exists or is not a file."
@@ -82,11 +103,18 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     logger.info(
       s"Try to fetch EngineConn(id: $ticketId, instance: $engineConnInstance) yarn logs from ${logPath.getPath} in application id: $applicationId"
     )
-    logPath
+    logPath.toFile
   }
 
   /**
+   * Not support line pattern in yarn log
+   * @return
+   */
+  override protected def getLinePattern: Regex = null
+
+  /**
    * Request the log fetcher
+   *
    * @param creator
    *   creator
    * @param applicationId
@@ -98,17 +126,17 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
   private def requestToFetchYarnLogs(
       creator: String,
       applicationId: String,
-      engineConnLogDir: String
+      yarnLogDir: String
   ): Future[String] = {
     EngineConnYarnLogOperator.YARN_LOG_FETCH_SCHEDULER.submit(new Callable[String] {
       override def call(): String = {
-        val logFile = new File(engineConnLogDir, "yarn_" + applicationId)
-        if (!logFile.exists()) {
+        val logPath = new FsPath(StorageUtils.FILE_SCHEMA + yarnLogDir + "/yarn_" + applicationId)
+        if (!fs.exists(logPath)) {
           val tempLogFile =
             s".yarn_${applicationId}_${System.currentTimeMillis()}_${Thread.currentThread().getId}"
           Utils.tryCatch {
             var command =
-              s"yarn logs -applicationId $applicationId >> $engineConnLogDir/$tempLogFile"
+              s"yarn logs -applicationId $applicationId >> $yarnLogDir/$tempLogFile"
             logger.info(s"Fetch yarn logs to temporary file: [$command]")
             val processBuilder = new ProcessBuilder(sudoCommands(creator, command): _*)
             processBuilder.environment.putAll(sys.env.asJava)
@@ -117,7 +145,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
             val exitCode = process.waitFor()
             logger.trace(s"Finish to fetch yan logs to temporary file, result: ${exitCode}")
             if (exitCode == 0) {
-              command = s"mv $engineConnLogDir/$tempLogFile $engineConnLogDir/yarn_$applicationId"
+              command = s"mv $yarnLogDir/$tempLogFile $yarnLogDir/yarn_$applicationId"
               logger.info(s"Move and save yarn logs(${applicationId}): [$command]")
               Utils.exec(sudoCommands(creator, command))
             }
@@ -126,7 +154,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
               s"Fail to fetch yarn logs application: $applicationId, message: ${e.getMessage}"
             )
           }
-          val tmpFile = new File(engineConnLogDir, tempLogFile)
+          val tmpFile = new File(yarnLogDir, tempLogFile)
           if (tmpFile.exists()) {
             logger.info(s"Delete temporary file: [${tempLogFile}] in yarn logs fetcher")
             tmpFile.delete()
@@ -134,7 +162,7 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
         }
         // Remove future
         yarnLogFetchers.remove(applicationId)
-        if (logFile.exists()) logFile.getPath else null
+        if (fs.exists(logPath)) logPath.getPath else null
       }
     })
   }
@@ -151,6 +179,10 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
 
 object EngineConnYarnLogOperator {
   val OPERATOR_NAME = "engineConnYarnLog"
+
+  // Specific the path to store the yarn logs
+  val YARN_LOG_STORAGE_PATH: CommonVars[String] =
+    CommonVars("linkis.engineconn.log.yarn.storage-path", "")
 
   val YARN_LOG_FETCH_THREAD: CommonVars[Int] =
     CommonVars("linkis.engineconn.log.yarn.fetch.thread-num", 5)

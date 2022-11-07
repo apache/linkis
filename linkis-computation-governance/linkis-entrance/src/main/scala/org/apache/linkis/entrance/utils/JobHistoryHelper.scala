@@ -32,6 +32,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.http.conn.util.InetAddressUtils
 
 import javax.servlet.http.HttpServletRequest
 
@@ -39,8 +40,6 @@ import java.util
 import java.util.Date
 
 import scala.collection.JavaConverters._
-
-import sun.net.util.IPAddressUtil
 
 object JobHistoryHelper extends Logging {
 
@@ -80,7 +79,7 @@ object JobHistoryHelper extends Logging {
     val afterProxyIp = addrList
       .find(ip => {
         StringUtils.isNotEmpty(ip) &&
-        (IPAddressUtil.isIPv4LiteralAddress(ip) || IPAddressUtil.isIPv6LiteralAddress(ip))
+        (InetAddressUtils.isIPv4Address(ip) || InetAddressUtils.isIPv6Address(ip))
       })
       .getOrElse("")
     if (StringUtils.isNotEmpty(afterProxyIp)) {

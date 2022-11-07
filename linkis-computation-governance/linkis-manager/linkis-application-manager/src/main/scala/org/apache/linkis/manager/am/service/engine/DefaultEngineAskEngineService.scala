@@ -143,10 +143,14 @@ class DefaultEngineAskEngineService
                 false
             }
         }
-        logger.info(
-          s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag",
-          exception
-        )
+        val msg =
+          s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag";
+        if (!retryFlag) {
+          logger.info(msg, exception)
+        } else {
+          logger.info("msg: {} canRetry Exception: {}", msg, exception.getClass.getName)
+        }
+
         sender.send(
           EngineCreateError(
             engineAskAsyncId,

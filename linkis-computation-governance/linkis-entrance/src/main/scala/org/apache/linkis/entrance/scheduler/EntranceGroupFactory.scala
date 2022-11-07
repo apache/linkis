@@ -54,8 +54,11 @@ class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups: Cache[String, Group] = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getValue, TimeUnit.MINUTES)
-    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getValue)
+    .expireAfterAccess(
+      EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getHotValue(),
+      TimeUnit.MINUTES
+    )
+    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getHotValue())
     .build()
 
   private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)
@@ -86,24 +89,28 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     val groupName = EntranceGroupFactory.getGroupNameByLabels(labels, params)
     val cacheGroup = groupNameToGroups.getIfPresent(groupName)
     if (null == cacheGroup) synchronized {
-      val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
+      val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getHotValue().toLong
       if (groupName.startsWith(EntranceGroupFactory.CONCURRENT)) {
         if (null == groupNameToGroups.getIfPresent(groupName)) synchronized {
           if (null == groupNameToGroups.getIfPresent(groupName)) {
             val group = new ParallelGroup(
               groupName,
               100,
-              EntranceConfiguration.CONCURRENT_FACTORY_MAX_CAPACITY.getValue
+              EntranceConfiguration.CONCURRENT_FACTORY_MAX_CAPACITY.getHotValue()
             )
-            group.setMaxRunningJobs(EntranceConfiguration.CONCURRENT_MAX_RUNNING_JOBS.getValue)
-            group.setMaxAskExecutorTimes(EntranceConfiguration.CONCURRENT_EXECUTOR_TIME.getValue)
+            group.setMaxRunningJobs(EntranceConfiguration.CONCURRENT_MAX_RUNNING_JOBS.getHotValue())
+            group.setMaxAskExecutorTimes(
+              EntranceConfiguration.CONCURRENT_EXECUTOR_TIME.getHotValue()
+            )
             groupNameToGroups.put(groupName, group)
             return group
           }
         }
       }
       val sender: Sender =
-        Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+        Sender.getSender(
+          Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getHotValue()
+        )
       val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
       val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
       logger.info(
@@ -155,7 +162,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   }
 
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
-    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    var userDefinedRunningJobs =
+      EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue, true)
     var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
     /*
     Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
@@ -165,7 +173,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       logger.error(s"Got 0 ${Sender.getThisServiceInstance.getApplicationName} instances.")
     }
     Math.max(
-      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
+      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getHotValue(),
       userDefinedRunningJobs / entranceNum
     );
   }
@@ -193,7 +201,7 @@ object EntranceGroupFactory {
         CACHE
       } else ""
     if (StringUtils.isNotEmpty(creator)) creator + "_" + user + cache
-    else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue + "_" + user + cache
+    else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getHotValue() + "_" + user + cache
   }
 
   def getGroupNameByLabels(

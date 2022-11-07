@@ -22,7 +22,11 @@ import org.apache.linkis.common.conf.{CommonVars, TimeType}
 object EntranceConfiguration {
 
   val ENTRANCE_SCHEDULER_MAX_PARALLELISM_USERS =
-    CommonVars("wds.linkis.entrance.scheduler.maxParallelismUsers", new Integer(1000), hotload = true)
+    CommonVars(
+      "wds.linkis.entrance.scheduler.maxParallelismUsers",
+      new Integer(1000),
+      hotload = true
+    )
 
   val ENTRANCE_LISTENER_BUS_EVENT_QUEUE_CAPACITY =
     CommonVars("wds.linkis.entrance.listenerBus.queue.capacity", new Integer(5000), hotload = true)
@@ -30,7 +34,8 @@ object EntranceConfiguration {
   val JOB_MAX_PERSIST_WAIT_TIME =
     CommonVars("wds.linkis.entrance.job.persist.wait.max", new TimeType("5m"))
 
-  val MULTI_ENTRANCE_CONDITION = CommonVars("wds.linkis.entrance.multi.entrance.flag", true, hotload = true)
+  val MULTI_ENTRANCE_CONDITION =
+    CommonVars("wds.linkis.entrance.multi.entrance.flag", true, hotload = true)
 
   /**
    * QUERY_PERSISTENCE_SPRING_APPLICATION_NAME is the name of the application that represents the
@@ -105,7 +110,8 @@ object EntranceConfiguration {
 
   val LOG_EXCLUDE_ALL = CommonVars("wds.linkis.log.exclude.all", "com.netflix")
 
-  val MAX_ASK_EXECUTOR_TIME = CommonVars("wds.linkis.max.ask.executor.time", new TimeType("5m"), hotload = true)
+  val MAX_ASK_EXECUTOR_TIME =
+    CommonVars("wds.linkis.max.ask.executor.time", new TimeType("5m"), hotload = true)
 
   val ERROR_CODE_FILE_DIR = CommonVars("wds.linkis.errorcode.file.dir", "")
 
@@ -151,13 +157,16 @@ object EntranceConfiguration {
     "sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while"
   )
 
-  val FLOW_EXECUTION_CREATOR = CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution", hotload = true)
+  val FLOW_EXECUTION_CREATOR =
+    CommonVars("wds.linkis.entrance.flow.creator", "nodeexecution", hotload = true)
 
-  val SCHEDULER_CREATOR = CommonVars("wds.linkis.entrance.scheduler.creator", "Schedulis", hotload = true)
+  val SCHEDULER_CREATOR =
+    CommonVars("wds.linkis.entrance.scheduler.creator", "Schedulis", hotload = true)
 
   val SKIP_AUTH = CommonVars("wds.linkis.entrance.skip.auth", false, hotload = true)
 
-  val PROGRESS_PUSH = CommonVars[String]("wds.linkis.entrance.push.progress", "false", hotload = true)
+  val PROGRESS_PUSH =
+    CommonVars[String]("wds.linkis.entrance.push.progress", "false", hotload = true)
 
   val CONCURRENT_FACTORY_MAX_CAPACITY =
     CommonVars("wds.linkis.concurrent.group.factory.capacity", 1000, hotload = true)
@@ -175,13 +184,18 @@ object EntranceConfiguration {
     CommonVars("wds.linkis.entrance.engine.timeout", new TimeType("10s"), hotload = true)
 
   val ENTRANCE_ENGINE_ACTIVITY_MONITOR_INTERVAL =
-    CommonVars("wds.linkis.entrance.engine.activity_monitor.interval", new TimeType("3s"), hotload = true)
+    CommonVars(
+      "wds.linkis.entrance.engine.activity_monitor.interval",
+      new TimeType("3s"),
+      hotload = true
+    )
 
   // Whether to turn on timeout detection
   val ENABLE_JOB_TIMEOUT_CHECK = CommonVars("wds.linkis.enable.job.timeout.check", true)
 
   // unit is seconds
-  val TIMEOUT_SCAN_INTERVAL = CommonVars("wds.linkis.timeout.thread.scan.interval", 120, hotload = true)
+  val TIMEOUT_SCAN_INTERVAL =
+    CommonVars("wds.linkis.timeout.thread.scan.interval", 120, hotload = true)
 
   // unit is MINUTES
   val USER_PARALLEL_REFLESH_TIME = CommonVars("wds.linkis.user.parallel.reflesh.time", 30)
@@ -193,7 +207,11 @@ object EntranceConfiguration {
     CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.max.times", 3, hotload = true)
 
   val JOBINFO_UPDATE_RETRY_INTERVAL =
-    CommonVars[Integer]("wds.linkis.entrance.jobinfo.update.retry.interval", 2 * 60 * 1000, hotload = true)
+    CommonVars[Integer](
+      "wds.linkis.entrance.jobinfo.update.retry.interval",
+      2 * 60 * 1000,
+      hotload = true
+    )
 
   val CODE_PARSER_SELECTIVE_IGNORED =
     CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.selective.ignored", true)
@@ -201,7 +219,8 @@ object EntranceConfiguration {
   val ENTRANCE_CODEPARSER_ENABLE =
     CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.enable", false)
 
-  val YARN_QUEUE_CORES_MAX = CommonVars[Integer]("wds.linkis.entrance.yarn.queue.core.max", 300, hotload = true)
+  val YARN_QUEUE_CORES_MAX =
+    CommonVars[Integer]("wds.linkis.entrance.yarn.queue.core.max", 300, hotload = true)
 
   val YARN_QUEUE_MEMORY_MAX =
     CommonVars[Integer]("wds.linkis.entrance.yarn.queue.memory.max.g", 1000, hotload = true)
@@ -215,9 +234,11 @@ object EntranceConfiguration {
   val LOG_PUSH_INTERVAL_TIME =
     CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
 
-  val GRORUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000, hotload = true)
+  val GRORUP_CACHE_MAX =
+    CommonVars("wds.linkis.consumer.group.cache.capacity", 5000, hotload = true)
 
-  val GRORUP_CACHE_EXPITE_TIME = CommonVars("wds.linkis.consumer.group.expire.time.hour", 50, hotload = true)
+  val GRORUP_CACHE_EXPITE_TIME =
+    CommonVars("wds.linkis.consumer.group.expire.time.hour", 50, hotload = true)
 
   val CLIENT_MONITOR_CREATOR =
     CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI", hotload = true)

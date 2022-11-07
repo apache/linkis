@@ -202,8 +202,8 @@ private[conf] object BDPConfiguration extends Logging {
     mapProps.foreach { case (k, v) => props.put(k, v) }
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = {
-    if (commonVars.hotload) {
+  def getOption[T](commonVars: CommonVars[T], hotload: Boolean): Option[T] = {
+    if (hotload) {
       val value = BDPConfiguration.getOption(commonVars.key, hotload = true)
       if (value.isEmpty) Option(commonVars.defaultValue)
       else formatValue(commonVars.defaultValue, value)
@@ -215,6 +215,16 @@ private[conf] object BDPConfiguration extends Logging {
         if (value.isEmpty) Option(commonVars.defaultValue)
         else formatValue(commonVars.defaultValue, value)
       }
+    }
+  }
+
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = {
+    if (commonVars.value != null) {
+      Option(commonVars.value)
+    } else {
+      val value = BDPConfiguration.getOption(commonVars.key)
+      if (value.isEmpty) Option(commonVars.defaultValue)
+      else formatValue(commonVars.defaultValue, value)
     }
   }
 

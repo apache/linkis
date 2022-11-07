@@ -266,7 +266,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             } else {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getHotValue())
                             || jobProgressInfo.totalTasks() > 0) {
                         setJobProgressInfos(list, jobProgressInfo);
                     }
@@ -311,7 +311,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             } else {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getHotValue())
                             || jobProgressInfo.totalTasks() > 0) {
                         setJobProgressInfos(list, jobProgressInfo);
                     }
@@ -348,11 +348,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                             corePercent =
                                     cores.get().floatValue()
                                             / EntranceConfiguration.YARN_QUEUE_CORES_MAX()
-                                                    .getValue();
+                                                    .getHotValue();
                             memoryPercent =
                                     memory.get().floatValue()
                                             / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
-                                                            .getValue()
+                                                            .getHotValue()
                                                             .longValue()
                                                     * 1024
                                                     * 1024

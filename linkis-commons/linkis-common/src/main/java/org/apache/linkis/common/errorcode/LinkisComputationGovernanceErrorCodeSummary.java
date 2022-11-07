@@ -19,25 +19,48 @@ package org.apache.linkis.common.errorcode;
 
 public enum LinkisComputationGovernanceErrorCodeSummary {
   ENGINE_LAUNCH_REQUEST_USER_BLANK(
-      20000, "User is null in the parameters of the request engine(请求引擎的参数中user为空)"),
+      20000,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager"),
   ENGINE_LAUNCH_REQUEST_CREATOR_BLANK(
       20001,
-      "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)"),
-  ENGINE_INIT_FAILED(20002, "Engine initialization failed(引擎初始化失败)"),
+      "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+      "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+      "EngineConnManager"),
+  ENGINE_INIT_FAILED(
+      20002,
+      "Engine initialization failed(引擎初始化失败)",
+      "Engine initialization failed(引擎初始化失败)",
+      "EngineConnManager"),
 
   ENGINE_REQUEST_USER_BLANK(
-      20000, "User is null in the parameters of the request engine(请求引擎的参数中user为空)"),
+      20000,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager"),
 
-  AM_EM_NOT_FOUND(20100, "User is null in the parameters of the request engine(请求引擎的参数中user为空)");
+  AM_EM_NOT_FOUND(
+      20100,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager");
   /** 错误码 */
   private int errorCode;
   /** 错误描述 */
   private String errorDesc;
   /** 错误可能出现的原因 */
-  LinkisComputationGovernanceErrorCodeSummary(int errorCode, String errorDesc) {
+  private String comment;
+  /** 所属的linkis的模块 */
+  private String module;
+
+  LinkisComputationGovernanceErrorCodeSummary(
+      int errorCode, String errorDesc, String comment, String module) {
     ErrorCodeUtils.validateErrorCode(errorCode, 20000, 24999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
+    this.comment = comment;
+    this.module = module;
   }
 
   public int getErrorCode() {
@@ -54,6 +77,22 @@ public enum LinkisComputationGovernanceErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
+
+  public String getModule() {
+    return module;
+  }
+
+  public void setModule(String module) {
+    this.module = module;
   }
 
   @Override

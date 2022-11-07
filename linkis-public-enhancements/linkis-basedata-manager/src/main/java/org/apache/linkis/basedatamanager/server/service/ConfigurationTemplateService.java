@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.basedatamanager.server.service;
 
+import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey;
 import org.apache.linkis.basedatamanager.server.request.ConfigurationTemplateSaveRequest;
+import org.apache.linkis.basedatamanager.server.response.EngineLabelResponse;
+
+import java.util.List;
 
 /** This module is designed to manage configuration parameter templates */
 public interface ConfigurationTemplateService {
@@ -36,4 +41,19 @@ public interface ConfigurationTemplateService {
    * @return Boolean
    */
   Boolean deleteConfigurationTemplate(Long keyId);
+
+  /**
+   * query all engine list
+   *
+   * @return List
+   */
+  List<EngineLabelResponse> getEngineList();
+
+  /**
+   * query config key list by label id
+   *
+   * @param engineLabelId engine label id
+   * @return List
+   */
+  List<ConfigurationConfigKey> getTemplateListByLabelId(String engineLabelId);
 }

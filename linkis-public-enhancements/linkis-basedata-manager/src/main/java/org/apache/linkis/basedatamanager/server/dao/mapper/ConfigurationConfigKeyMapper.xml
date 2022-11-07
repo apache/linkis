@@ -17,5 +17,25 @@
   -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.apache.linkis.basedatamanager.server.dao.ConfigurationConfigKeyMapper">
-
+    <!-- query config key list by engine label id -->
+    <select id="getTemplateListByLabelId"
+            resultType="org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey"
+            parameterType="java.lang.String">
+        select k.id,
+               k.`key`,
+               k.description,
+               k.`name`,
+               k.default_value,
+               k.validate_type,
+               k.validate_range,
+               k.engine_conn_type,
+               k.is_hidden   hidden,
+               k.is_advanced advanced,
+               k.`level`,
+               k.treeName
+        from linkis_ps_configuration_config_key k
+                 inner join linkis_ps_configuration_key_engine_relation r
+                            on k.id = r.config_key_id
+        where r.engine_type_label_id = #{engineLabelId};
+    </select>
 </mapper>

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.basedatamanager.server.service.impl;
 
 import org.apache.linkis.basedatamanager.server.dao.CgManagerLabelMapper;
@@ -25,18 +26,23 @@ import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey;
 import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigValue;
 import org.apache.linkis.basedatamanager.server.domain.ConfigurationKeyEngineRelation;
 import org.apache.linkis.basedatamanager.server.request.ConfigurationTemplateSaveRequest;
+import org.apache.linkis.basedatamanager.server.response.EngineLabelResponse;
 import org.apache.linkis.basedatamanager.server.service.ConfigurationTemplateService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Lists;
 
 /** This module is designed to manage configuration parameter templates */
 @Service
@@ -105,5 +111,28 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
     int deleteKey = configKeyMapper.deleteById(keyId);
 
     return deleteValue > 0 & deleteRelation > 0 & deleteKey > 0;
+  }
+
+  @Override
+  public List<EngineLabelResponse> getEngineList() {
+    List<CgManagerLabel> cgEngineList = managerLabelMapper.getEngineList();
+    if (CollectionUtils.isEmpty(cgEngineList)) {
+      return Lists.newArrayList();
+    }
+    return cgEngineList.stream()
+        .map(
+            e -> {
+              String labelValue = e.getLabelValue().split(",")[1];
+              if ("*-*".equals(labelValue)) {
+                labelValue = "全局设置";
+              }
+              return new EngineLabelResponse(e.getId(), labelValue);
+            })
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<ConfigurationConfigKey> getTemplateListByLabelId(String engineLabelId) {
+    return configKeyMapper.getTemplateListByLabelId(engineLabelId);
   }
 }

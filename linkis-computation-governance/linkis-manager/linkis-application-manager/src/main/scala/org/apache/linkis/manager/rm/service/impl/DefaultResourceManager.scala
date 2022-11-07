@@ -787,14 +787,14 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       val engineConnManagerSpringName =
         GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue()
       serviceInstance.getApplicationName match {
-        case engineConnSpringName =>
+        case value if value.equals(engineConnSpringName) =>
           val engineInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
             classOf[EngineInstanceLabel]
           )
           engineInstanceLabel.setServiceName(serviceInstance.getApplicationName)
           engineInstanceLabel.setInstance(serviceInstance.getInstance)
           aggregatedResource = labelResourceService.getLabelResource(engineInstanceLabel)
-        case engineConnManagerSpringName =>
+        case value if value.equals(engineConnManagerSpringName) =>
           val emInstanceLabel =
             LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
           emInstanceLabel.setServiceName(serviceInstance.getApplicationName)

@@ -21,21 +21,21 @@ import org.apache.linkis.common.conf.CommonVars;
 
 /** Configuration */
 public class MongoDbParamsMapper {
-    public static final CommonVars<String> PARAM_MONGO_HOST =
-            CommonVars.apply("wds.linkis.server.mdm.service.mongo.host", "host");
+  public static final CommonVars<String> PARAM_MONGO_HOST =
+      CommonVars.apply("wds.linkis.server.mdm.service.mongo.host", "host");
 
-    public static final CommonVars<String> PARAM_MONGO_PORT =
-            CommonVars.apply("wds.linkis.server.mdm.service.mongo.port", "port");
+  public static final CommonVars<String> PARAM_MONGO_PORT =
+      CommonVars.apply("wds.linkis.server.mdm.service.mongo.port", "port");
 
-    public static final CommonVars<String> PARAM_MONGO_USERNAME =
-            CommonVars.apply("wds.linkis.server.mdm.service.mongo.username", "username");
+  public static final CommonVars<String> PARAM_MONGO_USERNAME =
+      CommonVars.apply("wds.linkis.server.mdm.service.mongo.username", "username");
 
-    public static final CommonVars<String> PARAM_MONGO_PASSWORD =
-            CommonVars.apply("wds.linkis.server.mdm.service.mongo.password", "password");
+  public static final CommonVars<String> PARAM_MONGO_PASSWORD =
+      CommonVars.apply("wds.linkis.server.mdm.service.mongo.password", "password");
 
-    public static final CommonVars<String> PARAM_MONGO_DATABASE =
-            CommonVars.apply("wds.linkis.server.mdm.service.MONGO.params", "database");
+  public static final CommonVars<String> PARAM_MONGO_DATABASE =
+      CommonVars.apply("wds.linkis.server.mdm.service.MONGO.params", "database");
 
-    public static final CommonVars<String> PARAM_MONGO_EXTRA_PARAMS =
-            CommonVars.apply("wds.linkis.server.mdm.service.MONGO.params", "params");
+  public static final CommonVars<String> PARAM_MONGO_EXTRA_PARAMS =
+      CommonVars.apply("wds.linkis.server.mdm.service.MONGO.params", "params");
 }

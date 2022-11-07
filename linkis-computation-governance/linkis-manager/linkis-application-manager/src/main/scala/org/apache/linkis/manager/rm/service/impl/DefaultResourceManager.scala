@@ -786,15 +786,18 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
       var aggregatedResource: NodeResource = null
+      val engineConnSpringName = GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue()
+      val engineConnManagerSpringName =
+        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue()
       serviceInstance.getApplicationName match {
-        case GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue =>
+        case value if value.equals(engineConnSpringName) =>
           val engineInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
             classOf[EngineInstanceLabel]
           )
           engineInstanceLabel.setServiceName(serviceInstance.getApplicationName)
           engineInstanceLabel.setInstance(serviceInstance.getInstance)
           aggregatedResource = labelResourceService.getLabelResource(engineInstanceLabel)
-        case GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue =>
+        case value if value.equals(engineConnManagerSpringName) =>
           val emInstanceLabel =
             LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
           emInstanceLabel.setServiceName(serviceInstance.getApplicationName)

@@ -118,6 +118,6 @@ object FlinkEnvConfiguration {
   val FLINK_KERBEROS_CONF_PATH = CommonVars("linkis.flink.kerberos.krb5-conf.path", "")
 
   val FLINK_PARAMS_BLANK_PLACEHOLER =
-    CommonVars("linkis.flink.params.placeholder.blank", "\\0x001")
+    CommonVars("linkis.flink.params.placeholder.blank", "\u0001")
 
 }

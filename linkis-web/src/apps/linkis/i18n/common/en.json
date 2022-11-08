@@ -388,7 +388,7 @@
         "contentError": "English, numbers, asterisk and underline only",
         "contentError1": "English, numbers and underline only",
         "contentError2": "English, numbers, underscores and dashes only",
-        "ipContentError": "Please enter IP addresses in correct format.",
+        "ipContentError": "Please enter IP addresses in correct format.(Multiple IP addresses pass through, separate)",
         "check": "Check",
         "OK": "OK",
         "Cancel": "Cancel",

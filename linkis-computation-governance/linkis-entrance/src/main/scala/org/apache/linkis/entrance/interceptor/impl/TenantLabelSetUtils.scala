@@ -52,7 +52,7 @@ object TenantLabelSetUtils extends Logging {
             .getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
           val user = userCreatorLabel.split("-")(0)
           val creator = userCreatorLabel.split("-")(1)
-          logger.info(s"load tentant data user $user creator $creator data")
+          logger.info(s"load tenant data user $user creator $creator data")
           sender.ask(TenantRequest(user, creator)) match {
             case tenantResponse: TenantResponse => tenantResponse.tenant
             case _ =>
@@ -69,12 +69,12 @@ object TenantLabelSetUtils extends Logging {
       case requestPersistTask: JobRequest =>
         val labels = requestPersistTask.getLabels
         // Determine whether the tenant exists. If it exists, it will be released; if it does not exist, it will be backfilled
-        logger.debug("check lalabels contains tenant :{} ", labels)
+        logger.debug("check labels contains tenant :{} ", labels)
         if (!labels.contains(LabelKeyConstant.TENANT_KEY)) {
           // Get user information
           val userName = jobRequest.getSubmitUser
           // Error reported when user information is not obtained
-          if (StringUtils.isEmpty(userName)) {
+          if (StringUtils.isBlank(userName)) {
             throw SetTenantLabelException(
               EntranceErrorCode.USER_NULL_EXCEPTION.getErrCode,
               EntranceErrorCode.USER_NULL_EXCEPTION.getDesc
@@ -86,8 +86,9 @@ object TenantLabelSetUtils extends Logging {
             LabelUtil.getUserCreatorLabel(labels).getStringValue.toLowerCase()
           )
           if (StringUtils.isBlank(tenant)) {
-            tenant =
-              userCreatorTenantCache.get("*-" + LabelUtil.getUserCreator(labels)._2.toLowerCase())
+            tenant = userCreatorTenantCache.get(
+              "*-" + LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator.toLowerCase()
+            )
           }
           logger.info("get cache tenant:" + tenant + ",jobRequest:" + jobRequest.getId)
           // Add cached data if it is not empty
@@ -101,7 +102,7 @@ object TenantLabelSetUtils extends Logging {
             )
           }
         }
-      case _ => jobRequest
+      case _ =>
     }
     jobRequest
   }

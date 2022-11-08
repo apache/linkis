@@ -103,10 +103,6 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   public Map<String, Object> queryUserIPList(
       String user, String creator, Integer pageNow, Integer pageSize) {
     Map<String, Object> result = new HashMap<>(2);
-    if (StringUtils.isBlank(user)) user = null;
-    if (StringUtils.isBlank(creator)) creator = null;
-    if (null == pageNow) pageNow = 1;
-    if (null == pageSize) pageSize = 20;
     List<UserIpVo> userIpVos = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
@@ -121,22 +117,6 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   private void dataProcessing(UserIpVo userIpVo) throws ConfigurationException {
-    // Parameter verification
-    if (StringUtils.isBlank(userIpVo.getCreator())) {
-      throw new ConfigurationException("Application Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(userIpVo.getUser())) {
-      throw new ConfigurationException("User Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(userIpVo.getBussinessUser())) {
-      throw new ConfigurationException("Creat User couldn't be empty ");
-    }
-    if (StringUtils.isBlank(userIpVo.getIpList())) {
-      throw new ConfigurationException("Ip List couldn't be empty ");
-    }
-    if (StringUtils.isBlank(userIpVo.getDesc())) {
-      throw new ConfigurationException("Description couldn't be empty ");
-    }
     // Ip rule verification
     String ipList = userIpVo.getIpList();
     if (!ipList.equals("*")) {
@@ -153,18 +133,8 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   @Override
-  public Boolean checkUserCteator(String user, String creator) throws ConfigurationException {
+  public Boolean checkUserCteator(String user, String creator) {
     boolean result = true;
-    // Parameter verification
-    if (StringUtils.isBlank(creator)) {
-      throw new ConfigurationException("Application Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(user)) {
-      throw new ConfigurationException("User Name couldn't be empty ");
-    }
-    if (creator.equals("*")) {
-      throw new ConfigurationException("Application Name couldn't be '*' ");
-    }
     Map<String, Object> resultMap =
         queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null);
     Object userIpList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);

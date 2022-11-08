@@ -38,10 +38,8 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.collect.Lists;
 
 /** This module is designed to manage configuration parameter templates */
@@ -55,18 +53,8 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Boolean saveConfigurationTemplate(ConfigurationTemplateSaveRequest request) {
-    // check label is exist
-    CgManagerLabel labelQuery = new CgManagerLabel();
-    labelQuery.setLabelKey("combined_userCreator_engineType");
-    labelQuery.setLabelValue("*-*," + request.getCategoryName());
-    CgManagerLabel label = managerLabelMapper.selectOne(new QueryWrapper<>(labelQuery));
-
-    if (Objects.isNull(label)) {
-      labelQuery.setLabelFeature("OPTIONAL");
-      labelQuery.setLabelValueSize(2);
-      managerLabelMapper.insert(labelQuery);
-      label = managerLabelMapper.selectOne(new QueryWrapper<>(labelQuery));
-    }
+    // query engine label
+    CgManagerLabel label = managerLabelMapper.selectById(request.getEngineLabelId());
 
     // build key&value
     ConfigurationConfigKey configKey = new ConfigurationConfigKey();

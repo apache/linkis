@@ -29,7 +29,7 @@ public class ConfigurationTemplateRestfulApi {
     @ApiOperation(value = "save", notes = "save a configuration template", httpMethod = "POST")
     @RequestMapping(path = "/save", method = RequestMethod.POST)
     public Message add(@RequestBody ConfigurationTemplateSaveRequest request) {
-        if (Objects.isNull(request) || StringUtils.isEmpty(request.getCategoryName()) || StringUtils.isEmpty(request.getKey()) ||
+        if (Objects.isNull(request) || StringUtils.isEmpty(request.getEngineLabelId()) || StringUtils.isEmpty(request.getKey()) ||
                 StringUtils.isEmpty(request.getEngineConnType()) || StringUtils.isEmpty(request.getName()) ||
                 StringUtils.isEmpty(request.getTreeName())) {
             throw new InvalidParameterException("please check your parameter.");

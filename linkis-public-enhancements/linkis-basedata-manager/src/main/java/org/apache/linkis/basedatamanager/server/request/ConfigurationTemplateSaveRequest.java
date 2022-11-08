@@ -32,8 +32,8 @@ public class ConfigurationTemplateSaveRequest implements Serializable {
   @ApiModelProperty(value = "key id.")
   private Long id;
 
-  @ApiModelProperty(value = "category name. eg: openlookeng-1.5.0")
-  private String categoryName;
+  @ApiModelProperty(value = "engineLabelId.")
+  private String engineLabelId;
 
   @ApiModelProperty(value = "key. eg: linkis.openlookeng.url")
   private String key;
@@ -77,12 +77,12 @@ public class ConfigurationTemplateSaveRequest implements Serializable {
     this.id = id;
   }
 
-  public String getCategoryName() {
-    return categoryName;
+  public String getEngineLabelId() {
+    return engineLabelId;
   }
 
-  public void setCategoryName(String categoryName) {
-    this.categoryName = categoryName;
+  public void setEngineLabelId(String engineLabelId) {
+    this.engineLabelId = engineLabelId;
   }
 
   public String getKey() {

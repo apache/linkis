@@ -59,7 +59,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   private static final int MAX_DESC_LEN = GovernanceCommonConf.ERROR_CODE_DESC_LEN();
 
   private static final int RETRY_NUMBER =
-      EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getValue();
+      EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue();
 
   public QueryPersistenceEngine() {
     /*
@@ -97,7 +97,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       }
       if (retry) {
         try {
-          Thread.sleep(EntranceConfiguration.JOBINFO_UPDATE_RETRY_INTERVAL().getValue());
+          Thread.sleep(EntranceConfiguration.JOBINFO_UPDATE_RETRY_INTERVAL().getHotValue());
         } catch (Exception ex) {
           logger.warn(ex.getMessage());
         }

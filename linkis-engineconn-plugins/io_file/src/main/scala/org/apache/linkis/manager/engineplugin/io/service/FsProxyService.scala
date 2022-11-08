@@ -22,14 +22,20 @@ import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
 class FsProxyService extends Logging {
 
-  def canProxyUser(creatorUser: String, proxyUser: String, fsType: String): Boolean =
+  def canProxyUser(creatorUser: String, proxyUser: String, fsType: String): Boolean = {
+    val storageRootUser = StorageConfiguration.STORAGE_ROOT_USER.getValue
+    val localRootUser = StorageConfiguration.LOCAL_ROOT_USER.getValue
+    val hdfsRootUser = StorageConfiguration.HDFS_ROOT_USER.getValue
     creatorUser match {
-      case StorageConfiguration.STORAGE_ROOT_USER.getValue => true
-      case StorageConfiguration.LOCAL_ROOT_USER.getValue => StorageUtils.FILE == fsType
-      case StorageConfiguration.HDFS_ROOT_USER.getValue => StorageUtils.HDFS == fsType
+      case value: String if (null != value && value.equals(storageRootUser)) => true
+      case value: String if (null != value && value.equals(localRootUser)) =>
+        StorageUtils.FILE == fsType
+      case value: String if (null != value && value.equals(hdfsRootUser)) =>
+        StorageUtils.HDFS == fsType
       case _ => true // creatorUser.equals(proxyUser)
     }
-  /*  if(creatorUser.equals(proxyUser)) {
+  }
+  /*  if(creatorUser.equals(proxyUser)){
      return true
     }
     if(creatorUser == StorageConfiguration.STORAGE_ROOT_USER.getValue ) return t

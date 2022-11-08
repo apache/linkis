@@ -102,12 +102,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       } else {
         s"Succeed to create new ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       }
-      getPhysicalContext.pushLog(
-        TaskLogEvent(
-          this,
-          LogUtils.generateInfo(msg)
-        )
-      )
+      getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(msg)))
       val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)) {
         t: Throwable =>
           logger.error(

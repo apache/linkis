@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.scheduler
 
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -53,18 +54,16 @@ import java.util.regex.Pattern
 import scala.collection.JavaConverters._
 
 import com.google.common.cache.{Cache, CacheBuilder}
-import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.instance.label.client.InstanceLabelClient
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
-import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups: Cache[String, Group] = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getValue, TimeUnit.MINUTES)
-    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getValue)
+    .expireAfterAccess(
+      EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getHotValue(),
+      TimeUnit.MINUTES
+    )
+    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getHotValue())
     .build()
 
   private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)
@@ -95,24 +94,28 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     val groupName = EntranceGroupFactory.getGroupNameByLabels(labels, params)
     val cacheGroup = groupNameToGroups.getIfPresent(groupName)
     if (null == cacheGroup) synchronized {
-      val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getValue.toLong
+      val maxAskExecutorTimes = EntranceConfiguration.MAX_ASK_EXECUTOR_TIME.getHotValue().toLong
       if (groupName.startsWith(EntranceGroupFactory.CONCURRENT)) {
         if (null == groupNameToGroups.getIfPresent(groupName)) synchronized {
           if (null == groupNameToGroups.getIfPresent(groupName)) {
             val group = new ParallelGroup(
               groupName,
               100,
-              EntranceConfiguration.CONCURRENT_FACTORY_MAX_CAPACITY.getValue
+              EntranceConfiguration.CONCURRENT_FACTORY_MAX_CAPACITY.getHotValue()
             )
-            group.setMaxRunningJobs(EntranceConfiguration.CONCURRENT_MAX_RUNNING_JOBS.getValue)
-            group.setMaxAskExecutorTimes(EntranceConfiguration.CONCURRENT_EXECUTOR_TIME.getValue)
+            group.setMaxRunningJobs(EntranceConfiguration.CONCURRENT_MAX_RUNNING_JOBS.getHotValue())
+            group.setMaxAskExecutorTimes(
+              EntranceConfiguration.CONCURRENT_EXECUTOR_TIME.getHotValue()
+            )
             groupNameToGroups.put(groupName, group)
             return group
           }
         }
       }
       val sender: Sender =
-        Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
+        Sender.getSender(
+          Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getHotValue()
+        )
       val userCreatorLabel: UserCreatorLabel = LabelUtil.getUserCreatorLabel(labels)
       val engineTypeLabel: EngineTypeLabel = LabelUtil.getEngineTypeLabel(labels)
       logger.info(
@@ -164,7 +167,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   }
 
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
-    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    var userDefinedRunningJobs =
+      EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue, true)
     var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
     val labelList = new util.ArrayList[Label[_]]()
     val offlineRouteLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -172,8 +176,14 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     labelList.add(offlineRouteLabel)
     var offlineIns: Array[ServiceInstance] = null
     Utils.tryAndWarn {
-      offlineIns = InstanceLabelClient.getInstance.getInstanceFromLabel(labelList)
-        .asScala.filter(l => null != l && l.getApplicationName.equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)).toArray
+      offlineIns = InstanceLabelClient.getInstance
+        .getInstanceFromLabel(labelList)
+        .asScala
+        .filter(l =>
+          null != l && l.getApplicationName
+            .equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)
+        )
+        .toArray
     }
     if (null != offlineIns) {
       logger.info(s"There are ${offlineIns.length} offlining instance.")
@@ -189,7 +199,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       entranceNum = 1
     }
     Math.max(
-      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
+      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getHotValue(),
       userDefinedRunningJobs / entranceNum
     );
   }
@@ -217,7 +227,7 @@ object EntranceGroupFactory {
         CACHE
       } else ""
     if (StringUtils.isNotEmpty(creator)) creator + "_" + user + cache
-    else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue + "_" + user + cache
+    else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getHotValue() + "_" + user + cache
   }
 
   def getGroupNameByLabels(

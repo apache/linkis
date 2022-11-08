@@ -37,17 +37,17 @@ import org.springframework.stereotype.Component
 import java.util
 
 @Component
-class EurekaInstanceLabelClient extends Logging {
+class SpringCloudInstanceLabelClient extends Logging {
 
   @Autowired
   private var registration: Registration = _
 
   @EventListener(classes = Array(classOf[AvailabilityChangeEvent[AvailabilityState]]))
   def init(availabilityChangeEvent: AvailabilityChangeEvent[AvailabilityState]): Unit = {
-    logger.info(s"EurekaInstanceLabelClient app state ${availabilityChangeEvent.getState}")
+    logger.info("SpringCloudInstanceLabelClient app state {}", availabilityChangeEvent.getState)
     availabilityChangeEvent.getState match {
       case state: ReadinessState if state == ReadinessState.ACCEPTING_TRAFFIC =>
-        logger.info("EurekaInstanceLabelClient init")
+        logger.info("SpringCloudInstanceLabelClient init")
         val metadata = registration.getMetadata
         if (
             null != metadata && metadata.containsKey(LabelKeyConstant.ROUTE_KEY) && StringUtils

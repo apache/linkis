@@ -292,10 +292,7 @@ if test -z "$EUREKA_INSTALL_IP"
 then
   export EUREKA_INSTALL_IP=$SERVER_IP
 fi
-if [ "true" != "$EUREKA_PREFER_IP" ]
-then
-  export EUREKA_HOSTNAME=$EUREKA_INSTALL_IP
-fi
+
 export EUREKA_URL=http://$EUREKA_INSTALL_IP:$EUREKA_PORT/eureka/
 
 if test -z "$GATEWAY_INSTALL_IP"
@@ -314,10 +311,25 @@ sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$cur
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.yml
 sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.yml
 
+sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-engineconn.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-engineconn.yml
+
+if [ "$EUREKA_PREFER_IP" == "true" ]; then
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-eureka.yml
+
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-linkis.yml
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-engineconn.yml
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+
+  sed -i ${txt}  "s#linkis.discovery.prefer-ip-address.*#linkis.discovery.prefer-ip-address=true#g" $common_conf
+fi
+
 echo "update conf $common_conf"
 sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_SERVER_VERSION#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.gateway.url.*#wds.linkis.gateway.url=http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT#g" $common_conf
-sed -i ${txt}  "s#wds.linkis.eureka.defaultZone.*#wds.linkis.eureka.defaultZone=$EUREKA_URL#g" $common_conf
+sed -i ${txt}  "s#linkis.discovery.server-address.*#linkis.discovery.server-address=http://$EUREKA_INSTALL_IP:$EUREKA_PORT#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g" $common_conf
@@ -433,6 +445,7 @@ then
   sed -i ${txt}  "s#\#wds.linkis.prometheus.enable.*#wds.linkis.prometheus.enable=true#g" $common_conf
   sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-eureka.yml
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-engineconn.yml
 fi
 
 echo "preveliges linkis command shells"

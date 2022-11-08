@@ -22,12 +22,12 @@ import org.apache.linkis.instance.label.service.InsLabelServiceAdapter;
 import org.apache.linkis.instance.label.service.annotation.AdapterMode;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelService;
 import org.apache.linkis.instance.label.service.impl.DefaultInsLabelServiceAdapter;
-import org.apache.linkis.instance.label.service.impl.EurekaInsLabelService;
+import org.apache.linkis.instance.label.service.impl.SpringInsLabelService;
 import org.apache.linkis.mybatis.DataSourceConfig;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -51,7 +51,7 @@ public class InsLabelAutoConfiguration {
   }
 
   @ConditionalOnMissingBean({InsLabelServiceAdapter.class})
-  @Bean(initMethod = "init")
+  @Bean
   public InsLabelServiceAdapter insLabelServiceAdapter(List<InsLabelAccessService> accessServices) {
     LOG.info("Discover instance label accessServices: [" + accessServices.size() + "]");
     InsLabelServiceAdapter insLabelServiceAdapter = new DefaultInsLabelServiceAdapter();
@@ -70,27 +70,13 @@ public class InsLabelAutoConfiguration {
     return insLabelServiceAdapter;
   }
 
-  /** Configuration in eureka environment */
-  /* @Configuration
-  @ConditionalOnClass({EurekaClient.class})*/
-  public static class EurekaClientConfiguration {
-    @ConditionalOnMissingBean({EurekaInsLabelService.class})
+  /** Configuration in environment */
+  public static class SpringClientConfiguration {
+    @ConditionalOnMissingBean({SpringInsLabelService.class})
     @Bean
     @Scope("prototype")
-    public EurekaInsLabelService eurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {
-      return new EurekaInsLabelService(discoveryClient);
+    public SpringInsLabelService springInsLabelService(DiscoveryClient discoveryClient) {
+      return new SpringInsLabelService(discoveryClient);
     }
   }
-
-  /**
-   * Enable the rpc service
-   *
-   * @return
-   */
-  /*//@ConditionalOnExpression("${wds.linkis.is.gateway:false}==false")
-  @ConditionalOnMissingBean({InsLabelRpcService.class})
-  public InsLabelRpcService insLabelRpcService(){
-      LOG.info("Use the default implement of rpc service: [" + DefaultInsLabelRpcService.class + "]");
-      return new DefaultInsLabelRpcService();
-  }*/
 }

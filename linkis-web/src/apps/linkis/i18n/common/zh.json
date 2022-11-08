@@ -7,7 +7,7 @@
           "addAppType": "新增应用类型",
           "editContents": "编辑目录",
           "ConfirmEdit": "完成编辑",
-          "eurekaRegisterCenter":  "Eureka注册中心",
+          "serviceRegistryCenter":  "服务注册中心",
           "addParameterConfig": "新增参数配置",
           "addEngineType": "新增引擎类型",
           "editDescriptionEngineConfig": "编辑引擎配置",

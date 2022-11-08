@@ -389,7 +389,7 @@
                 "contentError": "仅限英文、数字、星号和下划线",
                 "contentError1": "仅限英文、数字和下划线",
                 "contentError2": "仅限英文、数字、下划线和横线",
-                "ipContentError": "请输入正确格式的IP地址",
+                "ipContentError": "请输入正确格式的IP地址(多个IP地址通过,分隔)",
                 "check": "检查",
                 "OK": "确定",
                 "Cancel": "取消",

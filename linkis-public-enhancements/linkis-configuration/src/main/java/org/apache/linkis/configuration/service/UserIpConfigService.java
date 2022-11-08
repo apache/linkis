@@ -32,7 +32,7 @@ public interface UserIpConfigService {
   Map<String, Object> queryUserIPList(
       String user, String creator, Integer pageNow, Integer pageSize);
 
-  Boolean checkUserCteator(String user, String creator) throws ConfigurationException;
+  Boolean checkUserCteator(String user, String creator);
 
   UserIpVo queryUserIP(String user, String creator);
 }

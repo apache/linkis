@@ -17,17 +17,28 @@
 
 package org.apache.linkis.gateway.ujes.parser
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
+import org.apache.linkis.jobhistory.entity.JobHistory
+import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-
+import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.server.conf.ServerConfiguration
 import org.springframework.stereotype.Component
+
+import javax.annotation.Resource
 
 @Component
 class EntranceRequestGatewayParser extends AbstractGatewayParser {
+
+
+  @Resource
+  private var jobHistoryQueryService: JobHistoryQueryService = _
+
   override def shouldContainRequestBody(gatewayContext: GatewayContext): Boolean = false
 
   override def parse(gatewayContext: GatewayContext): Unit =
@@ -36,9 +47,9 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
         val serviceInstance = if (execId.startsWith(EntranceRequestGatewayParser.API_REQUEST)) {
           if (
-              gatewayContext.getRequest.getQueryParams.containsKey(
-                EntranceRequestGatewayParser.INSTANCE
-              )
+            gatewayContext.getRequest.getQueryParams.containsKey(
+              EntranceRequestGatewayParser.INSTANCE
+            )
           ) {
             val instances =
               gatewayContext.getRequest.getQueryParams.get(EntranceRequestGatewayParser.INSTANCE)
@@ -50,12 +61,40 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
           } else {
             ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, null)
           }
-        } else {
+        } else if (execId.startsWith(ZuulEntranceUtils.EXEC_ID)) {
+          // parse by execId
           ZuulEntranceUtils.parseServiceInstanceByExecID(execId)(0)
+        } else {
+          // parse by taskId
+          val jobHistory = parseJobHistoryByTaskID(execId.toLong, gatewayContext)
+          // add header
+          val jobReqId = if (jobHistory == null) "" else jobHistory.getJobReqId
+          gatewayContext.getRequest.addHeader(ServerConfiguration.LINKIS_SERVER_HEADER_KEY.getValue, Array(jobReqId))
+          // select instance
+          val instance = if (jobHistory == null) null else jobHistory.getInstances
+          ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, instance)
         }
         gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)
       case _ =>
     }
+
+  def parseJobHistoryByTaskID(taskId: Long, gatewayContext: GatewayContext): JobHistory = {
+    val histories = jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null)
+    if (histories.isEmpty) {
+      sendErrorResponse(s"taskId $taskId is not exists.", gatewayContext)
+    }
+    val instances = histories.get(0).getInstances
+    val activeInstances = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue)
+
+    if (activeInstances.exists(StringUtils.isNotBlank(instances) && _.getInstance.equals(instances)) &&
+      activeInstances.filter(_.getInstance.equals(instances))(0).getRegistryTimestamp <= histories.get(0).getCreatedTime.getTime
+    ) {
+      histories.get(0)
+    } else {
+      null
+    }
+
+  }
 
 }
 

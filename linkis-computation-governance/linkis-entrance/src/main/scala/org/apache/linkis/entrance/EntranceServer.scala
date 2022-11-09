@@ -227,6 +227,28 @@ abstract class EntranceServer extends Logging {
       .toArray
   }
 
+  def getAllNotStartRunningTask(): Array[EntranceJob] = {
+    val consumers = getEntranceContext
+      .getOrCreateScheduler()
+      .getSchedulerContext
+      .getOrCreateConsumerManager
+      .listConsumers()
+      .toSet
+
+    consumers
+      .flatMap { consumer =>
+        consumer.getConsumeQueue.getWaitingEvents
+      }
+      .filter(job => job != null && job.isInstanceOf[EntranceJob])
+      .map(_.asInstanceOf[EntranceJob])
+      .toArray
+  }
+
+  def updateAllNotExecutionTaskInstances(): Unit = {
+    val taskIds = getAllNotStartRunningTask().map(_.getJobRequest.getId)
+    JobHistoryHelper.updateBatchInstances(taskIds)
+  }
+
 }
 
 object EntranceServer {

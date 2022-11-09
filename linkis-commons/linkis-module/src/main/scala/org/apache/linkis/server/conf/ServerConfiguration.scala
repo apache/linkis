@@ -207,4 +207,6 @@ object ServerConfiguration extends Logging {
   val LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY =
     CommonVars("wds.linkis.session.proxy.user.ticket.key", "linkis_user_session_proxy_ticket_id_v1")
 
+  val LINKIS_SERVER_HEADER_KEY = CommonVars("wds.linkis.session.proxy.user.ticket.key", "job_req_id")
+
 }

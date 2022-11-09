@@ -123,6 +123,23 @@ object JobHistoryHelper extends Logging {
     sender.ask(jobReqBatchUpdate)
   }
 
+  /**
+   * Batch update instances
+   *
+   * @param taskIdList
+   */
+  def updateBatchInstances(taskIdList: Array[java.lang.Long]): Unit = {
+    val jobReqList = new util.ArrayList[JobRequest]()
+    taskIdList.foreach(taskID => {
+      val jobRequest = new JobRequest
+      jobRequest.setId(taskID)
+      jobRequest.setInstances("")
+      jobReqList.add(jobRequest)
+    })
+    val jobReqBatchUpdate = JobReqBatchUpdate(jobReqList)
+    sender.ask(jobReqBatchUpdate)
+  }
+
   private def getTaskByTaskID(taskID: Long): JobRequest = {
     val jobRequest = new JobRequest
     jobRequest.setId(taskID)

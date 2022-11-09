@@ -18,6 +18,8 @@
 package org.apache.linkis.entrance.restful;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.context.DefaultEntranceContext;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.constant.LabelValueConstant;
@@ -26,6 +28,7 @@ import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +48,13 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(path = "/entrance/operation/label")
 public class EntranceLabelRestfulApi {
 
-  private static final Logger logger = LoggerFactory.getLogger(EntranceLabelRestfulApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(EntranceLabelRestfulApi.class);
+    private EntranceServer entranceServer;
+
+    @Autowired
+    public void setEntranceServer(EntranceServer entranceServer) {
+        this.entranceServer = entranceServer;
+    }
 
   @ApiOperation(value = "update", notes = "update route label", response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
@@ -79,6 +88,12 @@ public class EntranceLabelRestfulApi {
     insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance());
     InstanceLabelClient.getInstance().refreshLabelsToInstance(insLabelRefreshRequest);
     logger.info("Finished to modify the routelabel of entry to offline");
-    return Message.ok();
+
+    logger.info("Prepare to update the instances field for all not execution task to empty string");
+    // todo ((DefaultEntranceContext) entranceServer.getEntranceContext()).setOfflineFlag(true);
+    entranceServer.updateAllNotExecutionTaskInstances();
+    logger.info("Finished to update the instances field for all not execution task to empty string");
+
+      return Message.ok();
   }
 }

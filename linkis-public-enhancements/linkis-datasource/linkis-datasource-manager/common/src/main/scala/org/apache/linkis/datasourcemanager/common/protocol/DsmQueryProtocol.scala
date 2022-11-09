@@ -46,5 +46,6 @@ case class DsInfoResponse(
     status: Boolean,
     dsType: String,
     params: util.Map[String, Object],
-    creator: String
+    creator: String,
+    errorMsg: String
 ) extends DsmQueryProtocol

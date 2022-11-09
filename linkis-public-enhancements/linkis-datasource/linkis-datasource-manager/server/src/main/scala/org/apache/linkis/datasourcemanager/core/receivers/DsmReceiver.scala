@@ -67,11 +67,18 @@ class DsmReceiver {
             status = true,
             dataSource.getDataSourceType.getName,
             dataSource.getConnectParams,
-            dataSource.getCreateUser
+            dataSource.getCreateUser,
+            ""
           )
         } else {
           logger.warn("Can not get any dataSource")
-          DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(
+            status = true,
+            "",
+            new util.HashMap[String, Object](),
+            "",
+            "Can not get any dataSource"
+          )
         }
       } {
         case e: Exception =>
@@ -79,16 +86,28 @@ class DsmReceiver {
             s"Fail to get data source information, id:${dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}",
             e
           )
-          DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(
+            status = false,
+            "",
+            new util.HashMap[String, Object](),
+            "",
+            s"Fail to get data source information, id:${dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}"
+          )
         case t: Throwable =>
           logger.error(
             s"Fail to get data source information, id:{dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}",
             t
           )
-          DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(
+            status = false,
+            "",
+            new util.HashMap[String, Object](),
+            "",
+            s"Fail to get data source information, id:{dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}"
+          )
       }
     } else {
-      DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+      DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "", "")
     }
   }
 

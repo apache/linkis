@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.ujes.route.label
+package org.apache.linkis.gateway.parser
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.http.GatewayContext

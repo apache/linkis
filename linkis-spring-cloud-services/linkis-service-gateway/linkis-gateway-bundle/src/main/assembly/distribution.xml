@@ -21,7 +21,6 @@
     <id>linkis-gateway</id>
     <formats>
         <format>dir</format>
-        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-gateway</baseDirectory>
@@ -31,7 +30,7 @@
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
             <!-- Now, select which projects to include in this module-set. -->
             <outputDirectory>lib</outputDirectory>
-            <useProjectArtifact>true</useProjectArtifact>
+            <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
             <useStrictFiltering>false</useStrictFiltering>
@@ -43,10 +42,6 @@
             </excludes>
         </dependencySet>
     </dependencySets>
-
-    <fileSets>
-
-    </fileSets>
 
 </assembly>
 

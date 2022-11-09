@@ -33,7 +33,9 @@
     <module>linkis-gateway-httpclient-support</module>
     <module>linkis-spring-cloud-gateway</module>
     <module>linkis-gateway-server-support</module>
+    <module>linkis-gateway-dss-support</module>
     <module>linkis-gateway-authentication</module>
+    <module>linkis-gateway-bundle</module>
 
   </modules>
 

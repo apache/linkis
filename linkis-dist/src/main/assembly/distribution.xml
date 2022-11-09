@@ -155,7 +155,7 @@
         <!--linkis-gateway-->
         <fileSet>
             <directory>
-                ../linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-server-support/target/out/lib
+                ../linkis-spring-cloud-services/linkis-service-gateway/linkis-gateway-bundle/target/out/lib
             </directory>
             <outputDirectory>
                 linkis-package/lib/linkis-spring-cloud-services/linkis-mg-gateway

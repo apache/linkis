@@ -18,8 +18,8 @@
 package org.apache.linkis.gateway.ujes.route
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.gateway.parser.{GenericRoueLabelParser, RouteLabelParser}
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration
-import org.apache.linkis.gateway.ujes.route.label.{GenericRoueLabelParser, RouteLabelParser}
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore
 import org.springframework.context.annotation.{Bean, Configuration, Scope}

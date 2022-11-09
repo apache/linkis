@@ -148,7 +148,7 @@ class DefaultEngineAskEngineService
         if (!retryFlag) {
           logger.info(msg, exception)
         } else {
-          logger.info("msg: {} canRetry Exception: {}", msg, exception.getClass.getName)
+          logger.info(s"msg: ${msg} canRetry Exception: ${exception.getClass.getName}")
         }
 
         sender.send(

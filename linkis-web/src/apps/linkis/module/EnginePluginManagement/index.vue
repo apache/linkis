@@ -90,26 +90,30 @@
         </div>
       </div>
     </Modal>
-    <Row class="search-bar" type="flex" justify="space-around">
-      <Col>
-        <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{ $t('message.linkis.EnginePluginManagement.engineConnType') }}</span>
-        <Select  v-model="ecType" clearable>
-          <Option
-            v-for="(item) in typeList"
-            :label="item"
-            :value="item"
-            :key="item"/>
-        </Select>
+    <Row class="search-bar" type="flex" justify="flex-start">
+      <Col span="5">
+        <div class="search-item">
+          <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{ $t('message.linkis.EnginePluginManagement.engineConnType') }}</span>
+          <Select  v-model="ecType" clearable style="width: 180px; margin-left: 5px;">
+            <Option
+              v-for="(item) in typeList"
+              :label="item"
+              :value="item"
+              :key="item"/>
+          </Select>
+        </div>
       </Col>
-      <Col>
-        <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnVersion')">{{ $t('message.linkis.EnginePluginManagement.engineConnVersion') }}</span>
-        <Select  v-model="version" clearable>
-          <Option
-            v-for="(item) in typeVersionList"
-            :label="item"
-            :value="item"
-            :key="item"/>
-        </Select>
+      <Col span="5">
+        <div class="search-item">
+          <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnVersion')">{{ $t('message.linkis.EnginePluginManagement.engineConnVersion') }}</span>
+          <Select  v-model="version" clearable style="width: 180px; margin-left: 5px;">
+            <Option
+              v-for="(item) in typeVersionList"
+              :label="item"
+              :value="item"
+              :key="item"/>
+          </Select>
+        </div>
       </Col>
       <Col span="12">
         <Button type="primary" :style="{width: '60px', marginRight: '5px', padding: '5px'}" @click="resetSearch">{{
@@ -184,27 +188,23 @@ export default {
         {
           title: "ID",
           key: 'id',
-          width: 60,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.engineConnType'),
           key: 'engineConnType',
-          width: 120,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.engineConnVersion'),
           key: 'version',
-          width: 120,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.fileName'),
           key: 'fileName',
-          width: 120,
           tooltip: true,
           align: 'center',
         },
@@ -212,48 +212,41 @@ export default {
           title: this.$t('message.linkis.EnginePluginManagement.fileSize'),
           key: 'fileSize',
           tooltip: true,
-          width: 120,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.lastModified'),
           key: 'lastModified',
           tooltip: true,
-          width: 120,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.bmlResourceId'),
           key: 'bmlResourceId',
           tooltip: true,
-          width: 120,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.bmlResourceVersion'),
           key: 'bmlResourceVersion',
           slot: 'bmlResourceVersion',
-          width: 120,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.lastUpdateTime'),
           key: 'lastUpdateTime',
-          width: 120,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.createTime'),
           key: 'createTime',
-          width: 120,
           tooltip: true,
           align: 'center',
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.action'),
-          width: 120,
           slot: 'action',
           align: 'center',
         },

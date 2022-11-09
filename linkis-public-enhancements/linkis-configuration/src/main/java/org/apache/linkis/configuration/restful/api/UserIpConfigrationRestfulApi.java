@@ -21,6 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.UserIpVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
@@ -55,10 +56,11 @@ public class UserIpConfigrationRestfulApi {
     @RequestMapping(path = "/create-user-ip", method = RequestMethod.POST)
     public Message createUserIp(HttpServletRequest req, @RequestBody UserIpVo userIpVo) {
         try {
-            String userName = ModuleUserUtils.getOperationUser(req, "createUserIP");
+            String userName = ModuleUserUtils.getOperationUser(req, "execute createUserIP");
             if (!Configuration.isAdmin(userName)) {
                 return Message.error("Failed to create-user-ip,msg: only administrators can configure");
             }
+            parameterVerification(userIpVo);
             userIpConfigService.createUserIP(userIpVo);
         } catch (DuplicateKeyException e) {
             return Message.error("Failed to create-user-ip,msg:create user-creator is existed");
@@ -74,13 +76,14 @@ public class UserIpConfigrationRestfulApi {
     })
     @ApiOperation(value = "update-user-ip", notes = "update user ip", httpMethod = "POST")
     @RequestMapping(path = "/update-user-ip", method = RequestMethod.POST)
-    public Message updateUserIp(HttpServletRequest req, @RequestBody UserIpVo UserIpVo) {
+    public Message updateUserIp(HttpServletRequest req, @RequestBody UserIpVo userIpVo) {
         try {
-            String userName = ModuleUserUtils.getOperationUser(req, "updateUserIP");
+            String userName = ModuleUserUtils.getOperationUser(req, "execute updateUserIP");
             if (!Configuration.isAdmin(userName)) {
                 return Message.error("Failed to update-user-ip,msg: only administrators can configure ");
             }
-            userIpConfigService.updateUserIP(UserIpVo);
+            parameterVerification(userIpVo);
+            userIpConfigService.updateUserIP(userIpVo);
         } catch (ConfigurationException e) {
             return Message.error("Failed to update-user-ip,msg:" + e.getMessage());
         }
@@ -94,9 +97,9 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "delete-user-ip", notes = "delete user ip", httpMethod = "GET")
     @RequestMapping(path = "/delete-user-ip", method = RequestMethod.GET)
     public Message deleteUserIp(HttpServletRequest req,
-                                @RequestParam(value = "id", required = false) Integer id) {
+                                @RequestParam(value = "id") Integer id) {
         try {
-            String userName = ModuleUserUtils.getOperationUser(req, "delete-user-ip");
+            String userName =  ModuleUserUtils.getOperationUser(req, "execute deleteUserIp,id: " + id);
             if (!Configuration.isAdmin(userName)) {
                 return Message.error("Failed to delete-user-ip,msg: only administrators can configure");
             }
@@ -115,17 +118,21 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "query-user-ip-list", notes = "query user ip list", httpMethod = "GET")
     @RequestMapping(path = "/query-user-ip-list", method = RequestMethod.GET)
     public Message queryUserIpList(HttpServletRequest req,
-                                   @RequestParam(value = "user", required = false) String user,
-                                   @RequestParam(value = "creator", required = false) String creator,
-                                   @RequestParam(value = "pageNow", required = false) Integer pageNow,
-                                   @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                   @RequestParam(value = "user") String user,
+                                   @RequestParam(value = "creator") String creator,
+                                   @RequestParam(value = "pageNow") Integer pageNow,
+                                   @RequestParam(value = "pageSize") Integer pageSize) {
         String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
         if (!Configuration.isAdmin(userName)) {
             return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
         }
-        Map<String,Object> resultMap = userIpConfigService.queryUserIPList(user, creator,pageNow,pageSize);
+        if (StringUtils.isBlank(user)) user = null;
+        if (StringUtils.isBlank(creator)) creator = null;
+        if (null == pageNow) pageNow = 1;
+        if (null == pageSize) pageSize = 20;
+        Map<String, Object> resultMap = userIpConfigService.queryUserIPList(user, creator, pageNow, pageSize);
         return Message.ok().data("userIpList", resultMap.get("userIpList"))
-                .data(JobRequestConstants.TOTAL_PAGE(),resultMap.get(JobRequestConstants.TOTAL_PAGE()));
+                .data(JobRequestConstants.TOTAL_PAGE(), resultMap.get(JobRequestConstants.TOTAL_PAGE()));
     }
 
     @ApiImplicitParams({
@@ -136,13 +143,23 @@ public class UserIpConfigrationRestfulApi {
     @ApiOperation(value = "check-user-creator", notes = " check user creator", httpMethod = "GET")
     @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
     public Message checkUserCreator(HttpServletRequest req,
-                                    @RequestParam(value = "user", required = false) String user,
-                                    @RequestParam(value = "creator", required = false) String creator) {
+                                    @RequestParam(value = "user") String user,
+                                    @RequestParam(value = "creator") String creator) {
         Boolean result = false;
         try {
             String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
             if (!Configuration.isAdmin(userName)) {
                 return Message.error("Failed to check-user-creator,msg: only administrators can configure");
+            }
+            // Parameter verification
+            if (StringUtils.isBlank(creator)) {
+                throw new ConfigurationException("Application Name couldn't be empty ");
+            }
+            if (StringUtils.isBlank(user)) {
+                throw new ConfigurationException("User Name couldn't be empty ");
+            }
+            if (creator.equals("*")) {
+                throw new ConfigurationException("Application Name couldn't be '*' ");
             }
             result = userIpConfigService.checkUserCteator(user, creator);
         } catch (ConfigurationException e) {
@@ -151,5 +168,25 @@ public class UserIpConfigrationRestfulApi {
         return Message.ok().data("exist", result);
     }
 
-
+    private void parameterVerification(UserIpVo userIpVo) throws ConfigurationException {
+        // Parameter verification
+        if (StringUtils.isBlank(userIpVo.getCreator())) {
+            throw new ConfigurationException("Application Name couldn't be empty ");
+        }
+        if (StringUtils.isBlank(userIpVo.getUser())) {
+            throw new ConfigurationException("User Name couldn't be empty ");
+        }
+        if (StringUtils.isBlank(userIpVo.getBussinessUser())) {
+            throw new ConfigurationException("Creat User couldn't be empty ");
+        }
+        if (StringUtils.isBlank(userIpVo.getIpList())) {
+            throw new ConfigurationException("Ip List couldn't be empty ");
+        }
+        if (StringUtils.isBlank(userIpVo.getDesc())) {
+            throw new ConfigurationException("Description couldn't be empty ");
+        }
+        if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
+            throw new ConfigurationException("User-creat is existed");
+        }
+    }
 }

@@ -1,7 +1,7 @@
-## linkis-computation-engineconn 配置
+## linkis-computation-engineconn configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-computation-engineconn|wds.linkis.engine.resultSet.cache.max |0k|engine.resultSet.cache.max|
 |linkis-computation-engineconn|wds.linkis.engine.lock.expire.time|2 * 60 * 1000 |lock.expire.time|

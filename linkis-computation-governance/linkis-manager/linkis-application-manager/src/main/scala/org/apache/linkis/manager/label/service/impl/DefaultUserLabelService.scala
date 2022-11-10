@@ -22,6 +22,7 @@ import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelConstant
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary._
 import org.apache.linkis.manager.label.exception.LabelErrorException
 import org.apache.linkis.manager.label.service.UserLabelService
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
@@ -65,7 +66,7 @@ class DefaultUserLabelService extends UserLabelService with Logging {
     // 4.找出重复key,删除这个relation
     duplicatedKeyLabel.foreach(l => {
       labelManagerPersistence.removeLabelFromUser(user, util.Arrays.asList(l.getId))
-      userRelationLabels.asScala.toList.asJava.remove(duplicatedKeyLabel.get)
+      userRelationLabels.remove(duplicatedKeyLabel.get)
     })
     // 5.插入新的relation 需要抛出duplicateKey异常，回滚
     labelManagerPersistence.addLabelToUser(user, util.Arrays.asList(dbLabel.getId))
@@ -81,8 +82,8 @@ class DefaultUserLabelService extends UserLabelService with Logging {
           .containsAll(userRelationLabels.asScala.map(_.getId).asJava)
     ) {
       throw new LabelErrorException(
-        LabelConstant.LABEL_BUILDER_ERROR_CODE,
-        "update label realtion failed"
+        UPDATE_LABEL_FAILED.getErrorCode,
+        UPDATE_LABEL_FAILED.getErrorDesc
       )
     }
   }

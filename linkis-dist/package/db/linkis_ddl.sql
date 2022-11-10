@@ -290,6 +290,7 @@ CREATE TABLE `linkis_ps_datasource_field` (
   `is_partition_field` tinyint(1) NOT NULL,
   `is_primary` tinyint(1) NOT NULL,
   `length` int(11) DEFAULT NULL,
+  `mode_info` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -686,8 +687,7 @@ CREATE TABLE `linkis_cg_manager_lock` (
   `time_out` longtext COLLATE utf8_bin,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `lock_object` (`lock_object`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_rm_external_resource_provider`;

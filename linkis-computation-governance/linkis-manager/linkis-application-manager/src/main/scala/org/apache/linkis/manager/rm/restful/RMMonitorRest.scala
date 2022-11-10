@@ -22,6 +22,7 @@ import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
@@ -60,7 +61,7 @@ import org.springframework.web.bind.annotation._
 
 import javax.servlet.http.HttpServletRequest
 
-import java.text.SimpleDateFormat
+import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
 import java.util.{Comparator, List, TimeZone}
 
@@ -240,7 +241,7 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120011, "only admin can reset user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_RESET.getErrorCode, ONLY_ADMIN_RESET.getErrorDesc)
     }
     if (resourceId == null || resourceId <= 0) {
       userResourceService.resetAllUserResource(COMBINED_USERCREATOR_ENGINETYPE)
@@ -271,14 +272,16 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120010, "only admin can read all user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_READ.getErrorCode, ONLY_ADMIN_READ.getErrorDesc)
     }
     // 1. Construct a string for SQL LIKE query, query the label_value of the label table
     val searchUsername = if (StringUtils.isEmpty(username)) "" else username
     val searchCreator = if (StringUtils.isEmpty(creator)) "" else creator
     val searchEngineType = if (StringUtils.isEmpty(engineType)) "" else engineType
+    // label value in db as :{"creator":"nodeexecution","user":"hadoop","engineType":"appconn","version":"1"}
     val labelValuePattern =
-      "%" + searchCreator + "%" + "," + "%" + searchUsername + "%" + "," + "%" + searchEngineType + "%" + "," + "%"
+      MessageFormat.format("%{0}%,%{1}%,%{2}%,%", searchCreator, searchUsername, searchEngineType)
+
     if (COMBINED_USERCREATOR_ENGINETYPE == null) {
       val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
       val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])

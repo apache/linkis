@@ -1,7 +1,7 @@
-## linkis-module 配置
+## linkis-module configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-module|wds.linkis.server.component.exclude.packages| | exclude.packages |true|
 |linkis-module|wds.linkis.server.component.exclude.classes| |exclude.classes|true|
@@ -47,5 +47,3 @@
 |linkis-module|wds.linkis.session.proxy.user.ticket.key|linkis_user_session_proxy_ticket_id_v1  |ticket.key |true|
 |linkis-module|wds.linkis.proxy.ticket.header.crypt.key|  linkis-trust-key |crypt.key |true|
 |linkis-module|wds.linkis.proxy.ticket.header.crypt.key| bfs_ | crypt.key|true|
-
-

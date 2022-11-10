@@ -54,11 +54,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util
 import java.util.Date
 
-class DefaultEntranceExecutor(
-    id: Long,
-    mark: MarkReq,
-    entranceExecutorManager: EntranceExecutorManager
-) extends EntranceExecutor(id, mark)
+class DefaultEntranceExecutor(id: Long)
+    extends EntranceExecutor(id)
     with SingleTaskOperateSupport
     with Logging {
 

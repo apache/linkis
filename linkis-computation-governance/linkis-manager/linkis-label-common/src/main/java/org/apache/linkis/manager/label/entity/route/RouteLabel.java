@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.label.entity.route;
 
-import org.apache.linkis.manager.label.constant.LabelConstant;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.InheritableLabel;
 import org.apache.linkis.manager.label.entity.SerializableLabel;
@@ -26,6 +25,8 @@ import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
 
 import org.apache.commons.lang3.StringUtils;
+
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.LABEL_ERROR_CODE;
 
 public class RouteLabel extends InheritableLabel<String> implements UserModifiable {
 
@@ -39,18 +40,11 @@ public class RouteLabel extends InheritableLabel<String> implements UserModifiab
   }
 
   @Override
-  public Boolean getModifiable() {
-    return modifiable;
-  }
-
-  @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
       if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
         throw new LabelErrorException(
-            LabelConstant.LABEL_BUILDER_ERROR_CODE,
-            "The value of the label is set incorrectly, only 1 value can be set, and the symbol cannot be used"
-                + VALUE_SEPARATOR);
+            LABEL_ERROR_CODE.getErrorCode(), LABEL_ERROR_CODE.getErrorDesc());
       }
     }
   }

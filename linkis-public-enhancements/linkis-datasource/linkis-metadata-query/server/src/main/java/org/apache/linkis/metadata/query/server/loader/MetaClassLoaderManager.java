@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,8 +22,8 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
-import org.apache.linkis.metadata.query.common.service.MetadataService;
+import org.apache.linkis.metadata.query.common.service.AbstractCacheMetaService;
+import org.apache.linkis.metadata.query.common.service.BaseMetadataService;
 import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +43,9 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.ERROR_IN_CREATING;
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.INIT_META_SERVICE;
 
 /** Class Loader for metaClass // TODO used interface class */
 public class MetaClassLoaderManager {
@@ -54,14 +58,14 @@ public class MetaClassLoaderManager {
       CommonVars.apply(
           "wds.linkis.server.mdm.service.lib.dir",
           Configuration.getLinkisHome()
-              + "/lib/linkis-public-enhancements/linkis-ps-metadataquery/service");
+              + "/lib/linkis-public-enhancements/linkis-ps-publicservice/metadataquery-service");
   public static CommonVars<Integer> INSTANCE_EXPIRE_TIME =
       CommonVars.apply("wds.linkis.server.mdm.service.instance.expire-in-seconds", 60);
 
   private static final String META_CLASS_NAME =
       "org.apache.linkis.metadata.query.service.%sMetaService";
 
-  private static final String MYSQL_BASE_DIR = "mysql";
+  private static final String MYSQL_BASE_DIR = "jdbc";
 
   private static final Logger LOG = LoggerFactory.getLogger(MetaClassLoaderManager.class);
 
@@ -120,24 +124,24 @@ public class MetaClassLoaderManager {
                         });
                 if (Objects.isNull(metaClassLoader)) {
                   throw new MetaRuntimeException(
-                      "Error in creating classloader of type: [" + dsType + "]", null);
+                      MessageFormat.format(ERROR_IN_CREATING.getErrorDesc(), dsType), null);
                 }
                 String expectClassName = null;
                 if (dsType.length() > 0) {
                   String prefix = dsType.substring(0, 1).toUpperCase() + dsType.substring(1);
                   expectClassName = String.format(META_CLASS_NAME, prefix);
                 }
-                Class<? extends MetadataService> metaServiceClass =
+                Class<? extends BaseMetadataService> metaServiceClass =
                     searchForLoadMetaServiceClass(metaClassLoader, expectClassName, true);
                 if (Objects.isNull(metaServiceClass)) {
                   throw new MetaRuntimeException(
-                      "Fail to init and load meta service class for type: [" + dsType + "]", null);
+                      MessageFormat.format(INIT_META_SERVICE.getErrorDesc(), dsType), null);
                 }
-                MetadataService metadataService =
+                BaseMetadataService metadataService =
                     MetadataUtils.loadMetaService(metaServiceClass, metaClassLoader);
-                if (metadataService instanceof AbstractMetaService) {
+                if (metadataService instanceof AbstractCacheMetaService) {
                   LOG.info("Invoke the init() method in meta service for type: [" + dsType + "]");
-                  ((AbstractMetaService<?>) metadataService).init();
+                  ((AbstractCacheMetaService<?>) metadataService).init();
                 }
                 return new MetaServiceInstance(metadataService, metaClassLoader);
               });
@@ -148,12 +152,65 @@ public class MetaClassLoaderManager {
       ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
       try {
         Thread.currentThread().setContextClassLoader(finalServiceInstance.metaClassLoader);
-        Method method =
+        List<Method> methodsMatched =
             Arrays.stream(childMethods)
-                .filter(eachMethod -> eachMethod.getName().equals(m))
-                .collect(Collectors.toList())
-                .get(0);
-        return method.invoke(finalServiceInstance.serviceInstance, args);
+                .filter(
+                    eachMethod -> {
+                      if (eachMethod.getName().equals(m)) {
+                        Class<?>[] parameterType = eachMethod.getParameterTypes();
+                        if (parameterType.length == args.length) {
+                          for (int i = 0; i < parameterType.length; i++) {
+                            if (Objects.nonNull(args[i])) {
+                              boolean matches =
+                                  parameterType[i].isAssignableFrom(args[i].getClass())
+                                      || ((args[i].getClass().isPrimitive()
+                                              || parameterType[i].isPrimitive())
+                                          && MetadataUtils.getPrimitive(args[i].getClass())
+                                              == MetadataUtils.getPrimitive(parameterType[i]));
+                              if (!matches) {
+                                return false;
+                              }
+                            }
+                          }
+                          return true;
+                        }
+                      }
+                      return false;
+                    })
+                .collect(Collectors.toList());
+        if (methodsMatched.isEmpty()) {
+          String type = null;
+          if (Objects.nonNull(args)) {
+            type =
+                Arrays.stream(args)
+                    .map(arg -> Objects.nonNull(arg) ? arg.getClass().toString() : "null")
+                    .collect(Collectors.joining(","));
+          }
+          String message =
+              "Unknown method: [ name: "
+                  + m
+                  + ", type: ["
+                  + type
+                  + "]] for meta service instance: ["
+                  + finalServiceInstance.getServiceInstance().toString()
+                  + "]";
+          LOG.warn(message);
+          throw new MetaRuntimeException(message, null);
+        } else if (methodsMatched.size() > 1) {
+          LOG.warn(
+              "Find multiple matched methods with name: ["
+                  + m
+                  + "] such as: \n"
+                  + methodsMatched.stream()
+                      .map(
+                          method ->
+                              method.getName() + ":" + Arrays.toString(method.getParameterTypes()))
+                      .collect(Collectors.joining("\n"))
+                  + "\n in meta service instance: ["
+                  + finalServiceInstance.getServiceInstance().toString()
+                  + "], will choose the first one");
+        }
+        return methodsMatched.get(0).invoke(finalServiceInstance.serviceInstance, args);
       } catch (Exception e) {
         Throwable t = e;
         // UnWrap the Invocation target exception
@@ -174,12 +231,12 @@ public class MetaClassLoaderManager {
     };
   }
 
-  private Class<? extends MetadataService> searchForLoadMetaServiceClass(
+  private Class<? extends BaseMetadataService> searchForLoadMetaServiceClass(
       ClassLoader classLoader, String expectClassName, boolean initialize) {
     ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
     Thread.currentThread().setContextClassLoader(classLoader);
     try {
-      Class<? extends MetadataService> metaClass = null;
+      Class<? extends BaseMetadataService> metaClass = null;
       if (StringUtils.isNotBlank(expectClassName)) {
         metaClass =
             MetadataUtils.loadMetaServiceClass(
@@ -228,7 +285,7 @@ public class MetaClassLoaderManager {
 
   /** ServiceInstance Holder */
   public static class MetaServiceInstance {
-    private MetadataService serviceInstance;
+    private BaseMetadataService serviceInstance;
 
     private Method[] methods;
 
@@ -236,14 +293,14 @@ public class MetaClassLoaderManager {
 
     private long initTimeStamp = 0L;
 
-    public MetaServiceInstance(MetadataService serviceInstance, ClassLoader metaClassLoader) {
+    public MetaServiceInstance(BaseMetadataService serviceInstance, ClassLoader metaClassLoader) {
       this.serviceInstance = serviceInstance;
       this.metaClassLoader = metaClassLoader;
       this.methods = serviceInstance.getClass().getMethods();
       this.initTimeStamp = System.currentTimeMillis();
     }
 
-    public MetadataService getServiceInstance() {
+    public BaseMetadataService getServiceInstance() {
       return serviceInstance;
     }
   }

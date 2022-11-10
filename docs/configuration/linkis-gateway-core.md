@@ -1,7 +1,7 @@
-## linkis-gateway-core 配置
+## linkis-gateway-core configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-gateway-core|wds.linkis.gateway.conf.enable.proxy.user |false|gateway.conf.enable.proxy.user|
 |linkis-gateway-core|wds.linkis.gateway.conf.proxy.user.config|proxy.properties|proxy.user.config|

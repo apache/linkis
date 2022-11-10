@@ -98,6 +98,10 @@ spec:
             name: {{ include "linkis.fullname" . }}-linkis-config
         - name: log
           emptyDir: {}
+        - name: common
+          hostPath:
+            path: {{ .Values.linkis.locations.commonDir }}
+            type: DirectoryOrCreate
         - name: runtime
           {{- if .Values.linkis.featureGates.localMode }}
           hostPath:
@@ -119,7 +123,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-linkismanager
+              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-linkismanager
           ports:
             - name: "http"
               containerPort: {{ .Values.cgLinkisManager.port }}
@@ -168,6 +172,8 @@ spec:
               mountPath: {{ .Values.linkis.locations.logDir }}
             - name: runtime
               mountPath: {{ .Values.linkis.locations.runtimeDir }}
+            - name: common
+              mountPath: {{ .Values.linkis.locations.commonDir }}
           resources:
             {{- toYaml .Values.cgLinkisManager.resources | nindent 12 }}
       {{- with .Values.cgLinkisManager.nodeSelector }}

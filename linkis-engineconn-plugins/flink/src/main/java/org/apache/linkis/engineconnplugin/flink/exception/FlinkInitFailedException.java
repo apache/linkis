@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,18 +19,18 @@ package org.apache.linkis.engineconnplugin.flink.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-public class FlinkInitFailedException extends ErrorException {
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.FLINK_INIT_EXCEPTION_ID;
 
-  public static final int ERROR_CODE = 16020;
+public class FlinkInitFailedException extends ErrorException {
 
   private static final long serialVersionUID = 1L;
 
   public FlinkInitFailedException(String msg) {
-    super(ERROR_CODE, msg);
+    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
   }
 
   public FlinkInitFailedException(String msg, Throwable cause) {
-    super(ERROR_CODE, msg);
+    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
     initCause(cause);
   }
 }

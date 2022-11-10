@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.manager.am.util;
 
 import org.apache.linkis.common.ServiceInstance;
@@ -60,15 +61,26 @@ public class ECResourceInfoUtils {
           Map<String, Object> divermap = MapUtils.getMap(map, "driver");
           resourceVo.setInstance(((Double) divermap.get("instance")).intValue());
           resourceVo.setCores(((Double) divermap.get("cpu")).intValue());
-          resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes(divermap.get("memory").toString()));
+          String memoryStr = String.valueOf(map.getOrDefault("memory", "0k"));
+          long memorylong = 0;
+          if (!getScientific(memoryStr)) {
+            memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+          }
+          resourceVo.setMemory(memorylong);
           return resourceVo;
         } else {
           logger.warn("Compatible with old data ,{},{}", info.getLabelValue(), info);
           return null; // Compatible with old data
         }
       }
+
+      String memoryStr = String.valueOf(map.getOrDefault("memory", "0k"));
+      long memorylong = 0;
+      if (!getScientific(memoryStr)) {
+        memorylong = ByteTimeUtils.byteStringAsBytes(memoryStr);
+      }
       resourceVo.setInstance(((Double) map.get("instance")).intValue());
-      resourceVo.setMemory(ByteTimeUtils.byteStringAsBytes((map.get("memory").toString())));
+      resourceVo.setMemory(memorylong);
       Double core = null == map.get("cpu") ? (Double) map.get("cores") : (Double) map.get("cpu");
       resourceVo.setCores(core.intValue());
     }
@@ -94,5 +106,11 @@ public class ECResourceInfoUtils {
     engineNode.setStartTime(ecInfo.getCreateTime());
     engineNode.setUpdateTime(ecInfo.getReleaseTime());
     return engineNode;
+  }
+
+  public static boolean getScientific(String input) {
+    String regx = "^((-?\\d+.?\\d*)[Ee]{1}(-?\\d+))$";
+    Pattern pattern = Pattern.compile(regx);
+    return pattern.matcher(input).matches();
   }
 }

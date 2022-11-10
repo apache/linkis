@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,6 +61,7 @@ import javax.annotation.Nullable;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
@@ -68,6 +69,8 @@ import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class ExecutionContext {
 
@@ -246,7 +249,7 @@ public class ExecutionContext {
                   BatchTableSourceFactory.class, sourceProperties, classLoader);
       return factory.createBatchTableSource(sourceProperties);
     }
-    throw new SqlExecutionException("Unsupported execution type for sources.");
+    throw new SqlExecutionException(SUPPORTED_SOURCES.getErrorDesc());
   }
 
   private static TableSink<?> createTableSink(
@@ -263,7 +266,7 @@ public class ExecutionContext {
               TableFactoryService.find(BatchTableSinkFactory.class, sinkProperties, classLoader);
       return factory.createBatchTableSink(sinkProperties);
     }
-    throw new SqlExecutionException("Unsupported execution type for sinks.");
+    throw new SqlExecutionException(SUPPORTED_SINKS.getErrorDesc());
   }
 
   private TableEnvironmentInternal createStreamTableEnvironment(
@@ -534,7 +537,8 @@ public class ExecutionContext {
         } else if (v instanceof TableFunction) {
           streamTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
-          throw new SqlExecutionException("Unsupported function type: " + v.getClass().getName());
+          throw new SqlExecutionException(
+              MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
         }
       }
     } else {
@@ -549,7 +553,8 @@ public class ExecutionContext {
         } else if (v instanceof TableFunction) {
           batchTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
-          throw new SqlExecutionException("Unsupported function type: " + v.getClass().getName());
+          throw new SqlExecutionException(
+              MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
         }
       }
     }

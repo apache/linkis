@@ -1,7 +1,7 @@
-## accessible-executor 配置
+## accessible-executor configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |accessible-executor|wds.linkis.engineconn.log.cache.default|500|cache.default|
 |accessible-executor|wds.linkis.engineconn.ignore.words|org.apache.spark.deploy.yarn.Client |ignore.words| 

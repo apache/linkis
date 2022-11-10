@@ -1,7 +1,7 @@
-## spark 配置
+## spark configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |spark|linkis.bgservice.store.prefix|hdfs:///tmp/bdp-ide/|bgservice.store.prefix|
 |spark|linkis.bgservice.store.suffix|  |bgservice.store.suffix|
@@ -25,7 +25,3 @@
 |spark|wds.linkis.spark.engine.is.viewfs.env| true | spark.engine.is.viewfs.env|
 |spark|wds.linkis.spark.engineconn.fatal.log|error writing class;OutOfMemoryError|spark.engineconn.fatal.log|
 |spark|wds.linkis.spark.engine.scala.replace_package_header.enable| true |spark.engine.scala.replace_package_header.enable|
-
-
-
- 

@@ -19,13 +19,14 @@ package org.apache.linkis.engineconnplugin.flink.executor
 
 import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSetWriter
-import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.common.utils.OverloadUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.apache.linkis.manager.common.entity.resource._
@@ -35,7 +36,6 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
-import org.apache.commons.io.IOUtils
 import org.apache.flink.configuration.{CoreOptions, JobManagerOptions, TaskManagerOptions}
 import org.apache.flink.types.Row
 import org.apache.flink.yarn.configuration.YarnConfigOptions
@@ -75,7 +75,7 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException("Not support method for requestExpectedResource.")
+    throw new JobExecutionException(NOT_SUPPORT_METHOD.getErrorDesc)
 
   protected val flinkEngineConnContext: FlinkEngineConnContext
 
@@ -108,19 +108,19 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
 
 object FlinkExecutor {
 
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
 
   def writeResultSet(
       resultSet: ResultSet,
       resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
   ): Unit = {
-    val columns = resultSet.getColumns
+    val columns = resultSet.getColumns.asScala
       .map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
       .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {
       case data: util.List[Row] =>
-        data.foreach { row =>
+        data.asScala.foreach { row =>
           val record =
             (0 until row.getArity).map(row.getField).map(FlinkValueFormatUtil.formatValue).toArray
           resultSetWriter.addRecord(new TableRecord(record))

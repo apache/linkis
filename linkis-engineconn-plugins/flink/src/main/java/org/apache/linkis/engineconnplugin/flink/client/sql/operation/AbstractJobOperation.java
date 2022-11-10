@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,8 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_SUPPORT_TRANSFORM;
 
 /** A default implementation of JobOperation. */
 public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implements JobOperation {
@@ -78,7 +80,7 @@ public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implem
 
   public JobID transformToJobInfo(ResultSet resultSet) throws SqlExecutionException {
     if (resultSet.getColumns().size() != 1) {
-      throw new SqlExecutionException("Not support to transform this resultSet to JobId.");
+      throw new SqlExecutionException(NOT_SUPPORT_TRANSFORM.getErrorDesc());
     }
     Row row = resultSet.getData().get(0);
     return JobID.fromHexString(row.getField(0).toString());

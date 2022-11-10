@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,15 +19,16 @@ package org.apache.linkis.metadata.query.common.exception;
 
 import org.apache.linkis.common.exception.WarnException;
 
+import static org.apache.linkis.metadata.query.common.errorcode.LinkisMetadataQueryErrorCodeSummary.METARUNTIME_EXCEPTION_ID;
+
 public class MetaRuntimeException extends WarnException {
-  private static final int ERROR_CODE = 99900;
 
   public MetaRuntimeException(String desc, Throwable t) {
-    super(ERROR_CODE, desc);
+    super(METARUNTIME_EXCEPTION_ID.getErrorCode(), desc);
     super.initCause(t);
   }
 
   public MetaRuntimeException(String desc, String ip, int port, String serviceKind) {
-    super(ERROR_CODE, desc, ip, port, serviceKind);
+    super(METARUNTIME_EXCEPTION_ID.getErrorCode(), desc, ip, port, serviceKind);
   }
 }

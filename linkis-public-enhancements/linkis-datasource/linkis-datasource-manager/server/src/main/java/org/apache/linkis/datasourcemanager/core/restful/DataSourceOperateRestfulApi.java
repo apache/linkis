@@ -55,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.ENVID_ATYPICAL;
+
 @Api(tags = "data source operate restful api")
 @RestController
 @RequestMapping(
@@ -112,7 +114,7 @@ public class DataSourceOperateRestfulApi {
                         Long.parseLong((String) dataSource.getConnectParams().get("envId")),
                         dataSource);
             } catch (Exception e) {
-                throw new ParameterValidateException("envId atypical" + e);
+                throw new ParameterValidateException(ENVID_ATYPICAL.getErrorDesc() + e);
             }
         }
         List<DataSourceParamKeyDefinition> keyDefinitionList =

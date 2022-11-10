@@ -19,7 +19,9 @@ package org.apache.linkis.gateway.route
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.NOT_EXISTS_APPLICATION
 import org.apache.linkis.gateway.config.GatewayConfiguration
+import org.apache.linkis.gateway.errorcode.LinkisGatewayCoreErrorCodeSummary._
 import org.apache.linkis.gateway.exception.TooManyServiceException
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
@@ -30,8 +32,9 @@ import org.apache.linkis.server.exception.NoApplicationExistsException
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
+import java.text.MessageFormat
 import java.util
-import java.util.Locale
+import java.util.Locale;
 
 trait GatewayRouter {
 
@@ -42,7 +45,7 @@ trait GatewayRouter {
 }
 
 abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
-  import scala.collection.JavaConversions._
+  import scala.collection.JavaConverters._
   protected val enabledRefresh = GatewayConfiguration.GATEWAY_SERVER_REFRESH_ENABLED.getValue
 
   protected def findAndRefreshIfNotExists(
@@ -52,9 +55,8 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
     var service = findService
     if (service.isEmpty) {
       val applicationNotExists = new NoApplicationExistsException(
-        10050,
-        "Application " +
-          serviceId + " is not exists any instances."
+        NOT_EXISTS_APPLICATION.getErrorCode,
+        MessageFormat.format(NOT_EXISTS_APPLICATION.getErrorDesc, serviceId)
       )
       if (enabledRefresh) {
         Utils.tryThrow(
@@ -88,7 +90,7 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
       parsedServiceId: String,
       tooManyDeal: List[String] => Option[String]
   ): Option[String] = {
-    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices
+    val services = SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala
       .filter(
         _.toLowerCase(Locale.getDefault())
           .contains(parsedServiceId.toLowerCase(Locale.getDefault()))
@@ -105,10 +107,10 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
   ): util.List[ServiceInstance] = {
     val instancesInRegistry =
       ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
-    serviceInstances.filter(instance => {
+    serviceInstances.asScala.filter(instance => {
       instancesInRegistry.contains(instance)
     })
-  }
+  }.asJava
 
   protected def removeAllFromRegistry(
       serviceId: String,
@@ -116,29 +118,32 @@ abstract class AbstractGatewayRouter extends GatewayRouter with Logging {
   ): util.List[ServiceInstance] = {
     var serviceInstancesInRegistry =
       ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(serviceId)
-    serviceInstances.foreach(serviceInstance => {
+    serviceInstances.asScala.foreach(serviceInstance => {
       serviceInstancesInRegistry = serviceInstancesInRegistry.filterNot(_.equals(serviceInstance))
     })
     if (null == serviceInstancesInRegistry) {
       new util.ArrayList[ServiceInstance]()
     } else {
       serviceInstancesInRegistry.toList
-    }
+    }.asJava
   }
 
 }
 
 class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends AbstractGatewayRouter {
 
-  gatewayRouters = gatewayRouters.sortWith((left, right) => {
-    left.order() < right.order()
-  })
+  if (gatewayRouters != null && gatewayRouters.nonEmpty) {
+    val notNullRouters = gatewayRouters.filter(x => x != null)
+    gatewayRouters = notNullRouters.sortWith((left, right) => {
+      left.order() < right.order()
+    })
+  }
 
   private def findCommonService(parsedServiceId: String) = findService(
     parsedServiceId,
     services => {
       val errorMsg = new TooManyServiceException(
-        s"Cannot find a correct serviceId for parsedServiceId $parsedServiceId, service list is: " + services
+        MessageFormat.format(CANNOT_SERVICEID.getErrorDesc, parsedServiceId, services)
       )
       logger.warn("", errorMsg)
       throw errorMsg

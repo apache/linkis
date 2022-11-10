@@ -1,7 +1,7 @@
-## presto 配置
+## presto configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |presto|wds.linkis.engineconn.concurrent.limit|100|engineconn.concurrent.limit|
 |presto|wds.linkis.entrance.max.job.instance|100|entrance.max.job.instance|
@@ -19,5 +19,3 @@
 |presto|wds.linkis.presto.source|   |presto.source|
 |presto|wds.linkis.presto.source| global |presto.source|
 |presto|presto.session.query_max_total_memory|8GB|query_max_total_memory|
- 
-

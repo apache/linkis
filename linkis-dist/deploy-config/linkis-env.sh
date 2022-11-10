@@ -96,6 +96,9 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 #PYTHON_VERSION=python2
 
+## Hadoop env version
+HADOOP_VERSION=2.7.2
+
 ################### The install Configuration of all Micro-Services #####################
 #
 #    NOTICE:
@@ -124,11 +127,6 @@ MANAGER_PORT=9101
 #ENGINECONNMANAGER_INSTALL_IP=127.0.0.1
 ENGINECONNMANAGER_PORT=9102
 
-
-##linkis-cg-engineplugin
-#ENGINECONN_PLUGIN_SERVER_INSTALL_IP=127.0.0.1
-ENGINECONN_PLUGIN_SERVER_PORT=9103
-
 ##linkis-cg-entrance
 #ENTRANCE_INSTALL_IP=127.0.0.1
 ENTRANCE_PORT=9104
@@ -136,20 +134,6 @@ ENTRANCE_PORT=9104
 ##linkis-ps-publicservice
 #PUBLICSERVICE_INSTALL_IP=127.0.0.1
 PUBLICSERVICE_PORT=9105
-
-##linkis-ps-cs
-#CS_INSTALL_IP=127.0.0.1
-CS_PORT=9108
-
-
-##linkis-ps-data-source-manager
-#DATASOURCE_MANAGER_INSTALL_IP=127.0.0.1
-DATASOURCE_MANAGER_PORT=9109
-
-##linkis-ps-metadataquery
-#METADATA_QUERY_INSTALL_IP=127.0.0.1
-METADATA_QUERY_PORT=9110
-
 
 ########################################################################################
 
@@ -164,7 +148,10 @@ export SERVER_HEAP_SIZE="512M"
 ##The decompression directory and the installation directory need to be inconsistent
 #LINKIS_HOME=/appcom/Install/LinkisInstall
 
-LINKIS_VERSION=1.3.0
+##The extended lib such mysql-connector-java-*.jar
+#LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
+
+LINKIS_VERSION=1.3.1
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
@@ -174,9 +161,6 @@ LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module
 
 ##If you want to enable prometheus for monitoring linkis, you can set this export PROMETHEUS_ENABLE=true
 export PROMETHEUS_ENABLE=false
-
-#If you want to start metadata related microservices, you can set this export ENABLE_METADATA_MANAGE=true
-export ENABLE_METADATA_QUERY=true
 
 #If you only want to experience linkis streamlined services, not rely on hdfs
 #you can set the following configuration to false  and for the configuration related to the file directory,

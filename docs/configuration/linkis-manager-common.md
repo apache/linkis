@@ -1,7 +1,7 @@
-## linkis-manager-common 配置
+## linkis-manager-common configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-manager-common|wds.linkis.default.engine.type |spark|engine.type|
 |linkis-manager-common|wds.linkis.manager.admin|2.4.3|manager.admin|
@@ -36,9 +36,3 @@
 |linkis-manager-common|wds.linkis.rm.default.yarn.cluster.type| Yarn|yarn.cluster.type|
 |linkis-manager-common|wds.linkis.rm.external.retry.num|3|external.retry.num|
 |linkis-manager-common|wds.linkis.rm.default.yarn.webaddress.delimiter| ; | yarn.webaddress.delimiter|
- 
-
-
-
-
-

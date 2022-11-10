@@ -1,7 +1,6 @@
-## flink 配置
+## flink configure
 
-
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |flink|flink.client.memory |1024|client.memory |
 |flink|flink.taskmanager.memory|4096 |taskmanager.memory|

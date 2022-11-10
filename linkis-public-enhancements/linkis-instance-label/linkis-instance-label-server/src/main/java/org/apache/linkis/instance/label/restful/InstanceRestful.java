@@ -53,6 +53,8 @@ import io.swagger.annotations.ApiOperation;
 
 import java.util.*;
 
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.*;
+
 @Api(tags = "instance restful")
 @RestController
 @RequestMapping(path = "/microservice")
@@ -72,7 +74,7 @@ public class InstanceRestful {
         if (!Configuration.isAdmin(userName)) {
             throw new InstanceErrorException(
                     String.format(
-                            "Only admin can view all instances(只有管理员才能查看所有实例). The user [%s] is not admin.",
+                            ONLY_ADMIN_CAN_VIEW.getErrorDesc()+"The user [%s] is not admin.",
                             userName));
         }
 
@@ -100,7 +102,7 @@ public class InstanceRestful {
         if (!Configuration.isAdmin(userName)) {
             throw new InstanceErrorException(
                     String.format(
-                            "Only admin can modify instance label(只有管理员才能修改标签). The user [%s] is not admin",
+                            ONLY_ADMIN_CAN_MODIFY.getErrorDesc()+" The user [%s] is not admin",
                             userName));
         }
         String instanceName = jsonNode.get("instance").asText();
@@ -133,7 +135,7 @@ public class InstanceRestful {
         }
         if (labelKeySet.size() != labels.size()) {
             throw new InstanceErrorException(
-                    "Failed to update label, include repeat label(更新label失败，包含重复label)");
+                    INCLUDE_REPEAT.getErrorDesc());
         }
         insLabelService.refreshLabelsToInstance(labels, instance);
         InstanceInfo instanceInfo = insLabelService.getInstanceInfoByServiceInstance(instance);

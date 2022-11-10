@@ -25,7 +25,7 @@
     </select>
 
     <select id="getECResourceInfoRecordByInstance" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance}
+        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance} ORDER BY id DESC LIMIT 1
     </select>
 
 
@@ -71,7 +71,8 @@
         <where>
             <if test="instance != null"> service_instance = #{instance}</if>
             <if test="username != null"> and create_user = #{username}</if>
-            <if test="engineType !=null">and label_value like concat('%',#{engineType},'%')</if>
+<!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+            <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>
             <if test="startDate != null">and create_time BETWEEN  #{startDate} AND #{endDate}</if>
         </where>
         ORDER BY linkis_cg_ec_resource_info_record.create_time DESC

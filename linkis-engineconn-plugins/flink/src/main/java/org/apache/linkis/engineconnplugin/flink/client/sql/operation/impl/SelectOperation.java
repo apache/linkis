@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,8 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 /** Operation for SELECT command. */
 public class SelectOperation extends AbstractJobOperation {
@@ -94,7 +96,7 @@ public class SelectOperation extends AbstractJobOperation {
     synchronized (lock) {
       if (result == null) {
         LOG.error("The job for this query has been canceled.");
-        throw new SqlExecutionException("The job for this query has been canceled.");
+        throw new SqlExecutionException(QUERY_CANCELED.getErrorDesc());
       }
 
       if (this.result instanceof ChangelogResult) {
@@ -180,7 +182,7 @@ public class SelectOperation extends AbstractJobOperation {
       result.close();
       LOG.error(String.format("Invalid SQL query, sql is %s.", query), t);
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL query.", t);
+      throw new SqlExecutionException(INVALID_SQL_QUERY.getErrorDesc(), t);
     } finally {
       // Remove the temporal table object.
       executionContext.wrapClassLoader(tableEnv -> tableEnv.dropTemporaryTable(tableName));
@@ -196,8 +198,7 @@ public class SelectOperation extends AbstractJobOperation {
               result.startRetrieval(jobClient);
               return jobId;
             })
-        .orElseThrow(
-            () -> new SqlExecutionException("No job is generated, please ask admin for help!"));
+        .orElseThrow(() -> new SqlExecutionException(NOT_JOB_ASD_ADMIN.getErrorDesc()));
   }
 
   /** Creates a table using the given query in the given table environment. */
@@ -208,7 +209,7 @@ public class SelectOperation extends AbstractJobOperation {
       return context.wrapClassLoader(() -> tableEnv.sqlQuery(selectQuery));
     } catch (Exception t) {
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+      throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }
   }
 

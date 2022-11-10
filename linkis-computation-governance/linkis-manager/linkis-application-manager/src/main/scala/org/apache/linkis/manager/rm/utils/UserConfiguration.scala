@@ -26,6 +26,7 @@ import org.apache.linkis.governance.common.protocol.conf.{
 }
 import org.apache.linkis.manager.common.conf.RMConfiguration._
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMWarnException
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -163,7 +164,11 @@ object UserConfiguration extends Logging {
         )
       )
     case ResourceType.Special => new SpecialResource(new java.util.HashMap[String, AnyVal]())
-    case _ => throw new RMWarnException(11003, "not supported resource result type ")
+    case _ =>
+      throw new RMWarnException(
+        NOT_RESOURCE_RESULT_TYPE.getErrorCode,
+        NOT_RESOURCE_RESULT_TYPE.getErrorDesc
+      )
   }
 
 }

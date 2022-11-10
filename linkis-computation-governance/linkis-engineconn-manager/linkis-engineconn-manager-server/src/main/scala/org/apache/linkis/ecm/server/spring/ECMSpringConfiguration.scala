@@ -22,11 +22,16 @@ import org.apache.linkis.ecm.server.context.{DefaultECMContext, ECMContext}
 import org.apache.linkis.ecm.server.service._
 import org.apache.linkis.ecm.server.service.impl._
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.core.env.Environment
 
 @Configuration
 class ECMSpringConfiguration {
+
+  @Autowired
+  private var env: Environment = _;
 
   @Bean
   @ConditionalOnMissingBean
@@ -48,6 +53,7 @@ class ECMSpringConfiguration {
   ): ResourceLocalizationService = {
     val service: BmlResourceLocalizationService = new BmlResourceLocalizationService
     service.setLocalDirsHandleService(localDirsHandleService)
+    service.setSpringEnv(env)
     service
   }
 

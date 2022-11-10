@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -77,7 +77,11 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
 
   @Override
   public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
-    PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
+    if (null == nodeMetrics.getServiceInstance()) {
+      logger.warn(
+          "The request of update node metrics was ignored, because the node metrics service instance is null");
+      return;
+    }
     String instance = nodeMetrics.getServiceInstance().getInstance();
     // todo 异常信息后面统一处理
     PersistenceNode node = nodeManagerMapper.getNodeInstance(instance);
@@ -90,6 +94,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
     }
     int isInstanceIdExist = nodeMetricManagerMapper.checkInstanceExist(instance);
     // 是否存在
+    PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
     if (isInstanceIdExist == 0) {
       persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
       persistenceNodeMetrics.setHealthy(nodeMetrics.getHealthy());

@@ -1,7 +1,7 @@
-## linkis-application-manager 配置
+## linkis-application-manager configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-application-manager|wds.linkis.label.node.long.lived.label.keys |tenant|lived.label.keys|
 |linkis-application-manager|wds.linkis.governance.admin.operations|  |admin.operations|

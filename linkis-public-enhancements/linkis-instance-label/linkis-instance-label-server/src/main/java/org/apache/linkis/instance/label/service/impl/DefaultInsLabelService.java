@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.commons.lang3.math.NumberUtils.isCreatable;
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.INSERT_SERVICE_INSTANCE;
 
 @AdapterMode
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
@@ -66,7 +67,6 @@ import static org.apache.commons.lang3.math.NumberUtils.isCreatable;
 public class DefaultInsLabelService implements InsLabelAccessService {
 
   private static final Logger LOG = LoggerFactory.getLogger(DefaultInsLabelService.class);
-  private static Set<String> modifiableLabelKeyList;
   @Autowired private InstanceLabelDao instanceLabelDao;
   @Autowired private InstanceInfoDao instanceDao;
   @Autowired private InsLabelRelationDao insLabelRelationDao;
@@ -146,17 +146,6 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     insLabelRelationDao.dropRelationsByInstance(serviceInstance.getInstance());
     // Attach labels to instance
     attachLabelsToInstance(insLabels, serviceInstance);
-    // Async to delete labels that have no relationship
-    /*     if(!labelsCandidateRemoved.isEmpty()){
-        if(!asyncQueueInit.get()) {
-            initQueue();
-        }
-        labelsCandidateRemoved.forEach( label -> {
-            if(!asyncRemoveLabelQueue.offer(label)){
-                LOG.warn("Async queue for removing labels maybe full. current size: [" + asyncRemoveLabelQueue.size() + "]");
-            }
-        });
-    }*/
   }
 
   @Override
@@ -167,18 +156,6 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         insLabelRelationDao.searchLabelsByInstance(serviceInstance.getInstance());
     LOG.info("Drop relationships related by instance: [" + serviceInstance.getInstance() + "]");
     insLabelRelationDao.dropRelationsByInstance(serviceInstance.getInstance());
-    // Async to delete labels that have no relationship
-    //        if(!labelsCandidateRemoved.isEmpty()){
-    //            labelsCandidateRemoved.forEach( label -> {
-    //                if(!asyncQueueInit.get()) {
-    //                    initQueue();
-    //                }
-    //                if(!asyncRemoveLabelQueue.offer(label)){
-    //                    LOG.warn("Async queue for removing labels maybe full. current size: ["
-    // + asyncRemoveLabelQueue.size() + "]");
-    //                }
-    //            });
-    //        }
   }
 
   @Override
@@ -238,7 +215,6 @@ public class DefaultInsLabelService implements InsLabelAccessService {
             if (null == exist) {
               LOG.info("Remove information of instance label: [" + insLabel.toString() + "]");
               instanceLabelDao.remove(insLabel);
-              // instanceLabelDao.doRemoveKeyValues(insLabel.getId());
             }
           }
         });
@@ -373,27 +349,6 @@ public class DefaultInsLabelService implements InsLabelAccessService {
         insLabels,
         subInsLabels -> instanceLabelDao.insertBatch(subInsLabels),
         InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());
-    /*List<InsPersistenceLabelValue> labelValues =
-            insLabels.stream()
-                    .flatMap(
-                            insLabel -> {
-                                if (!Optional.ofNullable(insLabel.getId()).isPresent()) {
-                                    throw new IllegalArgumentException(
-                                            "Cannot get the generated id from bulk insertion, please check your mybatis version");
-                                }
-                                return insLabel.getValue().entrySet().stream()
-                                        .map(
-                                                entry ->
-                                                        new InsPersistenceLabelValue(
-                                                                insLabel.getId(),
-                                                                entry.getKey(),
-                                                                entry.getValue()));
-                            })
-                    .collect(Collectors.toList());
-    batchOperation(
-            labelValues,
-            subLabelValues -> instanceLabelDao.doInsertKeyValues(subLabelValues),
-            InsLabelConf.DB_PERSIST_BATCH_SIZE.getValue());*/
   }
 
   /**
@@ -406,7 +361,7 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     try {
       instanceDao.insertOne(new InstanceInfo(serviceInstance));
     } catch (Exception e) {
-      throw new InstanceErrorException("Failed to insert service instance", e);
+      throw new InstanceErrorException(INSERT_SERVICE_INSTANCE.getErrorDesc(), e);
     }
   }
 

@@ -26,12 +26,11 @@ import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorC
 import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 
 import org.springframework.cloud.client.{ServiceInstance => SpringCloudServiceInstance}
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServiceInstance
+import org.springframework.cloud.netflix.eureka.EurekaServiceInstance
 
 import java.util
 import java.util.Locale
 
-import scala.collection.JavaConverters
 import scala.collection.JavaConverters._
 
 /**
@@ -105,7 +104,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
           "invalid data-type: " + request.getClass.getCanonicalName
         )
     }
-    JavaConverters.asScalaIteratorConverter(ret.iterator()).asScala.toList
+    ret.iterator().asScala.toList
   }
 
   private def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =

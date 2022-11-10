@@ -1,7 +1,7 @@
-## linkis-computation-governance-common  配置
+## linkis-computation-governance-common  configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 |
+| Module Name (Service Name) | Parameter Name | Default Value | Description |
 | -------- | -------- | ----- |----- | 
 |linkis-computation-governance-common|wds.linkis.rm| | wds.linkis.rm |
 |linkis-computation-governance-common|wds.linkis.spark.engine.version|2.4.3 |spark.engine.version|

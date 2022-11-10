@@ -1,7 +1,7 @@
-## linkis-engineconn-manager-server 配置
+## linkis-engineconn-manager-server configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.capacity |500|bus.capacity|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.name|em_async_bus |async.bus.name|

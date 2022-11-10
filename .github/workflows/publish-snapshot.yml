@@ -42,18 +42,16 @@ jobs:
           distribution: 'adopt'
           java-version: 8
 
-        - name: Get Version
-          run: |
-            BRANCE= ${{ matrix.branch }}
-            echo "::set-output name=version::${BRANCE#*-}-SNAPSHOT"
-          id: get_version
+      - name: Get Version
+        run: |
+          BRANCE= ${{ matrix.branch }}
+          echo "::set-output name=version::${BRANCE#*-}-SNAPSHOT"
+        id: get_version
 
       - name: Publish snapshot - ${{ matrix.branch }}
         env:
           ASF_USERNAME: ${{ secrets.NEXUS_USER }}
           ASF_PASSWORD: ${{ secrets.NEXUS_PW }}
         run: |
-          ./mvnw -N install
           ./mvnw versions:set -DnewVersion={{steps.get_version.outputs.version}} -DgenerateBackupPoms=false
-          ./mvnw -N install
-          ./mvnw deploy -s  ./.github/asf-settings.xml -Drevision={{steps.get_version.outputs.version}} -DskipTests -Dmaven.javadoc.skip=true  -DretryFailedDeploymentCount=10
+          ./mvnw deploy -s  ./.github/asf-settings.xml -Dmaven.test.skip=true -Dmaven.javadoc.skip=true  -DretryFailedDeploymentCount=10

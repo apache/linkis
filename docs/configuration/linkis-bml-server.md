@@ -1,7 +1,6 @@
-## linkis-bml-server  配置
+## linkis-bml-server  configure
 
-
-| 模块名(服务名) | 参数名 | 默认值 | 描述 |
+| Module Name (Service Name) | Parameter Name | Default Value | Description |
 | -------- | -------- | ----- |----- | 
 |linkis-bml-server|wds.linkis.bml.hdfs.prefix| /apps-data | bml.hdfs.prefix|
 |linkis-bml-server|wds.linkis.bml.local.prefix|true|bml.local.prefix|

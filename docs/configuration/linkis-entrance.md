@@ -1,7 +1,7 @@
-## linkis-entrance 配置
+## linkis-entrance configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-entrance|wds.linkis.entrance.scheduler.maxParallelismUsers |1000| scheduler.maxParallelismUsers|
 |linkis-entrance|wds.linkis.entrance.listenerBus.queue.capacity|5000 |queue.capacity|

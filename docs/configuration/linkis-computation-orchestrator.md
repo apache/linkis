@@ -1,7 +1,7 @@
-## linkis-computation-orchestrator 配置
+## linkis-computation-orchestrator configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-computation-orchestrator|wds.linkis.computation.orchestrator.create.service |dss|orchestrator.create.service|
 |linkis-computation-orchestrator|wds.linkis.computation.orchestrator.mark.max.engine|3 |orchestrator.mark.max.engine|

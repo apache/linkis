@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,8 @@ import org.apache.flink.table.descriptors.DescriptorProperties;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.CONFIGURATION_ENTRY_INVALID;
+
 public abstract class ConfigEntry {
 
   protected final DescriptorProperties properties;
@@ -33,7 +35,7 @@ public abstract class ConfigEntry {
     try {
       validate(properties);
     } catch (ValidationException e) {
-      throw new FlinkInitFailedException("Invalid configuration entry.", e);
+      throw new FlinkInitFailedException(CONFIGURATION_ENTRY_INVALID.getErrorDesc(), e);
     }
 
     this.properties = properties;

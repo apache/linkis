@@ -1,7 +1,7 @@
-## elasticsearch 配置
+## elasticsearch configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |elasticsearch|linkis.es.cluster|127.0.0.1:9200|cluster|
 |elasticsearch|linkis.datasource|default_datasource |linkis.datasource|

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,8 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TaskDaoTest extends BaseDaoTest {
   @Autowired TaskDao taskDao;
 
-  @Test
-  void insert() {
+  void insertResourceTask() {
     ResourceTask resourceTask = new ResourceTask();
     resourceTask.setResourceId("123");
     resourceTask.setClientIp("192.168.142");
@@ -51,20 +50,40 @@ class TaskDaoTest extends BaseDaoTest {
   }
 
   @Test
-  void updateState() {
-    insert();
+  void testInsert() {
+    ResourceTask resourceTask = new ResourceTask();
+    resourceTask.setResourceId("123");
+    resourceTask.setClientIp("192.168.142");
+    resourceTask.setEndTime(new Date());
+    resourceTask.setId(32);
+    resourceTask.setStartTime(new Date());
+    resourceTask.setErrMsg("testErr");
+    resourceTask.setExtraParams("testpar");
+    resourceTask.setInstance("testInst");
+    resourceTask.setLastUpdateTime(new Date());
+    resourceTask.setOperation("testOPer");
+    resourceTask.setState("1");
+    resourceTask.setSubmitUser("testSumUser");
+    resourceTask.setSystem("testSym");
+    resourceTask.setVersion("1.2");
+    taskDao.insert(resourceTask);
+  }
+
+  @Test
+  void testUpdateState() {
+    insertResourceTask();
     taskDao.updateState(32, "1", new Date());
   }
 
   @Test
-  void updateState2Failed() {
-    insert();
+  void testUpdateState2Failed() {
+    insertResourceTask();
     taskDao.updateState2Failed(32, "1", new Date(), "errMsg");
   }
 
   @Test
-  void getNewestVersion() {
-    insert();
+  void testGetNewestVersion() {
+    insertResourceTask();
     taskDao.getNewestVersion("123");
   }
 }

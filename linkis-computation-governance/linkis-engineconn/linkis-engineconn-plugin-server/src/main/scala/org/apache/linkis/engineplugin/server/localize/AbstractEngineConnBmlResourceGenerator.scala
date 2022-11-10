@@ -20,20 +20,21 @@ package org.apache.linkis.engineplugin.server.localize
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.nio.file.Paths
+import java.text.MessageFormat
 
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
 
   if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(
-      20001,
-      s"Cannot find the home path(${getEngineConnsHome}) of engineConn."
+      CANNOT_HOME_PATH_EC.getErrorCode,
+      CANNOT_HOME_PATH_EC.getErrorDesc
     )
   }
 
@@ -46,32 +47,43 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   protected def getEngineConnDistHome(engineConnType: String, version: String): String = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
-    if (!new File(engineConnDistHome).exists()) {
+    checkEngineConnDistHome(engineConnDistHome)
+    if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
+    val formattedVersion = if (version.startsWith("v")) version else "v" + version
+    val engineConnPackageHome = Paths.get(engineConnDistHome, formattedVersion).toFile.getPath
+    val engineConnPackageHomeFile = new File(engineConnPackageHome)
+    if (!engineConnPackageHomeFile.exists()) {
       throw new EngineConnPluginErrorException(
-        20001,
-        "Cannot find the home path of engineconn dist."
+        ENGIN_VERSION_NOT_FOUND.getErrorCode,
+        MessageFormat.format(ENGIN_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
       )
     }
-    if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
-    val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
-    if (new File(engineConnPackageHome).exists()) engineConnPackageHome
-    else Paths.get(engineConnDistHome, "v" + version).toFile.getPath
+    engineConnPackageHome
+  }
+
+  private def checkEngineConnDistHome(engineConnPackageHomePath: String): Unit = {
+    val engineConnPackageHomeFile = new File(engineConnPackageHomePath)
+    checkEngineConnDistHome(engineConnPackageHomeFile)
+  }
+
+  private def checkEngineConnDistHome(engineConnPackageHome: File): Unit = {
+    if (!engineConnPackageHome.exists()) {
+      throw new EngineConnPluginErrorException(
+        CANNOT_HOME_PATH_DIST.getErrorCode,
+        CANNOT_HOME_PATH_DIST.getErrorDesc
+      )
+    }
   }
 
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     val engineConnDistHomeFile = new File(engineConnDistHome)
-    if (!engineConnDistHomeFile.exists()) {
-      throw new EngineConnPluginErrorException(
-        20001,
-        "Cannot find the home path of engineconn dist."
-      )
-    }
+    checkEngineConnDistHome(engineConnDistHomeFile)
     val children = engineConnDistHomeFile.listFiles()
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The dist of ${engineConnType}EngineConn is empty."
+        DIST_IS_EMPTY.getErrorCode,
+        MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
     } else if (!children.exists(_.getName.startsWith("v"))) {
       Array(engineConnDistHome)
@@ -79,8 +91,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
       children.map(_.getPath)
     } else {
       throw new EngineConnPluginErrorException(
-        20001,
-        s"The dist of ${engineConnType}EngineConn is irregular, both the version dir and non-version dir are exist."
+        DIST_IRREGULAR_EXIST.getErrorCode,
+        MessageFormat.format(DIST_IRREGULAR_EXIST.getErrorDesc, engineConnType)
       )
     }
   }

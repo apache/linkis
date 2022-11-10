@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.{
   SparkCreateFileException,
   SparkSessionNullException
@@ -58,22 +59,17 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     logger.info(s"------ Create new SparkContext {$master} -------")
     val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
     val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
-    val pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+    var pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
     if (pythonLibUris.length == 2) {
       val sparkConfValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files", "").getValue)
       val sparkConfValue2 = Utils.tryQuietly(sparkConf.get("spark.yarn.dist.files"))
-      if (StringUtils.isEmpty(sparkConfValue1) && StringUtils.isEmpty(sparkConfValue2)) {
-        sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
-      } else if (StringUtils.isEmpty(sparkConfValue1)) {
-        sparkConf.set("spark.yarn.dist.files", sparkConfValue2 + "," + pythonLibUris.mkString(","))
-      } else if (StringUtils.isEmpty(sparkConfValue2)) {
-        sparkConf.set("spark.yarn.dist.files", sparkConfValue1 + "," + pythonLibUris.mkString(","))
-      } else {
-        sparkConf.set(
-          "spark.yarn.dist.files",
-          sparkConfValue1 + "," + sparkConfValue2 + "," + pythonLibUris.mkString(",")
-        )
+      if (StringUtils.isNotBlank(sparkConfValue2)) {
+        pythonLibUris = sparkConfValue2 +: pythonLibUris
       }
+      if (StringUtils.isNotBlank(sparkConfValue1)) {
+        pythonLibUris = sparkConfValue1 +: pythonLibUris
+      }
+      sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
     }
     // Distributes needed libraries to workers
     // when spark version is greater than or equal to 1.5.0
@@ -86,7 +82,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     )
     val sparkSession = createSparkSession(outputDir, sparkConf)
     if (sparkSession == null) {
-      throw new SparkSessionNullException(40009, "sparkSession can not be null")
+      throw new SparkSessionNullException(CAN_NOT_NULL.getErrorCode, CAN_NOT_NULL.getErrorDesc)
     }
 
     val sc = sparkSession.sparkContext
@@ -174,7 +170,11 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       output
     }(t => {
       logger.warn("create spark repl classdir failed", t)
-      throw new SparkCreateFileException(80002, s"spark repl classdir create exception", t)
+      throw new SparkCreateFileException(
+        SPARK_CREATE_EXCEPTION.getErrorCode,
+        SPARK_CREATE_EXCEPTION.getErrorDesc,
+        t
+      )
       null
     })
   }

@@ -27,6 +27,7 @@ import org.apache.linkis.engineplugin.spark.Interpreter.PythonInterpreter._
 import org.apache.linkis.engineplugin.spark.common.{Kind, PySpark}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.ExecuteError
 import org.apache.linkis.engineplugin.spark.imexport.CsvRelation
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
@@ -37,6 +38,7 @@ import org.apache.linkis.storage.resultset.ResultSetWriter
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.{RandomStringUtils, StringUtils}
+import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.execution.datasources.csv.UDF
@@ -89,9 +91,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     }
   }
 
-  def getSparkConf: Unit = sc.getConf
+  def getSparkConf: SparkConf = sc.getConf
 
-  def getJavaSparkContext: Unit = new JavaSparkContext(sc)
+  def getJavaSparkContext: JavaSparkContext = new JavaSparkContext(sc)
 
   def getSparkSession: Object = if (sparkSession != null) sparkSession
   else () => throw new IllegalAccessException("not supported keyword spark in spark1.x versions")
@@ -228,7 +230,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       //      close
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
-          promise.failure(new ExecuteError(40007, "Pyspark process  has stopped, query failed!"))
+          promise.failure(
+            new ExecuteError(PYSPARK_STOPPED.getErrorCode, PYSPARK_STOPPED.getErrorDesc)
+          )
         }
       }) {
         close
@@ -328,7 +332,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
         logger.info("promise is completed and should start another python gateway")
         close
       } else {
-        promise.failure(ExecuteError(40003, out))
+        promise.failure(ExecuteError(OUT_ID.getErrorCode, out))
       }
     }
   }

@@ -1,7 +1,7 @@
-## linkis-engineconn-plugin-core 配置
+## linkis-engineconn-plugin-core configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-engineconn-plugin-core|wds.linkis.engineConn.jars|engineConn额外的Jars|engineConn.jars|
 |linkis-engineconn-plugin-core|wds.linkis.engineConn.files |engineConn额外的配置文件 |engineConn.files |

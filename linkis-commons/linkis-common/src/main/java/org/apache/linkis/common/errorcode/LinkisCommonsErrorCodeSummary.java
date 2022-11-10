@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,8 +18,7 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisCommonsErrorCodeSummary {
-  ENGINE_FAILED_STARTED(
-      11000, "Engine start failed(引擎启动失败)", "Engine start failed(引擎启动失败)", "hiveEngineConn");
+  ENGINE_FAILED_STARTED(11000, "Engine start failed(引擎启动失败)");
 
   /** 错误码 */
   private int errorCode;
@@ -30,11 +29,9 @@ public enum LinkisCommonsErrorCodeSummary {
   /** 所属的linkis的模块 */
   private String module;
 
-  LinkisCommonsErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  LinkisCommonsErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -51,22 +48,6 @@ public enum LinkisCommonsErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
   }
 
   @Override

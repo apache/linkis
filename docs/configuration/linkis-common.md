@@ -1,6 +1,6 @@
-## linkis-common 配置项
+## linkis-common configure
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-common|wds.linkis.encoding|utf-8|字符类型|true|
 |linkis-common|wds.linkis.date.pattern |yyyy-MM-dd'T'HH:mm:ssZ |时间格式|true|

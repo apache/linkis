@@ -1,7 +1,7 @@
-## executor-core 配置
+## executor-core configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |executor-core|wds.linkis.dataworkclod.engine.tmp.path|file:///tmp/|engine.tmp.path|
 |executor-core|wds.linkis.engine.application.name |  |application.name| 

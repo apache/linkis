@@ -1,7 +1,7 @@
-## linkis-storage 配置
+## linkis-storage configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-storage|wds.linkis.storage.proxy.user| | storage.proxy.user |true|
 |linkis-storage|wds.linkis.storage.root.user| hadoop |storage.root.user|true|
@@ -30,6 +30,3 @@
 |linkis-storage|wds.linkis.hdfs.rest.errs|  |rest.errs|true|
 |linkis-storage|wds.linkis.resultset.row.max.str | 2m  | max.str |true|
 |linkis-storage|wds.linkis.storage.file.type | dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql | file.type |true|
-
-
-

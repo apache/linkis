@@ -1,7 +1,7 @@
-## linkis-engineconn-common 配置
+## linkis-engineconn-common configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-engineconn-common|wds.linkis.engine.connector.executions|org.apache.linkis.engineconn.computation.executor.execute.ComputationEngineConnExecution|connector.executions|
 |linkis-engineconn-common|wds.linkis.engine.connector.hooks |org.apache.linkis.engineconn.computation.executor.hook.ComputationEngineConnHook |engine.connector.hooks|

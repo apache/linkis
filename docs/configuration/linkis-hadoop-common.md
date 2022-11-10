@@ -1,7 +1,7 @@
-## linkis-hadoop-common 配置
+## linkis-hadoop-common configure
 
 
-| 模块名(服务名) | 参数名 | 默认值 | 描述 | 是否引用|
+| Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-hadoop-common|wds.linkis.hadoop.root.user|hadoop-8|hadoop.root.user|true|
 |linkis-hadoop-common|wds.linkis.keytab.enable |false |keytab.enable|true|

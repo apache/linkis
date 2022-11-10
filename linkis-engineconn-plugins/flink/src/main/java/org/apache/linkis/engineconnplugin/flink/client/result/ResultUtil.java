@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,8 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.stream.Stream;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class ResultUtil {
 
@@ -82,8 +84,7 @@ public class ResultUtil {
       try {
         return InetAddress.getByName(address);
       } catch (UnknownHostException e) {
-        throw new SqlExecutionException(
-            "Invalid gateway address '" + address + "' for result retrieval.", e);
+        throw new SqlExecutionException(NOT_SOCKET_RETRIEVAL.getErrorDesc() + address, e);
       }
     } else {
       // TODO cache this
@@ -97,19 +98,13 @@ public class ResultUtil {
               deploy.getResponseTimeout(),
               400);
         } catch (Exception e) {
-          throw new SqlExecutionException(
-              "Could not determine address of the gateway for result retrieval "
-                  + "by connecting to the job manager. Please specify the gateway address manually.",
-              e);
+          throw new SqlExecutionException(NOT_DETERMINE_ADDRESS_JOB.getErrorDesc(), e);
         }
       } else {
         try {
           return InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
-          throw new SqlExecutionException(
-              "Could not determine address of the gateway for result retrieval. "
-                  + "Please specify the gateway address manually.",
-              e);
+          throw new SqlExecutionException(NOT_DETERMINE_ADDRESS.getErrorDesc(), e);
         }
       }
     }

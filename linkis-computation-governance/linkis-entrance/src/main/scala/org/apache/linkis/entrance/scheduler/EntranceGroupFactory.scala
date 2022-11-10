@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.scheduler
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.protocol.conf.{
@@ -204,7 +205,7 @@ object EntranceGroupFactory {
     val engineType = labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
     val concurrent = labels.asScala.find(_.isInstanceOf[ConcurrentEngineConnLabel])
     if (userCreator.isEmpty || engineType.isEmpty) {
-      throw new EntranceErrorException(20001, "userCreator label or engineType label cannot null")
+      throw new EntranceErrorException(LABEL_NOT_NULL.getErrorCode, LABEL_NOT_NULL.getErrorDesc)
     }
 
     if (concurrent.isDefined) {

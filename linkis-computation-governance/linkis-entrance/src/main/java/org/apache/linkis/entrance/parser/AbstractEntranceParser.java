@@ -45,6 +45,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary.JOBREQ_NOT_NULL;
+import static org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary.JOB_NOT_NULL;
+
 public abstract class AbstractEntranceParser extends EntranceParser {
 
   private EntranceContext entranceContext;
@@ -80,7 +83,8 @@ public abstract class AbstractEntranceParser extends EntranceParser {
   @Override
   public JobRequest parseToJobRequest(Job job) throws EntranceIllegalParamException {
     if (job == null) {
-      throw new EntranceIllegalParamException(20002, "job can't be null");
+      throw new EntranceIllegalParamException(
+          JOB_NOT_NULL.getErrorCode(), JOB_NOT_NULL.getErrorDesc());
     }
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     if (StringUtils.isEmpty(jobRequest.getReqId())) {
@@ -109,7 +113,8 @@ public abstract class AbstractEntranceParser extends EntranceParser {
   @Override
   public Job parseToJob(JobRequest jobReq) throws EntranceIllegalParamException {
     if (jobReq == null) {
-      throw new EntranceIllegalParamException(20001, "JobReq can't be null");
+      throw new EntranceIllegalParamException(
+          JOBREQ_NOT_NULL.getErrorCode(), JOBREQ_NOT_NULL.getErrorDesc());
     }
     EntranceJob job = createEntranceJob();
     job.setId(String.valueOf(jobReq.getId()));

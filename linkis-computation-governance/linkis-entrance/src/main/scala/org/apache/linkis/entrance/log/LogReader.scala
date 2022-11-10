@@ -48,7 +48,7 @@ abstract class LogReader(charset: String) extends Closeable with Logging {
    */
   def readArray(logs: Array[String], fromLine: Int, size: Int = 100): Int = {
     if (logs.length != 4) {
-      throw new LogReadFailedException(" logs的长度必须为4！")
+      throw new LogReadFailedException(" The length of the log must be 4(logs的长度必须为4)")
     }
     val error = new StringBuilder
     val warning = new StringBuilder

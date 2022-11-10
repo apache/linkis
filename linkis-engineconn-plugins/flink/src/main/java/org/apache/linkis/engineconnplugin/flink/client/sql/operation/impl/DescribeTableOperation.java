@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NO_TABLE_FOUND;
+
 /** Operation for DESCRIBE TABLE command. */
 public class DescribeTableOperation implements NonJobOperation {
   private final ExecutionContext context;
@@ -61,7 +63,7 @@ public class DescribeTableOperation implements NonJobOperation {
       schema = context.wrapClassLoader(() -> tableEnv.from(tableName).getSchema());
     } catch (Throwable t) {
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("No table with this name could be found.", t);
+      throw new SqlExecutionException(NO_TABLE_FOUND.getErrorDesc(), t);
     }
 
     Map<String, String> fieldToWatermark = new HashMap<>();

@@ -28,6 +28,6 @@ public class UDFExceptionTest {
   public void udfExceptionTest() {
     String errorMsg = "udf is not exist";
     UDFException udfException = new UDFException(errorMsg);
-    Assertions.assertEquals(errorMsg, udfException.getMessage());
+    Assertions.assertEquals(errorMsg, udfException.getDesc());
   }
 }

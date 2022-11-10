@@ -26,6 +26,7 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, InfoRMNode}
 import org.apache.linkis.manager.common.entity.persistence.{PersistenceLabel, PersistenceResource}
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
 import org.apache.linkis.manager.common.utils.{ManagerUtils, ResourceUtils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -62,6 +63,7 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.text.MessageFormat
 import java.util
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -297,7 +299,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
           val msg =
             s"Resource label: ${label.getStringValue} has no usedResource, please check, refuse request usedResource"
           logger.info(msg)
-          throw new RMErrorException(110022, msg)
+          throw new RMErrorException(
+            REFUSE_REQUEST.getErrorCode,
+            MessageFormat.format(REFUSE_REQUEST.getErrorDesc, label.getStringValue)
+          )
         }
         labelResourceList.put(label.getStringValue, usedResource)
       })
@@ -590,7 +595,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     if (labelResource.getCreateTime != null && usedResource.getCreateTime != null) {
       if (labelResource.getCreateTime.getTime > usedResource.getCreateTime.getTime) {
         throw new RMErrorException(
-          10022,
+          RESOURCE_LATER_CREATED.getErrorCode,
           s"no need to clear this labelResource, labelResource:${labelResource} created time is after than usedResource:${usedResource}" +
             s"无需清理该标签的资源,该标签资源的创建时间晚于已用资源的创建时间"
         )

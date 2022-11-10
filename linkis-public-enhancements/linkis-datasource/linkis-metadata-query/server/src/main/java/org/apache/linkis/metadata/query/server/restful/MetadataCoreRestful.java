@@ -59,6 +59,9 @@ public class MetadataCoreRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
+            }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
@@ -87,6 +90,9 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名称错误]");
@@ -127,6 +133,9 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
@@ -178,6 +187,9 @@ public class MetadataCoreRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
+            }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
             }
@@ -225,6 +237,9 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
@@ -277,6 +292,9 @@ public class MetadataCoreRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");

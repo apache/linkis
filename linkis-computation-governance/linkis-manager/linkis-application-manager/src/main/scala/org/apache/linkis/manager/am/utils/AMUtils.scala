@@ -111,16 +111,16 @@ object AMUtils {
       }
       EMNodeVo.setOwner(node.getOwner)
       if (node.getNodeTaskInfo != null) {
-        if (node.getNodeTaskInfo.getRunningTasks != null) {
+        if (node.getNodeTaskInfo.getRunningTasks >= 0) {
           EMNodeVo.setRunningTasks(node.getNodeTaskInfo.getRunningTasks)
         }
-        if (node.getNodeTaskInfo.getPendingTasks != null) {
+        if (node.getNodeTaskInfo.getPendingTasks >= 0) {
           EMNodeVo.setPendingTasks(node.getNodeTaskInfo.getPendingTasks)
         }
-        if (node.getNodeTaskInfo.getSucceedTasks != null) {
+        if (node.getNodeTaskInfo.getSucceedTasks >= 0) {
           EMNodeVo.setSucceedTasks(node.getNodeTaskInfo.getSucceedTasks)
         }
-        if (node.getNodeTaskInfo.getFailedTasks != null) {
+        if (node.getNodeTaskInfo.getFailedTasks >= 0) {
           EMNodeVo.setFailedTasks(node.getNodeTaskInfo.getFailedTasks)
         }
       }
@@ -234,16 +234,16 @@ object AMUtils {
         }
         AMEngineNodeVo.setOwner(node.getOwner)
         if (node.getNodeTaskInfo != null) {
-          if (node.getNodeTaskInfo.getRunningTasks != null) {
+          if (node.getNodeTaskInfo.getRunningTasks >= 0) {
             AMEngineNodeVo.setRunningTasks(node.getNodeTaskInfo.getRunningTasks)
           }
-          if (node.getNodeTaskInfo.getPendingTasks != null) {
+          if (node.getNodeTaskInfo.getPendingTasks >= 0) {
             AMEngineNodeVo.setPendingTasks(node.getNodeTaskInfo.getPendingTasks)
           }
-          if (node.getNodeTaskInfo.getSucceedTasks != null) {
+          if (node.getNodeTaskInfo.getSucceedTasks >= 0) {
             AMEngineNodeVo.setSucceedTasks(node.getNodeTaskInfo.getSucceedTasks)
           }
-          if (node.getNodeTaskInfo.getFailedTasks != null) {
+          if (node.getNodeTaskInfo.getFailedTasks >= 0) {
             AMEngineNodeVo.setFailedTasks(node.getNodeTaskInfo.getFailedTasks)
           }
         }

@@ -71,7 +71,7 @@ object ECMConfiguration {
   val ECM_PROTECTED_LOAD_ENABLED: Boolean =
     CommonVars[Boolean]("wds.linkis.ecm.protected.load.enabled", false).getValue
 
-  val MANAGER_SPRING_NAME: String = GovernanceCommonConf.MANAGER_SPRING_NAME.getValue
+  val MANAGER_SERVICE_NAME: String = GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue
 
   val ENGINE_CONN_MANAGER_SPRING_NAME: String =
     GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue

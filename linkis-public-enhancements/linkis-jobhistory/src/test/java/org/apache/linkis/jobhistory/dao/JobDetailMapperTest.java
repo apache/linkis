@@ -96,29 +96,29 @@ class JobDetailMapperTest extends BaseDaoTest {
     assertTrue(jobDetail.getId() > 0);
   }
 
-  @Test
-  void testUpdateJobDetail() {
-
-    JobDetail expectedJobDetail = insertOne();
-    expectedJobDetail.setResultLocation("modify " + expectedJobDetail.getResultLocation());
-    expectedJobDetail.setResultArraySize(10);
-    expectedJobDetail.setExecutionContent("modify " + expectedJobDetail.getExecutionContent());
-    expectedJobDetail.setJobGroupInfo("modify " + expectedJobDetail.getJobGroupInfo());
-    expectedJobDetail.setCreatedTime(new Date());
-    expectedJobDetail.setUpdatedTime(new Date());
-    expectedJobDetail.setStatus("modify " + expectedJobDetail.getStatus());
-    expectedJobDetail.setPriority(1);
-
-    jobDetailMapper.updateJobDetail(expectedJobDetail);
-
-    JobDetail actualJobDetail =
-        jobDetailMapper.selectJobDetailByJobDetailId(expectedJobDetail.getId());
-
-    //        assertEquals(expectedJobDetail, actualJobDetail);
-    ////       assertThat(actual, samePropertyValuesAs(expected));
-    // Determine whether the property values of the two objects are exactly the same
-    assertThat(actualJobDetail).usingRecursiveComparison().isEqualTo(expectedJobDetail);
-  }
+//  @Test
+//  void testUpdateJobDetail() {
+//
+//    JobDetail expectedJobDetail = insertOne();
+//    expectedJobDetail.setResultLocation("modify " + expectedJobDetail.getResultLocation());
+//    expectedJobDetail.setResultArraySize(10);
+//    expectedJobDetail.setExecutionContent("modify " + expectedJobDetail.getExecutionContent());
+//    expectedJobDetail.setJobGroupInfo("modify " + expectedJobDetail.getJobGroupInfo());
+//    expectedJobDetail.setCreatedTime(new Date());
+//    expectedJobDetail.setUpdatedTime(new Date());
+//    expectedJobDetail.setStatus("modify " + expectedJobDetail.getStatus());
+//    expectedJobDetail.setPriority(1);
+//
+//    jobDetailMapper.updateJobDetail(expectedJobDetail);
+//
+//    JobDetail actualJobDetail =
+//        jobDetailMapper.selectJobDetailByJobDetailId(expectedJobDetail.getId());
+//
+//    //        assertEquals(expectedJobDetail, actualJobDetail);
+//    ////       assertThat(actual, samePropertyValuesAs(expected));
+//    // Determine whether the property values of the two objects are exactly the same
+//    assertThat(actualJobDetail).usingRecursiveComparison().isEqualTo(expectedJobDetail);
+//  }
 
   @Test
   void testSelectJobDetailStatusForUpdateByJobDetailId() {

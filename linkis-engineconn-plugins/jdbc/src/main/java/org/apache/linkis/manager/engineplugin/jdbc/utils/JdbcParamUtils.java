@@ -64,8 +64,8 @@ public class JdbcParamUtils {
   }
 
   public static String filterJdbcUrl(String url) {
-    // temporarily filter only mysql jdbc url.
-    if (!url.startsWith(JDBC_MYSQL_PROTOCOL)) {
+    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
+    if (!url.startsWith(JDBC_MYSQL_PROTOCOL) && !url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
       return url;
     }
     if (url.contains(SENSITIVE_PARAM)) {

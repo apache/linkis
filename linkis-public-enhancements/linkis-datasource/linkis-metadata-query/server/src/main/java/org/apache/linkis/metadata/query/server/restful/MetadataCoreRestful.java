@@ -25,10 +25,10 @@ import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeExcepti
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,10 +62,10 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
-
+            String userName = ModuleUserUtils.getOperationUser(request, "getDatabases, dataSourceId:" + dataSourceId);
             List<String> databases =
                     metadataAppService.getDatabasesByDsId(
-                            dataSourceId, system, SecurityFilter.getLoginUsername(request));
+                            dataSourceId, system, userName);
             return Message.ok().data("dbs", databases);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -94,12 +94,13 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+            String userName = ModuleUserUtils.getOperationUser(request, "getTables, dataSourceId:" + dataSourceId);
             List<String> tables =
                     metadataAppService.getTablesByDsId(
                             dataSourceId,
                             database,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("tables", tables);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -137,14 +138,14 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
-
+            String userName = ModuleUserUtils.getOperationUser(request, "getTableProps, dataSourceId:" + dataSourceId);
             Map<String, String> tableProps =
                     metadataAppService.getTablePropsByDsId(
                             dataSourceId,
                             database,
                             table,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("props", tableProps);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -187,6 +188,7 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+            String userName = ModuleUserUtils.getOperationUser(request, "getPartitions, dataSourceId:" + dataSourceId);
             MetaPartitionInfo partitionInfo =
                     metadataAppService.getPartitionsByDsId(
                             dataSourceId,
@@ -194,7 +196,7 @@ public class MetadataCoreRestful {
                             table,
                             system,
                             traverse,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("props", partitionInfo);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -238,6 +240,7 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
                 return Message.error("'partition' is invalid[partition错误]");
             }
+            String userName = ModuleUserUtils.getOperationUser(request, "getPartitionProps, dataSourceId:" + dataSourceId);
             Map<String, String> partitionProps =
                     metadataAppService.getPartitionPropsByDsId(
                             dataSourceId,
@@ -245,7 +248,7 @@ public class MetadataCoreRestful {
                             table,
                             partition,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("props", partitionProps);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -287,13 +290,15 @@ public class MetadataCoreRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceId).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
-            List<MetaColumnInfo> columns =
+
+            String userName = ModuleUserUtils.getOperationUser(request, "getColumns, dataSourceId:" + dataSourceId);
+                    List<MetaColumnInfo> columns =
                     metadataAppService.getColumnsByDsId(
                             dataSourceId,
                             database,
                             table,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("columns", columns);
         } catch (Exception e) {
             return errorToResponseMessage(

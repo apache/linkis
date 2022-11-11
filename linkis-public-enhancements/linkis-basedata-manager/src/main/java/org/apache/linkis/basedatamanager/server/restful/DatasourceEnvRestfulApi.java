@@ -24,8 +24,11 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceEnvService;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "DatasourceEnvRestfulApi")
 @RestController
@@ -42,7 +45,8 @@ public class DatasourceEnvRestfulApi {
     })
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public Message list(String searchName,Integer currentPage,Integer pageSize) {
+    public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
+        ModuleUserUtils.getOperationUser(request, "list");
         PageInfo pageList = datasourceEnvService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -52,7 +56,8 @@ public class DatasourceEnvRestfulApi {
     })
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable("id") Long id) {
+    public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "get");
         DatasourceEnvEntity datasourceEnv = datasourceEnvService.getById(id);
         return Message.ok("").data("item", datasourceEnv);
     }
@@ -62,7 +67,8 @@ public class DatasourceEnvRestfulApi {
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody DatasourceEnvEntity datasourceEnv) {
+    public Message add(HttpServletRequest request,@RequestBody DatasourceEnvEntity datasourceEnv) {
+        ModuleUserUtils.getOperationUser(request, "add");
         boolean result = datasourceEnvService.save(datasourceEnv);
         return Message.ok("").data("result", result);
     }
@@ -72,7 +78,8 @@ public class DatasourceEnvRestfulApi {
     })
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public Message remove(@PathVariable("id") Long id) {
+    public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "remove");
         boolean result = datasourceEnvService.removeById(id);
         return Message.ok("").data("result", result);
     }
@@ -82,7 +89,8 @@ public class DatasourceEnvRestfulApi {
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody DatasourceEnvEntity errorCode) {
+    public Message update(HttpServletRequest request,@RequestBody DatasourceEnvEntity errorCode) {
+        ModuleUserUtils.getOperationUser(request, "update");
         boolean result = datasourceEnvService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }

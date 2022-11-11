@@ -24,8 +24,11 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceTypeService;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags="DatasourceTypeRestfulApi")
 @RestController
@@ -42,7 +45,8 @@ public class DatasourceTypeRestfulApi {
     })
     @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public Message list(String searchName,Integer currentPage,Integer pageSize) {
+    public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
+        ModuleUserUtils.getOperationUser(request, "list");
         PageInfo pageList = datasourceTypeService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -52,7 +56,8 @@ public class DatasourceTypeRestfulApi {
     })
     @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable("id") Long id) {
+    public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "get");
         DatasourceTypeEntity datasourceType = datasourceTypeService.getById(id);
         return Message.ok("").data("item", datasourceType);
     }
@@ -62,7 +67,8 @@ public class DatasourceTypeRestfulApi {
     })
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody DatasourceTypeEntity datasourceType) {
+    public Message add(HttpServletRequest request,@RequestBody DatasourceTypeEntity datasourceType) {
+        ModuleUserUtils.getOperationUser(request, "add");
         boolean result = datasourceTypeService.save(datasourceType);
         return Message.ok("").data("result", result);
     }
@@ -72,7 +78,8 @@ public class DatasourceTypeRestfulApi {
     })
     @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public Message remove(@PathVariable("id") Long id) {
+    public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "remove");
         boolean result = datasourceTypeService.removeById(id);
         return Message.ok("").data("result", result);
     }
@@ -82,7 +89,8 @@ public class DatasourceTypeRestfulApi {
     })
     @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody DatasourceTypeEntity errorCode) {
+    public Message update(HttpServletRequest request,@RequestBody DatasourceTypeEntity errorCode) {
+        ModuleUserUtils.getOperationUser(request, "update");
         boolean result = datasourceTypeService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }

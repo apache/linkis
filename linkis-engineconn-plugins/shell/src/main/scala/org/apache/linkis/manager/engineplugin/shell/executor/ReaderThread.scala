@@ -53,6 +53,7 @@ class ReaderThread extends Thread with Logging {
   def onDestroy(): Unit = {
     Utils.tryCatch {
       inputReader synchronized inputReader.close()
+      this.interrupt()
     } { t =>
       logger.warn("inputReader while closing the error stream", t)
     }

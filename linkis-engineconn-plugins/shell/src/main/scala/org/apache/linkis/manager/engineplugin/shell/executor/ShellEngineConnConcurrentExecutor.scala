@@ -20,6 +20,7 @@ package org.apache.linkis.manager.engineplugin.shell.executor
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
+  ConcurrentComputationExecutor,
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
@@ -31,6 +32,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.shell.common.ShellEngineConnPluginConst
+import org.apache.linkis.manager.engineplugin.shell.conf.ShellEngineConnConf
 import org.apache.linkis.manager.engineplugin.shell.exception.ShellCodeErrorException
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -44,23 +46,30 @@ import org.apache.linkis.scheduler.executer.{
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
-import java.io.{BufferedReader, File, FileReader, InputStreamReader, IOException}
+import java.io.{BufferedReader, File, InputStreamReader}
 import java.util
-import java.util.concurrent.CountDownLatch
+import java.util.concurrent.{ConcurrentHashMap, CountDownLatch}
 import java.util.concurrent.atomic.AtomicBoolean
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+import scala.concurrent.ExecutionContextExecutorService
 
-class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging {
+class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
+    extends ConcurrentComputationExecutor
+    with Logging {
 
   private var engineExecutionContext: EngineExecutionContext = _
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  private var process: Process = _
+  private val shellECTaskInfoCache: util.Map[String, ShellECTaskInfo] =
+    new ConcurrentHashMap[String, ShellECTaskInfo]()
 
-  private var extractor: YarnAppIdExtractor = _
+  private implicit val logAsyncService: ExecutionContextExecutorService =
+    Utils.newCachedExecutionContext(
+      ShellEngineConnConf.LOG_SERVICE_MAX_THREAD_SIZE,
+      "ShelLogService-Thread-"
+    )
 
   override def init(): Unit = {
     logger.info(s"Ready to change engine state!")
@@ -87,6 +96,11 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       logger.info("Shell executor reset new engineExecutionContext!")
     }
 
+    if (engineExecutionContext.getJobId.isEmpty) {
+      return ErrorExecuteResponse("taskID is null", null)
+    }
+
+    val taskId = engineExecutionContext.getJobId.get
     var bufferedReader: BufferedReader = null
     var errorsReader: BufferedReader = null
 
@@ -173,19 +187,21 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       }
 
       processBuilder.redirectErrorStream(false)
-      extractor = new YarnAppIdExtractor
-      process = processBuilder.start()
-
+      val extractor = new YarnAppIdExtractor
+      val process = processBuilder.start()
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream))
+      // add task id and task Info cache
+      shellECTaskInfoCache.put(taskId, ShellECTaskInfo(taskId, process, extractor))
+
       val counter: CountDownLatch = new CountDownLatch(2)
       inputReaderThread =
         new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter)
       errReaderThread =
         new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter)
 
-      inputReaderThread.start()
-      errReaderThread.start()
+      logAsyncService.execute(inputReaderThread)
+      logAsyncService.execute(errReaderThread)
 
       val exitCode = process.waitFor()
       counter.await()
@@ -195,6 +211,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       if (exitCode != 0) {
         ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
       } else SuccessExecuteResponse()
+
     } catch {
       case e: Exception =>
         logger.error("Execute shell code failed, reason:", e)
@@ -204,6 +221,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         Utils.tryAndWarn(errReaderThread.interrupt())
         Utils.tryAndWarn(inputReaderThread.interrupt())
       }
+      shellECTaskInfoCache.remove(taskId)
       Utils.tryAndWarn {
         inputReaderThread.onDestroy()
         errReaderThread.onDestroy()
@@ -215,7 +233,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
   private def isExecutePathExist(executePath: String): Boolean = {
     val etlHomeDir: File = new File(executePath)
-    (etlHomeDir.exists() && etlHomeDir.isDirectory())
+    (etlHomeDir.exists() && etlHomeDir.isDirectory)
   }
 
   private def generateRunCode(code: String): Array[String] = {
@@ -292,17 +310,23 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   override def killTask(taskID: String): Unit = {
+    val shellECTaskInfo = shellECTaskInfoCache.remove(taskID)
+    if (null == shellECTaskInfo) {
+      return
+    }
     /*
       Kill sub-processes
      */
-    val pid = getPid(process)
+    val pid = getPid(shellECTaskInfo.process)
     GovernanceUtils.killProcess(String.valueOf(pid), s"kill task $taskID process", false)
     /*
       Kill yarn-applications
      */
-    val yarnAppIds = extractor.getExtractedYarnAppIds()
+    val yarnAppIds = shellECTaskInfo.yarnAppIdExtractor.getExtractedYarnAppIds()
     GovernanceUtils.killYarnJobApp(yarnAppIds)
-    logger.info(s"Finished kill yarn app ids in the engine of (${getId()}).}")
+    logger.info(
+      s"Finished kill yarn app ids in the engine of (${getId()}). The yarn app ids are ${yarnAppIds}"
+    )
     super.killTask(taskID)
 
   }
@@ -320,15 +344,25 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
   }
 
   override def close(): Unit = {
-    try {
-      process.destroy()
-    } catch {
-      case e: Exception =>
-        logger.error(s"kill process ${process.toString} failed ", e)
-      case t: Throwable =>
-        logger.error(s"kill process ${process.toString} failed ", t)
+    Utils.tryCatch {
+      killAll()
+      logAsyncService.shutdown()
+    } { t: Throwable =>
+      logger.error(s"Shell ec failed to close ", t)
     }
     super.close()
+  }
+
+  override def killAll(): Unit = {
+    val iterator = shellECTaskInfoCache.values().iterator()
+    while (iterator.hasNext) {
+      val shellECTaskInfo = iterator.next()
+      Utils.tryAndWarn(killTask(shellECTaskInfo.taskId))
+    }
+  }
+
+  override def getConcurrentLimit: Int = {
+    maxRunningNumber
   }
 
 }

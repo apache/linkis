@@ -50,7 +50,7 @@ jobs:
           sort ${{ github.workspace }}/tool/dependencies/known-dependencies.txt > ~/known-dependencies.txt 
           join -t : -o 1.1 2.1 -a2 ~/known-dependencies.txt ~/current_dependencies.txt > ~/result.txt
           #print new third-party dependencies name if it exists 
-          awk -F ":" '{if($1=="")print $2" is not in file known-dependencies.txt!"}' ~/result.txt
+          awk -F ":" '{if($1=="")print $2" is not in file known-dependencies.txt!\n You can refer to this guide to repair it(你可以参考这个执行进行修复)：https://linkis.apache.org/zh-CN/community/development-specification/license"}' ~/result.txt
           result=`awk -F ":" '{if($1=="")print $2}'  ~/result.txt |wc -l`
           #if has new third-party,the Action will fail
           if [[ $result == 0 ]];then echo "All third dependencies is known!" ;else exit 1;fi

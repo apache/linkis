@@ -59,6 +59,12 @@ class DsmReceiver {
             dataSourceInfoService.getDataSourceInfoForConnect(dsInfoQueryRequest.id.toLong)
         }
         if (null != dataSource) {
+          var publishedVersionId = dataSource.getPublishedVersionId
+          if (publishedVersionId == null) {
+            logger.warn("Datasource name:{} is not published.", dataSource.getDataSourceName)
+            return DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+          }
+
           RestfulApiHelper.decryptPasswordKey(
             dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
             dataSource.getConnectParams

@@ -50,6 +50,7 @@ github:
     - aiceflower
     - brucedchen1991
     - binbinCheng
+    - ws00428637
   enabled_merge_buttons:
     merge:  true
     squash: true

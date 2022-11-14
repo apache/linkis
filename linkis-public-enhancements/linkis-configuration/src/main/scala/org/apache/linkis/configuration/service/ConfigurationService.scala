@@ -316,9 +316,20 @@ class ConfigurationService extends Logging {
     })
   }
 
+  def getConfigByLabelId(language: String, labelId: Integer): util.List[ConfigKeyValue] = {
+    var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
+    if (StringUtils.isNotBlank(language) && language.equals("en")) {
+      configs = configMapper.getConfigEnKeyValueByLabelId(labelId)
+    } else {
+      configs = configMapper.getConfigKeyValueByLabelId(labelId)
+    }
+    configs
+  }
+
   def getConfigsByLabelList(
       labelList: java.util.List[Label[_]],
-      useDefaultConfig: Boolean = true
+      useDefaultConfig: Boolean = true,
+      language: String
   ): (util.List[ConfigKeyValue], util.List[ConfigKeyValue]) = {
     LabelParameterParser.labelCheck(labelList)
     val combinedLabel = combinedLabelBuilder.build("", labelList).asInstanceOf[CombinedLabelImpl]
@@ -326,7 +337,7 @@ class ConfigurationService extends Logging {
       labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if (label != null && label.getId > 0) {
-      configs = configMapper.getConfigKeyValueByLabelId(label.getId)
+      configs = getConfigByLabelId(language, label.getId)
     }
     var defaultEngineConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     var defaultCreatorConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
@@ -339,7 +350,7 @@ class ConfigurationService extends Logging {
         defaultCreatorCombinedLabel.getStringValue
       )
       if (defaultCreatorLabel != null) {
-        defaultCreatorConfigs = configMapper.getConfigKeyValueByLabelId(defaultCreatorLabel.getId)
+        defaultCreatorConfigs = getConfigByLabelId(language, defaultCreatorLabel.getId)
       }
       val defaultEngineLabelList = LabelParameterParser.changeUserToDefault(labelList)
       val defaultEngineCombinedLabel =
@@ -349,7 +360,7 @@ class ConfigurationService extends Logging {
         defaultEngineCombinedLabel.getStringValue
       )
       if (defaultEngineLabel != null) {
-        defaultEngineConfigs = configMapper.getConfigKeyValueByLabelId(defaultEngineLabel.getId)
+        defaultEngineConfigs = getConfigByLabelId(language, defaultEngineLabel.getId)
       }
       if (CollectionUtils.isEmpty(defaultEngineConfigs)) {
         logger.warn(
@@ -379,9 +390,11 @@ class ConfigurationService extends Logging {
    */
   def getFullTreeByLabelList(
       labelList: java.util.List[Label[_]],
-      useDefaultConfig: Boolean = true
+      useDefaultConfig: Boolean = true,
+      language: String
   ): util.ArrayList[ConfigTree] = {
-    val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    val (configs, defaultEngineConfigs) =
+      getConfigsByLabelList(labelList, useDefaultConfig, language)
     buildTreeResult(configs, defaultEngineConfigs)
   }
 
@@ -395,7 +408,7 @@ class ConfigurationService extends Logging {
       labelList: java.util.List[Label[_]],
       useDefaultConfig: Boolean = true
   ): util.Map[String, String] = {
-    val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig, null)
     val configMap = new util.HashMap[String, String]()
     if (null != defaultEngineConfigs) {
       defaultEngineConfigs.asScala.foreach { keyValue =>

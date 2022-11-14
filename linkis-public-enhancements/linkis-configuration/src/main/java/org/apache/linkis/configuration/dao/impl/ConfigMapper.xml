@@ -92,6 +92,11 @@
         v.id as value_id, v.config_key_id,config_value, v.config_label_id
     </sql>
 
+    <sql id="Config_En_Key_Value_Column">
+        k.id, k.key, k.en_description as description, k.en_name as name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k.en_treeName as treeName,
+        v.id as value_id, v.config_key_id,config_value, v.config_label_id
+    </sql>
+
     <sql id="Config_Creator_Column">
         id, name, chinese_name, description
     </sql>
@@ -128,7 +133,13 @@
         WHERE v.config_label_id = #{labelId}
     </select>
 
-
+    <select id="getConfigEnKeyValueByLabelId" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_En_Key_Value_Column"/>
+        FROM linkis_ps_configuration_config_key AS k
+        LEFT OUTER JOIN linkis_ps_configuration_config_value AS v
+        ON k.id = v.config_key_id
+        WHERE v.config_label_id = #{labelId}
+    </select>
 
     <select id="getConfigById" resultMap="ConfigKeyValueMap">
         SELECT <include refid="Config_Key_Column"/>

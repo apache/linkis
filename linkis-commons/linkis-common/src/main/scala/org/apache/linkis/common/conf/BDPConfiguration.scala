@@ -43,18 +43,11 @@ private[conf] object BDPConfiguration extends Logging {
   private val sysProps = sys.props
   private val env = sys.env
 
-  private var configList = new ArrayBuffer[String]
-  private var extractConfigReload = new Properties
-  private var configReload = new Properties
-
-  private var writeLock: ReentrantReadWriteLock.WriteLock = null
-  private var readLock: ReentrantReadWriteLock.ReadLock = null
+  private val configList = new ArrayBuffer[String]
+  private val configReload = new Properties
+  private val lock = new ReentrantReadWriteLock()
 
   private def init: Unit = {
-
-    val lock = new ReentrantReadWriteLock()
-    writeLock = lock.writeLock();
-    readLock = lock.readLock();
 
     // load pub linkis conf
     val propertyFile = sysProps.getOrElse("wds.linkis.configuration", DEFAULT_PROPERTY_FILE_NAME)
@@ -125,9 +118,10 @@ private[conf] object BDPConfiguration extends Logging {
           logger.warn("Will reset config to origin config.")
           tmpConfig = config
         }
-        writeLock.lock()
-        configReload = tmpConfig
-        writeLock.unlock()
+        lock.writeLock().lock()
+        configReload.clear()
+        configReload.putAll(tmpConfig)
+        lock.writeLock().unlock()
       }
     }
     Utils.defaultScheduler.scheduleWithFixedDelay(
@@ -166,7 +160,9 @@ private[conf] object BDPConfiguration extends Logging {
     }
     var value = ""
     if (hotload) {
+      lock.readLock().lock()
       value = configReload.getProperty(key)
+      lock.readLock().unlock()
     } else {
       value = config.getProperty(key)
     }
@@ -193,7 +189,9 @@ private[conf] object BDPConfiguration extends Logging {
     val props = new Properties
     mergePropertiesFromMap(props, env)
     mergePropertiesFromMap(props, sysProps.toMap)
+    lock.readLock().lock()
     mergePropertiesFromMap(props, configReload.asScala.toMap)
+    lock.readLock().unlock()
     mergePropertiesFromMap(props, extractConfig.asScala.toMap)
     props
   }

@@ -20,12 +20,12 @@ package org.apache.linkis.metadata.query.service.mysql;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
+import org.springframework.util.CollectionUtils;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -59,11 +59,36 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
+    // Handle mysql security vulnerabilities
+    validateParams(extraParams);
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
     conn = getDBConnection(connectMessage, database);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
+  }
+
+  /**
+   * Handle mysql security vulnerabilities
+   * @param extraParams
+   */
+  private void validateParams(Map<String, Object> extraParams) {
+    if (CollectionUtils.isEmpty(extraParams)) {
+      return;
+    }
+    for (Map.Entry<String, Object> entries : extraParams.entrySet()) {
+      String key = entries.getKey();
+      if ("allowLoadLocalInfile".equalsIgnoreCase(key)
+          || "autoDeserialize".equalsIgnoreCase(key)
+          || "allowLocalInfile".equalsIgnoreCase(key)
+          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
+        extraParams.remove(key);
+      }
+    }
+    extraParams.put("allowLoadLocalInfile", "false");
+    extraParams.put("autoDeserialize", "false");
+    extraParams.put("allowLocalInfile", "false");
+    extraParams.put("allowUrlInLocalInfile", "false");
   }
 
   public List<String> getAllDatabases() throws SQLException {

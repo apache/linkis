@@ -70,6 +70,7 @@ public class SqlConnection implements Closeable {
 
   /**
    * Handle mysql security vulnerabilities
+   *
    * @param extraParams
    */
   private void validateParams(Map<String, Object> extraParams) {
@@ -77,14 +78,14 @@ public class SqlConnection implements Closeable {
       return;
     }
 
-    Iterator<Map.Entry<String, Object>> iterator= extraParams.entrySet().iterator();
-    while(iterator.hasNext()){
-      Map.Entry<String, Object> entry=iterator.next();
+    Iterator<Map.Entry<String, Object>> iterator = extraParams.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
       if ("allowLoadLocalInfile".equalsIgnoreCase(key)
-              || "autoDeserialize".equalsIgnoreCase(key)
-              || "allowLocalInfile".equalsIgnoreCase(key)
-              || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
+          || "autoDeserialize".equalsIgnoreCase(key)
+          || "allowLocalInfile".equalsIgnoreCase(key)
+          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
         extraParams.remove(key);
         iterator.remove();
       }

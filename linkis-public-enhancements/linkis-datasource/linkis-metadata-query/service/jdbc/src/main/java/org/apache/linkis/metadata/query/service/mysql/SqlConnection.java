@@ -76,15 +76,20 @@ public class SqlConnection implements Closeable {
     if (CollectionUtils.isEmpty(extraParams)) {
       return;
     }
-    for (Map.Entry<String, Object> entries : extraParams.entrySet()) {
-      String key = entries.getKey();
+
+    Iterator<Map.Entry<String, Object>> iterator= extraParams.entrySet().iterator();
+    while(iterator.hasNext()){
+      Map.Entry<String, Object> entry=iterator.next();
+      String key = entry.getKey();
       if ("allowLoadLocalInfile".equalsIgnoreCase(key)
-          || "autoDeserialize".equalsIgnoreCase(key)
-          || "allowLocalInfile".equalsIgnoreCase(key)
-          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
+              || "autoDeserialize".equalsIgnoreCase(key)
+              || "allowLocalInfile".equalsIgnoreCase(key)
+              || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
         extraParams.remove(key);
+        iterator.remove();
       }
     }
+
     extraParams.put("allowLoadLocalInfile", "false");
     extraParams.put("autoDeserialize", "false");
     extraParams.put("allowLocalInfile", "false");

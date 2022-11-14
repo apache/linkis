@@ -32,7 +32,7 @@ class UserCreatorIPCheckInterceptor extends EntranceInterceptor {
    * Additional information includes: user IP address restrictions
    */
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    if (EntranceConfiguration.CREATOR_IP_SWITCH.getHotValue()) {
+    if (EntranceConfiguration.CREATOR_IP_SWITCH.getValue) {
       UserCreatorIPCheckUtils.checkUserIp(jobRequest, logAppender)
     } else {
       jobRequest

@@ -81,7 +81,7 @@ object UserCreatorIPCheckUtils extends Logging {
           )
           if (StringUtils.isBlank(cacheIp)) {
             cacheIp = configCache.get(
-              "*-" + LabelUtil.getUserCreator(jobRequest.getLabels)._2.toLowerCase()
+              "*-" + LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator.toLowerCase()
             )
           }
           logger.info("get cache cacheIp:" + cacheIp + ",jobRequest:" + jobRequest.getId)
@@ -94,13 +94,13 @@ object UserCreatorIPCheckUtils extends Logging {
                 jobRequest.getId,
                 jobIp
               )
-              throw new UserCreatorIPCheckException(
+              throw UserCreatorIPCheckException(
                 EntranceErrorCode.USER_IP_EXCEPTION.getErrCode,
                 EntranceErrorCode.USER_IP_EXCEPTION.getDesc
               )
             }
           }
-        case _ => jobRequest
+        case _ =>
       }
     }
     jobRequest

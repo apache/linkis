@@ -60,11 +60,6 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   public Map<String, Object> queryTenantList(
       String user, String creator, String tenantValue, Integer pageNow, Integer pageSize) {
     Map<String, Object> result = new HashMap<>(2);
-    if (StringUtils.isBlank(user)) user = null;
-    if (StringUtils.isBlank(creator)) creator = null;
-    if (StringUtils.isBlank(tenantValue)) tenantValue = null;
-    if (null == pageNow) pageNow = 1;
-    if (null == pageSize) pageSize = 20;
     List<TenantVo> tenantVos = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
@@ -87,7 +82,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   public void deleteTenant(Integer id) throws ConfigurationException {
     logger.info("deleteUserIP : id:{}", id);
     if (StringUtils.isBlank(id.toString())) {
-      throw new ConfigurationException("id couldn't be empty ");
+      throw new ConfigurationException("id can't be empty ");
     }
     userTenantMapper.deleteTenant(id);
   }
@@ -100,7 +95,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   @Override
   public void updateTenant(TenantVo tenantVo) throws ConfigurationException {
     if (StringUtils.isBlank(tenantVo.getId())) {
-      throw new ConfigurationException("id couldn't be empty ");
+      throw new ConfigurationException("id can't be empty ");
     }
     dataProcessing(tenantVo);
     TenantVo tenantVoLowerCase = toLowerCase(tenantVo);
@@ -126,22 +121,6 @@ public class TenantConfigServiceImpl implements TenantConfigService {
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
     AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
-    // Parameter verification
-    if (StringUtils.isBlank(tenantVo.getCreator())) {
-      throw new ConfigurationException("Application Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(tenantVo.getUser())) {
-      throw new ConfigurationException("User Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(tenantVo.getBussinessUser())) {
-      throw new ConfigurationException("Creat User couldn't be empty ");
-    }
-    if (StringUtils.isBlank(tenantVo.getDesc())) {
-      throw new ConfigurationException("Description couldn't be empty ");
-    }
-    if (StringUtils.isBlank(tenantVo.getTenantValue())) {
-      throw new ConfigurationException("Tenant Tag couldn't be empty ");
-    }
     // Obtain the tenant information of the ECM list
     Map<String, Object> resultmap = null;
     try {
@@ -159,8 +138,8 @@ public class TenantConfigServiceImpl implements TenantConfigService {
               .filter(labelmap -> labelmap.containsKey("tenant"))
               .forEach(
                   map -> {
-                    String tenant = map.get("tenant").toString();
-                    if (tenant.toLowerCase().equals(tenantVo.getTenantValue())) {
+                    String tenant = map.get("tenant").toString().toLowerCase();
+                    if (tenant.equals(tenantVo.getTenantValue())) {
                       tenantResult.set(true);
                     }
                   });
@@ -179,16 +158,6 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   public Boolean checkUserCteator(String user, String creator, String tenantValue)
       throws ConfigurationException {
     boolean result = true;
-    // Parameter verification
-    if (StringUtils.isBlank(creator)) {
-      throw new ConfigurationException("Application Name couldn't be empty ");
-    }
-    if (StringUtils.isBlank(user)) {
-      throw new ConfigurationException("User Name couldn't be empty ");
-    }
-    if (creator.equals("*")) {
-      throw new ConfigurationException("Application Name couldn't be '*' ");
-    }
     Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);
     Object tenantList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);

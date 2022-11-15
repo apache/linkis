@@ -30,6 +30,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.text.MessageFormat
 import java.util
 
 import org.slf4j.LoggerFactory
@@ -62,7 +63,13 @@ class DsmReceiver {
           var publishedVersionId = dataSource.getPublishedVersionId
           if (publishedVersionId == null) {
             logger.warn("Datasource name:{} is not published.", dataSource.getDataSourceName)
-            return DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+            return DsInfoResponse(
+              status = false,
+              errorMsg = MessageFormat.format(
+                "Datasource name:{0} is not published.",
+                dataSource.getDataSourceName
+              )
+            )
           }
 
           RestfulApiHelper.decryptPasswordKey(

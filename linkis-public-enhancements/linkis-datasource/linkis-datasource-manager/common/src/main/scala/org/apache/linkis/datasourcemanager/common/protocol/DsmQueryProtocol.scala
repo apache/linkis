@@ -44,7 +44,8 @@ case class DsInfoQueryRequest(id: String, name: String, system: String) extends 
  */
 case class DsInfoResponse(
     status: Boolean,
-    dsType: String,
-    params: util.Map[String, Object],
-    creator: String
+    dsType: String = "",
+    params: util.Map[String, Object] = new util.HashMap[String, Object](),
+    creator: String = "",
+    errorMsg: String = ""
 ) extends DsmQueryProtocol

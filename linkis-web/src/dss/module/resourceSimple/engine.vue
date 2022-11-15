@@ -243,6 +243,8 @@ export default {
           return 'Datax';
         case 'openlookeng':
           return 'Openlookeng';
+        case 'elasticsearch':
+          return 'Elasticsearch';
         case 'Unlock':
           return this.$t('message.common.resourceSimple.KX')
         case 'Idle':
@@ -285,6 +287,18 @@ export default {
       }).catch(() => {
         this.loading = false;
       });
+    },
+    selectAll(isSelectedAll) {
+      this.ideEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
+      this.boardEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
+      this.otherEngineList.forEach((item) => {
+        if (this.supportColor(item.engineStatus) === 'green') item.isActive = !isSelectedAll;
+      });
+    
     },
     getEngineData() {
       if(this.loading) return;

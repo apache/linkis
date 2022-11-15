@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.execute
 
 import org.apache.linkis.common.exception.WarnException
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
@@ -30,7 +31,6 @@ import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
 
 import java.util.Date
 import java.util.concurrent.atomic.AtomicLong
-
 import scala.concurrent.duration.Duration
 
 abstract class EntranceExecutorManager(groupFactory: GroupFactory)
@@ -104,7 +104,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
               new DefaultEntranceExecutor(idGenerator.incrementAndGet())
             // getEngineConn Executor
             job.getLogListener.foreach(
-              _.onLogUpdate(job, "Your job is being scheduled by orchestrator.")
+              _.onLogUpdate(job, LogUtils.generateInfo("Your job is being scheduled by orchestrator."))
             )
 
             /**

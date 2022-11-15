@@ -31,9 +31,9 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.log.LogUtils
 
 import java.text.MessageFormat
 import java.util
@@ -149,7 +149,7 @@ abstract class EntranceServer extends Logging {
        */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
-      val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
+      val msg = LogUtils.generateInfo(s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted ")
       logger.info(msg)
 
       job match {

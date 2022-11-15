@@ -39,14 +39,14 @@ class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService
       engineConnBuildRequest: EngineConnBuildRequest,
       sender: Sender
   ): EngineNode = {
-    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
+    Sender.getSender(MANAGER_SERVICE_NAME).ask(engineConnBuildRequest) match {
       case request: EngineConnLaunchRequest if ENGINECONN_CREATE_DURATION._1 != 0L =>
         launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
     }
   }
 
   override def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode = {
-    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
+    Sender.getSender(MANAGER_SERVICE_NAME).ask(engineConnBuildRequest) match {
       case request: EngineConnLaunchRequest =>
         launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
     }

@@ -48,6 +48,14 @@
           :editable="false"
         />
       </FormItem>
+      <FormItem prop="instance" :label="$t('message.linkis.formItems.instance.label')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.instance"
+          :placeholder="$t('message.linkis.formItems.instance.placeholder')"
+          style="width:100px;"
+        />
+      </FormItem>
       <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
         <Input
           :maxlength="50"
@@ -374,7 +382,8 @@ export default {
         pageNow: page || this.pageSetting.current,
         pageSize: this.pageSetting.pageSize,
         proxyUser: this.searchBar.proxyUser,
-        isAdminView: this.isAdminModel
+        isAdminView: this.isAdminModel,
+        instance: this.searchBar.instance
       }
       if (!this.isAdminModel) {
         delete params.proxyUser
@@ -386,6 +395,7 @@ export default {
         delete params.startDate
         delete params.endDate
         delete params.proxyUser
+        delete params.instance
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {

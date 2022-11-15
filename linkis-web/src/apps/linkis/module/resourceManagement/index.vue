@@ -557,7 +557,10 @@ export default {
           const yarnType = type === 'memory' ? 'queueMemory' : 'queueCores'
           data = row[field].DriverAndYarnResource.yarnResource[yarnType]
         } else {
-          data = row[field].DriverAndYarnResource.loadInstanceResource[type]
+          // if(type === 'instance') {
+          //   type = instances;
+          // }
+          data = row[field].DriverAndYarnResource.loadInstanceResource[type] || row[field].DriverAndYarnResource.loadInstanceResource['instances']
         }
       }
       if (type === 'memory' && data !== ' -- ') {

@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -70,6 +71,11 @@ public class GatewayAuthTokenRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(HttpServletRequest request,@RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
         ModuleUserUtils.getOperationUser(request, "add");
+        gatewayAuthToken.setCreateTime(new Date());
+        gatewayAuthToken.setUpdateTime(new Date());
+        gatewayAuthToken.setBusinessOwner("BDP");
+        gatewayAuthToken.setUpdateBy("LINKIS");
+
         boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
         return Message.ok("").data("result", result);
     }
@@ -81,6 +87,9 @@ public class GatewayAuthTokenRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.PUT)
     public Message update(HttpServletRequest request,@RequestBody GatewayAuthTokenEntity token) {
         ModuleUserUtils.getOperationUser(request, "update");
+        token.setUpdateTime(new Date());
+        token.setUpdateBy("LINKIS");
+
         boolean result = gatewayAuthTokenService.updateById(token);
         return Message.ok("").data("result", result);
     }
@@ -95,6 +104,10 @@ public class GatewayAuthTokenRestfulApi {
         HashMap columnMap = new HashMap<String,Object>();
         columnMap.put("token_name",tokenName);
         boolean result = gatewayAuthTokenService.removeByMap(columnMap);
+        
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    public Message remove(@PathVariable("id") Integer id) {
+        boolean result = gatewayAuthTokenService.removeById(id);;
         return Message.ok("").data("result", result);
     }
 

@@ -238,6 +238,7 @@ export default {
         }
         this.modalLoading=false
         this.modalShow = false
+        this.load()
       })
     },
     onModalCancel(){

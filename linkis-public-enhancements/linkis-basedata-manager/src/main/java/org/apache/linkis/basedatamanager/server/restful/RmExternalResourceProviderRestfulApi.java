@@ -65,7 +65,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
         ModuleUserUtils.getOperationUser(request, "get");
         RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
-        return Message.ok("").data("dbs", rmExternalResourceProvider);
+        return Message.ok("").data("item", rmExternalResourceProvider);
     }
 
     @ApiImplicitParams({
@@ -76,7 +76,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message add(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         ModuleUserUtils.getOperationUser(request, "add");
         boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -87,7 +87,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
         ModuleUserUtils.getOperationUser(request, "remove");
         boolean result = rmExternalResourceProviderService.removeById(id);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -98,7 +98,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message update(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         ModuleUserUtils.getOperationUser(request, "update");
         boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
 

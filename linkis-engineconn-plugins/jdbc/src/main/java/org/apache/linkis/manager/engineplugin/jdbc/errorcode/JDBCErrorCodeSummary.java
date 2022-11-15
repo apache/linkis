@@ -62,10 +62,6 @@ public enum JDBCErrorCodeSummary {
 
   private String errorDesc;
 
-  private String comment;
-
-  private String module;
-
   JDBCErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;

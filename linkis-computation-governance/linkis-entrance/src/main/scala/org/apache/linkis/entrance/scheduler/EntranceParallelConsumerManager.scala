@@ -15,13 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.label.constant;
+package org.apache.linkis.entrance.scheduler
 
-public class LabelConstant {
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager
 
-  public static final int LABEL_BUILDER_ERROR_CODE = 40001;
+class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
+  extends ParallelConsumerManager(maxParallelismUsers, schedulerName){
 
-  public static final int LABEL_UTIL_CONVERT_ERROR_CODE = 40002;
+  override protected def createConsumer(groupName: String): FIFOUserConsumer = {
+    val group = getSchedulerContext.getOrCreateGroupFactory.getGroup(groupName)
+    new EntranceFIFOUserConsumer(getSchedulerContext, getOrCreateExecutorService, group)
+  }
 
-  public static final String OFFLINE = "offline";
 }

@@ -19,6 +19,7 @@ package org.apache.linkis.entrance.server;
 
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogReader;
@@ -79,6 +80,11 @@ public class DefaultEntranceServer extends EntranceServer {
     if (shutdownFlag) {
       logger.warn("event has been handled");
     } else {
+      if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_ENABLED()) {
+        logger.warn("Entrance exit to update all not execution task instances and clean ConsumeQueue");
+        updateAllNotExecutionTaskInstances(false);
+      }
+
       logger.warn("Entrance exit to stop all job");
       EntranceJob[] allUndoneJobs = getAllUndoneTask(null);
       if (null != allUndoneJobs) {

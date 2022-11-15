@@ -108,8 +108,9 @@ class FIFOUserConsumer(
     }
     var event: Option[SchedulerEvent] = getWaitForRetryEvent
     if (event.isEmpty) {
-      val completedNums = runningJobs.filter(job => job == null || job.isCompleted)
-      if (completedNums.length < 1) {
+      val maxAllowRunningJobs = fifoGroup.getMaxAllowRunningJobs
+      val currentRunningJobs = runningJobs.filter(e => e != null && !e.isCompleted)
+      if (maxAllowRunningJobs <= currentRunningJobs) {
         Utils.tryQuietly(Thread.sleep(1000)) // TODO 还可以优化，通过实现JobListener进行优化
         return
       }
@@ -186,6 +187,16 @@ class FIFOUserConsumer(
   private def putToRunningJobs(job: Job): Unit = {
     val index = runningJobs.indexWhere(f => f == null || f.isCompleted)
     runningJobs(index) = job
+  }
+
+  protected def scanAllRetryJobsAndRemove(): Unit = {
+    for (index <- runningJobs.indices) {
+      val job = runningJobs(index)
+      if (job != null && job.isJobCanRetry) {
+        runningJobs(index) = null
+        logger.info(s"Job $job can retry, remove from runningJobs")
+      }
+    }
   }
 
   override def shutdown(): Unit = {

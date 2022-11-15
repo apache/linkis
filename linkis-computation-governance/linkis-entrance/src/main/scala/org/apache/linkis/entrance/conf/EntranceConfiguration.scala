@@ -225,4 +225,25 @@ object EntranceConfiguration {
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
+  val ENTRANCE_FAILOVER_ENABLED = CommonVars("linkis.entrance.failover.enable", true).getValue
+
+  val ENTRANCE_FAILOVER_SCAN_INIT_TIME =
+    CommonVars("linkis.entrance.failover.scan.init.time", 3 * 1000).getValue
+
+  val ENTRANCE_FAILOVER_SCAN_INTERVAL =
+    CommonVars("linkis.entrance.failover.scan.interval", 3 * 1000).getValue
+
+  val ENTRANCE_FAILOVER_DATA_NUM_LIMIT = CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
+
+  val ENTRANCE_FAILOVER_DATA_INTERVAL_TIME = CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("7d").toLong).getValue
+
+  // if true, the waitForRetry job in runningJobs can be failover
+  val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED = CommonVars("linkis.entrance.failover.retry.job.enable", true)
+
+  val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
+
+  val ENTRANCE_SHUTDOWN_FAILOVER_ENABLED = CommonVars("linkis.entrance.shutdown.failover.enable", true).getValue
+
+  val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
+
 }

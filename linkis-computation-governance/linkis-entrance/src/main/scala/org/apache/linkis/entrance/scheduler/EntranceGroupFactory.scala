@@ -31,6 +31,7 @@ import org.apache.linkis.governance.common.protocol.conf.{
 import org.apache.linkis.instance.label.client.InstanceLabelClient
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
+import org.apache.linkis.governance.common.protocol.conf.{RequestQueryEngineConfigWithGlobalConfig, ResponseQueryConfig}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
   ConcurrentEngineConnLabel,
@@ -38,22 +39,25 @@ import org.apache.linkis.manager.label.entity.engine.{
   UserCreatorLabel
 }
 import org.apache.linkis.manager.label.entity.route.RouteLabel
+import org.apache.linkis.manager.label.entity.engine.{ConcurrentEngineConnLabel, EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
-
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-
 import scala.collection.JavaConverters._
-
 import com.google.common.cache.{Cache, CacheBuilder}
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.instance.label.client.InstanceLabelClient
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.{LabelConstant, LabelKeyConstant}
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 class EntranceGroupFactory extends GroupFactory with Logging {
 
@@ -72,6 +76,39 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     CommonVars("wds.linkis.entrance.specified.max.capacity", 5000)
 
   private val GROUP_INIT_CAPACITY = CommonVars("wds.linkis.entrance.init.capacity", 100)
+
+  private val GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
+
+  private val GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
+
+  if (EntranceConfiguration.ENTRANCE_GROUP_SCAN_ENABLED.getValue) {
+    Utils.defaultScheduler.scheduleAtFixedRate(
+      new Runnable {
+        override def run(): Unit = {
+          // get all entrance server from eureka
+          val serviceInstances = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName)
+          if (null == serviceInstances || serviceInstances.isEmpty) return
+
+          // get all offline label server
+          val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
+            .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelConstant.OFFLINE)
+          val labels = new util.ArrayList[Label[_]]
+          labels.add(routeLabel)
+          val labelInstances = InstanceLabelClient.getInstance.getInstanceFromLabel(labels)
+
+          // get active entrance server
+          val allInstances = new util.ArrayList[ServiceInstance]()
+          allInstances.addAll(serviceInstances.toList.asJava)
+          allInstances.removeAll(labelInstances)
+          // refresh all group maxAllowRunningJobs
+          refreshAllGroupMaxAllowRunningJobs(allInstances.size())
+        }
+      },
+      GROUP_SCAN_INIT_TIME.getValue,
+      GROUP_SCAN_INTERVAL.getValue,
+      TimeUnit.MILLISECONDS
+    )
+  }
 
   private val specifiedUsernameRegexPattern: Pattern =
     if (StringUtils.isNotBlank(SPECIFIED_USERNAME_REGEX.getValue)) {
@@ -156,41 +193,22 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
+  def refreshAllGroupMaxAllowRunningJobs(activeCount: Int): Unit = {
+    if (activeCount <= 0) return
+    groupNameToGroups.asMap().asScala.foreach(item => {
+      item._2 match {
+        case group: ParallelGroup =>
+          group.setMaxAllowRunningJobs(Math.round(group.getMaxRunningJobs / activeCount))
+        case _ =>
+      }
+    })
+  }
+
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
-    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
-    var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
-    val labelList = new util.ArrayList[Label[_]]()
-    val offlineRouteLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
-      .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
-    labelList.add(offlineRouteLabel)
-    var offlineIns: Array[ServiceInstance] = null
-    Utils.tryAndWarn {
-      offlineIns = InstanceLabelClient.getInstance
-        .getInstanceFromLabel(labelList)
-        .asScala
-        .filter(l =>
-          null != l && l.getApplicationName
-            .equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)
-        )
-        .toArray
-    }
-    if (null != offlineIns) {
-      logger.info(s"There are ${offlineIns.length} offlining instance.")
-      entranceNum = entranceNum - offlineIns.length
-    }
-    /*
-    Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
-     */
-    if (0 >= entranceNum) {
-      logger.error(
-        s"Got ${entranceNum} ${Sender.getThisServiceInstance.getApplicationName} instances."
-      )
-      entranceNum = 1
-    }
     Math.max(
       EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
-      userDefinedRunningJobs / entranceNum
-    );
+      EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    )
   }
 
 }

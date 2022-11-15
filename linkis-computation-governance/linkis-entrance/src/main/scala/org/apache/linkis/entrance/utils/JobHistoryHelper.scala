@@ -30,15 +30,13 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
-
 import org.apache.commons.lang3.StringUtils
 
 import javax.servlet.http.HttpServletRequest
-
 import java.util
 import java.util.Date
-
 import scala.collection.JavaConverters._
+import sun.net.util.IPAddressUtil
 
 import com.google.common.net.InetAddresses
 
@@ -124,11 +122,50 @@ object JobHistoryHelper extends Logging {
   }
 
   /**
-   * Batch update instances
+   * Get all consume queue task and batch update instances(获取所有消费队列中的任务进行批量更新)
    *
    * @param taskIdList
+   * @param retryWhenUpdateFail
    */
-  def updateBatchInstances(taskIdList: Array[java.lang.Long]): Unit = {
+  def updateAllConsumeQueueTask(taskIdList: List[java.lang.Long], retryWhenUpdateFail: Boolean = false): Unit = {
+
+    if (taskIdList.isEmpty) return
+
+    val updateTaskIds = new util.ArrayList[java.lang.Long]()
+
+    if (EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
+      taskIdList.length > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
+      for (i <- 0 until EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
+        updateTaskIds.add(taskIdList(i))
+      }
+    } else {
+      updateTaskIds.addAll(taskIdList.asJava)
+    }
+
+    try {
+      val successTaskIds = updateBatchInstances(updateTaskIds.asScala.toList)
+      if (retryWhenUpdateFail) {
+        taskIdList.asJava.removeAll(successTaskIds.asJava)
+      } else {
+        taskIdList.asJava.removeAll(updateTaskIds)
+      }
+    } catch {
+      case e: Exception =>
+        logger.warn("update batch instances failed, wait for retry", e)
+        Thread.sleep(1000)
+    }
+
+    updateAllConsumeQueueTask(taskIdList, retryWhenUpdateFail)
+
+  }
+
+  /**
+   * Batch update instances(批量更新instances字段)
+   *
+   * @param taskIdList
+   * @return
+   */
+  private def updateBatchInstances(taskIdList: List[java.lang.Long]): List[java.lang.Long] = {
     val jobReqList = new util.ArrayList[JobRequest]()
     taskIdList.foreach(taskID => {
       val jobRequest = new JobRequest
@@ -137,7 +174,67 @@ object JobHistoryHelper extends Logging {
       jobReqList.add(jobRequest)
     })
     val jobReqBatchUpdate = JobReqBatchUpdate(jobReqList)
-    sender.ask(jobReqBatchUpdate)
+    Utils.tryCatch {
+      val response = sender.ask(jobReqBatchUpdate)
+      response match {
+        case resp: util.ArrayList[JobRespProtocol] =>
+          resp.asScala.filter(r => r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID))
+            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long]).toList
+        case _ =>
+          throw JobHistoryFailedException(
+            "update batch instances from jobhistory not a correct List type"
+          )
+      }
+    } {
+      case errorException: ErrorException => throw errorException
+      case e: Exception =>
+        val e1 = JobHistoryFailedException(s"update batch instances ${taskIdList.mkString(",")} error")
+        e1.initCause(e)
+        throw e
+    }
+  }
+
+  /**
+   * query wait for failover task(获取待故障转移的任务)
+   *
+   * @param reqMap
+   * @param statusList
+   * @param startTimestamp
+   * @param limit
+   * @return
+   */
+  def queryWaitForFailoverTask(reqMap: util.Map[String, java.lang.Long], statusList: util.List[String], startTimestamp: Long, limit: Int): util.List[JobRequest] = {
+    val requestFailoverJob = RequestFailoverJob(reqMap, statusList, startTimestamp, limit)
+    val tasks = Utils.tryCatch {
+      val response = sender.ask(requestFailoverJob)
+      response match {
+        case responsePersist: JobRespProtocol =>
+          val status = responsePersist.getStatus
+          if (status != SUCCESS_FLAG) {
+            logger.error(s"query from jobHistory status failed, status is $status")
+            throw JobHistoryFailedException("query from jobHistory status failed")
+          }
+          val data = responsePersist.getData
+          data.get(JobRequestConstants.JOB_HISTORY_LIST) match {
+            case tasks: util.List[JobRequest] =>
+              tasks
+            case _ =>
+              throw JobHistoryFailedException(
+                s"query from jobhistory not a correct List type, instances ${reqMap.keySet()}"
+              )
+          }
+        case _ =>
+          logger.error("get query response incorrectly")
+          throw JobHistoryFailedException("get query response incorrectly")
+      }
+    } {
+      case errorException: ErrorException => throw errorException
+      case e: Exception =>
+        val e1 = JobHistoryFailedException(s"query failover task error, instances ${reqMap.keySet()} ")
+        e1.initCause(e)
+        throw e
+    }
+    tasks
   }
 
   private def getTaskByTaskID(taskID: Long): JobRequest = {

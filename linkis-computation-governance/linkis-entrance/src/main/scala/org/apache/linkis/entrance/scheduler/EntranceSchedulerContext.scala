@@ -28,6 +28,11 @@ class EntranceSchedulerContext extends SchedulerContext {
   private var consumerManager: ConsumerManager = _
   private var executorManager: ExecutorManager = _
 
+  private var offlineFlag: Boolean = false
+
+  def setOfflineFlag(offlineFlag: Boolean): Unit = this.offlineFlag = offlineFlag
+  def getOfflineFlag: Boolean = this.offlineFlag
+
   def this(
       groupFactory: GroupFactory,
       consumerManager: ConsumerManager,

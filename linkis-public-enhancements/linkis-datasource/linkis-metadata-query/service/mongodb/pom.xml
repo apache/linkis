@@ -24,12 +24,12 @@
     <relativePath>../../../../../pom.xml</relativePath>
   </parent>
 
-    <artifactId>linkis-metadata-query-service-mongodb</artifactId>
+  <artifactId>linkis-metadata-query-service-mongodb</artifactId>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <es.version>6.7.1</es.version>
-    </properties>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <es.version>6.7.1</es.version>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -55,17 +55,11 @@
       </exclusions>
     </dependency>
 
-      <dependency>
-          <groupId>org.mongodb</groupId>
-          <artifactId>mongo-java-driver</artifactId>
-          <version>3.12.7</version>
-      </dependency>
-      <dependency>
-          <groupId>org.apache.linkis</groupId>
-          <artifactId>linkis-metadata-query-common</artifactId>
-          <version>1.3.0</version>
-          <scope>compile</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.12.7</version>
+    </dependency>
 
   </dependencies>
 

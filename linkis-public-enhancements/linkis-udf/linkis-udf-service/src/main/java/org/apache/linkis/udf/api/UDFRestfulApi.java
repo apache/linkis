@@ -217,9 +217,7 @@ public class UDFRestfulApi {
       udfvo.setCreateUser(userName);
       udfvo.setCreateTime(new Date());
       udfvo.setUpdateTime(new Date());
-      udfService.addUDF(udfvo, userName);
-      message = Message.ok();
-      //            message.data("udf", udfvo);
+      message = Message.ok().data("udfId", udfService.addUDF(udfvo, userName));
     } catch (Exception e) {
       logger.error("Failed to add UDF: ", e);
       message = Message.error(e.getMessage());
@@ -920,6 +918,68 @@ public class UDFRestfulApi {
       message.data("userDirectory", userDirectory);
     } catch (Throwable e) {
       logger.error("Failed to get user directory: ", e);
+      message = Message.error(e.getMessage());
+    }
+    return message;
+  }
+
+  /** get UDF info by nameList */
+  @ApiOperation(value = "getUdfList", notes = "get user directory", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "nameList", required = true, dataType = "String", value = "category")
+  })
+  @RequestMapping(path = "/getUdfByNameList", method = RequestMethod.GET)
+  public Message getUdfList(HttpServletRequest req, @RequestParam("nameList") String nameList) {
+    Message message = null;
+    try {
+      String userName = ModuleUserUtils.getOperationUser(req, "getUdfByNameList ");
+      if (StringUtils.isEmpty(userName)) {
+        throw new UDFException("username is empty!");
+      }
+      if (StringUtils.isEmpty(nameList)) {
+        throw new UDFException("nameList is empty!");
+      }
+      List<String> collect = Arrays.stream(nameList.split(",")).collect(Collectors.toList());
+      List<UDFAddVo> udfInfoList = udfService.getUdfByNameList(collect);
+      message = Message.ok().data("infoList", udfInfoList);
+    } catch (Throwable e) {
+      logger.error("Failed to get user udfinfo : ", e);
+      message = Message.error(e.getMessage());
+    }
+    return message;
+  }
+
+  /** get version info by udfName && createUser */
+  @ApiOperation(value = "versionInfo", notes = "version list", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "udfName", required = true, dataType = "String", value = "udf name"),
+    @ApiImplicitParam(
+        name = "createUser",
+        required = true,
+        dataType = "String",
+        value = "create user")
+  })
+  @RequestMapping(path = "/versionInfo", method = RequestMethod.GET)
+  public Message versionInfo(
+      HttpServletRequest req,
+      @RequestParam("udfName") String udfName,
+      @RequestParam("createUser") String createUser) {
+    Message message = null;
+    try {
+      String userName = ModuleUserUtils.getOperationUser(req, "versionInfo ");
+      if (StringUtils.isEmpty(userName)) {
+        throw new UDFException("userName is empty!");
+      }
+      if (StringUtils.isEmpty(udfName)) {
+        throw new UDFException("udfName is empty!");
+      }
+      if (StringUtils.isEmpty(createUser)) {
+        throw new UDFException("createUser is empty!");
+      }
+      UDFVersionVo versionList = udfService.getUdfVersionInfo(udfName, createUser);
+      message = Message.ok().data("versionInfo", versionList);
+    } catch (Throwable e) {
+      logger.error("Failed to get udf versionInfo: ", e);
       message = Message.error(e.getMessage());
     }
     return message;

@@ -28,7 +28,7 @@ import com.github.pagehelper.PageInfo;
 
 public interface UDFService {
 
-  void addUDF(UDFAddVo udfInfo, String userName) throws Exception;
+  long addUDF(UDFAddVo udfInfo, String userName) throws Exception;
 
   void updateUDF(UDFUpdateVo udfUpdateVo, String userName) throws Exception;
 
@@ -115,4 +115,8 @@ public interface UDFService {
   List<String> getUserDirectory(String user, String category);
 
   List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
+
+  List<UDFAddVo> getUdfByNameList(List<String> userNameList);
+
+  UDFVersionVo getUdfVersionInfo(String udfName, String createUser);
 }

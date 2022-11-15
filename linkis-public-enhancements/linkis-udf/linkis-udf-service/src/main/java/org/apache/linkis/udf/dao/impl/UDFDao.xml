@@ -365,4 +365,20 @@
     <select id="getSharedUDFIdsByUser" resultType="java.lang.Long">
         select udf_id from linkis_ps_udf_shared_info where user_name=#{userName}
     </select>
+
+    <select id="getUdfInfoByNameList" resultType="org.apache.linkis.udf.vo.UDFAddVo">
+        select a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
+        select pu.*,put.name as directory
+        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
+        where 1 =1 and pu.create_user in
+        <foreach collection="arg0" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+        ) a join
+        (select udf_id,description,path,register_format,use_format,bml_resource_version
+        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
+        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)
+        ) b on a.id=b.udf_id
+        order by id desc
+    </select>
 </mapper>

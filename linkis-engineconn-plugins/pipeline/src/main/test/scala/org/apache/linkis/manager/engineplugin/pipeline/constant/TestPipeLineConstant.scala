@@ -28,7 +28,7 @@ class TestPipeLineConstant {
     Assertions.assertEquals("utf-8", PipeLineConstant.DEFAULTC_HARSET)
     Assertions.assertEquals("result", PipeLineConstant.DEFAULT_SHEETNAME)
     Assertions.assertEquals("yyyy-MM-dd HH:mm:ss", PipeLineConstant.DEFAULT_DATEFORMATE)
-    Assertions.assertEquals("pipeline.output.isoverwtite", PipeLineConstant.PIPELINE_OUTPUT_ISOVERWRITE)
+    Assertions.assertEquals("pipeline.output.isoverwrite", PipeLineConstant.PIPELINE_OUTPUT_ISOVERWRITE)
     Assertions.assertEquals("pipeline.output.shuffle.null.type", PipeLineConstant.PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE)
     Assertions.assertEquals("pipeline.output.charset", PipeLineConstant.PIPELINE_OUTPUT_CHARSET)
     Assertions.assertEquals("pipeline.field.split", PipeLineConstant.PIPELINE_FIELD_SPLIT)

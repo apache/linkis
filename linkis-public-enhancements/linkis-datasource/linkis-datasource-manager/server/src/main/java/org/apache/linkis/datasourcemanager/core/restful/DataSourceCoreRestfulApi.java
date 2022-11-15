@@ -18,6 +18,7 @@
 package org.apache.linkis.datasourcemanager.core.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
@@ -35,15 +36,11 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -52,15 +49,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
@@ -69,6 +57,9 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.DATASOURCE_NOT_FOUND;
 
@@ -80,6 +71,7 @@ import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasou
 public class DataSourceCoreRestfulApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataSourceCoreRestfulApi.class);
+
     @Autowired private DataSourceInfoService dataSourceInfoService;
 
     @Autowired private DataSourceRelateService dataSourceRelateService;
@@ -101,9 +93,10 @@ public class DataSourceCoreRestfulApi {
 
     @ApiOperation(value = "getAllDataSourceTypes", notes = "get all data source types", response = Message.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
-    public Message getAllDataSourceTypes() {
+    public Message getAllDataSourceTypes(HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getAllDataSourceTypes");
                     List<DataSourceType> dataSourceTypes =
                             dataSourceRelateService.getAllDataSourceTypes();
                     return Message.ok().data("typeList", dataSourceTypes);
@@ -117,12 +110,13 @@ public class DataSourceCoreRestfulApi {
     })
     @RequestMapping(value = "/key-define/type/{typeId}", method = RequestMethod.GET)
     public Message getKeyDefinitionsByType(
-            @PathVariable("typeId") Long dataSourceTypeId, HttpServletRequest req) {
+            @PathVariable("typeId") Long dataSourceTypeId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getKeyDefinitionsByType");
                     List<DataSourceParamKeyDefinition> keyDefinitions =
                             dataSourceRelateService.getKeyDefinitionsByType(
-                                    dataSourceTypeId, req.getHeader("Content-Language"));
+                                    dataSourceTypeId, request.getHeader("Content-Language"));
                     return Message.ok().data("keyDefine", keyDefinitions);
                 },
                 "Fail to get key definitions of data source type[查询数据源参数键值对失败]");
@@ -144,10 +138,12 @@ public class DataSourceCoreRestfulApi {
         @ApiImplicitParam(name = "username", required = false, dataType = "String", value = "user name")
     })
     @RequestMapping(value = "/info/json", method = RequestMethod.POST)
-    public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest req) {
+    public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = SecurityFilter.getLoginUsername(req);
+
+                    String userName = ModuleUserUtils.getOperationUser(request, "insertJsonInfo");
+
                     // Bean validation
                     Set<ConstraintViolation<DataSource>> result =
                             beanValidator.validate(dataSource, Default.class);
@@ -197,10 +193,10 @@ public class DataSourceCoreRestfulApi {
     public Message updateDataSourceInJson(
             @RequestBody DataSource dataSource,
             @PathVariable("dataSourceId") Long dataSourceId,
-            HttpServletRequest req) {
+            HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = SecurityFilter.getLoginUsername(req);
+                    String userName = ModuleUserUtils.getOperationUser(request, "updateDataSourceInJson");
                     // Bean validation
                     Set<ConstraintViolation<DataSource>> result =
                             beanValidator.validate(dataSource, Default.class);
@@ -247,7 +243,7 @@ public class DataSourceCoreRestfulApi {
      * create or update parameter, save a version of parameter,return version id.
      *
      * @param params
-     * @param req
+     * @param request
      * @return
      */
     @ApiOperation(value = "insertJsonParameter", notes = "insert json parameter", response = Message.class)
@@ -259,12 +255,14 @@ public class DataSourceCoreRestfulApi {
     public Message insertJsonParameter(
             @PathVariable("dataSourceId") Long dataSourceId,
             @RequestBody() Map<String, Object> params,
-            HttpServletRequest req) {
+            HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "insertJsonParameter");
+
                     Map<String, Object> connectParams = (Map) params.get("connectParams");
                     String comment = params.get("comment").toString();
-                    String userName = SecurityFilter.getLoginUsername(req);
+
 
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
@@ -313,11 +311,13 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceId dataSourceId:"+dataSourceId);
+
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId);
                     if (dataSource == null) {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -341,13 +341,16 @@ public class DataSourceCoreRestfulApi {
             throws UnsupportedEncodingException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+
+                    String userName = ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceName dataSourceName:"+dataSourceName);
+
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceName);
 
                     if (dataSource == null) {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -373,13 +376,16 @@ public class DataSourceCoreRestfulApi {
         throws UnsupportedEncodingException {
         return RestfulApiHelper.doAndResponse(
             () -> {
+                String userName = ModuleUserUtils.getOperationUser(request, "getPublishedInfoByDataSourceName dataSourceName:"+dataSourceName);
+
+
                 DataSource dataSource = dataSourceInfoService.getDataSourcePublishInfo(dataSourceName);
 
                 if (dataSource == null) {
                     return Message.error("No Exists The DataSource [不存在该数据源]");
                 }
 
-                if (!AuthContext.hasPermission(dataSource, request)) {
+                if (!AuthContext.hasPermission(dataSource, userName)) {
                     return Message.error(
                         "Don't have query permission for data source [没有数据源的查询权限]");
                 }
@@ -414,6 +420,8 @@ public class DataSourceCoreRestfulApi {
             HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceIdAndVersion dataSourceId:"+dataSourceId);
+
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfo(dataSourceId, version);
 
@@ -421,7 +429,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -451,6 +459,8 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getVersionList dataSourceId:"+dataSourceId);
+
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
 
@@ -458,7 +468,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -491,6 +501,8 @@ public class DataSourceCoreRestfulApi {
             HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "publishByDataSourceId dataSourceId:"+dataSourceId);
+
                     // Get brief info
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
@@ -499,7 +511,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have publish permission for data source [没有数据源的发布权限]");
                     }
@@ -528,6 +540,8 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "removeDataSource dataSourceId:"+dataSourceId);
+
                     // Get brief info
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
@@ -536,7 +550,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have delete permission for data source [没有数据源的删除权限]");
                     }
@@ -559,6 +573,8 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "expireDataSource dataSourceId:"+dataSourceId);
+
                     // Get brief info
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
@@ -567,7 +583,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, request)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have operation permission for data source [没有数据源的操作权限]");
                     }
@@ -585,7 +601,7 @@ public class DataSourceCoreRestfulApi {
      * get datasource connect params for publish version
      *
      * @param dataSourceId
-     * @param req
+     * @param request
      * @return
      */
     @ApiOperation(value = "getConnectParams(dataSourceId)", notes = "get connect params(dataSourceId)", response = Message.class)
@@ -594,9 +610,11 @@ public class DataSourceCoreRestfulApi {
     })
     @RequestMapping(value = "/{dataSourceId}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
-            @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest req) {
+            @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String userName = ModuleUserUtils.getOperationUser(request, "getConnectParams dataSourceId:"+dataSourceId);
+
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId);
 
@@ -604,7 +622,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, req)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -624,10 +642,13 @@ public class DataSourceCoreRestfulApi {
     })
     @RequestMapping(value = "/name/{dataSourceName}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
-            @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest req)
+            @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
             throws UnsupportedEncodingException {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+
+                    String userName = ModuleUserUtils.getOperationUser(request, "getConnectParams dataSourceName:"+dataSourceName);
+
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(dataSourceName);
 
@@ -635,7 +656,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, req)) {
+                    if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
                                 "Don't have query permission for data source [没有数据源的查询权限]");
                     }
@@ -658,10 +679,11 @@ public class DataSourceCoreRestfulApi {
     public Message connectDataSource(
             @PathVariable("dataSourceId") Long dataSourceId,
             @PathVariable("version") Long version,
-            HttpServletRequest req) {
+            HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String operator = SecurityFilter.getLoginUsername(req);
+                    String operator = ModuleUserUtils.getOperationUser(request, "connectDataSource dataSourceId:"+dataSourceId);
+
                     DataSource dataSource =
                             dataSourceInfoService.getDataSourceInfoForConnect(
                                     dataSourceId, version);
@@ -669,7 +691,7 @@ public class DataSourceCoreRestfulApi {
                         return Message.error("No Exists The DataSource [不存在该数据源]");
                     }
 
-                    if (!AuthContext.hasPermission(dataSource, req)) {
+                    if (!AuthContext.hasPermission(dataSource, operator)) {
                         return Message.error(
                                 "Don't have operation permission for data source [没有数据源的操作权限]");
                     }
@@ -706,9 +728,12 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/info/ids", method = RequestMethod.GET)
     public Message queryDataSource(
             @RequestParam(value = "ids") String idsJson
-            , HttpServletRequest req) {
+            , HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+
+                    String userName = ModuleUserUtils.getOperationUser(request, "queryDataSourceByIds ids:"+idsJson);
+
                     List ids = new ObjectMapper().readValue(idsJson, List.class);
                     List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids);
                     return Message.ok()
@@ -735,15 +760,17 @@ public class DataSourceCoreRestfulApi {
             @RequestParam(value = "identifies", required = false) String identifies,
             @RequestParam(value = "currentPage", required = false) Integer currentPage,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            HttpServletRequest req) {
+            HttpServletRequest request) {
         return RestfulApiHelper.doAndResponse(
                 () -> {
+                    String permissionUser = ModuleUserUtils.getOperationUser(request, "queryDataSource");
+
                     DataSourceVo dataSourceVo =
                             new DataSourceVo(
                                     dataSourceName, dataSourceTypeId, identifies, createSystem);
                     dataSourceVo.setCurrentPage(null != currentPage ? currentPage : 1);
                     dataSourceVo.setPageSize(null != pageSize ? pageSize : 10);
-                    String permissionUser = SecurityFilter.getLoginUsername(req);
+
                     if (AuthContext.isAdministrator(permissionUser)) {
                         permissionUser = null;
                     }

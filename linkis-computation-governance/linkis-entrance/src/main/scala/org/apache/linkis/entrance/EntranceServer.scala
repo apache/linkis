@@ -35,9 +35,11 @@ import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.linkis.common.log.LogUtils
 
 import java.text.MessageFormat
-import java.util
+import java.{lang, util}
+import java.util.Date
 
 abstract class EntranceServer extends Logging {
 
@@ -227,7 +229,7 @@ abstract class EntranceServer extends Logging {
       .toArray
   }
 
-  def getAllNotStartRunningTask(): Array[EntranceJob] = {
+  def getAllConsumeQueueTask(): Array[EntranceJob] = {
     val consumers = getEntranceContext
       .getOrCreateScheduler()
       .getSchedulerContext
@@ -244,9 +246,149 @@ abstract class EntranceServer extends Logging {
       .toArray
   }
 
-  def updateAllNotExecutionTaskInstances(): Unit = {
-    val taskIds = getAllNotStartRunningTask().map(_.getJobRequest.getId)
-    JobHistoryHelper.updateBatchInstances(taskIds)
+  def clearAllConsumeQueue(): Unit = {
+    getEntranceContext
+      .getOrCreateScheduler()
+      .getSchedulerContext
+      .getOrCreateConsumerManager
+      .listConsumers()
+      .foreach(_.getConsumeQueue.clearAll())
+  }
+
+  def updateAllNotExecutionTaskInstances(retryWhenUpdateFail: Boolean): Unit = {
+    val taskIds = getAllConsumeQueueTask().map(_.getJobRequest.getId).toList
+    JobHistoryHelper.updateAllConsumeQueueTask(taskIds, retryWhenUpdateFail)
+    logger.info("Finished to update all not execution task instances")
+    clearAllConsumeQueue()
+    logger.info("Finished to clean all ConsumeQueue")
+  }
+
+  /**
+   * execute failover job (提交故障转移任务，返回新的execId)
+   *
+   * @param jobRequest
+   */
+  def failoverExecute(jobRequest: JobRequest): String = {
+
+    if (null == jobRequest || null == jobRequest.getId || jobRequest.getId <= 0) {
+      throw new EntranceErrorException(
+        PERSIST_JOBREQUEST_ERROR.getErrorCode,
+        PERSIST_JOBREQUEST_ERROR.getErrorDesc
+      )
+    }
+
+    // todo dmp kill ec
+
+    val logAppender = new java.lang.StringBuilder()
+    // init properties
+    initJobRequestProperties(jobRequest, logAppender)
+    // update jobRequest
+    getEntranceContext
+      .getOrCreatePersistenceManager()
+      .createPersistenceEngine()
+      .updateIfNeeded(jobRequest)
+
+    val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
+    Utils.tryThrow {
+      job.init()
+      job.setLogListener(getEntranceContext.getOrCreateLogManager())
+      job.setProgressListener(getEntranceContext.getOrCreatePersistenceManager())
+      job.setJobListener(getEntranceContext.getOrCreatePersistenceManager())
+      job match {
+        case entranceJob: EntranceJob => {
+          entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
+        }
+        case _ =>
+      }
+      Utils.tryCatch {
+        if (logAppender.length() > 0)
+          job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
+      } { t =>
+        logger.error("Failed to write init JobRequest log, reason: ", t)
+      }
+
+      /**
+       * job.afterStateChanged() method is only called in job.run(), and job.run() is called only
+       * after job is scheduled so it suggest that we lack a hook for job init, currently we call
+       * this to trigger JobListener.onJobinit()
+       */
+      Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
+      getEntranceContext.getOrCreateScheduler().submit(job)
+      val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted, success to failover"
+      logger.info(msg)
+
+      job match {
+        case entranceJob: EntranceJob =>
+          entranceJob.getJobRequest.setReqId(job.getId())
+          if (jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob))
+            jobTimeoutManager.add(job.getId(), entranceJob)
+          entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
+        case _ =>
+      }
+
+      job.getId()
+    } { t =>
+      job.onFailure("Submitting the query failed!(提交查询失败！)", t)
+      val _jobRequest =
+        getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(_jobRequest)
+      t match {
+        case e: LinkisException => e
+        case e: LinkisRuntimeException => e
+        case t: Throwable =>
+          new SubmitFailedException(
+            SUBMITTING_QUERY_FAILED.getErrorCode,
+            SUBMITTING_QUERY_FAILED.getErrorDesc + ExceptionUtils.getRootCauseMessage(t),
+            t
+          )
+      }
+    }
+
+  }
+
+  private def initJobRequestProperties(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+
+    val initInstance = Sender.getThisInstance
+    val initDate = new Date(System.currentTimeMillis)
+    val initStatus = SchedulerEventState.Inited.toString
+    val initProgress = "0.0"
+    val initReqId = ""
+
+    logAppender.append(
+      LogUtils.generateInfo(s"Job ${jobRequest.getId} start to failover, Initialize the properties \n")
+    )
+    logAppender.append(
+      LogUtils.generateInfo(s"the instances ${jobRequest.getInstances} -> ${initInstance} \n")
+    )
+    logAppender.append(
+      LogUtils.generateInfo(s"the created_time ${jobRequest.getCreatedTime} -> ${initDate} \n")
+    )
+    logAppender.append(
+      LogUtils.generateInfo(s"the status ${jobRequest.getStatus} -> $initStatus \n")
+    )
+    logAppender.append(
+      LogUtils.generateInfo(s"the progress ${jobRequest.getProgress} -> $initProgress \n")
+    )
+    logAppender.append(
+      LogUtils.generateInfo(s"the job_req_id ${jobRequest.getReqId} -> $initReqId \n")
+    )
+
+    jobRequest.setInstances(initInstance)
+    jobRequest.setCreatedTime(initDate)
+    jobRequest.setStatus(initStatus)
+    jobRequest.setProgress(initProgress)
+    jobRequest.setReqId(initReqId)
+    jobRequest.setErrorCode(0)
+    jobRequest.setErrorDesc("")
+    jobRequest.setMetrics(new util.HashMap[String, Object]())
+    jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, initInstance)
+
+    logAppender.append(
+      LogUtils.generateInfo(s"Job ${jobRequest.getId} success to initialize the properties \n")
+    )
   }
 
 }

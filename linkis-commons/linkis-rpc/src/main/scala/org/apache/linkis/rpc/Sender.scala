@@ -86,8 +86,6 @@ object Sender {
   def getSender(serviceInstance: ServiceInstance): Sender = {
     if (RPCUtils.isPublicService(serviceInstance.getApplicationName)) {
       serviceInstance.setApplicationName(RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue)
-    } else if (RPCUtils.isLinkisManageMerged(serviceInstance.getApplicationName)) {
-      serviceInstance.setApplicationName(RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue)
     }
     if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
       serviceInstanceToSenders synchronized {

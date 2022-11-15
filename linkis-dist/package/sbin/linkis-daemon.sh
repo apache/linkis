@@ -156,9 +156,6 @@ case $SERVER_NAME in
   "cg-engineconnmanager"|"linkis-cg-engineconnmanager"|"engineconnmanager")
     export SERVER_NAME="cg-engineconnmanager"
     ;;
-  "cg-engineplugin"|"linkis-cg-engineplugin"|"engineplugin")
-    export SERVER_NAME="cg-engineplugin"
-    ;;
   "cg-entrance"|"linkis-cg-entrance"|"entrance")
     export SERVER_NAME="cg-entrance"
     ;;

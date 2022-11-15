@@ -36,28 +36,26 @@
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
             <excludes>
-                <exclude>com.google.code.findbugs:annotations:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
                 <exclude>commons-codec:commons-codec:jar</exclude>
                 <exclude>commons-collections:commons-collections:jar</exclude>
-                <exclude>commons-io:commons-io:jar</exclude>
                 <exclude>commons-logging:commons-logging:jar</exclude>
-                <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
-                <exclude>com.google.guava:failureaccess:jar</exclude>
-                <exclude>com.google.guava:guava:jar</exclude>
-                <exclude>com.google.j2objc:j2objc-annotations:jar</exclude>
                 <exclude>org.javassist:javassist:jar</exclude>
-                <exclude>javax.inject:javax.inject:jar</exclude>
-                <exclude>javax.xml.bind:jaxb-api:jar</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-guice:jar</exclude>
-                <exclude>com.google.code.findbugs:jsr305:jar</exclude>
-                <exclude>com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava</exclude>
-                <exclude>com.google.protobuf:protobuf-java:jar</exclude>
                 <exclude>org.reflections:reflections:jar</exclude>
                 <exclude>org.slf4j:slf4j-api:jar</exclude>
+                <exclude>org.apache.httpcomponents:httpclient:jar</exclude>
+                <exclude>org.apache.httpcomponents:httpcore:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-autoconfigure:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-config-client:jar</exclude>
+                <exclude>org.springframework:spring-aop:jar</exclude>
                 <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-context:jar</exclude>
                 <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-expression:jar</exclude>
                 <exclude>org.springframework:spring-jcl:jar</exclude>
+                <exclude>org.yaml:snakeyaml:jar</exclude>
             </excludes>
         </dependencySet>
     </dependencySets>

@@ -43,6 +43,28 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-bml-client</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-common</artifactId>
+        </exclusion>
+
+        <exclusion>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+        </exclusion>
+
+        <exclusion>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-storage</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-manager-persistence</artifactId>
       <version>${project.version}</version>
       <exclusions>

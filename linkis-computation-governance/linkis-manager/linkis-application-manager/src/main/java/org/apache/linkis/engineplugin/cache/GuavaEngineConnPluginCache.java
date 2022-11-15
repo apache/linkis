@@ -18,7 +18,11 @@
 package org.apache.linkis.engineplugin.cache;
 
 import org.apache.linkis.engineplugin.cache.config.EngineConnPluginCacheConfig;
-import org.apache.linkis.engineplugin.cache.refresh.*;
+import org.apache.linkis.engineplugin.cache.refresh.DefaultRefreshPluginCacheContainer;
+import org.apache.linkis.engineplugin.cache.refresh.PluginCacheRefresher;
+import org.apache.linkis.engineplugin.cache.refresh.RefreshPluginCacheContainer;
+import org.apache.linkis.engineplugin.cache.refresh.RefreshPluginCacheOperation;
+import org.apache.linkis.engineplugin.cache.refresh.RefreshableEngineConnPluginCache;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginNotFoundException;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInfo;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
@@ -113,8 +117,8 @@ public class GuavaEngineConnPluginCache implements RefreshableEngineConnPluginCa
   }
 
   @Override
-  public EngineConnPluginInstance get(EngineConnPluginInfo pluginInfo, PluginGetter caller)
-      throws Exception {
+  public EngineConnPluginInstance get(
+      EngineConnPluginInfo pluginInfo, EngineConnPluginCache.PluginGetter caller) throws Exception {
     return this.pluginCache.get(
         pluginInfo.toString(),
         () -> {

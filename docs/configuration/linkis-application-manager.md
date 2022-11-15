@@ -15,7 +15,6 @@
 |linkis-application-manager|wds.linkis.manager.am.stop.em.wait| 5m|stop.em.wait|
 |linkis-application-manager|wds.linkis.manager.am.em.label.init.wait|5m|label.init.wait|
 |linkis-application-manager|wds.linkis.manager.am.em.new.wait.mills|1000 * 60L| wait.mills|
-|linkis-application-manager|wds.linkis.engineconn.application.name | linkis-cg-engineplugin| engineconn.application.name |
 |linkis-application-manager|wds.linkis.engineconn.debug.mode.enable|jdbc,es,presto,io_file,appconn,openlookeng,trino| debug.mode.enable|
 |linkis-application-manager|wds.linkis.multi.user.engine.user|   |engine.user|
 |linkis-application-manager|wds.linkis.manager.am.engine.locker.max.time|  1000 * 60 * 5|locker.max.time|

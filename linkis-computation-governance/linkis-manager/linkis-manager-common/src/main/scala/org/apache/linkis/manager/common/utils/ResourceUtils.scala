@@ -62,7 +62,7 @@ object ResourceUtils {
   def fromPersistenceResource(persistenceResource: PersistenceResource): CommonNodeResource = {
     if (persistenceResource == null) return null
     val nodeResource = new CommonNodeResource
-    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
+    nodeResource.setId(persistenceResource.getId)
     if (persistenceResource.getMaxResource != null) {
       nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
     }
@@ -94,7 +94,7 @@ object ResourceUtils {
   def fromPersistenceResourceAndUser(persistenceResource: PersistenceResource): UserResource = {
     if (persistenceResource == null) return null
     val nodeResource = new UserResource
-    if (persistenceResource.getId != null) nodeResource.setId(persistenceResource.getId)
+    nodeResource.setId(persistenceResource.getId)
     if (persistenceResource.getMaxResource != null) {
       nodeResource.setMaxResource(deserializeResource(persistenceResource.getMaxResource))
     }

@@ -10,7 +10,6 @@
 |linkis-computation-governance-common|wds.linkis.python.code_parser.enabled| false |python.code_parser.enabled|
 |linkis-computation-governance-common|wds.linkis.scala.code_parser.enabled| false | scala.code_parser.enabled  |
 |linkis-computation-governance-common|wds.linkis.engineconn.name| linkis-cg-engineconn  | engineconn.name |
-|linkis-computation-governance-common|wds.linkis.engineconn.plugin.spring.name| linkis-cg-engineplugin |engineconn.plugin.spring.name|
 |linkis-computation-governance-common|wds.linkis.engineconn.manager.name|linkis-cg-engineconnmanager   | engineconn.manager.name |
 |linkis-computation-governance-common|wds.linkis.engineconn.port.range| - |engineconn.port.range|
 |linkis-computation-governance-common|wds.linkis.engineconn.manager.name| linkis-cg-linkismanager |engineconn.manager.name|

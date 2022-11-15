@@ -221,4 +221,27 @@
     <update id="updateOberverById">
         update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
     </update>
+    <select id="selectFailoverJobHistory" resultMap="jobHistoryMap" >
+        SELECT a.* FROM linkis_ps_job_history_group_history a
+        where (
+            a.instances = ''
+            or a.instances is null
+            or a.instances not in <foreach collection="instancesMap.keys" open="(" separator="," close=")" item="key">#{key}</foreach>
+            or EXISTS (
+                select 1 from
+                (
+                    <foreach collection="instancesMap.entrySet()" separator="union all" index="key" item="val">
+                        select #{key} as instances, #{val} as registryTime
+                    </foreach>
+                ) b
+                where a.instances = b.instances and UNIX_TIMESTAMP(a.created_time) * 1000  <![CDATA[<]]> b.registryTime
+            )
+        )
+        and
+        status in <foreach collection="statusList" open="(" separator="," close=")" item="status">#{status}</foreach>
+        <if test="startTimestamp != null and startTimestamp > 0">and UNIX_TIMESTAMP(a.created_time) * 1000 >= #{startTimestamp}</if>
+        <if test="limit != null and limit > 0">limit #{limit}</if>
+
+    </select>
+
 </mapper>

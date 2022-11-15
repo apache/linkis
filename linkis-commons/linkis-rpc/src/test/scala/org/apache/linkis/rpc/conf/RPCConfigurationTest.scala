@@ -26,8 +26,6 @@ class RPCConfigurationTest {
   def constTest(): Unit = {
 
     val bdprpcbroadcastthreadsize = RPCConfiguration.BDP_RPC_BROADCAST_THREAD_SIZE.getValue
-    val bdprpceurekaservicerefreshinterval =
-      RPCConfiguration.BDP_RPC_EUREKA_SERVICE_REFRESH_INTERVAL.getValue.toLong
     val bdprpcreceiverasynconsumerthreadmax =
       RPCConfiguration.BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX.getValue
     val bdprpcreceiverasynqueuecapacity =
@@ -39,14 +37,9 @@ class RPCConfigurationTest {
     val enablepublicservice = RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue
     val publicserviceapplicationname = RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
     val publicservicelist = RPCConfiguration.PUBLIC_SERVICE_LIST
-    val computationgovernanceappprefix = RPCConfiguration.COMPUTATION_GOVERNANCE_APP_PREFIX
-    val linkismanagerservicemerged = RPCConfiguration.LINKIS_MANAGER_SERVICE_MERGED.getValue
-    val linkismanagerapplicationname = RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue
-    val linkismanagerservicelist = RPCConfiguration.LINKIS_MANAGER_SERVICE_LIST
     val metadataqueryservicelist = RPCConfiguration.METADATAQUERY_SERVICE_LIST
 
     Assertions.assertTrue(25 == bdprpcbroadcastthreadsize.intValue())
-    Assertions.assertTrue(1000L == bdprpceurekaservicerefreshinterval.longValue())
     Assertions.assertTrue(400 == bdprpcreceiverasynconsumerthreadmax.intValue())
     Assertions.assertTrue(5000 == bdprpcreceiverasynqueuecapacity.intValue())
     Assertions.assertTrue(100 == bdprpcsenderasynconsumerthreadmax.intValue())
@@ -55,10 +48,6 @@ class RPCConfigurationTest {
     Assertions.assertTrue(enablepublicservice)
     Assertions.assertEquals("linkis-ps-publicservice", publicserviceapplicationname)
     Assertions.assertTrue(publicservicelist.size > 0)
-    Assertions.assertEquals("linkis-cg-", computationgovernanceappprefix)
-    Assertions.assertTrue(linkismanagerservicemerged)
-    Assertions.assertEquals("linkis-cg-linkismanager", linkismanagerapplicationname)
-    Assertions.assertTrue(linkismanagerservicelist.size > 0)
     Assertions.assertTrue(metadataqueryservicelist.size > 0)
 
   }

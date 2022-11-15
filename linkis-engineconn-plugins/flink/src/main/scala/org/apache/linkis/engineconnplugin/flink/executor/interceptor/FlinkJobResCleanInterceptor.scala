@@ -77,8 +77,7 @@ class FlinkJobResCleanInterceptor(cleaner: FlinkJobResourceCleaner)
     if (StringUtils.isNotBlank(mainClassJar) && cleaner.accept(mainClassJar)) {
       cleaner.cleanup(Array(mainClassJar))
     }
-    val shipDirsArray = (FLINK_SHIP_DIRECTORIES.getValue(options) + "," +
-      FLINK_SHIP_DIRECTORIES.getValue).split(",")
+    val shipDirsArray = FLINK_SHIP_DIRECTORIES.getValue(options).split(",")
     logger.trace(s"Ship directories to clean: ${shipDirsArray.length}")
     shipDirsArray match {
       case resArray: Array[String] => cleaner.cleanup(resArray.filter(cleaner.accept))

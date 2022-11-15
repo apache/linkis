@@ -65,8 +65,6 @@ object RMUtils extends Logging {
     EngineType.getAllEngineTypes().asScala.mkString(",")
   )
 
-  val AM_SERVICE_NAME = "linkis-cg-linkismanager"
-
   val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", true)
 
   def deserializeResource(plainResource: String): Resource = {

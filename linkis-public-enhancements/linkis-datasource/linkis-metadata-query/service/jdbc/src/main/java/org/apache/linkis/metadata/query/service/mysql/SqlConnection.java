@@ -78,6 +78,7 @@ public class SqlConnection implements Closeable {
       return;
     }
 
+    // Delete suspected vulnerability parameters
     Iterator<Map.Entry<String, Object>> iterator = extraParams.entrySet().iterator();
     while (iterator.hasNext()) {
       Map.Entry<String, Object> entry = iterator.next();
@@ -91,6 +92,7 @@ public class SqlConnection implements Closeable {
       }
     }
 
+    // Set all vulnerability parameters to false
     extraParams.put("allowLoadLocalInfile", "false");
     extraParams.put("autoDeserialize", "false");
     extraParams.put("allowLocalInfile", "false");

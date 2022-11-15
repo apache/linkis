@@ -19,12 +19,15 @@ package org.apache.linkis.basedatamanager.server.domain;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 /** @TableName linkis_mg_gateway_auth_token */
 @TableName("linkis_cg_rm_external_resource_provider")
 public class RmExternalResourceProviderEntity implements Serializable {
   /** */
+  @TableId(type = IdType.AUTO)
   private Integer id;
 
   /** */

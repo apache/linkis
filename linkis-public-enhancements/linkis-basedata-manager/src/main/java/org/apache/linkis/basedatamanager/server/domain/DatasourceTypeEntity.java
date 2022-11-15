@@ -37,7 +37,7 @@ public class DatasourceTypeEntity implements Serializable {
   /** */
   private String description;
 
-  /** */
+  @TableField(value = "`option`")
   private String option;
 
   /** */

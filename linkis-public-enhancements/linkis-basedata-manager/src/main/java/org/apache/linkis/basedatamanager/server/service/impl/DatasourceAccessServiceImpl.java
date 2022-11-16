@@ -30,7 +30,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @author jack
  * @description 针对表【linkis_ps_datasource_access】的数据库操作Service实现
  * @createDate 2022-08-13 15:17:35
  */

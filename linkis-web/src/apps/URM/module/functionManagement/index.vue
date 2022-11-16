@@ -17,7 +17,7 @@
 
 <template>
   <div class="function-management">
-    <Form class="function-management-searchbar" :model="searchBar" inline>
+    <Form class="function-management-searchbar" @submit.native.prevent :model="searchBar" inline>
       <FormItem prop="functionName" :label="$t('message.linkis.udf.functionName')">
         <Input
           v-model="searchBar.functionName"

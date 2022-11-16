@@ -8,7 +8,7 @@
 |spark |40004|Spark application has already stopped, please restart it(Spark 应用程序已停止，请重新启动)|SPARK_STOPPED|SparkErrorCodeSummary|
 |spark |40005|execute sparkScala failed!(执行 sparkScala 失败！)|EXECUTE_SPARKSCALA_FAILED|SparkErrorCodeSummary|
 |spark |40006|sparkILoop is null(sparkILoop 为空)|SPARK_IS_NULL|SparkErrorCodeSummary|
-|spark |40007|The csTable that name is {0} not found in cs(在 cs 中找不到名称为 {0} 的 csTable) |CSTABLE_NOT_FOUND|SparkErrorCodeSummary|
+|spark |40007|The csTable that name is：{0} not found in cs(在 cs 中找不到名称为:{0} 的 csTable)|CSTABLE_NOT_FOUND|SparkErrorCodeSummary|
 |spark |40007|Pyspark process  has stopped, query failed!(Pyspark 进程已停止，查询失败！)|PYSPARK_STOPPED|SparkErrorCodeSummary|
 |spark |40009|sparkSession can not be null(sparkSession 不能为空)|CAN_NOT_NULL|SparkErrorCodeSummary|
 |spark |80002|spark repl classdir create exception(spark repl classdir 创建异常)|SPARK_CREATE_EXCEPTION|SparkErrorCodeSummary|

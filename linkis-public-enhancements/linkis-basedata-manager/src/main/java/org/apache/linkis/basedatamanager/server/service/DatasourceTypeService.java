@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.github.pagehelper.PageInfo;
 
 /**
- * @author jack
  * @description Database operation Service for the linKIS_PS_DM_DATASource_type table
  * @createDate 2022-08-13 15:16:37
  */

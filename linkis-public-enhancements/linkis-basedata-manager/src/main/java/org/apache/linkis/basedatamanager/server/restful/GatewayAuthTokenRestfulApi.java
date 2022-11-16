@@ -27,6 +27,7 @@ import org.apache.linkis.server.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -65,6 +66,10 @@ public class GatewayAuthTokenRestfulApi {
     @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(@RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
+        gatewayAuthToken.setCreateTime(new Date());
+        gatewayAuthToken.setUpdateTime(new Date());
+        gatewayAuthToken.setBusinessOwner("BDP");
+        gatewayAuthToken.setUpdateBy("LINKIS");
         boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
         return Message.ok("").data("result", result);
     }
@@ -75,6 +80,8 @@ public class GatewayAuthTokenRestfulApi {
     @ApiOperation(value = "update", notes = "remove data by id", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
     public Message update(@RequestBody GatewayAuthTokenEntity token) {
+        token.setUpdateTime(new Date());
+        token.setUpdateBy("LINKIS");
         boolean result = gatewayAuthTokenService.updateById(token);
         return Message.ok("").data("result", result);
     }
@@ -83,11 +90,9 @@ public class GatewayAuthTokenRestfulApi {
             @ApiImplicitParam(paramType = "query", dataType = "string", name = "tokenName", value = "")
     })
     @ApiOperation(value = "remove", notes = "update data", httpMethod = "DELETE")
-    @RequestMapping(path = "", method = RequestMethod.DELETE)
-    public Message remove(String tokenName) {
-        HashMap columnMap = new HashMap<String,Object>();
-        columnMap.put("token_name",tokenName);
-        boolean result = gatewayAuthTokenService.removeByMap(columnMap);
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    public Message remove(@PathVariable("id") Integer id) {
+        boolean result = gatewayAuthTokenService.removeById(id);;
         return Message.ok("").data("result", result);
     }
 

@@ -25,10 +25,6 @@ public enum LinkisCommonsErrorCodeSummary {
   /** 错误描述 */
   private String errorDesc;
   /** 错误可能出现的原因 */
-  private String comment;
-  /** 所属的linkis的模块 */
-  private String module;
-
   LinkisCommonsErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;

@@ -37,6 +37,7 @@ object SparkKind {
   val SPARKMIX_TYPE = "sparkmix"
   val MIX_TYPE = "mix"
   val SPARKSQL_TYPE = "sparksql"
+  val SPARK_DATA_CALC_TYPE = "spark_data_calc"
   val SPARKMLSQL_TYPE = "mlsql"
   val FUNCTION_MDQ_TYPE = "function.mdq"
 
@@ -81,6 +82,10 @@ case class SparkMix() extends Kind {
 
 case class SparkSQL() extends Kind {
   override val toString: String = SparkKind.SPARKSQL_TYPE
+}
+
+case class SparkDataCalc() extends Kind {
+  override val toString: String = SparkKind.SPARK_DATA_CALC_TYPE
 }
 
 case class SparkMLSQL() extends Kind {

@@ -33,7 +33,6 @@ class ClassUtilsTest {
       "/" +
         classOf[StringUtils].getName.replace('.', '/') + ".class"
     )
-    println(s"StringutilsUri is $uri")
     assertEquals(
       Some(uri.toString.substring("jar:file:".length, uri.toString.indexOf("!"))),
       someClass

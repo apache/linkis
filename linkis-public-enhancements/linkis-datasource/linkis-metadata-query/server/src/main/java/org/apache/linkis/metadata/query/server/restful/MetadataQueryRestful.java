@@ -63,6 +63,12 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)){
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
+                return Message.error("'dataSourceId' is invalid[数据源错误]");
+            }
             Map<String, String> queryParams = request.getParameterMap().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey,
                             entry -> StringUtils.join(entry.getValue(), ",")));
@@ -93,6 +99,9 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
@@ -127,6 +136,9 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
@@ -172,6 +184,9 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
@@ -226,6 +241,9 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
+            }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
             }
@@ -279,6 +297,9 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");
@@ -336,6 +357,9 @@ public class MetadataQueryRestful {
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
+            }
+            if (!MetadataUtils.nameRegexPattern.matcher(system).matches()) {
+                return Message.error("'system' is invalid[系统名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名错误]");

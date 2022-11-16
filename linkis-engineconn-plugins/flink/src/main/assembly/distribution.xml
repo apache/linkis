@@ -114,6 +114,11 @@
                 <exclude>org.apache.httpcomponents:*:jar</exclude>
                 <exclude>org.apache.logging.log4j:*:jar</exclude>
                 <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
+                <!-- hive-2.1.1-cdh6.2.0 修改包 start -->
+                <exclude>org.apache.calcite:*.jar</exclude>
+                <exclude>org.apache.calcite.avatica:*.jar</exclude>
+                <exclude>org.apache.ant:ant:jar</exclude>
+                <!-- hive-2.1.1-cdh6.2.0 修改包 end -->
                 <exclude>org.aspectj:aspectjweaver:jar</exclude>
                 <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
                 <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>

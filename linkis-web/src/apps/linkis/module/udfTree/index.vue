@@ -198,16 +198,11 @@ export default {
       this.load()
     },
     onAdd(){
-      this.modalEditData={
-        id: "",
-        errorCode: "",
-        errorDesc: "",
-        errorRegex: '',
-      }
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
+      row.parent = row.parent + ""
       this.modalEditData = row
       this.modalAddMode = 'edit'
       this.modalShow = true
@@ -233,8 +228,8 @@ export default {
                 content: "删除失败"
               })
             }
+            this.load()
           })
-          this.load()
         }
       })
 
@@ -256,6 +251,7 @@ export default {
                 content: "添加失败"
               })
             }
+            this.load()
           })
         }else {
           edit(formData).then((data)=>{
@@ -265,13 +261,13 @@ export default {
                 duration: 3,
                 content: "编辑成功"
               })
-              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: "编辑失败"
               })
             }
+            this.load()
           })
         }
         this.modalLoading=false

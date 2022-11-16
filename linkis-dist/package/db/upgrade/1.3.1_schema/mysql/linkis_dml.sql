@@ -18,8 +18,8 @@
 -- Update field for linkis_ps_dm_datasource_type_key
 UPDATE `linkis_ps_dm_datasource_type_key` SET `require`=0 WHERE `data_source_type_id` = 1;
 
-
-
+-- update pipeline config key
+UPDATE `linkis_ps_configuration_config_key` SET `key` = 'pipeline.output.isoverwrite' WHERE `key` = 'pipeline.output.isoverwtite';
 
 -- Add datasource for linkis_ps_dm_datasource_type
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('doris','doris数据库','doris','olap','',4);

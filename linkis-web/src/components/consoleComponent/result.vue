@@ -700,7 +700,7 @@ export default {
     width: 100%;
     height: 42px;
     text-align: center;
-    padding-top: 10px;
+    margin-top: 10px;
     padding-left: 10px;
     .page-hint {
       display: inline-flex;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.sqoop.client.utils;
+package org.apache.linkis.engineconn.computation.executor.utlis;
 
 import org.apache.commons.lang3.Validate;
 
@@ -24,7 +24,7 @@ import java.io.FileFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.*;
+import java.security.AccessControlContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -157,6 +157,9 @@ public class JarLoader extends URLClassLoader {
         if (c == null) {
           return super.loadClass(name, resolve);
         }
+        // For compatibility with higher versions > java 1.8.0_141
+        //                sun.misc.PerfCounter.getFindClasses().addElapsedTimeFrom(t0);
+        //                sun.misc.PerfCounter.getFindClasses().increment();
       }
       if (resolve) {
         resolveClass(c);

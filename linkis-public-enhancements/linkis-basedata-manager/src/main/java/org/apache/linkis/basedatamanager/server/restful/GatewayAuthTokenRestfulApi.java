@@ -100,11 +100,11 @@ public class GatewayAuthTokenRestfulApi {
     })
     @ApiOperation(value = "remove", notes = "Remove a Gateway Auth Token Record by token name", httpMethod = "DELETE")
     @RequestMapping(path = "", method = RequestMethod.DELETE)
-    public Message remove(HttpServletRequest request,String tokenName) {
-        ModuleUserUtils.getOperationUser(request, "Remove a Gateway Auth Token Record,id:"+tokenName);
+    public Message remove(HttpServletRequest request,Long id) {
+        ModuleUserUtils.getOperationUser(request, "Remove a Gateway Auth Token Record,id:"+id);
         HashMap columnMap = new HashMap<String,Object>();
-        columnMap.put("token_name",tokenName);
-        boolean result = gatewayAuthTokenService.removeByMap(columnMap);
+        columnMap.put("token_name",id);
+        boolean result = gatewayAuthTokenService.removeById(id);
         return Message.ok("").data("result", result);
     }
 

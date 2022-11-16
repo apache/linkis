@@ -43,10 +43,10 @@ public class UdfTreeRestfulApi {
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
-    @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
+    @ApiOperation(value = "list", notes = "Query list data of UDF Tree", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
-        ModuleUserUtils.getOperationUser(request, "list");
+        ModuleUserUtils.getOperationUser(request, "Query list data of UDF Tree,search name:"+searchName);
         PageInfo pageList = udfTreeService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -54,44 +54,44 @@ public class UdfTreeRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
+    @ApiOperation(value = "get", notes = "Get a UDF Tree Record by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "get");
+        ModuleUserUtils.getOperationUser(request, "Get a UDF Tree Record,id:"+id.toString());
         UdfTreeEntity errorCode = udfTreeService.getById(id);
         return Message.ok("").data("item", errorCode);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "udfTreeEntity", value = "")
     })
-    @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
+    @ApiOperation(value = "add", notes = "Add a UDF Tree Record", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(HttpServletRequest request,@RequestBody UdfTreeEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "add");
-        boolean result = udfTreeService.save(errorCode);
+    public Message add(HttpServletRequest request,@RequestBody UdfTreeEntity udfTreeEntity) {
+        ModuleUserUtils.getOperationUser(request, "Add a UDF Tree Record,"+udfTreeEntity.toString());
+        boolean result = udfTreeService.save(udfTreeEntity);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
+    @ApiOperation(value = "remove", notes = "Remove a UDF Tree Record by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "remove");
+        ModuleUserUtils.getOperationUser(request, "Remove a UDF Tree Record,id:"+id.toString());
         boolean result = udfTreeService.removeById(id);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "udfTreeEntity", value = "")
     })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
+    @ApiOperation(value = "update", notes = "Update a UDF Tree Record", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(HttpServletRequest request,@RequestBody UdfTreeEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "update");
-        boolean result = udfTreeService.updateById(errorCode);
+    public Message update(HttpServletRequest request,@RequestBody UdfTreeEntity udfTreeEntity) {
+        ModuleUserUtils.getOperationUser(request, "Update a UDF Tree Record,id:"+udfTreeEntity.getId().toString());
+        boolean result = udfTreeService.updateById(udfTreeEntity);
         return Message.ok("").data("result", result);
     }
 

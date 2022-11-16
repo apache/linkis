@@ -43,10 +43,10 @@ public class UdfManagerRestfulApi {
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
-    @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
+    @ApiOperation(value = "list", notes = "Query list data of UDF Manager", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
-        ModuleUserUtils.getOperationUser(request, "list");
+        ModuleUserUtils.getOperationUser(request, "Query list data of UDF Manager,search name:"+searchName);
         PageInfo pageList = udfManagerService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -54,44 +54,44 @@ public class UdfManagerRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
+    @ApiOperation(value = "Get a Datasource UDF Manager", notes = "get data by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "get");
+        ModuleUserUtils.getOperationUser(request, "Get a Datasource UDF Manager,id:"+id.toString());
         UdfManagerEntity errorCode = udfManagerService.getById(id);
         return Message.ok("").data("item", errorCode);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "udfManagerEntity", value = "")
     })
-    @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
+    @ApiOperation(value = "add", notes = "Add a UDF Manager Record", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(HttpServletRequest request,@RequestBody UdfManagerEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "add");
-        boolean result = udfManagerService.save(errorCode);
+    public Message add(HttpServletRequest request,@RequestBody UdfManagerEntity udfManagerEntity) {
+        ModuleUserUtils.getOperationUser(request, "Add a UDF Manager Record,"+udfManagerEntity.toString());
+        boolean result = udfManagerService.save(udfManagerEntity);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
+    @ApiOperation(value = "remove", notes = "Remove a UDF Manager Record by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "remove");
+        ModuleUserUtils.getOperationUser(request, "Remove a UDF Manager Record,id:"+id.toString());
         boolean result = udfManagerService.removeById(id);
         return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "errorCode", value = "")
+            @ApiImplicitParam(paramType = "body", dataType = "UdfManagerEntity", name = "udfManagerEntity", value = "")
     })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
+    @ApiOperation(value = "update", notes = "Update a Datasource Access Record", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(HttpServletRequest request,@RequestBody UdfManagerEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "update");
-        boolean result = udfManagerService.updateById(errorCode);
+    public Message update(HttpServletRequest request,@RequestBody UdfManagerEntity udfManagerEntity) {
+        ModuleUserUtils.getOperationUser(request, "Update a Datasource Access Record,id:"+udfManagerEntity.getId().toString());
+        boolean result = udfManagerService.updateById(udfManagerEntity);
         return Message.ok("").data("result", result);
     }
 

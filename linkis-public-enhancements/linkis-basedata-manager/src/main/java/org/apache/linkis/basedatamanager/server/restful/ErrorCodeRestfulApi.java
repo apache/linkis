@@ -43,10 +43,10 @@ public class ErrorCodeRestfulApi {
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
-    @ApiOperation(value = "list", notes = "get list data with page", httpMethod = "GET")
+    @ApiOperation(value = "list", notes = "Query list data with page of Error Code", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
     public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
-        ModuleUserUtils.getOperationUser(request, "list");
+        ModuleUserUtils.getOperationUser(request, "Query list data of Error Code,search name:"+searchName);
         PageInfo pageList = errorCodeService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -54,10 +54,10 @@ public class ErrorCodeRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
+    @ApiOperation(value = "get", notes = "Get a Error Code Record by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "get");
+        ModuleUserUtils.getOperationUser(request, "Get a Error Code Record,id:"+id.toString());
         ErrorCodeEntity errorCode = errorCodeService.getById(id);
         return Message.ok("").data("item", errorCode);
     }
@@ -65,10 +65,10 @@ public class ErrorCodeRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "body", dataType = "ErrorCodeEntity", name = "errorCode", value = "")
     })
-    @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
+    @ApiOperation(value = "add", notes = "Add a Datasource Code Record", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(HttpServletRequest request,@RequestBody ErrorCodeEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "add");
+        ModuleUserUtils.getOperationUser(request, "Add a Datasource Code Record,"+errorCode.toString());
         boolean result = errorCodeService.save(errorCode);
         return Message.ok("").data("result", result);
     }
@@ -76,10 +76,10 @@ public class ErrorCodeRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
+    @ApiOperation(value = "remove", notes = "Remove a Datasource Code Record by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
-        ModuleUserUtils.getOperationUser(request, "remove");
+        ModuleUserUtils.getOperationUser(request, "Remove a Datasource Code Record,id:"+id.toString());
         boolean result = errorCodeService.removeById(id);
         return Message.ok("").data("result", result);
     }
@@ -87,10 +87,10 @@ public class ErrorCodeRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "body", dataType = "ErrorCodeEntity", name = "errorCode", value = "")
     })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
+    @ApiOperation(value = "update", notes = "Update a Datasource Code Record", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
     public Message update(HttpServletRequest request,@RequestBody ErrorCodeEntity errorCode) {
-        ModuleUserUtils.getOperationUser(request, "update");
+        ModuleUserUtils.getOperationUser(request, "Update a Datasource Code Record,id:"+errorCode.getId().toString());
         boolean result = errorCodeService.updateById(errorCode);
         return Message.ok("").data("result", result);
     }

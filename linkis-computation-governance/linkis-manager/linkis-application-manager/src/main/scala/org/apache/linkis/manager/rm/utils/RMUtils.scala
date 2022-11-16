@@ -37,7 +37,6 @@ import org.json4s.jackson.Serialization.{read, write}
 
 object RMUtils extends Logging {
 
-  lazy val GSON = BDPJettyServerHelper.gson
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = BDPJettyServerHelper.jacksonJson
 

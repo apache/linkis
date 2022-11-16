@@ -164,9 +164,9 @@ object VariableUtils extends Logging {
   }
 
   private def initAllDateVars(
-                               run_date: CustomDateType,
-                               nameAndType: mutable.Map[String, variable.VariableType]
-                             ): Unit = {
+      run_date: CustomDateType,
+      nameAndType: mutable.Map[String, variable.VariableType]
+  ): Unit = {
     val run_date_str = run_date.toString
     nameAndType("run_date_std") = variable.DateType(new CustomDateType(run_date.getStdDate))
     nameAndType("run_month_begin") = MonthType(new CustomMonthType(run_date_str, false))
@@ -371,31 +371,31 @@ object VariableUtils extends Logging {
     val customRegex = varString.r.unanchored
     val errRegex = errString.r.unanchored
     code.split("\n").foreach { str =>
-    {
-      str match {
-        case customRegex() =>
-          val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
-          val res: Array[String] = clearStr.split("=")
-          if (res != null && res.length == 2) {
-            val nameSet = res(0).split("@set")
-            if (nameSet != null && nameSet.length == 2) {
-              val name = nameSet(1).trim
-              nameAndValue(name) = res(1).trim
-            }
-          } else {
-            if (res.length > 2) {
-              throw new LinkisCommonErrorException(20044, s"$str var defined uncorrectly")
+      {
+        str match {
+          case customRegex() =>
+            val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
+            val res: Array[String] = clearStr.split("=")
+            if (res != null && res.length == 2) {
+              val nameSet = res(0).split("@set")
+              if (nameSet != null && nameSet.length == 2) {
+                val name = nameSet(1).trim
+                nameAndValue(name) = res(1).trim
+              }
             } else {
-              throw new LinkisCommonErrorException(20045, s"var was defined uncorrectly:$str")
+              if (res.length > 2) {
+                throw new LinkisCommonErrorException(20044, s"$str var defined uncorrectly")
+              } else {
+                throw new LinkisCommonErrorException(20045, s"var was defined uncorrectly:$str")
+              }
             }
-          }
-        case errRegex() =>
-          logger.warn(
-            s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
-          )
-        case _ =>
+          case errRegex() =>
+            logger.warn(
+              s"The variable definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
+            )
+          case _ =>
+        }
       }
-    }
     }
     nameAndValue
   }

@@ -40,8 +40,12 @@ class SpringRestfulCatchAOP extends Logging {
   @Around("springRestfulResponseCatch()")
   def dealResponseRestful(proceedingJoinPoint: ProceedingJoinPoint): Object = {
     val resp: Message = catchIt {
-      return proceedingJoinPoint.proceed()
+      proceedingJoinPoint.proceed() match {
+        case message: Message => message
+        case _ => Message.error("Failed to dealResponse get null message")
+      }
     }
+    // convert http status code
     val response = getCurrentHttpResponse
     if (response != null) {
       getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
@@ -51,11 +55,11 @@ class SpringRestfulCatchAOP extends Logging {
 
   def getCurrentHttpResponse: HttpServletResponse = {
     val requestAttributes = RequestContextHolder.getRequestAttributes
-    if (requestAttributes.isInstanceOf[ServletRequestAttributes]) {
-      val response = requestAttributes.asInstanceOf[ServletRequestAttributes].getResponse
-      return response
+    requestAttributes match {
+      case attributes: ServletRequestAttributes =>
+        attributes.getResponse
+      case _ => null
     }
-    null
   }
 
 }

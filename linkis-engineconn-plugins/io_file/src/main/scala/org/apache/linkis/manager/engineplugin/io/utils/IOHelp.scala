@@ -62,11 +62,20 @@ object IOHelp {
         writer.toString()
       } else if (method.params.length == 3) {
         val position =
-          if (method.params(1).toString.toInt < 0) 0 else method.params(1).toString.toInt
+          if (method.params(1).toString.toInt < 0) {
+            0
+          } else {
+            method.params(1).toString.toInt
+          }
         val fetchSize =
-          if (method.params(2).toString.toInt > maxPageSize) maxPageSize.toInt
-          else method.params(2).toString.toInt
-        if (position > 0) inputStream.skip(position)
+          if (method.params(2).toString.toInt > maxPageSize) {
+            maxPageSize.toInt
+          } else {
+            method.params(2).toString.toInt
+          }
+        if (position > 0) {
+          inputStream.skip(position)
+        }
         val bytes = new Array[Byte](fetchSize)
         val len = StorageUtils.readBytes(inputStream, bytes, fetchSize)
         val ioMetaData = new IOMetaData(0, len)
@@ -74,8 +83,9 @@ object IOHelp {
         writer.addMetaData(ioMetaData)
         writer.addRecord(ioRecord)
         writer.toString()
-      } else
+      } else {
         throw new StorageErrorException(PARAMETER_CALLS.getErrorCode, PARAMETER_CALLS.getErrorDesc)
+      }
     }(IOUtils.closeQuietly(inputStream))
   }
 

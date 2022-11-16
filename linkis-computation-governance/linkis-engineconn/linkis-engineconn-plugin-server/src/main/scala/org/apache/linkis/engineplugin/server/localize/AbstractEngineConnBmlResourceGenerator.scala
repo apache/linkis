@@ -22,7 +22,6 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
 
@@ -48,27 +47,38 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   protected def getEngineConnDistHome(engineConnType: String, version: String): String = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
-    if (!new File(engineConnDistHome).exists()) {
+    checkEngineConnDistHome(engineConnDistHome)
+    if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
+    val formattedVersion = if (version.startsWith("v")) version else "v" + version
+    val engineConnPackageHome = Paths.get(engineConnDistHome, formattedVersion).toFile.getPath
+    val engineConnPackageHomeFile = new File(engineConnPackageHome)
+    if (!engineConnPackageHomeFile.exists()) {
+      throw new EngineConnPluginErrorException(
+        ENGIN_VERSION_NOT_FOUND.getErrorCode,
+        MessageFormat.format(ENGIN_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+      )
+    }
+    engineConnPackageHome
+  }
+
+  private def checkEngineConnDistHome(engineConnPackageHomePath: String): Unit = {
+    val engineConnPackageHomeFile = new File(engineConnPackageHomePath)
+    checkEngineConnDistHome(engineConnPackageHomeFile)
+  }
+
+  private def checkEngineConnDistHome(engineConnPackageHome: File): Unit = {
+    if (!engineConnPackageHome.exists()) {
       throw new EngineConnPluginErrorException(
         CANNOT_HOME_PATH_DIST.getErrorCode,
         CANNOT_HOME_PATH_DIST.getErrorDesc
       )
     }
-    if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
-    val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
-    if (new File(engineConnPackageHome).exists()) engineConnPackageHome
-    else Paths.get(engineConnDistHome, "v" + version).toFile.getPath
   }
 
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     val engineConnDistHomeFile = new File(engineConnDistHome)
-    if (!engineConnDistHomeFile.exists()) {
-      throw new EngineConnPluginErrorException(
-        CANNOT_HOME_PATH_DIST.getErrorCode,
-        CANNOT_HOME_PATH_DIST.getErrorDesc
-      )
-    }
+    checkEngineConnDistHome(engineConnDistHomeFile)
     val children = engineConnDistHomeFile.listFiles()
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(

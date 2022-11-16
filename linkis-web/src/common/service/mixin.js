@@ -40,13 +40,12 @@ export default {
     getProjectJsonResult(key, name = 'visualis') {
       // 用于判断返回什么样的返回值
       const baseInfo = storage.get('baseInfo', 'local');
-      if (!baseInfo) return true;
-      const vsBi = baseInfo.applications ? (baseInfo.applications.find((item) => item.name === name) || {}) : {};
-      let projectJson = vsBi.enhanceJson;
-      if(!projectJson && key==='rsDownload') {
-        projectJson = '{"watermark": false, "rsDownload": true}'
+      if (!baseInfo) {
+        // linkis单独部署的时候没有baseinfo, 不用限制
+        return true;
+      } else {
+        return baseInfo.resultSetExportEnable;
       }
-      return projectJson ? JSON.parse(projectJson)[key] : true;
     },
     getFAQUrl() {
       const baseInfo = storage.get('baseInfo', 'local');

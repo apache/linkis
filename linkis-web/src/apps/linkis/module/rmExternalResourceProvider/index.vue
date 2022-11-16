@@ -201,8 +201,8 @@ export default {
                 content: "删除失败"
               })
             }
+            this.load()
           })
-          this.load()
         }
       })
 
@@ -213,7 +213,6 @@ export default {
         formData.config = JSON.stringify(formData.config)
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -225,22 +224,22 @@ export default {
                 content: "添加失败"
               })
             }
+            this.load()
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: "编辑成功"
               })
-              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: "编辑失败"
               })
             }
+            this.load()
           })
         }
         this.modalLoading=false

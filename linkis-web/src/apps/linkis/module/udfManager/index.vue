@@ -215,7 +215,6 @@ export default {
                 duration: 3,
                 content: "编辑成功"
               })
-              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
@@ -226,6 +225,7 @@ export default {
         }
         this.modalLoading=false
         this.modalShow = false
+        this.load()
       })
     },
     onModalCancel(){

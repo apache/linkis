@@ -73,7 +73,7 @@ public class DatasourceAccessRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(HttpServletRequest request,@RequestBody DatasourceAccessEntity datasourceAccess) {
         ModuleUserUtils.getOperationUser(request, "Add a Datasource Access Record,"+datasourceAccess.toString());
-        datasourceAccessEntity.setAccessTime(new Date());
+        datasourceAccess.setAccessTime(new Date());
         boolean result = datasourceAccessService.save(datasourceAccess);
         return Message.ok("").data("result", result);
     }

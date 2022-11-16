@@ -70,7 +70,7 @@ import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 @Api(tags = "file system")
 @RestController
-@RequestMapping(path = "/filesystem")
+@RequestMapping(path = "/filesystem/getUserRootPath")
 public class FsRestfulApi {
 
     @Autowired private FsService fsService;

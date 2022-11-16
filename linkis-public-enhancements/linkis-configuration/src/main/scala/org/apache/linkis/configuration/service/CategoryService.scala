@@ -110,7 +110,7 @@ class CategoryService extends Logging {
   def getAllCategory(language: String): util.List[CategoryLabelVo] = {
     val categoryLabelList = configMapper.getCategory()
     val categoryLabelTreeList = buildCategoryTree(categoryLabelList)
-    if (StringUtils.isEmpty(language) || (!language.equals("en"))) {
+    if (!"en".equals(language)) {
       categoryLabelTreeList.asScala.filter(_.getCategoryId == 1).foreach(_.setCategoryName("全局设置"))
     }
     categoryLabelTreeList

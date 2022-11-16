@@ -316,9 +316,12 @@ class ConfigurationService extends Logging {
     })
   }
 
-  def getConfigByLabelId(language: String, labelId: Integer): util.List[ConfigKeyValue] = {
+  def getConfigByLabelId(
+      labelId: Integer,
+      language: String = "zh-CN"
+  ): util.List[ConfigKeyValue] = {
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
-    if (StringUtils.isNotBlank(language) && language.equals("en")) {
+    if ("en".equals(language)) {
       configs = configMapper.getConfigEnKeyValueByLabelId(labelId)
     } else {
       configs = configMapper.getConfigKeyValueByLabelId(labelId)
@@ -337,7 +340,7 @@ class ConfigurationService extends Logging {
       labelMapper.getLabelByKeyValue(combinedLabel.getLabelKey, combinedLabel.getStringValue)
     var configs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     if (label != null && label.getId > 0) {
-      configs = getConfigByLabelId(language, label.getId)
+      configs = getConfigByLabelId(label.getId, language)
     }
     var defaultEngineConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
     var defaultCreatorConfigs: util.List[ConfigKeyValue] = new util.ArrayList[ConfigKeyValue]()
@@ -350,7 +353,7 @@ class ConfigurationService extends Logging {
         defaultCreatorCombinedLabel.getStringValue
       )
       if (defaultCreatorLabel != null) {
-        defaultCreatorConfigs = getConfigByLabelId(language, defaultCreatorLabel.getId)
+        defaultCreatorConfigs = getConfigByLabelId(defaultCreatorLabel.getId, language)
       }
       val defaultEngineLabelList = LabelParameterParser.changeUserToDefault(labelList)
       val defaultEngineCombinedLabel =
@@ -360,7 +363,7 @@ class ConfigurationService extends Logging {
         defaultEngineCombinedLabel.getStringValue
       )
       if (defaultEngineLabel != null) {
-        defaultEngineConfigs = getConfigByLabelId(language, defaultEngineLabel.getId)
+        defaultEngineConfigs = getConfigByLabelId(defaultEngineLabel.getId, language)
       }
       if (CollectionUtils.isEmpty(defaultEngineConfigs)) {
         logger.warn(

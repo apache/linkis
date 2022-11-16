@@ -85,7 +85,7 @@ class UserGroupInfo extends Logging {
     USERLOCKER.writeLock().lock()
     Utils.tryFinally {
       userList.clear()
-      userList ++ tmpUsers
+      userList ++= tmpUsers
     } {
       USERLOCKER.writeLock().unlock()
     }

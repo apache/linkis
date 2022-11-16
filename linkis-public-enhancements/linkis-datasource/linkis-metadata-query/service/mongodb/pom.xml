@@ -20,11 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-<<<<<<<< HEAD:linkis-public-enhancements/linkis-datasource/linkis-metadata-query/service/mongodb/pom.xml
-    <version>1.3.1</version>
-========
-    <version>1.1.7-webank</version>
->>>>>>>> origin/dev-1.3.2:linkis-public-enhancements/linkis-datasource/linkis-metadata-query/service/mysql/pom.xml
+    <version>1.1.8-webank</version>
     <relativePath>../../../../../pom.xml</relativePath>
   </parent>
 

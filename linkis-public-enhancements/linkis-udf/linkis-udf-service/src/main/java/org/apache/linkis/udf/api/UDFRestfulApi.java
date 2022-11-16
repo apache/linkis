@@ -25,6 +25,7 @@ import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.utils.ConstantVar;
+import org.apache.linkis.udf.utils.UdfConfiguration;
 import org.apache.linkis.udf.vo.*;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -939,6 +940,9 @@ public class UDFRestfulApi {
       if (StringUtils.isEmpty(nameList)) {
         throw new UDFException("nameList is empty!");
       }
+      if (!UdfConfiguration.nameRegexPattern().matcher(nameList).matches()) {
+        throw new UDFException("nameList is invalid!");
+      }
       List<String> collect = Arrays.stream(nameList.split(",")).collect(Collectors.toList());
       List<UDFAddVo> udfInfoList = udfService.getUdfByNameList(collect);
       message = Message.ok().data("infoList", udfInfoList);
@@ -975,6 +979,12 @@ public class UDFRestfulApi {
       }
       if (StringUtils.isEmpty(createUser)) {
         throw new UDFException("createUser is empty!");
+      }
+      if (!UdfConfiguration.nameRegexPattern().matcher(udfName).matches()) {
+        throw new UDFException("udfName is invalid!");
+      }
+      if (!UdfConfiguration.nameRegexPattern().matcher(createUser).matches()) {
+        throw new UDFException("createUser is invalid!");
       }
       UDFVersionVo versionList = udfService.getUdfVersionInfo(udfName, createUser);
       message = Message.ok().data("versionInfo", versionList);

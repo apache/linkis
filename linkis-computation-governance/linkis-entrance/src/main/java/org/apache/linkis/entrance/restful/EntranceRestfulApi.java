@@ -60,6 +60,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -94,6 +95,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @RequestMapping(path = "/execute", method = RequestMethod.POST)
     public Message execute(HttpServletRequest req, @RequestBody Map<String, Object> json) {
+        ModuleUserUtils.getOperationUser(req, "execute");
         Message message = null;
         logger.info("Begin to get an execID");
         json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
@@ -149,6 +151,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @RequestMapping(path = "/submit", method = RequestMethod.POST)
     public Message submit(HttpServletRequest req, @RequestBody Map<String, Object> json) {
+        ModuleUserUtils.getOperationUser(req,"submit");
         Message message = null;
         logger.info("Begin to get an execID");
         json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
@@ -210,8 +213,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
     public Message status(
+            HttpServletRequest req,
             @PathVariable("id") String id,
             @RequestParam(value = "taskID", required = false) String taskID) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("status,id:{0},taskID:{1}",id,taskID));
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
@@ -247,7 +252,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     })
     @Override
     @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
-    public Message progress(@PathVariable("id") String id) {
+    public Message progress(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("progress,id:{0}",id));
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = null;
@@ -292,7 +298,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     })
     @Override
     @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
-    public Message progressWithResource(@PathVariable("id") String id) {
+    public Message progressWithResource(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("progressWithResource,id:{0}",id));
         Message message = null;
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = null;
@@ -403,6 +410,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
     public Message log(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("log,id:{0}",id));
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
         Message message = null;
@@ -514,6 +522,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             HttpServletRequest req,
             @RequestBody JsonNode jsonNode,
             @PathVariable("id") String strongExecId) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("killJobs,strongExecId:{0}",strongExecId));
         JsonNode idNode = jsonNode.get("idList");
         JsonNode taskIDNode = jsonNode.get("taskIDList");
         ArrayList<Long> waitToForceKill = new ArrayList<>();
@@ -609,8 +618,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     @Override
     @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
     public Message kill(
+            HttpServletRequest req,
             @PathVariable("id") String id,
             @RequestParam(value = "taskID", required = false) Long taskID) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("kill,id:{0},taskID:{1}",id,taskID));
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = Option.apply(null);
         try {
@@ -671,7 +682,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     })
     @Override
     @RequestMapping(path = "/{id}/pause", method = RequestMethod.GET)
-    public Message pause(@PathVariable("id") String id) {
+    public Message pause(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("pause,id:{0}",id));
         String realId = ZuulEntranceUtils.parseExecID(id)[3];
         Option<Job> job = entranceServer.getJob(realId);
         Message message = null;

@@ -209,7 +209,8 @@ public class DataSourceAdminRestfulApi {
         @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id")
     })
     @RequestMapping(value = "/env-list/all/type/{typeId}", method = RequestMethod.GET)
-    public Message getAllEnvListByDataSourceType(@PathVariable("typeId") Long typeId) {
+    public Message getAllEnvListByDataSourceType(HttpServletRequest request,@PathVariable("typeId") Long typeId) {
+        ModuleUserUtils.getOperationUser(request, "getAllEnvListByDataSourceType,typeId:"+typeId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceEnv> envList =
@@ -224,7 +225,8 @@ public class DataSourceAdminRestfulApi {
         @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
     })
     @RequestMapping(value = "/env/{envId}", method = RequestMethod.GET)
-    public Message getEnvEntityById(@PathVariable("envId") Long envId) {
+    public Message getEnvEntityById(HttpServletRequest request,@PathVariable("envId") Long envId) {
+        ModuleUserUtils.getOperationUser(request, "getEnvEntityById,envId:"+envId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
@@ -239,6 +241,7 @@ public class DataSourceAdminRestfulApi {
     })
     @RequestMapping(value = "/env/{envId}", method = RequestMethod.DELETE)
     public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:"+envId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity");
@@ -268,6 +271,7 @@ public class DataSourceAdminRestfulApi {
             @PathVariable("envId") Long envId,
             HttpServletRequest request)
             throws ErrorException {
+        ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:"+envId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv");
@@ -317,10 +321,12 @@ public class DataSourceAdminRestfulApi {
     })
     @RequestMapping(value = "/env", method = RequestMethod.GET)
     public Message queryDataSourceEnv(
+            HttpServletRequest request,
             @RequestParam(value = "name", required = false) String envName,
             @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
             @RequestParam(value = "currentPage", required = false) Integer currentPage,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        ModuleUserUtils.getOperationUser(request, "queryDataSourceEnv,typeId:"+dataSourceTypeId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSourceEnvVo dataSourceEnvVo =

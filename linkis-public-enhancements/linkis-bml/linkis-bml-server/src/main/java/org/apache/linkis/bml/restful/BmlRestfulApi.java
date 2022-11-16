@@ -104,7 +104,7 @@ public class BmlRestfulApi {
             @RequestParam(value = "pageSize", required = false) String pageSize,
             HttpServletRequest request)
             throws ErrorException {
-
+        ModuleUserUtils.getOperationUser(request, "getVersions，resourceId：" + resourceId);
         String user = RestfulUtils.getUserName(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error(
@@ -196,7 +196,7 @@ public class BmlRestfulApi {
             HttpServletRequest request,
             HttpServletResponse response)
             throws ErrorException {
-
+        ModuleUserUtils.getOperationUser(request, "getResources");
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isEmpty(system)) {
@@ -287,6 +287,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "deleteVersion", method = RequestMethod.POST)
     public Message deleteVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws IOException, ErrorException {
+        ModuleUserUtils.getOperationUser(request, "deleteVersion，resourceId：" + jsonNode.get("resourceId"));
         String user = RestfulUtils.getUserName(request);
         if (null == jsonNode.get("resourceId")
                 || null == jsonNode.get("version")
@@ -372,7 +373,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "deleteResource", method = RequestMethod.POST)
     public Message deleteResource(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws IOException, ErrorException {
-
+        ModuleUserUtils.getOperationUser(request, "deleteResource，resourceId：" + jsonNode.get("resourceId"));
         String user = RestfulUtils.getUserName(request);
 
         if (null == jsonNode.get("resourceId")) {
@@ -452,6 +453,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
     public Message deleteResources(HttpServletRequest request, @RequestBody JsonNode jsonNode)
             throws IOException, ErrorException {
+        ModuleUserUtils.getOperationUser(request, "deleteResources");
         String user = RestfulUtils.getUserName(request);
         List<String> resourceIds = new ArrayList<>();
 
@@ -543,6 +545,7 @@ public class BmlRestfulApi {
             HttpServletResponse resp,
             HttpServletRequest request)
             throws IOException, ErrorException {
+        ModuleUserUtils.getOperationUser(request, "download，resourceId："+resourceId);
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isBlank(resourceId) || !resourceService.checkResourceId(resourceId)) {
@@ -672,6 +675,7 @@ public class BmlRestfulApi {
             @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
             @RequestParam(name = "file") List<MultipartFile> files)
             throws ErrorException {
+        ModuleUserUtils.getOperationUser(req, "upload");
         String user = RestfulUtils.getUserName(req);
         Message message;
         try {
@@ -730,6 +734,7 @@ public class BmlRestfulApi {
             @RequestParam("resourceId") String resourceId,
             @RequestParam("file") MultipartFile file)
             throws Exception {
+        ModuleUserUtils.getOperationUser(request, "updateVersion，resourceId："+resourceId);
         String user = RestfulUtils.getUserName(request);
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
             logger.error("error resourceId  is {} ", resourceId);
@@ -796,6 +801,7 @@ public class BmlRestfulApi {
             @RequestParam(value = "resourceId", required = false) String resourceId,
             HttpServletRequest request)
             throws ErrorException {
+        ModuleUserUtils.getOperationUser(request, "getBasic，resourceId："+resourceId);
         String user = RestfulUtils.getUserName(request);
 
         if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
@@ -868,6 +874,7 @@ public class BmlRestfulApi {
     public Message getResourceInfo(
             HttpServletRequest request,
             @RequestParam(value = "resourceId", required = false) String resourceId) {
+        ModuleUserUtils.getOperationUser(request, "getResourceInfo，resourceId："+resourceId);
         return Message.ok("Obtained information successfully(获取信息成功)");
     }
 
@@ -881,6 +888,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
     public Message changeOwnerByResourceId(
             HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
+        ModuleUserUtils.getOperationUser(request, "changeOwner，resourceId："+jsonNode.get("resourceId").textValue());
         String resourceId = jsonNode.get("resourceId").textValue();
         String oldOwner = jsonNode.get("oldOwner").textValue();
         String newOwner = jsonNode.get("newOwner").textValue();
@@ -897,7 +905,7 @@ public class BmlRestfulApi {
     @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
     public Message copyResourceToAnotherUser(
             HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
+        String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser，resourceId："+jsonNode.get("resourceId").textValue());
         String resourceId = jsonNode.get("resourceId").textValue();
         String anotherUser = jsonNode.get("anotherUser").textValue();
         Message message = null;
@@ -931,7 +939,7 @@ public class BmlRestfulApi {
     @ApiOperationSupport(ignoreParameters = {"jsonNode"})
     @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
     public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-        String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
+        String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion，resourceId："+jsonNode.get("resourceId").textValue());
         String resourceId = jsonNode.get("resourceId").textValue();
         String rollbackVersion = jsonNode.get("version").textValue();
         Message message = null;

@@ -342,6 +342,7 @@ public class EngineRestfulApi {
     public Message listAllNodeHealthyStatus(
             HttpServletRequest req,
             @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
+        ModuleUserUtils.getOperationUser(req, "listAllNodeHealthyStatus");
         NodeStatus[] nodeStatus = NodeStatus.values();
         return Message.ok().data("nodeStatus", nodeStatus);
     }

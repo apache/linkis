@@ -29,6 +29,7 @@ import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +56,7 @@ public class MetadataCoreRestful {
             @PathVariable("dataSourceId") String dataSourceId,
             @RequestParam("system") String system,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getDatabases,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -84,6 +86,7 @@ public class MetadataCoreRestful {
             @PathVariable("database") String database,
             @RequestParam("system") String system,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getTables,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -124,6 +127,7 @@ public class MetadataCoreRestful {
             @PathVariable("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getTableProps,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -174,6 +178,7 @@ public class MetadataCoreRestful {
             @RequestParam(name = "traverse", required = false, defaultValue = "false")
                     Boolean traverse,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getPartitions,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -222,6 +227,7 @@ public class MetadataCoreRestful {
             @PathVariable("partition") String partition,
             @RequestParam("system") String system,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getPartitionProps,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -274,6 +280,7 @@ public class MetadataCoreRestful {
             @PathVariable("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getColumns,dataSourceId:"+dataSourceId);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");

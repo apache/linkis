@@ -55,6 +55,7 @@ public class DatasourceAccessRestfulApi {
     @ApiOperation(value = "", notes = "", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public Message get(@PathVariable("id") Long id) {
+
         DatasourceAccessEntity datasourceAccess = datasourceAccessService.getById(id);
         return Message.ok("").data("item", datasourceAccess);
     }

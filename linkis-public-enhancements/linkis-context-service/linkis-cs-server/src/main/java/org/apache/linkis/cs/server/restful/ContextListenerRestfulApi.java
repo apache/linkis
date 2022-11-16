@@ -29,6 +29,7 @@ import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +60,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     @RequestMapping(path = "onBindIDListener", method = RequestMethod.POST)
     public Message onBindIDListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        ModuleUserUtils.getOperationUser(req, "onBindIDListener,contextID:"+jsonNode.get("contextId").textValue());
         String source = jsonNode.get("source").textValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
@@ -72,6 +74,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     @RequestMapping(path = "onBindKeyListener", method = RequestMethod.POST)
     public Message onBindKeyListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+        ModuleUserUtils.getOperationUser(req, "onBindKeyListener,contextID:"+jsonNode.get("contextId").textValue());
         String source = jsonNode.get("source").textValue();
         ContextID contextID = getContextIDFromJsonNode(jsonNode);
         ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
@@ -87,6 +90,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     @RequestMapping(path = "heartbeat", method = RequestMethod.POST)
     public Message heartbeat(HttpServletRequest req, @RequestBody JsonNode jsonNode)
             throws InterruptedException, IOException, CSErrorException {
+        ModuleUserUtils.getOperationUser(req, "heartbeat");
         String source = jsonNode.get("source").textValue();
         HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
         return generateResponse(answerJob, "ContextKeyValueBean");

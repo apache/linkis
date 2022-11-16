@@ -77,6 +77,7 @@ public class QueryRestfulApi {
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
         String username = SecurityFilter.getLoginUsername(req);
+        ModuleUserUtils.getOperationUser(req, "getTaskByID，jobId："+jobId);
         if (QueryUtils.isJobHistoryAdmin(username)
                 || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
             username = null;
@@ -140,6 +141,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
             throws IOException, QueryException {
         String username = SecurityFilter.getLoginUsername(req);
+        ModuleUserUtils.getOperationUser(req, "list，taskID："+taskID);
         if (StringUtils.isEmpty(status)) {
             status = null;
         }
@@ -253,6 +255,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "engineType", required = false) String engineType,
             @RequestParam(value = "creator", required = false) String creator)
             throws IOException, QueryException {
+        ModuleUserUtils.getOperationUser(req, "listundonetasks，startTaskID："+taskID);
         String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(status)) {
             status = "Running,Inited,Scheduled";
@@ -347,6 +350,7 @@ public class QueryRestfulApi {
             @RequestParam(value = "engineType", required = false) String engineType,
             @RequestParam(value = "creator", required = false) String creator)
             throws IOException, QueryException {
+        ModuleUserUtils.getOperationUser(req, "listundone，startTaskID："+taskID);
         String username = SecurityFilter.getLoginUsername(req);
         if (endDate == null) {
             endDate = System.currentTimeMillis();

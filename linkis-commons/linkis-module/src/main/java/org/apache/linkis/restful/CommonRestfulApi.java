@@ -19,6 +19,7 @@ package org.apache.linkis.restful;
 
 import org.apache.linkis.server.Message;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,7 @@ public class CommonRestfulApi {
     @ApiOperation(value = "Offline", notes = "offline this service", response = Message.class)
     @RequestMapping(path = "/offline", method = RequestMethod.GET)
     public Message offline(HttpServletRequest req) {
+        String userName = ModuleUserUtils.getOperationUser(req, "offline");
         DiscoveryManager.getInstance().shutdownComponent();
         return Message.ok().data("msg", "Offline successfully.");
     }

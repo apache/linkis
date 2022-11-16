@@ -37,6 +37,7 @@ import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,6 +54,7 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -101,7 +103,8 @@ public class DataSourceCoreRestfulApi {
 
     @ApiOperation(value = "getAllDataSourceTypes", notes = "get all data source types", response = Message.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
-    public Message getAllDataSourceTypes() {
+    public Message getAllDataSourceTypes(HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "getAllDataSourceTypes");
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceType> dataSourceTypes =
@@ -118,6 +121,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/key-define/type/{typeId}", method = RequestMethod.GET)
     public Message getKeyDefinitionsByType(
             @PathVariable("typeId") Long dataSourceTypeId, HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "getKeyDefinitionsByType,dataSourceTypeId:"+dataSourceTypeId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceParamKeyDefinition> keyDefinitions =
@@ -145,6 +149,7 @@ public class DataSourceCoreRestfulApi {
     })
     @RequestMapping(value = "/info/json", method = RequestMethod.POST)
     public Message insertJsonInfo(@RequestBody DataSource dataSource, HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "insertJsonInfo");
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     String userName = SecurityFilter.getLoginUsername(req);
@@ -198,6 +203,7 @@ public class DataSourceCoreRestfulApi {
             @RequestBody DataSource dataSource,
             @PathVariable("dataSourceId") Long dataSourceId,
             HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "updateDataSourceInJson，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     String userName = SecurityFilter.getLoginUsername(req);
@@ -260,6 +266,7 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId,
             @RequestBody() Map<String, Object> params,
             HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "insertJsonParameter，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     Map<String, Object> connectParams = (Map) params.get("connectParams");
@@ -311,6 +318,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/info/{dataSourceId}", method = RequestMethod.GET)
     public Message getInfoByDataSourceId(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceId，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceId);
@@ -339,6 +347,7 @@ public class DataSourceCoreRestfulApi {
     public Message getInfoByDataSourceName(
             @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
             throws UnsupportedEncodingException {
+        ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceName，dataSourceName："+dataSourceName);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource = dataSourceInfoService.getDataSourceInfo(dataSourceName);
@@ -371,6 +380,7 @@ public class DataSourceCoreRestfulApi {
     public Message getPublishedInfoByDataSourceName(
         @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest request)
         throws UnsupportedEncodingException {
+        ModuleUserUtils.getOperationUser(request, "getPublishedInfoByDataSourceName，dataSourceName："+dataSourceName);
         return RestfulApiHelper.doAndResponse(
             () -> {
                 DataSource dataSource = dataSourceInfoService.getDataSourcePublishInfo(dataSourceName);
@@ -412,6 +422,7 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId,
             @PathVariable("version") Long version,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getInfoByDataSourceIdAndVersion，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource =
@@ -449,6 +460,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/{dataSourceId}/versions", method = RequestMethod.GET)
     public Message getVersionList(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "getVersionList，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource =
@@ -489,6 +501,7 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId,
             @PathVariable("versionId") Long versionId,
             HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, MessageFormat.format("publishByDataSourceId,dataSourceId:{0},versionId:{1}",dataSourceId,versionId));
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     // Get brief info
@@ -526,6 +539,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/info/delete/{dataSourceId}", method = RequestMethod.DELETE)
     public Message removeDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "removeDataSource，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     // Get brief info
@@ -557,6 +571,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/info/{dataSourceId}/expire", method = RequestMethod.PUT)
     public Message expireDataSource(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "expireDataSource，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     // Get brief info
@@ -595,6 +610,7 @@ public class DataSourceCoreRestfulApi {
     @RequestMapping(value = "/{dataSourceId}/connect-params", method = RequestMethod.GET)
     public Message getConnectParams(
             @PathVariable("dataSourceId") Long dataSourceId, HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "getConnectParams，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource =
@@ -626,6 +642,7 @@ public class DataSourceCoreRestfulApi {
     public Message getConnectParams(
             @PathVariable("dataSourceName") String dataSourceName, HttpServletRequest req)
             throws UnsupportedEncodingException {
+        ModuleUserUtils.getOperationUser(req, "getConnectParams，dataSourceName："+dataSourceName);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSource dataSource =
@@ -659,6 +676,7 @@ public class DataSourceCoreRestfulApi {
             @PathVariable("dataSourceId") Long dataSourceId,
             @PathVariable("version") Long version,
             HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "connectDataSource，dataSourceId："+dataSourceId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     String operator = SecurityFilter.getLoginUsername(req);
@@ -707,6 +725,7 @@ public class DataSourceCoreRestfulApi {
     public Message queryDataSource(
             @RequestParam(value = "ids") String idsJson
             , HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "queryDataSourceByIds，idsJson："+idsJson);
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List ids = new ObjectMapper().readValue(idsJson, List.class);
@@ -736,6 +755,7 @@ public class DataSourceCoreRestfulApi {
             @RequestParam(value = "currentPage", required = false) Integer currentPage,
             @RequestParam(value = "pageSize", required = false) Integer pageSize,
             HttpServletRequest req) {
+        ModuleUserUtils.getOperationUser(req, "queryDataSource");
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     DataSourceVo dataSourceVo =

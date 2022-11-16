@@ -306,6 +306,7 @@ public class BmlProjectRestful {
             HttpServletResponse resp,
             HttpServletRequest request)
             throws IOException, ErrorException {
+        ModuleUserUtils.getOperationUser(request, "downloadShareResource，resourceId：" + resourceId);
         String user = RestfulUtils.getUserName(request);
         Message message = null;
         resp.setContentType("application/x-msdownload");
@@ -415,6 +416,7 @@ public class BmlProjectRestful {
     public Message getProjectInfo(
             HttpServletRequest request,
             @RequestParam(value = "projectName", required = false) String projectName) {
+        ModuleUserUtils.getOperationUser(request, "getProjectInfo，projectName：" + projectName);
         return Message.ok("Obtain project information successfully (获取工程信息成功)");
     }
 

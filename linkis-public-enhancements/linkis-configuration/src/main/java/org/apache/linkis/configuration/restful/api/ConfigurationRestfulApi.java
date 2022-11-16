@@ -89,6 +89,7 @@ public class ConfigurationRestfulApi {
             @RequestParam(value = "token", required = false) String token,
             @RequestParam(value = "keyJson", required = false) String keyJson)
             throws ConfigurationException {
+        ModuleUserUtils.getOperationUser(req, "addKeyForEngine");
         if (StringUtils.isBlank(engineType)
                 || StringUtils.isBlank(version)
                 || StringUtils.isBlank(token)) {
@@ -134,6 +135,7 @@ public class ConfigurationRestfulApi {
     @ApiOperation(value = "getCategory", notes = "get category", response = Message.class)
     @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
     public Message getCategory(HttpServletRequest req) {
+        String username = ModuleUserUtils.getOperationUser(req, "getCategory");
         List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
         return Message.ok().data("Category", categoryLabelList);
     }
@@ -258,6 +260,7 @@ public class ConfigurationRestfulApi {
     @ApiOperation(value = "listAllEngineType", notes = "list all engine type", response = Message.class)
     @RequestMapping(path = "/engineType", method = RequestMethod.GET)
     public Message listAllEngineType(HttpServletRequest request) {
+        ModuleUserUtils.getOperationUser(request, "engineType");
         String[] engineType = configurationService.listAllEngineType();
         return Message.ok().data("engineType", engineType);
     }

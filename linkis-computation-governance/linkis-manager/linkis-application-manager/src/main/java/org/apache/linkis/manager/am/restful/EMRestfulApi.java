@@ -137,6 +137,7 @@ public class EMRestfulApi {
     public Message listAllNodeHealthyStatus(
             HttpServletRequest req,
             @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
+        ModuleUserUtils.getOperationUser(req, "listAllECMHealthyStatus");
         NodeHealthy[] nodeHealthy = NodeHealthy.values();
         if (onlyEditable) {
             nodeHealthy =

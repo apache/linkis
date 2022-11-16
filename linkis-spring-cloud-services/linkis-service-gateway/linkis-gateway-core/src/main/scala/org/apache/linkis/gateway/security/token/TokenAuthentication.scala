@@ -76,7 +76,7 @@ object TokenAuthentication extends Logging {
       logger.info(
         s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
       )
-      GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser)
+      GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser, false)
       true
     } else {
       SecurityFilter.filterResponse(gatewayContext, authMsg)

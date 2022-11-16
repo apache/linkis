@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 @Api(tags = "DatasourceAccessRestfulApi")
 @RestController
@@ -72,6 +73,7 @@ public class DatasourceAccessRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(HttpServletRequest request,@RequestBody DatasourceAccessEntity datasourceAccess) {
         ModuleUserUtils.getOperationUser(request, "Add a Datasource Access Record,"+datasourceAccess.toString());
+        datasourceAccessEntity.setAccessTime(new Date());
         boolean result = datasourceAccessService.save(datasourceAccess);
         return Message.ok("").data("result", result);
     }

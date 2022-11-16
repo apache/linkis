@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -70,6 +71,12 @@ public class GatewayAuthTokenRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public Message add(HttpServletRequest request,@RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
         ModuleUserUtils.getOperationUser(request, "Add a Gateway Auth Token Record,"+gatewayAuthToken.toString());
+        gatewayAuthToken.setCreateTime(new Date());
+        gatewayAuthToken.setUpdateTime(new Date());
+        gatewayAuthToken.setBusinessOwner("BDP");
+        gatewayAuthToken.setUpdateBy("LINKIS");
+
+        ModuleUserUtils.getOperationUser(request, "Add a Gateway Auth Token Record,"+gatewayAuthToken.toString());
         boolean result = gatewayAuthTokenService.save(gatewayAuthToken);
         return Message.ok("").data("result", result);
     }
@@ -81,6 +88,9 @@ public class GatewayAuthTokenRestfulApi {
     @RequestMapping(path = "", method = RequestMethod.PUT)
     public Message update(HttpServletRequest request,@RequestBody GatewayAuthTokenEntity token) {
         ModuleUserUtils.getOperationUser(request, "Update a Gateway Auth Token Record,id:"+token.getId().toString());
+        token.setUpdateTime(new Date());
+        token.setUpdateBy("LINKIS");
+
         boolean result = gatewayAuthTokenService.updateById(token);
         return Message.ok("").data("result", result);
     }

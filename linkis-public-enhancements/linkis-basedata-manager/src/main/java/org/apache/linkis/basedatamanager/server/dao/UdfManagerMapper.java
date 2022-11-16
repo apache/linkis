@@ -24,7 +24,6 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @author jack
  * @description Database operation Mapper for the table [linKIS_PS_UDF_manager]
  * @createDate 2022-08-13 15:14:10 @Entity
  *     org.apache.linkis.basedatamanager.server.domain.LinkisPsUdfManager

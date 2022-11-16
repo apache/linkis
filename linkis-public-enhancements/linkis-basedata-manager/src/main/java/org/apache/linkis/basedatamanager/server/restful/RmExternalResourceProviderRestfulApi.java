@@ -65,7 +65,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
         ModuleUserUtils.getOperationUser(request, "Get a Resource manager External Resource Provider Record,id:"+id.toString());
         RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
-        return Message.ok("").data("dbs", rmExternalResourceProvider);
+        return Message.ok("").data("item", rmExternalResourceProvider);
     }
 
     @ApiImplicitParams({
@@ -76,7 +76,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message add(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         ModuleUserUtils.getOperationUser(request, "Add a Resource manager External Resource Provider Record,"+rmExternalResourceProvider.toString());
         boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -87,7 +87,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
         ModuleUserUtils.getOperationUser(request, "Remove a Resource manager External Resource Provider Record,id:"+id.toString());
         boolean result = rmExternalResourceProviderService.removeById(id);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
     @ApiImplicitParams({
@@ -98,7 +98,7 @@ public class RmExternalResourceProviderRestfulApi {
     public Message update(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
         ModuleUserUtils.getOperationUser(request, "Update a Resource manager External Resource Provider Record,id:"+rmExternalResourceProvider.getId().toString());
         boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
-        return Message.ok("").data("dbs", result);
+        return Message.ok("").data("result", result);
     }
 
 

@@ -22,7 +22,7 @@
         ]
     },
     "dependencies": {
-        "@form-create/iview": "^2.5.13",
+        "@form-create/iview": "^2.5.27",
         "axios": "0.19.2",
         "babel-polyfill": "6.26.0",
         "core-js": "2.6.11",

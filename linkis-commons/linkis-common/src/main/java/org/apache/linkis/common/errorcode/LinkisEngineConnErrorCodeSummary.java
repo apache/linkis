@@ -23,17 +23,11 @@ public enum LinkisEngineConnErrorCodeSummary {
   private int errorCode;
   /** 错误描述 */
   private String errorDesc;
-  /** 错误可能出现的原因 */
-  private String comment;
-  /** 所属的linkis的模块 */
-  private String module;
 
-  LinkisEngineConnErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  LinkisEngineConnErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -50,22 +44,6 @@ public enum LinkisEngineConnErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
   }
 
   @Override

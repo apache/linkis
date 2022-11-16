@@ -136,7 +136,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     if (!postStatus() && ExecutionNodeStatus.isCompleted(taskStatus.status)) {
       logger.warn(s" from $serviceInstance received ${taskStatus} cannot find execTask to deal")
       Thread.sleep(ComputationOrchestratorConf.TASK_STATUS_COMPLETE_WAIT_TIMEOUT)
-      if (postStatus()) {
+      if (!postStatus()) {
         logger.warn(
           s" from $serviceInstance received ${taskStatus} cannot find execTask to deal, by retry 2 times"
         )

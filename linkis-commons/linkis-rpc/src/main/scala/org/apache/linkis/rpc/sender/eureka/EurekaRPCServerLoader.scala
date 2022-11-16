@@ -22,7 +22,7 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.interceptor.AbstractRPCServerLoader
 
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient.EurekaServiceInstance
+import org.springframework.cloud.netflix.eureka.EurekaServiceInstance
 
 import java.util.Locale
 

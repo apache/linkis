@@ -50,7 +50,9 @@ object QueryUtils extends Logging {
   private val CODE_SPLIT = ";"
   private val LENGTH_SPLIT = "#"
   private val NAME_REGEX = "^[a-zA-Z\\-\\d_\\.]+$"
+  private val INSTANCE_NAME_REGEX = "^[a-zA-Z\\-\\d_\\.:]+$"
   private val nameRegexPattern = Pattern.compile(NAME_REGEX)
+  private val instanceNameRegexPattern = Pattern.compile(INSTANCE_NAME_REGEX)
 
   private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
     override protected def initialValue = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
@@ -166,6 +168,10 @@ object QueryUtils extends Logging {
 
   def checkNameValid(param: String): Boolean = {
     nameRegexPattern.matcher(param).find()
+  }
+
+  def checkInstanceNameValid(param: String): Boolean = {
+    instanceNameRegexPattern.matcher(param).find()
   }
 
 }

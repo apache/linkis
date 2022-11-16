@@ -54,8 +54,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups: Cache[String, Group] = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getValue, TimeUnit.MINUTES)
-    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getValue)
+    .expireAfterAccess(EntranceConfiguration.GROUP_CACHE_EXPIRE_TIME.getValue, TimeUnit.MINUTES)
+    .maximumSize(EntranceConfiguration.GROUP_CACHE_MAX.getValue)
     .build()
 
   private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)

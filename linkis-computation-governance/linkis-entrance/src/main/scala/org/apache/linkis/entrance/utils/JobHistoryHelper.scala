@@ -40,7 +40,7 @@ import java.util.Date
 
 import scala.collection.JavaConverters._
 
-import sun.net.util.IPAddressUtil
+import com.google.common.net.InetAddresses
 
 object JobHistoryHelper extends Logging {
 
@@ -79,8 +79,7 @@ object JobHistoryHelper extends Logging {
     )
     val afterProxyIp = addrList
       .find(ip => {
-        StringUtils.isNotEmpty(ip) &&
-        (IPAddressUtil.isIPv4LiteralAddress(ip) || IPAddressUtil.isIPv6LiteralAddress(ip))
+        StringUtils.isNotEmpty(ip) && InetAddresses.isInetAddress(ip)
       })
       .getOrElse("")
     if (StringUtils.isNotEmpty(afterProxyIp)) {

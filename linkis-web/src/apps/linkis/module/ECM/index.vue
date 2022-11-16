@@ -65,7 +65,7 @@
       :title="$t('message.linkis.tagEdit')"
       v-model="isTagEdit"
       :mask-closable="false">
-      <Form :label-width="80">
+      <Form :label-width="80" @submit.native.prevent>
         <FormItem :label="`${$t('message.linkis.instanceName')}：`">
           <Input disabled v-model="formItem.instance" />
         </FormItem>

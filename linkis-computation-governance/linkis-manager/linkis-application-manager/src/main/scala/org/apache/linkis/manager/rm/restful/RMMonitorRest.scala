@@ -238,6 +238,7 @@ class RMMonitorRest extends Logging {
       request: HttpServletRequest,
       @RequestParam(value = "resourceId", required = false) resourceId: Integer
   ): Message = {
+    ModuleUserUtils.getOperationUser(request, "resetResource,resourceId:" + resourceId)
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
@@ -254,6 +255,7 @@ class RMMonitorRest extends Logging {
   @ApiOperation(value = "listAllEngineType", notes = "list all engineType")
   @RequestMapping(path = Array("engineType"), method = Array(RequestMethod.GET))
   def listAllEngineType(request: HttpServletRequest): Message = {
+    ModuleUserUtils.getOperationUser(request, "engineType")
     val engineTypeString = RMUtils.ENGINE_TYPE.getValue
     val engineTypeList = engineTypeString.split(",")
     Message.ok.data("engineType", engineTypeList)
@@ -269,6 +271,7 @@ class RMMonitorRest extends Logging {
       @RequestParam(value = "page", required = false) page: Int,
       @RequestParam(value = "size", required = false) size: Int
   ): Message = {
+    ModuleUserUtils.getOperationUser(request, "allUserResource")
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
@@ -501,6 +504,7 @@ class RMMonitorRest extends Logging {
       request: HttpServletRequest,
       @RequestBody param: util.Map[String, AnyRef]
   ): Message = {
+    ModuleUserUtils.getOperationUser(request, "queueresources")
     val message = Message.ok("")
     val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
     val clusterLabel = labelFactory.createLabel(classOf[ClusterLabel])

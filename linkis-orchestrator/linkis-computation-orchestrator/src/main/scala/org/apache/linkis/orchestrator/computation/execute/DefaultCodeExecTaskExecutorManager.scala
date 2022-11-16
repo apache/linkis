@@ -182,7 +182,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       serviceInstance: ServiceInstance,
       engineConnTaskId: String
   ): Option[CodeExecTaskExecutor] = {
-    val maybeExecutors = instanceToExecutors.get()
+    val maybeExecutors = instanceToExecutors.get(serviceInstance)
     if (null != maybeExecutors) {
       val executors = maybeExecutors.filter(_.getEngineConnTaskId == engineConnTaskId)
       if (null != executors && executors.nonEmpty) {

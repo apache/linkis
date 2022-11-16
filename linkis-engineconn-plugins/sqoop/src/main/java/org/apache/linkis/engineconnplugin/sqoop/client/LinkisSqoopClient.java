@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconnplugin.sqoop.client;
 
 import org.apache.linkis.common.exception.ErrorException;
-import org.apache.linkis.engineconnplugin.sqoop.client.utils.JarLoader;
+import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 
 import org.apache.sqoop.SqoopOptions;

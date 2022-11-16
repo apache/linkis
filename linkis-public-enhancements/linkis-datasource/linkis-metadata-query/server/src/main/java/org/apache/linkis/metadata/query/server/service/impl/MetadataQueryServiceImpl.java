@@ -398,7 +398,8 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             true,
             dataSource.getDataSourceType().getName(),
             dataSource.getConnectParams(),
-            dataSource.getCreateUser())
+            dataSource.getCreateUser(),
+            "")
         : null;
   }
 

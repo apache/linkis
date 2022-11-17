@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -678,14 +677,12 @@ public class UDFRestfulApi {
   public Message rollbackUDF(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      long udfId = json.get("udfId").longValue();
-      String version = json.get("version").textValue();
-      String userName =
-          ModuleUserUtils.getOperationUser(
-              req, MessageFormat.format("rollback,udfId:{0},version:{1}", udfId, version));
+      String userName = ModuleUserUtils.getOperationUser(req, "rollback");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
+      long udfId = json.get("udfId").longValue();
+      String version = json.get("version").textValue();
       verifyOperationUser(userName, udfId);
       udfService.rollbackUDF(udfId, version, userName);
       message = Message.ok();
@@ -802,9 +799,7 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName =
-          ModuleUserUtils.getOperationUser(
-              req, MessageFormat.format("downloadUdf,udfId:{0},version:{1}", udfId, version));
+      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -846,9 +841,7 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName =
-          ModuleUserUtils.getOperationUser(
-              req, MessageFormat.format("downloadToLocal,udfId:{0},version:{1}", udfId, version));
+      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }

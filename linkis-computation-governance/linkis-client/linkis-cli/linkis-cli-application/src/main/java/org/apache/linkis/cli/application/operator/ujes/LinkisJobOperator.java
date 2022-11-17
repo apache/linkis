@@ -569,7 +569,6 @@ public class LinkisJobOperator implements JobOperator {
                   "Get resultSetArray failed. retry time : {0}/{1}. taskID={2} Reason: {3}",
                   retryTime, MAX_RETRY_TIME, taskID, reason);
           logger.debug(msg);
-        } else {
           break;
         }
       } catch (Exception e) {
@@ -603,8 +602,6 @@ public class LinkisJobOperator implements JobOperator {
               "Get resultSetArray failed. retry exhausted. taskID={0}. Reason: {1}",
               taskID, reason);
       logger.warn(msg);
-      throw new LinkisClientExecutionException(
-          "EXE0023", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg + ". taskID=" + taskID);
     }
     return new UJESResultAdapter(resultSetArray);
   }

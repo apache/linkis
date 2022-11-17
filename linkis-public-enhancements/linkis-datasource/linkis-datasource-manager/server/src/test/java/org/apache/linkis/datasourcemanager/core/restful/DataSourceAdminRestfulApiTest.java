@@ -25,8 +25,7 @@ import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
-import org.apache.linkis.server.conf.ServerConfiguration;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -41,7 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -52,7 +53,7 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
@@ -72,18 +73,16 @@ class DataSourceAdminRestfulApiTest {
 
   @MockBean private DataSourceInfoService dataSourceInfoService;
 
-  private static MockedStatic<SecurityFilter> securityFilter;
-  @MockBean private ServerConfiguration serverConfiguration;
+  private static MockedStatic<ModuleUserUtils> moduleUserUtils;
 
   @BeforeAll
   private static void init() {
-    System.setProperty("wds.linkis.server.version", "v1");
-    securityFilter = Mockito.mockStatic(SecurityFilter.class);
+    moduleUserUtils = Mockito.mockStatic(ModuleUserUtils.class);
   }
 
   @AfterAll
   private static void close() {
-    securityFilter.close();
+    moduleUserUtils.close();
   }
 
   @Test
@@ -95,8 +94,10 @@ class DataSourceAdminRestfulApiTest {
     dataSourceEnv.setId(dataSourceEnvId);
     StringWriter dsJsonWriter = new StringWriter();
     JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnv);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser", "hadoop");
     Message mvcResult =
         mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
@@ -125,8 +126,10 @@ class DataSourceAdminRestfulApiTest {
     dataSourceEnvList.add(dataSourceEnv);
     StringWriter dsJsonWriter = new StringWriter();
     JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnvList);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser", "hadoop");
     Message mvcResult =
         mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url + fromSystem, dsJsonWriter.toString()));
@@ -161,8 +164,10 @@ class DataSourceAdminRestfulApiTest {
     JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnvList);
 
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser", "hadoop");
     Message mvcResult =
         mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url + fromSystem, dsJsonWriter.toString()));
@@ -219,8 +224,10 @@ class DataSourceAdminRestfulApiTest {
     long dataSourceEnvId = 10l;
     String url = String.format("/data-source-manager/env/%s", dataSourceEnvId);
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser", "hadoop");
     Message mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
     assertTrue(
@@ -246,8 +253,10 @@ class DataSourceAdminRestfulApiTest {
     JsonUtils.jackson().writeValue(dsJsonWriter, dataSourceEnv);
 
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser", "hadoop");
     Message mvcResult =
         mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));

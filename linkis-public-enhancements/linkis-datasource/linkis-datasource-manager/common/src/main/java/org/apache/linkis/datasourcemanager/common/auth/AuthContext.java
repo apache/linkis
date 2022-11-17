@@ -19,11 +19,8 @@ package org.apache.linkis.datasourcemanager.common.auth;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
-import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,18 +45,6 @@ public class AuthContext {
         }
       }
     }
-  }
-
-  /**
-   * If has permission of data source
-   *
-   * @param dataSource data source
-   * @param request request
-   * @return boolean
-   */
-  public static boolean hasPermission(DataSource dataSource, HttpServletRequest request) {
-    String username = SecurityFilter.getLoginUsername(request);
-    return hasPermission(dataSource, username);
   }
 
   public static boolean hasPermission(DataSource dataSource, String username) {

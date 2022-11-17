@@ -33,7 +33,7 @@ object UdfConfiguration {
   val UDF_SHARE_PROXY_USER = CommonVars("wds.linkis.udf.share.proxy.user", "hadoop")
 
   val NAME_REGEX: String =
-    CommonVars.apply("wds.linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/:]+$").getValue
+    CommonVars.apply("wds.linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/,]+$").getValue
 
   val nameRegexPattern: Pattern = Pattern.compile(NAME_REGEX)
 

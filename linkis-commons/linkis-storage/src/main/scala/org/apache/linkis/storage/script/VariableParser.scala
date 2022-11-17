@@ -52,7 +52,12 @@ object VariableParser {
                 e.asScala
                   .filter(s => !isContextIDINFO(s._1))
                   .foreach(s => variables += Variable(f._1, p._1, s._1, s._2.toString))
-              case _ => variables += Variable(CONFIGURATION, f._1, p._1, p._2.toString)
+              case _ =>
+                if (null == p._2) {
+                  variables += Variable(CONFIGURATION, f._1, p._1, "")
+                } else {
+                  variables += Variable(CONFIGURATION, f._1, p._1, p._2.toString)
+                }
             }
           )
       }

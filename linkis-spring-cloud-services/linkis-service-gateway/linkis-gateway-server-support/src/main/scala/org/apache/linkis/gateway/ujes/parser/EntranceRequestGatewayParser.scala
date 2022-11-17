@@ -65,8 +65,8 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
           // parse by execId
           ZuulEntranceUtils.parseServiceInstanceByExecID(execId)(0)
         } else {
-          // parse by taskId
-          val jobHistory = parseJobHistoryByTaskID(execId.toLong, gatewayContext)
+          // check by taskId
+          val jobHistory = checkJobValidityByTaskID(execId.toLong, gatewayContext)
           // add header
           val jobReqId = if (jobHistory == null) "" else jobHistory.getJobReqId
           gatewayContext.getRequest.addHeader(ServerConfiguration.LINKIS_SERVER_HEADER_KEY.getValue, Array(jobReqId))
@@ -78,7 +78,7 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
       case _ =>
     }
 
-  def parseJobHistoryByTaskID(taskId: Long, gatewayContext: GatewayContext): JobHistory = {
+  def checkJobValidityByTaskID(taskId: Long, gatewayContext: GatewayContext): JobHistory = {
     val histories = jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null)
     if (histories.isEmpty) {
       sendErrorResponse(s"taskId $taskId is not exists.", gatewayContext)

@@ -32,4 +32,8 @@ public interface LinkisResultData extends LinkisJobData, Cloneable {
   void sendResultFin();
 
   boolean resultFinReceived();
+
+  boolean hasResult();
+
+  void setHasResult(boolean hasResult);
 }

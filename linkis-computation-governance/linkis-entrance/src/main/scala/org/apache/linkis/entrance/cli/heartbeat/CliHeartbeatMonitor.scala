@@ -141,7 +141,7 @@ class CliHeartbeatMonitor(handler: HeartbeatLossHandler) extends Logging {
   }
 
   private val monitorCreators =
-    EntranceConfiguration.CLIENT_MONITOR_CREATOR.getHotValue().split(",")
+    EntranceConfiguration.CLIENT_MONITOR_CREATOR.getValue.split(",")
 
   private def isCliJob(job: EntranceJob): Boolean = {
     monitorCreators.exists(job.getCreator.equalsIgnoreCase)

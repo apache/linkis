@@ -32,7 +32,7 @@ class EntranceEventListenerBus[L <: EntranceEventListener, E <: EntranceEvent](
   def this(eventQueueCapacity: Int) =
     this(eventQueueCapacity, DataWorkCloudApplication.getApplicationName + "-EventListenerBus")
 
-  def this() = this(EntranceConfiguration.ENTRANCE_LISTENER_BUS_EVENT_QUEUE_CAPACITY.getHotValue())
+  def this() = this(EntranceConfiguration.ENTRANCE_LISTENER_BUS_EVENT_QUEUE_CAPACITY.getValue)
 
   override protected def doPostEvent(listener: L, event: E): Unit = listener.onEvent(event)
 }

@@ -266,7 +266,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             } else {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getHotValue())
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
                             || jobProgressInfo.totalTasks() > 0) {
                         setJobProgressInfos(list, jobProgressInfo);
                     }
@@ -311,7 +311,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             } else {
                 List<Map<String, Object>> list = new ArrayList<>();
                 for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getHotValue())
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
                             || jobProgressInfo.totalTasks() > 0) {
                         setJobProgressInfos(list, jobProgressInfo);
                     }

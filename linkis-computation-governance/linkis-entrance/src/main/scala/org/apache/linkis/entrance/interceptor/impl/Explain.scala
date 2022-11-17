@@ -60,7 +60,7 @@ object SparkExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
     if (scStop.matcher(code).find()) {
@@ -346,7 +346,7 @@ object PythonExplain extends Explain {
   private val SC_STOP = """sc\.stop""".r.unanchored
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
 
@@ -408,7 +408,7 @@ object ScalaExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
     code match {

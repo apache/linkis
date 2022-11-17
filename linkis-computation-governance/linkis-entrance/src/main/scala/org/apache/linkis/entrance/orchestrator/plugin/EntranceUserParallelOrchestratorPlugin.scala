@@ -43,7 +43,7 @@ import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlugin with Logging {
 
-  private val DEFAULT_MAX_RUNNING = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue
+  private val DEFAULT_MAX_RUNNING = EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()
 
   private val SPLIT = ","
 
@@ -75,11 +75,11 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
         ) {
           logger.error(
             s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," +
-              s"will use default value ${EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue}。All config map: ${BDPJettyServerHelper.gson
+              s"will use default value ${EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()}。All config map: ${BDPJettyServerHelper.gson
                 .toJson(keyAndValue)}"
           )
         }
-        val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+        val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue, true)
         maxRunningJobs
       }
 

@@ -183,7 +183,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
       .asInstanceOf[UserCreatorLabel]
     if (null == userCreatorLabel) {
       userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
-      val creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
+      val creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getHotValue()
       userCreatorLabel.setUser(executeUser)
       userCreatorLabel.setCreator(creator)
       labels.put(userCreatorLabel.getLabelKey, userCreatorLabel)
@@ -221,13 +221,13 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     val executeApplicationName =
       params.get(TaskConstant.EXECUTEAPPLICATIONNAME).asInstanceOf[String]
     if (StringUtils.isBlank(creator)) {
-      creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue
+      creator = EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getHotValue()
     }
     // When the execution type is IDE, executioncode and scriptpath cannot be empty at the same time
     if (
-        EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(
-          creator
-        ) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
+        EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME
+          .getHotValue()
+          .equals(creator) && StringUtils.isEmpty(source.get(TaskConstant.SCRIPTPATH)) &&
         StringUtils.isEmpty(executionCode)
     ) {
       throw new EntranceIllegalParamException(
@@ -238,7 +238,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     var runType: String = null
     if (StringUtils.isNotEmpty(executionCode)) {
       runType = params.get(TaskConstant.RUNTYPE).asInstanceOf[String]
-      if (StringUtils.isEmpty(runType)) runType = EntranceConfiguration.DEFAULT_RUN_TYPE.getValue
+      if (StringUtils.isEmpty(runType))
+        runType = EntranceConfiguration.DEFAULT_RUN_TYPE.getHotValue()
       // If formatCode is not empty, we need to format it(如果formatCode 不为空的话，我们需要将其进行格式化)
       if (formatCode) executionCode = format(executionCode)
       jobReq.setExecutionCode(executionCode)

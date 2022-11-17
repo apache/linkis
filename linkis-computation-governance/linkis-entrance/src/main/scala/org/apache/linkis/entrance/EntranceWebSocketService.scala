@@ -423,7 +423,7 @@ class EntranceWebSocketService
             val sparkLogSpecial: String = EntranceConfiguration.SPARK_SPECIAL_LOG_INCLUDE.getValue
             val hiveCreateTableLog: String = EntranceConfiguration.HIVE_CREATE_TABLE_LOG.getValue
             if (singleLog.contains(hiveLogSpecial) && singleLog.contains(hiveCreateTableLog)) {
-              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getValue
+              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getHotValue()
               val printInfo = EntranceConfiguration.HIVE_PRINT_INFO_LOG.getValue
               val start = singleLog.indexOf(threadName)
               val end = singleLog.indexOf(printInfo) + printInfo.length
@@ -437,8 +437,8 @@ class EntranceWebSocketService
                 singleLog.contains(hiveLogSpecial) && singleLog.contains("map") && singleLog
                   .contains("reduce")
             ) {
-              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getValue
-              val stageName = EntranceConfiguration.HIVE_STAGE_NAME.getValue
+              val threadName = EntranceConfiguration.HIVE_THREAD_NAME.getHotValue()
+              val stageName = EntranceConfiguration.HIVE_STAGE_NAME.getHotValue()
               val start = singleLog.indexOf(threadName)
               val end = singleLog.indexOf(stageName)
               if (start > 0 && end > 0) {

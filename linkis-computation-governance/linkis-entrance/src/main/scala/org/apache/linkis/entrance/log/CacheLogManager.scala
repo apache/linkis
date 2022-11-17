@@ -74,7 +74,7 @@ class CacheLogManager extends LogManager with Logging {
     }
     job match {
       case entranceExecutionJob: EntranceExecutionJob =>
-        val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getValue)
+        val cache: Cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getHotValue())
         val logPath: String = entranceExecutionJob.getJobRequest.getLogPath
         val fsLogPath = new FsPath(logPath)
         val cacheLogWriter: LogWriter =

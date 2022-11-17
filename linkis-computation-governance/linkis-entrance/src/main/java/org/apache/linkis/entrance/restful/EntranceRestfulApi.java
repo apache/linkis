@@ -35,6 +35,7 @@ import org.apache.linkis.scheduler.listener.LogListener;
 import org.apache.linkis.scheduler.queue.Job;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.conf.ServerConfiguration;
 import org.apache.linkis.server.security.SecurityFilter;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -197,193 +198,277 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     entranceServer.getEntranceContext().getOrCreateLogManager().onLogUpdate(job, log);
   }
 
-  @ApiOperation(value = "status", notes = "get task stats", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = " task id"),
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id ")
-  })
-  @Override
-  @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
-  public Message status(
-      HttpServletRequest req,
-      @PathVariable("id") String id,
-      @RequestParam(value = "taskID", required = false) String taskID) {
-    Message message = null;
-    String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "status realId: " + realId);
-    Option<Job> job = Option.apply(null);
-    try {
-      job = entranceServer.getJob(realId);
-    } catch (Exception e) {
-      logger.warn("获取任务 {} 状态时出现错误", realId, e.getMessage());
-      long realTaskID = Long.parseLong(taskID);
-      String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
-      message = Message.ok();
-      message.setMethod("/api/entrance/" + id + "/status");
-      message.data("status", status).data("execID", id);
-      return message;
-    }
-    if (job.isDefined()) {
-      if (job.get() instanceof EntranceJob) {
-        ((EntranceJob) job.get()).updateNewestAccessByClientTimestamp();
-      }
-      message = Message.ok();
-      message.setMethod("/api/entrance/" + id + "/status");
-      message.data("status", job.get().getState().toString()).data("execID", id);
-    } else {
-      message =
-          Message.error(
-              "ID The corresponding job is empty and cannot obtain the corresponding task status.(ID 对应的job为空，不能获取相应的任务状态)");
-    }
-    return message;
-  }
-
-  @ApiOperation(value = "progress", notes = "get task progress info", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "exectue id")
-  })
-  @Override
-  @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
-  public Message progress(HttpServletRequest req, @PathVariable("id") String id) {
-    Message message = null;
-    String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "progress realId: " + realId);
-    Option<Job> job = null;
-    try {
-      job = entranceServer.getJob(realId);
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-    }
-    if (job != null && job.isDefined()) {
-      JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
-      if (jobProgressInfos == null) {
-        message =
-            Message.error(
-                "Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
-        message.setMethod("/api/entrance/" + id + "/progress");
-      } else {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-          if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
-              || jobProgressInfo.totalTasks() > 0) {
-            setJobProgressInfos(list, jobProgressInfo);
-          }
-        }
-        message = Message.ok();
-        message.setMethod("/api/entrance/" + id + "/progress");
-
-        message
-            .data("progress", Math.abs(job.get().getProgress()))
-            .data("execID", id)
-            .data("progressInfo", list);
-      }
-    } else {
-      message =
-          Message.error(
-              "The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
-    }
-    return message;
-  }
-
-  @ApiOperation(
-      value = "progressWithResource",
-      notes = "get progress  and resource info",
-      response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
-  })
-  @Override
-  @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
-  public Message progressWithResource(HttpServletRequest req, @PathVariable("id") String id) {
-    Message message = null;
-    String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "progressWithResource realId: " + realId);
-    Option<Job> job = null;
-    try {
-      job = entranceServer.getJob(realId);
-    } catch (Exception e) {
-      logger.error(e.getMessage());
-    }
-    if (job != null && job.isDefined()) {
-      JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
-      if (jobProgressInfos == null) {
-        message =
-            Message.error(
-                "Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
-        message.setMethod("/api/entrance/" + id + "/progressWithResource");
-      } else {
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
-          if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
-              || jobProgressInfo.totalTasks() > 0) {
-            setJobProgressInfos(list, jobProgressInfo);
-          }
-        }
-        message = Message.ok();
-        message.setMethod("/api/entrance/" + id + "/progressWithResource");
-
-        JobRequest jobRequest = ((EntranceJob) job.get()).getJobRequest();
-        Map<String, Object> metrics = jobRequest.getMetrics();
-        Map<String, Object> metricsVo = new HashMap<>();
-        if (metrics.containsKey(TaskConstant.ENTRANCEJOB_YARNRESOURCE)) {
-          HashMap<String, ResourceWithStatus> resourceMap =
-              (HashMap<String, ResourceWithStatus>)
-                  metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
-          ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
-          if (null != resourceMap && !resourceMap.isEmpty()) {
-            resourceMap.forEach(
-                (applicationId, resource) -> {
-                  resoureList.add(new YarnResourceWithStatusVo(applicationId, resource));
-                });
-            metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
-            Optional<Integer> cores =
-                resourceMap.values().stream()
-                    .map(resource -> resource.queueCores())
-                    .reduce((x, y) -> x + y);
-            Optional<Long> memory =
-                resourceMap.values().stream()
-                    .map(resource -> resource.queueMemory())
-                    .reduce((x, y) -> x + y);
-            float corePercent = 0.0f;
-            float memoryPercent = 0.0f;
-            if (cores.isPresent() && memory.isPresent()) {
-              corePercent =
-                  cores.get().floatValue()
-                      / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getHotValue();
-              memoryPercent =
-                  memory.get().floatValue()
-                      / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX().getHotValue().longValue()
-                          * 1024
-                          * 1024
-                          * 1024);
-            }
-            String coreRGB = RGBUtils.getRGB(corePercent);
-            String memoryRGB = RGBUtils.getRGB(memoryPercent);
-            metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
-            metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
-            metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
-            metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
-
-            message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
-          } else {
-            message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
-          }
+    @ApiOperation(value = "status", notes = "get task stats", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = " task id"),
+        @ApiImplicitParam(name = "id",required = true, dataType = "String",  value = "execute id ")
+    })
+    @Override
+    @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
+    public Message status(
+            HttpServletRequest req,
+            @PathVariable("id") String id,
+            @RequestParam(value = "taskID", required = false) String taskID) {
+        ModuleUserUtils.getOperationUser(req, "job status");
+      Message message = null;
+        String realId;
+        String execID;
+        if (id.startsWith(ZuulEntranceUtils.EXEC_ID())) {
+            // execID
+            realId = ZuulEntranceUtils.parseExecID(id)[3];
+            execID = id;
         } else {
-          message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+            // taskID
+            String jobReqId = req.getHeader(ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY().toString());
+            if (StringUtils.isEmpty(jobReqId)){
+                logger.warn("The job wait failover, return status is Inited");
+                String status = SchedulerEventState.Inited().toString();
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/status");
+                message.data("status", status).data("execID", "").data("taskID", id);
+                return message;
+            } else {
+                realId = jobReqId;
+                execID =
+                        ZuulEntranceUtils.generateExecID(
+                                realId,
+                                Sender.getThisServiceInstance().getApplicationName(),
+                                new String[] {Sender.getThisInstance()});
+            }
         }
 
-        message
-            .data("progress", Math.abs(job.get().getProgress()))
-            .data("execID", id)
-            .data("progressInfo", list);
-      }
-    } else {
-      message =
-          Message.error(
-              "The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
+        Option<Job> job = Option.apply(null);
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.warn("get {} status error", realId, e);
+            if (StringUtils.isEmpty(taskID)) {
+                message =
+                        Message.error(
+                                "Get job by ID error and cannot obtain the corresponding task status.(获取job时发生异常，不能获取相应的任务状态)");
+                return message;
+            }
+            long realTaskID = Long.parseLong(taskID);
+            String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
+            message = Message.ok();
+            message.setMethod("/api/entrance/" + id + "/status");
+            message.data("status", status).data("execID", execID);
+            return message;
+        }
+        if (job.isDefined()) {
+            if (job.get() instanceof EntranceJob) {
+                ((EntranceJob) job.get()).updateNewestAccessByClientTimestamp();
+            }
+            message = Message.ok();
+            message.setMethod("/api/entrance/" + id + "/status");
+            message.data("status", job.get().getState().toString()).data("execID", execID);
+        } else {
+            message =
+                    Message.error(
+                            "ID The corresponding job is empty and cannot obtain the corresponding task status.(ID 对应的job为空，不能获取相应的任务状态)");
+        }
+        return message;
     }
-    return message;
-  }
+
+    @ApiOperation(value = "progress", notes = "get task progress info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id",required = true, dataType = "String",  value = "exectue id")
+    })
+    @Override
+    @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
+    public Message progress(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, "job progress");
+      Message message = null;
+        String realId;
+        String execID;
+        if (id.startsWith(ZuulEntranceUtils.EXEC_ID())) {
+            // execID
+            realId = ZuulEntranceUtils.parseExecID(id)[3];
+            execID = id;
+        } else {
+            // taskID
+            String jobReqId = req.getHeader(ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY().toString());
+            if (StringUtils.isEmpty(jobReqId)){
+                logger.warn("The job wait failover, return progress is 0");
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/progress");
+                message.data("progress", 0)
+                        .data("execID", "")
+                        .data("taskID", id)
+                        .data("progressInfo", new ArrayList<>());
+                return message;
+            } else {
+                realId = jobReqId;
+                execID =
+                        ZuulEntranceUtils.generateExecID(
+                                realId,
+                                Sender.getThisServiceInstance().getApplicationName(),
+                                new String[] {Sender.getThisInstance()});
+            }
+        }
+
+        Option<Job> job = null;
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        if (job != null && job.isDefined()) {
+            JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
+            if (jobProgressInfos == null) {
+                message =
+                        Message.error(
+                                "Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
+                message.setMethod("/api/entrance/" + id + "/progress");
+            } else {
+                List<Map<String, Object>> list = new ArrayList<>();
+                for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
+                            || jobProgressInfo.totalTasks() > 0) {
+                        setJobProgressInfos(list, jobProgressInfo);
+                    }
+                }
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/progress");
+
+                message.data("progress", Math.abs(job.get().getProgress()))
+                        .data("execID", execID)
+                        .data("progressInfo", list);
+            }
+        } else {
+            message =
+                    Message.error(
+                            "The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
+        }
+        return message;
+    }
+
+    @ApiOperation(value = "progressWithResource", notes = "get progress  and resource info", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
+    })
+    @Override
+    @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
+    public Message progressWithResource(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, "job progressWithResource");
+      Message message = null;
+        String realId;
+        String execID;
+        if (id.startsWith(ZuulEntranceUtils.EXEC_ID())) {
+            // execID
+            realId = ZuulEntranceUtils.parseExecID(id)[3];
+            execID = id;
+        } else {
+            // taskID
+            String jobReqId = req.getHeader(ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY().toString());
+            if (StringUtils.isEmpty(jobReqId)){
+                logger.warn("The job wait failover, return progress is 0 and resource is null");
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/progressWithResource");
+                message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null)
+                        .data("progress", 0)
+                        .data("execID", "")
+                        .data("taskID", id)
+                        .data("progressInfo", new ArrayList<>());
+                return message;
+            } else {
+                realId = jobReqId;
+                execID =
+                        ZuulEntranceUtils.generateExecID(
+                                realId,
+                                Sender.getThisServiceInstance().getApplicationName(),
+                                new String[] {Sender.getThisInstance()});
+            }
+        }
+        Option<Job> job = null;
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        if (job != null && job.isDefined()) {
+            JobProgressInfo[] jobProgressInfos = ((EntranceJob) job.get()).getProgressInfo();
+            if (jobProgressInfos == null) {
+                message =
+                        Message.error(
+                                "Can not get the corresponding progress information, it may be that the corresponding progress information has not been generated(不能获取相应的进度信息,可能是相应的进度信息还未生成)");
+                message.setMethod("/api/entrance/" + id + "/progressWithResource");
+            } else {
+                List<Map<String, Object>> list = new ArrayList<>();
+                for (JobProgressInfo jobProgressInfo : jobProgressInfos) {
+                    if ("true".equals(EntranceConfiguration.PROGRESS_PUSH().getValue())
+                            || jobProgressInfo.totalTasks() > 0) {
+                        setJobProgressInfos(list, jobProgressInfo);
+                    }
+                }
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/progressWithResource");
+
+                JobRequest jobRequest = ((EntranceJob) job.get()).getJobRequest();
+                Map<String, Object> metrics = jobRequest.getMetrics();
+                Map<String, Object> metricsVo = new HashMap<>();
+                if (metrics.containsKey(TaskConstant.ENTRANCEJOB_YARNRESOURCE)) {
+                    HashMap<String, ResourceWithStatus> resourceMap =
+                            (HashMap<String, ResourceWithStatus>)
+                                    metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
+                    ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
+                    if (null != resourceMap && !resourceMap.isEmpty()) {
+                        resourceMap.forEach(
+                                (applicationId, resource) -> {
+                                    resoureList.add(
+                                            new YarnResourceWithStatusVo(applicationId, resource));
+                                });
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
+                        Optional<Integer> cores =
+                                resourceMap.values().stream()
+                                        .map(resource -> resource.queueCores())
+                                        .reduce((x, y) -> x + y);
+                        Optional<Long> memory =
+                                resourceMap.values().stream()
+                                        .map(resource -> resource.queueMemory())
+                                        .reduce((x, y) -> x + y);
+                        float corePercent = 0.0f;
+                        float memoryPercent = 0.0f;
+                        if (cores.isPresent() && memory.isPresent()) {
+                            corePercent =
+                                    cores.get().floatValue()
+                                            / EntranceConfiguration.YARN_QUEUE_CORES_MAX()
+                                                    .getValue();
+                            memoryPercent =
+                                    memory.get().floatValue()
+                                            / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX()
+                                                            .getValue()
+                                                            .longValue()
+                                                    * 1024
+                                                    * 1024
+                                                    * 1024);
+                        }
+                        String coreRGB = RGBUtils.getRGB(corePercent);
+                        String memoryRGB = RGBUtils.getRGB(memoryPercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
+                        metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
+
+                        message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
+                    } else {
+                        message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+                    }
+                } else {
+                    message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+                }
+
+                message.data("progress", Math.abs(job.get().getProgress()))
+                        .data("execID", execID)
+                        .data("progressInfo", list);
+            }
+        } else {
+            message =
+                    Message.error(
+                            "The job corresponding to the ID is empty, and the corresponding task progress cannot be obtained.(ID 对应的job为空，不能获取相应的任务进度)");
+        }
+        return message;
+    }
 
   private void setJobProgressInfos(
       List<Map<String, Object>> list, JobProgressInfo jobProgressInfo) {
@@ -396,108 +481,146 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     list.add(map);
   }
 
-  @ApiOperation(value = "log", notes = "get task log", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
-  })
-  @Override
-  @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
-  public Message log(HttpServletRequest req, @PathVariable("id") String id) {
-    String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "log realId: " + realId);
-    Option<Job> job = Option.apply(null);
-    Message message = null;
-    try {
-      job = entranceServer.getJob(realId);
-    } catch (final Throwable t) {
-      message =
-          Message.error(
-              "The job you just executed has ended. This interface no longer provides a query. It is recommended that you download the log file for viewing.(您刚刚执行的job已经结束，本接口不再提供查询，建议您下载日志文件进行查看)");
-      message.setMethod("/api/entrance/" + id + "/log");
-      return message;
-    }
-    if (job.isDefined()) {
-      logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(), job.get().getId());
-      LogReader logReader =
-          entranceServer.getEntranceContext().getOrCreateLogManager().getLogReader(realId);
-      int fromLine = 0;
-      int size = 100;
-      boolean distinctLevel = true;
-      if (req != null) {
+    @ApiOperation(value = "log", notes = "get task log", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "execute id")
+    })
+    @Override
+    @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
+    public Message log(HttpServletRequest req, @PathVariable("id") String id) {
+        ModuleUserUtils.getOperationUser(req, "get job log");
+      Message message = null;
+        int fromLine = 0;
+        int size = 100;
+        boolean distinctLevel = true;
         String fromLineStr = req.getParameter("fromLine");
         String sizeStr = req.getParameter("size");
         if (StringUtils.isNotBlank(fromLineStr)) {
-          fromLine = Math.max(Integer.parseInt(fromLineStr), 0);
+            fromLine = Math.max(Integer.parseInt(fromLineStr), 0);
         }
         if (StringUtils.isNotBlank(sizeStr)) {
-          size = Integer.parseInt(sizeStr) >= 0 ? Integer.parseInt(sizeStr) : 10000;
+            size = Integer.parseInt(sizeStr) >= 0 ? Integer.parseInt(sizeStr) : 10000;
         }
         String distinctLevelStr = req.getParameter("distinctLevel");
         if ("false".equals(distinctLevelStr)) {
-          distinctLevel = false;
+            distinctLevel = false;
         }
-      }
 
-      Object retLog = null;
-      int retFromLine = 0;
-      try {
-        if (distinctLevel) {
-          String[] logs = new String[4];
-          retFromLine = logReader.readArray(logs, fromLine, size);
-          retLog = new ArrayList<String>(Arrays.asList(logs));
+        String realId;
+        String execID;
+        if (id.startsWith(ZuulEntranceUtils.EXEC_ID())) {
+            // execID
+            realId = ZuulEntranceUtils.parseExecID(id)[3];
+            execID = id;
         } else {
-          StringBuilder sb = new StringBuilder();
-          retFromLine = logReader.read(sb, fromLine, size);
-          retLog = sb.toString();
+            // taskID
+            String jobReqId = req.getHeader(ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY().toString());
+            if (StringUtils.isEmpty(jobReqId)){
+                logger.warn("The job wait failover, return customer log");
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/log");
+                String log = LogUtils.generateInfo("The job will failover soon, please try again later");
+                Object retLog;
+                if (distinctLevel) {
+                    String[] array = new String[4];
+                    array[2] = log;
+                    array[3] = log;
+                    retLog = new ArrayList<String>(Arrays.asList(array));
+                } else {
+                    retLog = log;
+                }
+                message.data("log", retLog).data("execID", "").data("taskID", id).data("fromLine", 0);
+                return message;
+            } else {
+                realId = jobReqId;
+                execID =
+                        ZuulEntranceUtils.generateExecID(
+                                realId,
+                                Sender.getThisServiceInstance().getApplicationName(),
+                                new String[] {Sender.getThisInstance()});
+            }
         }
-      } catch (IllegalStateException e) {
-        logger.debug(
-            "Failed to get log information for :{}(为 {} 获取日志失败)",
-            job.get().getId(),
-            job.get().getId(),
-            e);
-        message = Message.ok();
-        message.setMethod("/api/entrance/" + id + "/log");
-        message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
-      } catch (final IllegalArgumentException e) {
-        logger.debug(
-            "Failed to get log information for :{}(为 {} 获取日志失败)",
-            job.get().getId(),
-            job.get().getId(),
-            e);
-        message = Message.ok();
-        message.setMethod("/api/entrance/" + id + "/log");
-        message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
-        return message;
-      } catch (final Exception e1) {
-        logger.debug(
-            "Failed to get log information for :{}(为 {} 获取日志失败)",
-            job.get().getId(),
-            job.get().getId(),
-            e1);
-        message = Message.error("Failed to get log information(获取日志信息失败)");
-        message.setMethod("/api/entrance/" + id + "/log");
-        message.data("log", "").data("execID", id).data("fromLine", retFromLine + fromLine);
-        return message;
-      } finally {
-        if (null != logReader && job.get().isCompleted()) {
-          IOUtils.closeQuietly(logReader);
+
+        Option<Job> job = Option.apply(null);
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (final Throwable t) {
+            message =
+                    Message.error(
+                            "The job you just executed has ended. This interface no longer provides a query. It is recommended that you download the log file for viewing.(您刚刚执行的job已经结束，本接口不再提供查询，建议您下载日志文件进行查看)");
+            message.setMethod("/api/entrance/" + id + "/log");
+            return message;
         }
-      }
-      message = Message.ok();
-      message.setMethod("/api/entrance/" + id + "/log");
-      message.data("log", retLog).data("execID", id).data("fromLine", retFromLine + fromLine);
-      logger.debug("success to get log for {} (获取 {} 日志成功)", job.get().getId(), job.get().getId());
-    } else {
-      message =
-          Message.error(
-              "Can't find execID(不能找到execID): "
-                  + id
-                  + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
-      message.setMethod("/api/entrance/" + id + "/log");
+        if (job.isDefined()) {
+            logger.debug(
+                    "begin to get log for {}(开始获取 {} 的日志)", job.get().getId(), job.get().getId());
+            LogReader logReader =
+                    entranceServer
+                            .getEntranceContext()
+                            .getOrCreateLogManager()
+                            .getLogReader(realId);
+
+            Object retLog = null;
+            int retFromLine = 0;
+            try {
+                if (distinctLevel) {
+                    String[] logs = new String[4];
+                    retFromLine = logReader.readArray(logs, fromLine, size);
+                    retLog = new ArrayList<String>(Arrays.asList(logs));
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    retFromLine = logReader.read(sb, fromLine, size);
+                    retLog = sb.toString();
+                }
+            } catch (IllegalStateException e) {
+                logger.debug(
+                        "Failed to get log information for :{}(为 {} 获取日志失败)",
+                        job.get().getId(),
+                        job.get().getId(),
+                        e);
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/log");
+                message.data("log", "").data("execID", execID).data("fromLine", retFromLine + fromLine);
+            } catch (final IllegalArgumentException e) {
+                logger.debug(
+                        "Failed to get log information for :{}(为 {} 获取日志失败)",
+                        job.get().getId(),
+                        job.get().getId(),
+                        e);
+                message = Message.ok();
+                message.setMethod("/api/entrance/" + id + "/log");
+                message.data("log", "").data("execID", execID).data("fromLine", retFromLine + fromLine);
+                return message;
+            } catch (final Exception e1) {
+                logger.debug(
+                        "Failed to get log information for :{}(为 {} 获取日志失败)",
+                        job.get().getId(),
+                        job.get().getId(),
+                        e1);
+                message = Message.error("Failed to get log information(获取日志信息失败)");
+                message.setMethod("/api/entrance/" + id + "/log");
+                message.data("log", "").data("execID", execID).data("fromLine", retFromLine + fromLine);
+                return message;
+            } finally {
+                if (null != logReader && job.get().isCompleted()) {
+                    IOUtils.closeQuietly(logReader);
+                }
+            }
+            message = Message.ok();
+            message.setMethod("/api/entrance/" + id + "/log");
+            message.data("log", retLog).data("execID", execID).data("fromLine", retFromLine + fromLine);
+            logger.debug(
+                    "success to get log for {} (获取 {} 日志成功)", job.get().getId(), job.get().getId());
+        } else {
+            message =
+                    Message.error(
+                            "Can't find execID(不能找到execID): "
+                                    + id
+                                    + "Corresponding job, can not get the corresponding log(对应的job，不能获得对应的日志)");
+            message.setMethod("/api/entrance/" + id + "/log");
+        }
+        return message;
     }
-    return message;
-  }
 
   @ApiOperation(value = "killJobs", notes = "kill jobs", response = Message.class)
   @ApiImplicitParams({
@@ -595,71 +718,103 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     return Message.ok("success").data("messages", messages);
   }
 
-  @ApiOperation(value = "kill", notes = "kill", response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "excute id"),
-    @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = "task id")
-  })
-  @Override
-  @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
-  public Message kill(
-      HttpServletRequest req,
-      @PathVariable("id") String id,
-      @RequestParam(value = "taskID", required = false) Long taskID) {
-    String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "kill realId:" + realId);
-    Option<Job> job = Option.apply(null);
-    try {
-      job = entranceServer.getJob(realId);
-    } catch (Exception e) {
-      logger.warn("can not find a job in entranceServer, will force to kill it", e);
-      // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
-      JobHistoryHelper.forceKill(taskID);
-      Message message = Message.ok("Forced Kill task (强制杀死任务)");
-      message.setMethod("/api/entrance/" + id + "/kill");
-      message.setStatus(0);
-      return message;
-    }
-    Message message = null;
-    if (job.isEmpty()) {
-      logger.warn("can not find a job in entranceServer, will force to kill it");
-      // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
-      JobHistoryHelper.forceKill(taskID);
-      message = Message.ok("Forced Kill task (强制杀死任务)");
-      message.setMethod("/api/entrance/" + id + "/kill");
-      message.setStatus(0);
-      return message;
-    } else {
-      try {
-        logger.info("begin to kill job {} ", job.get().getId());
-        job.get().kill();
-        message = Message.ok("Successfully killed the job(成功kill了job)");
-        message.setMethod("/api/entrance/" + id + "/kill");
-        message.setStatus(0);
-        message.data("execID", id);
-        // ensure the job's state is cancelled in database
-        if (job.get() instanceof EntranceJob) {
-          EntranceJob entranceJob = (EntranceJob) job.get();
-          JobRequest jobReq = entranceJob.getJobRequest();
-          entranceJob.updateJobRequestStatus(SchedulerEventState.Cancelled().toString());
-          this.entranceServer
-              .getEntranceContext()
-              .getOrCreatePersistenceManager()
-              .createPersistenceEngine()
-              .updateIfNeeded(jobReq);
+    @ApiOperation(value = "kill", notes = "kill", response = Message.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "id", required = true, dataType = "String", value = "exec id"),
+        @ApiImplicitParam(name = "taskID", required = false, dataType = "String", value = "task id")
+    })
+    @Override
+    @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
+    public Message kill(
+            HttpServletRequest req,
+            @PathVariable("id") String id,
+            @RequestParam(value = "taskID", required = false) Long taskID) {
+        ModuleUserUtils.getOperationUser(req, "kill job");
+      Message message = null;
+        String realId;
+        String execID;
+        if (id.startsWith(ZuulEntranceUtils.EXEC_ID())) {
+            // execID
+            realId = ZuulEntranceUtils.parseExecID(id)[3];
+            execID = id;
+        } else {
+            // taskID
+            String jobReqId = req.getHeader(ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY().toString());
+            if (StringUtils.isEmpty(jobReqId)){
+                logger.warn("The job wait failover, but now force kill");
+                // TODO If failover occurs during force kill, the job status may change from Cancelled to Running
+                long taskId = Long.parseLong(id);
+                JobHistoryHelper.forceKill(taskId);
+                message = Message.ok("Forced Kill task (强制杀死任务)");
+                message.setMethod("/api/entrance/" + id + "/kill");
+                message.data("execID", "").data("taskID", id);
+                return message;
+            } else {
+                realId = jobReqId;
+                execID =
+                        ZuulEntranceUtils.generateExecID(
+                                realId,
+                                Sender.getThisServiceInstance().getApplicationName(),
+                                new String[] {Sender.getThisInstance()});
+            }
         }
-        logger.info("end to kill job {} ", job.get().getId());
-      } catch (Throwable t) {
-        logger.error("kill job {} failed ", job.get().getId(), t);
-        message =
-            Message.error(
-                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
-        message.setMethod("/api/entrance/" + id + "/kill");
-        message.setStatus(1);
-      }
+
+        Option<Job> job = Option.apply(null);
+        try {
+            job = entranceServer.getJob(realId);
+        } catch (Exception e) {
+            logger.warn("can not find a job in entranceServer, will force to kill it", e);
+            // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            if (taskID == null || taskID <= 0) {
+                message =
+                        Message.error(
+                                "Get job by ID error, kill failed.(获取job时发生异常，kill失败)");
+                return message;
+            }
+            JobHistoryHelper.forceKill(taskID);
+            message = Message.ok("Forced Kill task (强制杀死任务)");
+            message.setMethod("/api/entrance/" + id + "/kill");
+            message.setStatus(0);
+            return message;
+        }
+
+        if (job.isEmpty()) {
+            logger.warn("can not find a job in entranceServer, will force to kill it");
+            // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
+            JobHistoryHelper.forceKill(taskID);
+            message = Message.ok("Forced Kill task (强制杀死任务)");
+            message.setMethod("/api/entrance/" + id + "/kill");
+            message.setStatus(0);
+            return message;
+        } else {
+            try {
+                logger.info("begin to kill job {} ", job.get().getId());
+                job.get().kill();
+                message = Message.ok("Successfully killed the job(成功kill了job)");
+                message.setMethod("/api/entrance/" + id + "/kill");
+                message.data("execID", execID);
+                // ensure the job's state is cancelled in database
+                if (job.get() instanceof EntranceJob) {
+                    EntranceJob entranceJob = (EntranceJob) job.get();
+                    JobRequest jobReq = entranceJob.getJobRequest();
+                    entranceJob.updateJobRequestStatus(SchedulerEventState.Cancelled().toString());
+                    this.entranceServer
+                            .getEntranceContext()
+                            .getOrCreatePersistenceManager()
+                            .createPersistenceEngine()
+                            .updateIfNeeded(jobReq);
+                }
+                logger.info("end to kill job {} ", job.get().getId());
+            } catch (Throwable t) {
+                logger.error("kill job {} failed ", job.get().getId(), t);
+                message =
+                        Message.error(
+                                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
+                message.setMethod("/api/entrance/" + id + "/kill");
+            }
+        }
+        return message;
     }
-    return message;
-  }
 
   @ApiOperation(value = "pause ", notes = "puase a task job", response = Message.class)
   @ApiImplicitParams({

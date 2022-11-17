@@ -154,7 +154,7 @@ public class BMLFsRestfulApi {
     @RequestMapping(path = "/saveScriptToBML", method = RequestMethod.POST)
     public Message saveScriptToBML(HttpServletRequest req, @RequestBody Map<String, Object> json)
             throws IOException {
-
+        ModuleUserUtils.getOperationUser(req, "saveScriptToBML");
         String scriptContent = (String) json.get("scriptContent");
         Map<String, Object> params = (Map<String, Object>) json.get("metadata");
         String fileName = (String) json.get("fileName");

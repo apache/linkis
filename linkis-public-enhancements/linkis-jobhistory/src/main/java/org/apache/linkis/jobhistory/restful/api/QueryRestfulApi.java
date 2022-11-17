@@ -76,6 +76,7 @@ public class QueryRestfulApi {
     })
     @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
     public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
+        ModuleUserUtils.getOperationUser(req,"getTaskByID,jobId:"+jobId);
         String username = SecurityFilter.getLoginUsername(req);
         ModuleUserUtils.getOperationUser(req, "getTaskByID，jobId："+jobId);
         if (QueryUtils.isJobHistoryAdmin(username)

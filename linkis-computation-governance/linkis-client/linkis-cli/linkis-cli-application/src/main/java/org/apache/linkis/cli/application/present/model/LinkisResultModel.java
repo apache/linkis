@@ -63,4 +63,8 @@ public class LinkisResultModel implements Model {
   public String getUser() {
     return data.getUser();
   }
+
+  public boolean hasResult() {
+    return data.hasResult();
+  }
 }

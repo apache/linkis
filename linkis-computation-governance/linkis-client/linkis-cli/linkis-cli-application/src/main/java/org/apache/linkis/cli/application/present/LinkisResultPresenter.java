@@ -65,9 +65,14 @@ public class LinkisResultPresenter implements Presenter {
           .info("JobStatus is not \'success\'. Will not retrieve result-set.");
       return;
     }
-    LogUtils.getInformationLogger()
-        .info(
-            "Retrieving result-set, may take time if result-set is large, please do not exit program.");
+    String msg = "";
+    if (resultModel.hasResult()) {
+      msg =
+          "Retrieving result-set, may take time if result-set is large, please do not exit program.";
+    } else {
+      msg = "Your job has no result.";
+    }
+    LogUtils.getInformationLogger().info(msg);
 
     final DisplayOperator displayOperator =
         DisplayOperFactory.getDisplayOper(
@@ -96,7 +101,7 @@ public class LinkisResultPresenter implements Presenter {
       StringBuilder resultSb,
       DisplayOperator displayOperator) {
     List<LinkisResultSet> linkisResultSets = resultModel.consumeResultContent();
-    if (linkisResultSets != null) {
+    if (linkisResultSets != null && !linkisResultSets.isEmpty()) {
       for (LinkisResultSet c : linkisResultSets) {
         int idxResultset = c.getResultsetIdx();
         /**

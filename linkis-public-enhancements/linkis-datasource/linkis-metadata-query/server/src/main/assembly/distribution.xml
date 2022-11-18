@@ -54,7 +54,7 @@
         <fileSet>
             <directory>${basedir}/../service/hive/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>service/hive</outputDirectory>
+            <outputDirectory>lib/service/hive</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -65,7 +65,7 @@
         <fileSet>
             <directory>${basedir}/../service/kafka/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>service/kafka</outputDirectory>
+            <outputDirectory>lib/service/kafka</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -76,7 +76,7 @@
         <fileSet>
             <directory>${basedir}/../service/jdbc/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>service/jdbc</outputDirectory>
+            <outputDirectory>lib/service/jdbc</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>
@@ -87,7 +87,7 @@
         <fileSet>
             <directory>${basedir}/../service/hdfs/target/out/lib</directory>
             <fileMode>0755</fileMode>
-            <outputDirectory>service/hdfs</outputDirectory>
+            <outputDirectory>lib/service/hdfs</outputDirectory>
             <includes>
                 <include>*.jar</include>
             </includes>

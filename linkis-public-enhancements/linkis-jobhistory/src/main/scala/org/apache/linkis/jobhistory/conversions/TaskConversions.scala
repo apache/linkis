@@ -193,6 +193,7 @@ object TaskConversions extends Logging {
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
+    jobHistory.setObserveInfo(jobReq.getObserveInfo)
     jobHistory
   }
 

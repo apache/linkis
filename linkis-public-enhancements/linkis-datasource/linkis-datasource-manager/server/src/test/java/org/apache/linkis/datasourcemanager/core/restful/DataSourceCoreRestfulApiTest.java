@@ -30,7 +30,8 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.conf.ServerConfiguration;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -52,6 +53,7 @@ import java.util.*;
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -62,7 +64,8 @@ import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isA;
 
 @ExtendWith({SpringExtension.class})
 @AutoConfigureMockMvc
@@ -83,17 +86,22 @@ class DataSourceCoreRestfulApiTest {
 
   @MockBean MetadataOperateService metadataOperateService;
 
-  private static MockedStatic<SecurityFilter> securityFilter;
+  @MockBean private ServerConfiguration serverConfiguration;
+
+  private static MockedStatic<ModuleUserUtils> moduleUserUtils;
 
   @BeforeAll
   private static void init() {
-    securityFilter = Mockito.mockStatic(SecurityFilter.class);
+    moduleUserUtils = Mockito.mockStatic(ModuleUserUtils.class);
   }
 
   @AfterAll
   private static void close() {
-    securityFilter.close();
+    moduleUserUtils.close();
   }
+
+  @BeforeEach
+  public void setUp() {}
 
   @Test
   void getAllDataSourceTypes() throws Exception {
@@ -152,8 +160,10 @@ class DataSourceCoreRestfulApiTest {
     dataSource.setDataSourceName("ds-hive");
     StringWriter dsJsonWriter = new StringWriter();
     JsonUtils.jackson().writeValue(dsJsonWriter, dataSource);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser");
     Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, dsJsonWriter.toString()));
     assertTrue(
@@ -194,8 +204,10 @@ class DataSourceCoreRestfulApiTest {
     StringWriter dsJsonWriter = new StringWriter();
     JsonUtils.jackson().writeValue(dsJsonWriter, params);
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser");
     Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
     assertTrue(
@@ -240,8 +252,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
@@ -269,8 +283,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
@@ -300,10 +316,13 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
+
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
     assertTrue(
         MessageStatus.ERROR() == res.getStatus()
@@ -329,8 +348,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
@@ -360,8 +381,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
@@ -396,8 +419,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
@@ -433,8 +458,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
@@ -470,8 +497,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
@@ -499,8 +528,10 @@ class DataSourceCoreRestfulApiTest {
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("No Exists The DataSource"));
 
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser")
         .thenReturn("hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
@@ -525,9 +556,11 @@ class DataSourceCoreRestfulApiTest {
     DataSourceType dataSourceType = new DataSourceType();
     dataSourceType.setName("hive");
     dataSource.setDataSourceType(dataSourceType);
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
-        .thenReturn("testUser", "testUser", "testUser", "hadoop");
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
+        .thenReturn("testUser", "testUser", "hadoop");
     Mockito.when(dataSourceInfoService.getDataSourceInfoForConnect(dataSourceId, version))
         .thenReturn(null)
         .thenReturn(dataSource);
@@ -556,8 +589,10 @@ class DataSourceCoreRestfulApiTest {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("currentPage", "10");
     params.add("pageSize", "20");
-    securityFilter
-        .when(() -> SecurityFilter.getLoginUsername(isA(HttpServletRequest.class)))
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
         .thenReturn("testUser");
 
     DataSourceVo dataSourceVo = new DataSourceVo();

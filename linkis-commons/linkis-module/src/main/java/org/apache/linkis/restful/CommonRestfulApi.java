@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,12 +35,12 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
-    @Autowired private DiscoveryClient client;
+  @Autowired private DiscoveryClient client;
 
-    @ApiOperation(value = "Offline", notes = "offline this service", response = Message.class)
-    @RequestMapping(path = "/offline", method = RequestMethod.GET)
-    public Message offline(HttpServletRequest req) {
-        DiscoveryManager.getInstance().shutdownComponent();
-        return Message.ok().data("msg", "Offline successfully.");
-    }
+  @ApiOperation(value = "Offline", notes = "offline this service", response = Message.class)
+  @RequestMapping(path = "/offline", method = RequestMethod.GET)
+  public Message offline(HttpServletRequest req) {
+    DiscoveryManager.getInstance().shutdownComponent();
+    return Message.ok().data("msg", "Offline successfully.");
+  }
 }

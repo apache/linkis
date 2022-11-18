@@ -20,6 +20,7 @@ import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProvide
 import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
 import org.apache.linkis.server.Message;
 
+import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "RmExternalResourceProviderRestfulApi")
 @RestController
@@ -46,9 +49,10 @@ public class RmExternalResourceProviderRestfulApi {
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
             @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
     })
-    @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
+    @ApiOperation(value = "list", notes = "Query list data of Resource manager External Resource Provider", httpMethod = "GET")
     @RequestMapping(path = "", method = RequestMethod.GET)
-    public Message list(String searchName,Integer currentPage,Integer pageSize) {
+    public Message list(HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
+        ModuleUserUtils.getOperationUser(request, "Query list data of Resource manager External Resource Provider,search name:"+searchName);
         PageInfo pageList = rmExternalResourceProviderService.getListByPage(searchName,currentPage,pageSize);
         return Message.ok("").data("list", pageList);
     }
@@ -56,9 +60,10 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
+    @ApiOperation(value = "get", notes = "Get a Resource manager External Resource Provider Record by id", httpMethod = "GET")
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable("id") Long id) {
+    public Message get(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "Get a Resource manager External Resource Provider Record,id:"+id.toString());
         RmExternalResourceProviderEntity rmExternalResourceProvider = rmExternalResourceProviderService.getById(id);
         return Message.ok("").data("item", rmExternalResourceProvider);
     }
@@ -66,9 +71,10 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
     })
-    @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
+    @ApiOperation(value = "add", notes = "Add a Resource manager External Resource Provider Record", httpMethod = "POST")
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+    public Message add(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+        ModuleUserUtils.getOperationUser(request, "Add a Resource manager External Resource Provider Record,"+rmExternalResourceProvider.toString());
         boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
         return Message.ok("").data("result", result);
     }
@@ -76,9 +82,10 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
     })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
+    @ApiOperation(value = "remove", notes = "Remove a Resource manager External Resource Provider Record by id", httpMethod = "DELETE")
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public Message remove(@PathVariable("id") Long id) {
+    public Message remove(HttpServletRequest request,@PathVariable("id") Long id) {
+        ModuleUserUtils.getOperationUser(request, "Remove a Resource manager External Resource Provider Record,id:"+id.toString());
         boolean result = rmExternalResourceProviderService.removeById(id);
         return Message.ok("").data("result", result);
     }
@@ -86,9 +93,10 @@ public class RmExternalResourceProviderRestfulApi {
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "body", dataType = "RmExternalResourceProviderEntity", name = "rmExternalResourceProvider", value = "")
     })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
+    @ApiOperation(value = "update", notes = "Update a Resource manager External Resource Provider Record", httpMethod = "PUT")
     @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+    public Message update(HttpServletRequest request,@RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
+        ModuleUserUtils.getOperationUser(request, "Update a Resource manager External Resource Provider Record,id:"+rmExternalResourceProvider.getId().toString());
         boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
         return Message.ok("").data("result", result);
     }

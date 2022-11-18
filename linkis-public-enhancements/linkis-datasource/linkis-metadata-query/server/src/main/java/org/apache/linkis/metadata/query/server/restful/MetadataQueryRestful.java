@@ -25,7 +25,7 @@ import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeExcepti
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.metadata.query.server.utils.MetadataUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,11 +65,12 @@ public class MetadataQueryRestful {
             if (StringUtils.isBlank(system)){
                 return Message.error("'system' is missing[缺少系统名]");
             }
+            String userName=ModuleUserUtils.getOperationUser(request, "getConnectionInfo, dataSourceName:" + dataSourceName);
             Map<String, String> queryParams = request.getParameterMap().entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey,
                             entry -> StringUtils.join(entry.getValue(), ",")));
             Map<String, String> info = metadataQueryService.getConnectionInfoByDsName(dataSourceName, queryParams,
-                    system, SecurityFilter.getLoginUsername(request));
+                    system, userName);
             return Message.ok().data("info", info);
         } catch (Exception e){
             return errorToResponseMessage(
@@ -100,9 +101,10 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+            String userName=ModuleUserUtils.getOperationUser(request, "getDatabases, dataSourceName:" + dataSourceName);
             List<String> databases =
                     metadataQueryService.getDatabasesByDsName(
-                            dataSourceName, system, SecurityFilter.getLoginUsername(request));
+                            dataSourceName, system, userName);
             return Message.ok().data("dbs", databases);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -138,12 +140,13 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名称错误]");
             }
+            String userName=ModuleUserUtils.getOperationUser(request, "getTables, dataSourceName:" + dataSourceName);
             List<String> tables =
                     metadataQueryService.getTablesByDsName(
                             dataSourceName,
                             database,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("tables", tables);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -187,13 +190,14 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+            String userName=ModuleUserUtils.getOperationUser(request, "getTableProps, dataSourceName:" + dataSourceName);
             Map<String, String> tableProps =
                     metadataQueryService.getTablePropsByDsName(
                             dataSourceName,
                             database,
                             table,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("props", tableProps);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -241,6 +245,8 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+
+            String userName=ModuleUserUtils.getOperationUser(request, "getPartitions, dataSourceName:" + dataSourceName);
             MetaPartitionInfo partitionInfo =
                     metadataQueryService.getPartitionsByDsName(
                             dataSourceName,
@@ -248,7 +254,7 @@ public class MetadataQueryRestful {
                             table,
                             system,
                             traverse,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("partitions", partitionInfo);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -299,6 +305,7 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
                 return Message.error("'partition' is invalid[partition错误]");
             }
+            String userName = ModuleUserUtils.getOperationUser(request, "getPartitionProps, dataSourceName:" + dataSourceName);
             Map<String, String> partitionProps =
                     metadataQueryService.getPartitionPropsByDsName(
                             dataSourceName,
@@ -306,7 +313,7 @@ public class MetadataQueryRestful {
                             table,
                             partition,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("props", partitionProps);
         } catch (Exception e) {
             return errorToResponseMessage(
@@ -354,13 +361,16 @@ public class MetadataQueryRestful {
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
                 return Message.error("'dataSourceId' is invalid[数据源错误]");
             }
+
+            String userName=ModuleUserUtils.getOperationUser(request, "getColumns, dataSourceName:" + dataSourceName);
+
             List<MetaColumnInfo> columns =
                     metadataQueryService.getColumnsByDsName(
                             dataSourceName,
                             database,
                             table,
                             system,
-                            SecurityFilter.getLoginUsername(request));
+                            userName);
             return Message.ok().data("columns", columns);
         } catch (Exception e) {
             return errorToResponseMessage(

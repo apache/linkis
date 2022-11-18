@@ -31,7 +31,6 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateExcept
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,7 @@ public class DataSourceOperateRestfulApi {
         ModuleUserUtils.getOperationUser(request, "connect");
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String operator = SecurityFilter.getLoginUsername(request);
+                    String operator = ModuleUserUtils.getOperationUser(request, "do connect");
                     // Bean validation
                     Set<ConstraintViolation<DataSource>> result =
                             beanValidator.validate(dataSource, Default.class);

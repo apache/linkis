@@ -135,95 +135,92 @@ abstract class EntranceJob extends Job {
       fromState: SchedulerEventState,
       toState: SchedulerEventState
   ): Unit = {
-    super.afterStateChanged(fromState, toState)
-    toState match {
-      case Scheduled =>
-        if (getJobRequest.getMetrics == null) {
+    try {
+      toState match {
+        case Scheduled =>
+          if (getJobRequest.getMetrics == null) {
+            getLogListener.foreach(
+              _.onLogUpdate(this, LogUtils.generateWarn("Job Metrics has not been initialized."))
+            )
+          } else {
+            if (getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)) {
+              getLogListener.foreach(
+                _.onLogUpdate(
+                  this,
+                  LogUtils.generateWarn("Your job has already been scheduled before.")
+                )
+              )
+            } else {
+              getJobRequest.getMetrics.put(
+                TaskConstant.ENTRANCEJOB_SCHEDULE_TIME,
+                new Date(System.currentTimeMillis)
+              )
+            }
+          }
           getLogListener.foreach(
-            _.onLogUpdate(this, LogUtils.generateWarn("Job Metrics has not been initialized."))
+            _.onLogUpdate(
+              this,
+              LogUtils.generateInfo("Your job is Scheduled. Please wait it to run.")
+            )
           )
-        } else {
-          if (getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)) {
+        case WaitForRetry =>
+          getLogListener.foreach(
+            _.onLogUpdate(
+              this,
+              LogUtils.generateInfo("Your job is turn to retry. Please wait it to schedule.")
+            )
+          )
+        case Running =>
+          getLogListener.foreach(
+            _.onLogUpdate(
+              this,
+              LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")
+            )
+          )
+        case _ if SchedulerEventState.isCompleted(toState) =>
+          getJobRequest.getMetrics.put(
+            TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
+            new Date(System.currentTimeMillis())
+          )
+          if (getJobInfo != null) {
+            getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
+          }
+          if (isSucceed) {
             getLogListener.foreach(
               _.onLogUpdate(
                 this,
-                LogUtils.generateWarn("Your job has already been scheduled before.")
+                LogUtils.generateInfo("Congratulations. Your job completed with status Success.")
               )
             )
           } else {
-            getJobRequest.getMetrics.put(
-              TaskConstant.ENTRANCEJOB_SCHEDULE_TIME,
-              new Date(System.currentTimeMillis)
-            )
-          }
-        }
-        getLogListener.foreach(
-          _.onLogUpdate(
-            this,
-            LogUtils.generateInfo("Your job is Scheduled. Please wait it to run.")
-          )
-        )
-      case WaitForRetry =>
-        getLogListener.foreach(
-          _.onLogUpdate(
-            this,
-            LogUtils.generateInfo("Your job is turn to retry. Please wait it to schedule.")
-          )
-        )
-      case Running =>
-        getLogListener.foreach(
-          _.onLogUpdate(
-            this,
-            LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")
-          )
-        )
-
-      case _ if SchedulerEventState.isCompleted(toState) =>
-        endTime = System.currentTimeMillis()
-
-        getJobRequest.getMetrics.put(
-          TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
-          new Date(System.currentTimeMillis())
-        )
-        if (getJobInfo != null) {
-          getLogListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo(getJobInfo.getMetric)))
-        }
-        if (isSucceed) {
-          getLogListener.foreach(
-            _.onLogUpdate(
-              this,
-              LogUtils.generateInfo("Congratulations. Your job completed with status Success.")
-            )
-          )
-        } else {
-          getLogListener.foreach(
-            _.onLogUpdate(
-              this,
-              LogUtils.generateInfo(
-                s"Sorry. Your job completed with a status $toState. You can view logs for the reason."
+            getLogListener.foreach(
+              _.onLogUpdate(
+                this,
+                LogUtils.generateInfo(
+                  s"Sorry. Your job completed with a status $toState. You can view logs for the reason."
+                )
               )
             )
+          }
+          this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS)
+          entranceListenerBus.foreach(
+            _.post(
+              EntranceProgressEvent(this, EntranceJob.JOB_COMPLETED_PROGRESS, this.getProgressInfo)
+            )
           )
-        }
-        this.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS)
-        entranceListenerBus.foreach(
-          _.post(
-            EntranceProgressEvent(this, EntranceJob.JOB_COMPLETED_PROGRESS, this.getProgressInfo)
+          this.getProgressListener.foreach(listener =>
+            listener.onProgressUpdate(
+              this,
+              EntranceJob.JOB_COMPLETED_PROGRESS,
+              Array[JobProgressInfo]()
+            )
           )
-        )
-        this.getProgressListener.foreach(listener =>
-          listener.onProgressUpdate(
-            this,
-            EntranceJob.JOB_COMPLETED_PROGRESS,
-            Array[JobProgressInfo]()
-          )
-        )
-        getEntranceContext
-          .getOrCreatePersistenceManager()
-          .createPersistenceEngine()
-          .updateIfNeeded(getJobRequest)
-      case _ =>
+        case _ =>
+      }
+    } catch {
+      case e: Exception => logger.error("Failed to match state", e)
     }
+    super.afterStateChanged(fromState, toState)
     entranceListenerBus.foreach(_.post(EntranceJobEvent(this.getId())))
   }
 

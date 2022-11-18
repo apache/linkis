@@ -31,7 +31,12 @@ object GatewayConfiguration {
 
   val TOKEN_KEY = "Token-Code"
   val TOKEN_USER_KEY = "Token-User"
+  val TOKEN_ALIVE_KEY = "Token-Alive"
+  val TOKEN_ALIVE_TRUE = "true"
   val ENABLE_TOKEN_AUTHENTICATION = CommonVars("wds.linkis.gateway.conf.enable.token.auth", false)
+
+  val ENABLE_TOEKN_AUTHENTICATION_ALIVE =
+    CommonVars("wds.linkis.gateway.auth.token.alive.enable", false)
 
   val TOKEN_AUTHENTICATION_SCAN_INTERVAL =
     CommonVars("wds.linkis.gateway.conf.token.auth.scan.interval", 1000 * 60 * 10)

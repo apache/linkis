@@ -262,6 +262,19 @@
             </includes>
         </fileSet>
 
+        <fileSet>
+            <directory>
+                ../linkis-public-enhancements/linkis-datasource/linkis-metadata-query/server/target/out/service/
+            </directory>
+            <outputDirectory>
+                linkis-package/lib/linkis-public-enhancements/linkis-ps-publicservice/metadataquery-service
+            </outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+
+
     </fileSets>
 
     <dependencySets>

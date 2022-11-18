@@ -66,6 +66,7 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends 
   }
 
   private val addCookies = new JMap[String, Array[Cookie]]
+  private val addHeaders = new JMap[String, Array[String]]
 
   private var requestBody: String = _
   private var requestURI: String = _
@@ -84,7 +85,7 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends 
   override def getHeaders: JMap[String, Array[String]] = headers
 
   override def addHeader(headerName: String, headers: Array[String]): Unit =
-    request.getHeaders.addAll(headerName, headers.toList.asJava)
+    addHeaders.put(headerName, headers)
 
   override def addCookie(cookieName: String, cookies: Array[Cookie]): Unit = {
     this.cookies.put(cookieName, cookies)
@@ -92,6 +93,8 @@ class SpringCloudGatewayHttpRequest(request: AbstractServerHttpRequest) extends 
   }
 
   def getAddCookies: JMap[String, Array[Cookie]] = addCookies
+
+  def getAddHeaders: JMap[String, Array[String]] = addHeaders
 
   override def getQueryParams: JMap[String, Array[String]] = queryParams
 

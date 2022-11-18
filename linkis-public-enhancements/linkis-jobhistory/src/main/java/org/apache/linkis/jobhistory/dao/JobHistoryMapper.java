@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,7 +47,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instances") String instances);
 
   List<JobHistory> searchWithUserCreator(
       @Param("id") Long id,
@@ -58,7 +59,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instances") String instances);
 
   List<JobHistory> searchWithCreatorOnly(
       @Param("id") Long id,
@@ -69,7 +71,8 @@ public interface JobHistoryMapper {
       @Param("startDate") Date startDate,
       @Param("endDate") Date endDate,
       @Param("engineType") String engineType,
-      @Param("startId") Long startId);
+      @Param("startId") Long startId,
+      @Param("instances") String instances);
 
   Integer countUndoneTaskNoCreator(
       @Param("umUser") String username,

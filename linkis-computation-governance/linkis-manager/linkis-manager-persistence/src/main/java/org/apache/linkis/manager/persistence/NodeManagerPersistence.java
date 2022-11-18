@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -114,4 +114,24 @@ public interface NodeManagerPersistence {
    */
   List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
       throws PersistenceErrorException;
+
+  /**
+   * Get the information of the Engine and EM information through the ServiceInstance of the Engine
+   * (batch query)
+   *
+   * @param serviceInstances
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstances)
+      throws PersistenceErrorException;
+
+  /**
+   * Get the node list according to ownerList
+   *
+   * @param owner
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<Node> getNodesByOwnerList(List<String> owner);
 }

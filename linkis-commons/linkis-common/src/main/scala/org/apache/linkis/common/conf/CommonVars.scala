@@ -24,14 +24,29 @@ import scala.collection.JavaConverters._
 case class CommonVars[T](key: String, defaultValue: T, value: T, description: String = null) {
   val getValue: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
 
+  def getHotValue(): T = BDPConfiguration.getOption(this, true).getOrElse(defaultValue)
+
   def getValue(properties: java.util.Map[String, String]): T = {
     if (properties == null || !properties.containsKey(key) || properties.get(key) == null) {
       getValue
     } else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
   }
 
-  def getValue(properties: Map[String, String]): T = getValue(properties.asJava)
-  def acquireNew: T = BDPConfiguration.getOption(this).getOrElse(defaultValue)
+  def getValue(properties: Map[String, String], hotload: Boolean = false): T = getValue(
+    properties.asJava
+  )
+
+  def getValue(properties: java.util.Map[String, String], hotload: Boolean): T = {
+    if (properties == null || !properties.containsKey(key) || properties.get(key) == null) {
+      if (hotload) {
+        getHotValue()
+      } else {
+        getValue
+      }
+    } else BDPConfiguration.formatValue(defaultValue, Option(properties.get(key))).get
+  }
+
+  def acquireNew: T = getHotValue()
 }
 
 object CommonVars {
@@ -42,8 +57,10 @@ object CommonVars {
   implicit def apply[T](key: String, defaultValue: T): CommonVars[T] =
     new CommonVars(key, defaultValue, null.asInstanceOf[T], null)
 
-  implicit def apply[T](key: String): CommonVars[T] = apply(key, null.asInstanceOf[T])
+  implicit def apply[T](key: String): CommonVars[T] =
+    apply(key, null.asInstanceOf[T], null.asInstanceOf[T], null)
 
   def properties: Properties = BDPConfiguration.properties
 
+  def hotProperties: Properties = BDPConfiguration.hotProperties
 }

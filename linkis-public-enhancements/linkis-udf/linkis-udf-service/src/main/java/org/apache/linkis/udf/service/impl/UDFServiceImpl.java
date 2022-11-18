@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -804,6 +804,14 @@ public class UDFServiceImpl implements UDFService {
   @Override
   public List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category) {
     return udfDao.getUDFInfoByTreeId(treeId, userName, categoryToCodes.get(category));
+  }
+
+  @Override
+  public List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) {
+    if (ids == null || ids.length == 0) {
+      return new ArrayList<>(0);
+    }
+    return udfDao.getUDFInfoByIds(ids, categoryToCodes.get(category));
   }
 
   /**

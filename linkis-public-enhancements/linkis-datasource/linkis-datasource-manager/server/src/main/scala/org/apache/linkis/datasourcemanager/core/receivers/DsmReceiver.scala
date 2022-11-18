@@ -30,6 +30,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.text.MessageFormat
 import java.util
 
 import org.slf4j.LoggerFactory
@@ -59,19 +60,31 @@ class DsmReceiver {
             dataSourceInfoService.getDataSourceInfoForConnect(dsInfoQueryRequest.id.toLong)
         }
         if (null != dataSource) {
+          var publishedVersionId = dataSource.getPublishedVersionId
+          if (publishedVersionId == null) {
+            logger.warn("Datasource name:{} is not published.", dataSource.getDataSourceName)
+            return DsInfoResponse(
+              status = false,
+              errorMsg = MessageFormat.format(
+                "Datasource name:{0} is not published.",
+                dataSource.getDataSourceName
+              )
+            )
+          }
+
           RestfulApiHelper.decryptPasswordKey(
             dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId),
             dataSource.getConnectParams
           )
           DsInfoResponse(
             status = true,
-            dataSource.getDataSourceType.getName,
-            dataSource.getConnectParams,
-            dataSource.getCreateUser
+            dsType = dataSource.getDataSourceType.getName,
+            params = dataSource.getConnectParams,
+            creator = dataSource.getCreateUser
           )
         } else {
           logger.warn("Can not get any dataSource")
-          DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(status = true, errorMsg = "Can not get any dataSource")
         }
       } {
         case e: Exception =>
@@ -79,16 +92,24 @@ class DsmReceiver {
             s"Fail to get data source information, id:${dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}",
             e
           )
-          DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(
+            status = false,
+            errorMsg =
+              s"Fail to get data source information, id:${dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}"
+          )
         case t: Throwable =>
           logger.error(
             s"Fail to get data source information, id:{dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}",
             t
           )
-          DsInfoResponse(status = false, "", new util.HashMap[String, Object](), "")
+          DsInfoResponse(
+            status = false,
+            errorMsg =
+              s"Fail to get data source information, id:{dsInfoQueryRequest.id} system:${dsInfoQueryRequest.system}"
+          )
       }
     } else {
-      DsInfoResponse(status = true, "", new util.HashMap[String, Object](), "")
+      DsInfoResponse(status = true)
     }
   }
 

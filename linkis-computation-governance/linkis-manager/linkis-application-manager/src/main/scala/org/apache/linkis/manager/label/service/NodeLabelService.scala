@@ -58,7 +58,7 @@ trait NodeLabelService {
    */
   def removeLabelsFromNode(instance: ServiceInstance, labels: util.List[Label[_]]): Unit
 
-  def removeLabelsFromNode(instance: ServiceInstance): Unit
+  def removeLabelsFromNode(instance: ServiceInstance, isEngine: Boolean): Unit
 
   /**
    * Get node instances by labels
@@ -85,5 +85,9 @@ trait NodeLabelService {
   def getScoredNodeMapsByLabels(
       labels: util.List[Label[_]]
   ): util.Map[ScoreServiceInstance, util.List[Label[_]]]
+
+  def getNodeLabelsByInstanceList(
+      instanceList: util.List[ServiceInstance]
+  ): util.HashMap[String, util.List[Label[_]]]
 
 }

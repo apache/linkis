@@ -123,6 +123,7 @@ public class QueryRestfulApi {
         @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
         @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
         @ApiImplicitParam(name = "isAdminView", required = false, dataType = "Boolean", value = "is admin view"),
+        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
     })
     @RequestMapping(path = "/list", method = RequestMethod.GET)
     public Message list(
@@ -137,8 +138,8 @@ public class QueryRestfulApi {
                     String executeApplicationName,
             @RequestParam(value = "creator", required = false) String creator,
             @RequestParam(value = "proxyUser", required = false) String proxyUser,
-            @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
-            throws IOException, QueryException {
+            @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
+            @RequestParam(value = "instance", required = false) String instance) throws IOException, QueryException {
         String username = SecurityFilter.getLoginUsername(req);
         if (StringUtils.isEmpty(status)) {
             status = null;
@@ -172,10 +173,10 @@ public class QueryRestfulApi {
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
         if (sDate.getTime() == eDate.getTime()) {
-            Calendar instance = Calendar.getInstance();
-            instance.setTimeInMillis(endDate);
-            instance.add(Calendar.DAY_OF_MONTH, 1);
-            eDate = new Date(instance.getTime().getTime()); // todo check
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(endDate);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            eDate = new Date(calendar.getTime().getTime()); // todo check
         }
         if (isAdminView == null) {
             isAdminView = false;
@@ -187,6 +188,13 @@ public class QueryRestfulApi {
                 } else {
                     username = null;
                 }
+            }
+        }
+        if (StringUtils.isEmpty(instance)) {
+            instance = null;
+        }else{
+            if (!QueryUtils.checkNameValid(instance)) {
+                return Message.error("Invalid instances : " + instance);
             }
         }
         List<JobHistory> queryTasks = null;
@@ -201,7 +209,8 @@ public class QueryRestfulApi {
                             sDate,
                             eDate,
                             executeApplicationName,
-                            null);
+                            null,
+                            instance);
         } finally {
             PageHelper.clearPage();
         }
@@ -306,7 +315,7 @@ public class QueryRestfulApi {
                             sDate,
                             eDate,
                             engineType,
-                            queryCacheManager.getUndoneTaskMinId());
+                            queryCacheManager.getUndoneTaskMinId(), null);
         } finally {
             PageHelper.clearPage();
         }

@@ -254,19 +254,29 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(
-      jobId: java.lang.Long,
+      jobId: lang.Long,
       username: String,
       status: String,
       creator: String,
       sDate: Date,
       eDate: Date,
       engineType: String,
-      startJobId: java.lang.Long
+      startJobId: lang.Long,
+      instance: String
   ): util.List[JobHistory] = {
 
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
-      jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType, startJobId)
+      jobHistoryMapper.search(
+        jobId,
+        username,
+        split,
+        sDate,
+        eDate,
+        engineType,
+        startJobId,
+        instance
+      )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
       jobHistoryMapper.searchWithCreatorOnly(
@@ -278,7 +288,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         sDate,
         eDate,
         engineType,
-        startJobId
+        startJobId,
+        instance
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -298,7 +309,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         sDate,
         eDate,
         engineType,
-        startJobId
+        startJobId,
+        instance
       )
     }
     result
@@ -320,7 +332,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null), {
+      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -71,6 +71,8 @@ public class LinkisJobDataImpl
   private TriggerEventListener logFinListener = new TriggerEventListener();
   private TriggerEvent resultFinEvent = new TriggerEvent();
   private TriggerEventListener resultFinListener = new TriggerEventListener();
+
+  private boolean hasResult = true;
 
   {
     logFinevent.register(logFinListener);
@@ -285,6 +287,16 @@ public class LinkisJobDataImpl
   @Override
   public boolean resultFinReceived() {
     return this.resultFinListener.isTriggered();
+  }
+
+  @Override
+  public boolean hasResult() {
+    return hasResult;
+  }
+
+  @Override
+  public void setHasResult(boolean hasResult) {
+    this.hasResult = hasResult;
   }
 
   @Override

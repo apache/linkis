@@ -27,7 +27,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 trait RouteLabelParser {
 
@@ -57,7 +57,10 @@ class GenericRoueLabelParser extends RouteLabelParser with Logging {
           case map: util.Map[String, Any] => labelBuilderFactory.getLabels(map.asInstanceOf)
           case _ => new util.ArrayList[Label[_]]()
         }
-        labels.filter(label => label.isInstanceOf[RouteLabel]).map(_.asInstanceOf[RouteLabel])
+        labels.asScala
+          .filter(label => label.isInstanceOf[RouteLabel])
+          .map(_.asInstanceOf[RouteLabel])
+          .asJava
       case _ => null
     }
   }

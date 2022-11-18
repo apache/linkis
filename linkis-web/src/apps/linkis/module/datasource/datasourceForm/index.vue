@@ -33,7 +33,7 @@ import { getKeyDefine, getDataSourceByIdAndVersion } from '../dataSourceApi'
 
 const type = {
   TEXT: { type: 'input' },
-  NUMBER: { type: 'input', props: { type: 'number' } },
+  NUMBER: { type: 'input', props: { type: 'number', } },
   PASSWORD: { type: 'input', props: { type: 'password' } },
   EMAIL: { type: 'input', props: { type: 'email' } },
   DATE: { type: 'input', props: { type: 'date' } },
@@ -149,6 +149,7 @@ const typesMap = {
 export default {
   props: {
     data: Object,
+    type: String,
   },
   data() {
     return {
@@ -166,7 +167,7 @@ export default {
           field: 'dataSourceName',
           value: '',
           props: {
-            placeholder: this.$t('message.linkis.datasource.sourceName'),
+            placeholder: this.$t('message.linkis.datasource.sourceName')
           },
           validate: [
             {
@@ -184,7 +185,7 @@ export default {
           field: 'dataSourceDesc',
           value: '',
           props: {
-            placeholder: this.$t('message.linkis.datasource.sourceDec'),
+            placeholder: this.$t('message.linkis.datasource.sourceDec')
           },
         },
         {
@@ -193,7 +194,7 @@ export default {
           field: 'labels',
           value: '',
           props: {
-            placeholder: this.$t('message.linkis.datasource.label'),
+            placeholder: this.$t('message.linkis.datasource.label')
           },
         },
       ],
@@ -303,6 +304,10 @@ export default {
         }
       }
       this.rule = this.rule.concat(tempData)
+      let disabled = this.type === this.$t('message.linkis.datasource.watch')
+      this.rule.forEach((item) => {
+        item.props.disabled = disabled;
+      })
       return tempData
     },
   },

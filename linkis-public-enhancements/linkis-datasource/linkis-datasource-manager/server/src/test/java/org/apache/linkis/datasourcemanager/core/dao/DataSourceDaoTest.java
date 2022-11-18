@@ -20,8 +20,11 @@ package org.apache.linkis.datasourcemanager.core.dao;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DataSourceDaoTest extends BaseDaoTest {
   private static final Logger logger = LoggerFactory.getLogger(DataSourceDaoTest.class);
@@ -195,5 +199,15 @@ class DataSourceDaoTest extends BaseDaoTest {
     DataSource dataSource = insertOne();
     dataSourceDao.updateVersionId(dataSource.getId(), 10l);
     assertTrue(dataSourceDao.selectByPageVo(new DataSourceVo()).get(0).getVersionId() == 10l);
+  }
+
+  @Test
+  void testSelectByIds() {
+    DataSource dataSource = insertOne();
+    dataSource.setDataSourceName("unitTest");
+    dataSource.setDataSourceTypeId(1l);
+    dataSource.setCreateUser("test");
+    List<DataSource> list = dataSourceDao.selectByIds(Arrays.asList(dataSource.getId()));
+    assertTrue(CollectionUtils.isNotEmpty(list));
   }
 }

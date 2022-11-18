@@ -73,18 +73,18 @@
         <Button type="text" size="large" @click="onModalCancel()">取消</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">确定</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <EditForm ref="editForm" :data="modalEditData"></EditForm>
     </Modal>
   </div>
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import ErrorCodeForm from './EditForm/index'
+import EditForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {ErrorCodeForm},
+  components: {EditForm},
   data() {
     return {
       searchName: "",
@@ -140,7 +140,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd')
             )
           }
         },
@@ -152,7 +152,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.updateTime),'yyyy-MM-dd')
             )
           }
         },
@@ -205,14 +205,17 @@ export default {
     onAdd(){
       this.modalEditData={
         id: "",
-        errorCode: "",
-        errorDesc: "",
-        errorRegex: '',
+        tokenName: "",
+        legalUsers: "",
+        legalHosts: "",
+        elapseDay: '',
       }
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
+      console.log(row);
+      row.elapseDay = row.elapseDay+""
       this.modalEditData = row
       this.modalAddMode = 'edit'
       this.modalShow = true
@@ -245,7 +248,8 @@ export default {
 
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.editForm.formModel.submit((formData)=>{
+        console.log(formData);
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
@@ -281,6 +285,7 @@ export default {
         }
         this.modalLoading=false
         this.modalShow = false
+        this.load()
       })
     },
     onModalCancel(){

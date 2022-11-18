@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,6 +30,12 @@ public class ConfigurationConfiguration {
 
   public static final String COPYKEYTOKEN =
       CommonVars$.MODULE$.apply("wds.linkis.configuration.copykey.token", "e8724-e").getValue();
+  public static final String IPCHECK =
+      CommonVars$.MODULE$
+          .apply(
+              "linkis.configuration.ipcheck.pattern",
+              "^(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}$")
+          .getValue();
 
   static {
     PERMIT_LABEL_TYPE.add(new UserCreatorLabel());

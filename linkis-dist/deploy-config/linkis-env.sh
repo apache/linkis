@@ -75,8 +75,8 @@ YARN_RESTFUL_URL="http://127.0.0.1:8088"
 #HADOOP
 HADOOP_HOME=/appcom/Install/hadoop
 HADOOP_CONF_DIR=/appcom/config/hadoop-config
-#HADOOP_KERBEROS_ENABLE=true
-#HADOOP_KEYTAB_PATH=/appcom/keytab/
+HADOOP_KERBEROS_ENABLE=true
+HADOOP_KEYTAB_PATH=/appcom/keytab/
 
 #Hive
 HIVE_HOME=/appcom/Install/hive

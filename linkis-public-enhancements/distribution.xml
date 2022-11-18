@@ -299,15 +299,6 @@
                 <include>**/*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${basedir}/conf</directory>
-            <includes>
-                <include>*</include>
-            </includes>
-            <fileMode>0777</fileMode>
-            <outputDirectory>conf</outputDirectory>
-            <lineEnding>unix</lineEnding>
-        </fileSet>
     </fileSets>
 
 </assembly>

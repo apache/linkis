@@ -454,6 +454,18 @@
           "parent": "Parent",
           "createTime": "Create Time",
           "updateTime": "Update Time"
+        },
+        "datasourceEnv": {
+          "envName": "Env Name",
+          "envDesc": "Env Desc",
+          "name": "Name",
+          "datasourceType": "Datasource Type",
+          "keytab": "Kerboros",
+          "parameter": "Parameter",
+          "createTime": "Create Time",
+          "createUser": "Create User",
+          "updateTime": "Update Time",
+          "modifyUser": "Modify User"
         }
       },
       "EnginePluginManagement": {

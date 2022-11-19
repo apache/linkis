@@ -455,6 +455,18 @@
           "parent": "父级Key",
           "createTime": "创建时间",
           "updateTime": "更新时间"
+        },
+        "datasourceEnv": {
+          "envName": "环境名称",
+          "envDesc": "环境描述",
+          "name": "数据源名称",
+          "datasourceType": "数据源类型",
+          "keytab": "kerboros认证",
+          "parameter": "参数",
+          "createTime": "创建时间",
+          "createUser": "创建者",
+          "updateTime": "更新时间",
+          "modifyUser": "更新者"
         }
       },
       "EnginePluginManagement": {

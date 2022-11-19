@@ -61,7 +61,7 @@ export default {
         },
         {
           type: 'input',
-          title: "环境名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envName'),
           field: 'envName',
           value: '',
           props: {
@@ -72,14 +72,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"环境名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envName'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "环境描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
           field: 'envDesc',
           value: '',
           props: {
@@ -90,7 +90,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"环境描述"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
               trigger: 'blur',
             },
           ],
@@ -98,7 +98,7 @@ export default {
         {
           type: "select",
           field: "datasourceTypeId",
-          title: "数据源环境",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.datasourceType'),
           value: 1,
           options: [],
           validate: [
@@ -106,13 +106,13 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"数据源环境"`
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.datasourceType')
             },
           ],
         },
         {
           type: "radio",
-          title: "kerboros认证",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.keytab'),
           field: "keytab",
           value: false,
           options: [
@@ -145,13 +145,13 @@ export default {
         },
         {
           type: 'v-jsoneditor',
-          title: "参数",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
           field: 'parameter',
           value: '',
           props: {
             type: 'form-create',
             height: "280px",
-            options: { 
+            options: {
               mode: "code",
               modes: ['code','tree'],
             }
@@ -161,7 +161,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"参数"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
               trigger: 'blur',
             },
           ],

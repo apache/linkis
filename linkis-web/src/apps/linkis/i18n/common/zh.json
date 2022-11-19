@@ -404,6 +404,7 @@
       },
       "basedataManagement": {
         "add": "新增",
+        "addUDFAdmin": "新增UDF管理员",
         "remove": "删除",
         "edit": "编辑",
         "searchLabel": "模糊搜索:",
@@ -422,7 +423,6 @@
           "modalEditSuccess": "编辑成功",
           "modalEditFail": "编辑失败"
         },
-        "addUDFAdmin": "新增UDF管理员",
         "gatewayAuthToken": {
           "tokenName": "名称",
           "legalUsers": "用户",
@@ -443,6 +443,9 @@
           "name": "名称",
           "labels": "标签",
           "config": "配置信息"
+        },
+        "udfManager": {
+          "userName": "用户名"
         }
       },
       "EnginePluginManagement": {

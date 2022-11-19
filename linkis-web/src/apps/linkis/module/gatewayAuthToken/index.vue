@@ -19,7 +19,8 @@
   <div>
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.search')"></Input>
+        <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.searchPlaceholder')"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
@@ -30,8 +31,6 @@
           $t('message.linkis.basedataManagement.add')
         }}
         </Button>
-      </Col>
-      <Col span="15">
       </Col>
     </Row>
     <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"

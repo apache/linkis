@@ -405,6 +405,8 @@
         "add": "Add",
         "remove": "Remove",
         "edit": "Edit",
+        "searchLabel": "Fuzzy Search:",
+        "searchPlaceholder": "Please enter your search",
         "search": "Search",
         "action": "Action",
         "modal":{

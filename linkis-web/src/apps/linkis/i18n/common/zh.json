@@ -406,6 +406,8 @@
         "add": "新增",
         "remove": "删除",
         "edit": "编辑",
+        "searchLabel": "模糊搜索:",
+        "searchPlaceholder": "请输入搜索内容",
         "search": "搜索",
         "action": "操作",
         "modal":{

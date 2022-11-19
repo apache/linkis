@@ -169,9 +169,10 @@ export default {
     onAdd(){
       this.modalEditData={
         id: "",
-        errorCode: "",
-        errorDesc: "",
-        errorRegex: '',
+        resourceType: "",
+        name: "",
+        labels: '',
+        config: '',
       }
       this.modalAddMode = 'add'
       this.modalShow = true

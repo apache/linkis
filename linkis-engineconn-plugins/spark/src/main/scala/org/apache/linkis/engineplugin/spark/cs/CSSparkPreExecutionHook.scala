@@ -21,7 +21,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.cs.client.utils.ContextServiceUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.core.errorcode.LinkisEngineconnCoreErrorCodeSummary.CANNOT_PARSE_FOR_NODE
-import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, ExecutorHookFatalException}
+import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 
 import org.springframework.stereotype.Component
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 import java.text.MessageFormat
+import java.util
 
 @Component
 class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
@@ -46,10 +47,13 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
   ): String = {
 
     var parsedCode = code
+    val properties =
+      if (engineExecutionContext != null) engineExecutionContext.getProperties
+      else new util.HashMap[String, Object]()
     val contextIDValueStr =
-      ContextServiceUtils.getContextIDStrByMap(engineExecutionContext.getProperties)
+      ContextServiceUtils.getContextIDStrByMap(properties)
     val nodeNameStr =
-      ContextServiceUtils.getNodeNameStrByMap(engineExecutionContext.getProperties)
+      ContextServiceUtils.getNodeNameStrByMap(properties)
     logger.info(
       s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr"
     )

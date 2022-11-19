@@ -23,7 +23,7 @@ import org.apache.linkis.metadata.query.server.WebApplicationServer;
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +33,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +47,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import static org.mockito.ArgumentMatchers.isA;
+
 @ExtendWith({SpringExtension.class})
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {WebApplicationServer.class})
@@ -54,18 +58,18 @@ class MetadataCoreRestfulTest {
 
   @MockBean private MetadataQueryService metadataQueryService;
 
-  private static MockedStatic<SecurityFilter> securityFilter;
-
   private static String system = "linkis";
+
+  private static MockedStatic<ModuleUserUtils> moduleUserUtils;
 
   @BeforeAll
   private static void init() {
-    securityFilter = Mockito.mockStatic(SecurityFilter.class);
+    moduleUserUtils = Mockito.mockStatic(ModuleUserUtils.class);
   }
 
   @AfterAll
   private static void close() {
-    securityFilter.close();
+    moduleUserUtils.close();
   }
 
   @Test
@@ -76,19 +80,27 @@ class MetadataCoreRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
+
+      moduleUserUtils
+          .when(
+              () ->
+                  ModuleUserUtils.getOperationUser(
+                      isA(HttpServletRequest.class), isA(String.class)))
+          .thenReturn("hadoop", "hadoop", "hadoop");
+
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
               && res.getMessage().contains("'system' is missing"));
       params.set("system", system);
-      Mockito.when(metadataQueryService.getDatabasesByDsId(dataSourceId, system, null))
+      Mockito.when(metadataQueryService.getDatabasesByDsId(dataSourceId, system, "hadoop"))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getDatabasesByDsId(dataSourceId, system, null);
+          .getDatabasesByDsId(dataSourceId, system, "hadoop");
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -107,20 +119,26 @@ class MetadataCoreRestfulTest {
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.set("system", "");
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
+    moduleUserUtils
+        .when(
+            () ->
+                ModuleUserUtils.getOperationUser(isA(HttpServletRequest.class), isA(String.class)))
+        .thenReturn("hadoop", "hadoop", "hadoop");
+
     Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
     Assertions.assertTrue(
         MessageStatus.ERROR() == res.getStatus()
             && res.getMessage().contains("'system' is missing"));
 
     params.set("system", system);
-    Mockito.when(metadataQueryService.getTablesByDsId(dataSourceId, database, system, null))
+    Mockito.when(metadataQueryService.getTablesByDsId(dataSourceId, database, system, "hadoop"))
         .thenReturn(new ArrayList<>());
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
     Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
     Mockito.doThrow(new ErrorException(1, ""))
         .when(metadataQueryService)
-        .getTablesByDsId(dataSourceId, database, system, null);
+        .getTablesByDsId(dataSourceId, database, system, "hadoop");
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
     Assertions.assertTrue(
         MessageStatus.ERROR() == res.getStatus()
@@ -138,6 +156,14 @@ class MetadataCoreRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
+
+      moduleUserUtils
+          .when(
+              () ->
+                  ModuleUserUtils.getOperationUser(
+                      isA(HttpServletRequest.class), isA(String.class)))
+          .thenReturn("hadoop", "hadoop", "hadoop");
+
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -145,14 +171,15 @@ class MetadataCoreRestfulTest {
 
       params.set("system", system);
       Mockito.when(
-              metadataQueryService.getTablePropsByDsId(dataSourceId, database, table, system, null))
+              metadataQueryService.getTablePropsByDsId(
+                  dataSourceId, database, table, system, "hadoop"))
           .thenReturn(new HashMap<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getTablePropsByDsId(dataSourceId, database, table, system, null);
+          .getTablePropsByDsId(dataSourceId, database, table, system, "hadoop");
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -174,6 +201,13 @@ class MetadataCoreRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
+      moduleUserUtils
+          .when(
+              () ->
+                  ModuleUserUtils.getOperationUser(
+                      isA(HttpServletRequest.class), isA(String.class)))
+          .thenReturn("hadoop", "hadoop", "hadoop");
+
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -182,14 +216,14 @@ class MetadataCoreRestfulTest {
       params.set("system", system);
       Mockito.when(
               metadataQueryService.getPartitionsByDsId(
-                  dataSourceId, database, table, system, false, null))
+                  dataSourceId, database, table, system, false, "hadoop"))
           .thenReturn(new MetaPartitionInfo());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getPartitionsByDsId(dataSourceId, database, table, system, false, null);
+          .getPartitionsByDsId(dataSourceId, database, table, system, false, "hadoop");
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -216,6 +250,14 @@ class MetadataCoreRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
+
+      moduleUserUtils
+          .when(
+              () ->
+                  ModuleUserUtils.getOperationUser(
+                      isA(HttpServletRequest.class), isA(String.class)))
+          .thenReturn("hadoop", "hadoop", "hadoop");
+
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -224,14 +266,14 @@ class MetadataCoreRestfulTest {
       params.set("system", system);
       Mockito.when(
               metadataQueryService.getPartitionPropsByDsId(
-                  dataSourceId, database, table, partition, system, null))
+                  dataSourceId, database, table, partition, system, "hadoop"))
           .thenReturn(new HashMap<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getPartitionPropsByDsId(dataSourceId, database, table, partition, system, null);
+          .getPartitionPropsByDsId(dataSourceId, database, table, partition, system, "hadoop");
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -253,6 +295,14 @@ class MetadataCoreRestfulTest {
       MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
       params.set("system", "");
       MvcUtils mvcUtils = new MvcUtils(mockMvc);
+
+      moduleUserUtils
+          .when(
+              () ->
+                  ModuleUserUtils.getOperationUser(
+                      isA(HttpServletRequest.class), isA(String.class)))
+          .thenReturn("hadoop", "hadoop", "hadoop");
+
       Message res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()
@@ -260,14 +310,15 @@ class MetadataCoreRestfulTest {
 
       params.set("system", system);
       Mockito.when(
-              metadataQueryService.getColumnsByDsId(dataSourceId, database, table, system, null))
+              metadataQueryService.getColumnsByDsId(
+                  dataSourceId, database, table, system, "hadoop"))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getColumnsByDsId(dataSourceId, database, table, system, null);
+          .getColumnsByDsId(dataSourceId, database, table, system, "hadoop");
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()

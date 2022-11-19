@@ -415,6 +415,7 @@
           "confirm": "确定",
           "cancel": "取消",
           "modalTitle": "提示信息",
+          "modalFormat": "确定删除 {0} 这条记录?",
           "modalDelete": "确认是否删除该记录?",
           "modalDeleteSuccess": "删除成功",
           "modalDeleteFail": "删除失败",
@@ -467,6 +468,14 @@
           "createUser": "创建者",
           "updateTime": "更新时间",
           "modifyUser": "更新者"
+        },
+        "datasourceType": {
+          "name": "名称",
+          "description": "描述",
+          "option": "选项",
+          "classifier": "分类",
+          "icon": "图标",
+          "layers": "层级"
         }
       },
       "EnginePluginManagement": {

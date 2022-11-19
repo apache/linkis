@@ -413,6 +413,7 @@
           "confirm": "Confirm",
           "cancel": "Cancel",
           "modalTitle": "Info",
+          "modalFormat": "Confirm deleting the {0} record?",
           "modalDelete": "Confirm that the record should be deleted?",
           "modalDeleteSuccess": "Successfully delete",
           "modalDeleteFail": "Fail to delete",
@@ -466,6 +467,14 @@
           "createUser": "Create User",
           "updateTime": "Update Time",
           "modifyUser": "Modify User"
+        },
+        "datasourceType": {
+          "name": "Name",
+          "description": "Description",
+          "option": "Option",
+          "classifier": "Classifier",
+          "icon": "Icon",
+          "layers": "Layers"
         }
       },
       "EnginePluginManagement": {

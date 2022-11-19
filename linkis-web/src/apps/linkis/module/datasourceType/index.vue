@@ -19,15 +19,16 @@
   <div>
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索"></Input>
+        <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.searchPlaceholder')"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
-          $t('message.linkis.search')
+          $t('message.linkis.basedataManagement.search')
         }}
         </Button>
         <Button type="success" class="Button" style="margin-left: 10px" @click="onAdd()">{{
-          $t('message.linkis.basedata.add')
+          $t('message.linkis.basedataManagement.add')
         }}
         </Button>
       </Col>
@@ -44,7 +45,7 @@
               size="small"
               type="primary"
               @click="onTableEdit(row, index)"
-            >{{ $t('message.linkis.edit') }}
+            >{{ $t('message.linkis.basedataManagement.edit') }}
             </Button
             >
             <Button
@@ -53,7 +54,7 @@
               type="primary"
               @click="onTableDelete(row, index)"
             >
-              {{ $t('message.linkis.basedata.remove') }}
+              {{ $t('message.linkis.basedataManagement.remove') }}
             </Button>
           </ButtonGroup>
         </template>
@@ -77,12 +78,12 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
+      :title="modalAddMode=='add'? $t('message.linkis.basedataManagement.add') : $t('message.linkis.basedataManagement.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">
-        <Button type="text" size="large" @click="onModalCancel()">取消</Button>
-        <Button type="primary" size="large" @click="onModalOk('userConfirm')">确定</Button>
+        <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
+        <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
       <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
     </Modal>
@@ -92,6 +93,7 @@
 import mixin from '@/common/service/mixin';
 import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
+import "@/utils/string-format.js"
 export default {
   mixins: [mixin],
   components: {ErrorCodeForm},
@@ -112,38 +114,38 @@ export default {
           align: 'center',
         },
         {
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.name'),
           key: 'name',
           minWidth: 50,
           tooltip: true,
           align: 'center',
         },
         {
-          title: "描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.description'),
           key: 'description',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "选项",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.option'),
           key: 'option',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "分类",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.name'),
           key: 'classifier',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "图标",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.icon'),
           key: 'icon',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "层级",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           key: 'layers',
           tooltip: true,
           align: 'center',
@@ -209,8 +211,8 @@ export default {
     },
     onTableDelete(row){
       this.$Modal.confirm({
-        title: "提示信息",
-        content: `确定删除 ${row.name} 这条记录?`,
+        title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name)  ,
         onOk: ()=>{
           let params = {
             id: row.id
@@ -219,12 +221,12 @@ export default {
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "删除成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "删除失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
             this.load()
@@ -236,34 +238,36 @@ export default {
     onModalOk(){
       this.$refs.errorCodeForm.formModel.submit((formData)=>{
         this.modalLoading = true
+        delete formData._index
+        delete formData._rowKey
         if(this.modalAddMode=='add') {
+
           add(formData).then((data)=>{
             console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "添加成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "添加失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
             this.load()
           })
         }else {
           edit(formData).then((data)=>{
-
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "编辑成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "编辑失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
             this.load()

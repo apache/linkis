@@ -24,9 +24,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /** @TableName linkis_ps_dm_datasource_type_key */
 @TableName(value = "linkis_ps_dm_datasource_type_key")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DatasourceTypeKeyEntity implements Serializable {
   /** */
   @TableId(type = IdType.AUTO)

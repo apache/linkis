@@ -71,7 +71,7 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <EditForm ref="editForm" :data="modalEditData" :typeOptions=datasourceTypeOptions></EditForm>
     </Modal>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
@@ -91,12 +91,12 @@
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import ErrorCodeForm from './EditForm/index'
+import EditForm from './EditForm/index'
 import {add, del, edit, getList, getAllEnv} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {ErrorCodeForm},
+  components: {EditForm},
   data() {
     return {
       searchName: "",
@@ -151,12 +151,6 @@ export default {
           }
         },
         {
-          title: this.$t('message.linkis.basedataManagement.datasourceEnv.createUser'),
-          key: 'createUser',
-          tooltip: true,
-          align: 'center',
-        },
-        {
           title: this.$t('message.linkis.basedataManagement.datasourceEnv.updateTime'),
           key: 'updateTime',
           minWidth: 50,
@@ -169,12 +163,6 @@ export default {
           }
         },
         {
-          title: this.$t('message.linkis.basedataManagement.datasourceEnv.modifyUser'),
-          key: 'modifyUser',
-          tooltip: true,
-          align: 'center',
-        },
-        {
           title: this.$t('message.linkis.datasource.action'),
           width: 150,
           slot: 'action',
@@ -183,7 +171,7 @@ export default {
 
       ],
       pageDatalist: [],
-      allEnv: [],
+      // allEnv: [],
       modalShow: false,
       modalAddMode: 'add',
       modalEditData: {
@@ -199,7 +187,8 @@ export default {
         _index: '',
         _rowKey: ''
       },
-      modalLoading: false
+      modalLoading: false,
+      datasourceTypeOptions: []
     };
   },
   created() {
@@ -219,20 +208,23 @@ export default {
         pageSize: this.page.pageSize
       }
       getAllEnv().then((res) => {
-        this.allEnv = [...res.typeList]
-        this.allEnv.sort((a, b) => a.id - b.id)
+        let options = [...res.typeList].sort((a, b) => a.id - b.id)
+          .map(item => { return {value: +item.id, label: item.name}})
+        this.datasourceTypeOptions= options
+        // 获取列表
         getList(params).then((data) => {
           this.pageDatalist = data.list.list
           this.page.totalSize = data.list.total
-          let options = []
-          //console.log(this.pageDatalist)
-          this.pageDatalist.map(item => { item.name = this.allEnv[item.datasourceTypeId - 1].name})
-          this.allEnv.map(item => {
-            options.push({value: +item.id, label: item.name})
+          // 类型ID转类型名称
+          this.pageDatalist.map(item => {
+            let filter = options.filter(optionsItem=>{
+              return optionsItem.value === item.datasourceTypeId
+            })
+            item.name = filter[0].label
           })
-          this.$refs['errorCodeForm'].changeSelector(options)
         })
       })
+
     },
     changePage(value) {
       this.page.pageNow = value
@@ -246,12 +238,10 @@ export default {
     onTableEdit(row){
       row.keytab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
-      //console.log(this.modalEditData)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
-
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
         content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
@@ -284,9 +274,11 @@ export default {
       this.modalEditData.keytab = false;
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.editForm.formModel.submit((formData)=>{
         if('keytab' in formData) delete formData['keytab'];
         if('pic' in formData) delete formData['pic'];
+        delete formData._index
+        delete formData._rowKey
         this.modalLoading = true
         formData.parameter = JSON.stringify(formData.parameter)
         if(this.modalAddMode=='add') {

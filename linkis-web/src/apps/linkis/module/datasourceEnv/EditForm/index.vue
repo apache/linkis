@@ -31,6 +31,7 @@ export default {
   props: {
     mode: String,
     data: Object,
+    typeOptions: Array
   },
   data() {
     return {
@@ -155,16 +156,7 @@ export default {
               mode: "code",
               modes: ['code','tree'],
             }
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
-              trigger: 'blur',
-            },
-          ],
+          }
         },
       ]
     }
@@ -175,17 +167,20 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
-      this.formData.parameter = JSON.parse(this.formData.parameter)
-    },
-    changeSelector(options){
-      console.log('test', options)
-      this.rule[3].options = [...options];
-      options.forEach(ele=> {
-        this.keyToName[ele.value] = ele.label;
-      })
+      if(this.formData.parameter.length>0){
+        this.formData.parameter = JSON.parse(this.formData.parameter)
+      }else{
+        this.formData.parameter= {}
+      }
     },
   },
   watch: {
+    typeOptions: {
+      handler(newV) {
+        this.rule[3].options = newV
+      },
+      deep: true,
+    },
     data: {
       handler(newV) {
         this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;

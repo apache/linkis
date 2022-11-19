@@ -432,6 +432,11 @@
           "createTime":"创建时间",
           "updateTime": "更新时间",
           "updateBy": "更新人"
+        },
+        "errorCode": {
+          "errorCode": "错误代码",
+          "errorDesc": "错误描述",
+          "errorRegex": "错误正则"
         }
       },
       "EnginePluginManagement": {

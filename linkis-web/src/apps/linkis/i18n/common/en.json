@@ -431,6 +431,11 @@
           "createTime":"Create Time",
           "updateTime": "Update Time",
           "updateBy": "Update By"
+        },
+        "errorCode": {
+          "errorCode": "Code",
+          "errorDesc": "Desc",
+          "errorRegex": "Regex"
         }
       },
       "EnginePluginManagement": {

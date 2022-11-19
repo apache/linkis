@@ -22,10 +22,7 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.manager.engineplugin.common.creation.CodeLanguageLabelExecutorFactory
-import org.apache.linkis.manager.engineplugin.common.exception.{
-  EngineConnPluginErrorCode,
-  EngineConnPluginErrorException
-}
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel

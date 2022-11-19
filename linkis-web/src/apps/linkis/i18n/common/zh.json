@@ -427,7 +427,8 @@
             "deleteCurrentbml": "删除",
             "versionList": "版本列表",
             "rollback": "回滚",
-            "action": "操作"
+            "action": "操作",
+            "checkEngineConnTypeAndVersion": "请选择引擎类型及版本"
           }
         }
     }

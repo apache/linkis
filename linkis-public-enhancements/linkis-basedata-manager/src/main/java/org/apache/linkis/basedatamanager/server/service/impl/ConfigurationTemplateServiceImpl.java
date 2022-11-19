@@ -41,10 +41,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** This module is designed to manage configuration parameter templates */
 @Service
 public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateService {
+  private static final Logger LOG = LoggerFactory.getLogger(ConfigurationTemplateService.class);
   @Resource ConfigurationConfigKeyMapper configKeyMapper;
   @Resource ConfigurationKeyEngineRelationMapper relationMapper;
   @Resource CgManagerLabelMapper managerLabelMapper;
@@ -66,22 +69,28 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
 
     // update
     if (!StringUtils.isEmpty(keyId)) {
+      LOG.info("update configuration config key: [ keyId: " + keyId + " ]");
       int updateKey = configKeyMapper.updateById(configKey);
       configValue.setConfigKeyId(configKey.getId());
+      LOG.info("update configuration config value: [ keyId: " + keyId + " ]");
       int updateValue = configValueMapper.updateByKeyId(configValue);
       return updateKey > 0 && updateValue > 0;
     }
 
     // 1.insert into ps_configuration_config_key
     int insertKey = configKeyMapper.insert(configKey);
+    LOG.info("insert a configuration config key: [ keyId: " + configKey.getKey() + " ]");
     // 2.insert into ps_configuration_key_engine_relation
     ConfigurationKeyEngineRelation relation = new ConfigurationKeyEngineRelation();
     relation.setConfigKeyId(configKey.getId());
     relation.setEngineTypeLabelId(label.getId().longValue());
     int insertRelation = relationMapper.insert(relation);
+    LOG.info(
+        "insert a configuration key engine relation: [ relationId: " + relation.getId() + " ]");
     // 3.insert into ps_configuration_config_value
     configValue.setConfigKeyId(configKey.getId());
     int insertValue = configValueMapper.insert(configValue);
+    LOG.info("insert a configuration config value: [ valueId: " + configValue.getId() + " ]");
 
     return insertKey > 0 & insertRelation > 0 & insertValue > 0;
   }
@@ -91,12 +100,15 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
   public Boolean deleteConfigurationTemplate(Long keyId) {
     // 1.delete ps_configuration_config_value by keyId
     int deleteValue = configValueMapper.deleteByKeyId(keyId);
+    LOG.info("delete a configuration config value: [ keyId: " + keyId + " ]");
 
     // 2.delete ps_configuration_key_engine_relation by keyId
     int deleteRelation = relationMapper.deleteByKeyId(keyId);
+    LOG.info("delete a configuration key engine relation: [ keyId: " + keyId + " ]");
 
     // 3.delete ps_configuration_config_key by id
     int deleteKey = configKeyMapper.deleteById(keyId);
+    LOG.info("delete a configuration config key: [ keyId: " + keyId + " ]");
 
     return deleteValue > 0 & deleteRelation > 0 & deleteKey > 0;
   }

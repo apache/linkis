@@ -60,8 +60,8 @@ export default {
         },
         {
           type: 'input',
-          title: "用户名",
-          field: 'userName',
+          title: "键名",
+          field: 'key',
           value: '',
           props: {
             placeholder: "",
@@ -71,7 +71,61 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"用户名"`,
+              )}"键名"`,
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: "名称",
+          field: 'name',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )}"名称"`,
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: "值类型",
+          field: 'valueType',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )}"值类型"`,
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: "描述",
+          field: 'description',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )}"描述"`,
               trigger: 'blur',
             },
           ],

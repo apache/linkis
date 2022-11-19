@@ -164,6 +164,7 @@
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
             "datasourceType": "Datasource Type",
+            "datasourceTypeKey": "Data source classification field",
             "EnginePluginManagement": "Engine Plugin Management",
             "basedataManagement": "Base data management"
           }
@@ -400,11 +401,35 @@
         "confirmDel": "Confirm Deletion",
         "isConfirmDel": "Are you sure you want to delete this tag"
       },
-      "basedata": {
-        "add": "add",
-        "remove": "remove",
-        "edit": "edit",
-        "addUDFAdmin": "add UDF administrator"
+      "basedataManagement": {
+        "add": "Add",
+        "remove": "Remove",
+        "edit": "Edit",
+        "search": "Search",
+        "action": "Action",
+        "modal":{
+          "confirm": "Confirm",
+          "cancel": "Cancel",
+          "modalTitle": "Info",
+          "modalDelete": "Confirm that the record should be deleted?",
+          "modalDeleteSuccess": "Successfully delete",
+          "modalDeleteFail": "Fail to delete",
+          "modalAddSuccess": "Successfully added",
+          "modalAddFail": "Fail to add",
+          "modalEditSuccess": "Edit successful",
+          "modalEditFail": "Edit failure"
+        },
+        "addUDFAdmin": "Add UDF administrator",
+        "gatewayAuthToken": {
+          "tokenName": "Token Name",
+          "legalUsers": "Legal Users",
+          "legalHosts": "Legal Hosts",
+          "elapseDay": "Elapse Day",
+          "businessOwner": "Owner",
+          "createTime":"Create Time",
+          "updateTime": "Update Time",
+          "updateBy": "Update By"
+        }
       },
       "EnginePluginManagement": {
         "engineConnType": "EngineConn Type",

@@ -437,6 +437,12 @@
           "errorCode": "错误代码",
           "errorDesc": "错误描述",
           "errorRegex": "错误正则"
+        },
+        "rmExternalResourceProvider": {
+          "resourceType": "资源类型",
+          "name": "名称",
+          "labels": "标签",
+          "config": "配置信息"
         }
       },
       "EnginePluginManagement": {

@@ -436,6 +436,12 @@
           "errorCode": "Code",
           "errorDesc": "Desc",
           "errorRegex": "Regex"
+        },
+        "rmExternalResourceProvider": {
+          "resourceType": "Resource Type",
+          "name": "Name",
+          "labels": "Labels",
+          "config": "Config"
         }
       },
       "EnginePluginManagement": {

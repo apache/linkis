@@ -476,6 +476,15 @@
           "classifier": "分类",
           "icon": "图标",
           "layers": "层级"
+        },
+        "datasourceTypeKey": {
+          "key": "键名",
+          "dataSourceType": "数据源类型",
+          "name": "名称",
+          "valueType": "值类型",
+          "description": "描述",
+          "createTime": "创建时间",
+          "updateTime": "更新时间"
         }
       },
       "EnginePluginManagement": {

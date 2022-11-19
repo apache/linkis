@@ -27,11 +27,13 @@ public class DatasourceTypeKeyEntity implements Serializable {
     /**
      * 
      */
+    @TableField(value = "`key`")
     private String key;
 
     /**
      * 
      */
+    @TableField(value = "`name`")
     private String name;
 
     /**
@@ -52,6 +54,7 @@ public class DatasourceTypeKeyEntity implements Serializable {
     /**
      * 
      */
+    @TableField(value = "`require`")
     private Integer require;
 
     /**

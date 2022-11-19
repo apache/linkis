@@ -475,6 +475,15 @@
           "classifier": "Classifier",
           "icon": "Icon",
           "layers": "Layers"
+        },
+        "datasourceTypeKey": {
+          "key": "Key",
+          "dataSourceType": "Datasource Type",
+          "name": "Name",
+          "valueType": "Value Type",
+          "description": "Description",
+          "createTime": "Create Time",
+          "updateTime": "Update Time"
         }
       },
       "EnginePluginManagement": {

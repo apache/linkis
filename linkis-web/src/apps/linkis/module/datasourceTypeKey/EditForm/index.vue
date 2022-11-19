@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "键名",
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
           field: 'key',
           value: '',
           props: {
@@ -71,14 +71,32 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"键名"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
+          field: 'dataSourceTypeId',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.name'),
           field: 'name',
           value: '',
           props: {
@@ -89,14 +107,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.name'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "值类型",
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
           field: 'valueType',
           value: '',
           props: {
@@ -107,14 +125,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"值类型"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
           field: 'description',
           value: '',
           props: {
@@ -125,7 +143,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"描述"`,
+              )} ` +this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
               trigger: 'blur',
             },
           ],

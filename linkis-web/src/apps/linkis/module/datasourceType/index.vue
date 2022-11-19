@@ -212,7 +212,7 @@ export default {
     onTableDelete(row){
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name)  ,
+        content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name),
         onOk: ()=>{
           let params = {
             id: row.id

@@ -140,7 +140,7 @@ export default {
           },
           validate: [
             {
-              required: true,
+              required: false,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceType.icon'),

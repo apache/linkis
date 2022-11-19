@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
           field: 'tokenName',
           value: '',
           props: {
@@ -71,14 +71,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "用户",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
           field: 'legalUsers',
           value: '',
           props: {
@@ -89,15 +89,15 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"用户"`,
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
               trigger: 'blur',
             },
           ],
         },
-       
+
         {
           type: 'input',
-          title: "主机",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
           field: 'legalHosts',
           value: '',
           props: {
@@ -108,14 +108,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"主机"`,
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'Input',
-          title: "过期天数",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
           value: -1,
           props: {
@@ -126,7 +126,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"过期天数"`,
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
               trigger: 'blur',
             },
           ],

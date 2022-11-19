@@ -16,7 +16,7 @@
 -->
 
 <template>
-  <div>
+  <div :style="{height: '100%', overflow: 'hidden'}">
     <Row class="search-bar" type="flex">
       <Col span="6">
         <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
@@ -35,8 +35,8 @@
       <Col span="15">
       </Col>
     </Row>
-    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"
-      class="table-content">
+    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist"
+      class="table-content mytable">
       <template slot-scope="{ row,index }" slot="action">
         <ButtonGroup size="small">
           <Button
@@ -58,9 +58,18 @@
         </ButtonGroup>
       </template>
     </Table>
-    <div style="margin: 10px; overflow: hidden">
-      <div style="float: right">
-        <Page :page-size="page.pageSize" :total="page.totalSize" :current="page.pageNow" @on-change="changePage"></Page>
+    <div style="margin: 10px; overflow: hidden; textAlign: center">
+      <div>
+        <Page
+          :page-size="page.pageSize"
+          :total="page.totalSize"
+          :current="page.pageNow"
+          @on-change="changePage"
+          size="small"
+          show-total
+          show-elevator
+          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+        ></Page>
       </div>
     </div>
     <Modal
@@ -257,4 +266,26 @@ export default {
 </script>
 
 <style lang="scss" src="./index.scss" scoped>
+</style>
+<style lang="scss">
+.mytable {
+  border: 0;
+  height: calc(100% - 110px);
+  width: 100%;
+  overflow-y: auto;
+
+  .ivu-table:before {
+    height: 0
+  }
+
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+    width: 100%;
+  }
+}
 </style>

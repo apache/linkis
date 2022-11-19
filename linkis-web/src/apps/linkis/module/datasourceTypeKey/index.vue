@@ -16,7 +16,7 @@
 -->
 
 <template>
-  <div>
+  <div :style="{height: '100%', overflow: 'hidden'}">
     <Row class="search-bar" type="flex">
       <Col span="6">
         <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
@@ -35,31 +35,29 @@
       <Col span="15">
       </Col>
     </Row>
-    <div style="height: 600px">
-      <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="450"
-        class="table-content">
-        <template slot-scope="{ row,index }" slot="action">
-          <ButtonGroup size="small">
-            <Button
-              :disabled="row.expire"
-              size="small"
-              type="primary"
-              @click="onTableEdit(row, index)"
-            >{{ $t('message.linkis.basedataManagement.edit') }}
-            </Button
-            >
-            <Button
-              :disabled="row.expire"
-              size="small"
-              type="primary"
-              @click="onTableDelete(row, index)"
-            >
-              {{ $t('message.linkis.basedataManagement.remove') }}
-            </Button>
-          </ButtonGroup>
-        </template>
-      </Table>
-    </div>
+    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist"
+      class="table-content mytable">
+      <template slot-scope="{ row,index }" slot="action">
+        <ButtonGroup size="small">
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
+            @click="onTableEdit(row, index)"
+          >{{ $t('message.linkis.basedataManagement.edit') }}
+          </Button
+          >
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
+            @click="onTableDelete(row, index)"
+          >
+            {{ $t('message.linkis.basedataManagement.remove') }}
+          </Button>
+        </ButtonGroup>
+      </template>
+    </Table>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
         <Page
@@ -303,4 +301,27 @@ export default {
 </script>
 
 <style lang="scss" src="./index.scss" scoped>
+</style>
+
+<style lang="scss">
+.mytable {
+  border: 0;
+  height: calc(100% - 110px);
+  width: 100%;
+  overflow-y: auto;
+
+  .ivu-table:before {
+    height: 0
+  }
+
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+    width: 100%;
+  }
+}
 </style>

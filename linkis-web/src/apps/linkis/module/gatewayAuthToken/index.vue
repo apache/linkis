@@ -42,7 +42,7 @@
             size="small"
             type="primary"
             @click="onTableEdit(row, index)"
-          >{{ $t('message.linkis.edit') }}
+          >{{ $t('message.linkis.basedataManagement.edit') }}
           </Button
           >
           <Button

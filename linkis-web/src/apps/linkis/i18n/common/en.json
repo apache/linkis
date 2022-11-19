@@ -445,6 +445,15 @@
         },
         "udfManager": {
           "userName": "User Name"
+        },
+        "udfTree": {
+          "name": "Name",
+          "category": "Category",
+          "userName": "User Name",
+          "description": "Description",
+          "parent": "Parent",
+          "createTime": "Create Time",
+          "updateTime": "Update Time"
         }
       },
       "EnginePluginManagement": {

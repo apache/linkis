@@ -446,6 +446,15 @@
         },
         "udfManager": {
           "userName": "用户名"
+        },
+        "udfTree": {
+          "name": "名称",
+          "category": "分类",
+          "userName": "用户名",
+          "description": "描述",
+          "parent": "父级Key",
+          "createTime": "创建时间",
+          "updateTime": "更新时间"
         }
       },
       "EnginePluginManagement": {

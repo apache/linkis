@@ -164,9 +164,9 @@
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
             "datasourceType": "Datasource Type",
-            "datasourceTypeKey": "Data source classification field",
+            "datasourceTypeKey": "Datasource Config Options",
             "EnginePluginManagement": "Engine Plugin Management",
-            "basedataManagement": "Base data management"
+            "basedataManagement": "Base Data Management"
           }
         }
       },

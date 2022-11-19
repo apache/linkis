@@ -71,8 +71,8 @@
       :loading="modalLoading"
     >
       <div slot="footer">
-        <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.cancel')}}</Button>
-        <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.confirm')}}</Button>
+        <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
+        <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
       <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
     </Modal>

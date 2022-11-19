@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance
 
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
@@ -149,7 +150,9 @@ abstract class EntranceServer extends Logging {
        */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
-      val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
+      val msg = LogUtils.generateInfo(
+        s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "
+      )
       logger.info(msg)
 
       job match {

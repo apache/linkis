@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,6 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -41,62 +44,47 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.List;
-
 @Api(tags = "global variable")
 @RestController
 @RequestMapping(path = "/variable")
 public class VariableRestfulApi {
 
-    @Autowired private VariableService variableService;
+  @Autowired private VariableService variableService;
 
-    ObjectMapper mapper = new ObjectMapper();
+  ObjectMapper mapper = new ObjectMapper();
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+  private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /*@RequestMapping(path = "addGlobalVariable",method = RequestMethod.POST)
-    public Message addGlobalVariable(HttpServletRequest req,@RequestBody JsonNode json) throws IOException {
-        String userName = SecurityFilter.getLoginUsername(req);
-        List globalVariables = mapper.readValue(json.get("globalVariables"), List.class);
-        globalVariables.stream().forEach(f -> {
-            String j = BDPJettyServerHelper.gson().toJson(f);
-            variableService.addGlobalVariable(BDPJettyServerHelper.gson().fromJson(j, VarKeyValueVO.class), userName);
-        });
-        return Message.ok();
-    }
+  @ApiOperation(
+      value = "listGlobalVariable",
+      notes = "list global variable",
+      response = Message.class)
+  @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
+  public Message listGlobalVariable(HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "listGlobalVariable ");
+    List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
+    return Message.ok().data("globalVariables", kvs);
+  }
 
-    @RequestMapping(path = "removeGlobalVariable",method = RequestMethod.POST)
-    public Message removeGlobalVariable(HttpServletRequest req, JsonNode json) {
-        String userName = SecurityFilter.getLoginUsername(req);
-        Long keyID = json.get("keyID").getLongValue();
-        variableService.removeGlobalVariable(keyID);
-        return Message.ok();
-    }*/
-    @ApiOperation(value = "listGlobalVariable", notes = "list global variable", response = Message.class)
-    @RequestMapping(path = "listGlobalVariable", method = RequestMethod.GET)
-    public Message listGlobalVariable(HttpServletRequest req) {
-        String userName = ModuleUserUtils.getOperationUser(req, "listGlobalVariable ");
-        List<VarKeyValueVO> kvs = variableService.listGlobalVariable(userName);
-        return Message.ok().data("globalVariables", kvs);
-    }
-
-    @ApiOperation(value = "saveGlobalVariable", notes = "save global variable", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "globalVariables",required = true,  dataType = "Map", value = "global variables"),
-        @ApiImplicitParam(name = "key",required = true,  dataType = "String",  value = "key", example = "key"),
-        @ApiImplicitParam(name = "value",required = true,  dataType = "List", value = "Value", example = "value"),
-        @ApiImplicitParam(name = "keyID", required = true, dataType = "String",  value = "key id", example = "2"),
-        @ApiImplicitParam(name = "valueID",required = true,  dataType = "List", value = "value id", example = "2")
-    })
-    @ApiOperationSupport(ignoreParameters = {"json"})
-    @RequestMapping(path = "saveGlobalVariable", method = RequestMethod.POST)
-    public Message saveGlobalVariable(HttpServletRequest req, @RequestBody JsonNode json)
-            throws IOException, VariableException {
-        String userName = ModuleUserUtils.getOperationUser(req, "saveGlobalVariable ");
-        List<VarKeyValueVO> userVariables = variableService.listGlobalVariable(userName);
-        List globalVariables = mapper.treeToValue(json.get("globalVariables"), List.class);
-        variableService.saveGlobalVaraibles(globalVariables, userVariables, userName);
-        return Message.ok();
-    }
+  @ApiOperation(
+      value = "saveGlobalVariable",
+      notes = "save global variable",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "globalVariables", required = true, dataType = "Map"),
+    @ApiImplicitParam(name = "key", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "value", required = true, dataType = "List"),
+    @ApiImplicitParam(name = "keyID", required = true, dataType = "String", example = "2"),
+    @ApiImplicitParam(name = "valueID", required = true, dataType = "List", example = "2")
+  })
+  @ApiOperationSupport(ignoreParameters = {"json"})
+  @RequestMapping(path = "saveGlobalVariable", method = RequestMethod.POST)
+  public Message saveGlobalVariable(HttpServletRequest req, @RequestBody JsonNode json)
+      throws IOException, VariableException {
+    String userName = ModuleUserUtils.getOperationUser(req, "saveGlobalVariable ");
+    List<VarKeyValueVO> userVariables = variableService.listGlobalVariable(userName);
+    List globalVariables = mapper.treeToValue(json.get("globalVariables"), List.class);
+    variableService.saveGlobalVaraibles(globalVariables, userVariables, userName);
+    return Message.ok();
+  }
 }

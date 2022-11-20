@@ -259,6 +259,16 @@ export default [
       }
     },
     {
+      name: 'datasourceTypeKey',
+      path: 'datasourceTypeKey',
+      component: () =>
+        import('./module/datasourceTypeKey/index.vue'),
+      meta: {
+        title: 'datasourceTypeKey',
+        publicPage: true,
+      }
+    },
+    {
       name: 'EnginePluginManagement',
       path: 'EnginePluginManagement',
       component: () =>

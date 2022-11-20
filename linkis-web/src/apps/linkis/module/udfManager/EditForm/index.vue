@@ -60,8 +60,8 @@ export default {
         },
         {
           type: 'input',
-          title: "用户名",
-          field: 'user_name',
+          title: this.$t('message.linkis.basedataManagement.udfManager.userName'),
+          field: 'userName',
           value: '',
           props: {
             placeholder: "",
@@ -71,7 +71,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"用户名"`,
+              )}`+this.$t('message.linkis.basedataManagement.udfManager.userName'),
               trigger: 'blur',
             },
           ],

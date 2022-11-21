@@ -485,7 +485,8 @@
           "valueType": "Value Type",
           "description": "Description",
           "createTime": "Create Time",
-          "updateTime": "Update Time"
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name"
         }
       },
       "EnginePluginManagement": {

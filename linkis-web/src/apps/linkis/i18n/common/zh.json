@@ -438,7 +438,8 @@
         "errorCode": {
           "errorCode": "错误代码",
           "errorDesc": "错误描述",
-          "errorRegex": "错误正则"
+          "errorRegex": "错误正则",
+          "searchPlaceholder": "代码/描述/正则"
         },
         "rmExternalResourceProvider": {
           "resourceType": "资源类型",

@@ -437,7 +437,8 @@
         "errorCode": {
           "errorCode": "Code",
           "errorDesc": "Desc",
-          "errorRegex": "Regex"
+          "errorRegex": "Regex",
+          "searchPlaceholder": "Code/Desc/Regex"
         },
         "rmExternalResourceProvider": {
           "resourceType": "Resource Type",

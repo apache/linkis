@@ -64,14 +64,20 @@ object TokenAuthentication extends Logging {
         return false
       }
     }
-    val tokenAliveKey = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)(0)
     var tokenAlive = false
-    if (StringUtils.isBlank(tokenAliveKey)) {
-      val tokenAliveStr = gatewayContext.getRequest.getCookies.get(TOKEN_ALIVE_KEY)(0).getValue
-      if (StringUtils.isNotBlank(tokenAliveStr)) {
-        if (tokenAliveStr.toLowerCase().equals(GatewayConfiguration.TOKEN_ALIVE_TRUE)) {
-          tokenAlive = true
-        }
+    val tokenAliveArr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)
+    var tokenAliveStr = ""
+    if (null != tokenAliveArr && !tokenAliveArr.isEmpty) {
+      tokenAliveStr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)(0)
+    } else {
+      val tokenAliveCookieArr = gatewayContext.getRequest.getCookies.get(TOKEN_ALIVE_KEY)
+      if (null != tokenAliveCookieArr && !tokenAliveCookieArr.isEmpty) {
+        tokenAliveStr = tokenAliveCookieArr(0).getValue
+      }
+    }
+    if (StringUtils.isNotBlank(tokenAliveStr)) {
+      if (tokenAliveStr.toLowerCase().equals(GatewayConfiguration.TOKEN_ALIVE_TRUE)) {
+        tokenAlive = true
       }
     }
     var authMsg: Message = Message.noLogin(
@@ -88,6 +94,9 @@ object TokenAuthentication extends Logging {
         s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
       )
       if (GatewayConfiguration.ENABLE_TOEKN_AUTHENTICATION_ALIVE.getValue || tokenAlive) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(s"Token auth of user : ${tokenUser} has param : tokenAlive : true.")
+        }
         GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser, true)
       } else {
         GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser, false)

@@ -445,7 +445,8 @@
           "config": "Config"
         },
         "udfManager": {
-          "userName": "User Name"
+          "userName": "User Name",
+          "searchPlaceholder": "UserName"
         },
         "udfTree": {
           "name": "Name",
@@ -455,7 +456,7 @@
           "parent": "Parent",
           "createTime": "Create Time",
           "updateTime": "Update Time",
-          "searchPlaceholder": "User Name"
+          "searchPlaceholder": "Name/Category/Desc/UserName"
         },
         "datasourceEnv": {
           "envName": "Env Name",

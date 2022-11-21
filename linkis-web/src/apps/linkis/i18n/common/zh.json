@@ -446,7 +446,8 @@
           "config": "配置信息"
         },
         "udfManager": {
-          "userName": "用户名"
+          "userName": "用户名",
+          "searchPlaceholder": "用户名"
         },
         "udfTree": {
           "name": "名称",
@@ -456,7 +457,7 @@
           "parent": "父级Key",
           "createTime": "创建时间",
           "updateTime": "更新时间",
-          "searchPlaceholder": "用户名"
+          "searchPlaceholder": "名称/分类/描述/用户名"
         },
         "datasourceEnv": {
           "envName": "环境名称",

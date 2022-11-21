@@ -372,7 +372,7 @@
         from linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
         <where>
             <if test="1 == 1">1 = 1</if>
-            <if test="creator != null">and pu.create_user = #{createUser}</if>
+            <if test="createUser != null">and pu.create_user = #{createUser}</if>
             <if test="udfNameList != null">and pu.udf_name in
                 <foreach collection="udfNameList" open="(" close=")" item="item" separator=",">
                     #{item}

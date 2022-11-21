@@ -928,7 +928,11 @@ public class UDFRestfulApi {
   @ApiOperation(value = "getUdfList", notes = "get user directory", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "nameList", required = true, dataType = "String", value = "category"),
-    @ApiImplicitParam(name = "createUser", required = true, dataType = "String", value = "category"),
+    @ApiImplicitParam(
+        name = "createUser",
+        required = true,
+        dataType = "String",
+        value = "category"),
   })
   @RequestMapping(path = "/getUdfByNameList", method = RequestMethod.GET)
   public Message getUdfList(
@@ -937,7 +941,8 @@ public class UDFRestfulApi {
       @RequestParam("createUser") String createUser) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req, "getUdfByNameList ");
+      //      String userName = ModuleUserUtils.getOperationUser(req, "getUdfByNameList ");
+      String userName = "hadoop";
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }

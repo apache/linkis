@@ -24,9 +24,9 @@ class testPrestoSQLHook {
   @Test
   def testPreExecuteHook {
     val prestoSQLHook = PrestoSQLHook
-    val code = "1104"
+    val code = "`1104`"
     val codes = prestoSQLHook.preExecuteHook(code)
-    Assertions.assertEquals(code, codes)
+    Assertions.assertEquals(codes, "\"1104\"")
   }
 
 }

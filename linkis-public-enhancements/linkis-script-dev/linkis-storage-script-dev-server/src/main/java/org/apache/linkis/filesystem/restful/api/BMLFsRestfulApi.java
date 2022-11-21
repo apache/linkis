@@ -78,9 +78,11 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
     String userName =
-        MessageFormat.format(
-            "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
-            resourceId, version, fileName);
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
+                resourceId, version, fileName));
     Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
     InputStream inputStream = (InputStream) query.get("stream");
     try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
@@ -122,9 +124,11 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
     String userName =
+        ModuleUserUtils.getOperationUser(
+            req,
             MessageFormat.format(
-                    "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
-                    resourceId, version, fileName);
+                "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
+                resourceId, version, fileName));
     if (!StringUtils.isEmpty(creator)) {
       userName = creator;
     }

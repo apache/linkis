@@ -431,7 +431,8 @@
           "businessOwner": "Owner",
           "createTime":"Create Time",
           "updateTime": "Update Time",
-          "updateBy": "Update By"
+          "updateBy": "Update By",
+          "searchPlaceholder": "TokenName/Users/Hosts"
         },
         "errorCode": {
           "errorCode": "Code",

@@ -432,7 +432,8 @@
           "businessOwner": "所属者",
           "createTime":"创建时间",
           "updateTime": "更新时间",
-          "updateBy": "更新人"
+          "updateBy": "更新人",
+          "searchPlaceholder": "令牌名称/用户/主机"
         },
         "errorCode": {
           "errorCode": "错误代码",

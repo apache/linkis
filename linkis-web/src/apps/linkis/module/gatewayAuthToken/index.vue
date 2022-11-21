@@ -141,6 +141,12 @@ export default {
           align: 'center',
         },
         {
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.updateBy'),
+          key: 'updateBy',
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.createTime'),
           key: 'createTime',
           minWidth: 50,
@@ -163,12 +169,6 @@ export default {
               formatDate(new Date(params.row.updateTime),'yyyy-MM-dd')
             )
           }
-        },
-        {
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.updateBy'),
-          key: 'updateBy',
-          tooltip: true,
-          align: 'center',
         },
         {
           title: this.$t('message.linkis.basedataManagement.action'),

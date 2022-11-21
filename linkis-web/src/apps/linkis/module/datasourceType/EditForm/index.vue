@@ -149,7 +149,7 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'InputNumber',
           title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           field: 'layers',
           value: 0,

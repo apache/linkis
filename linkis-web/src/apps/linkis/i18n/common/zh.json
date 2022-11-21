@@ -445,7 +445,8 @@
           "resourceType": "资源类型",
           "name": "名称",
           "labels": "标签",
-          "config": "配置信息"
+          "config": "配置信息",
+          "searchPlaceholder": "名称/标签/配置"
         },
         "udfManager": {
           "userName": "用户名",

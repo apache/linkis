@@ -444,7 +444,8 @@
           "resourceType": "Resource Type",
           "name": "Name",
           "labels": "Labels",
-          "config": "Config"
+          "config": "Config",
+          "searchPlaceholder": "Name/Labels/Config"
         },
         "udfManager": {
           "userName": "User Name",

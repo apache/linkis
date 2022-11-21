@@ -33,7 +33,7 @@ public enum ManagerCommonErrorCodeSummary {
   YARN_NOT_EXISTS_QUEUE(11006, "Queue:{0} is not exists in YARN(YARN 中不存在队列:{0})"),
   ONLY_SUPPORT_FAIRORCAPA(
       11006,
-      "Only support fairScheduler or capacityScheduler, not support schedulerType:{0}(仅支持 fairScheduler 或 capacityScheduler"),
+      "Only support fairScheduler or capacityScheduler, not support schedulerType:{0}(仅支持 fairScheduler 或 capacityScheduler)"),
   GET_YARN_EXCEPTION(
       11007,
       "Get active Yarn resourcemanager from:{0} exception.(从 {0} 获取主 Yarn resourcemanager 异常)"),

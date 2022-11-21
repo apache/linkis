@@ -215,9 +215,9 @@ object EntranceConfiguration {
   val LOG_PUSH_INTERVAL_TIME =
     CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
 
-  val GRORUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000)
+  val GROUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000)
 
-  val GRORUP_CACHE_EXPITE_TIME = CommonVars("wds.linkis.consumer.group.expire.time.hour", 50)
+  val GROUP_CACHE_EXPIRE_TIME = CommonVars("wds.linkis.consumer.group.expire.time", 50)
 
   val CLIENT_MONITOR_CREATOR =
     CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")

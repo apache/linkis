@@ -93,13 +93,12 @@ public class MetadataQueryRestful {
             @RequestParam("dataSourceName") String dataSourceName,
             @RequestParam("system") String system,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getDatabases,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
             String userName=ModuleUserUtils.getOperationUser(request, "getDatabases, dataSourceName:" + dataSourceName);
             List<String> databases =
@@ -129,13 +128,12 @@ public class MetadataQueryRestful {
             @RequestParam("database") String database,
             @RequestParam("system") String system,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getTables,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
                 return Message.error("'database' is invalid[数据库名称错误]");
@@ -176,7 +174,6 @@ public class MetadataQueryRestful {
             @RequestParam("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getTableProps,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -188,7 +185,7 @@ public class MetadataQueryRestful {
                 return Message.error("'table' is invalid[表名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
             String userName=ModuleUserUtils.getOperationUser(request, "getTableProps, dataSourceName:" + dataSourceName);
             Map<String, String> tableProps =
@@ -231,7 +228,6 @@ public class MetadataQueryRestful {
             @RequestParam(name = "traverse", required = false, defaultValue = "false")
                     Boolean traverse,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getPartitions,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -243,7 +239,7 @@ public class MetadataQueryRestful {
                 return Message.error("'table' is invalid[表名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
 
             String userName=ModuleUserUtils.getOperationUser(request, "getPartitions, dataSourceName:" + dataSourceName);
@@ -288,7 +284,6 @@ public class MetadataQueryRestful {
             @RequestParam("partition") String partition,
             @RequestParam("system") String system,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getPartitionProps,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -300,7 +295,7 @@ public class MetadataQueryRestful {
                 return Message.error("'table' is invalid[表名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
                 return Message.error("'partition' is invalid[partition错误]");
@@ -347,7 +342,6 @@ public class MetadataQueryRestful {
             @RequestParam("table") String table,
             @RequestParam("system") String system,
             HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "getColumns,dataSourceName:"+dataSourceName);
         try {
             if (StringUtils.isBlank(system)) {
                 return Message.error("'system' is missing[缺少系统名]");
@@ -359,7 +353,7 @@ public class MetadataQueryRestful {
                 return Message.error("'table' is invalid[表名错误]");
             }
             if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-                return Message.error("'dataSourceId' is invalid[数据源错误]");
+                return Message.error("'dataSourceName' is invalid[数据源错误]");
             }
 
             String userName=ModuleUserUtils.getOperationUser(request, "getColumns, dataSourceName:" + dataSourceName);

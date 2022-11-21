@@ -241,10 +241,9 @@ public class DataSourceAdminRestfulApi {
     })
     @RequestMapping(value = "/env/{envId}", method = RequestMethod.DELETE)
     public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
-        ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:"+envId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity");
+                    String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:"+envId);
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }
@@ -271,10 +270,9 @@ public class DataSourceAdminRestfulApi {
             @PathVariable("envId") Long envId,
             HttpServletRequest request)
             throws ErrorException {
-        ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:"+envId);
         return RestfulApiHelper.doAndResponse(
                 () -> {
-                    String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv");
+                    String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv,envId:"+envId);
                     if (!RestfulApiHelper.isAdminUser(userName)) {
                         return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
                     }

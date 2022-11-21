@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 @Api(tags = "ECP(engineconn plugin) operation")
@@ -76,7 +77,7 @@ public class EnginePluginRestful {
                                   @RequestParam(value = "ecType", required = false) String ecType,
                                   @RequestParam(value = "version", required = false) String version,
                                   @RequestParam(value = "bmlResourceId", required = false) String bmlResourceId) {
-        String username = ModuleUserUtils.getOperationUser(req, "getVersionList");
+        String username = ModuleUserUtils.getOperationUser(req, MessageFormat.format("getVersionList,ecType{:0},version:{1},bmlResourceId:{2}",ecType,version,bmlResourceId));
         if (Configuration.isAdmin(username)) {
             log.info("{} start to get all ec resource versionList", username);
             try {
@@ -135,7 +136,7 @@ public class EnginePluginRestful {
                                          @RequestParam(value = "ecType") String ecType,
                                          @RequestParam(value = "version") String version,
                                          HttpServletRequest req) {
-        ModuleUserUtils.getOperationUser(req, "updateEnginePluginBML");
+        ModuleUserUtils.getOperationUser(req, MessageFormat.format("updateEnginePluginBML,ecType{:0},version:{1}",ecType,version));
         if(ecType.isEmpty() || ecType.length() == 0 || ecType.equals("null")){
             return Message.error("ecType is not null");
         }else if(version.isEmpty() || version.length() == 0 || version.equals("null")){
@@ -221,7 +222,7 @@ public class EnginePluginRestful {
     public Message deleteEnginePluginBML(HttpServletRequest req,
                                          @RequestParam(value = "ecType") String ecType,
                                          @RequestParam(value = "version", required = false) String version) {
-        String username = ModuleUserUtils.getOperationUser(req, "deleteEnginePluginBML");
+        String username = ModuleUserUtils.getOperationUser(req,  MessageFormat.format("deleteEnginePluginBML,ecType{:0},version:{1}",ecType,version));
         if (Configuration.isAdmin(username)) {
             log.info("{} start to delete engineplugin {} {}", username,ecType,version);
             try {

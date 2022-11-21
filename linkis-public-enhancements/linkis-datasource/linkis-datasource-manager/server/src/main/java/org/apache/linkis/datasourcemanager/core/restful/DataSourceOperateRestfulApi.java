@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +31,7 @@ import org.apache.linkis.datasourcemanager.core.validate.ParameterValidateExcept
 import org.apache.linkis.datasourcemanager.core.validate.ParameterValidator;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.security.SecurityFilter;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,92 +46,91 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
-import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.ENVID_ATYPICAL;
 
 @Api(tags = "data source operate restful api")
 @RestController
 @RequestMapping(
-        value = "/data-source-manager/op/",
-        produces = {"application/json"})
+    value = "/data-source-manager/op/",
+    produces = {"application/json"})
 public class DataSourceOperateRestfulApi {
 
-    @Autowired private MetadataOperateService metadataOperateService;
+  @Autowired private MetadataOperateService metadataOperateService;
 
-    @Autowired private DataSourceRelateService dataSourceRelateService;
+  @Autowired private DataSourceRelateService dataSourceRelateService;
 
-    @Autowired private DataSourceInfoService dataSourceInfoService;
+  @Autowired private DataSourceInfoService dataSourceInfoService;
 
-    @Autowired private ParameterValidator parameterValidator;
+  @Autowired private ParameterValidator parameterValidator;
 
-    @Autowired private Validator beanValidator;
+  @Autowired private Validator beanValidator;
 
-    @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
+  @Autowired private List<DataSourceParamsHook> dataSourceParamsHooks = new ArrayList<>();
 
-    private MultiPartFormDataTransformer formDataTransformer;
+  private MultiPartFormDataTransformer formDataTransformer;
 
-    @PostConstruct
-    public void initRestful() {
-        this.formDataTransformer = FormDataTransformerFactory.buildCustom();
+  @PostConstruct
+  public void initRestful() {
+    this.formDataTransformer = FormDataTransformerFactory.buildCustom();
+  }
+
+  @ApiOperation(value = "connect", notes = "connect", response = Message.class)
+  @ApiOperationSupport(ignoreParameters = {"dataSource"})
+  @RequestMapping(value = "/connect/json", method = RequestMethod.POST)
+  public Message connect(@RequestBody DataSource dataSource, HttpServletRequest request) {
+    return RestfulApiHelper.doAndResponse(
+        () -> {
+          String operator = ModuleUserUtils.getOperationUser(request, "do connect");
+          // Bean validation
+          Set<ConstraintViolation<DataSource>> result =
+              beanValidator.validate(dataSource, Default.class);
+          if (result.size() > 0) {
+            throw new ConstraintViolationException(result);
+          }
+          doConnect(operator, dataSource);
+          return Message.ok().data("ok", true);
+        },
+        "");
+  }
+
+  /**
+   * Build a connection
+   *
+   * @param dataSource
+   */
+  protected void doConnect(String operator, DataSource dataSource) throws ErrorException {
+    if (dataSource.getConnectParams().containsKey("envId")) {
+      try {
+        dataSourceInfoService.addEnvParamsToDataSource(
+            Long.parseLong((String) dataSource.getConnectParams().get("envId")), dataSource);
+      } catch (Exception e) {
+        throw new ParameterValidateException(ENVID_ATYPICAL.getErrorDesc() + e);
+      }
     }
-
-    @ApiOperation(value = "connect", notes = "connect", response = Message.class)
-    @ApiOperationSupport(ignoreParameters = {"dataSource"})
-    @RequestMapping(value = "/connect/json", method = RequestMethod.POST)
-    public Message connect(@RequestBody DataSource dataSource, HttpServletRequest request) {
-        return RestfulApiHelper.doAndResponse(
-                () -> {
-                    String operator = SecurityFilter.getLoginUsername(request);
-                    // Bean validation
-                    Set<ConstraintViolation<DataSource>> result =
-                            beanValidator.validate(dataSource, Default.class);
-                    if (result.size() > 0) {
-                        throw new ConstraintViolationException(result);
-                    }
-                    doConnect(operator, dataSource);
-                    return Message.ok().data("ok", true);
-                },
-                "");
+    List<DataSourceParamKeyDefinition> keyDefinitionList =
+        dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+    dataSource.setKeyDefinitions(keyDefinitionList);
+    Map<String, Object> connectParams = dataSource.getConnectParams();
+    parameterValidator.validate(keyDefinitionList, connectParams);
+    // For connecting, also need to handle the parameters
+    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+      hook.beforePersist(connectParams, keyDefinitionList);
     }
-
-    /**
-     * Build a connection
-     *
-     * @param dataSource
-     */
-    protected void doConnect(String operator, DataSource dataSource) throws ErrorException {
-        if (dataSource.getConnectParams().containsKey("envId")) {
-            try {
-                dataSourceInfoService.addEnvParamsToDataSource(
-                        Long.parseLong((String) dataSource.getConnectParams().get("envId")),
-                        dataSource);
-            } catch (Exception e) {
-                throw new ParameterValidateException(ENVID_ATYPICAL.getErrorDesc() + e);
-            }
-        }
-        List<DataSourceParamKeyDefinition> keyDefinitionList =
-                dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
-        dataSource.setKeyDefinitions(keyDefinitionList);
-        Map<String, Object> connectParams = dataSource.getConnectParams();
-        parameterValidator.validate(keyDefinitionList, connectParams);
-        // For connecting, also need to handle the parameters
-        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
-            hook.beforePersist(connectParams, keyDefinitionList);
-        }
-        DataSourceType dataSourceType =
-                dataSourceRelateService.getDataSourceType(dataSource.getDataSourceTypeId());
-        metadataOperateService.doRemoteConnect(
-                MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue(),
-                dataSourceType.getName().toLowerCase(),
-                operator,
-                dataSource.getConnectParams());
-    }
+    DataSourceType dataSourceType =
+        dataSourceRelateService.getDataSourceType(dataSource.getDataSourceTypeId());
+    metadataOperateService.doRemoteConnect(
+        MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue(),
+        dataSourceType.getName().toLowerCase(),
+        operator,
+        dataSource.getConnectParams());
+  }
 }

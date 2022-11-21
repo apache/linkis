@@ -475,7 +475,8 @@
           "option": "Option",
           "classifier": "Classifier",
           "icon": "Icon",
-          "layers": "Layers"
+          "layers": "Layers",
+          "searchPlaceholder": "Name/Desc/Classifier"
         },
         "datasourceTypeKey": {
           "key": "Key",

@@ -476,7 +476,8 @@
           "option": "选项",
           "classifier": "分类",
           "icon": "图标",
-          "layers": "层级"
+          "layers": "层级",
+          "searchPlaceholder": "名称/描述/分类"
         },
         "datasourceTypeKey": {
           "key": "键名",

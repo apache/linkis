@@ -466,7 +466,8 @@
           "createTime": "Create Time",
           "createUser": "Create User",
           "updateTime": "Update Time",
-          "modifyUser": "Modify User"
+          "modifyUser": "Modify User",
+          "searchPlaceholder": "EnvName/EnvDesc/Param"
         },
         "datasourceType": {
           "name": "Name",

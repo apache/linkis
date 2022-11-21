@@ -467,7 +467,8 @@
           "createTime": "创建时间",
           "createUser": "创建者",
           "updateTime": "更新时间",
-          "modifyUser": "更新者"
+          "modifyUser": "更新者",
+          "searchPlaceholder": "环境名称/环境描述/参数"
         },
         "datasourceType": {
           "name": "名称",

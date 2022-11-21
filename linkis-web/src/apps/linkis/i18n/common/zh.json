@@ -455,7 +455,8 @@
           "description": "描述",
           "parent": "父级Key",
           "createTime": "创建时间",
-          "updateTime": "更新时间"
+          "updateTime": "更新时间",
+          "searchPlaceholder": "用户名"
         },
         "datasourceEnv": {
           "envName": "环境名称",

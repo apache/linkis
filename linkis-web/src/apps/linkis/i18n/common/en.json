@@ -454,7 +454,8 @@
           "description": "Description",
           "parent": "Parent",
           "createTime": "Create Time",
-          "updateTime": "Update Time"
+          "updateTime": "Update Time",
+          "searchPlaceholder": "User Name"
         },
         "datasourceEnv": {
           "envName": "Env Name",

@@ -19,12 +19,9 @@ package org.apache.linkis.manager.label.utils;
 
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
-import org.apache.linkis.protocol.util.ImmutablePair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.*;
 
@@ -57,33 +54,5 @@ public class LabelUtilsTest {
     labels2.add(userCreatorLabel2);
     List<Label<?>> labels3 = LabelUtils.distinctLabel(labels1, labels2);
     Assertions.assertTrue(labels3.size() == 1);
-  }
-
-  @Test
-  public void testLabelsToMap() throws Exception {
-    UserCreatorLabel userCreatorLabel = new UserCreatorLabel();
-    userCreatorLabel.setLabelKey("testLabelKey");
-    Map<String, String> map = new HashMap<>();
-    map.put("test", "test1");
-    userCreatorLabel.setValue(map);
-    List<Label<?>> labels1 = new ArrayList<>();
-    labels1.add(userCreatorLabel);
-    Map<String, Object> labelsToMap = LabelUtils.labelsToMap(labels1);
-    Map<String, String> maps = (Map<String, String>) labelsToMap.get("testLabelKey");
-    Assertions.assertNull(maps);
-  }
-
-  @Test
-  public void testLabelsToPairList() throws Exception {
-    UserCreatorLabel userCreatorLabel = new UserCreatorLabel();
-    userCreatorLabel.setLabelKey("testLabelKey");
-    Map<String, String> map = new HashMap<>();
-    map.put("test", "test1");
-    userCreatorLabel.setValue(map);
-    List<Label<?>> labels1 = new ArrayList<>();
-    labels1.add(userCreatorLabel);
-    List<ImmutablePair<String, String>> immutablePairList = LabelUtils.labelsToPairList(labels1);
-    ImmutablePair<String, String> immutablePair = immutablePairList.get(0);
-    Assertions.assertNull(immutablePair.getValue());
   }
 }

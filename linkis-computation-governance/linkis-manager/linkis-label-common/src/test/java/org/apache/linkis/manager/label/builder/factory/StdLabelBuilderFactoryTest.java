@@ -20,7 +20,6 @@ package org.apache.linkis.manager.label.builder.factory;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
 import org.apache.linkis.manager.label.builder.LabelBuilder;
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,13 +39,6 @@ public class StdLabelBuilderFactoryTest {
   }
 
   @Test
-  public void testCreateLabelInLabelKey() throws Exception {
-    String codeType = "inLabelKey";
-    UserCreatorLabel userCreatorLabel1 = stdLabelBuilderFactory.createLabel(codeType);
-    Assertions.assertNull(userCreatorLabel1);
-  }
-
-  @Test
   public void testCreateLabelOutLabelClass() throws Exception {
     EMInstanceLabel emInstanceLabel = new EMInstanceLabel();
     emInstanceLabel.setLabelKey("testLabelKey");
@@ -61,16 +53,6 @@ public class StdLabelBuilderFactoryTest {
     EMInstanceLabel emInstanceLabel1 =
         stdLabelBuilderFactory.createLabel(EMInstanceLabel.class, null);
     Assertions.assertTrue(emInstanceLabel1.getLabelKey().equals("emInstance"));
-  }
-
-  @Test
-  public void testCreateLabelForInLabelKeyInValueObj() throws Exception {
-    EMInstanceLabel emInstanceLabel = new EMInstanceLabel();
-    emInstanceLabel.setLabelKey("testLabelKey");
-    Object ob = new Object();
-    EMInstanceLabel emInstanceLabel1 =
-        stdLabelBuilderFactory.createLabel("testLabelKey", emInstanceLabel);
-    Assertions.assertNull(emInstanceLabel1);
   }
 
   @Test

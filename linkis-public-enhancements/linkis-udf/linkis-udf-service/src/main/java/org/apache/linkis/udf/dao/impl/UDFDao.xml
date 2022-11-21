@@ -370,10 +370,15 @@
         select a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
         select pu.*,put.name as directory
         from linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
-        where 1 =1 and pu.create_user in
-        <foreach collection="arg0" open="(" separator="," close=")" item="item">
-            #{item}
-        </foreach>
+        <where>
+            <if test="1 == 1">1 = 1</if>
+            <if test="creator != null">and pu.create_user = #{creator}</if>
+            <if test="udfNameList != null">and pu.udf_name in
+                <foreach collection="udfNameList" open="(" close=")" item="item" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
         ) a join
         (select udf_id,description,path,register_format,use_format,bml_resource_version
         from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)

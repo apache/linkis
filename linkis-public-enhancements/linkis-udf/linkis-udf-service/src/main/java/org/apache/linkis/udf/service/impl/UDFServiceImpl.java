@@ -1051,10 +1051,10 @@ public class UDFServiceImpl implements UDFService {
   }
 
   @Override
-  public List<UDFAddVo> getUdfByNameList(List<String> userNameList) {
+  public List<UDFAddVo> getUdfByNameList(List<String> udfNameList, String creator) {
     logger.info("begin to get managerPages.");
     List<UDFAddVo> retList = new ArrayList<>();
-    retList = udfDao.getUdfInfoByNameList(userNameList);
+    retList = udfDao.getUdfInfoByNameList(udfNameList, creator);
     retList.forEach(
         udfInfo -> {
           String createUser = udfInfo.getCreateUser();

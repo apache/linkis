@@ -133,5 +133,6 @@ public interface UDFDao {
       @Param("userName") String userName,
       @Param("categoryCodes") Collection<Integer> categoryCodes);
 
-  List<UDFAddVo> getUdfInfoByNameList(Collection<String> userNameList);
+  List<UDFAddVo> getUdfInfoByNameList(
+      @Param("udfNameList") Collection<String> udfNameList, @Param("creator") String creator);
 }

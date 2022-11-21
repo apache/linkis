@@ -928,13 +928,13 @@ public class UDFRestfulApi {
   @ApiOperation(value = "getUdfList", notes = "get user directory", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "nameList", required = true, dataType = "String", value = "category"),
-    @ApiImplicitParam(name = "creator", required = true, dataType = "String", value = "category"),
+    @ApiImplicitParam(name = "createUser", required = true, dataType = "String", value = "category"),
   })
   @RequestMapping(path = "/getUdfByNameList", method = RequestMethod.GET)
   public Message getUdfList(
       HttpServletRequest req,
       @RequestParam("nameList") String nameList,
-      @RequestParam("creator") String creator) {
+      @RequestParam("createUser") String createUser) {
     Message message = null;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "getUdfByNameList ");
@@ -947,11 +947,11 @@ public class UDFRestfulApi {
       if (!UdfConfiguration.nameRegexPattern().matcher(nameList).matches()) {
         throw new UDFException("nameList is invalid!");
       }
-      if (StringUtils.isEmpty(creator)) {
+      if (StringUtils.isEmpty(createUser)) {
         throw new UDFException("creator is empty!");
       }
       List<String> collect = Arrays.stream(nameList.split(",")).collect(Collectors.toList());
-      List<UDFAddVo> udfInfoList = udfService.getUdfByNameList(collect, creator);
+      List<UDFAddVo> udfInfoList = udfService.getUdfByNameList(collect, createUser);
       message = Message.ok().data("infoList", udfInfoList);
     } catch (Throwable e) {
       logger.error("Failed to get user udfinfo : ", e);

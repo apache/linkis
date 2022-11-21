@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.udfTree.name'),
           field: 'name',
           value: '',
           props: {
@@ -71,14 +71,39 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.udfTree.name'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'select',
+          title: this.$t('message.linkis.basedataManagement.udfTree.category'),
+          field: 'category',
+          value: '',
+          options: [
+            {"value": "udf", "label": "UDF", "disabled": false},
+            {"value": "function", "label": "函数", "disabled": false},
+          ],
+          props: {
+            multiple: false,
+            placeholder: "请选择",
+            notFoundText: "无匹配数据",
+            placement: "bottom",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.udfTree.category'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "用户名",
+          title: this.$t('message.linkis.basedataManagement.udfTree.userName'),
           field: 'userName',
           value: '',
           props: {
@@ -89,14 +114,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"用户名"`,
+              )} `+this.$t('message.linkis.basedataManagement.udfTree.userName'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "描述",
+          title: this.$t('message.linkis.basedataManagement.udfTree.description'),
           field: 'description',
           value: '',
           props: {
@@ -107,14 +132,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"描述"`,
+              )}`+this.$t('message.linkis.basedataManagement.udfTree.description'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "父级Key",
+          title: this.$t('message.linkis.basedataManagement.udfTree.parent'),
           field: 'parent',
           value: '',
           props: {
@@ -125,7 +150,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"父级Key"`,
+              )} `+this.$t('message.linkis.basedataManagement.udfTree.parent'),
               trigger: 'blur',
             },
           ],

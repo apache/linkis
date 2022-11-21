@@ -414,7 +414,7 @@ export default {
     // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
-
+      
     },
     // Edit tags(修改标签)
     editEnter(editInputKey, editInputValue,editedInputValue) {

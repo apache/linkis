@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.name'),
           field: 'name',
           value: '',
           props: {
@@ -71,14 +71,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.name'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.description'),
           field: 'description',
           value: '',
           props: {
@@ -89,14 +89,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"描述"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.description'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "选项",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.option'),
           field: 'option',
           value: '',
           props: {
@@ -107,14 +107,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"选项"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.option'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "分类",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.classifier'),
           field: 'classifier',
           value: '',
           props: {
@@ -125,14 +125,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"分类"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.classifier'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "图标",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.icon'),
           field: 'icon',
           value: '',
           props: {
@@ -140,29 +140,26 @@ export default {
           },
           validate: [
             {
-              required: true,
+              required: false,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"图标"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.icon'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "层级",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           field: 'layers',
-          value: '',
-          props: {
-            placeholder: "",
-          },
+          value: 0,
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"层级"`,
-              trigger: 'blur',
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.layers'),
+              trigger: 'change',
             },
           ],
         }

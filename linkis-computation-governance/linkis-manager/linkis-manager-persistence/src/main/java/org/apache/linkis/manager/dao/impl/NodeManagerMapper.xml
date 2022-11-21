@@ -109,4 +109,10 @@
         select id from linkis_cg_manager_service_instance where owner = #{owner}
     </select>
 
+    <select id="getNodeInstancesByOwnerList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
+        select * from linkis_cg_manager_service_instance where owner in(
+        <foreach collection='owner' separator=',' item='owner'>
+            #{owner}
+        </foreach>)
+    </select>
 </mapper>

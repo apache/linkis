@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,12 +28,22 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,24 +64,12 @@ public class LabelUtils {
    * @return
    */
   public static boolean isBasicType(Class<?> clz) {
-    return clz.equals(String.class)
-        || clz.equals(Enum.class)
-        || clz.isPrimitive()
-        || isWrapClass(clz);
-  }
-
-  /**
-   * If is wrap class
-   *
-   * @param clz class
-   * @return
-   */
-  private static boolean isWrapClass(Class<?> clz) {
-    try {
-      return ((Class<?>) clz.getField("TYPE").get(null)).isPrimitive();
-    } catch (Exception e) {
+    if (clz == null) {
       return false;
     }
+    return clz.equals(String.class)
+        || clz.equals(Enum.class)
+        || org.apache.commons.lang3.ClassUtils.isPrimitiveOrWrapper(clz);
   }
 
   /**
@@ -157,16 +155,10 @@ public class LabelUtils {
       // Enum
       mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
       mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-      //
-      // mapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(),
-      // true);
       // Empty beans allowed
       mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
       // Ignore unknown properties
       mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-      // Cancel to scape no ascii
-      //            mapper.configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(),
-      // false);
     }
 
     /**
@@ -340,9 +332,6 @@ public class LabelUtils {
       if (!labelMap.containsKey(label.getLabelKey())) {
         labelMap.put(label.getLabelKey(), label.getStringValue());
       }
-      /*else {
-          throw new LabelRuntimeException(LabelConstant.LABEL_UTIL_CONVERT_ERROR_CODE, "Got more than one " + label.getLabelKey() + " label, some will be dropped, use labelsToPairList instead.");
-      }*/
     }
     return labelMap;
   }
@@ -354,7 +343,7 @@ public class LabelUtils {
     List<ImmutablePair<String, String>> rsList = new ArrayList<>(labelList.size());
     for (Label<?> label : labelList) {
       if (null != label) {
-        rsList.add(new ImmutablePair<String, String>(label.getLabelKey(), label.getStringValue()));
+        rsList.add(new ImmutablePair<>(label.getLabelKey(), label.getStringValue()));
       } else {
         logger.warn("LabelList contans empty label.");
       }

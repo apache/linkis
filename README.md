@@ -3,9 +3,8 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis builds a computation middleware layer to decouple the upper applications and the underlying data engines,
-  provides standardized interfaces (REST, JDBC, WebSocket etc.) to easily connect to various underlying engines (Spark, Presto, Flink, etc.),
-  while enables cross engine context sharing, unified job& engine governance and orchestration.</strong>
+  <strong> Linkis builds a computation middleware layer to facilitate connection, 
+    governance and orchestration between the upper applications and the underlying data engines. </strong>
 </p>
 <p align="center">
   <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
@@ -31,7 +30,7 @@
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows/build.yml/badge.svg" />
+        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
 
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
@@ -76,7 +75,7 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 - **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
 
-- **Resource management capabilities**  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger, but also able to provide label-based multi-level resource allocation and recycling, allowing itself to have powerful resource management capabilities across mutiple Yarn clusters and mutiple computation resource types
+- **Resource management capabilities**  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger, but also able to provide label-based multi-level resource allocation and recycling, allowing itself to have powerful resource management capabilities across multiple Yarn clusters and multiple computation resource types
 
 - **Unified Context Service** Generate Context ID for each task/request,  associate and manage user and system resource files (JAR, ZIP, Properties, etc.), result set, parameter variable, function, etc., across user, system, and computing engine. Set in one place, automatic reference everywhere
 
@@ -110,8 +109,8 @@ Please go to the [Linkis Releases Page](https://linkis.apache.org/download/main)
 # Compile and Deploy
 
 > For more detailed guidance see:
->- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/linkis-compile-and-package)
->- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/web-build)
+>- [[Backend Compile]](https://linkis.apache.org/docs/latest/development/build)
+>- [[Management Console Build]](https://linkis.apache.org/docs/latest/development/build-console)
 
 ```shell
 
@@ -152,16 +151,16 @@ npm run build
 ### Bundled with MySQL JDBC Driver
 Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the 
 official released linkis image by default. However, at current stage, linkis still relies on this library to work properly.
-To solve this problem, we provide a script which can help to creating an custom image with mysql jdbc from the official 
+To solve this problem, we provide a script which can help to creating a custom image with mysql jdbc from the official 
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 
+$> LINKIS_IMAGE=linkis:1.3.1 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
 
-Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/quick-deploy) to do the deployment.
+Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/deploy-quick/) to do the deployment.
 
 # Examples and Guidance
 - [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)

@@ -87,6 +87,7 @@
         :data="currentSourceData"
         ref="datasourceForm"
         v-if="showDataSource && currentStep === 1"
+        :type="actionType"
       />
 
       <div slot="footer">

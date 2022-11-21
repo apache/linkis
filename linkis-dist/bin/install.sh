@@ -188,6 +188,11 @@ then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
 fi
 
+if [ "$HADOOP_VERSION" != "" ]
+then
+  sed -i ${txt}  "s#@HADOOP_VERSION#$HADOOP_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+fi
+
 if [ "$YARN_AUTH_ENABLE" != "" ]
 then
   sed -i ${txt}  "s#@YARN_AUTH_ENABLE#$YARN_AUTH_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql

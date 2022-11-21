@@ -50,7 +50,7 @@ class UserGroupInfo extends Logging {
     }
     Utils.defaultScheduler.scheduleWithFixedDelay(
       runnable,
-      100000L,
+      100 * 1000L,
       WorkSpaceConfiguration.LOCAL_FILESYSTEM_USER_REFRESH_INTERVAL.getValue,
       TimeUnit.MILLISECONDS
     )
@@ -85,7 +85,7 @@ class UserGroupInfo extends Logging {
     USERLOCKER.writeLock().lock()
     Utils.tryFinally {
       userList.clear()
-      userList ++ tmpUsers
+      userList ++= tmpUsers
     } {
       USERLOCKER.writeLock().unlock()
     }

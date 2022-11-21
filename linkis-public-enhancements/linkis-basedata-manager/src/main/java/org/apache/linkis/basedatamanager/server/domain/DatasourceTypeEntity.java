@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,9 +23,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /** @TableName linkis_ps_dm_datasource_type */
 @TableName(value = "linkis_ps_dm_datasource_type")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DatasourceTypeEntity implements Serializable {
   /** */
   @TableId(type = IdType.AUTO)
@@ -37,7 +39,7 @@ public class DatasourceTypeEntity implements Serializable {
   /** */
   private String description;
 
-  /** */
+  @TableField(value = "`option`")
   private String option;
 
   /** */

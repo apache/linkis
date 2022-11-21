@@ -113,7 +113,7 @@ public class MetadataQueryRestful {
         return Message.error("'system' is invalid[系统名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
       String userName =
           ModuleUserUtils.getOperationUser(
@@ -152,7 +152,7 @@ public class MetadataQueryRestful {
         return Message.error("'system' is invalid[系统名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(database).matches()) {
         return Message.error("'database' is invalid[数据库名称错误]");
@@ -204,7 +204,7 @@ public class MetadataQueryRestful {
         return Message.error("'table' is invalid[表名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
       String userName =
           ModuleUserUtils.getOperationUser(
@@ -258,7 +258,7 @@ public class MetadataQueryRestful {
         return Message.error("'table' is invalid[表名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
 
       String userName =
@@ -317,7 +317,7 @@ public class MetadataQueryRestful {
         return Message.error("'table' is invalid[表名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(partition).matches()) {
         return Message.error("'partition' is invalid[partition错误]");
@@ -375,7 +375,7 @@ public class MetadataQueryRestful {
         return Message.error("'table' is invalid[表名错误]");
       }
       if (!MetadataUtils.nameRegexPattern.matcher(dataSourceName).matches()) {
-        return Message.error("'dataSourceId' is invalid[数据源错误]");
+        return Message.error("'dataSourceName' is invalid[数据源错误]");
       }
 
       String userName =

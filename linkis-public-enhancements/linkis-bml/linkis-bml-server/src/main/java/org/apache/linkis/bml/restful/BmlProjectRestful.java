@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -138,7 +139,8 @@ public class BmlProjectRestful {
       @RequestParam(name = "projectName") String projectName,
       @RequestParam(name = "file") List<MultipartFile> files)
       throws ErrorException {
-    String username = ModuleUserUtils.getOperationUser(request, "uploadShareResource");
+    String username =
+        ModuleUserUtils.getOperationUser(request, "uploadShareResource,projectName:" + projectName);
     Message message;
     try {
       LOGGER.info(
@@ -302,7 +304,11 @@ public class BmlProjectRestful {
       HttpServletResponse resp,
       HttpServletRequest request)
       throws IOException, ErrorException {
-    String user = RestfulUtils.getUserName(request);
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "downloadShareResource,resourceId:{0},version:{1}", resourceId, version));
     Message message = null;
     resp.setContentType("application/x-msdownload");
     resp.setHeader("Content-Disposition", "attachment");
@@ -403,6 +409,7 @@ public class BmlProjectRestful {
   public Message getProjectInfo(
       HttpServletRequest request,
       @RequestParam(value = "projectName", required = false) String projectName) {
+    ModuleUserUtils.getOperationUser(request, "getProjectInfo,projectName:" + projectName);
     return Message.ok("Obtain project information successfully (获取工程信息成功)");
   }
 
@@ -439,8 +446,9 @@ public class BmlProjectRestful {
   @RequestMapping(path = "updateProjectUsers", method = RequestMethod.POST)
   public Message updateProjectUsers(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws ErrorException {
-    String username = ModuleUserUtils.getOperationUser(request, "updateProjectUsers");
     String projectName = jsonNode.get("projectName").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(request, "updateProjectUsers,projectName:" + projectName);
     LOGGER.info("{} begins to update project users for {}", username, projectName);
     List<String> editUsers = new ArrayList<>();
     List<String> accessUsers = new ArrayList<>();

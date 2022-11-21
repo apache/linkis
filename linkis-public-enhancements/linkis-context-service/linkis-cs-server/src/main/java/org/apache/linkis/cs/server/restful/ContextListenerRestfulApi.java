@@ -28,6 +28,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +63,11 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "onBindIDListener,contextID:{0},source:{1}",
+            jsonNode.get("contextID").textValue(), source));
     ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
     listener.setSource(source);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.BIND, contextID, listener);
@@ -78,6 +85,11 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "onBindKeyListener,contextID:{0},source:{1},contextKey:{2}",
+            jsonNode.get("contextID").textValue(), source, jsonNode.get("contextKey").textValue()));
     CommonContextKeyListenerDomain listener = new CommonContextKeyListenerDomain();
     listener.setSource(source);
     HttpAnswerJob answerJob =
@@ -91,6 +103,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
   public Message heartbeat(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, IOException, CSErrorException {
     String source = jsonNode.get("source").textValue();
+    ModuleUserUtils.getOperationUser(req, "heartbeat,source:" + source);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
     return generateResponse(answerJob, "ContextKeyValueBean");
   }

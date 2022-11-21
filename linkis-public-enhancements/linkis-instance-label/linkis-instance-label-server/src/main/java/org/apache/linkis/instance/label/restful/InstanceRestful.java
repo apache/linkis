@@ -73,7 +73,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
   public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "listAllInstanceWithLabel");
     if (!Configuration.isAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -103,7 +103,7 @@ public class InstanceRestful {
   @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
   public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "listAllInstanceWithLabel");
     if (!Configuration.isAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -153,6 +153,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
   public Message listAllModifiableLabelKey(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "listAllModifiableLabelKey");
     Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
     return Message.ok().data("keyList", keyList);
   }
@@ -160,6 +161,7 @@ public class InstanceRestful {
   @ApiOperation(value = "getEurekaURL", notes = "get eureka URL", response = Message.class)
   @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
   public Message getEurekaURL(HttpServletRequest request) throws Exception {
+    ModuleUserUtils.getOperationUser(request, "getEurekaURL");
     String eurekaURL = insLabelService.getEurekaURL();
     return Message.ok().data("url", eurekaURL);
   }

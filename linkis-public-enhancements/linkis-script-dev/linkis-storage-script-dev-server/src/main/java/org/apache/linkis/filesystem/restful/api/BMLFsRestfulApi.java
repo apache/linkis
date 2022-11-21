@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,10 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "projectName", required = false) String projectName,
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
-    String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
+    String userName =
+        MessageFormat.format(
+            "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
+            resourceId, version, fileName);
     Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
     InputStream inputStream = (InputStream) query.get("stream");
     try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
@@ -117,7 +121,10 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
-    String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
+    String userName =
+            MessageFormat.format(
+                    "openScriptFromBML,resourceId:{0},version:{1}},fileName:{2}",
+                    resourceId, version, fileName);
     if (!StringUtils.isEmpty(creator)) {
       userName = creator;
     }
@@ -158,7 +165,6 @@ public class BMLFsRestfulApi {
   @RequestMapping(path = "/saveScriptToBML", method = RequestMethod.POST)
   public Message saveScriptToBML(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws IOException {
-
     String scriptContent = (String) json.get("scriptContent");
     Map<String, Object> params = (Map<String, Object>) json.get("metadata");
     String fileName = (String) json.get("fileName");

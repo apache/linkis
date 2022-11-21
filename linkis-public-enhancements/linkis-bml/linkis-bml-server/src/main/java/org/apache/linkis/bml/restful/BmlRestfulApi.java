@@ -108,7 +108,9 @@ public class BmlRestfulApi {
       HttpServletRequest request)
       throws ErrorException {
 
-    String user = RestfulUtils.getUserName(request);
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request, MessageFormat.format("getVersions,resourceId:{0}", resourceId));
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error(
           "ResourceId {} provided by user {} is illegal (用户{} 提供的resourceId {} is illegal)",
@@ -197,7 +199,7 @@ public class BmlRestfulApi {
       HttpServletResponse response)
       throws ErrorException {
 
-    String user = RestfulUtils.getUserName(request);
+    String user = ModuleUserUtils.getOperationUser(request, "getResources");
 
     if (StringUtils.isEmpty(system)) {
       // 默认系统是wtss
@@ -286,17 +288,19 @@ public class BmlRestfulApi {
   @RequestMapping(path = "deleteVersion", method = RequestMethod.POST)
   public Message deleteVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws IOException, ErrorException {
-    String user = RestfulUtils.getUserName(request);
     if (null == jsonNode.get("resourceId")
         || null == jsonNode.get("version")
         || StringUtils.isEmpty(jsonNode.get("resourceId").textValue())
         || StringUtils.isEmpty(jsonNode.get("version").textValue())) {
       throw new BmlServerParaErrorException(DELETE_SPECIFIED_VERSION.getErrorDesc());
     }
-
     String resourceId = jsonNode.get("resourceId").textValue();
     String version = jsonNode.get("version").textValue();
-    // 检查资源和版本是否存在
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format("deleteVersion,resourceId:{0},version:{1}", resourceId, version));
+    // Check if resource and version exists(检查资源和版本是否存在)
     if (!resourceService.checkResourceId(resourceId)
         || !versionService.checkVersion(resourceId, version)
         || !versionService.canAccess(resourceId, version)) {
@@ -367,14 +371,14 @@ public class BmlRestfulApi {
   @RequestMapping(path = "deleteResource", method = RequestMethod.POST)
   public Message deleteResource(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws IOException, ErrorException {
-
-    String user = RestfulUtils.getUserName(request);
-
     if (null == jsonNode.get("resourceId")) {
       throw new BmlServerParaErrorException(NOT_BALID_RESOURCEID.getErrorDesc());
     }
 
     String resourceId = jsonNode.get("resourceId").textValue();
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request, MessageFormat.format("deleteResource,resourceId:{0}", resourceId));
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error("the error resourceId  is {} ", resourceId);
       throw new BmlServerParaErrorException(
@@ -446,13 +450,12 @@ public class BmlRestfulApi {
   @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
   public Message deleteResources(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws IOException, ErrorException {
-    String user = RestfulUtils.getUserName(request);
     List<String> resourceIds = new ArrayList<>();
 
     if (null == jsonNode.get("resourceIds")) {
       throw new BmlServerParaErrorException(BULK_DELETION_PARAMETERS.getErrorDesc());
     }
-
+    String user = ModuleUserUtils.getOperationUser(request, "deleteResources");
     Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").elements();
     while (jsonNodeIter.hasNext()) {
       resourceIds.add(jsonNodeIter.next().asText());
@@ -532,7 +535,10 @@ public class BmlRestfulApi {
       HttpServletResponse resp,
       HttpServletRequest request)
       throws IOException, ErrorException {
-    String user = RestfulUtils.getUserName(request);
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format("download,resourceId:{0},version:{1}", resourceId, version));
 
     if (StringUtils.isBlank(resourceId) || !resourceService.checkResourceId(resourceId)) {
       throw new BmlQueryFailException(
@@ -656,7 +662,7 @@ public class BmlRestfulApi {
       @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
       @RequestParam(name = "file") List<MultipartFile> files)
       throws ErrorException {
-    String user = RestfulUtils.getUserName(req);
+    String user = ModuleUserUtils.getOperationUser(req, "upload");
     Message message;
     try {
       logger.info("User {} starts uploading resources (用户 {} 开始上传资源)", user, user);
@@ -715,7 +721,9 @@ public class BmlRestfulApi {
       @RequestParam("resourceId") String resourceId,
       @RequestParam("file") MultipartFile file)
       throws Exception {
-    String user = RestfulUtils.getUserName(request);
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request, MessageFormat.format("updateVersion,resourceId:{0}", resourceId));
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error("error resourceId  is {} ", resourceId);
       throw new BmlServerParaErrorException(
@@ -773,7 +781,9 @@ public class BmlRestfulApi {
       @RequestParam(value = "resourceId", required = false) String resourceId,
       HttpServletRequest request)
       throws ErrorException {
-    String user = RestfulUtils.getUserName(request);
+    String user =
+        ModuleUserUtils.getOperationUser(
+            request, MessageFormat.format("getBasic,resourceId:{0}", resourceId));
 
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       throw new BmlServerParaErrorException(PARAMETER_IS_ILLEGAL.getErrorDesc());
@@ -837,6 +847,8 @@ public class BmlRestfulApi {
   public Message getResourceInfo(
       HttpServletRequest request,
       @RequestParam(value = "resourceId", required = false) String resourceId) {
+    ModuleUserUtils.getOperationUser(
+        request, MessageFormat.format("getResourceInfo,resourceId:{0}", resourceId));
     return Message.ok("Obtained information successfully(获取信息成功)");
   }
 
@@ -869,9 +881,13 @@ public class BmlRestfulApi {
   @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
   public Message copyResourceToAnotherUser(
       HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
     String resourceId = jsonNode.get("resourceId").textValue();
     String anotherUser = jsonNode.get("anotherUser").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "downloadShareResource,resourceId:{0},anotherUser:{1}", resourceId, anotherUser));
     Message message = null;
     try {
       logger.info("用户 {} 开始 copy bml resource: {}", username, resourceId);
@@ -905,9 +921,13 @@ public class BmlRestfulApi {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
   public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
     String resourceId = jsonNode.get("resourceId").textValue();
     String rollbackVersion = jsonNode.get("version").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "rollbackVersion,resourceId:{0},version:{1}", resourceId, rollbackVersion));
     Message message = null;
     try {
       logger.info(

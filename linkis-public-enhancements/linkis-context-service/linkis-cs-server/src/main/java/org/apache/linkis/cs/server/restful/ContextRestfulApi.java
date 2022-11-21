@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -85,6 +86,11 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "getContextValue,contextID:{0},contextKey:{1}",
+            jsonNode.get("contextID").textValue(), jsonNode.get("contextKey").textValue()));
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, contextKey);
     Message message = generateResponse(answerJob, "contextValue");
     return message;
@@ -103,6 +109,8 @@ public class ContextRestfulApi implements CsRestfulParent {
   public Message searchContextValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "searchContextValue,contextID:" + jsonNode.get("contextID").textValue());
     JsonNode condition = jsonNode.get("condition");
     Map<Object, Object> conditionMap =
         objectMapper.convertValue(condition, new TypeReference<Map<Object, Object>>() {});
@@ -123,6 +131,11 @@ public class ContextRestfulApi implements CsRestfulParent {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     ContextValue contextValue = getContextValueFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "setValueByKey,contextID:{0},contextKey:{1}",
+            jsonNode.get("contextID").textValue(), jsonNode.get("contextKey").textValue()));
     HttpAnswerJob answerJob =
         submitRestJob(req, ServiceMethod.SET, contextID, contextKey, contextValue);
     return generateResponse(answerJob, "");
@@ -138,6 +151,8 @@ public class ContextRestfulApi implements CsRestfulParent {
   public Message setValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "setValue,contextID:" + jsonNode.get("contextID").textValue());
     ContextKeyValue contextKeyValue = getContextKeyValueFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SET, contextID, contextKeyValue);
     return generateResponse(answerJob, "");
@@ -154,6 +169,11 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "resetValue,contextID:{0},contextKey:{1}",
+            jsonNode.get("contextID").textValue(), jsonNode.get("contextKey").textValue()));
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, contextID, contextKey);
     return generateResponse(answerJob, "");
   }
@@ -169,6 +189,11 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "removeValue,contextID:{0},contextKey:{1}",
+            jsonNode.get("contextID").textValue(), jsonNode.get("contextKey").textValue()));
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, contextKey);
     return generateResponse(answerJob, "");
   }
@@ -183,6 +208,8 @@ public class ContextRestfulApi implements CsRestfulParent {
   public Message removeAllValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeAllValue,contextID:" + jsonNode.get("contextID").textValue());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);
     return generateResponse(answerJob, "");
   }
@@ -201,6 +228,10 @@ public class ContextRestfulApi implements CsRestfulParent {
       HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        "removeAllValueByKeyPrefixAndContextType,contextID:"
+            + jsonNode.get("contextID").textValue());
     String contextType = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR).textValue();
     String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).textValue();
     HttpAnswerJob answerJob =
@@ -221,6 +252,8 @@ public class ContextRestfulApi implements CsRestfulParent {
   public Message removeAllValueByKeyPrefix(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeAllValueByKeyPrefix,contextID:" + jsonNode.get("contextID").textValue());
     String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).textValue();
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, keyPrefix);
     return generateResponse(answerJob, "");
@@ -240,6 +273,7 @@ public class ContextRestfulApi implements CsRestfulParent {
         || !jsonNode.has("idList")
         || !jsonNode.get("idList").isArray()
         || (jsonNode.get("idList").isArray() && ((ArrayNode) jsonNode.get("idList")).size() == 0)) {
+      ModuleUserUtils.getOperationUser(req, "clearAllContextByID");
       throw new CSErrorException(97000, "idList cannot be empty.");
     }
     ArrayNode idArray = (ArrayNode) jsonNode.get("idList");
@@ -270,7 +304,7 @@ public class ContextRestfulApi implements CsRestfulParent {
   public Message clearAllContextByID(
       HttpServletRequest req, @RequestBody Map<String, Object> bodyMap)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-    String username = ModuleUserUtils.getOperationUser(req);
+    String username = ModuleUserUtils.getOperationUser(req, "clearAllContextByID");
     if (!Configuration.isAdmin(username)) {
       throw new CSErrorException(97018, "Only station admins are allowed.");
     }

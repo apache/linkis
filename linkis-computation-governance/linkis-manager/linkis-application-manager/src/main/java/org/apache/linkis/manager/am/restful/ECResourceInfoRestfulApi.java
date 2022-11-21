@@ -63,7 +63,7 @@ public class ECResourceInfoRestfulApi {
   public Message getECInfo(
       HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
       throws AMErrorException {
-    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo");
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo,ticketid：" + ticketid);
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
     if (null != ecResourceInfoRecord
@@ -82,7 +82,7 @@ public class ECResourceInfoRestfulApi {
   @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
   public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
       throws AMErrorException {
-    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo");
+    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo,ticketid：" + ticketid);
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
     if (null != ecResourceInfoRecord

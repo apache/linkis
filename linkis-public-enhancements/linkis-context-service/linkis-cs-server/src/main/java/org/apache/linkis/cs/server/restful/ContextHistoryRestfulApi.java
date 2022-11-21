@@ -25,6 +25,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -63,6 +64,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   @RequestMapping(path = "createHistory", method = RequestMethod.POST)
   public Message createHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    ModuleUserUtils.getOperationUser(
+        req, "createHistory,contextID:" + jsonNode.get("contextID").textValue());
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
@@ -85,6 +88,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
   public Message removeHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    ModuleUserUtils.getOperationUser(
+        req, "removeHistory,contextID:" + jsonNode.get("contextID").textValue());
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
@@ -107,6 +112,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   @RequestMapping(path = "getHistories", method = RequestMethod.POST)
   public Message getHistories(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    ModuleUserUtils.getOperationUser(
+        req, "getHistories,contextID:" + jsonNode.get("contextID").textValue());
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
       throw new CSErrorException(97000, "contxtId cannot be empty");
@@ -126,6 +133,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   public Message getHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     // ContextID contextID, String source
+    ModuleUserUtils.getOperationUser(
+        req, "getHistory,contextID:" + jsonNode.get("contextID").textValue());
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
@@ -150,6 +159,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   public Message searchHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     // ContextID contextID, String[] keywords
+    ModuleUserUtils.getOperationUser(
+        req, "searchHistory,contextID:" + jsonNode.get("contextID").textValue());
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
     if (StringUtils.isEmpty(contextID.getContextId())) {

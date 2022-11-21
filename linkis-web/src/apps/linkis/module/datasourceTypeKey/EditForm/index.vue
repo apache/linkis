@@ -60,7 +60,43 @@ export default {
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.udfTree.name'),
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
+          field: 'key',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
+          field: 'dataSourceTypeId',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.name'),
           field: 'name',
           value: '',
           props: {
@@ -71,40 +107,15 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.udfTree.name'),
-              trigger: 'blur',
-            },
-          ],
-        },
-        {
-          type: 'select',
-          title: this.$t('message.linkis.basedataManagement.udfTree.category'),
-          field: 'category',
-          value: '',
-          options: [
-            {"value": "udf", "label": "UDF", "disabled": false},
-            {"value": "function", "label": "函数", "disabled": false},
-          ],
-          props: {
-            multiple: false,
-            placeholder: "请选择",
-            notFoundText: "无匹配数据",
-            placement: "bottom",
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.udfTree.category'),
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.name'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.udfTree.userName'),
-          field: 'userName',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
+          field: 'valueType',
           value: '',
           props: {
             placeholder: "",
@@ -114,14 +125,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.udfTree.userName'),
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: this.$t('message.linkis.basedataManagement.udfTree.description'),
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
           field: 'description',
           value: '',
           props: {
@@ -132,29 +143,11 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.udfTree.description'),
+              )} ` +this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
               trigger: 'blur',
             },
           ],
         },
-        {
-          type: 'input',
-          title: this.$t('message.linkis.basedataManagement.udfTree.parent'),
-          field: 'parent',
-          value: '',
-          props: {
-            placeholder: "",
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.udfTree.parent'),
-              trigger: 'blur',
-            },
-          ],
-        }
       ]
     }
   },

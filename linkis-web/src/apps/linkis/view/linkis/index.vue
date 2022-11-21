@@ -126,7 +126,8 @@ export default {
           {key: '1-8-1', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
           {key: '1-8-2', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
           {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
-          {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          // {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          {key: '1-8-5', name: this.$t('message.linkis.sideNavList.function.children.datasourceTypeKey'), path: '/console/datasourceTypeKey' },
         ]
       },
       basedataNavList: {
@@ -139,9 +140,9 @@ export default {
           {key: '1-10-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
           {key: '1-10-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
           {key: '1-10-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
-          {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
-          {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
-          
+          // {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
+          // {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
+
         ]
       },
       urmSideNavList: {

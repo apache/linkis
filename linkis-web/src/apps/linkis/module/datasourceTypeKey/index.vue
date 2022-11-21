@@ -76,24 +76,25 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add'? $t('message.linkis.basedataManagement.addUDFAdmin') : $t('message.linkis.basedataManagement.edit')"
+      :title="modalAddMode=='add'? $t('message.linkis.basedataManagement.add') : $t('message.linkis.basedataManagement.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <EditForm ref="editForm" :data="modalEditData"></EditForm>
     </Modal>
   </div>
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import ErrorCodeForm from './EditForm/index'
+import EditForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
+import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {ErrorCodeForm},
+  components: {EditForm},
   data() {
     return {
       searchName: "",
@@ -111,24 +112,74 @@ export default {
           align: 'center',
         },
         {
-          title: this.$t('message.linkis.basedataManagement.udfManager.userName'),
-          key: 'userName',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
+          key: 'key',
           minWidth: 50,
           tooltip: true,
           align: 'center',
         },
         {
-          title: this.$t('message.linkis.basedataManagement.action'),
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.name'),
+          key: 'name',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
+          key: 'valueType',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
+          key: 'description',
+          tooltip: true,
+          align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.createTime'),
+          key: 'createTime',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+          render: (h,params)=>{
+            return h('div',
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+            )
+          }
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.updateTime'),
+          key: 'updateTime',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+          render: (h,params)=>{
+            return h('div',
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+            )
+          }
+        },
+        {
+          title: this.$t('message.linkis.datasource.action'),
           width: 150,
           slot: 'action',
           align: 'center',
         },
 
       ],
+      modalEditData: {
+        key: '',
+        name: '',
+        valueType: '',
+        id: '',
+        description: '',
+      },
       pageDatalist: [],
       modalShow: false,
       modalAddMode: 'add',
-      modalEditData: {},
       modalLoading: false
     };
   },
@@ -140,7 +191,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      //console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -158,25 +209,20 @@ export default {
       this.load()
     },
     onAdd(){
-      this.modalEditData={
-        id: "",
-        errorCode: "",
-        errorDesc: "",
-        errorRegex: '',
-      }
       this.modalAddMode = 'add'
       this.modalShow = true
+      this.clearForm()
     },
     onTableEdit(row){
-      this.modalEditData = row
+      row.dataSourceTypeId = row.dataSourceTypeId+""
+      this.modalEditData = {...row}
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
-
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -200,7 +246,9 @@ export default {
 
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.editForm.formModel.submit((formData)=>{
+        delete formData._index
+        delete formData._rowKey
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
@@ -220,7 +268,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -242,6 +290,11 @@ export default {
     onModalCancel(){
       this.modalLoading=false
       this.modalShow = false
+    },
+    clearForm(){
+      for(let key in this.modalEditData) {
+        this.modalEditData[key] = ''
+      }
     }
   },
 };
@@ -249,6 +302,7 @@ export default {
 
 <style lang="scss" src="./index.scss" scoped>
 </style>
+
 <style lang="scss">
 .mytable {
   border: 0;

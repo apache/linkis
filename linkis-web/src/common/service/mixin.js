@@ -25,7 +25,7 @@ export default {
       SUPPORTED_LANG_MODES,
     };
   },
-  
+
   created: function () {},
   mounted: function () {},
   beforeDestroy: function () {},
@@ -38,6 +38,7 @@ export default {
       return vsBi.url;
     },
     getProjectJsonResult(key, name = 'visualis') {
+      console.log(key,name)
       // 用于判断返回什么样的返回值
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) {

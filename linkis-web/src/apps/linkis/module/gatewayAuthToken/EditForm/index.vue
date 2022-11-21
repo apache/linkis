@@ -62,13 +62,15 @@ export default {
           type: 'input',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
           field: 'tokenName',
+          info: 'Token Name,Example: TEST-AUTH',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. TEST-AUTH",
           },
           validate: [
             {
               required: true,
+              pattern: /[A-Z]+-[A-Z]+/g,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
@@ -82,7 +84,7 @@ export default {
           field: 'legalUsers',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
@@ -101,7 +103,7 @@ export default {
           field: 'legalHosts',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
@@ -114,12 +116,12 @@ export default {
           ],
         },
         {
-          type: 'Input',
+          type: 'InputNumber',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
           value: -1,
           props: {
-            placeholder: "",
+            placeholder: "eg . -1",
           },
           validate: [
             {

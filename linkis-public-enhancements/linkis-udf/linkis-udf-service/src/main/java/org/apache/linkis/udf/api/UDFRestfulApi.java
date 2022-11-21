@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -487,7 +488,7 @@ public class UDFRestfulApi {
   public Message shareUDF(HttpServletRequest req, @RequestBody JsonNode json) throws Throwable {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "shareUDF");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("UserName is Empty!");
       }
@@ -541,7 +542,7 @@ public class UDFRestfulApi {
   public Message getSharedUsers(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "getSharedUsers");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("UserName is Empty!");
       }
@@ -638,7 +639,7 @@ public class UDFRestfulApi {
   public Message publishUDF(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "publish");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -677,12 +678,14 @@ public class UDFRestfulApi {
   public Message rollbackUDF(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      long udfId = json.get("udfId").longValue();
+      String version = json.get("version").textValue();
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("rollback,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
-      long udfId = json.get("udfId").longValue();
-      String version = json.get("version").textValue();
       verifyOperationUser(userName, udfId);
       udfService.rollbackUDF(udfId, version, userName);
       message = Message.ok();
@@ -701,7 +704,7 @@ public class UDFRestfulApi {
   public Message versionList(HttpServletRequest req, @RequestParam("udfId") long udfId) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "versionList,udfId:" + udfId);
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -750,7 +753,7 @@ public class UDFRestfulApi {
   public Message managerPages(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "managerPages");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -799,7 +802,9 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("downloadUdf,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -841,7 +846,9 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("downloadToLocal,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }

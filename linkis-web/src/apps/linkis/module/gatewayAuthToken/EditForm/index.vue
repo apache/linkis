@@ -21,7 +21,6 @@
       :rule="rule"
       v-model="formModel"
       :option="options"
-      :value.sync="formData"
     />
   </div>
 </template>
@@ -30,12 +29,11 @@
 export default {
   props: {
     mode: String,
-    data: Object,
   },
   data() {
     return {
       formModel: {},
-      formData: {},
+      // formData: {},
       options: {
         submitBtn: false,
       },
@@ -62,13 +60,15 @@ export default {
           type: 'input',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
           field: 'tokenName',
+          info: 'Token Name,Example: TEST-AUTH',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. TEST-AUTH",
           },
           validate: [
             {
               required: true,
+              pattern: /^[A-Za-z]+-[A-Za-z]+$/g,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
@@ -82,7 +82,7 @@ export default {
           field: 'legalUsers',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
@@ -94,14 +94,13 @@ export default {
             },
           ],
         },
-
         {
           type: 'input',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
           field: 'legalHosts',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
@@ -114,16 +113,17 @@ export default {
           ],
         },
         {
-          type: 'Input',
+          type: 'input',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
-          value: -1,
+          value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg . -1",
           },
           validate: [
             {
               required: true,
+              pattern: /^(\-|\+)?\d+(\.\d+)?$/,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
@@ -133,22 +133,6 @@ export default {
         },
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

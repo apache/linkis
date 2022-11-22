@@ -432,21 +432,25 @@
           "businessOwner": "所属者",
           "createTime":"创建时间",
           "updateTime": "更新时间",
-          "updateBy": "更新人"
+          "updateBy": "更新人",
+          "searchPlaceholder": "令牌名称/用户/主机"
         },
         "errorCode": {
           "errorCode": "错误代码",
           "errorDesc": "错误描述",
-          "errorRegex": "错误正则"
+          "errorRegex": "错误正则",
+          "searchPlaceholder": "代码/描述/正则"
         },
         "rmExternalResourceProvider": {
           "resourceType": "资源类型",
           "name": "名称",
           "labels": "标签",
-          "config": "配置信息"
+          "config": "配置信息",
+          "searchPlaceholder": "名称/标签/配置"
         },
         "udfManager": {
-          "userName": "用户名"
+          "userName": "用户名",
+          "searchPlaceholder": "用户名"
         },
         "udfTree": {
           "name": "名称",
@@ -455,7 +459,8 @@
           "description": "描述",
           "parent": "父级Key",
           "createTime": "创建时间",
-          "updateTime": "更新时间"
+          "updateTime": "更新时间",
+          "searchPlaceholder": "名称/分类/描述/用户名"
         },
         "datasourceEnv": {
           "envName": "环境名称",
@@ -467,7 +472,8 @@
           "createTime": "创建时间",
           "createUser": "创建者",
           "updateTime": "更新时间",
-          "modifyUser": "更新者"
+          "modifyUser": "更新者",
+          "searchPlaceholder": "环境名称/环境描述/参数"
         },
         "datasourceType": {
           "name": "名称",
@@ -475,7 +481,8 @@
           "option": "选项",
           "classifier": "分类",
           "icon": "图标",
-          "layers": "层级"
+          "layers": "层级",
+          "searchPlaceholder": "名称/描述/分类"
         },
         "datasourceTypeKey": {
           "key": "键名",
@@ -484,7 +491,8 @@
           "valueType": "值类型",
           "description": "描述",
           "createTime": "创建时间",
-          "updateTime": "更新时间"
+          "updateTime": "更新时间",
+          "searchPlaceholder": "名称"
         }
       },
       "EnginePluginManagement": {

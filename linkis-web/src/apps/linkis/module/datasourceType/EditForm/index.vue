@@ -64,7 +64,7 @@ export default {
           field: 'name',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql",
           },
           validate: [
             {
@@ -82,7 +82,7 @@ export default {
           field: 'description',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql database",
           },
           validate: [
             {
@@ -100,7 +100,7 @@ export default {
           field: 'option',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql database",
           },
           validate: [
             {
@@ -118,7 +118,7 @@ export default {
           field: 'classifier',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "relational database",
           },
           validate: [
             {
@@ -134,13 +134,15 @@ export default {
           type: 'input',
           title: this.$t('message.linkis.basedataManagement.datasourceType.icon'),
           field: 'icon',
+          info: 'example：https://linkis.apache.org/img/logo.png',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. https://linkis.apache.org/img/logo.png",
           },
           validate: [
             {
-              required: false,
+              required: true,
+              type: "url",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceType.icon'),
@@ -149,10 +151,13 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'InputNumber',
           title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           field: 'layers',
           value: 0,
+          props: {
+            placeholder: "eg. 1-3"
+          },
           validate: [
             {
               required: true,

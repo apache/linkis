@@ -41,9 +41,11 @@ public class DatasourceTypeKeyServiceImpl
     implements DatasourceTypeKeyService {
 
   @Override
-  public PageInfo getListByPage(String searchName,Integer dataSourceTypeId, Integer currentPage, Integer pageSize) {
+  public PageInfo getListByPage(
+      String searchName, Integer dataSourceTypeId, Integer currentPage, Integer pageSize) {
     PageHelper.startPage(currentPage, pageSize);
-    List<DatasourceTypeEntity> listByPage = this.getBaseMapper().getListByPage(searchName,dataSourceTypeId);
+    List<DatasourceTypeEntity> listByPage =
+        this.getBaseMapper().getListByPage(searchName, dataSourceTypeId);
     PageInfo pageInfo = new PageInfo(listByPage);
     return pageInfo;
   }

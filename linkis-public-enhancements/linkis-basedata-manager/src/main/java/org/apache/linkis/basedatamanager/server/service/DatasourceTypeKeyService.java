@@ -27,5 +27,6 @@ import com.github.pagehelper.PageInfo;
  * @createDate 2022-11-19 10:53:47
  */
 public interface DatasourceTypeKeyService extends IService<DatasourceTypeKeyEntity> {
-  PageInfo getListByPage(String searchName,Integer dataSourceTypeId, Integer currentPage, Integer pageSize);
+  PageInfo getListByPage(
+      String searchName, Integer dataSourceTypeId, Integer currentPage, Integer pageSize);
 }

@@ -49,14 +49,15 @@ public class DatasourceTypeKeyRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.GET)
   public Message list(
       HttpServletRequest request,
-      @RequestParam(value = "searchName",required = false)  String searchName,
-      @RequestParam(value = "dataSourceTypeId",required = false) Integer dataSourceTypeId,
-      Integer currentPage, Integer pageSize) {
-
+      @RequestParam(value = "searchName", required = false) String searchName,
+      @RequestParam(value = "dataSourceTypeId", required = false) Integer dataSourceTypeId,
+      Integer currentPage,
+      Integer pageSize) {
 
     ModuleUserUtils.getOperationUser(
         request, "Query list data of Datasource Type Key,search name:" + searchName);
-    PageInfo pageList = datasourceTypeKeyService.getListByPage(searchName,dataSourceTypeId, currentPage, pageSize);
+    PageInfo pageList =
+        datasourceTypeKeyService.getListByPage(searchName, dataSourceTypeId, currentPage, pageSize);
     return Message.ok("").data("list", pageList);
   }
 

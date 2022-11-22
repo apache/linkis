@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.service.em
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
 import org.apache.linkis.manager.am.service.EMEngineService
@@ -54,6 +55,9 @@ class DefaultEMEngineService extends EMEngineService with Logging {
   private var nodeLabelService: NodeLabelService = _
 
   @Autowired
+  private var engineConnLaunchService: EngineConnLaunchService = _
+
+  @Autowired
   private var labelFilter: LabelFilter = _
 
   override def listEngines(getEMEnginesRequest: GetEMEnginesRequest): util.List[EngineNode] = {
@@ -68,7 +72,10 @@ class DefaultEMEngineService extends EMEngineService with Logging {
   ): EngineNode = {
 
     logger.info(s"EM ${emNode.getServiceInstance} start to create Engine ${engineBuildRequest}")
-    val engineNode = emNodeManager.createEngine(engineBuildRequest, emNode)
+    val engineConnLaunchRequest =
+      engineConnLaunchService.createEngineConnLaunchRequest(engineBuildRequest)
+
+    val engineNode = emNodeManager.createEngine(engineConnLaunchRequest, emNode)
     logger.info(
       s"EM ${emNode.getServiceInstance} Finished to create Engine ${engineBuildRequest.ticketId}"
     )

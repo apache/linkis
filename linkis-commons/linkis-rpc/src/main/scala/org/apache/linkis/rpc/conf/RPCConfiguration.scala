@@ -73,6 +73,13 @@ object RPCConfiguration {
     "metadatamanager,metadataquery"
   ).getValue.split(",")
 
+  val LINKIS_MANAGER_SERVICE_NAME: CommonVars[String] =
+    CommonVars("wds.linkis.gateway.conf.linkismanager.name", "linkis-cg-linkismanager")
+
+  val LINKIS_MANAGER_SERVICE_LIST: Array[String] =
+    CommonVars("wds.linkis.gateway.conf.linkismanager.list", "linkisManager,engineplugin").getValue
+      .split(",")
+
   val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] =
     CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))
 

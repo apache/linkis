@@ -86,10 +86,15 @@ public class EntranceFailoverJobServer {
                                 if (!locked) return;
                                 logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
 
-                                // serverInstance to map
-                                Map<String, Long> serverInstanceMap = getActiveServerInstances().stream()
-                                        .collect(Collectors.toMap(ServiceInstance::getInstance, ServiceInstance::getRegistryTimestamp, (k1, k2) -> k2));
-                                if (serverInstanceMap.isEmpty()) return;
+                    // serverInstance to map
+                    Map<String, Long> serverInstanceMap =
+                        getActiveServerInstances().stream()
+                            .collect(
+                                Collectors.toMap(
+                                    ServiceInstance::getInstance,
+                                    ServiceInstance::getRegistryTimestamp,
+                                    (k1, k2) -> k2));
+                    if (serverInstanceMap.isEmpty()) return;
 
                     // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
                     long expiredTimestamp = 0L;
@@ -100,8 +105,9 @@ public class EntranceFailoverJobServer {
                     }
 
                                 // get uncompleted status
-                                List<String> statusList = Lists.newArrayList();
-                                SchedulerEventState.values().filterNot(SchedulerEventState::isCompleted).foreach(state -> statusList.add(state.toString()));
+                                List<String> statusList =
+                                Arrays.stream(SchedulerEventState.uncompleteStatusArray())
+                            .map(Object::toString).collect(Collectors.toList());
 
                     List<JobRequest> jobRequests =
                         JobHistoryHelper.queryWaitForFailoverTask(

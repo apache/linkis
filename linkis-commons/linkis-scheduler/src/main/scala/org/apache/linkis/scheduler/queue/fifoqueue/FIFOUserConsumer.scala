@@ -109,7 +109,7 @@ class FIFOUserConsumer(
     var event: Option[SchedulerEvent] = getWaitForRetryEvent
     if (event.isEmpty) {
       val maxAllowRunningJobs = fifoGroup.getMaxAllowRunningJobs
-      val currentRunningJobs = runningJobs.filter(e => e != null && !e.isCompleted)
+      val currentRunningJobs = runningJobs.count(e => e != null && !e.isCompleted)
       if (maxAllowRunningJobs <= currentRunningJobs) {
         Utils.tryQuietly(Thread.sleep(1000)) // TODO 还可以优化，通过实现JobListener进行优化
         return

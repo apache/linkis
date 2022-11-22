@@ -292,7 +292,7 @@ abstract class EntranceServer extends Logging {
         engineMap.asScala
           .map(_._2.asInstanceOf[util.Map[String, Object]])
           .filter(_.containsKey(TaskConstant.ENGINE_INSTANCE))
-          .maxBy(_.getOrDefault(TaskConstant.ENGINE_CONN_SUBMIT_TIME, 0).toString)
+          .maxBy(_.getOrDefault(TaskConstant.ENGINE_CONN_SUBMIT_TIME, "0").toString)
 
       if (engineInstance != null || engineInstance.containsKey(TaskConstant.FAILOVER_FLAG)) {
         logger.info(

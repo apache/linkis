@@ -117,13 +117,13 @@ export default {
         this.$emit('clear-session');
         storage.set('need-refresh-proposals-hql', true);
         storage.set('need-refresh-proposals-python', true);
-        // 手动退出清掉baseInfo
+        // Manually exit to clear baseInfo(手动退出清掉baseInfo)
         storage.remove('baseInfo', 'local');
         this.$router.push({ path: '/login' });
       });
     },
     changeLang() {
-      // 中文切换英文
+      // Chinese to English(中文切换英文)
       if (localStorage.getItem('locale') === 'zh-CN') {
         localStorage.setItem('locale', 'en');
       } else {

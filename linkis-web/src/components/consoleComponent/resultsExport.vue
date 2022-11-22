@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <Modal
     v-model="show"
@@ -134,7 +134,7 @@ export default {
     },
     setFileTree() {
       if (isEmpty(this.fileTree)) {
-        // 取indexedDB缓存
+        // Fetch indexedDB cache(取indexedDB缓存)
         this.dispatch('IndexedDB:getTree', {
           name: 'scriptTree',
           cb: (res) => {
@@ -180,7 +180,7 @@ export default {
     },
     exportConfirm() {
       const tabName = `new_stor_${Date.now()}.out`;
-      // 导出结果集增加是否导出全部，当选择导出全部时，来源路径不带后缀文件
+      // Whether to export all the result set is added. When export all is selected, the source path does not have a suffix file.(导出结果集增加是否导出全部，当选择导出全部时，来源路径不带后缀文件)
       let temPath = this.currentPath;
       if (this.isAll) {
         temPath = temPath.substring(0, temPath.lastIndexOf('/'));
@@ -192,7 +192,7 @@ export default {
         id: md5Path,
         filename: tabName,
         filepath: '',
-        // saveAs表示临时脚本，需要关闭或保存时另存
+        // saveAs represents a temporary script that needs to be closed or saved when saved(saveAs表示临时脚本，需要关闭或保存时另存)
         saveAs: true,
         noLoadCache: true,
         code,

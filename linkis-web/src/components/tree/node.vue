@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 
 <template>
   <div
@@ -116,7 +116,7 @@ export default {
     isHasFileOpen() {
       if (!this.highlightPath) return false;
       const highlightList = this.highlightPath.split('/');
-      // 目录一一对应,需递归匹配所有父层级
+      // One-to-one correspondence between directories, all parent levels need to be recursively matched(目录一一对应,需递归匹配所有父层级)
       let flag = false;
       const checkName = (node) => {
         const name = node.data.name;
@@ -150,8 +150,8 @@ export default {
       if (val) {
         this.$nextTick(() => {
           this.$refs.edit && this.$refs.edit.focus();
-          // 设置选中区域
-          // index为-1时，是文件夹，会默认选中全部
+          // set selected area(设置选中区域)
+          // When the index is -1, it is a folder, and all will be selected by default(index为-1时，是文件夹，会默认选中全部)
           if (this.node.label) {
             const index = this.node.label.lastIndexOf('.');
             this.$refs.edit.setSelectionRange(0, index);
@@ -186,7 +186,7 @@ export default {
           }
         });
       }
-      // 初始化的时候默认打开根目录
+      // The root directory is opened by default during initialization(初始化的时候默认打开根目录)
       if (this.isRootDefaultOpen) {
         this.expanded = true;
       }
@@ -246,7 +246,7 @@ export default {
       const childrenKey = tree.nodeProps.children || 'children';
       const that = this;
       const children = that.node.data[childrenKey] || [];
-      // 如果有children数据就不去请求
+      // If there is children data, do not request(如果有children数据就不去请求)
       if (tree && tree.loadDataFn && !children.length) {
         tree.loadDataFn(this.node, (data) => {
           if (data) {
@@ -294,7 +294,7 @@ export default {
           label: newLabel,
           node: this.node.data,
         });
-        // 如果脚本类型是sql或者是hql是支持脚本修改后缀的，且修改的后缀是正确的
+        // If the script type is sql or hql, it supports script modification suffix, and the modified suffix is ​​correct(如果脚本类型是sql或者是hql是支持脚本修改后缀的，且修改的后缀是正确的)
         const reg = /\.(hql|sql)$/i;
         const newResult = reg.test(newLabel);
         const oldResult = reg.test(oldLabel);

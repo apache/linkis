@@ -2,35 +2,35 @@
 
 | module name(模块名) | error code(错误码)  | describe(描述) |enumeration name(枚举)| Exception Class(类名)|
 | -------- | -------- | ----- |-----|-----|
-|flink |16020|Cannot register module {0}  because a module with this name is already registered.(无法注册模块 {0},因为已注册具有此名称的模块.)|CANNOT_MODULE_ALREADY|FlinkErrorCodeSummary|
-|flink |16020|Cannot create catalog   because a catalog with this name is already registered.(无法创建目录，因为同名的目录已注册.)|CANNOT_CATALOG_ALREADY|FlinkErrorCodeSummary|
-|flink |16020|Cannot create table because a table with this name is already registered,table name(无法创建表，因为同名的表已注册,表名为){0}|CANNOT_TABLE_ALREADY|FlinkErrorCodeSummary|
-|flink |16020|Cannot create function because a function with this name is already registered,function name(无法创建函数，因为具有此名称的函数已注册,函数名称){0}|CANNOT_FUNCTION_ALREADY|FlinkErrorCodeSummary|
+|flink |16020|Cannot register module:{0}, because a module with this name is already registered(无法注册模块：{0},因为已注册具有此名称的模块).|CANNOT_MODULE_ALREADY|FlinkErrorCodeSummary|
+|flink |16020|Cannot create catalog:{0}, because a catalog with this name is already registered(无法创建目录：{0},因为同名的目录已注册).|CANNOT_CATALOG_ALREADY|FlinkErrorCodeSummary|
+|flink |16020|Cannot create table:{0}, because a table with this name is already registered(无法创建表：{0}，因为同名的表已注册).|CANNOT_TABLE_ALREADY|FlinkErrorCodeSummary|
+|flink |16020|Cannot create function:{}, because a function with this name is already registered(无法创建函数：{0}，因为同名函数已注册).|CANNOT_FUNCTION_ALREADY|FlinkErrorCodeSummary|
 |flink |16020|The sql code is empty.(sql代码为空.)|SQL_CODE_EMPTY|FlinkErrorCodeSummary|
-|flink |16020|Not support runType (不支持 runType)|NOT_SUPPORT_RUNTYPE|FlinkErrorCodeSummary|
-|flink |16020|Planner must be one of these(规划师必须是以下之一):{0}|PLANNER_MUST_THESE|FlinkErrorCodeSummary|
-|flink |16020|Execution must be one of these(执行类型必须是以下之一):{0}|EXECUTION_MUST_THESE|FlinkErrorCodeSummary|
+|flink |16020|Not support the runType:{}(不支持的runType：{}).|NOT_SUPPORT_RUNTYPE|FlinkErrorCodeSummary|
+|flink |16020|Planner must be one of:{}(Planner 必须是以下之一).|PLANNER_MUST_THESE|FlinkErrorCodeSummary|
+|flink |16020|Execution type must be one of:{}(Execution 类型必须是以下之一).|EXECUTION_MUST_THESE|FlinkErrorCodeSummary|
 |flink |16020|Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)|NOT_SUPPORTED_YARNTARGET|FlinkErrorCodeSummary|
-|flink |16020|Unknown checkpoint mode(未知检查点模式)|UNKNOWN_CHECKPOINT_MODE|FlinkErrorCodeSummary|
+|flink |16020|Unknown checkpoint mode:{0}(未知的 checkpoint 模式).|UNKNOWN_CHECKPOINT_MODE|FlinkErrorCodeSummary|
 |flink |16020|hudi jars is not exists.(hudi jars 不存在.)|HUDIJARS_NOT_EXISTS|FlinkErrorCodeSummary|
-|flink |16020|Path is not exist or is not a directory,The path is(路径不存在或不是目录,路径为):{0}|PATH_NOT_EXIST|FlinkErrorCodeSummary|
-|flink |16020|Could not parse environment file. Cause(无法解析环境文件.原因):|BOT_PARSE_ENVIRONMENT|FlinkErrorCodeSummary|
+|flink |16020|The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)|PATH_NOT_EXIST|FlinkErrorCodeSummary|
+|flink |16020|Could not parse environment file，because:{0}(无法解析 environment 文件)|BOT_PARSE_ENVIRONMENT|FlinkErrorCodeSummary|
 |flink |16020|Invalid configuration entry.(配置条目无效.)|CONFIGURATION_ENTRY_INVALID|FlinkErrorCodeSummary|
 |flink |16021|Only RESET ALL is supported now(现在只支持 RESET ALL)|ONLY_RESET_ALL|FlinkErrorCodeSummary|
-|flink |16021|Unsupported command call(不支持的命令调用) |SUPPORTED_COMMAND_CALL|FlinkErrorCodeSummary|
+|flink |16021|Unsupported command call:{0}(不支持该命令调用)|SUPPORTED_COMMAND_CALL|FlinkErrorCodeSummary|
 |flink |16021|Only single statement is supported now(现在只支持单个语句)|ONLY_SINGLE_STATEMENT|FlinkErrorCodeSummary|
-|flink |16021|Unknown statement(未知声明):{0}|UNKNOWN_STATEMENT|FlinkErrorCodeSummary|
+|flink |16021|Unknown statement:{0}|UNKNOWN_STATEMENT|FlinkErrorCodeSummary|
 |flink |16021|Failed to parse statement.(解析语句失败.)|FAILED_PARSE_STATEMENT|FlinkErrorCodeSummary|
 |flink |16021| Failed to parse drop view statement.(无法解析 drop view 语句.)|FAILED_DROP_STATEMENT|FlinkErrorCodeSummary|
 |flink |16022| Unsupported execution type for sources.(不支持的源执行类型.)|SUPPORTED_SOURCES|FlinkErrorCodeSummary|
 |flink |16022|Unsupported execution type for sinks.(接收器不支持的执行类型.)|SUPPORTED_SINKS|FlinkErrorCodeSummary|
-|flink |16022|Unsupported function type(不支持的函数类型):{0}|SUPPORTED_FUNCTION_TYPE|FlinkErrorCodeSummary|
+|flink |16022|Unsupported function type:{0}(不支持的函数类型).|SUPPORTED_FUNCTION_TYPE|FlinkErrorCodeSummary|
 |flink |16022|Not support to transform this resultSet to JobId.(不支持将此 resultSet 转换为 JobId.)|NOT_SUPPORT_TRANSFORM|FlinkErrorCodeSummary|
 |flink |16022|has already been defined in the current session.(已在当前会话中定义.)|ALREADY_CURRENT_SESSION|FlinkErrorCodeSummary|
 |flink |16022|does not exist in the current session.(当前会话中不存在.)|NOT_EXIST_SESSION|FlinkErrorCodeSummary|
 |flink |16022|The job for this query has been canceled.(此查询的作业已取消.)|QUERY_CANCELED|FlinkErrorCodeSummary|
 |flink |16022|No job is generated, please ask admin for help!(未生成作业，请向管理员寻求帮助！)|NOT_JOB_ASD_ADMIN|FlinkErrorCodeSummary|
-|flink |16022|Not support grammar(不支持语法)|NOT_SUPPORT_GRAMMAR|FlinkErrorCodeSummary|
+|flink |16022|Not support this grammar{0}(不支持该语法：{0})|NOT_SUPPORT_GRAMMAR|FlinkErrorCodeSummary|
 |flink |16022|Error while submitting job.(提交作业时出错.)|ERROR_SUBMITTING_JOB|FlinkErrorCodeSummary|
 |flink |16022|Result The retrieved gateway address is invalid, the address is(结果 检索到的网关地址无效，地址为):|NOT_SOCKET_RETRIEVAL|FlinkErrorCodeSummary|
 |flink |16022|Could not determine address of the gateway for result retrieval  by connecting to the job manager. Please specify the gateway address manually.(无法通过连接到作业管理器来确定用于检索结果的网关地址,请手动指定网关地址.)|NOT_DETERMINE_ADDRESS_JOB|FlinkErrorCodeSummary|
@@ -46,7 +46,7 @@
 |flink |16023|No applicationId is exists!(不存在 applicationId!)|APPLICATIONID_NOT_EXIST|FlinkErrorCodeSummary|
 |flink |16023|The accumulator could not retrieve the result.(累加器无法检索结果.)|NOT_RETRIEVE_RESULT|FlinkErrorCodeSummary|
 |flink |16023|Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法.)|NOT_SUPPORT_METHOD|FlinkErrorCodeSummary|
-|flink |16023|Not support to do savepoint for  (不支持为保存点):|NOT_SUPPORT_SAVEPOTION|FlinkErrorCodeSummary|
+|flink |16023|Not support to do savepoint for  (不支持为保存点):{0}|NOT_SUPPORT_SAVEPOTION|FlinkErrorCodeSummary|
 |flink |16023|Create a new instance of failure, the instance is(新建失败实例,实例为):{0}|CREATE_INSTANCE_FAILURE|FlinkErrorCodeSummary|
 |flink |16023|Job:could not retrieve or create a cluster.(作业：无法检索或创建集群.)|NOT_CREATE_CLUSTER|FlinkErrorCodeSummary|
 |flink |16023|Job: operation failed(作业：操作失败)|OPERATION_FAILED|FlinkErrorCodeSummary|

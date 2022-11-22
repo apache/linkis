@@ -199,7 +199,7 @@ abstract class Job extends Runnable with SchedulerEvent with Closeable with Logg
     // TODO Add event（加事件）
     case Scheduled =>
       jobListener.foreach(_.onJobScheduled(this))
-      logListener.foreach(_.onLogUpdate(this, "job is scheduled."))
+      logListener.foreach(_.onLogUpdate(this, LogUtils.generateInfo("job is scheduled.")))
     // TODO Add event（加事件）
     case Running =>
       jobListener.foreach(_.onJobRunning(this))

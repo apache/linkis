@@ -164,6 +164,20 @@
         on a.id=b.udf_id
     </select>
 
+    <select id="getUDFInfoByIds" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
+        select pub.*, puv.path, puv.register_format, puv.use_format, puv.bml_resource_id, puv.bml_resource_version, puv.description
+        from
+            linkis_ps_udf_baseinfo pub
+            join (
+                select udf_id, max(bml_resource_version) as max_version
+                from linkis_ps_udf_version
+                where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                group by udf_id
+            ) puvg on pub.id=puvg.udf_id
+            join linkis_ps_udf_version puv on puvg.udf_id=puv.udf_id and puvg.max_version=puv.bml_resource_version
+        where udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+    </select>
+
     <select id="getLoadedUDFs" resultMap="UDFInfoMap">
         select b.*,if(a.udf_id IS NULL,0,1) as is_load
         from

@@ -105,7 +105,7 @@ private[conf] object BDPConfiguration extends Logging {
         var tmpConfigPath = ""
         var tmpConfig = new Properties()
         Utils.tryCatch {
-          // 刷新配置
+          // refresh configuration
           configList.foreach(configPath => {
             if (logger.isDebugEnabled()) {
               logger.debug(s"reload config file : ${configPath}")

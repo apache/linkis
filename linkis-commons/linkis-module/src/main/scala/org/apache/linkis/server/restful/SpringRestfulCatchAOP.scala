@@ -45,6 +45,7 @@ class SpringRestfulCatchAOP extends Logging {
         case _ => Message.error("Failed to dealResponse get null message")
       }
     }
+    // convert http status code
     val response = getCurrentHttpResponse
     if (response != null) {
       getCurrentHttpResponse.setStatus(Message.messageToHttpStatus(resp))
@@ -56,8 +57,7 @@ class SpringRestfulCatchAOP extends Logging {
     val requestAttributes = RequestContextHolder.getRequestAttributes
     requestAttributes match {
       case attributes: ServletRequestAttributes =>
-        val response = attributes.getResponse
-        response
+        attributes.getResponse
       case _ => null
     }
   }

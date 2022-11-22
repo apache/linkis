@@ -254,7 +254,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(
-      jobId: java.lang.Long,
+      jobId: lang.Long,
       username: String,
       status: String,
       creator: String,

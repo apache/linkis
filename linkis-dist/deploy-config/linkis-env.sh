@@ -96,6 +96,9 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 #PYTHON_VERSION=python2
 
+## Hadoop env version
+HADOOP_VERSION=2.7.2
+
 ################### The install Configuration of all Micro-Services #####################
 #
 #    NOTICE:
@@ -148,7 +151,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.1.7-webank
+LINKIS_VERSION=1.3.1
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

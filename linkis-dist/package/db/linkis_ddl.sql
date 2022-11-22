@@ -954,6 +954,8 @@ PRIMARY KEY (`id`),
 UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
 -- ----------------------------
 -- Table structure for linkis_cg_tenant_label_config
 -- ----------------------------

@@ -26,7 +26,7 @@
 
   <groupId>org.apache.linkis</groupId>
   <artifactId>linkis</artifactId>
-  <version>1.1.7-webank</version>
+  <version>1.3.1</version>
   <packaging>pom</packaging>
   <name>Linkis Project Parent POM</name>
   <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -118,7 +118,7 @@
 
     <!-- json -->
     <gson.version>2.8.9</gson.version>
-    <jackson-bom.version>2.13.1</jackson-bom.version>
+    <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <!-- spark2.4 use 3.5.3, spark3.2 use 3.7.0-M11 -->
     <json4s.version>3.5.3</json4s.version>
 
@@ -1232,12 +1232,12 @@
                 <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
               </importOrder>
 
-              <excludes>
-                <exclude>**/restful/**/*RestfulApi.java</exclude>
-                <exclude>**/restful/**/*Restful.java</exclude>
-              </excludes>
-
               <removeUnusedImports/>
+
+              <licenseHeader>
+                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>
+                <delimiter>package</delimiter>
+              </licenseHeader>
             </java>
             <scala>
               <scalafmt>
@@ -1249,6 +1249,15 @@
               </licenseHeader>
             </scala>
           </configuration>
+          <executions>
+            <execution>
+              <id>spotless-apply</id>
+              <goals>
+                <goal>apply</goal>
+              </goals>
+              <phase>validate</phase>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -1308,6 +1317,28 @@
       <properties>
         <rat.skip>false</rat.skip>
       </properties>
+    </profile>
+    <profile>
+      <id>jdk11-on</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-opens java.base/java.util=ALL-UNNAMED
+                --add-opens java.base/java.nio=ALL-UNNAMED
+                --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>release</id>

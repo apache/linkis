@@ -3,8 +3,7 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis 在上层应用和底层引擎之间构建了一层计算中间件。通过使用Linkis 提供的REST/WebSocket/JDBC 等标准接口，
-  上层应用可以方便地连接访问Spark, Presto, Flink 等底层引擎,同时实现跨引擎上下文共享、统一的计算任务和引擎治理与编排能力</strong>
+  <strong>Linkis 构建了一层计算中间件，方便上层应用与底层数据引擎之间的连接、治理和编排 </strong>
 </p>
 <p align="center">
   <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
@@ -106,8 +105,8 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 # 编译和安装部署
 
 > 更详细的步骤参见:
->- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/build)
+>- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/build-console)
 
 
 
@@ -148,11 +147,11 @@ npm run build
 我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.1.7-webank 
+$> LINKIS_IMAGE=linkis:1.3.1 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
+请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/deploy-quick/) 来部署 Linkis
 
 # 示例和使用指引
 

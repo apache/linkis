@@ -101,11 +101,12 @@ public class DataSourceCoreRestfulApi {
 
     @ApiOperation(value = "getAllDataSourceTypes", notes = "get all data source types", response = Message.class)
     @RequestMapping(value = "/type/all", method = RequestMethod.GET)
-    public Message getAllDataSourceTypes() {
+    public Message getAllDataSourceTypes(HttpServletRequest req) {
+        String languageType = req.getHeader("Content-Language");
         return RestfulApiHelper.doAndResponse(
                 () -> {
                     List<DataSourceType> dataSourceTypes =
-                            dataSourceRelateService.getAllDataSourceTypes();
+                            dataSourceRelateService.getAllDataSourceTypes(languageType);
                     return Message.ok().data("typeList", dataSourceTypes);
                 },
                 "Fail to get all types of data source[获取数据源类型列表失败]");

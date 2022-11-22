@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.client;
 
+import org.apache.linkis.engineconn.acessible.executor.log.LogHelper;
 import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 
 import org.apache.seatunnel.core.flink.SeatunnelFlink;
@@ -26,11 +27,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class LinkisSeatunnelFlinkClient {
-  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelSparkClient.class);
   private static Class<?> seatunnelEngineClass;
   private static JarLoader jarLoader;
 
@@ -53,7 +50,7 @@ public class LinkisSeatunnelFlinkClient {
       Method method = seatunnelEngineClass.getDeclaredMethod("main", String[].class);
       return (Integer) method.invoke(null, (Object) args);
     } catch (Throwable e) {
-      logger.error("Run Error Message:" + getLog(e));
+      LogHelper.logger().error("Run Error Message:" + getLog(e));
       return -1;
     }
   }

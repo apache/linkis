@@ -135,7 +135,7 @@ class SeatunnelFlinkOnceCodeExecutor(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelFlink Process end")
+    info(s"Execute SeatunnelFlink Process end args:${args.mkString(" ")}")
     LinkisSeatunnelFlinkClient.main(args)
   }
 

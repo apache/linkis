@@ -30,7 +30,7 @@ object SeatunnelUtils extends Logging {
   private var process: Process = _
 
   def localArray(code: String): Array[String] = {
-    Array(SeatunnelSparkEnvConfiguration.LINKIS_SPARK_CONFIG.getValue, generateExecFile(code))
+    Array(SeatunnelSparkEnvConfiguration.GET_LINKIS_SPARK_CONFIG, generateExecFile(code))
   }
 
   def generateExecFile(code: String): String = {

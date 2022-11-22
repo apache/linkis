@@ -25,31 +25,16 @@ import org.apache.linkis.ecm.core.launch.{
 import org.apache.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService {
 
   @Receiver
-  def launchEngineConn(
-      engineConnBuildRequest: EngineConnBuildRequest,
-      sender: Sender
-  ): EngineNode = {
-    Sender.getSender(MANAGER_SERVICE_NAME).ask(engineConnBuildRequest) match {
-      case request: EngineConnLaunchRequest if ENGINECONN_CREATE_DURATION._1 != 0L =>
-        launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
-    }
-  }
-
-  override def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode = {
-    Sender.getSender(MANAGER_SERVICE_NAME).ask(engineConnBuildRequest) match {
-      case request: EngineConnLaunchRequest =>
-        launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
-    }
+  override def launchEngineConn(engineConnLaunchRequest: EngineConnLaunchRequest): EngineNode = {
+    if (ENGINECONN_CREATE_DURATION._1 != 0L) {
+      launchEngineConn(engineConnLaunchRequest, ENGINECONN_CREATE_DURATION._1)
+    } else null
   }
 
   def createDiscoveryMsgGenerator: DiscoveryMsgGenerator = new EurekaDiscoveryMsgGenerator

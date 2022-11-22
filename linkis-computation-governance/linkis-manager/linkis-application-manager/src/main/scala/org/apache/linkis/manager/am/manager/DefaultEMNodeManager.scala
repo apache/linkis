@@ -23,7 +23,7 @@ import org.apache.linkis.manager.common.entity.node._
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.manager.exception.NodeInstanceDuplicateException
 import org.apache.linkis.manager.persistence.{NodeManagerPersistence, NodeMetricManagerPersistence}
 import org.apache.linkis.manager.rm.service.ResourceManager
@@ -176,10 +176,10 @@ class DefaultEMNodeManager extends EMNodeManager with Logging {
    * @return
    */
   override def createEngine(
-      engineBuildRequest: EngineConnBuildRequest,
+      engineConnLaunchRequest: EngineConnLaunchRequest,
       emNode: EMNode
   ): EngineNode = {
-    nodePointerBuilder.buildEMNodePointer(emNode).createEngine(engineBuildRequest)
+    nodePointerBuilder.buildEMNodePointer(emNode).createEngine(engineConnLaunchRequest)
   }
 
   override def stopEngine(engineStopRequest: EngineStopRequest, emNode: EMNode): Unit = {

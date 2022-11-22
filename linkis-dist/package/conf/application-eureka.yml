@@ -21,8 +21,8 @@ spring:
 server:
   port: 8761
   enable-self-preservation: false
-  eviction-interval-timer-in-ms: 3000
-  response-cache-update-interval-ms: 2000
+  eviction-interval-timer-in-ms: 30000
+  response-cache-update-interval-ms: 10000
 eureka:
   instance:
     metadata-map:

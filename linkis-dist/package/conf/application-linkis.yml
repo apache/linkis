@@ -42,4 +42,4 @@ pagehelper:
 ##disable  kinif4j.production when you want to use apidoc during development
 knife4j:
   enable: true
-  production: true
+  production: false

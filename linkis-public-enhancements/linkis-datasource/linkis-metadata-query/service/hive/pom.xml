@@ -26,9 +26,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hive.version>2.1.1</hive.version>
-    <hadoop.version>3.0.0</hadoop.version>
-    <datanucleus-api-jdo.version>4.2.4</datanucleus-api-jdo.version>
+    <hive.version>2.1.1-cdh6.2.0</hive.version>
+    <hadoop.version>3.0.0-cdh6.2.0</hadoop.version>
+    <datanucleus-api-jdo.version>4.2.1</datanucleus-api-jdo.version>
   </properties>
 
   <dependencies>
@@ -81,11 +81,18 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
-      <version>${hadoop.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-yarn-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -134,6 +141,16 @@
           <groupId>com.github.joshelser</groupId>
           <artifactId>dropwizard-metrics-hadoop-metrics2-reporter</artifactId>
         </exclusion>
+        <!-- add by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 start -->
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-1.2-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+        </exclusion>
+        <!-- add by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 end -->
       </exclusions>
     </dependency>
     <dependency>
@@ -193,14 +210,16 @@
           <groupId>org.apache.hive</groupId>
           <artifactId>hive-shims</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>com.jolbox</groupId>
-          <artifactId>bonecp</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.derby</groupId>
-          <artifactId>derby</artifactId>
-        </exclusion>
+        <!-- delete by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 start -->
+<!--        <exclusion>-->
+<!--          <groupId>com.jolbox</groupId>-->
+<!--          <artifactId>bonecp</artifactId>-->
+<!--        </exclusion>-->
+<!--        <exclusion>-->
+<!--          <groupId>org.apache.derby</groupId>-->
+<!--          <artifactId>derby</artifactId>-->
+<!--        </exclusion>-->
+        <!-- delete by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 end -->
         <exclusion>
           <groupId>org.apache.curator</groupId>
           <artifactId>curator-framework</artifactId>
@@ -245,9 +264,79 @@
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpcore</artifactId>
         </exclusion>
+        <!-- add by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 start -->
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-1.2-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-slf4j-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.calcite</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.calcite.avatica</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.zookeeper</groupId>
+          <artifactId>zookeeper</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.ant</groupId>
+          <artifactId>ant</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.gson</groupId>
+          <artifactId>gson</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.datanucleus</groupId>
+          <artifactId>datanucleus-api-jdo</artifactId>
+        </exclusion>
+        <!-- add by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 end -->
       </exclusions>
     </dependency>
-
+    <!-- 兼容cdh6.2.0增加zookeeper包 start -->
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+      <version>3.4.5-cdh6.2.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.yetus</groupId>
+          <artifactId>audience-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- 兼容cdh6.2.0增加zookeeper包 end -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpcore</artifactId>

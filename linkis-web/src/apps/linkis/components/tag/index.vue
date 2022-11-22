@@ -37,7 +37,7 @@
         @on-change="handleTagChange"
       >{{ item.key }}{{ item.key ? '-' : '' }}{{ item.value }}
       </Tag>
-      <!-- 编辑标签 -->
+      <!-- Edit tags(编辑标签) -->
       <div class="addAndCancel" v-else>
         <Input ref="editInputValue" :value="item.value" style="width: 200px" @on-enter="()=>exitTags(item)">
           <Select ref="editInputKey" :value="item.key"  disabled  slot="prepend" style="width: 80px">
@@ -62,7 +62,7 @@
 
 
 
-    <!-- 新增标签 -->
+    <!-- Add a label(新增标签) -->
     <div class="addAndCancel" v-if="adding">
       <Input v-model="value2" style="width: 200px" @on-enter="change">
         <Select v-model="value1" slot="prepend" style="width: 80px">
@@ -98,17 +98,17 @@
 export default {
   name: "ECMTag",
   props: {
-    // tag渲染列表数据
+    // tag rendering list data(tag渲染列表数据)
     tagList: {
       type: Array,
       default: () => [],
     },
-    // 默认的key值
+    // default key value(默认的key值)
     currentKey: {
       type: String,
       default: "http",
     },
-    // 可选的key值
+    // optional key value(可选的key值)
     selectList: {
       type: Array,
       default: () => [],
@@ -139,9 +139,9 @@ export default {
     change() {
       let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;
       if (reg.test(this.value2)) {
-        this.$Message.error("标签内容不能为特殊符号和空格！");
+        this.$Message.error("Label content cannot be special symbols and spaces(标签内容不能为特殊符号和空格)！");
       } else if (this.value2.length >= 16) {
-        this.$Message.error("标签内容长度不超过16！");
+        this.$Message.error("Tag content length not exceeding 16(标签内容长度不超过16)！");
       } else if (this.value1 && this.value2) {
         this.$emit("addEnter", this.value1, this.value2);
         this.adding = false;
@@ -151,12 +151,12 @@ export default {
     handleTagChange(cheacked, name) {
       this.adding = false;
       this.clickValue = name;
-      // input 聚焦
+      // input focus(input 聚焦)
       this.$nextTick(()=> {
         this.$refs.editInputValue[0].$refs.input.focus()
       })
     },
-    //编辑确认
+    //Edit confirmation(编辑确认)
     exitTags(item) {
       let editedInputValue = this.$refs.editInputValue[0].$refs.input.value;
       let reg = /[`~!#$%^&*()\+=<>?:"{}|~！#￥%……&*（）={}|《》？：“”【】、；‘’，。、\s+]/g;

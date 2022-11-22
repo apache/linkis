@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="global-valiable">
     <Row class="global-valiable-control">
@@ -121,9 +121,9 @@ export default {
       isEdit: false,
       validateKey: (rule, value, callback) => {
         const prop = rule.field;
-        // 拿到当前编辑的item的index
+        // Get the index of the currently edited item(拿到当前编辑的item的index)
         const current = prop.slice(prop.indexOf('.') + 1, prop.lastIndexOf('.'));
-        // 必须当key相等，而且index不等的时候才是repeat
+        // It must be repeated when the keys are equal and the indexes are not equal(必须当key相等，而且index不等的时候才是repeat)
         const findRepeat = this.formDynamic.items.find((item, index) => {
           return item.key === value && current != index;
         });

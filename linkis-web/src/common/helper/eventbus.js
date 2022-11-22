@@ -5,32 +5,32 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 /**
  *  事件bus
  */
 class Eventbus {
   /**
-     * 构造器
+     * Constructor(构造器)
      */
   constructor() {
     this.storage = {};
   }
 
   /**
-     * 
-     * @param {*} arr 
-     * @param {*} x 
+     *
+     * @param {*} arr
+     * @param {*} x
      * @return {Object}
      */
   findIndex(arr, x) {
@@ -38,9 +38,9 @@ class Eventbus {
   }
 
   /**
-     * 注册事件
-     * @param {*} name 
-     * @param {*} fn 
+     * Registration issue(注册事件)
+     * @param {*} name
+     * @param {*} fn
      * @return {undefined}
      */
   on(name, fn) {
@@ -52,9 +52,9 @@ class Eventbus {
   }
 
   /**
-    * 删除事件
-    * @param {*} name 
-    * @param {*} fn 
+    * delete event(删除事件)
+    * @param {*} name
+    * @param {*} fn
     * @return {undefined}
     */
   off(name, fn) {
@@ -65,8 +65,8 @@ class Eventbus {
   }
 
   /**
-     * 清空指定name的所有事件
-     * @param {*} name 
+     * Clear all events of the specified name(清空指定name的所有事件)
+     * @param {*} name
      * @return {Object}
      */
   clear(name) {
@@ -79,10 +79,10 @@ class Eventbus {
   }
 
   /**
-     * 触发事件
-     * @param {*} name 
-     * @param {*} payload  参数
-     * @param {*} cb      回调函数 
+     * trigger event(触发事件)
+     * @param {*} name
+     * @param {*} payload  parameter(参数)
+     * @param {*} cb     Callback( 回调函数)
      * @return {undefined}
      */
   emit(name, payload, cb) {

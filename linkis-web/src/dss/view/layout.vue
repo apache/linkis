@@ -56,7 +56,7 @@ export default {
       return this.$route.query.noFooter || location.search.indexOf('noFooter') < 0
     },
     isEmbedInFrame() {
-      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入，只有单独跑时要加水印
+      // If it is imported by iframe, top !== self returns true, which is used to distinguish between running alone or being introduced. Only when running alone, a watermark should be added.(如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入，只有单独跑时要加水印)
       return top !== self;
     }
   },

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance
 
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
@@ -27,9 +28,14 @@ import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.entrance.log.LogReader
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.JobHistoryHelper
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
+import org.apache.linkis.governance.common.protocol.task.RequestTaskKill
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
+import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 
@@ -40,6 +46,8 @@ import org.apache.linkis.common.log.LogUtils
 import java.text.MessageFormat
 import java.{lang, util}
 import java.util.Date
+
+import scala.collection.JavaConverters._
 
 abstract class EntranceServer extends Logging {
 
@@ -263,6 +271,68 @@ abstract class EntranceServer extends Logging {
     logger.info("Finished to clean all ConsumeQueue")
   }
 
+  def killEC(jobRequest: JobRequest): Unit = {
+    Utils.tryCatch {
+      if (
+          !SchedulerEventState.isRunning(SchedulerEventState.withName(jobRequest.getStatus))
+          || !SchedulerEventState.isScheduled(SchedulerEventState.withName(jobRequest.getStatus))
+          || jobRequest.getMetrics == null
+          || !jobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+      ) {
+        logger.info(
+          s"job ${jobRequest.getId} is not running,scheduled or not have EC info, ignore it"
+        )
+      }
+
+      val engineMap = jobRequest.getMetrics
+        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .asInstanceOf[util.Map[String, Object]]
+
+      val engineInstance =
+        engineMap.asScala
+          .map(_._2.asInstanceOf[util.Map[String, Object]])
+          .filter(_.containsKey(TaskConstant.ENGINE_INSTANCE))
+          .maxBy(_.getOrDefault(TaskConstant.ENGINE_CONN_SUBMIT_TIME, 0).toString)
+
+      if (engineInstance != null || engineInstance.containsKey(TaskConstant.FAILOVER_FLAG)) {
+        logger.info(
+          s"job ${jobRequest.getId} do not submit to EC or already failover, not need kill ec"
+        )
+        return
+      }
+      engineInstance.put(TaskConstant.FAILOVER_FLAG, "")
+
+      val ecInstance = ServiceInstance(
+        GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
+        engineInstance.get(TaskConstant.ENGINE_INSTANCE).toString
+      )
+      if (jobRequest.getLabels.asScala.exists(_.isInstanceOf[ExecuteOnceLabel])) {
+        // kill ec by linkismanager
+        val engineStopRequest = new EngineStopRequest
+        engineStopRequest.setServiceInstance(ecInstance)
+        // send to linkismanager
+        Sender
+          .getSender(RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue)
+          .send(engineStopRequest)
+        logger.info(
+          s"job ${jobRequest.getId} send EngineStopRequest to linkismanager, kill instance $ecInstance"
+        )
+      } else if (engineInstance.containsKey(TaskConstant.ENGINE_CONN_TASK_ID)) {
+        // kill ec task
+        val engineTaskId = engineInstance.get(TaskConstant.ENGINE_CONN_TASK_ID).toString
+        // send to ec
+        Sender
+          .getSender(ecInstance)
+          .send(RequestTaskKill(engineTaskId))
+        logger.info(
+          s"job ${jobRequest.getId} send RequestTaskKill to kill engineConn $ecInstance, execID $engineTaskId"
+        )
+      }
+    } { case e: Exception =>
+      logger.error(s"job ${jobRequest.getId} kill ec error", e)
+    }
+  }
+
   /**
    * execute failover job (提交故障转移任务，返回新的execId)
    *
@@ -277,7 +347,8 @@ abstract class EntranceServer extends Logging {
       )
     }
 
-    // todo dmp kill ec
+    // try to kill ec
+    killEC(jobRequest);
 
     val logAppender = new java.lang.StringBuilder()
     // init properties
@@ -376,6 +447,18 @@ abstract class EntranceServer extends Logging {
       LogUtils.generateInfo(s"the job_req_id ${jobRequest.getReqId} -> $initReqId \n")
     )
 
+    val metricMap = new util.HashMap[String, Object]()
+    if (
+        jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
+          TaskConstant.ENTRANCEJOB_ENGINECONN_MAP
+        )
+    ) {
+      val oldEngineconnMap = jobRequest.getMetrics
+        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .asInstanceOf[util.Map[String, Object]]
+      metricMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, oldEngineconnMap)
+    }
+
     jobRequest.setInstances(initInstance)
     jobRequest.setCreatedTime(initDate)
     jobRequest.setStatus(initStatus)
@@ -383,8 +466,8 @@ abstract class EntranceServer extends Logging {
     jobRequest.setReqId(initReqId)
     jobRequest.setErrorCode(0)
     jobRequest.setErrorDesc("")
-    jobRequest.setMetrics(new util.HashMap[String, Object]())
-    jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, initInstance)
+    jobRequest.setMetrics(metricMap)
+    jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, initDate)
 
     logAppender.append(
       LogUtils.generateInfo(s"Job ${jobRequest.getId} success to initialize the properties \n")

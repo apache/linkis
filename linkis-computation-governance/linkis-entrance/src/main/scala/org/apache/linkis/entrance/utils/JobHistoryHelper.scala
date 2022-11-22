@@ -133,8 +133,10 @@ object JobHistoryHelper extends Logging {
 
     val updateTaskIds = new util.ArrayList[java.lang.Long]()
 
-    if (EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
-      taskIdList.length > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
+    if (
+        EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
+        taskIdList.length > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue
+    ) {
       for (i <- 0 until EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
         updateTaskIds.add(taskIdList(i))
       }
@@ -178,8 +180,12 @@ object JobHistoryHelper extends Logging {
       val response = sender.ask(jobReqBatchUpdate)
       response match {
         case resp: util.ArrayList[JobRespProtocol] =>
-          resp.asScala.filter(r => r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID))
-            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long]).toList
+          resp.asScala
+            .filter(r =>
+              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
+            )
+            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
+            .toList
         case _ =>
           throw JobHistoryFailedException(
             "update batch instances from jobhistory not a correct List type"
@@ -188,7 +194,8 @@ object JobHistoryHelper extends Logging {
     } {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
-        val e1 = JobHistoryFailedException(s"update batch instances ${taskIdList.mkString(",")} error")
+        val e1 =
+          JobHistoryFailedException(s"update batch instances ${taskIdList.mkString(",")} error")
         e1.initCause(e)
         throw e
     }
@@ -203,7 +210,12 @@ object JobHistoryHelper extends Logging {
    * @param limit
    * @return
    */
-  def queryWaitForFailoverTask(reqMap: util.Map[String, java.lang.Long], statusList: util.List[String], startTimestamp: Long, limit: Int): util.List[JobRequest] = {
+  def queryWaitForFailoverTask(
+      reqMap: util.Map[String, java.lang.Long],
+      statusList: util.List[String],
+      startTimestamp: Long,
+      limit: Int
+  ): util.List[JobRequest] = {
     val requestFailoverJob = RequestFailoverJob(reqMap, statusList, startTimestamp, limit)
     val tasks = Utils.tryCatch {
       val response = sender.ask(requestFailoverJob)
@@ -230,7 +242,8 @@ object JobHistoryHelper extends Logging {
     } {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
-        val e1 = JobHistoryFailedException(s"query failover task error, instances ${reqMap.keySet()} ")
+        val e1 =
+          JobHistoryFailedException(s"query failover task error, instances ${reqMap.keySet()} ")
         e1.initCause(e)
         throw e
     }

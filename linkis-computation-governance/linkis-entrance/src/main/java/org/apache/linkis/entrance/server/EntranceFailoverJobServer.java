@@ -91,23 +91,34 @@ public class EntranceFailoverJobServer {
                                         .collect(Collectors.toMap(ServiceInstance::getInstance, ServiceInstance::getRegistryTimestamp, (k1, k2) -> k2));
                                 if (serverInstanceMap.isEmpty()) return;
 
-                                // get failover start time
-                                long startTimestamp = 0L;
-                                if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
-                                    startTimestamp = System.currentTimeMillis() - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
-                                }
+                    // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
+                    long expiredTimestamp = 0L;
+                    if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
+                      expiredTimestamp =
+                          System.currentTimeMillis()
+                              - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
+                    }
 
                                 // get uncompleted status
                                 List<String> statusList = Lists.newArrayList();
                                 SchedulerEventState.values().filterNot(SchedulerEventState::isCompleted).foreach(state -> statusList.add(state.toString()));
 
-                                List<JobRequest> jobRequests = JobHistoryHelper.queryWaitForFailoverTask(serverInstanceMap, statusList, startTimestamp, EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
-                                if (jobRequests.isEmpty()) return;
-                                logger.info("success query failover jobs , job ids: {}", jobRequests.stream().map(JobRequest::getId));
+                    List<JobRequest> jobRequests =
+                        JobHistoryHelper.queryWaitForFailoverTask(
+                            serverInstanceMap,
+                            statusList,
+                            expiredTimestamp,
+                            EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
+                    if (jobRequests.isEmpty()) return;
+                    logger.info(
+                        "success query failover jobs , job ids: {}",
+                        jobRequests.stream().map(JobRequest::getId));
 
-                                // failover to local server
-                                jobRequests.forEach(jobRequest -> entranceServer.failoverExecute(jobRequest));
-                                logger.info("success execute failover jobs, job ids: {}", jobRequests.stream().map(JobRequest::getId));
+                    // failover to local server
+                    jobRequests.forEach(jobRequest -> entranceServer.failoverExecute(jobRequest));
+                    logger.info(
+                        "success execute failover jobs, job ids: {}",
+                        jobRequests.stream().map(JobRequest::getId));
 
                             } catch (Exception e) {
                                 logger.error("failover failed", e);

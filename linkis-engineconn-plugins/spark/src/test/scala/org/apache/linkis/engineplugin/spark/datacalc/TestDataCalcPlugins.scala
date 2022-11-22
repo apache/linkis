@@ -17,9 +17,8 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc
 
-import org.apache.linkis.engineplugin.spark.common.Kind
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.datacalc.model.{DataCalcArrayData, DataCalcGroupData}
-import org.apache.linkis.engineplugin.spark.datacalc.util.PluginUtil
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 
 import org.junit.jupiter.api.{Assertions, Test};

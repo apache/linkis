@@ -287,6 +287,19 @@
         </dependencySet>
     </dependencySets>
 
+    <fileSets>
+        <fileSet>
+            <directory>
+                ./linkis-datasource/linkis-metadata-query/server/target/out/lib/service
+            </directory>
+            <outputDirectory>
+                lib/metadataquery-service
+            </outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 
 </assembly>
 

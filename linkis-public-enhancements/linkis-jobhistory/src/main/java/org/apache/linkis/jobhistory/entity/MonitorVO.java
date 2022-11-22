@@ -17,13 +17,12 @@
 
 package org.apache.linkis.jobhistory.entity;
 
-import java.util.List;
 import java.util.Map;
 
 public class MonitorVO {
 
   private Long taskId;
-  private List<String> monitorStatus;
+  private String monitorStatus;
   private String monitorLevel;
   private String receiver;
   private Map<String, String> extra;
@@ -38,11 +37,11 @@ public class MonitorVO {
     this.taskId = taskId;
   }
 
-  public List<String> getMonitorStatus() {
+  public String getMonitorStatus() {
     return monitorStatus;
   }
 
-  public void setMonitorStatus(List<String> monitorStatus) {
+  public void setMonitorStatus(String monitorStatus) {
     this.monitorStatus = monitorStatus;
   }
 

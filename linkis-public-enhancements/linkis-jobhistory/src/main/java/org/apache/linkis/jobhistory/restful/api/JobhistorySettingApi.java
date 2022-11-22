@@ -26,7 +26,6 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,13 +56,15 @@ public class JobhistorySettingApi {
 
   private Logger log = LoggerFactory.getLogger(this.getClass());
 
+  /** Method list should not contain subjob, which may cause performance problems. */
+  @ApiOperation(value = "addObserveInfo", notes = "add Observe Info", response = Message.class)
   @RequestMapping(path = "/addObserveInfo", method = RequestMethod.POST)
   public Message addObserveInfo(HttpServletRequest req, @RequestBody MonitorVO monitor) {
     String username = ModuleUserUtils.getOperationUser(req, "isNotice");
     if (null == monitor.getTaskId()) {
       return Message.error("TaskId can't be empty ");
     }
-    if (CollectionUtils.isEmpty(monitor.getMonitorStatus())) {
+    if (StringUtils.isBlank(monitor.getMonitorStatus())) {
       return Message.error("MonitorStatus can't be empty ");
     }
     if (StringUtils.isBlank(monitor.getReceiver())) {
@@ -87,9 +91,9 @@ public class JobhistorySettingApi {
     Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
     if (runtimeMap.containsKey("task.notification.conditions")) {
       // 判断任务是否已经完成，完成则不允许修改
-      String[] strings = JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS();
       boolean result =
-          Arrays.stream(strings).anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
+          Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
+              .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
       if (result) {
         // 任务未完成 ，更新job记录
         String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
@@ -99,6 +103,31 @@ public class JobhistorySettingApi {
         // 告警任务已经完成
         return Message.error("The task has been completed, and the alarm cannot be set");
       }
+    }
+    return Message.ok();
+  }
+
+  @ApiOperation(
+      value = "deleteObserveInfo",
+      notes = "delete Observe Info",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "taskId", required = false, dataType = "long", value = "taskId")
+  })
+  @RequestMapping(path = "/deleteObserveInfo", method = RequestMethod.GET)
+  public Message deleteObserveInfo(HttpServletRequest req, Long taskId) {
+    ModuleUserUtils.getOperationUser(req, "deleteObserveInfo");
+    // 根据id获取jobInfo
+    JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(taskId, null);
+    boolean result =
+        Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
+            .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
+    if (result) {
+      jobHistory.setObserveInfo("");
+      jobHistoryQueryService.changeObserveInfoById(jobHistory);
+    } else {
+      // 告警任务已经完成
+      return Message.error("The task has been completed, and the alarm cannot be set");
     }
     return Message.ok();
   }

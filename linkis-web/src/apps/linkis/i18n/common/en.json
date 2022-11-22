@@ -431,21 +431,25 @@
           "businessOwner": "Owner",
           "createTime":"Create Time",
           "updateTime": "Update Time",
-          "updateBy": "Update By"
+          "updateBy": "Update By",
+          "searchPlaceholder": "TokenName/Users/Hosts"
         },
         "errorCode": {
           "errorCode": "Code",
           "errorDesc": "Desc",
-          "errorRegex": "Regex"
+          "errorRegex": "Regex",
+          "searchPlaceholder": "Code/Desc/Regex"
         },
         "rmExternalResourceProvider": {
           "resourceType": "Resource Type",
           "name": "Name",
           "labels": "Labels",
-          "config": "Config"
+          "config": "Config",
+          "searchPlaceholder": "Name/Labels/Config"
         },
         "udfManager": {
-          "userName": "User Name"
+          "userName": "User Name",
+          "searchPlaceholder": "UserName"
         },
         "udfTree": {
           "name": "Name",
@@ -454,7 +458,8 @@
           "description": "Description",
           "parent": "Parent",
           "createTime": "Create Time",
-          "updateTime": "Update Time"
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name/Category/Desc/UserName"
         },
         "datasourceEnv": {
           "envName": "Env Name",
@@ -466,7 +471,8 @@
           "createTime": "Create Time",
           "createUser": "Create User",
           "updateTime": "Update Time",
-          "modifyUser": "Modify User"
+          "modifyUser": "Modify User",
+          "searchPlaceholder": "EnvName/EnvDesc/Param"
         },
         "datasourceType": {
           "name": "Name",
@@ -474,7 +480,8 @@
           "option": "Option",
           "classifier": "Classifier",
           "icon": "Icon",
-          "layers": "Layers"
+          "layers": "Layers",
+          "searchPlaceholder": "Name/Desc/Classifier"
         },
         "datasourceTypeKey": {
           "key": "Key",
@@ -483,7 +490,8 @@
           "valueType": "Value Type",
           "description": "Description",
           "createTime": "Create Time",
-          "updateTime": "Update Time"
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name"
         }
       },
       "EnginePluginManagement": {

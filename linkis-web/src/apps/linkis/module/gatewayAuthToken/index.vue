@@ -20,7 +20,7 @@
     <Row class="search-bar" type="flex">
       <Col span="6">
         <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.searchPlaceholder')"></Input>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.gatewayAuthToken.searchPlaceholder')"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
@@ -141,6 +141,12 @@ export default {
           align: 'center',
         },
         {
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.updateBy'),
+          key: 'updateBy',
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.createTime'),
           key: 'createTime',
           minWidth: 50,
@@ -163,12 +169,6 @@ export default {
               formatDate(new Date(params.row.updateTime),'yyyy-MM-dd')
             )
           }
-        },
-        {
-          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.updateBy'),
-          key: 'updateBy',
-          tooltip: true,
-          align: 'center',
         },
         {
           title: this.$t('message.linkis.basedataManagement.action'),
@@ -211,20 +211,13 @@ export default {
       this.load()
     },
     onAdd(){
-      this.modalEditData={
-        id: "",
-        tokenName: "",
-        legalUsers: "",
-        legalHosts: "",
-        elapseDay: '',
-      }
+      this.$refs.editForm.formModel.resetFields ()
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
-      console.log(row);
       row.elapseDay = row.elapseDay+""
-      this.modalEditData = row
+      this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },

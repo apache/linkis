@@ -38,4 +38,8 @@ object SchedulerEventState extends Enumeration {
     SchedulerEventState.withName(jobState)
   )
 
+  def uncompleteStatusArray(): Array[SchedulerEventState] = {
+    SchedulerEventState.values.filterNot(isCompleted).toArray
+  }
+
 }

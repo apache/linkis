@@ -18,10 +18,7 @@
 package org.apache.linkis.ecm.server.service
 
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 
 trait EngineConnLaunchService {
 
@@ -30,7 +27,7 @@ trait EngineConnLaunchService {
    * @param engineConnBuildRequest
    *   封装了引擎启动的参数
    */
-  def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode
+  def launchEngineConn(engineConnLaunchRequest: EngineConnLaunchRequest): EngineNode
 
   def launchEngineConn(engineConnLaunchRequest: EngineConnLaunchRequest, duration: Long): EngineNode
 

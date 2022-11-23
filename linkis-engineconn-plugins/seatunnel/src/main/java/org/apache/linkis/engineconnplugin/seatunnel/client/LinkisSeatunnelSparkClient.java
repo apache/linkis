@@ -43,6 +43,8 @@ public class LinkisSeatunnelSparkClient {
                     .getPath()
               });
       jarLoader.loadClass("org.apache.seatunnel.common.config.Common", false);
+      jarLoader.loadClass("org.apache.seatunnel.core.base.config.ConfigBuilder", false);
+      jarLoader.loadClass("org.apache.seatunnel.core.base.config.PluginFactory", false);
       seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.spark.SparkStarter");
       jarLoader.addJarURL(
           SeatunnelSpark.class

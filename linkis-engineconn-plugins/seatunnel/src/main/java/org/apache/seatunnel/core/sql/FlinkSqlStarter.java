@@ -26,12 +26,11 @@ import org.apache.seatunnel.core.base.Starter;
 import org.apache.seatunnel.core.flink.args.FlinkCommandArgs;
 import org.apache.seatunnel.core.flink.config.FlinkJobType;
 import org.apache.seatunnel.core.flink.utils.CommandLineUtils;
-import org.apache.seatunnel.core.spark.SparkStarter;
 
 import java.util.List;
 
 public class FlinkSqlStarter implements Starter {
-  public static final Log logger = LogFactory.getLog(SparkStarter.class.getName());
+  public static final Log logger = LogFactory.getLog(FlinkSqlStarter.class.getName());
   private static final String APP_JAR_NAME = "seatunnel-core-flink-sql.jar";
   private static final String CLASS_NAME = SeatunnelSql.class.getName();
 

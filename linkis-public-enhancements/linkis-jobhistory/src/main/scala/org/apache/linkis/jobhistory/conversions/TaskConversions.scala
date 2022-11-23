@@ -344,6 +344,7 @@ object TaskConversions extends Logging {
         logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
+    taskVO.setObserveInfo(job.getObserveInfo)
     taskVO
   }
 

@@ -151,7 +151,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm:ss')
             )
           }
         },
@@ -163,7 +163,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.updateTime),'yyyy-MM-dd hh:mm:ss')
             )
           }
         },

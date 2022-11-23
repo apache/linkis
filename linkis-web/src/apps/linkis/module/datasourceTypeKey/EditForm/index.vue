@@ -21,7 +21,6 @@
       :rule="rule"
       v-model="formModel"
       :option="options"
-      :value.sync="formData"
     />
   </div>
 </template>
@@ -30,12 +29,10 @@
 export default {
   props: {
     mode: String,
-    data: Object,
   },
   data() {
     return {
       formModel: {},
-      formData: {},
       options: {
         submitBtn: false,
       },
@@ -77,16 +74,18 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'select',
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
           field: 'dataSourceTypeId',
+          options: [],
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "请选择",
           },
           validate: [
             {
               required: true,
+              type: "number",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
@@ -113,12 +112,13 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'select',
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
           field: 'valueType',
+          options: [{label: "TEXT",value: "TEXT"},{label: "PASSWORD",value: "PASSWORD"},{label: "SELECT",value: "SELECT"}],
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "请选择",
           },
           validate: [
             {
@@ -150,22 +150,6 @@ export default {
         },
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

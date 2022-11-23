@@ -17,6 +17,7 @@
 
 package org.apache.linkis.basedatamanager.server.restful;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.linkis.basedatamanager.server.domain.UdfManagerEntity;
 import org.apache.linkis.basedatamanager.server.service.UdfManagerService;
 import org.apache.linkis.server.Message;
@@ -78,9 +79,16 @@ public class UdfManagerRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody UdfManagerEntity udfManagerEntity) {
     ModuleUserUtils.getOperationUser(
-        request, "Add a UDF Manager Record," + udfManagerEntity.toString());
-    boolean result = udfManagerService.save(udfManagerEntity);
-    return Message.ok("").data("result", result);
+            request, "Add a UDF Manager Record," + udfManagerEntity.toString());
+    QueryWrapper<UdfManagerEntity> queryWrapper = new QueryWrapper<>(udfManagerEntity)
+            .eq("user_name",udfManagerEntity.getUserName());
+    UdfManagerEntity udfManager = udfManagerService.getOne(queryWrapper);
+    if (udfManager == null) {
+      boolean result = udfManagerService.save(udfManagerEntity);
+      return Message.ok("").data("result", result);
+    }else{
+      return Message.error("The username already exists,Please add again!");
+    }
   }
 
   @ApiImplicitParams({@ApiImplicitParam(paramType = "path", dataType = "long", name = "id")})

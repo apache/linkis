@@ -449,7 +449,11 @@
         },
         "udfManager": {
           "userName": "User Name",
-          "searchPlaceholder": "UserName"
+          "searchPlaceholder": "UserName",
+          "userNameValidate": {
+            "size": "Usernames cannot be longer than 20 characters",
+            "empty": "Please enter your username"
+          }
         },
         "udfTree": {
           "name": "Name",

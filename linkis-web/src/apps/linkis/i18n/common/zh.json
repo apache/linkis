@@ -450,7 +450,11 @@
         },
         "udfManager": {
           "userName": "用户名",
-          "searchPlaceholder": "用户名"
+          "searchPlaceholder": "用户名",
+          "userNameValidate": {
+            "size": "用户名长度不能超过20个字符",
+            "empty": "请输入用户名"
+          }
         },
         "udfTree": {
           "name": "名称",

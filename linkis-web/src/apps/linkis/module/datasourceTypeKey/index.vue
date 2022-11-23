@@ -17,24 +17,27 @@
 
 <template>
   <div :style="{height: '100%', overflow: 'hidden'}">
-    <Row class="search-bar" type="flex">
-      <Col span="6">
-        <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.datasourceTypeKey.searchPlaceholder')"></Input>
-      </Col>
-      <Col span="3">
-        <Button type="primary" class="Button" @click="load()">{{
-          $t('message.linkis.basedataManagement.search')
-        }}
-        </Button>
-        <Button type="success" class="Button" style="margin-left: 10px" @click="onAdd()">{{
-          $t('message.linkis.basedataManagement.add')
-        }}
-        </Button>
-      </Col>
-      <Col span="15">
-      </Col>
-    </Row>
+    <div class="search-bar" style="display: flex;align-items: flex-start">
+
+      <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.datasourceTypeKey.searchName')">{{$t('message.linkis.basedataManagement.datasourceTypeKey.searchName')}}</span>
+      <Input style="width: 150px" v-model="searchName" clearable class="input" :placeholder="$t('message.linkis.basedataManagement.datasourceTypeKey.searchPlaceholder')"></Input>
+
+      <span :style="{ whiteSpace: 'nowrap',marginLeft:'5px', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.datasourceTypeKey.searchType')">{{$t('message.linkis.basedataManagement.datasourceTypeKey.searchType')}}</span>
+      <Select style="width: 150px;margin-right: 15px" v-model="datasourceType" >
+        <Option value="-1" selected>{{$t('message.linkis.basedataManagement.datasourceTypeKey.all')}}</Option>
+        <Option v-for="item in datasourceTypeOptions" :value="item.value" :key="item.value">{{item.label}}</Option>
+      </Select>
+
+      <Button type="primary" class="Button" @click="load()">{{
+        $t('message.linkis.basedataManagement.search')
+      }}
+      </Button>
+      <Button type="success" class="Button" style="margin-left: 10px" @click="onAdd()">{{
+        $t('message.linkis.basedataManagement.add')
+      }}
+      </Button>
+
+    </div>
     <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist"
       class="table-content mytable">
       <template slot-scope="{ row,index }" slot="action">
@@ -83,7 +86,7 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <EditForm ref="editForm" :data="modalEditData"></EditForm>
+      <EditForm ref="editForm"></EditForm>
     </Modal>
   </div>
 </template>
@@ -92,12 +95,14 @@ import mixin from '@/common/service/mixin';
 import EditForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
+import {getAllEnv} from "../datasourceEnv/service";
 export default {
   mixins: [mixin],
   components: {EditForm},
   data() {
     return {
       searchName: "",
+      datasourceType: "-1",
       page: {
         totalSize: 0,
         pageSize: 10,
@@ -110,6 +115,18 @@ export default {
           width: 100,
           tooltip: true,
           align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.dataSourceType'),
+          key: 'dataSourceTypeId',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+          render: (h,params)=>{
+            return h('div',
+              this.getDatasourceType( params.row.dataSourceTypeId)
+            )
+          }
         },
         {
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.key'),
@@ -146,7 +163,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm:ss')
             )
           }
         },
@@ -158,7 +175,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm:ss')
             )
           }
         },
@@ -170,52 +187,58 @@ export default {
         },
 
       ],
-      modalEditData: {
-        key: '',
-        name: '',
-        valueType: '',
-        id: '',
-        description: '',
-      },
       pageDatalist: [],
       modalShow: false,
       modalAddMode: 'add',
-      modalLoading: false
+      modalLoading: false,
+      datasourceTypeOptions: []
     };
   },
   created() {
     this.load()
   },
-  mounted() {
-    this.init();
-  },
   methods: {
-    init() {
-      //console.log(this.$route.query.isSkip);
-    },
-    load() {
+    async load() {
       let params = {
         searchName: this.searchName,
+        dataSourceTypeId: this.datasourceType==="-1"?"":this.datasourceType,
         currentPage: this.page.pageNow,
         pageSize: this.page.pageSize
       }
-      getList(params).then((data) => {
-        this.pageDatalist = data.list.list
-        this.page.totalSize = data.list.total
-      })
+
+      //拉取分类
+      let res = await getAllEnv()
+      let options = [...res.typeList].sort((a, b) => a.id - b.id)
+        .map(item => { return {value: +item.id, label: item.name}})
+      this.datasourceTypeOptions= options
+
+      //拉取列表
+      let data = await getList(params)
+      this.pageDatalist = data.list.list
+      this.page.totalSize = data.list.total
+    },
+    getDatasourceType(id){
+      if(this.datasourceTypeOptions.length>1){
+        let datasourceType =  this.datasourceTypeOptions.filter(m=>m.value === id)
+        if(datasourceType.length>0){
+          return datasourceType[0].label
+        }
+      }
+      return "loadding"
     },
     changePage(value) {
       this.page.pageNow = value
       this.load()
     },
     onAdd(){
+      this.$refs.editForm.rule[2].options=this.datasourceTypeOptions
+      this.$refs.editForm.formModel.resetFields()
       this.modalAddMode = 'add'
       this.modalShow = true
-      this.clearForm()
     },
     onTableEdit(row){
-      row.dataSourceTypeId = row.dataSourceTypeId+""
-      this.modalEditData = {...row}
+      this.$refs.editForm.rule[2].options=this.datasourceTypeOptions
+      this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
@@ -291,11 +314,6 @@ export default {
       this.modalLoading=false
       this.modalShow = false
     },
-    clearForm(){
-      for(let key in this.modalEditData) {
-        this.modalEditData[key] = ''
-      }
-    }
   },
 };
 </script>

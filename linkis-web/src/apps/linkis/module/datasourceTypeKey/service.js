@@ -35,9 +35,14 @@ const del = (params)=> {
   return api.fetch(`${dataSourceTypeBaseUrl}/${params.id}`,'delete')
 }
 
+const getAllEnv = () => {
+  return api.fetch(`/data-source-manager/type/all`, 'get')
+}
+
 export{
   getList,
   add,
   edit,
-  del
+  del,
+  getAllEnv
 }

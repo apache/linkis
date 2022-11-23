@@ -433,7 +433,12 @@
           "createTime":"创建时间",
           "updateTime": "更新时间",
           "updateBy": "更新人",
-          "searchPlaceholder": "令牌名称/用户/主机"
+          "searchPlaceholder": "令牌名称/用户/主机",
+          "info":"过期天数: -1 表示永久",
+          "elapseDayValidate": {
+            "size": "过期天数不能小于-1",
+            "empty": "请填写过期天数"
+          }
         },
         "errorCode": {
           "errorCode": "错误代码",

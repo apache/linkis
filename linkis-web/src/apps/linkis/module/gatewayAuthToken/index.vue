@@ -216,7 +216,6 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
-      row.elapseDay = row.elapseDay+""
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true

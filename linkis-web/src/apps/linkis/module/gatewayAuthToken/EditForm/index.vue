@@ -113,20 +113,28 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'inputNumber',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
-          value: '',
+          value: -1,
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.info'),
           props: {
             placeholder: "eg . -1",
           },
           validate: [
             {
               required: true,
-              pattern: /^(\-|\+)?\d+(\.\d+)?$/,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
+                  }
+                  if(value<-1){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.size'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],

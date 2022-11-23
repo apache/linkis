@@ -432,7 +432,12 @@
           "createTime":"Create Time",
           "updateTime": "Update Time",
           "updateBy": "Update By",
-          "searchPlaceholder": "TokenName/Users/Hosts"
+          "searchPlaceholder": "TokenName/Users/Hosts",
+          "info":"Elapse Day: -1 means permanent",
+          "elapseDayValidate": {
+            "size": "The Elapse Day cannot be less than -1",
+            "empty": "Please enter the elapse day"
+          }
         },
         "errorCode": {
           "errorCode": "Code",

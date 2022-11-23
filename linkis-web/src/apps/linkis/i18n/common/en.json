@@ -491,7 +491,10 @@
           "description": "Description",
           "createTime": "Create Time",
           "updateTime": "Update Time",
-          "searchPlaceholder": "Name"
+          "searchPlaceholder": "Name",
+          "searchName": "名称",
+          "searchType": "类型",
+          "all": "All"
         }
       },
       "EnginePluginManagement": {

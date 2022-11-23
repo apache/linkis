@@ -211,7 +211,7 @@ export default {
       this.load()
     },
     onAdd(){
-      this.$refs.editForm.formModel.resetFields ()
+      this.$refs.editForm.formModel.resetFields()
       this.modalAddMode = 'add'
       this.modalShow = true
     },

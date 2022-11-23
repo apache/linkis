@@ -27,6 +27,8 @@ import org.apache.linkis.engineplugin.vo.EnginePluginBMLVo;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -157,11 +159,13 @@ public class EnginePluginRestful {
       @RequestParam("file") MultipartFile file,
       @RequestParam(value = "ecType") String ecType,
       @RequestParam(value = "version") String version,
+      @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force,
       HttpServletRequest req) {
-    if (ecType.isEmpty() || ecType.length() == 0 || ecType.equals("null")) {
-      return Message.error("ecType is not null");
-    } else if (version.isEmpty() || version.length() == 0 || version.equals("null")) {
-      return Message.error("version is not null");
+
+    if (StringUtils.isNotBlank(ecType)) {
+      return Message.error("ecType cannot be null");
+    } else if (StringUtils.isNotBlank(version)) {
+      return Message.error("version cannot be null");
     }
     file.getOriginalFilename().toLowerCase().endsWith(".zip");
     if (file.getOriginalFilename().toLowerCase().endsWith(".zip")) {
@@ -174,17 +178,17 @@ public class EnginePluginRestful {
               new RefreshEngineConnResourceRequest();
           refreshEngineConnResourceRequest.setEngineConnType(ecType);
           refreshEngineConnResourceRequest.setVersion(version);
-          engineConnResourceService.refresh(refreshEngineConnResourceRequest);
+          engineConnResourceService.refresh(refreshEngineConnResourceRequest, force);
         } catch (Exception e) {
           return Message.error(e.getMessage());
         }
         log.info("{} finished to update enginePlugin {} {}", username, ecType, version);
-        return Message.ok().data("mes", "upload file success");
+        return Message.ok().data("msg", "upload file success");
       } else {
         return Message.error("Only administrators can operate");
       }
     } else {
-      return Message.error("Only suppose zip format file");
+      return Message.error("Only support zip format file");
     }
   }
 
@@ -291,7 +295,8 @@ public class EnginePluginRestful {
   public Message refreshOne(
       HttpServletRequest req,
       @RequestParam(value = "ecType") String ecType,
-      @RequestParam(value = "version", required = false) String version) {
+      @RequestParam(value = "version", required = false) String version,
+      @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
     String username = ModuleUserUtils.getOperationUser(req, "refreshOne");
     if (Configuration.isAdmin(username)) {
       log.info("{} start to refresh {} ec resource", username, ecType);
@@ -299,7 +304,8 @@ public class EnginePluginRestful {
           new RefreshEngineConnResourceRequest();
       refreshEngineConnResourceRequest.setEngineConnType(ecType);
       refreshEngineConnResourceRequest.setVersion(version);
-      engineConnResourceService.refresh(refreshEngineConnResourceRequest);
+
+      engineConnResourceService.refresh(refreshEngineConnResourceRequest, force);
       log.info("{} finished to refresh {} ec resource", username, ecType);
       return Message.ok().data("msg", "Refresh successfully");
     } else {

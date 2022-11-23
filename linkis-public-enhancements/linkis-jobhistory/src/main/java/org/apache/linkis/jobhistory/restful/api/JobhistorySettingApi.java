@@ -60,16 +60,12 @@ public class JobhistorySettingApi {
   @ApiOperation(value = "addObserveInfo", notes = "add Observe Info", response = Message.class)
   @RequestMapping(path = "/addObserveInfo", method = RequestMethod.POST)
   public Message addObserveInfo(HttpServletRequest req, @RequestBody MonitorVO monitor) {
-    String username = ModuleUserUtils.getOperationUser(req, "isNotice");
-    if (null == monitor.getTaskId()) {
-      return Message.error("TaskId can't be empty ");
-    }
-    if (StringUtils.isBlank(monitor.getMonitorStatus())) {
+    ModuleUserUtils.getOperationUser(req, "isNotice");
+    // Parameter verification
+    if (null == monitor.getTaskId()) return Message.error("TaskId can't be empty ");
+    if (StringUtils.isBlank(monitor.getMonitorStatus()))
       return Message.error("MonitorStatus can't be empty ");
-    }
-    if (StringUtils.isBlank(monitor.getReceiver())) {
-      return Message.error("Receiver can't be empty");
-    }
+    if (StringUtils.isBlank(monitor.getReceiver())) return Message.error("Receiver can't be empty");
     if (null == monitor.getExtra()) {
       return Message.error("Extra can't be empty ");
     } else {
@@ -79,28 +75,27 @@ public class JobhistorySettingApi {
       if (StringUtils.isBlank(extra.getOrDefault("detail", "")))
         return Message.error("detail can't be empty ");
     }
-    if (StringUtils.isBlank(monitor.getMonitorLevel())) {
+    if (StringUtils.isBlank(monitor.getMonitorLevel()))
       return Message.error("MonitorLevel can't be empty ");
-    }
-    // 根据id获取jobInfo
+    if (StringUtils.isBlank(monitor.getSubSystemId()))
+      return Message.error("SubSystemId can't be empty ");
+    // Get jobInfo according to ID
     JobHistory jobHistory =
         jobHistoryQueryService.getJobHistoryByIdAndName(monitor.getTaskId(), null);
-    // 根据用户自定义 在runtimeMap里面设置是否告警（task.notification.conditions）
     Map<String, Object> map =
         BDPJettyServerHelper.gson().fromJson(jobHistory.getParams(), new HashMap<>().getClass());
     Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
     if (runtimeMap.containsKey("task.notification.conditions")) {
-      // 判断任务是否已经完成，完成则不允许修改
+      // Judge whether the task has been completed, and cannot be modified when it is completed
       boolean result =
           Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
               .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
       if (result) {
-        // 任务未完成 ，更新job记录
+        // Task not completed, update job record
         String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
         jobHistory.setObserveInfo(observeInfoJson);
         jobHistoryQueryService.changeObserveInfoById(jobHistory);
       } else {
-        // 告警任务已经完成
         return Message.error("The task has been completed, and the alarm cannot be set");
       }
     }
@@ -117,7 +112,7 @@ public class JobhistorySettingApi {
   @RequestMapping(path = "/deleteObserveInfo", method = RequestMethod.GET)
   public Message deleteObserveInfo(HttpServletRequest req, Long taskId) {
     ModuleUserUtils.getOperationUser(req, "deleteObserveInfo");
-    // 根据id获取jobInfo
+    // Get jobInfo according to ID
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(taskId, null);
     boolean result =
         Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
@@ -126,7 +121,7 @@ public class JobhistorySettingApi {
       jobHistory.setObserveInfo("");
       jobHistoryQueryService.changeObserveInfoById(jobHistory);
     } else {
-      // 告警任务已经完成
+      // The alarm task has been completed
       return Message.error("The task has been completed, and the alarm cannot be set");
     }
     return Message.ok();

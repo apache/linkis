@@ -427,7 +427,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def changeObserveInfoById(jobHistory: JobHistory): Unit = {
-    jobHistoryMapper.updateJobHistory(jobHistory)
+    jobHistoryMapper.updateOberverById(jobHistory.getId, jobHistory.getObserveInfo)
   }
 
 }

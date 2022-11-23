@@ -25,6 +25,7 @@ public class MonitorVO {
   private String monitorStatus;
   private String monitorLevel;
   private String receiver;
+  private String subSystemId;
   private Map<String, String> extra;
 
   public MonitorVO() {}
@@ -69,22 +70,23 @@ public class MonitorVO {
     this.receiver = receiver;
   }
 
+  public String getSubSystemId() {
+    return subSystemId;
+  }
+
+  public void setSubSystemId(String subSystemId) {
+    this.subSystemId = subSystemId;
+  }
+
   @Override
   public String toString() {
-    return "MonitorVO{"
-        + "taskId="
-        + taskId
-        + ", monitorStatus="
-        + monitorStatus
-        + ", monitorLevel='"
-        + monitorLevel
-        + '\''
-        + ", receiver='"
-        + receiver
-        + '\''
-        + ", extra='"
-        + extra
-        + '\''
-        + '}';
+    return "MonitorVO{" +
+            "taskId=" + taskId +
+            ", monitorStatus='" + monitorStatus + '\'' +
+            ", monitorLevel='" + monitorLevel + '\'' +
+            ", receiver='" + receiver + '\'' +
+            ", subSystemId='" + subSystemId + '\'' +
+            ", extra=" + extra +
+            '}';
   }
 }

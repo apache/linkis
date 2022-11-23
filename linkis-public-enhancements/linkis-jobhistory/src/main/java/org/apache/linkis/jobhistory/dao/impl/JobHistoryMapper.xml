@@ -218,4 +218,7 @@
         </where>
     </select>
 
+    <update id="updateOberverById">
+        update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
+    </update>
 </mapper>

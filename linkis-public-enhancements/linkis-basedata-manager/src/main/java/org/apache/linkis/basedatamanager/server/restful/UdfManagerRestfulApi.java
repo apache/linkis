@@ -17,7 +17,6 @@
 
 package org.apache.linkis.basedatamanager.server.restful;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.apache.linkis.basedatamanager.server.domain.UdfManagerEntity;
 import org.apache.linkis.basedatamanager.server.service.UdfManagerService;
 import org.apache.linkis.server.Message;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -79,14 +79,14 @@ public class UdfManagerRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody UdfManagerEntity udfManagerEntity) {
     ModuleUserUtils.getOperationUser(
-            request, "Add a UDF Manager Record," + udfManagerEntity.toString());
-    QueryWrapper<UdfManagerEntity> queryWrapper = new QueryWrapper<>(udfManagerEntity)
-            .eq("user_name",udfManagerEntity.getUserName());
+        request, "Add a UDF Manager Record," + udfManagerEntity.toString());
+    QueryWrapper<UdfManagerEntity> queryWrapper =
+        new QueryWrapper<>(udfManagerEntity).eq("user_name", udfManagerEntity.getUserName());
     UdfManagerEntity udfManager = udfManagerService.getOne(queryWrapper);
     if (udfManager == null) {
       boolean result = udfManagerService.save(udfManagerEntity);
       return Message.ok("").data("result", result);
-    }else{
+    } else {
       return Message.error("The username already exists,Please add again!");
     }
   }

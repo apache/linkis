@@ -435,8 +435,17 @@
           "updateBy": "更新人",
           "searchPlaceholder": "令牌名称/用户/主机",
           "info":"过期天数: -1 表示永久",
+          "legalUsersInfo": "*允许所有用户；多用户使用,隔开，例如:user1,user2",
+          "legalUsersValidate": {
+            "empty": "请填写用户",
+            "format": "格式不正确，使用*或使用,分割，例如:user1,user2"
+          },
+          "legalHostsInfo": "*允许所有主机；多主机使用,隔开，例如:host1,host2",
+          "legalHostsInfoValidate": {
+            "empty": "请填写主机"
+          },
           "elapseDayValidate": {
-            "size": "过期天数不能小于-1",
+            "format": "格式不正确，使用*或使用,分割，例如:host1,host2",
             "empty": "请填写过期天数"
           }
         },

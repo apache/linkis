@@ -81,15 +81,24 @@ export default {
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
           field: 'legalUsers',
           value: '',
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersInfo'),
           props: {
             placeholder: "eg. *",
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.empty'))
+                  }
+                  if(value<-1){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.format'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],
@@ -99,15 +108,21 @@ export default {
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
           field: 'legalHosts',
           value: '',
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfo'),
           props: {
             placeholder: "eg. *",
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfoValidate.empty'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],
@@ -128,9 +143,6 @@ export default {
                 return new Promise((resolve, reject)=>{
                   if(!value){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
-                  }
-                  if(value<-1){
-                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.size'))
                   }
                   resolve()
                 })

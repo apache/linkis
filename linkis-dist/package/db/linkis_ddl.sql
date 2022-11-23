@@ -172,8 +172,8 @@ CREATE TABLE `linkis_ps_udf_tree` (
   `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
   `user_name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

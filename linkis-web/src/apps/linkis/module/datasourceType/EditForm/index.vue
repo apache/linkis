@@ -113,12 +113,20 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'select',
           title: this.$t('message.linkis.basedataManagement.datasourceType.classifier'),
           field: 'classifier',
           value: '',
+          options: [
+            {label: "关系型数据库",value: "关系型数据库"},
+            {label: "消息队列",value: "消息队列"},
+            {label: "大数据存储",value: "大数据存储"},
+            {label: "olap",value: "olap"},
+            {label: "分布式全文索引",value: "分布式全文索引"},
+          ],
           props: {
             placeholder: "relational database",
+            "filterable": true
           },
           validate: [
             {

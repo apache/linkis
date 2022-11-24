@@ -51,6 +51,8 @@ public class JobRequest {
 
   private String observeInfo;
 
+  private Boolean updateLimitFlag = true;
+
   private Map<String, Object> metrics = new HashMap<>();
 
   public Long getId() {
@@ -203,6 +205,14 @@ public class JobRequest {
 
   public void setObserveInfo(String observeInfo) {
     this.observeInfo = observeInfo;
+  }
+
+  public Boolean getUpdateLimitFlag() {
+    return updateLimitFlag;
+  }
+
+  public void setUpdateLimitFlag(Boolean updateLimitFlag) {
+    this.updateLimitFlag = updateLimitFlag;
   }
 
   @Override

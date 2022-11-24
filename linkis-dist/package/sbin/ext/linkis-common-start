@@ -27,15 +27,9 @@ if [ ! -w "$LINKIS_LOG_DIR" ] ; then
   mkdir -p "$LINKIS_LOG_DIR"
 fi
 
-#export DYNAMIC_JVM=
-if test -z "$DYNAMIC_JVM"
+if test -z "$SERVER_HEAP_SIZE"
 then
-  if test -z "$SERVER_HEAP_SIZE"
-  then
-    export SERVER_HEAP_SIZE="512M"
-  fi
-else
-  export SERVER_HEAP_SIZE="${DYNAMIC_JVM}"
+  export SERVER_HEAP_SIZE="512M"
 fi
 
 if [ "$DEBUG_PORT" ];

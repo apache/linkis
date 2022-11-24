@@ -15,22 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.computation.executor.execute
+package org.apache.linkis.engineconn.computation.concurrent.monitor;
 
-import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.executor.entity.ConcurrentExecutor
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.scheduler.executer.ExecuteResponse
+public interface MonitorService {
 
-abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int = 1000)
-    extends ComputationExecutor(outputPrintLimit)
-    with ConcurrentExecutor {
-
-  protected override def ensureOp[A](f: => A): A = f
-
-  override def afterExecute(
-      engineConnTask: EngineConnTask,
-      executeResponse: ExecuteResponse
-  ): Unit = {}
+    boolean isAvailable();
 
 }

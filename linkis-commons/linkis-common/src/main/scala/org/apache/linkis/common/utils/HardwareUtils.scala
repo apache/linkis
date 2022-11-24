@@ -15,35 +15,74 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.util
+package org.apache.linkis.common.utils
 
 import oshi.SystemInfo
 
+import java.math.RoundingMode
+import java.text.DecimalFormat
+
 object HardwareUtils {
 
+  private val systemInfo = new SystemInfo
+
+  private val hardware = systemInfo.getHardware
+
+  private val THREE_DECIMAL = "0.000"
+
   def getAvailableMemory(): Long = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
     val globalMemory = hardware.getMemory
     globalMemory.getAvailable
   }
 
   def getMaxMemory(): Long = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
     val globalMemory = hardware.getMemory
     globalMemory.getTotal
   }
 
   /**
    * 1 total 2 available
+   *
    * @return
    */
   def getTotalAndAvailableMemory(): (Long, Long) = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
     val globalMemory = hardware.getMemory
     (globalMemory.getTotal, globalMemory.getAvailable)
   }
+
+  /**
+   * Get memory usage percentage
+   * Keep 3 decimal
+   *
+   * @return percent
+   */
+  def memoryUsage(): Double = {
+    val memory = hardware.getMemory
+    val memoryUsage = (memory.getTotal - memory.getAvailable) * 1.0 / memory.getTotal
+    val df = new DecimalFormat(THREE_DECIMAL)
+    df.setRoundingMode(RoundingMode.HALF_UP)
+    df.format(memoryUsage).toDouble
+  }
+
+
+  /**
+   * load average
+   *
+   * @return percent
+   */
+  def loadAverageUsage(): Double = {
+    val loadAverage = Utils.tryCatch{
+      OverloadUtils.getOSBean.getSystemLoadAverage
+    } {
+      case e: Exception =>
+        val loadAverage = hardware.getProcessor.getSystemLoadAverage(1)(0)
+        if (loadAverage.isNaN) -1 else loadAverage
+    }
+
+    val df = new DecimalFormat(THREE_DECIMAL)
+    df.setRoundingMode(RoundingMode.HALF_UP)
+    if (loadAverage <= 0) 0 else df.format(loadAverage/100D).toDouble
+  }
+
 
 }

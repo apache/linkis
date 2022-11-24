@@ -217,17 +217,13 @@ class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
     } finally {
-      if (!completed.get()) {
-        Utils.tryAndWarn(errReaderThread.interrupt())
-        Utils.tryAndWarn(inputReaderThread.interrupt())
-      }
-      shellECTaskInfoCache.remove(taskId)
-      Utils.tryAndWarn {
+      if (null != errorsReader) {
         inputReaderThread.onDestroy()
+      }
+      if (null != inputReaderThread) {
         errReaderThread.onDestroy()
       }
-      IOUtils.closeQuietly(bufferedReader)
-      IOUtils.closeQuietly(errorsReader)
+      shellECTaskInfoCache.remove(taskId)
     }
   }
 

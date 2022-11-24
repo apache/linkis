@@ -141,7 +141,7 @@ export default {
           },
           validate: [
             {
-              required: true,
+              required: false,
               type: "url",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
@@ -151,16 +151,19 @@ export default {
           ],
         },
         {
-          type: 'InputNumber',
+          type: 'inputNumber',
           title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           field: 'layers',
           value: 0,
           props: {
-            placeholder: "eg. 1-3"
+            placeholder: "eg. 1-3",
+            type: "number"
           },
           validate: [
             {
               required: true,
+              "mode": "required",
+              type: "number",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceType.layers'),
@@ -170,22 +173,6 @@ export default {
         }
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

@@ -211,12 +211,11 @@ export default {
       this.load()
     },
     onAdd(){
-      this.$refs.editForm.formModel.resetFields ()
+      this.$refs.editForm.formModel.resetFields()
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
-      row.elapseDay = row.elapseDay+""
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true

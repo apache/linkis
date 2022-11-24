@@ -159,12 +159,32 @@ export default [
       },
     },
     {
+      name: 'tenantTagManagement',
+      path: 'tenantTagManagement',
+      component: () =>
+        import('./module/tenantTagManagement/index.vue'),
+      meta: {
+        title: 'tenantTagManagement',
+        publicPage: true,
+      }
+    },
+    {
       name: 'errorCode',
       path: 'errorCode',
       component: () =>
         import('./module/errorCode/index.vue'),
       meta: {
         title: 'errorCode',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'ipListManagement',
+      path: 'ipListManagement',
+      component: () =>
+        import('./module/ipListManagement/index.vue'),
+      meta: {
+        title: 'ipListManagement',
         publicPage: true,
       },
     },

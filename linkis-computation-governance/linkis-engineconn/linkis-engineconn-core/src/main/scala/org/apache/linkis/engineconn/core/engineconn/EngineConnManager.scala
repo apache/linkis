@@ -21,7 +21,7 @@ import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.errorcode.LinkisEngineconnCoreErrorCodeSummary.NEED_ENGINE_BEFORE_CALL
-import org.apache.linkis.engineconn.core.exception.{EngineConnErrorCode, EngineConnFatalException}
+import org.apache.linkis.engineconn.core.exception.EngineConnFatalException
 
 trait EngineConnManager {
 

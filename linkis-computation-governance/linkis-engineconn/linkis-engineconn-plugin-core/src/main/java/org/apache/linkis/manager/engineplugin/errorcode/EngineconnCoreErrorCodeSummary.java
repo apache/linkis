@@ -36,13 +36,13 @@ public enum EngineconnCoreErrorCodeSummary {
       "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
   DIST_IRREGULAR_EXIST(
       20001,
-      "The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在}"),
+      "The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在)"),
   NO_PERMISSION_FILE(
       20001,
       "System have no permission to delete old engineConn file:{0}(系统无权删除旧的engineConn文件:{0})"),
   LIB_CONF_DIR_NECESSARY(
       20001,
-      "The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在"),
+      "The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)"),
 
   NOT_SUPPORTED_EF(20011, "Not supported ExecutorFactory(不支持 ExecutorFactory)"),
   DERTL_CANNOT_NULL(

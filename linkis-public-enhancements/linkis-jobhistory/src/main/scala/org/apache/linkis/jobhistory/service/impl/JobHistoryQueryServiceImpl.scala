@@ -109,7 +109,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
           logger.info(s"${jobReq.getErrorDesc}")
         }
       }
-      if (jobReq.getStatus != null) {
+      if (jobReq.getUpdateLimitFlag && jobReq.getStatus != null) {
         val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
         if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
           throw new QueryException(
@@ -174,7 +174,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
               logger.info(s"${jobReq.getErrorDesc}")
             }
           }
-          if (jobReq.getStatus != null) {
+          if (jobReq.getUpdateLimitFlag && jobReq.getStatus != null) {
             val oldStatus: String = jobHistoryMapper.selectJobHistoryStatusForUpdate(jobReq.getId)
             if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
               throw new QueryException(

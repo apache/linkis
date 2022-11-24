@@ -37,6 +37,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.List;
+
 @Api(tags = "UdfTreeRestfulApi")
 @RestController
 @RequestMapping(path = "/basedata-manager/udf-tree")
@@ -57,6 +59,15 @@ public class UdfTreeRestfulApi {
         request, "Query list data of UDF Tree,search name:" + searchName);
     PageInfo pageList = udfTreeService.getListByPage(searchName, currentPage, pageSize);
     return Message.ok("").data("list", pageList);
+  }
+
+  @ApiOperation(value = "all", notes = "Query all data of UDF Tree", httpMethod = "GET")
+  @RequestMapping(path = "/all", method = RequestMethod.GET)
+  public Message all(HttpServletRequest request, String searchName) {
+    ModuleUserUtils.getOperationUser(
+            request, "Query all data of UDF Tree,search name:" + searchName);
+    List<UdfTreeEntity> udfTreeEntityList = udfTreeService.list();
+    return Message.ok("").data("list", udfTreeEntityList);
   }
 
   @ApiImplicitParams({@ApiImplicitParam(paramType = "path", dataType = "long", name = "id")})

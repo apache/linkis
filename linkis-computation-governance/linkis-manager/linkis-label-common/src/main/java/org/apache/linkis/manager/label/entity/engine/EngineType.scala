@@ -43,8 +43,6 @@ object EngineType extends Enumeration with Logging {
 
   val PIPELINE = Value("pipeline")
 
-  val ES = Value("es")
-
   val PRESTO = Value("presto")
 
   val FLINK = Value("flink")
@@ -60,6 +58,8 @@ object EngineType extends Enumeration with Logging {
   val TRINO = Value("trino")
 
   val ELASTICSEARCH = Value("elasticsearch")
+
+  val SEATUNNEL = Value("seatunnel")
 
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
@@ -86,7 +86,6 @@ object EngineType extends Enumeration with Logging {
     case _ if IO_ENGINE_FILE.toString.equalsIgnoreCase(str) => IO_ENGINE_FILE
     case _ if IO_ENGINE_HDFS.toString.equalsIgnoreCase(str) => IO_ENGINE_HDFS
     case _ if PIPELINE.toString.equalsIgnoreCase(str) => PIPELINE
-    case _ if ES.toString.equalsIgnoreCase(str) => ES
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
     case _ if APPCONN.toString.equals(str) => APPCONN
@@ -95,6 +94,7 @@ object EngineType extends Enumeration with Logging {
     case _ if OPENLOOKENG.toString.equalsIgnoreCase(str) => OPENLOOKENG
     case _ if TRINO.toString.equalsIgnoreCase(str) => TRINO
     case _ if ELASTICSEARCH.toString.equalsIgnoreCase(str) => ELASTICSEARCH
+    case _ if SEATUNNEL.toString.equalsIgnoreCase(str) => SEATUNNEL
     case _ => null
 
   }

@@ -22,17 +22,21 @@
     justify-content: flex-start;
     align-items: center;
     font-size: $font-size-base;
-
-    .lable {
-      width: 180px;
-      // flex-basis: 130px;
-      text-align: right;
+    .search-item {
+      display: flex;
+      justify-items: center;
+      .lable {
+        width: 180px;
+        // flex-basis: 130px;
+        text-align: right;
+      }
     }
+    
   }
 
   .ivu-col {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
 }

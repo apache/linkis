@@ -46,6 +46,7 @@ import java.util
 import java.util.concurrent.ExecutorService
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 @Component
 class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
@@ -140,14 +141,13 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
    */
   private def dealECNodes(engineNodes: util.List[Node]): Unit = {
     val existingEngineInstances = Sender.getInstances(ecName)
+    val clearECSet = new mutable.HashSet[ServiceInstance]()
     engineNodes.asScala.foreach { engineNode =>
       if (NodeStatus.isCompleted(engineNode.getNodeStatus)) {
         logger.info(
           s"${engineNode.getServiceInstance} is completed ${engineNode.getNodeStatus}, will be remove"
         )
-        Utils.tryAndWarnMsg(clearEngineNode(engineNode.getServiceInstance))(
-          "clear engine node failed"
-        )
+        clearECSet.add(engineNode.getServiceInstance)
       } else {
         val engineIsStarted =
           (System.currentTimeMillis() - engineNode.getStartTime.getTime) > maxCreateInterval
@@ -162,17 +162,22 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
             logger.warn(
               s"Failed to find instance ${engineNode.getServiceInstance} from eureka prepare to kill, engineIsStarted"
             )
-            Utils.tryAndWarnMsg(clearEngineNode(engineNode.getServiceInstance))(
-              "engineIsStarted clear failed"
-            )
+            clearECSet.add(engineNode.getServiceInstance)
           }
         } else if (updateOverdue) {
           logger.warn(s" ${engineNode.getServiceInstance} heartbeat updateOverdue")
-          Utils.tryAndWarnMsg(clearEngineNode(engineNode.getServiceInstance))(
-            "updateOverdue clear failed"
-          )
+          clearECSet.add(engineNode.getServiceInstance)
         }
       }
+    }
+    clearECSet.foreach(clearEngineNode)
+  }
+
+  private def updateMetrics(node: Node): Unit = {
+    val metric = nodeMetricManagerPersistence.getNodeMetrics(node)
+    if (null != metric) {
+      node.setNodeStatus(NodeStatus.values()(metric.getStatus))
+      node.setUpdateTime(metric.getUpdateTime)
     }
   }
 
@@ -186,12 +191,21 @@ class NodeHeartbeatMonitor extends ManagerMonitor with Logging {
       }
       val updateOverdue = (System.currentTimeMillis() - updateTime) > ecmHeartBeatTime
       if (!existingECMInstances.contains(ecm.getServiceInstance) && updateOverdue) {
-        logger.warn(
-          s"Failed to find ecm instance ${ecm.getServiceInstance} from eureka Registry to kill"
-        )
-        Utils.tryAndWarnMsg(triggerEMSuicide(ecm.getServiceInstance))(
-          s"ecm ${ecm.getServiceInstance} clear failed"
-        )
+        Utils.tryAndWarn(updateMetrics(ecm))
+        val isUpdateOverdue = if (null == ecm.getUpdateTime) {
+          (System.currentTimeMillis() - ecm.getStartTime.getTime) > ecmHeartBeatTime
+        } else {
+          (System.currentTimeMillis() - ecm.getUpdateTime.getTime) > ecmHeartBeatTime
+        }
+        val isExistingECMInstances = Sender.getInstances(ecmName).contains(ecm.getServiceInstance)
+        if (!isExistingECMInstances && isUpdateOverdue) {
+          logger.warn(
+            s"Failed to find ecm instance ${ecm.getServiceInstance} from eureka Registry to kill"
+          )
+          Utils.tryAndWarnMsg(triggerEMSuicide(ecm.getServiceInstance))(
+            s"ecm ${ecm.getServiceInstance} clear failed"
+          )
+        }
       }
     }
   }

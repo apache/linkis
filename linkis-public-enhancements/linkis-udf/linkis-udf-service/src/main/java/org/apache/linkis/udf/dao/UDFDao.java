@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,6 +60,9 @@ public interface UDFDao {
 
   List<UDFInfoVo> getUDFInfoByTreeId(
       Long treeId, String userName, Collection<Integer> categoryCodes);
+
+  List<UDFInfoVo> getUDFInfoByIds(
+      @Param("ids") Long[] ids, @Param("categoryCodes") Collection<Integer> categoryCodes);
 
   List<UDFInfo> getLoadedUDFs(String userName);
 

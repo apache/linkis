@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,11 +19,8 @@ package org.apache.linkis.datasourcemanager.common.auth;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
-import org.apache.linkis.server.security.SecurityFilter;
 
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,18 +45,6 @@ public class AuthContext {
         }
       }
     }
-  }
-
-  /**
-   * If has permission of data source
-   *
-   * @param dataSource data source
-   * @param request request
-   * @return boolean
-   */
-  public static boolean hasPermission(DataSource dataSource, HttpServletRequest request) {
-    String username = SecurityFilter.getLoginUsername(request);
-    return hasPermission(dataSource, username);
   }
 
   public static boolean hasPermission(DataSource dataSource, String username) {

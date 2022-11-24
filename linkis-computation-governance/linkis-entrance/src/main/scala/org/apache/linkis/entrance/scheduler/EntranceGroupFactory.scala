@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.scheduler
 
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -27,12 +28,16 @@ import org.apache.linkis.governance.common.protocol.conf.{
   RequestQueryEngineConfigWithGlobalConfig,
   ResponseQueryConfig
 }
+import org.apache.linkis.instance.label.client.InstanceLabelClient
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.constant.{LabelKeyConstant, LabelValueConstant}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
   ConcurrentEngineConnLabel,
   EngineTypeLabel,
   UserCreatorLabel
 }
+import org.apache.linkis.manager.label.entity.route.RouteLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.TaskUtils
@@ -54,8 +59,8 @@ class EntranceGroupFactory extends GroupFactory with Logging {
 
   private val groupNameToGroups: Cache[String, Group] = CacheBuilder
     .newBuilder()
-    .expireAfterAccess(EntranceConfiguration.GRORUP_CACHE_EXPITE_TIME.getValue, TimeUnit.MINUTES)
-    .maximumSize(EntranceConfiguration.GRORUP_CACHE_MAX.getValue)
+    .expireAfterAccess(EntranceConfiguration.GROUP_CACHE_EXPIRE_TIME.getValue, TimeUnit.MINUTES)
+    .maximumSize(EntranceConfiguration.GROUP_CACHE_MAX.getValue)
     .build()
 
   private val GROUP_MAX_CAPACITY = CommonVars("wds.linkis.entrance.max.capacity", 2000)
@@ -157,12 +162,33 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
     var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
     var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
+    val labelList = new util.ArrayList[Label[_]]()
+    val offlineRouteLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
+      .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
+    labelList.add(offlineRouteLabel)
+    var offlineIns: Array[ServiceInstance] = null
+    Utils.tryAndWarn {
+      offlineIns = InstanceLabelClient.getInstance
+        .getInstanceFromLabel(labelList)
+        .asScala
+        .filter(l =>
+          null != l && l.getApplicationName
+            .equalsIgnoreCase(Sender.getThisServiceInstance.getApplicationName)
+        )
+        .toArray
+    }
+    if (null != offlineIns) {
+      logger.info(s"There are ${offlineIns.length} offlining instance.")
+      entranceNum = entranceNum - offlineIns.length
+    }
     /*
     Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
      */
-    if (0 == entranceNum) {
+    if (0 >= entranceNum) {
+      logger.error(
+        s"Got ${entranceNum} ${Sender.getThisServiceInstance.getApplicationName} instances."
+      )
       entranceNum = 1
-      logger.error(s"Got 0 ${Sender.getThisServiceInstance.getApplicationName} instances.")
     }
     Math.max(
       EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,

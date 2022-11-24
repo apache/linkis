@@ -11,7 +11,7 @@
 |linkis-bml-server |70068| Failed to delete the resource version(删除资源版本失败)|DELETE_VERSION_FAILED|BmlServerErrorCodeSummary|
 |linkis-bml-server |70068|Delete resource operation failed(删除资源操作失败)|DELETE_OPERATION_FAILED|BmlServerErrorCodeSummary|
 |linkis-bml-server |70068|The bulk delete resource operation failed(批量删除资源操作失败)|BULK_DELETE_FAILED|BmlServerErrorCodeSummary|
-|linkis-bml-server |70068|ResourceID :{} is empty, illegal or has been deleted (resourceId:为空,非法或者已被删除!)|RESOURCEID_BEEN_DELETED|BmlServerErrorCodeSummary|
+|linkis-bml-server |70068|ResourceID:{0} is empty, illegal or has been deleted (resourceId{0}:为空,非法或者已被删除!)|RESOURCEID_BEEN_DELETED|BmlServerErrorCodeSummary|
 |linkis-bml-server |70068|version :{} is empty, illegal or has been deleted (version:为空,非法或者已被删除!)|VERSION_BEEN_DELETED|BmlServerErrorCodeSummary|
 |linkis-bml-server |70068|Failed to obtain resource basic information (获取资源基本信息失败)|FAILED_RESOURCE_BASIC|BmlServerErrorCodeSummary|
 |linkis-bml-server |78531| has expired and cannot be downloaded(已经过期,不能下载)|EXPIRED_CANNOT_DOWNLOADED|BmlServerErrorCodeSummary|

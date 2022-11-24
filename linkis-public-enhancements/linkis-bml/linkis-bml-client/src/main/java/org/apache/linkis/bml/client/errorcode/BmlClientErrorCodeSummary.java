@@ -27,31 +27,20 @@ public enum BmlClientErrorCodeSummary {
    */
   POST_REQUEST_RESULT_NOT_MATCH(
       20060,
-      "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)",
-      "",
-      "bmlClient"),
+      "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)"),
 
   BML_CLIENT_FAILED(
-      20061,
-      "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
-      "",
-      "bmlClient"),
-  SERVER_URL_NOT_NULL(20062, "serverUrl cannot be null(serverUrl 不能为空)", "", "bmlClient");
+      20061, "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"),
+  SERVER_URL_NOT_NULL(20062, "serverUrl cannot be null(serverUrl 不能为空)");
 
   private int errorCode;
 
   private String errorDesc;
 
-  private String comment;
-
-  private String module;
-
-  BmlClientErrorCodeSummary(int errorCode, String errorDesc, String comment, String module) {
+  BmlClientErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 20000, 24999);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
-    this.module = module;
   }
 
   public int getErrorCode() {
@@ -68,22 +57,6 @@ public enum BmlClientErrorCodeSummary {
 
   public void setErrorDesc(String errorDesc) {
     this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  public String getModule() {
-    return module;
-  }
-
-  public void setModule(String module) {
-    this.module = module;
   }
 
   @Override

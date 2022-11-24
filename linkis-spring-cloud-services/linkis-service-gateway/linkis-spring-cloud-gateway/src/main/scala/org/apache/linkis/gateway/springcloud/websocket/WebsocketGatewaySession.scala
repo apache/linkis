@@ -145,7 +145,7 @@ case class ProxyGatewayWebSocketSession(
 ) extends GatewayWebSocketSession(webSocketSession) {
   private var lastPingTime = System.currentTimeMillis
 
-  override def equals(obj: scala.Any): Boolean = if (obj == null) false
+  override def equals(obj: Any): Boolean = if (obj == null) false
   else {
     obj match {
       case w: ProxyGatewayWebSocketSession =>

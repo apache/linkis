@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,8 @@ import java.util.List;
 public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisResultData {
 
   private SimpleOnceJobAdapter onceJobAdapter;
+
+  private boolean hasResult = true;
 
   public SimpleOnceJobAdapter getOnceJobAdapter() {
     return onceJobAdapter;
@@ -146,6 +148,16 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
   @Override
   public boolean resultFinReceived() {
     return onceJobAdapter.resultFinReceived();
+  }
+
+  @Override
+  public boolean hasResult() {
+    return hasResult;
+  }
+
+  @Override
+  public void setHasResult(boolean hasResult) {
+    this.hasResult = hasResult;
   }
 
   @Override

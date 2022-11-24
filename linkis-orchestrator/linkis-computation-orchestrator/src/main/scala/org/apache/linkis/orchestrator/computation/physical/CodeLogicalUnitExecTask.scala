@@ -97,6 +97,12 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     if (executor.isDefined && !isCanceled) {
       val requestTask = toRequestTask
       val codeExecutor = executor.get
+      val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
+        s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
+      } else {
+        s"Succeed to create new ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
+      }
+      getPhysicalContext.pushLog(TaskLogEvent(this, LogUtils.generateInfo(msg)))
       val response = Utils.tryCatch(codeExecutor.getEngineConnExecutor.execute(requestTask)) {
         t: Throwable =>
           logger.error(
@@ -148,7 +154,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       }
     } else if (null != retryException) {
       new DefaultFailedTaskResponse(
-        s"ask Engine failed + ${retryException.getMessage}",
+        s"ask Engine failed ${retryException.getMessage}",
         OrchestratorErrorCodeSummary.EXECUTION_FOR_EXECUTION_ERROR_CODE,
         retryException
       )

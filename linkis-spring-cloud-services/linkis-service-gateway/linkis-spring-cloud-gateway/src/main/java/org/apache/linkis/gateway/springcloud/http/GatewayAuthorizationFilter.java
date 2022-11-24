@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -216,6 +216,11 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
                 httpHeaders,
                 ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddCookies());
           });
+    }
+    if (!((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddHeaders().isEmpty()) {
+      ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest())
+          .getAddHeaders()
+          .forEach(builder::header);
     }
     return chain.filter(exchange.mutate().request(builder.build()).build());
   }

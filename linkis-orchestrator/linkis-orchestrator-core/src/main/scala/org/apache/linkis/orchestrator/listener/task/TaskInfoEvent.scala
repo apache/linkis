@@ -74,7 +74,7 @@ case class TaskErrorResponseEvent(execTask: ExecTask, errorMsg: String)
 
 }
 
-//case class TaskProgressEvent(execId: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent
+// case class TaskProgressEvent(execId: ExecTask, progress: Float, progressInfo: Array[JobProgressInfo]) extends TaskInfoEvent
 
 case class TaskLogEvent(execTask: ExecTask, log: String)
     extends TaskInfoEvent

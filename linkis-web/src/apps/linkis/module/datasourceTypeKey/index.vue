@@ -143,6 +143,13 @@ export default {
           align: 'center',
         },
         {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.nameEn'),
+          key: 'nameEn',
+          minWidth: 50,
+          tooltip: true,
+          align: 'center',
+        },
+        {
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueType'),
           key: 'valueType',
           minWidth: 50,
@@ -152,6 +159,13 @@ export default {
         {
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.description'),
           key: 'description',
+          tooltip: true,
+          align: 'center',
+        },
+        {
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.descriptionEn'),
+          key: 'descriptionEn',
+          minWidth: 50,
           tooltip: true,
           align: 'center',
         },

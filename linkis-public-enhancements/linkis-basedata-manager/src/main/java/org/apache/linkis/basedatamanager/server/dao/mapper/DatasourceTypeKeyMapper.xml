@@ -21,29 +21,32 @@
 <mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeKeyMapper">
 
     <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeKeyEntity">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="dataSourceTypeId" column="data_source_type_id" jdbcType="INTEGER"/>
-            <result property="key" column="key" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="defaultValue" column="default_value" jdbcType="VARCHAR"/>
-            <result property="valueType" column="value_type" jdbcType="VARCHAR"/>
-            <result property="scope" column="scope" jdbcType="VARCHAR"/>
-            <result property="require" column="require" jdbcType="TINYINT"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="valueRegex" column="value_regex" jdbcType="VARCHAR"/>
-            <result property="refId" column="ref_id" jdbcType="BIGINT"/>
-            <result property="refValue" column="ref_value" jdbcType="VARCHAR"/>
-            <result property="dataSource" column="data_source" jdbcType="VARCHAR"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="dataSourceTypeId" column="data_source_type_id" jdbcType="INTEGER"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="nameEn" column="name_en" jdbcType="VARCHAR"/>
+        <result property="defaultValue" column="default_value" jdbcType="VARCHAR"/>
+        <result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+        <result property="scope" column="scope" jdbcType="VARCHAR"/>
+        <result property="require" column="require" jdbcType="TINYINT"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="descriptionEn" column="description_en" jdbcType="VARCHAR"/>
+        <result property="valueRegex" column="value_regex" jdbcType="VARCHAR"/>
+        <result property="refId" column="ref_id" jdbcType="BIGINT"/>
+        <result property="refValue" column="ref_value" jdbcType="VARCHAR"/>
+        <result property="dataSource" column="data_source" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        `id`,`data_source_type_id`,`key`,
-        `name`,`default_value`,`value_type`,
-        `scope`,`require`,`description`,
-        `value_regex`,`ref_id`,`ref_value`,
-        `data_source`,`update_time`,`create_time`
+        id,data_source_type_id,`key`,
+        `name`,name_en,default_value,
+        value_type,`scope`,`require`,
+        description,description_en,value_regex,
+        ref_id,ref_value,data_source,
+        update_time,create_time
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">

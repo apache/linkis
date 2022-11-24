@@ -31,13 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.List;
 
 @Api(tags = "UdfTreeRestfulApi")
 @RestController
@@ -65,7 +65,7 @@ public class UdfTreeRestfulApi {
   @RequestMapping(path = "/all", method = RequestMethod.GET)
   public Message all(HttpServletRequest request, String searchName) {
     ModuleUserUtils.getOperationUser(
-            request, "Query all data of UDF Tree,search name:" + searchName);
+        request, "Query all data of UDF Tree,search name:" + searchName);
     List<UdfTreeEntity> udfTreeEntityList = udfTreeService.list();
     return Message.ok("").data("list", udfTreeEntityList);
   }

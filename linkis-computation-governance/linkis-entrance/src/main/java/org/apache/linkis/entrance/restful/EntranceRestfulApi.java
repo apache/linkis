@@ -346,10 +346,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             if (cores.isPresent() && memory.isPresent()) {
               corePercent =
                   cores.get().floatValue()
-                      / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getValue();
+                      / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getHotValue();
               memoryPercent =
                   memory.get().floatValue()
-                      / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX().getValue().longValue()
+                      / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX().getHotValue().longValue()
                           * 1024
                           * 1024
                           * 1024);
@@ -692,7 +692,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         message.setStatus(1);
       }
     }
-
     return message;
   }
 }

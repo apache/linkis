@@ -104,15 +104,15 @@ class DefaultEngineAskEngineService
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
       engineCreateRequest.setLabels(engineAskRequest.getLabels)
-      engineCreateRequest.setTimeOut(engineAskRequest.getTimeOut)
+      engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
       engineCreateRequest.setUser(engineAskRequest.getUser)
       engineCreateRequest.setProperties(engineAskRequest.getProperties)
       engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
       val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
       val timeout =
-        if (engineCreateRequest.getTimeOut <= 0) {
+        if (engineCreateRequest.getTimeout <= 0) {
           AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-        } else engineCreateRequest.getTimeOut
+        } else engineCreateRequest.getTimeout
       // useEngine 需要加上超时
       val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
       if (null == createEngineNode) {

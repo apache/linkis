@@ -352,14 +352,15 @@ public class LinkisManageJob extends LinkisJob
             .queryResultSetPaths(
                 resultData.getUser(), resultData.getJobID(), resultData.getResultLocation()));
     if (resultData.getResultSetPaths() == null || resultData.getResultSetPaths().length == 0) {
-      throw new LinkisClientExecutionException(
-          "EXE0039",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ExecutionResultErr,
-          "Got null or empty ResultSetPaths");
+      String msg = "Your job got no result.";
+      logger.warn(msg);
+      resultData.sendResultFin(); // inform listener to stop
+      resultData.setHasResult(false);
+      return;
     }
 
     try {
+      resultData.setHasResult(true);
       Thread resultRetriever = new Thread(() -> queryResultLoop(resultData), "Result-Retriever");
       SchedulerUtils.getCachedThreadPoolExecutor().execute(resultRetriever);
     } catch (Exception e) {

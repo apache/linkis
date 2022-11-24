@@ -197,13 +197,12 @@ export default {
       this.load()
     },
     onAdd(){
+      this.$refs.errorCodeForm.formModel.resetFields()
       this.modalAddMode = 'add'
       this.modalShow = true
-      this.clearForm()
     },
     onTableEdit(row){
-      row.layers = row.layers+""
-      this.modalEditData = {...row}
+      this.$refs.errorCodeForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },

@@ -69,9 +69,19 @@ export default {
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}`+this.$t('message.linkis.basedataManagement.udfManager.userName'),
+              len: 20,
+              validator: (rule, value)=>{
+                console.log(rule,value,value.length)
+                return new Promise((resolve,reject)=>{
+                  if(value.length>20){
+                    reject(this.$t('message.linkis.basedataManagement.udfManager.userNameValidate.size'))
+                  }else if (value.length<1){
+                    reject(this.$t('message.linkis.basedataManagement.udfManager.userNameValidate.empty'))
+                  } else{
+                    resolve()
+                  }
+                })
+              },
               trigger: 'blur',
             },
           ],

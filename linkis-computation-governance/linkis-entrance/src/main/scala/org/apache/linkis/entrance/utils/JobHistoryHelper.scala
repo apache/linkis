@@ -67,6 +67,11 @@ object JobHistoryHelper extends Logging {
     else task.getStatus
   }
 
+  def getProgressByTaskID(taskID: Long): String = {
+    val task = getTaskByTaskID(taskID)
+    if (task == null) "0" else task.getProgress
+  }
+
   def getRequestIpAddr(req: HttpServletRequest): String = {
     val addrList = List(
       Option(req.getHeader("x-forwarded-for")).getOrElse("").split(",")(0),
@@ -228,8 +233,8 @@ object JobHistoryHelper extends Logging {
           }
           val data = responsePersist.getData
           data.get(JobRequestConstants.JOB_HISTORY_LIST) match {
-            case tasks: util.List[JobRequest] =>
-              tasks
+            case tasks: List[JobRequest] =>
+              tasks.asJava
             case _ =>
               throw JobHistoryFailedException(
                 s"query from jobhistory not a correct List type, instances ${reqMap.keySet()}"
@@ -250,7 +255,7 @@ object JobHistoryHelper extends Logging {
     tasks
   }
 
-  private def getTaskByTaskID(taskID: Long): JobRequest = {
+  def getTaskByTaskID(taskID: Long): JobRequest = {
     val jobRequest = new JobRequest
     jobRequest.setId(taskID)
     jobRequest.setSource(null)

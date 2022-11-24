@@ -19,14 +19,16 @@ package org.apache.linkis.gateway.ujes.parser
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.entity.JobInstance
+import org.apache.linkis.common.utils.JsonUtils
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
-import org.apache.linkis.jobhistory.entity.JobHistory
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.springframework.stereotype.Component
 
@@ -65,35 +67,50 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
           // parse by execId
           ZuulEntranceUtils.parseServiceInstanceByExecID(execId)(0)
         } else {
-          // check by taskId
-          val jobHistory = checkJobValidityByTaskID(execId.toLong, gatewayContext)
-          // add header
-          val jobReqId = if (jobHistory == null) "" else jobHistory.getJobReqId
-          gatewayContext.getRequest.addHeader(ServerConfiguration.LINKIS_SERVER_HEADER_KEY.getValue, Array(jobReqId))
-          // select instance
-          val instance = if (jobHistory == null) null else jobHistory.getInstances
-          ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, instance)
+          // build JobInstance by taskId
+          val jobInstance = buildJobInstance(execId.toLong, gatewayContext)
+          if (jobInstance == null) return
+          val str = BDPJettyServerHelper.gson.toJson(jobInstance)
+          gatewayContext.getRequest.addHeader(
+            ServerConfiguration.LINKIS_SERVER_ENTRANCE_HEADER_KEY.getValue,
+            Array(str)
+          )
+
+          ServiceInstance(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue, jobInstance.instances)
         }
         gatewayContext.getGatewayRoute.setServiceInstance(serviceInstance)
       case _ =>
     }
 
-  def checkJobValidityByTaskID(taskId: Long, gatewayContext: GatewayContext): JobHistory = {
+  def buildJobInstance(taskId: Long, gatewayContext: GatewayContext): JobInstance = {
     val histories = jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null)
     if (histories.isEmpty) {
       sendErrorResponse(s"taskId $taskId is not exists.", gatewayContext)
+      return null
     }
-    val instances = histories.get(0).getInstances
-    val activeInstances = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue)
-
-    if (activeInstances.exists(StringUtils.isNotBlank(instances) && _.getInstance.equals(instances)) &&
-      activeInstances.filter(_.getInstance.equals(instances))(0).getRegistryTimestamp <= histories.get(0).getCreatedTime.getTime
-    ) {
-      histories.get(0)
-    } else {
-      null
+    val history = histories.get(0)
+    if (StringUtils.isEmpty(history.getInstances)) {
+      return JobInstance(
+        history.getStatus,
+        null,
+        history.getJobReqId,
+        history.getCreatedTime.getTime,
+        Long.MaxValue
+      )
     }
-
+    val activeInstances = ServiceInstanceUtils.getRPCServerLoader.getServiceInstances(
+      GatewayConfiguration.ENTRANCE_SPRING_NAME.getValue
+    )
+    val instance = activeInstances
+      .find(_.getInstance.equals(history.getInstances))
+      .getOrElse(ServiceInstance("", "", Long.MaxValue))
+    JobInstance(
+      history.getStatus,
+      history.getInstances,
+      history.getJobReqId,
+      history.getCreatedTime.getTime,
+      instance.getRegistryTimestamp
+    )
   }
 
 }

@@ -22,7 +22,6 @@ import java.util.Map;
 public class MonitorVO {
 
   private Long taskId;
-  private String monitorStatus;
   private String monitorLevel;
   private String receiver;
   private String subSystemId;
@@ -36,14 +35,6 @@ public class MonitorVO {
 
   public void setTaskId(Long taskId) {
     this.taskId = taskId;
-  }
-
-  public String getMonitorStatus() {
-    return monitorStatus;
-  }
-
-  public void setMonitorStatus(String monitorStatus) {
-    this.monitorStatus = monitorStatus;
   }
 
   public String getMonitorLevel() {
@@ -80,13 +71,20 @@ public class MonitorVO {
 
   @Override
   public String toString() {
-    return "MonitorVO{" +
-            "taskId=" + taskId +
-            ", monitorStatus='" + monitorStatus + '\'' +
-            ", monitorLevel='" + monitorLevel + '\'' +
-            ", receiver='" + receiver + '\'' +
-            ", subSystemId='" + subSystemId + '\'' +
-            ", extra=" + extra +
-            '}';
+    return "MonitorVO{"
+        + "taskId="
+        + taskId
+        + ", monitorLevel='"
+        + monitorLevel
+        + '\''
+        + ", receiver='"
+        + receiver
+        + '\''
+        + ", subSystemId='"
+        + subSystemId
+        + '\''
+        + ", extra="
+        + extra
+        + '}';
   }
 }

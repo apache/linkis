@@ -63,8 +63,6 @@ public class JobhistorySettingApi {
     ModuleUserUtils.getOperationUser(req, "isNotice");
     // Parameter verification
     if (null == monitor.getTaskId()) return Message.error("TaskId can't be empty ");
-    if (StringUtils.isBlank(monitor.getMonitorStatus()))
-      return Message.error("MonitorStatus can't be empty ");
     if (StringUtils.isBlank(monitor.getReceiver())) return Message.error("Receiver can't be empty");
     if (null == monitor.getExtra()) {
       return Message.error("Extra can't be empty ");

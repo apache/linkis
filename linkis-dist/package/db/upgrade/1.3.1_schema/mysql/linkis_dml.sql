@@ -128,7 +128,13 @@ INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `n
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 1, '密码(Password)', 'Password', '', NULL, '', NULL, now(), now());
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'elasticUrls', 'ES连接URL(Elastic Url)', 'Elastic Url', NULL, 'TEXT', NULL, 1, 'ES连接URL(Elastic Url)', 'Elastic Url', '', NULL, '', NULL, now(), now());
 
+-- delete error_code 43008, should be done before the index idx_error_regex is added
+DELETE FROM `linkis_ps_error_code` WHERE error_code = 43008;
+
 -- add unique index
 ALTER TABLE `linkis_ps_dm_datasource_env` ADD UNIQUE INDEX `env_name_datasource_type_id` (`env_name`, `datasource_type_id`);
 ALTER TABLE `linkis_ps_dm_datasource` ADD UNIQUE INDEX `datasource_name_un` (`datasource_name`);
 ALTER TABLE `linkis_ps_dm_datasource_type` ADD UNIQUE INDEX `name_un` (`name`);
+ALTER TABLE `linkis_ps_error_code` ADD UNIQUE INDEX `idx_error_regex` (error_regex(100));
+
+

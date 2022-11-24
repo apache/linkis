@@ -220,7 +220,7 @@ export default {
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
+                content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
             }else{
               this.$Message.success({

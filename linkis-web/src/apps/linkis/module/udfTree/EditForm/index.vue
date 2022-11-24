@@ -21,7 +21,6 @@
       :rule="rule"
       v-model="formModel"
       :option="options"
-      :value.sync="formData"
     />
   </div>
 </template>
@@ -138,7 +137,7 @@ export default {
           ],
         },
         {
-          type: 'input',
+          type: 'inputNumber',
           title: this.$t('message.linkis.basedataManagement.udfTree.parent'),
           field: 'parent',
           value: '',
@@ -148,6 +147,7 @@ export default {
           validate: [
             {
               required: true,
+              type: "number",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.udfTree.parent'),
@@ -157,22 +157,6 @@ export default {
         }
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

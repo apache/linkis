@@ -1067,9 +1067,14 @@
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin.version}</version>
           <configuration>
-            <scalaVersion>${scala.version}</scalaVersion>
             <recompileMode>incremental</recompileMode>
-            <addScalacArgs>-target:jvm-${java.version}</addScalacArgs>
+            <args>
+              <arg>-unchecked</arg>
+              <arg>-deprecation</arg>
+              <arg>-feature</arg>
+              <arg>-explaintypes</arg>
+              <arg>-target:jvm-${java.version}</arg>
+            </args>
           </configuration>
           <executions>
             <execution>

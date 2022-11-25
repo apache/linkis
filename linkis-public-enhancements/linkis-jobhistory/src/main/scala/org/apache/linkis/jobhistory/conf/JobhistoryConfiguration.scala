@@ -22,6 +22,9 @@ import org.apache.linkis.common.conf.{CommonVars, Configuration}
 object JobhistoryConfiguration {
   // modify this param in linkis.properties
   val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
+
+  val JOB_HISTORY_ADMIN = CommonVars("wds.linkis.jobhistory.admin", "hadoop")
+
   val JOB_HISTORY_SAFE_TRIGGER = CommonVars("wds.linkis.jobhistory.safe.trigger", true).getValue
 
   val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance")

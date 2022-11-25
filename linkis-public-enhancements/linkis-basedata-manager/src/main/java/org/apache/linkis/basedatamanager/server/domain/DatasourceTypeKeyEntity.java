@@ -46,12 +46,16 @@ public class DatasourceTypeKeyEntity implements Serializable {
   private String name;
 
   /** */
+  private String nameEn;
+
+  /** */
   private String defaultValue;
 
   /** */
   private String valueType;
 
   /** */
+  @TableField(value = "`scope`")
   private String scope;
 
   /** */
@@ -60,6 +64,9 @@ public class DatasourceTypeKeyEntity implements Serializable {
 
   /** */
   private String description;
+
+  /** */
+  private String descriptionEn;
 
   /** */
   private String valueRegex;
@@ -123,6 +130,16 @@ public class DatasourceTypeKeyEntity implements Serializable {
   }
 
   /** */
+  public String getNameEn() {
+    return nameEn;
+  }
+
+  /** */
+  public void setNameEn(String nameEn) {
+    this.nameEn = nameEn;
+  }
+
+  /** */
   public String getDefaultValue() {
     return defaultValue;
   }
@@ -170,6 +187,16 @@ public class DatasourceTypeKeyEntity implements Serializable {
   /** */
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  /** */
+  public String getDescriptionEn() {
+    return descriptionEn;
+  }
+
+  /** */
+  public void setDescriptionEn(String descriptionEn) {
+    this.descriptionEn = descriptionEn;
   }
 
   /** */
@@ -252,6 +279,9 @@ public class DatasourceTypeKeyEntity implements Serializable {
         && (this.getName() == null
             ? other.getName() == null
             : this.getName().equals(other.getName()))
+        && (this.getNameEn() == null
+            ? other.getNameEn() == null
+            : this.getNameEn().equals(other.getNameEn()))
         && (this.getDefaultValue() == null
             ? other.getDefaultValue() == null
             : this.getDefaultValue().equals(other.getDefaultValue()))
@@ -267,6 +297,9 @@ public class DatasourceTypeKeyEntity implements Serializable {
         && (this.getDescription() == null
             ? other.getDescription() == null
             : this.getDescription().equals(other.getDescription()))
+        && (this.getDescriptionEn() == null
+            ? other.getDescriptionEn() == null
+            : this.getDescriptionEn().equals(other.getDescriptionEn()))
         && (this.getValueRegex() == null
             ? other.getValueRegex() == null
             : this.getValueRegex().equals(other.getValueRegex()))
@@ -296,11 +329,13 @@ public class DatasourceTypeKeyEntity implements Serializable {
         prime * result + ((getDataSourceTypeId() == null) ? 0 : getDataSourceTypeId().hashCode());
     result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
     result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+    result = prime * result + ((getNameEn() == null) ? 0 : getNameEn().hashCode());
     result = prime * result + ((getDefaultValue() == null) ? 0 : getDefaultValue().hashCode());
     result = prime * result + ((getValueType() == null) ? 0 : getValueType().hashCode());
     result = prime * result + ((getScope() == null) ? 0 : getScope().hashCode());
     result = prime * result + ((getRequire() == null) ? 0 : getRequire().hashCode());
     result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
+    result = prime * result + ((getDescriptionEn() == null) ? 0 : getDescriptionEn().hashCode());
     result = prime * result + ((getValueRegex() == null) ? 0 : getValueRegex().hashCode());
     result = prime * result + ((getRefId() == null) ? 0 : getRefId().hashCode());
     result = prime * result + ((getRefValue() == null) ? 0 : getRefValue().hashCode());
@@ -320,11 +355,13 @@ public class DatasourceTypeKeyEntity implements Serializable {
     sb.append(", dataSourceTypeId=").append(dataSourceTypeId);
     sb.append(", key=").append(key);
     sb.append(", name=").append(name);
+    sb.append(", nameEn=").append(nameEn);
     sb.append(", defaultValue=").append(defaultValue);
     sb.append(", valueType=").append(valueType);
     sb.append(", scope=").append(scope);
     sb.append(", require=").append(require);
     sb.append(", description=").append(description);
+    sb.append(", descriptionEn=").append(descriptionEn);
     sb.append(", valueRegex=").append(valueRegex);
     sb.append(", refId=").append(refId);
     sb.append(", refValue=").append(refValue);

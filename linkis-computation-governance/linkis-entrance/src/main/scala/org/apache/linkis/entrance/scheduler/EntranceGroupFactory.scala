@@ -193,18 +193,20 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
-  def refreshAllGroupMaxAllowRunningJobs(activeCount: Int): Unit = {
-    if (activeCount <= 0) return
+  def refreshAllGroupMaxAllowRunningJobs(validInsCount: Int): Unit = {
+    if (validInsCount <= 0) return
     groupNameToGroups
       .asMap()
       .asScala
       .foreach(item => {
         item._2 match {
           case group: ParallelGroup =>
-            val maxAllowRunningJobs = Math.round(group.getMaxRunningJobs / activeCount)
+            val maxAllowRunningJobs = Math.round(group.getMaxRunningJobs / validInsCount)
             group.setMaxAllowRunningJobs(maxAllowRunningJobs)
             logger
-              .info(s"group ${group.getGroupName} update maxAllowRunningJobs $maxAllowRunningJobs")
+              .info(
+                s"group ${group.getGroupName} refresh maxAllowRunningJobs => ${group.getMaxRunningJobs}/$validInsCount=$maxAllowRunningJobs"
+              )
           case _ =>
         }
       })

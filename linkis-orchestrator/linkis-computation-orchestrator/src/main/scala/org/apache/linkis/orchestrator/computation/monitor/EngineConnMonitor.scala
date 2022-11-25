@@ -113,7 +113,7 @@ object EngineConnMonitor extends Logging {
     val requestEngineStatus = RequestEngineStatusBatch(engineList)
     Utils.tryAndError {
       Sender
-        .getSender(GovernanceCommonConf.MANAGER_SPRING_NAME.getValue)
+        .getSender(GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue)
         .ask(requestEngineStatus) match {
         case response: ResponseEngineStatusBatch =>
           if (null != response.msg) {

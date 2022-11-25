@@ -33,8 +33,7 @@ import org.apache.commons.lang3.StringUtils
 import java.time.ZonedDateTime
 import java.util
 
-import scala.collection.JavaConverters.mapAsScalaMapConverter
-import scala.collection.convert.WrapAsScala._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.Exception.allCatch
 
@@ -59,7 +58,7 @@ object VariableUtils extends Logging {
   def replace(replaceStr: String, variables: util.Map[String, Any]): String = {
     val nameAndType = mutable.Map[String, variable.VariableType]()
     var run_date: CustomDateType = null
-    variables foreach {
+    variables.asScala.foreach {
       case (RUN_DATE, value) if !nameAndType.contains(RUN_DATE) =>
         val run_date_str = value.asInstanceOf[String]
         if (StringUtils.isNotEmpty(run_date_str)) {

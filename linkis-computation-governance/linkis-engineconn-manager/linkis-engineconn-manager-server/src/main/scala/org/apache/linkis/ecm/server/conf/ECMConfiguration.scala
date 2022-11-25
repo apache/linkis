@@ -82,9 +82,6 @@ object ECMConfiguration {
   val ECM_HEALTH_REPORT_DELAY: Long =
     CommonVars("wds.linkis.ecm.health.report.delay", 10).getValue
 
-  val ENGINECONN_PLUGIN_SPRING_NAME: String =
-    GovernanceCommonConf.ENGINE_CONN_PLUGIN_SPRING_NAME.getValue
-
   val ECM_HOME_DIR: String =
     CommonVars("wds.linkis.ecm.home.dir", this.getClass.getResource("/").getPath).getValue
 

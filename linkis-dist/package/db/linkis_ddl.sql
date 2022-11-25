@@ -856,7 +856,8 @@ CREATE TABLE `linkis_ps_dm_datasource`
     `version_id`           int(11)                            DEFAULT NULL COMMENT 'current version id',
     `expire`               tinyint(1)                         DEFAULT 0,
     `published_version_id` int(11)                            DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `datasource_name_un` (`datasource_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -875,7 +876,8 @@ CREATE TABLE `linkis_ps_dm_datasource_env`
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `env_name` (`env_name`)
+    UNIQUE KEY `env_name` (`env_name`),
+    UNIQUE INDEX `env_name_datasource_type_id` (`env_name`, `datasource_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -892,7 +894,8 @@ CREATE TABLE `linkis_ps_dm_datasource_type`
     `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
     `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
     `layers`      int(3)                       NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `name_un` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------

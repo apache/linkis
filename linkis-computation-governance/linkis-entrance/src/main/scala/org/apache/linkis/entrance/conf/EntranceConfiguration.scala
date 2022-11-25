@@ -246,4 +246,10 @@ object EntranceConfiguration {
 
   val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
 
+  val ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.engine.conn.enable", true)
+
+  val ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.yarn.resource.enable", true)
+
 }

@@ -19,6 +19,5 @@ package org.apache.linkis.engineconn.computation.concurrent.monitor;
 
 public interface MonitorService {
 
-    boolean isAvailable();
-
+  boolean isAvailable();
 }

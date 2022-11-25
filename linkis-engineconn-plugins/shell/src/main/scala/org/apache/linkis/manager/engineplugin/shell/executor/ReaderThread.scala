@@ -17,10 +17,11 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import org.apache.commons.io.IOUtils
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+
+import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.BufferedReader
@@ -36,7 +37,7 @@ class ReaderThread extends Thread with Logging {
   private val logListCount = CommonVars[Int]("wds.linkis.engineconn.log.list.count", 50)
   private var counter: CountDownLatch = _
 
-  private var isAlive = true
+  private var isReaderAlive = true
 
   def this(
       engineExecutionContext: EngineExecutionContext,
@@ -54,7 +55,7 @@ class ReaderThread extends Thread with Logging {
   }
 
   def onDestroy(): Unit = {
-    isAlive = false
+    isReaderAlive = false
   }
 
   def startReaderThread(): Unit = {
@@ -69,7 +70,7 @@ class ReaderThread extends Thread with Logging {
     Utils.tryCatch {
       var line: String = null
       val logArray: util.List[String] = new util.ArrayList[String]
-      while ({ line = inputReader.readLine(); line != null && isAlive}) {
+      while ({ line = inputReader.readLine(); line != null && isReaderAlive }) {
         logger.info("read logger line :{}", line)
         logArray.add(line)
         extractor.appendLineToExtractor(line)

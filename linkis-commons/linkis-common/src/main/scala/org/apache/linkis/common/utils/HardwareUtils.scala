@@ -17,10 +17,10 @@
 
 package org.apache.linkis.common.utils
 
-import oshi.SystemInfo
-
 import java.math.RoundingMode
 import java.text.DecimalFormat
+
+import oshi.SystemInfo
 
 object HardwareUtils {
 
@@ -51,10 +51,10 @@ object HardwareUtils {
   }
 
   /**
-   * Get memory usage percentage
-   * Keep 3 decimal
+   * Get memory usage percentage Keep 3 decimal
    *
-   * @return percent
+   * @return
+   *   percent
    */
   def memoryUsage(): Double = {
     val memory = hardware.getMemory
@@ -64,25 +64,23 @@ object HardwareUtils {
     df.format(memoryUsage).toDouble
   }
 
-
   /**
    * load average
    *
-   * @return percent
+   * @return
+   *   percent
    */
   def loadAverageUsage(): Double = {
-    val loadAverage = Utils.tryCatch{
+    val loadAverage = Utils.tryCatch {
       OverloadUtils.getOSBean.getSystemLoadAverage
-    } {
-      case e: Exception =>
-        val loadAverage = hardware.getProcessor.getSystemLoadAverage(1)(0)
-        if (loadAverage.isNaN) -1 else loadAverage
+    } { case e: Exception =>
+      val loadAverage = hardware.getProcessor.getSystemLoadAverage(1)(0)
+      if (loadAverage.isNaN) -1 else loadAverage
     }
 
     val df = new DecimalFormat(THREE_DECIMAL)
     df.setRoundingMode(RoundingMode.HALF_UP)
-    if (loadAverage <= 0) 0 else df.format(loadAverage/100D).toDouble
+    if (loadAverage <= 0) 0 else df.format(loadAverage / 100d).toDouble
   }
-
 
 }

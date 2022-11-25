@@ -21,10 +21,10 @@ import org.apache.linkis.common.conf.CommonVars
 
 object ShellEngineConnConf {
 
-  val SHELL_ENGINECONN_CONCURRENT_LIMIT: Int = CommonVars[Int]("linkis.engineconn.shell.concurrent.limit", 30).getValue
+  val SHELL_ENGINECONN_CONCURRENT_LIMIT: Int =
+    CommonVars[Int]("linkis.engineconn.shell.concurrent.limit", 30).getValue
 
-  val LOG_SERVICE_MAX_THREAD_SIZE: Int = CommonVars("linkis.engineconn.shell.log.max.thread.size", 50).getValue
-
-
+  val LOG_SERVICE_MAX_THREAD_SIZE: Int =
+    CommonVars("linkis.engineconn.shell.log.max.thread.size", 50).getValue
 
 }

@@ -46,6 +46,4 @@ class HardwareUtilsTest {
     assert(usage >= 0.000)
   }
 
-
-
 }

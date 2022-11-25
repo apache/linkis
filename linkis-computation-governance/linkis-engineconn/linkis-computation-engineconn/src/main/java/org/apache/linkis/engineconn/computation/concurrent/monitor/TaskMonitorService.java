@@ -21,42 +21,47 @@ import org.apache.linkis.engineconn.computation.executor.execute.ConcurrentCompu
 import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
 import org.apache.linkis.engineconn.executor.entity.Executor;
+
+import org.springframework.stereotype.Component;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 @Component
 public class TaskMonitorService implements MonitorService {
 
-    private static Logger LOG = LoggerFactory.getLogger(HardwareMonitorService.class);
+  private static Logger LOG = LoggerFactory.getLogger(HardwareMonitorService.class);
 
-    private static ConcurrentComputationExecutor concurrentExecutor = null;
+  private static ConcurrentComputationExecutor concurrentExecutor = null;
 
-    @Override
-    public boolean isAvailable() {
+  @Override
+  public boolean isAvailable() {
 
-        if (! EngineConnObject.isReady()) {
-            return true;
-        }
-
-        try {
-            if (null == concurrentExecutor) {
-                Executor executor = ExecutorManager$.MODULE$.getInstance().getReportExecutor();
-                if (executor instanceof ConcurrentComputationExecutor) {
-                    concurrentExecutor = (ConcurrentComputationExecutor) executor;
-                }
-            }
-            if (null == concurrentExecutor) {
-                LOG.warn("shell executor can not is null");
-                return true;
-            }
-            if (concurrentExecutor.getRunningTask() > concurrentExecutor.getConcurrentLimit()) {
-                LOG.info("running task({}) > concurrent limit ({}) , now to mark ec to busy ", concurrentExecutor.getRunningTask(), concurrentExecutor.getConcurrentLimit());
-                return false;
-            }
-        } catch (Exception e) {
-            LOG.warn("Task Monitor failed", e);
-        }
-        return true;
+    if (!EngineConnObject.isReady()) {
+      return true;
     }
+
+    try {
+      if (null == concurrentExecutor) {
+        Executor executor = ExecutorManager$.MODULE$.getInstance().getReportExecutor();
+        if (executor instanceof ConcurrentComputationExecutor) {
+          concurrentExecutor = (ConcurrentComputationExecutor) executor;
+        }
+      }
+      if (null == concurrentExecutor) {
+        LOG.warn("shell executor can not is null");
+        return true;
+      }
+      if (concurrentExecutor.getRunningTask() > concurrentExecutor.getConcurrentLimit()) {
+        LOG.info(
+            "running task({}) > concurrent limit ({}) , now to mark ec to busy ",
+            concurrentExecutor.getRunningTask(),
+            concurrentExecutor.getConcurrentLimit());
+        return false;
+      }
+    } catch (Exception e) {
+      LOG.warn("Task Monitor failed", e);
+    }
+    return true;
+  }
 }

@@ -26,8 +26,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
 import org.apache.linkis.engineconn.executor.entity.Executor;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,69 +34,74 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
-public class TimingMonitorService implements InitializingBean, Runnable{
+public class TimingMonitorService implements InitializingBean, Runnable {
 
-    private static Logger LOG = LoggerFactory.getLogger(TimingMonitorService.class);
+  private static Logger LOG = LoggerFactory.getLogger(TimingMonitorService.class);
 
-    private static CommonVars<TimeType> MONITOR_INTERVAL = CommonVars.apply("linkis.engineconn.concurrent.monitor.interval", new TimeType("30s"));
+  private static CommonVars<TimeType> MONITOR_INTERVAL =
+      CommonVars.apply("linkis.engineconn.concurrent.monitor.interval", new TimeType("30s"));
 
-    @Autowired
-    private List<MonitorService> monitorServiceList;
+  @Autowired private List<MonitorService> monitorServiceList;
 
-    private boolean isAvailable = true;
+  private boolean isAvailable = true;
 
-    private AccessibleExecutor concurrentExecutor = null;
+  private AccessibleExecutor concurrentExecutor = null;
 
-    private static final Object EXECUTOR_STATUS_LOCKER = new Object();
+  private static final Object EXECUTOR_STATUS_LOCKER = new Object();
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM()) {
-            Utils.defaultScheduler().scheduleAtFixedRate(this,3 * 60 * 1000, MONITOR_INTERVAL.getValue().toLong(), TimeUnit.MILLISECONDS);
-        }
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM()) {
+      Utils.defaultScheduler()
+          .scheduleAtFixedRate(
+              this, 3 * 60 * 1000, MONITOR_INTERVAL.getValue().toLong(), TimeUnit.MILLISECONDS);
+    }
+  }
+
+  @Override
+  public void run() {
+
+    if (!EngineConnObject.isReady()) {
+      return;
     }
 
-
-    @Override
-    public void run() {
-
-        if (! EngineConnObject.isReady()) {
-            return;
+    try {
+      if (null == concurrentExecutor) {
+        Executor executor = ExecutorManager$.MODULE$.getInstance().getReportExecutor();
+        if (executor instanceof AccessibleExecutor) {
+          concurrentExecutor = (AccessibleExecutor) executor;
         }
-
-        try {
-            if (null == concurrentExecutor) {
-                Executor executor = ExecutorManager$.MODULE$.getInstance().getReportExecutor();
-                if (executor instanceof AccessibleExecutor) {
-                    concurrentExecutor = (AccessibleExecutor)executor;
-                }
+      }
+      if (null == concurrentExecutor) {
+        LOG.warn("shell executor can not is null");
+        return;
+      }
+      isAvailable = true;
+      monitorServiceList.forEach(
+          monitorService -> {
+            if (!monitorService.isAvailable()) {
+              isAvailable = false;
             }
-            if (null == concurrentExecutor) {
-                LOG.warn("shell executor can not is null");
-                return;
-            }
-            isAvailable = true;
-            monitorServiceList.forEach(monitorService -> {
-                if (! monitorService.isAvailable()) {
-                    isAvailable = false;
-                }
-            });
-            if (isAvailable) {
-                if (concurrentExecutor.isBusy()) synchronized (EXECUTOR_STATUS_LOCKER) {
-                    LOG.info("monitor turn to executor status from busy to unlock");
-                    concurrentExecutor.transition(NodeStatus.Unlock);
-                }
-            } else {
-                if (concurrentExecutor.isIdle()) synchronized (EXECUTOR_STATUS_LOCKER) {
-                    LOG.info("monitor turn to executor status from busy to unlock");
-                    concurrentExecutor.transition(NodeStatus.Busy);
-                }
-            }
-        } catch (Exception e) {
-            LOG.warn("Failed to executor monitor ", e);
-        }
+          });
+      if (isAvailable) {
+        if (concurrentExecutor.isBusy())
+          synchronized (EXECUTOR_STATUS_LOCKER) {
+            LOG.info("monitor turn to executor status from busy to unlock");
+            concurrentExecutor.transition(NodeStatus.Unlock);
+          }
+      } else {
+        if (concurrentExecutor.isIdle())
+          synchronized (EXECUTOR_STATUS_LOCKER) {
+            LOG.info("monitor turn to executor status from busy to unlock");
+            concurrentExecutor.transition(NodeStatus.Busy);
+          }
+      }
+    } catch (Exception e) {
+      LOG.warn("Failed to executor monitor ", e);
     }
-
-
+  }
 }

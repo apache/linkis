@@ -202,6 +202,9 @@ export default {
         this.pageDatalist = data.list.list
         this.page.totalSize = data.list.total
       })
+
+
+
     },
     changePage(value) {
       this.page.pageNow = value

@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import {getAll} from "../service";
+
 export default {
   props: {
     mode: String,
@@ -137,17 +139,18 @@ export default {
           ],
         },
         {
-          type: 'inputNumber',
+          type: 'select',
           title: this.$t('message.linkis.basedataManagement.udfTree.parent'),
           field: 'parent',
-          value: '',
+          info: this.$t('message.linkis.basedataManagement.udfTree.parentInfo'),
+          value: "",
           props: {
             placeholder: "",
           },
+          options: [],
           validate: [
             {
               required: true,
-              type: "number",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.udfTree.parent'),
@@ -157,6 +160,15 @@ export default {
         }
       ]
     }
+  },
+  created() {
+    getAll().then(res=>{
+      let list = res.list.map(m=>{
+        return {label: m.name,value: m.id}
+      });
+      list = [{label: "Root",value: -1},...list]
+      this.rule[this.rule.length-1].options = list
+    })
   },
 }
 </script>

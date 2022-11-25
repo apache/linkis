@@ -43,8 +43,8 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 
-import java.text.MessageFormat
 import java.{lang, util}
+import java.text.{MessageFormat, SimpleDateFormat}
 import java.util.Date
 
 import scala.collection.JavaConverters._
@@ -360,6 +360,8 @@ abstract class EntranceServer extends Logging {
       .createPersistenceEngine()
       .updateIfNeeded(jobRequest)
 
+    logger.info(s"job ${jobRequest.getId} update JobRequest success")
+
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
     Utils.tryThrow {
       job.init()
@@ -386,7 +388,9 @@ abstract class EntranceServer extends Logging {
        */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
       getEntranceContext.getOrCreateScheduler().submit(job)
-      val msg = s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted, success to failover"
+      val msg = LogUtils.generateInfo(
+        s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted, success to failover"
+      )
       logger.info(msg)
 
       job match {
@@ -421,31 +425,42 @@ abstract class EntranceServer extends Logging {
 
   }
 
-  private def initJobRequestProperties(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
-
+  private def initJobRequestProperties(
+      jobRequest: JobRequest,
+      logAppender: lang.StringBuilder
+  ): Unit = {
+    logger.info(s"Job ${jobRequest.getId} start to initialize the properties")
+    val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     val initInstance = Sender.getThisInstance
     val initDate = new Date(System.currentTimeMillis)
     val initStatus = SchedulerEventState.Inited.toString
     val initProgress = "0.0"
     val initReqId = ""
 
+    logAppender.append("\n\n")
     logAppender.append(
-      LogUtils.generateInfo(s"Job ${jobRequest.getId} start to failover, Initialize the properties \n")
+      LogUtils
+        .generateInfo(
+          s"*************************************FAILOVER************************************** \n"
+        )
+    )
+    logAppender.append(
+      LogUtils
+        .generateInfo(s"Job ${jobRequest.getId} start to failover, Initialize the properties \n")
     )
     logAppender.append(
       LogUtils.generateInfo(s"the instances ${jobRequest.getInstances} -> ${initInstance} \n")
     )
     logAppender.append(
-      LogUtils.generateInfo(s"the created_time ${jobRequest.getCreatedTime} -> ${initDate} \n")
+      LogUtils.generateInfo(
+        s"the created_time ${sdf.format(jobRequest.getCreatedTime)} -> ${sdf.format(initDate)} \n"
+      )
     )
     logAppender.append(
       LogUtils.generateInfo(s"the status ${jobRequest.getStatus} -> $initStatus \n")
     )
     logAppender.append(
       LogUtils.generateInfo(s"the progress ${jobRequest.getProgress} -> $initProgress \n")
-    )
-    logAppender.append(
-      LogUtils.generateInfo(s"the job_req_id ${jobRequest.getReqId} -> $initReqId \n")
     )
 
     val metricMap = new util.HashMap[String, Object]()
@@ -458,6 +473,17 @@ abstract class EntranceServer extends Logging {
         .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
         .asInstanceOf[util.Map[String, Object]]
       metricMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, oldEngineconnMap)
+    }
+
+    if (
+        jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
+          TaskConstant.ENTRANCEJOB_YARNRESOURCE
+        )
+    ) {
+      val oldResourceMap = jobRequest.getMetrics
+        .get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+        .asInstanceOf[util.Map[String, Object]]
+      metricMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, oldResourceMap)
     }
 
     jobRequest.setInstances(initInstance)
@@ -474,6 +500,7 @@ abstract class EntranceServer extends Logging {
     logAppender.append(
       LogUtils.generateInfo(s"Job ${jobRequest.getId} success to initialize the properties \n")
     )
+    logger.info(s"Job ${jobRequest.getId} success to initialize the properties")
   }
 
 }

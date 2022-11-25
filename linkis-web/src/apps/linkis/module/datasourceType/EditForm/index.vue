@@ -165,7 +165,8 @@ export default {
           value: 0,
           props: {
             placeholder: "eg. 1-3",
-            type: "number"
+            type: "number",
+            min: 0
           },
           validate: [
             {
@@ -175,6 +176,12 @@ export default {
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceType.layers'),
+              trigger: 'change',
+            },
+            {
+              min: 0,
+              type: "number",
+              message: this.$t('message.linkis.basedataManagement.datasourceType.layersValidate.range'),
               trigger: 'change',
             },
           ],

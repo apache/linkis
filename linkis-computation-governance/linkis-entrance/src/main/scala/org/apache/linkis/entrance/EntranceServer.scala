@@ -274,6 +274,10 @@ abstract class EntranceServer extends Logging {
 
   def killEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
     Utils.tryCatch {
+      logAppender.append(
+        LogUtils
+          .generateInfo(s"job ${jobRequest.getId} start to kill ec \n")
+      )
       if (
           !SchedulerEventState.isRunning(SchedulerEventState.withName(jobRequest.getStatus))
           || !SchedulerEventState.isScheduled(SchedulerEventState.withName(jobRequest.getStatus))
@@ -363,7 +367,7 @@ abstract class EntranceServer extends Logging {
     logAppender.append(
       LogUtils
         .generateInfo(
-          s"\n\n *************************************FAILOVER************************************** \n"
+          s"\n\n*************************************FAILOVER************************************** \n\n"
         )
     )
     // try to kill ec
@@ -455,7 +459,7 @@ abstract class EntranceServer extends Logging {
 
     logAppender.append(
       LogUtils
-        .generateInfo(s"job ${jobRequest.getId} start to failover, Initialize the properties \n")
+        .generateInfo(s"job ${jobRequest.getId} start to Initialize the properties \n")
     )
     logAppender.append(
       LogUtils.generateInfo(s"the instances ${jobRequest.getInstances} -> ${initInstance} \n")

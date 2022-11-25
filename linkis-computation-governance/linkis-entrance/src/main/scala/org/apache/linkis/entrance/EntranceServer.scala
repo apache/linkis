@@ -282,6 +282,7 @@ abstract class EntranceServer extends Logging {
         logger.info(
           s"job ${jobRequest.getId} is not running,scheduled or not have EC info, ignore it"
         )
+        return
       }
 
       val engineMap = jobRequest.getMetrics
@@ -294,7 +295,7 @@ abstract class EntranceServer extends Logging {
           .filter(_.containsKey(TaskConstant.ENGINE_INSTANCE))
           .maxBy(_.getOrDefault(TaskConstant.ENGINE_CONN_SUBMIT_TIME, "0").toString)
 
-      if (engineInstance != null || engineInstance.containsKey(TaskConstant.FAILOVER_FLAG)) {
+      if (engineInstance == null || engineInstance.containsKey(TaskConstant.FAILOVER_FLAG)) {
         logger.info(
           s"job ${jobRequest.getId} do not submit to EC or already failover, not need kill ec"
         )
@@ -328,8 +329,8 @@ abstract class EntranceServer extends Logging {
           s"job ${jobRequest.getId} send RequestTaskKill to kill engineConn $ecInstance, execID $engineTaskId"
         )
       }
-    } { case e: Exception =>
-      logger.error(s"job ${jobRequest.getId} kill ec error", e)
+    } { t =>
+      logger.error(s"job ${jobRequest.getId} kill ec error", t)
     }
   }
 

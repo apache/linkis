@@ -476,7 +476,8 @@
           "parent": "Parent",
           "createTime": "Create Time",
           "updateTime": "Update Time",
-          "searchPlaceholder": "Name/Category/Desc/UserName"
+          "searchPlaceholder": "Name/Category/Desc/UserName",
+          "parentInfo": "Parent classification, Root is the root directory"
         },
         "datasourceEnv": {
           "envName": "Env Name",
@@ -503,9 +504,15 @@
         "datasourceTypeKey": {
           "key": "Key",
           "dataSourceType": "Datasource Type",
-          "name": "Name",
+          "name": "Name(Chinese)",
+          "nameEn": "Name",
           "valueType": "Value Type",
-          "description": "Description",
+          "scope": "Scope",
+          "require": "Require",
+          "defaultValue": "Default Value",
+          "description": "Description(Chinese)",
+          "descriptionEn": "Description",
+          "valueRegex": "Value Regex",
           "createTime": "Create Time",
           "updateTime": "Update Time",
           "searchPlaceholder": "Name",

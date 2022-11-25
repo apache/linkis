@@ -235,7 +235,7 @@ public class EnginePluginRestful {
         } catch (Exception e) {
           return Message.error(e.getMessage());
         }
-        engineConnResourceService.refreshAll(true,false);
+        engineConnResourceService.refreshAll(true, false);
         log.info("{} finished to upload enginePlugin", username);
         return Message.ok().data("mes", "upload file success");
       } else {
@@ -275,12 +275,13 @@ public class EnginePluginRestful {
       notes = "refresh all engineconn resource",
       response = Message.class)
   @RequestMapping(path = "/refreshAll", method = RequestMethod.GET)
-  public Message refreshAll(HttpServletRequest req,
-                            @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
+  public Message refreshAll(
+      HttpServletRequest req,
+      @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force) {
     String username = ModuleUserUtils.getOperationUser(req, "refreshAll");
     if (Configuration.isAdmin(username)) {
       log.info("{} start to refresh all ec resource", username);
-      engineConnResourceService.refreshAll(true,force);
+      engineConnResourceService.refreshAll(true, force);
       log.info("{} finished to refresh all ec resource", username);
       return Message.ok().data("msg", "Refresh successfully");
     } else {

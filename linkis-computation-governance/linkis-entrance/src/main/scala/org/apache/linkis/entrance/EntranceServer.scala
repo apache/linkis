@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
@@ -271,17 +272,25 @@ abstract class EntranceServer extends Logging {
     logger.info("Finished to clean all ConsumeQueue")
   }
 
-  def killEC(jobRequest: JobRequest): Unit = {
+  def killEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
     Utils.tryCatch {
       if (
           !SchedulerEventState.isRunning(SchedulerEventState.withName(jobRequest.getStatus))
           || !SchedulerEventState.isScheduled(SchedulerEventState.withName(jobRequest.getStatus))
-          || jobRequest.getMetrics == null
+      ) {
+        val msg = s"job ${jobRequest.getId} status is not running or scheduled, ignore it"
+        logger.info(msg)
+        logAppender.append(LogUtils.generateInfo(msg) + "\n")
+        return
+      }
+
+      if (
+          jobRequest.getMetrics == null
           || !jobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
       ) {
-        logger.info(
-          s"job ${jobRequest.getId} is not running,scheduled or not have EC info, ignore it"
-        )
+        val msg = s"job ${jobRequest.getId} not have EC info, ignore it"
+        logger.info(msg)
+        logAppender.append(LogUtils.generateInfo(msg) + "\n")
         return
       }
 
@@ -296,9 +305,10 @@ abstract class EntranceServer extends Logging {
           .maxBy(_.getOrDefault(TaskConstant.ENGINE_CONN_SUBMIT_TIME, "0").toString)
 
       if (engineInstance == null || engineInstance.containsKey(TaskConstant.FAILOVER_FLAG)) {
-        logger.info(
+        val msg =
           s"job ${jobRequest.getId} do not submit to EC or already failover, not need kill ec"
-        )
+        logger.info(msg)
+        logAppender.append(LogUtils.generateInfo(msg) + "\n")
         return
       }
       engineInstance.put(TaskConstant.FAILOVER_FLAG, "")
@@ -315,9 +325,10 @@ abstract class EntranceServer extends Logging {
         Sender
           .getSender(RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue)
           .send(engineStopRequest)
-        logger.info(
+        val msg =
           s"job ${jobRequest.getId} send EngineStopRequest to linkismanager, kill instance $ecInstance"
-        )
+        logger.info(msg)
+        logAppender.append(LogUtils.generateInfo(msg) + "\n")
       } else if (engineInstance.containsKey(TaskConstant.ENGINE_CONN_TASK_ID)) {
         // kill ec task
         val engineTaskId = engineInstance.get(TaskConstant.ENGINE_CONN_TASK_ID).toString
@@ -325,9 +336,10 @@ abstract class EntranceServer extends Logging {
         Sender
           .getSender(ecInstance)
           .send(RequestTaskKill(engineTaskId))
-        logger.info(
+        val msg =
           s"job ${jobRequest.getId} send RequestTaskKill to kill engineConn $ecInstance, execID $engineTaskId"
-        )
+        logger.info(msg)
+        logAppender.append(LogUtils.generateInfo(msg) + "\n")
       }
     } { t =>
       logger.error(s"job ${jobRequest.getId} kill ec error", t)
@@ -347,11 +359,15 @@ abstract class EntranceServer extends Logging {
         PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
-
-    // try to kill ec
-    killEC(jobRequest);
-
     val logAppender = new java.lang.StringBuilder()
+    logAppender.append(
+      LogUtils
+        .generateInfo(
+          s"\n\n *************************************FAILOVER************************************** \n"
+        )
+    )
+    // try to kill ec
+    killEC(jobRequest, logAppender);
     // init properties
     initJobRequestProperties(jobRequest, logAppender)
     // update jobRequest
@@ -429,7 +445,7 @@ abstract class EntranceServer extends Logging {
       jobRequest: JobRequest,
       logAppender: lang.StringBuilder
   ): Unit = {
-    logger.info(s"Job ${jobRequest.getId} start to initialize the properties")
+    logger.info(s"job ${jobRequest.getId} start to initialize the properties")
     val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     val initInstance = Sender.getThisInstance
     val initDate = new Date(System.currentTimeMillis)
@@ -437,16 +453,9 @@ abstract class EntranceServer extends Logging {
     val initProgress = "0.0"
     val initReqId = ""
 
-    logAppender.append("\n\n")
     logAppender.append(
       LogUtils
-        .generateInfo(
-          s"*************************************FAILOVER************************************** \n"
-        )
-    )
-    logAppender.append(
-      LogUtils
-        .generateInfo(s"Job ${jobRequest.getId} start to failover, Initialize the properties \n")
+        .generateInfo(s"job ${jobRequest.getId} start to failover, Initialize the properties \n")
     )
     logAppender.append(
       LogUtils.generateInfo(s"the instances ${jobRequest.getInstances} -> ${initInstance} \n")
@@ -464,26 +473,30 @@ abstract class EntranceServer extends Logging {
     )
 
     val metricMap = new util.HashMap[String, Object]()
-    if (
-        jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-          TaskConstant.ENTRANCEJOB_ENGINECONN_MAP
-        )
-    ) {
-      val oldEngineconnMap = jobRequest.getMetrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
-        .asInstanceOf[util.Map[String, Object]]
-      metricMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, oldEngineconnMap)
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED.getValue) {
+      if (
+          jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
+            TaskConstant.ENTRANCEJOB_ENGINECONN_MAP
+          )
+      ) {
+        val oldEngineconnMap = jobRequest.getMetrics
+          .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+          .asInstanceOf[util.Map[String, Object]]
+        metricMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, oldEngineconnMap)
+      }
     }
 
-    if (
-        jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-          TaskConstant.ENTRANCEJOB_YARNRESOURCE
-        )
-    ) {
-      val oldResourceMap = jobRequest.getMetrics
-        .get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
-        .asInstanceOf[util.Map[String, Object]]
-      metricMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, oldResourceMap)
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED.getValue) {
+      if (
+          jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
+            TaskConstant.ENTRANCEJOB_YARNRESOURCE
+          )
+      ) {
+        val oldResourceMap = jobRequest.getMetrics
+          .get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+          .asInstanceOf[util.Map[String, Object]]
+        metricMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, oldResourceMap)
+      }
     }
 
     jobRequest.setInstances(initInstance)
@@ -498,9 +511,9 @@ abstract class EntranceServer extends Logging {
     jobRequest.setUpdateLimitFlag(false)
 
     logAppender.append(
-      LogUtils.generateInfo(s"Job ${jobRequest.getId} success to initialize the properties \n")
+      LogUtils.generateInfo(s"job ${jobRequest.getId} success to initialize the properties \n")
     )
-    logger.info(s"Job ${jobRequest.getId} success to initialize the properties")
+    logger.info(s"job ${jobRequest.getId} success to initialize the properties")
   }
 
 }

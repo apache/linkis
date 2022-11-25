@@ -95,7 +95,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     bmlResource
   }
 
-  override def refreshAll(iswait: Boolean = false): Unit = {
+  override def refreshAll(iswait: Boolean = false, force: Boolean = false): Unit = {
     if (!isRefreshing) {
       synchronized {
         if (!isRefreshing) {
@@ -110,7 +110,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
                     engineConnBmlResourceGenerator.generate(engineConnType).foreach {
                       case (version, localize) =>
                         logger.info(s" Try to initialize ${engineConnType}EngineConn-$version.")
-                        refresh(localize, engineConnType, version)
+                        refresh(localize, engineConnType, version, force)
                     }
                   } { t =>
                     if (
@@ -144,19 +144,22 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   }
 
   @Receiver
-  override def refresh(engineConnRefreshRequest: RefreshEngineConnResourceRequest): Boolean = {
+  override def refresh(
+      engineConnRefreshRequest: RefreshEngineConnResourceRequest,
+      force: Boolean
+  ): Boolean = {
     val engineConnType = engineConnRefreshRequest.getEngineConnType
     val version = engineConnRefreshRequest.getVersion
     if ("*" == version || StringUtils.isEmpty(version)) {
       logger.info(s"Try to refresh all versions of ${engineConnType}EngineConn.")
       engineConnBmlResourceGenerator.generate(engineConnType).foreach { case (v, localize) =>
         logger.info(s"Try to refresh ${engineConnType}EngineConn-$v.")
-        refresh(localize, engineConnType, v)
+        refresh(localize, engineConnType, v, force)
       }
     } else {
       logger.info(s"Try to refresh ${engineConnType}EngineConn-$version.")
       val localize = engineConnBmlResourceGenerator.generate(engineConnType, version)
-      refresh(localize, engineConnType, version)
+      refresh(localize, engineConnType, version, force)
     }
     true
   }
@@ -164,7 +167,8 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   private def refresh(
       localize: Array[EngineConnLocalizeResource],
       engineConnType: String,
-      version: String
+      version: String,
+      force: Boolean = false
   ): Unit = {
     val engineConnBmlResources = asScalaBufferConverter(
       engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, version)
@@ -198,25 +202,32 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setLastModified(localizeResource.lastModified)
         engineConnBmlResource.setVersion(version)
         engineConnBmlResourceDao.save(engineConnBmlResource)
-      } else if (
-          resource.exists(r =>
-            r.getFileSize != localizeResource.fileSize || r.getLastModified != localizeResource.lastModified
-          )
-      ) {
-        logger.info(
-          s"Ready to upload a refreshed bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName
-        )
-        val engineConnBmlResource = resource.get
-        val bmlResource = uploadToBml(localizeResource, engineConnBmlResource.getBmlResourceId)
-        engineConnBmlResource.setBmlResourceVersion(bmlResource.getVersion)
-        engineConnBmlResource.setLastUpdateTime(new Date)
-        engineConnBmlResource.setFileSize(localizeResource.fileSize)
-        engineConnBmlResource.setLastModified(localizeResource.lastModified)
-        engineConnBmlResourceDao.update(engineConnBmlResource)
       } else {
-        logger.info(
-          s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName
+        var isChanged = resource.exists(r =>
+          r.getFileSize != localizeResource.fileSize
+            || r.getLastModified != localizeResource.lastModified
         )
+        if (isChanged == true || (isChanged == false && force == true)) {
+          if (isChanged == false && force == true) {
+            logger.info(
+              s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName + ", but force to refresh"
+            )
+          }
+          logger.info(
+            s"Ready to upload a refreshed bmlResource for ${engineConnType}EngineConn-$version. path: " + localizeResource.fileName
+          )
+          val engineConnBmlResource = resource.get
+          val bmlResource = uploadToBml(localizeResource, engineConnBmlResource.getBmlResourceId)
+          engineConnBmlResource.setBmlResourceVersion(bmlResource.getVersion)
+          engineConnBmlResource.setLastUpdateTime(new Date)
+          engineConnBmlResource.setFileSize(localizeResource.fileSize)
+          engineConnBmlResource.setLastModified(localizeResource.lastModified)
+          engineConnBmlResourceDao.update(engineConnBmlResource)
+        } else {
+          logger.info(
+            s"The file has no change in ${engineConnType}EngineConn-$version, path: " + localizeResource.fileName
+          )
+        }
       }
     }
   }

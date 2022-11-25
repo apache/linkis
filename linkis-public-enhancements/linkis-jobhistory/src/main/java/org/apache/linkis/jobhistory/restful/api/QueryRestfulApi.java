@@ -68,9 +68,9 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
-    String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-    boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
-    return Message.ok().data("admin", match);
+    return Message.ok()
+        .data("admin", QueryUtils.isStationAdmin(username))
+        .data("historyAdmin", QueryUtils.isJobHistoryAdmin(username));
   }
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)

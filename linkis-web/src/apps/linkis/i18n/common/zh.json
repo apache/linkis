@@ -501,7 +501,10 @@
           "classifier": "分类",
           "icon": "图标",
           "layers": "层级",
-          "searchPlaceholder": "名称/描述/分类"
+          "searchPlaceholder": "名称/描述/分类",
+          "layersValidate": {
+            "range": "最小为0"
+          }
         },
         "datasourceTypeKey": {
           "key": "键名",

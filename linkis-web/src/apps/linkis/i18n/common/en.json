@@ -499,7 +499,10 @@
           "classifier": "Classifier",
           "icon": "Icon",
           "layers": "Layers",
-          "searchPlaceholder": "Name/Desc/Classifier"
+          "searchPlaceholder": "Name/Desc/Classifier",
+          "layersValidate": {
+            "range": "The minimum is 0"
+          }
         },
         "datasourceTypeKey": {
           "key": "Key",

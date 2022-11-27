@@ -235,7 +235,7 @@ The following file are provided under the Apache 2.0 License.
     linkis-web/src/common/i18n/zh.json
     linkis-web/src/config.json
     linkis-web/public/favicon.ico
-
+    linkis-engineconn-plugins/seatunnel/src/main/java/org/apache/seatunnel/*
 
 The files:
     .mvn/wrapper/MavenWrapperDownloader.java

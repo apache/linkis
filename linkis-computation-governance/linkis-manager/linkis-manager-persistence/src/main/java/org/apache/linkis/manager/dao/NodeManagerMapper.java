@@ -72,4 +72,6 @@ public interface NodeManagerMapper {
 
   void updateNodeLabelRelation(
       @Param("tickedId") String tickedId, @Param("instance") String instance);
+
+  List<PersistenceNode> getNodeInstancesByOwnerList(@Param("owner") List<String> owner);
 }

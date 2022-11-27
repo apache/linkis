@@ -80,9 +80,9 @@
         select * from linkis_cg_manager_linkis_resources where id in
         (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance= #{instance})
     </select>
-    <select id="getResourceByServiceInstance" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource" >
-        select * from linkis_cg_manager_linkis_resources where id in
-        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance= #{instance})
+    <select id="getResourceByInstanceAndResourceType" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        select * from linkis_cg_manager_linkis_resources where resourceType = #{resourceType} and
+        id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance=#{instance})
     </select>
 
     <select id="getNodeResourceByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">

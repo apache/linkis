@@ -20,7 +20,7 @@
 import i18n from '@/common/i18n';
 import {isPlainObject, forEach, forIn} from 'lodash';
 /**
- * 转换日志
+ * conversion log(转换日志)
  *
  * @return {Object}
  */
@@ -49,7 +49,7 @@ export function convertLog(logs) {
 }
 
 /**
- * 转换时间戳差值
+ * Convert Timestamp Difference(转换时间戳差值)
  * @param {*} runningTime
  * @return {*}
  */
@@ -69,10 +69,10 @@ export function convertTimestamp(runningTime) {
 }
 
 /**
- * 排序
- * @param {*} a 第一个参数
- * @param {*} b 第两个参数
- * @param {*} type 类型，可能是desc和asc
+ * sort(排序)
+ * @param {*} a first parameter(第一个参数)
+ * @param {*} b second parameter(第两个参数)
+ * @param {*} type ,possibly desc and asc(类型，可能是desc和asc)
  */
 export function sort(a, b, type) {
     const sortString = (a, b, type) => {
@@ -101,7 +101,7 @@ export function sort(a, b, type) {
 }
 
 /**
- * 转换数组为对象key:value形式
+ * Convert array to object key:value form(转换数组为对象key:value形式)
  * @param {*} arr
  * @return {*}
  */
@@ -114,7 +114,7 @@ export function convertArrayToObject(arr) {
 }
 
 /**
- * 转换对象为数组形式
+ * Convert object to array form(转换对象为数组形式)
  * @param {*} obj
  */
 export function convertObjectToArray(obj) {
@@ -129,7 +129,7 @@ export function convertObjectToArray(obj) {
 }
 
 /**
- * 转换数组为数组[{key1:value1},{key2,value2}]形式
+ * Convert the array to an array of the form [{key1:value1},{key2,value2}](转换数组为数组[{key1:value1},{key2,value2}]形式)
  * @param {*} arr
  * @return {*}
  */
@@ -188,7 +188,7 @@ const convertList = {
   };
 
   /**
-   * 格式化值
+   * format value(格式化值)
    * @param {*} item
    * @param {*} field
    * @return {*} return

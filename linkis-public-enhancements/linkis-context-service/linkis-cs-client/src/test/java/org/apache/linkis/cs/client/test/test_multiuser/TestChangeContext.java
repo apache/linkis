@@ -51,7 +51,7 @@ public class TestChangeContext {
       StringBuilder builder = new StringBuilder();
       try (FileReader fr = new FileReader(file);
           BufferedReader br = new BufferedReader(fr)) {
-        java.lang.String tmp = br.readLine();
+        String tmp = br.readLine();
         while (null != tmp) {
           builder.append(tmp);
           tmp = br.readLine();

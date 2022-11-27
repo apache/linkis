@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div>
     <Spin
@@ -117,7 +117,7 @@ export default {
         status: 'Running,Inited,Scheduled',
       }, 'get').then((rst) => {
         this.loading = false;
-        // 剔除requestApplicationName为 "nodeexecution" 的task
+        // Eliminate tasks whose requestApplicationName is "nodeexecution"(剔除requestApplicationName为 "nodeexecution" 的task)
         let tasks = rst.tasks.filter(item => item.requestApplicationName !== "nodeexecution" && item.requestApplicationName !== "CLI")
         this.dispatch('Footer:updateRunningJob', tasks.length);
         this.jobTypeList = [
@@ -136,7 +136,7 @@ export default {
         console.error(err)
       });
     },
-    // 删除当前工作
+    // delete current job(删除当前工作)
     killJob() {
       const item = this.lastClick;
       if (this.loading) return this.$Message.warning(this.$t('message.common.resourceSimple.DDJK'));
@@ -146,7 +146,7 @@ export default {
       api.fetch(`/entrance/${item.strongerExecId}/kill`, {taskID: item.taskID},'get').then(() => {
         this.loading = false;
         this.$emit('close-modal');
-        // 停止执行
+        // stop execution(停止执行)
         this.$Notice.close(item.scriptPath);
         this.$Notice.warning({
           title: this.$t('message.common.resourceSimple.YXTS'),
@@ -204,11 +204,11 @@ export default {
         this.$emit('close-modal');
         if (this.$route.name === 'Home') {
           this.dispatch('Workbench:add', {
-            id: md5Id, // 唯一标识，就算文件名修改，它都能标识它是它
+            id: md5Id, // Unique identification, even if the file name is changed, it can identify it as it is(唯一标识，就算文件名修改，它都能标识它是它)
             taskID: item.taskID,
             filename: name,
             filepath: item.scriptPath,
-            // saveAs表示临时脚本，需要关闭或保存时另存
+            // saveAs represents a temporary script that needs to be closed or saved when saved(saveAs表示临时脚本，需要关闭或保存时另存)
             saveAs: true,
             code: item.executionCode,
             type: 'historyScript',
@@ -218,7 +218,7 @@ export default {
             }
           });
         } else {
-          // 模块拆分后分两种情况，一种是带scriptis的，一种是不带走通用日志展示
+          // After the module is split, there are two cases, one is with scripts, and the other is without the general log display.(模块拆分后分两种情况，一种是带scriptis的，一种是不带走通用日志展示)
           const currentModules = util.currentModules();
           if (currentModules.hasScriptis) {
             this.$router.push({ path: '/home',

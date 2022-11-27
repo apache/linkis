@@ -1,0 +1,38 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package scala.org.apache.linkis.manager.engineplugin.pipeline.constant
+
+import org.apache.linkis.manager.engineplugin.pipeline.conf.PipelineEngineConfiguration
+import org.apache.linkis.manager.engineplugin.pipeline.constant.PipeLineConstant
+import org.junit.jupiter.api.{Assertions, Test}
+
+class TestPipeLineConstant {
+
+  @Test
+  def testConfig: Unit = {
+    Assertions.assertEquals("utf-8", PipeLineConstant.DEFAULTC_HARSET)
+    Assertions.assertEquals("result", PipeLineConstant.DEFAULT_SHEETNAME)
+    Assertions.assertEquals("yyyy-MM-dd HH:mm:ss", PipeLineConstant.DEFAULT_DATEFORMATE)
+    Assertions.assertEquals("pipeline.output.isoverwrite", PipeLineConstant.PIPELINE_OUTPUT_ISOVERWRITE)
+    Assertions.assertEquals("pipeline.output.shuffle.null.type", PipeLineConstant.PIPELINE_OUTPUT_SHUFFLE_NULL_TYPE)
+    Assertions.assertEquals("pipeline.output.charset", PipeLineConstant.PIPELINE_OUTPUT_CHARSET)
+    Assertions.assertEquals("pipeline.field.split", PipeLineConstant.PIPELINE_FIELD_SPLIT)
+    Assertions.assertEquals("wds.linkis.engine.pipeline.field.quote.retoch.enable", PipeLineConstant.PIPELINE_FIELD_QUOTE_RETOUCH_CONF_ENABLE)
+  }
+
+}

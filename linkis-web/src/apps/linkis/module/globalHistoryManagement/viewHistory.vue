@@ -103,14 +103,14 @@ export default {
     this.scriptViewState.bottomContentHeight = node.clientHeight - 55
   },
   methods: {
-    // 点击tab时触发请求，log初始就请求了，不做判断
+    // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)
     onClickTabs(name) {
       this.tabName = name
       if (name === 'result') {
-        // 判断是否为结果集
-        if (this.hasResultData) return // 判断是否已经获取过数据，获取过则直接返回
+        // Determine whether it is a result set(判断是否为结果集)
+        if (this.hasResultData) return // Determine whether the data has been obtained, and return directly if it is obtained(判断是否已经获取过数据，获取过则直接返回)
         if (this.jobhistoryTask && this.jobhistoryTask.resultLocation) {
-          // 判断是否有资源地址，如果没有则不发请求
+          //Determine if there is a resource address, if not, do not send a request(判断是否有资源地址，如果没有则不发请求)
           this.getResult(this.jobhistoryTask)
         } else {
           this.$Notice.warning({
@@ -148,9 +148,9 @@ export default {
               result = {
                 headRows: [],
                 bodyRows: [],
-                // 如果totalLine是null，就显示为0
+                // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
                 total: ret.totalLine ? ret.totalLine : 0,
-                // 如果内容为null,就显示暂无数据
+                // (If the content is null, it will display no data)如果内容为null,就显示暂无数据
                 type: ret.fileContent ? ret.type : 0,
                 path: resultPath,
                 current: 1,
@@ -161,9 +161,9 @@ export default {
               result = {
                 headRows: ret.metadata,
                 bodyRows: ret.fileContent,
-                // 如果totalLine是null，就显示为0
+                // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
                 total: ret.totalLine ? ret.totalLine : 0,
-                // 如果内容为null,就显示暂无数据
+                // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
                 type: ret.fileContent ? ret.type : 0,
                 path: resultPath,
                 current: 1,
@@ -189,7 +189,7 @@ export default {
         cb()
       }
     },
-    // 将数组格式化成json形式。
+    // Format the array into json form.(将数组格式化成json形式。)
     openAnalysisTab(type) {
       this.visualShow = type
       if (type === 'visual') {
@@ -240,8 +240,8 @@ export default {
             }`,
             model,
             source: {
-              engineType: 'spark', //引擎类型
-              dataSourceType: 'resultset', //数据源类型，结果集、脚本、库表
+              engineType: 'spark', //engine type(引擎类型)
+              dataSourceType: 'resultset', //Data source types, result sets, scripts, library tables(数据源类型，结果集、脚本、库表)
               dataSourceContent: {
                 resultLocation: this.scriptResult.path
               },
@@ -275,7 +275,7 @@ export default {
         }
       }
     },
-    // 获取历史详情
+    // Get historical details(获取历史详情)
     async initHistory(jobId) {
       try {
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
@@ -330,7 +330,7 @@ export default {
         this.isLoading = false
       }
     },
-    // 获取结果集内容
+    // Get result set content(获取结果集内容)
     async getResult(option) {
       this.isLoading = true
       try {
@@ -343,7 +343,7 @@ export default {
           'get'
         )
         if (rst.dirFileTrees) {
-          // 后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序
+          // The order of the result set in the background is sorted by string according to the name of the result set. When displaying, there will be a problem that the result set cannot be matched, so add sorting(后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序)
           let scriptResultList = rst.dirFileTrees.children.sort(
             (a, b) => parseInt(a.name, 10) - parseInt(b.name, 10)
           )
@@ -390,7 +390,7 @@ export default {
           }
           this.hasResultData = true
         } else {
-          // 没有返回则设置一个初始化数据
+          // If not returned, set an initialization data(没有返回则设置一个初始化数据)
           let tmpResult = {
             headRows: [],
             bodyRows: [],
@@ -410,7 +410,7 @@ export default {
         console.error(error)
       }
     },
-    // 返回上一页
+    // go back to the last page(返回上一页)
     back() {
       if (this.isLoading) {
         return this.$Message.warning(this.$t('message.linkis.logLoading'))
@@ -427,6 +427,9 @@ export default {
   position: absolute;
   top: 0;
   right: 20px;
+}
+/deep/ .table-div {
+  height: 100% !important;
 }
 </style>
 

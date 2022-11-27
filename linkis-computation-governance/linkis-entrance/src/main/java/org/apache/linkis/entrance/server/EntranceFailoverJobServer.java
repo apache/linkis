@@ -67,94 +67,102 @@ public class EntranceFailoverJobServer {
         failoverTask();
     }
 
-    public void failoverTask() {
-        if (EntranceConfiguration.ENTRANCE_FAILOVER_ENABLED()) {
-            Utils.defaultScheduler().scheduleAtFixedRate(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            EntranceSchedulerContext schedulerContext = (EntranceSchedulerContext) entranceServer.getEntranceContext().getOrCreateScheduler().getSchedulerContext();
+  public void failoverTask() {
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_ENABLED()) {
+      Utils.defaultScheduler()
+          .scheduleWithFixedDelay(
+              () -> {
+                EntranceSchedulerContext schedulerContext =
+                    (EntranceSchedulerContext)
+                        entranceServer
+                            .getEntranceContext()
+                            .getOrCreateScheduler()
+                            .getSchedulerContext();
 
-                            // entrance do not failover job when it is offline
-                            if (schedulerContext.getOfflineFlag()) return;
+                // entrance do not failover job when it is offline
+                if (schedulerContext.getOfflineFlag()) return;
 
-                            CommonLock commonLock = new CommonLock();
-                            commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
-                            Boolean locked = false;
-                            try {
-                                locked = commonLockService.lock(commonLock, 10 * 1000L);
-                                if (!locked) return;
-                                logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
+                CommonLock commonLock = new CommonLock();
+                commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
+                Boolean locked = false;
+                try {
+                  locked = commonLockService.lock(commonLock, 10 * 1000L);
+                  if (!locked) return;
+                  logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
 
-                    // serverInstance to map
-                    Map<String, Long> serverInstanceMap =
-                        getActiveServerInstances().stream()
-                            .collect(
-                                Collectors.toMap(
-                                    ServiceInstance::getInstance,
-                                    ServiceInstance::getRegistryTimestamp,
-                                    (k1, k2) -> k2));
-                    if (serverInstanceMap.isEmpty()) return;
+                  // serverInstance to map
+                  Map<String, Long> serverInstanceMap =
+                      getActiveServerInstances().stream()
+                          .collect(
+                              Collectors.toMap(
+                                  ServiceInstance::getInstance,
+                                  ServiceInstance::getRegistryTimestamp,
+                                  (k1, k2) -> k2));
+                  if (serverInstanceMap.isEmpty()) return;
 
-                    // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
-                    long expiredTimestamp = 0L;
-                    if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
-                      expiredTimestamp =
-                          System.currentTimeMillis()
-                              - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
-                    }
+                  // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
+                  long expiredTimestamp = 0L;
+                  if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
+                    expiredTimestamp =
+                        System.currentTimeMillis()
+                            - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
+                  }
 
-                                // get uncompleted status
-                                List<String> statusList =
-                                Arrays.stream(SchedulerEventState.uncompleteStatusArray())
-                            .map(Object::toString).collect(Collectors.toList());
+                  // get uncompleted status
+                  List<String> statusList =
+                      Arrays.stream(SchedulerEventState.uncompleteStatusArray())
+                          .map(Object::toString)
+                          .collect(Collectors.toList());
 
-                    List<JobRequest> jobRequests =
-                        JobHistoryHelper.queryWaitForFailoverTask(
-                            serverInstanceMap,
-                            statusList,
-                            expiredTimestamp,
-                            EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
-                    if (jobRequests.isEmpty()) return;
-                    Object[] ids = jobRequests.stream().map(JobRequest::getId).toArray();
-                    logger.info("success query failover jobs , job ids: {}", ids);
+                  List<JobRequest> jobRequests =
+                      JobHistoryHelper.queryWaitForFailoverTask(
+                          serverInstanceMap,
+                          statusList,
+                          expiredTimestamp,
+                          EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
+                  if (jobRequests.isEmpty()) return;
+                  Object[] ids = jobRequests.stream().map(JobRequest::getId).toArray();
+                  logger.info("success query failover jobs , job ids: {}", ids);
 
-                    // failover to local server
-                    jobRequests.forEach(jobRequest -> entranceServer.failoverExecute(jobRequest));
-                    logger.info("success execute failover jobs, job ids: {}", ids);
+                  // failover to local server
+                  jobRequests.forEach(jobRequest -> entranceServer.failoverExecute(jobRequest));
+                  logger.info("success execute failover jobs, job ids: {}", ids);
 
-                            } catch (Exception e) {
-                                logger.error("failover failed", e);
-                            } finally {
-                                if (locked) commonLockService.unlock(commonLock);
-                            }
-                        }
-                    },
-                    EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
-                    EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
-                    TimeUnit.MILLISECONDS
-            );
-        }
+                } catch (Exception e) {
+                  logger.error("failover failed", e);
+                } finally {
+                  if (locked) commonLockService.unlock(commonLock);
+                }
+              },
+              EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
+              EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
+              TimeUnit.MILLISECONDS);
     }
+  }
 
-    private List<ServiceInstance> getActiveServerInstances() {
-        // get all entrance server from eureka
-        ServiceInstance[] serviceInstances = Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
-        if (serviceInstances == null || serviceInstances.length <= 0) return Lists.newArrayList();
+  private List<ServiceInstance> getActiveServerInstances() {
+    // get all entrance server from eureka
+    ServiceInstance[] serviceInstances =
+        Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
+    if (serviceInstances == null || serviceInstances.length <= 0) return Lists.newArrayList();
 
-        // get all offline label server
-        RouteLabel routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory()
-                .createLabel(LabelKeyConstant.ROUTE_KEY, LabelConstant.OFFLINE);
-        List<Label<?>> labels = Lists.newArrayList();
-        labels.add(routeLabel);
-        List<ServiceInstance> labelInstances = InstanceLabelClient.getInstance().getInstanceFromLabel(labels);
+    // get all offline label server
+    RouteLabel routeLabel =
+        LabelBuilderFactoryContext.getLabelBuilderFactory()
+            .createLabel(LabelKeyConstant.ROUTE_KEY, LabelConstant.OFFLINE);
+    List<Label<?>> labels = Lists.newArrayList();
+    labels.add(routeLabel);
+    List<ServiceInstance> labelInstances =
+        InstanceLabelClient.getInstance().getInstanceFromLabel(labels);
+    if (labelInstances == null) labelInstances = Lists.newArrayList();
 
-        // get active entrance server
-        List<ServiceInstance> allInstances = Lists.newArrayList();
-        allInstances.addAll(Arrays.asList(serviceInstances));
-        allInstances.removeAll(labelInstances);
+    // get active entrance server
+    List<ServiceInstance> allInstances = Lists.newArrayList();
+    allInstances.addAll(Arrays.asList(serviceInstances));
+    allInstances.removeAll(labelInstances);
 
-        return allInstances;
-    }
+    return allInstances;
+  }
+}
 
 }

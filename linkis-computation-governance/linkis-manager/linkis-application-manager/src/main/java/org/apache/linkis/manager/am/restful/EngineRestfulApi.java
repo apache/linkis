@@ -60,6 +60,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -214,6 +215,30 @@ public class EngineRestfulApi {
     return Message.ok("Kill engineConn succeed.");
   }
 
+  @ApiOperation(value = "kill egineconns of a ecm", notes = "", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:9210"),
+    @ApiImplicitParam(name = "concurrentEngineEnable", dataType = "boolean")
+  })
+  @ApiOperationSupport(ignoreParameters = {"param"})
+  @RequestMapping(path = "/rm/unlockEngineKillByEM", method = RequestMethod.POST)
+  public Message killUnlockEngine(
+      HttpServletRequest req,
+      @RequestParam(value = "instance", required = false) String instance,
+      @RequestParam(value = "concurrentEngineEnable", required = false, defaultValue = "false")
+          Boolean concurrentEngineEnable)
+      throws AMErrorException {
+    String operatmsg = MessageFormat.format("kill the unlock engines of ECM:{0}", instance);
+    String userName = ModuleUserUtils.getOperationUser(req, operatmsg);
+    if (!isAdmin(userName)) {
+      throw new AMErrorException(
+          210003,
+          "Only admin can kill unlock engine of the specified ecm(只有管理员才能 kill 指定 ecm 下的所有空闲引擎).");
+    }
+    engineStopService.stopUnlockEngineByECM(instance, concurrentEngineEnable, userName);
+    return Message.ok("Kill engineConn succeed.");
+  }
+
   @ApiOperation(
       value = "kill eginecon",
       notes = "kill one engineconn or more ",
@@ -233,6 +258,11 @@ public class EngineRestfulApi {
   public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
       throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
+
+    if (!isAdmin(userName)) {
+      return Message.error("You have no permission to batch kill EngineConn!");
+    }
+
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");
@@ -240,6 +270,24 @@ public class EngineRestfulApi {
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
       engineStopService.stopEngine(stopEngineRequest, sender);
+      logger.info("Finished to kill engines");
+    }
+    return Message.ok("Kill engineConn succeed.");
+  }
+
+  @ApiOperationSupport(ignoreParameters = {"param"})
+  @RequestMapping(path = "/rm/enginekillAsyn", method = RequestMethod.POST)
+  public Message killEngineAsyn(HttpServletRequest req, @RequestBody Map<String, String>[] param)
+      throws Exception {
+    String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
+
+    Sender sender = Sender.getSender(Sender.getThisServiceInstance());
+    for (Map<String, String> engineParam : param) {
+      String moduleName = engineParam.get("applicationName");
+      String engineInstance = engineParam.get("engineInstance");
+      EngineStopRequest stopEngineRequest =
+          new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
+      engineStopService.stopEngineAsyn(stopEngineRequest, sender);
       logger.info("Finished to kill engines");
     }
     return Message.ok("Kill engineConn succeed.");

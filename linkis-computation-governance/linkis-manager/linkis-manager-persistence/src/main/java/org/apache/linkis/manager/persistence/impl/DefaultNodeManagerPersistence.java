@@ -25,6 +25,7 @@ import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeEntity;
+import org.apache.linkis.manager.dao.ECResourceRecordMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.dao.NodeMetricManagerMapper;
 import org.apache.linkis.manager.exception.NodeInstanceDuplicateException;
@@ -34,6 +35,7 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.text.MessageFormat;

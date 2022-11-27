@@ -135,7 +135,6 @@ public class EnginePluginRestful {
                                          @RequestParam(value = "ecType") String ecType,
                                          @RequestParam(value = "version") String version,
                                          HttpServletRequest req) {
-        ModuleUserUtils.getOperationUser(req, "updateEnginePluginBML");
         if(ecType.isEmpty() || ecType.length() == 0 || ecType.equals("null")){
             return Message.error("ecType is not null");
         }else if(version.isEmpty() || version.length() == 0 || version.equals("null")){

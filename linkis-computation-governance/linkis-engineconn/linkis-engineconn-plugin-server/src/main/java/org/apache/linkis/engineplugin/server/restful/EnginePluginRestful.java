@@ -136,9 +136,9 @@ public class EnginePluginRestful {
                                          @RequestParam(value = "version") String version,
                                          HttpServletRequest req) {
         if(ecType.isEmpty() || ecType.length() == 0 || ecType.equals("null")){
-            return Message.error("ecType is null");
+            return Message.error("ecType should not be null or empty");
         }else if(version.isEmpty() || version.length() == 0 || version.equals("null")){
-            return Message.error("version not null");
+            return Message.error("version should not be null or empty");
         }
         if(file.getOriginalFilename().toLowerCase().endsWith(".zip")){
             String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");

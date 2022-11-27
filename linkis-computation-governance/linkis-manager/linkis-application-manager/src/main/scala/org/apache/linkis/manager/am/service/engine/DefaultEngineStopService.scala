@@ -17,17 +17,19 @@
 
 package org.apache.linkis.manager.am.service.engine
 
+import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.EngineNode
+import org.apache.linkis.manager.common.entity.node.{AMEMNode, EngineNode}
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineConnReleaseRequest,
   EngineStopRequest,
   EngineSuicideRequest
 }
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
 import org.apache.linkis.manager.rm.exception.RMErrorCode
@@ -39,6 +41,7 @@ import org.apache.linkis.rpc.message.annotation.Receiver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutorService, Future}
 
 @Service
@@ -52,6 +55,12 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   @Autowired
   private var nodeLabelRemoveService: DefaultNodeLabelRemoveService = _
+
+  @Autowired
+  private var engineInfoService: EngineInfoService = _
+
+  @Autowired
+  private var engineStopService: EngineStopService = _
 
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
@@ -88,8 +97,58 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     )
   }
 
+  @Receiver
+  override def stopEngineAsyn(engineStopRequest: EngineStopRequest, sender: Sender): Unit = {
+    val runnable = new Runnable {
+      override def run(): Unit = {
+        stopEngine(engineStopRequest, sender)
+      }
+    }
+    executor.submit(runnable)
+  }
+
+  override def stopUnlockEngineByECM(
+      ecmInstance: String,
+      concurrentEngineEnable: Boolean,
+      operatorName: String
+  ): Unit = {
+    // get all unlock ec node of the specified ecm
+    val ecmInstanceService = new ServiceInstance
+    ecmInstanceService.setInstance(ecmInstance)
+    ecmInstanceService.setApplicationName(
+      GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue
+    )
+    val emNode = new AMEMNode
+    emNode.setServiceInstance(ecmInstanceService)
+    emNode.setNodeStatus(NodeStatus.Unlock)
+
+    val engineNodes = engineInfoService.listEMEngines(emNode)
+
+    engineNodes.asScala.foreach { node =>
+      // todo 判断engine node 节点是否是并发引擎类型
+      val isconcurrentEngineNode = false
+
+      if (isconcurrentEngineNode == true && concurrentEngineEnable == false) {
+        logger.info(
+          s"skipped to kill concurrent type engine:${node.getServiceInstance.getInstance}"
+        )
+      } else {
+        logger.info(s"try to kill engine:${node.getServiceInstance.getInstance}")
+        val runnable = new Runnable {
+          override def run(): Unit = {
+            val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, operatorName)
+            val sender = Sender.getSender(Sender.getThisServiceInstance)
+            engineStopService.stopEngine(stopEngineRequest, sender)
+          }
+        }
+        executor.submit(runnable)
+      }
+    }
+  }
+
   /**
    *   1. to clear rm info 2. to clear label info 3. to clear am info
+   *
    * @param ecNode
    */
   override def engineConnInfoClear(ecNode: EngineNode): Unit = {

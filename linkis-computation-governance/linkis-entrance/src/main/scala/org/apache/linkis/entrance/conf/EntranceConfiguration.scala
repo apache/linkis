@@ -231,7 +231,7 @@ object EntranceConfiguration {
     CommonVars("linkis.entrance.failover.scan.init.time", 3 * 1000).getValue
 
   val ENTRANCE_FAILOVER_SCAN_INTERVAL =
-    CommonVars("linkis.entrance.failover.scan.interval", 3 * 1000).getValue
+    CommonVars("linkis.entrance.failover.scan.interval", 30 * 1000).getValue
 
   val ENTRANCE_FAILOVER_DATA_NUM_LIMIT = CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
 

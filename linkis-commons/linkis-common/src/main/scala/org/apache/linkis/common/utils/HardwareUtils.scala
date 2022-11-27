@@ -40,6 +40,11 @@ object HardwareUtils {
     globalMemory.getTotal
   }
 
+  def getMaxLogicalCore(): Int = {
+    val globalProcessor = hardware.getProcessor
+    globalProcessor.getLogicalProcessorCount
+  }
+
   /**
    * 1 total 2 available
    *

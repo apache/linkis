@@ -136,11 +136,10 @@ public class EnginePluginRestful {
                                          @RequestParam(value = "version") String version,
                                          HttpServletRequest req) {
         if(ecType.isEmpty() || ecType.length() == 0 || ecType.equals("null")){
-            return Message.error("ecType is not null");
+            return Message.error("ecType is null");
         }else if(version.isEmpty() || version.length() == 0 || version.equals("null")){
-            return Message.error("version is not null");
+            return Message.error("version not null");
         }
-        file.getOriginalFilename().toLowerCase().endsWith(".zip");
         if(file.getOriginalFilename().toLowerCase().endsWith(".zip")){
             String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");
             if (Configuration.isAdmin(username)) {
@@ -161,7 +160,7 @@ public class EnginePluginRestful {
                 return Message.error("Only administrators can operate");
             }
         }else {
-            return Message.error("Only suppose zip format file");
+            return Message.error("Only support zip format file");
         }
     }
 
@@ -194,7 +193,6 @@ public class EnginePluginRestful {
     @ApiOperation(value = "uploadEnginePluginBML", notes = "add one engineplugin", response = Message.class)
     @RequestMapping(path = "/uploadEnginePluginBML", method = RequestMethod.POST)
     public Message uploadEnginePluginBML(@RequestParam("file") MultipartFile file, HttpServletRequest req) {
-        file.getOriginalFilename().toLowerCase().endsWith(".zip");
         if(file.getOriginalFilename().toLowerCase().endsWith(".zip")){
             String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");
             if (Configuration.isAdmin(username)) {
@@ -211,7 +209,7 @@ public class EnginePluginRestful {
                 return Message.error("Only administrators can operate");
             }
         }else {
-            return Message.error("Only suppose zip format file");
+            return Message.error("Only support zip format file");
         }
     }
 

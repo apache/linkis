@@ -56,6 +56,9 @@ object Configuration extends Logging {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
+  // Only the specified token has permission to call some api
+  val GOVERNANCE_STATION_ADMIN_TOKEN = CommonVars("wds.linkis.governance.station.admin.token", "")
+
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
   private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
@@ -66,6 +69,10 @@ object Configuration extends Logging {
 
   def isNotAdmin(username: String): Boolean = {
     !isAdmin(username)
+  }
+
+  def isAdminToken(token: String): Boolean = {
+    GOVERNANCE_STATION_ADMIN_TOKEN.getValue.split(",").exists(token.equalsIgnoreCase)
   }
 
   def getGateWayURL(): String = {

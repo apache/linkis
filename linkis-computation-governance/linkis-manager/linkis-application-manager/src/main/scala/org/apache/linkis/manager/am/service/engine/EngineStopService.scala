@@ -29,6 +29,25 @@ trait EngineStopService {
 
   def stopEngine(engineStopRequest: EngineStopRequest, sender: Sender): Unit
 
+  def stopEngineAsyn(engineStopRequest: EngineStopRequest, sender: Sender): Unit
+
+  /**
+   * Stop all unlock ec node of a specified ecm
+   *
+   * @param ecmInstance
+   *   the specified ecm.
+   * @param concurrentEngineEnable
+   *   include concurrent engine type
+   * @param operatorName
+   *   the username who request this operation
+   * @return
+   */
+  def stopUnlockEngineByECM(
+      ecmInstance: String,
+      concurrentEngineEnable: Boolean,
+      operatorName: String
+  ): Unit
+
   def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
 
   def engineSuicide(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit

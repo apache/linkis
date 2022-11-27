@@ -63,7 +63,7 @@ public class ECResourceInfoRestfulApi {
   public Message getECInfo(
       HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
       throws AMErrorException {
-    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo");
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo,ticketid:" + ticketid);
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
     if (null != ecResourceInfoRecord
@@ -82,7 +82,7 @@ public class ECResourceInfoRestfulApi {
   @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
   public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
       throws AMErrorException {
-    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo");
+    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo,ticketid:" + ticketid);
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
     if (null != ecResourceInfoRecord
@@ -100,13 +100,21 @@ public class ECResourceInfoRestfulApi {
       notes = "query engineconn resource history info list",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "instance", dataType = "String", value = "instance"),
-    @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "startDate", dataType = "String", value = "start date"),
-    @ApiImplicitParam(name = "endDate", dataType = "String", value = "end date"),
-    @ApiImplicitParam(name = "engineType", dataType = "String", value = "engine type"),
-    @ApiImplicitParam(name = "pageNow", dataType = "String", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "String", value = "page size")
+    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "String",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "String", value = "end date"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
   })
   @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
   public Message queryEcrHistory(
@@ -125,6 +133,7 @@ public class ECResourceInfoRestfulApi {
       @RequestParam(value = "engineType", required = false) String engineType,
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+    ModuleUserUtils.getOperationUser(req, "ecrHistoryList");
     String username = SecurityFilter.getLoginUsername(req);
     // Parameter judgment
     instance = ECResourceInfoUtils.strCheckAndDef(instance, null);

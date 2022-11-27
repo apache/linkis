@@ -75,17 +75,24 @@ public class QueryRestfulApi {
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "jobId", required = true, dataType = "long", example = "12345")
+    @ApiImplicitParam(
+        name = "jobId",
+        required = true,
+        dataType = "long",
+        value = "job id",
+        example = "12345")
   })
   @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
   public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
     String username = SecurityFilter.getLoginUsername(req);
+    ModuleUserUtils.getOperationUser(req, "getTaskByID，jobId：" + jobId);
     if (QueryUtils.isJobHistoryAdmin(username)
         || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
       username = null;
     }
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(jobId, username);
-
+    //        List<SubJobDetail> subJobDetails =
+    // TaskConversions.jobdetails2SubjobDetail(jobDetailMapper.selectJobDetailByJobHistoryId(jobId));
     try {
       if (null != jobHistory) {
         QueryUtils.exchangeExecutionCode(jobHistory);
@@ -100,24 +107,55 @@ public class QueryRestfulApi {
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
     }
-
+    //        for (SubJobDetail subjob : subJobDetails) {
+    //            if (!StringUtils.isEmpty(subjob.getResultLocation())) {
+    //                taskVO.setResultLocation(subjob.getResultLocation());
+    //                break;
+    //            }
+    //        }
     return Message.ok().data(TaskConstant.TASK, taskVO);
   }
 
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "list", notes = "list", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long", example = "1658937600001"),
-    @ApiImplicitParam(name = "endDate", dataType = "long", example = "1658937600000"),
-    @ApiImplicitParam(name = "status", dataType = "String", example = ""),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "long",
+        value = "start date",
+        example = "1658937600001"),
+    @ApiImplicitParam(
+        name = "endDate",
+        required = false,
+        dataType = "long",
+        value = "end date",
+        example = "1658937600000"),
+    @ApiImplicitParam(
+        name = "status",
+        required = false,
+        dataType = "String",
+        value = "status",
+        example = ""),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
     @ApiImplicitParam(name = "taskID", required = false, dataType = "long", value = "task id"),
-    @ApiImplicitParam(name = "executeApplicationName", dataType = "String"),
+    @ApiImplicitParam(
+        name = "executeApplicationName",
+        required = false,
+        dataType = "String",
+        value = "execute application name"),
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
-    @ApiImplicitParam(name = "isAdminView", dataType = "Boolean"),
-    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance")
+    @ApiImplicitParam(
+        name = "isAdminView",
+        required = false,
+        dataType = "Boolean",
+        value = "is admin view"),
   })
   @RequestMapping(path = "/list", method = RequestMethod.GET)
   public Message list(
@@ -132,10 +170,10 @@ public class QueryRestfulApi {
           String executeApplicationName,
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "proxyUser", required = false) String proxyUser,
-      @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
-      @RequestParam(value = "instance", required = false) String instance)
+      @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
+    ModuleUserUtils.getOperationUser(req, "list，taskID：" + taskID);
     if (StringUtils.isEmpty(status)) {
       status = null;
     }
@@ -168,10 +206,10 @@ public class QueryRestfulApi {
     Date sDate = new Date(startDate);
     Date eDate = new Date(endDate);
     if (sDate.getTime() == eDate.getTime()) {
-      Calendar calendar = Calendar.getInstance();
-      calendar.setTimeInMillis(endDate);
-      calendar.add(Calendar.DAY_OF_MONTH, 1);
-      eDate = new Date(calendar.getTime().getTime()); // todo check
+      Calendar instance = Calendar.getInstance();
+      instance.setTimeInMillis(endDate);
+      instance.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(instance.getTime().getTime()); // todo check
     }
     if (isAdminView == null) {
       isAdminView = false;
@@ -185,27 +223,12 @@ public class QueryRestfulApi {
         }
       }
     }
-    if (StringUtils.isEmpty(instance)) {
-      instance = null;
-    } else {
-      if (!QueryUtils.checkNameValid(instance)) {
-        return Message.error("Invalid instances : " + instance);
-      }
-    }
     List<JobHistory> queryTasks = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
       queryTasks =
           jobHistoryQueryService.search(
-              taskID,
-              username,
-              status,
-              creator,
-              sDate,
-              eDate,
-              executeApplicationName,
-              null,
-              instance);
+              taskID, username, status, creator, sDate, eDate, executeApplicationName, null);
     } finally {
       PageHelper.clearPage();
     }
@@ -216,8 +239,17 @@ public class QueryRestfulApi {
     List<QueryTaskVO> vos = new ArrayList<>();
     for (JobHistory jobHistory : list) {
       QueryUtils.exchangeExecutionCode(jobHistory);
+      //            List<JobDetail> jobDetails =
+      // jobDetailMapper.selectJobDetailByJobHistoryId(jobHistory.getId());
       QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
       vos.add(taskVO);
+      /*// todo add first resultLocation to taskVO
+      for (JobDetail subjob : jobDetails) {
+          if (!StringUtils.isEmpty(subjob.getResult_location())) {
+              taskVO.setResultLocation(subjob.getResult_location());
+          }
+          break;
+      }*/
     }
     return Message.ok().data(TaskConstant.TASKS, vos).data(JobRequestConstants.TOTAL_PAGE(), total);
   }
@@ -225,14 +257,30 @@ public class QueryRestfulApi {
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "listundonetasks", notes = "list undone tasks", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "long",
+        value = "start date"),
     @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
     @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "long",
+        value = "start taskID"),
   })
   @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
   public Message listundonetasks(
@@ -246,6 +294,7 @@ public class QueryRestfulApi {
       @RequestParam(value = "engineType", required = false) String engineType,
       @RequestParam(value = "creator", required = false) String creator)
       throws IOException, QueryException {
+    ModuleUserUtils.getOperationUser(req, "listundonetasks，startTaskID：" + taskID);
     String username = SecurityFilter.getLoginUsername(req);
     if (StringUtils.isEmpty(status)) {
       status = "Running,Inited,Scheduled";
@@ -299,8 +348,7 @@ public class QueryRestfulApi {
               sDate,
               eDate,
               engineType,
-              queryCacheManager.getUndoneTaskMinId(),
-              null);
+              queryCacheManager.getUndoneTaskMinId());
     } finally {
       PageHelper.clearPage();
     }
@@ -319,13 +367,25 @@ public class QueryRestfulApi {
 
   @ApiOperation(value = "listundone", notes = "list undone", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "long",
+        value = "start date"),
     @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
     @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "long",
+        value = "start taskID"),
   })
   /** Method list should not contain subjob, which may cause performance problems. */
   @RequestMapping(path = "/listundone", method = RequestMethod.GET)
@@ -339,6 +399,7 @@ public class QueryRestfulApi {
       @RequestParam(value = "engineType", required = false) String engineType,
       @RequestParam(value = "creator", required = false) String creator)
       throws IOException, QueryException {
+    ModuleUserUtils.getOperationUser(req, "listundone，startTaskID：" + taskID);
     String username = SecurityFilter.getLoginUsername(req);
     if (endDate == null) {
       endDate = System.currentTimeMillis();

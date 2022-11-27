@@ -55,22 +55,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -113,18 +103,22 @@ public class EngineRestfulApi {
 
   private static final Logger logger = LoggerFactory.getLogger(EngineRestfulApi.class);
 
-  @ApiOperation(value = "createEngineConn", response = Message.class)
+  @ApiOperation(
+      value = "createEngineConn",
+      notes = "create an engineconn",
+      response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
-  public Message createEngineConn(
-      HttpServletRequest req, @RequestBody EngineCreateRequest engineCreateRequest)
+  public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws IOException, InterruptedException {
     String userName = ModuleUserUtils.getOperationUser(req, "createEngineConn");
+    EngineCreateRequest engineCreateRequest =
+        objectMapper.treeToValue(jsonNode, EngineCreateRequest.class);
     engineCreateRequest.setUser(userName);
-    long timeout = engineCreateRequest.getTimeout();
+    long timeout = engineCreateRequest.getTimeOut();
     if (timeout <= 0) {
       timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME().getValue().toLong();
-      engineCreateRequest.setTimeout(timeout);
+      engineCreateRequest.setTimeOut(timeout);
     }
     logger.info(
         "User {} try to create a engineConn with maxStartTime {}. EngineCreateRequest is {}.",
@@ -225,15 +219,23 @@ public class EngineRestfulApi {
       notes = "kill one engineconn or more ",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "engineInstance", dataType = "String", example = "bdpujes110:12295"),
+    @ApiImplicitParam(
+        name = "engineInstance",
+        required = false,
+        dataType = "String",
+        value = "engine instance",
+        example = "bdpujes110003:12295"),
     @ApiImplicitParam(
         name = "applicationName",
+        required = false,
         dataType = "String",
+        value = "application name",
         example = "linkis-cg-engineconn")
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
   @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
-  public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param) {
+  public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
+      throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
@@ -264,16 +266,35 @@ public class EngineRestfulApi {
       response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "em", required = false, dataType = "Map", value = "ecm object"),
-    @ApiImplicitParam(name = "serviceInstance", dataType = "Map"),
+    @ApiImplicitParam(
+        name = "serviceInstance",
+        required = false,
+        dataType = "Map",
+        value = "service instance"),
     @ApiImplicitParam(
         name = "applicationName",
+        required = false,
         dataType = "String",
+        value = "application name",
         example = "linkis-cg-engineconnmanager"),
     @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
-    @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdpujes110003:9102"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "nodeStatus", dataType = "String"),
-    @ApiImplicitParam(name = "owner", dataType = "String", value = "owner")
+    @ApiImplicitParam(
+        name = "emInstance",
+        required = false,
+        dataType = "String",
+        value = "ecm instance",
+        example = "bdpujes110003:9102"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(
+        name = "nodeStatus",
+        required = false,
+        dataType = "String",
+        value = "node status"),
+    @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "owner"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)
@@ -333,16 +354,35 @@ public class EngineRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(
         name = "applicationName",
+        required = false,
         dataType = "String",
+        value = "application name",
         example = "linkis-cg-engineconn"),
     @ApiImplicitParam(
         name = "emStatus",
+        required = false,
         dataType = "String",
+        value = "ecm status",
         example = "Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success"),
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:12295"),
+    @ApiImplicitParam(
+        name = "instance",
+        dataType = "String",
+        required = false,
+        value = "instance",
+        example = "bdpujes110003:12295"),
     @ApiImplicitParam(name = "labels", dataType = "List", required = false, value = "labels"),
-    @ApiImplicitParam(name = "labelKey", dataType = "String", example = "engineInstance"),
-    @ApiImplicitParam(name = "stringValue", dataType = "String", example = "linkis-cg:12295")
+    @ApiImplicitParam(
+        name = "labelKey",
+        dataType = "String",
+        required = false,
+        value = "label key",
+        example = "engineInstance"),
+    @ApiImplicitParam(
+        name = "stringValue",
+        dataType = "String",
+        required = false,
+        value = "stringValue",
+        example = "linkis-cg-engineconn-bdpujes110003:12295")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/modifyEngineInfo", method = RequestMethod.PUT)
@@ -388,6 +428,7 @@ public class EngineRestfulApi {
   public Message listAllNodeHealthyStatus(
       HttpServletRequest req,
       @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
+    ModuleUserUtils.getOperationUser(req, "listAllNodeHealthyStatus");
     NodeStatus[] nodeStatus = NodeStatus.values();
     return Message.ok().data("nodeStatus", nodeStatus);
   }

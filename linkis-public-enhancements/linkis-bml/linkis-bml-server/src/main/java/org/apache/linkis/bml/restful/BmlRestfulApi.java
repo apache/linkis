@@ -96,8 +96,16 @@ public class BmlRestfulApi {
       notes = "get resource versions info list",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", dataType = "String"),
-    @ApiImplicitParam(name = "currentPage", dataType = "String"),
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = false,
+        dataType = "String",
+        value = "resource Id"),
+    @ApiImplicitParam(
+        name = "currentPage",
+        required = false,
+        dataType = "String",
+        value = "current page"),
     @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
   })
   @RequestMapping(path = "getVersions", method = RequestMethod.GET)
@@ -107,7 +115,6 @@ public class BmlRestfulApi {
       @RequestParam(value = "pageSize", required = false) String pageSize,
       HttpServletRequest request)
       throws ErrorException {
-
     String user = RestfulUtils.getUserName(request);
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error(
@@ -118,7 +125,7 @@ public class BmlRestfulApi {
           resourceId);
       throw new BmlServerParaErrorException(SUBMITTED_INVALID.getErrorDesc());
     }
-
+    ModuleUserUtils.getOperationUser(request, "getVersions，resourceId：" + resourceId);
     Integer current = 0;
     Integer size = 0;
     if (StringUtils.isEmpty(currentPage) || !StringUtils.isNumeric(currentPage)) {
@@ -185,7 +192,11 @@ public class BmlRestfulApi {
   @ApiOperation(value = "getResources", notes = "get resources info list", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
-    @ApiImplicitParam(name = "currentPage", dataType = "String"),
+    @ApiImplicitParam(
+        name = "currentPage",
+        required = false,
+        dataType = "String",
+        value = "current page"),
     @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
   })
   @RequestMapping(path = "getResources", method = RequestMethod.GET)
@@ -196,7 +207,7 @@ public class BmlRestfulApi {
       HttpServletRequest request,
       HttpServletResponse response)
       throws ErrorException {
-
+    ModuleUserUtils.getOperationUser(request, "getResources");
     String user = RestfulUtils.getUserName(request);
 
     if (StringUtils.isEmpty(system)) {
@@ -279,7 +290,11 @@ public class BmlRestfulApi {
 
   @ApiOperation(value = "deleteVersion", notes = "delete version", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource id"),
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
@@ -296,7 +311,10 @@ public class BmlRestfulApi {
 
     String resourceId = jsonNode.get("resourceId").textValue();
     String version = jsonNode.get("version").textValue();
-    // 检查资源和版本是否存在
+    ModuleUserUtils.getOperationUser(
+        request,
+        MessageFormat.format("deleteVersion,resourceId:{0},version:{1}", resourceId, version));
+    // Check if resource and version exists(检查资源和版本是否存在)
     if (!resourceService.checkResourceId(resourceId)
         || !versionService.checkVersion(resourceId, version)
         || !versionService.canAccess(resourceId, version)) {
@@ -362,19 +380,24 @@ public class BmlRestfulApi {
   }
 
   @ApiOperation(value = "deleteResource", notes = "delete Resource", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "resourceId", required = true, dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "deleteResource", method = RequestMethod.POST)
   public Message deleteResource(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws IOException, ErrorException {
-
     String user = RestfulUtils.getUserName(request);
-
     if (null == jsonNode.get("resourceId")) {
       throw new BmlServerParaErrorException(NOT_BALID_RESOURCEID.getErrorDesc());
     }
-
     String resourceId = jsonNode.get("resourceId").textValue();
+    ModuleUserUtils.getOperationUser(
+        request, "deleteResource，resourceId：" + jsonNode.get("resourceId"));
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error("the error resourceId  is {} ", resourceId);
       throw new BmlServerParaErrorException(
@@ -441,7 +464,13 @@ public class BmlRestfulApi {
       value = "deleteResources",
       notes = "batch delete resource",
       response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "resourceIds", required = true, dataType = "List")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "resourceIds",
+        required = true,
+        dataType = "List",
+        value = "collection of resource id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
   public Message deleteResources(HttpServletRequest request, @RequestBody JsonNode jsonNode)
@@ -452,7 +481,7 @@ public class BmlRestfulApi {
     if (null == jsonNode.get("resourceIds")) {
       throw new BmlServerParaErrorException(BULK_DELETION_PARAMETERS.getErrorDesc());
     }
-
+    ModuleUserUtils.getOperationUser(request, "deleteResources");
     Iterator<JsonNode> jsonNodeIter = jsonNode.get("resourceIds").elements();
     while (jsonNodeIter.hasNext()) {
       resourceIds.add(jsonNodeIter.next().asText());
@@ -522,8 +551,16 @@ public class BmlRestfulApi {
    */
   @ApiOperation(value = "download", notes = "download resource", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", dataType = "String"),
-    @ApiImplicitParam(name = "version", dataType = "String")
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = false,
+        dataType = "String",
+        value = "resource Id"),
+    @ApiImplicitParam(
+        name = "version",
+        required = false,
+        dataType = "String",
+        value = "resource version")
   })
   @RequestMapping(path = "download", method = RequestMethod.GET)
   public void download(
@@ -542,7 +579,6 @@ public class BmlRestfulApi {
               + resourceId
               + "为空,非法或者已被删除!)");
     }
-
     if (!resourceService.checkAuthority(user, resourceId)) {
       throw new BmlPermissionDeniedException(NOT_HAVE_PERMISSION.getErrorDesc());
     }
@@ -559,7 +595,9 @@ public class BmlRestfulApi {
     if (!resourceService.checkExpire(resourceId, version)) {
       throw new BmlResourceExpiredException(resourceId);
     }
-
+    ModuleUserUtils.getOperationUser(
+        request,
+        MessageFormat.format("deleteVersion,resourceId:{0},version:{1}", resourceId, version));
     Message message = null;
     resp.setContentType("application/x-msdownload");
     resp.setHeader("Content-Disposition", "attachment");
@@ -638,12 +676,36 @@ public class BmlRestfulApi {
   @ApiOperation(value = "upload", notes = "upload resource", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
-    @ApiImplicitParam(name = "resourceHeader", dataType = "String"),
-    @ApiImplicitParam(name = "isExpire", dataType = "String"),
-    @ApiImplicitParam(name = "expireType", dataType = "String"),
-    @ApiImplicitParam(name = "expireTime", dataType = "String"),
-    @ApiImplicitParam(name = "maxVersion", dataType = "String"),
-    @ApiImplicitParam(name = "file", required = true, dataType = "List<MultipartFile>")
+    @ApiImplicitParam(
+        name = "resourceHeader",
+        required = false,
+        dataType = "String",
+        value = "resource header"),
+    @ApiImplicitParam(
+        name = "isExpire",
+        required = false,
+        dataType = "String",
+        value = "is expire"),
+    @ApiImplicitParam(
+        name = "expireType",
+        required = false,
+        dataType = "String",
+        value = "expire type"),
+    @ApiImplicitParam(
+        name = "expireTime",
+        required = false,
+        dataType = "String",
+        value = "expire time"),
+    @ApiImplicitParam(
+        name = "maxVersion",
+        required = false,
+        dataType = "String",
+        value = "max version"),
+    @ApiImplicitParam(
+        name = "file",
+        required = true,
+        dataType = "List<MultipartFile>",
+        value = "file")
   })
   @RequestMapping(path = "upload", method = RequestMethod.POST)
   public Message uploadResource(
@@ -656,6 +718,7 @@ public class BmlRestfulApi {
       @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
       @RequestParam(name = "file") List<MultipartFile> files)
       throws ErrorException {
+    ModuleUserUtils.getOperationUser(req, "upload");
     String user = RestfulUtils.getUserName(req);
     Message message;
     try {
@@ -706,7 +769,11 @@ public class BmlRestfulApi {
       notes = "update resource version",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource Id"),
     @ApiImplicitParam(name = "file", required = true, dataType = "MultipartFile", value = "file")
   })
   @RequestMapping(path = "updateVersion", method = RequestMethod.POST)
@@ -730,6 +797,7 @@ public class BmlRestfulApi {
               + resourceId
               + " 之前未上传物料,或物料已被删除,请先调用上传接口.!)");
     }
+    ModuleUserUtils.getOperationUser(request, "updateVersion，resourceId：" + resourceId);
     Message message;
     try {
       logger.info(
@@ -767,7 +835,13 @@ public class BmlRestfulApi {
   }
 
   @ApiOperation(value = "getBasic", notes = "get resource basic info", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "resourceId", required = true, dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource Id")
+  })
   @RequestMapping(path = "getBasic", method = RequestMethod.GET)
   public Message getBasic(
       @RequestParam(value = "resourceId", required = false) String resourceId,
@@ -778,7 +852,7 @@ public class BmlRestfulApi {
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       throw new BmlServerParaErrorException(PARAMETER_IS_ILLEGAL.getErrorDesc());
     }
-
+    ModuleUserUtils.getOperationUser(request, "getBasic，resourceId：" + resourceId);
     Message message = null;
     try {
       Resource resource = resourceService.getResource(resourceId);
@@ -832,17 +906,28 @@ public class BmlRestfulApi {
   }
 
   @ApiOperation(value = "getResourceInfo", notes = "get resource info", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "resourceId", required = true, dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource Id")
+  })
   @RequestMapping(path = "getResourceInfo", method = RequestMethod.GET)
   public Message getResourceInfo(
       HttpServletRequest request,
       @RequestParam(value = "resourceId", required = false) String resourceId) {
+    ModuleUserUtils.getOperationUser(request, "getResourceInfo，resourceId：" + resourceId);
     return Message.ok("Obtained information successfully(获取信息成功)");
   }
 
   @ApiOperation(value = "changeOwner", notes = "change resource owner", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resourceId"),
     @ApiImplicitParam(name = "oldOwner", required = true, dataType = "String", value = "old Owner"),
     @ApiImplicitParam(name = "newOwner", required = true, dataType = "String", value = "new Owner")
   })
@@ -850,7 +935,11 @@ public class BmlRestfulApi {
   @RequestMapping(path = "changeOwner", method = RequestMethod.POST)
   public Message changeOwnerByResourceId(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws ErrorException {
+    if (null == jsonNode.get("resourceId")) {
+      throw new BmlServerParaErrorException(NOT_BALID_RESOURCEID.getErrorDesc());
+    }
     String resourceId = jsonNode.get("resourceId").textValue();
+    ModuleUserUtils.getOperationUser(request, "changeOwner，resourceId：" + resourceId);
     String oldOwner = jsonNode.get("oldOwner").textValue();
     String newOwner = jsonNode.get("newOwner").textValue();
     resourceService.changeOwnerByResourceId(resourceId, oldOwner, newOwner);
@@ -862,15 +951,29 @@ public class BmlRestfulApi {
       notes = "copy resource to another user",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "anotherUser", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resourceId"),
+    @ApiImplicitParam(
+        name = "anotherUser",
+        required = true,
+        dataType = "String",
+        value = "another user")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
   public Message copyResourceToAnotherUser(
-      HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
+      HttpServletRequest request, @RequestBody JsonNode jsonNode)
+      throws BmlServerParaErrorException {
+    if (null == jsonNode.get("resourceId")) {
+      throw new BmlServerParaErrorException(NOT_BALID_RESOURCEID.getErrorDesc());
+    }
     String resourceId = jsonNode.get("resourceId").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "copyResourceToAnotherUser，resourceId：" + resourceId);
     String anotherUser = jsonNode.get("anotherUser").textValue();
     Message message = null;
     try {
@@ -899,14 +1002,23 @@ public class BmlRestfulApi {
       notes = "rollback resource version",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "resourceId", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "resourceId",
+        required = true,
+        dataType = "String",
+        value = "resource id"),
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
-  public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
+  public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode)
+      throws BmlServerParaErrorException {
+    if (null == jsonNode.get("resourceId")) {
+      throw new BmlServerParaErrorException(NOT_BALID_RESOURCEID.getErrorDesc());
+    }
     String resourceId = jsonNode.get("resourceId").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(request, "rollbackVersion，resourceId：" + resourceId);
     String rollbackVersion = jsonNode.get("version").textValue();
     Message message = null;
     try {

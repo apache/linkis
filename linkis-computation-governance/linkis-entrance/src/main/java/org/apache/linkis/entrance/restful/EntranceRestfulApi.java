@@ -51,6 +51,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -162,6 +163,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     Job job = entranceServer.getJob(jobId).get();
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobRequest.getId();
+    ModuleUserUtils.getOperationUser(req, "submit，jobReqId：" + jobReqId);
     pushLog(
         LogUtils.generateInfo(
             "You have submitted a new job, script code (after variable substitution) is"),
@@ -206,6 +208,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   @Override
   @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
   public Message status(
+      HttpServletRequest req,
       @PathVariable("id") String id,
       @RequestParam(value = "taskID", required = false) String taskID) {
     Message message = null;
@@ -216,6 +219,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     } catch (Exception e) {
       logger.warn("获取任务 {} 状态时出现错误", realId, e.getMessage());
       long realTaskID = Long.parseLong(taskID);
+      ModuleUserUtils.getOperationUser(
+          req, MessageFormat.format("status,id:{0},taskID:{1}", id, taskID));
       String status = JobHistoryHelper.getStatusByTaskID(realTaskID);
       message = Message.ok();
       message.setMethod("/api/entrance/" + id + "/status");
@@ -243,9 +248,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   })
   @Override
   @RequestMapping(path = "/{id}/progress", method = RequestMethod.GET)
-  public Message progress(@PathVariable("id") String id) {
+  public Message progress(HttpServletRequest req, @PathVariable("id") String id) {
     Message message = null;
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
+    ModuleUserUtils.getOperationUser(req, "progress,id:" + id);
     Option<Job> job = null;
     try {
       job = entranceServer.getJob(realId);
@@ -292,9 +298,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   })
   @Override
   @RequestMapping(path = "/{id}/progressWithResource", method = RequestMethod.GET)
-  public Message progressWithResource(@PathVariable("id") String id) {
+  public Message progressWithResource(HttpServletRequest req, @PathVariable("id") String id) {
     Message message = null;
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
+    ModuleUserUtils.getOperationUser(req, "progressWithResource,id:" + id);
     Option<Job> job = null;
     try {
       job = entranceServer.getJob(realId);
@@ -346,10 +353,10 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             if (cores.isPresent() && memory.isPresent()) {
               corePercent =
                   cores.get().floatValue()
-                      / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getHotValue();
+                      / EntranceConfiguration.YARN_QUEUE_CORES_MAX().getValue();
               memoryPercent =
                   memory.get().floatValue()
-                      / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX().getHotValue().longValue()
+                      / (EntranceConfiguration.YARN_QUEUE_MEMORY_MAX().getValue().longValue()
                           * 1024
                           * 1024
                           * 1024);
@@ -401,6 +408,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   @RequestMapping(path = "/{id}/log", method = RequestMethod.GET)
   public Message log(HttpServletRequest req, @PathVariable("id") String id) {
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
+    ModuleUserUtils.getOperationUser(req, "log,id:" + id);
     Option<Job> job = Option.apply(null);
     Message message = null;
     try {
@@ -497,7 +505,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
 
   @ApiOperation(value = "killJobs", notes = "kill jobs", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "strongExecId", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "strongExecId",
+        required = true,
+        dataType = "String",
+        value = "strong execte id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @Override
@@ -508,6 +520,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       @PathVariable("id") String strongExecId) {
     JsonNode idNode = jsonNode.get("idList");
     JsonNode taskIDNode = jsonNode.get("taskIDList");
+    ModuleUserUtils.getOperationUser(req, "killJobs,strongExecId:" + strongExecId);
     ArrayList<Long> waitToForceKill = new ArrayList<>();
     if (idNode.size() != taskIDNode.size()) {
       return Message.error(
@@ -598,6 +611,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   @Override
   @RequestMapping(path = "/{id}/kill", method = RequestMethod.GET)
   public Message kill(
+      HttpServletRequest req,
       @PathVariable("id") String id,
       @RequestParam(value = "taskID", required = false) Long taskID) {
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
@@ -608,6 +622,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       logger.warn("can not find a job in entranceServer, will force to kill it", e);
       // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
       JobHistoryHelper.forceKill(taskID);
+      ModuleUserUtils.getOperationUser(
+          req, MessageFormat.format("kill,id:{0},taskID:{1}", id, taskID));
       Message message = Message.ok("Forced Kill task (强制杀死任务)");
       message.setMethod("/api/entrance/" + id + "/kill");
       message.setStatus(0);
@@ -660,8 +676,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
   })
   @Override
   @RequestMapping(path = "/{id}/pause", method = RequestMethod.GET)
-  public Message pause(@PathVariable("id") String id) {
+  public Message pause(HttpServletRequest req, @PathVariable("id") String id) {
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
+    ModuleUserUtils.getOperationUser(req, "pause,id:" + id);
     Option<Job> job = entranceServer.getJob(realId);
     Message message = null;
     if (job.isEmpty()) {
@@ -692,6 +709,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         message.setStatus(1);
       }
     }
+
     return message;
   }
 }

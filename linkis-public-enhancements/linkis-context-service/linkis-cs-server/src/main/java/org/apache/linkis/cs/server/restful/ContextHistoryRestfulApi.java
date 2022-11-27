@@ -25,6 +25,7 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -56,8 +57,16 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "createHistory", notes = "create context history", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextHistory", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextHistory",
+        required = true,
+        dataType = "String",
+        value = "context history"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context Id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "createHistory", method = RequestMethod.POST)
@@ -65,6 +74,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "createHistory,ContextID:" + jsonNode.get("contextId").textValue());
     // source and contextid cannot be empty
     if (StringUtils.isEmpty(history.getSource())) {
       throw new CSErrorException(97000, "history source cannot be empty");
@@ -78,8 +89,16 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "removeHistory", notes = "remove context history", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextHistory", dataType = "String"),
-    @ApiImplicitParam(name = "contextID", dataType = "String")
+    @ApiImplicitParam(
+        name = "contextHistory",
+        required = false,
+        dataType = "String",
+        value = "context history"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = false,
+        dataType = "String",
+        value = "context Id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeHistory", method = RequestMethod.POST)
@@ -87,6 +106,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeHistory,ContextID:" + jsonNode.get("contextId").textValue());
     // source and contextid cannot be empty
     if (StringUtils.isEmpty(history.getSource())) {
       throw new CSErrorException(97000, "history source cannot be empty");
@@ -102,12 +123,20 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       value = "getHistories",
       notes = "get content history list",
       response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextID", dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextID",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "getHistories", method = RequestMethod.POST)
   public Message getHistories(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "getHistories,ContextID:" + jsonNode.get("contextId").textValue());
     if (StringUtils.isEmpty(contextID.getContextId())) {
       throw new CSErrorException(97000, "contxtId cannot be empty");
     }
@@ -118,7 +147,11 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "GetHistory", notes = "get context history", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id"),
     @ApiImplicitParam(name = "source", required = false, dataType = "String", value = "source")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
@@ -128,6 +161,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     // ContextID contextID, String source
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "getHistory,ContextID:" + jsonNode.get("contextId").textValue());
     // source and contextid cannot be empty
     if (StringUtils.isEmpty(source)) {
       throw new CSErrorException(97000, "history source cannot be empty");
@@ -142,8 +177,12 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "searchHistory", notes = "search history", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "keywords", dataType = "String", value = "key words")
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id"),
+    @ApiImplicitParam(name = "keywords", required = false, dataType = "String", value = "key words")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "searchHistory", method = RequestMethod.POST)
@@ -151,6 +190,8 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     // ContextID contextID, String[] keywords
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "searchHistory,ContextID:" + jsonNode.get("contextId").textValue());
     String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
     if (StringUtils.isEmpty(contextID.getContextId())) {
       throw new CSErrorException(97000, "contxtId cannot be empty");

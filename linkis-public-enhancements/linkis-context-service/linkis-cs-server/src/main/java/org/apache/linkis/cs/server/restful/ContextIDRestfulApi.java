@@ -66,18 +66,32 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   @Autowired private CsScheduler csScheduler;
 
   @ApiOperation(value = "createContextID", notes = "create context Id", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextID", dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextID",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "createContextID", method = RequestMethod.POST)
   public Message createContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "createContextID,ContextID:" + jsonNode.get("contextId").textValue());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
     return generateResponse(answerJob, "contextId");
   }
 
   @ApiOperation(value = "GetContextID", notes = "Get_Context_Id", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextId", required = false, dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextId",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @RequestMapping(path = "getContextID", method = RequestMethod.GET)
   public Message getContextID(
       HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
@@ -85,18 +99,27 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     if (StringUtils.isEmpty(id)) {
       throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    ModuleUserUtils.getOperationUser(req, "getContextID,contextID:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
     Message message = generateResponse(answerJob, "contextID");
     return message;
   }
 
   @ApiOperation(value = "updateContextID", notes = "update content id", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextId", dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextId",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "updateContextID", method = RequestMethod.POST)
   public Message updateContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "updateContextID,ContextID:" + jsonNode.get("contextId").textValue());
     if (StringUtils.isEmpty(contextID.getContextId())) {
       throw new CSErrorException(97000, "contxtId cannot be empty");
     }
@@ -105,7 +128,13 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   }
 
   @ApiOperation(value = "resetContextID", notes = "reset context Id", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextId", dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextId",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
   public Message resetContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -114,12 +143,19 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throw new CSErrorException(97000, ContextHTTPConstant.CONTEXT_ID_STR + " cannot be empty");
     }
     String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
+    ModuleUserUtils.getOperationUser(req, "resetContextID,id:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
     return generateResponse(answerJob, "");
   }
 
   @ApiOperation(value = "removeContextID", notes = "remove context ID", response = Message.class)
-  @ApiImplicitParams({@ApiImplicitParam(name = "contextId", dataType = "String")})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "contextId",
+        required = false,
+        dataType = "String",
+        value = "context id")
+  })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
   public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
@@ -128,6 +164,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     if (StringUtils.isEmpty(id)) {
       throw new CSErrorException(97000, "contxtId cannot be empty");
     }
+    ModuleUserUtils.getOperationUser(req, "removeContextID,ContextID:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
     return generateResponse(answerJob, "");
   }
@@ -137,14 +174,38 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       notes = "search contextId by time",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "createTimeStart", dataType = "String"),
-    @ApiImplicitParam(name = "createTimeEnd", dataType = "String"),
-    @ApiImplicitParam(name = "updateTimeStart", dataType = "String"),
-    @ApiImplicitParam(name = "updateTimeEnd", dataType = "String"),
-    @ApiImplicitParam(name = "accessTimeStart", dataType = "String"),
-    @ApiImplicitParam(name = "accessTimeEnd", dataType = "String"),
-    @ApiImplicitParam(name = "pageNow", dataType = "String", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "String", value = "page size")
+    @ApiImplicitParam(
+        name = "createTimeStart",
+        required = false,
+        dataType = "String",
+        value = "create time start"),
+    @ApiImplicitParam(
+        name = "createTimeEnd",
+        required = false,
+        dataType = "String",
+        value = "create time end"),
+    @ApiImplicitParam(
+        name = "updateTimeStart",
+        required = false,
+        dataType = "String",
+        value = "update time start"),
+    @ApiImplicitParam(
+        name = "updateTimeEnd",
+        required = false,
+        dataType = "String",
+        value = "update time end"),
+    @ApiImplicitParam(
+        name = "accessTimeStart",
+        required = false,
+        dataType = "String",
+        value = "access time start"),
+    @ApiImplicitParam(
+        name = "accessTimeEnd",
+        required = false,
+        dataType = "String",
+        value = "access time end"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
   })
   @RequestMapping(path = "searchContextIDByTime", method = RequestMethod.GET)
   public Message searchContextIDByTime(
@@ -158,6 +219,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       @RequestParam(value = "pageNow", required = false) Integer paramPageNow,
       @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    ModuleUserUtils.getOperationUser(req, "searchContextIDByTime");
     String username = ModuleUserUtils.getOperationUser(req);
     if (!Configuration.isAdmin(username)) {
       throw new CSErrorException(97018, "Only station admins are allowed.");

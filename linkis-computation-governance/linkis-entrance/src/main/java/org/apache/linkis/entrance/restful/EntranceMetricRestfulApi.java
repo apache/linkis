@@ -58,9 +58,13 @@ public class EntranceMetricRestfulApi {
 
   @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
-    @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
-    @ApiImplicitParam(name = "engineTypeLabel", dataType = "String", value = "engine type lable")
+    @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "User"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
+    @ApiImplicitParam(
+        name = "engineTypeLabel",
+        required = false,
+        dataType = "String",
+        value = "engine type lable")
   })
   @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
   public Message taskinfo(
@@ -116,7 +120,7 @@ public class EntranceMetricRestfulApi {
   @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
   @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
   public Message status(HttpServletRequest req) {
-
+    ModuleUserUtils.getOperationUser(req, "runningtask");
     EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
     Boolean isCompleted = false;
     if (null == undoneTasks || undoneTasks.length < 1) {

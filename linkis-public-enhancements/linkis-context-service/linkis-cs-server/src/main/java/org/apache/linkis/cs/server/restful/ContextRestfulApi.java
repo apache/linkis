@@ -76,14 +76,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "getContextValue", notes = "get context value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKey",
+        required = true,
+        dataType = "String",
+        value = "context key"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "getContextValue", method = RequestMethod.POST)
   public Message getContextValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "getContextValue，contextID:" + jsonNode.get("contextId").textValue());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, contextKey);
     Message message = generateResponse(answerJob, "contextValue");
@@ -95,14 +105,24 @@ public class ContextRestfulApi implements CsRestfulParent {
       notes = "search context value",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "condition", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "condition",
+        required = true,
+        dataType = "String",
+        value = "condition"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "searchContextValue", method = RequestMethod.POST)
   public Message searchContextValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "searchContextValue，contextID:" + jsonNode.get("contextId").textValue());
     JsonNode condition = jsonNode.get("condition");
     Map<Object, Object> conditionMap =
         objectMapper.convertValue(condition, new TypeReference<Map<Object, Object>>() {});
@@ -113,14 +133,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "setValueByKey", notes = "set value by key", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKey",
+        required = true,
+        dataType = "String",
+        value = "context key"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "setValueByKey", method = RequestMethod.POST)
   public Message setValueByKey(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws CSErrorException, IOException, ClassNotFoundException, InterruptedException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "setValueByKey，contextID:" + jsonNode.get("contextId").textValue());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     ContextValue contextValue = getContextValueFromJsonNode(jsonNode);
     HttpAnswerJob answerJob =
@@ -130,14 +160,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "setValue", notes = "set value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKeyValue", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKeyValue",
+        required = true,
+        dataType = "String",
+        value = "context key value"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "setValue", method = RequestMethod.POST)
   public Message setValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "setValue，contextID:" + jsonNode.get("contextId").textValue());
     ContextKeyValue contextKeyValue = getContextKeyValueFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SET, contextID, contextKeyValue);
     return generateResponse(answerJob, "");
@@ -145,14 +185,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "resetValue", notes = "reset value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKey",
+        required = true,
+        dataType = "String",
+        value = "context key"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "resetValue", method = RequestMethod.POST)
   public Message resetValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "resetValue，contextID:" + jsonNode.get("contextId").textValue());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, contextID, contextKey);
     return generateResponse(answerJob, "");
@@ -160,14 +210,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "removeValue", notes = "remove value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKey",
+        required = true,
+        dataType = "String",
+        value = "context key"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeValue", method = RequestMethod.POST)
   public Message removeValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeValue，contextID:" + jsonNode.get("contextId").textValue());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, contextKey);
     return generateResponse(answerJob, "");
@@ -175,14 +235,24 @@ public class ContextRestfulApi implements CsRestfulParent {
 
   @ApiOperation(value = "removeAllValue", notes = "remove all value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "contextID", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKey",
+        required = true,
+        dataType = "String",
+        value = "context key"),
+    @ApiImplicitParam(
+        name = "contextID",
+        required = true,
+        dataType = "String",
+        value = "context id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeAllValue", method = RequestMethod.POST)
   public Message removeAllValue(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeAllValue，contextID:" + jsonNode.get("contextId").textValue());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);
     return generateResponse(answerJob, "");
   }
@@ -192,8 +262,16 @@ public class ContextRestfulApi implements CsRestfulParent {
       notes = "remove all value by key prefix and context type",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextKeyType", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "keyPrefix", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "contextKeyType",
+        required = true,
+        dataType = "String",
+        value = "context key type"),
+    @ApiImplicitParam(
+        name = "keyPrefix",
+        required = true,
+        dataType = "String",
+        value = "key prefix")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeAllValueByKeyPrefixAndContextType", method = RequestMethod.POST)
@@ -201,6 +279,10 @@ public class ContextRestfulApi implements CsRestfulParent {
       HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req,
+        "removeAllValueByKeyPrefixAndContextType，contextID:"
+            + jsonNode.get("contextId").textValue());
     String contextType = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR).textValue();
     String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).textValue();
     HttpAnswerJob answerJob =
@@ -214,13 +296,23 @@ public class ContextRestfulApi implements CsRestfulParent {
       notes = "remove all value by key prefix",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextID", dataType = "String"),
-    @ApiImplicitParam(name = "keyPrefix", dataType = "String")
+    @ApiImplicitParam(
+        name = "contextID",
+        required = false,
+        dataType = "String",
+        value = "context iD"),
+    @ApiImplicitParam(
+        name = "keyPrefix",
+        required = false,
+        dataType = "String",
+        value = "key prefix")
   })
   @RequestMapping(path = "removeAllValueByKeyPrefix", method = RequestMethod.POST)
   public Message removeAllValueByKeyPrefix(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
+    ModuleUserUtils.getOperationUser(
+        req, "removeAllValueByKeyPrefix，contextID:" + jsonNode.get("contextId").textValue());
     String keyPrefix = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR).textValue();
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID, keyPrefix);
     return generateResponse(answerJob, "");
@@ -236,6 +328,7 @@ public class ContextRestfulApi implements CsRestfulParent {
   @RequestMapping(path = "clearAllContextByID", method = RequestMethod.POST)
   public Message clearAllContextByID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+    ModuleUserUtils.getOperationUser(req, "clearAllContextByID");
     if (null == jsonNode
         || !jsonNode.has("idList")
         || !jsonNode.get("idList").isArray()
@@ -259,18 +352,42 @@ public class ContextRestfulApi implements CsRestfulParent {
       notes = "clear all context by id(time)",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "createTimeStart", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "updateTimeStart", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "accessTimeStart", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "accessTimeEnd", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "createTimeStart",
+        required = true,
+        dataType = "String",
+        value = "create time start"),
+    @ApiImplicitParam(
+        name = "createTimeEnd",
+        required = true,
+        dataType = "String",
+        value = "create time end"),
+    @ApiImplicitParam(
+        name = "updateTimeStart",
+        required = true,
+        dataType = "String",
+        value = "update time start"),
+    @ApiImplicitParam(
+        name = "createTimeEnd",
+        required = true,
+        dataType = "String",
+        value = "update time end"),
+    @ApiImplicitParam(
+        name = "accessTimeStart",
+        required = true,
+        dataType = "String",
+        value = "access time start"),
+    @ApiImplicitParam(
+        name = "accessTimeEnd",
+        required = true,
+        dataType = "String",
+        value = "access time end")
   })
   @RequestMapping(path = "clearAllContextByTime", method = RequestMethod.POST)
   public Message clearAllContextByID(
       HttpServletRequest req, @RequestBody Map<String, Object> bodyMap)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-    String username = ModuleUserUtils.getOperationUser(req);
+    String username = ModuleUserUtils.getOperationUser(req, "clearAllContextByTime");
     if (!Configuration.isAdmin(username)) {
       throw new CSErrorException(97018, "Only station admins are allowed.");
     }

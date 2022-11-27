@@ -73,7 +73,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
   public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "allInstance");
     if (!Configuration.isAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -93,17 +93,29 @@ public class InstanceRestful {
       notes = "up date instance label",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "applicationName", dataType = "String"),
+    @ApiImplicitParam(
+        name = "applicationName",
+        required = false,
+        dataType = "String",
+        value = "application name"),
     @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
     @ApiImplicitParam(name = "labels", required = false, dataType = "List", value = "labels"),
-    @ApiImplicitParam(name = "labelKey", dataType = "String"),
-    @ApiImplicitParam(name = "stringValue", dataType = "String")
+    @ApiImplicitParam(
+        name = "labelKey",
+        required = false,
+        dataType = "String",
+        value = "label key"),
+    @ApiImplicitParam(
+        name = "stringValue",
+        required = false,
+        dataType = "String",
+        value = "string value")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
   public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "instanceLabel");
     if (!Configuration.isAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -153,6 +165,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
   public Message listAllModifiableLabelKey(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "modifiableLabelKey");
     Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
     return Message.ok().data("keyList", keyList);
   }
@@ -160,6 +173,7 @@ public class InstanceRestful {
   @ApiOperation(value = "getEurekaURL", notes = "get eureka URL", response = Message.class)
   @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
   public Message getEurekaURL(HttpServletRequest request) throws Exception {
+    ModuleUserUtils.getOperationUser(request, "eurekaURL");
     String eurekaURL = insLabelService.getEurekaURL();
     return Message.ok().data("url", eurekaURL);
   }

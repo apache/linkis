@@ -219,10 +219,13 @@ public class DataSourceAdminRestfulApi {
     @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id")
   })
   @RequestMapping(value = "/env-list/all/type/{typeId}", method = RequestMethod.GET)
-  public Message getAllEnvListByDataSourceType(@PathVariable("typeId") Long typeId) {
+  public Message getAllEnvListByDataSourceType(
+      HttpServletRequest request, @PathVariable("typeId") Long typeId) {
     return RestfulApiHelper.doAndResponse(
         () -> {
           List<DataSourceEnv> envList = dataSourceInfoService.listDataSourceEnvByType(typeId);
+          ModuleUserUtils.getOperationUser(
+              request, "getAllEnvListByDataSourceType,typeId:" + typeId);
           return Message.ok().data("envList", envList);
         },
         "Fail to get data source environment list[获取数据源环境清单失败]");
@@ -236,10 +239,11 @@ public class DataSourceAdminRestfulApi {
     @ApiImplicitParam(name = "envId", required = true, dataType = "Long", value = "env id")
   })
   @RequestMapping(value = "/env/{envId}", method = RequestMethod.GET)
-  public Message getEnvEntityById(@PathVariable("envId") Long envId) {
+  public Message getEnvEntityById(HttpServletRequest request, @PathVariable("envId") Long envId) {
     return RestfulApiHelper.doAndResponse(
         () -> {
           DataSourceEnv dataSourceEnv = dataSourceInfoService.getDataSourceEnv(envId);
+          ModuleUserUtils.getOperationUser(request, "getEnvEntityById,envId:" + envId);
           return Message.ok().data("env", dataSourceEnv);
         },
         "Fail to get data source environment[获取数据源环境信息失败]");
@@ -253,7 +257,8 @@ public class DataSourceAdminRestfulApi {
   public Message removeEnvEntity(@PathVariable("envId") Long envId, HttpServletRequest request) {
     return RestfulApiHelper.doAndResponse(
         () -> {
-          String userName = ModuleUserUtils.getOperationUser(request, "removeEnvEntity");
+          String userName =
+              ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:" + envId);
           if (!RestfulApiHelper.isAdminUser(userName)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
           }
@@ -280,7 +285,8 @@ public class DataSourceAdminRestfulApi {
       throws ErrorException {
     return RestfulApiHelper.doAndResponse(
         () -> {
-          String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnv");
+          String userName =
+              ModuleUserUtils.getOperationUser(request, "updateJsonEnv,envId:" + envId);
           if (!RestfulApiHelper.isAdminUser(userName)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
           }
@@ -324,11 +330,16 @@ public class DataSourceAdminRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "name", required = true, dataType = "Long", value = "name"),
     @ApiImplicitParam(name = "typeId", required = true, dataType = "Long", value = "type id"),
-    @ApiImplicitParam(name = "currentPage", required = true, dataType = "Long"),
+    @ApiImplicitParam(
+        name = "currentPage",
+        required = true,
+        dataType = "Long",
+        value = "current page"),
     @ApiImplicitParam(name = "pageSize", required = true, dataType = "Long", value = "page size")
   })
   @RequestMapping(value = "/env", method = RequestMethod.GET)
   public Message queryDataSourceEnv(
+      HttpServletRequest request,
       @RequestParam(value = "name", required = false) String envName,
       @RequestParam(value = "typeId", required = false) Long dataSourceTypeId,
       @RequestParam(value = "currentPage", required = false) Integer currentPage,
@@ -336,6 +347,8 @@ public class DataSourceAdminRestfulApi {
     return RestfulApiHelper.doAndResponse(
         () -> {
           DataSourceEnvVo dataSourceEnvVo = new DataSourceEnvVo(envName, dataSourceTypeId);
+          ModuleUserUtils.getOperationUser(
+              request, "queryDataSourceEnv,typeId:" + dataSourceTypeId);
           dataSourceEnvVo.setCurrentPage(null != currentPage ? currentPage : 1);
           dataSourceEnvVo.setPageSize(null != pageSize ? pageSize : 10);
           List<DataSourceEnv> queryList =

@@ -192,18 +192,24 @@ public class ECResourceInfoRestfulApi {
       @RequestParam(value = "creators", required = true) String creators,
       @RequestParam(value = "engineType", required = false) String engineType,
       @RequestParam(value = "statuss", required = false) String statuss) {
-    String username = SecurityFilter.getLoginUsername(req);
 
-    // todo check username only  special token user
+    String username = ModuleUserUtils.getOperationUser(req, "ecList");
 
-    if (!Configuration.isAdmin(username)) {
-      logger.warn("User {} has no permission to query ecrHistoryListAll.", username);
-      return Message.error("User:" + username + " has no permission to query ecrHistoryListAll.");
+    String token = ModuleUserUtils.getToken(req);
+    // check special admin token
+    if (StringUtils.isNotBlank(token)) {
+      if (!Configuration.isAdminToken(token)) {
+        logger.warn("Token {} has no permission to query ecList.", token);
+        return Message.error("Token:" + token + " has no permission to query ecList.");
+      }
+    } else if (!Configuration.isAdmin(username)) {
+      logger.warn("User {} has no permission to query ecList.", username);
+      return Message.error("User:" + username + " has no permission to query ecList.");
     }
 
     engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
-    String[] creatorArray = creators.split(",");
 
+    String[] creatorArray = creators.split(",");
     List<String> creatorUserList = Arrays.stream(creatorArray).collect(Collectors.toList());
     for (String creatorUser : creatorUserList) {
       if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
@@ -217,7 +223,6 @@ public class ECResourceInfoRestfulApi {
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(creatorUserList, engineType, statusList);
 
-    // todo confirm
     return Message.ok().data("ecLit", list);
   }
 }

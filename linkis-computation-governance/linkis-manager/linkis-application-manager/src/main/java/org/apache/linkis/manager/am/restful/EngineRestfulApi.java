@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -265,14 +266,26 @@ public class EngineRestfulApi {
   @RequestMapping(path = "/rm/enginekillAsyn", method = RequestMethod.POST)
   public Message killEngineAsyn(HttpServletRequest req, @RequestBody Map<String, String>[] param)
       throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
+    String username = ModuleUserUtils.getOperationUser(req, "enginekill");
+    String token = ModuleUserUtils.getToken(req);
+
+    // check special token
+    if (StringUtils.isNotBlank(token)) {
+      if (!Configuration.isAdminToken(token)) {
+        logger.warn("Token {} has no permission to asyn kill engines.", token);
+        return Message.error("Token:" + token + " has no permission to asyn kill engines.");
+      }
+    } else if (!Configuration.isAdmin(username)) {
+      logger.warn("User {} has no permission to asyn kill engines.", username);
+      return Message.error("User:" + username + " has no permission to asyn kill engines.");
+    }
 
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");
       String engineInstance = engineParam.get("engineInstance");
       EngineStopRequest stopEngineRequest =
-          new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
+          new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), username);
       engineStopService.stopEngineAsyn(stopEngineRequest, sender);
       logger.info("Finished to kill engines");
     }

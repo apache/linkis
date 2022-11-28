@@ -25,12 +25,12 @@ import { Message } from 'iview';
 import i18n from '@/common/i18n'
 
 /**
- * 提供脚本运行相关方法，包括执行方法，状态轮询，日志接收，获取结果等
- * * 1.默认使用socket方式通信，若socket连接失败则使用http方式
- * * 2.点击执行调用start方法，收到taskID后进入执行中状态
- * * 3.执行中任务关闭脚本tab，重新打开时需要恢复状态
- * * 4.执行中任务socket降级http之后调用queryStatus轮询进度，日志
- * ! 5.本方法是script执行、工作流节点执行时复用的公共方法
+ * Provide script running related methods, including execution methods, status polling, log reception, and obtaining results, etc.(提供脚本运行相关方法，包括执行方法，状态轮询，日志接收，获取结果等)
+ * * 1. By default, socket communication is used. If the socket connection fails, the http method is used.(默认使用socket方式通信，若socket连接失败则使用http方式)
+ * * 2. Click Execute to call the start method, and enter the executing state after receiving the taskID(点击执行调用start方法，收到taskID后进入执行中状态)
+ * * 3.The task in execution closes the script tab, and needs to restore the state when reopening(执行中任务关闭脚本tab，重新打开时需要恢复状态)
+ * * 4.After the task socket is downgraded to http, call queryStatus to poll the progress, log(执行中任务socket降级http之后调用queryStatus轮询进度，日志)
+ * ! 5.This method is a public method that is reused during script execution and workflow node execution.(本方法是script执行、工作流节点执行时复用的公共方法)
  * @param { Object } data 待执行脚本信息
  */
 function Execute(data) {
@@ -42,7 +42,7 @@ function Execute(data) {
   this.progress = 0;
   this.id = null;
   this.status = null;
-  // 仅/api/jobhistory/${id}/get接口使用
+  // Only used by the /api/jobhistory/${id}/get interface(仅/api/jobhistory/${id}/get接口使用)
   this.taskID = null;
   this.postType = process.env.NODE_ENV === 'sandbox' ? 'http' : (data.data.postType || 'socket');
   delete data.data.postType;
@@ -53,18 +53,18 @@ function Execute(data) {
   this.runType = data.data.runType;
   this.event = new Vue();
   this.run = false;
-  // 存储结果集的相关信息，用到里面的日志和结果路径
+  // Store the relevant information of the result set, use the log and result path inside(存储结果集的相关信息，用到里面的日志和结果路径)
   this.resultsetInfo = null;
-  // 存储结果集目录下的所有信息，可用于拿到单个结果集
+  // Stores all information in the result set directory, which can be used to get a single result set(存储结果集目录下的所有信息，可用于拿到单个结果集)
   this.resultList = [];
-  // 当前结果集的path
+  // the path of the current result set(当前结果集的path)
   this.currentResultPath = '';
   this.isDiagnosisFailed = false;
-  // 用来控制获取结果集的url
+  // Used to control the url to get the result set(用来控制获取结果集的url)
   this.getResultUrl = data.getResultUrl || 'filesystem',
   this.on('execute', () => {
     this.run = true;
-    // 注释是留作发起请求时，长时间没返回第一个接口时
+    // The comment is reserved for when the request is initiated, when the first interface is not returned for a long time(注释是留作发起请求时，长时间没返回第一个接口时)
     // timeoutCheck(this);
   });
   this.on('execute:queryState', () => {
@@ -90,11 +90,11 @@ function Execute(data) {
       this.queryStatus({ isKill: true });
     }
   });
-  // data是接口的返回数据
-  // execute.data是前台发送至后台的请求数据
+  // data is the return data of the interface(data是接口的返回数据)
+  // execute.data is the request data sent from the foreground to the background(execute.data是前台发送至后台的请求数据)
   this.on('data', ({ data, execute }) => {
     if (execute.postType !== 'socket') return;
-    // 这里对websocket第一个接口execute直接会返回errorMsg的情况进行判断
+    // Here, we judge the situation that the first interface execute of websocket will directly return errorMsg(这里对websocket第一个接口execute直接会返回errorMsg的情况进行判断)
     if (Object.prototype.hasOwnProperty.call(data.data, 'errorMsg')) {
       execute.trigger('stop');
       execute.trigger('error');
@@ -119,7 +119,7 @@ function Execute(data) {
       const id = data.data && data.data.taskID;
       let prefix = method.slice(0, method.lastIndexOf('/') + 1);
       if (execute.taskID !== id) {
-        // 针对临时脚本多次右键点击的，过期数据不更新的情况
+        // For the case where the expired data is not updated when the temporary script is right-clicked multiple times(针对临时脚本多次右键点击的，过期数据不更新的情况)
         if (data.data.status) {
           return execute.trigger('updateExpireHistory', data.data);
         }
@@ -153,15 +153,15 @@ function Execute(data) {
   });
   this.on('downgrade', ({ execute }) => {
     execute.postType = 'http';
-    // 脚本运行中，由socket降级成http则使用http接口轮询进度
-    // 当websocket降级时有两种可能，1，，任务已经启动，在返回id前就断了连接， 2.一种是在启动前就失去连接
+    // When the script is running, if the socket is downgraded to http, the http interface is used to poll the progress(脚本运行中，由socket降级成http则使用http接口轮询进度)
+    // There are two possibilities when the websocket is downgraded, 1. The task has been started and the connection is disconnected before returning the id, 2. One is that the connection is lost before starting(当websocket降级时有两种可能，1，，任务已经启动，在返回id前就断了连接， 2.一种是在启动前就失去连接)
     if (execute.run) {
       if (this.id && this.taskID) {
         execute.queryStatus({isKill: false});
       } else {
-        // 重新跑任务
+        // run the task again(重新跑任务)
         console.warn('[websocket降级没有获取到taskID]');
-        // this.execute(); // 不主动帮用户启动任务
+        // this.execute(); // Do not actively help users start tasks(不主动帮用户启动任务)
       }
     }
   });
@@ -319,7 +319,7 @@ Execute.prototype.getResultList = function() {
     let params = {
       path: `${this.resultsetInfo.resultLocation}`,
     }
-    // 如果是api执行需要带上taskId
+    // If it is api execution, you need to bring taskId(如果是api执行需要带上taskId)
     if (this.getResultUrl !== 'filesystem') {
       params.taskId = this.taskID
     }
@@ -328,7 +328,7 @@ Execute.prototype.getResultList = function() {
       'get'
     )
       .then((rst) => {
-        // 后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序
+        // The order of the result set in the background is sorted by string according to the name of the result set. When displaying, there will be a problem that the result set cannot be matched, so add sorting(后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序)
         if(rst.dirFileTrees && rst.dirFileTrees.children) {
           this.resultList = rst.dirFileTrees.children.sort((a, b) => {
             const slice = (name) => {
@@ -358,9 +358,9 @@ Execute.prototype.getFirstResult = function() {
     this.trigger('log', log);
     this.trigger('steps', 'Completed');
     this.run = false;
-  } else {  // 获取第一个结果集
+  } else {  // Get the first result set(获取第一个结果集)
     this.currentResultPath = this.resultList[0].path;
-    // 需要提供日志路径，用于下载日志
+    // The log path needs to be provided to download the log(需要提供日志路径，用于下载日志)
     this.trigger('history', {
       execID: this.id,
       logPath: this.resultsetInfo.logPath,
@@ -371,7 +371,7 @@ Execute.prototype.getFirstResult = function() {
       path: this.currentResultPath,
       pageSize,
     }
-    // 如果是api执行需要带上taskId
+    // If it is api execution, you need to bring taskId(如果是api执行需要带上taskId)
     if (this.getResultUrl !== 'filesystem') {
       params.taskId = this.taskID
     }
@@ -392,7 +392,7 @@ Execute.prototype.getFirstResult = function() {
   }
 };
 
-// 获取错误原因，并更新历史
+// Get error reason and update history(获取错误原因，并更新历史)
 Execute.prototype.updateLastHistory = function(option, cb) {
   if (option) {
     return this.trigger('history', {
@@ -404,7 +404,7 @@ Execute.prototype.updateLastHistory = function(option, cb) {
       failedReason: '',
     });
   }
-  // api执行时的路径不一样
+  // The path when the api is executed is different(api执行时的路径不一样)
   const taskUrl = this.getResultUrl !== 'filesystem' ? this.getResultUrl : 'jobhistory';
   api.fetch(`/${taskUrl}/${this.taskID}/get`, 'get')
     .then((res) => {
@@ -418,7 +418,7 @@ Execute.prototype.updateLastHistory = function(option, cb) {
         execID: '',
         createDate: task.createdTime,
         runningTime: task.costTime,
-        // 这里改成使用execute的status是因为数据库中在大结果集的情况下可能会发生状态不翻转的情况，但websocket推送的状态是对的
+        // This is changed to the status of execute because the state may not be flipped in the case of a large result set in the database, but the state pushed by the websocket is correct(这里改成使用execute的status是因为数据库中在大结果集的情况下可能会发生状态不翻转的情况，但websocket推送的状态是对的)
         status: this.status,
         failedReason: task.errCode && task.errDesc ? task.errCode + task.errDesc : task.errCode || task.errDesc || ''
       });
@@ -435,7 +435,7 @@ Execute.prototype.updateLastHistory = function(option, cb) {
 };
 
 /**
- * kill的时候去轮询获取cancelled状态
+ * When killing, go to poll to get the canceled status(kill的时候去轮询获取cancelled状态)
  * @param {*} execute
  * @param {*} ret
  */
@@ -451,7 +451,7 @@ function deconstructStatusIfKill(execute, ret) {
 }
 
 /**
- * 轮询状态
+ * poll status(轮询状态)
  * @param {*} execute
  * @param {*} ret
  */
@@ -462,10 +462,10 @@ function deconstructStatus(execute, ret) {
   execute.trigger('status', ret.status);
   switch (ret.status) {
     case 'Inited': case 'Scheduled': case 'Running':
-      // 在状态发生改变的时候更新历史
+      // Update history when state changes(在状态发生改变的时候更新历史)
       execute.updateLastHistory();
       if (execute.postType !== 'socket') {
-        // 5秒发送一次请求
+        // Send a request every 5 seconds(5秒发送一次请求)
         if (!execute.run) return;
         setTimeout(() => {
           execute.queryStatus({ isKill: false });
@@ -496,17 +496,17 @@ function deconstructStatus(execute, ret) {
 }
 
 /**
- * 当状态为成功时执行的逻辑
+ * Logic to execute when the status is successful(当状态为成功时执行的逻辑)
  * @param {*} execute
  */
 function whenSuccess(execute) {
   if (execute.runType !== 'pipeline') {
-    // stateEnd是需要获取结果集的，获取结果集的同时会更新历史
+    // stateEnd needs to obtain the result set, and the history will be updated when the result set is obtained(stateEnd是需要获取结果集的，获取结果集的同时会更新历史)
     execute.trigger('stateEnd');
     const log = `**result tips: ${i18n.t('message.common.execute.success.stateEnd')}`;
     execute.trigger('log', log);
   } else {
-    // 导入导出不需要请求结果集，但需要更新历史，否则会出现状态未翻转的问题。
+    // Import and export do not need to request the result set, but need to update the history, otherwise there will be a problem that the state is not flipped.(导入导出不需要请求结果集，但需要更新历史，否则会出现状态未翻转的问题。)
     const log = `**result tips: ${i18n.t('message.common.execute.error.noResultList')}`;
     execute.trigger('log', log);
     execute.trigger('steps', 'Completed');
@@ -521,7 +521,7 @@ function whenSuccess(execute) {
 }
 
 /**
- * 当状态为异常状态时执行的逻辑
+ * Logic to execute when the state is abnormal(当状态为异常状态时执行的逻辑)
  * @param {*} execute
  * @param {*} ret
  */
@@ -597,7 +597,7 @@ function timeoutCheck(execute) {
 }
 
 /**
- * 当websocket请求超过1分钟未返回时，发送一个status请求重新唤醒.
+ * When the websocket request has not returned for more than 1 minute, send a status request to wake up again.(当websocket请求超过1分钟未返回时，发送一个status请求重新唤醒.)
  * @param {*} execute
  */
 function reawakening(execute) {
@@ -635,10 +635,10 @@ function logError(err, that) {
 }
 
 /**
- * 查询异常时的操作
- * @param {*} execute 当前的对象
- * @param {*} type notice的类型
- * @param {*} msg notice的提示文本
+ * Action when query is abnormal(查询异常时的操作)
+ * @param {*} execute the current object(execute 当前的对象)
+ * @param {*} type notice的类型(type notice的类型)
+ * @param {*} The prompt text of msg notice(msg notice的提示文本)
  */
 function queryException(execute, type, msg) {
   clearInterval(execute.diagnosisTimeout);
@@ -653,7 +653,7 @@ function queryException(execute, type, msg) {
 }
 
 /**
- * webscoket为background模式时，在接收execute接口时调用get请求或者后台拼接的脚本内容；
+ * When webscoket is in background mode, when receiving the execute interface, the get request or the script content spliced ​​in the background is called;(webscoket为background模式时，在接收execute接口时调用get请求或者后台拼接的脚本内容；)
  * @param {*} execute
  * @param {*} method
  * @return {*}

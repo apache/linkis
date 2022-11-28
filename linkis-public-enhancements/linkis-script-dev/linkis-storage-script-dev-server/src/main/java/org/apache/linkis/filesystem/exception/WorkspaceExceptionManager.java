@@ -27,37 +27,37 @@ public class WorkspaceExceptionManager {
         {
           put(
               "80001",
-              "Requesting IO-Engine to initialize fileSystem failed!(请求IO-Engine初始化fileSystem失败！)");
+              "Requesting IO-Engine to initialize fileSystem failed(请求IO-Engine初始化fileSystem失败)!");
           put(
               "80002",
               "The user has obtained the filesystem for more than %d ms. Please contact the administrator.（用户获取filesystem的时间超过%d ms，请联系管理员）");
           put(
               "80003",
-              "User local root directory does not exist, please contact administrator to add. directory（用户本地根目录不存在,请联系管理员添加.本地目录为):%s");
-          put("80004", "path:(路径：)%sIs empty!(为空！)");
+                  "User local root directory:%s does not exist, please contact administrator to add（用户本地根目录:%s不存在,请联系管理员添加)");
+          put("80004", "path(路径):%sIs empty(为空)!");
           put("80005", "The created folder name is duplicated!,folder name(创建的文件夹名重复!文件夹名):%s");
           put("80006", "The file name created is duplicated!file name(创建的文件名重复!文件名):%s");
           put("80007", "The renamed name is repeated!renamed name(重命名的名字重复!名字):%s");
-          put("80008", "The deleted file or folder does not exist!(删除的文件or文件夹不存在!)");
+          put("80008", "The deleted file or folder does not exist(删除的文件or文件夹不存在)!");
           put(
               "80009",
-              "This user does not have permission to delete this file or folder!(该用户无权删除此文件或文件夹！)");
+              "This user does not have permission to delete this file or folder(该用户无权删除此文件或文件夹)!");
           put(
               "80010",
-              "The user does not have permission to view the contents of the directory(该用户无权限查看该目录的内容)。user(用户):%s,directory(目录)：%s");
+              "The user does not have permission to view the contents of the directory(该用户无权限查看该目录的内容).user(用户):%s,directory(目录)：%s");
           put("80011", "The downloaded file does not exist!file(下载的文件不存在!文件)：%s");
-          put("80012", "This user has no permission to read this file!(该用户无权读取该文件！)");
+          put("80012", "This user has no permission to read this file(该用户无权读取该文件)!");
           put("80013", "file does not exist!file(文件不存在！file):%s");
           put(
               "80014",
-              "The user has no permission to modify the contents of this file and cannot save it!(该用户无权限对此文件内容进行修改，无法保存！)");
+              "The user has no permission to modify the contents of this file and cannot save it(该用户无权限对此文件内容进行修改，无法保存)!");
           put("80015", "unsupported resultset output type(不支持的结果集输出类型)");
-          put("80016", "The file content is empty and cannot be imported!(文件内容为空，不能进行导入操作！)");
+          put("80016", "The file content is empty and cannot be imported(文件内容为空，不能进行导入操作)!");
           put(
               "80017",
-              "The header of the file has no qualifiers. Do not check the first behavior header or set no qualifier!(该文件的表头没有限定符，请勿勾选首行为表头或者设置无限定符！)");
-          put("80018", "This user has no permission to read this log!(该用户无权限读取此日志！)");
-          put("80019", "scriptContent is empty,this is normal!(scriptContent 为空，这是正常的！)");
+              "The header of the file has no qualifiers. Do not check the first behavior header or set no qualifier(该文件的表头没有限定符，请勿勾选首行为表头或者设置无限定符)!");
+          put("80018", "This user has no permission to read this log(该用户无权限读取此日志)!");
+          put("80019", "scriptContent is empty,this is normal(scriptContent 为空，这是正常的)!");
           put("80021", "upload failed(上传失败)");
           put("80022", "update failed(更新失败)");
           put("80023", "download failed(下载失败)");
@@ -67,7 +67,7 @@ public class WorkspaceExceptionManager {
           put(
               "80028",
               "the path exist special char,only support numbers, uppercase letters, underscores, Chinese(路径存在特殊字符,只支持数字,字母大小写,下划线,中文)");
-          put("80029", "empty dir!(空目录！)");
+          put("80029", "empty dir(空目录)!");
           put("80030", "Failed to create user path,path(创建用户路径失败,路径为):%s");
           put("80031", "The user  was not initialized(用户未初始化),user(用户为):%s");
         }

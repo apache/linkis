@@ -152,7 +152,7 @@ public class FsRestfulApi {
           throw WorkspaceExceptionManager.createException(80030, path);
         }
       }
-      throw WorkspaceExceptionManager.createException(80003, path);
+      throw WorkspaceExceptionManager.createException(80003, path,path);
     }
     return Message.ok().data(String.format("user%sRootPath", returnType), path);
   }

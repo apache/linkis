@@ -101,8 +101,8 @@ class DefaultEntranceExecutor(id: Long)
       orchestration: Orchestration
   ): Unit = {
     orchestrationResponse match {
-      case succeedResponose: SucceedTaskResponse =>
-        succeedResponose match {
+      case succeedResponse: SucceedTaskResponse =>
+        succeedResponse match {
           case resultSetResp: ResultSetTaskResponse =>
             logger.info(
               s"JobRequest : ${entranceExecuteRequest.jobId()} succeed to execute task, and get result."
@@ -160,7 +160,7 @@ class DefaultEntranceExecutor(id: Long)
           _.onLogUpdate(
             entranceExecuteRequest.getJob,
             LogUtils.generateInfo(
-              s"Congratuaions! Your job : ${entranceExecuteRequest.getJob.getId} executed with status succeed and ${entranceExecuteRequest.getJob
+              s"Congratulations! Your job : ${entranceExecuteRequest.getJob.getId} executed with status succeed and ${entranceExecuteRequest.getJob
                 .addAndGetResultSize(0)} results."
             )
           )
@@ -172,7 +172,7 @@ class DefaultEntranceExecutor(id: Long)
         }
       case _ =>
         val msg =
-          s"Job : ${entranceExecuteRequest.getJob.getId} , JobRequest id: ${entranceExecuteRequest.jobId()} returnd unknown response}"
+          s"Job : ${entranceExecuteRequest.getJob.getId} , JobRequest id: ${entranceExecuteRequest.jobId()} returned unknown response}"
         logger.error(msg)
         entranceExecuteRequest.getJob.getLogListener.foreach(
           _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))

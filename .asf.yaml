@@ -23,7 +23,7 @@ github:
     wiki: false
     # Enable projects for project management boards
     projects: true
-  description: Linkis helps easily connect to various back-end computation/storage engines(Spark, Python, TiDB...), exposes various interfaces(REST, JDBC, Java ...), with multi-tenancy, high performance, and resource control.
+  description: Apache Linkis builds a computation middleware layer to facilitate connection, governance and orchestration between the upper applications and the underlying data engines.
   homepage: https://linkis.apache.org/
   labels:
     - sql
@@ -46,6 +46,13 @@ github:
     - linkis
     - context-service
     - scriptis
+  collaborators:
+    - aiceflower
+    - brucedchen1991
+    - binbinCheng
+    - ws00428637
+    - yyuser5201314
+    - KangTomwk
   enabled_merge_buttons:
     merge:  true
     squash: true

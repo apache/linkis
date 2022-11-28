@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 
+import org.springframework.beans.BeanUtils
+
 import java.{lang, util}
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util.Date
@@ -265,11 +267,14 @@ abstract class EntranceServer extends Logging {
   }
 
   def updateAllNotExecutionTaskInstances(retryWhenUpdateFail: Boolean): Unit = {
-    val taskIds = getAllConsumeQueueTask().map(_.getJobRequest.getId).toList
-    JobHistoryHelper.updateAllConsumeQueueTask(taskIds, retryWhenUpdateFail)
-    logger.info("Finished to update all not execution task instances")
-    clearAllConsumeQueue()
-    logger.info("Finished to clean all ConsumeQueue")
+    val consumeQueueTasks = getAllConsumeQueueTask()
+    if (consumeQueueTasks != null && consumeQueueTasks.length > 0) {
+      val taskIds = consumeQueueTasks.map(_.getJobRequest.getId.asInstanceOf[Long]).toList
+      clearAllConsumeQueue()
+      logger.info("Finished to clean all ConsumeQueue")
+      JobHistoryHelper.updateAllConsumeQueueTask(taskIds.asJava, retryWhenUpdateFail)
+      logger.info("Finished to update all not execution task instances")
+    }
   }
 
   def killEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
@@ -355,14 +360,18 @@ abstract class EntranceServer extends Logging {
    *
    * @param jobRequest
    */
-  def failoverExecute(jobRequest: JobRequest): String = {
+  def failoverExecute(jobReq: JobRequest): String = {
 
-    if (null == jobRequest || null == jobRequest.getId || jobRequest.getId <= 0) {
+    if (null == jobReq || null == jobReq.getId || jobReq.getId <= 0) {
       throw new EntranceErrorException(
         PERSIST_JOBREQUEST_ERROR.getErrorCode,
         PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
+
+    var jobRequest = new JobRequest
+    BeanUtils.copyProperties(jobReq, jobRequest)
+
     val logAppender = new java.lang.StringBuilder()
     logAppender.append(
       LogUtils
@@ -370,10 +379,62 @@ abstract class EntranceServer extends Logging {
           s"\n\n*************************************FAILOVER************************************** \n\n"
         )
     )
+
     // try to kill ec
     killEC(jobRequest, logAppender);
+
+    // if status is Inited, need to deal by all Interceptors, such as log_path
+    if (jobRequest.getStatus.equals(SchedulerEventState.Inited.toString)) {
+      Utils.tryThrow(
+        getEntranceContext
+          .getOrCreateEntranceInterceptors()
+          .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
+      ) { t =>
+        val error = t match {
+          case error: ErrorException => error
+          case t1: Throwable =>
+            val exception = new EntranceErrorException(
+              FAILED_ANALYSIS_TASK.getErrorCode,
+              MessageFormat.format(
+                FAILED_ANALYSIS_TASK.getErrorDesc,
+                ExceptionUtils.getRootCauseMessage(t)
+              )
+            )
+            exception.initCause(t1)
+            exception
+          case _ =>
+            new EntranceErrorException(
+              FAILED_ANALYSIS_TASK.getErrorCode,
+              MessageFormat.format(
+                FAILED_ANALYSIS_TASK.getErrorDesc,
+                ExceptionUtils.getRootCauseMessage(t)
+              )
+            )
+        }
+        jobRequest match {
+          case t: JobRequest =>
+            t.setErrorCode(error.getErrCode)
+            t.setErrorDesc(error.getDesc)
+            t.setStatus(SchedulerEventState.Failed.toString)
+            t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+            val infoMap = new util.HashMap[String, Object]
+            infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+            infoMap.put(TaskConstant.TICKET_ID, "")
+            infoMap.put("message", "Task interception failed and cannot be retried")
+            JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
+          case _ =>
+        }
+        getEntranceContext
+          .getOrCreatePersistenceManager()
+          .createPersistenceEngine()
+          .updateIfNeeded(jobRequest)
+        error
+      }
+    }
+
     // init properties
     initJobRequestProperties(jobRequest, logAppender)
+
     // update jobRequest
     getEntranceContext
       .getOrCreatePersistenceManager()

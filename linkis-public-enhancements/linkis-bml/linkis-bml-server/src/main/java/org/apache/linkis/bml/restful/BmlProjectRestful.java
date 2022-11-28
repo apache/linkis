@@ -102,25 +102,24 @@ public class BmlProjectRestful {
   @RequestMapping(path = "createBmlProject", method = RequestMethod.POST)
   public Message createBmlProject(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
 
-        String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
-        String username =
-                ModuleUserUtils.getOperationUser(request, "createBmlProject" + projectName);
-        LOGGER.info("{} begins to create a project {} in bml", username, projectName);
-        JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
-        JsonNode accessUserNode = jsonNode.get(ACCESS_USERS_STR);
-        List<String> accessUsers = new ArrayList<>();
-        List<String> editUsers = new ArrayList<>();
-        if (editUserNode.isArray()) {
-            for (JsonNode node : editUserNode) {
-                editUsers.add(node.textValue());
-            }
-        }
-        if (accessUserNode.isArray()) {
-            for (JsonNode node : accessUserNode) {
-                accessUsers.add(node.textValue());
-            }
-        }
-        bmlProjectService.createBmlProject(projectName, username, editUsers, accessUsers);
+    String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
+    String username = ModuleUserUtils.getOperationUser(request, "createBmlProject" + projectName);
+    LOGGER.info("{} begins to create a project {} in bml", username, projectName);
+    JsonNode editUserNode = jsonNode.get(EDIT_USERS_STR);
+    JsonNode accessUserNode = jsonNode.get(ACCESS_USERS_STR);
+    List<String> accessUsers = new ArrayList<>();
+    List<String> editUsers = new ArrayList<>();
+    if (editUserNode.isArray()) {
+      for (JsonNode node : editUserNode) {
+        editUsers.add(node.textValue());
+      }
+    }
+    if (accessUserNode.isArray()) {
+      for (JsonNode node : accessUserNode) {
+        accessUsers.add(node.textValue());
+      }
+    }
+    bmlProjectService.createBmlProject(projectName, username, editUsers, accessUsers);
 
     return Message.ok("success to create project(创建工程ok)");
   }

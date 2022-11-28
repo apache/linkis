@@ -17,6 +17,8 @@
 
 package org.apache.seatunnel.core.base.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.apis.base.env.RuntimeEnv;
 import org.apache.seatunnel.common.config.ConfigRuntimeException;
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
@@ -26,9 +28,6 @@ import org.apache.seatunnel.shade.com.typesafe.config.ConfigResolveOptions;
 
 import java.nio.file.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Used to build the {@link Config} from file.
  *
@@ -36,8 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ConfigBuilder<ENVIRONMENT extends RuntimeEnv> {
 
-  private static Logger LOGGER = LoggerFactory.getLogger(ConfigBuilder.class);
-
+  public static final Log LOGGER = LogFactory.getLog(ConfigBuilder.class.getName());
   private static final String PLUGIN_NAME_KEY = "plugin_name";
   private final Path configFile;
   private final EngineType engine;

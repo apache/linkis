@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +40,7 @@
               :title="item.name"
               :name="item.key"/>
           </CellGroup>
-          
+
         </Card>
       </div>
       <div
@@ -87,13 +87,13 @@ export default {
   },
 
   created() {
-    // 根据路径显示页面的标题
+    // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach(element => {
       if(element.path === this.$route.path) {
         this.breadcrumbSecondName = element.name
       }
     });
-    // 获取是否是历史管理员权限
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');

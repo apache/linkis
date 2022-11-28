@@ -172,7 +172,7 @@ export default {
       const val = this.searchText;
       if (!log) return MatchText;
       if (val) {
-        // 这部分代码是为了让正则表达式不报错，所以在特殊符号前面加上\
+        // This part of the code is to make the regular expression not report an error, so add \ in front of the special symbol(这部分代码是为了让正则表达式不报错，所以在特殊符号前面加上\)
         let formatedVal = '';
         forEach(val, (o) => {
           if (/^[\w\u4e00-\u9fa5]$/.test(o)) {
@@ -181,7 +181,7 @@ export default {
             formatedVal += `\\${o}`;
           }
         });
-        // 全局和不区分大小写模式，正则是匹配searchText前后出了换行符之外的字符
+        // Global and case-insensitive mode, the regular pattern is to match characters other than newlines before and after searchText(全局和不区分大小写模式，正则是匹配searchText前后出了换行符之外的字符)
         let regexp = new RegExp(`.*${formatedVal}.*`, 'gi');
         MatchText = filter(log.split('\n'), (item) => {
           return regexp.test(item);

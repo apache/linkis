@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div>
     <div class="list-view-phantom" :style="{
@@ -129,7 +129,7 @@ export default {
       this.header.forEach((item, index) => {
         count += this.getItemSizeAndOffset(this.startIndex + index).size;
       });
-      // 如果所有已分配宽度的列宽度和小于表格的宽度，就使用等比宽度
+      // Proportional widths are used if the sum of all columns with assigned widths is less than the width of the table(如果所有已分配宽度的列宽度和小于表格的宽度，就使用等比宽度)
       if (count && count <= this.viewWidth) {
         this.isDivideWidth = true;
         this.divideWidth = this.viewWidth / this.header.length;

@@ -132,37 +132,40 @@ object JobHistoryHelper extends Logging {
    * @param taskIdList
    * @param retryWhenUpdateFail
    */
-  def updateAllConsumeQueueTask(taskIdList: List[java.lang.Long], retryWhenUpdateFail: Boolean = false): Unit = {
+  def updateAllConsumeQueueTask(
+      taskIdList: util.List[Long],
+      retryWhenUpdateFail: Boolean = false
+  ): Unit = {
 
     if (taskIdList.isEmpty) return
 
-    val updateTaskIds = new util.ArrayList[java.lang.Long]()
+    val updateTaskIds = new util.ArrayList[Long]()
 
     if (
         EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue > 0 &&
-        taskIdList.length > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue
+        taskIdList.size() > EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue
     ) {
       for (i <- 0 until EntranceConfiguration.ENTRANCE_UPDATE_BATCH_SIZE.getValue) {
-        updateTaskIds.add(taskIdList(i))
+        updateTaskIds.add(taskIdList.get(i))
       }
     } else {
-      updateTaskIds.addAll(taskIdList.asJava)
+      updateTaskIds.addAll(taskIdList)
     }
-
+    val list = new util.ArrayList[Long]()
+    list.addAll(taskIdList)
     try {
-      val successTaskIds = updateBatchInstances(updateTaskIds.asScala.toList)
+      val successTaskIds = updateBatchInstances(updateTaskIds)
       if (retryWhenUpdateFail) {
-        taskIdList.asJava.removeAll(successTaskIds.asJava)
+        list.removeAll(successTaskIds)
       } else {
-        taskIdList.asJava.removeAll(updateTaskIds)
+        list.removeAll(updateTaskIds)
       }
     } catch {
       case e: Exception =>
         logger.warn("update batch instances failed, wait for retry", e)
         Thread.sleep(1000)
     }
-
-    updateAllConsumeQueueTask(taskIdList, retryWhenUpdateFail)
+    updateAllConsumeQueueTask(list, retryWhenUpdateFail)
 
   }
 
@@ -172,9 +175,9 @@ object JobHistoryHelper extends Logging {
    * @param taskIdList
    * @return
    */
-  private def updateBatchInstances(taskIdList: List[java.lang.Long]): List[java.lang.Long] = {
+  private def updateBatchInstances(taskIdList: util.List[Long]): util.List[Long] = {
     val jobReqList = new util.ArrayList[JobRequest]()
-    taskIdList.foreach(taskID => {
+    taskIdList.asScala.foreach(taskID => {
       val jobRequest = new JobRequest
       jobRequest.setId(taskID)
       jobRequest.setInstances("")
@@ -184,13 +187,16 @@ object JobHistoryHelper extends Logging {
     Utils.tryCatch {
       val response = sender.ask(jobReqBatchUpdate)
       response match {
-        case resp: util.ArrayList[JobRespProtocol] =>
-          resp.asScala
-            .filter(r =>
-              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
-            )
-            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
-            .toList
+        case resp: util.List[JobRespProtocol] =>
+          // todo filter success data, rpc have bug
+//          resp.asScala
+//            .filter(r =>
+//              r.getStatus == SUCCESS_FLAG && r.getData.containsKey(JobRequestConstants.JOB_ID)
+//            )
+//            .map(_.getData.get(JobRequestConstants.JOB_ID).asInstanceOf[java.lang.Long])
+//            .toList
+
+          taskIdList
         case _ =>
           throw JobHistoryFailedException(
             "update batch instances from jobhistory not a correct List type"
@@ -200,7 +206,9 @@ object JobHistoryHelper extends Logging {
       case errorException: ErrorException => throw errorException
       case e: Exception =>
         val e1 =
-          JobHistoryFailedException(s"update batch instances ${taskIdList.mkString(",")} error")
+          JobHistoryFailedException(
+            s"update batch instances ${taskIdList.asScala.mkString(",")} error"
+          )
         e1.initCause(e)
         throw e
     }

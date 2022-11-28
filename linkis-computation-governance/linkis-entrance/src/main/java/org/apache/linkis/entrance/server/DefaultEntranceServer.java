@@ -81,16 +81,19 @@ public class DefaultEntranceServer extends EntranceServer {
       logger.warn("event has been handled");
     } else {
       if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_ENABLED()) {
-        logger.warn("Entrance exit to update all not execution task instances and clean ConsumeQueue");
+        logger.warn("Entrance exit to update and clean all ConsumeQueue task instances");
         updateAllNotExecutionTaskInstances(false);
       }
 
       logger.warn("Entrance exit to stop all job");
-      EntranceJob[] allUndoneJobs = getAllUndoneTask(null);
-      if (null != allUndoneJobs) {
-        for (EntranceJob job : allUndoneJobs) {
-          job.onFailure(
-              "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)", null);
+      EntranceJob[] allUndoneTask = getAllUndoneTask(null);
+      if (null != allUndoneTask) {
+        String msg = "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)";
+        for (EntranceJob job : allUndoneTask) {
+          if (job.getLogListener().isDefined()) {
+            job.getLogListener().get().onLogUpdate(job, msg);
+          }
+          job.onFailure(msg, null);
         }
       }
     }

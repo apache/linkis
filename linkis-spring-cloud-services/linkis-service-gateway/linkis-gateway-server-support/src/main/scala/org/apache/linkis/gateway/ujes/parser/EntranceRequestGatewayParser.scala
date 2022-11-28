@@ -103,10 +103,10 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
     )
     val instance = activeInstances
       .find(_.getInstance.equals(history.getInstances))
-      .getOrElse(ServiceInstance("", "", Long.MaxValue))
+      .getOrElse(ServiceInstance(null, null, Long.MaxValue))
     JobInstance(
       history.getStatus,
-      history.getInstances,
+      instance.getInstance,
       history.getJobReqId,
       history.getCreatedTime.getTime,
       instance.getRegistryTimestamp

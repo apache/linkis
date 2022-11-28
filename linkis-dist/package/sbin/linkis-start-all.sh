@@ -57,7 +57,7 @@ executeCMD $SERVER_IP "$SERVER_START_CMD"
 
 isSuccess "start $SERVER_NAME"
 echo "<-------------------------------->"
-sleep 3
+sleep 15
 }
 
 

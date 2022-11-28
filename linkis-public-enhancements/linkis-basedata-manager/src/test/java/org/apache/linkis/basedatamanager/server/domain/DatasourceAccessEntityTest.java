@@ -15,136 +15,115 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.basedatamanager.server.domain; 
- 
+package org.apache.linkis.basedatamanager.server.domain;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
-/** 
- * DatasourceAccessEntity Tester
-*/ 
-public class DatasourceAccessEntityTest { 
- 
-    @Autowired
-    private DatasourceAccessEntity datasourceAccessEntity;
- 
-    @BeforeEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void before() throws Exception {
-    }
- 
-    @AfterEach
-    @DisplayName("Each unit test method is executed once before execution")
-    public void after() throws Exception {
-    }
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetTableId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetTableId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetVisitor() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetVisitor() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetFields() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetFields() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetApplicationId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetApplicationId() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testGetAccessTime() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testSetAccessTime() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testEquals() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testHashCode() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-    @Test
-    @DisplayName("Method description: ...")
-    public void testToString() throws Exception { 
-        //TODO: Test goes here... 
-    } 
- 
- 
-} 
+/** DatasourceAccessEntity Tester */
+public class DatasourceAccessEntityTest {
+
+  @Autowired private DatasourceAccessEntity datasourceAccessEntity;
+
+  @BeforeEach
+  @DisplayName("Each unit test method is executed once before execution")
+  public void before() throws Exception {}
+
+  @AfterEach
+  @DisplayName("Each unit test method is executed once before execution")
+  public void after() throws Exception {}
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetTableId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetTableId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetVisitor() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetVisitor() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetFields() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetFields() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetApplicationId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetApplicationId() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testGetAccessTime() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testSetAccessTime() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testEquals() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testHashCode() throws Exception {
+    // TODO: Test goes here...
+  }
+
+  @Test
+  @DisplayName("Method description: ...")
+  public void testToString() throws Exception {
+    // TODO: Test goes here...
+  }
+}

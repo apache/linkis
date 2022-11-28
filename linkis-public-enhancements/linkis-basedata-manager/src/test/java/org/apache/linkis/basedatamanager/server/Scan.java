@@ -17,8 +17,9 @@
 
 package org.apache.linkis.basedatamanager.server;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+
+import org.mybatis.spring.annotation.MapperScan;
 
 @EnableAutoConfiguration
 @MapperScan("org.apache.linkis.basedatamanager.server.dao")

@@ -33,7 +33,7 @@ public class WorkspaceExceptionManager {
               "The user has obtained the filesystem for more than %d ms. Please contact the administrator.（用户获取filesystem的时间超过%d ms，请联系管理员）");
           put(
               "80003",
-                  "User local root directory:%s does not exist, please contact administrator to add（用户本地根目录:%s不存在,请联系管理员添加)");
+              "User local root directory:%s does not exist, please contact administrator to add（用户本地根目录:%s不存在,请联系管理员添加)");
           put("80004", "path(路径):%sIs empty(为空)!");
           put("80005", "The created folder name is duplicated!,folder name(创建的文件夹名重复!文件夹名):%s");
           put("80006", "The file name created is duplicated!file name(创建的文件名重复!文件名):%s");

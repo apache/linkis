@@ -32,4 +32,15 @@ class JsonCodeParserTest {
     Assertions.assertTrue(array.size == 1)
   }
 
+  @Test
+  @DisplayName("noJsonParseTest")
+  def noJsonParseTest(): Unit = {
+
+    val jsonStr = "{\"nane\":\"hadoop\",\"jobId\":\"0001\""
+    val parser = new JsonCodeParser
+    val array = parser.parse(jsonStr)
+
+    Assertions.assertTrue(array.length == 1)
+  }
+
 }

@@ -33,14 +33,15 @@ import org.apache.commons.lang3.StringUtils
 import java.time.ZonedDateTime
 import java.util
 
-import scala.collection.JavaConverters.mapAsScalaMapConverter
-import scala.collection.convert.WrapAsScala._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.Exception.allCatch
 
 object VariableUtils extends Logging {
 
   val RUN_DATE = "run_date"
+
+  val RUN_TODAY_H = "run_today_h"
 
   private val codeReg =
     "\\$\\{\\s*[A-Za-z][A-Za-z0-9_\\.]*\\s*[\\+\\-\\*/]?\\s*[A-Za-z0-9_\\.]*\\s*\\}".r
@@ -57,8 +58,8 @@ object VariableUtils extends Logging {
   def replace(replaceStr: String, variables: util.Map[String, Any]): String = {
     val nameAndType = mutable.Map[String, variable.VariableType]()
     var run_date: CustomDateType = null
-    variables foreach {
-      case (RUN_DATE, value) if nameAndType.get(RUN_DATE).isEmpty =>
+    variables.asScala.foreach {
+      case (RUN_DATE, value) if !nameAndType.contains(RUN_DATE) =>
         val run_date_str = value.asInstanceOf[String]
         if (StringUtils.isNotEmpty(run_date_str)) {
           run_date = new CustomDateType(run_date_str, false)
@@ -75,7 +76,13 @@ object VariableUtils extends Logging {
       run_date = new CustomDateType(getYesterday(false), false)
       nameAndType(RUN_DATE) = variable.DateType(new CustomDateType(run_date.toString, false))
     }
-
+    if (variables.containsKey(RUN_TODAY_H)) {
+      val runTodayHStr = variables.get(RUN_TODAY_H).asInstanceOf[String]
+      if (StringUtils.isNotBlank(runTodayHStr)) {
+        val runTodayH = new CustomHourType(runTodayHStr, false)
+        nameAndType(RUN_TODAY_H) = HourType(runTodayH)
+      }
+    }
     initAllDateVars(run_date, nameAndType)
     val codeOperation = parserVar(replaceStr, nameAndType)
     parserDate(codeOperation, run_date)
@@ -134,6 +141,13 @@ object VariableUtils extends Logging {
       nameAndType(RUN_DATE) = variable.DateType(new CustomDateType(run_date.toString, false))
     }
 
+    if (variables.containsKey(RUN_TODAY_H)) {
+      val runTodayHStr = variables.get(RUN_TODAY_H).asInstanceOf[String]
+      if (StringUtils.isNotBlank(runTodayHStr)) {
+        val runTodayH = new CustomHourType(runTodayHStr, false)
+        nameAndType(RUN_TODAY_H) = HourType(runTodayH)
+      }
+    }
     initAllDateVars(run_date, nameAndType)
     val codeOperation = parserVar(code, nameAndType)
     parserDate(codeOperation, run_date)
@@ -239,9 +253,15 @@ object VariableUtils extends Logging {
     nameAndType("run_mon_end_std") = MonType(new CustomMonType(run_mon.toString, true, true))
 
     // calculate run_mon base on run_date
-    val run_today_h = new CustomHourType(getCurHour(false, run_today.toString), false)
-    nameAndType("run_today_h") = HourType(run_today_h)
-    nameAndType("run_today_h_std") = HourType(new CustomHourType(run_today_h.toString, true))
+    if (nameAndType.contains(RUN_TODAY_H)) {
+      nameAndType(RUN_TODAY_H).asInstanceOf[HourType]
+    } else {
+      val run_today_h = new CustomHourType(getCurHour(false, run_today.toString), false)
+      nameAndType(RUN_TODAY_H) = HourType(run_today_h)
+    }
+    nameAndType("run_today_h_std") = HourType(
+      new CustomHourType(nameAndType(RUN_TODAY_H).asInstanceOf[HourType].getValue, true)
+    )
   }
 
   /**

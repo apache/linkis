@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 import { getNodeKey } from './utils';
 import Node from './node.js';
@@ -137,7 +137,7 @@ export default class Store {
         } else {
           node.visible = allHidden === false;
         }
-        // 由于有可能有文件夹未打开，所以只要文件夹未打开的，都显示
+        // Since there may be folders that are not open, as long as the folder is not open, it will be displayed.(由于有可能有文件夹未打开，所以只要文件夹未打开的，都显示)
       } else if (!node.visible && !children.length && !node.isLeaf) {
         node.visible = true;
       }

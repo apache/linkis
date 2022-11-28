@@ -35,7 +35,7 @@
             :key="index2"
             @on-click="handleCellClick">
             <Cell
-              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&item.key !== '1-11':true"
+              v-if="!isLogAdmin? (item.path !=='/console/ECM')&&(item.path !=='/console/microService')&&(item.key !== '1-10'):true"
               :key="index2"
               :class="{ crrentItem: crrentItem === item.key }"
               :title="item.name"
@@ -43,11 +43,11 @@
               <div>
                 <span>{{item.name}}</span>
                 <div class="sub-menu-row">
-                  <Icon v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-11')" type="ios-arrow-down" class="user-icon"/>
-                  <Icon v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-11')" type="ios-arrow-up" class="user-icon"/>
+                  <Icon v-show="item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10')" type="ios-arrow-down" class="user-icon"/>
+                  <Icon v-show="!item.showSubMenu && (item.key === '1-8' || item.key === '1-9' || item.key === '1-10')" type="ios-arrow-up" class="user-icon"/>
                 </div>
               </div>
-              <div v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-11') && !item.showSubMenu">
+              <div v-if="(item.key === '1-8' || item.key === '1-9' || item.key === '1-10') && !item.showSubMenu">
                 <div @click.stop="">
                   <CellGroup
                     v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
@@ -114,7 +114,7 @@ export default {
           { key: '1-7', name: this.$t('message.linkis.sideNavList.function.children.microserviceManage'), path: '/console/microService' },
           { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: true },
           { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: true},
-          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
+          { key: '1-10', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
         ],
       },
       datasourceNavList: {
@@ -126,7 +126,8 @@ export default {
           {key: '1-8-1', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
           {key: '1-8-2', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
           {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
-          {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          // {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          {key: '1-8-5', name: this.$t('message.linkis.sideNavList.function.children.datasourceTypeKey'), path: '/console/datasourceTypeKey' },
         ]
       },
       basedataNavList: {
@@ -135,10 +136,13 @@ export default {
         padding: 0,
         icon: 'ios-options',
         children: [
-          {key: '1-11-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
-          {key: '1-11-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
-          {key: '1-11-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
-          {key: '1-11-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
+          {key: '1-10-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
+          {key: '1-10-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
+          {key: '1-10-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
+          {key: '1-10-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
+          // {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
+          // {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
+
         ]
       },
       urmSideNavList: {
@@ -164,19 +168,19 @@ export default {
       return path;
     },
     isEmbedInFrame() {
-      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入
+      // If it is introduced by iframe top !== self returns true, used to distinguish between running alone or being introduced(如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入)
       return top !== self;
     }
   },
 
   created() {
-    // 根据路径显示页面的标题
+    // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach(element => {
       if(element.path === this.$route.path) {
         this.breadcrumbSecondName = element.name
       }
     });
-    // 获取是否是历史管理员权限
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');
@@ -192,11 +196,11 @@ export default {
         this.sideNavList.children[7].showSubMenu = !this.sideNavList.children[7].showSubMenu;
         return;
       }
-      if (index === '1-11') {
+      if (index === '1-10') {
         this.sideNavList.children[8].showSubMenu = !this.sideNavList.children[8].showSubMenu;
         return;
       }
-      index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
+      index = index.split('-')[0] + '-' + index.split('-')[1]; //Prevent tertiary menus from appearing(防止出现三级菜单)
       const activedCellParent = this.sideNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
@@ -236,7 +240,7 @@ export default {
       });
     } else if ((to.name === 'Console' && from.name === 'Home') || (to.name === 'Console' && from.name === 'Project') || (to.name === 'Console' && from.name === 'Workflow') || !from.name) {
       const lastActiveConsole = storage.get('lastActiveConsole');
-      // 如果为历史详情则直接刷新
+      // If it is historical details, refresh directly(如果为历史详情则直接刷新)
       if(to.name === 'viewHistory') return next();
       next((vm) => {
         if (lastActiveConsole) {

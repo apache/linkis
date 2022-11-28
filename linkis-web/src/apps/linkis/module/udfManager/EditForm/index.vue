@@ -60,8 +60,8 @@ export default {
         },
         {
           type: 'input',
-          title: "用户名",
-          field: 'user_name',
+          title: this.$t('message.linkis.basedataManagement.udfManager.userName'),
+          field: 'userName',
           value: '',
           props: {
             placeholder: "",
@@ -69,9 +69,19 @@ export default {
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"用户名"`,
+              len: 20,
+              validator: (rule, value)=>{
+                console.log(rule,value,value.length)
+                return new Promise((resolve,reject)=>{
+                  if(value.length>20){
+                    reject(this.$t('message.linkis.basedataManagement.udfManager.userNameValidate.size'))
+                  }else if (value.length<1){
+                    reject(this.$t('message.linkis.basedataManagement.udfManager.userNameValidate.empty'))
+                  } else{
+                    resolve()
+                  }
+                })
+              },
               trigger: 'blur',
             },
           ],

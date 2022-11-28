@@ -25,7 +25,7 @@ export default {
       SUPPORTED_LANG_MODES,
     };
   },
-  
+
   created: function () {},
   mounted: function () {},
   beforeDestroy: function () {},
@@ -38,15 +38,15 @@ export default {
       return vsBi.url;
     },
     getProjectJsonResult(key, name = 'visualis') {
-      // 用于判断返回什么样的返回值
+      console.log(key,name)
+      // Used to determine what return value to return(用于判断返回什么样的返回值)
       const baseInfo = storage.get('baseInfo', 'local');
-      if (!baseInfo) return true;
-      const vsBi = baseInfo.applications ? (baseInfo.applications.find((item) => item.name === name) || {}) : {};
-      let projectJson = vsBi.enhanceJson;
-      if(!projectJson && key==='rsDownload') {
-        projectJson = '{"watermark": false, "rsDownload": true}'
+      if (!baseInfo) {
+        // When linkis is deployed alone, there is no baseinfo, no restrictions(linkis单独部署的时候没有baseinfo, 不用限制)
+        return true;
+      } else {
+        return baseInfo.resultSetExportEnable;
       }
-      return projectJson ? JSON.parse(projectJson)[key] : true;
     },
     getFAQUrl() {
       const baseInfo = storage.get('baseInfo', 'local');
@@ -61,13 +61,13 @@ export default {
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) return;
       const info = baseInfo.applications.find((item) => item.name === type) || {};
-      // 根据是否有projectid来确定是走首页还是工程页
+      // According to whether there is a projectid to determine whether to go to the home page or the engineering page(根据是否有projectid来确定是走首页还是工程页)
       let url = '';
       if (!query.projectID) {
         localStorage.removeItem('appJointProjectId')
         url = info.homepageUrl
       }
-      // 如果没有提示用户功能暂未开发
+      // If the user is not prompted, the function has not yet been developed(如果没有提示用户功能暂未开发)
       if (Object.keys(info).length === 0) {
         this.$Message.warning(this.$t('message.common.warning.comingSoon'));
       } else {

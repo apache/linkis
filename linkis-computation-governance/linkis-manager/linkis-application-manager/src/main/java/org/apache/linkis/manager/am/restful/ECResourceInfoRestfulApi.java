@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.*;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -44,135 +46,132 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-import java.util.*;
-
 @Api(tags = "enginneconn resource info operation")
 @RequestMapping(
-        path = "/linkisManager/ecinfo",
-        produces = {"application/json"})
+    path = "/linkisManager/ecinfo",
+    produces = {"application/json"})
 @RestController
 public class ECResourceInfoRestfulApi {
 
-    @Autowired private ECResourceInfoService ecResourceInfoService;
+  @Autowired private ECResourceInfoService ecResourceInfoService;
 
-    @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
-    })
-    @RequestMapping(path = "/get", method = RequestMethod.GET)
-    public Message getECInfo(
-            HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
-            throws AMErrorException {
-        String userName = ModuleUserUtils.getOperationUser(req, "getECInfo");
-        ECResourceInfoRecord ecResourceInfoRecord =
-                ecResourceInfoService.getECResourceInfoRecord(ticketid);
-        if (null != ecResourceInfoRecord
-                && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
-                        || Configuration.isAdmin(userName))) {
-            return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
-        } else {
-            return Message.error("tickedId not exist:" + ticketid);
-        }
+  @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+  })
+  @RequestMapping(path = "/get", method = RequestMethod.GET)
+  public Message getECInfo(
+      HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
+      throws AMErrorException {
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo");
+    ECResourceInfoRecord ecResourceInfoRecord =
+        ecResourceInfoService.getECResourceInfoRecord(ticketid);
+    if (null != ecResourceInfoRecord
+        && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
+            || Configuration.isAdmin(userName))) {
+      return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
+    } else {
+      return Message.error("tickedId not exist:" + ticketid);
     }
+  }
 
-    @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
-    })
-    @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
-    public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
-            throws AMErrorException {
-        String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo");
-        ECResourceInfoRecord ecResourceInfoRecord =
-                ecResourceInfoService.getECResourceInfoRecord(ticketid);
-        if (null != ecResourceInfoRecord
-                && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
-                        || Configuration.isAdmin(userName))) {
-            ecResourceInfoService.deleteECResourceInfoRecord(ecResourceInfoRecord.getId());
-            return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
-        } else {
-            return Message.error("tickedId not exist:" + ticketid);
-        }
+  @ApiOperation(value = "delete", notes = "delete engineconn info", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
+  })
+  @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
+  public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
+      throws AMErrorException {
+    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo");
+    ECResourceInfoRecord ecResourceInfoRecord =
+        ecResourceInfoService.getECResourceInfoRecord(ticketid);
+    if (null != ecResourceInfoRecord
+        && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
+            || Configuration.isAdmin(userName))) {
+      ecResourceInfoService.deleteECResourceInfoRecord(ecResourceInfoRecord.getId());
+      return Message.ok().data("ecResourceInfoRecord", ecResourceInfoRecord);
+    } else {
+      return Message.error("tickedId not exist:" + ticketid);
     }
+  }
 
-    @ApiOperation(value = "ecrHistoryList", notes = "query engineconn resource history info list", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-        @ApiImplicitParam(name = "startDate", required = false, dataType = "String", value = "start date"),
-        @ApiImplicitParam(name = "endDate", required = false, dataType = "String", value = "end date"),
-        @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
-        @ApiImplicitParam(name = "pageNow", required = false, dataType = "String", value = "page now"),
-        @ApiImplicitParam(name = "pageSize", required = false, dataType = "String", value = "page size")
-    })
-    @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
-    public Message queryEcrHistory(
-            HttpServletRequest req,
-            @RequestParam(value = "instance", required = false) String instance,
-            @RequestParam(value = "creator", required = false) String creator,
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                    @RequestParam(value = "startDate", required = false)
-                    Date startDate,
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                    @RequestParam(
-                            value = "endDate",
-                            required = false,
-                            defaultValue = "#{new java.util.Date()}")
-                    Date endDate,
-            @RequestParam(value = "engineType", required = false) String engineType,
-            @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
-            @RequestParam(value = "pageSize", required = false, defaultValue = "20")
-                    Integer pageSize) {
-        String username = SecurityFilter.getLoginUsername(req);
-        // Parameter judgment
-        instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
-        String creatorUser = ECResourceInfoUtils.strCheckAndDef(creator, null);
-        engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
-        if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
-            return Message.error("Invalid creator : " + creatorUser);
-        }
-        if (null == startDate) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.HOUR_OF_DAY, 0);
-            calendar.set(Calendar.MINUTE, 0);
-            calendar.set(Calendar.SECOND, 0);
-            startDate = calendar.getTime();
-        }
-        if (Configuration.isAdmin(username)) {
-            username = null;
-            if (StringUtils.isNotBlank(creatorUser)) {
-                username = creatorUser;
-            }
-        }
-        List<ECResourceInfoRecordVo> list = new ArrayList<>();
-        List<ECResourceInfoRecord> queryTasks = null;
-
-        PageHelper.startPage(pageNow, pageSize);
-        try {
-            queryTasks =
-                    ecResourceInfoService.getECResourceInfoRecordList(
-                            instance, endDate, startDate, username, engineType);
-            queryTasks.forEach(
-                    info -> {
-                        ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
-                        BeanUtils.copyProperties(info, ecrHistroryListVo);
-                        ecrHistroryListVo.setEngineType(
-                                info.getLabelValue().split(",")[1].split("-")[0]);
-                        ecrHistroryListVo.setUsedResource(
-                                ECResourceInfoUtils.getStringToMap(info.getUsedResource(), info));
-                        ecrHistroryListVo.setReleasedResource(
-                                ECResourceInfoUtils.getStringToMap(
-                                        info.getReleasedResource(), info));
-                        ecrHistroryListVo.setRequestResource(
-                                ECResourceInfoUtils.getStringToMap(
-                                        info.getRequestResource(), info));
-                        list.add(ecrHistroryListVo);
-                    });
-        } finally {
-            PageHelper.clearPage();
-        }
-        PageInfo<ECResourceInfoRecord> pageInfo = new PageInfo<>(queryTasks);
-        long total = pageInfo.getTotal();
-        return Message.ok().data("engineList", list).data(JobRequestConstants.TOTAL_PAGE(), total);
+  @ApiOperation(
+      value = "ecrHistoryList",
+      notes = "query engineconn resource history info list",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "instance", dataType = "String", value = "instance"),
+    @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
+    @ApiImplicitParam(name = "startDate", dataType = "String", value = "start date"),
+    @ApiImplicitParam(name = "endDate", dataType = "String", value = "end date"),
+    @ApiImplicitParam(name = "engineType", dataType = "String", value = "engine type"),
+    @ApiImplicitParam(name = "pageNow", dataType = "String", value = "page now"),
+    @ApiImplicitParam(name = "pageSize", dataType = "String", value = "page size")
+  })
+  @RequestMapping(path = "/ecrHistoryList", method = RequestMethod.GET)
+  public Message queryEcrHistory(
+      HttpServletRequest req,
+      @RequestParam(value = "instance", required = false) String instance,
+      @RequestParam(value = "creator", required = false) String creator,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+          @RequestParam(value = "startDate", required = false)
+          Date startDate,
+      @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+          @RequestParam(
+              value = "endDate",
+              required = false,
+              defaultValue = "#{new java.util.Date()}")
+          Date endDate,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
+    String username = SecurityFilter.getLoginUsername(req);
+    // Parameter judgment
+    instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
+    String creatorUser = ECResourceInfoUtils.strCheckAndDef(creator, null);
+    engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
+    if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
+      return Message.error("Invalid creator : " + creatorUser);
     }
+    if (null == startDate) {
+      Calendar calendar = Calendar.getInstance();
+      calendar.set(Calendar.HOUR_OF_DAY, 0);
+      calendar.set(Calendar.MINUTE, 0);
+      calendar.set(Calendar.SECOND, 0);
+      startDate = calendar.getTime();
+    }
+    if (Configuration.isAdmin(username)) {
+      username = null;
+      if (StringUtils.isNotBlank(creatorUser)) {
+        username = creatorUser;
+      }
+    }
+    List<ECResourceInfoRecordVo> list = new ArrayList<>();
+    List<ECResourceInfoRecord> queryTasks = null;
+
+    PageHelper.startPage(pageNow, pageSize);
+    try {
+      queryTasks =
+          ecResourceInfoService.getECResourceInfoRecordList(
+              instance, endDate, startDate, username, engineType);
+      queryTasks.forEach(
+          info -> {
+            ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
+            BeanUtils.copyProperties(info, ecrHistroryListVo);
+            ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
+            ecrHistroryListVo.setUsedResource(
+                ECResourceInfoUtils.getStringToMap(info.getUsedResource(), info));
+            ecrHistroryListVo.setReleasedResource(
+                ECResourceInfoUtils.getStringToMap(info.getReleasedResource(), info));
+            ecrHistroryListVo.setRequestResource(
+                ECResourceInfoUtils.getStringToMap(info.getRequestResource(), info));
+            list.add(ecrHistroryListVo);
+          });
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<ECResourceInfoRecord> pageInfo = new PageInfo<>(queryTasks);
+    long total = pageInfo.getTotal();
+    return Message.ok().data("engineList", list).data(JobRequestConstants.TOTAL_PAGE(), total);
+  }
 }

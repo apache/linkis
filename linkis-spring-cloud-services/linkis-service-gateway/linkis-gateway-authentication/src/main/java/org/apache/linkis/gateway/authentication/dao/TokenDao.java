@@ -24,11 +24,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TokenDao {
-  Boolean insertToken(TokenEntity token); // TODO
-
-  Boolean updateToken(TokenEntity token); // TODO
-
-  Boolean removeToken(TokenEntity token); // TODO
 
   TokenEntity selectTokenByName(@Param("tokenName") String tokenName);
 

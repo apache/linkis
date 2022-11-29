@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.am.service.engine
 
+import org.apache.linkis.manager.am.vo.ResourceVo
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineConnReleaseRequest,
@@ -24,6 +25,10 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineSuicideRequest
 }
 import org.apache.linkis.rpc.Sender
+
+import java.util
+
+import scala.collection.mutable
 
 trait EngineStopService {
 
@@ -42,12 +47,13 @@ trait EngineStopService {
    * @param operatorName
    *   the username who request this operation
    * @return
+   *   Map
    */
   def stopUnlockEngineByECM(
       ecmInstance: String,
       withMultiUserEngine: Boolean,
       operatorName: String
-  ): Unit
+  ): java.util.Map[String, Object]
 
   def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
 

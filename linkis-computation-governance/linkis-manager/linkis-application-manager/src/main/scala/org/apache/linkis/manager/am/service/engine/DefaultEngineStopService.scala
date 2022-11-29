@@ -121,9 +121,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       ecmInstance: String,
       withMultiUserEngine: Boolean,
       operatorName: String
-  ): java.util.Map[String, Object] = {
+  ): java.util.Map[String, Any] = {
 
-    val resultMap = new util.HashMap[String, Object]
+    val resultMap = new util.HashMap[String, Any]
     var killEngineNum = 0;
 
     // get all unlock ec node of the specified ecm
@@ -144,7 +144,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     engineNodes.asScala.foreach { node =>
       breakable {
         if (node.getLabels.isEmpty) {
-          logger.info(s"node:${node.getServiceInstance.getInstance} label is empty, will skip to kill this node")
+          logger.info(
+            s"node:${node.getServiceInstance.getInstance} label is empty, will skip to kill this node"
+          )
           break
         }
       }
@@ -155,7 +157,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       val isMultiUserEngineNode = AMConfiguration.isMultiUserEngine(engineTypeStr)
 
       if (isMultiUserEngineNode == true && withMultiUserEngine == false) {
-        logger.info(s"skipped to kill multi user engine node:${node.getServiceInstance.getInstance}")
+        logger.info(
+          s"skipped to kill multi user engine node:${node.getServiceInstance.getInstance}"
+        )
       } else {
         // calculate the resources that can be released
         if (node.getNodeResource.getUsedResource != null) {

@@ -116,7 +116,21 @@ public interface UDFService {
 
   List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
 
+  /**
+   * * Get udf information according to udfnameList
+   *
+   * @param userNameList
+   * @param createUser
+   * @return
+   */
   List<UDFAddVo> getUdfByNameList(List<String> userNameList, String createUser);
 
+  /**
+   * * Get the udf version information according to udfname and creator
+   *
+   * @param udfName
+   * @param createUser
+   * @return
+   */
   UDFVersionVo getUdfVersionInfo(String udfName, String createUser);
 }

@@ -29,7 +29,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <mysql.version>8.0.28</mysql.version>
-    <postgresql.version>42.3.1</postgresql.version>
+    <postgresql.version>42.3.8</postgresql.version>
     <clickhouse.version>0.3.2-patch11</clickhouse.version>
   </properties>
 

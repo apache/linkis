@@ -46,7 +46,7 @@
         <Button class="search" type="primary" @click="searchAction">{{
           $t("message.linkis.find")
         }}</Button>
-        <!-- 跳转 -->
+        <!-- jump(跳转) -->
         <Button class="jump" type="primary" @click="handleTabsJump">{{ $t("message.linkis.eurekaRegisterCenter") }}</Button>
       </Col>
     </Row>
@@ -203,13 +203,13 @@ export default {
           minWidth: 80,
         },
       ],
-      tableData: [], // 用于展示的数据
-      allInstance: [], // 暂存的所有数据，用于做筛选
+      tableData: [], // data for presentation(用于展示的数据)
+      allInstance: [], // All data temporarily stored for filtering(暂存的所有数据，用于做筛选)
     };
   },
   computed: {
     pageDatalist() {
-      // 展示的数据
+      // Displayed data(展示的数据)
       return this.tableData.filter((item, index) => {
         return (
           (this.page.pageNow - 1) * this.page.pageSize <= index &&
@@ -223,7 +223,7 @@ export default {
     this.getAllInstance();
   },
   methods: {
-    // 获取所有可修改的labelKey
+    // Get all modifiable labelKeys(获取所有可修改的labelKey)
     getKeyList() {
       api.fetch("/microservice/modifiableLabelKey", "get").then((res) => {
         let list = res.keyList || [];
@@ -235,7 +235,7 @@ export default {
         });
       });
     },
-    // 获取所有的微服务
+    // Get all microservices(获取所有的微服务)
     getAllInstance() {
       this.loading = true;
       api.fetch("/microservice/allInstance", "get").then((res) => {
@@ -254,13 +254,13 @@ export default {
     searchAction() {
       this.search(this.instance, this.applicationName);
     },
-    //跳转到微服务
+    //Jump to Microservices(跳转到微服务)
     handleTabsJump() {
       api.fetch("/microservice/eurekaURL", "get").then((rst) => {
         window.open(rst.url, "_blank");
       });
     },
-    // 点击搜索 对数据进行筛选
+    // Click to search to filter the data(点击搜索 对数据进行筛选)
     search(instance="", applicationName="") {
       if (instance || applicationName) {
         this.tableData = this.allInstance.filter((item) => {
@@ -275,7 +275,7 @@ export default {
       this.page.pageNow = 1;
       this.page.totalSize = this.tableData.length;
     },
-    // 显示修改弹框并初始化数据
+    // Display the modification popup and initialize the data(显示修改弹框并初始化数据)
     modify(data) {
       this.modifyShow = true;
       this.modifyData.instance = data.instance;
@@ -288,7 +288,7 @@ export default {
       });
       this.modifyData.applicationName = data.applicationName;
     },
-    // 更新单个微服务实例的label信息
+    // Update the label information of a single microservice instance(更新单个微服务实例的label信息)
     modifyOk() {
       let param = JSON.parse(JSON.stringify(this.modifyData));
       param.labels = param.labels.map((item) => {
@@ -302,12 +302,12 @@ export default {
         this.getAllInstance();
       });
     },
-    // 添加tag
+    // add tag(添加tag)
     addEnter(key, value) {
       this.modifyData.labels.push({ key, value });
     },
 
-    // 修改标签
+    // Edit tags(修改标签)
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.modifyData.labels.findIndex((item)=>{
         return  item.value === editInputValue && item.key === editInputKey
@@ -315,20 +315,20 @@ export default {
       this.modifyData.labels.splice(index,1,{key: editInputKey,modifiable: true,value: editedInputValue})
     },
 
-    // 删除tag
+    // delete tag(删除tag)
     onCloseTag(name, index) {
       this.modifyData.labels.splice(index, 1);
     },
-    // 切换分页
+    // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
     },
-    // 页容量变化
+    // page size change(页容量变化)
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
     },
-    // 转换时间格式
+    // Convert time format(转换时间格式)
     dateFormatter(date) {
       return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },

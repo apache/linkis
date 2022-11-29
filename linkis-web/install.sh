@@ -22,6 +22,16 @@ echo "linkis frontend deployment script"
 
 source $workDir/config.sh
 # frontend directory,decompression directory by default
+
+input_port=$1
+
+re='^[0-9]+$'
+if  [[ $input_port =~ $re ]] ; then
+   echo "try to use special frontend port：${input_port}"
+   linkis_port=$input_port
+fi
+
+
 linkis_basepath=$workDir
 
 #To be compatible with MacOS and Linux
@@ -69,7 +79,7 @@ echo ""
 
 portIsOccupy=false
 checkPort(){
-    pid=`lsof -nP -iTCP:$linkis_port -sTCP:LISTEN`
+    pid=`sudo lsof -nP -iTCP:$linkis_port -sTCP:LISTEN`
     if [ "$pid" != "" ];then
       echo "$linkis_port already used"
       portIsOccupy=true
@@ -178,7 +188,7 @@ centos6(){
     linkisConf
 
     # firewall
-    S_iptables=`lsof -i:$linkis_port | wc -l`
+    S_iptables=`sudo lsof -i:$linkis_port | wc -l`
     if [ "$S_iptables" -gt "0" ];then
       # allow to access port,restart firewall
       service iptables restart
@@ -190,7 +200,7 @@ centos6(){
     fi
 
     # start nginx
-    /etc/init.d/nginx start
+    sudo /etc/init.d/nginx start
 
      # adjust SELinux parameter
     sed -i "s/SELINUX=enforcing/SELINUX=disabled/g" /etc/selinux/config
@@ -206,14 +216,27 @@ if [ "$portIsOccupy" = true ];then
   exit 1
 fi
 
-# centos 6
-if [[ $version -eq 6 ]]; then
-    centos6
-fi
+if [ -e /var/run/nginx.pid ]; then
+echo "Nginx is already running! Will try to reload nginx config";
+# config inginx
+linkisConf
 
-# centos 7
-if [[ $version -eq 7 ]]; then
-    centos7
+sudo nginx -s reload
+
+else
+
+	echo "Starting install nginx and try to starting..."
+
+  # centos 6
+  if [[ $version -eq 6 ]]; then
+      centos6
+  fi
+
+  # centos 7
+  if [[ $version -eq 7 ]]; then
+      centos7
+  fi
+
 fi
 
 echo "Please open the link in the browser：http://${linkis_ipaddr}:${linkis_port}"

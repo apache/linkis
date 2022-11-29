@@ -66,7 +66,6 @@ public class Common {
     if (MODE.equals(Optional.of(DeployMode.CLIENT.getName()))) {
       try {
         String path = System.getProperty("SEATUNNEL_HOME") + "/seatunnel";
-        System.out.println("appRootDir:" + path);
         path = new File(path).getPath();
         return Paths.get(path);
       } catch (Exception e) {

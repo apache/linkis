@@ -48,6 +48,8 @@ import java.nio.file.Files
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
+import scala.language.postfixOps
+
 class SeatunnelSparkOnceCodeExecutor(
     override val id: Long,
     override protected val seatunnelEngineConnContext: SeatunnelEngineConnContext
@@ -91,14 +93,13 @@ class SeatunnelSparkOnceCodeExecutor(
   protected def runCode(code: String): Int = {
     info("Execute SeatunnelSpark Process")
     val masterKey = LINKIS_SPARK_MASTER.getValue
-    val configKey = LINKIS_SPARK_CONFIG.getValue
     val deployModeKey = LINKIS_SPARK_DEPLOY_MODE.getValue
 
     var args: Array[String] = Array.empty
     if (params != null && StringUtils.isNotBlank(params.get(masterKey))) {
       args = Array(
         GET_LINKIS_SPARK_MASTER,
-        params.getOrDefault(masterKey, "yarn"),
+        params.getOrDefault(masterKey, "local[4]"),
         GET_LINKIS_SPARK_DEPLOY_MODE,
         params.getOrDefault(deployModeKey, "client"),
         GET_LINKIS_SPARK_CONFIG,
@@ -113,7 +114,7 @@ class SeatunnelSparkOnceCodeExecutor(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelSpark Process end")
+    info(s"Execute SeatunnelSpark Process end args:${args.mkString(" ")}")
     LinkisSeatunnelSparkClient.main(args)
   }
 

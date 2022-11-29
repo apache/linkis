@@ -32,7 +32,8 @@ import org.apache.commons.lang3.time.DateFormatUtils
 
 import java.io.{InputStream, OutputStream}
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util
+import java.util.{Arrays, Date}
 import java.util.regex.Pattern
 
 object QueryUtils extends Logging {
@@ -152,14 +153,21 @@ object QueryUtils extends Logging {
     }
   }
 
-  def isJobHistoryAdmin(username: String): Boolean = {
+  def isStationAdmin(username: String): Boolean = {
     JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue
       .split(",")
       .exists(username.equalsIgnoreCase)
   }
 
+  def isJobHistoryAdmin(username: String): Boolean = {
+    getJobHistoryAdmin()
+      .exists(username.equalsIgnoreCase)
+  }
+
   def getJobHistoryAdmin(): Array[String] = {
-    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
+    val stationAdmin = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
+    val historyAdmin = JobhistoryConfiguration.JOB_HISTORY_ADMIN.getValue.split(",")
+    stationAdmin ++ historyAdmin
   }
 
   def dateToString(date: Date): String = {

@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -45,6 +46,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Api(tags = "enginneconn resource info operation")
 @RequestMapping(
@@ -54,6 +57,8 @@ import io.swagger.annotations.ApiOperation;
 public class ECResourceInfoRestfulApi {
 
   @Autowired private ECResourceInfoService ecResourceInfoService;
+
+  private static final Logger logger = LoggerFactory.getLogger(ECResourceInfoRestfulApi.class);
 
   @ApiOperation(value = "get", notes = "get engineconn info ", response = Message.class)
   @ApiImplicitParams({
@@ -173,5 +178,52 @@ public class ECResourceInfoRestfulApi {
     PageInfo<ECResourceInfoRecord> pageInfo = new PageInfo<>(queryTasks);
     long total = pageInfo.getTotal();
     return Message.ok().data("engineList", list).data(JobRequestConstants.TOTAL_PAGE(), total);
+  }
+
+  @ApiOperation(value = "ecList", notes = "query engineconn info list", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "creators", dataType = "String", value = "creators"),
+    @ApiImplicitParam(name = "engineType", dataType = "String", value = "engine type"),
+    @ApiImplicitParam(name = "statuss", dataType = "String", value = "statuss"),
+  })
+  @RequestMapping(path = "/ecList", method = RequestMethod.POST)
+  public Message queryEcList(
+      HttpServletRequest req,
+      @RequestParam(value = "creators", required = true) String creators,
+      @RequestParam(value = "engineTypes", required = false) String engineTypes,
+      @RequestParam(value = "statuss", required = false) String statuss) {
+
+    String username = ModuleUserUtils.getOperationUser(req, "ecList");
+
+    String token = ModuleUserUtils.getToken(req);
+    // check special admin token
+    if (StringUtils.isNotBlank(token)) {
+      if (!Configuration.isAdminToken(token)) {
+        logger.warn("Token {} has no permission to query ecList.", token);
+        return Message.error("Token:" + token + " has no permission to query ecList.");
+      }
+    } else if (!Configuration.isAdmin(username)) {
+      logger.warn("User {} has no permission to query ecList.", username);
+      return Message.error("User:" + username + " has no permission to query ecList.");
+    }
+
+    String[] engineTypeArray = engineTypes.split(",");
+    List<String> engineTypeList = Arrays.stream(engineTypeArray).collect(Collectors.toList());
+
+    String[] creatorArray = creators.split(",");
+    List<String> creatorUserList = Arrays.stream(creatorArray).collect(Collectors.toList());
+    for (String creatorUser : creatorUserList) {
+      if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
+        return Message.error("Invalid creator : " + creatorUser);
+      }
+    }
+
+    String[] statusArray = statuss.split(",");
+    List<String> statusList = Arrays.stream(statusArray).collect(Collectors.toList());
+
+    List<Map<String, Object>> list =
+        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusList);
+
+    return Message.ok().data("ecLit", list);
   }
 }

@@ -76,11 +76,6 @@ public interface TaskConstant {
   String TASK_ID = "taskId";
   String MONITOR_LEVEL = "monitorLevel";
   String RECEIVER = "receiver";
-  String SUB_SYSTEM_ID= "subSystemId";
-  String EXTRA= "extra";
-
-
-
-
-
+  String SUB_SYSTEM_ID = "subSystemId";
+  String EXTRA = "extra";
 }

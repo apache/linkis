@@ -17,8 +17,9 @@
 
 package org.apache.linkis.ujes.client.request
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.httpclient.request.GetAction
+
+import org.apache.commons.lang3.StringUtils
 
 class JobDeleteObserveAction extends GetAction with UJESJobAction {
   override def suffixURLs: Array[String] = Array("jobhistory", "setting", "deleteObserveInfo")
@@ -27,7 +28,7 @@ class JobDeleteObserveAction extends GetAction with UJESJobAction {
 object JobDeleteObserveAction {
   def newBuilder(): Builder = new Builder
 
-  class Builder private[JobDeleteObserveAction]() {
+  class Builder private[JobDeleteObserveAction] () {
     private var user: String = _
     private var taskId: Long = _
 
@@ -47,7 +48,7 @@ object JobDeleteObserveAction {
       jobDeleteObserve.setParameter("taskId", taskId)
       jobDeleteObserve
     }
+
   }
+
 }
-
-

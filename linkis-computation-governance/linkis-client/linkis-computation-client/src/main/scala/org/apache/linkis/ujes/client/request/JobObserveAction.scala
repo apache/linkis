@@ -33,6 +33,7 @@ class JobObserveAction private () extends POSTAction with UJESJobAction {
     DWSHttpClient.jacksonJson.writeValueAsString(getRequestPayloads)
 
 }
+
 object JobObserveAction {
   def builder(): Builder = new Builder
 
@@ -59,14 +60,17 @@ object JobObserveAction {
       this.monitorLevel = monitorLevel
       this
     }
+
     def setReceiver(receiver: String): Builder = {
       this.receiver = receiver
       this
     }
+
     def setSubSystemId(subSystemId: String): Builder = {
       this.subSystemId = subSystemId
       this
     }
+
     def setExtra(extra: util.Map[String, String]): Builder = {
       this.extra = extra
       this
@@ -91,5 +95,3 @@ object JobObserveAction {
   }
 
 }
-
-

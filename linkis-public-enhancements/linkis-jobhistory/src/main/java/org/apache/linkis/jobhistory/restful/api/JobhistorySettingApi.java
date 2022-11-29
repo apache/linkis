@@ -60,7 +60,7 @@ public class JobhistorySettingApi {
   @ApiOperation(value = "addObserveInfo", notes = "add Observe Info", response = Message.class)
   @RequestMapping(path = "/addObserveInfo", method = RequestMethod.POST)
   public Message addObserveInfo(HttpServletRequest req, @RequestBody MonitorVO monitor) {
-    ModuleUserUtils.getOperationUser(req, "isNotice");
+    ModuleUserUtils.getOperationUser(req, "addObserveInfo");
     // Parameter verification
     if (null == monitor.getTaskId()) return Message.error("TaskId can't be empty ");
     if (StringUtils.isBlank(monitor.getReceiver())) return Message.error("Receiver can't be empty");

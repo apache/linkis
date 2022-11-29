@@ -73,4 +73,14 @@ public interface TaskConstant {
   String CODE = "code";
 
   String REQUEST_IP = "requestIP";
+  String TASK_ID = "taskId";
+  String MONITOR_LEVEL = "monitorLevel";
+  String RECEIVER = "receiver";
+  String SUB_SYSTEM_ID= "subSystemId";
+  String EXTRA= "extra";
+
+
+
+
+
 }

@@ -43,6 +43,7 @@
         from linkis_ps_udf_tree
         <if test="searchName != null and searchName!=''">
             where user_name like concat('%',#{searchName},'%')
+            or name like concat('%',#{searchName},'%')
             or description like concat('%',#{searchName},'%')
             or category like concat('%',#{searchName},'%')
         </if>

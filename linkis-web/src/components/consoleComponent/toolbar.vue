@@ -254,7 +254,7 @@ export default {
       },
       isIconLabelShow: true,
       iconSize: 14,
-      allDownload: false, // 是否下载全部结果集
+      allDownload: false, // whether to download all result sets(是否下载全部结果集)
       resultsShowType: '2'
     };
   },
@@ -304,7 +304,7 @@ export default {
       this.cancelPopup(type);
     },
     showResultAction() {
-      // 当切换结果集可视化按钮时
+      // When toggling the result set visualization button(当切换结果集可视化按钮时)
       if (this.visualShow=='table') {
         this.popup.visualis = true;
       } else {
@@ -330,19 +330,19 @@ export default {
       }
       const filename = `Result_${fileName}_${timestamp}`;
       let temPath = this.currentPath;
-      // api执行下载的结果集路径不一样
+      // The result set path of the api execution download is different(api执行下载的结果集路径不一样)
       let apiPath = `${this.getResultUrl}/resultsetToExcel`;
       if (this.isAll && this.allDownload) {
         temPath = temPath.substring(0, temPath.lastIndexOf('/'));
         apiPath = `${this.getResultUrl}/resultsetsToExcel`
       }
       let url = `http://${window.location.host}/api/rest_j/v1/` + apiPath +'?path=' + temPath + '&charset=' + charset + '&outputFileType=' + splitor + '&nullValue=' + nullValue + '&outputFileName=' + filename;
-      // 如果是api执行页获取结果集，需要带上taskId
+      // If the api execution page gets the result set, you need to bring the taskId(如果是api执行页获取结果集，需要带上taskId)
       if(this.getResultUrl !== 'filesystem') {
         url += `&taskId=${this.comData.taskID}`
       }
 
-      // 下载之前条用心跳接口确认是否登录
+      // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)
       await api.fetch('/user/heartbeat', 'get');
 
       const link = document.createElement('a');

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LinkisSeatunnelFlinkClient {
-  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelSparkClient.class);
+  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelFlinkClient.class);
   private static Class<?> seatunnelEngineClass;
   private static JarLoader jarLoader;
 

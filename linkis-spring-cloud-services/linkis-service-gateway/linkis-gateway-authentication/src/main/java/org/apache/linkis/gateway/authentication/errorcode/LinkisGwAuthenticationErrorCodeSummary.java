@@ -20,7 +20,7 @@ package org.apache.linkis.gateway.authentication.errorcode;
 public enum LinkisGwAuthenticationErrorCodeSummary {
   TOKEN_IS_NULL(15205, "token is null(token 令牌为空)!"),
   FAILED_TO_LOAD_TOKEN(15200, "Failed to load token from DB into cache(无法将 token 令牌从数据库加载到缓存中)!"),
-  TOKEN_VALID_OR_STALE(15201, "Token is not valid or stale(token 令牌无效或陈旧)!"),
+  TOKEN_VALID_OR_STALE(15201, "Token is not valid or stale(token 令牌无效或已过期)!"),
   ILLEGAL_TOKENUSER(15202, "Illegal TokenUser for Token(Token非法用户)!"),
   ILLEGAL_HOST(15203, "Illegal Host for Token(Token非法主机)!"),
   INVALID_TOKEN(15204, "Invalid Token(令牌无效)");

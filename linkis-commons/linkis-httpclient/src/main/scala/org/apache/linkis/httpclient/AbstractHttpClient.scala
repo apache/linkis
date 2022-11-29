@@ -44,7 +44,7 @@ import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.{HttpResponse, _}
-import org.apache.http.client.{CookieStore, ResponseHandler}
+import org.apache.http.client.CookieStore
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.{
   DeflateDecompressingEntity,
@@ -422,7 +422,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       } catch {
         case connectionPoolTimeOutException: ConnectionPoolTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionPoolTimeOutException")
           throw new HttpClientRetryException(
             "connectionPoolTimeOutException",
@@ -430,7 +430,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case connectionTimeOutException: ConnectTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionTimeOutException")
           throw new HttpClientRetryException(
             "connectionTimeOutException",
@@ -438,7 +438,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case httpHostConnectException: HttpHostConnectException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for httpHostConnectException")
           throw new HttpClientRetryException("httpHostConnectException", httpHostConnectException)
         case t: Throwable =>
@@ -447,7 +447,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     response
   }
 
-  private def addUnHealThyUrlToDiscovery(serverUrl: String): Unit = {
+  private def addUnHealthyUrlToDiscovery(serverUrl: String): Unit = {
     discovery.foreach {
       case d: AbstractDiscovery =>
         d.addUnhealthyServerInstances(serverUrl)

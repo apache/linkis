@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="log-editor-wrap">
     <div class="log-tools">
@@ -148,7 +148,7 @@ export default {
       const val = this.searchText;
       if (!log) return MatchText;
       if (val) {
-        // 这部分代码是为了让正则表达式不报错，所以在特殊符号前面加上\
+        // This part of the code is to make the regular expression not report an error, so add \ in front of the special symbol(这部分代码是为了让正则表达式不报错，所以在特殊符号前面加上\)
         let formatedVal = '';
         forEach(val, (o) => {
           if (/^[\w\u4e00-\u9fa5]$/.test(o)) {
@@ -157,7 +157,7 @@ export default {
             formatedVal += `\\${o}`;
           }
         });
-        // 全局和不区分大小写模式，正则是匹配searchText前后出了换行符之外的字符
+        // Global and case-insensitive mode, the regular pattern is to match characters other than newlines before and after searchText(全局和不区分大小写模式，正则是匹配searchText前后出了换行符之外的字符)
         const regexp = new RegExp(`.*${formatedVal}.*`, 'gi');
         MatchText = filter(log.split('\n'), (item) => {
           return regexp.test(item);

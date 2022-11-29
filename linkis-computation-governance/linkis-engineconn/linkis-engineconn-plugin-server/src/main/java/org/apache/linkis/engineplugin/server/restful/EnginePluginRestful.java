@@ -168,7 +168,7 @@ public class EnginePluginRestful {
       return Message.error("version cannot be null");
     }
     if (file.getOriginalFilename().toLowerCase().endsWith(".zip")) {
-      String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");
+      String username = ModuleUserUtils.getOperationUser(req, "updateEnginePluginBML");
       if (Configuration.isAdmin(username)) {
         log.info("{} start to update enginePlugin {} {}", username, ecType, version);
         try {

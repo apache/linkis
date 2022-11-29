@@ -219,15 +219,15 @@ public class EngineRestfulApi {
   @ApiOperation(value = "kill egineconns of a ecm", notes = "", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:9210"),
-    @ApiImplicitParam(name = "concurrentEngineEnable", dataType = "boolean")
+    @ApiImplicitParam(name = "withMultiUserEngine", dataType = "boolean")
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
-  @RequestMapping(path = "/rm/unlockEngineKillByEM", method = RequestMethod.POST)
+  @RequestMapping(path = "/rm/killUnlockEngineByEM", method = RequestMethod.POST)
   public Message killUnlockEngine(
       HttpServletRequest req,
       @RequestParam(value = "instance", required = false) String instance,
-      @RequestParam(value = "concurrentEngineEnable", required = false, defaultValue = "false")
-          Boolean concurrentEngineEnable)
+      @RequestParam(value = "withMultiUserEngine", required = false, defaultValue = "false")
+          Boolean withMultiUserEngine)
       throws AMErrorException {
     String operatmsg = MessageFormat.format("kill the unlock engines of ECM:{0}", instance);
     String userName = ModuleUserUtils.getOperationUser(req, operatmsg);
@@ -236,7 +236,7 @@ public class EngineRestfulApi {
           210003,
           "Only admin can kill unlock engine of the specified ecm(只有管理员才能 kill 指定 ecm 下的所有空闲引擎).");
     }
-    engineStopService.stopUnlockEngineByECM(instance, concurrentEngineEnable, userName);
+    engineStopService.stopUnlockEngineByECM(instance, withMultiUserEngine, userName);
     return Message.ok("Kill engineConn succeed.");
   }
 

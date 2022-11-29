@@ -77,7 +77,5 @@ public interface NodeManagerMapper {
   List<PersistenceNode> getNodeInstancesByOwnerList(@Param("owner") List<String> owner);
 
   List<PersistencerEcNodeInfo> getEMNodeInfoList(
-      @Param("creatorUsers") List<String> creatorUsers,
-      @Param("engineType") String engineType,
-      @Param("statuss") List<String> statuss);
+      @Param("creatorUsers") List<String> creatorUsers, @Param("statuss") List<String> statuss);
 }

@@ -48,5 +48,5 @@ public interface ECResourceRecordMapper {
       @Param("engineType") String engineType);
 
   List<ECResourceInfoRecord> getECResourceInfoList(
-      @Param("instances") List<String> instances, @Param("engineType") String engineType);
+      @Param("instances") List<String> instances, @Param("engineTypes") List<String> engineTypes);
 }

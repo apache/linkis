@@ -23,6 +23,8 @@ import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
 class QueryUtilsTest {
 
+  private val username = "hadoop"
+
   @Test
   @DisplayName("isJobHistoryAdminTest")
   def isJobHistoryAdminTest(): Unit = {
@@ -39,7 +41,7 @@ class QueryUtilsTest {
   @DisplayName("getJobHistoryAdminTest")
   def getJobHistoryAdminTest(): Unit = {
     val admins = QueryUtils.getJobHistoryAdmin()
-    Assertions.assertTrue(admins.size == 1)
+    Assertions.assertTrue(admins.exists(username.equalsIgnoreCase))
   }
 
   @Test

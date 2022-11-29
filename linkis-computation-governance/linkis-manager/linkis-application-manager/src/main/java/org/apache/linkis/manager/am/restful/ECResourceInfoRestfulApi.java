@@ -190,7 +190,7 @@ public class ECResourceInfoRestfulApi {
   public Message queryEcList(
       HttpServletRequest req,
       @RequestParam(value = "creators", required = true) String creators,
-      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "engineTypes", required = false) String engineTypes,
       @RequestParam(value = "statuss", required = false) String statuss) {
 
     String username = ModuleUserUtils.getOperationUser(req, "ecList");
@@ -207,7 +207,8 @@ public class ECResourceInfoRestfulApi {
       return Message.error("User:" + username + " has no permission to query ecList.");
     }
 
-    engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
+    String[] engineTypeArray = engineTypes.split(",");
+    List<String> engineTypeList = Arrays.stream(engineTypeArray).collect(Collectors.toList());
 
     String[] creatorArray = creators.split(",");
     List<String> creatorUserList = Arrays.stream(creatorArray).collect(Collectors.toList());
@@ -221,7 +222,7 @@ public class ECResourceInfoRestfulApi {
     List<String> statusList = Arrays.stream(statusArray).collect(Collectors.toList());
 
     List<Map<String, Object>> list =
-        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineType, statusList);
+        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusList);
 
     return Message.ok().data("ecLit", list);
   }

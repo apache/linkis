@@ -91,6 +91,16 @@ object AMConfiguration {
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""
   }
 
+  def isMultiUserEngine(engineType: String): Boolean = {
+    val multiUserEngine = AMConfiguration.MULTI_USER_ENGINE_TYPES.getValue.split(",")
+    val findResult = multiUserEngine.find(_.equalsIgnoreCase(engineType))
+    if (findResult.isDefined) {
+      true
+    } else {
+      false
+    }
+  }
+
   def isAdmin(userName: String): Boolean = {
     GOVERNANCE_STATION_ADMIN.getValue.split(",").contains(userName)
   }

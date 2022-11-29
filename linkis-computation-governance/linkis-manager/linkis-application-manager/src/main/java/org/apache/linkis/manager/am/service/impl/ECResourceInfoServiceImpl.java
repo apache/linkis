@@ -92,13 +92,13 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, String engineType, List<String> statusList) {
+      List<String> creatorUserList, List<String> engineTypeList, List<String> statusList) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
     // get engine conn info list filter by creator user list /engineType/instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
-        nodeManagerMapper.getEMNodeInfoList(creatorUserList, engineType, statusList);
+        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusList);
 
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());
@@ -107,7 +107,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
     // filter by engineType and get latest resource record info
     List<ECResourceInfoRecord> ecResourceInfoRecords =
-        ecResourceRecordMapper.getECResourceInfoList(instanceList, engineType);
+        ecResourceRecordMapper.getECResourceInfoList(instanceList, engineTypeList);
     // map k:v---> instanceName：ECResourceInfoRecord
     Map<String, ECResourceInfoRecord> map =
         ecResourceInfoRecords.stream()

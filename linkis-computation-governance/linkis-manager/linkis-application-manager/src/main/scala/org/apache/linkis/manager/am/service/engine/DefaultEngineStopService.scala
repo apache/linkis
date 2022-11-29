@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutorService, Future}
+import scala.util.control.Breaks._
 
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {
@@ -109,7 +110,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   override def stopUnlockEngineByECM(
       ecmInstance: String,
-      concurrentEngineEnable: Boolean,
+      withMultiUserEngine: Boolean,
       operatorName: String
   ): Unit = {
     // get all unlock ec node of the specified ecm
@@ -125,12 +126,22 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     val engineNodes = engineInfoService.listEMEngines(emNode)
 
     engineNodes.asScala.foreach { node =>
-      // todo 判断engine node 节点是否是并发引擎类型
-      val isconcurrentEngineNode = false
+      breakable {
+        if (node.getLabels.isEmpty) {
+          break
+        }
+      }
 
-      if (isconcurrentEngineNode == true && concurrentEngineEnable == false) {
+      val engineTypeLabel =
+        node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).getOrElse(null)
+      val engineTypeStr = engineTypeLabel.asInstanceOf[EngineTypeLabel] getEngineType
+      val isMultiUserEngineNode = AMConfiguration.isMultiUserEngine(engineTypeStr)
+
+      node.getNodeResource.getLockedResource
+
+      if (isMultiUserEngineNode == true && withMultiUserEngine == false) {
         logger.info(
-          s"skipped to kill concurrent type engine:${node.getServiceInstance.getInstance}"
+          s"skipped to kill multi user engine node:${node.getServiceInstance.getInstance}"
         )
       } else {
         logger.info(s"try to kill engine:${node.getServiceInstance.getInstance}")

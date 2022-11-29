@@ -36,15 +36,16 @@ trait EngineStopService {
    *
    * @param ecmInstance
    *   the specified ecm.
-   * @param concurrentEngineEnable
-   *   include concurrent engine type
+   * @param withMultiUserEngine
+   *   include multi user engine type see
+   * @org.apache.linkis.manager.am.conf.AMConfiguration#getDefaultMultiEngineUser()
    * @param operatorName
    *   the username who request this operation
    * @return
    */
   def stopUnlockEngineByECM(
       ecmInstance: String,
-      concurrentEngineEnable: Boolean,
+      withMultiUserEngine: Boolean,
       operatorName: String
   ): Unit
 

@@ -61,7 +61,7 @@ trait EngineStopService {
       ecmInstance: String,
       withMultiUserEngine: Boolean,
       operatorName: String
-  ): java.util.Map[String, Object]
+  ): java.util.Map[String, Any]
 
   def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
 

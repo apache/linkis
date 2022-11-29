@@ -108,7 +108,6 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     )
   }
 
-  @Receiver
   override def stopEngineAsyn(engineStopRequest: EngineStopRequest, sender: Sender): Unit = {
     val runnable = new Runnable {
       override def run(): Unit = {

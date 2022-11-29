@@ -55,6 +55,8 @@ public class QueryTaskVO {
 
   private boolean canRetry;
 
+  private String observeInfo;
+
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
   }
@@ -271,5 +273,13 @@ public class QueryTaskVO {
 
   public void setCanRetry(boolean canRetry) {
     this.canRetry = canRetry;
+  }
+
+  public String getObserveInfo() {
+    return observeInfo;
+  }
+
+  public void setObserveInfo(String observeInfo) {
+    this.observeInfo = observeInfo;
   }
 }

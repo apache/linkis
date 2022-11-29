@@ -231,8 +231,10 @@ public class EngineRestfulApi {
           210003,
           "Only admin can kill unlock engine of the specified ecm(只有管理员才能 kill 指定 ecm 下的所有空闲引擎).");
     }
-    engineStopService.stopUnlockEngineByECM(instance, withMultiUserEngine, userName);
-    return Message.ok("Kill engineConn succeed.");
+
+    Map result = engineStopService.stopUnlockEngineByECM(instance, withMultiUserEngine, userName);
+
+    return Message.ok("Kill engineConn succeed.").data("result", result);
   }
 
   @ApiOperation(

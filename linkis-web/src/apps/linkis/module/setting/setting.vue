@@ -17,7 +17,7 @@
 
 <template>
   <div class="setting" style="height: 100%">
-    <!-- tab组件只做切换选择 -->
+    <!-- The tab component only does switch selection(tab组件只做切换选择) -->
     <Tabs
       class="tabs"
       v-model="currentTabName"
@@ -49,7 +49,7 @@
         >
         </cardList>
       </TabPane>
-      <!-- 应用编辑按钮 -->
+      <!-- Apply edit button(应用编辑按钮) -->
       <Button @click="handleTabsEdit" size="small" slot="extra" v-show="isLogAdmin" :class="{active:  iseditListItem || isdeleteListItem}">{{
         iseditListItem || isdeleteListItem ? $t("message.linkis.ConfirmEdit") : $t("message.linkis.editContents")
       }}</Button>
@@ -60,7 +60,7 @@
         $t("message.linkis.addEngineType")
       }}</Button>
     </Tabs>
-    <!-- 参数详情 -->
+    <!-- Parameter details(参数详情) -->
     <div v-if="fullTree && fullTree.length" class="setting-content">
       <div class="setting-content-header">
         <Button @click="toggleAdvance" :class="{active:isAdvancedShow}"
@@ -91,21 +91,21 @@
         />
       </div>
     </div>
-    <!-- 引擎描述修改 -->
+    <!-- Engine description modification(引擎描述修改) -->
     <Modal
       @on-ok="addEngineDesc"
       :title="$t('message.linkis.editDescriptionEngineConfig')"
       v-model="isEditChildCategory"
       :mask-closable="false"
     >
-      <!-- 引擎描述的编辑 -->
+      <!-- Editing of engine descriptions(引擎描述的编辑) -->
       <Form
         :label-width="90"
         ref="formValidate"
         :model="editEngineFromItem"
         :rules="ruleValidate"
       >
-        <!-- 新增引擎的名称 -->
+        <!-- Add the name of the engine(新增引擎的名称) -->
         <FormItem :label="`${$t('message.linkis.tableColumns.engineType')}：`">
           <Select v-model="editEngineFromItem.type" disabled>
             <Option :value="editEngineFromItem.type">{{
@@ -113,7 +113,7 @@
             }}</Option>
           </Select>
         </FormItem>
-        <!-- 引擎版本信息 -->
+        <!-- Engine version information(引擎版本信息) -->
         <FormItem
           class="addTagClass"
           :label="`${$t('message.linkis.tableColumns.engineVersion')}：`"
@@ -132,21 +132,21 @@
       </Form>
     </Modal>
 
-    <!-- 新增参数配置modal -->
+    <!-- Added parameter configuration modal(新增参数配置modal) -->
     <Modal
       @on-ok="addParameterSet"
       :title="$t('message.linkis.addParameterConfig')"
       v-model="isChildCategory"
       :mask-closable="false"
     >
-      <!-- 引擎描述的编辑 -->
+      <!-- Editing of engine descriptions(引擎描述的编辑) -->
       <Form
         :label-width="90"
         ref="formValidate"
         :model="childCategoryFormItem"
         :rules="ruleValidate"
       >
-        <!-- 新增引擎的名称 -->
+        <!-- Add the name of the engine(新增引擎的名称) -->
         <FormItem :label="`${$t('message.linkis.tableColumns.engineType')}：`">
           <Select v-model="childCategoryFormItem.type">
             <Option :value="item" v-for="item in engineType" :key="item.key">{{
@@ -154,7 +154,7 @@
             }}</Option>
           </Select>
         </FormItem>
-        <!-- 引擎版本信息 -->
+        <!-- Engine version information(引擎版本信息) -->
         <FormItem
           class="addTagClass"
           :label="`${$t('message.linkis.tableColumns.engineVersion')}：`"
@@ -172,7 +172,7 @@
         </FormItem>
       </Form>
     </Modal>
-    <!-- 新增应用类型modal -->
+    <!-- 新增应用类型modal(新增应用类型modal) -->
     <Modal
       @on-ok="addApptype"
       :title="$t('message.linkis.addAppType')"
@@ -210,22 +210,22 @@ export default {
   data() {
     return {
       menuList: [],
-      activeMenu: "", // 当前打开目录
+      activeMenu: "", // currently open directory(当前打开目录)
       currentTabName: "",
       fullTree: [],
-      engineType: [], //引擎类型数据
+      engineType: [], //engine type data(引擎类型数据)
       loading: false,
       unValidMsg: {},
       isAdvancedShow: false,
       isChildCategory: false,
-      isEditChildCategory: false, //编辑引擎的对话框
-      isAddApptype: false,  //新增应用的对话框
-      isTypeCard: false, //tab栏是否开启card类型
-      iseditListItem: false, //应用下的引擎编辑功能是否开启
-      isdeleteListItem: false, //应用下的引擎删除功能是否开启
-      isOpenAdd: false, //应用下的引擎添加功能是否开启
+      isEditChildCategory: false, //Dialog for editing the engine(编辑引擎的对话框)
+      isAddApptype: false,  //New application dialog(新增应用的对话框)
+      isTypeCard: false, //Whether the card type is enabled in the tab bar(tab栏是否开启card类型)
+      iseditListItem: false, //Whether the engine editing function under the application is enabled(应用下的引擎编辑功能是否开启)
+      isdeleteListItem: false, //应用下的引擎删除功能是否开启(应用下的引擎删除功能是否开启)
+      isOpenAdd: false, //Whether the engine addition function under the application is enabled(应用下的引擎添加功能是否开启)
       tabLeft: 0,
-      isLogAdmin: false,  //用户是否有管理员权限
+      isLogAdmin: false,  //Whether the user has administrator privileges(用户是否有管理员权限)
       childCategoryFormItem: {
         name: "",
         tagList: [],
@@ -262,7 +262,7 @@ export default {
 
   mounted() {
     this.subCategory = {}
-    // 获取设置目录
+    // get settings directory(获取设置目录)
     api.fetch("/configuration/getCategory", "get").then((rst) => {
       this.menuList = rst.Category || [];
       this.$nextTick(() => {
@@ -275,7 +275,7 @@ export default {
         }
       });
     });
-    //获取所有引擎类型
+    //Get all engine types(获取所有引擎类型)
     api.fetch("/configuration/engineType", "get").then((rst) => {
       this.engineType = rst.engineType;
     });
@@ -302,21 +302,21 @@ export default {
 
     getAppVariable(type = '') {
       this.activeMenu = type;
-      let parameter = type.split("-"); // 切割目录name
-      // 如果只有一级目录则直接返回['creator'],如果为二级目录则['creator', 'engineType', 'version']
+      let parameter = type.split("-"); // cut directory name(切割目录name)
+      // If there is only a first-level directory, it will directly return ['creator'], if it is a second-level directory, ['creator', 'engineType', 'version'](如果只有一级目录则直接返回['creator'],如果为二级目录则['creator', 'engineType', 'version'])
       api
         .fetch(
           "/configuration/getFullTreesByAppName",
           {
-            creator: parameter[0], // 指定一级目录
-            engineType: parameter[1], // 指定引擎（二级目录）如果只有一级目录则自动为undefined不会传参
-            version: parameter[2], // 对应的引擎目前只支持对应的版本，如spark就传version-2.4.3，如果只有一级目录则自动为undefined不会传参
+            creator: parameter[0], // Specify a first-level directory(指定一级目录)
+            engineType: parameter[1], // Specify the engine (secondary directory) if there is only a first-level directory, it will be automatically undefined and no parameters will be passed(指定引擎（二级目录）如果只有一级目录则自动为undefined不会传参)
+            version: parameter[2], // The corresponding engine currently only supports the corresponding version. For example, spark will pass version-2.4.3. If there is only a first-level directory, it will be automatically undefined and no parameters will be passed.(对应的引擎目前只支持对应的版本，如spark就传version-2.4.3，如果只有一级目录则自动为undefined不会传参)
           },
           "get"
         )
         .then((rst) => {
           this.loading = false;
-          //当前活动的tab 是否和点击的引擎同一个tab
+          //Whether the currently active tab is the same tab as the clicked engine(当前活动的tab 是否和点击的引擎同一个tab)
           this.fullTree = rst.fullTree;
           this.fullTree.forEach((item) => {
             item.settings = orderBy(item.settings, ["level"], ["asc"]);
@@ -435,15 +435,15 @@ export default {
     toggleAdvance() {
       this.isAdvancedShow = !this.isAdvancedShow;
     },
-    // tag切换触发
+    // tag switch trigger(tag切换触发)
     clickTabChange(name) {
       this.currentTabName = name;
-      // 初始化显示数据，筛选index
+      // Initialize display data, filter index(初始化显示数据，筛选index)
       let index = this.menuList.findIndex((item) => item.categoryName === name);
       if (index !== -1) {
         let menuListItem = this.menuList[index];
         let type = ''
-        // 判断是否存在子项，如果存在就进行拼接
+        // Determine whether there is a sub-item, and if it exists, splicing(判断是否存在子项，如果存在就进行拼接)
         if (menuListItem.childCategory && menuListItem.childCategory.length) {
           if (!this.subCategory[menuListItem.categoryName]) {
             this.subCategory[menuListItem.categoryName] = menuListItem.childCategory[0]
@@ -463,16 +463,16 @@ export default {
     addChildCategory() {
       this.isChildCategory = true;
     },
-    // 点击子项设置
+    // Click on sub item settings(点击子项设置)
     clickChildCategory(title, index, item) {
-      // 记录当前tab的子项显示,如果想缓存子项详情则改为getAppVariable内存储
+      // Record the display of the sub-items of the current tab. If you want to cache the details of the sub-items, store them in getAppVariable instead.(记录当前tab的子项显示,如果想缓存子项详情则改为getAppVariable内存储)
       this.subCategory[this.currentTabName]= {
         ...item,
         _subCategoryType: title
       };
       this.getAppVariable(title);
     },
-    //编辑引擎
+    //editing engine(编辑引擎)
     editChildCategory(index, item) {
       this.isEditChildCategory = true;
       this.editEngineFromItem.type = item.categoryName.split("-")[0];
@@ -481,7 +481,7 @@ export default {
       this.editEngineFromItem.categoryName =
         item.fatherCategoryName + "-" + item.categoryName;
     },
-    //编辑引擎提交
+    //Edit engine submission(编辑引擎提交)
     addEngineDesc() {
       let param = {
         description: this.editEngineFromItem.desc,
@@ -498,12 +498,12 @@ export default {
               item.description = this.editEngineFromItem.desc;
             }
           });
-          // this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+          // this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
           this.$Message.success(`修改描述成功`);
         });
     },
 
-    // 删除子项设置(删除应用下的引擎)
+    // Delete subitem settings (delete engine under application)(删除子项设置(删除应用下的引擎))
     async deleteChildCategory(index, item) {
       let confirm = await this.showConfirm(index, {
         content: '删除引擎将会删除该应用下此引擎的所有配置，且不可恢复(对所有用户生效)'
@@ -515,10 +515,10 @@ export default {
             { categoryId: item.categoryId },
             "post"
           )
-        this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+        this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
       }
     },
-    // 点击编辑目录 显示应用和引擎的删除按钮
+    // Click Edit Directory to display the Delete button for the application and engine(点击编辑目录 显示应用和引擎的删除按钮)
     handleTabsEdit() {
       this.isTypeCard = !this.isTypeCard;
       this.isdeleteListItem = !this.isdeleteListItem;
@@ -526,11 +526,11 @@ export default {
       this.isOpenAdd = !this.isOpenAdd;
     },
 
-    //删除目录应用
+    //delete directory application(删除目录应用)
     removeTab(name) {
-      //找到点击删除的tab 在menuList里的数据
+      //Find the data in the menuList of the tab you clicked to delete(找到点击删除的tab 在menuList里的数据)
       let menuItem = this.menuList.find((item) => item.categoryName === name);
-      //判断当前的活动tab是否和当前点击删除的tab一样
+      //Determine whether the current active tab is the same as the tab currently clicked to delete(判断当前的活动tab是否和当前点击删除的tab一样)
       if (this.currentTabName === name) {
         let ItemIndex = this.menuList.findIndex(
           (item) => item.categoryName === this.currentTabName
@@ -543,7 +543,7 @@ export default {
             "post"
           )
           .then(() => {
-            this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+            this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
             this.$Message.success(`删除${name}应用成功`);
           });
       } else {
@@ -554,7 +554,7 @@ export default {
             "post"
           )
           .then(() => {
-            this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+            this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
             this.$Message.success(`删除${name}应用成功`);
           });
       }
@@ -576,16 +576,16 @@ export default {
       })
     },
 
-    // 显示新增应用类型modal
+    // Display the new application type modal(显示新增应用类型modal)
     handleTabsAdd() {
       this.isAddApptype = true;
     },
     handleEngineAdd() {
       this.isChildCategory = true;
     },
-    // 新增引擎配置
+    // Add engine configuration(新增引擎配置)
     addParameterSet() {
-      /* 对输入的 引擎版本信息进行校验 */
+      /* Verify the entered engine version information(对输入的 引擎版本信息进行校验) */
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
           const currentTab = this.menuList.find((item) => {
@@ -610,7 +610,7 @@ export default {
         }
       });
     },
-    // 新增应用类型
+    // Add application type(新增应用类型)
     addApptype() {
 
       api
@@ -623,7 +623,7 @@ export default {
           "post"
         )
         .then(() => {
-          this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+          this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
         });
 
     },

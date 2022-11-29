@@ -31,6 +31,7 @@ export default {
   props: {
     mode: String,
     data: Object,
+    typeOptions: Array
   },
   data() {
     return {
@@ -61,7 +62,7 @@ export default {
         },
         {
           type: 'input',
-          title: "环境名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envName'),
           field: 'envName',
           value: '',
           props: {
@@ -72,14 +73,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"环境名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envName'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "环境描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
           field: 'envDesc',
           value: '',
           props: {
@@ -90,7 +91,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"环境描述"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
               trigger: 'blur',
             },
           ],
@@ -98,7 +99,7 @@ export default {
         {
           type: "select",
           field: "datasourceTypeId",
-          title: "数据源环境",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.datasourceType'),
           value: 1,
           options: [],
           validate: [
@@ -106,13 +107,13 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"数据源环境"`
+              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.datasourceType')
             },
           ],
         },
         {
           type: "radio",
-          title: "kerboros认证",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.keytab'),
           field: "keytab",
           value: false,
           options: [
@@ -145,26 +146,17 @@ export default {
         },
         {
           type: 'v-jsoneditor',
-          title: "参数",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
           field: 'parameter',
           value: '',
           props: {
             type: 'form-create',
             height: "280px",
-            options: { 
+            options: {
               mode: "code",
               modes: ['code','tree'],
             }
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"参数"`,
-              trigger: 'blur',
-            },
-          ],
+          }
         },
       ]
     }
@@ -175,17 +167,20 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
-      this.formData.parameter = JSON.parse(this.formData.parameter)
-    },
-    changeSelector(options){
-      console.log('test', options)
-      this.rule[3].options = [...options];
-      options.forEach(ele=> {
-        this.keyToName[ele.value] = ele.label;
-      })
+      if(this.formData.parameter.length>0){
+        this.formData.parameter = JSON.parse(this.formData.parameter)
+      }else{
+        this.formData.parameter= {}
+      }
     },
   },
   watch: {
+    typeOptions: {
+      handler(newV) {
+        this.rule[3].options = newV
+      },
+      deep: true,
+    },
     data: {
       handler(newV) {
         this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;

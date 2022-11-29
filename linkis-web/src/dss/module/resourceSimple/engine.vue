@@ -166,7 +166,7 @@ export default {
     return {
       btnSize: 'small',
       loading: false,
-      ideSelectData: 0, // 数据开发分类选择
+      ideSelectData: 0, // Data Development Classification Selection(数据开发分类选择)
       boardSelectData: 0,
       otherSelectData: 0,
       typeList: [
@@ -193,7 +193,7 @@ export default {
     },
   },
   watch: {
-    // 选择分类，分组数据
+    // Select classification, group data(选择分类，分组数据)
     ideSelectData() {
       this.ideClassList = [];
       this.getClassListAction(this.ideSelectData, this.ideEngineList, this.ideClassList);
@@ -324,7 +324,7 @@ export default {
             this.otherEngineList.push(item);
           }
         });
-        // 根据状态改变数据
+        // Change data based on state(根据状态改变数据)
         this.getClassListAction(this.ideSelectData, this.ideEngineList, this.ideClassList);
         this.getClassListAction(this.boardSelectData, this.boardEngineList, this.boardClassList);
         this.getClassListAction(this.otherSelectData, this.otherEngineList, this.otherClassList);
@@ -350,7 +350,7 @@ export default {
         });
       }
     },
-    // 颜色过滤
+    // color filter(颜色过滤)
     supportColor(status) {
       switch (status) {
         case 'Busy':
@@ -371,7 +371,7 @@ export default {
           return 'blue';
       }
     },
-    // 图标过滤
+    // Icon filtering(图标过滤)
     supportIcon(item) {
       const supportTypes = [
         { rule: 'hive', logo: 'fi-hive' },

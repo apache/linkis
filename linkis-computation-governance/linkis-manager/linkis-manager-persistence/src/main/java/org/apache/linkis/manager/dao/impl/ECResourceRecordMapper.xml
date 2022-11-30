@@ -96,7 +96,7 @@
                 #{i}
             </foreach>
         </if>
-        GROUP BY  r.service_instance ;
+        GROUP BY  ecr.service_instance ;
     </select>
 
 </mapper>

@@ -21,6 +21,8 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+import org.apache.linkis.common.utils.JsonUtils;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
@@ -66,6 +68,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import scala.annotation.meta.param;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -218,18 +223,32 @@ public class EngineRestfulApi {
 
   @ApiOperation(value = "kill egineconns of a ecm", notes = "", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:9210"),
+    @ApiImplicitParam(
+        name = "instance",
+        dataType = "String",
+        required = true,
+        example = "bdpujes110003:9210"),
     @ApiImplicitParam(name = "withMultiUserEngine", dataType = "boolean")
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
   @RequestMapping(path = "/rm/killUnlockEngineByEM", method = RequestMethod.POST)
-  public Message killUnlockEngine(
-      HttpServletRequest req,
-      @RequestParam(value = "instance", required = false) String instance,
-      @RequestParam(value = "withMultiUserEngine", required = false, defaultValue = "false")
-          Boolean withMultiUserEngine)
+  public Message killUnlockEngine(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws AMErrorException {
-    String operatmsg = MessageFormat.format("kill the unlock engines of ECM:{0}", instance);
+
+    JsonNode ecmInstance = jsonNode.get("instance");
+    JsonNode withMultiUserEngineParam = jsonNode.get("withMultiUserEngine");
+    if (null == ecmInstance || StringUtils.isBlank(ecmInstance.textValue())) {
+      throw new AMErrorException(
+          210003, "instance is null in the parameters of the request(请求参数中【instance】为空)");
+    }
+    Boolean withMultiUserEngine = false;
+    if (withMultiUserEngineParam != null) {
+      withMultiUserEngine = withMultiUserEngineParam.booleanValue();
+    }
+
+    String operatmsg =
+        MessageFormat.format("kill the unlock engines of ECM:{0}", ecmInstance.textValue());
+
     String userName = ModuleUserUtils.getOperationUser(req, operatmsg);
     if (!isAdmin(userName)) {
       throw new AMErrorException(
@@ -237,7 +256,9 @@ public class EngineRestfulApi {
           "Only admin can kill unlock engine of the specified ecm(只有管理员才能 kill 指定 ecm 下的所有空闲引擎).");
     }
 
-    Map result = engineStopService.stopUnlockEngineByECM(instance, withMultiUserEngine, userName);
+    Map result =
+        engineStopService.stopUnlockEngineByECM(
+            ecmInstance.textValue(), withMultiUserEngine, userName);
 
     return Message.ok("Kill engineConn succeed.").data("result", result);
   }
@@ -273,15 +294,20 @@ public class EngineRestfulApi {
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), userName);
       engineStopService.stopEngine(stopEngineRequest, sender);
-      logger.info("Finished to kill engines");
     }
+    logger.info("Finished to kill engines");
     return Message.ok("Kill engineConn succeed.");
   }
 
   @ApiOperationSupport(ignoreParameters = {"param"})
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "instances",
+        dataType = "Array",
+        example = "[\"bdpujes110003:12295\",\"bdpujes110003:12296\"]")
+  })
   @RequestMapping(path = "/rm/enginekillAsyn", method = RequestMethod.POST)
-  public Message killEngineAsyn(HttpServletRequest req, @RequestBody Map<String, String>[] param)
-      throws Exception {
+  public Message killEngineAsyn(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
     String username = ModuleUserUtils.getOperationUser(req, "enginekill");
     String token = ModuleUserUtils.getToken(req);
 
@@ -296,15 +322,32 @@ public class EngineRestfulApi {
       return Message.error("User:" + username + " has no permission to asyn kill engines.");
     }
 
+    JsonNode instancesParam = jsonNode.get("instances");
+
+    if (instancesParam == null || instancesParam.size() == 0) {
+      return Message.error(
+          "instances is null in the parameters of the request(请求参数中【instances】为空)");
+    }
+
+    List<String> instancesList = null;
+    try {
+      instancesList =
+          JsonUtils.jackson()
+              .readValue(instancesParam.toString(), new TypeReference<List<String>>() {});
+    } catch (JsonProcessingException e) {
+      return Message.error("instances parameters parsing failed(请求参数【instances】解析失败)");
+    }
+
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
-    for (Map<String, String> engineParam : param) {
-      String moduleName = engineParam.get("applicationName");
-      String engineInstance = engineParam.get("engineInstance");
+    for (String engineInstance : instancesList) {
+      // String moduleName = engineParam.get("applicationName");
+      // String engineInstance = engineParam.get("engineInstance");
+      String moduleName = GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue();
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), username);
       engineStopService.stopEngineAsyn(stopEngineRequest, sender);
-      logger.info("Finished to kill engines");
     }
+    logger.info("Finished to kill engines");
     return Message.ok("Kill engineConn succeed.");
   }
 

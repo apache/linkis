@@ -427,10 +427,12 @@ public class BmlProjectRestful {
       HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
     String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
     String resourceId = jsonNode.get("resourceId").textValue();
-    ModuleUserUtils.getOperationUser(
-        request,
-        MessageFormat.format(
-            "attachResourceAndProject,resourceId:{0},projectName:{1}", resourceId, projectName));
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "attachResourceAndProject,resourceId:{0},projectName:{1}",
+                resourceId, projectName));
     LOGGER.info("begin to attach {}  and {}", projectName, username);
     bmlProjectService.attach(projectName, resourceId);
     return Message.ok("attach resource and project ok");

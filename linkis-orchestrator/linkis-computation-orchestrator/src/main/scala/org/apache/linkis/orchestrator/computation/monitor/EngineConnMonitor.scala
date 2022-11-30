@@ -35,55 +35,54 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.{toJavaMap, BDPJettyServerHelper}
 
 import java.util
-import java.util.Collections
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters.{
-  asScalaBufferConverter,
-  asScalaSetConverter,
-  mapAsScalaMapConverter
-}
+import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 object EngineConnMonitor extends Logging {
 
+  private val ENGINECONN_LASTUPDATE_TIMEOUT =
+    ComputationOrchestratorConf.ENGINECONN_LASTUPDATE_TIMEOUT.getValue.toLong
+
   private[linkis] def addEngineExecutorStatusMonitor(
-      engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
+      engineConnExecutorCache: util.Map[ServiceInstance, Array[CodeExecTaskExecutor]],
       endJobByEngineInstance: ServiceInstance => Unit
   ): Unit = {
     val task = new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val startTime = System.currentTimeMillis()
         val engineExecutorCache = engineConnExecutorCache
-        val unActivityEngines =
-          Collections.synchronizedSet(new util.HashSet[EngineConnExecutor]())
-        engineExecutorCache.values.foreach(taskExecutors =>
+        val unActivityEngines = new mutable.HashSet[EngineConnExecutor]()
+        val allTaskExecutors = engineExecutorCache.values().iterator()
+        while (allTaskExecutors.hasNext) {
+          val taskExecutors = allTaskExecutors.next()
           taskExecutors.foreach(executor => {
-            if (
-                startTime - executor.getEngineConnExecutor
-                  .getLastUpdateTime() > ComputationOrchestratorConf.ENGINECONN_LASTUPDATE_TIMEOUT.getValue.toLong
-            ) {
+            val interval = startTime - executor.getEngineConnExecutor.getLastUpdateTime()
+            if (interval > ENGINECONN_LASTUPDATE_TIMEOUT) {
               unActivityEngines.add(executor.getEngineConnExecutor)
             }
           })
-        )
-        if (null != unActivityEngines && !unActivityEngines.isEmpty) {
-          logger.info("There are {} unActivity engines.", unActivityEngines.size)
+        }
+        if (null != unActivityEngines && unActivityEngines.nonEmpty) {
+          logger.info(s"There are ${unActivityEngines.size} unActivity engines.")
           val engineList = new util.ArrayList[ServiceInstance]()
-          unActivityEngines.asScala.foreach(engine => {
+          val instanceAndExecutors =
+            new mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]()
+          unActivityEngines.foreach(engine => {
             engineList.add(engine.getServiceInstance)
+            val executors = engineConnExecutorCache.get(engine.getServiceInstance)
+            if (null != executors) {
+              instanceAndExecutors.put(engine.getServiceInstance, executors)
+            }
             if (engineList.size() >= GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT) {
-              queryEngineStatusAndHandle(
-                engineConnExecutorCache,
-                engineList,
-                endJobByEngineInstance
-              )
+              queryEngineStatusAndHandle(instanceAndExecutors, engineList, endJobByEngineInstance)
               engineList.clear()
             }
           })
           if (!engineList.isEmpty) {
-            queryEngineStatusAndHandle(engineConnExecutorCache, engineList, endJobByEngineInstance)
+            queryEngineStatusAndHandle(instanceAndExecutors, engineList, endJobByEngineInstance)
             engineList.clear()
           }
         }
@@ -118,14 +117,11 @@ object EngineConnMonitor extends Logging {
         .ask(requestEngineStatus) match {
         case response: ResponseEngineStatusBatch =>
           if (null != response.msg) {
-            logger.info("ResponseEngineStatusBatch msg: {}", response.msg)
+            logger.info(s"ResponseEngineStatusBatch msg : ${response.msg}")
           }
           if (response.engineStatus.size() != requestEngineStatus.engineList.size()) {
-            logger.error(
-              "ResponseEngineStatusBatch engines size: {} is not equal request: {}.",
-              response.engineStatus.size(): Any,
-              requestEngineStatus.engineList.size(): Any
-            )
+            logger.warn(s"ResponseEngineStatusBatch engines size : ${response.engineStatus
+              .size()} is not euqal requet : ${requestEngineStatus.engineList.size()}.")
             val unKnownEngines = new ArrayBuffer[ServiceInstance]()
             requestEngineStatus.engineList.asScala.foreach(instance => {
               if (!response.engineStatus.containsKey(instance)) {
@@ -134,15 +130,14 @@ object EngineConnMonitor extends Logging {
               }
             })
             val instances = unKnownEngines.map(_.getInstance).mkString(",")
-            logger.warn("These engine instances cannot be found in manager : {}", instances)
+            logger.warn(s"These engine instances cannot be found in manager : ${instances}")
           }
           response.engineStatus.asScala.foreach(status =>
             dealWithEngineStatus(status, engineConnExecutorCache, endJobByEngineInstance)
           )
         case _ =>
-          logger.error(
-            "Invalid response. request : {}",
-            BDPJettyServerHelper.gson.toJson(requestEngineStatus)
+          logger.warn(
+            s"Invalid response. request : ${BDPJettyServerHelper.gson.toJson(requestEngineStatus)}"
           )
       }
     }
@@ -155,7 +150,7 @@ object EngineConnMonitor extends Logging {
   ): Unit = {
     status._2 match {
       case NodeExistStatus.UnExist =>
-        logger.warn("Engine {} is Failed, now go to clear its task.", status._1)
+        logger.warn(s"Engine ${status._1} is Failed, now go to clear its task.")
         endJobByEngineInstance(status._1)
       case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
         val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
@@ -169,23 +164,17 @@ object EngineConnMonitor extends Logging {
                   endJobByEngineInstance(status._1)
                 } else {
                   if (logger.isDebugEnabled()) {
-                    logger.debug("Will update engineConnExecutor({}) lastupdated time", status._1)
+                    logger.debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
                   }
                   updateExecutorActivityTime(status._1, engineConnExecutorCache)
                 }
-              case o: Any =>
-                Utils.tryAndWarn(
-                  logger.warn("Unknown response: {} for request: {}"),
-                  BDPJettyServerHelper.gson.toJson(o): Any,
-                  BDPJettyServerHelper.gson.toJson(requestNodeStatus): Any
+              case _ =>
+                logger.warn(
+                  s"Unknown response for request : ${BDPJettyServerHelper.gson.toJson(requestNodeStatus)}"
                 )
             }
-          } { case t: Throwable =>
-            logger.error(
-              "Failed to get status of engineConn : {}, now end the job.",
-              status._1: Any,
-              t: Any
-            )
+          } { t: Throwable =>
+            logger.error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
             endJobByEngineInstance(status._1)
           }
         }
@@ -199,23 +188,14 @@ object EngineConnMonitor extends Logging {
     if (null != serviceInstance) {
       val taskExecutorList = engineConnExecutorCache.getOrDefault(serviceInstance, null)
       if (null != taskExecutorList) {
-        val executors = taskExecutorList.filter(
-          _.getEngineConnExecutor.getServiceInstance.equals(serviceInstance)
-        )
-        if (null != executors && executors.size >= 1) {
-          synchronized {
-            executors.head.getEngineConnExecutor.updateLastUpdateTime()
+        taskExecutorList.foreach(executor =>
+          if (executor.getEngineConnExecutor.getServiceInstance.equals(serviceInstance)) {
+            executor.getEngineConnExecutor.updateLastUpdateTime()
           }
-        } else {
-          logger.warn(
-            "EngineConnExecutor {} cannot be found in engineConnExecutorCache",
-            serviceInstance.toString
-          )
-        }
+        )
       } else {
         logger.warn(
-          "EngineConnExecutor {} cannot be found in engineConnExecutorCache",
-          serviceInstance.toString
+          s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache"
         )
       }
     }

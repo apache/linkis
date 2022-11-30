@@ -22,9 +22,23 @@ import org.apache.commons.lang3.StringUtils;
 public enum NodeStatus {
 
   /**
-   * em 中管理的engineConn状态: Starting running Failed, Success to manage engineconn status
+   * Starting, EC start state
    *
-   * <p>manager中管理的engineConn状态：Starting ShuttingDown Unlock Idle Busy
+   * <p>Unlock, EC idle state
+   *
+   * <p>Locked state: This state contains two substates, Idle and Busy
+   *
+   * <p>Idle, which locks the no-task state
+   *
+   * <p>Busy, task execution status
+   *
+   * <p>Running,ECM exclusive state,EC will not have this state
+   *
+   * <p>ShuttingDown,EC abnormal exit state
+   *
+   * <p>Failed, Once EC executes the exception failure state and the start failure state
+   *
+   * <p>Success; The EC exits the state normally
    */
   Starting,
   Unlock,

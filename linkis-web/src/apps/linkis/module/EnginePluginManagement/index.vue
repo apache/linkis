@@ -341,9 +341,9 @@ export default {
       var formData = new FormData();
       if(this.actionNum === 0){
         formData.append('file', this.file);
-        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
+        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {method: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
           console.log(response);
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
           this.getTypeList();
           this.showFileOperate = false;
         }).catch(e => {
@@ -357,7 +357,7 @@ export default {
         formData.append('ecType', this.ecType);
         formData.append('version', this.version);
         api.fetch('/engineplugin/updateEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
           if(this.updWay === 'table') {
             this.ecType = '';
             this.version = '';

@@ -78,6 +78,8 @@ import org.slf4j.LoggerFactory;
 @RestController
 public class EMRestfulApi {
 
+  public static final String KEY_TENANT = "tenant";
+
   @Autowired private EMInfoService emInfoService;
 
   @Autowired private NodeLabelService nodeLabelService;
@@ -109,7 +111,8 @@ public class EMRestfulApi {
         dataType = "String",
         value = "node  healthy status",
         example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-    @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "Owner")
+    @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner"),
+    @ApiImplicitParam(name = "tenantLabel", dataType = "String", value = "tenantLabel")
   })
   // todo add healthInfo
   @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -117,7 +120,8 @@ public class EMRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "instance", required = false) String instance,
       @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
-      @RequestParam(value = "owner", required = false) String owner)
+      @RequestParam(value = "owner", required = false) String owner,
+      @RequestParam(value = "tenantLabel", required = false) String tenantLabel)
       throws AMErrorException {
     checkAdmin(ModuleUserUtils.getOperationUser(req, "listAllEMs"));
     List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
@@ -136,6 +140,24 @@ public class EMRestfulApi {
       if (StringUtils.isNotBlank(owner)) {
         stream = stream.filter(em -> em.getOwner().equalsIgnoreCase(owner));
       }
+
+      if (StringUtils.isNotBlank(tenantLabel)) {
+        stream =
+            stream.filter(
+                em -> {
+                  List<Label> labels = em.getLabels();
+                  labels =
+                      labels.stream()
+                          .filter(
+                              label ->
+                                  KEY_TENANT.equals(label.getLabelKey())
+                                      && tenantLabel.equals(label.getStringValue()))
+                          .collect(Collectors.toList());
+                  ;
+                  return labels.size() > 0 ? true : false;
+                });
+      }
+
       emNodeVos = stream.collect(Collectors.toList());
     }
     return Message.ok().data("EMs", emNodeVos);

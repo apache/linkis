@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,10 @@ public class ConfigurationRestfulApi {
         || StringUtils.isBlank(token)) {
       throw new ConfigurationException(PARAMS_CANNOT_BE_EMPTY.getErrorDesc());
     }
+    ModuleUserUtils.getOperationUser(
+        req,
+        MessageFormat.format(
+            "addKeyForEngine,engineType:{0},version:{1},token:{2}", engineType, version, token));
     // todo 检验token
     if (!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)) {
       throw new ConfigurationException(TOKEN_IS_ERROR.getErrorDesc());
@@ -120,12 +125,16 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "version", required = false) String version,
       @RequestParam(value = "creator", required = false) String creator)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
     if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
       engineType = "*";
       version = "*";
       creator = "*";
     }
+    String username =
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "ConfigurationException,engineType:{0},version:{1}", engineType, version));
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
             username, creator, engineType, version);

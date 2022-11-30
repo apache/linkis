@@ -33,7 +33,7 @@
 |linkis-entrance|wds.linkis.entrance.bdp.env| printInfo -|hive.printinfo.log|
 |linkis-entrance|wds.linkis.errorcode.file.dir| true | entrance.bdp.env|
 |linkis-entrance|wds.linkis.entrance.shell.danger.check.enabled|true | check.enabled|
-|linkis-entrance|wds.linkis.shell.danger.usage| bdp-client  |danger.usage|
+|linkis-entrance|wds.linkis.shell.danger.usage|rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn |danger.usage|
 |linkis-entrance|wds.linkis.shell.white.usage|sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while |.white.usage|
 |linkis-entrance|wds.linkis.entrance.flow.creator| nodeexecution|flow.creator|
 |linkis-entrance|wds.linkis.entrance.scheduler.creator| Schedulis|scheduler.creator|

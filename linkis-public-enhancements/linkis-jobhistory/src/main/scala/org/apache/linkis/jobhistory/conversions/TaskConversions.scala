@@ -41,6 +41,8 @@ import java.util.Date
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
+import com.fasterxml.jackson.core.JsonProcessingException
+
 object TaskConversions extends Logging {
 
   lazy private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -104,11 +106,21 @@ object TaskConversions extends Logging {
     jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
     jobReq.setExecutionCode(job.getExecutionCode)
+    jobReq.setObserveInfo(job.getObserveInfo)
     jobReq
   }
 
   def jobRequest2JobHistory(jobReq: JobRequest): JobHistory = {
     if (null == jobReq) return null
+
+    if (logger.isDebugEnabled) {
+      try logger.debug("input jobReq:" + JsonUtils.jackson.writeValueAsString(jobReq))
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobReq to string with error:" + e.getMessage)
+      }
+    }
+
     val jobHistory = new JobHistory
     jobHistory.setId(jobReq.getId)
     jobHistory.setJobReqId(jobReq.getReqId)
@@ -145,6 +157,19 @@ object TaskConversions extends Logging {
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
+    if (null != jobReq.getObserveInfo) {
+      jobHistory.setObserveInfo(jobReq.getObserveInfo)
+    }
+
+    if (logger.isDebugEnabled) {
+      try logger.debug(
+        "after jobRequest2JobHistory:" + JsonUtils.jackson.writeValueAsString(jobHistory)
+      )
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobRequest2JobHistory to string with error:" + e.getMessage)
+      }
+    }
     jobHistory
   }
 
@@ -295,6 +320,7 @@ object TaskConversions extends Logging {
         logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
+    taskVO.setObserveInfo(job.getObserveInfo)
     taskVO
   }
 

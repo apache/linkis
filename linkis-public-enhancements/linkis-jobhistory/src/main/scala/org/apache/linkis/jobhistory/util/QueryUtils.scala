@@ -153,23 +153,6 @@ object QueryUtils extends Logging {
     }
   }
 
-  def isStationAdmin(username: String): Boolean = {
-    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue
-      .split(",")
-      .exists(username.equalsIgnoreCase)
-  }
-
-  def isJobHistoryAdmin(username: String): Boolean = {
-    getJobHistoryAdmin()
-      .exists(username.equalsIgnoreCase)
-  }
-
-  def getJobHistoryAdmin(): Array[String] = {
-    val stationAdmin = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
-    val historyAdmin = JobhistoryConfiguration.JOB_HISTORY_ADMIN.getValue.split(",")
-    stationAdmin ++ historyAdmin
-  }
-
   def dateToString(date: Date): String = {
     dateFormatLocal.get().format(date)
   }

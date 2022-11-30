@@ -153,6 +153,7 @@ public class EMRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
     NodeHealthy[] nodeHealthy = NodeHealthy.values();
+    ModuleUserUtils.getOperationUser(req, "listAllNodeHealthyStatus");
     if (onlyEditable) {
       nodeHealthy =
           new NodeHealthy[] {

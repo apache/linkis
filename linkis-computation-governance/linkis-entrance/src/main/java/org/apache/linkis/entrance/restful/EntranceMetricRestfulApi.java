@@ -116,7 +116,7 @@ public class EntranceMetricRestfulApi {
   @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
   @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
   public Message status(HttpServletRequest req) {
-
+    ModuleUserUtils.getOperationUser(req, "runningtask");
     EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
     Boolean isCompleted = false;
     if (null == undoneTasks || undoneTasks.length < 1) {

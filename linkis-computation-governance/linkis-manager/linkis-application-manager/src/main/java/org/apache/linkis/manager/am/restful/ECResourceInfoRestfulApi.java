@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
@@ -38,8 +39,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -182,16 +185,39 @@ public class ECResourceInfoRestfulApi {
 
   @ApiOperation(value = "ecList", notes = "query engineconn info list", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "creators", dataType = "String", value = "creators"),
-    @ApiImplicitParam(name = "engineType", dataType = "String", value = "engine type"),
-    @ApiImplicitParam(name = "statuss", dataType = "String", value = "statuss"),
+    @ApiImplicitParam(name = "creators", dataType = "Array", required = true, value = "creators"),
+    @ApiImplicitParam(name = "engineTypes", dataType = "Array", value = "engine type"),
+    @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
-  public Message queryEcList(
-      HttpServletRequest req,
-      @RequestParam(value = "creators", required = true) String creators,
-      @RequestParam(value = "engineTypes", required = false) String engineTypes,
-      @RequestParam(value = "statuss", required = false) String statuss) {
+  public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+      throws JsonProcessingException {
+
+    JsonNode creatorsParam = jsonNode.get("creators");
+    JsonNode engineTypesParam = jsonNode.get("engineTypes");
+    JsonNode statussParam = jsonNode.get("statuss");
+
+    if (creatorsParam == null || creatorsParam.size() == 0) {
+      return Message.error("creators is null in the parameters of the request(请求参数中【creators】为空)");
+    }
+
+    List<String> creatorUserList =
+        JsonUtils.jackson()
+            .readValue(creatorsParam.toString(), new TypeReference<List<String>>() {});
+
+    List<String> engineTypeList = new ArrayList<>();
+    if (engineTypesParam != null) {
+      engineTypeList =
+          JsonUtils.jackson()
+              .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
+    }
+
+    List<String> statusList = new ArrayList<>();
+    if (statussParam != null) {
+      statusList =
+          JsonUtils.jackson()
+              .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
+    }
 
     String username = ModuleUserUtils.getOperationUser(req, "ecList");
 
@@ -199,27 +225,19 @@ public class ECResourceInfoRestfulApi {
     // check special admin token
     if (StringUtils.isNotBlank(token)) {
       if (!Configuration.isAdminToken(token)) {
-        logger.warn("Token {} has no permission to query ecList.", token);
+        logger.warn("Token:{} has no permission to query ecList.", token);
         return Message.error("Token:" + token + " has no permission to query ecList.");
       }
     } else if (!Configuration.isAdmin(username)) {
-      logger.warn("User {} has no permission to query ecList.", username);
+      logger.warn("User:{} has no permission to query ecList.", username);
       return Message.error("User:" + username + " has no permission to query ecList.");
     }
 
-    String[] engineTypeArray = engineTypes.split(",");
-    List<String> engineTypeList = Arrays.stream(engineTypeArray).collect(Collectors.toList());
-
-    String[] creatorArray = creators.split(",");
-    List<String> creatorUserList = Arrays.stream(creatorArray).collect(Collectors.toList());
     for (String creatorUser : creatorUserList) {
       if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
-        return Message.error("Invalid creator : " + creatorUser);
+        return Message.error("Invalid creator: " + creatorUser);
       }
     }
-
-    String[] statusArray = statuss.split(",");
-    List<String> statusList = Arrays.stream(statusArray).collect(Collectors.toList());
 
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusList);

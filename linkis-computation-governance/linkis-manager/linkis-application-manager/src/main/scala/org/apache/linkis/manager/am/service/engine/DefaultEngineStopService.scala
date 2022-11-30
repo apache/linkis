@@ -18,11 +18,9 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
-import org.apache.linkis.manager.am.utils.AMUtils.mapper
-import org.apache.linkis.manager.am.vo.ResourceVo
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.{
@@ -53,6 +51,7 @@ import scala.collection.JavaConverters._
 import scala.concurrent.{ExecutionContextExecutorService, Future}
 import scala.util.control.Breaks._
 
+import com.fasterxml.jackson.core.JsonProcessingException
 import org.json4s.jackson.Serialization.write
 
 @Service
@@ -138,10 +137,19 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     emNode.setNodeStatus(NodeStatus.Unlock)
 
     val engineNodes = engineInfoService.listEMEngines(emNode)
+    logger.info("get ec node list size:{} of ecm:{} ", engineNodes.size(), ecmInstance)
 
     var loadInstanceResourceTotla = new LoadInstanceResource(0, 0, 0)
 
     engineNodes.asScala.foreach { node =>
+      if (logger.isDebugEnabled) {
+        try logger.debug("engine node:" + JsonUtils.jackson.writeValueAsString(node))
+        catch {
+          case e: JsonProcessingException =>
+            logger.debug("convert jobReq to string with error:" + e.getMessage)
+        }
+      }
+
       breakable {
         if (node.getLabels.isEmpty) {
           logger.info(

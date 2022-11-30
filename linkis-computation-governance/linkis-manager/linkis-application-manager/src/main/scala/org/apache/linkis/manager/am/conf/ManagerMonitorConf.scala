@@ -38,6 +38,6 @@ object ManagerMonitorConf {
   val MONITOR_SWITCH_ON = CommonVars("wds.linkis.manager.am.monitor.switch.on", true)
 
   val ECM_HEARTBEAT_MAX_UPDATE_TIME =
-    CommonVars("wds.linkis.manager.am.ecm.heartbeat", new TimeType("1m"))
+    CommonVars("wds.linkis.manager.am.ecm.heartbeat", new TimeType("5m"))
 
 }

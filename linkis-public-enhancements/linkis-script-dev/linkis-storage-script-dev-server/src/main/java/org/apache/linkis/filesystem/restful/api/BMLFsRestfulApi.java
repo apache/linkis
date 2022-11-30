@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,11 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "projectName", required = false) String projectName,
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
-    String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
+    String userName =
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "openScriptFromBML,resourceId:{0},fileName:{1}", resourceId, fileName));
     Map<String, Object> query = bmlHelper.query(userName, resourceId, version);
     InputStream inputStream = (InputStream) query.get("stream");
     try (FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream)) {
@@ -117,7 +122,11 @@ public class BMLFsRestfulApi {
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "fileName", defaultValue = "test.sql") String fileName)
       throws IOException, WorkSpaceException {
-    String userName = ModuleUserUtils.getOperationUser(req, "openScriptFromBML");
+    String userName =
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "openScriptFromProductBML,resourceId:{0},fileName:{1}", resourceId, fileName));
     if (!StringUtils.isEmpty(creator)) {
       userName = creator;
     }
@@ -165,7 +174,11 @@ public class BMLFsRestfulApi {
     String resourceId = (String) json.get("resourceId");
     String creator = (String) json.get("creator");
     String projectName = (String) json.get("projectName");
-    String userName = ModuleUserUtils.getOperationUser(req, "saveScriptToBML" + fileName);
+    String userName =
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "saveScriptToBML,resourceId:{0},fileName:{1}", resourceId, fileName));
     ScriptFsWriter writer =
         StorageScriptFsWriter.getScriptFsWriter(
             new FsPath(fileName), Consts.UTF_8.toString(), null);

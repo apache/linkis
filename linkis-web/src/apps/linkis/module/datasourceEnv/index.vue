@@ -182,6 +182,10 @@ export default {
         modifyTime: '',
         modifyUser: '',
         parameter: '',
+        uris: '',
+        keytab: '',
+        principle: '',
+        hadoopConf: '',
         _index: '',
         _rowKey: ''
       },
@@ -190,7 +194,7 @@ export default {
     };
   },
   created() {
-    this.load()
+    // this.load()
   },
   mounted() {
     this.init();
@@ -234,8 +238,17 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
-      row.keytab = JSON.parse(row.parameter).keytab ? true : false;
+      row.hasKeyTab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
+      // format parameter for modal
+      if (this.modalEditData.parameter) {
+        this.modalEditData.parameter = JSON.parse(this.modalEditData.parameter)
+        const { uris, principle, keytab, hadoopConf } = this.modalEditData.parameter
+        this.modalEditData.uris = uris;
+        this.modalEditData.principle = principle;
+        this.modalEditData.keytab = keytab;
+        this.modalEditData.hadoopConf = hadoopConf;
+      }
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
@@ -268,17 +281,31 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
+        console.log(key);
       }
-      this.modalEditData.keytab = false;
+      this.modalEditData.hasKeyTab = false;
     },
     onModalOk(){
-      this.$refs.editForm.formModel.submit((formData)=>{
-        if('keytab' in formData) delete formData['keytab'];
+      this.$refs.errorCodeForm.formModel.submit((formData)=>{
         if('pic' in formData) delete formData['pic'];
         delete formData._index
         delete formData._rowKey
         this.modalLoading = true
+        const { uris, keytab, principle, hadoopConf } = formData;
+        if (formData.hasKeyTab) {
+          // inject props to parameter
+          formData.parameter = {
+            keytab, principle
+          }
+        }
+        formData.parameter.uris = uris
+        formData.parameter.hadoopConf = hadoopConf
         formData.parameter = JSON.stringify(formData.parameter)
+        if('hasKeyTab' in formData) delete formData['hasKeyTab'];
+        if('principle' in formData) delete formData['principle'];
+        if('hadoopConf' in formData) delete formData['hadoopConf'];
+        if('keytab' in formData) delete formData['keytab'];
+        if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
             if(data.result) {
@@ -310,13 +337,14 @@ export default {
             this.load()
           })
         }
+        console.log(formData);
         this.modalLoading=false
         this.modalShow = false
 
       })
     },
     onModalCancel(){
-      this.modalLoading=false
+      this.modalLoading = false
       this.modalShow = false
     }
   },

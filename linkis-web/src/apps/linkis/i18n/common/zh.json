@@ -300,6 +300,7 @@
       "viewlog": "查看日志",
       "datasource": {
         "pleaseInput": "请输入",
+        "pleaseUpload": "请上传",
         "datasourceSrc": "数据源",
         "connectTest": "测试连接",
         "sourceName": "数据源名称",

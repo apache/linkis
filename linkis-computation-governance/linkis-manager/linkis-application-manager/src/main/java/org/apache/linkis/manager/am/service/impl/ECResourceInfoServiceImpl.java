@@ -19,8 +19,6 @@ package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.manager.am.restful.EMRestfulApi;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
-import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
-import org.apache.linkis.manager.am.vo.ResourceVo;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
@@ -103,7 +101,9 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());
 
-    if (instanceList.size() == 0) return resultList;
+    if (instanceList.size() == 0) {
+      return resultList;
+    }
 
     // filter by engineType and get latest resource record info
     List<ECResourceInfoRecord> ecResourceInfoRecords =
@@ -120,12 +120,13 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
                 json.readValue(
                     json.writeValueAsString(info), new TypeReference<Map<String, Object>>() {});
             Integer intStatus = info.getInstanceStatus();
-            item.put("instanceStatus", NodeStatus.values()[info.getInstanceStatus()].name());
+            item.put("instanceStatus", NodeStatus.values()[intStatus].name());
             ECResourceInfoRecord latestEcInfo = map.get(info.getInstance());
-            ResourceVo resourceVo =
-                ECResourceInfoUtils.getStringToMap(latestEcInfo.getUsedResource(), latestEcInfo);
-            item.put("useResource", resourceVo);
+            item.put("useResource", latestEcInfo.getUsedResource());
             item.put("ecmInstance", latestEcInfo.getEcmInstance());
+            String engineType = latestEcInfo.getLabelValue().split(",")[1].split("-")[0];
+            item.put("engineType", engineType);
+
             resultList.add(item);
 
           } catch (JsonProcessingException e) {

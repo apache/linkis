@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.persistence;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +148,16 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       throw new EntranceIllegalParamException(
           JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
     }
+    if (logger.isDebugEnabled()) {
+      try {
+        logger.debug("jobReq:" + JsonUtils.jackson().writeValueAsString(jobReq));
+      } catch (JsonProcessingException e) {
+        logger.debug("convert jobReq to string with error:" + e.getMessage());
+      }
+    }
+
     JobReqInsert jobReqInsert = new JobReqInsert(jobReq);
+
     JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqInsert, "Insert job");
     if (null != jobRespProtocol) {
       Map<String, Object> data = jobRespProtocol.getData();

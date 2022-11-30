@@ -17,6 +17,7 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -103,14 +104,14 @@ public class FsRestfulApi {
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (WorkspaceUtil.isLogAdmin(userName)) {
+    if (Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
     LOGGER.debug("requestPath:" + requestPath);
     LOGGER.debug("workspacePath:" + workspacePath);
     LOGGER.debug("enginconnPath:" + enginconnPath);
-    LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue());
+    LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
   }
 
@@ -978,7 +979,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
-    if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
+    if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
     if (!checkIsUsersDirectory(path, userName)) {

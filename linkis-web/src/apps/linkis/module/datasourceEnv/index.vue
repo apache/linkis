@@ -44,13 +44,14 @@
             size="small"
             type="primary"
             @click="onTableEdit(row, index)"
+            style="margin-right: 5px"
           >{{ $t('message.linkis.basedataManagement.edit') }}
           </Button
           >
           <Button
             :disabled="row.expire"
             size="small"
-            type="primary"
+            type="error"
             @click="onTableDelete(row, index)"
           >
             {{ $t('message.linkis.basedataManagement.remove') }}
@@ -211,7 +212,7 @@ export default {
       }
       getAllEnv().then((res) => {
         let options = [...res.typeList].sort((a, b) => a.id - b.id)
-          .map(item => { return {value: +item.id, label: item.name}})
+          .map(item => { return {value: +item.id, label: item.name, disabled: ![2, 4].includes(+item.id)}})
         this.datasourceTypeOptions= options
         // 获取列表
         getList(params).then((data) => {
@@ -286,7 +287,7 @@ export default {
       this.modalEditData.hasKeyTab = false;
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.editForm.formModel.submit((formData)=>{
         if('pic' in formData) delete formData['pic'];
         delete formData._index
         delete formData._rowKey

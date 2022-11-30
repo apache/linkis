@@ -87,15 +87,6 @@ export default {
           props: {
             placeholder: "",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
-              trigger: 'blur',
-            },
-          ],
         },
         //3
         {
@@ -226,16 +217,6 @@ export default {
               modes: ['code','tree'],
             }
           },
-          validate: [
-            {
-              required: true,
-              type: 'object',
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"参数"`,
-              trigger: 'blur',
-            },
-          ],
         },
       ]
     }
@@ -259,7 +240,7 @@ export default {
     },
     hiddenHandler (newV) {
       // radio
-      this.rule[4].hidden = !(this.keyToName[newV.datasourceTypeId] === 'hive');
+      this.rule[4].hidden = !(newV.datasourceTypeId === 4);
       // keytab value
       this.rule[6].hidden = !newV.keytab;
       // upload

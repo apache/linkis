@@ -108,7 +108,7 @@ public class UDFServiceImpl implements UDFService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void addUDF(UDFAddVo udfVo, String userName) throws Exception {
+  public long addUDF(UDFAddVo udfVo, String userName) throws Exception {
     logger.info(userName + " add udfVo: " + udfVo.getUdfName());
     // 锁同一用户
     CommonLock commonLock = new CommonLock();
@@ -186,6 +186,7 @@ public class UDFServiceImpl implements UDFService {
         addLoadInfo(udfInfo.getId(), userName);
       }
       logger.info("end for " + userName + " add udfVo: " + udfVo.getUdfName());
+      return udfInfo.getId();
     } finally {
       commonLockService.unlock(commonLock);
     }
@@ -1047,5 +1048,44 @@ public class UDFServiceImpl implements UDFService {
       udfDao.deleteSharedUser(oldsharedUser, udfId);
       udfDao.deleteLoadInfo(udfId, oldsharedUser);
     }
+  }
+
+  @Override
+  public List<UDFAddVo> getUdfByNameList(List<String> udfNameList, String creator) {
+    logger.info("begin to get managerPages.");
+    List<UDFAddVo> retList = new ArrayList<>();
+    retList = udfDao.getUdfInfoByNameList(udfNameList, creator);
+    retList.forEach(
+        udfInfo -> {
+          String createUser = udfInfo.getCreateUser();
+          boolean ismanager = isUDFManager(createUser);
+          List<Long> loadedUdf = udfDao.getLoadedUDFIds(createUser);
+          udfInfo.setLoad(loadedUdf.contains(udfInfo.getId()));
+          boolean canExpire = false;
+          if (Boolean.TRUE.equals(udfInfo.getShared())) {
+            long loadCount = udfDao.getUserLoadCountByUdfId(udfInfo.getId(), createUser);
+            if (loadCount > 0) {
+              canExpire = true;
+            }
+          }
+          boolean finalCanExpire = canExpire;
+          udfInfo.setOperationStatus(
+              new HashMap<String, Boolean>() {
+                {
+                  put("canUpdate", true);
+                  put("canDelete", !finalCanExpire);
+                  put("canExpire", finalCanExpire);
+                  put("canShare", ismanager);
+                  put("canPublish", ismanager && Boolean.TRUE.equals(udfInfo.getShared()));
+                  put("canHandover", true);
+                }
+              });
+        });
+    return retList;
+  }
+
+  @Override
+  public UDFVersionVo getUdfVersionInfo(String udfName, String createUser) {
+    return udfVersionDao.getUdfVersionInfoByName(udfName, createUser);
   }
 }

@@ -132,4 +132,7 @@ public interface UDFDao {
   List<UDFInfoVo> getLatesetPublishedUDF(
       @Param("userName") String userName,
       @Param("categoryCodes") Collection<Integer> categoryCodes);
+
+  List<UDFAddVo> getUdfInfoByNameList(
+      @Param("udfNameList") Collection<String> udfNameList, @Param("createUser") String createUser);
 }

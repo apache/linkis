@@ -15,35 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.util
+package org.apache.linkis.manager.engineplugin.shell.conf
 
-import oshi.SystemInfo
+import org.apache.linkis.common.conf.CommonVars
 
-object HardwareUtils {
+object ShellEngineConnConf {
 
-  def getAvailableMemory(): Long = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
-    val globalMemory = hardware.getMemory
-    globalMemory.getAvailable
-  }
+  val SHELL_ENGINECONN_CONCURRENT_LIMIT: Int =
+    CommonVars[Int]("linkis.engineconn.shell.concurrent.limit", 30).getValue
 
-  def getMaxMemory(): Long = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
-    val globalMemory = hardware.getMemory
-    globalMemory.getTotal
-  }
-
-  /**
-   * 1 total 2 available
-   * @return
-   */
-  def getTotalAndAvailableMemory(): (Long, Long) = {
-    val systemInfo = new SystemInfo
-    val hardware = systemInfo.getHardware
-    val globalMemory = hardware.getMemory
-    (globalMemory.getTotal, globalMemory.getAvailable)
-  }
+  val LOG_SERVICE_MAX_THREAD_SIZE: Int =
+    CommonVars("linkis.engineconn.shell.log.max.thread.size", 50).getValue
 
 }

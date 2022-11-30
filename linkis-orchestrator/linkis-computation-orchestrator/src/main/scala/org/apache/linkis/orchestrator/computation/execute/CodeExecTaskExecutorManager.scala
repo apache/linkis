@@ -93,9 +93,9 @@ trait CodeExecTaskExecutorManager {
       isSucceed: Boolean
   ): Unit
 
-  def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+  def getAllInstanceToExecutorCache(): java.util.Map[ServiceInstance, Array[CodeExecTaskExecutor]]
 
-  def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor]
+  def getAllExecTaskToExecutorCache(): java.util.Map[String, CodeExecTaskExecutor]
 
 }
 

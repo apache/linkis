@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.am.locker
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
 import org.apache.linkis.manager.common.protocol.{
   RequestEngineLock,
@@ -46,7 +46,7 @@ class DefaultEngineNodeLocker extends EngineNodeLocker with Logging {
   }
 
   @Receiver
-  def releaseLock(requestManagerUnlock: RequestManagerUnlock): Unit = {
+  def releaseLock(requestManagerUnlock: RequestManagerUnlock): Unit = Utils.tryAndWarn {
     logger.info(
       s"client${requestManagerUnlock.clientInstance} Start to unlock engine ${requestManagerUnlock.engineInstance}"
     )

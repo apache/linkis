@@ -196,6 +196,7 @@ class DefaultEngineCreateService
           failedEcNode.getLabels.addAll(
             LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels)
           )
+          failedEcNode.setNodeStatus(NodeStatus.Failed)
           engineStopService.engineConnInfoClear(failedEcNode)
         }
         throw t
@@ -220,6 +221,7 @@ class DefaultEngineCreateService
         failedEcNode.getLabels.addAll(
           LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels)
         )
+        failedEcNode.setNodeStatus(NodeStatus.Failed)
         engineStopService.engineConnInfoClear(failedEcNode)
       }
       throw new LinkisRetryException(

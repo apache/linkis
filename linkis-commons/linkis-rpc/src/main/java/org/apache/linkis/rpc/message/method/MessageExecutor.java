@@ -87,7 +87,7 @@ public class MessageExecutor {
           }
         }
       } catch (Throwable t) {
-        logger.error(String.format("method %s call failed", methodWrapper.getAlias()), t);
+        logger.warn(String.format("method %s call failed", methodWrapper.getAlias()), t);
 
         final String errorMsg =
             t instanceof InvocationTargetException

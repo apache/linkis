@@ -90,7 +90,7 @@ public class WorkspaceUtil {
     if (i != -1) {
       name = name.substring(0, i);
     }
-    // 只支持数字,字母大小写,下划线,中文
+    // Only support numbers, uppercase letters, underscores, Chinese(只支持数字,字母大小写,下划线,中文)
     String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
     Pattern specialPattern = Pattern.compile(specialRegEx);
     if (!specialPattern.matcher(name).find()) {

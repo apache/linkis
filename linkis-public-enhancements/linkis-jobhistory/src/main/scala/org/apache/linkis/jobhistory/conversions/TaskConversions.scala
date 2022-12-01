@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -41,6 +41,8 @@ import java.util.Date
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
 
+import com.fasterxml.jackson.core.JsonProcessingException
+
 object TaskConversions extends Logging {
 
   lazy private val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
@@ -56,54 +58,6 @@ object TaskConversions extends Logging {
     }
     task
   }
-
-  /* @deprecated
-  def queryTask2RequestPersistTask(queryTask: QueryTask): RequestPersistTask = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val task = new RequestPersistTask
-    BeanUtils.copyProperties(queryTask, task)
-    task.setSource(BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]]))
-    task.setParams(BDPJettyServerHelper.gson.fromJson(queryTask.getParamsJson, classOf[java.util.HashMap[String, Object]]))
-    task
-  } */
-
-  /* @deprecated
-  def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
-    val task: QueryTask = new QueryTask
-    BeanUtils.copyProperties(requestPersistTask, task)
-    if (requestPersistTask.getParams != null)
-      task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getParams))
-    else
-      task.setParamsJson(null)
-    task
-  } */
-
-  /* def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val taskVO = new QueryTaskVO
-    BeanUtils.copyProperties(queryTask, taskVO)
-    if (!StringUtils.isEmpty(taskVO.getSourceJson)) {
-      Utils.tryCatch {
-        val source = BDPJettyServerHelper.gson.fromJson(taskVO.getSourceJson, classOf[util.Map[String, String]])
-        taskVO.setSourceTailor(source.asScala.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
-      } {
-        case _ => warn("sourceJson deserializae failed,this task may be the old data")
-      }
-    }
-    if (queryTask.getExecId() != null && queryTask.getExecuteApplicationName() != null && queryTask.getInstance() != null) {
-      taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(queryTask.getExecId(),
-        queryTask.getExecuteApplicationName(), queryTask.getInstance(), queryTask.getRequestApplicationName))
-    }
-    val status = queryTask.getStatus()
-    val createdTime = queryTask.getCreatedTime()
-    val updatedTime = queryTask.getUpdatedTime()
-    if (isJobFinished(status) && createdTime != null && updatedTime != null) {
-      taskVO.setCostTime(queryTask.getUpdatedTime().getTime() - queryTask.getCreatedTime().getTime());
-    } else if (createdTime != null) {
-      taskVO.setCostTime(System.currentTimeMillis() - queryTask.getCreatedTime().getTime());
-    }
-    taskVO
-  } */
 
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
@@ -158,6 +112,15 @@ object TaskConversions extends Logging {
 
   def jobRequest2JobHistory(jobReq: JobRequest): JobHistory = {
     if (null == jobReq) return null
+
+    if (logger.isDebugEnabled) {
+      try logger.debug("input jobReq:" + JsonUtils.jackson.writeValueAsString(jobReq))
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobReq to string with error:" + e.getMessage)
+      }
+    }
+
     val jobHistory = new JobHistory
     jobHistory.setId(jobReq.getId)
     jobHistory.setJobReqId(jobReq.getReqId)
@@ -196,6 +159,16 @@ object TaskConversions extends Logging {
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
     if (null != jobReq.getObserveInfo) {
       jobHistory.setObserveInfo(jobReq.getObserveInfo)
+    }
+
+    if (logger.isDebugEnabled) {
+      try logger.debug(
+        "after jobRequest2JobHistory:" + JsonUtils.jackson.writeValueAsString(jobHistory)
+      )
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobRequest2JobHistory to string with error:" + e.getMessage)
+      }
     }
     jobHistory
   }
@@ -251,7 +224,7 @@ object TaskConversions extends Logging {
     taskVO.setInstance(job.getInstances)
     taskVO.setExecId(job.getJobReqId)
     taskVO.setUmUser(job.getSubmitUser)
-
+    taskVO.setExecuteUser(job.getExecuteUser)
     taskVO.setProgress(job.getProgress)
     taskVO.setLogPath(job.getLogPath)
     taskVO.setStatus(job.getStatus)
@@ -267,7 +240,7 @@ object TaskConversions extends Logging {
         engineType = LabelUtil.getEngineType(labelList)
       }
       codeType = LabelUtil.getCodeType(labelList)
-      val userCreator = Option(LabelUtil.getUserCreator(labelList)).getOrElse(null)
+      val userCreator = Option(LabelUtil.getUserCreator(labelList)).orNull
       if (null != userCreator) {
         creator = userCreator._2
       }
@@ -327,7 +300,7 @@ object TaskConversions extends Logging {
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
     val instances =
-      job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
+      job.getInstances.split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
     taskVO.setStrongerExecId(
       ZuulEntranceUtils.generateExecID(job.getJobReqId, entranceName, instances)
     )

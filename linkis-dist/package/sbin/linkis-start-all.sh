@@ -57,7 +57,7 @@ executeCMD $SERVER_IP "$SERVER_START_CMD"
 
 isSuccess "start $SERVER_NAME"
 echo "<-------------------------------->"
-sleep 15
+sleep 3
 }
 
 
@@ -76,6 +76,8 @@ startApp
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp
+
+sleep 15
 
 #linkis-cg-linkismanage
 SERVER_NAME="cg-linkismanager"

@@ -145,10 +145,10 @@ public class UserIpConfigrationRestfulApi {
   @RequestMapping(path = "/query-user-ip-list", method = RequestMethod.GET)
   public Message queryUserIpList(
       HttpServletRequest req,
-      @RequestParam(value = "user") String user,
-      @RequestParam(value = "creator") String creator,
-      @RequestParam(value = "pageNow") Integer pageNow,
-      @RequestParam(value = "pageSize") Integer pageSize) {
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize) {
     String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
     if (!Configuration.isAdmin(userName)) {
       return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
@@ -177,8 +177,8 @@ public class UserIpConfigrationRestfulApi {
   @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
   public Message checkUserCreator(
       HttpServletRequest req,
-      @RequestParam(value = "user") String user,
-      @RequestParam(value = "creator") String creator) {
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "creator", required = false) String creator) {
     Boolean result = false;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");

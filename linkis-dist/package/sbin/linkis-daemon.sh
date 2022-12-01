@@ -121,10 +121,10 @@ function start()
   else
       echo "Start server, startup script:  $SERVER_START_BIN"
       export SERVER_NAME=linkis-$SERVER_NAME
-      sed -i "/.*export DEBUG_PORT*/c\#export DEBUG_PORT=" $SERVER_START_BIN
       sed -i "/.*export DYNAMIC_JVM*/c\#export DYNAMIC_JVM=" $SERVER_START_COMMON
-      setport
+      sed -i "/.*export DEBUG_PORT*/c\#export DEBUG_PORT=" $SERVER_START_BIN
       setjvm
+      setport
       sh  $SERVER_START_BIN
   fi
 }

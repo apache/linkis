@@ -19,6 +19,7 @@ package org.apache.linkis.entrance
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.{ErrorException, LinkisException, LinkisRuntimeException}
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -26,7 +27,7 @@ import org.apache.linkis.entrance.cs.CSEntranceHelper
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import org.apache.linkis.entrance.execute.EntranceJob
-import org.apache.linkis.entrance.log.LogReader
+import org.apache.linkis.entrance.log.{Cache, HDFSCacheLogWriter, LogReader}
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -39,6 +40,7 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
+import org.apache.linkis.storage.utils.StorageUtils
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -355,22 +357,106 @@ abstract class EntranceServer extends Logging {
     }
   }
 
+  def dealInitedJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+    Utils.tryThrow(
+      getEntranceContext
+        .getOrCreateEntranceInterceptors()
+        .foreach(int => int.apply(jobRequest, logAppender))
+    ) { t =>
+      val error = t match {
+        case error: ErrorException => error
+        case t1: Throwable =>
+          val exception = new EntranceErrorException(
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
+          )
+          exception.initCause(t1)
+          exception
+        case _ =>
+          new EntranceErrorException(
+            FAILED_ANALYSIS_TASK.getErrorCode,
+            MessageFormat.format(
+              FAILED_ANALYSIS_TASK.getErrorDesc,
+              ExceptionUtils.getRootCauseMessage(t)
+            )
+          )
+      }
+      jobRequest match {
+        case t: JobRequest =>
+          t.setErrorCode(error.getErrCode)
+          t.setErrorDesc(error.getDesc)
+          t.setStatus(SchedulerEventState.Failed.toString)
+          t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
+          val infoMap = new util.HashMap[String, Object]
+          infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put(TaskConstant.TICKET_ID, "")
+          infoMap.put("message", "Task interception failed and cannot be retried")
+          JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
+        case _ =>
+      }
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(jobRequest)
+      error
+    }
+
+  }
+
+  def dealRunningJobRequest(jobRequest: JobRequest): Unit = {
+    Utils.tryCatch {
+      // init jobRequest properties
+      jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
+      jobRequest.setProgress("1.0")
+      jobRequest.setInstances(Sender.getThisInstance)
+
+      // update jobRequest
+      getEntranceContext
+        .getOrCreatePersistenceManager()
+        .createPersistenceEngine()
+        .updateIfNeeded(jobRequest)
+
+      // append log
+      val logPath = jobRequest.getLogPath
+      if (StringUtils.isNotBlank(logPath)) {
+        val fsLogPath = new FsPath(logPath)
+        if (StorageUtils.HDFS == fsLogPath.getFsType) {
+          val logWriter = new HDFSCacheLogWriter(
+            logPath,
+            EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
+            Cache(1),
+            jobRequest.getExecuteUser
+          )
+
+          val msg =
+            s"Job ${jobRequest.getId} failover, status changed from Running to Cancelled (任务故障转移，状态从Running变更为Cancelled)"
+          logWriter.write(msg)
+          logWriter.flush()
+          logWriter.close()
+        }
+      }
+    } { case e: Exception =>
+      logger.error(s"Job ${jobRequest.getId} failover, change status error", e)
+    }
+
+  }
+
   /**
    * execute failover job (提交故障转移任务，返回新的execId)
    *
    * @param jobRequest
    */
-  def failoverExecute(jobReq: JobRequest): String = {
+  def failoverExecute(jobRequest: JobRequest): Unit = {
 
-    if (null == jobReq || null == jobReq.getId || jobReq.getId <= 0) {
+    if (null == jobRequest || null == jobRequest.getId || jobRequest.getId <= 0) {
       throw new EntranceErrorException(
         PERSIST_JOBREQUEST_ERROR.getErrorCode,
         PERSIST_JOBREQUEST_ERROR.getErrorDesc
       )
     }
-
-    var jobRequest = new JobRequest
-    BeanUtils.copyProperties(jobReq, jobRequest)
 
     val logAppender = new java.lang.StringBuilder()
     logAppender.append(
@@ -383,53 +469,18 @@ abstract class EntranceServer extends Logging {
     // try to kill ec
     killEC(jobRequest, logAppender);
 
-    // if status is Inited, need to deal by all Interceptors, such as log_path
+    // deal Inited jobRequest, if status is Inited, need to deal by all Interceptors, such as log_path
     if (jobRequest.getStatus.equals(SchedulerEventState.Inited.toString)) {
-      Utils.tryThrow(
-        getEntranceContext
-          .getOrCreateEntranceInterceptors()
-          .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
-      ) { t =>
-        val error = t match {
-          case error: ErrorException => error
-          case t1: Throwable =>
-            val exception = new EntranceErrorException(
-              FAILED_ANALYSIS_TASK.getErrorCode,
-              MessageFormat.format(
-                FAILED_ANALYSIS_TASK.getErrorDesc,
-                ExceptionUtils.getRootCauseMessage(t)
-              )
-            )
-            exception.initCause(t1)
-            exception
-          case _ =>
-            new EntranceErrorException(
-              FAILED_ANALYSIS_TASK.getErrorCode,
-              MessageFormat.format(
-                FAILED_ANALYSIS_TASK.getErrorDesc,
-                ExceptionUtils.getRootCauseMessage(t)
-              )
-            )
-        }
-        jobRequest match {
-          case t: JobRequest =>
-            t.setErrorCode(error.getErrCode)
-            t.setErrorDesc(error.getDesc)
-            t.setStatus(SchedulerEventState.Failed.toString)
-            t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-            val infoMap = new util.HashMap[String, Object]
-            infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
-            infoMap.put(TaskConstant.TICKET_ID, "")
-            infoMap.put("message", "Task interception failed and cannot be retried")
-            JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
-          case _ =>
-        }
-        getEntranceContext
-          .getOrCreatePersistenceManager()
-          .createPersistenceEngine()
-          .updateIfNeeded(jobRequest)
-        error
-      }
+      dealInitedJobRequest(jobRequest, logAppender)
+    }
+
+    // deal Running jobRequest, if enabled, status changed from Running to Cancelled
+    if (
+        EntranceConfiguration.ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED.getValue &&
+        jobRequest.getStatus.equals(SchedulerEventState.Running.toString)
+    ) {
+      dealRunningJobRequest(jobRequest)
+      return
     }
 
     // init properties
@@ -482,8 +533,6 @@ abstract class EntranceServer extends Logging {
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
-
-      job.getId()
     } { t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
       val _jobRequest =
@@ -503,7 +552,6 @@ abstract class EntranceServer extends Logging {
           )
       }
     }
-
   }
 
   private def initJobRequestProperties(

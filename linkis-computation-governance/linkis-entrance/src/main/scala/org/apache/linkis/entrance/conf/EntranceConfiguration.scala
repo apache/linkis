@@ -252,4 +252,7 @@ object EntranceConfiguration {
   val ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED =
     CommonVars("linkis.entrance.failover.retain.yarn.resource.enable", true)
 
+  val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
+    CommonVars("linkis.entrance.failover.running.kill.enable", true)
+
 }

@@ -77,6 +77,8 @@ SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp
 
+sleep 15
+
 #linkis-cg-linkismanage
 SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP

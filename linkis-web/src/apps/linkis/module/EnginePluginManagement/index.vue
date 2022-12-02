@@ -73,7 +73,7 @@
       <Spin size="large" fix v-if="loadingForm"></Spin>
       <div style="height: 200px">
         <form style="width: 200px;height: 200px">
-          <input type="file" @change="getFile($event)"></input>
+          <input type="file" @change="getFile($event)" />
         </form>
       </div>
 
@@ -82,7 +82,7 @@
           <div>
             <Button
               type="primary"
-              @click="showFileOperate = false"
+              @click="handleCancel"
             >{{ $t('message.linkis.close') }}</Button>
             <Button type="primary" @click="onSubmit">{{
               $t('message.linkis.complete')}}</Button>
@@ -90,7 +90,7 @@
         </div>
       </div>
     </Modal>
-    <Row class="search-bar" type="flex" justify="flex-start">
+    <Row class="search-bar" type="flex" justify="start">
       <Col span="5">
         <div class="search-item">
           <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{ $t('message.linkis.EnginePluginManagement.engineConnType') }}</span>
@@ -146,6 +146,15 @@
         >{{ `${row.bmlResourceVersion || '-'}` }}</Button
         >
       </template>
+      <template slot-scope="{ row }" slot="action">
+        <Button
+          size="small"
+          type="primary"
+          style="margin-right: 5px;"
+          @click="() => tableActionHandler(row, 'upd')"
+        >{{ $t('message.linkis.EnginePluginManagement.updateFileOnly') }}</Button
+        >
+      </template>
     </Table>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
@@ -184,6 +193,7 @@ export default {
       actionNum: '',
       loadingForm: false,
       tableLoading: false,
+      updWay: '',
       tableColumnNum: [
         {
           title: "ID",
@@ -232,6 +242,7 @@ export default {
           slot: 'bmlResourceVersion',
           tooltip: true,
           align: 'center',
+          minWidth: 30,
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.lastUpdateTime'),
@@ -248,6 +259,7 @@ export default {
         {
           title: this.$t('message.linkis.EnginePluginManagement.action'),
           slot: 'action',
+          minWidth: 20,
           align: 'center',
         },
       ],
@@ -286,6 +298,7 @@ export default {
   watch: {
     ecType(newName, oldName) {
       console.log(oldName);
+      if(!newName) return;
       this.getTypeVersionList(newName)
     }
   },
@@ -328,9 +341,9 @@ export default {
       var formData = new FormData();
       if(this.actionNum === 0){
         formData.append('file', this.file);
-        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
+        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {method: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
           console.log(response);
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
           this.getTypeList();
           this.showFileOperate = false;
         }).catch(e => {
@@ -344,7 +357,12 @@ export default {
         formData.append('ecType', this.ecType);
         formData.append('version', this.version);
         api.fetch('/engineplugin/updateEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
+          if(this.updWay === 'table') {
+            this.ecType = '';
+            this.version = '';
+            this.updWay = '';
+          }
           this.getTypeList();
           this.initECMList();
           this.showFileOperate = false;
@@ -356,6 +374,14 @@ export default {
 
       }
 
+    },
+    handleCancel() {
+      this.showFileOperate = false;
+      if(this.updWay === 'table') {
+        this.ecType = '';
+        this.version = '';
+        this.updWay = '';
+      }
     },
     deleteBML(){
       var th=this;
@@ -407,6 +433,15 @@ export default {
         this.actionType=this.$t('message.linkis.EnginePluginManagement.update')
       }
       this.showFileOperate = true
+    },
+    async tableActionHandler(row, type) {
+      console.log(row);
+      if(type === 'upd') {
+        this.ecType = row.engineConnType;
+        this.version = row.version;
+        this.updWay = 'table';
+        this.createOrUpdate(1);
+      } 
     },
     async openVersionList(row) {
       this.currentEnginpluginData = row

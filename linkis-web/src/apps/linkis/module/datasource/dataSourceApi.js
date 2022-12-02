@@ -50,7 +50,7 @@ const createDataSource = (realFormData)=>{
  * @returns
  */
 const createDataSourceForm = (realFormData)=>{
-  return api.fetch('data-source-manager/info/form', realFormData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch('data-source-manager/info/form', realFormData, {method: 'post', 'Content-Type': 'text/plain'})
 }
 
 /**
@@ -78,7 +78,7 @@ const saveConnectParams = (datasourceId, data, comment)=>{
  */
 const saveConnectParamsForm = (datasourceId, data, comment)=>{
   const formData = serialize({connectParams: data, comment});
-  return api.fetch(`/data-source-manager/parameter/${datasourceId}/form`, formData, {methed: 'post', 'Content-Type': 'text/plain'})
+  return api.fetch(`/data-source-manager/parameter/${datasourceId}/form`, formData, {method: 'post', 'Content-Type': 'text/plain'})
 }
 
 

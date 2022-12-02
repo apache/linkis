@@ -297,6 +297,7 @@
       "resetAllTip": "Whether to reset all user resources (this operation will only clean up user resource records, not the resources that have been generated)?",
       "viewlog": "View Log",
       "datasource": {
+        "pleaseUpload": "Please upload",
         "pleaseInput": "Please input",
         "datasourceSrc": "Datasource",
         "connectTest": "Test Connection",

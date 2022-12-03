@@ -18,7 +18,7 @@
 package org.apache.linkis.orchestrator.execution.impl
 
 import org.apache.linkis.common.listener.Event
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.execution._
@@ -233,9 +233,8 @@ class DefaultTaskManager extends AbstractTaskManager with Logging {
       execTaskRunners ++= subExecTaskRunners
     }
     val finishTime = System.currentTimeMillis()
-    logger.debug(
-      s"Finished to getRunnableTasks finishTime: $finishTime, taken: ${finishTime - startTime}"
-    )
+    logger.debug(s"Finished to getRunnableTasks finishTime: $finishTime, taken: ${ByteTimeUtils
+      .msDurationToString(finishTime - startTime)}")
     taskRunnableTasks(execTaskRunners.toArray)
   }
 

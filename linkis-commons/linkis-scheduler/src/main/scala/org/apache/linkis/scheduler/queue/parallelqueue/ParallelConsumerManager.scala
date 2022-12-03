@@ -17,7 +17,7 @@
 
 package org.apache.linkis.scheduler.queue.parallelqueue
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.scheduler.conf.SchedulerConfiguration
 import org.apache.linkis.scheduler.listener.ConsumerListener
 import org.apache.linkis.scheduler.queue._
@@ -61,9 +61,8 @@ class ParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
               )
               .foreach(consumer => destroyConsumer(consumer.getGroup.getGroupName))
           }
-          logger.info(
-            s"Finished to clean up idle consumers for $schedulerName, cost ${System.currentTimeMillis() - nowTime} ms."
-          )
+          logger.info(s"Finished to clean up idle consumers for $schedulerName, cost ${ByteTimeUtils
+            .msDurationToString(System.currentTimeMillis - nowTime)} ms.")
         }
       },
       SchedulerConfiguration.FIFO_CONSUMER_IDLE_SCAN_INIT_TIME.getValue.toLong,

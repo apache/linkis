@@ -22,7 +22,7 @@ import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 class TestDWSResult extends DWSResult {
 
   @Test
-  @DisplayName("httpClientResultExceptionTest")
+  @DisplayName("DWSResultExceptionTest")
   def httpClientResultExceptionTest(): Unit = {
 
     val url = "/api/rest_j/v1/bml/updateVersion"

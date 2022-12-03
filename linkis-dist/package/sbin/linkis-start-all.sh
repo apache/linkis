@@ -77,6 +77,7 @@ SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP
 startApp
 
+echo "sleeping 15s before start cg-linkismanager, please be patient"
 sleep 15
 
 #linkis-cg-linkismanage
@@ -84,6 +85,7 @@ SERVER_NAME="cg-linkismanager"
 SERVER_IP=$MANAGER_INSTALL_IP
 startApp
 
+echo "sleeping 20s before start cg-entrance, please be patient"
 sleep 20
 
 #linkis-cg-entrance

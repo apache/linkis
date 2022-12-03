@@ -15,20 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.publicservice.common.lock.dao;
+package org.apache.linkis.errorcode.server.dao;
 
-import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
+import org.apache.linkis.errorcode.common.LinkisErrorCode;
 
-import org.apache.ibatis.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@Mapper
-public interface CommonLockMapper {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-  void lock(@Param("jsonObject") String jsonObject, @Param("timeOut") Long timeOut);
+public class ErrorCodeMapperTest extends BaseDaoTest {
 
-  void unlock(@Param("jsonObject") String jsonObject);
+  @Autowired private ErrorCodeMapper errorCodeMapper;
 
-  List<CommonLock> getAll();
+  @Test
+  @DisplayName("getAllErrorCodes")
+  public void getAllErrorCodesTest() {
+    List<LinkisErrorCode> list = errorCodeMapper.getAllErrorCodes();
+    Assertions.assertTrue(list.size() == 2);
+  }
 }

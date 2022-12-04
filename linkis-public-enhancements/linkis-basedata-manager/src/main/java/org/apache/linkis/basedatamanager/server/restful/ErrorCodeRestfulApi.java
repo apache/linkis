@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.ErrorCodeEntity;
 import org.apache.linkis.basedatamanager.server.service.ErrorCodeService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -74,8 +75,12 @@ public class ErrorCodeRestfulApi {
   @ApiOperation(value = "add", notes = "Add an Error Code Record", httpMethod = "POST")
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody ErrorCodeEntity errorCode) {
-    ModuleUserUtils.getOperationUser(
-        request, "Add a Datasource Code Record," + errorCode.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a Datasource Code Record," + errorCode.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = errorCodeService.save(errorCode);
     return Message.ok("").data("result", result);
   }
@@ -96,8 +101,12 @@ public class ErrorCodeRestfulApi {
   @ApiOperation(value = "update", notes = "Update a Error Code Record", httpMethod = "PUT")
   @RequestMapping(path = "", method = RequestMethod.PUT)
   public Message update(HttpServletRequest request, @RequestBody ErrorCodeEntity errorCode) {
-    ModuleUserUtils.getOperationUser(
-        request, "Update a Datasource Code Record,id:" + errorCode.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a Datasource Code Record,id:" + errorCode.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = errorCodeService.updateById(errorCode);
     return Message.ok("").data("result", result);
   }

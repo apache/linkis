@@ -69,7 +69,7 @@ class SeatunnelSparkOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + code)
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(
@@ -80,7 +80,7 @@ class SeatunnelSparkOnceCodeExecutor(
           )
           tryFailed()
         }
-        info("All codes completed, now stop SeatunnelEngineConn.")
+        logger.info("All codes completed, now stop SeatunnelEngineConn.")
         closeDaemon()
         if (!isFailed) {
           trySucceed()
@@ -91,7 +91,7 @@ class SeatunnelSparkOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    info("Execute SeatunnelSpark Process")
+    logger.info("Execute SeatunnelSpark Process")
     val masterKey = LINKIS_SPARK_MASTER.getValue
     val deployModeKey = LINKIS_SPARK_DEPLOY_MODE.getValue
 
@@ -109,22 +109,22 @@ class SeatunnelSparkOnceCodeExecutor(
       args = localArray(code)
     }
 
-    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue));
+    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue))
     Files.createSymbolicLink(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelSpark Process end args:${args.mkString(" ")}")
+    logger.info(s"Execute SeatunnelSpark Process end args:${args.mkString(" ")}")
     LinkisSeatunnelSparkClient.main(args)
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              info("The Seatunnel Spark Process In Running")
+              logger.info("The Seatunnel Spark Process In Running")
             }
           }
         },
@@ -132,6 +132,7 @@ class SeatunnelSparkOnceCodeExecutor(
         SeatunnelEnvConfiguration.SEATUNNEL_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def getCurrentNodeResource(): NodeResource = {

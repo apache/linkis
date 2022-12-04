@@ -120,7 +120,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       }
       val jobUpdate = jobRequest2JobHistory(jobReq)
       if (jobUpdate.getUpdatedTime == null) {
-        throw new QueryException(120001, s"jobId:${jobReq.getId}，update job failed, updatetime needed(更新job相关信息失败，请指定该请求的更新时间)!")
+        throw new QueryException(
+          120001,
+          s"jobId:${jobReq.getId}，update job failed, updatetime needed(更新job相关信息失败，请指定该请求的更新时间)!"
+        )
       }
       logger.info(
         s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} + status ${jobReq.getStatus}, updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}"
@@ -163,7 +166,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
             if (jobReq.getErrorDesc.length > GovernanceCommonConf.ERROR_CODE_DESC_LEN) {
               logger.info(s"errorDesc is too long,we will cut some message")
               jobReq.setErrorDesc(
-                jobReq.getErrorDesc.substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN - 3) + "..."
+                jobReq.getErrorDesc
+                  .substring(0, GovernanceCommonConf.ERROR_CODE_DESC_LEN - 3) + "..."
               )
               logger.info(s"${jobReq.getErrorDesc}")
             }

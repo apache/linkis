@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceEnvService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Date;
 
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -74,8 +77,15 @@ public class DatasourceEnvRestfulApi {
   @ApiOperation(value = "add", notes = "Add a Datasource Env Record", httpMethod = "POST")
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody DatasourceEnvEntity datasourceEnv) {
-    ModuleUserUtils.getOperationUser(
-        request, "Add a Datasource Env Record," + datasourceEnv.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a Datasource Env Record," + datasourceEnv.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+    datasourceEnv.setCreateUser(username);
+    datasourceEnv.setCreateTime(new Date());
+    datasourceEnv.setModifyUser(username);
     boolean result = datasourceEnvService.save(datasourceEnv);
     return Message.ok("").data("result", result);
   }
@@ -99,8 +109,14 @@ public class DatasourceEnvRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.PUT)
   public Message update(
       HttpServletRequest request, @RequestBody DatasourceEnvEntity datasourceEnv) {
-    ModuleUserUtils.getOperationUser(
-        request, "Update a Datasource Env Record,id:" + datasourceEnv.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a Datasource Env Record,id:" + datasourceEnv.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+    datasourceEnv.setModifyUser(username);
+    datasourceEnv.setModifyTime(new Date());
     boolean result = datasourceEnvService.updateById(datasourceEnv);
     return Message.ok("").data("result", result);
   }

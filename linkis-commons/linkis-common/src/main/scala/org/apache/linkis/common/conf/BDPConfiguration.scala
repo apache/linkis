@@ -50,7 +50,7 @@ private[conf] object BDPConfiguration extends Logging {
       initConfig(config, configFileURL.getPath)
     } else {
       logger.warn(
-        s"************ Notice: The Linkis configuration file $propertyFile is not exists! *******************"
+        s"************ Notice: The Linkis configuration file $propertyFile does not exist! *******************"
       )
     }
 
@@ -64,7 +64,7 @@ private[conf] object BDPConfiguration extends Logging {
       initConfig(config, serverConfFileURL.getPath)
     } else {
       logger.warn(
-        s"**************** Notice: The Linkis serverConf file $serverConf is not exists! *******************"
+        s"**************** Notice: The Linkis serverConf file $serverConf does not exist! *******************"
       )
     }
 
@@ -81,7 +81,7 @@ private[conf] object BDPConfiguration extends Logging {
           initConfig(config, configFileURL.getPath)
         } else {
           logger.warn(
-            s"********** Notice: The Linkis server.confs file $propertyF is not exists! **************"
+            s"********** Notice: The Linkis server.confs file $propertyF does not exist! **************"
           )
         }
       }

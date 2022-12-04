@@ -70,7 +70,7 @@ public class EntranceMetricRestfulApi {
       @RequestParam(value = "engineTypeLabel", required = false) String engineTypeLabelValue) {
     String userName = ModuleUserUtils.getOperationUser(req, "taskinfo");
     String queryUser = user;
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       if (StringUtils.isBlank(queryUser)) {
         queryUser = userName;
       } else if (!userName.equalsIgnoreCase(queryUser)) {

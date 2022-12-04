@@ -114,7 +114,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
           throw new QueryException(
             120001,
-            s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}，newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
+            s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}," +
+              s" newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
           )
         }
       }
@@ -126,7 +127,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         )
       }
       logger.info(
-        s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} + status ${jobReq.getStatus}, updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}"
+        s"Update data to the database(往数据库中更新数据)：task ${jobReq.getId} ,status ${jobReq.getStatus}," +
+          s" updateTime: ${jobUpdate.getUpdateTimeMills}, progress : ${jobUpdate.getProgress}"
       )
       jobHistoryMapper.updateJobHistory(jobUpdate)
       val map = new util.HashMap[String, Object]
@@ -177,7 +179,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
             if (oldStatus != null && !shouldUpdate(oldStatus, jobReq.getStatus)) {
               throw new QueryException(
                 120001,
-                s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}，newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
+                s"jobId:${jobReq.getId}，oldStatus(在数据库中的task状态为)：${oldStatus}，" +
+                  s"newStatus(更新的task状态为)：${jobReq.getStatus}，update failed(更新失败)！"
               )
             }
           }
@@ -289,7 +292,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       fakeLabel.setCreator(creator)
       val userCreator = fakeLabel.getStringValue
       Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
-        info("input user or creator is not correct", t)
+        logger.info("input user or creator is not correct", t)
         throw t
       }
       jobHistoryMapper.searchWithUserCreator(

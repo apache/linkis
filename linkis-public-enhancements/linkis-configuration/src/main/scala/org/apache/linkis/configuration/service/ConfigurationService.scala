@@ -46,6 +46,8 @@ import java.util
 
 import scala.collection.JavaConverters._
 
+import com.google.common.collect.Lists
+
 @Service
 class ConfigurationService extends Logging {
 
@@ -382,6 +384,15 @@ class ConfigurationService extends Logging {
       useDefaultConfig: Boolean = true
   ): util.ArrayList[ConfigTree] = {
     val (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    buildTreeResult(configs, defaultEngineConfigs)
+  }
+
+  def getConfigurationTemplateByLabelList(
+      labelList: java.util.List[Label[_]],
+      useDefaultConfig: Boolean = true
+  ): util.ArrayList[ConfigTree] = {
+    var (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    configs = Lists.newArrayList()
     buildTreeResult(configs, defaultEngineConfigs)
   }
 

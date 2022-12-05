@@ -135,7 +135,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
      * update step:
      * 1.delete relations of old labels 2.add new relation between new labels and instance
      */
-    if (null != willBeDelete && willBeDelete.nonEmpty) {
+    if (null != willBeUpdate && willBeUpdate.nonEmpty) {
       labels.asScala.foreach(label => {
         if (
             modifiableKeyList.contains(label.getLabelKey) && willBeUpdate
@@ -381,6 +381,29 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       }
     }
     persistenceLabel.getId
+  }
+
+  override def getNodeLabelsByInstanceList(
+      serviceInstanceList: util.List[ServiceInstance]
+  ): util.HashMap[String, util.List[Label[_]]] = {
+    val resultMap = new util.HashMap[String, util.List[Label[_]]]()
+    val map = labelManagerPersistence.getLabelRelationsByServiceInstance(serviceInstanceList)
+    serviceInstanceList.asScala.foreach(serviceInstance => {
+      val LabelList = map
+        .get(serviceInstance)
+        .asScala
+        .map { label =>
+          val realyLabel: Label[_] = labelFactory.createLabel(
+            label.getLabelKey,
+            if (!CollectionUtils.isEmpty(label.getValue)) label.getValue else label.getStringValue
+          )
+          realyLabel
+        }
+        .toList
+        .asJava
+      resultMap.put(serviceInstance.toString, LabelList)
+    })
+    resultMap
   }
 
 }

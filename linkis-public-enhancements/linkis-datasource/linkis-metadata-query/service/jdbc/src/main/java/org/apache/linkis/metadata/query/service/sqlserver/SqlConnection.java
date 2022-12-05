@@ -37,7 +37,7 @@ public class SqlConnection implements Closeable {
   private static final CommonVars<String> SQL_DRIVER_CLASS =
       CommonVars.apply(
           "wds.linkis.server.mdm.service.sqlserver.driver",
-          "com.microsoft.jdbc.sqlserver.SQLServerDriver");
+          "com.microsoft.sqlserver.jdbc.SQLServerDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
       CommonVars.apply(

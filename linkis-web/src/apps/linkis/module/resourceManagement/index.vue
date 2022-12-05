@@ -81,7 +81,7 @@
       </Form>
     </div>
     <div class="noData" v-if="!isAdminModel && progressDataList.length <= 0">No data, try refresh</div>
-    <!-- 进度条 -->
+    <!-- progress bar(进度条) -->
     <template v-if="!isAdminModel">
       <div v-for="item in progressDataList" :key="item.id">
         <WbProgress @expandChange="expandChange" :progressData="item">
@@ -92,12 +92,12 @@
       </div>
     </template>
 
-    <!-- 应用列表 -->
+    <!-- Application List(应用列表) -->
     <template v-if="isShowTable && !isAdminModel">
       <div class="resource-title appListTitle">
         {{$t('message.linkis.resourceManagement.applicationList')}}
       </div>
-      <!-- 应用列表标签 -->
+      <!-- App List Labels(应用列表标签) -->
       <div class="appListTag">
         <div class="tagName">
           <span class="span-white-space">{{$t('message.linkis.tableColumns.label')}}:</span>
@@ -194,7 +194,7 @@ export default {
       isChildren: false,
       stopList: [],
       loading: false,
-      isLogAdmin: false, //账户是否有管理员权限
+      isLogAdmin: false, //Does the account have administrator privileges?(账户是否有管理员权限)
       formItem: {
         instance: '',
         labels: [],
@@ -202,8 +202,8 @@ export default {
       },
       tagTitle: [],
       applicationList: {},
-      currentEngineData: {}, // 当前点击的引擎列表
-      currentParentsData: {}, // 当前点击的主引擎
+      currentEngineData: {}, // List of currently clicked engines(当前点击的引擎列表)
+      currentParentsData: {}, // The main engine of the current click(当前点击的主引擎)
       isShowTable: false,
       progressDataList: [],
       tableWidth: 0,
@@ -292,11 +292,11 @@ export default {
                       onOk: () => {
                         let data = [];
                         data.push({
-                          engineType: params.row.applicationName, // 当期需求是写死此参数
+                          engineType: params.row.applicationName,
                           engineInstance: params.row.instance,
                         });
                         api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
-                          // 由于引擎关闭有延迟所以记录引擎，做前端列表筛选，刷新页面或刷新
+                          // Since there is a delay in the shutdown of the engine, record the engine, do front-end list filtering, refresh the page or refresh(由于引擎关闭有延迟所以记录引擎，做前端列表筛选，刷新页面或刷新)
                           this.stopList.push(params.row.instance);
                           this.initExpandList();
                           this.$Message.success({
@@ -389,7 +389,7 @@ export default {
   computed: {
   },
   created() {
-    // 获取是否是历史管理员权限
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       this.initExpandList();
@@ -401,12 +401,12 @@ export default {
 
   },
   methods: {
-    // 刷新进度条
+    // refresh progress bar(刷新进度条)
     refreshResource() {
-      this.stopList = []; // 初始化停止列表，由于引擎关闭有延迟固设置此参数做判断
+      this.stopList = []; // Initialize the stop list. Due to the delay of the engine shutdown, this parameter is set for judgment.(初始化停止列表，由于引擎关闭有延迟固设置此参数做判断)
       this.initExpandList();
     },
-    // 初始化主要数据
+    // Initialize main data(初始化主要数据)
     initData() {
       this.page = {
         totalSize: 0,
@@ -414,13 +414,13 @@ export default {
         pageSize: 15,
         pageNow: 1
       };
-      this.currentEngineData = {}; // 当前点击的引擎列表
-      this.currentParentsData = {}; // 当前点击的主引擎
+      this.currentEngineData = {}; // List of currently clicked engines(当前点击的引擎列表)
+      this.currentParentsData = {}; // The main engine of the current click(当前点击的主引擎)
       this.isShowTable = false;
       this.progressDataList = [];
       this.tableData = [];
     },
-    // 获取所有可修改的labelKey
+    // Get all modifiable labelKeys(获取所有可修改的labelKey)
     getKeyList() {
       api.fetch('/microservice/modifiableLabelKey', 'get').then((res) => {
         let list = res.keyList || [];
@@ -432,15 +432,15 @@ export default {
         })
       })
     },
-    // 初始化引擎列表
+    // Initialize the engine list(初始化引擎列表)
     async initExpandList() {
-      // 初始化数据
+      // Initialization data(初始化数据)
       this.initData();
-      // 获取引擎数据
+      // Get engine data(获取引擎数据)
       this.loading = true;
       try {
         let engines = await api.fetch('/linkisManager/rm/userresources','post') || {};
-        // 获取使用的引擎资源列表
+        // Get a list of used engine resources(获取使用的引擎资源列表)
         let enginesList = engines.userResources || [];
         enginesList.forEach((it, index) => {
           it.id = it.userCreator + index
@@ -464,18 +464,18 @@ export default {
         this.loading = false;
       }
     },
-    // 展开和关闭
+    // expand and close(展开和关闭)
     async expandChange(item, isChildren = false, parentData = {},) {
-      // 显示表格
+      // show table(显示表格)
       this.isShowTable = true;
       this.isChildren = isChildren;
-      // 如果点击的不为子列表则缓存下当前数据
-      // 如果两次点击同一元素则阻止
+      // If the click is not a sublist, the current data will be cached(如果点击的不为子列表则缓存下当前数据)
+      // Block if the same element is clicked twice(如果两次点击同一元素则阻止)
       if(item.id === this.currentEngineData.id) return;
       // if(item.id === this.currentParentsData.id && !isChildren) return;
       this.currentEngineData = item;
       this.loading = true;
-      // 资源标签显示
+      // Resource tab display(资源标签显示)
       this.tagTitle = [];
       if(!isChildren) {
         this.currentParentsData = item;
@@ -493,13 +493,13 @@ export default {
         let engineInstances = engines.applications[0].applicationList;
         this.applicationList = engineInstances || {};
         let tableData = engineInstances.engineInstances || [];
-        // 刷选是否有已经停止的引擎
+        // Check to see if there are any stopped engines(刷选是否有已经停止的引擎)
         if(this.stopList.length && tableData.length) tableData = tableData.map(item => {
           if(this.stopList.includes(item.instance)) item.isStop = true;
           return item;
         })
         this.tableData = tableData;
-        //更新formItem.applicationName 的数据
+        //Update the data of formItem.applicationName(更新formItem.applicationName 的数据)
         this.formItem.applicationName = this.tableData[0].engineType;
         this.page.totalSize = this.tableData.length;
       } catch (errorMsg) {
@@ -507,26 +507,26 @@ export default {
         this.loading = false;
       }
     },
-    // 添加tag
+    // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
     },
-    // 删除tag
+    // delete tag(删除tag)
     onCloseTag (name, index) {
       this.formItem.labels.splice(index, 1);
     },
-    // 切换分页
+    // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
       this.search();
     },
-    // 页容量变化
+    // page size change(页容量变化)
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
       this.search();
     },
-    // 时间格式转换
+    // time format conversion(时间格式转换)
     timeFormat(row) {
       if (row.startTime.indexOf('CST') > 0) {
         return moment(new Date(row.startTime)).utc().subtract(6, 'hour').format('YYYY-MM-DD HH:mm:ss')
@@ -557,7 +557,10 @@ export default {
           const yarnType = type === 'memory' ? 'queueMemory' : 'queueCores'
           data = row[field].DriverAndYarnResource.yarnResource[yarnType]
         } else {
-          data = row[field].DriverAndYarnResource.loadInstanceResource[type]
+          // if(type === 'instance') {
+          //   type = instances;
+          // }
+          data = row[field].DriverAndYarnResource.loadInstanceResource[type] || row[field].DriverAndYarnResource.loadInstanceResource['instances']
         }
       }
       if (type === 'memory' && data !== ' -- ') {

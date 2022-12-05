@@ -217,6 +217,11 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
                 ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddCookies());
           });
     }
+    if (!((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddHeaders().isEmpty()) {
+      ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest())
+          .getAddHeaders()
+          .forEach(builder::header);
+    }
     return chain.filter(exchange.mutate().request(builder.build()).build());
   }
 

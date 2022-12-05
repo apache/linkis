@@ -164,6 +164,20 @@
         on a.id=b.udf_id
     </select>
 
+    <select id="getUDFInfoByIds" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
+        select pub.*, puv.path, puv.register_format, puv.use_format, puv.bml_resource_id, puv.bml_resource_version, puv.description
+        from
+            linkis_ps_udf_baseinfo pub
+            join (
+                select udf_id, max(bml_resource_version) as max_version
+                from linkis_ps_udf_version
+                where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                group by udf_id
+            ) puvg on pub.id=puvg.udf_id
+            join linkis_ps_udf_version puv on puvg.udf_id=puv.udf_id and puvg.max_version=puv.bml_resource_version
+        where udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+    </select>
+
     <select id="getLoadedUDFs" resultMap="UDFInfoMap">
         select b.*,if(a.udf_id IS NULL,0,1) as is_load
         from
@@ -350,5 +364,26 @@
 
     <select id="getSharedUDFIdsByUser" resultType="java.lang.Long">
         select udf_id from linkis_ps_udf_shared_info where user_name=#{userName}
+    </select>
+
+    <select id="getUdfInfoByNameList" resultType="org.apache.linkis.udf.vo.UDFAddVo">
+        select a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
+        select pu.*,put.name as directory
+        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
+        <where>
+            <if test="1 == 1">1 = 1</if>
+            <if test="createUser != null">and pu.create_user = #{createUser}</if>
+            <if test="udfNameList != null">and pu.udf_name in
+                <foreach collection="udfNameList" open="(" close=")" item="item" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ) a join
+        (select udf_id,description,path,register_format,use_format,bml_resource_version
+        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
+        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)
+        ) b on a.id=b.udf_id
+        order by id desc
     </select>
 </mapper>

@@ -1067,9 +1067,14 @@
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin.version}</version>
           <configuration>
-            <scalaVersion>${scala.version}</scalaVersion>
             <recompileMode>incremental</recompileMode>
-            <addScalacArgs>-target:jvm-${java.version}</addScalacArgs>
+            <args>
+              <arg>-unchecked</arg>
+              <arg>-deprecation</arg>
+              <arg>-feature</arg>
+              <arg>-explaintypes</arg>
+              <arg>-target:jvm-${java.version}</arg>
+            </args>
           </configuration>
           <executions>
             <execution>
@@ -1232,11 +1237,6 @@
                 <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
               </importOrder>
 
-              <excludes>
-                <exclude>**/restful/**/*RestfulApi.java</exclude>
-                <exclude>**/restful/**/*Restful.java</exclude>
-              </excludes>
-
               <removeUnusedImports/>
 
               <licenseHeader>
@@ -1322,6 +1322,28 @@
       <properties>
         <rat.skip>false</rat.skip>
       </properties>
+    </profile>
+    <profile>
+      <id>jdk11-on</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.release>8</maven.compiler.release>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-opens java.base/java.util=ALL-UNNAMED
+                --add-opens java.base/java.nio=ALL-UNNAMED
+                --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>release</id>

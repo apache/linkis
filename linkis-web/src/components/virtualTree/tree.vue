@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 
 <template>
   <virtual-list
@@ -30,13 +30,13 @@
 </template>
 <script>
 /**
- * 虚拟树组件
- * 传入树形数据，内部扁平化并使用虚拟滚动列表渲染
- * 可以自定义render函数控制节点渲染
- * 节点isVisible===false则不渲染
- * ! 每个节点需要唯一键值标识字段，可以通过keyText配置
- * ! 必须设置height用于计算虚拟滚动渲染条数
- * 示例
+ * virtual tree component(虚拟树组件)
+ * Pass in tree data, flatten the interior and render it with a virtual scrolling list(传入树形数据，内部扁平化并使用虚拟滚动列表渲染)
+ * You can customize the render function to control node rendering(可以自定义render函数控制节点渲染)
+ * Node isVisible===false does not render(节点isVisible===false则不渲染)
+ * ! Each node requires a unique key value identification field, which can be configured through keyText(每个节点需要唯一键值标识字段，可以通过keyText配置)
+ * ! The height must be set to calculate the number of virtual scroll rendering bars(必须设置height用于计算虚拟滚动渲染条数)
+ * Example(示例)
  * <virtual-tree
       :list="treeData"
       :render="renderNode"
@@ -66,19 +66,19 @@ export default {
       type: Array,
       default: () => [],
     },
-    render: { // 自定义节点渲染
+    render: { // custom node rendering(自定义节点渲染)
       type: Function
     },
     open: Object, // 展开节点key eg: {xxxx:true,xx:true}
-    size: { // 行高
+    size: { // row height(行高)
       type: Number,
       default: 24
     },
-    height: { // 树高度
+    height: { // tree height(树高度)
       type: Number,
       require: true
     },
-    keyText: { // 节点数据唯一id
+    keyText: { // Node data unique id(节点数据唯一id)
       type: String,
       default: '_id'
     }
@@ -100,7 +100,7 @@ export default {
     clickNode(index) {
       let item = this.showData[index];
       let now = Date.now();
-      // 双击
+      // double click(双击)
       if (this.lastClick === item[this.keyText] && (now - this.lastClickTime || now) < 300) {
         return
       }
@@ -131,11 +131,11 @@ export default {
     refresData(openNode) {
       let showData = []
       openNode = openNode || {...this.open}
-      // 树形数据扁平化
+      // Tree data flattening(树形数据扁平化)
       let formatTree = (list, level = 1) => {
         list.forEach(item => {
-          // 扁平处理数据后列表只保留渲染所需数据
-          // isVisible false 不渲染
+          // After flattening the data, the list only retains the data required for rendering(扁平处理数据后列表只保留渲染所需数据)
+          // isVisible false does not render(不渲染)
           if (item.isVisible !== false) {
             showData.push({...item, level, isLeaf: !item.children, children: []});
             if (item.children && item.children.length) {

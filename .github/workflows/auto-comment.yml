@@ -50,6 +50,6 @@ jobs:
 
 
             ### Mailing Lists
-            |name|description|Subscribe|Unsubscribe|archive|
+            |Name|Description|Subscribe|Unsubscribe|Archive|
             |:-----|:--------|:------|:-------|:-----|
             | [dev@linkis.apache.org](mailto:dev@linkis.apache.org) | community activity information | [subscribe](mailto:dev-subscribe@linkis.apache.org) | [unsubscribe](mailto:dev-unsubscribe@linkis.apache.org) | [archive](http://mail-archives.apache.org/mod_mbox/linkis-dev) |

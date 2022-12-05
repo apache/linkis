@@ -91,8 +91,9 @@ object SSOUtils extends Logging {
   private[security] def getUserAndLoginTime(userTicketId: String): Option[(String, Long)] = {
     ServerConfiguration.getUsernameByTicket(userTicketId).map { userAndLoginTime =>
       {
-        if (userAndLoginTime.indexOf(",") < 0)
+        if (userAndLoginTime.indexOf(",") < 0) {
           throw new IllegalUserTicketException(s"Illegal user token information(非法的用户token信息).")
+        }
         val index = userAndLoginTime.lastIndexOf(",")
         (userAndLoginTime.substring(0, index), userAndLoginTime.substring(index + 1).toLong)
       }
@@ -105,10 +106,14 @@ object SSOUtils extends Logging {
     ServerConfiguration.getTicketByUsername(timeoutUser)
   }
 
-  def setLoginUser(addCookie: Cookie => Unit, username: String): Unit = {
+  def setLoginUser(
+      addCookie: Cookie => Unit,
+      username: String,
+      updateSession: Boolean = true
+  ): Unit = {
     logger.info(s"add login userTicketCookie for user $username.")
     val userTicketId = getUserTicketId(username)
-    userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
+    if (updateSession) userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
     val cookie = new Cookie(USER_TICKET_ID_STRING, userTicketId)
     cookie.setMaxAge(-1)
     if (sslEnable) cookie.setSecure(true)

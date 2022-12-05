@@ -350,13 +350,14 @@ class SparkSubmitProcessEngineConnLaunchBuilder private extends JavaProcessEngin
     this.deployMode("client")
     val driverJavaSet = new StringBuilder(" -server")
 
-    if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue))
+    if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
       EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
         .format(getGcLogDir(engineRequest))
         .split("\\s+")
         .foreach(l => {
           driverJavaSet.append(" ").append(l)
         })
+    }
     getLogDir(engineRequest).trim
       .split(" ")
       .foreach(l => {

@@ -65,7 +65,7 @@
       :title="$t('message.linkis.tagEdit')"
       v-model="isTagEdit"
       :mask-closable="false">
-      <Form :label-width="80">
+      <Form :label-width="80" @submit.native.prevent>
         <FormItem :label="`${$t('message.linkis.instanceName')}：`">
           <Input disabled v-model="formItem.instance" />
         </FormItem>
@@ -95,8 +95,8 @@ export default {
   data() {
     return {
       keyList: [],
-      statusList: [], // 可搜索的状态列表
-      healthyStatusList: [], // 可修改的状态列表
+      statusList: [], // Searchable Status List(可搜索的状态列表)
+      healthyStatusList: [], // Modifiable state list(可修改的状态列表)
       ownerList: [],
       loading: false,
       formItem: {
@@ -106,18 +106,18 @@ export default {
         applicationName: '',
       },
       tagTitle: [],
-      addTagForm: { // 新增标签的form表单
+      addTagForm: { // form with new label(新增标签的form表单)
         key: '',
         value: ''
       },
       isShowTable: false,
-      addTagFormRule: { // 验证规则
+      addTagFormRule: { // validation rules(验证规则)
         key: [
           { required: true, message: this.$t('message.linkis.keyTip'), trigger: 'blur' }
         ]
       },
       tableWidth: 0,
-      // 开启标签修改弹框
+      // Open the label modification popup(开启标签修改弹框)
       isTagEdit: false,
       tableData: [],
       page: {
@@ -128,54 +128,54 @@ export default {
       },
       columns: [
         {
-          title: this.$t('message.linkis.tableColumns.instanceName'), // 实例名称
+          title: this.$t('message.linkis.tableColumns.instanceName'), // instance name(实例名称)
           key: 'instance',
           minWidth: 150,
           className: 'table-project-column',
           slot: 'instance'
         },
         {
-          title: this.$t('message.linkis.tableColumns.status'), // 状态
+          title: this.$t('message.linkis.tableColumns.status'), // state(状态)
           key: 'nodeHealthy',
           minWidth: 100,
           className: 'table-project-column',
         },
         {
-          title: this.$t('message.linkis.tableColumns.label'), // 标签
+          title: this.$t('message.linkis.tableColumns.label'), // Label(标签)
           key: 'labels',
           minWidth: 160,
           className: 'table-project-column',
           slot: 'labels'
         },
         {
-          title: this.$t('message.linkis.tableColumns.usedResources'), // 已用资源
+          title: this.$t('message.linkis.tableColumns.usedResources'), // resource used(已用资源)
           key: 'usedResource',
           className: 'table-project-column',
           slot: 'usedResource',
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.maximumAvailableResources'), // 最大可用资源
+          title: this.$t('message.linkis.tableColumns.maximumAvailableResources'), // maximum available resources(最大可用资源)
           key: 'maxResource',
           slot: 'maxResource',
           className: 'table-project-column',
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.lockedResource'), // 最大可用资源
+          title: this.$t('message.linkis.tableColumns.lockedResource'), // maximum available resources(最大可用资源)
           key: 'lockedResource',
           slot: 'lockedResource',
           className: 'table-project-column',
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.initiator'), // 启动者
+          title: this.$t('message.linkis.tableColumns.initiator'), // initiator(启动者)
           key: 'owner',
           className: 'table-project-column',
           minWidth: 150,
         },
         {
-          title: this.$t('message.linkis.tableColumns.startTime'), // 启用时间
+          title: this.$t('message.linkis.tableColumns.startTime'), // enable time(启用时间)
           key: 'startTime',
           className: 'table-project-column',
           slot: 'startTime',
@@ -200,7 +200,7 @@ export default {
                     let obj = {};
                     obj.instance = params.row.instance;
                     let labels = params.row.labels || [];
-                    // 将标签数据转换成组件可渲染格式
+                    // Convert label data to a component-renderable format(将标签数据转换成组件可渲染格式)
                     obj.labels = labels.map(item => {
                       return {
                         key: item.labelKey,
@@ -225,7 +225,7 @@ export default {
     WbTag
   },
   computed: {
-    pageDatalist() {// 展示的数据
+    pageDatalist() {// Displayed data(展示的数据)
       return this.tableData.filter((item, index) => {
         return (this.page.pageNow - 1) * this.page.pageSize <= index && index < this.page.pageNow * this.page.pageSize;
       })
@@ -245,24 +245,24 @@ export default {
   },
   created() {
     this.initECMList();
-    // 获取状态信息列表
+    // Get a list of status information(获取状态信息列表)
     this.getListAllNodeHealthyStatus();
     this.getSearchStatus();
     this.getKeyList();
   },
   methods: {
 
-    // 刷新数据
+    // refresh data(刷新数据)
     refreshResource() {
       this.initECMList();
     },
-    // 初始化ECM列表
+    // Initialize ECM list(初始化ECM列表)
     async initECMList() {
-      // 获取ECM实例数据
+      // Get ECM instance data(获取ECM实例数据)
       this.loading = true;
       try {
         let ECM = await api.fetch('/linkisManager/listAllEMs','get') || {};
-        // 获取使用的引擎资源列表
+        // Get a list of used engine resources(获取使用的引擎资源列表)
         let ECMList = ECM.EMs || [];
         this.tableData = ECMList;
         this.ownerList = [];
@@ -278,7 +278,7 @@ export default {
         this.loading = false;
       }
     },
-    // 获取所有可修改的labelKey
+    // Get all modifiable labelKeys(获取所有可修改的labelKey)
     getKeyList() {
       api.fetch('/microservice/modifiableLabelKey', 'get').then((res) => {
         let list = res.keyList || [];
@@ -290,7 +290,7 @@ export default {
         })
       })
     },
-    // 获取所有可修改的状态信息
+    // Get all modifiable state information(获取所有可修改的状态信息)
     async getListAllNodeHealthyStatus() {
       try {
         let healthyStatusList = await api.fetch('/linkisManager/listAllECMHealthyStatus', { onlyEditable: true }, 'get') || {};
@@ -301,7 +301,7 @@ export default {
         console.log(err)
       }
     },
-    // 获取搜索的状态列表
+    // Get a list of states for a search(获取搜索的状态列表)
     async getSearchStatus() {
       try {
         let statusList = await api.fetch('/linkisManager/listAllNodeHealthyStatus', 'get') || {};
@@ -311,12 +311,12 @@ export default {
         console.log(err)
       }
     },
-    // 添加tag
+    // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
     },
 
-    // 修改tag
+    // modify tag(修改tag)
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.formItem.labels.findIndex((item)=>{
         return  item.value === editInputValue
@@ -324,12 +324,12 @@ export default {
       this.formItem.labels.splice(index,1,{key: editInputKey,modifiable: true,value: editedInputValue})
     },
 
-    // 删除tag
+    // delete tag(删除tag)
     onCloseTag (name, index) {
       this.formItem.labels.splice(index, 1);
     },
 
-    //  提交修改
+    //  Submit changes(提交修改)
     submitTagEdit() {
       let param = JSON.parse(JSON.stringify(this.formItem));
       param.labels = param.labels.map(item => {
@@ -341,21 +341,21 @@ export default {
       api.fetch('/linkisManager/modifyEMInfo', param, 'put').then(() => {
         this.isTagEdit = false;
         this.$Message.success(this.$t('message.linkis.editedSuccess'));
-        this.refreshResource(); // 刷新
+        this.refreshResource(); // refresh(刷新)
       }).catch(() => {
         this.isTagEdit = false;
       })
     },
-    // 切换分页
+    // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
     },
-    // 页容量变化
+    // page size change(页容量变化)
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
     },
-    // 搜索
+    // search(搜索)
     search(e) {
       let param = {
         instance: e.instance,
@@ -370,11 +370,11 @@ export default {
       this.page.pageNow = 1;
       this.page.totalSize = this.tableData.length;
     },
-    // 跳转到引擎列表
+    // Jump to engine list(跳转到引擎列表)
     getEngineConnList(e) {
       this.$router.push({ name: 'EngineConnList', query: { instance: e.instance, applicationName: e.applicationName } })
     },
-    // 时间格式转换
+    // time format conversion(时间格式转换)
     timeFormat(row) {
       return moment(new Date(row.startTime)).format('YYYY-MM-DD HH:mm:ss')
     },
@@ -398,7 +398,7 @@ export default {
   .ivu-table:before {
     height: 0
   }
-  
+
   .ivu-table:after {
     width: 0
   }

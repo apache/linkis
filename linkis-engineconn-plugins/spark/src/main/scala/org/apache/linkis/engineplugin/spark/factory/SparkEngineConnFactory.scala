@@ -187,7 +187,8 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   private val executorFactoryArray = Array[ExecutorFactory](
     new SparkSqlExecutorFactory,
     new SparkPythonExecutorFactory,
-    new SparkScalaExecutorFactory
+    new SparkScalaExecutorFactory,
+    new SparkDataCalcExecutorFactory
   )
 
   override def getExecutorFactories: Array[ExecutorFactory] = {

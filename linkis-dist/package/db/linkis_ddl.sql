@@ -172,8 +172,8 @@ CREATE TABLE `linkis_ps_udf_tree` (
   `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
   `user_name` varchar(50) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -856,7 +856,8 @@ CREATE TABLE `linkis_ps_dm_datasource`
     `version_id`           int(11)                            DEFAULT NULL COMMENT 'current version id',
     `expire`               tinyint(1)                         DEFAULT 0,
     `published_version_id` int(11)                            DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `datasource_name_un` (`datasource_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -875,7 +876,8 @@ CREATE TABLE `linkis_ps_dm_datasource_env`
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `env_name` (`env_name`)
+    UNIQUE KEY `env_name` (`env_name`),
+    UNIQUE INDEX `env_name_datasource_type_id` (`env_name`, `datasource_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -892,7 +894,8 @@ CREATE TABLE `linkis_ps_dm_datasource_type`
     `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
     `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
     `layers`      int(3)                       NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `name_un` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -955,3 +958,37 @@ UNIQUE KEY `token_name` (`token_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+-- ----------------------------
+-- Table structure for linkis_cg_tenant_label_config
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_cg_tenant_label_config`;
+CREATE TABLE `linkis_cg_tenant_label_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) COLLATE utf8_bin NOT NULL,
+  `creator` varchar(50) COLLATE utf8_bin NOT NULL,
+  `tenant_value` varchar(128) COLLATE utf8_bin NOT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `desc` varchar(100) COLLATE utf8_bin NOT NULL,
+  `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_creator` (`user`,`creator`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- ----------------------------
+-- Table structure for linkis_cg_user_ip_config
+-- ----------------------------
+DROP TABLE IF EXISTS `linkis_cg_user_ip_config`;
+CREATE TABLE `linkis_cg_user_ip_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) COLLATE utf8_bin NOT NULL,
+  `creator` varchar(50) COLLATE utf8_bin NOT NULL,
+  `ip_list` text COLLATE utf8_bin NOT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `desc` varchar(100) COLLATE utf8_bin NOT NULL,
+  `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_creator` (`user`,`creator`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin

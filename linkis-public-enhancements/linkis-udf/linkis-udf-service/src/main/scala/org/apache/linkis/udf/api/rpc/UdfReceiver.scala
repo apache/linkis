@@ -18,7 +18,9 @@
 package org.apache.linkis.udf.api.rpc
 
 import org.apache.linkis.rpc.{Receiver, Sender}
-import org.apache.linkis.udf.service.UDFTreeService
+import org.apache.linkis.udf.service.{UDFService, UDFTreeService}
+
+import java.lang
 
 import scala.concurrent.duration.Duration
 
@@ -26,9 +28,12 @@ class UdfReceiver extends Receiver {
 
   private var udfTreeService: UDFTreeService = _
 
-  def this(udfTreeService: UDFTreeService) = {
+  private var udfService: UDFService = _
+
+  def this(udfTreeService: UDFTreeService, udfService: UDFService) = {
     this()
     this.udfTreeService = udfTreeService
+    this.udfService = udfService
   }
 
   override def receive(message: Any, sender: Sender): Unit = {}
@@ -38,6 +43,9 @@ class UdfReceiver extends Receiver {
       case RequestUdfTree(userName, treeType, treeId, treeCategory) =>
         val udfTree = udfTreeService.getTreeById(treeId, userName, treeType, treeCategory)
         new ResponseUdfTree(udfTree)
+      case RequestUdfIds(userName, udfIds, treeCategory) =>
+        val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
+        new ResponseUdfs(udfs)
       case _ =>
     }
   }

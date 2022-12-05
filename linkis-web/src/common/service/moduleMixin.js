@@ -5,19 +5,19 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 /**
- * 全局混入Dispatch处理事件，全局mixin
+ * Global mixin Dispatch processing events, global mixin(全局混入Dispatch处理事件，全局mixin)
  */
 import util from '@/common/util';
 import eventbus from '@/common/helper/eventbus';
@@ -27,7 +27,7 @@ let module = function(config) {
   if (!config.name) {
     return console.error('请配置独一无二的ModuleName');
   }
-  // 控制对外抛出的事件
+  // Control events thrown out(控制对外抛出的事件)
   let dispatchs = config.dispatchs || [];
   if (util.isPlainObject(dispatchs)) {
     let arr = [];
@@ -40,7 +40,7 @@ let module = function(config) {
     }
     dispatchs = arr;
   }
-  // 处理模块 methods
+  // processing module methods(处理模块 methods)
   if (config.methods) {
     let methods = Object.keys(config.methods);
     if (methods.length > 0) {
@@ -53,7 +53,7 @@ let module = function(config) {
     }
   }
   /**
-     * 挂载dispatch到空模块
+     * Mount dispatch to empty module(挂载dispatch到空模块)
      * @param {*} name
      * @param {*} param
      * @param {*} [cb=new Function()]
@@ -74,7 +74,7 @@ let module = function(config) {
       return data;
     },
     created() {
-      // 处理模块下的组件监听
+      // Component monitoring under the processing module(处理模块下的组件监听)
       if (config.events) {
         let events = config.events;
         if (util.isArray(events) && events.length > 0) {
@@ -101,12 +101,12 @@ let module = function(config) {
       }
     },
     methods: {
-      // 触发事件
+      // trigger event(触发事件)
       dispatch: config.dispatch,
       getUserName() {
         return  storage.get("baseInfo", 'local') ? storage.get("baseInfo", 'local').username : null;
       },
-      // 获取当前编排的环境
+      // Get the current orchestration environment(获取当前编排的环境)
       getCurrentDsslabels() {
         return storage.get("currentDssLabels") ? storage.get("currentDssLabels") : null;
       }
@@ -116,12 +116,12 @@ let module = function(config) {
 
 let modules = {}
 /**
- * 提供Dispatch方法统一事件处理方式
+ * Provide Dispatch method to unify event handling(提供Dispatch方法统一事件处理方式)
  */
 export default function mixinDispatch (requireComponent, requireComponentVue) {
   if (requireComponent) {
     requireComponent.keys().forEach((fileName) => {
-      // 获取组件配置
+      // Get component configuration(获取组件配置)
       let moduleConfig = requireComponent(fileName);
       moduleConfig = moduleConfig.default || moduleConfig;
       moduleConfig.mixin = module(moduleConfig);
@@ -131,7 +131,7 @@ export default function mixinDispatch (requireComponent, requireComponentVue) {
 
   if (requireComponentVue) {
     requireComponentVue.keys().forEach((fileName) => {
-    // 获取组件配置
+    // Get component configuration(获取组件配置)
       let vueConfig = requireComponentVue(fileName);
       vueConfig = vueConfig.default || vueConfig;
       let indexPath = './' + fileName.split('/')[1] + '/index.js';

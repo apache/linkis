@@ -24,7 +24,7 @@ public enum LinkisModuleErrorCodeSummary {
   FETCH_MAPCACHE_ERROR(
       10021,
       "Failed to get user parameters,because RPC request{0} Service failed(获取用户参数失败！因为 RPC 请求{0}服务失败)!"),
-  NOT_EXISTS_APPLICATION(10050, "Application {0} is not exists any instances(应用程序 {0} 不存在任何实例)"),
+  NOT_EXISTS_APPLICATION(10050, "Application {0} does not exist any instances(应用程序 {0} 不存在任何实例)"),
   HAVE_NOT_SET(
       11000,
       "The wds.linkis.server.home或BDP_SERVER_HOME haven't set(wds.linkis.server.home 或 BDP_SERVER_HOME 没有设置)!"),

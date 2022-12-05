@@ -30,7 +30,7 @@ public enum ManagerCommonErrorCodeSummary {
   YARN_QUEUE_EXCEPTION(11006, "Get the Yarn queue information exception(获取Yarn队列信息异常)"),
   YARN_APPLICATION_EXCEPTION(
       11006, "Get the Yarn Application information exception.(获取Yarn Application信息异常)"),
-  YARN_NOT_EXISTS_QUEUE(11006, "Queue:{0} is not exists in YARN(YARN 中不存在队列:{0})"),
+  YARN_NOT_EXISTS_QUEUE(11006, "Queue:{0} does not exist in YARN(YARN 中不存在队列:{0})"),
   ONLY_SUPPORT_FAIRORCAPA(
       11006,
       "Only support fairScheduler or capacityScheduler, not support schedulerType:{0}(仅支持 fairScheduler 或 capacityScheduler)"),

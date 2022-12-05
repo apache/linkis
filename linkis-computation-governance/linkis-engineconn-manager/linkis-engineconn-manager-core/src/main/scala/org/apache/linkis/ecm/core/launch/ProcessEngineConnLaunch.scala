@@ -136,7 +136,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       if (StringUtils.isEmpty(env.getValue)) {
         throw new ErrorException(
           30000,
-          s"Necessary environment $e is not exists!(必须的环境变量 $e 不存在！)"
+          s"Necessary environment $e does not exist!(必须的环境变量 $e 不存在！)"
         ) // TODO exception
       } else request.environment.put(e, env.getValue)
     }

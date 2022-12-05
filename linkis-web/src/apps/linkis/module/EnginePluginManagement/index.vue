@@ -72,9 +72,11 @@
     >
       <Spin size="large" fix v-if="loadingForm"></Spin>
       <div style="height: 200px">
-        <form style="width: 200px;height: 200px">
-          <input type="file" @change="getFile($event)" />
+        <form style="width: 200px;height: 200px" v-show="false">
+          <input ref="upload" type="file" @change="getFile($event)" accept=".zip"/>
         </form>
+        <Button type="default" style="width: 100%; height: 70%; font-size: 50px;" size="large" icon="ios-cloud-upload-outline" @click="handleClick"></Button>
+        <span style="margin-top: 30px; text-align: center; display: inline-block; width:100%; font-size:14px">{{$t('message.linkis.EnginePluginManagement.upload')}}</span>
       </div>
 
       <div slot="footer">
@@ -83,7 +85,7 @@
             <Button
               type="primary"
               @click="handleCancel"
-            >{{ $t('message.linkis.close') }}</Button>
+            >{{ $t('message.linkis.cancel') }}</Button>
             <Button type="primary" @click="onSubmit">{{
               $t('message.linkis.complete')}}</Button>
           </div>
@@ -120,12 +122,12 @@
           $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
         <Button type="primary" class="button" :style="{width: '60px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="initECMList()">{{
           $t('message.linkis.search') }}</Button>
-        <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
+        <!-- <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
           $t('message.linkis.EnginePluginManagement.update')}}</Button>
         <Button type="error" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="deleteBML">{{
-          $t('message.linkis.EnginePluginManagement.delete')}}</Button>
-        <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(0)">{{
-          $t('message.linkis.EnginePluginManagement.create') }}</Button>
+          $t('message.linkis.EnginePluginManagement.delete')}}</Button> -->
+        <!-- <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(0)">{{
+          $t('message.linkis.EnginePluginManagement.create') }}</Button> -->
       </Col>
     </Row>
     <Table
@@ -229,6 +231,10 @@ export default {
           key: 'lastModified',
           tooltip: true,
           align: 'center',
+          render: (h, params) => {
+            let time = new Date(parseInt(params.row.lastModified)).toLocaleString().replace(/:\d(1,2)$/, ' ')
+            return h('span', time);
+          }
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.bmlResourceId'),
@@ -489,6 +495,9 @@ export default {
         this.$Message.error(e);
       })
     },
+    handleClick () {
+      this.$refs.upload.click();
+    }
   },
 }
 </script>

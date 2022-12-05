@@ -415,7 +415,8 @@
           "cancel": "Cancel",
           "modalTitle": "Info",
           "modalFormat": "Confirm deleting the {0} record?",
-          "modalDelete": "Confirm that the record should be deleted?",
+          "modalDelete1": "Confirm that the record [{username}] should be deleted?",
+          "modalDelete": "Confirm that the record [{envName}] should be deleted?",
           "modalDeleteSuccess": "Successfully delete",
           "modalDeleteFail": "Fail to delete",
           "modalAddSuccess": "Successfully added",
@@ -429,6 +430,7 @@
           "legalUsers": "Legal Users",
           "legalHosts": "Legal Hosts",
           "elapseDay": "Elapse Day",
+          "permanentlyValid": "Permanently Valid",
           "businessOwner": "Owner",
           "createTime":"Create Time",
           "updateTime": "Update Time",
@@ -445,7 +447,8 @@
           },
           "elapseDayValidate": {
             "size": "The Elapse Day cannot be less than -1",
-            "empty": "Please enter the elapse day"
+            "empty": "Please enter the elapse day",
+            "GT0": "Valid days must be greater than 0"
           }
         },
         "errorCode": {
@@ -546,7 +549,8 @@
         "versionList": "Version List",
         "rollback": "Rollback",
         "action": "Operate",
-        "checkEngineConnTypeAndVersion": "Please select the engine type and version"
+        "checkEngineConnTypeAndVersion": "Please select the engine type and version",
+        "upload": "Please click the button to upload the engine plug-in"
       }
     }
   }

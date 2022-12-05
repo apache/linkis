@@ -15,20 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.common.launch
+package org.apache.linkis.engineplugin.spark.client.deployment;
 
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 
-trait EngineConnLaunchBuilder {
+public class ClusterDescriptorAdapterFactory {
 
-  protected var engineConnBuildRequest: EngineConnBuildRequest = _
-
-  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
-    this.engineConnBuildRequest = engineConnBuildRequest
-
-  def buildEngineConn(): EngineConnLaunchRequest
-
+  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
+    ClusterDescriptorAdapter clusterDescriptorAdapter =
+        new YarnApplicationClusterDescriptorAdapter(executionContext);
+    return clusterDescriptorAdapter;
+  }
 }

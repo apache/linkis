@@ -15,20 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.common.launch
+package org.apache.linkis.engineplugin.spark.exception;
 
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+import org.apache.linkis.common.exception.ErrorException;
 
-trait EngineConnLaunchBuilder {
+public class JobExecutionException extends ErrorException {
 
-  protected var engineConnBuildRequest: EngineConnBuildRequest = _
+  private static final long serialVersionUID = 1L;
 
-  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
-    this.engineConnBuildRequest = engineConnBuildRequest
+  public static final int ERROR_CODE = 16023;
 
-  def buildEngineConn(): EngineConnLaunchRequest
+  public JobExecutionException(String message) {
+    super(ERROR_CODE, message);
+  }
 
+  public JobExecutionException(String message, Throwable e) {
+    super(ERROR_CODE, message);
+    this.initCause(e);
+  }
 }

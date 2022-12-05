@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.common.launch
+package org.apache.linkis.engineplugin.spark.context
 
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext
 
-trait EngineConnLaunchBuilder {
+class SparkEngineConnContext(environmentContext: EnvironmentContext) {
 
-  protected var engineConnBuildRequest: EngineConnBuildRequest = _
+  private var executionContext: ExecutionContext = _
 
-  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
-    this.engineConnBuildRequest = engineConnBuildRequest
+  def getEnvironmentContext: EnvironmentContext = environmentContext
 
-  def buildEngineConn(): EngineConnLaunchRequest
+  def getExecutionContext: ExecutionContext = executionContext
+
+  def setExecutionContext(executionContext: ExecutionContext): Unit = this.executionContext =
+    executionContext
 
 }

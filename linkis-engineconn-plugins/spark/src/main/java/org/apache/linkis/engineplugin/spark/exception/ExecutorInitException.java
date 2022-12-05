@@ -15,20 +15,29 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.common.launch
+package org.apache.linkis.engineplugin.spark.exception;
 
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+import org.apache.linkis.common.exception.ErrorException;
 
-trait EngineConnLaunchBuilder {
+public class ExecutorInitException extends ErrorException {
 
-  protected var engineConnBuildRequest: EngineConnBuildRequest = _
+  public static final int ERROR_CODE = 16021;
 
-  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
-    this.engineConnBuildRequest = engineConnBuildRequest
+  private static final long serialVersionUID = 1L;
 
-  def buildEngineConn(): EngineConnLaunchRequest
+  public ExecutorInitException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 
+  public ExecutorInitException(String desc) {
+    super(20001, desc);
+  }
+
+  public ExecutorInitException(Exception e) {
+    super(20001, e.getMessage());
+  }
+
+  public ExecutorInitException() {
+    super(20001, "argument illegal");
+  }
 }

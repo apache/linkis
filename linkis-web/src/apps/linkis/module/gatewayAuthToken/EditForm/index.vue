@@ -128,13 +128,35 @@ export default {
           ],
         },
         {
+          type: 'radio',
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.permanentlyValid'),
+          field: "permanentlyValid",
+          value: false,
+          hidden: false,
+          options: [
+            {value: false,label: "否",disabled: false},
+            {value: true,label: "是",disabled: false},
+          ],
+          on: {
+            'on-change': () => {
+              this.rule[5].hidden = !this.rule[5].hidden;
+              if(this.rule[5].hidden) {
+                this.formModel.elapseDay = -1;
+              } else {
+                this.formModel.elapseDay = 1;
+              }
+            }
+          }
+        },
+        {
           type: 'inputNumber',
           title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
-          value: -1,
+          value: 1,
+          hidden: false,
           info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.info'),
           props: {
-            placeholder: "eg . -1",
+            placeholder: "eg . 1",
           },
           validate: [
             {
@@ -143,6 +165,9 @@ export default {
                 return new Promise((resolve, reject)=>{
                   if(!value){
                     reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
+                  }
+                  if(!this.formModel.permanentlyValid && value < 1) {
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.GT0'))
                   }
                   resolve()
                 })

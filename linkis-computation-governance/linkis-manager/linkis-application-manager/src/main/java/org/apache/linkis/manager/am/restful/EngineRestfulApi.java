@@ -188,7 +188,7 @@ public class EngineRestfulApi {
       }
       engineNode = ECResourceInfoUtils.convertECInfoTOECNode(ecInfo);
     }
-    if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && isNotAdmin(userName)) {
       return Message.error("You have no permission to access EngineConn " + serviceInstance);
     }
     return Message.ok().data("engine", engineNode);
@@ -204,7 +204,7 @@ public class EngineRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
     logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
     EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
-    if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && isNotAdmin(userName)) {
       return Message.error("You have no permission to kill EngineConn " + serviceInstance);
     }
     EngineStopRequest stopEngineRequest = new EngineStopRequest(serviceInstance, userName);
@@ -278,7 +278,7 @@ public class EngineRestfulApi {
   public Message listEMEngines(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws IOException, AMErrorException {
     String username = ModuleUserUtils.getOperationUser(req, "listEMEngines");
-    if (!isAdmin(username)) {
+    if (isNotAdmin(username)) {
       throw new AMErrorException(
           210003, "Only admin can search engine information(只有管理员才能查询所有引擎信息).");
     }
@@ -347,7 +347,7 @@ public class EngineRestfulApi {
   public Message modifyEngineInfo(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws AMErrorException, LabelErrorException {
     String username = ModuleUserUtils.getOperationUser(req, "modifyEngineInfo");
-    if (!isAdmin(username)) {
+    if (isNotAdmin(username)) {
       throw new AMErrorException(
           210003, "Only admin can modify engineConn information(只有管理员才能修改引擎信息).");
     }
@@ -401,7 +401,7 @@ public class EngineRestfulApi {
     ServiceInstance serviceInstance = getServiceInstance(jsonNode);
     logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
     EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
-    if (!userName.equals(engineNode.getOwner()) && !isAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && isNotAdmin(userName)) {
       return Message.error("You have no permission to execute Engine Operation " + serviceInstance);
     }
     Map<String, Object> parameters =
@@ -419,6 +419,10 @@ public class EngineRestfulApi {
 
   private boolean isAdmin(String user) {
     return AMConfiguration.isAdmin(user);
+  }
+
+  private boolean isNotAdmin(String user) {
+    return !isAdmin(user);
   }
 
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {

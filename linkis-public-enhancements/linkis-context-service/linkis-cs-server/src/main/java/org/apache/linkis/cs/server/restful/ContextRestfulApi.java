@@ -271,7 +271,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       HttpServletRequest req, @RequestBody Map<String, Object> bodyMap)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     String username = ModuleUserUtils.getOperationUser(req);
-    if (!Configuration.isAdmin(username)) {
+    if (Configuration.isNotAdmin(username)) {
       throw new CSErrorException(97018, "Only station admins are allowed.");
     }
     if (null == bodyMap || bodyMap.isEmpty()) {

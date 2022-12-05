@@ -286,7 +286,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       fakeLabel.setCreator(creator)
       val userCreator = fakeLabel.getStringValue
       Utils.tryCatch(fakeLabel.valueCheck(userCreator)) { t =>
-        info("input user or creator is not correct", t)
+        logger.info("input user or creator is not correct", t)
         throw t
       }
       jobHistoryMapper.searchWithUserCreator(

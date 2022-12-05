@@ -22,7 +22,10 @@ import org.apache.linkis.common.utils.CodeAndRunTypeUtils
 class PYScriptCompaction private extends CommonScriptCompaction {
 
   override def belongTo(suffix: String): Boolean =
-    CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
+    CodeAndRunTypeUtils.getSuffixBelongToLanguageTypeOrNot(
+      suffix,
+      CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON
+    )
 
   override def prefix: String = "#@set"
 

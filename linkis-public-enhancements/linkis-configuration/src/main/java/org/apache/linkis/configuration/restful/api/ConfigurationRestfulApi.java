@@ -328,7 +328,7 @@ public class ConfigurationRestfulApi {
   }
 
   private void checkAdmin(String userName) throws ConfigurationException {
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
     }
   }

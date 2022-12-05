@@ -67,7 +67,6 @@ public class SparkOnceJobTest {
     onceJob.submit();
     logger.info("jobId: {}", onceJob.getId());
 
-
     EngineConnLogOperator logOperator =
         (EngineConnLogOperator) onceJob.getOperator(EngineConnLogOperator.OPERATOR_NAME());
     int fromLine = 1;

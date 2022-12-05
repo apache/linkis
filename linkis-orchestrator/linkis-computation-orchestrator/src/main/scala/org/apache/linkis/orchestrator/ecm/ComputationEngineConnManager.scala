@@ -19,7 +19,7 @@ package org.apache.linkis.orchestrator.ecm
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{
@@ -104,13 +104,13 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         }
       } catch {
         case t: LinkisRetryException =>
-          val taken = System.currentTimeMillis() - start
+          val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)
           logger.warn(
             s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}"
           )
           retryException = t
         case t: Throwable =>
-          val taken = System.currentTimeMillis() - start
+          val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)
           logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")
           throw t
       }

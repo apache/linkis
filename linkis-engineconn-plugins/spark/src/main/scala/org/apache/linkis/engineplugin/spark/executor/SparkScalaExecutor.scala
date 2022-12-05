@@ -18,10 +18,10 @@
 package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, Utils}
-import org.apache.linkis.engineconn.computation.execute
-import org.apache.linkis.engineconn.computation.rs
-import org.apache.linkis.engineconn.core.ExecutorManager
-import org.apache.linkis.engineplugin.common.{Kind, SparkScala}
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineplugin.spark.common.{Kind, SparkScala}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._

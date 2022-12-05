@@ -111,7 +111,7 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
 //    {
 //      var servers = lb.getAllServers
 //      val instanceNotExists = new NoInstanceExistsException(10051, "The instance " +
-//        serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists.")
+//        serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " does not exist.")
 //      var server = servers.find(_.getHostPort == serviceInstance.getInstance)
 //      if(server.isEmpty) Utils.tryThrow(Utils.waitUntil(() =>{
 //        refreshServerList(lb)

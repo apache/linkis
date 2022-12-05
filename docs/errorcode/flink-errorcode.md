@@ -12,7 +12,7 @@
 |flink |16020|Execution type must be one of:{}(Execution 类型必须是以下之一).|EXECUTION_MUST_THESE|FlinkErrorCodeSummary|
 |flink |16020|Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)|NOT_SUPPORTED_YARNTARGET|FlinkErrorCodeSummary|
 |flink |16020|Unknown checkpoint mode:{0}(未知的 checkpoint 模式).|UNKNOWN_CHECKPOINT_MODE|FlinkErrorCodeSummary|
-|flink |16020|hudi jars is not exists.(hudi jars 不存在.)|HUDIJARS_NOT_EXISTS|FlinkErrorCodeSummary|
+|flink |16020|hudi jars does not exist.(hudi jars 不存在.)|HUDIJARS_NOT_EXISTS|FlinkErrorCodeSummary|
 |flink |16020|The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)|PATH_NOT_EXIST|FlinkErrorCodeSummary|
 |flink |16020|Could not parse environment file，because:{0}(无法解析 environment 文件)|BOT_PARSE_ENVIRONMENT|FlinkErrorCodeSummary|
 |flink |16020|Invalid configuration entry.(配置条目无效.)|CONFIGURATION_ENTRY_INVALID|FlinkErrorCodeSummary|
@@ -50,7 +50,7 @@
 |flink |16023|Create a new instance of failure, the instance is(新建失败实例,实例为):{0}|CREATE_INSTANCE_FAILURE|FlinkErrorCodeSummary|
 |flink |16023|Job:could not retrieve or create a cluster.(作业：无法检索或创建集群.)|NOT_CREATE_CLUSTER|FlinkErrorCodeSummary|
 |flink |16023|Job: operation failed(作业：操作失败)|OPERATION_FAILED|FlinkErrorCodeSummary|
-|flink |16023|Not support flink version, StreamExecutionEnvironment.class is not exists getConfiguration method!(不支持flink版本，StreamExecutionEnvironment.class不存在getConfiguration方法!)|NOT_FLINK_VERSION|FlinkErrorCodeSummary|
+|flink |16023|Not support flink version, StreamExecutionEnvironment.class does not exist getConfiguration method!(不支持flink版本，StreamExecutionEnvironment.class不存在getConfiguration方法!)|NOT_FLINK_VERSION|FlinkErrorCodeSummary|
 |flink |16023|StreamExecutionEnvironment.getConfiguration() execute failed!(StreamExecutionEnvironment.getConfiguration() 执行失败！)|EXECUTE_FAILED|FlinkErrorCodeSummary|
 |flink |20001|Not support ClusterDescriptorAdapter for flink application.(不支持 flink 应用的 ClusterDescriptorAdapter.)|NOT_SUPPORT_FLINK|FlinkErrorCodeSummary|
 |flink |20001|The application start failed, since yarn applicationId is null.(应用程序启动失败，因为 yarn applicationId 为 null.)|YARN_IS_NULL|FlinkErrorCodeSummary|

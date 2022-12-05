@@ -17,53 +17,34 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
-import org.apache.linkis.engineconn.core.executor.ExecutorManager
-import org.apache.linkis.engineplugin.spark.common.{Kind, SparkScala}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Utils}
+import org.apache.linkis.engineconn.computation.execute
+import org.apache.linkis.engineconn.computation.rs
+import org.apache.linkis.engineconn.core.ExecutorManager
+import org.apache.linkis.engineplugin.common.{Kind, SparkScala}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
-import org.apache.linkis.engineplugin.spark.exception.{
-  ApplicationAlreadyStoppedException,
-  ExecuteError,
-  SparkSessionNullException
-}
+import org.apache.linkis.engineplugin.spark.exception.{ApplicationAlreadyStoppedException, ExecuteError, SparkSessionNullException}
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.ScalaCodeParser
-import org.apache.linkis.scheduler.executer.{
-  ErrorExecuteResponse,
-  ExecuteResponse,
-  IncompleteExecuteResponse,
-  SuccessExecuteResponse
-}
+import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, IncompleteExecuteResponse, SuccessExecuteResponse}
 import org.apache.linkis.storage.resultset.ResultSetWriter
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.reflect.FieldUtils
+import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.engineplugin.spark.common.SparkScala
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.repl.SparkILoop
-import org.apache.spark.sql.{SparkSession, SQLContext}
+import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.util.SparkUtils
 
 import java.io.{BufferedReader, File}
 import java.util.Locale
-
-import scala.tools.nsc.interpreter.{
-  isReplPower,
-  replProps,
-  IMain,
-  JPrintWriter,
-  NamedParam,
-  Results,
-  SimpleReader,
-  StdReplTags
-}
+import scala.tools.nsc.interpreter.{IMain, JPrintWriter, NamedParam, Results, SimpleReader, StdReplTags, isReplPower, replProps}
 import scala.util.Properties.versionNumberString
-
 import _root_.scala.tools.nsc.GenericRunnerSettings
 
 class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
@@ -347,7 +328,9 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       () => sparkILoop.intp != null && sparkILoop.intp.isInitializeComplete,
       SparkConfiguration.SPARK_LANGUAGE_REPL_INIT_TIME.getValue.toDuration
     )
-    logger.warn(s"Start to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+    logger.warn(
+      s"Start to init sparkILoop cost ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)}."
+    )
     sparkILoop.beSilentDuring {
       sparkILoop.command(":silent")
       sparkILoop.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
@@ -404,7 +387,9 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       )
       sparkILoop.interpret("implicit val sparkSession = spark")
       bindFlag = true
-      logger.warn(s"Finished to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+      logger.warn(
+        s"Finished to init sparkILoop cost ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)}."
+      )
     }
   }
 

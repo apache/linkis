@@ -86,8 +86,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throw new CSErrorException(97000, "contxtId cannot be empty");
     }
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
-    Message message = generateResponse(answerJob, "contextID");
-    return message;
+    return generateResponse(answerJob, "contextID");
   }
 
   @ApiOperation(value = "updateContextID", notes = "update content id", response = Message.class)
@@ -177,7 +176,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     if (null == createTimeStart
         && null == createTimeEnd
         && null == updateTimeStart
-        && null == createTimeEnd
+        && null == updateTimeEnd
         && null == accessTimeStart
         && null == accessTimeEnd) {
       throw new CSErrorException(

@@ -86,8 +86,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, contextKey);
-    Message message = generateResponse(answerJob, "contextValue");
-    return message;
+    return generateResponse(answerJob, "contextValue");
   }
 
   @ApiOperation(
@@ -262,7 +261,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     @ApiImplicitParam(name = "createTimeStart", required = true, dataType = "String"),
     @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
     @ApiImplicitParam(name = "updateTimeStart", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "updateTimeEnd", required = true, dataType = "String"),
     @ApiImplicitParam(name = "accessTimeStart", required = true, dataType = "String"),
     @ApiImplicitParam(name = "accessTimeEnd", required = true, dataType = "String")
   })
@@ -298,21 +297,21 @@ public class ContextRestfulApi implements CsRestfulParent {
       updateTimeEnd =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("updateTimeEnd"), dtf));
     if (bodyMap.containsKey("accessTimeStart") && null != bodyMap.get("accessTimeStart"))
-      updateTimeStart =
+      accessTimeStart =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("accessTimeStart"), dtf));
     if (bodyMap.containsKey("accessTimeEnd") && null != bodyMap.get("accessTimeEnd"))
-      updateTimeEnd =
+      accessTimeEnd =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("accessTimeEnd"), dtf));
     if (null == createTimeStart
         && null == createTimeEnd
         && null == updateTimeStart
-        && null == createTimeEnd) {
+        && null == updateTimeEnd) {
       throw new CSErrorException(
           97000,
           "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
     }
     logger.info(
-        "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
+        "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}.",
         username,
         createTimeStart,
         createTimeEnd,

@@ -44,7 +44,7 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
     }
     logger.info(s"engineConnTask(${engineConnTask.getTaskId}) running task is ($getRunningTask) ")
     val response = super.execute(engineConnTask)
-    if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask)
+    if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
       EXECUTOR_STATUS_LOCKER.synchronized {
         if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
           logger.info(
@@ -53,6 +53,7 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
           transition(NodeStatus.Unlock)
         }
       }
+    }
     response
   }
 

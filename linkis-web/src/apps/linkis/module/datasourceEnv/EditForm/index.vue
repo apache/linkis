@@ -181,7 +181,7 @@ export default {
           field: 'uris',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: 'thrift://127.0.0.1:9083',
           },
           validate: [
             {
@@ -201,7 +201,7 @@ export default {
           value: '',
           hidden: true,
           props: {
-            placeholder: "",
+            placeholder: 'hadoop@APACHE.COM',
           },
         },
         {

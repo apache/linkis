@@ -22,12 +22,9 @@ import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
 import org.apache.linkis.engineconn.executor.entity.Executor;
 
-import org.springframework.stereotype.Component;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component
 public class TaskMonitorService implements MonitorService {
 
   private static Logger LOG = LoggerFactory.getLogger(HardwareMonitorService.class);

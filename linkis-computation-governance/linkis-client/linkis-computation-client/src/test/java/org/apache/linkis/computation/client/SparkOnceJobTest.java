@@ -48,11 +48,10 @@ public class SparkOnceJobTest {
             .addJobContent("runType", "jar")
             .addJobContent("spark.app.main.class", "org.apache.spark.examples.JavaWordCount")
             .addJobContent("spark.app.args", "hdfs:///tmp/log.log -a 10 -b=12")
-            .addJobContent("spark.extconf", "spark.a=d spark.c=d\nspark.args.start_date=2022-06-14")
+            .addJobContent("spark.extconf", "spark.a=d\nspark.c=d\nspark.args.start_date=2022-06-14")
             .addLabel("engineType", engineType + "-2.4.7")
             .addLabel("userCreator", submitUser + "-IDE")
             .addLabel("engineConnMode", "once")
-            .addLabel("yarnCluster", "http://172.21.212.5:8088")
             .addStartupParam("spark.app.name", "spark-submit-jar-test-xi")
             .addStartupParam("spark.executor.memory", "1g")
             .addStartupParam("spark.driver.memory", "1g")
@@ -60,7 +59,7 @@ public class SparkOnceJobTest {
             .addStartupParam("spark.executor.instance", "1")
             .addStartupParam(
                 "spark.app.resource",
-                "hdfs:///linkis/opscenter/qatest/spark/spark-examples_2.11-2.3.0.2.6.5.0-292.jar")
+                "hdfs:///spark/spark-examples_2.11-2.3.0.2.6.5.0-292.jar")
             .addSource("jobName", "OnceJobTest")
             .build();
     // endregion

@@ -48,7 +48,8 @@ public class SparkOnceJobTest {
             .addJobContent("runType", "jar")
             .addJobContent("spark.app.main.class", "org.apache.spark.examples.JavaWordCount")
             .addJobContent("spark.app.args", "hdfs:///tmp/log.log -a 10 -b=12")
-            .addJobContent("spark.extconf", "spark.a=d\nspark.c=d\nspark.args.start_date=2022-06-14")
+            .addJobContent(
+                "spark.extconf", "spark.a=d\nspark.c=d\nspark.args.start_date=2022-06-14")
             .addLabel("engineType", engineType + "-2.4.7")
             .addLabel("userCreator", submitUser + "-IDE")
             .addLabel("engineConnMode", "once")
@@ -58,8 +59,7 @@ public class SparkOnceJobTest {
             .addStartupParam("spark.executor.cores", "1")
             .addStartupParam("spark.executor.instance", "1")
             .addStartupParam(
-                "spark.app.resource",
-                "hdfs:///spark/spark-examples_2.11-2.3.0.2.6.5.0-292.jar")
+                "spark.app.resource", "hdfs:///spark/spark-examples_2.11-2.3.0.2.6.5.0-292.jar")
             .addSource("jobName", "OnceJobTest")
             .build();
     // endregion

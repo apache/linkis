@@ -39,9 +39,9 @@ public interface ECResourceInfoService {
   /**
    * @param creatorUserList engineconn creator list
    * @param engineTypeList engineconn type list
-   * @param statusList engineconn status list
+   * @param statusStrList engineconn status string list
    * @return
    */
   List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusList);
+      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList);
 }

@@ -778,11 +778,12 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             if (null != logListener) {
               logListener.onLogUpdate(
                   entranceJob,
-                  "Job "
-                      + jobReq.getId()
-                      + " was kill by user successfully(任务"
-                      + jobReq.getId()
-                      + "已成功取消)");
+                  LogUtils.generateInfo(
+                      "Job "
+                          + jobReq.getId()
+                          + " was kill by user successfully(任务"
+                          + jobReq.getId()
+                          + "已成功取消)"));
             }
             this.entranceServer
                 .getEntranceContext()

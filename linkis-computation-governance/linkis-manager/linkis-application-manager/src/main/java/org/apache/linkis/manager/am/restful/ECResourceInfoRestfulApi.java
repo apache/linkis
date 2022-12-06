@@ -212,11 +212,11 @@ public class ECResourceInfoRestfulApi {
               .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
     }
 
-    List<String> statusList = new ArrayList<>();
+    List<String> statusStrList = new ArrayList<>();
     if (statussParam != null) {
-      statusList =
+      statusStrList =
           JsonUtils.jackson()
-              .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
+              .readValue(statussParam.toString(), new TypeReference<List<String>>() {});
     }
 
     String username = ModuleUserUtils.getOperationUser(req, "ecList");
@@ -240,7 +240,7 @@ public class ECResourceInfoRestfulApi {
     }
 
     List<Map<String, Object>> list =
-        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusList);
+        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusStrList);
 
     return Message.ok().data("ecLit", list);
   }

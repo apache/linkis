@@ -112,7 +112,7 @@ public class EMRestfulApi {
         value = "node  healthy status",
         example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
     @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner"),
-    @ApiImplicitParam(name = "tenantLabel", dataType = "String", value = "tenantLabel")
+    @ApiImplicitParam(name = "tenantLabel", dataType = "String", value = "tenantLabel like")
   })
   // todo add healthInfo
   @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -151,14 +151,39 @@ public class EMRestfulApi {
                           .filter(
                               label ->
                                   KEY_TENANT.equals(label.getLabelKey())
-                                      && tenantLabel.equals(label.getStringValue()))
+                                      && label.getStringValue().contains(tenantLabel))
                           .collect(Collectors.toList());
-                  ;
                   return labels.size() > 0 ? true : false;
                 });
       }
 
       emNodeVos = stream.collect(Collectors.toList());
+
+      // sort
+      if (StringUtils.isNotBlank(tenantLabel)) {
+        Collections.sort(
+            emNodeVos,
+            new Comparator<EMNodeVo>() {
+              @Override
+              public int compare(EMNodeVo a, EMNodeVo b) {
+                String aLabelStr =
+                    a.getLabels().stream()
+                        .filter(label -> KEY_TENANT.equals(label.getLabelKey()))
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getStringValue();
+                String bLabelStr =
+                    b.getLabels().stream()
+                        .filter(label -> KEY_TENANT.equals(label.getLabelKey()))
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getStringValue();
+                return aLabelStr.compareTo(bLabelStr);
+              }
+            });
+      } else {
+        Collections.sort(emNodeVos, Comparator.comparing(EMNodeVo::getInstance));
+      }
     }
     return Message.ok().data("EMs", emNodeVos);
   }

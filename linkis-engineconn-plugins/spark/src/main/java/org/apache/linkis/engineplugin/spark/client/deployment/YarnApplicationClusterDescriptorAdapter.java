@@ -25,7 +25,6 @@ import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;

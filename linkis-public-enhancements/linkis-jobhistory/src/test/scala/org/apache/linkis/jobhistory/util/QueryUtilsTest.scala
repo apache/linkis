@@ -26,25 +26,6 @@ class QueryUtilsTest {
   private val username = "hadoop"
 
   @Test
-  @DisplayName("isJobHistoryAdminTest")
-  def isJobHistoryAdminTest(): Unit = {
-    val defaultName = "hadoop"
-    val otherName = "hadoops"
-    val defaultVal = QueryUtils.isJobHistoryAdmin(defaultName)
-    val otherVal = QueryUtils.isJobHistoryAdmin(otherName)
-
-    Assertions.assertTrue(defaultVal)
-    Assertions.assertFalse(otherVal)
-  }
-
-  @Test
-  @DisplayName("getJobHistoryAdminTest")
-  def getJobHistoryAdminTest(): Unit = {
-    val admins = QueryUtils.getJobHistoryAdmin()
-    Assertions.assertTrue(admins.exists(username.equalsIgnoreCase))
-  }
-
-  @Test
   @DisplayName("dateToStringTest")
   def dateToStringTest(): Unit = {
     val dateStr = QueryUtils.dateToString(new Date)

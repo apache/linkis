@@ -41,7 +41,6 @@ public class WorkSpaceConfigurationTest {
     Integer fileSystemFsThreadCache = WorkSpaceConfiguration.FILESYSTEM_FS_THREAD_CACHE.getValue();
     Boolean filesystemPathCheckTrigger =
         WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_TRIGGER.getValue();
-    String filesystemLogAdmin = WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue();
     Boolean filesystemPathCheckOwner =
         WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
     Boolean filesystemPathAutoCreate =
@@ -60,7 +59,6 @@ public class WorkSpaceConfigurationTest {
     Assertions.assertTrue(fileSystemFsThreadNum == 10);
     Assertions.assertTrue(fileSystemFsThreadCache == 1000);
     Assertions.assertFalse(filesystemPathCheckTrigger);
-    Assertions.assertNotNull(filesystemLogAdmin);
     Assertions.assertFalse(filesystemPathCheckOwner.booleanValue());
     Assertions.assertFalse(filesystemPathAutoCreate.booleanValue());
     Assertions.assertTrue(localFilesystemUserRefreshInterval == 1800000L);

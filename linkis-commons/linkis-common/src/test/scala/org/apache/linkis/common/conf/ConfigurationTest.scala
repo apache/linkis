@@ -21,7 +21,7 @@ import org.junit.jupiter.api.{Assertions, Test}
 
 class ConfigurationTest {
 
-  @Test private[conf] def testAdmin(): Unit = {
+  @Test private[conf] def testIsAdmin(): Unit = {
     Assertions.assertTrue(Configuration.isAdmin("hadoop"))
     Assertions.assertFalse(Configuration.isAdmin("HaDoop"))
   }

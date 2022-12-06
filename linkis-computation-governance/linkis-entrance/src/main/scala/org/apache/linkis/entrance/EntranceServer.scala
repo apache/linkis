@@ -24,10 +24,12 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.cs.CSEntranceHelper
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import org.apache.linkis.entrance.execute.EntranceJob
-import org.apache.linkis.entrance.log.{Cache, HDFSCacheLogWriter, LogReader}
+import org.apache.linkis.entrance.log.{Cache, CacheLogWriter, HDFSCacheLogWriter, LogReader}
+import org.apache.linkis.entrance.parser.ParserUtils
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -279,7 +281,49 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def killEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+  /**
+   * execute failover job (提交故障转移任务，返回新的execId)
+   *
+   * @param jobRequest
+   */
+  def failoverExecute(jobRequest: JobRequest): Unit = {
+
+    if (null == jobRequest || null == jobRequest.getId || jobRequest.getId <= 0) {
+      throw new EntranceErrorException(
+        PERSIST_JOBREQUEST_ERROR.getErrorCode,
+        PERSIST_JOBREQUEST_ERROR.getErrorDesc
+      )
+    }
+
+    val logAppender = new java.lang.StringBuilder()
+    logAppender.append(
+      LogUtils
+        .generateInfo(
+          s"\n\n*************************************FAILOVER************************************** \n\n"
+        )
+    )
+
+    // try to kill ec
+    killOldEC(jobRequest, logAppender);
+
+    // deal Inited jobRequest, if status is Inited, need to deal by all Interceptors, such as set log_path
+    if (jobRequest.getStatus.equals(SchedulerEventState.Inited.toString)) {
+      dealInitedJobRequest(jobRequest, logAppender)
+    }
+
+    if (
+        EntranceConfiguration.ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED.getValue &&
+        jobRequest.getStatus.equals(SchedulerEventState.Running.toString)
+    ) {
+      // deal Running jobRequest, if enabled, status changed from Running to Cancelled
+      dealRunningJobRequest(jobRequest, logAppender)
+    } else {
+      // init and submit
+      initAndSubmitJobRequest(jobRequest, logAppender)
+    }
+  }
+
+  def killOldEC(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
     Utils.tryCatch {
       logAppender.append(
         LogUtils
@@ -332,18 +376,18 @@ abstract class EntranceServer extends Logging {
         // kill ec by linkismanager
         val engineStopRequest = new EngineStopRequest
         engineStopRequest.setServiceInstance(ecInstance)
-        // send to linkismanager
+        // send to linkismanager kill ec
         Sender
           .getSender(RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue)
           .send(engineStopRequest)
         val msg =
-          s"job ${jobRequest.getId} send EngineStopRequest to linkismanager, kill instance $ecInstance"
+          s"job ${jobRequest.getId} send EngineStopRequest to linkismanager, kill EC instance $ecInstance"
         logger.info(msg)
         logAppender.append(LogUtils.generateInfo(msg) + "\n")
       } else if (engineInstance.containsKey(TaskConstant.ENGINE_CONN_TASK_ID)) {
-        // kill ec task
+        // get ec taskId
         val engineTaskId = engineInstance.get(TaskConstant.ENGINE_CONN_TASK_ID).toString
-        // send to ec
+        // send to ec kill task
         Sender
           .getSender(ecInstance)
           .send(RequestTaskKill(engineTaskId))
@@ -403,15 +447,22 @@ abstract class EntranceServer extends Logging {
         .updateIfNeeded(jobRequest)
       error
     }
-
   }
 
-  def dealRunningJobRequest(jobRequest: JobRequest): Unit = {
+  def dealRunningJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
     Utils.tryCatch {
+      // error_msg
+      val msg =
+        MessageFormat.format(
+          EntranceErrorCodeSummary.FAILOVER_RUNNING_TO_CANCELLED.getErrorDesc,
+          jobRequest.getId
+        )
       // init jobRequest properties
       jobRequest.setStatus(SchedulerEventState.Cancelled.toString)
       jobRequest.setProgress("1.0")
       jobRequest.setInstances(Sender.getThisInstance)
+      jobRequest.setErrorCode(EntranceErrorCodeSummary.FAILOVER_RUNNING_TO_CANCELLED.getErrorCode)
+      jobRequest.setErrorDesc(msg)
 
       // update jobRequest
       getEntranceContext
@@ -419,70 +470,46 @@ abstract class EntranceServer extends Logging {
         .createPersistenceEngine()
         .updateIfNeeded(jobRequest)
 
-      // append log
-      val logPath = jobRequest.getLogPath
-      if (StringUtils.isNotBlank(logPath)) {
-        val fsLogPath = new FsPath(logPath)
-        if (StorageUtils.HDFS == fsLogPath.getFsType) {
-          val logWriter = new HDFSCacheLogWriter(
-            logPath,
-            EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
-            Cache(1),
-            jobRequest.getExecuteUser
-          )
-
-          val msg =
-            s"Job ${jobRequest.getId} failover, status changed from Running to Cancelled (任务故障转移，状态从Running变更为Cancelled)"
-          logWriter.write(msg)
-          logWriter.flush()
-          logWriter.close()
-        }
+      // getOrGenerate log_path
+      var logPath = jobRequest.getLogPath
+      if (StringUtils.isBlank(logPath)) {
+        ParserUtils.generateLogPath(jobRequest, null)
+        logPath = jobRequest.getLogPath
+        logAppender.append(
+          LogUtils.generateInfo(s"job ${jobRequest.getId} generate new logPath $logPath \n")
+        )
       }
+      val fsLogPath = new FsPath(logPath)
+      val cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getHotValue())
+      val logWriter = if (StorageUtils.HDFS == fsLogPath.getFsType) {
+        new HDFSCacheLogWriter(
+          logPath,
+          EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
+          cache,
+          jobRequest.getExecuteUser
+        )
+      } else {
+        new CacheLogWriter(
+          logPath,
+          EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
+          cache,
+          jobRequest.getExecuteUser
+        )
+      }
+      if (logAppender.length() > 0) {
+        logWriter.write(logAppender.toString.trim)
+      }
+
+      logWriter.write(LogUtils.generateInfo(msg) + "\n")
+      logWriter.flush()
+      logWriter.close()
+
     } { case e: Exception =>
       logger.error(s"Job ${jobRequest.getId} failover, change status error", e)
     }
-
   }
 
-  /**
-   * execute failover job (提交故障转移任务，返回新的execId)
-   *
-   * @param jobRequest
-   */
-  def failoverExecute(jobRequest: JobRequest): Unit = {
-
-    if (null == jobRequest || null == jobRequest.getId || jobRequest.getId <= 0) {
-      throw new EntranceErrorException(
-        PERSIST_JOBREQUEST_ERROR.getErrorCode,
-        PERSIST_JOBREQUEST_ERROR.getErrorDesc
-      )
-    }
-
-    val logAppender = new java.lang.StringBuilder()
-    logAppender.append(
-      LogUtils
-        .generateInfo(
-          s"\n\n*************************************FAILOVER************************************** \n\n"
-        )
-    )
-
-    // try to kill ec
-    killEC(jobRequest, logAppender);
-
-    // deal Inited jobRequest, if status is Inited, need to deal by all Interceptors, such as log_path
-    if (jobRequest.getStatus.equals(SchedulerEventState.Inited.toString)) {
-      dealInitedJobRequest(jobRequest, logAppender)
-    }
-
-    // deal Running jobRequest, if enabled, status changed from Running to Cancelled
-    if (
-        EntranceConfiguration.ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED.getValue &&
-        jobRequest.getStatus.equals(SchedulerEventState.Running.toString)
-    ) {
-      dealRunningJobRequest(jobRequest)
-      return
-    }
-
+  def initAndSubmitJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
     // init properties
     initJobRequestProperties(jobRequest, logAppender)
 

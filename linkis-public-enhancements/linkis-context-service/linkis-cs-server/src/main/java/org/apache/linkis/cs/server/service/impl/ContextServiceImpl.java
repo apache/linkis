@@ -256,6 +256,17 @@ public class ContextServiceImpl extends ContextService {
   }
 
   @Override
+  public void removeValueByKeyAndContextType(
+      ContextID contextID, ContextType contextType, String keyStr) throws CSErrorException {
+    contextCacheService.removeByKey(contextID, keyStr, contextType);
+    getPersistence().removeByKey(contextID, contextType, keyStr);
+    logger.info(
+        String.format(
+            "removeAllValueByKeyAndContextType, csId:%s,csType:%s,keyStr:%s",
+            contextID.getContextId(), contextType, keyStr));
+  }
+
+  @Override
   public void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
       throws CSErrorException {
     contextCacheService.removeByKeyPrefix(contextID, keyPrefix);
@@ -264,6 +275,14 @@ public class ContextServiceImpl extends ContextService {
         String.format(
             "removeAllValueByKeyPrefix, csId:%s,keyPrefix:%s",
             contextID.getContextId(), keyPrefix));
+  }
+
+  @Override
+  public void removeValueByKey(ContextID contextID, String keyStr) throws CSErrorException {
+    contextCacheService.removeByKey(contextID, keyStr);
+    getPersistence().removeByKey(contextID, keyStr);
+    logger.info(
+        String.format("removeAllValueByKey, csId:%s,keyStr:%s", contextID.getContextId(), keyStr));
   }
 
   @Override

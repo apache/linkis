@@ -713,6 +713,20 @@ public class HttpContextClient extends AbstractContextClient {
   }
 
   @Override
+  public void removeAllValueByKeyAndContextType(
+      ContextID contextID, ContextType contextType, String key) throws ErrorException {
+    String contextIDStr = SerializeHelper.serializeContextID(contextID);
+    DefaultContextPostAction action =
+        ContextPostActionBuilder.of(ContextServerHttpConf.removeAllValueByKeyAndContextTypeURL())
+            .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
+            .with(ContextHTTPConstant.CONTEXT_KEY_TYPE_STR, contextType.toString())
+            .with(ContextHTTPConstant.CONTEXT_KEY_STR, key)
+            .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
+            .build();
+    checkDWSResult(execute(action));
+  }
+
+  @Override
   public void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
       throws ErrorException {
     String contextIDStr = SerializeHelper.serializeContextID(contextID);
@@ -720,6 +734,18 @@ public class HttpContextClient extends AbstractContextClient {
         ContextPostActionBuilder.of(ContextServerHttpConf.removeAllValueByKeyPrefixURL())
             .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
             .with(ContextHTTPConstant.CONTEXT_KEY_PREFIX_STR, keyPrefix)
+            .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
+            .build();
+    checkDWSResult(execute(action));
+  }
+
+  @Override
+  public void removeValueByKey(ContextID contextID, String key) throws ErrorException {
+    String contextIDStr = SerializeHelper.serializeContextID(contextID);
+    DefaultContextPostAction action =
+        ContextPostActionBuilder.of(ContextServerHttpConf.removeAllValueByKeyURL())
+            .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
+            .with(ContextHTTPConstant.CONTEXT_KEY_STR, key)
             .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
             .build();
     checkDWSResult(execute(action));

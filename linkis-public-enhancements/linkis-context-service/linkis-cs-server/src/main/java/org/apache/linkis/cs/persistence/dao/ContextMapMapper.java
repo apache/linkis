@@ -74,6 +74,11 @@ public interface ContextMapMapper {
       @Param("contextType") ContextType contextType,
       @Param("keyPrefix") String keyPrefix);
 
+  void removeByKeyAndContextType(
+      @Param("contextID") ContextID contextID,
+      @Param("contextType") ContextType contextType,
+      @Param("keyStr") String keyStr);
+
   void removeByKeyPrefix(
       @Param("contextID") ContextID contextID, @Param("keyPrefix") String keyPrefix);
 }

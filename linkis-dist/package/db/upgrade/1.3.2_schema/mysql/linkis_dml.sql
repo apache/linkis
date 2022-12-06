@@ -98,7 +98,7 @@ update linkis_ps_configuration_config_key set en_name ="Maximum Queue CPU Usage"
 update linkis_ps_configuration_config_key set en_name ="Maximum Queue Memory Usage" where name ="队列内存使用上限";
 update linkis_ps_configuration_config_key set en_name ="Global Upper Limit Of Each Engine's Memory Usage" where name ="全局各个引擎内存使用上限";
 update linkis_ps_configuration_config_key set en_name ="Maximum Number Of Global Engine Cores" where name ="全局各个引擎核心个数上限";
-update linkis_ps_configuration_config_key set en_name ="Maximum Concurrent Number Of Global engines" where name ="全局各个引擎最大并发数";
+update linkis_ps_configuration_config_key set en_name ="Maximum Concurrent Number Of Global Engines" where name ="全局各个引擎最大并发数";
 update linkis_ps_configuration_config_key set en_name ="Maximum Concurrent Number Of Spark Engine" where name ="spark引擎最大并发数";
 update linkis_ps_configuration_config_key set en_name ="Maximum Concurrent Number Of spark executor Instances" where name ="spark执行器实例最大并发数";
 update linkis_ps_configuration_config_key set en_name ="Number Of Spark Actuator Cores" where name ="spark执行器核心个数";
@@ -115,7 +115,7 @@ update linkis_ps_configuration_config_key set en_name ="Map Data Block Size" whe
 update linkis_ps_configuration_config_key set en_name ="Reduce The Amount Of Data Processed" where name ="reduce处理的数据量";
 update linkis_ps_configuration_config_key set en_name ="Maximum Memory Usage Of Python Drive" where name ="python驱动器内存使用上限";
 update linkis_ps_configuration_config_key set en_name ="Maximum Number Of Python Drive Cores" where name ="python驱动器核心个数上限";
-update linkis_ps_configuration_config_key set en_name ="Maximum Number Of Concurrent Python engines" where name ="python引擎最大并发数";
+update linkis_ps_configuration_config_key set en_name ="Maximum Number Of Concurrent Python Engines" where name ="python引擎最大并发数";
 update linkis_ps_configuration_config_key set en_name ="Python Engine Initialization Memory Size" where name ="python引擎初始化内存大小";
 update linkis_ps_configuration_config_key set en_name ="Result Set Export Type" where name ="结果集导出类型";
 update linkis_ps_configuration_config_key set en_name ="Csv Separator" where name ="csv分隔符";

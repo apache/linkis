@@ -33,6 +33,7 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineStopRequest,
   EngineSuicideRequest
 }
+import org.apache.linkis.manager.dao.NodeMetricManagerMapper
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.service.impl.DefaultNodeLabelRemoveService
@@ -72,6 +73,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   @Autowired
   private var engineStopService: EngineStopService = _
 
+  @Autowired
+  private var nodeMetricManagerMapper: NodeMetricManagerMapper = _
+
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
       AMConfiguration.ASYNC_STOP_ENGINE_MAX_THREAD_SIZE,
@@ -110,7 +114,22 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   override def stopEngineAsyn(engineStopRequest: EngineStopRequest, sender: Sender): Unit = {
     val runnable = new Runnable {
       override def run(): Unit = {
-        stopEngine(engineStopRequest, sender)
+        //  1. set ec node Metrics status Unlock to ShuttingDown
+        //  2. ec node metircs report ignore update Shutingdown node
+        val instance = engineStopRequest.getServiceInstance.getInstance
+        val ok = nodeMetricManagerMapper.updateNodeStatus(
+          instance,
+          NodeStatus.ShuttingDown.ordinal(),
+          NodeStatus.Unlock.ordinal()
+        )
+        if (ok > 0) {
+          stopEngine(engineStopRequest, sender)
+        } else {
+          logger.info(
+            s"ec node:${instance} status update failed! maybe the status is not unlock. will skip to kill this ec node"
+          )
+        }
+
       }
     }
     executor.submit(runnable)
@@ -180,16 +199,10 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
         logger.info(s"try to kill engine:${node.getServiceInstance.getInstance}")
         killEngineNum = killEngineNum + 1
-        val runnable = new Runnable {
-          override def run(): Unit = {
-            val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, operatorName)
-            val sender = Sender.getSender(Sender.getThisServiceInstance)
-            // todo 1. set ec node Metrics status to ShuttingDown
-            //  2. ec node metircs report ignore update Shutingdown node
-            engineStopService.stopEngine(stopEngineRequest, sender)
-          }
-        }
-        executor.submit(runnable)
+        // asyn to stop
+        val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, operatorName)
+        val sender = Sender.getSender(Sender.getThisServiceInstance)
+        stopEngineAsyn(stopEngineRequest, sender)
       }
     }
     resultMap.put("killEngineNum", killEngineNum)

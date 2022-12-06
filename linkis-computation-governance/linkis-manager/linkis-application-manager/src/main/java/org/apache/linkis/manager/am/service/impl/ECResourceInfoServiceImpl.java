@@ -24,13 +24,13 @@ import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
 import org.apache.linkis.manager.dao.ECResourceRecordMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
-import org.apache.linkis.server.BDPJettyServerHelper;
 
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   private static final Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-  private ObjectMapper json = BDPJettyServerHelper.jacksonJson();
+  private ObjectMapper json =
+      new ObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
   @Autowired private ECResourceRecordMapper ecResourceRecordMapper;
 
@@ -90,13 +91,19 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusList) {
+      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
+    // convert status string to int
+    List<Integer> statusIntList = new ArrayList<>();
+    for (String status : statusStrList) {
+      statusIntList.add(NodeStatus.valueOf(status).ordinal());
+    }
+
     // get engine conn info list filter by creator user list /engineType/instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
-        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusList);
+        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList);
 
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());

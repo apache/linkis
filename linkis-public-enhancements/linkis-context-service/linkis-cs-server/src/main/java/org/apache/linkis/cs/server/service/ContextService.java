@@ -59,7 +59,13 @@ public abstract class ContextService extends AbstractService {
   public abstract void removeAllValueByKeyPrefixAndContextType(
       ContextID contextID, ContextType contextType, String keyPrefix) throws CSErrorException;
 
+  public abstract void removeValueByKeyAndContextType(
+      ContextID contextID, ContextType contextType, String keyPrefix) throws CSErrorException;
+
   public abstract void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix)
+      throws CSErrorException;
+
+  public abstract void removeValueByKey(ContextID contextID, String keyPrefix)
       throws CSErrorException;
 
   public abstract int clearAllContextByID(List<String> idList) throws CSErrorException;

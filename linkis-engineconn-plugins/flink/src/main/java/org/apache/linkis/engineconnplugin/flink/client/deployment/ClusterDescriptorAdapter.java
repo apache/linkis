@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,6 +41,8 @@ import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 /** Cluster Descriptor Adapter, adaptable with datastream/sql tasks(集群交互适配器，适合datastream、sql方式作业) */
 public abstract class ClusterDescriptorAdapter implements Closeable {
@@ -81,7 +83,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   /** Returns the status of the flink job. */
   public JobStatus getJobStatus() throws JobExecutionException {
     if (jobId == null) {
-      throw new JobExecutionException("No job has been submitted. This is a bug.");
+      throw new JobExecutionException(NO_JOB_SUBMITTED.getErrorDesc());
     }
     return bridgeClientRequest(
         this.executionContext, jobId, () -> clusterClient.getJobStatus(jobId), false);
@@ -111,7 +113,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
         function = () -> clusterClient.stopWithSavepoint(jobId, false, savepoint);
         break;
       default:
-        throw new JobExecutionException("not supported savepoint operator mode " + mode);
+        throw new JobExecutionException(NOT_SAVEPOINT_MODE.getErrorDesc() + mode);
     }
     return bridgeClientRequest(this.executionContext, jobId, function, false);
   }
@@ -134,7 +136,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     if (clusterClient == null) {
       if (this.clusterID == null) {
         LOG.error("Cluster information don't exist.");
-        throw new JobExecutionException("Cluster information don't exist.");
+        throw new JobExecutionException(CLUSTER_NOT_EXIST.getErrorDesc());
       }
       clusterDescriptor = executionContext.createClusterDescriptor();
       try {
@@ -162,9 +164,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     try {
       method = StreamExecutionEnvironment.class.getDeclaredMethod("getConfiguration");
     } catch (NoSuchMethodException e) {
-      throw new JobExecutionException(
-          "Not support flink version, StreamExecutionEnvironment.class is not exists getConfiguration method!",
-          e);
+      throw new JobExecutionException(NOT_FLINK_VERSION.getErrorDesc(), e);
     }
     method.setAccessible(true);
     Configuration configuration;
@@ -172,8 +172,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
       configuration =
           (Configuration) method.invoke(executionContext.getStreamExecutionEnvironment());
     } catch (Exception e) {
-      throw new JobExecutionException(
-          "StreamExecutionEnvironment.getConfiguration() execute failed!", e);
+      throw new JobExecutionException(EXECUTE_FAILED.getErrorDesc(), e);
     }
     String applicationId = configuration.getString(YarnConfigOptions.APPLICATION_ID);
     if (StringUtils.isNotBlank(applicationId)) {
@@ -184,7 +183,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     }
     applicationId = executionContext.getFlinkConfig().getString(YarnConfigOptions.APPLICATION_ID);
     if (StringUtils.isBlank(applicationId) && this.clusterID == null) {
-      throw new JobExecutionException("No applicationId is exists!");
+      throw new JobExecutionException(APPLICATIONID_NOT_EXIST.getErrorDesc());
     } else if (StringUtils.isNotBlank(applicationId)) {
       configuration.setString(YarnConfigOptions.APPLICATION_ID, applicationId);
       LOG.info("Bind applicationId {} to StreamExecutionEnvironment.", applicationId);

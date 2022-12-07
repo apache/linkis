@@ -130,7 +130,7 @@
                 "engineTop": "引擎上限资源"
             },
             "logLoading": "日志请求中，请稍后",
-            "title": "Linkis计算治理台",
+            "title": "Linkis管理台",
             "info": "{num} 条新消息",
             "hint": "请在跳转页面查看……",
             "sideNavList": {
@@ -145,7 +145,7 @@
                     "children": {
                         "globalHistory": "全局历史",
                         "resource": "资源管理",
-                        "resourceEngineConnList": "历史引擎信息",
+                        "resourceEngineConnList": "历史引擎",
                         "setting": "参数配置",
                         "dateReport": "全局变量",
                         "globalValiable": "常见问题",
@@ -156,7 +156,16 @@
                         "functionManagement": "函数管理",
                         "dataSourceManage": "数据源管理",
                         "userResourceManagement": "用户资源管理",
-                        "EnginePluginManagement": "引擎物料管理"
+                        "errorCode": "错误码管理",
+                        "gatewayAuthToken": "令牌管理",
+                        "rmExternalResourceProvider": "扩展资源管理",
+                        "udfManager": "用户管理",
+                        "udfTree": "UDF分类",
+                        "datasourceAccess": "数据源权限",
+                        "datasourceEnv": "数据源环境",
+                        "datasourceType": "数据源分类",
+                        "EnginePluginManagement": "引擎物料管理",
+                        "basedataManagement": "基础数据管理"
                     }
                 }
             },
@@ -318,6 +327,12 @@
                 "cannotPublish": "不可发布",
                 "used": "可用",
                 "commentValue": "从版本 {text} 回滚"
+            },
+            "basedata": {
+              "add": "新增",
+              "remove": "删除",
+              "edit": "编辑",
+              "addUDFAdmin": "新增UDF管理员"
             },
           "EnginePluginManagement": {
             "engineConnType": "引擎类型",

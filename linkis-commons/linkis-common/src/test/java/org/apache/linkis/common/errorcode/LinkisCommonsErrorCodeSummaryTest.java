@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,46 +45,16 @@ class LinkisCommonsErrorCodeSummaryTest {
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testGetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getErrorDesc());
   }
 
   @ParameterizedTest
   @EnumSource(LinkisCommonsErrorCodeSummary.class)
   void testSetErrorDesc(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getErrorDesc());
+    assertEquals("Engine start failed(引擎启动失败)", linkisCommonsErrorCodeSummary.getErrorDesc());
     linkisCommonsErrorCodeSummary.setErrorDesc("testSetErrorDesc");
     assertEquals("testSetErrorDesc", linkisCommonsErrorCodeSummary.getErrorDesc());
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetComment(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("引擎启动失败", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("testSetComment");
-    assertEquals("testSetComment", linkisCommonsErrorCodeSummary.getComment());
-    linkisCommonsErrorCodeSummary.setComment("引擎启动失败");
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testGetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-  }
-
-  @ParameterizedTest
-  @EnumSource(LinkisCommonsErrorCodeSummary.class)
-  void testSetModule(LinkisCommonsErrorCodeSummary linkisCommonsErrorCodeSummary) {
-    assertEquals("hiveEngineConn", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("testSetModule");
-    assertEquals("testSetModule", linkisCommonsErrorCodeSummary.getModule());
-    linkisCommonsErrorCodeSummary.setModule("hiveEngineConn");
+    linkisCommonsErrorCodeSummary.setErrorDesc("Engine start failed(引擎启动失败)");
   }
 
   @ParameterizedTest
@@ -95,7 +65,9 @@ class LinkisCommonsErrorCodeSummaryTest {
     assertEquals(
         "errorCode: 0, errorDesc:testSetErrorDesc", linkisCommonsErrorCodeSummary.toString());
     linkisCommonsErrorCodeSummary.setErrorCode(11000);
-    linkisCommonsErrorCodeSummary.setErrorDesc("引擎启动失败");
-    assertEquals("errorCode: 11000, errorDesc:引擎启动失败", linkisCommonsErrorCodeSummary.toString());
+    linkisCommonsErrorCodeSummary.setErrorDesc("Engine start failed(引擎启动失败)");
+    assertEquals(
+        "errorCode: 11000, errorDesc:Engine start failed(引擎启动失败)",
+        linkisCommonsErrorCodeSummary.toString());
   }
 }

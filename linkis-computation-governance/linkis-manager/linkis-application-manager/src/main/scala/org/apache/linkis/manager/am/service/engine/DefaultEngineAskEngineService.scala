@@ -110,9 +110,9 @@ class DefaultEngineAskEngineService
       engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
       val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
       val timeout =
-        if (engineCreateRequest.getTimeOut <= 0)
+        if (engineCreateRequest.getTimeOut <= 0) {
           AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-        else engineCreateRequest.getTimeOut
+        } else engineCreateRequest.getTimeOut
       // useEngine 需要加上超时
       val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
       if (null == createEngineNode) {
@@ -135,14 +135,13 @@ class DefaultEngineAskEngineService
         val retryFlag = exception match {
           case retryException: LinkisRetryException => true
           case retryableException: RetryableException => true
-          case _ => {
+          case _ =>
             ExceptionUtils.getRootCause(exception) match {
               case socketTimeoutException: SocketTimeoutException => true
               case timeoutException: TimeoutException => true
               case _ =>
                 false
             }
-          }
         }
         logger.info(
           s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag",

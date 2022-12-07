@@ -101,13 +101,12 @@ class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStre
     val regex = ("\\s*" + prefix + "\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*").r
     line match {
       case regex(_, _) => true
-      case _ => {
+      case _ =>
         val split: Array[String] = line.split("=")
         if (split.size != 2) return false
         if (split(0).split(" ").filter(_ != "").size != 4) return false
         if (!split(0).split(" ").filter(_ != "")(0).equals(prefixConf)) return false
         true
-      }
     }
   }
 

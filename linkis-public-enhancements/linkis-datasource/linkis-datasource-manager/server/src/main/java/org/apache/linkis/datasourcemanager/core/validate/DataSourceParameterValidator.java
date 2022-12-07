@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.PARAM_VALIDATE_FAILED;
 
 @Component
 public class DataSourceParameterValidator implements ParameterValidator {
@@ -92,7 +94,8 @@ public class DataSourceParameterValidator implements ParameterValidator {
         if (null == keyValue || StringUtils.isBlank(String.valueOf(keyValue))) {
           if (def.isRequire()) {
             throw new ParameterValidateException(
-                "Param Validate Failed[参数校验出错], [the value of key: '"
+                PARAM_VALIDATE_FAILED.getErrorDesc()
+                    + ", [the value of key: '"
                     + keyName
                     + " cannot be blank']");
           }

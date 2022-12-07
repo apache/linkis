@@ -23,6 +23,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConsta
 import org.apache.commons.io.IOUtils
 
 import java.io.OutputStream
+import java.nio.charset.StandardCharsets
 
 trait ProcessEngineCommandBuilder {
 
@@ -55,7 +56,7 @@ abstract class ShellProcessEngineCommandBuilder extends ProcessEngineCommandBuil
   }
 
   def writeTo(output: OutputStream): Unit = {
-    IOUtils.write(sb, output)
+    IOUtils.write(sb, output, StandardCharsets.UTF_8)
   }
 
   override def replaceExpansionMarker(value: String): String = value
@@ -66,7 +67,7 @@ abstract class ShellProcessEngineCommandBuilder extends ProcessEngineCommandBuil
 
 class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
 
-  newLine("#!/bin/bash")
+  newLine("#!/usr/bin/env bash")
 
   if (ECPCoreConf.CORE_DUMP_DISABLE) {
     newLine("ulimit -c 0")

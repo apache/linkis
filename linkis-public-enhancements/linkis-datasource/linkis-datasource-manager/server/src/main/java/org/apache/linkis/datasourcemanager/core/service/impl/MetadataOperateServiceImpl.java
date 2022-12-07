@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,8 +37,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.BML_SERVICE_ERROR;
-import static org.apache.linkis.datasourcemanager.common.ServiceErrorCode.REMOTE_METADATA_SERVICE_ERROR;
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.*;
 
 @Service
 public class MetadataOperateServiceImpl implements MetadataOperateService {
@@ -77,8 +76,8 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
                     } catch (ErrorException e) {
                       // TODO redefined a exception extends warnException
                       throw new WarnException(
-                          BML_SERVICE_ERROR.getValue(),
-                          "Fail to operate file in request[上传文件处理失败]");
+                          OPERATE_FILE_IN_REQUEST.getErrorCode(),
+                          OPERATE_FILE_IN_REQUEST.getErrorDesc());
                     }
                   }
                 }
@@ -97,18 +96,18 @@ public class MetadataOperateServiceImpl implements MetadataOperateService {
           MetadataResponse response = (MetadataResponse) object;
           if (!response.status()) {
             throw new WarnException(
-                REMOTE_METADATA_SERVICE_ERROR.getValue(),
-                "Connection Failed[连接失败], Msg[" + response.data() + "]");
+                CONNECTION_FAILED.getErrorCode(),
+                CONNECTION_FAILED.getErrorDesc() + ", Msg[" + response.data() + "]");
           }
         } else {
           throw new WarnException(
-              REMOTE_METADATA_SERVICE_ERROR.getValue(), "Remote Service Error[远端服务出错, 联系运维处理]");
+              REMOTE_SERVICE_ERROR.getErrorCode(), REMOTE_SERVICE_ERROR.getErrorDesc());
         }
       } catch (Exception t) {
         if (!(t instanceof WarnException)) {
           throw new WarnException(
-              REMOTE_METADATA_SERVICE_ERROR.getValue(),
-              "Remote Service Error[远端服务出错, 联系运维处理], message:[" + t.getMessage() + "]");
+              REMOTE_SERVICE_ERROR.getErrorCode(),
+              REMOTE_SERVICE_ERROR.getErrorDesc() + ", message:[" + t.getMessage() + "]");
         }
         throw t;
       }

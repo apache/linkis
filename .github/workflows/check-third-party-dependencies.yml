@@ -33,16 +33,13 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: mvn -N install
-        run:
-          mvn -N install
       - name: mvn install
         run:
           #pom.xml also introduce linkis related jar,so run mvn install in first time
-          mvn install
+          ./mvnw install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
       - name: mvn dependency:copy-dependencies
         run:
-          mvn dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies
+          ./mvnw dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies
       - name: generate current_dependencies.txt
         run: |
           ls ${{ github.workspace }}/current_dependencies  |egrep -v "^linkis" |sort > ~/current_dependencies.txt

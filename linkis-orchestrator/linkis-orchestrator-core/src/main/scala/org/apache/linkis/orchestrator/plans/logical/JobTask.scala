@@ -40,7 +40,7 @@ class JobTask(protected var parents: Array[Task], protected var children: Array[
 
   override def theSame(other: Task): Boolean = if (super.equals(other)) true
   else if (other == null) false
-  else
+  else {
     other match {
       case jobTask: JobTask =>
         jobTask.getParents.sameElements(parents) && jobTask.getChildren.sameElements(
@@ -48,6 +48,7 @@ class JobTask(protected var parents: Array[Task], protected var children: Array[
         ) && jobTask.getTaskDesc == getTaskDesc
       case _ => false
     }
+  }
 
   override def getId: String = {
     if (null == id) synchronized {

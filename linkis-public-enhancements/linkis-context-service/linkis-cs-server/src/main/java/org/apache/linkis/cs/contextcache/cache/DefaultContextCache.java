@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -75,10 +74,11 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
     this.cache =
         CacheBuilder.newBuilder()
             .maximumSize(ContextCacheConf.MAX_CACHE_SIZE)
-                // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 start
-//            .expireAfterWrite(Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
+            // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 start
+            //
+            // .expireAfterWrite(Duration.ofMillis(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS))
             .expireAfterWrite(ContextCacheConf.MAX_CACHE_READ_EXPIRE_MILLS, TimeUnit.NANOSECONDS)
-                // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 end
+            // modify by jiangkun0928 for guava-30.0-jre -> guava-23.0 end
             .removalListener(contextIDRemoveListener)
             .recordStats()
             .build();

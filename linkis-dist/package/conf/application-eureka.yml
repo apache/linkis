@@ -20,9 +20,7 @@ spring:
 
 server:
   port: 8761
-  enable-self-preservation: false
-  eviction-interval-timer-in-ms: 30000
-  response-cache-update-interval-ms: 10000
+
 eureka:
   instance:
     metadata-map:
@@ -34,7 +32,10 @@ eureka:
 #    fetch-registry: false
     serviceUrl:
       defaultZone: http://bigd-sit-linkis-mgr1:8761/eureka/,http://bigd-sit-linkis-mgr2:8761/eureka/
-
+  server:
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 30000
+    response-cache-update-interval-ms: 10000
 management:
   endpoints:
     web:

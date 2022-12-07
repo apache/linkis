@@ -17,16 +17,20 @@
 
 package org.apache.linkis.bml.common
 
+import org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary._
 import org.apache.linkis.common.exception.ErrorException
 
 case class BmlAuthorityException()
     extends ErrorException(
-      60036,
-      "Store cannot be accessed without login or expired login(未登录或登录过期，无法访问物料库)"
+      CANNOT_ACCESSED_EXPIRED.getErrorCode,
+      CANNOT_ACCESSED_EXPIRED.getErrorDesc
     )
 
 case class UploadResourceException()
-    extends ErrorException(60050, "The first upload of the resource failed(首次上传资源失败)")
+    extends ErrorException(FIRST_UPLOAD_FAILED.getErrorCode, FIRST_UPLOAD_FAILED.getErrorDesc)
 
 case class UpdateResourceException()
-    extends ErrorException(60051, "Failed to update resources(更新资源失败)")
+    extends ErrorException(
+      FAILED_UPDATE_RESOURCES.getErrorCode,
+      FAILED_UPDATE_RESOURCES.getErrorDesc
+    )

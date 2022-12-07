@@ -94,11 +94,6 @@ SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 startApp
 
-##linkis-cg-engineplugin(ecp)
-#SERVER_NAME="cg-engineplugin"
-#SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
-#startApp
-
 echo "start-all shell script executed completely"
 
 echo "Start to check all linkis microservice"
@@ -160,10 +155,5 @@ sleep 3
 SERVER_NAME="cg-engineconnmanager"
 SERVER_IP=$ENGINECONNMANAGER_INSTALL_IP
 checkServer
-#
-##linkis-cg-engineplugin(ecp)
-#SERVER_NAME="cg-engineplugin"
-#SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
-#checkServer
 
 echo "Linkis started successfully"

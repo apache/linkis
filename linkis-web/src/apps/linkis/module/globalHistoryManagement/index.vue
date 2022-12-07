@@ -362,8 +362,8 @@ export default {
     },
 
     getParams(page) {
-      const startDate = this.searchBar.shortcut[0]
-      const endDate = this.searchBar.shortcut[1]
+      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0)) : this.searchBar.shortcut[0]
+      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0)): this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
         creator: this.searchBar.creator,
@@ -458,7 +458,8 @@ export default {
             createdTime: item.createdTime,
             progress: item.progress,
             failedReason: getFailedReason(item),
-            runType: item.runType
+            runType: item.runType,
+            instance: item.instance
           }
         })
       }

@@ -70,7 +70,7 @@ class UserRunningNumber {
   }
 
   /**
-   * TODO 统一getKey方法
+   * TODO Unified getKey method
    * @param labels
    * @return
    */

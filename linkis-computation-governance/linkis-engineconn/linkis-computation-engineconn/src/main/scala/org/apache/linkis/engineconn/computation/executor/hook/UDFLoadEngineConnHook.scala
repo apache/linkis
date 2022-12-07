@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 abstract class UDFLoad extends Logging {
@@ -197,7 +197,7 @@ abstract class UDFLoadEngineConnHook extends UDFLoad with EngineConnHook with Lo
       engineConn: EngineConn
   ): Unit = {
     val codeLanguageLabel = new CodeLanguageLabel
-    engineCreationContext.getLabels().find(_.isInstanceOf[EngineTypeLabel]) match {
+    engineCreationContext.getLabels().asScala.find(_.isInstanceOf[EngineTypeLabel]) match {
       case Some(engineTypeLabel) =>
         codeLanguageLabel.setCodeType(
           getRealRunType(engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType).toString

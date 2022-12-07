@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,28 +40,35 @@ class LinkisFrameErrorCodeSummaryTest {
 
   @Test
   void testGetErrorDesc() {
-    assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
+    assertEquals(
+        "Error code definition is incorrect(错误码定义有误)", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
   }
 
   @Test
   void testSetErrorDesc() {
     VALIDATE_ERROR_CODE_FAILED.setErrorDesc("test");
     assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
-    VALIDATE_ERROR_CODE_FAILED.setErrorDesc("错误码定义有误");
-    assertEquals("错误码定义有误", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
+    VALIDATE_ERROR_CODE_FAILED.setErrorDesc("Error code definition is incorrect(错误码定义有误)");
+    assertEquals(
+        "Error code definition is incorrect(错误码定义有误)", VALIDATE_ERROR_CODE_FAILED.getErrorDesc());
   }
 
   @Test
   void testGetComment() {
-    assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
+    assertEquals(
+        "Error code definition exceeds the maximum value or is less than the minimum value(错误码定义超过最大值或者小于最小值)",
+        VALIDATE_ERROR_CODE_FAILED.getComment());
   }
 
   @Test
   void testSetComment() {
     VALIDATE_ERROR_CODE_FAILED.setComment("test");
     assertEquals("test", VALIDATE_ERROR_CODE_FAILED.getComment());
-    VALIDATE_ERROR_CODE_FAILED.setComment("错误码定义超过最大值或者小于最小值");
-    assertEquals("错误码定义超过最大值或者小于最小值", VALIDATE_ERROR_CODE_FAILED.getComment());
+    VALIDATE_ERROR_CODE_FAILED.setComment(
+        "Error code definition exceeds the maximum value or is less than the minimum value(错误码定义超过最大值或者小于最小值)");
+    assertEquals(
+        "Error code definition exceeds the maximum value or is less than the minimum value(错误码定义超过最大值或者小于最小值)",
+        VALIDATE_ERROR_CODE_FAILED.getComment());
   }
 
   @Test
@@ -79,6 +86,8 @@ class LinkisFrameErrorCodeSummaryTest {
 
   @Test
   void testToString() {
-    assertEquals("errorCode: 10000, errorDesc:错误码定义有误", VALIDATE_ERROR_CODE_FAILED.toString());
+    assertEquals(
+        "errorCode: 10000, errorDesc:Error code definition is incorrect(错误码定义有误)",
+        VALIDATE_ERROR_CODE_FAILED.toString());
   }
 }

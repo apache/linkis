@@ -48,11 +48,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
   }
 
   private def getLabelsFromArgs(params: Array[String]): util.Map[String, AnyRef] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     val labelRegex = """label\.(.+)\.(.+)=(.+)""".r
     val labels = new util.HashMap[String, AnyRef]()
     // TODO: magic
-    labels += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
+    labels.asScala += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
       "alias",
       ENGINE_CONN_MANAGER_SPRING_NAME
     )
@@ -95,7 +95,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
 
   override def registerECM(request: RegisterEMRequest): Unit = Utils.tryCatch {
     logger.info("start register ecm")
-    val response = Sender.getSender(MANAGER_SPRING_NAME).ask(request)
+    val response = Sender.getSender(MANAGER_SERVICE_NAME).ask(request)
     response match {
       case RegisterEMResponse(isSuccess, msg) =>
         if (!isSuccess) {
@@ -113,7 +113,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
 
   override def unRegisterECM(request: StopEMRequest): Unit = {
     logger.info("start unRegister ecm")
-    Sender.getSender(MANAGER_SPRING_NAME).send(request)
+    Sender.getSender(MANAGER_SERVICE_NAME).send(request)
   }
 
 }

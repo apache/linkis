@@ -18,12 +18,12 @@
 package org.apache.linkis.datasourcemanager.core.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
-import org.apache.linkis.datasourcemanager.common.ServiceErrorCode;
 import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceType;
 import org.apache.linkis.datasourcemanager.common.domain.DatasourceVersion;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.datasourcemanager.core.formdata.FormDataTransformerFactory;
 import org.apache.linkis.datasourcemanager.core.formdata.MultiPartFormDataTransformer;
 import org.apache.linkis.datasourcemanager.core.service.DataSourceInfoService;
@@ -38,7 +38,12 @@ import org.apache.linkis.server.Message;
 import org.apache.linkis.server.security.SecurityFilter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +52,15 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
@@ -56,8 +70,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.util.*;
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.DATASOURCE_NOT_FOUND;
 
 @Api(tags = "data source core restful api")
 @RestController
@@ -216,6 +229,14 @@ public class DataSourceCoreRestfulApi {
                                         + dataSourceName
                                         + " 已经存在]");
                     }
+                    List<DataSourceParamKeyDefinition> keyDefinitionList =
+                            dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+                    dataSource.setKeyDefinitions(keyDefinitionList);
+                    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+                        hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+                    }
+                    String parameter = Json.toJson(dataSource.getConnectParams(), null);
+                    dataSource.setParameter(parameter);
                     dataSourceInfoService.updateDataSourceInfo(dataSource);
                     return Message.ok().data("updateId", dataSourceId);
                 },
@@ -249,8 +270,8 @@ public class DataSourceCoreRestfulApi {
                             dataSourceInfoService.getDataSourceInfoBrief(dataSourceId);
                     if (null == dataSource) {
                         throw new ErrorException(
-                                ServiceErrorCode.DATASOURCE_NOTFOUND_ERROR.getValue(),
-                                "datasource not found ");
+                                DATASOURCE_NOT_FOUND.getErrorCode(),
+                                DATASOURCE_NOT_FOUND.getErrorDesc());
                     }
                     if (!AuthContext.hasPermission(dataSource, userName)) {
                         return Message.error(
@@ -678,6 +699,25 @@ public class DataSourceCoreRestfulApi {
                 "Fail to connect data source[连接数据源失败]");
     }
 
+    @ApiOperation(value = "queryDataSourceByIds", notes = "query data source by ids", response = Message.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", required = true, dataType = "List", value = "ids"),
+    })
+    @RequestMapping(value = "/info/ids", method = RequestMethod.GET)
+    public Message queryDataSource(
+            @RequestParam(value = "ids") String idsJson
+            , HttpServletRequest req) {
+        return RestfulApiHelper.doAndResponse(
+                () -> {
+                    List ids = new ObjectMapper().readValue(idsJson, List.class);
+                    List<DataSource> dataSourceList = dataSourceInfoService.queryDataSourceInfo(ids);
+                    return Message.ok()
+                            .data("queryList", dataSourceList)
+                            .data("totalPage", dataSourceList.size());
+                }, "Fail to query page of data source[查询数据源失败]"
+        );
+    }
+
     @ApiOperation(value = "queryDataSource", notes = "query data source", response = Message.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name = "system", required = false, dataType = "String", value = "system"),
@@ -728,6 +768,11 @@ public class DataSourceCoreRestfulApi {
         List<DataSourceParamKeyDefinition> keyDefinitionList =
                 dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
         dataSource.setKeyDefinitions(keyDefinitionList);
+        for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+            hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+        }
+        String parameter = Json.toJson(dataSource.getConnectParams(), null);
+        dataSource.setParameter(parameter);
         dataSourceInfoService.saveDataSourceInfo(dataSource);
     }
 }

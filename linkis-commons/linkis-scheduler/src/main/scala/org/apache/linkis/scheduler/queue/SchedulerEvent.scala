@@ -18,8 +18,11 @@
 package org.apache.linkis.scheduler.queue
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.scheduler.errorcode.LinkisSchedulerErrorCodeSummary._
 import org.apache.linkis.scheduler.exception.SchedulerErrorException
 import org.apache.linkis.scheduler.queue.SchedulerEventState._
+
+import java.text.MessageFormat
 
 trait SchedulerEvent extends Logging {
 
@@ -37,7 +40,7 @@ trait SchedulerEvent extends Logging {
    * To be compatible with old versions.
    * It's not recommonded to use scheduledTime, which was only several mills at most time.
    */
-  @Deprecated
+  @deprecated
   def getScheduledTime: Long = scheduledTime
 
   def getId: String = id
@@ -47,8 +50,9 @@ trait SchedulerEvent extends Logging {
     this synchronized notify()
   }
 
-  def turnToScheduled(): Boolean = if (!isWaiting) false
-  else
+  def turnToScheduled(): Boolean = if (!isWaiting) {
+    false
+  } else {
     this synchronized {
       if (!isWaiting) false
       else {
@@ -58,6 +62,7 @@ trait SchedulerEvent extends Logging {
         true
       }
     }
+  }
 
   def pause(): Unit
   def resume(): Unit
@@ -83,11 +88,12 @@ trait SchedulerEvent extends Logging {
   def beforeStateChanged(fromState: SchedulerEventState, toState: SchedulerEventState): Unit = {}
 
   protected def transition(state: SchedulerEventState): Unit = synchronized {
-    if (state.id < this.state.id && state != WaitForRetry)
+    if (state.id < this.state.id && state != WaitForRetry) {
       throw new SchedulerErrorException(
-        12000,
-        s"Task status flip error! Cause: Failed to flip from ${this.state} to $state.（任务状态翻转出错！原因：不允许从${this.state} 翻转为$state.）"
-      ) // 抛异常
+        TASK_STATUS_FLIP_ERROR.getErrorCode,
+        MessageFormat.format(TASK_STATUS_FLIP_ERROR.getErrorDesc, this.state, state)
+      )
+    }
     logger.info(s"$toString change status ${this.state} => $state.")
     val oldState = this.state
     this.state = state

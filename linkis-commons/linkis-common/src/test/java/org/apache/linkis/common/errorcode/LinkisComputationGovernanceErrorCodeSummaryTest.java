@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,36 +44,55 @@ class LinkisComputationGovernanceErrorCodeSummaryTest {
 
   @Test
   void testGetErrorDesc() {
-    assertEquals("请求引擎的参数中user为空", ENGINE_LAUNCH_REQUEST_USER_BLANK.getErrorDesc());
-    assertEquals("请求启动引擎的参数中creator为空", ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getErrorDesc());
-    assertEquals("引擎初始化失败", ENGINE_INIT_FAILED.getErrorDesc());
-    assertEquals("请求引擎的参数中user为空", ENGINE_REQUEST_USER_BLANK.getErrorDesc());
-    assertEquals("请求引擎的参数中user为空", AM_EM_NOT_FOUND.getErrorDesc());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        ENGINE_LAUNCH_REQUEST_USER_BLANK.getErrorDesc());
+    assertEquals(
+        "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+        ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getErrorDesc());
+    assertEquals("Engine initialization failed(引擎初始化失败)", ENGINE_INIT_FAILED.getErrorDesc());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        ENGINE_REQUEST_USER_BLANK.getErrorDesc());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        AM_EM_NOT_FOUND.getErrorDesc());
   }
 
   @Test
   void testSetErrorDesc() {
     ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.setErrorDesc("Test SetErrorDesc");
     assertEquals("Test SetErrorDesc", ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getErrorDesc());
-    ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.setErrorDesc("请求启动引擎的参数中creator为空");
-    assertEquals("请求启动引擎的参数中creator为空", ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getErrorDesc());
+    ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.setErrorDesc(
+        "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)");
+    assertEquals(
+        "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+        ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getErrorDesc());
   }
 
   @Test
   void testGetComment() {
-    assertEquals("请求引擎的参数中user为空", ENGINE_LAUNCH_REQUEST_USER_BLANK.getComment());
-    assertEquals("请求启动引擎的参数中creator为空", ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getComment());
-    assertEquals("引擎初始化失败", ENGINE_INIT_FAILED.getComment());
-    assertEquals("请求引擎的参数中user为空", ENGINE_REQUEST_USER_BLANK.getComment());
-    assertEquals("请求引擎的参数中user为空", AM_EM_NOT_FOUND.getComment());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        ENGINE_LAUNCH_REQUEST_USER_BLANK.getComment());
+    assertEquals(
+        "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+        ENGINE_LAUNCH_REQUEST_CREATOR_BLANK.getComment());
+    assertEquals("Engine initialization failed(引擎初始化失败)", ENGINE_INIT_FAILED.getComment());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        ENGINE_REQUEST_USER_BLANK.getComment());
+    assertEquals(
+        "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        AM_EM_NOT_FOUND.getComment());
   }
 
   @Test
   void testSetComment() {
     ENGINE_INIT_FAILED.setComment("Test SetComment");
     assertEquals("Test SetComment", ENGINE_INIT_FAILED.getComment());
-    ENGINE_INIT_FAILED.setComment("引擎初始化失败");
-    assertEquals("引擎初始化失败", ENGINE_INIT_FAILED.getComment());
+    ENGINE_INIT_FAILED.setComment("Engine initialization failed(引擎初始化失败)");
+    assertEquals("Engine initialization failed(引擎初始化失败)", ENGINE_INIT_FAILED.getComment());
   }
 
   @Test
@@ -95,6 +114,8 @@ class LinkisComputationGovernanceErrorCodeSummaryTest {
 
   @Test
   void testToString() {
-    assertEquals("errorCode: 20100, errorDesc:请求引擎的参数中user为空", AM_EM_NOT_FOUND.toString());
+    assertEquals(
+        "errorCode: 20100, errorDesc:User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+        AM_EM_NOT_FOUND.toString());
   }
 }

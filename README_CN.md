@@ -3,8 +3,7 @@
 </h2>
 
 <p align="center">
-  <strong>Linkis 在上层应用和底层引擎之间构建了一层计算中间件。通过使用Linkis 提供的REST/WebSocket/JDBC 等标准接口，
-  上层应用可以方便地连接访问Spark, Presto, Flink 等底层引擎,同时实现跨引擎上下文共享、统一的计算任务和引擎治理与编排能力</strong>
+  <strong>Linkis 构建了一层计算中间件，方便上层应用与底层数据引擎之间的连接、治理和编排 </strong>
 </p>
 <p align="center">
   <a href="https://linkis.apache.org/">https://linkis.apache.org/</a>
@@ -32,7 +31,7 @@
     <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
         <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
-    
+
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
    </a>
@@ -42,9 +41,6 @@
    <a target="_blank" href='https://github.com/apache/incubator-linkis'>
         <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
    </a>
-   <a target="_blank" href="https://codecov.io/gh/apache/incubator-linkis">
-        <img src="https://codecov.io/gh/apache/incubator-linkis/branch/master/graph/badge.svg" />
-   </a>
   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
        <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
   </a>
@@ -53,7 +49,7 @@
 <br/>
 
 ---
-[English](README.md) | [中文 ](README_CN.md)
+[English](README.md) | [中文](README_CN.md)
 
 # 介绍
 
@@ -66,14 +62,14 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 
 ![没有 Linkis 之前 ](https://user-images.githubusercontent.com/7869972/148767370-06025750-090e-4fd6-bd32-aab2fbb01352.png)
 
-
 ![有了 Linkis 之后 ](https://user-images.githubusercontent.com/7869972/148767358-b02ae982-4080-4efa-aa0f-768ca27902b7.png)
 
 ## 核心特点
+
 - **丰富的底层计算存储引擎支持**  
-    - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
-    - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
-    - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等   
+  - **目前支持的计算存储引擎** Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC 和 Shell 等  
+  - **正在支持中的计算存储引擎** Trino(计划 1.3.1)、SeaTunnel(计划 1.3.1) 等  
+  - **支持的脚本语言** SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala 和 JDBC 等
 - **强大的计算治理能力** 基于 Orchestrator、Label Manager 和定制的 Spring Cloud Gateway 等服务，Linkis 能够提供基于多级标签的跨集群/跨 IDC 细粒度路由、负载均衡、多租户、流量控制、资源控制和编排策略 (如双活、主备等) 支持能力  
 - **全栈计算存储引擎架构支持** 能够接收、执行和管理针对各种计算存储引擎的任务和请求，包括离线批量任务、交互式查询任务、实时流式任务和存储型任务
 - **资源管理能力** ResourceManager 不仅具备对 Yarn 和 Linkis EngineManager 的资源管理能力，还将提供基于标签的多级资源分配和回收能力，让 ResourceManager 具备跨集群、跨计算资源类型的强大资源管理能力
@@ -109,8 +105,8 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 # 编译和安装部署
 
 > 更详细的步骤参见:
->- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/linkis-compile-and-package)
->- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/web-build)
+>- [后端编译打包 ](https://linkis.apache.org/zh-CN/docs/latest/development/build)
+>- [管理台编译 ](https://linkis.apache.org/zh-CN/docs/latest/development/build-console)
 
 
 
@@ -151,11 +147,11 @@ npm run build
 我们提供了一个脚本，它可以帮助你快速的基于官方的 Linkis 镜像创建一个集成了MySQL JDBC 的自定义镜像。 这个工具创建的镜像默认的名称是 `linkis:with-jdbc`。
 
 ```shell
-$> LINKIS_IMAGE=linkis:1.3.0 
+$> LINKIS_IMAGE=linkis:1.3.1 
 $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 ```
 
-请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/quick-deploy) 来部署 Linkis
+请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/deploy-quick/) 来部署 Linkis
 
 # 示例和使用指引
 
@@ -169,9 +165,9 @@ $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 
 - Meetup 视频 [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
-
 # 架构概要
 Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服务、公共增强服务和微服务治理服务。  
+
 - 计算治理服务，支持计算任务/请求处理流程的 3 个主要阶段:提交-> 准备-> 执行
 - 公共增强服务，包括上下文服务、物料管理服务及数据源服务等
 - 微服务治理服务，包括定制化的 Spring Cloud Gateway、Eureka、Open Feign
@@ -183,17 +179,15 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 # 贡献
 
 我们非常欢迎和期待更多的贡献者参与共建 Linkis, 不论是代码、文档，或是其他能够帮助到社区的贡献形式。  
-代码和文档相关的贡献请参照[贡献指引 ](https://linkis.apache.org/zh-CN/community/how-to-contribute).
+代码和文档相关的贡献请参照[贡献指引](https://linkis.apache.org/zh-CN/community/how-to-contribute).
 
 # 联系我们
 
 - 对 Linkis 的任何问题和建议，可以提交 issue，以便跟踪处理和经验沉淀共享
-- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org) 
+- 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - 可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应
 
 ![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
-
 
 # 谁在使用 Linkis
 

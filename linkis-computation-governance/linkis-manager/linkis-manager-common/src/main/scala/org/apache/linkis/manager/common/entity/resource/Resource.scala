@@ -19,11 +19,14 @@ package org.apache.linkis.manager.common.entity.resource
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 import org.apache.linkis.manager.common.entity.resource.ResourceType._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.ResourceWarnException
 
 import org.apache.commons.lang3.StringUtils
 
-import scala.collection.JavaConversions
+import java.text.MessageFormat
+
+import scala.collection.JavaConverters._
 
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
 import org.json4s.JsonAST.JObject
@@ -57,25 +60,25 @@ abstract class Resource {
 
   def notLess(r: Resource): Boolean
 
-  def +(r: Resource) = add(r)
+  def +(r: Resource): Resource = add(r)
 
-  def -(r: Resource) = minus(r)
+  def -(r: Resource): Resource = minus(r)
 
-  def *(rate: Float) = multiplied(rate)
+  def *(rate: Float): Resource = multiplied(rate)
 
-  def *(rate: Double) = multiplied(rate.toFloat)
+  def *(rate: Double): Resource = multiplied(rate.toFloat)
 
-  def /(rate: Int) = divide(rate)
+  def /(rate: Int): Resource = divide(rate)
 
-  def ==(r: Resource) = equalsTo(r)
+  def ==(r: Resource): Boolean = equalsTo(r)
 
-  def >(r: Resource) = moreThan(r)
+  def >(r: Resource): Boolean = moreThan(r)
 
-  def >=(r: Resource) = notLess(r)
+  def >=(r: Resource): Boolean = notLess(r)
 
-  def <(r: Resource) = ! >=(r)
+  def <(r: Resource): Boolean = ! >=(r)
 
-  def <=(r: Resource) = ! >(r)
+  def <=(r: Resource): Boolean = ! >(r)
 
   def toJson: String
 }
@@ -93,7 +96,11 @@ object Resource extends Logging {
       new DriverAndYarnResource(new LoadInstanceResource(0, 0, 0), new YarnResource(0, 0, 0))
     case Special => new SpecialResource(new java.util.HashMap[String, AnyVal]())
     case Default => new LoadResource(0, 0)
-    case _ => throw new ResourceWarnException(11003, "not supported resource result policy ")
+    case _ =>
+      throw new ResourceWarnException(
+        NOT_RESOURCE_POLICY.getErrorCode,
+        NOT_RESOURCE_POLICY.getErrorDesc
+      )
   }
 
   def getZeroResource(resource: Resource): Resource = resource match {
@@ -114,7 +121,10 @@ object Resource extends Logging {
       }
     case s: SpecialResource => new SpecialResource(new java.util.HashMap[String, AnyVal]())
     case r: Resource =>
-      throw new ResourceWarnException(11003, "not supported resource type " + r.getClass)
+      throw new ResourceWarnException(
+        NOT_RESOURCE_TYPE.getErrorCode,
+        MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+      )
   }
 
 }
@@ -435,15 +445,17 @@ class DriverAndYarnResource(
     ) {
       logger.debug(s"Not module operate this:$this other:$r")
       false
-    } else
+    } else {
       false
+    }
   }
 
   def isModuleOperate: Boolean = {
-    if (this.yarnResource != null && StringUtils.isNotEmpty(this.yarnResource.queueName))
+    if (this.yarnResource != null && StringUtils.isNotEmpty(this.yarnResource.queueName)) {
       false
-    else
+    } else {
       true
+    }
   }
 
   override def add(r: Resource): DriverAndYarnResource = {
@@ -475,7 +487,10 @@ class DriverAndYarnResource(
   }
 
   override def multiplied(r: Resource): Resource = {
-    throw new ResourceWarnException(11002, "Unsupported operation: multiplied")
+    throw new ResourceWarnException(
+      OPERATION_MULTIPLIED.getErrorCode,
+      OPERATION_MULTIPLIED.getErrorDesc
+    )
   }
 
   override def multiplied(rate: Float): Resource = {
@@ -490,7 +505,10 @@ class DriverAndYarnResource(
   }
 
   override def divide(r: Resource): Resource =
-    throw new ResourceWarnException(11002, "Unsupported operation: multiplied")
+    throw new ResourceWarnException(
+      OPERATION_MULTIPLIED.getErrorCode,
+      OPERATION_MULTIPLIED.getErrorDesc
+    )
 
   override def divide(rate: Int): Resource = if (isModuleOperate) {
     new DriverAndYarnResource(this.loadInstanceResource.divide(rate), this.yarnResource)
@@ -549,7 +567,7 @@ class DriverAndYarnResource(
 }
 
 class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Resource {
-  def this(resources: Map[String, AnyVal]) = this(JavaConversions.mapAsJavaMap(resources))
+  def this(resources: Map[String, AnyVal]) = this(resources.asJava)
 
   private def specialResourceOperator(
       r: Resource,
@@ -557,15 +575,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   ): SpecialResource = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      new SpecialResource(
-        JavaConversions
-          .mapAsScalaMap(resources)
-          .map { case (k, v) =>
-            val v1 = rs.get(k)
-            k -> op(v, v1)
-          }
-          .toMap
-      )
+      new SpecialResource(resources.asScala.map { case (k, v) =>
+        val v1 = rs.get(k)
+        k -> op(v, v1)
+      }.toMap)
     case _ => new SpecialResource(Map.empty[String, AnyVal])
   }
 
@@ -579,7 +592,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case f: Float => f + v2.asInstanceOf[Float]
         case s: Short => s + v2.asInstanceOf[Short]
         case _ =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v1.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+          )
       }
   )
 
@@ -593,7 +609,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case f: Float => f - v2.asInstanceOf[Float]
         case s: Short => s - v2.asInstanceOf[Short]
         case _ =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v1.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+          )
       }
   )
 
@@ -607,13 +626,15 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case f: Float => f * v2.asInstanceOf[Float]
         case s: Short => s * v2.asInstanceOf[Short]
         case _ =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v1.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+          )
       }
   )
 
   override def multiplied(rate: Float): Resource = new SpecialResource(
-    JavaConversions
-      .mapAsScalaMap(resources)
+    resources.asScala
       .map {
         case (k, i: Int) => k -> (i * rate).toInt
         case (k, d: Double) => k -> d * rate
@@ -621,7 +642,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, f: Float) => k -> f * rate
         case (k, s: Short) => k -> (s * rate).toShort
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
       .toMap[String, AnyVal]
   )
@@ -636,13 +660,15 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case f: Float => f / v2.asInstanceOf[Float]
         case s: Short => s / v2.asInstanceOf[Short]
         case _ =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v1.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+          )
       }
   )
 
   override def divide(rate: Int): Resource = new SpecialResource(
-    JavaConversions
-      .mapAsScalaMap(resources)
+    resources.asScala
       .map {
         case (k, i: Int) => k -> i / rate
         case (k, d: Double) => k -> d / rate
@@ -650,7 +676,10 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
         case (k, f: Float) => k -> f / rate
         case (k, s: Short) => k -> (s / rate).toShort
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
       .toMap[String, AnyVal]
   )
@@ -658,14 +687,17 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def moreThan(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i <= rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d <= rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l <= rs.get(k).asInstanceOf[Long]
         case (k, f: Float) => f <= rs.get(k).asInstanceOf[Float]
         case (k, s: Short) => s <= rs.get(k).asInstanceOf[Short]
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
     case _ => true
   }
@@ -679,14 +711,17 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def caseMore(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      JavaConversions.mapAsScalaMap(resources).exists {
+      resources.asScala.exists {
         case (k, i: Int) => i > rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d > rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l > rs.get(k).asInstanceOf[Long]
         case (k, f: Float) => f > rs.get(k).asInstanceOf[Float]
         case (k, s: Short) => s > rs.get(k).asInstanceOf[Short]
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
     case _ => true
   }
@@ -694,14 +729,17 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def equalsTo(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i != rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d != rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l != rs.get(k).asInstanceOf[Long]
         case (k, f: Float) => f != rs.get(k).asInstanceOf[Float]
         case (k, s: Short) => s != rs.get(k).asInstanceOf[Short]
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
     case _ => true
   }
@@ -709,14 +747,17 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
   override def notLess(r: Resource): Boolean = r match {
     case s: SpecialResource =>
       val rs = s.resources
-      !JavaConversions.mapAsScalaMap(resources).exists {
+      !resources.asScala.exists {
         case (k, i: Int) => i < rs.get(k).asInstanceOf[Int]
         case (k, d: Double) => d < rs.get(k).asInstanceOf[Double]
         case (k, l: Long) => l < rs.get(k).asInstanceOf[Long]
         case (k, f: Float) => f < rs.get(k).asInstanceOf[Float]
         case (k, s: Short) => s < rs.get(k).asInstanceOf[Short]
         case (k, v) =>
-          throw new ResourceWarnException(11003, "not supported resource type: " + v.getClass)
+          throw new ResourceWarnException(
+            NOT_RESOURCE_TYPE.getErrorCode,
+            MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, v.getClass)
+          )
       }
     case _ => true
   }
@@ -778,8 +819,8 @@ object ResourceSerializer
             new SpecialResource(resources.extract[Map[String, AnyVal]])
           case JObject(list) =>
             throw new ResourceWarnException(
-              11003,
-              "not supported resource serializable string " + list
+              NOT_RESOURCE_STRING.getErrorCode,
+              NOT_RESOURCE_STRING.getErrorDesc + list
             )
         },
         {
@@ -806,9 +847,12 @@ object ResourceSerializer
               )
             )
           case s: SpecialResource =>
-            ("resources", Serialization.write(JavaConversions.mapAsScalaMap(s.resources).toMap))
+            ("resources", Serialization.write(s.resources.asScala.toMap))
           case r: Resource =>
-            throw new ResourceWarnException(11003, "not supported resource type " + r.getClass)
+            throw new ResourceWarnException(
+              NOT_RESOURCE_TYPE.getErrorCode,
+              MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
+            )
         }
       )
     )

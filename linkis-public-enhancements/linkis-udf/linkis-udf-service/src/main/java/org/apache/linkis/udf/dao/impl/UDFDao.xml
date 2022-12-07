@@ -178,7 +178,8 @@
     </select>
 
     <select id="getSameSysCount" resultType="java.lang.Long">
-        select count(1) linkis_ps_udf_baseinfo where user_name="sys" and udf_name=#{arg0}
+        select count(1) from linkis_ps_udf_baseinfo where  udf_name=#{arg0}
+        and tree_id in (select id from linkis_ps_udf_tree where user_name = 'sys')
     </select>
 
     <select id="getSameLoadCount" resultType="java.lang.Long">
@@ -347,7 +348,7 @@
         on a.id=b.udf_id
     </select>
 
-    <select id="getSharedUDFIdsByUser">
+    <select id="getSharedUDFIdsByUser" resultType="java.lang.Long">
         select udf_id from linkis_ps_udf_shared_info where user_name=#{userName}
     </select>
 </mapper>

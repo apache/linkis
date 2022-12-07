@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,9 +34,12 @@ import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 
 import org.springframework.dao.DuplicateKeyException;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary.*;
 
 public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
 
@@ -76,7 +79,9 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       nodeManagerMapper.addNodeInstance(persistenceNode);
     } catch (DuplicateKeyException e) {
       NodeInstanceDuplicateException nodeInstanceDuplicateException =
-          new NodeInstanceDuplicateException(41001, "Node实例已存在");
+          new NodeInstanceDuplicateException(
+              NODE_INSTANCE_ALREADY_EXISTS.getErrorCode(),
+              NODE_INSTANCE_ALREADY_EXISTS.getErrorDesc());
       nodeInstanceDuplicateException.initCause(e);
       throw nodeInstanceDuplicateException;
     }
@@ -91,7 +96,9 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     persistenceNode.setOwner(node.getOwner());
     persistenceNode.setMark(node.getMark());
     persistenceNode.setUpdateTime(new Date());
-    persistenceNode.setCreator(node.getOwner()); // rm中插入记录的时候并未给出creator，所以需要set这个值
+    persistenceNode.setCreator(
+        node.getOwner()); // The creator is not given when inserting records in rm, so you need to
+    // set this value(rm中插入记录的时候并未给出creator，所以需要set这个值)
     persistenceNode.setUpdator(node.getOwner());
     try {
       nodeManagerMapper.updateNodeInstance(serviceInstance.getInstance(), persistenceNode);
@@ -104,7 +111,9 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
           41003, "engine instance name is exist, request of created engine will be retry");
     } catch (Exception e) {
       NodeInstanceNotFoundException nodeInstanceNotFoundException =
-          new NodeInstanceNotFoundException(41002, "Node实例不存在");
+          new NodeInstanceNotFoundException(
+              NODE_INSTANCE_DOES_NOT_EXIST.getErrorCode(),
+              NODE_INSTANCE_DOES_NOT_EXIST.getErrorDesc());
       nodeInstanceNotFoundException.initCause(e);
       throw nodeInstanceNotFoundException;
     }
@@ -117,7 +126,9 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       nodeManagerMapper.removeNodeInstance(instance);
     } catch (Exception e) {
       NodeInstanceNotFoundException nodeInstanceNotFoundException =
-          new NodeInstanceNotFoundException(41002, "Node实例不存在");
+          new NodeInstanceNotFoundException(
+              NODE_INSTANCE_DOES_NOT_EXIST.getErrorCode(),
+              NODE_INSTANCE_DOES_NOT_EXIST.getErrorDesc());
       nodeInstanceNotFoundException.initCause(e);
       throw nodeInstanceNotFoundException;
     }
@@ -198,13 +209,14 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
 
   @Override
   public void addEngineNode(EngineNode engineNode) throws PersistenceErrorException {
-    // 插入engine
+    // insert engine(插入engine)
     addNodeInstance(engineNode);
-    // 插入关联关系，todo 异常后续统一处理
+    // insert relationship,(插入关联关系，)todo 异常后续统一处理
     String engineNodeInstance = engineNode.getServiceInstance().getInstance();
     if (null == engineNode.getEMNode()) {
       throw new PersistenceErrorException(
-          410002, " The emNode  is null " + engineNode.getServiceInstance());
+          THE_EMNODE_IS_NULL.getErrorCode(),
+          MessageFormat.format(THE_EMNODE_IS_NULL.getErrorDesc(), engineNode.getServiceInstance()));
     }
     String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
     nodeManagerMapper.addEngineNode(engineNodeInstance, emNodeInstance);
@@ -215,20 +227,20 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     String engineNodeInstance = engineNode.getServiceInstance().getInstance();
     if (null != engineNode.getEMNode()) {
       String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
-      // 清理 engine和em 的关系表
+      // Clean up the relation table between engine and em(清理 engine和em 的关系表)
       nodeManagerMapper.deleteEngineNode(engineNodeInstance, emNodeInstance);
     }
     // 清理 metric信息
     metricManagerMapper.deleteNodeMetricsByInstance(engineNodeInstance);
     // metricManagerMapper.deleteNodeMetrics(emNodeId);
-    // 清除 引擎
+    // 清除 引擎(clear engine)
     nodeManagerMapper.removeNodeInstance(engineNode.getServiceInstance().getInstance());
   }
 
   @Override
   public EngineNode getEngineNode(ServiceInstance serviceInstance)
       throws PersistenceErrorException {
-    // 给定引擎的 serviceinstance 查到 emNode
+    // The serviceinstance of a given engine finds emNode (给定引擎的 serviceinstance 查到 emNode)
     AMEngineNode amEngineNode = new AMEngineNode();
     amEngineNode.setServiceInstance(serviceInstance);
     PersistenceNode engineNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());
@@ -259,7 +271,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   @Override
   public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
       throws PersistenceErrorException {
-    // 给定EM的 serviceinstance
+    // serviceinstance for a given EM(给定EM的 serviceinstance)
     PersistenceNode emNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());
     if (null == emNode) {
       return new ArrayList<>();

@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationExecutorFactory
 import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.NotSupportSparkPythonTypeException
 import org.apache.linkis.engineplugin.spark.executor.SparkPythonExecutor
 import org.apache.linkis.manager.label.entity.Label
@@ -40,9 +41,7 @@ class SparkPythonExecutorFactory extends ComputationExecutorFactory {
       case sparkEngineSession: SparkEngineSession =>
         new SparkPythonExecutor(sparkEngineSession, id)
       case _ =>
-        throw NotSupportSparkPythonTypeException(
-          "Invalid EngineConn engine session obj, failed to create sparkPython executor"
-        )
+        throw NotSupportSparkPythonTypeException(INVALID_CREATE_SPARKPYTHON.getErrorDesc)
     }
   }
 

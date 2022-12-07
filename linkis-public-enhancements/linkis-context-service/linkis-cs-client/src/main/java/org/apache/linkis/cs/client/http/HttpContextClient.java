@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -53,6 +53,8 @@ import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.client.errorcode.CsClientErrorCodeSummary.*;
 
 /** Description: HttpContextClient是ContextClient的使用Http方式进行通信的具体实现 一般可以将其做成单例 */
 public class HttpContextClient extends AbstractContextClient {
@@ -116,7 +118,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextCreateAction);
     } catch (Exception e) {
       LOGGER.error("create context failed", e);
-      ExceptionHelper.throwErrorException(80015, "create context failed", e);
+      ExceptionHelper.throwErrorException(
+          CREATE_CONTEXT_FAILED.getErrorCode(), CREATE_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextCreateResult) {
       ContextCreateResult contextCreateResult = (ContextCreateResult) result;
@@ -159,7 +162,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextCreateAction);
     } catch (Exception e) {
       LOGGER.error("create context failed", e);
-      ExceptionHelper.throwErrorException(80015, "create context failed", e);
+      ExceptionHelper.throwErrorException(
+          CREATE_CONTEXT_FAILED.getErrorCode(), CREATE_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextCreateResult) {
       ContextCreateResult contextCreateResult = (ContextCreateResult) result;
@@ -218,7 +222,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextGetValueAction);
     } catch (Exception e) {
       LOGGER.error("get context value id: {} , key: {} failed", contextIDStr, contextKeyStr, e);
-      ExceptionHelper.throwErrorException(80015, "get context value failed", e);
+      ExceptionHelper.throwErrorException(
+          GET_CONTEXT_VALUE_FAILED.getErrorCode(), GET_CONTEXT_VALUE_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextGetValueResult) {
       ContextGetValueResult contextGetValueResult = (ContextGetValueResult) result;
@@ -265,7 +270,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextSetKeyValueAction);
     } catch (Exception e) {
       LOGGER.error("update context failed", e);
-      ExceptionHelper.throwErrorException(80015, "update context failed", e);
+      ExceptionHelper.throwErrorException(
+          UPDATE_CONTEXT_FAILED.getErrorCode(), UPDATE_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextSetKeyValueResult) {
       ContextSetKeyValueResult contextSetKeyValueResult = (ContextSetKeyValueResult) result;
@@ -302,7 +308,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextResetValueAction);
     } catch (Exception e) {
       LOGGER.error("reset contextID {}, contextKey {}  failed", contextIdStr, contextKeyStr, e);
-      ExceptionHelper.throwErrorException(80015, "reset context failed", e);
+      ExceptionHelper.throwErrorException(
+          RESET_CONTEXT_FAILED.getErrorCode(), RESET_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextResetResult) {
       ContextResetResult contextResetResult = (ContextResetResult) result;
@@ -340,7 +347,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextResetIDAction);
     } catch (Exception e) {
       LOGGER.error("reset contextID {} failed", contextIdStr, e);
-      ExceptionHelper.throwErrorException(80015, "reset context failed", e);
+      ExceptionHelper.throwErrorException(
+          RESET_CONTEXT_FAILED.getErrorCode(), RESET_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextResetIDResult) {
       ContextResetIDResult contextResetResult = (ContextResetIDResult) result;
@@ -381,7 +389,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextRemoveAction);
     } catch (Exception e) {
       LOGGER.error("remove context id {} context key {} failed", contextIdStr, contextIdStr, e);
-      ExceptionHelper.throwErrorException(80015, "remove context failed", e);
+      ExceptionHelper.throwErrorException(
+          REMOVE_CONTEXT_FAILED.getErrorCode(), REMOVE_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextRemoveResult) {
       ContextRemoveResult contextRemoveResult = (ContextRemoveResult) result;
@@ -417,7 +426,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(action);
     } catch (Exception e) {
       LOGGER.error("set value failed", e);
-      ExceptionHelper.throwErrorException(80015, "update context failed", e);
+      ExceptionHelper.throwErrorException(
+          UPDATE_CONTEXT_FAILED.getErrorCode(), REMOVE_CONTEXT_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextSetKeyValueResult) {
       ContextSetKeyValueResult contextSetKeyValueResult = (ContextSetKeyValueResult) result;
@@ -448,7 +458,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextBindIDAction);
     } catch (Exception e) {
       LOGGER.error("bind context id {} failed", contextIDStr, e);
-      ExceptionHelper.throwErrorException(80015, "bind context id failed", e);
+      ExceptionHelper.throwErrorException(
+          BIND_CONTEXTID_FAILED.getErrorCode(), BIND_CONTEXTID_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextBindIDResult) {
       ContextBindIDResult contextBindIDResult = (ContextBindIDResult) result;
@@ -486,7 +497,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextBindKeyAction);
     } catch (Exception e) {
       LOGGER.error("bind context id {} context key {} failed", contextIDStr, contextKeyStr, e);
-      ExceptionHelper.throwErrorException(80015, "bind context key failed", e);
+      ExceptionHelper.throwErrorException(
+          BIND_CONTEXTID_FAILED.getErrorCode(), BIND_CONTEXTID_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextBindKeyResult) {
       ContextBindKeyResult contextBindKeyResult = (ContextBindKeyResult) result;
@@ -568,7 +580,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = dwsHttpClient.execute(contextSearchContextAction);
     } catch (Exception e) {
       LOGGER.error("search condition failed", e);
-      ExceptionHelper.throwErrorException(80015, "search condition failed", e);
+      ExceptionHelper.throwErrorException(
+          SEARCH_CONDITION_FAILED.getErrorCode(), SEARCH_CONDITION_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextSearchResult) {
       ContextSearchResult contextSearchResult = (ContextSearchResult) result;
@@ -751,7 +764,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = execute(action);
     } catch (Exception e) {
       LOGGER.error("searchHAIDByTime failed, {}", e.getMessage(), e);
-      ExceptionHelper.throwErrorException(80017, "searchHAIDByTime failed.", e);
+      ExceptionHelper.throwErrorException(
+          HAIDBYTIME_FAILED.getErrorCode(), HAIDBYTIME_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextSearchIDByTimeResult) {
       ContextSearchIDByTimeResult contextSearchIDByTimeResult =
@@ -789,7 +803,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = execute(action);
     } catch (Exception e) {
       LOGGER.error("batchClearContextByHAID failed, {}", e.getMessage(), e);
-      ExceptionHelper.throwErrorException(80017, "batchClearContextByHAID failed.", e);
+      ExceptionHelper.throwErrorException(
+          CLEAR_CONTEXT_HAID_FAILED.getErrorCode(), CLEAR_CONTEXT_HAID_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextClearByIDResult) {
       ContextClearByIDResult contextClearByIDResult = (ContextClearByIDResult) result;
@@ -838,7 +853,8 @@ public class HttpContextClient extends AbstractContextClient {
       result = execute(action);
     } catch (Exception e) {
       LOGGER.error("batchClearContextByTime failed, {}", e.getMessage(), e);
-      ExceptionHelper.throwErrorException(80017, "batchClearContextByTime failed.", e);
+      ExceptionHelper.throwErrorException(
+          CLEAR_CONTEXT_HAID_FAILED.getErrorCode(), CLEAR_CONTEXT_HAID_FAILED.getErrorDesc(), e);
     }
     if (result instanceof ContextClearByTimeResult) {
       ContextClearByTimeResult contextClearByTimeResult = (ContextClearByTimeResult) result;
@@ -859,7 +875,8 @@ public class HttpContextClient extends AbstractContextClient {
       return dwsHttpClient.execute(action);
     } catch (Exception e) {
       LOGGER.error("execute failed", e);
-      ExceptionHelper.throwErrorException(80015, "execute failed", e);
+      ExceptionHelper.throwErrorException(
+          EXECUTE_FALIED.getErrorCode(), EXECUTE_FALIED.getErrorDesc(), e);
     }
     return null;
   }

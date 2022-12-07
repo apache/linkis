@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.scheduler
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.execute.EntranceJob
 import org.apache.linkis.governance.common.protocol.conf.{
@@ -45,7 +46,7 @@ import java.util
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.google.common.cache.{Cache, CacheBuilder}
 
@@ -116,7 +117,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       }(
         "Get user configurations from configuration server failed! Next use the default value to continue."
       )
-      val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+      val maxRunningJobs = getUserMaxRunningJobs(keyAndValue)
       val initCapacity = GROUP_INIT_CAPACITY.getValue(keyAndValue)
       val maxCapacity = if (null != specifiedUsernameRegexPattern) {
         if (specifiedUsernameRegexPattern.matcher(userCreatorLabel.getUser).find()) {
@@ -153,6 +154,22 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     group
   }
 
+  private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {
+    var userDefinedRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue)
+    var entranceNum = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName).length
+    /*
+    Sender.getInstances may get 0 instances due to cache in Sender. So this instance is the one instance.
+     */
+    if (0 == entranceNum) {
+      entranceNum = 1
+      logger.error(s"Got 0 ${Sender.getThisServiceInstance.getApplicationName} instances.")
+    }
+    Math.max(
+      EntranceConfiguration.ENTRANCE_INSTANCE_MIN.getValue,
+      userDefinedRunningJobs / entranceNum
+    );
+  }
+
 }
 
 object EntranceGroupFactory {
@@ -172,8 +189,9 @@ object EntranceGroupFactory {
           runtime.get(TaskConstant.READ_FROM_CACHE) != null && runtime
             .get(TaskConstant.READ_FROM_CACHE)
             .asInstanceOf[Boolean]
-      ) CACHE
-      else ""
+      ) {
+        CACHE
+      } else ""
     if (StringUtils.isNotEmpty(creator)) creator + "_" + user + cache
     else EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue + "_" + user + cache
   }
@@ -183,11 +201,11 @@ object EntranceGroupFactory {
       params: util.Map[String, Any] = new util.HashMap[String, Any]
   ): String = {
 
-    val userCreator = labels.find(_.isInstanceOf[UserCreatorLabel])
-    val engineType = labels.find(_.isInstanceOf[EngineTypeLabel])
-    val concurrent = labels.find(_.isInstanceOf[ConcurrentEngineConnLabel])
+    val userCreator = labels.asScala.find(_.isInstanceOf[UserCreatorLabel])
+    val engineType = labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
+    val concurrent = labels.asScala.find(_.isInstanceOf[ConcurrentEngineConnLabel])
     if (userCreator.isEmpty || engineType.isEmpty) {
-      throw new EntranceErrorException(20001, "userCreator label or engineType label cannot null")
+      throw new EntranceErrorException(LABEL_NOT_NULL.getErrorCode, LABEL_NOT_NULL.getErrorDesc)
     }
 
     if (concurrent.isDefined) {
@@ -207,8 +225,9 @@ object EntranceGroupFactory {
             runtime.get(TaskConstant.READ_FROM_CACHE) != null && runtime
               .get(TaskConstant.READ_FROM_CACHE)
               .asInstanceOf[Boolean]
-        ) CACHE
-        else ""
+        ) {
+          CACHE
+        } else ""
       val groupName =
         userCreatorLabel.getCreator + "_" + userCreatorLabel.getUser + "_" + engineTypeLabel.getEngineType + cache
       groupName

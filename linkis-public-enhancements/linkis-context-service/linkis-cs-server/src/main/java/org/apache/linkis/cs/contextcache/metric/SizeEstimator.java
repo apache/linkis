@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,26 +17,10 @@
 
 package org.apache.linkis.cs.contextcache.metric;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class SizeEstimator {
-
-  private static final Logger logger = LoggerFactory.getLogger(SizeEstimator.class);
-
-  private static ClassIntrospector classIntrospector = new ClassIntrospector();
 
   @Deprecated
   public static Long estimate(Object obj) {
-    /* try {
-        if (obj == null) {
-            return 0L;
-        }
-        ObjectInfo info = classIntrospector.introspect(obj);
-        return info.getDeepSize();
-    } catch (Throwable e) {
-        logger.info("estimate size failed", e);
-    }*/
     return 0L;
   }
 }

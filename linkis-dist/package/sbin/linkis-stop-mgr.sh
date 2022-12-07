@@ -69,11 +69,6 @@ SERVER_NAME="cg-entrance"
 SERVER_IP=$ENTRANCE_INSTALL_IP
 stopApp
 
-#linkis-cg-engineplugin(ecp)
-SERVER_NAME="cg-engineplugin"
-SERVER_IP=$ENGINECONN_PLUGIN_SERVER_INSTALL_IP
-stopApp
-
 #linkis-ps-publicservice
 SERVER_NAME="ps-publicservice"
 SERVER_IP=$PUBLICSERVICE_INSTALL_IP

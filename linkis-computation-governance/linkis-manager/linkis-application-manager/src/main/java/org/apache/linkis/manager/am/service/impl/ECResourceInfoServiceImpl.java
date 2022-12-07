@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -42,15 +42,23 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
-    if (StringUtils.isNoneBlank(ticketId)) {
+    if (StringUtils.isNotBlank(ticketId)) {
       return ecResourceRecordMapper.getECResourceInfoRecord(ticketId);
     }
     return null;
   }
 
   @Override
+  public ECResourceInfoRecord getECResourceInfoRecordByInstance(String instance) {
+    if (StringUtils.isNotBlank(instance)) {
+      return ecResourceRecordMapper.getECResourceInfoRecordByInstance(instance);
+    }
+    return null;
+  }
+
+  @Override
   public void deleteECResourceInfoRecordByTicketId(String ticketId) {
-    if (StringUtils.isNoneBlank(ticketId)) {
+    if (StringUtils.isNotBlank(ticketId)) {
       logger.info("Start to delete ec：{} info ", ticketId);
       ecResourceRecordMapper.deleteECResourceInfoRecordByTicketId(ticketId);
     }

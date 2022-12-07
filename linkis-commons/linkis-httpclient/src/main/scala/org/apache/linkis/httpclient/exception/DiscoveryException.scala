@@ -18,5 +18,7 @@
 package org.apache.linkis.httpclient.exception
 
 import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.httpclient.errorcode.LinkisHttpclientErrorCodeSummary.CONNECT_TO_SERVERURL
 
-class DiscoveryException(errorDesc: String) extends ErrorException(10901, errorDesc)
+class DiscoveryException(errorDesc: String)
+    extends ErrorException(CONNECT_TO_SERVERURL.getErrorCode, errorDesc)

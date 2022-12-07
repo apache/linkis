@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary.BEANUTILS_POPULATE_FAILED;
 
 public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
 
@@ -310,7 +312,8 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
                   Map.Entry::getKey,
                   f -> f.getValue().stream().map(Tunple::getValue).collect(Collectors.toList())));
     } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new PersistenceWarnException(10000, "beanutils populate failed", e);
+      throw new PersistenceWarnException(
+          BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
     }
   }
 
@@ -347,7 +350,8 @@ public class DefaultLabelManagerPersistence implements LabelManagerPersistence {
                   Map.Entry::getKey,
                   f -> f.getValue().stream().map(Tunple::getValue).collect(Collectors.toList())));
     } catch (InvocationTargetException | IllegalAccessException e) {
-      throw new PersistenceWarnException(10000, "beanutils populate failed", e);
+      throw new PersistenceWarnException(
+          BEANUTILS_POPULATE_FAILED.getErrorCode(), BEANUTILS_POPULATE_FAILED.getErrorDesc(), e);
     }
   }
 

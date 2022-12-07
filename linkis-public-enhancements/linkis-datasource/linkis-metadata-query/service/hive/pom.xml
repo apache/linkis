@@ -20,7 +20,8 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
+    <relativePath>../../../../../pom.xml</relativePath>
   </parent>
   <artifactId>linkis-metadata-query-service-hive</artifactId>
 
@@ -87,12 +88,8 @@
           <artifactId>hadoop-yarn-common</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.protobuf</groupId>
-          <artifactId>protobuf-java</artifactId>
+          <groupId>io.netty</groupId>
+          <artifactId>netty</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -211,14 +208,14 @@
           <artifactId>hive-shims</artifactId>
         </exclusion>
         <!-- delete by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 start -->
-<!--        <exclusion>-->
-<!--          <groupId>com.jolbox</groupId>-->
-<!--          <artifactId>bonecp</artifactId>-->
-<!--        </exclusion>-->
-<!--        <exclusion>-->
-<!--          <groupId>org.apache.derby</groupId>-->
-<!--          <artifactId>derby</artifactId>-->
-<!--        </exclusion>-->
+        <!--        <exclusion>-->
+        <!--          <groupId>com.jolbox</groupId>-->
+        <!--          <artifactId>bonecp</artifactId>-->
+        <!--        </exclusion>-->
+        <!--        <exclusion>-->
+        <!--          <groupId>org.apache.derby</groupId>-->
+        <!--          <artifactId>derby</artifactId>-->
+        <!--        </exclusion>-->
         <!-- delete by jiangkun0928 for 适配 hive-2.1.1-cdh6.2.0 end -->
         <exclusion>
           <groupId>org.apache.curator</groupId>

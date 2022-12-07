@@ -19,10 +19,9 @@ package org.apache.linkis.engineplugin.spark.Interpreter
 
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.spark.common.LineBufferedStream
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
-import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.storage.FSFactory
 
 import org.apache.commons.io.IOUtils
@@ -66,7 +65,7 @@ object PythonInterpreter {
     new PythonInterpreter(process, gatewayServer)
   }
 
-  def pythonPath = {
+  def pythonPath: String = {
     val pythonPath = new ArrayBuffer[String]
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
@@ -76,7 +75,7 @@ object PythonInterpreter {
         override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
       })
       .foreach(f => pythonPath += f.getPath)
-    EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
+    ClassUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
 
@@ -156,6 +155,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     val iterable = initOut.iterator
     while (continue && iterable.hasNext) {
       iterable.next match {
+        // scalastyle:off println
         case "READY" => println("Start python application succeed."); continue = false
         case str: String => println(str)
         case _ =>
@@ -182,16 +182,15 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
   }
 
   private def sendRequest(request: Map[String, Any]): Option[JValue] = {
+    // scalastyle:off println
     stdin.println(Serialization.write(request))
     stdin.flush()
 
     Option(stdout.readLine()).map { line => parse(line) }
   }
 
-  def pythonPath = {
+  def pythonPath: String = {
     val pythonPath = new ArrayBuffer[String]
-    //    sys.env.get("SPARK_HOME").foreach { sparkHome =>
-    //    }
     val pythonHomePath = new File(SparkConfiguration.SPARK_HOME.getValue, "python").getPath
     val pythonParentPath = new File(pythonHomePath, "lib")
     pythonPath += pythonHomePath
@@ -200,7 +199,7 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
         override def accept(pathname: File): Boolean = pathname.getName.endsWith(".zip")
       })
       .foreach(f => pythonPath += f.getPath)
-    EngineUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
+    ClassUtils.jarOfClass(classOf[SparkContext]).foreach(pythonPath += _)
     pythonPath.mkString(File.pathSeparator)
   }
 

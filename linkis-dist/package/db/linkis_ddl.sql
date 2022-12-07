@@ -290,6 +290,7 @@ CREATE TABLE `linkis_ps_datasource_field` (
   `is_partition_field` tinyint(1) NOT NULL,
   `is_primary` tinyint(1) NOT NULL,
   `length` int(11) DEFAULT NULL,
+  `mode_info` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -686,8 +687,7 @@ CREATE TABLE `linkis_cg_manager_lock` (
   `time_out` longtext COLLATE utf8_bin,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `lock_object` (`lock_object`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_rm_external_resource_provider`;
@@ -754,6 +754,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ec instance info',
     `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ecm instance info ',
     `ticket_id` VARCHAR(100) NOT NULL COMMENT 'ec ticket id',
+    `status` varchar(50) DEFAULT NULL COMMENT 'EC status: Starting,Unlock,Locked,Idle,Busy,Running,ShuttingDown,Failed,Success',
     `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'log path',
     `request_times` INT(8) COMMENT 'resource request times',
     `request_resource` VARCHAR(1020) COMMENT 'request resource',
@@ -846,7 +847,7 @@ CREATE TABLE `linkis_ps_dm_datasource`
     `datasource_type_id`   int(11)                       NOT NULL,
     `create_identify`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
     `create_system`        varchar(255) COLLATE utf8_bin      DEFAULT NULL,
-    `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
+    `parameter`            varchar(1024) COLLATE utf8_bin NULL DEFAULT NULL,
     `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
@@ -868,12 +869,13 @@ CREATE TABLE `linkis_ps_dm_datasource_env`
     `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
     `env_desc`           varchar(255) COLLATE utf8_bin          DEFAULT NULL,
     `datasource_type_id` int(11)                       NOT NULL,
-    `parameter`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `parameter`          varchar(1024) COLLATE utf8_bin          DEFAULT NULL,
     `create_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
     `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `env_name` (`env_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -916,7 +918,8 @@ CREATE TABLE `linkis_ps_dm_datasource_type_key`
     `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
     `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `data_source_type_id_key` (`data_source_type_id`, `key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ----------------------------
 -- Table structure for linkis_ps_dm_datasource_version

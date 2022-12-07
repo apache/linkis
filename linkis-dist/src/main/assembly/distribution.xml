@@ -16,7 +16,8 @@
   ~ limitations under the License.
   -->
 
-<assembly>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
     <id>dist</id>
     <formats>
         <format>tar.gz</format>
@@ -225,7 +226,7 @@
 
         <!--lib-->
         <!--linkis-computation-governance-->
-        <!--linkis-gc-manager-->
+        <!--linkis-ec-manager-->
         <fileSet>
             <directory>
                 ../linkis-computation-governance/linkis-engineconn-manager/linkis-engineconn-manager-server/target/out/lib
@@ -238,23 +239,10 @@
             </includes>
         </fileSet>
 
-        <!--engineConnPlugin-->
-        <fileSet>
-            <directory>
-                ../linkis-computation-governance/linkis-engineconn/linkis-engineconn-plugin-server/target/out/lib/
-            </directory>
-            <outputDirectory>
-                linkis-package/lib/linkis-computation-governance/linkis-cg-engineplugin
-            </outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-
         <!--application-manager-->
         <fileSet>
             <directory>
-                ../linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/lib
+                ../linkis-computation-governance/linkis-manager/target/out/lib
             </directory>
             <outputDirectory>
                 linkis-package/lib/linkis-computation-governance/linkis-cg-linkismanager

@@ -1,14 +1,18 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
- * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
- * to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.linkis.engineplugin.openlookeng.executor;
@@ -80,6 +84,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.engineplugin.openlookeng.conf.OpenLooKengConfiguration.OPENLOOKENG_HTTP_CONNECT_TIME_OUT;
 import static org.apache.linkis.engineplugin.openlookeng.conf.OpenLooKengConfiguration.OPENLOOKENG_HTTP_READ_TIME_OUT;
+import static org.apache.linkis.engineplugin.openlookeng.errorcode.OpenLooKengErrorCodeSummary.OPENLOOKENG_CLIENT_ERROR;
+import static org.apache.linkis.engineplugin.openlookeng.errorcode.OpenLooKengErrorCodeSummary.OPENLOOKENG_STATUS_ERROR;
 
 public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor {
 
@@ -345,8 +351,9 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
       }
       LOG.warn("Fetched {} col(s) : {} row(s) in openlookeng", columnCount, rows);
       engineExecutorContext.sendResultSet(resultSetWriter);
-    } finally {
+    } catch (Exception e) {
       IOUtils.closeQuietly(resultSetWriter);
+      throw e;
     }
   }
 
@@ -374,10 +381,11 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     } else if (statement.isClientAborted()) {
       LOG.warn("openlookeng statement is killed.");
     } else if (statement.isClientError()) {
-      throw new OpenLooKengClientException(60001, "openlookeng client error.");
+      throw new OpenLooKengClientException(
+          OPENLOOKENG_CLIENT_ERROR.getErrorCode(), OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
     } else {
       throw new OpenLooKengStateInvalidException(
-          60002, "openlookeng status error. Statement is not finished.");
+          OPENLOOKENG_STATUS_ERROR.getErrorCode(), OPENLOOKENG_STATUS_ERROR.getErrorDesc());
     }
     return null;
   }

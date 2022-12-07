@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,10 +21,11 @@ import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.exception.LabelRuntimeException;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
-import static org.apache.linkis.manager.label.constant.LabelConstant.LABEL_BUILDER_ERROR_CODE;
 import static org.apache.linkis.manager.label.constant.LabelKeyConstant.ENV_TYPE_KEY;
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.NOT_SUPPORT_ENVTYPE;
 
 public class EnvLabel extends GenericLabel {
 
@@ -43,7 +44,9 @@ public class EnvLabel extends GenericLabel {
 
   public void setEnvType(String envType) {
     if (!envType.equals(DEV) && !envType.equals(TEST) && !envType.equals(PROD)) {
-      throw new LabelRuntimeException(LABEL_BUILDER_ERROR_CODE, "Not support envType: " + envType);
+      throw new LabelRuntimeException(
+          NOT_SUPPORT_ENVTYPE.getErrorCode(),
+          MessageFormat.format(NOT_SUPPORT_ENVTYPE.getErrorDesc(), envType));
     }
     if (null == getValue()) {
       setValue(new HashMap<>());

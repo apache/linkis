@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,18 +19,18 @@ package org.apache.linkis.engineconnplugin.sqoop.client.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
+import static org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.ERROR_IN_CLOSING_ID;
+
 /** Exception in closing/destroying the job */
 public class JobClosableException extends ErrorException {
   private static final long serialVersionUID = 1L;
 
-  public static final int ERROR_CODE = 16025;
-
   public JobClosableException(String message) {
-    super(ERROR_CODE, message);
+    super(ERROR_IN_CLOSING_ID.getErrorCode(), message);
   }
 
   public JobClosableException(String message, Throwable e) {
-    super(ERROR_CODE, message);
+    super(ERROR_IN_CLOSING_ID.getErrorCode(), message);
     this.initCause(e);
   }
 }

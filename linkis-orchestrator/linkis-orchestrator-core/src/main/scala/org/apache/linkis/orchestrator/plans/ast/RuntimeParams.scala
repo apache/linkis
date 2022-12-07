@@ -29,7 +29,7 @@ trait RuntimeParams {
 
   def getDataSources: util.Map[String, AnyRef]
 
-  @Deprecated
+  @deprecated
   def getSpecials: util.Map[String, AnyRef]
 
   def getJobs: util.Map[String, AnyRef]
@@ -62,18 +62,19 @@ class RuntimeParamsImpl(
 
   init()
 
-  @Deprecated
+  @deprecated
   private def initContextMap(
       runtime: util.Map[String, AnyRef],
       context: util.Map[String, AnyRef]
   ): Unit = {
     if (context.isEmpty && runtime.containsKey(QueryParams.CONTEXT_KEY_FOR_ID)) {
       context.put(QueryParams.CONTEXT_KEY_FOR_ID, runtime.get(QueryParams.CONTEXT_KEY_FOR_ID))
-      if (runtime.containsKey(QueryParams.CONTEXT_KEY_FOR_NODE_NAME))
+      if (runtime.containsKey(QueryParams.CONTEXT_KEY_FOR_NODE_NAME)) {
         context.put(
           QueryParams.CONTEXT_KEY_FOR_NODE_NAME,
           runtime.get(QueryParams.CONTEXT_KEY_FOR_NODE_NAME)
         )
+      }
     }
   }
 

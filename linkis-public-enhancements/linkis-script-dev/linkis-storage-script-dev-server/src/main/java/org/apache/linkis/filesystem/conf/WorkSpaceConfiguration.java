@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -56,6 +56,13 @@ public class WorkSpaceConfiguration {
 
   public static final CommonVars<Boolean> FILESYSTEM_PATH_AUTO_CREATE =
       CommonVars$.MODULE$.apply("linkis.workspace.filesystem.auto.create", false);
+
+  public static final CommonVars<Long> LOCAL_FILESYSTEM_USER_REFRESH_INTERVAL =
+      CommonVars$.MODULE$.apply(
+          "linkis.filesystem.local.usermap.refresh.interval.mills", 30 * 60 * 1000L);
+
+  public static final CommonVars<Boolean> ENABLE_USER_GROUP =
+      CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(

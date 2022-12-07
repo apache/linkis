@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,14 +19,14 @@ package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.AbstractMetaService;
+import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EsMetaService extends AbstractMetaService<ElasticConnection> {
+public class EsMetaService extends AbstractDbMetaService<ElasticConnection> {
   @Override
   public MetadataConnection<ElasticConnection> getConnection(
       String operator, Map<String, Object> params) throws Exception {

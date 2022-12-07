@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,9 @@ import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.client.config.entries.TableEntry;
 import org.apache.flink.table.client.config.entries.ViewEntry;
 
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ALREADY_CURRENT_SESSION;
+import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
+
 /** Operation for CREATE VIEW command. */
 public class CreateViewOperation implements NonJobOperation {
   private final ExecutionContext context;
@@ -47,7 +50,7 @@ public class CreateViewOperation implements NonJobOperation {
     TableEntry tableEntry = env.getTables().get(viewName);
     if (tableEntry instanceof ViewEntry) {
       throw new SqlExecutionException(
-          "'" + viewName + "' has already been defined in the current session.");
+          "'" + viewName + "' " + ALREADY_CURRENT_SESSION.getErrorDesc());
     }
 
     // TODO check the logic
@@ -60,7 +63,7 @@ public class CreateViewOperation implements NonJobOperation {
           });
     } catch (Throwable t) {
       // catch everything such that the query does not crash the executor
-      throw new SqlExecutionException("Invalid SQL statement.", t);
+      throw new SqlExecutionException(INVALID_SQL_STATEMENT.getErrorDesc(), t);
     }
     // Also attach the view to ExecutionContext#environment.
     env.getTables().put(viewName, ViewEntry.create(viewName, query));

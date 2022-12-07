@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
+import java.util.Locale
 
 @Service
 class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackService with Logging {
@@ -89,7 +90,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
   private def matchRetryLog(errorMsg: String): Boolean = {
     var flag = false
     if (StringUtils.isNotBlank(errorMsg)) {
-      val errorMsgLowCase = errorMsg.toLowerCase
+      val errorMsgLowCase = errorMsg.toLowerCase(Locale.getDefault)
       canRetryLogs.foreach(canRetry =>
         if (errorMsgLowCase.contains(canRetry)) {
           logger.error(s"match engineConn log fatal logs,is $canRetry")

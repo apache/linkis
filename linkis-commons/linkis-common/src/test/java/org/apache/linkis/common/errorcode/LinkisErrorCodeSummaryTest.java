@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,28 +39,33 @@ class LinkisErrorCodeSummaryTest {
 
   @Test
   void testGetErrorDesc() {
-    assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
+    assertEquals("Engine start failed(引擎启动失败)", EngineManagerErrorException.getErrorDesc());
   }
 
   @Test
   void testSetErrorDesc() {
     EngineManagerErrorException.setErrorDesc("test");
     assertEquals("test", EngineManagerErrorException.getErrorDesc());
-    EngineManagerErrorException.setErrorDesc("引擎启动失败");
-    assertEquals("引擎启动失败", EngineManagerErrorException.getErrorDesc());
+    EngineManagerErrorException.setErrorDesc("Engine start failed(引擎启动失败)");
+    assertEquals("Engine start failed(引擎启动失败)", EngineManagerErrorException.getErrorDesc());
   }
 
   @Test
   void testGetComment() {
-    assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
+    assertEquals(
+        "Failed to start under certain circumstances(在某种情况下启动失败)",
+        EngineManagerErrorException.getComment());
   }
 
   @Test
   void testSetComment() {
     EngineManagerErrorException.setComment("test");
     assertEquals("test", EngineManagerErrorException.getComment());
-    EngineManagerErrorException.setComment("在某种情况下启动失败");
-    assertEquals("在某种情况下启动失败", EngineManagerErrorException.getComment());
+    EngineManagerErrorException.setComment(
+        "Failed to start under certain circumstances(在某种情况下启动失败)");
+    assertEquals(
+        "Failed to start under certain circumstances(在某种情况下启动失败)",
+        EngineManagerErrorException.getComment());
   }
 
   @Test

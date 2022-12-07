@@ -187,6 +187,7 @@
             <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
                 <![CDATA[`datasource_type_id` = #{dataSourceTypeId},]]>
             </if>
+            <![CDATA[`parameter` = #{parameter},]]>
             <![CDATA[`create_identify` = #{createIdentify,jdbcType=VARCHAR},]]>
             <![CDATA[`create_system` = #{createSystem,jdbcType=VARCHAR},]]>
             <choose>
@@ -214,6 +215,22 @@
             `id` = #{dataSourceId}
         </where>
     </update>
+
+    <select id="selectByIds" resultMap="dataSourceMap">
+        <![CDATA[SELECT ]]>
+        <include refid="data_source_query_page"/>
+        <![CDATA[ FROM `linkis_ps_dm_datasource_type` t
+        INNER JOIN `linkis_ps_dm_datasource` d ON t.`id` = d.`datasource_type_id`]]>
+        <where>
+            <if test="ids != null and ids.size > 0">
+                <![CDATA[AND d.`id` in ]]>
+                <foreach collection="ids" index="index" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        <![CDATA[ ORDER BY create_time DESC ]]>
+    </select>
 
     <select id="selectByPageVo" resultMap="dataSourceMap">
         <![CDATA[SELECT ]]>

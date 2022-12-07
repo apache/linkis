@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static org.apache.linkis.datasourcemanager.common.errorcode.LinkisDatasourceManagerErrorCodeSummary.PARAM_VALIDATE_FAILED;
 
 /** RegExpression validate strategy */
 public class RegExpParameterValidateStrategy implements ParameterValidateStrategy {
@@ -64,7 +66,8 @@ public class RegExpParameterValidateStrategy implements ParameterValidateStrateg
     boolean match = Pattern.matches(valueRegex, value);
     if (!match) {
       throw new ParameterValidateException(
-          "Param Validate Failed[参数校验出错], [the value: '"
+          PARAM_VALIDATE_FAILED.getErrorDesc()
+              + ", [the value: '"
               + String.valueOf(value)
               + "' to key: '"
               + key

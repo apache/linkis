@@ -22,7 +22,6 @@ import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
-import org.apache.linkis.jobhistory.dao.JobDetailMapper;
 import org.apache.linkis.jobhistory.entity.*;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
 import org.apache.linkis.jobhistory.util.QueryUtils;
@@ -59,7 +58,6 @@ public class QueryRestfulApi {
     private Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private JobHistoryQueryService jobHistoryQueryService;
-    @Autowired private JobDetailMapper jobDetailMapper;
 
     @Autowired private DefaultQueryCacheManager queryCacheManager;
 
@@ -273,6 +271,17 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (StringUtils.isEmpty(engineType)) {
+            engineType = null;
+        } else {
+            if (!QueryUtils.checkNameValid(engineType)) {
+                return Message.error("Invalid engienType: " + engineType);
+            }
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);
@@ -347,6 +356,17 @@ public class QueryRestfulApi {
         }
         if (StringUtils.isEmpty(creator)) {
             creator = null;
+        } else {
+            if (!QueryUtils.checkNameValid(creator)) {
+                return Message.error("Invalid creator : " + creator);
+            }
+        }
+        if (StringUtils.isEmpty(engineType)) {
+            engineType = null;
+        } else {
+            if (!QueryUtils.checkNameValid(engineType)) {
+                return Message.error("Invalid engienType: " + engineType);
+            }
         }
         Date sDate = new Date(startDate);
         Date eDate = new Date(endDate);

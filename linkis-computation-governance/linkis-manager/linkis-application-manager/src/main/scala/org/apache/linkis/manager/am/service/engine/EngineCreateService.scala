@@ -25,8 +25,6 @@ import org.apache.linkis.rpc.Sender
 
 trait EngineCreateService {
 
-  def getEngineNode(serviceInstance: ServiceInstance): EngineNode
-
   @throws[LinkisRetryException]
   def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
 

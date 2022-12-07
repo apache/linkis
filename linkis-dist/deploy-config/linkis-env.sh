@@ -95,6 +95,9 @@ HIVE_VERSION=2.1.1
 
 #PYTHON_VERSION=python2
 
+## Hadoop env version
+HADOOP_VERSION=3.0.0
+
 ################### The install Configuration of all Micro-Services #####################
 #
 #    NOTICE:
@@ -123,11 +126,6 @@ MANAGER_PORT=9101
 #ENGINECONNMANAGER_INSTALL_IP=127.0.0.1
 ENGINECONNMANAGER_PORT=9102
 
-
-##linkis-cg-engineplugin
-#ENGINECONN_PLUGIN_SERVER_INSTALL_IP=127.0.0.1
-ENGINECONN_PLUGIN_SERVER_PORT=9103
-
 ##linkis-cg-entrance
 #ENTRANCE_INSTALL_IP=127.0.0.1
 ENTRANCE_PORT=9104
@@ -135,7 +133,6 @@ ENTRANCE_PORT=9104
 ##linkis-ps-publicservice
 #PUBLICSERVICE_INSTALL_IP=127.0.0.1
 PUBLICSERVICE_PORT=9105
-
 
 ########################################################################################
 
@@ -153,7 +150,7 @@ LINKIS_HOME=/opt/linkis
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.3.0
+LINKIS_VERSION=1.3.1
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

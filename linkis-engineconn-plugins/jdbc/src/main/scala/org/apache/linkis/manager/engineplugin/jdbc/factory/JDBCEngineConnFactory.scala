@@ -23,7 +23,7 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
-import org.apache.linkis.manager.engineplugin.jdbc.executer.JDBCEngineConnExecutor
+import org.apache.linkis.manager.engineplugin.jdbc.executor.JDBCEngineConnExecutor
 import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType

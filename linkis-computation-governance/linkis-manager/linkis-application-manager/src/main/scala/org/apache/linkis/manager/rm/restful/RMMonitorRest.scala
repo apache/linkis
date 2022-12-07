@@ -22,6 +22,7 @@ import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource._
+import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
@@ -59,7 +60,7 @@ import org.springframework.web.bind.annotation._
 
 import javax.servlet.http.HttpServletRequest
 
-import java.text.SimpleDateFormat
+import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
 import java.util.{Comparator, TimeZone}
 
@@ -164,35 +165,39 @@ class RMMonitorRest extends Logging {
           val applicationList = creatorToApplicationList(userCreatorLabel.getCreator)
           applicationList.put(
             "usedResource",
-            (if (applicationList("usedResource") == null)
+            (if (applicationList("usedResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("usedResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getUsedResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getUsedResource
           )
           applicationList.put(
             "maxResource",
-            (if (applicationList("maxResource") == null)
+            (if (applicationList("maxResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("maxResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getMaxResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getMaxResource
           )
           applicationList.put(
             "minResource",
-            (if (applicationList("minResource") == null)
+            (if (applicationList("minResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("minResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getMinResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getMinResource
           )
           applicationList.put(
             "lockedResource",
-            (if (applicationList("lockedResource") == null)
+            (if (applicationList("lockedResource") == null) {
                Resource.initResource(ResourceType.LoadInstance)
-             else
+             } else {
                applicationList("lockedResource")
-                 .asInstanceOf[Resource]) + node.getNodeResource.getLockedResource
+                 .asInstanceOf[Resource]
+             }) + node.getNodeResource.getLockedResource
           )
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
@@ -235,7 +240,7 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120011, "only admin can reset user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_RESET.getErrorCode, ONLY_ADMIN_RESET.getErrorDesc)
     }
     if (resourceId == null || resourceId <= 0) {
       userResourceService.resetAllUserResource(COMBINED_USERCREATOR_ENGINETYPE)
@@ -266,14 +271,16 @@ class RMMonitorRest extends Logging {
     val queryUser = SecurityFilter.getLoginUser(request)
     val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
     if (!admins.contains(queryUser.get)) {
-      throw new RMErrorException(120010, "only admin can read all user's resource.")
+      throw new RMErrorException(ONLY_ADMIN_READ.getErrorCode, ONLY_ADMIN_READ.getErrorDesc)
     }
     // 1. Construct a string for SQL LIKE query, query the label_value of the label table
     val searchUsername = if (StringUtils.isEmpty(username)) "" else username
     val searchCreator = if (StringUtils.isEmpty(creator)) "" else creator
     val searchEngineType = if (StringUtils.isEmpty(engineType)) "" else engineType
+    // label value in db as :{"creator":"nodeexecution","user":"hadoop","engineType":"appconn","version":"1"}
     val labelValuePattern =
-      "%" + searchCreator + "%" + "," + "%" + searchUsername + "%" + "," + "%" + searchEngineType + "%" + "," + "%"
+      MessageFormat.format("%{0}%,%{1}%,%{2}%,%", searchCreator, searchUsername, searchEngineType)
+
     if (COMBINED_USERCREATOR_ENGINETYPE == null) {
       val userCreatorLabel = labelFactory.createLabel(classOf[UserCreatorLabel])
       val engineTypeLabel = labelFactory.createLabel(classOf[EngineTypeLabel])
@@ -427,9 +434,9 @@ class RMMonitorRest extends Logging {
         if (totalMaxCores > 0) (totalUsedCores + totalLockedCores) / totalMaxCores.toDouble
         else 0
       val totalInstancePercent =
-        if (totalMaxInstances > 0)
+        if (totalMaxInstances > 0) {
           (totalUsedInstances + totalLockedInstances) / totalMaxInstances.toDouble
-        else 0
+        } else 0
       val totalPercent =
         Math.max(Math.max(totalMemoryPercent, totalCoresPercent), totalInstancePercent)
       userCreatorEngineTypeResource.put("engineTypes", engineTypeResources)
@@ -470,10 +477,12 @@ class RMMonitorRest extends Logging {
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
       if (node.getNodeResource != null) {
-        if (node.getNodeResource.getLockedResource != null)
+        if (node.getNodeResource.getLockedResource != null) {
           record.put("preUsedResource", node.getNodeResource.getLockedResource)
-        if (node.getNodeResource.getUsedResource != null)
+        }
+        if (node.getNodeResource.getUsedResource != null) {
           record.put("usedResource", node.getNodeResource.getUsedResource)
+        }
       }
       if (node.getNodeStatus == null) {
         record.put("engineStatus", "Busy")
@@ -540,7 +549,7 @@ class RMMonitorRest extends Logging {
           nodes = new Array[EngineNode](0)
         }
         nodes.foreach { node =>
-          if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null)
+          if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null) {
             node.getNodeResource.getUsedResource match {
               case driverYarn: DriverAndYarnResource
                   if driverYarn.yarnResource.queueName.equals(yarnIdentifier.getQueueName) =>
@@ -549,6 +558,7 @@ class RMMonitorRest extends Logging {
                 appIdToEngineNode.put(yarn.applicationId, node)
               case _ =>
             }
+          }
         }
         userAppInfo._2.foreach { appInfo =>
           appIdToEngineNode.get(appInfo.asInstanceOf[YarnAppInfo].id) match {
@@ -614,8 +624,9 @@ class RMMonitorRest extends Logging {
       override def compare(o1: mutable.Map[String, Any], o2: mutable.Map[String, Any]): Int = if (
           o1.getOrElse("totalPercentage", 0.0)
             .asInstanceOf[Double] > o2.getOrElse("totalPercentage", 0.0).asInstanceOf[Double]
-      ) -1
-      else 1
+      ) {
+        -1
+      } else 1
     })
     appendMessageData(message, "userResources", userResourceRecords)
   }
@@ -705,10 +716,12 @@ class RMMonitorRest extends Logging {
               }
               if (nodeResource != null) {
                 nodeResource.setMaxResource(configuredResource)
-                if (null == nodeResource.getUsedResource)
+                if (null == nodeResource.getUsedResource) {
                   nodeResource.setUsedResource(nodeResource.getLockedResource)
-                if (null == nodeResource.getMinResource)
+                }
+                if (null == nodeResource.getMinResource) {
                   nodeResource.setMinResource(Resource.initResource(nodeResource.getResourceType))
+                }
                 node.setNodeResource(nodeResource)
               }
             }

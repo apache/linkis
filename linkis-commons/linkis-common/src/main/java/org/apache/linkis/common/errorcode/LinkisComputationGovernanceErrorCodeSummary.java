@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,14 +18,33 @@
 package org.apache.linkis.common.errorcode;
 
 public enum LinkisComputationGovernanceErrorCodeSummary {
-  ENGINE_LAUNCH_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager"),
+  ENGINE_LAUNCH_REQUEST_USER_BLANK(
+      20000,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager"),
   ENGINE_LAUNCH_REQUEST_CREATOR_BLANK(
-      20001, "请求启动引擎的参数中creator为空", "请求启动引擎的参数中creator为空", "EngineConnManager"),
-  ENGINE_INIT_FAILED(20002, "引擎初始化失败", "引擎初始化失败", "EngineConnManager"),
+      20001,
+      "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+      "The creator in the parameters of the request to start the engine is null(请求启动引擎的参数中creator为空)",
+      "EngineConnManager"),
+  ENGINE_INIT_FAILED(
+      20002,
+      "Engine initialization failed(引擎初始化失败)",
+      "Engine initialization failed(引擎初始化失败)",
+      "EngineConnManager"),
 
-  ENGINE_REQUEST_USER_BLANK(20000, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager"),
+  ENGINE_REQUEST_USER_BLANK(
+      20000,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager"),
 
-  AM_EM_NOT_FOUND(20100, "请求引擎的参数中user为空", "请求引擎的参数中user为空", "EngineConnManager");
+  AM_EM_NOT_FOUND(
+      20100,
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "User is null in the parameters of the request engine(请求引擎的参数中user为空)",
+      "EngineConnManager");
   /** 错误码 */
   private int errorCode;
   /** 错误描述 */

@@ -55,6 +55,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
+import static org.apache.linkis.bml.errorcode.BmlServerErrorCodeSummary.FAILED_DOWNLOAD_RESOURCE;
+
 @Api(tags = "bml(bigdata material library) project opreation")
 @RequestMapping(path = "/bml")
 @RestController
@@ -355,7 +357,7 @@ public class BmlProjectRestful {
                         resourceId,
                         version);
                 downloadModel.setState(1);
-                throw new BmlQueryFailException("Failed to download the resource(下载资源失败)");
+                throw new BmlQueryFailException(FAILED_DOWNLOAD_RESOURCE.getErrorDesc());
             }
             downloadService.addDownloadRecord(downloadModel);
             LOGGER.info(

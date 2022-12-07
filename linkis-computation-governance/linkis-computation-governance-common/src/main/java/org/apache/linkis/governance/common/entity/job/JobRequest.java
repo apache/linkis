@@ -49,9 +49,9 @@ public class JobRequest {
   /** result location */
   private String resultLocation;
 
-  private String observeInfo;
+  private Boolean updateOrderFlag = true;
 
-  private Boolean updateLimitFlag = true;
+  private String observeInfo;
 
   private Map<String, Object> metrics = new HashMap<>();
 
@@ -207,12 +207,12 @@ public class JobRequest {
     this.observeInfo = observeInfo;
   }
 
-  public Boolean getUpdateLimitFlag() {
-    return updateLimitFlag;
+  public Boolean getUpdateOrderFlag() {
+    return updateOrderFlag;
   }
 
-  public void setUpdateLimitFlag(Boolean updateLimitFlag) {
-    this.updateLimitFlag = updateLimitFlag;
+  public void setUpdateOrderFlag(Boolean updateOrderFlag) {
+    this.updateOrderFlag = updateOrderFlag;
   }
 
   @Override

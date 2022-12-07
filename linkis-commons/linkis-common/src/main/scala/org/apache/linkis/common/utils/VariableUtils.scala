@@ -340,8 +340,7 @@ object VariableUtils extends Logging {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_JAVA =>
         varString = """\s*!!@set\s*.+\s*"""
       case _ =>
-        varString = """\s*#@set\s*.+\s*"""
-        errString = """\s*#@"""
+        return nameAndValue
     }
 
     val customRegex = varString.r.unanchored

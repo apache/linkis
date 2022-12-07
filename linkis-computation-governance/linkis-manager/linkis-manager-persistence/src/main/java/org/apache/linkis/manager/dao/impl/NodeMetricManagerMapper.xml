@@ -84,7 +84,7 @@
     <update id="updateNodeStatus">
       update linkis_cg_manager_service_instance_metrics
       set instance_status = #{instanceStatus},
-      update_time= now(),
+      update_time= now()
       where instance = #{instance} and instance_status=#{oldStatus}
     </update>
 

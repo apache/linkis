@@ -129,11 +129,14 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
             Integer intStatus = info.getInstanceStatus();
             item.put("instanceStatus", NodeStatus.values()[intStatus].name());
             ECResourceInfoRecord latestEcInfo = map.get(info.getInstance());
-            item.put("useResource", latestEcInfo.getUsedResource());
-            item.put("ecmInstance", latestEcInfo.getEcmInstance());
-            String engineType = latestEcInfo.getLabelValue().split(",")[1].split("-")[0];
-            item.put("engineType", engineType);
-
+            if (latestEcInfo == null) {
+              logger.info("Can not get any resource record info of ec:{}", info.getInstance());
+            } else {
+              item.put("useResource", latestEcInfo.getUsedResource());
+              item.put("ecmInstance", latestEcInfo.getEcmInstance());
+              String engineType = latestEcInfo.getLabelValue().split(",")[1].split("-")[0];
+              item.put("engineType", engineType);
+            }
             resultList.add(item);
 
           } catch (JsonProcessingException e) {

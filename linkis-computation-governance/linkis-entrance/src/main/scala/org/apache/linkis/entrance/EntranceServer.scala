@@ -648,7 +648,7 @@ abstract class EntranceServer extends Logging {
     jobRequest.setErrorDesc("")
     jobRequest.setMetrics(metricMap)
     jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, initDate)
-    jobRequest.setUpdateLimitFlag(false)
+    jobRequest.setUpdateOrderFlag(false)
 
     logAppender.append(
       LogUtils.generateInfo(s"job ${jobRequest.getId} success to initialize the properties \n")

@@ -989,7 +989,3 @@ CREATE TABLE `linkis_cg_user_ip_config` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
-
-
-
-ALTER TABLE `linkis_ps_job_history_group_history` ADD COLUMN `observe_info` VARCHAR(500) NULL DEFAULT NULL

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.entrance.server;
 
-import org.apache.commons.compress.utils.Lists;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.entrance.EntranceServer;
@@ -28,115 +27,133 @@ import org.apache.linkis.entrance.utils.JobHistoryHelper;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import org.apache.linkis.manager.label.constant.LabelConstant;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.constant.LabelValueConstant;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.route.RouteLabel;
 import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.commons.compress.utils.Lists;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(ServiceNameConsts.ENTRANCE_FAILOVER_SERVER)
 public class EntranceFailoverJobServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultEntranceServer.class);
+  private static final Logger logger = LoggerFactory.getLogger(EntranceFailoverJobServer.class);
 
-    @Autowired
-    private EntranceServer entranceServer;
+  @Autowired private EntranceServer entranceServer;
 
-    @Autowired
-    private CommonLockService commonLockService;
+  @Autowired private CommonLockService commonLockService;
 
+  private static String ENTRANCE_FAILOVER_LOCK = "ENTRANCE_FAILOVER_LOCK";
 
-    private static String ENTRANCE_FAILOVER_LOCK = "ENTRANCE_FAILOVER_LOCK";
+  private ScheduledExecutorService scheduledExecutor;
 
-    @PostConstruct
-    public void init() {
-        failoverTask();
-    }
+  @PostConstruct
+  public void init() {
+    this.scheduledExecutor =
+        Executors.newSingleThreadScheduledExecutor(
+            Utils.threadFactory("Linkis-Failover-Scheduler-Thread-", true));
+    failoverTask();
+  }
 
   public void failoverTask() {
     if (EntranceConfiguration.ENTRANCE_FAILOVER_ENABLED()) {
-      Utils.defaultScheduler()
-          .scheduleWithFixedDelay(
-              () -> {
-                EntranceSchedulerContext schedulerContext =
-                    (EntranceSchedulerContext)
-                        entranceServer
-                            .getEntranceContext()
-                            .getOrCreateScheduler()
-                            .getSchedulerContext();
+      scheduledExecutor.scheduleWithFixedDelay(
+          () -> {
+            EntranceSchedulerContext schedulerContext =
+                (EntranceSchedulerContext)
+                    entranceServer
+                        .getEntranceContext()
+                        .getOrCreateScheduler()
+                        .getSchedulerContext();
 
-                // entrance do not failover job when it is offline
-                if (schedulerContext.getOfflineFlag()) return;
+            // entrance do not failover job when it is offline
+            if (schedulerContext.getOfflineFlag()) return;
 
-                CommonLock commonLock = new CommonLock();
-                commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
-                Boolean locked = false;
-                try {
-                  locked = commonLockService.lock(commonLock, 10 * 1000L);
-                  if (!locked) return;
-                  logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
+            CommonLock commonLock = new CommonLock();
+            commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
+            Boolean locked = false;
+            try {
+              locked = commonLockService.lock(commonLock, 10 * 1000L);
+              if (!locked) return;
+              logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
 
-                  // serverInstance to map
-                  Map<String, Long> serverInstanceMap =
-                      getActiveServerInstances().stream()
-                          .collect(
-                              Collectors.toMap(
-                                  ServiceInstance::getInstance,
-                                  ServiceInstance::getRegistryTimestamp,
-                                  (k1, k2) -> k2));
-                  if (serverInstanceMap.isEmpty()) return;
+              // serverInstance to map
+              Map<String, Long> serverInstanceMap =
+                  getActiveServerInstances().stream()
+                      .collect(
+                          Collectors.toMap(
+                              ServiceInstance::getInstance,
+                              ServiceInstance::getRegistryTimestamp,
+                              (k1, k2) -> k2));
+              if (serverInstanceMap.isEmpty()) return;
 
-                  // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
-                  long expiredTimestamp = 0L;
-                  if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
-                    expiredTimestamp =
-                        System.currentTimeMillis()
-                            - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
-                  }
+              // It is very important to avoid repeated execute job
+              // when failover self job, if self instance is empty, the job can be repeated execute
+              if (!serverInstanceMap.containsKey(Sender.getThisInstance())) {
+                logger.warn(
+                    "server has just started and has not get self info, it does not failover");
+                return;
+              }
 
-                  // get uncompleted status
-                  List<String> statusList =
-                      Arrays.stream(SchedulerEventState.uncompleteStatusArray())
-                          .map(Object::toString)
-                          .collect(Collectors.toList());
+              // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
+              long expiredTimestamp = 0L;
+              if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
+                expiredTimestamp =
+                    System.currentTimeMillis()
+                        - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
+              }
 
-                  List<JobRequest> jobRequests =
-                      JobHistoryHelper.queryWaitForFailoverTask(
-                          serverInstanceMap,
-                          statusList,
-                          expiredTimestamp,
-                          EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
-                  if (jobRequests.isEmpty()) return;
-                  Object[] ids = jobRequests.stream().map(JobRequest::getId).toArray();
-                  logger.info("success query failover jobs , job ids: {}", ids);
+              // get uncompleted status
+              List<String> statusList =
+                  Arrays.stream(SchedulerEventState.uncompleteStatusArray())
+                      .map(Object::toString)
+                      .collect(Collectors.toList());
 
-                  // failover to local server
-                  jobRequests.forEach(jobRequest -> entranceServer.failoverExecute(jobRequest));
-                  logger.info("success execute failover jobs, job ids: {}", ids);
+              List<JobRequest> jobRequests =
+                  JobHistoryHelper.queryWaitForFailoverTask(
+                      serverInstanceMap,
+                      statusList,
+                      expiredTimestamp,
+                      EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
+              if (jobRequests.isEmpty()) return;
+              Object[] ids = jobRequests.stream().map(JobRequest::getId).toArray();
+              logger.info("success query failover jobs , job ids: {}", ids);
 
-                } catch (Exception e) {
-                  logger.error("failover failed", e);
-                } finally {
-                  if (locked) commonLockService.unlock(commonLock);
-                }
-              },
-              EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
-              EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
-              TimeUnit.MILLISECONDS);
+              // failover to local server
+              for (JobRequest jobRequest : jobRequests) {
+                entranceServer.failoverExecute(jobRequest);
+              }
+              logger.info("finished execute failover jobs, job ids: {}", ids);
+
+            } catch (Exception e) {
+              logger.error("failover failed", e);
+            } finally {
+              if (locked) commonLockService.unlock(commonLock);
+            }
+          },
+          EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
+          EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
+          TimeUnit.MILLISECONDS);
     }
   }
 
@@ -149,7 +166,7 @@ public class EntranceFailoverJobServer {
     // get all offline label server
     RouteLabel routeLabel =
         LabelBuilderFactoryContext.getLabelBuilderFactory()
-            .createLabel(LabelKeyConstant.ROUTE_KEY, LabelConstant.OFFLINE);
+            .createLabel(LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE);
     List<Label<?>> labels = Lists.newArrayList();
     labels.add(routeLabel);
     List<ServiceInstance> labelInstances =
@@ -163,6 +180,4 @@ public class EntranceFailoverJobServer {
 
     return allInstances;
   }
-}
-
 }

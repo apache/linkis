@@ -283,10 +283,6 @@ public class EngineRestfulApi {
       throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
 
-    if (!isAdmin(userName)) {
-      return Message.error("You have no permission to batch kill EngineConn!");
-    }
-
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");

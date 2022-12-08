@@ -194,11 +194,11 @@ object SQLSession extends Logging {
           .toSeq
           .sorted
           .mkString("{", ",", "}")
-      case (null, _) => "null"
-      case (s: String, StringType) => "\"" + s + "\""
-      case (decimal, DecimalType()) => decimal.toString
-      case (interval, CalendarIntervalType) => interval.toString
-      case (other, tpe) if primitiveTypes contains tpe => other.toString
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case other: Any => other.toString
+      case _ => null
     }
 
     a match {
@@ -219,23 +219,13 @@ object SQLSession extends Logging {
           .toSeq
           .sorted
           .mkString("{", ",", "}")
-      case (null, _) => "NULL"
-      case (d: Date, DateType) =>
-        DateTimeUtils.dateToString(DateTimeUtils.fromJavaDate(d))
-      case (t: Timestamp, TimestampType) =>
-        DateTimeUtils.timestampToString(DateTimeUtils.fromJavaTimestamp(t))
-      case (bin: Array[Byte], BinaryType) => new String(bin, StandardCharsets.UTF_8)
-      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
-      case (interval, CalendarIntervalType) => interval.toString
-      case (other, tpe) if primitiveTypes.contains(tpe) => other.toString
-    }
-  }
 
-  private def formatDecimal(d: java.math.BigDecimal): String = {
-    if (null == d || d.compareTo(java.math.BigDecimal.ZERO) == 0) {
-      java.math.BigDecimal.ZERO.toPlainString
-    } else {
-      d.stripTrailingZeros().toPlainString
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case other: Any => other.toString
+      case _ => null
+
     }
   }
 

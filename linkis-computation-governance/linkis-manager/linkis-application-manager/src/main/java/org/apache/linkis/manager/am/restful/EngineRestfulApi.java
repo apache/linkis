@@ -63,6 +63,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -273,6 +274,7 @@ public class EngineRestfulApi {
   @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
   public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param) {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
+
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");

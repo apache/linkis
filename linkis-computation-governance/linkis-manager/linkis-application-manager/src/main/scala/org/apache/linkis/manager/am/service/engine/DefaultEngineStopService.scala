@@ -134,10 +134,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     val unlockEngineNodes = engineNodes.filter(node => NodeStatus.Unlock.equals(node.getNodeStatus))
 
     logger.info(
-      "get ec node total num:{} and unlock node num:{} of ecm:{} ",
-      engineNodes.size,
-      unlockEngineNodes.size,
-      ecmInstance
+      s"get ec node total num:${engineNodes.size} and unlock node num:${unlockEngineNodes.size} of ecm:${ecmInstance} "
     )
 
     var loadInstanceResourceTotal = new LoadInstanceResource(0, 0, 0)

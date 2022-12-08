@@ -94,7 +94,6 @@ export default {
             },
           ],
         },
-       
         {
           type: 'input',
           title: "主机",
@@ -114,10 +113,10 @@ export default {
           ],
         },
         {
-          type: 'Input',
+          type: 'input',
           title: "过期天数",
           field: 'elapseDay',
-          value: -1,
+          value: '',
           props: {
             placeholder: "",
           },
@@ -130,7 +129,7 @@ export default {
               trigger: 'blur',
             },
           ],
-        },
+        }
       ]
     }
   },

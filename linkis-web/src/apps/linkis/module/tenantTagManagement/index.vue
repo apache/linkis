@@ -53,10 +53,10 @@
         <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="search">{{
           $t('message.linkis.tenantTagManagement.search')
         }}</Button>
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
+        <Button type="warning" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
           $t('message.linkis.tenantTagManagement.clear')
         }}</Button>
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="createTenant">{{
+        <Button type="success" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="createTenant">{{
           $t('message.linkis.tenantTagManagement.create')
         }}</Button>
       </Col>
@@ -79,7 +79,7 @@
       size="small"
       show-elevator
       :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
-      style="margin: 10px; overflow: hidden; text-align: center;"
+      style="position: absoulute; bottom: 10px; overflow: hidden; text-align: center;"
     ></Page>
     <Modal
       v-model="showCreateModal"

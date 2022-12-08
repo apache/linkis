@@ -197,17 +197,19 @@ export default {
       this.load()
     },
     onAdd(){
+      console.log(this.modalEditData)
       this.modalAddMode = 'add'
       this.modalShow = true
       this.clearForm()
     },
     onTableEdit(row){
-      row.layers = row.layers+""
       this.modalEditData = {...row}
+      //console.log(this.modalEditData)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
+      //console.log(row)
       this.$Modal.confirm({
         title: "提示信息",
         content: `确定删除 ${row.name} 这条记录?`,
@@ -227,8 +229,8 @@ export default {
                 content: "删除失败"
               })
             }
-            this.load()
           })
+          this.load()
         }
       })
 
@@ -250,7 +252,6 @@ export default {
                 content: "添加失败"
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
@@ -260,13 +261,13 @@ export default {
                 duration: 3,
                 content: "编辑成功"
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: "编辑失败"
               })
             }
-            this.load()
           })
         }
         this.modalLoading=false

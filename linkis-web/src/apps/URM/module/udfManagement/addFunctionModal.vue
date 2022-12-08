@@ -54,7 +54,7 @@
           <Radio
             v-if="isUdf"
             :disabled="isUdf && model === 1"
-            label="spark"/>
+            label="Spark"/>
           <Radio
             v-if="!isUdf"
             :label="$t('message.linkis.udf.ZDYHS')"/>
@@ -115,7 +115,7 @@
       <FormItem
         v-else-if="fnType === 2 && fnCategory.isSpark"
         :label="$t('message.linkis.udf.registerFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem prop="scalaTypeL">
             <Input
@@ -160,7 +160,7 @@
       </FormItem>
       <FormItem
         :label="$t('message.linkis.udf.useFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem class="format-item">
             <Input
@@ -203,7 +203,8 @@
       <FormItem :label="$t('message.linkis.udf.class')" prop="directory">
         <Select 
           ref="directory" 
-          v-model="setting.directory" filterable 
+          v-model="setting.directory"
+          filterable 
           :remoteMethod="filterAdd" 
           @on-query-change="queryChange"
           :disabled="isUdf && model === 1">
@@ -327,8 +328,7 @@ export default {
           {
             type: 'string',
             pattern: /^[a-zA-Z][a-zA-Z0-9_\u4e00-\u9fa5]*$/,
-            message:
-                            this.$t('message.linkis.udf.BXYZMKT'),
+            message: this.$t('message.linkis.udf.BXYZMKT'),
             trigger: 'change',
           },
         ],
@@ -348,8 +348,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(jar)$/,
-            message: this.$t('message.linkis.udf.HZMZC'),
+            validator: this.jarValidator,
             trigger: 'change',
           },
         ],
@@ -362,8 +361,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -376,8 +374,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -424,7 +421,7 @@ export default {
             type: 'string',
             required: true,
             message: this.$t('message.linkis.udf.SRFL'),
-            trigger: 'blur',
+            trigger: 'change',
           },
         ]
       },
@@ -597,11 +594,23 @@ export default {
       } else if (this.node.udfType === 1) {
         this.setting.pyPara = conver(',', ')', 'indexOf', 'lastIndexOf');
       } else {
-        const type = rf.slice(rf.indexOf('['), rf.indexOf(']'));
+        const type = rf.slice(rf.indexOf('[') + 1, rf.indexOf(']'));
+        console.log(type, rf, '=====');
         // 如果存在多个逗号，就只用使用格式来截取，否则会出现多个类型填入input异常的问题
         if (type.indexOf(',') !== type.lastIndexOf(',')) {
-          this.setting.scalaTypeL = '';
-          this.setting.scalaTypeR = '';
+          // there are 2 case:
+          // 1. tuple,  return params in ();
+          // 2. multi params, the first params is return params
+          if (type.indexOf('(') !== -1) {
+            // tuple
+            this.setting.scalaTypeL = type.slice(type.indexOf('('), type.indexOf(')') + 1)
+            this.setting.scalaTypeR = type.slice(type.indexOf(')')+2)
+          } else {
+            // multi params
+            this.setting.scalaTypeL = type.split(',')[0];
+            this.setting.scalaTypeR = type.split(',').slice(1).toString();
+          }
+         
           this.showScalaRF = this.node.registerFormat;
         } else {
           this.setting.scalaTypeL = conver('[', ',', 'indexOf', 'indexOf');
@@ -761,6 +770,26 @@ export default {
         this.$refs.directory.setQuery(null)
         this.directories = [...this.remoteDirectories]
       }
+    },
+    jarValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(jar)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.HZMZC')));
+      }
+      cb();
+    },
+    pyValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.ZCPYSCA')));
+      }
+      cb();
     }
   },
 };

@@ -75,6 +75,9 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
+      if (tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(), null)) {
+        throw new ConfigurationException("User-creator is existed");
+      }
       parameterVerification(tenantVo);
       tenantConfigService.createTenant(tenantVo);
     } catch (DuplicateKeyException e) {
@@ -108,6 +111,9 @@ public class TenantConfigrationRestfulApi {
       String userName = ModuleUserUtils.getOperationUser(req, "execute updateTenant");
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to update-tenant,msg: only administrators can configure");
+      }
+      if (!tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(), null)) {
+        throw new ConfigurationException("User-creator is not existed");
       }
       parameterVerification(tenantVo);
       tenantConfigService.updateTenant(tenantVo);
@@ -259,9 +265,6 @@ public class TenantConfigrationRestfulApi {
     }
     if (StringUtils.isBlank(tenantVo.getTenantValue())) {
       throw new ConfigurationException("Tenant tag can't be empty ");
-    }
-    if (tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(), null)) {
-      throw new ConfigurationException("User-creat is existed");
     }
   }
 }

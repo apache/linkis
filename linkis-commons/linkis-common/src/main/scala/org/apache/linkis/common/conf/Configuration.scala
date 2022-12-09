@@ -64,6 +64,10 @@ object Configuration extends Logging {
     adminUsers.exists(username.equalsIgnoreCase)
   }
 
+  def isNotAdmin(username: String): Boolean = {
+    !isAdmin(username)
+  }
+
   def getGateWayURL(): String = {
     val url = GATEWAY_URL.getValue.trim
     val gatewayUr = if (url.endsWith("/")) {

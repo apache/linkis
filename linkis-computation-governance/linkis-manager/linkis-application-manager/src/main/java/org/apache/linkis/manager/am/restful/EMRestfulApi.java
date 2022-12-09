@@ -96,7 +96,7 @@ public class EMRestfulApi {
   private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
-    if (!AMConfiguration.isAdmin(userName)) {
+    if (AMConfiguration.isNotAdmin(userName)) {
       throw new AMErrorException(210003, "Only admin can modify ECMs(只有管理员才能修改ECM).");
     }
   }
@@ -272,7 +272,7 @@ public class EMRestfulApi {
               + ExceptionUtils.getRootCauseMessage(e));
     }
     parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
-    if (!userName.equals(engineNode.getOwner()) && !AMConfiguration.isAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && AMConfiguration.isNotAdmin(userName)) {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
     }
@@ -372,7 +372,7 @@ public class EMRestfulApi {
   private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     if (ArrayUtils.contains(adminOperations, operationName)
-        && !AMConfiguration.isAdmin(ecmOperateRequest.user())) {
+        && AMConfiguration.isNotAdmin(ecmOperateRequest.user())) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
           ecmOperateRequest.user(),

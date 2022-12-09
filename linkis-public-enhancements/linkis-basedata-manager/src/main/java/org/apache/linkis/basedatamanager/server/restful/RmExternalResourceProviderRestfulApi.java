@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity;
 import org.apache.linkis.basedatamanager.server.service.RmExternalResourceProviderService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -92,10 +93,14 @@ public class RmExternalResourceProviderRestfulApi {
   public Message add(
       HttpServletRequest request,
       @RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
-    ModuleUserUtils.getOperationUser(
-        request,
-        "Add a Resource manager External Resource Provider Record,"
-            + rmExternalResourceProvider.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            "Add a Resource manager External Resource Provider Record,"
+                + rmExternalResourceProvider.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = rmExternalResourceProviderService.save(rmExternalResourceProvider);
     return Message.ok("").data("result", result);
   }
@@ -127,10 +132,14 @@ public class RmExternalResourceProviderRestfulApi {
   public Message update(
       HttpServletRequest request,
       @RequestBody RmExternalResourceProviderEntity rmExternalResourceProvider) {
-    ModuleUserUtils.getOperationUser(
-        request,
-        "Update a Resource manager External Resource Provider Record,id:"
-            + rmExternalResourceProvider.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            "Update a Resource manager External Resource Provider Record,id:"
+                + rmExternalResourceProvider.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = rmExternalResourceProviderService.updateById(rmExternalResourceProvider);
     return Message.ok("").data("result", result);
   }

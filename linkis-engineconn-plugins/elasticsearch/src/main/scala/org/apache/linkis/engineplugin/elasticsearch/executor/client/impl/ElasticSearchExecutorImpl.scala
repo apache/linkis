@@ -67,7 +67,7 @@ class ElasticSearchExecutorImpl(runType: String, properties: util.Map[String, St
 
   override def executeLine(code: String): ElasticSearchResponse = {
     val realCode = code.trim()
-    info(s"es client begins to run $runType code:\n ${realCode.trim}")
+    logger.info(s"es client begins to run $runType code:\n ${realCode.trim}")
     val countDown = new CountDownLatch(1)
     var executeResponse: ElasticSearchResponse = ElasticSearchErrorResponse("INCOMPLETE")
     cancelable = client.execute(

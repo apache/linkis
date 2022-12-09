@@ -32,7 +32,6 @@ class GovernanceCommonConfTest {
     val pythoncodeparserswitch = GovernanceCommonConf.PYTHON_CODE_PARSER_SWITCH.getValue
     val scalacodeparserswitch = GovernanceCommonConf.SCALA_CODE_PARSER_SWITCH.getValue
     val engineconnspringname = GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue
-    val engineconnpluginspringname = GovernanceCommonConf.ENGINE_CONN_PLUGIN_SPRING_NAME.getValue
     val engineconnmanagerspringname = GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue
     val engineconnportrange = GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue
     val managerservicename = GovernanceCommonConf.MANAGER_SERVICE_NAME.getValue
@@ -49,7 +48,6 @@ class GovernanceCommonConfTest {
     Assertions.assertFalse(pythoncodeparserswitch)
     Assertions.assertFalse(scalacodeparserswitch)
     Assertions.assertEquals("linkis-cg-engineconn", engineconnspringname)
-    Assertions.assertEquals("linkis-cg-engineplugin", engineconnpluginspringname)
     Assertions.assertEquals("linkis-cg-engineconnmanager", engineconnmanagerspringname)
     Assertions.assertEquals("-", engineconnportrange)
     Assertions.assertEquals("linkis-cg-linkismanager", managerservicename)

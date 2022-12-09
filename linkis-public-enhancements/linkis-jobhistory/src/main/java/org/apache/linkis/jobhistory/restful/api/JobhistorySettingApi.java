@@ -21,7 +21,6 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.entity.MonitorVO;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
-import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -37,7 +36,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import io.swagger.annotations.Api;
@@ -80,23 +78,24 @@ public class JobhistorySettingApi {
     // Get jobInfo according to ID
     JobHistory jobHistory =
         jobHistoryQueryService.getJobHistoryByIdAndName(monitor.getTaskId(), null);
-    Map<String, Object> map =
-        BDPJettyServerHelper.gson().fromJson(jobHistory.getParams(), new HashMap<>().getClass());
-    Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
-    if (runtimeMap.containsKey("task.notification.conditions")) {
-      // Judge whether the task has been completed, and cannot be modified when it is completed
-      boolean result =
-          Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
-              .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
-      if (result) {
-        // Task not completed, update job record
-        String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
-        jobHistory.setObserveInfo(observeInfoJson);
-        jobHistoryQueryService.changeObserveInfoById(jobHistory);
-      } else {
-        return Message.error("The task has been completed, and the alarm cannot be set");
-      }
+    //    Map<String, Object> map =
+    //        BDPJettyServerHelper.gson().fromJson(jobHistory.getParams(), new
+    // HashMap<>().getClass());
+    //    Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
+    //    if (runtimeMap.containsKey("task.notification.conditions")) {
+    // Judge whether the task has been completed, and cannot be modified when it is completed
+    boolean result =
+        Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
+            .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
+    if (result) {
+      // Task not completed, update job record
+      String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
+      jobHistory.setObserveInfo(observeInfoJson);
+      jobHistoryQueryService.changeObserveInfoById(jobHistory);
+    } else {
+      return Message.error("The task has been completed, and the alarm cannot be set");
     }
+    //    }
     return Message.ok();
   }
 

@@ -15,6 +15,13 @@
  * limitations under the License.
  */
 
+
+-- Index naming convention(索引命名规范)
+-- Ordinary index: inx_field name(普通索引：inx_字段名)
+-- Unique index: uni_ field name(唯一索引：uni_字段名)
+-- Composite index: ain_ field name(复合索引：ain_字段名)
+-- The index name should not exceed 50 characters(索引名尽量不超过50个字符)
+
 SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_config_key`;

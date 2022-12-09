@@ -161,7 +161,7 @@
             "errorCode": "错误码管理",
             "gatewayAuthToken": "令牌管理",
             "rmExternalResourceProvider": "扩展资源管理",
-            "udfManager": "用户管理",
+            "udfManager": "管理员用户",
             "udfTree": "UDF分类",
             "datasourceAccess": "数据源权限",
             "datasourceEnv": "数据源环境",
@@ -300,6 +300,7 @@
       "viewlog": "查看日志",
       "datasource": {
         "pleaseInput": "请输入",
+        "pleaseUpload": "请上传",
         "datasourceSrc": "数据源",
         "connectTest": "测试连接",
         "sourceName": "数据源名称",
@@ -416,7 +417,8 @@
           "cancel": "取消",
           "modalTitle": "提示信息",
           "modalFormat": "确定删除 {0} 这条记录?",
-          "modalDelete": "确认是否删除该记录?",
+          "modalDelete1": "确认是否删除[{username}]该记录?",
+          "modalDelete": "确认是否删除[{envName}]该记录?",
           "modalDeleteSuccess": "删除成功",
           "modalDeleteFail": "删除失败",
           "modalAddSuccess": "添加成功",
@@ -428,13 +430,14 @@
           "tokenName": "名称",
           "legalUsers": "用户",
           "legalHosts": "主机",
-          "elapseDay": "过期天数",
+          "elapseDay": "有效天数",
+          "permanentlyValid": "永久有效",
           "businessOwner": "所属者",
           "createTime":"创建时间",
           "updateTime": "更新时间",
           "updateBy": "更新人",
           "searchPlaceholder": "令牌名称/用户/主机",
-          "info":"过期天数: -1 表示永久",
+          "info":"有效天数: -1 表示永久",
           "legalUsersInfo": "*允许所有用户；多用户使用,隔开，例如:user1,user2",
           "legalUsersValidate": {
             "empty": "请填写用户",
@@ -446,7 +449,8 @@
           },
           "elapseDayValidate": {
             "format": "格式不正确，使用*或使用,分割，例如:host1,host2",
-            "empty": "请填写过期天数"
+            "empty": "请填写有效天数",
+            "GT0": "有效天数必须大于0"
           }
         },
         "errorCode": {
@@ -514,10 +518,10 @@
           "valueType": "值类型",
           "defaultValue": "默认值",
           "scope": "范围",
-          "require": "必填",
+          "require": "必要字段",
           "description": "描述",
           "descriptionEn": "描述(英文)",
-          "valueRegex": "值校验",
+          "valueRegex": "值校验规则",
           "createTime": "创建时间",
           "updateTime": "更新时间",
           "searchPlaceholder": "名称",
@@ -547,7 +551,8 @@
         "versionList": "版本列表",
         "rollback": "回滚",
         "action": "操作",
-        "checkEngineConnTypeAndVersion": "请选择引擎类型及版本"
+        "checkEngineConnTypeAndVersion": "请选择引擎类型及版本",
+        "upload": "请点击上传引擎插件"
       }
     }
   }

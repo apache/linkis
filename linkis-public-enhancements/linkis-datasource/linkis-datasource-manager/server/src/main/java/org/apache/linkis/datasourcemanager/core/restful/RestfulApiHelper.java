@@ -37,11 +37,21 @@ public class RestfulApiHelper {
    * If is administrator
    *
    * @param userName user name
-   * @return
+   * @return whether userName is an admin user
    */
   public static boolean isAdminUser(String userName) {
     List<String> userList = Arrays.asList(AuthContext.AUTH_ADMINISTRATOR.getValue().split(","));
     return userList.contains(userName);
+  }
+
+  /**
+   * If is not administrator
+   *
+   * @param userName user name
+   * @return whether userName is not an admin user
+   */
+  public static boolean isNotAdminUser(String userName) {
+    return !isAdminUser(userName);
   }
 
   /**

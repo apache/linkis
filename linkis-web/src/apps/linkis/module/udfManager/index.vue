@@ -160,6 +160,7 @@ export default {
     onAdd(){
       this.modalEditData={
         id: "",
+        userName: "",
         errorCode: "",
         errorDesc: "",
         errorRegex: '',
@@ -176,7 +177,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete1', {username: row.userName}),
         onOk: ()=>{
           let params = {
             id: row.id

@@ -212,16 +212,38 @@ update linkis_ps_dm_datasource_type set classifier_en ="Semi Structured Database
 update linkis_ps_dm_datasource_type set classifier_en ="Distributed Full-Text Indexing" where classifier ="分布式全文索引";
 update linkis_ps_dm_datasource_type set classifier_en ="Olap" where classifier ="olap";
 
-update linkis_ps_dm_datasource_type_key set name_en="Driver Class Name" where name_en = "Driver class name" ;
-update linkis_ps_dm_datasource_type_key set name_en="Connection Params" where name_en = "Connection params" ;
-update linkis_ps_dm_datasource_type_key set name_en="Database Name" where name_en = "Database name" ;
-update linkis_ps_dm_datasource_type_key set name_en="Cluster Env" where name_en = "Cluster env" ;
-update linkis_ps_dm_datasource_type_key set name_en="Driver Class Name" where name_en = "Driver class name" ;
-update linkis_ps_dm_datasource_type_key set name_en="Connection Params" where name_en = "Connection params" ;
-update linkis_ps_dm_datasource_type_key set name_en="Database Name" where name_en = "Database name" ;
-update linkis_ps_dm_datasource_type_key set name_en="Cluster Env" where name_en = "Cluster env" ;
-update linkis_ps_dm_datasource_type_key set description_en="Driver Class Name" where description_en ="Driver class name";
-update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description_en ="Input JSON format: {\"param\":\"value\"}";
-update linkis_ps_dm_datasource_type_key set description_en="Database Name" where description_en ="Database name";
-update linkis_ps_dm_datasource_type_key set description_en="Cluster Env" where description_en ="Cluster env";
+update linkis_ps_dm_datasource_type_key set name_en="Host" where name = "主机名(Host)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Port" where name = "端口号(Port)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Driver Class Name" where name = "驱动类名(Driver class name)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Connection Params" where name = "连接参数(Connection params)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Username" where name = "用户名(Username)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Password" where name = "密码(Password)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Database Name" where name = "数据库名(Database name)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Cluster Env" where name = "集群环境(Cluster env)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Instance" where name = "实例名(instance)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Elastic Url" where name = "ES连接URL(Elastic Url)" ;
+update linkis_ps_dm_datasource_type_key set name_en="Username" where name = "用户名" ;
+update linkis_ps_dm_datasource_type_key set name_en="Password" where name = "密码" ;
+update linkis_ps_dm_datasource_type_key set name_en="Default Library" where name = "默认库" ;
+update linkis_ps_dm_datasource_type_key set name_en="Host" where name = "Host" ;
+update linkis_ps_dm_datasource_type_key set name_en="Port" where name = "端口" ;
+update linkis_ps_dm_datasource_type_key set name_en="Connection Params" where name = "连接参数" ;
+
+
+update linkis_ps_dm_datasource_type_key set description_en="Host" where description ="主机名(Host)";
+update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口号(Port)";
+update linkis_ps_dm_datasource_type_key set description_en="Driver Class Name" where description ="驱动类名(Driver class name)";
+update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式(Input JSON format): {\"param\":\"value\"}";
+update linkis_ps_dm_datasource_type_key set description_en="Username" where description ="用户名(Username)";
+update linkis_ps_dm_datasource_type_key set description_en="Password" where description ="密码(Password)";
+update linkis_ps_dm_datasource_type_key set description_en="Database Name" where description ="数据库名(Database name)";
+update linkis_ps_dm_datasource_type_key set description_en="Cluster Env" where description ="集群环境(Cluster env)";
+update linkis_ps_dm_datasource_type_key set description_en="Instance" where description ="实例名(instance)";
+update linkis_ps_dm_datasource_type_key set description_en="Elastic Url" where description ="ES连接URL(Elastic Url)";
+update linkis_ps_dm_datasource_type_key set description_en="Username" where description ="用户名";
+update linkis_ps_dm_datasource_type_key set description_en="Password" where description ="密码";
+update linkis_ps_dm_datasource_type_key set description_en="Default Library" where description ="默认库";
+update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where description ="mongodb Host";
+update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
+update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 

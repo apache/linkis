@@ -95,4 +95,8 @@ object AMConfiguration {
     GOVERNANCE_STATION_ADMIN.getValue.split(",").contains(userName)
   }
 
+  def isNotAdmin(userName: String): Boolean = {
+    !isAdmin(userName)
+  }
+
 }

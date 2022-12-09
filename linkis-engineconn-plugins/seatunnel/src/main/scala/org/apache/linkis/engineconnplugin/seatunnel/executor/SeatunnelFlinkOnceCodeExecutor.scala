@@ -80,7 +80,7 @@ class SeatunnelFlinkOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + code)
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(
@@ -91,7 +91,7 @@ class SeatunnelFlinkOnceCodeExecutor(
           )
           tryFailed()
         }
-        info("All codes completed, now stop SeatunnelEngineConn.")
+        logger.info("All codes completed, now stop SeatunnelEngineConn.")
         closeDaemon()
         if (!isFailed) {
           trySucceed()
@@ -102,7 +102,7 @@ class SeatunnelFlinkOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    info("Execute SeatunnelFlink Process")
+    logger.info("Execute SeatunnelFlink Process")
 
     var args: Array[String] = Array.empty
     val flinkRunMode = LINKIS_FLINK_RUNMODE.getValue
@@ -135,17 +135,17 @@ class SeatunnelFlinkOnceCodeExecutor(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelFlink Process end args:${args.mkString(" ")}")
+    logger.info(s"Execute SeatunnelFlink Process end args:${args.mkString(" ")}")
     LinkisSeatunnelFlinkClient.main(args)
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              info("The Seatunnel Flink Process In Running")
+              logger.info("The Seatunnel Flink Process In Running")
             }
           }
         },
@@ -153,6 +153,7 @@ class SeatunnelFlinkOnceCodeExecutor(
         SeatunnelEnvConfiguration.SEATUNNEL_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def getCurrentNodeResource(): NodeResource = {

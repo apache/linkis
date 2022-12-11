@@ -84,7 +84,7 @@ object CSEntranceHelper extends Logging {
         val (contextIDValueStr, nodeNameStr) = getContextInfo(entranceJob.getParams)
         logger.info(s"registerCSRSData: nodeName:$nodeNameStr")
         if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) {
-            return null
+          return null
         }
 
         val contextKey = new CommonContextKey

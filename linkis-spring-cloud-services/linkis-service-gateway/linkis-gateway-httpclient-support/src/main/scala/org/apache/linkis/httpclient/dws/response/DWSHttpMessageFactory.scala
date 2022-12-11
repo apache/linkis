@@ -29,7 +29,8 @@ object DWSHttpMessageFactory {
   private val reflections = org.apache.linkis.common.utils.ClassUtils.reflections
 
   private val methodToHttpMessageClasses = reflections
-    .getTypesAnnotatedWith(classOf[DWSHttpMessageResult]).asScala
+    .getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
+    .asScala
     .filter(ClassUtils.isAssignable(_, classOf[Result]))
     .map { c =>
       val httpMessageResult = c.getAnnotation(classOf[DWSHttpMessageResult])

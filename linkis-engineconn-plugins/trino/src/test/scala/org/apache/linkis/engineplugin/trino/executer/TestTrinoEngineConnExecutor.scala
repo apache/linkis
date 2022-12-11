@@ -20,7 +20,10 @@ package org.apache.linkis.engineplugin.trino.executer
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
+import org.apache.linkis.engineconn.common.creation.{
+  DefaultEngineCreationContext,
+  EngineCreationContext
+}
 import org.apache.linkis.engineconn.computation.executor.entity.CommonEngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
@@ -30,13 +33,18 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
+}
 import org.apache.linkis.manager.label.entity.Label
-import org.junit.jupiter.api.Assertions
 
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+
+import org.junit.jupiter.api.Assertions
 
 class TestTrinoEngineConnExecutor {
 

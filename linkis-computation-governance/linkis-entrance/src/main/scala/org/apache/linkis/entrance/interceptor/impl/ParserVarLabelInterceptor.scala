@@ -34,7 +34,9 @@ class ParserVarLabelInterceptor extends EntranceInterceptor {
     jobRequest match {
       case requestPersistTask: JobRequest =>
         val variableMap =
-          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]).asScala
+          TaskUtils
+            .getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+            .asScala
         val labels = requestPersistTask.getLabels
         if (variableMap.contains(LabelKeyConstant.TENANT_KEY)) {
           val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory

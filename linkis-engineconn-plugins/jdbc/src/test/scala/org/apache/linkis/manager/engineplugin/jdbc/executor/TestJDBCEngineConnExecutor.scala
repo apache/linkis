@@ -20,7 +20,10 @@ package org.apache.linkis.manager.engineplugin.jdbc.executor
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
+import org.apache.linkis.engineconn.common.creation.{
+  DefaultEngineCreationContext,
+  EngineCreationContext
+}
 import org.apache.linkis.engineconn.computation.executor.entity.CommonEngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
@@ -30,17 +33,22 @@ import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse
-import org.h2.tools.Server
-import org.junit.jupiter.api.{Assertions, BeforeEach, Test}
 
 import java.sql.Statement
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+
+import org.h2.tools.Server
+import org.junit.jupiter.api.{Assertions, BeforeEach, Test}
 
 class TestJDBCEngineConnExecutor {
 

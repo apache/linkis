@@ -19,11 +19,13 @@ package org.apache.linkis.ujes.client.response
 
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.json4s._
-import org.json4s.jackson.Serialization._
 
 import java.util
+
 import scala.collection.JavaConverters._
+
+import org.json4s._
+import org.json4s.jackson.Serialization._
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/entrance/(\\S+)/progress")
 class JobProgressResult extends UJESJobResult {
@@ -39,7 +41,8 @@ class JobProgressResult extends UJESJobResult {
 
   def setProgressInfo(progressInfo: util.List[util.Map[String, AnyRef]]): Unit = {
     this.progressInfo = progressInfo
-    progressInfos = progressInfo.asScala.map(map => read[JobProgressInfo](write(map.asScala.toMap))).toArray
+    progressInfos =
+      progressInfo.asScala.map(map => read[JobProgressInfo](write(map.asScala.toMap))).toArray
   }
 
   def getProgressInfo: Array[JobProgressInfo] = progressInfos

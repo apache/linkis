@@ -17,14 +17,16 @@
 
 package org.apache.linkis.entrance.interceptor.impl
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.entrance.interceptor.exception.LabelCheckException
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 
+import org.apache.commons.lang3.StringUtils
+
 import java.lang
+
 import scala.collection.JavaConverters._
 
 class LabelCheckInterceptor extends EntranceInterceptor {

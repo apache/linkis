@@ -158,7 +158,8 @@ class SpringCloudGatewayConfiguration {
           val serviceInstance = getServiceInstance(serviceId)
           logger.info("redirect to " + serviceInstance)
           val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-          val server = lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
+          val server =
+            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
           new RibbonLoadBalancerClient.RibbonServer(
             serviceId,
             server,

@@ -17,35 +17,25 @@
 
 package org.apache.linkis.ecm.core.launch
 
+import org.apache.commons.io.FileUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.core.errorcode.LinkisECMErrorCodeSummary._
 import org.apache.linkis.ecm.core.exception.ECMCoreException
 import org.apache.linkis.ecm.core.utils.PortUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.utils.{
-  EngineConnArgumentsBuilder,
-  EngineConnArgumentsParser
-}
+import org.apache.linkis.governance.common.utils.{EngineConnArgumentsBuilder, EngineConnArgumentsParser}
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.{
-  Environment,
-  ProcessEngineConnLaunchRequest
-}
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, ProcessEngineConnLaunchRequest}
 import org.apache.linkis.server.conf.ServerConfiguration
 
-import org.apache.commons.io.{FileUtils, IOUtils}
-import org.apache.commons.lang3.StringUtils
-
-import java.io.{File, InputStream, IOException, OutputStream}
-import java.net.ServerSocket
-
-import scala.collection.JavaConversions._
+import java.io.{File, InputStream, OutputStream}
+import scala.collection.JavaConverters._
 
 trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
@@ -115,7 +105,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case ENGINECONN_ENVKEYS =>
         environment.put(
           ENGINECONN_ENVKEYS.toString,
-          GovernanceCommonConf.ENGINECONN_ENVKEYS.toString
+          GovernanceCommonConf.ENGINECONN_ENVKEYS
         )
       case _ =>
     }
@@ -163,14 +153,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   protected def getCommandArgs: Array[String] = {
     if (
-        request.creationDesc.properties.exists { case (k, v) =>
+        request.creationDesc.properties.asScala.exists { case (k, v) =>
           k.contains(" ") || (v != null && v.contains(" "))
         }
-    )
+    ) {
       throw new ErrorException(
         30000,
         "Startup parameters contain spaces!(启动参数中包含空格！)"
       ) // TODO exception
+    }
     val arguments = EngineConnArgumentsBuilder.newBuilder()
     engineConnPort = PortUtils
       .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue)
@@ -180,7 +171,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       "server.port" -> engineConnPort,
       "spring.profiles.active" -> "engineconn",
       "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}"
-    ) ++: discoveryMsgGenerator.generate(engineConnManagerEnv)
+    ) ++: discoveryMsgGenerator.generate(engineConnManagerEnv).asScala
 
     val eurekaPreferIp: Boolean = Configuration.EUREKA_PREFER_IP
     logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
@@ -198,15 +189,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       springConf =
         springConf + ("eureka.instance.metadata-map.prometheus.path" -> ("\\${prometheus.path:" + endpoint + "}"))
     }
-    request.creationDesc.properties.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
+    request.creationDesc.properties.asScala.filter(_._1.startsWith("spring.")).foreach { case (k, v) =>
       springConf = springConf += (k -> v)
     }
     arguments.addSpringConf(springConf.toMap)
     var engineConnConf = Map("ticketId" -> request.ticketId, "user" -> request.user)
-    engineConnConf = engineConnConf ++: request.labels
+    engineConnConf = engineConnConf ++: request.labels.asScala
       .map(l => EngineConnArgumentsParser.LABEL_PREFIX + l.getLabelKey -> l.getStringValue)
       .toMap
-    engineConnConf = engineConnConf ++: request.creationDesc.properties
+    engineConnConf = engineConnConf ++: request.creationDesc.properties.asScala
       .filterNot(_._1.startsWith("spring."))
       .toMap
     arguments.addEngineConnConf(engineConnConf)
@@ -232,7 +223,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     initializeEnv()
     // TODO env需要考虑顺序问题
     val classPath = request.environment.remove(CLASSPATH.toString)
-    request.environment.foreach { case (k, v) =>
+    request.environment.asScala.foreach { case (k, v) =>
       val value = v.replaceAll(CLASS_PATH_SEPARATOR, File.pathSeparator)
       setMoreAvailPort(value)
       processBuilder.setEnv(k, processBuilder.replaceExpansionMarker(value))

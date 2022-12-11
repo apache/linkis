@@ -31,7 +31,7 @@ import org.apache.linkis.rpc.Sender
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object CustomVariableUtils extends Logging {
 
@@ -64,9 +64,9 @@ object CustomVariableUtils extends Logging {
       variables.putAll(keyAndValue)
     }
     val variableMap = TaskUtils
-      .getVariableMap(jobRequest.getParams.asInstanceOf[util.Map[String, Any]])
+      .getVariableMap(jobRequest.getParams.asInstanceOf[util.Map[String, Any]]).asScala
       .map { case (k, v) => k -> v.asInstanceOf[String] }
-    variables.putAll(variableMap)
+    variables.putAll(variableMap.asJava)
     if (!variables.containsKey("user")) {
       variables.put("user", jobRequest.getExecuteUser)
     }

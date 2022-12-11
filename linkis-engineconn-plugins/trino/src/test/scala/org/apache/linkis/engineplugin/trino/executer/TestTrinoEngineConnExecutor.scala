@@ -20,10 +20,7 @@ package org.apache.linkis.engineplugin.trino.executer
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.common.creation.{
-  DefaultEngineCreationContext,
-  EngineCreationContext
-}
+import org.apache.linkis.engineconn.common.creation.{DefaultEngineCreationContext, EngineCreationContext}
 import org.apache.linkis.engineconn.computation.executor.entity.CommonEngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineConstant
@@ -33,18 +30,13 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
-import org.apache.linkis.manager.label.builder.factory.{
-  LabelBuilderFactory,
-  LabelBuilderFactoryContext
-}
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.entity.Label
+import org.junit.jupiter.api.Assertions
 
 import java.util
-
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-
-import org.junit.jupiter.api.{Assertions, Test}
 
 class TestTrinoEngineConnExecutor {
 
@@ -105,7 +97,7 @@ class TestTrinoEngineConnExecutor {
     engineExecutionContext.setLabels(anyArray.map(_.asInstanceOf[Label[_]]))
     val testPath = this.getClass.getClassLoader.getResource("").getPath
     engineExecutionContext.setStorePath(testPath)
-    engineCreationContext.getOptions.foreach({ case (key, value) =>
+    engineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       engineExecutionContext.addProperty(key, value)
     })
     Assertions.assertNotNull(jdbcExecutor.getProgressInfo(taskId))
@@ -130,13 +122,13 @@ class TestTrinoEngineConnExecutor {
         labels += labelBuilderFactory
           .createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
       }
-      engineCreationContext.setLabels(labels.toList)
+      engineCreationContext.setLabels(labels.toList.asJava)
     }
     val jMap = new java.util.HashMap[String, String](engineConf.size)
-    jMap.putAll(engineConf)
+    jMap.putAll(engineConf.asJava)
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
-    sys.props.putAll(jMap)
+    sys.props.asJava.putAll(jMap)
   }
 
 }

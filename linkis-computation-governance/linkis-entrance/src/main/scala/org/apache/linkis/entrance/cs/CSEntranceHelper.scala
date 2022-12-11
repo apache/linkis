@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object CSEntranceHelper extends Logging {
 
@@ -80,11 +80,12 @@ object CSEntranceHelper extends Logging {
    */
   def registerCSRSData(job: Job): Unit = {
     job match {
-      case entranceJob: EntranceJob => {
+      case entranceJob: EntranceJob =>
         val (contextIDValueStr, nodeNameStr) = getContextInfo(entranceJob.getParams)
         logger.info(s"registerCSRSData: nodeName:$nodeNameStr")
-        if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr))
-          return null
+        if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) {
+            return null
+        }
 
         val contextKey = new CommonContextKey
         contextKey.setContextScope(ContextScope.PUBLIC)
@@ -105,7 +106,6 @@ object CSEntranceHelper extends Logging {
           case _ =>
         }
         logger.info(s"registerCSRSData end: nodeName:$nodeNameStr")
-      }
       case _ =>
     }
   }
@@ -144,7 +144,7 @@ object CSEntranceHelper extends Logging {
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
       val userCreatorLabel = LabelUtil.getUserCreatorLabel(requestPersistTask.getLabels)
       val newLabels = new util.ArrayList[Label[_]]
-      requestPersistTask.getLabels
+      requestPersistTask.getLabels.asScala
         .filterNot(_.isInstanceOf[UserCreatorLabel])
         .foreach(newLabels.add)
       SerializeHelper.deserializeContextID(contextIDValueStr) match {
@@ -184,17 +184,17 @@ object CSEntranceHelper extends Logging {
     if (StringUtils.isNotBlank(contextIDValueStr)) {
       logger.info(s"parse variable nodeName:$nodeNameStr")
       val linkisVariableList: util.List[LinkisVariable] =
-        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
+        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr)
       if (null != linkisVariableList) {
-        linkisVariableList.foreach { linkisVariable =>
+        linkisVariableList.asScala.foreach { linkisVariable =>
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
         }
       }
-      if (variableMap.nonEmpty) {
+      if (variableMap.asScala.nonEmpty) {
         // 1.cs priority is low, the same ones are not added
         val varMap =
           TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
-        variableMap.foreach { keyAndValue =>
+        variableMap.asScala.foreach { keyAndValue =>
           if (!varMap.containsKey(keyAndValue._1)) {
             varMap.put(keyAndValue._1, keyAndValue._2)
           }

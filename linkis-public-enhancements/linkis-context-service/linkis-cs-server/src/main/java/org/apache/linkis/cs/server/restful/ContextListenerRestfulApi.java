@@ -65,7 +65,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "onBindIDListener,contextID:" + contextID.getContextId());
     ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
@@ -85,7 +85,7 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(
         req, "onBindKeyListener,contextID:" + contextID.getContextId());

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.linkis.cs.common.entity.enumeration.ExpireType;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.persistence.entity.PersistenceContextID;
@@ -25,20 +26,12 @@ import org.apache.linkis.cs.server.enumeration.ServiceType;
 import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
 import org.apache.linkis.server.Message;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Date;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping(path = "/contextservice")
@@ -65,7 +58,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
       throws InterruptedException, CSErrorException {
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
     return generateResponse(answerJob, "");
@@ -84,7 +77,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     // TODO: 2020/2/25 这里要填响应的contextId
     contextID.setContextId("84714");
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
     return generateResponse(answerJob, "");
@@ -95,7 +88,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException {
     String id = null;
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
     return generateResponse(answerJob, "");
@@ -106,7 +99,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException {
     String id = json.get("contextId").textValue();
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
     return generateResponse(answerJob, "");

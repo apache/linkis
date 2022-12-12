@@ -87,7 +87,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "getContextValue,contextID:" + contextID.getContextId());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
@@ -110,7 +110,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(
         req, "searchContextValue,contextID:" + contextID.getContextId());
@@ -133,7 +133,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws CSErrorException, IOException, ClassNotFoundException, InterruptedException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "setValueByKey,contextID:" + contextID.getContextId());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
@@ -154,7 +154,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "setValue,contextID:" + contextID.getContextId());
     ContextKeyValue contextKeyValue = getContextKeyValueFromJsonNode(jsonNode);
@@ -173,7 +173,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "resetValue,contextID:" + contextID.getContextId());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
@@ -192,7 +192,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "removeValue,contextID:" + contextID.getContextId());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
@@ -211,7 +211,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "removeAllValue,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEALL, contextID);
@@ -233,7 +233,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(
         req, "removeAllValueByKeyPrefixAndContextType,contextID:" + contextID.getContextId());
@@ -258,7 +258,7 @@ public class ContextRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(
         req, "removeAllValueByKeyPrefix,contextID:" + contextID.getContextId());
@@ -304,7 +304,7 @@ public class ContextRestfulApi implements CsRestfulParent {
     @ApiImplicitParam(name = "createTimeStart", required = true, dataType = "String"),
     @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
     @ApiImplicitParam(name = "updateTimeStart", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "createTimeEnd", required = true, dataType = "String"),
+    @ApiImplicitParam(name = "updateTimeEnd", required = true, dataType = "String"),
     @ApiImplicitParam(name = "accessTimeStart", required = true, dataType = "String"),
     @ApiImplicitParam(name = "accessTimeEnd", required = true, dataType = "String")
   })
@@ -340,21 +340,21 @@ public class ContextRestfulApi implements CsRestfulParent {
       updateTimeEnd =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("updateTimeEnd"), dtf));
     if (bodyMap.containsKey("accessTimeStart") && null != bodyMap.get("accessTimeStart"))
-      updateTimeStart =
+      accessTimeStart =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("accessTimeStart"), dtf));
     if (bodyMap.containsKey("accessTimeEnd") && null != bodyMap.get("accessTimeEnd"))
-      updateTimeEnd =
+      accessTimeEnd =
           localDatetimeToDate(LocalDateTime.parse((String) bodyMap.get("accessTimeEnd"), dtf));
     if (null == createTimeStart
         && null == createTimeEnd
         && null == updateTimeStart
-        && null == createTimeEnd) {
+        && null == updateTimeEnd) {
       throw new CSErrorException(
           97000,
           "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd cannot be all null.");
     }
     logger.info(
-        "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
+        "clearAllContextByTime: user : {}, createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}.",
         username,
         createTimeStart,
         createTimeEnd,

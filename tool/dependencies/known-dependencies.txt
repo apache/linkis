@@ -463,7 +463,7 @@ simpleclient_common-0.8.1.jar
 slf4j-api-1.7.30.jar
 slice-0.38.jar
 slider-core-0.90.2-incubating.jar
-snakeyaml-1.26.jar
+snakeyaml-1.33.jar
 snappy-java-1.0.4.1.jar
 snappy-java-1.0.5.jar
 snappy-java-1.1.4.jar

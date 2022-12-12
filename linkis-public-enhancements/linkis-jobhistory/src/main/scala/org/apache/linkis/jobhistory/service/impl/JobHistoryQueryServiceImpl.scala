@@ -27,9 +27,8 @@ import org.apache.linkis.governance.common.entity.job.{
   SubJobDetail
 }
 import org.apache.linkis.governance.common.protocol.job._
-import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
-import org.apache.linkis.jobhistory.dao.{JobDetailMapper, JobHistoryMapper}
+import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
@@ -238,7 +237,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   /* private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     val tasks = new util.ArrayList[RequestPersistTask]
     import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
     queryTask.foreach(f => tasks.add(f))

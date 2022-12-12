@@ -26,7 +26,7 @@ import org.apache.linkis.protocol.utils.TaskUtils
 
 import java.{lang, util}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class ParserVarLabelInterceptor extends EntranceInterceptor {
 
@@ -34,7 +34,9 @@ class ParserVarLabelInterceptor extends EntranceInterceptor {
     jobRequest match {
       case requestPersistTask: JobRequest =>
         val variableMap =
-          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+          TaskUtils
+            .getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+            .asScala
         val labels = requestPersistTask.getLabels
         if (variableMap.contains(LabelKeyConstant.TENANT_KEY)) {
           val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory

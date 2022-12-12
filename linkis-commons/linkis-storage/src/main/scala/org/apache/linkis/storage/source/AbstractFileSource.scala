@@ -24,7 +24,7 @@ import org.apache.commons.math3.util.Pair
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 abstract class AbstractFileSource(var fileSplits: Array[FileSplit]) extends FileSource {
 
@@ -51,7 +51,7 @@ abstract class AbstractFileSource(var fileSplits: Array[FileSplit]) extends File
   override def getFileSplits: Array[FileSplit] = this.fileSplits
 
   override def getParams: util.Map[String, String] =
-    fileSplits.map(_.params).foldLeft(Map[String, String]())(_ ++ _)
+    fileSplits.map(_.params.asScala).foldLeft(Map[String, String]())(_ ++ _).asJava
 
   override def write[K <: MetaData, V <: Record](fsWriter: FsWriter[K, V]): Unit =
     fileSplits.foreach(_.write(fsWriter))

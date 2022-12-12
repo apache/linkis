@@ -37,16 +37,16 @@ public enum EngineconnServerErrorCodeSummary {
       "Cannot fetch more than {0} lines of logs.(无法获取超过{0}行的日志.)"),
   LOGFILE_IS_NOT_EXISTS(
       11110,
-      "LogFile {0} is not exists or is not a file.(LogFile {0} 不存在或不是文件.)",
-      "LogFile {0} is not exists or is not a file.(LogFile {0} 不存在或不是文件.)"),
+      "LogFile {0} does not exist or is not a file.(LogFile {0} 不存在或不是文件.)",
+      "LogFile {0} does not exist or is not a file.(LogFile {0} 不存在或不是文件.)"),
   BOTH_NOT_EXISTS(
       11110,
       "the parameters of engineConnInstance and ticketId are both not exists.(engineConnInstance 和ticketId 的参数都不存在.)",
       "the parameters of engineConnInstance and ticketId are both not exists.(engineConnInstance 和ticketId 的参数都不存在.)"),
   LOG_IS_NOT_EXISTS(
       11110,
-      "Log directory {0} is not exists.(日志目录 {0} 不存在.)",
-      "Log directory {0} is not exists.(日志目录 {0} 不存在.)"),
+      "Log directory {0} does not exist.(日志目录 {0} 不存在.)",
+      "Log directory {0} does not exist.(日志目录 {0} 不存在.)"),
   FAILED_TO_DOWNLOAD(911115, "failed to downLoad(下载失败)", "failed to downLoad(下载失败)");
 
   /** (errorCode)错误码 */

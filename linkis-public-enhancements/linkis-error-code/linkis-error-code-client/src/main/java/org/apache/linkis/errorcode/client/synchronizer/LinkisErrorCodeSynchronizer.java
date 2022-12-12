@@ -22,14 +22,13 @@ import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.errorcode.client.ErrorCodeClientBuilder;
 import org.apache.linkis.errorcode.client.LinkisErrorCodeClient;
 import org.apache.linkis.errorcode.common.LinkisErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LinkisErrorCodeSynchronizer {
 
@@ -37,7 +36,7 @@ public class LinkisErrorCodeSynchronizer {
 
   private LinkisErrorCode errorCode =
       new LinkisErrorCode(
-          "60001", "会话创建失败，%s队列不存在，请检查队列设置是否正确", "queue (\\S+) is not exists in YARN", 0);
+          "60001", "会话创建失败，%s队列不存在，请检查队列设置是否正确", "queue (\\S+) does not exist in YARN", 0);
 
   private List<LinkisErrorCode> linkisErrorCodeList = Arrays.asList(errorCode);
 

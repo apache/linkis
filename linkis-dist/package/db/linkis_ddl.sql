@@ -447,7 +447,7 @@ CREATE TABLE `linkis_ps_cs_context_id` (
   PRIMARY KEY (`id`),
   KEY `inx_instance` (`instance`(128)),
   KEY `inx_backup_instance` (`backup_instance`(191)),
-  KEY `ain_instance_bin` (`instance`(128),`backup_instance`(128))
+  KEY `inx_instance_bin` (`instance`(128),`backup_instance`(128))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

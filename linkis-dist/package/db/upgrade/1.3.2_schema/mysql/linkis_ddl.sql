@@ -114,7 +114,7 @@ ALTER TABLE `linkis_ps_cs_context_id`
         DROP INDEX IF EXISTS `instance_2`,
         ADD  KEY `inx_instance` (`instance`(128)),
         ADD KEY `inx_backup_instance` (`backup_instance`(191)),
-        ADD KEY `ain_instance_bin` (`instance`(128),`backup_instance`(128));
+        ADD KEY `inx_instance_bin` (`instance`(128),`backup_instance`(128));
 
 ALTER TABLE `linkis_ps_bml_resources_version`
         DROP INDEX IF EXISTS `resource_id_version`,

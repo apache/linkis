@@ -152,6 +152,7 @@
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <poi.version>5.2.3</poi.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- jakarta -->
     <annotation-api.version>1.3.5</annotation-api.version>
@@ -924,6 +925,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -996,6 +998,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
     </dependency>
   </dependencies>
 

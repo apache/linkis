@@ -278,7 +278,7 @@ export default {
       },
       TYPELIB: {
         jar: 0,
-        spark: {
+        Spark: {
           py: 1,
           scala: 2,
         },
@@ -446,7 +446,7 @@ export default {
       if (this.fnCategory.isCommon) {
         prop = 'jar';
       } else if (this.fnCategory.isSpark) {
-        prop = `spark.${suffix}`;
+        prop = `Spark.${suffix}`;
       } else {
         prop = `custom.${suffix}`;
       }
@@ -497,7 +497,7 @@ export default {
     'setting.fnType'(val) {
       let map = {};
       map[this.$t('message.linkis.udf.common')] = 'isCommon';
-      map['spark'] = 'isSpark';
+      map['Spark'] = 'isSpark';
       map[this.$t('message.linkis.udf.ZDYHS')] = 'isCustom';
       let type = map[val];
       Object.keys(this.fnCategory).forEach((key) => this.fnCategory[key] = false);
@@ -538,7 +538,7 @@ export default {
       }
       this.title = titleMap[this.model];
       this.btnLabel = btnLabelMap[this.model];
-      if (this.setting.fnType === 'spark') {
+      if (this.setting.fnType === 'Spark') {
         this.filterNode = (node) => {
           const name = node.label;
           const tabSuffix = name.substr(name.lastIndexOf('.'), name.length);
@@ -555,7 +555,7 @@ export default {
 
     init() {
       let { name, shared, description, path, udfName, directory, udfType, registerFormat, load, useFormat } = this.node;
-      let fnType = 'spark'
+      let fnType = 'Spark'
       if (udfType === 0) {
         fnType = this.$t('message.linkis.udf.common');
       } else if (udfType > 2) {
@@ -708,7 +708,7 @@ export default {
 
     onTypeChange() {
       this.$emit('type-change', this.setting.fnType);
-      if (this.setting.fnType === 'spark') {
+      if (this.setting.fnType === 'Spark') {
         this.filterNode = (node) => {
           const name = node.label;
           const tabSuffix = name.substr(name.lastIndexOf('.'), name.length);

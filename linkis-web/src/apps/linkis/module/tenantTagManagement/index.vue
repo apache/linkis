@@ -105,13 +105,13 @@
         </Form>
         <div style="margin-top: 60px">
           <span style="width: 60px">{{ $t('message.linkis.tenantTagManagement.yourTagMapping') }}</span>
-          <Input class="input" v-model="mapping" style="width: 240px; margin-left: 10px" disabled></Input>
-          <Button type="primary" @click="checkUserTag" style="margin-left: 10px">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
+          <Input class="input" v-model="mapping" style="width: 220px; margin-left: 10px" disabled></Input>
+          <Button type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
         </div>
       </div>
       <div slot="footer">
         <Button @click="cancel">{{$t('message.linkis.tenantTagManagement.Cancel')}}</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag">{{$t('message.linkis.tenantTagManagement.OK')}}</Button>
+        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.OK')}}</Button>
       </div>
     </Modal>
   </div>
@@ -248,6 +248,7 @@ export default {
         totalPage: 0,
       },
       userName: '',
+      isRequesting: false
     }
   },
   computed: {
@@ -309,6 +310,7 @@ export default {
       this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
+      if(this.isRequesting) return;
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
           const {user, creator} = this.modalData;
@@ -317,6 +319,7 @@ export default {
             return;
           }
           try {
+            this.isRequesting = true
             await api.fetch("/configuration/tenant-mapping/check-user-creator",
               {
                 user,
@@ -327,9 +330,10 @@ export default {
               }
               this.tagIsExist = res.exist;
             })
+            this.isRequesting = false
           } catch (err) {
             console.log(err);
-            this.cancel();
+            this.isRequesting = false
           }
         }
         else {
@@ -357,6 +361,7 @@ export default {
       this.$refs.createTenantForm.resetFields();
     },
     addTenantTag() {
+      if(this.isRequesting) return;
       const target = this.mode === 'edit' ? '/configuration/tenant-mapping/update-tenant' : '/configuration/tenant-mapping/create-tenant'
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
@@ -365,14 +370,16 @@ export default {
             if(this.mode !== 'edit') {
               this.page.pageNow = 1;
             }
+            this.isRequesting = true;
             await api.fetch(target, this.modalData, "post").then(async (res) => {
               console.log(res);
               await this.getTableData();
               this.cancel();
               this.$Message.success(this.$t('message.linkis.tenantTagManagement.addSuccessful'));
             });
+            this.isRequesting = false;
           } catch(err) {
-            this.cancel();
+            this.isRequesting = false;
             console.log(err);
           }
         } else {

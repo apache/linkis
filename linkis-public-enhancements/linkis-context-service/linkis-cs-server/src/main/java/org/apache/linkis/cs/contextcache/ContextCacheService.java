@@ -54,5 +54,9 @@ public interface ContextCacheService {
 
   void removeByKeyPrefix(ContextID contextID, String preFix);
 
+  void removeByKey(ContextID contextID, String preFix);
+
   void removeByKeyPrefix(ContextID contextID, String preFix, ContextType csType);
+
+  void removeByKey(ContextID contextID, String preFix, ContextType csType);
 }

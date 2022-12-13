@@ -71,6 +71,9 @@ public class UserIpConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-user-ip,msg: only administrators can configure");
       }
+      if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
+        throw new ConfigurationException("User-creator is existed");
+      }
       parameterVerification(userIpVo);
       userIpConfigService.createUserIP(userIpVo);
     } catch (DuplicateKeyException e) {
@@ -100,6 +103,9 @@ public class UserIpConfigrationRestfulApi {
       String userName = ModuleUserUtils.getOperationUser(req, "execute updateUserIP");
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to update-user-ip,msg: only administrators can configure ");
+      }
+      if (!userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
+        throw new ConfigurationException("User-creator is not existed");
       }
       parameterVerification(userIpVo);
       userIpConfigService.updateUserIP(userIpVo);
@@ -145,10 +151,10 @@ public class UserIpConfigrationRestfulApi {
   @RequestMapping(path = "/query-user-ip-list", method = RequestMethod.GET)
   public Message queryUserIpList(
       HttpServletRequest req,
-      @RequestParam(value = "user") String user,
-      @RequestParam(value = "creator") String creator,
-      @RequestParam(value = "pageNow") Integer pageNow,
-      @RequestParam(value = "pageSize") Integer pageSize) {
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "pageNow", required = false) Integer pageNow,
+      @RequestParam(value = "pageSize", required = false) Integer pageSize) {
     String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
     if (!Configuration.isAdmin(userName)) {
       return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
@@ -177,8 +183,8 @@ public class UserIpConfigrationRestfulApi {
   @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
   public Message checkUserCreator(
       HttpServletRequest req,
-      @RequestParam(value = "user") String user,
-      @RequestParam(value = "creator") String creator) {
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "creator", required = false) String creator) {
     Boolean result = false;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
@@ -218,9 +224,6 @@ public class UserIpConfigrationRestfulApi {
     }
     if (StringUtils.isBlank(userIpVo.getDesc())) {
       throw new ConfigurationException("Description couldn't be empty ");
-    }
-    if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
-      throw new ConfigurationException("User-creat is existed");
     }
   }
 }

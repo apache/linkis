@@ -33,7 +33,7 @@ import org.apache.linkis.orchestrator.ecm.cache.EngineAsyncResponseCache
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity.{DefaultMark, Mark, MarkReq, Policy}
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
-import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
+import org.apache.linkis.orchestrator.ecm.service.{AbstractEngineConnExecutor, EngineConnExecutor}
 import org.apache.linkis.orchestrator.ecm.service.impl.{
   ComputationConcurrentEngineConnExecutor,
   ComputationEngineConnExecutor

@@ -104,4 +104,11 @@
         description=#{description,jdbcType=VARCHAR}
         WHERE id = #{id,jdbcType=BIGINT}
     </update>
+
+    <select id="getUdfVersionInfoByName" resultType="org.apache.linkis.udf.vo.UDFVersionVo">
+        select
+        puv.*, is_expire, create_user
+        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on pu.id=puv.udf_id and pu.udf_name=#{udfName} and pu.create_user=#{createUser}
+        order by puv.bml_resource_version desc  limit 1
+    </select>
 </mapper>

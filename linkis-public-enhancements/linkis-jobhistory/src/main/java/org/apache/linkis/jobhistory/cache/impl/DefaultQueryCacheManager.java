@@ -64,11 +64,17 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
 
   @PostConstruct
   private void init() {
-    try {
-      refreshUndoneTask();
-    } catch (Exception e) {
-      logger.info("Failed to init refresh undone task", e);
-    }
+    Thread undoneTask =
+        new Thread(
+            () -> {
+              try {
+                refreshUndoneTask();
+              } catch (Exception e) {
+                logger.info("Failed to init refresh undone task", e);
+              }
+            });
+    undoneTask.setName("refreshUndoneTask");
+    undoneTask.start();
   }
 
   @Override

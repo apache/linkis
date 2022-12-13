@@ -34,6 +34,7 @@
 
     <sql id="DataSource_En_Column">
         id ,name,COALESCE(description_en, description) as description,option_en as option,classifier_en as classifier,icon,layers
+
     </sql>
 
     <select id="getAllTypes" resultMap="dataSourceTypeMap">

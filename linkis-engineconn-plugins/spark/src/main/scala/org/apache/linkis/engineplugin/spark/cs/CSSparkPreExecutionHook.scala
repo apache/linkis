@@ -24,6 +24,8 @@ import org.apache.linkis.engineconn.core.errorcode.LinkisEngineconnCoreErrorCode
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
 
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
@@ -54,6 +56,10 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
       ContextServiceUtils.getContextIDStrByMap(properties)
     val nodeNameStr =
       ContextServiceUtils.getNodeNameStrByMap(properties)
+    if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) {
+      logger.info("cs info is null skip CSSparkPreExecutionHook")
+      return code
+    }
     logger.info(
       s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr"
     )

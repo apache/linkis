@@ -56,12 +56,21 @@ object Configuration extends Logging {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
+  val JOB_HISTORY_ADMIN = CommonVars("wds.linkis.jobhistory.admin", "hadoop")
+
+  // Only the specified token has permission to call some api
+  val GOVERNANCE_STATION_ADMIN_TOKEN = CommonVars("wds.linkis.governance.station.admin.token", "")
+
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
   private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
 
   def isAdmin(username: String): Boolean = {
     adminUsers.exists(username.equalsIgnoreCase)
+  }
+
+  def isAdminToken(token: String): Boolean = {
+    GOVERNANCE_STATION_ADMIN_TOKEN.getValue.split(",").exists(token.equalsIgnoreCase)
   }
 
   def getGateWayURL(): String = {
@@ -84,6 +93,23 @@ object Configuration extends Logging {
     }
     logger.info(s"linkisHome is $linkisHome")
     linkisHome
+  }
+
+  def isStationAdmin(username: String): Boolean = {
+    GOVERNANCE_STATION_ADMIN.getValue
+      .split(",")
+      .exists(username.equalsIgnoreCase)
+  }
+
+  def isJobHistoryAdmin(username: String): Boolean = {
+    getJobHistoryAdmin()
+      .exists(username.equalsIgnoreCase)
+  }
+
+  def getJobHistoryAdmin(): Array[String] = {
+    val stationAdmin = GOVERNANCE_STATION_ADMIN.getValue.split(",")
+    val historyAdmin = JOB_HISTORY_ADMIN.getValue.split(",")
+    (stationAdmin ++ historyAdmin).distinct
   }
 
 }

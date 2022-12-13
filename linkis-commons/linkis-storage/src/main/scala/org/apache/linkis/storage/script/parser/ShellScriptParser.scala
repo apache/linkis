@@ -23,7 +23,10 @@ class ShellScriptParser private extends CommonScriptParser {
   override def prefix: String = "#@set"
 
   override def belongTo(suffix: String): Boolean =
-    CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_SHELL)
+    CodeAndRunTypeUtils.getSuffixBelongToLanguageTypeOrNot(
+      suffix,
+      CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL
+    )
 
   override def prefixConf: String = "#conf@set"
 }

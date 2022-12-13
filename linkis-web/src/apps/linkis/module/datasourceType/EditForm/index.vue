@@ -152,14 +152,17 @@ export default {
           type: 'input',
           title: "层级",
           field: 'layers',
-          value: 0,
+          value: '',
+          props: {
+            placeholder: "",
+          },
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )}"层级"`,
-              trigger: 'change',
+              trigger: 'blur',
             },
           ],
         }

@@ -28,7 +28,7 @@
       show-elevator
       @on-change="changePage"
     />
-    <Modal v-model="showContent" footer-hide width="80%" title="查看源码" class="view-code">
+    <Modal v-model="showContent" footer-hide width="80%" :title="$t('message.linkis.udf.viewSourceCode')" class="view-code">
       <Spin v-if="loadingContent" size="large" fix />
       <Input
         v-show="!loadingContent"
@@ -55,42 +55,42 @@ export default {
     return {
       cols: [
         {
-          title: '版本',
+          title: this.$t('message.linkis.udf.version'),
           key: 'bmlResourceVersion',
           align: 'center',
           width: 95
         },
         {
-          title: '发布',
+          title: this.$t('message.linkis.udf.publish'),
           key: 'publish',
           align: 'center',
           width: 75
         },
         {
-          title: '状态',
+          title: this.$t('message.linkis.udf.status'),
           key: 'status',
           align: 'center',
           width: 80
         },
         {
-          title: '注释',
+          title: this.$t('message.linkis.udf.notes'),
           key: 'description',
           align: 'center',
           width: 170
         },
         {
-          title: '修改时间',
+          title: this.$t('message.linkis.udf.lastModifyTime'),
           key: 'createTimeFormat',
           align: 'center',
           width: 160
         },
         {
-          title: '创建者',
+          title: this.$t('message.linkis.udf.creator'),
           key: 'createUser',
           align: 'center',
           width: 120
         }, {
-          title: '操作',
+          title: this.$t('message.linkis.udf.action.title'),
           align: 'center',
           width: 285,
           render: (h, params) => {
@@ -107,7 +107,7 @@ export default {
                     this.back(params.row)
                   }
                 }
-              }, '创建新版本'),
+              }, this.$t('message.linkis.udf.createNewVersion')),
               h('Button', {
                 props: {
                   size: 'small',
@@ -121,7 +121,7 @@ export default {
                     this.publish(params.row)
                   }
                 }
-              }, '发布'),
+              }, this.$t('message.linkis.udf.publish')),
               h('Button', {
                 props: {
                   size: 'small',
@@ -134,7 +134,7 @@ export default {
                     this.download(params.row)
                   }
                 }
-              }, '下载'),
+              }, this.$t('message.linkis.udf.download')),
               h('Button', {
                 props: {
                   size: 'small',
@@ -148,7 +148,7 @@ export default {
                     this.viewCode(params.row)
                   }
                 }
-              }, '查看源码')
+              }, this.$t('message.linkis.udf.viewSourceCode'))
             ]);
           }
         }],
@@ -225,7 +225,7 @@ export default {
         }, 'post')
         .then(() => {
           this.fetchList()
-          this.$Message.success('操作成功')
+          this.$Message.success(this.$t('message.linkis.udf.success'))
           this.$emit('refresh-list')
         })
         .catch(() => {
@@ -240,7 +240,7 @@ export default {
           version: row.bmlResourceVersion
         }, 'post')
         .then(() => {
-          this.$Message.success('操作成功')
+          this.$Message.success(this.$t('message.linkis.udf.success'))
           this.fetchList()
         })
         .catch(() => {
@@ -267,7 +267,7 @@ export default {
           document.body.appendChild(l);
           l.click()
           window.URL.revokeObjectURL(url)
-          this.$Message.success('操作成功')
+          this.$Message.success(this.$t('message.linkis.udf.success'))
         })
         .catch(() => {
           this.loading = false

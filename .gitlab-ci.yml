@@ -1,0 +1,63 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.default: 
+  before_script:
+    - cd linkis-web
+    - wnpm i
+  stage: build 
+  variables:
+     ENV: $ENV
+  tags: 
+    - wxapp
+  environment: 
+    name: $ENV
+# 测试环境
+sit: 
+  extends: .default
+  script:
+    ## 根据项目情况，修改打包命令:
+    ## 使用mn gen打包的需要改成mn2 gen
+    ## 默认使用node10，另外支持node6 node8 node12 node14 node16，需指定
+    ## mn1要指定node6环境，加这行命令： - export PATH="/data/node6/bin:$PATH"
+    ## 指定node8加这行命令： - export PATH="/data/node8/bin:$PATH"
+    - wnpm run build
+     # 根据项目情况修改fes-upload-aomp命令参数，这行命令用于将代码上传到aomp并发布:
+     # --dist=上传目录  --sys=子系统 --tplId=aomp发布模板ID --version=将1.0.0改为子系统版本号
+    - fes-upload-aomp --dist="./dist" --sys=BDPE-UJES --tplId=64203 --version="1.1.5"    
+  variables:
+     ENV: "sit" #根据项目实际情况设置ENV的值
+  only:
+    - /^test_.*$/ #test_*分支，都执行sit打包部署
+  cache:
+    paths: #配置缓存目录，测试环境每次打包不删除node_modules，提升打包速度
+      - linkis-web/node_modules/ 
+      - linkis-web/package-lock.json
+# 生产环境
+release: 
+  extends: .default
+  script:
+    ## 生产打包命令
+    - wnpm run build
+     # 根据项目情况修改fes-upload-aomp命令参数，这行命令用于将代码上传到aomp并发布:
+     # --dist=上传目录  --sys=子系统 --tplId=aomp发布模板ID --version=将1.0.0改为子系统版本号
+    - fes-upload-aomp --dist="./dist" --sys=BDPE-UJES --tplId=64203 --version="1.1.5"    
+  variables:
+     ENV: "release" 
+  only:
+   #打包分支 只有release分支才执打生产打包部署
+    - release

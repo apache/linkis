@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobHistoryMapper">
@@ -40,6 +40,7 @@
         <result property = "engineType" column = "engine_type" />
         <result property = "executionCode" column = "execution_code" />
         <result property = "resultLocation" column = "result_location" />
+        <result property = "observeInfo" column = "observe_info" />
     </resultMap>
 
 
@@ -51,7 +52,7 @@
 
     <sql id="insert_job_list">
         `job_req_id`, `submit_user`, `execute_user`, `source`, `labels`, `params`,
-        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`, `execution_code`
+        `progress`, `status`, `log_path`, `error_code`, `error_desc`, `created_time`, `updated_time`, `instances`, `metrics`,`engine_type`, `execution_code`, `observe_info`
     </sql>
 
     <insert id="insertJobHistory" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
@@ -59,7 +60,7 @@
         VALUES (#{jobReqId},#{submitUser},#{executeUser},#{source},
         #{labels},#{params},#{progress},
         #{status},#{logPath},#{errorCode},#{errorDesc},
-        #{createdTime}, #{updateTimeMills},#{instances},#{metrics},#{engineType},#{executionCode})
+        #{createdTime}, #{updateTimeMills},#{instances},#{metrics},#{engineType},#{executionCode},#{observeInfo})
     </insert>
 
 
@@ -148,7 +149,7 @@
             <if test="jobReqId != null">job_req_id = #{jobReqId},</if>
             <if test="submitUser != null">submit_user = #{submitUser},</if>
             <if test="executeUser != null">execute_user = #{executeUser},</if>
-            <if test="source != null">source = #{source},</if>
+            <if test="source != null">`source` = #{source},</if>
             <if test="labels != null">labels = #{labels},</if>
             <if test="params != null">params = #{params},</if>
             <if test="progress != null">progress = #{progress},</if>
@@ -162,6 +163,7 @@
             <if test="metrics != null">metrics = #{metrics},</if>
             <if test="engineType != null">engine_type = #{engineType},</if>
             <if test="executionCode != null">execution_code = #{executionCode},</if>
+            <if test="observeInfo != null">observe_info = #{observeInfo},</if>
         </trim>
         <![CDATA[
         WHERE id = #{id} AND updated_time <= #{updateTimeMills}
@@ -216,4 +218,7 @@
         </where>
     </select>
 
+    <update id="updateOberverById">
+        update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
+    </update>
 </mapper>

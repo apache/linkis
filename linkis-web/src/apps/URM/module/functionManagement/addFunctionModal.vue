@@ -54,7 +54,7 @@
           <Radio
             v-if="isUdf"
             :disabled="model === 1"
-            label="spark"/>
+            label="Spark"/>
           <Radio
             v-if="!isUdf"
             :label="$t('message.linkis.udf.ZDYHS')"/>
@@ -159,7 +159,7 @@
       </FormItem> -->
       <FormItem
         :label="$t('message.linkis.udf.useFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem class="format-item">
             <Input
@@ -341,8 +341,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(jar)$/,
-            message: this.$t('message.linkis.udf.HZMZC'),
+            validator: this.jarValidator,
             trigger: 'change',
           },
         ],
@@ -355,8 +354,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -369,8 +367,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -417,7 +414,7 @@ export default {
             type: 'string',
             required: true,
             message: this.$t('message.linkis.udf.SRFL'),
-            trigger: 'blur',
+            trigger: 'change',
           },
         ],
       },
@@ -726,6 +723,26 @@ export default {
         this.$refs.directory.setQuery(null)
         this.directories = [...this.remoteDirectories]
       }
+    },
+    jarValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(jar)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.HZMZC')));
+      }
+      cb();
+    },
+    pyValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.ZCPYSCA')));
+      }
+      cb();
     }
   },
 };

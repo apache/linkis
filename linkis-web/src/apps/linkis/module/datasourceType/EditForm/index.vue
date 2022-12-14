@@ -84,15 +84,15 @@ export default {
           props: {
             placeholder: "mysql database",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceType.description'),
-              trigger: 'blur',
-            },
-          ],
+          // validate: [
+          //   {
+          //     required: true,
+          //     message: `${this.$t(
+          //       'message.linkis.datasource.pleaseInput'
+          //     )} `+this.$t('message.linkis.basedataManagement.datasourceType.description'),
+          //     trigger: 'blur',
+          //   },
+          // ],
         },
         {
           type: 'input',
@@ -102,15 +102,15 @@ export default {
           props: {
             placeholder: "mysql database",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceType.option'),
-              trigger: 'blur',
-            },
-          ],
+          // validate: [
+          //   {
+          //     required: true,
+          //     message: `${this.$t(
+          //       'message.linkis.datasource.pleaseInput'
+          //     )} `+this.$t('message.linkis.basedataManagement.datasourceType.option'),
+          //     trigger: 'blur',
+          //   },
+          // ],
         },
         {
           type: 'select',

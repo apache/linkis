@@ -150,6 +150,24 @@ export default {
         },
         {
           type: 'input',
+          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueRegex'),
+          field: 'valueRegex',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: false,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueRegex'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.defaultValue'),
           field: 'defaultValue',
           value: '',
@@ -166,24 +184,24 @@ export default {
             },
           ],
         },
-        {
-          type: 'input',
-          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.scope'),
-          field: 'scope',
-          value: '',
-          props: {
-            placeholder: "",
-          },
-          validate: [
-            {
-              required: false,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.scope'),
-              trigger: 'blur',
-            },
-          ],
-        },
+        // {
+        //   type: 'input',
+        //   title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.scope'),
+        //   field: 'scope',
+        //   value: '',
+        //   props: {
+        //     placeholder: "",
+        //   },
+        //   validate: [
+        //     {
+        //       required: false,
+        //       message: `${this.$t(
+        //         'message.linkis.datasource.pleaseInput'
+        //       )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.scope'),
+        //       trigger: 'blur',
+        //     },
+        //   ],
+        // },
         {
           type: 'switch',
           title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.require'),
@@ -236,24 +254,6 @@ export default {
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} ` +this.$t('message.linkis.basedataManagement.datasourceTypeKey.descriptionEn'),
-              trigger: 'blur',
-            },
-          ],
-        },
-        {
-          type: 'input',
-          title: this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueRegex'),
-          field: 'valueRegex',
-          value: '',
-          props: {
-            placeholder: "",
-          },
-          validate: [
-            {
-              required: false,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.valueRegex'),
               trigger: 'blur',
             },
           ],

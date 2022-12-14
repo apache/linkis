@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceTypeService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -77,8 +78,12 @@ public class DatasourceTypeRestfulApi {
   @ApiOperation(value = "add", notes = "Add a Datasource Type Record", httpMethod = "POST")
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody DatasourceTypeEntity datasourceType) {
-    ModuleUserUtils.getOperationUser(
-        request, "Add a Datasource Type Record," + datasourceType.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a Datasource Type Record," + datasourceType.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = datasourceTypeService.save(datasourceType);
     return Message.ok("").data("result", result);
   }
@@ -106,8 +111,12 @@ public class DatasourceTypeRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.PUT)
   public Message update(
       HttpServletRequest request, @RequestBody DatasourceTypeEntity datasourceType) {
-    ModuleUserUtils.getOperationUser(
-        request, "Update a Datasource Type Record,id:" + datasourceType.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a Datasource Type Record,id:" + datasourceType.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = datasourceTypeService.updateById(datasourceType);
     return Message.ok("").data("result", result);
   }

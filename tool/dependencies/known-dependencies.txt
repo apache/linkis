@@ -580,5 +580,5 @@ seatunnel-core-flink-sql-2.1.2.jar
 seatunnel-core-spark-2.1.2.jar
 mongo-java-driver-3.12.7.jar
 clickhouse-jdbc-0.3.2-patch11.jar
-postgresql-42.3.1.jar
+postgresql-42.3.8.jar
 

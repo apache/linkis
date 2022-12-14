@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.python.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
@@ -323,7 +323,9 @@ class PythonSession extends Logging {
     val metaData = new LineMetaData(null)
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
-    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, done with html")
+    logger.warn(
+      s"Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}, done with html"
+    )
     engineExecutionContext.sendResultSet(writer)
   }
 

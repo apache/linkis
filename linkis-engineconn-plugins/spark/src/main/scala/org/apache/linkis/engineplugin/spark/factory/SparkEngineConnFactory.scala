@@ -60,13 +60,13 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       engineCreationContext: EngineCreationContext
   ): Any = {
     if (EngineConnServer.isOnceMode) {
-      createSparkEngineConnContext(engineCreationContext)
+      createSparkOnceEngineConnContext(engineCreationContext)
     } else {
       createSparkEngineSession(engineCreationContext)
     }
   }
 
-  def createSparkEngineConnContext(
+  def createSparkOnceEngineConnContext(
       engineCreationContext: EngineCreationContext
   ): SparkEngineConnContext = {
     val environmentContext = createEnvironmentContext(engineCreationContext)

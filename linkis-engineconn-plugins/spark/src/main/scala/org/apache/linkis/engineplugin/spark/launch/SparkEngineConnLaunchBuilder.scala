@@ -35,6 +35,7 @@ import org.apache.linkis.manager.label.entity.engine.{
   EngineConnModeLabel,
   UserCreatorLabel
 }
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.util
 
@@ -65,18 +66,8 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   }
 
   def isOnceMode: Boolean = {
-    val engineConnMode = engineConnBuildRequest.labels.asScala.find(label =>
-      "engineConnMode".equals(label.getLabelKey)
-    )
-    engineConnMode match {
-      case Some(s) =>
-        s match {
-          case l: EngineConnModeLabel =>
-            EngineConnMode.toEngineConnMode(l.getEngineConnMode) == EngineConnMode.Once
-          case _ => false
-        }
-      case None => false
-    }
+    val engineConnMode = LabelUtil.getEngineConnMode(engineConnBuildRequest.labels)
+    EngineConnMode.toEngineConnMode(engineConnMode) == EngineConnMode.Once
   }
 
   override def getEnvironment(implicit

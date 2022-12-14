@@ -55,6 +55,13 @@ public enum SparkErrorCodeSummary {
       "{0} requires that the data to be inserted have the same number of columns as the target table: target table has {1} column(s) but the inserted data has {2} column(s)"),
   DATA_CALC_FIELD_NOT_EXIST(43023, "{0} columns({1}) are not exist in source columns"),
   DATA_CALC_VARIABLE_NOT_EXIST(43024, "Please set [{0}] in variables"),
+
+  NOT_SUPPORT_ADAPTER(43031, "Not support Adapter for spark application."),
+
+  YARN_APPLICATION_START_FAILED(
+      43032, "The application start failed, since yarn applicationId is null."),
+
+  NOT_SUPPORT_METHOD(43040, "Not support method for requestExpectedResource."),
   ;
 
   /** (errorCode)错误码 */

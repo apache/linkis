@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.spark.executor
 
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineplugin.spark.context.SparkEngineConnContext
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 import org.apache.linkis.engineplugin.spark.exception.JobExecutionException
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.label.entity.Label
@@ -50,7 +51,10 @@ trait SparkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException("Not support method for requestExpectedResource.")
+    throw new JobExecutionException(
+      SparkErrorCodeSummary.NOT_SUPPORT_METHOD.getErrorCode,
+      SparkErrorCodeSummary.NOT_SUPPORT_METHOD.getErrorDesc
+    )
 
   protected val sparkEngineConnContext: SparkEngineConnContext
 

@@ -65,7 +65,7 @@ object EngineConnHook extends Logging {
       engineConnHooks = hooks
         .split(",")
         .map(_.trim)
-        .filter(_.nonEmpty)
+        .filter(StringUtils.isNotBlank)
         .map(Utils.tryAndWarn(Utils.getClassInstance[EngineConnHook](_)))
         .filter(_ != null)
     } else {

@@ -27,7 +27,9 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
 object SparkJobProgressUtil extends Logging {
-  val YARN_RESTFUL_URL: String = CommonVars[String]("yarn.restful.url", "").getValue
+
+  val YARN_RESTFUL_URL: String =
+    CommonVars[String]("linkis.spark.once.yarn.restful.url", "").getValue
 
   def getProgress(applicationId: String): Float = {
     if (StringUtils.isBlank(applicationId)) return 0f

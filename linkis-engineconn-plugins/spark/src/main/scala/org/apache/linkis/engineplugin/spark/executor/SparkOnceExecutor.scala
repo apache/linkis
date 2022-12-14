@@ -30,6 +30,7 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX,
   SPARK_ONCE_APP_STATUS_FETCH_INTERVAL
 }
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 import org.apache.linkis.engineplugin.spark.exception.ExecutorInitException
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
@@ -51,7 +52,8 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
       case adapter: T => clusterDescriptorAdapter = adapter
       case _ =>
         throw new ExecutorInitException(
-          "Not support ClusterDescriptorAdapter for spark application."
+          SparkErrorCodeSummary.NOT_SUPPORT_ADAPTER.getErrorCode,
+          SparkErrorCodeSummary.NOT_SUPPORT_ADAPTER.getErrorDesc
         )
     }
     val options = onceExecutorExecutionContext.getOnceExecutorContent.getJobContent.map {
@@ -63,7 +65,8 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
     if (isCompleted) return
     if (null == clusterDescriptorAdapter.getApplicationId)
       throw new ExecutorInitException(
-        "The application start failed, since yarn applicationId is null."
+        SparkErrorCodeSummary.YARN_APPLICATION_START_FAILED.getErrorCode,
+        SparkErrorCodeSummary.YARN_APPLICATION_START_FAILED.getErrorDesc
       )
     setApplicationId(clusterDescriptorAdapter.getApplicationId)
     logger.info(s"Application is started, applicationId: $getApplicationId.")

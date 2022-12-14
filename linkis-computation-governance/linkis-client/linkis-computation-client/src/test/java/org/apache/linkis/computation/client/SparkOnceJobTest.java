@@ -94,7 +94,7 @@ public class SparkOnceJobTest {
         }
         fromLine += logLines.size();
       } catch (Exception e) {
-        logger.error("获取日志失败", e);
+        logger.error("Failed to get log information", e);
         break;
       }
     }

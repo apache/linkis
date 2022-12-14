@@ -36,7 +36,7 @@ object EngineConnConf {
   )
 
   val ENGINE_CONN_ONCE_HOOKS = CommonVars(
-    "wds.linkis.engine.connector.once.hooks",
+    "linkis.engine.connector.once.hooks",
     "org.apache.linkis.engineconn.computation.executor.hook.ComputationEngineConnHook"
   )
 

@@ -62,6 +62,9 @@ object AMConfiguration {
     "jdbc,es,presto,io_file,appconn,openlookeng,trino"
   )
 
+  val ALLOW_BATCH_KILL_ENGINE_TYPES =
+    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,flink,sqoop,datax")
+
   val MULTI_USER_ENGINE_USER =
     CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
 
@@ -94,6 +97,16 @@ object AMConfiguration {
   def isMultiUserEngine(engineType: String): Boolean = {
     val multiUserEngine = AMConfiguration.MULTI_USER_ENGINE_TYPES.getValue.split(",")
     val findResult = multiUserEngine.find(_.equalsIgnoreCase(engineType))
+    if (findResult.isDefined) {
+      true
+    } else {
+      false
+    }
+  }
+
+  def isAllowKilledEngineType(engineType: String): Boolean = {
+    val allowBatchKillEngine = AMConfiguration.ALLOW_BATCH_KILL_ENGINE_TYPES.getValue.split(",")
+    val findResult = allowBatchKillEngine.find(_.equalsIgnoreCase(engineType))
     if (findResult.isDefined) {
       true
     } else {

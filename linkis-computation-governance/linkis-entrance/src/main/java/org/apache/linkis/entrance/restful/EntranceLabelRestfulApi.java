@@ -52,7 +52,7 @@ public class EntranceLabelRestfulApi {
   @RequestMapping(path = "/update", method = RequestMethod.POST)
   public Message updateRouteLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
     String userName = ModuleUserUtils.getOperationUser(req, "updateRouteLabel");
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       return Message.error("Non-administrators cannot update Route Label");
     }
     String routeLabel = jsonNode.get("routeLabel").textValue();

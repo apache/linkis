@@ -34,7 +34,7 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
   private val shellDangerousGrammerCheckSwitch =
     EntranceConfiguration.SHELL_DANGER_CHECK_SWITCH.getValue
 
-  private val shellDangerCode = EntranceConfiguration.SHELL_DANGER_USAGE.getValue.split(",")
+  private val shellDangerCode = EntranceConfiguration.SHELL_DANGER_USAGE.getValue
   private val shellWhiteCodes = EntranceConfiguration.SHELL_WHITE_USAGE.getValue
 
   logger.info(s"shellDangerousGrammerCheckSwitch : ${shellDangerousGrammerCheckSwitch}")
@@ -61,7 +61,7 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
   }
 
   /**
-   * check dander shell usage
+   * check danger shell usage
    *
    * @param shellContent
    * @return
@@ -75,7 +75,7 @@ class ShellDangerousGrammerInterceptor extends EntranceInterceptor with Logging 
       } else {
         val shellCommands = shellLine.trim.split(" ")
         shellCommands foreach { shellCommand =>
-          if (shellDangerCode.contains(shellCommand)) {
+          if (shellDangerCode.split(",").contains(shellCommand)) {
             signature = true
           }
         }

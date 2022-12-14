@@ -167,9 +167,8 @@ public class EnginePluginRestful {
     } else if (StringUtils.isNotBlank(version)) {
       return Message.error("version cannot be null");
     }
-    file.getOriginalFilename().toLowerCase().endsWith(".zip");
     if (file.getOriginalFilename().toLowerCase().endsWith(".zip")) {
-      String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");
+      String username = ModuleUserUtils.getOperationUser(req, "updateEnginePluginBML");
       if (Configuration.isAdmin(username)) {
         log.info("{} start to update enginePlugin {} {}", username, ecType, version);
         try {
@@ -225,7 +224,6 @@ public class EnginePluginRestful {
   @RequestMapping(path = "/uploadEnginePluginBML", method = RequestMethod.POST)
   public Message uploadEnginePluginBML(
       @RequestParam("file") MultipartFile file, HttpServletRequest req) {
-    file.getOriginalFilename().toLowerCase().endsWith(".zip");
     if (file.getOriginalFilename().toLowerCase().endsWith(".zip")) {
       String username = ModuleUserUtils.getOperationUser(req, "uploadEnginePluginBML");
       if (Configuration.isAdmin(username)) {
@@ -237,7 +235,7 @@ public class EnginePluginRestful {
         }
         engineConnResourceService.refreshAll(true, false);
         log.info("{} finished to upload enginePlugin", username);
-        return Message.ok().data("mes", "upload file success");
+        return Message.ok().data("msg", "upload file success");
       } else {
         return Message.error("Only administrators can operate");
       }

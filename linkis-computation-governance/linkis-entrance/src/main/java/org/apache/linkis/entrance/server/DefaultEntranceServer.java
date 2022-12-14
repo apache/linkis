@@ -80,7 +80,7 @@ public class DefaultEntranceServer extends EntranceServer {
     if (shutdownFlag) {
       logger.warn("event has been handled");
     } else {
-      if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_ENABLED()) {
+      if (EntranceConfiguration.ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED()) {
         logger.warn("Entrance exit to update and clean all ConsumeQueue task instances");
         updateAllNotExecutionTaskInstances(false);
       }

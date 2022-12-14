@@ -242,7 +242,8 @@ object EntranceConfiguration {
 
   val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
 
-  val ENTRANCE_SHUTDOWN_FAILOVER_ENABLED = CommonVars("linkis.entrance.shutdown.failover.enable", true).getValue
+  val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
+    CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
 
   val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
 

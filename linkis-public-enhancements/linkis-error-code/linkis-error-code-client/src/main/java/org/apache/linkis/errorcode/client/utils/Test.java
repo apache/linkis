@@ -38,7 +38,7 @@ public class Test {
     LinkisErrorCodeHandler linkisErrorCodeHandler = LinkisErrorCodeHandler.getInstance();
     List<ErrorCode> ret =
         linkisErrorCodeHandler.handle(
-            "queue root is not exists in YARN \n queue root is not exists in YARN");
+            "queue root does not exist in YARN \n queue root does not exist in YARN");
     System.out.println(ret);
     linkisErrorCodeHandler.close();
   }

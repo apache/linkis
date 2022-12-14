@@ -71,7 +71,7 @@ class ResultSetCacheGatewayParser extends AbstractGatewayParser {
     if (value != null && value.nonEmpty) value(0)
     else if (requestBody != null && requestBody.containsKey(key)) requestBody.get(key)
     else {
-      sendErrorResponse(s"$key is not exists.", gatewayContext)
+      sendErrorResponse(s"$key does not exist.", gatewayContext)
       null
     }
   }

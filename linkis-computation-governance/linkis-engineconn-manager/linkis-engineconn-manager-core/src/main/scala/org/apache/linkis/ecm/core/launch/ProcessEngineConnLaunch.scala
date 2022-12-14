@@ -136,7 +136,7 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       if (StringUtils.isEmpty(env.getValue)) {
         throw new ErrorException(
           30000,
-          s"Necessary environment $e is not exists!(必须的环境变量 $e 不存在！)"
+          s"Necessary environment $e does not exist!(必须的环境变量 $e 不存在！)"
         ) // TODO exception
       } else request.environment.put(e, env.getValue)
     }
@@ -166,11 +166,12 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
         request.creationDesc.properties.exists { case (k, v) =>
           k.contains(" ") || (v != null && v.contains(" "))
         }
-    )
+    ) {
       throw new ErrorException(
         30000,
         "Startup parameters contain spaces!(启动参数中包含空格！)"
       ) // TODO exception
+    }
     val arguments = EngineConnArgumentsBuilder.newBuilder()
     engineConnPort = PortUtils
       .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue)

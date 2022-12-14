@@ -33,12 +33,17 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.catalyst.util.DateTimeUtils
 import org.apache.spark.sql.types.{BinaryType, DateType, DecimalType, TimestampType, _}
 import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types.BooleanType
+import org.apache.spark.sql.types.ByteType
+import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.types.FloatType
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.types.ShortType
+import org.apache.spark.sql.types.StringType
 
-import java.nio.charset.StandardCharsets
-import java.sql.{Date, Timestamp}
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -154,19 +159,6 @@ object SQLSession extends Logging {
 
   /** Formats a datum (based on the given data type) and returns the string representation. */
   private def toHiveString(a: (Any, org.apache.spark.sql.types.DataType)): String = {
-    val primitiveTypes = Seq(
-      StringType,
-      IntegerType,
-      LongType,
-      DoubleType,
-      FloatType,
-      BooleanType,
-      ByteType,
-      ShortType,
-      DateType,
-      TimestampType,
-      BinaryType
-    )
 
     def formatDecimal(d: java.math.BigDecimal): String = {
       if (d.compareTo(java.math.BigDecimal.ZERO) == 0) {
@@ -195,13 +187,13 @@ object SQLSession extends Logging {
           .toSeq
           .sorted
           .mkString("{", ",", "}")
+      case (null, _) => "null"
       case (str: String, StringType) => str.replaceAll("\n|\t", " ")
       case (double: Double, DoubleType) => nf.format(double)
       case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
-      case other: Any => other.toString
+      case (other: Any, tpe) => other.toString
       case _ => null
     }
-
     a match {
       case (struct: Row, StructType(fields)) =>
         struct.toSeq
@@ -224,12 +216,23 @@ object SQLSession extends Logging {
       case (str: String, StringType) => str.replaceAll("\n|\t", " ")
       case (double: Double, DoubleType) => nf.format(double)
       case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
-      case other: Any => other.toString
+      case (other: Any, tpe) => other.toString
       case _ => null
 
     }
   }
 
+//  private def toHiveString(value: Any): String = {
+//
+//    value match {
+//      case value: String => value.replaceAll("\n|\t", " ")
+//      case value: Double => nf.format(value)
+//      case value: java.math.BigDecimal => formatDecimal(value)
+//      case value: Any => value.toString
+//      case _ => null
+//    }
+//
+//  }
   def showHTML(
       sc: SparkContext,
       jobGroup: String,

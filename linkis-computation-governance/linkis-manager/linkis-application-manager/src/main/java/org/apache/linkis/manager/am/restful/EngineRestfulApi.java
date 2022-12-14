@@ -227,8 +227,7 @@ public class EngineRestfulApi {
         name = "instance",
         dataType = "String",
         required = true,
-        example = "bdpujes110003:9210"),
-    @ApiImplicitParam(name = "withMultiUserEngine", dataType = "boolean")
+        example = "bdpujes110003:9210")
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
   @RequestMapping(path = "/rm/killUnlockEngineByEM", method = RequestMethod.POST)
@@ -241,24 +240,18 @@ public class EngineRestfulApi {
       throw new AMErrorException(
           210003, "instance is null in the parameters of the request(请求参数中【instance】为空)");
     }
-    Boolean withMultiUserEngine = false;
-    if (withMultiUserEngineParam != null) {
-      withMultiUserEngine = withMultiUserEngineParam.booleanValue();
-    }
 
-    String operatmsg =
+    String operatMsg =
         MessageFormat.format("kill the unlock engines of ECM:{0}", ecmInstance.textValue());
 
-    String userName = ModuleUserUtils.getOperationUser(req, operatmsg);
+    String userName = ModuleUserUtils.getOperationUser(req, operatMsg);
     if (!isAdmin(userName)) {
       throw new AMErrorException(
           210003,
           "Only admin can kill unlock engine of the specified ecm(只有管理员才能 kill 指定 ecm 下的所有空闲引擎).");
     }
 
-    Map result =
-        engineStopService.stopUnlockEngineByECM(
-            ecmInstance.textValue(), withMultiUserEngine, userName);
+    Map result = engineStopService.stopUnlockEngineByECM(ecmInstance.textValue(), userName);
 
     return Message.ok("Kill engineConn succeed.").data("result", result);
   }

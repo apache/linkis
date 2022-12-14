@@ -47,11 +47,7 @@ trait EngineStopService {
    * @return
    *   Map
    */
-  def stopUnlockEngineByECM(
-      ecmInstance: String,
-      withMultiUserEngine: Boolean,
-      operatorName: String
-  ): java.util.Map[String, Any]
+  def stopUnlockEngineByECM(ecmInstance: String, operatorName: String): java.util.Map[String, Any]
 
   def asyncStopEngine(engineStopRequest: EngineStopRequest): Unit
 

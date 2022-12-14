@@ -175,7 +175,7 @@ object JobHistoryHelper extends Logging {
    * @param taskIdList
    * @return
    */
-  private def updateBatchInstances(taskIdList: util.List[Long]): util.List[Long] = {
+  def updateBatchInstances(taskIdList: util.List[Long]): util.List[Long] = {
     val jobReqList = new util.ArrayList[JobRequest]()
     taskIdList.asScala.foreach(taskID => {
       val jobRequest = new JobRequest

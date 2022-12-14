@@ -19,23 +19,39 @@ package org.apache.linkis.entrance.scheduler
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.scheduler.SchedulerContext
 import org.apache.linkis.scheduler.queue.Group
 import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
+import java.util
 import java.util.concurrent.ExecutorService
 
+import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+
 class EntranceFIFOUserConsumer(
-  schedulerContext: SchedulerContext,
-  executeService: ExecutorService,
-  private var group: Group
+    schedulerContext: SchedulerContext,
+    executeService: ExecutorService,
+    private var group: Group
 ) extends FIFOUserConsumer(schedulerContext, executeService, group) {
 
   override def loop(): Unit = {
     schedulerContext match {
       case entranceSchedulerContext: EntranceSchedulerContext =>
-        if (entranceSchedulerContext.getOfflineFlag && EntranceConfiguration.ENTRANCE_FAILOVER_RETRY_JOB_ENABLED.getValue) {
-          scanAllRetryJobsAndRemove()
+        if (
+            entranceSchedulerContext.getOfflineFlag && EntranceConfiguration.ENTRANCE_FAILOVER_RETRY_JOB_ENABLED.getValue
+        ) {
+          val jobs = scanAllRetryJobsAndRemove()
+          if (!jobs.isEmpty) {
+            val ids = new util.ArrayList[Long]()
+            jobs.asScala.foreach {
+              case entranceJob: EntranceJob =>
+                ids.add(entranceJob.getJobRequest.getId)
+              case _ =>
+            }
+            JobHistoryHelper.updateBatchInstances(ids)
+          }
           Utils.tryQuietly(Thread.sleep(5000))
           return
         }

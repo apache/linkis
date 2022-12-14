@@ -25,18 +25,10 @@ import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.scheduler.EntranceSchedulerContext;
 import org.apache.linkis.entrance.utils.JobHistoryHelper;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
-import org.apache.linkis.instance.label.client.InstanceLabelClient;
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-import org.apache.linkis.manager.label.constant.LabelKeyConstant;
-import org.apache.linkis.manager.label.constant.LabelValueConstant;
-import org.apache.linkis.manager.label.entity.Label;
-import org.apache.linkis.manager.label.entity.route.RouteLabel;
 import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
-
-import org.apache.commons.compress.utils.Lists;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -97,15 +89,19 @@ public class EntranceFailoverJobServer {
               if (!locked) return;
               logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
 
+              // get all entrance server from eureka
+              ServiceInstance[] serviceInstances =
+                  Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
+              if (serviceInstances == null || serviceInstances.length <= 0) return;
+
               // serverInstance to map
               Map<String, Long> serverInstanceMap =
-                  getActiveServerInstances().stream()
+                  Arrays.stream(serviceInstances)
                       .collect(
                           Collectors.toMap(
                               ServiceInstance::getInstance,
                               ServiceInstance::getRegistryTimestamp,
                               (k1, k2) -> k2));
-              if (serverInstanceMap.isEmpty()) return;
 
               // It is very important to avoid repeated execute job
               // when failover self job, if self instance is empty, the job can be repeated execute
@@ -155,29 +151,5 @@ public class EntranceFailoverJobServer {
           EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
           TimeUnit.MILLISECONDS);
     }
-  }
-
-  private List<ServiceInstance> getActiveServerInstances() {
-    // get all entrance server from eureka
-    ServiceInstance[] serviceInstances =
-        Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
-    if (serviceInstances == null || serviceInstances.length <= 0) return Lists.newArrayList();
-
-    // get all offline label server
-    RouteLabel routeLabel =
-        LabelBuilderFactoryContext.getLabelBuilderFactory()
-            .createLabel(LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE);
-    List<Label<?>> labels = Lists.newArrayList();
-    labels.add(routeLabel);
-    List<ServiceInstance> labelInstances =
-        InstanceLabelClient.getInstance().getInstanceFromLabel(labels);
-    if (labelInstances == null) labelInstances = Lists.newArrayList();
-
-    // get active entrance server
-    List<ServiceInstance> allInstances = Lists.newArrayList();
-    allInstances.addAll(Arrays.asList(serviceInstances));
-    allInstances.removeAll(labelInstances);
-
-    return allInstances;
   }
 }

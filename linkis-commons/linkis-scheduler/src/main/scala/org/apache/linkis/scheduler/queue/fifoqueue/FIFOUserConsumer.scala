@@ -27,6 +27,7 @@ import org.apache.linkis.scheduler.executer.Executor
 import org.apache.linkis.scheduler.future.{BDPFuture, BDPFutureTask}
 import org.apache.linkis.scheduler.queue._
 
+import java.util
 import java.util.concurrent.{ExecutorService, Future}
 
 import scala.beans.BeanProperty
@@ -189,14 +190,17 @@ class FIFOUserConsumer(
     runningJobs(index) = job
   }
 
-  protected def scanAllRetryJobsAndRemove(): Unit = {
+  protected def scanAllRetryJobsAndRemove(): util.List[Job] = {
+    val jobs = new util.ArrayList[Job]()
     for (index <- runningJobs.indices) {
       val job = runningJobs(index)
       if (job != null && job.isJobCanRetry) {
+        jobs.add(job)
         runningJobs(index) = null
         logger.info(s"Job $job can retry, remove from runningJobs")
       }
     }
+    jobs
   }
 
   override def shutdown(): Unit = {

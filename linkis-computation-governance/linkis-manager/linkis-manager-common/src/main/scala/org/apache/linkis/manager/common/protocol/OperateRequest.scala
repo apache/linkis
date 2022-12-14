@@ -32,14 +32,14 @@ object OperateRequest {
     parameters
       .getOrElse(
         OperateRequest.OPERATOR_NAME_KEY,
-        throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")
+        throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY does not exist.")
       )
       .asInstanceOf[String]
 
   def getOperationName(parameters: java.util.Map[String, Any]): String =
     parameters.get(OperateRequest.OPERATOR_NAME_KEY) match {
       case v: String => v
-      case _ => throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY is not exists.")
+      case _ => throw new GovernanceErrorException(20031, s"$OPERATOR_NAME_KEY does not exist.")
     }
 
 }

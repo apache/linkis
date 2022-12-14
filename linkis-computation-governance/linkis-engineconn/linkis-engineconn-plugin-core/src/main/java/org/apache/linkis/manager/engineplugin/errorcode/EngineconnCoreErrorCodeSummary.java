@@ -23,8 +23,8 @@ public enum EngineconnCoreErrorCodeSummary {
   CANNOT_INSTANCE_ECE(20000, "Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)"),
 
   CANNOT_DEFAULT_EF(20000, "Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)"),
-  ETL_NOT_EXISTS(20000, "EngineTypeLabel is not exists(EngineTypeLabel 不存在)"),
-  UCL_NOT_EXISTS(20000, "UserCreatorLabel is not exists(UserCreatorLabel 不存在)"),
+  ETL_NOT_EXISTS(20000, "EngineTypeLabel does not exist(EngineTypeLabel 不存在)"),
+  UCL_NOT_EXISTS(20000, "UserCreatorLabel does not exist(UserCreatorLabel 不存在)"),
   CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
   CANNOT_HOME_PATH_DIST(
       20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),

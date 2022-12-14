@@ -174,7 +174,7 @@ public class EngineRestfulApi {
     try {
       engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
     } catch (Exception e) {
-      logger.info("Instances {} is not exists", serviceInstance.getInstance());
+      logger.info("Instances {} does not exist", serviceInstance.getInstance());
     }
     if (null == engineNode) {
       ECResourceInfoRecord ecInfo = null;
@@ -182,7 +182,7 @@ public class EngineRestfulApi {
         try {
           ecInfo = ecResourceInfoService.getECResourceInfoRecord(ticketIdNode.asText());
         } catch (Exception e) {
-          logger.info("TicketId  {} is not exists", ticketIdNode.asText());
+          logger.info("TicketId  {} does not exist", ticketIdNode.asText());
         }
       }
       if (null == ecInfo) {

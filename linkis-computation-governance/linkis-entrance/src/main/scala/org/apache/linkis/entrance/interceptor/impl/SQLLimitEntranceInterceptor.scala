@@ -43,11 +43,11 @@ class SQLLimitEntranceInterceptor extends EntranceInterceptor {
         ""
       }
     }
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
     task match {
       case jobRequest: JobRequest =>
-        runType match {
-          case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
+        languageType match {
+          case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
             val executionCode = jobRequest.getExecutionCode
             SQLExplain.dealSQLLimit(executionCode, jobRequest, logAppender)
           case _ =>

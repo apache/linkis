@@ -54,7 +54,7 @@
           <Radio
             v-if="isUdf"
             :disabled="model === 1"
-            label="spark"/>
+            label="Spark"/>
           <Radio
             v-if="!isUdf"
             :label="$t('message.linkis.udf.ZDYHS')"/>
@@ -159,7 +159,7 @@
       </FormItem> -->
       <FormItem
         :label="$t('message.linkis.udf.useFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem class="format-item">
             <Input
@@ -270,7 +270,7 @@ export default {
       },
       TYPELIB: {
         jar: 0,
-        spark: {
+        Spark: {
           py: 1,
           scala: 2,
         },
@@ -341,8 +341,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(jar)$/,
-            message: this.$t('message.linkis.udf.HZMZC'),
+            validator: this.jarValidator,
             trigger: 'change',
           },
         ],
@@ -355,8 +354,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -369,8 +367,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -417,7 +414,7 @@ export default {
             type: 'string',
             required: true,
             message: this.$t('message.linkis.udf.SRFL'),
-            trigger: 'blur',
+            trigger: 'change',
           },
         ],
       },
@@ -441,7 +438,7 @@ export default {
       if (this.fnCategory.isCommon) {
         prop = 'jar';
       } else if (this.fnCategory.isSpark) {
-        prop = `spark.${suffix}`;
+        prop = `Spark.${suffix}`;
       } else {
         prop = `custom.${suffix}`;
       }
@@ -492,7 +489,7 @@ export default {
     'setting.fnType'(val) {
       let map = {};
       map[this.$t('message.linkis.udf.common')] = 'isCommon';
-      map['spark'] = 'isSpark';
+      map['Spark'] = 'isSpark';
       map[this.$t('message.linkis.udf.ZDYHS')] = 'isCustom';
       let type = map[val];
       Object.keys(this.fnCategory).forEach((key) => this.fnCategory[key] = false);
@@ -537,7 +534,7 @@ export default {
 
     init() {
       let { name, shared, description, path, udfName, directory, udfType, registerFormat, load, useFormat } = this.node;
-      let fnType = 'spark'
+      let fnType = 'Spark'
       if (udfType === 0) {
         fnType = this.$t('message.linkis.udf.common');
       } else if (udfType > 2) {
@@ -726,6 +723,26 @@ export default {
         this.$refs.directory.setQuery(null)
         this.directories = [...this.remoteDirectories]
       }
+    },
+    jarValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(jar)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.HZMZC')));
+      }
+      cb();
+    },
+    pyValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.ZCPYSCA')));
+      }
+      cb();
     }
   },
 };

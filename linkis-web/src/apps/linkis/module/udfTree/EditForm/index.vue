@@ -77,31 +77,6 @@ export default {
           ],
         },
         {
-          type: 'select',
-          title: "分类",
-          field: 'category',
-          value: '',
-          options: [
-            {"value": "udf", "label": "UDF", "disabled": false},
-            {"value": "function", "label": "函数", "disabled": false},
-          ],
-          props: {
-            multiple: false, 
-            placeholder: "请选择", 
-            notFoundText: "无匹配数据",
-            placement: "bottom", 
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
-              trigger: 'blur',
-            },
-          ],
-        },
-        {
           type: 'input',
           title: "用户名",
           field: 'userName',

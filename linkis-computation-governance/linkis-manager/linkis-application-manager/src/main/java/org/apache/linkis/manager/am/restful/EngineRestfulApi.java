@@ -283,10 +283,6 @@ public class EngineRestfulApi {
       throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
 
-    if (!isAdmin(userName)) {
-      return Message.error("You have no permission to batch kill EngineConn!");
-    }
-
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (Map<String, String> engineParam : param) {
       String moduleName = engineParam.get("applicationName");
@@ -338,14 +334,11 @@ public class EngineRestfulApi {
       return Message.error("instances parameters parsing failed(请求参数【instances】解析失败)");
     }
 
-    Sender sender = Sender.getSender(Sender.getThisServiceInstance());
     for (String engineInstance : instancesList) {
-      // String moduleName = engineParam.get("applicationName");
-      // String engineInstance = engineParam.get("engineInstance");
       String moduleName = GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue();
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(ServiceInstance.apply(moduleName, engineInstance), username);
-      engineStopService.stopEngineAsyn(stopEngineRequest, sender);
+      engineStopService.asyncStopEngineWithUpdateMetrics(stopEngineRequest);
     }
     logger.info("Finished to kill engines");
     return Message.ok("Kill engineConn succeed.");

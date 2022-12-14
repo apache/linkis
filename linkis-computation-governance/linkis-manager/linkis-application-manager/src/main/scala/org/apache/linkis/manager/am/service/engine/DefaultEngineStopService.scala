@@ -53,7 +53,6 @@ import scala.concurrent.{ExecutionContextExecutorService, Future}
 import scala.util.control.Breaks._
 
 import com.fasterxml.jackson.core.JsonProcessingException
-import org.json4s.jackson.Serialization.write
 
 @Service
 class DefaultEngineStopService extends AbstractEngineService with EngineStopService with Logging {
@@ -111,30 +110,6 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     )
   }
 
-  override def stopEngineAsyn(engineStopRequest: EngineStopRequest, sender: Sender): Unit = {
-    val runnable = new Runnable {
-      override def run(): Unit = {
-        //  1. set ec node Metrics status Unlock to ShuttingDown
-        //  2. ec node metircs report ignore update Shutingdown node
-        val instance = engineStopRequest.getServiceInstance.getInstance
-        val ok = nodeMetricManagerMapper.updateNodeStatus(
-          instance,
-          NodeStatus.ShuttingDown.ordinal(),
-          NodeStatus.Unlock.ordinal()
-        )
-        if (ok > 0) {
-          stopEngine(engineStopRequest, sender)
-        } else {
-          logger.info(
-            s"ec node:${instance} status update failed! maybe the status is not unlock. will skip to kill this ec node"
-          )
-        }
-
-      }
-    }
-    executor.submit(runnable)
-  }
-
   override def stopUnlockEngineByECM(
       ecmInstance: String,
       withMultiUserEngine: Boolean,
@@ -153,16 +128,20 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
     val emNode = new AMEMNode
     emNode.setServiceInstance(ecmInstanceService)
-    emNode.setNodeStatus(NodeStatus.Unlock)
 
-    val engineNodes = engineInfoService.listEMEngines(emNode)
-    logger.info("get ec node list size:{} of ecm:{} ", engineNodes.size(), ecmInstance)
+    val engineNodes = engineInfoService.listEMEngines(emNode).asScala
 
-    var loadInstanceResourceTotla = new LoadInstanceResource(0, 0, 0)
+    val unlockEngineNodes = engineNodes.filter(node => NodeStatus.Unlock.equals(node.getNodeStatus))
 
-    engineNodes.asScala.foreach { node =>
+    logger.info(
+      s"get ec node total num:${engineNodes.size} and unlock node num:${unlockEngineNodes.size} of ecm:${ecmInstance} "
+    )
+
+    var loadInstanceResourceTotal = new LoadInstanceResource(0, 0, 0)
+
+    unlockEngineNodes.foreach { node =>
       if (logger.isDebugEnabled) {
-        try logger.debug("engine node:" + JsonUtils.jackson.writeValueAsString(node))
+        try logger.debug("ec node:" + JsonUtils.jackson.writeValueAsString(node))
         catch {
           case e: JsonProcessingException =>
             logger.debug("convert jobReq to string with error:" + e.getMessage)
@@ -194,20 +173,20 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
             case dy: DriverAndYarnResource => dy.loadInstanceResource
             case _ => node.getNodeResource.getUsedResource
           }
-          loadInstanceResourceTotla = loadInstanceResourceTotla.add(realResource)
+          loadInstanceResourceTotal =
+            loadInstanceResourceTotal.add(node.getNodeResource.getUsedResource)
         }
 
-        logger.info(s"try to kill engine:${node.getServiceInstance.getInstance}")
+        logger.info(s"try to asyn kill engine node:${node.getServiceInstance.getInstance}")
         killEngineNum = killEngineNum + 1
         // asyn to stop
         val stopEngineRequest = new EngineStopRequest(node.getServiceInstance, operatorName)
-        val sender = Sender.getSender(Sender.getThisServiceInstance)
-        stopEngineAsyn(stopEngineRequest, sender)
+        asyncStopEngineWithUpdateMetrics(stopEngineRequest)
       }
     }
     resultMap.put("killEngineNum", killEngineNum)
-    resultMap.put("memory", loadInstanceResourceTotla.memory)
-    resultMap.put("cores", loadInstanceResourceTotla.cores)
+    resultMap.put("memory", loadInstanceResourceTotal.memory)
+    resultMap.put("cores", loadInstanceResourceTotal.cores)
     resultMap
   }
 
@@ -280,6 +259,38 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
         stopEngine(engineStopRequest, Sender.getSender(Sender.getThisServiceInstance))
       )(s"async stop engineFailed $engineStopRequest")
     }
+  }
+
+  override def asyncStopEngineWithUpdateMetrics(engineStopRequest: EngineStopRequest): Unit = {
+
+    Future {
+      Utils.tryCatch {
+        logger.info(s"Start to async stop engine node:$engineStopRequest")
+        //  1. set ec node Metrics status Unlock to ShuttingDown
+        //  2. ec node metircs report ignore update Shutingdown node
+        val instance = engineStopRequest.getServiceInstance.getInstance
+        logger.info(s"Try to update ec node:$engineStopRequest status Unlock --> ShuttingDown")
+        val ok = nodeMetricManagerMapper.updateNodeStatus(
+          instance,
+          NodeStatus.ShuttingDown.ordinal(),
+          NodeStatus.Unlock.ordinal()
+        )
+        if (ok > 0) {
+          logger.info(s"Try to do stop ec node $engineStopRequest action")
+          stopEngine(engineStopRequest, Sender.getSender(Sender.getThisServiceInstance))
+        } else {
+          logger.info(
+            s"ec node:${instance} status update failed! maybe the status is not unlock. will skip to kill this ec node"
+          )
+        }
+
+      } { case e: Exception =>
+        logger.error(s"asyncStopEngineWithUpdateMetrics with error:, ${e.getMessage}", e)
+
+      }
+
+    }
+
   }
 
 }

@@ -304,14 +304,14 @@ public class UDFRestfulApi {
 
   @ApiOperation(value = "isLoad", notes = "is load", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "udfId", dataType = "Long", value = "udf id"),
-    @ApiImplicitParam(name = "isLoad", dataType = "Boolean", value = "is load")
+    @ApiImplicitParam(name = "udfId", required = true, dataType = "Long", value = "udf id"),
+    @ApiImplicitParam(name = "isLoad", required = true, dataType = "Boolean", value = "is load")
   })
   @RequestMapping(path = "isload", method = RequestMethod.GET)
   public Message isLoad(
       HttpServletRequest req,
-      @RequestParam(value = "udfId", required = false) Long udfId,
-      @RequestParam(value = "isLoad", required = false) Boolean isLoad) {
+      @RequestParam(value = "udfId") Long udfId,
+      @RequestParam(value = "isLoad") Boolean isLoad) {
     String userName = ModuleUserUtils.getOperationUser(req, "isload ");
     Message message = null;
     try {

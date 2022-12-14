@@ -32,8 +32,13 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.util.DateTimeUtils
+import org.apache.spark.sql.types.{BinaryType, DateType, DecimalType, TimestampType, _}
 import org.apache.spark.sql.types.{StructField, StructType}
 
+import java.nio.charset.StandardCharsets
+import java.sql.{Date, Timestamp}
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -122,7 +127,9 @@ object SQLSession extends Logging {
     Utils.tryThrow({
       while (index < maxResult && iterator.hasNext) {
         val row = iterator.next()
-        val r: Array[Any] = columns.indices.map { i => toHiveString(row(i)) }.toArray
+        val r: Array[Any] = columns.indices.map { i =>
+          toHiveString((row(i), columnsSet.fields(i).dataType))
+        }.toArray
         writer.addRecord(new TableRecord(r))
         index += 1
       }
@@ -142,23 +149,83 @@ object SQLSession extends Logging {
     engineExecutionContext.sendResultSet(writer)
   }
 
-  private def toHiveString(value: Any): String = {
+  /** also see org.apache.spark.sql.execution.QueryExecution#toHiveString */
 
-    value match {
-      case value: String => value.replaceAll("\n|\t", " ")
-      case value: Double => nf.format(value)
-      case value: java.math.BigDecimal => formatDecimal(value)
-      case value: Any => value.toString
+  /** Formats a datum (based on the given data type) and returns the string representation. */
+  private def toHiveString(a: (Any, org.apache.spark.sql.types.DataType)): String = {
+    val primitiveTypes = Seq(
+      StringType,
+      IntegerType,
+      LongType,
+      DoubleType,
+      FloatType,
+      BooleanType,
+      ByteType,
+      ShortType,
+      DateType,
+      TimestampType,
+      BinaryType
+    )
+
+    def formatDecimal(d: java.math.BigDecimal): String = {
+      if (d.compareTo(java.math.BigDecimal.ZERO) == 0) {
+        java.math.BigDecimal.ZERO.toPlainString
+      } else {
+        d.stripTrailingZeros().toPlainString
+      }
+    }
+
+    /** Hive outputs fields of structs slightly differently than top level attributes. */
+    def toHiveStructString(a: (Any, org.apache.spark.sql.types.DataType)): String = a match {
+      case (struct: Row, StructType(fields)) =>
+        struct.toSeq
+          .zip(fields)
+          .map { case (v, t) =>
+            s""""${t.name}":${toHiveStructString((v, t.dataType))}"""
+          }
+          .mkString("{", ",", "}")
+      case (seq: Seq[_], ArrayType(typ, _)) =>
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+      case (map: Map[_, _], MapType(kType, vType, _)) =>
+        map
+          .map { case (key, value) =>
+            toHiveStructString((key, kType)) + ":" + toHiveStructString((value, vType))
+          }
+          .toSeq
+          .sorted
+          .mkString("{", ",", "}")
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case other: Any => other.toString
       case _ => null
     }
 
-  }
+    a match {
+      case (struct: Row, StructType(fields)) =>
+        struct.toSeq
+          .zip(fields)
+          .map { case (v, t) =>
+            s""""${t.name}":${toHiveStructString((v, t.dataType))}"""
+          }
+          .mkString("{", ",", "}")
+      case (seq: Seq[_], ArrayType(typ, _)) =>
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+      case (map: Map[_, _], MapType(kType, vType, _)) =>
+        map
+          .map { case (key, value) =>
+            toHiveStructString((key, kType)) + ":" + toHiveStructString((value, vType))
+          }
+          .toSeq
+          .sorted
+          .mkString("{", ",", "}")
 
-  private def formatDecimal(d: java.math.BigDecimal): String = {
-    if (null == d || d.compareTo(java.math.BigDecimal.ZERO) == 0) {
-      java.math.BigDecimal.ZERO.toPlainString
-    } else {
-      d.stripTrailingZeros().toPlainString
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case other: Any => other.toString
+      case _ => null
+
     }
   }
 

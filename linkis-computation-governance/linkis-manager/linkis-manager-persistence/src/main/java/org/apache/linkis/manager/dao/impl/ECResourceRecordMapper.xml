@@ -81,8 +81,8 @@
 
     <select id="getECResourceInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
         select * from linkis_cg_ec_resource_info_record
-        where id =(
-            <!-- get the latest record of this ec -->
+        where id in (
+            <!-- choose the latest record of this ec -->
             select max(ecr.id) as id from linkis_cg_ec_resource_info_record ecr
             WHERE 1=1
             <if test="instances != null and instances.size() > 0">

@@ -19,11 +19,17 @@ package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.manager.am.restful.EMRestfulApi;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
+import org.apache.linkis.manager.am.util.ECResourceInfoUtils;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
 import org.apache.linkis.manager.dao.ECResourceRecordMapper;
+import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.manager.label.service.NodeLabelService;
+import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,6 +57,12 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
   @Autowired private ECResourceRecordMapper ecResourceRecordMapper;
 
   @Autowired private NodeManagerMapper nodeManagerMapper;
+
+  @Autowired private LabelManagerMapper labelManagerMapper;
+
+  @Autowired private LabelManagerPersistence labelManagerPersistence;
+
+  @Autowired private NodeLabelService nodeLabelService;
 
   @Override
   public ECResourceInfoRecord getECResourceInfoRecord(String ticketId) {
@@ -101,7 +113,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
       statusIntList.add(NodeStatus.valueOf(status).ordinal());
     }
 
-    // get engine conn info list filter by creator user list /engineType/instance status list
+    //   get engine conn info list filter by creator user list /instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
         nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList);
 
@@ -112,6 +124,28 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
       return resultList;
     }
 
+    // filter by engineTypes
+    List<PersistencerEcNodeInfo> ecNodesFilterInfo = new ArrayList<>();
+    HashMap<String, List<Label<?>>> labelsMap =
+        nodeLabelService.getNodeLabelsByInstanceList2(instanceList);
+    for (PersistencerEcNodeInfo node : ecNodesInfo) {
+      List<Label<?>> labels =
+          labelsMap.get(node.getInstance()).stream()
+              .filter(
+                  label -> {
+                    if (label instanceof EngineTypeLabel) {
+                      String engineType = ((EngineTypeLabel) label).getEngineType();
+                      return engineTypeList.contains(engineType);
+                    } else {
+                      return false;
+                    }
+                  })
+              .collect(Collectors.toList());
+      if (labels.size() > 0) {
+        ecNodesFilterInfo.add(node);
+      }
+    }
+
     // filter by engineType and get latest resource record info
     List<ECResourceInfoRecord> ecResourceInfoRecords =
         ecResourceRecordMapper.getECResourceInfoList(instanceList, engineTypeList);
@@ -120,7 +154,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
         ecResourceInfoRecords.stream()
             .collect(Collectors.toMap(ECResourceInfoRecord::getServiceInstance, item -> item));
 
-    ecNodesInfo.forEach(
+    ecNodesFilterInfo.forEach(
         info -> {
           try {
             Map<String, Object> item =
@@ -129,11 +163,21 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
             Integer intStatus = info.getInstanceStatus();
             item.put("instanceStatus", NodeStatus.values()[intStatus].name());
             ECResourceInfoRecord latestEcInfo = map.get(info.getInstance());
-            item.put("useResource", latestEcInfo.getUsedResource());
-            item.put("ecmInstance", latestEcInfo.getEcmInstance());
-            String engineType = latestEcInfo.getLabelValue().split(",")[1].split("-")[0];
-            item.put("engineType", engineType);
+            if (latestEcInfo == null) {
+              logger.info("Can not get any resource record info of ec:{}", info.getInstance());
+            } else {
+              String usedResourceStr = latestEcInfo.getUsedResource();
+              /*
+              {"instance":1,"memory":"2.0 GB","cpu":1}
+              ->
+              {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
+               */
 
+              item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
+              item.put("ecmInstance", latestEcInfo.getEcmInstance());
+              String engineType = latestEcInfo.getLabelValue().split(",")[1].split("-")[0];
+              item.put("engineType", engineType);
+            }
             resultList.add(item);
 
           } catch (JsonProcessingException e) {

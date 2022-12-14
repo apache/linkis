@@ -190,33 +190,45 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
-  public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws JsonProcessingException {
+  public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
 
     JsonNode creatorsParam = jsonNode.get("creators");
     JsonNode engineTypesParam = jsonNode.get("engineTypes");
     JsonNode statussParam = jsonNode.get("statuss");
 
-    if (creatorsParam == null || creatorsParam.size() == 0) {
+    if (creatorsParam == null || creatorsParam.isNull() || creatorsParam.size() == 0) {
       return Message.error("creators is null in the parameters of the request(请求参数中【creators】为空)");
     }
 
-    List<String> creatorUserList =
-        JsonUtils.jackson()
-            .readValue(creatorsParam.toString(), new TypeReference<List<String>>() {});
+    List<String> creatorUserList = new ArrayList<>();
+    try {
+      creatorUserList =
+          JsonUtils.jackson()
+              .readValue(creatorsParam.toString(), new TypeReference<List<String>>() {});
+    } catch (JsonProcessingException e) {
+      return Message.error("parameters:creators parsing failed(请求参数【creators】解析失败)");
+    }
 
     List<String> engineTypeList = new ArrayList<>();
-    if (engineTypesParam != null) {
-      engineTypeList =
-          JsonUtils.jackson()
-              .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
+    if (engineTypesParam != null && !engineTypesParam.isNull()) {
+      try {
+        engineTypeList =
+            JsonUtils.jackson()
+                .readValue(engineTypesParam.toString(), new TypeReference<List<String>>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:engineTypes parsing failed(请求参数【engineTypes】解析失败)");
+      }
     }
 
     List<String> statusStrList = new ArrayList<>();
-    if (statussParam != null) {
-      statusStrList =
-          JsonUtils.jackson()
-              .readValue(statussParam.toString(), new TypeReference<List<String>>() {});
+    if (statussParam != null && !statussParam.isNull()) {
+      try {
+        statusStrList =
+            JsonUtils.jackson()
+                .readValue(statussParam.toString(), new TypeReference<List<String>>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:statuss parsing failed(请求参数【statuss】解析失败)");
+      }
     }
 
     String username = ModuleUserUtils.getOperationUser(req, "ecList");
@@ -239,9 +251,15 @@ public class ECResourceInfoRestfulApi {
       }
     }
 
+    logger.info(
+        "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}]",
+        String.join(",", creatorUserList),
+        String.join(",", engineTypeList),
+        String.join(",", statusStrList));
+
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusStrList);
 
-    return Message.ok().data("ecLit", list);
+    return Message.ok().data("ecList", list);
   }
 }

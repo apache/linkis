@@ -87,6 +87,26 @@ public class ECResourceInfoUtils {
     return resourceVo;
   }
 
+  /*
+  {"instance":1,"memory":"2.0 GB","cpu":1}
+  ->
+  {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
+   */
+  public static Map<String, Object> getStringToMap(String usedResourceStr) {
+    Map<String, Object> resourceMap = new HashMap<>();
+    Map<String, Object> map =
+        BDPJettyServerHelper.gson().fromJson(usedResourceStr, new HashMap<>().getClass());
+    if (MapUtils.isNotEmpty(map)) {
+
+      if (!usedResourceStr.contains("driver")) {
+        resourceMap.put("driver", map);
+      } else {
+        resourceMap = map;
+      }
+    }
+    return resourceMap;
+  }
+
   public static AMEngineNode convertECInfoTOECNode(ECResourceInfoRecord ecInfo) {
     AMEngineNode engineNode = new AMEngineNode();
     AMEMNode ecmNode = new AMEMNode();

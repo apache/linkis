@@ -26,15 +26,62 @@ INSTALL_HOME=`pwd`
 
 
 function print_usage(){
-  echo "Usage: linkis-daemon [start | stop | restart | status] [serverName]"
+  echo "Usage: linkis-daemon [start | stop | restart | status] [serverName] [debug-port] [jvm-num] "
   echo " serverName            The service name of the operation"
+  echo "debug-port  Specify the service to open the debug port. Not required"
+  echo "jvm-num  Specifies the JVM service memory. Not necessary"
   echo "Most commands print help when invoked w/o parameters."
 }
 
-if [ $# != 2 ]; then
+if [ $# -gt 4 ]; then
   print_usage
   exit 2
 fi
+
+#set init debug_port and  jvm-num
+export debug_port=""
+export jvm_num=""
+
+if [ $# -eq 4 ]; then
+     if [[ ${3} == *"debug"* ]]; then
+            export debug_port=${3#*-}
+            export jvm_num=${4#*-}
+     else
+            export jvm_num=${3#*-}
+            export debug_port=${4#*-}
+     fi
+fi
+
+if [ $# -eq 3 ]; then
+     if [[ ${3} == *"debug"* ]]; then
+            export debug_port=${3#*-}
+     else
+            export jvm_num=${3#*-}
+     fi
+fi
+
+#set debug-port
+function setport()
+{
+  if [ "$debug_port" !=  "" ]; then
+    pid=`lsof -i :$debug_port | grep -v "PID"`
+    if [ "$pid" != "" ];then
+      echo "$debug_port already used"
+      echo "The port is already in use, please check before installing"
+      exit 1
+    fi
+    sed -i "s/#export DEBUG_PORT=/export DEBUG_PORT=${debug_port}/g" $SERVER_START_BIN
+    echo "$debug_port"
+  fi
+}
+
+#set jvm
+function setjvm()
+{
+  if [ "$jvm_num" !=  "" ]; then
+    sed -i "s/#export DYNAMIC_JVM=/export DYNAMIC_JVM=${jvm_num}/g" $SERVER_START_COMMON
+  fi
+}
 
 # set LINKIS_HOME
 if [ "$LINKIS_HOME" = "" ]; then
@@ -66,6 +113,7 @@ function start()
       fi
   fi
   export SERVER_START_BIN=$LINKIS_HOME/sbin/ext/linkis-$SERVER_NAME
+  export SERVER_START_COMMON=$LINKIS_HOME/sbin/ext/linkis-common-start
   if [[ ! -f "${SERVER_START_BIN}" ]]; then
       echo "The $SERVER_NAME is wrong or the corresponding startup script does not exist: "
       echo "$SERVER_START_BIN"
@@ -73,6 +121,10 @@ function start()
   else
       echo "Start server, startup script:  $SERVER_START_BIN"
       export SERVER_NAME=linkis-$SERVER_NAME
+      sed -i "/.*export DYNAMIC_JVM*/c\#export DYNAMIC_JVM=" $SERVER_START_COMMON
+      sed -i "/.*export DEBUG_PORT*/c\#export DEBUG_PORT=" $SERVER_START_BIN
+      setjvm
+      setport
       sh  $SERVER_START_BIN
   fi
 }
@@ -155,9 +207,6 @@ export SERVER_NAME=$2
 case $SERVER_NAME in
   "cg-engineconnmanager"|"linkis-cg-engineconnmanager"|"engineconnmanager")
     export SERVER_NAME="cg-engineconnmanager"
-    ;;
-  "cg-engineplugin"|"linkis-cg-engineplugin"|"engineplugin")
-    export SERVER_NAME="cg-engineplugin"
     ;;
   "cg-entrance"|"linkis-cg-entrance"|"entrance")
     export SERVER_NAME="cg-entrance"

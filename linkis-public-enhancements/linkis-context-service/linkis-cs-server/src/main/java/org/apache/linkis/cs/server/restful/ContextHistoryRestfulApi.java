@@ -71,7 +71,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throw new CSErrorException(97000, "history source cannot be empty");
     }
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "createHistory,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID, history);
@@ -94,7 +94,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throw new CSErrorException(97000, "history source cannot be empty");
     }
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "removeHistory,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, history);
@@ -112,7 +112,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "getHistories,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID);
@@ -137,7 +137,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
       throw new CSErrorException(97000, "history source cannot be empty");
     }
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "getHistory,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, source);
@@ -158,7 +158,7 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "searchHistory,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, keywords);

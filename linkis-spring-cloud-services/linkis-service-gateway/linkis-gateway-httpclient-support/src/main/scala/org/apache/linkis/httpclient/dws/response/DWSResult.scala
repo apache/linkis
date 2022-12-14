@@ -82,9 +82,7 @@ trait DWSResult extends Logging with HttpResult {
       this.url = url
       this.contentType = contentType
     } { case e: Exception =>
-      throw new HttpClientResultException(
-        s"URL $url request failed! ResponseBody is $responseBody. ${e.getMessage}"
-      )
+      logger.error(e.getMessage())
     }
 
   }

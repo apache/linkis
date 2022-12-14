@@ -112,7 +112,6 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
 
   override def stopUnlockEngineByECM(
       ecmInstance: String,
-      withMultiUserEngine: Boolean,
       operatorName: String
   ): java.util.Map[String, Any] = {
 
@@ -160,11 +159,11 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       val engineTypeLabel =
         node.getLabels.asScala.find(_.isInstanceOf[EngineTypeLabel]).getOrElse(null)
       val engineTypeStr = engineTypeLabel.asInstanceOf[EngineTypeLabel] getEngineType
-      val isMultiUserEngineNode = AMConfiguration.isMultiUserEngine(engineTypeStr)
+      val isAllowKill = AMConfiguration.isAllowKilledEngineType(engineTypeStr)
 
-      if (isMultiUserEngineNode == true && withMultiUserEngine == false) {
+      if (isAllowKill == false) {
         logger.info(
-          s"skipped to kill multi user engine node:${node.getServiceInstance.getInstance}"
+          s"skipped to kill engine node:${node.getServiceInstance.getInstance},engine type:${engineTypeStr}"
         )
       } else {
         // calculate the resources that can be released
@@ -187,6 +186,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     resultMap.put("killEngineNum", killEngineNum)
     resultMap.put("memory", loadInstanceResourceTotal.memory)
     resultMap.put("cores", loadInstanceResourceTotal.cores)
+    resultMap.put("batchKillEngineType", AMConfiguration.ALLOW_BATCH_KILL_ENGINE_TYPES.getValue)
     resultMap
   }
 
@@ -283,7 +283,6 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
             s"ec node:${instance} status update failed! maybe the status is not unlock. will skip to kill this ec node"
           )
         }
-
       } { case e: Exception =>
         logger.error(s"asyncStopEngineWithUpdateMetrics with error:, ${e.getMessage}", e)
 

@@ -31,10 +31,17 @@ if [ ! -w "$LINKIS_LOG_DIR" ] ; then
   mkdir -p "$LINKIS_LOG_DIR"
 fi
 
-if test -z "$SERVER_HEAP_SIZE"
-then
-  export SERVER_HEAP_SIZE="512M"
+
+if test -z "$EUREKA_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$EUREKA_HEAP_SIZE
 fi
+
 
 if [ "$DEBUG_PORT" ];
 then

@@ -44,15 +44,15 @@ class CommentInterceptor extends EntranceInterceptor {
    */
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(task.getLabels)
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
-    runType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         task.setExecutionCode(SQLCommentHelper.dealComment(task.getExecutionCode))
-      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON =>
         task.setExecutionCode(PythonCommentHelper.dealComment(task.getExecutionCode))
-      case CodeAndRunTypeUtils.RUN_TYPE_SCALA | CodeAndRunTypeUtils.RUN_TYPE_JAVA =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA | CodeAndRunTypeUtils.LANGUAGE_TYPE_JAVA =>
         task.setExecutionCode(ScalaCommentHelper.dealComment(task.getExecutionCode))
-      case CodeAndRunTypeUtils.RUN_TYPE_SHELL =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
       case _ =>
     }
     task

@@ -57,54 +57,6 @@ object TaskConversions extends Logging {
     task
   }
 
-  /* @deprecated
-  def queryTask2RequestPersistTask(queryTask: QueryTask): RequestPersistTask = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val task = new RequestPersistTask
-    BeanUtils.copyProperties(queryTask, task)
-    task.setSource(BDPJettyServerHelper.gson.fromJson(queryTask.getSourceJson, classOf[java.util.HashMap[String, String]]))
-    task.setParams(BDPJettyServerHelper.gson.fromJson(queryTask.getParamsJson, classOf[java.util.HashMap[String, Object]]))
-    task
-  } */
-
-  /* @deprecated
-  def requestPersistTaskTask2QueryTask(requestPersistTask: RequestPersistTask): QueryTask = {
-    val task: QueryTask = new QueryTask
-    BeanUtils.copyProperties(requestPersistTask, task)
-    if (requestPersistTask.getParams != null)
-      task.setParamsJson(BDPJettyServerHelper.gson.toJson(requestPersistTask.getParams))
-    else
-      task.setParamsJson(null)
-    task
-  } */
-
-  /* def queryTask2QueryTaskVO(queryTask: QueryTask): QueryTaskVO = {
-    QueryUtils.exchangeExecutionCode(queryTask)
-    val taskVO = new QueryTaskVO
-    BeanUtils.copyProperties(queryTask, taskVO)
-    if (!StringUtils.isEmpty(taskVO.getSourceJson)) {
-      Utils.tryCatch {
-        val source = BDPJettyServerHelper.gson.fromJson(taskVO.getSourceJson, classOf[util.Map[String, String]])
-        taskVO.setSourceTailor(source.asScala.map(_._2).foldLeft("")(_ + _ + "-").stripSuffix("-"))
-      } {
-        case _ => warn("sourceJson deserializae failed,this task may be the old data")
-      }
-    }
-    if (queryTask.getExecId() != null && queryTask.getExecuteApplicationName() != null && queryTask.getInstance() != null) {
-      taskVO.setStrongerExecId(ZuulEntranceUtils.generateExecID(queryTask.getExecId(),
-        queryTask.getExecuteApplicationName(), queryTask.getInstance(), queryTask.getRequestApplicationName))
-    }
-    val status = queryTask.getStatus()
-    val createdTime = queryTask.getCreatedTime()
-    val updatedTime = queryTask.getUpdatedTime()
-    if (isJobFinished(status) && createdTime != null && updatedTime != null) {
-      taskVO.setCostTime(queryTask.getUpdatedTime().getTime() - queryTask.getCreatedTime().getTime());
-    } else if (createdTime != null) {
-      taskVO.setCostTime(System.currentTimeMillis() - queryTask.getCreatedTime().getTime());
-    }
-    taskVO
-  } */
-
   def isJobFinished(status: String): Boolean = {
     TaskStatus.Succeed.toString.equals(status) ||
     TaskStatus.Failed.toString.equals(status) ||
@@ -247,7 +199,7 @@ object TaskConversions extends Logging {
     taskVO.setInstance(job.getInstances)
     taskVO.setExecId(job.getJobReqId)
     taskVO.setUmUser(job.getSubmitUser)
-
+    taskVO.setExecuteUser(job.getExecuteUser)
     taskVO.setProgress(job.getProgress)
     taskVO.setLogPath(job.getLogPath)
     taskVO.setStatus(job.getStatus)
@@ -263,7 +215,7 @@ object TaskConversions extends Logging {
         engineType = LabelUtil.getEngineType(labelList)
       }
       codeType = LabelUtil.getCodeType(labelList)
-      val userCreator = Option(LabelUtil.getUserCreator(labelList)).getOrElse(null)
+      val userCreator = Option(LabelUtil.getUserCreator(labelList)).orNull
       if (null != userCreator) {
         creator = userCreator._2
       }
@@ -323,7 +275,7 @@ object TaskConversions extends Logging {
 
     val entranceName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
     val instances =
-      job.getInstances().split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
+      job.getInstances.split(JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue)
     taskVO.setStrongerExecId(
       ZuulEntranceUtils.generateExecID(job.getJobReqId, entranceName, instances)
     )

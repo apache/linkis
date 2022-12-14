@@ -23,7 +23,10 @@ class PYScriptParser private extends CommonScriptParser {
   override def prefix: String = "#@set"
 
   override def belongTo(suffix: String): Boolean =
-    CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_PYTHON)
+    CodeAndRunTypeUtils.getSuffixBelongToLanguageTypeOrNot(
+      suffix,
+      CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON
+    )
 
   override def prefixConf: String = "#conf@set"
 }

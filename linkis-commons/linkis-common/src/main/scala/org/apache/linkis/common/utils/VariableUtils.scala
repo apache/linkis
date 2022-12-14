@@ -88,23 +88,16 @@ object VariableUtils extends Logging {
     parserDate(codeOperation, run_date)
   }
 
-  def replace(code: String, runtType: String, variables: util.Map[String, String]): String = {
-    val codeTypeAndRunTypeRelationMap = CodeAndRunTypeUtils.getCodeTypeAndRunTypeRelationMap
-    if (codeTypeAndRunTypeRelationMap.isEmpty) {
+  def replace(code: String, codeType: String, variables: util.Map[String, String]): String = {
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+    if (StringUtils.isBlank(languageType)) {
       return code
     }
-    val allowedRunTypeMap: Map[String, String] =
-      CodeAndRunTypeUtils.getRunTypeAndCodeTypeRelationMap
-    val codeType = allowedRunTypeMap.getOrElse(runtType, null)
-    if (codeType == null) {
-      return code
-    }
-
     var run_date: CustomDateType = null
 
     val nameAndType = mutable.Map[String, variable.VariableType]()
 
-    val nameAndValue: mutable.Map[String, String] = getCustomVar(code, codeType)
+    val nameAndValue: mutable.Map[String, String] = getCustomVar(code, languageType)
 
     def putNameAndType(data: mutable.Map[String, String]): Unit = if (null != data) data foreach {
       case (key, value) =>
@@ -348,23 +341,26 @@ object VariableUtils extends Logging {
    *   :SQL,PYTHON
    * @return
    */
-  def getCustomVar(code: String, codeType: String): mutable.Map[String, String] = {
+  def getCustomVar(code: String, languageType: String): mutable.Map[String, String] = {
     val nameAndValue = mutable.Map[String, String]()
 
     var varString: String = null
     var errString: String = null
 
-    codeType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         varString = """\s*--@set\s*.+\s*"""
         errString = """\s*--@.*"""
-      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON | CodeAndRunTypeUtils.RUN_TYPE_SHELL =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
         varString = """\s*#@set\s*.+\s*"""
         errString = """\s*#@"""
-      case CodeAndRunTypeUtils.RUN_TYPE_SCALA =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         varString = """\s*//@set\s*.+\s*"""
         errString = """\s*//@.+"""
-      case CodeAndRunTypeUtils.RUN_TYPE_JAVA => varString = """\s*!!@set\s*.+\s*"""
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_JAVA =>
+        varString = """\s*!!@set\s*.+\s*"""
+      case _ =>
+        return nameAndValue
     }
 
     val customRegex = varString.r.unanchored

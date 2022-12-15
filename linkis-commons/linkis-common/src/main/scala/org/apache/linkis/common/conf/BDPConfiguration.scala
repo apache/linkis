@@ -267,10 +267,15 @@ private[conf] object BDPConfiguration extends Logging {
   def get(key: String, hotload: Boolean = false): String =
     getOption(key, hotload).getOrElse(throw new NoSuchElementException(key))
 
+  def get(key: String): String =
+    getOption(key).getOrElse(throw new NoSuchElementException(key))
+
   def getInt(key: String, default: Int, hotload: Boolean = false): Int =
     getOption(key, hotload).map(_.toInt).getOrElse(default)
 
   def getInt(commonVars: CommonVars[Int]): Option[Int] = getOption(commonVars)
+
+  def contains(key: String): Boolean = getOption(key).isDefined
 
   def contains(key: String, hotload: Boolean = false): Boolean = getOption(key, hotload).isDefined
 

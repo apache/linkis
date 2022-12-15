@@ -22,7 +22,6 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.EntranceErrorException
-import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.scheduler.executer.{Executor, ExecutorManager}
 import org.apache.linkis.scheduler.queue.{GroupFactory, Job, SchedulerEvent}
@@ -49,17 +48,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
   override def askExecutor(schedulerEvent: SchedulerEvent): Option[Executor] =
     schedulerEvent match {
       case job: Job =>
-        val executor = createExecutor(job)
-        if (executor != null) {
-          job match {
-            case entranceExecutionJob: EntranceExecutionJob =>
-              val jobReq = entranceExecutionJob.getJobRequest
-              jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
-            case _ =>
-          }
-          Some(executor)
-        } else None
-
+        Option(createExecutor(job))
     }
 
   // Update the overall job running status after no subtask runs
@@ -70,7 +59,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
         val startTime = System.currentTimeMillis()
         var warnException: WarnException = null
         var executor: Option[Executor] = None
-        while (System.currentTimeMillis - startTime < wait.toMillis && executor.isEmpty)
+        while (System.currentTimeMillis - startTime < wait.toMillis && executor.isEmpty) {
           Utils.tryCatch(executor = askExecutor(job)) {
             case warn: WarnException =>
               logger.warn("request engine failed!", warn)
@@ -78,6 +67,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
               None
             case t: Throwable => throw t
           }
+        }
         // todo check
         if (warnException != null && executor.isEmpty) throw warnException
         executor
@@ -98,7 +88,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
     schedulerEvent match {
       case job: EntranceJob =>
         job.getJobRequest match {
-          case jobRequest: JobRequest =>
+          case jobReq: JobRequest =>
             val entranceEntranceExecutor =
               new DefaultEntranceExecutor(idGenerator.incrementAndGet())
             // getEngineConn Executor
@@ -108,6 +98,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
                 LogUtils.generateInfo("Your job is being scheduled by orchestrator.")
               )
             )
+            jobReq.setUpdatedTime(new Date(System.currentTimeMillis()))
 
             /**
              * // val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)

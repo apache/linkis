@@ -49,6 +49,8 @@ import java.util
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
+import scala.collection.JavaConverters._
+
 class EntranceWebSocketService
     extends ServerEventService
     with EntranceEventListener
@@ -115,10 +117,9 @@ class EntranceWebSocketService
               case job: Job =>
                 if (jobIdToEventId.containsKey(job.getId)) {
                   val entranceJob = job.asInstanceOf[EntranceJob]
-                  val engineTypeLabel = entranceJob.getJobRequest.getLabels
-                    .filter(l => l.getLabelKey.equalsIgnoreCase(LabelKeyConstant.ENGINE_TYPE_KEY))
-                    .headOption
-                    .getOrElse(null)
+                  val engineTypeLabel = entranceJob.getJobRequest.getLabels.asScala
+                    .find(l => l.getLabelKey.equalsIgnoreCase(LabelKeyConstant.ENGINE_TYPE_KEY))
+                    .orNull
                   if (null == engineTypeLabel) {
                     logger.error("Invalid engineTpyeLabel")
                     return
@@ -132,7 +133,8 @@ class EntranceWebSocketService
                   Utils.tryQuietly(
                     sendMsg(
                       job,
-                      "Get waiting size succeed."
+                      Message
+                        .ok("Get waiting size succeed.")
                         .data("execID", realID)
                         .data("taskID", taskID)
                         .data("waitingSize", index)
@@ -178,17 +180,16 @@ class EntranceWebSocketService
     } // TODO Convert to a suitable Map(转换成合适的Map)
     val websocketTag = event.getWebsocketTag
     params.put(TaskConstant.EXECUTE_USER, event.getUser)
-    val jobId = entranceServer.execute(params)
-    jobIdToEventId synchronized jobIdToEventId.put(jobId, event.getId)
-    websocketTagJobID synchronized websocketTagJobID.put(jobId, websocketTag)
-    val jobRequest = entranceServer.getJob(jobId).get.asInstanceOf[EntranceJob].getJobRequest
+    val job = entranceServer.execute(params)
+    jobIdToEventId synchronized jobIdToEventId.put(job.getId(), event.getId)
+    websocketTagJobID synchronized websocketTagJobID.put(job.getId(), websocketTag)
+    val jobRequest = job.asInstanceOf[EntranceJob].getJobRequest
     val taskID = jobRequest.getId
-    val job = entranceServer.getJob(jobId).get
     val engineTypeLabel = LabelUtil.getEngineTypeLabel(jobRequest.getLabels)
     val executeApplicationName: String = engineTypeLabel.getEngineType
     val creator: String = LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator
     val execID = ZuulEntranceUtils.generateExecID(
-      jobId,
+      job.getId(),
       executeApplicationName,
       Sender.getThisInstance,
       creator
@@ -197,7 +198,7 @@ class EntranceWebSocketService
     executeResponseMsg
       .data("execID", execID)
       .data("taskID", taskID)
-      .data("websocketTag", websocketTagJobID.get(jobId))
+      .data("websocketTag", websocketTagJobID.get(job.getId()))
     executeResponseMsg.setMethod(restfulURI + "entrance/execute")
     executeResponseMsg.setStatus(0)
     sendMsg(job, executeResponseMsg)
@@ -238,7 +239,7 @@ class EntranceWebSocketService
     "The request was executed successfully!"
       .data("execID", execID)
       .data("taskID", taskID)
-      .data("websocketTag", websocketTagJobID.get(jobId))
+      .data("websocketTag", websocketTagJobID.get(job.getId))
     // executeResponseMsg
   }
 
@@ -301,8 +302,8 @@ class EntranceWebSocketService
           .data("websocketTag", websocketTagJobID.get(realID))
           .data("taskID", taskID)
         logger.info(
-          s" retMessage: execID is $longExecID, status is ${status.toString}, websocketTag is ${websocketTagJobID
-            .get(realID)}"
+          "retMessage: execID is {}, status is {}, websocketTag is {}",
+          Array(longExecID, status.toString, websocketTagJobID.get(realID)): _*
         )
         retMessage.setStatus(0)
         retMessage.setMethod(restfulURI + "entrance/" + longExecID + "/status")

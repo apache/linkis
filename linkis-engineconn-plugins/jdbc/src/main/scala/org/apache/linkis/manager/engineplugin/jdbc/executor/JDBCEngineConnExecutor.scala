@@ -66,7 +66,6 @@ import java.util
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
@@ -261,7 +260,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val md = resultSet.getMetaData
       val metaArrayBuffer = new ArrayBuffer[(String, String)]()
       for (i <- 1 to md.getColumnCount) {
-        metaArrayBuffer.asJava.add(
+        metaArrayBuffer.append(
           Tuple2(md.getColumnName(i), JDBCHelper.getTypeStr(md.getColumnType(i)))
         )
       }

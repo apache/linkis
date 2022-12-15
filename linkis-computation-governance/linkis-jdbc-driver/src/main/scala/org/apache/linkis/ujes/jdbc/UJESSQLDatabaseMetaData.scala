@@ -25,8 +25,6 @@ import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 
-import scala.collection.JavaConverters._
-
 
 class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends DatabaseMetaData with Logging {
   override def allProceduresAreCallable(): Boolean = false
@@ -328,7 +326,6 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection) extends Data
     val getDBSAction = GetDBSAction.builder().setUser(getUserName).build()
     val dBSResult = ujesSQLConnection.ujesClient.getDBS(getDBSAction)
     val dbsName = dBSResult.getDBSName()
-    import scala.collection.JavaConverters._
     logger.info(s"dbNames are " + dbsName.mkString(","))
     new LinkisMetaDataResultSet[String](util.Arrays.asList("TABLE_SCHEMA", "TABLE_CATALOG"),
       util.Arrays.asList("string", "string"), dbsName) {

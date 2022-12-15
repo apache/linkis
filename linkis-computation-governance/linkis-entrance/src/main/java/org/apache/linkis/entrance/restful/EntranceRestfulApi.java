@@ -98,15 +98,14 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     logger.info("Begin to get an execID");
     json.put(TaskConstant.EXECUTE_USER, ModuleUserUtils.getOperationUser(req));
     json.put(TaskConstant.SUBMIT_USER, SecurityFilter.getLoginUsername(req));
-    HashMap<String, String> map = (HashMap) json.get(TaskConstant.SOURCE);
+    HashMap<String, String> map = (HashMap<String, String>) json.get(TaskConstant.SOURCE);
     if (map == null) {
       map = new HashMap<>();
       json.put(TaskConstant.SOURCE, map);
     }
     String ip = JobHistoryHelper.getRequestIpAddr(req);
     map.put(TaskConstant.REQUEST_IP, ip);
-    String jobId = entranceServer.execute(json);
-    Job job = entranceServer.getJob(jobId).get();
+    Job job = entranceServer.execute(json);
     JobRequest jobReq = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobReq.getId();
     ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
@@ -121,7 +120,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         "************************************SCRIPT CODE************************************", job);
     String execID =
         ZuulEntranceUtils.generateExecID(
-            jobId,
+            job.getId(),
             Sender.getThisServiceInstance().getApplicationName(),
             new String[] {Sender.getThisInstance()});
     pushLog(
@@ -158,8 +157,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     }
     String ip = JobHistoryHelper.getRequestIpAddr(req);
     map.put(TaskConstant.REQUEST_IP, ip);
-    String jobId = entranceServer.execute(json);
-    Job job = entranceServer.getJob(jobId).get();
+    Job job = entranceServer.execute(json);
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobRequest.getId();
     ModuleUserUtils.getOperationUser(req, "submit jobReqId: " + jobReqId);
@@ -175,7 +173,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     pushLog(
         LogUtils.generateInfo(
             "Your job is accepted,  jobID is "
-                + jobId
+                + job.getId()
                 + " and jobReqId is "
                 + jobReqId
                 + " in "
@@ -184,7 +182,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         job);
     String execID =
         ZuulEntranceUtils.generateExecID(
-            jobId,
+            job.getId(),
             Sender.getThisServiceInstance().getApplicationName(),
             new String[] {Sender.getThisInstance()});
     message = Message.ok();

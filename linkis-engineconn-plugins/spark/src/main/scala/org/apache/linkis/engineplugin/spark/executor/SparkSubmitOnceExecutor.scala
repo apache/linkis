@@ -117,11 +117,12 @@ class SparkSubmitOnceExecutor(
     } else {
       logger.info("clusterDescriptorAdapter/getJobState is not null")
     }
-    if (
-        oldProgress >= 1 || (clusterDescriptorAdapter != null && clusterDescriptorAdapter.getJobState != null && clusterDescriptorAdapter.getJobState.isFinal)
-    )
+    val jobIsFinal = clusterDescriptorAdapter != null &&
+      clusterDescriptorAdapter.getJobState != null &&
+      clusterDescriptorAdapter.getJobState.isFinal
+    if (oldProgress >= 1 || jobIsFinal) {
       1
-    else {
+    } else {
       val newProgress = SparkJobProgressUtil.getProgress(this.getApplicationId)
       if (newProgress > oldProgress) {
         oldProgress = newProgress

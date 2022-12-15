@@ -108,11 +108,11 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
 
           override def run(): Unit = if (!isCompleted && !waitingToFinished) {
             val jobState = Utils.tryCatch(clusterDescriptorAdapter.getJobState) { t =>
-              if (fetchJobStatusFailedNum >= SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue) {
-                logger.error(
-                  s"Fetch job status has failed max ${SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue} times, now stop this SparkEngineConn.",
-                  t
-                )
+              val maxFailedNum = SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue
+              if (fetchJobStatusFailedNum >= maxFailedNum) {
+                val errMsg =
+                  s"Fetch job status has failed max $maxFailedNum times, now stop this SparkEngineConn."
+                logger.error(errMsg, t)
                 tryFailed()
                 close()
               } else {

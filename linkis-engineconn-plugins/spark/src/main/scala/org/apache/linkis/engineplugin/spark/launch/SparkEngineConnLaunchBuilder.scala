@@ -89,13 +89,17 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
       .find(_.isInstanceOf[UserCreatorLabel])
       .map { case label: UserCreatorLabel => label.getUser }
       .get
+
+    def getBmlString(bml: BmlResource): String = {
+      s"BmlResource(${bml.getFileName}, ${bml.getResourceId}, ${bml.getVersion})"
+    }
+
+    val ticketId = engineConnBuildRequest.ticketId
     properties.get("spark.app.main.class.jar.bml.json") match {
       case mainClassJarContent: String =>
-        val bmlResource = contentToBmlResource(userName, mainClassJarContent)
-        logger.info(
-          s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}."
-        )
-        bmlResources.add(bmlResource)
+        val bml = contentToBmlResource(userName, mainClassJarContent)
+        logger.info(s"Add a ${getBmlString(bml)} for user $userName and ticketId $ticketId")
+        bmlResources.add(bml)
         properties.remove("spark.app.main.class.jar.bml.json")
       case _ =>
     }
@@ -105,11 +109,9 @@ class SparkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
           classpathContent,
           classOf[java.util.List[java.util.Map[String, Object]]]
         )
-        contentList.asScala.map(contentToBmlResource(userName, _)).foreach { bmlResource =>
-          logger.info(
-            s"Add a BmlResource(${bmlResource.getFileName}, ${bmlResource.getResourceId}, ${bmlResource.getVersion}) for user $userName and ticketId ${engineConnBuildRequest.ticketId}."
-          )
-          bmlResources.add(bmlResource)
+        contentList.asScala.map(contentToBmlResource(userName, _)).foreach { bml =>
+          logger.info(s"Add a ${getBmlString(bml)} for user $userName and ticketId $ticketId")
+          bmlResources.add(bml)
         }
         properties.remove("spark.app.user.class.path.bml.json")
       case _ =>

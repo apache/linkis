@@ -130,9 +130,12 @@ object SparkConfiguration extends Logging {
   val SPARK_APPLICATION_MAIN_CLASS = CommonVars("spark.app.main.class", "")
 
   val SPARK_ONCE_APP_STATUS_FETCH_INTERVAL =
-    CommonVars("spark.app.fetch.status.interval", new TimeType("5s"))
+    CommonVars("linkis.spark.once.app.fetch.status.interval", new TimeType("5s"))
 
-  val SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX = CommonVars("spark.app.fetch.status.failed.num", 3)
+  val SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX =
+    CommonVars("linkis.spark.once.app.fetch.status.failed.num", 3)
+
+  val SPARK_ONCE_YARN_RESTFUL_URL = CommonVars[String]("linkis.spark.once.yarn.restful.url", "")
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

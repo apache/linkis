@@ -17,8 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.utils
 
-import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{JsonUtils, Logging}
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.SPARK_ONCE_YARN_RESTFUL_URL
 import org.apache.linkis.protocol.engine.JobProgressInfo
 
 import org.apache.commons.lang3.StringUtils
@@ -27,9 +28,6 @@ import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
 object SparkJobProgressUtil extends Logging {
-
-  val YARN_RESTFUL_URL: String =
-    CommonVars[String]("linkis.spark.once.yarn.restful.url", "").getValue
 
   def getProgress(applicationId: String): Float = {
     if (StringUtils.isBlank(applicationId)) return 0f
@@ -73,18 +71,17 @@ object SparkJobProgressUtil extends Logging {
   def getSparkJobInfo(applicationId: String): Array[java.util.Map[String, Object]] =
     if (StringUtils.isBlank(applicationId)) Array.empty
     else {
-      val getAppUrl = s"$YARN_RESTFUL_URL/ws/v1/cluster/apps/$applicationId"
+      val yarnRestfulUrl =
+        SPARK_ONCE_YARN_RESTFUL_URL.getValue(EngineConnServer.getEngineCreationContext.getOptions)
+      val getAppUrl = s"$yarnRestfulUrl/ws/v1/cluster/apps/$applicationId"
       logger.info(s"get yarn app, url: $getAppUrl")
       val appResult =
         JsonUtils.jackson.readValue(get(getAppUrl), classOf[java.util.Map[String, Object]])
       val app = appResult.get("app").asInstanceOf[java.util.Map[String, Object]]
       if (app == null) return Array.empty
       val trackingUrl = app.getOrDefault("trackingUrl", "").asInstanceOf[String]
-      if (
-          StringUtils.isBlank(trackingUrl) || "FINISHED".equals(
-            app.getOrDefault("state", "").asInstanceOf[String]
-          )
-      ) {
+      val state = app.getOrDefault("state", "").asInstanceOf[String]
+      if (StringUtils.isBlank(trackingUrl) || "FINISHED".equals(state)) {
         return Array.empty
       }
       val getSparkJobsUrl = s"${trackingUrl}api/v1/applications/$applicationId/jobs"

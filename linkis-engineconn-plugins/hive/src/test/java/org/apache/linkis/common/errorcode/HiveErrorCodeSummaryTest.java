@@ -41,7 +41,8 @@ public class HiveErrorCodeSummaryTest {
     assertEquals(
         "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)",
         HIVE_EXEC_JAR_ERROR.getErrorDesc());
-    assertEquals("cannot get the field schemas(无法获取字段 schemas)", GET_FIELD_SCHEMAS_ERROR.getErrorDesc());
+    assertEquals(
+        "cannot get the field schemas(无法获取字段 schemas)", GET_FIELD_SCHEMAS_ERROR.getErrorDesc());
     assertEquals("invalid value(无效值)", INVALID_VALUE.getErrorDesc());
   }
 }

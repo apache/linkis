@@ -17,7 +17,9 @@
 
 package org.apache.linkis.gateway.errorcode;
 
-public enum LinkisGatewayCoreErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisGatewayCoreErrorCodeSummary implements LinkisErrorCode {
   CANNOT_SERVICEID(
       11010,
       "Cannot find a correct serviceId for parsedServiceId:{0}, service list are:{1}(无法为 parsedServiceId:{0} 找到正确的 serviceId，服务列表为：{1})"),
@@ -33,33 +35,22 @@ public enum LinkisGatewayCoreErrorCodeSummary {
       "Cannot find an instance in the routing chain of serviceId:{0} , please retry (在 serviceId:{0} 的路由链中找不到实例，请重试)"),
   GET_REQUESTBODY_FAILED(18000, "get requestBody failed!(获取 requestBody 失败！)");
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisGatewayCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

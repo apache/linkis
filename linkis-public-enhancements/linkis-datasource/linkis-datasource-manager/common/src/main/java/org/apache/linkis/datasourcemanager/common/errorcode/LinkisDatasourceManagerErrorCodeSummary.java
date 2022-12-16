@@ -17,7 +17,9 @@
 
 package org.apache.linkis.datasourcemanager.common.errorcode;
 
-public enum LinkisDatasourceManagerErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisDatasourceManagerErrorCodeSummary implements LinkisErrorCode {
   SERIALIZATION_FAILED(16897, "Unable to deserialize to object from string(json) in type: (序列化失败)"),
   CANNOT_BE_SERIALIZATION(16898, "cannot be serialized (无法序列化)"),
   CONNECTION_FAILED(99983, "Connection Failed(连接失败)"),
@@ -30,33 +32,22 @@ public enum LinkisDatasourceManagerErrorCodeSummary {
   OPERATE_FILE_IN_REQUEST(99987, "Fail to operate file in request(上传文件处理失败)");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisDatasourceManagerErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

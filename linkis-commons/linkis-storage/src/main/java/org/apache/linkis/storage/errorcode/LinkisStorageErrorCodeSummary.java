@@ -17,7 +17,9 @@
 
 package org.apache.linkis.storage.errorcode;
 
-public enum LinkisStorageErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisStorageErrorCodeSummary implements LinkisErrorCode {
   UNSUPPORTED_FILE(50000, "Unsupported file system type:{0}(不支持的文件系统类型)"),
   UNSUPPORTED_RESULT(50000, "Unsupported result type:{0}(不支持的结果类型)"),
   CONFIGURATION_NOT_READ(
@@ -35,36 +37,25 @@ public enum LinkisStorageErrorCodeSummary {
       52004,
       "You must register IOMethodInterceptorCreator before you can use proxy mode.(必须先注册IOMethodInterceptorCreator，才能使用代理模式)"),
   UNSUPPORTED_OPEN_FILE_TYPE(54001, "Unsupported open file type(不支持打开的文件类型)"),
-  INCALID_CUSTOM_PARAMETER(65000, "Invalid custom parameter(不合法的自定义参数)");
+  INVALID_CUSTOM_PARAMETER(65000, "Invalid custom parameter(不合法的自定义参数)");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisStorageErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

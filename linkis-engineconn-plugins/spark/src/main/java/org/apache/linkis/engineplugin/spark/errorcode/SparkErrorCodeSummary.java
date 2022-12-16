@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.errorcode;
 
-public enum SparkErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum SparkErrorCodeSummary implements LinkisErrorCode {
   READ_RECORD_EXCEPTION(40001, "read record  exception(读取记录异常)"),
   DATAFRAME_EXCEPTION(40002, "dataFrame to local exception(dataFrame 到本地异常)"),
   OUT_ID(40003, ""),
@@ -58,33 +60,22 @@ public enum SparkErrorCodeSummary {
   ;
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   SparkErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

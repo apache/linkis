@@ -43,17 +43,16 @@ import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.storage.utils.StorageUtils
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.linkis.common.log.LogUtils
 
 import org.springframework.beans.BeanUtils
+import org.apache.linkis.entrance.job.EntranceExecutionJob
 
 import java.{lang, util}
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util.Date
-
 import scala.collection.JavaConverters._
 
 abstract class EntranceServer extends Logging {
@@ -272,11 +271,24 @@ abstract class EntranceServer extends Logging {
 
   def updateAllNotExecutionTaskInstances(retryWhenUpdateFail: Boolean): Unit = {
     val consumeQueueTasks = getAllConsumeQueueTask()
+
+    clearAllConsumeQueue()
+    logger.info("Finished to clean all ConsumeQueue")
+
     if (consumeQueueTasks != null && consumeQueueTasks.length > 0) {
-      val taskIds = consumeQueueTasks.map(_.getJobRequest.getId.asInstanceOf[Long]).toList
-      clearAllConsumeQueue()
-      logger.info("Finished to clean all ConsumeQueue")
-      JobHistoryHelper.updateAllConsumeQueueTask(taskIds.asJava, retryWhenUpdateFail)
+      val taskIds = new util.ArrayList[Long]()
+      consumeQueueTasks.foreach(job => {
+        taskIds.add(job.getJobRequest.getId.asInstanceOf[Long])
+        job match {
+          case entranceExecutionJob : EntranceExecutionJob =>
+            val msg = LogUtils.generateWarn(s"job ${job.getJobRequest.getId} clean from ConsumeQueue, wait for failover")
+            entranceExecutionJob.getLogListener.foreach(_.onLogUpdate(entranceExecutionJob, msg))
+            entranceExecutionJob.getLogWriter.foreach(_.close())
+          case _ =>
+        }
+      })
+
+      JobHistoryHelper.updateAllConsumeQueueTask(taskIds, retryWhenUpdateFail)
       logger.info("Finished to update all not execution task instances")
     }
   }

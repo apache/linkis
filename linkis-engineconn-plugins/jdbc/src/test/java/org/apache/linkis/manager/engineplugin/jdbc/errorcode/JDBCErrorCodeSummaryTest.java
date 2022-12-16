@@ -36,6 +36,6 @@ public class JDBCErrorCodeSummaryTest {
         "Failed to get datasource info from datasource server(从数据源服务器获取数据源信息失败)",
         JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc());
     assertEquals(
-        "JDBC related parameters are illegal(JDBC相关参数非法)", JDBC_PARAMS_ILLEGAL.getErrorDesc());
+        "JDBC related parameters are illegal(JDBC 相关参数非法)", JDBC_PARAMS_ILLEGAL.getErrorDesc());
   }
 }

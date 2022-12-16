@@ -35,7 +35,7 @@ public class OpenLooKengErrorCodeSummaryTest {
     assertEquals(
         "openlookeng client error(openlookeng客户端异常)", OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
     assertEquals(
-        "openlookeng status error,Statement is not finished(openlookeng状态异常, 查询语句未完成)",
+        "openlookeng status error,statement is not finished(openlookeng状态异常, 查询语句未完成)",
         OPENLOOKENG_STATUS_ERROR.getErrorDesc());
   }
 }

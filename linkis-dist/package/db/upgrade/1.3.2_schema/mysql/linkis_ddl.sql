@@ -87,7 +87,7 @@ ALTER TABLE `linkis_ps_variable_key_user`
         DROP INDEX  IF EXISTS `application_id`,
         DROP INDEX  IF EXISTS `application_id_2`,
         ADD KEY `idx_key_id` (`key_id`),
-        ADD KEY `uniq_aid_kid_uname` (`application_id`,`key_id`,`user_name`),
+        ADD UNIQUE KEY `uniq_aid_kid_uname` (`application_id`,`key_id`,`user_name`),
         ADD KEY `idx_aid` (`application_id`);
 
 ALTER TABLE `linkis_ps_variable_key`
@@ -191,6 +191,10 @@ ALTER TABLE `linkis_mg_gateway_auth_token`
 ALTER TABLE `linkis_ps_dm_datasource`
         DROP INDEX IF EXISTS `datasource_name_un`,
         ADD  UNIQUE KEY `uniq_datasource_name` (`datasource_name`);
+
+ALTER TABLE `linkis_ps_dm_datasource_type`
+        DROP INDEX IF EXISTS `name_un`,
+        ADD UNIQUE INDEX `uniq_name` (`name`);
 
 ALTER TABLE `linkis_cg_user_ip_config`
         DROP INDEX IF EXISTS `user_creator`,

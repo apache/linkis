@@ -75,8 +75,8 @@ ALTER TABLE `linkis_ps_configuration_category`
 ALTER TABLE `linkis_ps_job_history_group_history`
         DROP INDEX IF EXISTS `created_time`,
         DROP INDEX IF EXISTS `submit_user`,
-        ADD KEY `inx_created_time` (`created_time`),
-        ADD KEY `inx_submit_user` (`submit_user`);
+        ADD KEY `idx_created_time` (`created_time`),
+        ADD KEY `idx_submit_user` (`submit_user`);
 
 ALTER TABLE `linkis_ps_common_lock`
         DROP INDEX IF EXISTS `lock_object`,
@@ -86,13 +86,13 @@ ALTER TABLE `linkis_ps_variable_key_user`
         DROP INDEX  IF EXISTS `key_id`,
         DROP INDEX  IF EXISTS `application_id`,
         DROP INDEX  IF EXISTS `application_id_2`,
-        ADD KEY `inx_key_id` (`key_id`),
+        ADD KEY `idx_key_id` (`key_id`),
         ADD KEY `uni_aid_kid_uname` (`application_id`,`key_id`,`user_name`),
-        ADD KEY `inx_aid` (`application_id`);
+        ADD KEY `idx_aid` (`application_id`);
 
 ALTER TABLE `linkis_ps_variable_key`
         DROP INDEX IF EXISTS `application_id`,
-        ADD KEY `inx_aid` (`application_id`);
+        ADD KEY `idx_aid` (`application_id`);
 
 ALTER TABLE `linkis_ps_datasource_table`
         DROP INDEX IF EXISTS `database`,
@@ -102,19 +102,19 @@ ALTER TABLE `linkis_ps_cs_context_map`
         DROP INDEX IF EXISTS `key`,
         DROP INDEX IF EXISTS `keywords`,
         ADD UNIQUE KEY `uni_key_cid_ctype` (`key`,`context_id`,`context_type`),
-        ADD KEY `inx_keywords` (`keywords`(191));
+        ADD KEY `idx_keywords` (`keywords`(191));
 
 ALTER TABLE `linkis_ps_cs_context_history`
         DROP INDEX IF EXISTS `keyword`,
-        ADD KEY `inx_keyword` (`keyword`(191));
+        ADD KEY `idx_keyword` (`keyword`(191));
 
 ALTER TABLE `linkis_ps_cs_context_id`
         DROP INDEX IF EXISTS `instance`,
         DROP INDEX IF EXISTS `backup_instance`,
         DROP INDEX IF EXISTS `instance_2`,
-        ADD  KEY `inx_instance` (`instance`(128)),
-        ADD KEY `inx_backup_instance` (`backup_instance`(191)),
-        ADD KEY `inx_instance_bin` (`instance`(128),`backup_instance`(128));
+        ADD  KEY `idx_instance` (`instance`(128)),
+        ADD KEY `idx_backup_instance` (`backup_instance`(191)),
+        ADD KEY `idx_instance_bin` (`instance`(128),`backup_instance`(128));
 
 ALTER TABLE `linkis_ps_bml_resources_version`
         DROP INDEX IF EXISTS `resource_id_version`,
@@ -163,12 +163,12 @@ ALTER TABLE `linkis_cg_manager_label_resource`
 ALTER TABLE `linkis_cg_ec_resource_info_record`
         DROP INDEX IF EXISTS `ticket_id`,
         DROP INDEX IF EXISTS `label_value_ticket_id`,
-        ADD  KEY `inx_tid` (`ticket_id`),
+        ADD  KEY `idx_tid` (`ticket_id`),
         ADD UNIQUE KEY `uni_tid_lv` (`ticket_id`,`label_value`);
 
 ALTER TABLE `linkis_cg_manager_label_service_instance`
         DROP INDEX IF EXISTS `label_serviceinstance`,
-        ADD  KEY `uni_lid_instance` (`label_id`,`service_instance`);
+        ADD  KEY `idx_lid_instance` (`label_id`,`service_instance`);
 
 ALTER TABLE `linkis_cg_manager_label_service_instance`
         DROP INDEX IF EXISTS `label_serviceinstance`,

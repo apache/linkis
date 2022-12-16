@@ -247,6 +247,10 @@ object EntranceConfiguration {
 
   val ENTRANCE_GROUP_SCAN_ENABLED = CommonVars("linkis.entrance.group.scan.enable", true)
 
+  val ENTRANCE_GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
+
+  val ENTRANCE_GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
+
   val ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED =
     CommonVars("linkis.entrance.failover.retain.engine.conn.enable", true)
 

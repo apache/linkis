@@ -17,7 +17,6 @@
 
 package org.apache.linkis.entrance.scheduler
 
-import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
@@ -46,6 +45,7 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.{Group, GroupFactory, SchedulerEvent}
 import org.apache.linkis.scheduler.queue.parallelqueue.ParallelGroup
+
 import org.apache.commons.lang3.StringUtils
 
 import java.util
@@ -76,39 +76,6 @@ class EntranceGroupFactory extends GroupFactory with Logging {
     CommonVars("wds.linkis.entrance.specified.max.capacity", 5000)
 
   private val GROUP_INIT_CAPACITY = CommonVars("wds.linkis.entrance.init.capacity", 100)
-
-  private val GROUP_SCAN_INIT_TIME = CommonVars("linkis.entrance.group.scan.init.time", 3 * 1000)
-
-  private val GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
-
-  if (EntranceConfiguration.ENTRANCE_GROUP_SCAN_ENABLED.getValue) {
-    Utils.defaultScheduler.scheduleAtFixedRate(
-      new Runnable {
-        override def run(): Unit = {
-          // get all entrance server from eureka
-          val serviceInstances = Sender.getInstances(Sender.getThisServiceInstance.getApplicationName)
-          if (null == serviceInstances || serviceInstances.isEmpty) return
-
-          // get all offline label server
-          val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
-            .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelConstant.OFFLINE)
-          val labels = new util.ArrayList[Label[_]]
-          labels.add(routeLabel)
-          val labelInstances = InstanceLabelClient.getInstance.getInstanceFromLabel(labels)
-
-          // get active entrance server
-          val allInstances = new util.ArrayList[ServiceInstance]()
-          allInstances.addAll(serviceInstances.toList.asJava)
-          allInstances.removeAll(labelInstances)
-          // refresh all group maxAllowRunningJobs
-          refreshAllGroupMaxAllowRunningJobs(allInstances.size())
-        }
-      },
-      GROUP_SCAN_INIT_TIME.getValue,
-      GROUP_SCAN_INTERVAL.getValue,
-      TimeUnit.MILLISECONDS
-    )
-  }
 
   private val specifiedUsernameRegexPattern: Pattern =
     if (StringUtils.isNotBlank(SPECIFIED_USERNAME_REGEX.getValue)) {
@@ -191,25 +158,6 @@ class EntranceGroupFactory extends GroupFactory with Logging {
       )
     }
     group
-  }
-
-  def refreshAllGroupMaxAllowRunningJobs(validInsCount: Int): Unit = {
-    if (validInsCount <= 0) return
-    groupNameToGroups
-      .asMap()
-      .asScala
-      .foreach(item => {
-        item._2 match {
-          case group: ParallelGroup =>
-            val maxAllowRunningJobs = Math.round(group.getMaxRunningJobs / validInsCount)
-            group.setMaxAllowRunningJobs(maxAllowRunningJobs)
-            logger
-              .info(
-                s"group ${group.getGroupName} refresh maxAllowRunningJobs => ${group.getMaxRunningJobs}/$validInsCount=$maxAllowRunningJobs"
-              )
-          case _ =>
-        }
-      })
   }
 
   private def getUserMaxRunningJobs(keyAndValue: util.Map[String, String]): Int = {

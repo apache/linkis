@@ -19,7 +19,7 @@ package org.apache.linkis.entrance.scheduler
 
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
-import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.scheduler.SchedulerContext
 import org.apache.linkis.scheduler.queue.Group
@@ -27,7 +27,6 @@ import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import java.util
 import java.util.concurrent.ExecutorService
-
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 class EntranceFIFOUserConsumer(
@@ -46,7 +45,8 @@ class EntranceFIFOUserConsumer(
           if (!jobs.isEmpty) {
             val ids = new util.ArrayList[Long]()
             jobs.asScala.foreach {
-              case entranceJob: EntranceJob =>
+              case entranceJob: EntranceExecutionJob =>
+                entranceJob.getLogWriter.foreach(_.close())
                 ids.add(entranceJob.getJobRequest.getId)
               case _ =>
             }

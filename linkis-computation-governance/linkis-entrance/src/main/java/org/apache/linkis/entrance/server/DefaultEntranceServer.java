@@ -22,8 +22,11 @@ import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.execute.EntranceJob;
+import org.apache.linkis.entrance.job.EntranceExecutionJob;
 import org.apache.linkis.entrance.log.LogReader;
 import org.apache.linkis.rpc.Sender;
+
+import org.apache.commons.io.IOUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
@@ -90,10 +93,8 @@ public class DefaultEntranceServer extends EntranceServer {
       if (null != allUndoneTask) {
         String msg = "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)";
         for (EntranceJob job : allUndoneTask) {
-          if (job.getLogListener().isDefined()) {
-            job.getLogListener().get().onLogUpdate(job, msg);
-          }
           job.onFailure(msg, null);
+          IOUtils.closeQuietly(((EntranceExecutionJob) job).getLogWriter().get());
         }
       }
     }

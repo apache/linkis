@@ -18,21 +18,17 @@
 package org.apache.linkis.engineplugin.openlookeng.errorcode;
 
 import org.apache.linkis.common.errorcode.ErrorCodeUtils;
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
-public enum OpenLooKengErrorCodeSummary {
-  /**
-   * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
-   * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
-   * linkis-extensions 26000-29999 linkis-engineconn-plugins
-   */
+public enum OpenLooKengErrorCodeSummary implements LinkisErrorCode {
   OPENLOOKENG_CLIENT_ERROR(26030, "openlookeng client error(openlookeng客户端异常)"),
 
   OPENLOOKENG_STATUS_ERROR(
       26031, "openlookeng status error,statement is not finished(openlookeng状态异常, 查询语句未完成)");
 
-  private int errorCode;
+  private final int errorCode;
 
-  private String errorDesc;
+  private final String errorDesc;
 
   OpenLooKengErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
@@ -40,24 +36,13 @@ public enum OpenLooKengErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

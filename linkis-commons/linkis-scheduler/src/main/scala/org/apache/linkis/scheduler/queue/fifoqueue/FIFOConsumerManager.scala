@@ -45,8 +45,8 @@ class FIFOConsumerManager(groupName: String) extends ConsumerManager {
         Utils.newCachedThreadPool(g.getMaxRunningJobs + 2, groupName + "-Thread-")
       case _ =>
         throw new SchedulerErrorException(
-          NEED_SUPPORTTED_GROUP.getErrorCode,
-          MessageFormat.format(NEED_SUPPORTTED_GROUP.getErrorDesc, group.getClass)
+          NEED_SUPPORTED_GROUP.getErrorCode,
+          MessageFormat.format(NEED_SUPPORTED_GROUP.getErrorDesc, group.getClass)
         )
     }
     consumerQueue = new LoopArrayQueue(

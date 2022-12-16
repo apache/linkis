@@ -17,7 +17,9 @@
 
 package org.apache.linkis.entrance.errorcode;
 
-public enum EntranceErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   UNSUPPORTED_OPERATION(10000, "Unsupported operation(不支持的操作)"),
   JOBREQ_NOT_NULL(20001, "JobReq cannot be null(JobReq不能为空)"),
   LABEL_NOT_NULL(
@@ -72,33 +74,22 @@ public enum EntranceErrorCodeSummary {
   LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   EntranceErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

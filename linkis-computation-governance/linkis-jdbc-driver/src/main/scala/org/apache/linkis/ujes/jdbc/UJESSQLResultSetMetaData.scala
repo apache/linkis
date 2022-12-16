@@ -5,24 +5,23 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ujes.jdbc
-
-
-import java.sql.{ResultSetMetaData, SQLException, Types}
-import java.util
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ujes.jdbc.entity.JdbcColumn
+
+import java.sql.{ResultSetMetaData, SQLException, Types}
+import java.util
 
 class UJESSQLResultSetMetaData extends ResultSetMetaData with Logging {
   private val columnNameProperties: util.HashMap[Int, String] = new util.HashMap[Int, String]()
@@ -145,8 +144,11 @@ class UJESSQLResultSetMetaData extends ResultSetMetaData with Logging {
   }
 
   protected def toZeroIndex(column: Int): Int = {
-    if (dataTypeProperties == null) throw new SQLException("Could not determine column type name for ResultSet")
-    if (column < 1 || column > dataTypeProperties.size) throw new SQLException("Invalid column value: " + column)
+    if (dataTypeProperties == null)
+      throw new SQLException("Could not determine column type name for ResultSet")
+    if (column < 1 || column > dataTypeProperties.size)
+      throw new SQLException("Invalid column value: " + column)
     column - 1
   }
+
 }

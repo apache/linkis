@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.errorcode;
 
-public enum FlinkErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   CANNOT_MODULE_ALREADY(
       16020,
       "Cannot register module:{0}, because a module with this name is already registered(无法注册模块：{0},因为已注册具有此名称的模块)."),
@@ -109,33 +111,22 @@ public enum FlinkErrorCodeSummary {
   EXECUTORINIT_ID(20001, "");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   FlinkErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

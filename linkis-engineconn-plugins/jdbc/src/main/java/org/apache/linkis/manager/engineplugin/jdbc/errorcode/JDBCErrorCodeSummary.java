@@ -18,13 +18,9 @@
 package org.apache.linkis.manager.engineplugin.jdbc.errorcode;
 
 import org.apache.linkis.common.errorcode.ErrorCodeUtils;
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
-public enum JDBCErrorCodeSummary {
-  /**
-   * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
-   * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
-   * linkis-extensions 26000-29999 linkis-engineconn-plugins
-   */
+public enum JDBCErrorCodeSummary implements LinkisErrorCode {
   JDBC_GET_DATASOURCEINFO_ERROR(
       26010, "Failed to get datasource info from datasource server(从数据源服务器获取数据源信息失败)"),
   JDBC_PARAMS_ILLEGAL(26011, "JDBC related parameters are illegal(JDBC 相关参数非法)"),
@@ -58,9 +54,9 @@ public enum JDBCErrorCodeSummary {
       "In the jdbc authentication mode of kerberos, the kerberos keytab cannot be empty(kerberos的jdbc认证方式下，kerberos keytab不能为空)"),
   UNSUPPORTED_AUTHENTICATION_TYPE(26029, "Unsupported authentication type:{0}(不支持的身份验证类型)");
 
-  private int errorCode;
+  private final int errorCode;
 
-  private String errorDesc;
+  private final String errorDesc;
 
   JDBCErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
@@ -68,24 +64,13 @@ public enum JDBCErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -17,7 +17,9 @@
 
 package org.apache.linkis.metadata.errorcode;
 
-public enum LinkisMetadataErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisMetadataErrorCodeSummary implements LinkisErrorCode {
   UNRECOGNIZED_IMPORT_TYPE(57895, "unrecognized import type(无法识别的导入类型)"),
   IMPORT_HIVE_SOURCE_IS_NULL(57895, "import hive source is null(导入配置单元源为空)"),
   HIVE_CREATE_IS_NULL(
@@ -27,33 +29,22 @@ public enum LinkisMetadataErrorCodeSummary {
   EXPRESS_CODE(57895, "");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisMetadataErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

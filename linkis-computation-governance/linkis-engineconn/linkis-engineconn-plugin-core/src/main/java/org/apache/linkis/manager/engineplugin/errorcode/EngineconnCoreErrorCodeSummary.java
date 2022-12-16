@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.engineplugin.errorcode;
 
-public enum EngineconnCoreErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   FAILED_CREATE_ELR(10001, "Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)"),
   ETL_REQUESTED(10001, "EngineTypeLabel are requested(需要参数 EngineTypeLabel)"),
   CANNOT_INSTANCE_ECE(20000, "Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)"),
@@ -31,7 +33,7 @@ public enum EngineconnCoreErrorCodeSummary {
   DIST_IS_EMPTY(
       20001,
       "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})"),
-  ENGIN_VERSION_NOT_FOUND(
+  ENGINE_VERSION_NOT_FOUND(
       20001,
       "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
   DIST_IRREGULAR_EXIST(
@@ -66,33 +68,22 @@ public enum EngineconnCoreErrorCodeSummary {
   PLUGIN_FAIL_TO_LOAD_RES(70064, "");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   EngineconnCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

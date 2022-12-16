@@ -28,7 +28,7 @@ CREATE TABLE `linkis_cg_tenant_label_config` (
   `desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
+  UNIQUE KEY `user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -45,7 +45,7 @@ CREATE TABLE `linkis_cg_user_ip_config` (
   `desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
+  UNIQUE KEY `user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -187,6 +187,10 @@ ALTER TABLE `linkis_ps_dm_datasource_type_key`
 ALTER TABLE `linkis_mg_gateway_auth_token`
         DROP INDEX IF EXISTS `token_name`,
         ADD  UNIQUE KEY `uniq_token_name` (`token_name`);
+
+ALTER TABLE `linkis_ps_dm_datasource`
+        DROP INDEX IF EXISTS `datasource_name_un`,
+        ADD  UNIQUE KEY `uniq_datasource_name` (`datasource_name`);
 
 ALTER TABLE `linkis_cg_user_ip_config`
         DROP INDEX IF EXISTS `user_creator`,

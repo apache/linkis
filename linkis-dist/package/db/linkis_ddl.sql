@@ -52,7 +52,7 @@ CREATE TABLE `linkis_ps_configuration_key_engine_relation`(
   `config_key_id` bigint(20) NOT NULL COMMENT 'config key id',
   `engine_type_label_id` bigint(20) NOT NULL COMMENT 'engine label id',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `uin_kid_lid` (`config_key_id`, `engine_type_label_id`)
+  UNIQUE INDEX `uniq_kid_lid` (`config_key_id`, `engine_type_label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
@@ -65,7 +65,7 @@ CREATE TABLE `linkis_ps_configuration_config_value`(
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `uin_kid_lid` (`config_key_id`, `config_label_id`)
+  UNIQUE INDEX `uniq_kid_lid` (`config_key_id`, `config_label_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_ps_configuration_category`;
@@ -585,7 +585,7 @@ create table if not exists linkis_ps_bml_project_user(
   `creator` varchar(128) not null,
   `create_time` datetime DEFAULT now(),
   `expire_time` datetime default null,
-  unique key `uin_name_pid`(`username`, `project_id`),
+  unique key `uniq_name_pid`(`username`, `project_id`),
 PRIMARY KEY (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=COMPACT;
 
@@ -622,7 +622,7 @@ CREATE TABLE `linkis_ps_instance_label_value_relation` (
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uin_lvk_lid` (`label_value_key`,`label_id`)
+  UNIQUE KEY `uniq_lvk_lid` (`label_value_key`,`label_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_ps_instance_label_relation`;
@@ -933,7 +933,7 @@ CREATE TABLE `linkis_ps_dm_datasource_type_key`
     `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uin_dstid_key` (`data_source_type_id`, `key`)
+    UNIQUE KEY `uniq_dstid_key` (`data_source_type_id`, `key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ----------------------------
 -- Table structure for linkis_ps_dm_datasource_version
@@ -947,7 +947,7 @@ CREATE TABLE `linkis_ps_dm_datasource_version`
     `comment`       varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
     `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
     `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
-    PRIMARY KEY `uin_vid_did` (`version_id`, `datasource_id`) USING BTREE
+    PRIMARY KEY `uniq_vid_did` (`version_id`, `datasource_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -984,7 +984,7 @@ CREATE TABLE `linkis_cg_tenant_label_config` (
   `desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uin_user_creator` (`user`,`creator`)
+  UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ----------------------------
@@ -1001,5 +1001,5 @@ CREATE TABLE `linkis_cg_user_ip_config` (
   `desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uin_user_creator` (`user`,`creator`)
+  UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin

@@ -233,24 +233,6 @@ public class BmlProjectRestful {
     Message message;
     try {
       String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
-      if (StringUtils.isBlank(projectName)) {
-        LOGGER.error(
-            "The project name of user {}'s resourceId: {} is empty.  Contact the administrator. (用户{}的资源：{}对应的项目名称为空，请联系管理员。)",
-            username,
-            resourceId,
-            username,
-            resourceId);
-        throw new BmlProjectNoEditException(
-            "The project name of user "
-                + username
-                + "'s resourceId: "
-                + resourceId
-                + " is empty.  Contact the administrator. (用户"
-                + username
-                + "的资源："
-                + resourceId
-                + "对应的项目名称为空，请联系管理员。)");
-      }
       if (!bmlProjectService.checkEditPriv(projectName, username)) {
         LOGGER.error(
             "{} does not have edit permission on project {}. Upload resource failed ({} 对工程 {} 没有编辑权限, 上传资源失败)",
@@ -334,24 +316,6 @@ public class BmlProjectRestful {
             "downloadShareResource,resourceId:{0},version:{1}", resourceId, version));
     try {
       String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
-      if (StringUtils.isBlank(projectName)) {
-        LOGGER.error(
-            "The project name of user {}'s resourceId: {} is empty.  Contact the administrator. (用户{}的资源：{}对应的项目名称为空，请联系管理员。)",
-            user,
-            resourceId,
-            user,
-            resourceId);
-        throw new BmlProjectNoEditException(
-            "The project name of user "
-                + user
-                + "'s resourceId: "
-                + resourceId
-                + " is empty.  Contact the administrator. (用户"
-                + user
-                + "的资源："
-                + resourceId
-                + "对应的项目名称为空，请联系管理员。)");
-      }
       if (!bmlProjectService.checkAccessPriv(projectName, user)) {
         LOGGER.error(
             "{} does not have view privileges on project {}. Download resource failed({} 对工程 {} 没有查看权限, 下载资源失败)",
@@ -367,7 +331,7 @@ public class BmlProjectRestful {
                 + user
                 + " 对工程 { "
                 + projectName
-                + " }没有编辑权限, 下载资源失败");
+                + " }没有编辑权限,上传资源失败");
       }
       LOGGER.info(
           "user {} begin to downLoad resource resourceId is {}, version is {} ,ip is {}, 并代理成hadoop ",

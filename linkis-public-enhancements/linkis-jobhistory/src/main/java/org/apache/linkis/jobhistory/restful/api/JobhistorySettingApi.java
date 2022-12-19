@@ -87,6 +87,7 @@ public class JobhistorySettingApi {
     boolean result =
         Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
             .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
+    log.info("addObserveInfo taskid:" + jobHistory.getId() + ",result:" + result);
     if (result) {
       // Task not completed, update job record
       String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);

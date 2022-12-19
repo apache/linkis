@@ -112,9 +112,10 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to update-tenant,msg: only administrators can configure");
       }
-//      if (!tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(), null)) {
-//        throw new ConfigurationException("User-creator is not existed");
-//      }
+      //      if (!tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(),
+      // null)) {
+      //        throw new ConfigurationException("User-creator is not existed");
+      //      }
       parameterVerification(tenantVo);
       tenantConfigService.updateTenant(tenantVo);
     } catch (ConfigurationException e) {

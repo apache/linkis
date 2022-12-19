@@ -67,3 +67,4 @@ ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) 
 
 ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) DEFAULT NULL COMMENT 'english description';
 
+ALTER TABLE `linkis_ps_job_history_group_history` ADD COLUMN `observe_info` VARCHAR(500) NULL DEFAULT NULL ;

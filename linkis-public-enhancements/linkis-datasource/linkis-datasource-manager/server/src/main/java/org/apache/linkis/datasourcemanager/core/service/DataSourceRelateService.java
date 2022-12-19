@@ -56,7 +56,7 @@ public interface DataSourceRelateService {
    *
    * @return
    */
-  List<DataSourceType> getAllDataSourceTypes();
+  List<DataSourceType> getAllDataSourceTypes(String languageType);
 
   /**
    * Get data source type

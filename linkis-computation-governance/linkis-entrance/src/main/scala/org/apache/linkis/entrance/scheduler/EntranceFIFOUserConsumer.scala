@@ -50,7 +50,7 @@ class EntranceFIFOUserConsumer(
                 ids.add(entranceJob.getJobRequest.getId)
               case _ =>
             }
-            JobHistoryHelper.updateBatchInstances(ids)
+            JobHistoryHelper.updateBatchInstancesEmpty(ids)
           }
           Utils.tryQuietly(Thread.sleep(5000))
           return

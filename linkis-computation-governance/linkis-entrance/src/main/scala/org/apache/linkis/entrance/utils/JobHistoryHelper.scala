@@ -154,7 +154,7 @@ object JobHistoryHelper extends Logging {
     val list = new util.ArrayList[Long]()
     list.addAll(taskIdList)
     try {
-      val successTaskIds = updateBatchInstances(updateTaskIds)
+      val successTaskIds = updateBatchInstancesEmpty(updateTaskIds)
       if (retryWhenUpdateFail) {
         list.removeAll(successTaskIds)
       } else {
@@ -175,7 +175,7 @@ object JobHistoryHelper extends Logging {
    * @param taskIdList
    * @return
    */
-  def updateBatchInstances(taskIdList: util.List[Long]): util.List[Long] = {
+  def updateBatchInstancesEmpty(taskIdList: util.List[Long]): util.List[Long] = {
     val jobReqList = new util.ArrayList[JobRequest]()
     taskIdList.asScala.foreach(taskID => {
       val jobRequest = new JobRequest

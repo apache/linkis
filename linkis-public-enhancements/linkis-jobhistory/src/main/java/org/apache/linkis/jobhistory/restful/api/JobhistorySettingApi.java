@@ -58,7 +58,7 @@ public class JobhistorySettingApi {
   @ApiOperation(value = "addObserveInfo", notes = "add Observe Info", response = Message.class)
   @RequestMapping(path = "/addObserveInfo", method = RequestMethod.POST)
   public Message addObserveInfo(HttpServletRequest req, @RequestBody MonitorVO monitor) {
-    ModuleUserUtils.getOperationUser(req, "addObserveInfo");
+    String username = ModuleUserUtils.getOperationUser(req, "addObserveInfo");
     // Parameter verification
     if (null == monitor.getTaskId()) return Message.error("TaskId can't be empty ");
     if (StringUtils.isBlank(monitor.getReceiver())) return Message.error("Receiver can't be empty");
@@ -78,6 +78,10 @@ public class JobhistorySettingApi {
     // Get jobInfo according to ID
     JobHistory jobHistory =
         jobHistoryQueryService.getJobHistoryByIdAndName(monitor.getTaskId(), null);
+    if (!username.equals(jobHistory.getSubmitUser())) {
+      return Message.error("Only submitUser can change");
+    }
+
     //    Map<String, Object> map =
     //        BDPJettyServerHelper.gson().fromJson(jobHistory.getParams(), new
     // HashMap<>().getClass());
@@ -108,9 +112,12 @@ public class JobhistorySettingApi {
   })
   @RequestMapping(path = "/deleteObserveInfo", method = RequestMethod.GET)
   public Message deleteObserveInfo(HttpServletRequest req, Long taskId) {
-    ModuleUserUtils.getOperationUser(req, "deleteObserveInfo");
+    String username = ModuleUserUtils.getOperationUser(req, "deleteObserveInfo");
     // Get jobInfo according to ID
     JobHistory jobHistory = jobHistoryQueryService.getJobHistoryByIdAndName(taskId, null);
+    if (!username.equals(jobHistory.getSubmitUser())) {
+      return Message.error("Only submitUser can change");
+    }
     boolean result =
         Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
             .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));

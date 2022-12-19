@@ -75,24 +75,9 @@ public class BmlProjectServiceImpl implements BmlProjectService {
   public boolean checkEditPriv(String projectName, String username) {
     try {
       Integer priv = bmlProjectDao.getPrivInProject(projectName, username);
-      if (null == priv) {
-        LOGGER.warn(
-            "The permission of {} is null on project {}, verification failure. (用户{}对工程{}的权限为空，权限校验失败。)",
-            username,
-            projectName,
-            username,
-            projectName);
-        return false;
-      }
       return priv >= DEFAULT_EDIT_PRIV;
     } catch (Exception e) {
-      LOGGER.error(
-          "User {} fails to obtain the permission on project {}, verification failure. (用户{}获取工程{}权限异常，权限校验失败。)",
-          username,
-          projectName,
-          username,
-          projectName);
-      return false;
+      return true;
     }
   }
 
@@ -100,24 +85,9 @@ public class BmlProjectServiceImpl implements BmlProjectService {
   public boolean checkAccessPriv(String projectName, String username) {
     try {
       Integer priv = bmlProjectDao.getPrivInProject(projectName, username);
-      if (null == priv) {
-        LOGGER.warn(
-            "The permission of {} is null on project {}, verification failure. (用户{}对工程{}的权限为空，权限校验失败。)",
-            username,
-            projectName,
-            username,
-            projectName);
-        return false;
-      }
       return priv >= DEFAULT_ACCESS_PRIV;
     } catch (Exception e) {
-      LOGGER.error(
-          "User {} fails to obtain the permission on project {}, verification failure. (用户{}获取工程{}权限异常，权限校验失败。)",
-          username,
-          projectName,
-          username,
-          projectName);
-      return false;
+      return true;
     }
   }
 

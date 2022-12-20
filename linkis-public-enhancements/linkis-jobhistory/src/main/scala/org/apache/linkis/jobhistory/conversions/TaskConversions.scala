@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -29,18 +29,14 @@ import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
-import org.apache.linkis.server.{toScalaBuffer, toScalaMap, BDPJettyServerHelper}
-
+import org.apache.linkis.server.{BDPJettyServerHelper, toScalaBuffer, toScalaMap}
 import org.apache.commons.lang3.StringUtils
-
 import org.springframework.beans.BeanUtils
-
 import java.text.SimpleDateFormat
 import java.util
 import java.util.Date
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
-
 import com.fasterxml.jackson.core.JsonProcessingException
 
 object TaskConversions extends Logging {
@@ -106,7 +102,6 @@ object TaskConversions extends Logging {
     jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
     jobReq.setExecutionCode(job.getExecutionCode)
-    jobReq.setObserveInfo(job.getObserveInfo)
     jobReq
   }
 
@@ -157,9 +152,6 @@ object TaskConversions extends Logging {
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
-    if (null != jobReq.getObserveInfo) {
-      jobHistory.setObserveInfo(jobReq.getObserveInfo)
-    }
 
     if (logger.isDebugEnabled) {
       try logger.debug(
@@ -320,7 +312,6 @@ object TaskConversions extends Logging {
         logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
-    taskVO.setObserveInfo(job.getObserveInfo)
     taskVO
   }
 

@@ -46,12 +46,7 @@ class SqoopEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    EP_CONTEXT_CONSTRUCTOR_LOCK.synchronized {
-      if (null == engineConnLaunchBuilder) {
-        engineConnLaunchBuilder = new SqoopEngineConnLaunchBuilder()
-      }
-      engineConnLaunchBuilder
-    }
+    new SqoopEngineConnLaunchBuilder()
   }
 
   override def getEngineConnFactory: EngineConnFactory = {

@@ -15,20 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.common.launch
+package org.apache.linkis.engineplugin.spark.client.context;
 
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
+public class ExecutionContext {
+  private SparkConfig sparkConfig;
 
-trait EngineConnLaunchBuilder {
+  public SparkConfig getSparkConfig() {
+    return sparkConfig;
+  }
 
-  protected var engineConnBuildRequest: EngineConnBuildRequest = _
-
-  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
-    this.engineConnBuildRequest = engineConnBuildRequest
-
-  def buildEngineConn(): EngineConnLaunchRequest
-
+  public void setSparkConfig(SparkConfig sparkConfig) {
+    this.sparkConfig = sparkConfig;
+  }
 }

@@ -17,35 +17,29 @@
 
 package org.apache.linkis.common.errorcode;
 
-public class LinkisSpringCloudServiceErrorCodeSummary {;
+/** Linkis error code interface */
+public interface LinkisErrorCode {
+  /**
+   * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
+   * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
+   * linkis-extensions 26000-29999 linkis-engineconn-plugins
+   */
 
-  private int errorCode;
-  private String errorDesc;
+  /**
+   * Get error code
+   *
+   * @return error code
+   */
+  int getErrorCode();
 
-  LinkisSpringCloudServiceErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 13000, 14999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
-  }
+  /**
+   * Get error description
+   *
+   * @return error description
+   */
+  String getErrorDesc();
 
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
+  default String getErrorMessage() {
+    return String.format("errorCode: %s, errorDesc: %s", getErrorCode(), getErrorDesc());
   }
 }

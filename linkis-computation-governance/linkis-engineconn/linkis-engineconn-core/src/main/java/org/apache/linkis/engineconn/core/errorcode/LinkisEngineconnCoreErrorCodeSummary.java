@@ -17,40 +17,31 @@
 
 package org.apache.linkis.engineconn.core.errorcode;
 
-public enum LinkisEngineconnCoreErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisEngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   NEED_ENGINE_BEFORE_CALL(
       12100,
       "You need to wait for engine conn to be initialized before starting to call(在开始调用之前，您需要等待 engine conn 初始化)"),
   CANNOT_PARSE_FOR_NODE(12101, "Cannot parse cs table for node：{0}(无法解析节点：{0} 的 cs 表)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisEngineconnCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

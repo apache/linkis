@@ -17,8 +17,10 @@
 
 package org.apache.linkis.scheduler.errorcode;
 
-public enum LinkisSchedulerErrorCodeSummary {
-  REQUEST_ENGINE_TIMES_OUT(
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisSchedulerErrorCodeSummary implements LinkisErrorCode {
+  REQUEST_ENGINE_TIME_OUT(
       11055,
       "The job request engine time out (任务请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以查看EngineConnManager对应的out和log日志)."),
   TASK_STATUS_FLIP_ERROR(
@@ -26,39 +28,28 @@ public enum LinkisSchedulerErrorCodeSummary {
       "Task status flip error，because: failed to flip from:{0} to:{1}(任务状态翻转出错，原因：不允许从{0} 翻转为{1})."),
   JOB_QUEUE_IS_FULL(12001, "The submission job failed and the queue is full!(提交作业失败，队列已满！)"),
   UNRECOGNIZED_EXECID(12011, "Unrecognized execId (不能识别的execId):"),
-  NEED_SUPPORTTED_GROUP(
+  NEED_SUPPORTED_GROUP(
       13000,
       "FIFOConsumerManager just support FIFO group, {0} is not FIFO group.(FIFOConsumerManager只支持FIFO类型的消费组，{0} 不是这类消费组.)"),
   NODE_STATE_ERROR(20001, "{0} is in state {0}({0} 处于状态 {0}).");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisSchedulerErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

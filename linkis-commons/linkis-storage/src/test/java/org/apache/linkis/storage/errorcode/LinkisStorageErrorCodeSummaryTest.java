@@ -26,41 +26,25 @@ public class LinkisStorageErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   public void enumTest() {
-
-    int unsupportedFileErrorCode = LinkisStorageErrorCodeSummary.UNSUPPORTED_FILE.getErrorCode();
-    int unsupportedResultErrorCode =
-        LinkisStorageErrorCodeSummary.UNSUPPORTED_RESULT.getErrorCode();
-    int configurationNotReadErrorCode =
-        LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ.getErrorCode();
-    int failedToReadIntegerErrorCode =
-        LinkisStorageErrorCodeSummary.FAILED_TO_READ_INTEGER.getErrorCode();
-    int theFileIsEmptyErrorCode = LinkisStorageErrorCodeSummary.THE_FILE_IS_EMPTY.getErrorCode();
-    int toBeUnknowErrorCode = LinkisStorageErrorCodeSummary.TO_BE_UNKNOW.getErrorCode();
-    int fsnNotInitExceptionErrorCode =
-        LinkisStorageErrorCodeSummary.FSN_NOT_INIT_EXCEPTION.getErrorCode();
-    int parsingMetadataFailedErrorCode =
-        LinkisStorageErrorCodeSummary.PARSING_METADATA_FAILED.getErrorCode();
-    int tableAreNotSupportedErrorCode =
-        LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED.getErrorCode();
-    int mustRegisterTocErrorCode = LinkisStorageErrorCodeSummary.MUST_REGISTER_TOC.getErrorCode();
-    int mustRegisterTomErrorCode = LinkisStorageErrorCodeSummary.MUST_REGISTER_TOM.getErrorCode();
-    int unsupportedOpenFileTypeErrorCode =
-        LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode();
-    int incalidCustomParameterErrorCode =
-        LinkisStorageErrorCodeSummary.INCALID_CUSTOM_PARAMETER.getErrorCode();
-
-    Assertions.assertTrue(50000 == unsupportedFileErrorCode);
-    Assertions.assertTrue(50000 == unsupportedResultErrorCode);
-    Assertions.assertTrue(50001 == configurationNotReadErrorCode);
-    Assertions.assertTrue(51000 == failedToReadIntegerErrorCode);
-    Assertions.assertTrue(51000 == theFileIsEmptyErrorCode);
-    Assertions.assertTrue(51001 == toBeUnknowErrorCode);
-    Assertions.assertTrue(52000 == fsnNotInitExceptionErrorCode);
-    Assertions.assertTrue(52001 == parsingMetadataFailedErrorCode);
-    Assertions.assertTrue(52002 == tableAreNotSupportedErrorCode);
-    Assertions.assertTrue(52004 == mustRegisterTocErrorCode);
-    Assertions.assertTrue(52004 == mustRegisterTomErrorCode);
-    Assertions.assertTrue(54001 == unsupportedOpenFileTypeErrorCode);
-    Assertions.assertTrue(65000 == incalidCustomParameterErrorCode);
+    Assertions.assertEquals(50000, LinkisStorageErrorCodeSummary.UNSUPPORTED_FILE.getErrorCode());
+    Assertions.assertEquals(50000, LinkisStorageErrorCodeSummary.UNSUPPORTED_RESULT.getErrorCode());
+    Assertions.assertEquals(
+        50001, LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ.getErrorCode());
+    Assertions.assertEquals(
+        51000, LinkisStorageErrorCodeSummary.FAILED_TO_READ_INTEGER.getErrorCode());
+    Assertions.assertEquals(51000, LinkisStorageErrorCodeSummary.THE_FILE_IS_EMPTY.getErrorCode());
+    Assertions.assertEquals(51001, LinkisStorageErrorCodeSummary.TO_BE_UNKNOW.getErrorCode());
+    Assertions.assertEquals(
+        52000, LinkisStorageErrorCodeSummary.FSN_NOT_INIT_EXCEPTION.getErrorCode());
+    Assertions.assertEquals(
+        52001, LinkisStorageErrorCodeSummary.PARSING_METADATA_FAILED.getErrorCode());
+    Assertions.assertEquals(
+        52002, LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED.getErrorCode());
+    Assertions.assertEquals(52004, LinkisStorageErrorCodeSummary.MUST_REGISTER_TOC.getErrorCode());
+    Assertions.assertEquals(52004, LinkisStorageErrorCodeSummary.MUST_REGISTER_TOM.getErrorCode());
+    Assertions.assertEquals(
+        54001, LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode());
+    Assertions.assertEquals(
+        65000, LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorCode());
   }
 }

@@ -32,7 +32,6 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateResponse
 }
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
 import org.apache.linkis.manager.persistence.{
   LabelManagerPersistence,
@@ -304,8 +303,8 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
       return engineNode
     }
     throw new AMErrorException(
-      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getCode,
-      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getMessage
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode,
+      AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc
     )
   }
 

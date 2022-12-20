@@ -1,7 +1,9 @@
 package org.apache.linkis.basedatamanager.server.restful;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.linkis.basedatamanager.server.Scan;
 import org.apache.linkis.basedatamanager.server.WebApplicationServer;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
 import org.apache.linkis.basedatamanager.server.service.DatasourceAccessService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
@@ -18,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
@@ -32,7 +36,7 @@ public class DatasourceAccessRestfulApiTest {
     private DatasourceAccessService datasourceAccessService;
 
     @Test
-    public void TestGetListByPage() throws Exception {
+    public void TestList() throws Exception {
         MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
         paramsMap.add("searchName", "");
         paramsMap.add("currentPage", "1");
@@ -40,6 +44,50 @@ public class DatasourceAccessRestfulApiTest {
         String url = "/basedata-manager/datasource-access";
         sendUrl(url, paramsMap, "get", null);
     }
+
+    @Test
+    public void TestGet() throws Exception {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        String url = "/basedata-manager/datasource-access/"+"1";
+        sendUrl(url, paramsMap, "get", null);
+    }
+
+    @Test
+    public void TestAdd() throws Exception {
+        String url = "/basedata-manager/datasource-access";
+        DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
+        datasourceAccessEntity.setApplicationId(1);
+        datasourceAccessEntity.setTableId(1L);
+        datasourceAccessEntity.setVisitor("1");
+        datasourceAccessEntity.setFields("1");
+        datasourceAccessEntity.setAccessTime(new Date());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String msg = objectMapper.writeValueAsString(datasourceAccessEntity);
+        sendUrl(url, null, "post", msg);
+    }
+
+    @Test
+    public void TestUpdate() throws Exception {
+        String url = "/basedata-manager/datasource-access";
+        DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
+        datasourceAccessEntity.setId(1L);
+        datasourceAccessEntity.setApplicationId(1);
+        datasourceAccessEntity.setTableId(1L);
+        datasourceAccessEntity.setVisitor("1");
+        datasourceAccessEntity.setFields("1");
+        datasourceAccessEntity.setAccessTime(new Date());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String msg = objectMapper.writeValueAsString(datasourceAccessEntity);
+        sendUrl(url, null, "put", msg);
+    }
+
+    @Test
+    public void TestRemove() throws Exception {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        String url = "/basedata-manager/datasource-access/"+"1";
+        sendUrl(url, paramsMap, "delete", null);
+    }
+
     public void sendUrl(String url, MultiValueMap<String, String> paramsMap, String type, String msg)
             throws Exception {
         MvcUtils mvcUtils = new MvcUtils(mockMvc);
@@ -51,11 +99,23 @@ public class DatasourceAccessRestfulApiTest {
                 mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
             }
         }
+
+        if (type.equals("delete")) {
+                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
+        }
+
         if (type.equals("post")) {
             if (msg != null) {
                 mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, msg));
             } else {
                 mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
+            }
+        }
+        if (type.equals("put")) {
+            if (msg != null) {
+                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, msg));
+            } else {
+                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
             }
         }
         assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());

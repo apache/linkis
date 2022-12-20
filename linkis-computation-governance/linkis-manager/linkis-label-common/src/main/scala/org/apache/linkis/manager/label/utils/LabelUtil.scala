@@ -20,6 +20,7 @@ package org.apache.linkis.manager.label.utils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
+  EngineConnModeLabel,
   EngineTypeLabel,
   UserCreatorLabel
 }
@@ -77,6 +78,20 @@ object LabelUtil {
 
   def getCodeTypeLabel(labels: util.List[Label[_]]): CodeLanguageLabel = {
     getLabelFromList[CodeLanguageLabel](labels)
+  }
+
+  def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel = {
+    getLabelFromList[EngineConnModeLabel](labels)
+  }
+
+  def getEngineConnMode(labels: util.List[Label[_]]): String = {
+    if (null == labels) return null
+    val engineConnModeLabel = getEngineConnModeLabel(labels)
+    if (null != engineConnModeLabel) {
+      engineConnModeLabel.getEngineConnMode
+    } else {
+      null
+    }
   }
 
   def getBindEngineLabel(labels: util.List[Label[_]]): BindEngineLabel = {

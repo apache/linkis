@@ -17,39 +17,30 @@
 
 package org.apache.linkis.storage.errorcode;
 
-public enum LinkisIoFileErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisIoFileErrorCodeSummary implements LinkisErrorCode {
   CANNOT_BE_EMPTY(53002, "The read method parameter cannot be empty(read方法参数不能为空)"),
   FS_CAN_NOT_PROXY_TO(52002, "FS Can not proxy to:{}(FS 不能代理到：{})"),
   NOT_EXISTS_METHOD(53003, "not exists method {} in fs {}(方法不存在)"),
   PARAMETER_CALLS(53003, "Unsupported parameter calls(不支持的参数调用)");
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisIoFileErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -18,20 +18,16 @@
 package org.apache.linkis.engineplugin.presto.errorcode;
 
 import org.apache.linkis.common.errorcode.ErrorCodeUtils;
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
-public enum PrestoErrorCodeSummary {
-  /**
-   * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
-   * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
-   * linkis-extensions 26000-29999 linkis-engineconn-plugins
-   */
+public enum PrestoErrorCodeSummary implements LinkisErrorCode {
   PRESTO_STATE_INVALID(
       26001, "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)"),
   PRESTO_CLIENT_ERROR(26002, "Presto client error(Presto客户端异常)");
 
-  private int errorCode;
+  private final int errorCode;
 
-  private String errorDesc;
+  private final String errorDesc;
 
   PrestoErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
@@ -39,24 +35,13 @@ public enum PrestoErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

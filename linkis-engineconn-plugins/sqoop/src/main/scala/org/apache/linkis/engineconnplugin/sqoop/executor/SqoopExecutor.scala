@@ -19,7 +19,7 @@ package org.apache.linkis.engineconnplugin.sqoop.executor
 
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
 import org.apache.linkis.engineconnplugin.sqoop.client.Sqoop
-import org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.NOT_SUPPORT_METHON
+import org.apache.linkis.engineconnplugin.sqoop.client.errorcode.SqoopErrorCodeSummary.NOT_SUPPORT_METHOD
 import org.apache.linkis.engineconnplugin.sqoop.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopEngineConnContext
 import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfiguration.LINKIS_QUEUE_NAME
@@ -45,7 +45,7 @@ trait SqoopExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException(NOT_SUPPORT_METHON.getErrorDesc)
+    throw new JobExecutionException(NOT_SUPPORT_METHOD.getErrorDesc)
 
   protected val sqoopEngineConnContext: SqoopEngineConnContext
 }

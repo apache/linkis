@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.rm.exception;
 
-public enum RMErrorCode {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum RMErrorCode implements LinkisErrorCode {
 
   /** */
   LABEL_RESOURCE_NOT_FOUND(110021, "label resource not found, please check!"),
@@ -63,28 +65,22 @@ public enum RMErrorCode {
   ECM_INSTANCES_INSUFFICIENT(11003, "ECM Insufficient number of instances(ECM实例数不足)"),
   ;
 
-  RMErrorCode(int errorCode, String message) {
-    this.code = errorCode;
-    this.message = message;
+  private final int errorCode;
+
+  private final String errorDesc;
+
+  RMErrorCode(int errorCode, String errorDesc) {
+    this.errorCode = errorCode;
+    this.errorDesc = errorDesc;
   }
 
-  private int code;
-
-  private String message;
-
-  public int getCode() {
-    return code;
+  @Override
+  public int getErrorCode() {
+    return errorCode;
   }
 
-  public void setCode(int code) {
-    this.code = code;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
+  @Override
+  public String getErrorDesc() {
+    return errorDesc;
   }
 }

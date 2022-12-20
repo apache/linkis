@@ -17,7 +17,9 @@
 
 package org.apache.linkis.metadata.query.common.errorcode;
 
-public enum LinkisMetadataQueryErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisMetadataQueryErrorCodeSummary implements LinkisErrorCode {
   INVOKE_METHOD_FAIL(199604, "Invoke method:{0} fail,message:{1}(调用方法：{0} 失败,信息：{1})"),
   FAILED_METADATA_SERVICE(199611, "Failed to load metadata service(加载元数据服务失败)"),
   METARUNTIME_EXCEPTION_ID(99900, ""),
@@ -35,33 +37,22 @@ public enum LinkisMetadataQueryErrorCodeSummary {
   CANNOT_PARSE_PARAM(99900, "Cannot parse the param:{0}(无法解析参数)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisMetadataQueryErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

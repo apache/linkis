@@ -93,7 +93,7 @@ class DefaultEngineConnStatusCallbackService extends EngineConnStatusCallbackSer
       val errorMsgLowCase = errorMsg.toLowerCase(Locale.getDefault)
       canRetryLogs.foreach(canRetry =>
         if (errorMsgLowCase.contains(canRetry)) {
-          logger.error(s"match engineConn log fatal logs,is $canRetry")
+          logger.info(s"match engineConn log fatal logs,is $canRetry")
           flag = true
         }
       )

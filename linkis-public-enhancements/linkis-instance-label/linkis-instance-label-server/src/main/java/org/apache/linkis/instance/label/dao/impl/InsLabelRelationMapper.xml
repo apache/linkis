@@ -90,7 +90,7 @@
         <![CDATA[SELECT ]]>
         <include refid="search_ins_columns"/>
         <![CDATA[ FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
-            (SELECT `label_id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
+            (SELECT `id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
         ]]>
         <foreach collection="list" item="item" open="(" close=")" separator=",">
             <![CDATA[(#{item.labelKey}, #{item.stringValue})]]>
@@ -184,7 +184,7 @@
         <![CDATA[SELECT ]]>
         <include refid="search_ins_columns"/>
         <![CDATA[ FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
-            (SELECT `label_id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
+            (SELECT `id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
         ]]>
         <foreach collection="list" item="item" open="(" close=")" separator=",">
             <![CDATA[(#{item.labelKey}, #{item.stringValue})]]>

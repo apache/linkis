@@ -107,7 +107,7 @@ export default {
     handleScroll(v, h) {
       this.$refs.body.handleScroll(v, h);
     },
-    // sorting 中不允许再点击
+    // No more clicks allowed in sorting(sorting 中不允许再点击)
     handleSortClick(event, { col, index }, sortOrder) {
       if (this.sort.sorting) return;
       if (this.sort.type === sortOrder && this.sort.index === index) {

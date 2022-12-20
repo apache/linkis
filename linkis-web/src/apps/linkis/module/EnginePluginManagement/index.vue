@@ -72,9 +72,11 @@
     >
       <Spin size="large" fix v-if="loadingForm"></Spin>
       <div style="height: 200px">
-        <form style="width: 200px;height: 200px">
-          <input type="file" @change="getFile($event)"></input>
+        <form style="width: 200px;height: 200px" v-show="false">
+          <input ref="upload" type="file" @change="getFile($event)" accept=".zip"/>
         </form>
+        <Button type="default" style="width: 100%; height: 70%; font-size: 50px;" size="large" icon="ios-cloud-upload-outline" @click="handleClick"></Button>
+        <span style="margin-top: 30px; text-align: center; display: inline-block; width:100%; font-size:14px">{{$t('message.linkis.EnginePluginManagement.upload')}}</span>
       </div>
 
       <div slot="footer">
@@ -82,15 +84,15 @@
           <div>
             <Button
               type="primary"
-              @click="showFileOperate = false"
-            >{{ $t('message.linkis.close') }}</Button>
+              @click="handleCancel"
+            >{{ $t('message.linkis.cancel') }}</Button>
             <Button type="primary" @click="onSubmit">{{
               $t('message.linkis.complete')}}</Button>
           </div>
         </div>
       </div>
     </Modal>
-    <Row class="search-bar" type="flex" justify="flex-start">
+    <Row class="search-bar" type="flex" justify="start">
       <Col span="5">
         <div class="search-item">
           <span class="lable" :title="$t('message.linkis.EnginePluginManagement.engineConnType')">{{ $t('message.linkis.EnginePluginManagement.engineConnType') }}</span>
@@ -120,12 +122,12 @@
           $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
         <Button type="primary" class="button" :style="{width: '60px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="initECMList()">{{
           $t('message.linkis.search') }}</Button>
-        <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
+        <!-- <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
           $t('message.linkis.EnginePluginManagement.update')}}</Button>
         <Button type="error" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="deleteBML">{{
-          $t('message.linkis.EnginePluginManagement.delete')}}</Button>
-        <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(0)">{{
-          $t('message.linkis.EnginePluginManagement.create') }}</Button>
+          $t('message.linkis.EnginePluginManagement.delete')}}</Button> -->
+        <!-- <Button type="primary" :style="{width: '90px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(0)">{{
+          $t('message.linkis.EnginePluginManagement.create') }}</Button> -->
       </Col>
     </Row>
     <Table
@@ -144,6 +146,15 @@
           :disabled="row.expire"
           @click="openVersionList(row, index)"
         >{{ `${row.bmlResourceVersion || '-'}` }}</Button
+        >
+      </template>
+      <template slot-scope="{ row }" slot="action">
+        <Button
+          size="small"
+          type="primary"
+          style="margin-right: 5px;"
+          @click="() => tableActionHandler(row, 'upd')"
+        >{{ $t('message.linkis.EnginePluginManagement.updateFileOnly') }}</Button
         >
       </template>
     </Table>
@@ -184,6 +195,7 @@ export default {
       actionNum: '',
       loadingForm: false,
       tableLoading: false,
+      updWay: '',
       tableColumnNum: [
         {
           title: "ID",
@@ -219,6 +231,10 @@ export default {
           key: 'lastModified',
           tooltip: true,
           align: 'center',
+          render: (h, params) => {
+            let time = new Date(parseInt(params.row.lastModified)).toLocaleString().replace(/:\d(1,2)$/, ' ')
+            return h('span', time);
+          }
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.bmlResourceId'),
@@ -232,6 +248,7 @@ export default {
           slot: 'bmlResourceVersion',
           tooltip: true,
           align: 'center',
+          minWidth: 30,
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.lastUpdateTime'),
@@ -248,6 +265,7 @@ export default {
         {
           title: this.$t('message.linkis.EnginePluginManagement.action'),
           slot: 'action',
+          minWidth: 20,
           align: 'center',
         },
       ],
@@ -286,6 +304,7 @@ export default {
   watch: {
     ecType(newName, oldName) {
       console.log(oldName);
+      if(!newName) return;
       this.getTypeVersionList(newName)
     }
   },
@@ -328,9 +347,9 @@ export default {
       var formData = new FormData();
       if(this.actionNum === 0){
         formData.append('file', this.file);
-        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
+        api.fetch('/engineplugin/uploadEnginePluginBML', formData, {method: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
           console.log(response);
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
           this.getTypeList();
           this.showFileOperate = false;
         }).catch(e => {
@@ -344,7 +363,12 @@ export default {
         formData.append('ecType', this.ecType);
         formData.append('version', this.version);
         api.fetch('/engineplugin/updateEnginePluginBML', formData, {methed: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
-          this.$Message.success(response.mes);
+          this.$Message.success(response.msg);
+          if(this.updWay === 'table') {
+            this.ecType = '';
+            this.version = '';
+            this.updWay = '';
+          }
           this.getTypeList();
           this.initECMList();
           this.showFileOperate = false;
@@ -357,6 +381,14 @@ export default {
       }
 
     },
+    handleCancel() {
+      this.showFileOperate = false;
+      if(this.updWay === 'table') {
+        this.ecType = '';
+        this.version = '';
+        this.updWay = '';
+      }
+    },
     deleteBML(){
       var th=this;
       var reqList=[]
@@ -365,6 +397,10 @@ export default {
           reqList.push(it.bmlResourceId);
         }
       })
+      if(!reqList || reqList.length<1){
+        this.$Message.info(this.$t('message.linkis.EnginePluginManagement.checkEngineConnTypeAndVersion'));
+        return
+      }
       api.fetch('/bml/deleteResources', {'resourceIds': reqList}, 'post').then(response => {
         console.log(response);
         api.fetch('/engineplugin/deleteEnginePluginBML', {'ecType': th.ecType, 'version': th.version}, 'get').then(response2 => {
@@ -390,6 +426,12 @@ export default {
       // })
     },
     createOrUpdate(num) {
+
+      if(!this.ecType || !this.version){
+        this.$Message.info(this.$t('message.linkis.EnginePluginManagement.checkEngineConnTypeAndVersion'));
+        return
+      }
+
       this.actionNum = num
       if(num === 0){
         this.actionType=this.$t('message.linkis.EnginePluginManagement.create')
@@ -397,6 +439,15 @@ export default {
         this.actionType=this.$t('message.linkis.EnginePluginManagement.update')
       }
       this.showFileOperate = true
+    },
+    async tableActionHandler(row, type) {
+      console.log(row);
+      if(type === 'upd') {
+        this.ecType = row.engineConnType;
+        this.version = row.version;
+        this.updWay = 'table';
+        this.createOrUpdate(1);
+      } 
     },
     async openVersionList(row) {
       this.currentEnginpluginData = row
@@ -444,6 +495,9 @@ export default {
         this.$Message.error(e);
       })
     },
+    handleClick () {
+      this.$refs.upload.click();
+    }
   },
 }
 </script>

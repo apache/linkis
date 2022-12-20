@@ -144,7 +144,10 @@ object EntranceConfiguration {
   val SHELL_DANGER_CHECK_SWITCH =
     CommonVars("wds.linkis.entrance.shell.danger.check.enabled", true)
 
-  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "bdp-client")
+  val SHELL_DANGER_USAGE = CommonVars(
+    "wds.linkis.shell.danger.usage",
+    "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn"
+  )
 
   val SHELL_WHITE_USAGE = CommonVars(
     "wds.linkis.shell.white.usage",
@@ -197,9 +200,6 @@ object EntranceConfiguration {
 
   val CODE_PARSER_SELECTIVE_IGNORED =
     CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.selective.ignored", true)
-
-  val ENTRANCE_CODEPARSER_ENABLE =
-    CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.enable", false)
 
   val YARN_QUEUE_CORES_MAX = CommonVars[Integer]("wds.linkis.entrance.yarn.queue.core.max", 300)
 

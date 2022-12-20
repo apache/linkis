@@ -135,7 +135,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
      * update step:
      * 1.delete relations of old labels 2.add new relation between new labels and instance
      */
-    if (null != willBeDelete && willBeDelete.nonEmpty) {
+    if (null != willBeUpdate && willBeUpdate.nonEmpty) {
       labels.asScala.foreach(label => {
         if (
             modifiableKeyList.contains(label.getLabelKey) && willBeUpdate

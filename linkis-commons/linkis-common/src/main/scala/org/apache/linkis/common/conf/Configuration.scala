@@ -61,7 +61,11 @@ object Configuration extends Logging {
   private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
 
   def isAdmin(username: String): Boolean = {
-    adminUsers.exists(username.equalsIgnoreCase)
+    adminUsers.exists(username.equals)
+  }
+
+  def isNotAdmin(username: String): Boolean = {
+    !isAdmin(username)
   }
 
   def getGateWayURL(): String = {

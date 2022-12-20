@@ -17,49 +17,29 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 
 import org.apache.commons.lang3.StringUtils
 
 import java.io._
 import java.util
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.Collections
 import java.util.regex.Pattern
 
-class YarnAppIdExtractor extends Thread with Logging {
-  val MAX_BUFFER: Int = 32 * 1024 * 1024 // 32MB
+class YarnAppIdExtractor extends Logging {
 
-  val buff: StringBuilder = new StringBuilder
+  private val appIdList: util.Set[String] = Collections.synchronizedSet(new util.HashSet[String]())
 
-  val appIdList: util.List[String] = new util.ArrayList[String]()
-
-  val shouldStop: AtomicBoolean = new AtomicBoolean(false)
+  private val regex = EngineConnConf.SPARK_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX.getValue
+  private val pattern = Pattern.compile(regex)
 
   def appendLineToExtractor(content: String): Unit = {
-    buff.synchronized {
-      if (content.length + buff.length > MAX_BUFFER) {
-        logger.warn(
-          s"input exceed max-buffer-size, will abandon some part of input. maybe will lost some yarn-app-id."
-        )
-        buff
-          .append(StringUtils.substring(content, 0, MAX_BUFFER - buff.length))
-          .append(System.lineSeparator())
-      } else {
-        buff.append(content).append(System.lineSeparator())
-      }
-    }
-  }
-
-  def startExtraction(): Unit = {
-    this.start()
-  }
-
-  def onDestroy(): Unit = {
-    shouldStop.set(true)
-    this.interrupt()
-    buff.synchronized {
-      buff.setLength(0)
+    if (StringUtils.isBlank(content)) return
+    val yarnAppIDMatcher = pattern.matcher(content)
+    if (yarnAppIDMatcher.find) {
+      val yarnAppID = yarnAppIDMatcher.group(2)
+      appIdList.add(yarnAppID)
     }
   }
 
@@ -68,8 +48,6 @@ class YarnAppIdExtractor extends Thread with Logging {
     if (StringUtils.isBlank(content)) return new Array[String](0)
     // spark: Starting|Submitted|Activating.{1,100}(application_\d{13}_\d+)
     // sqoop, importtsv: Submitted application application_1609166102854_970911
-    val regex = EngineConnConf.SPARK_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX.getValue
-    val pattern = Pattern.compile(regex)
 
     val stringReader = new StringReader(content)
 
@@ -94,48 +72,9 @@ class YarnAppIdExtractor extends Thread with Logging {
     ret.toArray(new Array[String](ret.size()))
   }
 
-  override def run(): Unit = {
-    while (!shouldStop.get()) {
-      var content: String = ""
-      buff.synchronized {
-        content = buff.toString()
-        buff.setLength(0)
-      }
-      if (StringUtils.isNotBlank(content)) {
-        val appIds = doExtractYarnAppId(content)
-        if (appIds != null && appIds.length != 0) {
-          logger.info(s"Retrieved new yarn application Id：" + appIds.mkString(" "))
-          addYarnAppIds(appIds)
-        }
-        logger.debug(s"Yarn-appid-extractor is running")
-      }
-      Utils.sleepQuietly(200L)
-    }
-  }
-
-  def addYarnAppId(yarnAppId: String): Unit = {
+  def getExtractedYarnAppIds(): util.List[String] = {
     appIdList.synchronized {
-      appIdList.add(yarnAppId)
-    }
-  }
-
-  def addYarnAppIds(yarnAppIds: Array[String]): Unit = {
-    if (yarnAppIds != null && !yarnAppIds.isEmpty) {
-      appIdList.synchronized {
-        yarnAppIds.foreach(id =>
-          if (!appIdList.contains(id)) {
-            appIdList.add(id)
-            // input application id to logs/stderr
-            logger.info(s"Submitted application $id")
-          }
-        )
-      }
-    }
-  }
-
-  def getExtractedYarnAppIds(): Array[String] = {
-    appIdList.synchronized {
-      appIdList.toArray(new Array[String](appIdList.size()))
+      new util.ArrayList[String](appIdList)
     }
   }
 

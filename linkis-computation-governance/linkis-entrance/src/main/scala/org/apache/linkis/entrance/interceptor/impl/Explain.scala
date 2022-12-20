@@ -60,7 +60,7 @@ object SparkExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
     if (scStop.matcher(code).find()) {
@@ -103,10 +103,7 @@ object SQLExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (code.trim.matches(CREATE_DATABASE_SQL)) {
-      error.append("Sorry, you have no permission to create database")
-      false
-    } else true
+    true
   }
 
   /**
@@ -346,7 +343,7 @@ object PythonExplain extends Explain {
   private val SC_STOP = """sc\.stop""".r.unanchored
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
 
@@ -408,7 +405,7 @@ object ScalaExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (EntranceConfiguration.SKIP_AUTH.getValue) {
+    if (EntranceConfiguration.SKIP_AUTH.getHotValue()) {
       return true
     }
     code match {

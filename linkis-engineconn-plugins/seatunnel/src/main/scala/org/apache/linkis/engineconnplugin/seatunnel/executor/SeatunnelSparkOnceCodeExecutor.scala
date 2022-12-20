@@ -41,12 +41,14 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.nio.file.Files
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
+
+import scala.language.postfixOps
 
 class SeatunnelSparkOnceCodeExecutor(
     override val id: Long,
@@ -67,7 +69,7 @@ class SeatunnelSparkOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + code)
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(
@@ -78,7 +80,7 @@ class SeatunnelSparkOnceCodeExecutor(
           )
           tryFailed()
         }
-        info("All codes completed, now stop SeatunnelEngineConn.")
+        logger.info("All codes completed, now stop SeatunnelEngineConn.")
         closeDaemon()
         if (!isFailed) {
           trySucceed()
@@ -89,16 +91,15 @@ class SeatunnelSparkOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    info("Execute SeatunnelSpark Process")
+    logger.info("Execute SeatunnelSpark Process")
     val masterKey = LINKIS_SPARK_MASTER.getValue
-    val configKey = LINKIS_SPARK_CONFIG.getValue
     val deployModeKey = LINKIS_SPARK_DEPLOY_MODE.getValue
 
     var args: Array[String] = Array.empty
     if (params != null && StringUtils.isNotBlank(params.get(masterKey))) {
       args = Array(
         GET_LINKIS_SPARK_MASTER,
-        params.getOrDefault(masterKey, "yarn"),
+        params.getOrDefault(masterKey, "local[4]"),
         GET_LINKIS_SPARK_DEPLOY_MODE,
         params.getOrDefault(deployModeKey, "client"),
         GET_LINKIS_SPARK_CONFIG,
@@ -108,22 +109,22 @@ class SeatunnelSparkOnceCodeExecutor(
       args = localArray(code)
     }
 
-    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue));
+    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue))
     Files.createSymbolicLink(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelSpark Process end")
+    logger.info(s"Execute SeatunnelSpark Process end args:${args.mkString(" ")}")
     LinkisSeatunnelSparkClient.main(args)
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              info("The Seatunnel Spark Process In Running")
+              logger.info("The Seatunnel Spark Process In Running")
             }
           }
         },
@@ -131,6 +132,7 @@ class SeatunnelSparkOnceCodeExecutor(
         SeatunnelEnvConfiguration.SEATUNNEL_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def getCurrentNodeResource(): NodeResource = {

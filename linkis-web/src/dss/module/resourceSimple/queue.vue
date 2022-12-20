@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="queue-manager">
     <Spin
@@ -113,11 +113,11 @@ export default {
   methods: {
     getQueueList() {
       this.loading = true;
-      // 获取队列资源使用状态
+      // Get queue resource usage status(获取队列资源使用状态)
       api.fetch('/linkisManager/rm/queues').then((res) => {
         this.loading = false;
         this.queueList = [];
-        // 将显示字段进行拼接显示并分别存储对应参数
+        // Mosaic display fields and store corresponding parameters separately(将显示字段进行拼接显示并分别存储对应参数)
         res.queues.forEach(item => {
           item.queues.forEach(i => {
             let obj ={};
@@ -134,13 +134,13 @@ export default {
       });
     },
     getQueueInfo(name = '') {
-      // 根据返回的显示数据找出对应的完整对象
+      // Find the corresponding complete object based on the returned display data(根据返回的显示数据找出对应的完整对象)
       name = this.queueList.find(item => item.text === name) || {};
       this.loading = true;
-      // 取出对应的参数
+      // Take out the corresponding parameters(取出对应的参数)
       let clustername = name.clustername;
       let queuename = name.queuename;
-      // 获取队列资源数据
+      // Get queue resource data(获取队列资源数据)
       api.fetch('/linkisManager/rm/queueresources', {
         queuename,
         clustername

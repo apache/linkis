@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     ref="footerChannel"
@@ -54,7 +54,7 @@ export default {
     };
   },
   created() {
-    // 让其它接口请求保持在getBasicInfo接口后面请求
+    // Keep other interface requests behind the getBasicInfo interface(让其它接口请求保持在getBasicInfo接口后面请求)
     setTimeout(() => {
       this.getRunningJob();
     }, 500);
@@ -70,7 +70,7 @@ export default {
         pageSize: 100,
         status: 'Running,Inited,Scheduled',
       }, 'get').then((rst) => {
-        // 剔除requestApplicationName为 "nodeexecution" 的task
+        // Eliminate tasks whose requestApplicationName is "nodeexecution"(剔除requestApplicationName为 "nodeexecution" 的task)
         let tasks = rst.tasks.filter(item => item.requestApplicationName !== "nodeexecution" && item.requestApplicationName !== "CLI")
         this.num = tasks.length;
       });
@@ -86,7 +86,7 @@ export default {
       this[method](num);
     },
     toast() {
-      // 取消拖动后自动点击事件
+      // Automatic click event after cancel dragging(取消拖动后自动点击事件)
       if (this.isMouseMove) {
         return;
       }
@@ -99,12 +99,12 @@ export default {
       this.moveY = e.clientY - footerChannel.offsetTop;
       this.isMouseDrop = true;
       this.isMouseMove = false;
-      // 阻止拖拽过程中选中文本
+      // Prevent text selection during dragging(阻止拖拽过程中选中文本)
       document.onselectstart = () => {
         return false;
       }
-      // 这里无法在元素上使用@mousemove，否则拖动会有卡顿
-      // 使用setTimeout是防止点击的同时会触发move事件，这时正常的点击事件是不会触发的。
+      // You can't use @mousemove on elements here, otherwise dragging will freeze(这里无法在元素上使用@mousemove，否则拖动会有卡顿)
+      // Using setTimeout is to prevent the click from triggering the move event at the same time. At this time, the normal click event will not be triggered.(使用setTimeout是防止点击的同时会触发move事件，这时正常的点击事件是不会触发的。)
       setTimeout(() => {
         document.onmousemove = (e) => {
 
@@ -113,7 +113,7 @@ export default {
             const footerChannel = this.$refs.footerChannel;
             let x = e.clientX - this.moveX;
             let y = e.clientY - this.moveY;
-            // 限制拖动范围
+            // Limit drag range(限制拖动范围)
             let maxX = document.documentElement.clientWidth - 120;
             let maxY = document.documentElement.clientHeight - 60;
             if (this.moveX <= 0) {
@@ -134,13 +134,13 @@ export default {
       }, 0)
     },
     oMouseUp() {
-      // 清空onmousemove方法
+      // Empty the onmousemove method(清空onmousemove方法)
       document.onmousemove = null;
       this.isMouseDrop = false;
       setTimeout(() => {
         this.isMouseMove = false;
       }, 200)
-      // 恢复document的文本选中功能
+      // Restore the text selection function of the document(恢复document的文本选中功能)
       document.onselectstart = () => {
         return true;
       }

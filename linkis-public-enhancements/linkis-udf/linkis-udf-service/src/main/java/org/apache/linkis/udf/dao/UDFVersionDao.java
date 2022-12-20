@@ -56,4 +56,7 @@ public interface UDFVersionDao {
       @Param("newUser") String newUser);
 
   void updateUDFVersion(UDFVersion udfVersion);
+
+  UDFVersionVo getUdfVersionInfoByName(
+      @Param("udfName") String udfName, @Param("createUser") String createUser);
 }

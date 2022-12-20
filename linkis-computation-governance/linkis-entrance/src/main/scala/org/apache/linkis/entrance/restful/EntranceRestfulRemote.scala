@@ -43,18 +43,19 @@ trait EntranceRestfulRemote {
 
   @RequestMapping(value = Array("/entrance/{id}/status"), method = Array(RequestMethod.GET))
   def status(
+      req: HttpServletRequest,
       @PathVariable("id") id: String,
       @RequestParam(value = "taskID", required = false) taskID: String
   ): Message
 
   @RequestMapping(value = Array("/entrance/{id}/progress"), method = Array(RequestMethod.GET))
-  def progress(@PathVariable("id") id: String): Message
+  def progress(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
   @RequestMapping(
     value = Array("/entrance/{id}/progressWithResource"),
     method = Array(RequestMethod.GET)
   )
-  def progressWithResource(@PathVariable("id") id: String): Message
+  def progressWithResource(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
   @RequestMapping(value = Array("/entrance/{id}/log"), method = Array(RequestMethod.GET))
   def log(req: HttpServletRequest, @PathVariable("id") id: String): Message
@@ -67,9 +68,13 @@ trait EntranceRestfulRemote {
   ): Message
 
   @RequestMapping(value = Array("/entrance/{id}/kill"), method = Array(RequestMethod.GET))
-  def kill(@PathVariable("id") id: String, @RequestParam("taskID") taskID: java.lang.Long): Message
+  def kill(
+      req: HttpServletRequest,
+      @PathVariable("id") id: String,
+      @RequestParam("taskID") taskID: java.lang.Long
+  ): Message
 
   @RequestMapping(value = Array("/entrance/{id}/pause"), method = Array(RequestMethod.GET))
-  def pause(@PathVariable("id") id: String): Message
+  def pause(req: HttpServletRequest, @PathVariable("id") id: String): Message
 
 }

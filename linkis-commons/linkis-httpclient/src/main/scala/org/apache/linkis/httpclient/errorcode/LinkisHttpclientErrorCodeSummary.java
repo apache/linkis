@@ -17,7 +17,9 @@
 
 package org.apache.linkis.httpclient.errorcode;
 
-public enum LinkisHttpclientErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisHttpclientErrorCodeSummary implements LinkisErrorCode {
   CONNECT_TO_SERVERURL(
           10901,
           "connect to serverUrl:{0} failed! because gateway server is unhealthy(连接到 serverUrl {0} 失败，因为网关服务器请求失败)!"),
@@ -26,7 +28,7 @@ public enum LinkisHttpclientErrorCodeSummary {
           "URL request failed!(URL 请求失败)"),
   RETRY_EXCEPTION(
           10900,
-          ""),
+          "retry exception(重试异常)"),
   MESSAGE_PARSE_EXCEPTION(
           10900,
           "Discovery is not enable(未启用发现)!"),
@@ -37,9 +39,9 @@ public enum LinkisHttpclientErrorCodeSummary {
 
 
   /** error code(错误码) */
-  private int errorCode;
+  private final int errorCode;
   /** wrong description(错误描述 )*/
-  private String errorDesc;
+  private final String errorDesc;
 
 
   LinkisHttpclientErrorCodeSummary(int errorCode, String errorDesc) {
@@ -47,25 +49,13 @@ public enum LinkisHttpclientErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -71,6 +71,9 @@ public class UserIpConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-user-ip,msg: only administrators can configure");
       }
+      if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
+        throw new ConfigurationException("User-creator is existed");
+      }
       parameterVerification(userIpVo);
       userIpConfigService.createUserIP(userIpVo);
     } catch (DuplicateKeyException e) {
@@ -101,6 +104,10 @@ public class UserIpConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to update-user-ip,msg: only administrators can configure ");
       }
+      //      if (!userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator()))
+      // {
+      //        throw new ConfigurationException("User-creator is not existed");
+      //      }
       parameterVerification(userIpVo);
       userIpConfigService.updateUserIP(userIpVo);
     } catch (ConfigurationException e) {
@@ -218,9 +225,6 @@ public class UserIpConfigrationRestfulApi {
     }
     if (StringUtils.isBlank(userIpVo.getDesc())) {
       throw new ConfigurationException("Description couldn't be empty ");
-    }
-    if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
-      throw new ConfigurationException("User-creat is existed");
     }
   }
 }

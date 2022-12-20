@@ -82,7 +82,7 @@ object CSEntranceHelper extends Logging {
     job match {
       case entranceJob: EntranceJob =>
         val (contextIDValueStr, nodeNameStr) = getContextInfo(entranceJob.getParams)
-        logger.info(s"registerCSRSData: nodeName:$nodeNameStr")
+        logger.info("registerCSRSData: nodeName: {}", nodeNameStr)
         if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) {
           return null
         }
@@ -105,7 +105,7 @@ object CSEntranceHelper extends Logging {
             logger.info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
           case _ =>
         }
-        logger.info(s"registerCSRSData end: nodeName:$nodeNameStr")
+        logger.info("registerCSRSData end: nodeName: {}", nodeNameStr)
       case _ =>
     }
   }
@@ -190,7 +190,7 @@ object CSEntranceHelper extends Logging {
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
         }
       }
-      if (variableMap.asScala.nonEmpty) {
+      if (!variableMap.isEmpty) {
         // 1.cs priority is low, the same ones are not added
         val varMap =
           TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])

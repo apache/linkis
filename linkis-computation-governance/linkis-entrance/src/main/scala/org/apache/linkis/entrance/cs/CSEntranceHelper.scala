@@ -86,7 +86,6 @@ object CSEntranceHelper extends Logging {
         if (StringUtils.isBlank(contextIDValueStr) || StringUtils.isBlank(nodeNameStr)) {
           return null
         }
-
         val contextKey = new CommonContextKey
         contextKey.setContextScope(ContextScope.PUBLIC)
         contextKey.setContextType(ContextType.DATA)

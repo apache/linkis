@@ -895,9 +895,9 @@ class UJESSQLResultSet(
   }
 
   override def getStatement: Statement = {
-    if (statement != null && !hasClosed)
+    if (statement != null && !hasClosed) {
       statement.asInstanceOf[Statement]
-    else throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
+    } else throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
   }
 
   override def getObject(columnIndex: Int, map: util.Map[String, Class[_]]): AnyRef = {

@@ -358,6 +358,7 @@ See licenses/ for text of these licenses.
     (Apache License, Version 2.0) Jackson-module-parameter-names (com.fasterxml.jackson.module:jackson-module-parameter-names:2.13.4 - https://github.com/FasterXML/jackson-modules-java8/jackson-module-parameter-names)
     (Apache License, Version 2.0) Jettison (org.codehaus.jettison:jettison:1.3.7 - http://codehaus.org/jettison/)
     (Apache License, Version 2.0) Joda-Time (joda-time:joda-time:2.3 - http://www.joda.org/joda-time/)
+    (Apache License, Version 2.0) Joda-Time (joda-time:joda-time:2.10.5 - http://www.joda.org/joda-time/)
     (Apache License, Version 2.0) Netty/All-in-One (io.netty:netty-all:4.0.23.Final - http://netty.io/netty-all/)
     (Apache License, Version 2.0) Netty/Buffer (io.netty:netty-buffer:4.1.49.Final - https://netty.io/netty-buffer/)
     (Apache License, Version 2.0) Netty/Codec (io.netty:netty-codec:4.1.49.Final - https://netty.io/netty-codec/)

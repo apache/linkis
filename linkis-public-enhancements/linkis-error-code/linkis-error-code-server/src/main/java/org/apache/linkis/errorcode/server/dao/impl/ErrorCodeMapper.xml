@@ -20,9 +20,23 @@
 
 <mapper namespace="org.apache.linkis.errorcode.server.dao.ErrorCodeMapper">
 
+    <resultMap id="BaseResultMap" type="org.apache.linkis.errorcode.common.LinkisErrorCode">
+        <result property="errorCode" column="error_code" jdbcType="VARCHAR"/>
+        <result property="errorDesc" column="error_desc" jdbcType="VARCHAR"/>
+        <result property="errorRegexStr" column="error_regex" jdbcType="VARCHAR"/>
+        <result property="errorType" column="error_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,error_code,error_desc,
+        error_regex,error_type
+    </sql>
+
     <select id="getAllErrorCodes"
-            resultType="org.apache.linkis.errorcode.common.LinkisErrorCode">
-        SELECT * FROM linkis_ps_error_code
+            resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM linkis_ps_error_code
     </select>
 
 </mapper>

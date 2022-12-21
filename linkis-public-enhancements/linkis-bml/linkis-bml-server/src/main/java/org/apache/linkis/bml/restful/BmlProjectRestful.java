@@ -387,13 +387,17 @@ public class BmlProjectRestful {
           user,
           user,
           resourceId,
-          version);
+          version,
+          t);
       downloadModel.setEndTime(new Date());
       downloadModel.setState(1);
       downloadService.addDownloadRecord(downloadModel);
-      throw new ErrorException(
-          73561,
-          "Sorry, the background service error caused you to download the resources failed (抱歉，后台服务出错导致您本次下载资源失败)");
+      ErrorException errorException =
+          new ErrorException(
+              73561,
+              "Sorry, the background service error caused you to download the resources failed (抱歉，后台服务出错导致您本次下载资源失败)");
+      errorException.initCause(t);
+      throw errorException;
     } finally {
       IOUtils.closeQuietly(resp.getOutputStream());
     }

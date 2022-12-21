@@ -243,14 +243,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobResp
   }
 
-  /* private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
-    val tasks = new util.ArrayList[RequestPersistTask]
-    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
-    queryTask.foreach(f => tasks.add(f))
-    tasks
-  } */
-
   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)

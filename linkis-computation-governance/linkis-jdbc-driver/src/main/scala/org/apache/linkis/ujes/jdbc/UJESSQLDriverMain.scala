@@ -39,7 +39,7 @@ class UJESSQLDriverMain extends Driver with Logging {
   override def connect(url: String, properties: Properties): Connection = if (acceptsURL(url)) {
     val props = if (properties != null) properties else new Properties
     props.putAll(parseURL(url))
-    info(s"input url:$url, properties:$properties")
+    logger.info(s"input url:$url, properties:$properties")
     val ujesClient = UJESClientFactory.getUJESClient(props)
     new UJESSQLConnection(ujesClient, props)
   } else throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)

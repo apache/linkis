@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 object JobObserveActionTest extends App {
 
   val clientConfig = DWSClientConfigBuilder.newBuilder()
-    .addServerUrl("http://10.107.97.166:9001") // 改成测试gateway地址
+    .addServerUrl("") // 改成测试gateway地址
     .connectionTimeout(30000)
     .discoveryEnabled(false)
     .discoveryFrequency(1, TimeUnit.MINUTES)

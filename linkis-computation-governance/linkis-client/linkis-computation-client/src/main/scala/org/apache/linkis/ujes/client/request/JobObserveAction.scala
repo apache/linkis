@@ -84,7 +84,7 @@ object JobObserveAction {
       if (subSystemId == null) throw new UJESClientBuilderException("subSystemId is needed!")
       if (extra == null) throw new UJESClientBuilderException("extra is needed!")
       JobObserveAction.setUser(user)
-      JobObserveAction.addRequestPayload(TaskConstant.TASK_ID, taskId)
+      JobObserveAction.addRequestPayload("taskId", taskId)
       JobObserveAction.addRequestPayload(TaskConstant.MONITOR_LEVEL, monitorLevel)
       JobObserveAction.addRequestPayload(TaskConstant.RECEIVER, receiver)
       JobObserveAction.addRequestPayload(TaskConstant.SUB_SYSTEM_ID, subSystemId)

@@ -25,6 +25,10 @@ INSERT INTO `linkis_ps_dm_datasource_env` (`id`, `env_name`, `env_desc`, `dataso
 DELETE FROM linkis_ps_dm_datasource_type_key;
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`id`, `data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 1, 'host', '主机名(Host)', 'Host', NULL, 'TEXT', NULL, 0, '主机名(Host)', 'Host1', NULL, NULL, NULL, NULL, '2022-11-24 20:46:21', '2022-11-24 20:46:21');
 
+DELETE FROM linkis_ps_dm_datasource_type;
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2);
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('hive', 'hive数据库', 'hive', '大数据存储', '', 3);
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('elasticsearch','elasticsearch数据源','es无结构化存储','分布式全文索引','',3);
 
 
 

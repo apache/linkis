@@ -71,3 +71,17 @@ CREATE TABLE `linkis_ps_dm_datasource_type_key`
     PRIMARY KEY (`id`),
     UNIQUE KEY `uniq_dstid_key` (`data_source_type_id`, `key`)
 );
+
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type`;
+CREATE TABLE `linkis_ps_dm_datasource_type`
+(
+    `id`          int(11)                      NOT NULL AUTO_INCREMENT,
+    `name`        varchar(32)  NOT NULL,
+    `description` varchar(255)  DEFAULT NULL,
+    `option`      varchar(32)   DEFAULT NULL,
+    `classifier`  varchar(32)  NOT NULL,
+    `icon`        varchar(255)  DEFAULT NULL,
+    `layers`      int(3)                       NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uniq_name` (`name`)
+);

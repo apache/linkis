@@ -44,7 +44,7 @@ import java.sql.{
 import java.util.Properties
 import java.util.concurrent.Executor
 
-import scala.collection.{mutable, JavaConverters}
+import scala.collection.{mutable, JavaConversions}
 
 class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Properties)
     extends Connection
@@ -132,18 +132,16 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
   }
 
   override def createStatement(resultSetType: Int, resultSetConcurrency: Int): Statement = {
-    if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+    if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY)
       throw new SQLException(
         "Statement with resultset concurrency " + resultSetConcurrency + " is not supported",
         "HYC00"
       )
-    }
-    if (resultSetType == ResultSet.TYPE_SCROLL_SENSITIVE) {
+    if (resultSetType == ResultSet.TYPE_SCROLL_SENSITIVE)
       throw new SQLException(
         "Statement with resultset type " + resultSetType + " is not supported",
         "HYC00"
       )
-    }
     createStatementAndAdd(new UJESSQLStatement(this))
   }
 
@@ -159,9 +157,8 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
   override def getMetaData: DatabaseMetaData = throwWhenClosed(new UJESSQLDatabaseMetaData(this))
 
   override def close(): Unit = {
-    JavaConverters
-      .asScalaBufferConverter(runningSQLStatements)
-      .asScala
+    JavaConversions
+      .asScalaBuffer(runningSQLStatements)
       .foreach(statement => Utils.tryQuietly(statement.close()))
     closed = true
   }
@@ -308,17 +305,15 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createStruct not supported")
 
   override def setSchema(schema: String): Unit = throwWhenClosed {
-    if (StringUtils.isBlank(schema)) {
+    if (StringUtils.isBlank(schema))
       throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "schema is empty!")
-    }
     createStatement().execute("use " + schema)
   }
 
   override def getSchema: String = throwWhenClosed {
     val resultSet = createStatement().executeQuery("SELECT current_database()")
-    if (!resultSet.next()) {
+    if (!resultSet.next())
       throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "Get schema failed!")
-    }
     resultSet.getString(1)
   }
 

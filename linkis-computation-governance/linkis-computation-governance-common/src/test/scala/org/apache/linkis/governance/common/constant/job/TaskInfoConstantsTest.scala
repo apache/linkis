@@ -15,39 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.governance.common.constant.job
 
-public enum LinkisEngineConnErrorCodeSummary {
-  ;
-  /** 错误码 */
-  private int errorCode;
-  /** 错误描述 */
-  private String errorDesc;
+import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
-  LinkisEngineConnErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
+class TaskInfoConstantsTest {
+
+  @Test
+  @DisplayName("constTest")
+  def constTest(): Unit = {
+
+    val execid = TaskInfoConstants.EXEC_ID
+    val idinfo = TaskInfoConstants.ID_INFO
+    val taskclassname = TaskInfoConstants.TASK_CLASSNAME
+    val taskname = TaskInfoConstants.TASK_NAME
+
+    Assertions.assertEquals("execId", execid)
+    Assertions.assertEquals("idInfo", idinfo)
+    Assertions.assertEquals("taskClassname", taskclassname)
+    Assertions.assertEquals("taskName", taskname)
   }
 
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
-  }
 }

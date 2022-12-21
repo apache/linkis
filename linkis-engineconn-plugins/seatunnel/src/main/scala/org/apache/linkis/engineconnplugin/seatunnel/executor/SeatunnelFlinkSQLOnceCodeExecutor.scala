@@ -80,7 +80,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + code)
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(
@@ -91,7 +91,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
           )
           tryFailed()
         }
-        info("All codes completed, now stop SeatunnelEngineConn.")
+        logger.info("All codes completed, now stop SeatunnelEngineConn.")
         closeDaemon()
         if (!isFailed) {
           trySucceed()
@@ -102,7 +102,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    info("Execute SeatunnelFlink Process")
+    logger.info("Execute SeatunnelFlink Process")
 
     var args: Array[String] = Array.empty
     val flinkRunMode = LINKIS_FLINK_RUNMODE.getValue
@@ -135,7 +135,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelFlinkSQL Process end args:${args.mkString(" ")}")
+    logger.info(s"Execute SeatunnelFlinkSQL Process end args:${args.mkString(" ")}")
     LinkisSeatunnelFlinkSQLClient.main(args)
   }
 
@@ -145,7 +145,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              info("The SeatunnelFlinkSQL Process In Running")
+              logger.info("The SeatunnelFlinkSQL Process In Running")
             }
           }
         },

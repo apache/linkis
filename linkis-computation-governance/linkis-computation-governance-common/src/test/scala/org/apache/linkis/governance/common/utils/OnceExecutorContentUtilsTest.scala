@@ -15,37 +15,30 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.governance.common.utils
 
-public class LinkisSpringCloudServiceErrorCodeSummary {;
+import org.apache.linkis.governance.common.utils.OnceExecutorContentUtils.BmlResource
 
-  private int errorCode;
-  private String errorDesc;
+import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
-  LinkisSpringCloudServiceErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 13000, 14999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
+class OnceExecutorContentUtilsTest {
+
+  @Test
+  @DisplayName("constTest")
+  def constTest(): Unit = {
+
+    val onceexecutorcontentkey = OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY
+    Assertions.assertEquals("onceExecutorContent", onceexecutorcontentkey)
+
   }
 
-  public int getErrorCode() {
-    return errorCode;
+  @Test
+  @DisplayName("resourceToValueTest")
+  def resourceToValueTest(): Unit = {
+
+    val bmlResource = BmlResource("0001", "v1")
+    val str = OnceExecutorContentUtils.resourceToValue(bmlResource)
+    Assertions.assertNotNull(str)
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
-  }
 }

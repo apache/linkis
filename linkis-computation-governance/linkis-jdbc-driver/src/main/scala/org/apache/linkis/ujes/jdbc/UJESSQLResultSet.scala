@@ -970,9 +970,8 @@ class UJESSQLResultSet(
     logger.info(s"the value of value is $value and the value of localTimeZone is $localTimeZone")
     if (wasNull()) {
       null
-    } else {
+    } else
       new Timestamp(TIMESTAMP_FORMATTER.withZone(localTimeZone).parseMillis(String.valueOf(value)))
-    }
   }
 
   override def getTimestamp(columnIndex: Int, cal: Calendar): Timestamp = {

@@ -45,7 +45,7 @@ object JDBCDriverPreExecutionHook extends Logging {
           case _ => logger.warn(s"obj is not a engineHook obj is ${obj.getClass}")
         }
       } { case e: Exception =>
-        logger.error(s"failed to load class ${hookStr}", e)
+        error(s"failed to load class ${hookStr}", e)
       }
     }
     hooks.toArray

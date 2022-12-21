@@ -101,7 +101,7 @@ object CSEntranceHelper extends Logging {
                 SerializeHelper.serializeContextKey(contextKey),
                 data
               )
-            logger.info(s"(${contextKey.getKey} put ${jobRequest.getId} of jobId to cs)")
+            logger.info("({} put {} of jobId to cs)", contextKey.getKey: Any, jobRequest.getId: Any)
           case _ =>
         }
         logger.info("registerCSRSData end: nodeName: {}", nodeNameStr)
@@ -122,7 +122,7 @@ object CSEntranceHelper extends Logging {
     )
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
-      logger.info(s"init node($nodeNameStr) cs info")
+      logger.info("init node({}) cs info", nodeNameStr)
       CSNodeServiceImpl.getInstance().initNodeCSInfo(contextIDValueStr, nodeNameStr)
     }
   }
@@ -150,14 +150,16 @@ object CSEntranceHelper extends Logging {
         case contextID: LinkisWorkflowContextID =>
           if (CSCommonUtils.CONTEXT_ENV_PROD.equalsIgnoreCase(contextID.getEnv)) {
             logger.info(
-              s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.SCHEDULER_CREATOR
-                .getHotValue()
+              "reset creator from {} to {}",
+              userCreatorLabel.getCreator: Any,
+              EntranceConfiguration.SCHEDULER_CREATOR.getHotValue(): Any
             )
             userCreatorLabel.setCreator(EntranceConfiguration.SCHEDULER_CREATOR.getHotValue())
           } else {
             logger.info(
-              s"reset creator from ${userCreatorLabel.getCreator} to " + EntranceConfiguration.FLOW_EXECUTION_CREATOR
-                .getHotValue()
+              "reset creator from {} to {}",
+              userCreatorLabel.getCreator: Any,
+              EntranceConfiguration.FLOW_EXECUTION_CREATOR.getHotValue: Any
             )
             userCreatorLabel.setCreator(EntranceConfiguration.FLOW_EXECUTION_CREATOR.getHotValue())
           }
@@ -181,7 +183,7 @@ object CSEntranceHelper extends Logging {
     )
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
-      logger.info(s"parse variable nodeName:$nodeNameStr")
+      logger.info("parse variable nodeName: {}", nodeNameStr)
       val linkisVariableList: util.List[LinkisVariable] =
         CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr)
       if (null != linkisVariableList) {
@@ -204,7 +206,7 @@ object CSEntranceHelper extends Logging {
         )
       }
 
-      logger.info(s"parse variable end nodeName:$nodeNameStr")
+      logger.info("parse variable end nodeName: {}", nodeNameStr)
     }
   }
 

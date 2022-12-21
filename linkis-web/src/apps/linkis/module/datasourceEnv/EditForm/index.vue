@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
 export default {
   props: {
     mode: String,
@@ -86,16 +87,8 @@ export default {
           props: {
             placeholder: "",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
-              trigger: 'blur',
-            },
-          ],
         },
+        //3
         {
           type: "select",
           field: "datasourceTypeId",
@@ -105,50 +98,117 @@ export default {
           validate: [
             {
               required: true,
+              type: 'number',
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.datasourceEnv.datasourceType')
             },
           ],
         },
+        //4
         {
           type: "radio",
           title: this.$t('message.linkis.basedataManagement.datasourceEnv.keytab'),
-          field: "keytab",
+          field: "hasKeyTab",
           value: false,
+          hidden: true,
           options: [
             {value: false,label: "否",disabled: false},
             {value: true,label: "是",disabled: false},
           ],
           on: {
             'on-change': () => {
-              this.rule[5].hidden = !this.rule[5].hidden;
+              this.rule[8].hidden = !this.rule[8].hidden;
             }
           }
         },
+        //5
         {
           type: "upload",
           field: "pic",
           title: "keytab",
-          value: [],
+          value: '',
           hidden: true,
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseUpload'
+              )}"keytab"`,
+              trigger: 'blur',
+            },
+            {
+              validator: this.keyTabValidator,
+              trigger: 'blur'
+            }
+          ],
           props: {
             uploadType: 'file',
             action: "/api/rest_j/v1/bml/upload",
             maxLength: 1,
             multiple: false,
             onSuccess: (res) =>{
-              let tmpParameter = this.formData.parameter ? JSON.parse(this.formData.parameter) : {};
-              tmpParameter.keytab = res.data.resourceId;
-              this.formData.parameter = JSON.stringify(tmpParameter);
+              this.formData.keytab = res.data.resourceId;
             }
+          },
+        },
+        //6
+        {
+          type: 'input',
+          title: "keytab",
+          field: 'keytab',
+          value: '',
+          hidden: true,
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseUpload'
+              )}"keytab"`,
+              trigger: 'blur',
+            },
+          ],
+          props: {
+            placeholder: "",
+            readonly: true,
+            clearable: true,
+          },
+        },
+        //7
+        {
+          type: 'input',
+          title: "uris",
+          field: 'uris',
+          value: '',
+          props: {
+            placeholder: 'thrift://127.0.0.1:9083',
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )}"uris"`,
+              trigger: 'blur',
+            },
+          ],
+        },
+        //8
+        {
+          type: 'input',
+          title: "principle",
+          field: 'principle',
+          value: '',
+          hidden: true,
+          props: {
+            placeholder: 'hadoop@APACHE.COM',
           },
         },
         {
           type: 'v-jsoneditor',
           title: this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
-          field: 'parameter',
-          value: '',
+          field: 'hadoopConf',
+          value: {},
           props: {
             type: 'form-create',
             height: "280px",
@@ -156,7 +216,7 @@ export default {
               mode: "code",
               modes: ['code','tree'],
             }
-          }
+          },
         },
       ]
     }
@@ -166,12 +226,36 @@ export default {
   },
   methods: {
     getData(data){
-      this.formData = {...data}
-      if(this.formData.parameter.length>0){
-        this.formData.parameter = JSON.parse(this.formData.parameter)
-      }else{
-        this.formData.parameter= {}
+      this.formData = cloneDeep(data);
+      // if (this.formData.parameter) {
+      //   this.formData.parameter = JSON.parse(this.formData.parameter)
+      //   this.formData.uris = this.formData.parameter.uris
+      // }
+    },
+    changeSelector(options){
+      this.rule[3].options = [...options];
+      options.forEach(ele=> {
+        this.keyToName[ele.value] = ele.label;
+      })
+    },
+    hiddenHandler (newV) {
+      // radio
+      this.rule[4].hidden = !(newV.datasourceTypeId === 4);
+      // keytab value
+      this.rule[6].hidden = !newV.keytab;
+      // upload
+      this.rule[5].hidden = !this.rule[6].hidden;
+      if (!newV.hasKeyTab || newV.datasourceTypeId !== 4){
+        this.rule[5].hidden = true;
+        this.rule[6].hidden = true;
+        this.rule[8].hidden = true;
       }
+    },
+    keyTabValidator(rule, val, cb) {
+      if (!this.formData.keytab) {
+        cb(new Error(`${this.$t('message.linkis.datasource.pleaseUpload')}"keytab"`));
+      }
+      cb();
     },
   },
   watch: {
@@ -183,20 +267,14 @@ export default {
     },
     data: {
       handler(newV) {
-        this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;
-        this.rule[5].hidden = !this.formData.keytab;
-        if(this.rule[4].hidden) this.rule[5].hidden = true;
+        this.hiddenHandler(newV)
         this.getData(newV)
       },
       deep: true,
     },
     formData: {
       handler(newV){
-        console.log(this.keyToName)
-        this.rule[4].hidden = this.keyToName[newV.datasourceTypeId] == 'hive' ? false : true;
-        if(this.rule[4].hidden) this.rule[5].hidden = true;
-        else if(this.formData.keytab && newV.datasourceTypeId == 4) this.rule[5].hidden = false;
-        else this.rule[5].hidden = true;
+        this.hiddenHandler(newV)
       },
       deep: true
     }

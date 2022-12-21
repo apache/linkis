@@ -144,12 +144,10 @@ class UJESSQLResultSetMetaData extends ResultSetMetaData with Logging {
   }
 
   protected def toZeroIndex(column: Int): Int = {
-    if (dataTypeProperties == null) {
+    if (dataTypeProperties == null)
       throw new SQLException("Could not determine column type name for ResultSet")
-    }
-    if (column < 1 || column > dataTypeProperties.size) {
+    if (column < 1 || column > dataTypeProperties.size)
       throw new SQLException("Invalid column value: " + column)
-    }
     column - 1
   }
 

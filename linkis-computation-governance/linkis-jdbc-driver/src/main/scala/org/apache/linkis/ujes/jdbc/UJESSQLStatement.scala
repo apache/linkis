@@ -27,7 +27,7 @@ import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters
+import scala.collection.JavaConversions
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration
 
@@ -89,12 +89,11 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection)
 
   override def setMaxRows(max: Int): Unit = this.maxRows = max
 
-  override def setEscapeProcessing(enable: Boolean): Unit = if (enable) {
+  override def setEscapeProcessing(enable: Boolean): Unit = if (enable)
     throw new UJESSQLException(
       UJESSQLErrorCode.NOSUPPORT_STATEMENT,
       "setEscapeProcessing not supported"
     )
-  }
 
   override def getQueryTimeout: Int = queryTimeout
 
@@ -121,11 +120,8 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection)
       .addExecuteCode(parsedSQL)
       .setCreator(ujesSQLConnection.creator)
       .setUser(ujesSQLConnection.user)
-    if (ujesSQLConnection.variableMap.nonEmpty) {
-      action.setVariableMap(
-        JavaConverters.mapAsJavaMapConverter(ujesSQLConnection.variableMap).asJava
-      )
-    }
+    if (ujesSQLConnection.variableMap.nonEmpty)
+      action.setVariableMap(JavaConversions.mapAsJavaMap(ujesSQLConnection.variableMap))
     jobExecuteResult =
       Utils.tryCatch(ujesSQLConnection.ujesClient.execute(action.build())) { t: Throwable =>
         logger.error("UJESClient failed to get result", t)
@@ -204,12 +200,13 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection)
   override def getMoreResults: Boolean = false
 
   override def setFetchDirection(direction: Int): Unit =
-    throwWhenClosed(if (direction != ResultSet.FETCH_FORWARD) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.NOSUPPORT_STATEMENT,
-        "only FETCH_FORWARD is supported."
-      )
-    })
+    throwWhenClosed(
+      if (direction != ResultSet.FETCH_FORWARD)
+        throw new UJESSQLException(
+          UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+          "only FETCH_FORWARD is supported."
+        )
+    )
 
   override def getFetchDirection: Int = throwWhenClosed(ResultSet.FETCH_FORWARD)
 

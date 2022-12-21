@@ -36,15 +36,14 @@ object UJESClientFactory extends Logging {
     val host = props.getProperty(HOST)
     val port = props.getProperty(PORT)
     val serverUrl = if (StringUtils.isNotBlank(port)) s"http://$host:$port" else "http://" + host
-    if (ujesClients.containsKey(serverUrl)) { ujesClients.get(serverUrl) }
-    else {
+    if (ujesClients.containsKey(serverUrl)) ujesClients.get(serverUrl)
+    else
       serverUrl.intern synchronized {
         if (ujesClients.containsKey(serverUrl)) return ujesClients.get(serverUrl)
         val ujesClient = createUJESClient(serverUrl, props)
         ujesClients.put(serverUrl, ujesClient)
         ujesClient
       }
-    }
   }
 
   private def createUJESClient(serverUrl: String, props: Properties): UJESClient = {

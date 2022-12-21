@@ -15,38 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.governance.common.paser
 
-public enum LinkisExtensionErrorCodeSummary {
-  ;
-  private int errorCode;
+import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
-  private String errorDesc;
+class EmptyCodeParserTest {
 
-  LinkisExtensionErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 26000, 26999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
+  @Test
+  @DisplayName("parseTest")
+  def parseTest(): Unit = {
+
+    val code = "show databases;"
+    val parser = new EmptyCodeParser
+    val array = parser.parse(code)
+    Assertions.assertTrue(array.size == 1)
+
   }
 
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
-  }
 }

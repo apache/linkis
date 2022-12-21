@@ -32,7 +32,7 @@ import java.sql.{
 import java.util.Properties
 import java.util.logging.Logger
 
-import scala.collection.JavaConverters
+import scala.collection.JavaConversions
 
 class UJESSQLDriverMain extends Driver with Logging {
 
@@ -150,9 +150,8 @@ object UJESSQLDriverMain {
       connectionParams: String,
       variableMap: java.util.Map[String, Any]
   ): String = {
-    val variables = JavaConverters
-      .mapAsScalaMapConverter(variableMap)
-      .asScala
+    val variables = JavaConversions
+      .mapAsScalaMap(variableMap)
       .map(kv => VARIABLE_HEADER + kv._1 + KV_SPLIT + kv._2)
       .mkString(PARAM_SPLIT)
     if (StringUtils.isNotBlank(connectionParams)) connectionParams + PARAM_SPLIT + variables
@@ -180,20 +179,17 @@ object UJESSQLDriverMain {
   ): String = {
     val sb = new StringBuilder
     if (StringUtils.isNotBlank(version)) sb.append(VERSION).append(KV_SPLIT).append(version)
-    if (maxConnectionSize > 0) {
+    if (maxConnectionSize > 0)
       sb.append(PARAM_SPLIT).append(MAX_CONNECTION_SIZE).append(KV_SPLIT).append(maxConnectionSize)
-    }
-    if (readTimeout > 0) {
+    if (readTimeout > 0)
       sb.append(PARAM_SPLIT).append(READ_TIMEOUT).append(KV_SPLIT).append(readTimeout)
-    }
     if (enableDiscovery) {
       sb.append(PARAM_SPLIT).append(ENABLE_DISCOVERY).append(KV_SPLIT).append(enableDiscovery)
-      if (enableLoadBalancer) {
+      if (enableLoadBalancer)
         sb.append(PARAM_SPLIT)
           .append(ENABLE_LOADBALANCER)
           .append(KV_SPLIT)
           .append(enableLoadBalancer)
-      }
     }
     if (sb.startsWith(PARAM_SPLIT)) sb.toString.substring(PARAM_SPLIT.length) else sb.toString
   }

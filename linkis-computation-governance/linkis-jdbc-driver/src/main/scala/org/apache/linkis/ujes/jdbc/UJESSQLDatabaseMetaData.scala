@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils
 import java.sql.{Connection, DatabaseMetaData, ResultSet, RowIdLifetime}
 import java.util
 
-import scala.collection.JavaConverters._
+import scala.collection.JavaConversions._
 
 class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
     extends DatabaseMetaData
@@ -369,7 +369,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
     val result = ujesSQLConnection.ujesClient.getTables(getTableAction)
     val tables = result.getTables
     val resultTables = new util.ArrayList[util.Map[String, String]]()
-    tables.asScala.foreach { table =>
+    tables.foreach { table =>
       val tableType =
         if (table.get("isView").asInstanceOf[Boolean]) TableType.VIEW.name()
         else TableType.TABLE.name()
@@ -418,8 +418,8 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
     val getDBSAction = GetDBSAction.builder().setUser(getUserName).build()
     val dBSResult = ujesSQLConnection.ujesClient.getDBS(getDBSAction)
     val dbsName = dBSResult.getDBSName()
-    import scala.collection.JavaConverters._
-    logger.info(s"dbNames are " + dbsName.asScala.mkString(","))
+    import scala.collection.JavaConversions._
+    logger.info(s"dbNames are " + dbsName.mkString(","))
     new LinkisMetaDataResultSet[String](
       util.Arrays.asList("TABLE_SCHEMA", "TABLE_CATALOG"),
       util.Arrays.asList("string", "string"),
@@ -447,7 +447,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
     new LinkisMetaDataResultSet[TableType](
       util.Arrays.asList("TABLE_TYPE"),
       util.Arrays.asList("string"),
-      typesList.toList.asJava
+      typesList.toList
     ) {
       private var cnt = 0
 
@@ -487,7 +487,7 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
     val columns = result.getColumns
     val resultColumns = new util.ArrayList[JdbcColumn]()
     var ordinalPos = 1
-    columns.asScala.foreach { column =>
+    columns.foreach { column =>
       val jdbcColumn = new JdbcColumn(
         column.get("columnName").asInstanceOf[String],
         tableNamePattern,

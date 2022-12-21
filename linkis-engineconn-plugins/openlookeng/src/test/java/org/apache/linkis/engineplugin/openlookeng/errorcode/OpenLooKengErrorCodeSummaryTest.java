@@ -31,41 +31,11 @@ public class OpenLooKengErrorCodeSummaryTest {
   }
 
   @Test
-  void testSetErrorCode() {
-    OPENLOOKENG_CLIENT_ERROR.setErrorCode(1);
-    assertEquals(1, OPENLOOKENG_CLIENT_ERROR.getErrorCode());
-    OPENLOOKENG_CLIENT_ERROR.setErrorCode(26030);
-    assertEquals(26030, OPENLOOKENG_CLIENT_ERROR.getErrorCode());
-
-    OPENLOOKENG_STATUS_ERROR.setErrorCode(1);
-    assertEquals(1, OPENLOOKENG_STATUS_ERROR.getErrorCode());
-    OPENLOOKENG_STATUS_ERROR.setErrorCode(26031);
-    assertEquals(26031, OPENLOOKENG_STATUS_ERROR.getErrorCode());
-  }
-
-  @Test
   void testGetErrorDesc() {
     assertEquals(
         "openlookeng client error(openlookeng客户端异常)", OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
     assertEquals(
-        "openlookeng status error,Statement is not finished(openlookeng状态异常, 查询语句未完成)",
-        OPENLOOKENG_STATUS_ERROR.getErrorDesc());
-  }
-
-  @Test
-  void testSetErrorDesc() {
-    OPENLOOKENG_CLIENT_ERROR.setErrorDesc("test");
-    assertEquals("test", OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
-    OPENLOOKENG_CLIENT_ERROR.setErrorDesc("openlookeng client error(openlookeng客户端异常)");
-    assertEquals(
-        "openlookeng client error(openlookeng客户端异常)", OPENLOOKENG_CLIENT_ERROR.getErrorDesc());
-
-    OPENLOOKENG_STATUS_ERROR.setErrorDesc("test");
-    assertEquals("test", OPENLOOKENG_STATUS_ERROR.getErrorDesc());
-    OPENLOOKENG_STATUS_ERROR.setErrorDesc(
-        "openlookeng status error,Statement is not finished(openlookeng状态异常, 查询语句未完成)");
-    assertEquals(
-        "openlookeng status error,Statement is not finished(openlookeng状态异常, 查询语句未完成)",
+        "openlookeng status error,statement is not finished(openlookeng状态异常, 查询语句未完成)",
         OPENLOOKENG_STATUS_ERROR.getErrorDesc());
   }
 }

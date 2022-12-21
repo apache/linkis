@@ -40,7 +40,10 @@ object ComputationOrchestratorConf {
     "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn"
   )
 
-  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls")
+  val SHELL_WHITE_USAGE = CommonVars(
+    "wds.linkis.shell.white.usage",
+    "sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while"
+  )
 
   val SHELL_WHITE_USAGE_ENABLED = CommonVars("wds.linkis.shell.white.usage.enabled", false)
 

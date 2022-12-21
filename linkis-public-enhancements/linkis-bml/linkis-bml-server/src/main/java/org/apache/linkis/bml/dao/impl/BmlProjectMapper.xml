@@ -35,7 +35,7 @@
     </insert>
     <select id="getPrivInProject" resultType="java.lang.Integer">
         select a.priv from linkis_ps_bml_project_user a join linkis_ps_bml_project b on
-        a.project_id = b.id and b.name = #{projectName} and a.username = #{username} order by a.priv desc limit 1
+        a.project_id = b.id and b.name = #{projectName} and a.username = #{username}
     </select>
     <insert id="addProjectResource" >
         insert ignore into linkis_ps_bml_project_resource(project_id, resource_id)

@@ -24,21 +24,19 @@ class LinkisHttpclientErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   def enumTest(): Unit = {
-
-    val connectToServerurlCode = LinkisHttpclientErrorCodeSummary.CONNECT_TO_SERVERURL.getErrorCode
-    val requestFailedHttpCode = LinkisHttpclientErrorCodeSummary.REQUEST_FAILED_HTTP.getErrorCode
-    val retryExceptionCode = LinkisHttpclientErrorCodeSummary.RETRY_EXCEPTION.getErrorCode
-    val messagePareseExceptionCode =
-      LinkisHttpclientErrorCodeSummary.MESSAGE_PARSE_EXCEPTION.getErrorCode
-    val methodNotSupportExceptionCode =
-      LinkisHttpclientErrorCodeSummary.METHOD_NOT_SUPPORT_EXCEPTION.getErrorCode
-
-    Assertions.assertTrue(10901 == connectToServerurlCode.intValue())
-    Assertions.assertTrue(10905 == requestFailedHttpCode.intValue())
-    Assertions.assertTrue(10900 == retryExceptionCode.intValue())
-    Assertions.assertTrue(10900 == messagePareseExceptionCode.intValue())
-    Assertions.assertTrue(10902 == methodNotSupportExceptionCode.intValue())
-
+    Assertions.assertTrue(
+      10901 == LinkisHttpclientErrorCodeSummary.CONNECT_TO_SERVERURL.getErrorCode
+    )
+    Assertions.assertTrue(
+      10905 == LinkisHttpclientErrorCodeSummary.REQUEST_FAILED_HTTP.getErrorCode
+    )
+    Assertions.assertTrue(10900 == LinkisHttpclientErrorCodeSummary.RETRY_EXCEPTION.getErrorCode)
+    Assertions.assertTrue(
+      10900 == LinkisHttpclientErrorCodeSummary.MESSAGE_PARSE_EXCEPTION.getErrorCode
+    )
+    Assertions.assertTrue(
+      10902 == LinkisHttpclientErrorCodeSummary.METHOD_NOT_SUPPORT_EXCEPTION.getErrorCode
+    )
   }
 
 }

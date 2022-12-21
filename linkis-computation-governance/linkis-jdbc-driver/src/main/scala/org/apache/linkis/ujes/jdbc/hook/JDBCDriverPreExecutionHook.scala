@@ -42,7 +42,7 @@ object JDBCDriverPreExecutionHook extends Logging {
         val obj = clazz.newInstance()
         obj match {
           case hook: JDBCDriverPreExecutionHook => hooks += hook
-          case _ => warn(s"obj is not a engineHook obj is ${obj.getClass}")
+          case _ => logger.warn(s"obj is not a engineHook obj is ${obj.getClass}")
         }
       } { case e: Exception =>
         error(s"failed to load class ${hookStr}", e)

@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils
 import java.text.MessageFormat
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.util.Random
 
 class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParser])
@@ -43,7 +43,7 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
       gatewayContext: GatewayContext
   ): util.List[RouteLabel] = {
     var routeLabels: Option[util.List[RouteLabel]] = None
-    for (parser <- routeLabelParsers if routeLabels.isEmpty || routeLabels.get.isEmpty) {
+    for (parser <- routeLabelParsers.asScala if routeLabels.isEmpty || routeLabels.get.isEmpty) {
       routeLabels = Option(parser.parse(gatewayContext))
     }
     routeLabels.getOrElse(new util.ArrayList[RouteLabel]())
@@ -63,10 +63,10 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
     ) {
       val applicationName: String =
         gatewayContext.getGatewayRoute.getServiceInstance.getApplicationName
-      val filterCandidates = candidates.filter(serviceInstance =>
+      val filterCandidates = candidates.asScala.filter(serviceInstance =>
         serviceInstance.getApplicationName.equalsIgnoreCase(applicationName)
       )
-      roulette(filterCandidates)
+      roulette(filterCandidates.asJava)
     } else {
       roulette(candidates)
     }
@@ -84,7 +84,7 @@ class DefaultLabelGatewayRouter(var routeLabelParsers: util.List[RouteLabelParse
       throw new GatewayErrorException(NO_ROUTE_SERVICE.getErrorCode, NO_ROUTE_SERVICE.getErrorDesc)
     }
 
-    val serviceIds = serviceInstances.map(_.getApplicationName).distinct
+    val serviceIds = serviceInstances.asScala.map(_.getApplicationName).distinct
     val filteredInstances = new util.ArrayList[ServiceInstance]()
     for (serviceId <- serviceIds) {
       filteredInstances.addAll(retainAllInRegistry(serviceId, serviceInstances))

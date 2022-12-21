@@ -185,7 +185,7 @@ object CSEntranceHelper extends Logging {
     if (StringUtils.isNotBlank(contextIDValueStr)) {
       logger.info("parse variable nodeName: {}", nodeNameStr)
       val linkisVariableList: util.List[LinkisVariable] =
-        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
+        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr)
       if (null != linkisVariableList) {
         linkisVariableList.asScala.foreach { linkisVariable =>
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)

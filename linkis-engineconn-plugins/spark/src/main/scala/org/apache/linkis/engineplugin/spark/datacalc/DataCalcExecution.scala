@@ -37,7 +37,7 @@ import javax.validation.{Validation, Validator}
 
 import java.text.MessageFormat
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 import org.slf4j.{Logger, LoggerFactory}
@@ -83,8 +83,9 @@ object DataCalcExecution {
       sinks: Array[DataCalcSink[SK]]
   ): Unit = {
     if (sources != null && !sources.isEmpty) sources.foreach(source => sourceProcess(spark, source))
-    if (transformations != null && !transformations.isEmpty)
+    if (transformations != null && !transformations.isEmpty) {
       transformations.foreach(transformation => transformProcess(spark, transformation))
+    }
     if (sinks != null && !sinks.isEmpty) sinks.foreach(sink => sinkProcess(spark, sink))
 
     DataCalcTempData.clean(spark.sqlContext)
@@ -210,7 +211,7 @@ object DataCalcExecution {
         log.error(
           s"Configuration check error, ${BDPJettyServerHelper.gson.toJson(plugin.getConfig)}"
         )
-        for (violation <- violations) {
+        for (violation <- violations.asScala) {
           if (
               violation.getMessageTemplate
                 .startsWith("{") && violation.getMessageTemplate.endsWith("}")

@@ -45,8 +45,9 @@ object ECMUtils {
     } else {
       response = client.downloadShareResource(userName, resource.getResourceId, resource.getVersion)
     }
-    if (!response.isSuccess)
+    if (!response.isSuccess) {
       throw new ECMErrorException(FAILED_TO_DOWNLOAD.getErrorCode, FAILED_TO_DOWNLOAD.getErrorDesc)
+    }
     val map = new util.HashMap[String, Object]
     map.put("path", response.fullFilePath)
     map.put("is", response.inputStream)

@@ -79,8 +79,8 @@ class DriverAndYarnReqResourceService(
         val maxYarn = maxResource.asInstanceOf[YarnResource]
         if (yarn.queueCores > yarnAvailable.queueCores) {
           (
-            RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getCode,
-            RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getMessage +
+            RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getErrorCode,
+            RMErrorCode.CLUSTER_QUEUE_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
@@ -91,8 +91,8 @@ class DriverAndYarnReqResourceService(
           )
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
           (
-            RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode,
-            RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage +
+            RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getErrorCode,
+            RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
@@ -103,8 +103,8 @@ class DriverAndYarnReqResourceService(
           )
         } else {
           (
-            RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getCode,
-            RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getMessage +
+            RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getErrorCode,
+            RMErrorCode.CLUSTER_QUEUE_INSTANCES_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
@@ -116,8 +116,8 @@ class DriverAndYarnReqResourceService(
         }
       case _ =>
         (
-          RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getCode,
-          RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getMessage + " Unusual insufficient queue memory."
+          RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getErrorCode,
+          RMErrorCode.CLUSTER_QUEUE_MEMORY_INSUFFICIENT.getErrorDesc + " Unusual insufficient queue memory."
         )
     }
   }

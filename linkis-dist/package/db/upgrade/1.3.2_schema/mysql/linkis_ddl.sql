@@ -49,15 +49,15 @@ CREATE TABLE `linkis_cg_user_ip_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
---Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
---The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
---It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
---The index name should not exceed 50 characters, and the name should be lowercase
+-- Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
+-- The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
+-- It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
+-- The index name should not exceed 50 characters, and the name should be lowercase
 --
---非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
---唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
---组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
---索引名尽量不超过50个字符，命名应该使用小写
+-- 非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
+-- 唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
+-- 组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
+-- 索引名尽量不超过50个字符，命名应该使用小写
 
 ALTER TABLE `linkis_ps_configuration_key_engine_relation`
         DROP INDEX IF EXISTS `config_key_id`,

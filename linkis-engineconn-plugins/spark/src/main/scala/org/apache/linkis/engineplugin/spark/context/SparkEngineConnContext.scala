@@ -15,37 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.engineplugin.spark.context
 
-public class LinkisSpringCloudServiceErrorCodeSummary {;
+import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext
 
-  private int errorCode;
-  private String errorDesc;
+class SparkEngineConnContext(environmentContext: EnvironmentContext) {
 
-  LinkisSpringCloudServiceErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 13000, 14999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
-  }
+  private var executionContext: ExecutionContext = _
 
-  public int getErrorCode() {
-    return errorCode;
-  }
+  def getEnvironmentContext: EnvironmentContext = environmentContext
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
+  def getExecutionContext: ExecutionContext = executionContext
 
-  public String getErrorDesc() {
-    return errorDesc;
-  }
+  def setExecutionContext(executionContext: ExecutionContext): Unit = this.executionContext =
+    executionContext
 
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
-  }
 }

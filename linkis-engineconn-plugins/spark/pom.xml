@@ -65,6 +65,18 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-once-engineconn</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-storage</artifactId>
       <version>${project.version}</version>
       <exclusions>

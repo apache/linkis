@@ -15,38 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.engineplugin.spark.exception;
 
-public enum LinkisExtensionErrorCodeSummary {
-  ;
-  private int errorCode;
+import org.apache.linkis.common.exception.ErrorException;
 
-  private String errorDesc;
-
-  LinkisExtensionErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 26000, 26999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
-  }
-
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
+public class ExecutorInitException extends ErrorException {
+  public ExecutorInitException(int errCode, String desc) {
+    super(errCode, desc);
   }
 }

@@ -17,7 +17,9 @@
 
 package org.apache.linkis.ecm.core.errorcode;
 
-public enum LinkisECMErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisECMErrorCodeSummary implements LinkisErrorCode {
   CAN_NOT_GET_INPUTSTREAM(
       20001, "Process is not be launch, can not get InputStream(进程未启动，无法获取 InputStream)!"),
   CAN_NOT_GET_TERMINATED(
@@ -25,33 +27,22 @@ public enum LinkisECMErrorCodeSummary {
       "Process is not be launch, can not get terminated code by wait(进程未启动，无法获得 terminated code)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisECMErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

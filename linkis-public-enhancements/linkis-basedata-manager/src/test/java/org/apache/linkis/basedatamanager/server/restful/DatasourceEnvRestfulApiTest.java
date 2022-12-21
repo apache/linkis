@@ -19,8 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.Scan;
 import org.apache.linkis.basedatamanager.server.WebApplicationServer;
-import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
-import org.apache.linkis.basedatamanager.server.service.DatasourceAccessService;
+import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.MessageStatus;
 
@@ -37,7 +36,6 @@ import java.util.Date;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith({SpringExtension.class})
 @AutoConfigureMockMvc
 @SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
-public class DatasourceAccessRestfulApiTest {
+public class DatasourceEnvRestfulApiTest {
   private Logger logger = LoggerFactory.getLogger(DatasourceAccessRestfulApiTest.class);
 
   @Autowired protected MockMvc mockMvc;
-
-  @Mock private DatasourceAccessService datasourceAccessService;
 
   @Test
   public void TestList() throws Exception {
@@ -59,57 +55,50 @@ public class DatasourceAccessRestfulApiTest {
     paramsMap.add("searchName", "");
     paramsMap.add("currentPage", "1");
     paramsMap.add("pageSize", "10");
-    String url = "/basedata-manager/datasource-env";
+    String url = "/basedata-manager/datasource-access";
     sendUrl(url, paramsMap, "get", null);
   }
 
   @Test
   public void TestGet() throws Exception {
     MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
-    String url = "/basedata-manager/datasource-env/" + "1";
+    String url = "/basedata-manager/datasource-access/" + "1";
     sendUrl(url, paramsMap, "get", null);
   }
 
   @Test
   public void TestAdd() throws Exception {
-    String url = "/basedata-manager/datasource-env";
-    DatasourceEnvEntity datasourceEnv = new DatasourceEnvEntity();
-    datasourceEnv.setId(2);
-    datasourceEnv.setEnvName("test");
-    datasourceEnv.setEnvDesc("test");
-    datasourceEnv.setParameter("params");
-    datasourceEnv.setCreateTime(new Date());
-    datasourceEnv.setModifyTime(new Date());
-    datasourceEnv.setDatasourceTypeId(1);
-    datasourceEnv.setModifyUser("linkis");
-    datasourceEnv.setCreateUser("linkis");
+    String url = "/basedata-manager/datasource-access";
+    DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
+    datasourceAccessEntity.setApplicationId(1);
+    datasourceAccessEntity.setTableId(1L);
+    datasourceAccessEntity.setVisitor("1");
+    datasourceAccessEntity.setFields("1");
+    datasourceAccessEntity.setAccessTime(new Date());
     ObjectMapper objectMapper = new ObjectMapper();
-    String msg = objectMapper.writeValueAsString(datasourceEnv);
+    String msg = objectMapper.writeValueAsString(datasourceAccessEntity);
     sendUrl(url, null, "post", msg);
   }
 
   @Test
   public void TestUpdate() throws Exception {
-    String url = "/basedata-manager/datasource-env";
-    DatasourceEnvEntity datasourceEnv = new DatasourceEnvEntity();
-    datasourceEnv.setId(2);
-    datasourceEnv.setEnvName("test");
-    datasourceEnv.setEnvDesc("test");
-    datasourceEnv.setParameter("params");
-    datasourceEnv.setCreateTime(new Date());
-    datasourceEnv.setModifyTime(new Date());
-    datasourceEnv.setDatasourceTypeId(1);
-    datasourceEnv.setModifyUser("linkis");
-    datasourceEnv.setCreateUser("linkis");
+    String url = "/basedata-manager/datasource-access";
+    DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
+    datasourceAccessEntity.setId(1L);
+    datasourceAccessEntity.setApplicationId(1);
+    datasourceAccessEntity.setTableId(1L);
+    datasourceAccessEntity.setVisitor("1");
+    datasourceAccessEntity.setFields("1");
+    datasourceAccessEntity.setAccessTime(new Date());
     ObjectMapper objectMapper = new ObjectMapper();
-    String msg = objectMapper.writeValueAsString(datasourceEnv);
+    String msg = objectMapper.writeValueAsString(datasourceAccessEntity);
     sendUrl(url, null, "put", msg);
   }
 
   @Test
   public void TestRemove() throws Exception {
     MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
-    String url = "/basedata-manager/datasource-env/" + "1";
+    String url = "/basedata-manager/datasource-access/" + "1";
     sendUrl(url, paramsMap, "delete", null);
   }
 

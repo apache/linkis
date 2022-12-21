@@ -16,5 +16,9 @@
 */
 
 DELETE FROM linkis_ps_datasource_access;
-
 INSERT INTO `linkis_ps_datasource_access` (`id`, `table_id`, `visitor`, `fields`, `application_id`, `access_time`) VALUES (1, 1, 'test', 'test', 1, '2022-12-20 22:54:36');
+
+
+DELETE FROM linkis_ps_dm_datasource_env;
+INSERT INTO `linkis_ps_dm_datasource_env` (`id`, `env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES (1, '测试环境SIT', '测试环境SIT', 4, '{\"uris\":\"thrift://localhost:9083\", \"hadoopConf\":{\"hive.metastore.execute.setugi\":\"true\"}}', '2022-11-24 20:46:21', NULL, '2022-11-24 20:46:21', NULL);
+

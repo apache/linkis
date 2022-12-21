@@ -30,3 +30,20 @@ CREATE TABLE `linkis_ps_datasource_access`
     `access_time`    datetime    NOT NULL,
     PRIMARY KEY (`id`)
 );
+
+DROP TABLE IF EXISTS `linkis_ps_dm_datasource_env`;
+CREATE TABLE `linkis_ps_dm_datasource_env`
+(
+    `id`                 int(11)                       NOT NULL AUTO_INCREMENT,
+    `env_name`           varchar(32)   NOT NULL,
+    `env_desc`           varchar(255)           DEFAULT NULL,
+    `datasource_type_id` int(11)                       NOT NULL,
+    `parameter`          varchar(1024)           DEFAULT NULL,
+    `create_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`        varchar(255)  NULL     DEFAULT NULL,
+    `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_user`        varchar(255)  NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_env_name` (`env_name`),
+    UNIQUE INDEX `uniq_name_dtid` (`env_name`, `datasource_type_id`)
+);

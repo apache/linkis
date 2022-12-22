@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
-import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
+import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.JobHistory;
 import org.apache.linkis.jobhistory.entity.MonitorVO;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import io.swagger.annotations.Api;
@@ -88,11 +87,7 @@ public class JobhistorySettingApi {
     //    Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
     //    if (runtimeMap.containsKey("task.notification.conditions")) {
     // Judge whether the task has been completed, and cannot be modified when it is completed
-    boolean result =
-        Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
-            .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
-    log.info("addObserveInfo taskid:" + jobHistory.getId() + ",result:" + result);
-    if (result) {
+    if (TaskConversions.isJobFinished(jobHistory.getStatus())) {
       // Task not completed, update job record
       String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
       jobHistory.setObserveInfo(observeInfoJson);
@@ -119,10 +114,7 @@ public class JobhistorySettingApi {
     if (!username.equals(jobHistory.getSubmitUser())) {
       return Message.error("Only submitUser can change");
     }
-    boolean result =
-        Arrays.stream(JobhistoryConfiguration.DIRTY_DATA_UNFINISHED_JOB_STATUS())
-            .anyMatch(S -> S.equals(jobHistory.getStatus().toUpperCase()));
-    if (result) {
+    if (TaskConversions.isJobFinished(jobHistory.getStatus())) {
       jobHistory.setObserveInfo("");
       jobHistoryQueryService.changeObserveInfoById(jobHistory);
     } else {

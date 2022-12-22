@@ -17,7 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
-import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.configuration.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -122,7 +122,9 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
     if (creator != null
-        && (creator.equals("通用设置") || creator.equals("全局设置") || creator.equals("GlobalSettings"))) {
+        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
+            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
+            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
       engineType = "*";
       version = "*";
       creator = "*";
@@ -234,7 +236,10 @@ public class ConfigurationRestfulApi {
     List fullTrees = mapper.treeToValue(json.get("fullTree"), List.class);
     String creator = JsonNodeUtil.getStringValue(json.get("creator"));
     String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
-    if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
+    if (creator != null
+        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
+            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
+            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
       creator = "*";
     }
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
@@ -331,7 +336,7 @@ public class ConfigurationRestfulApi {
   }
 
   private void checkAdmin(String userName) throws ConfigurationException {
-    if (!Configuration.isAdmin(userName)) {
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(userName)) {
       throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
     }
   }

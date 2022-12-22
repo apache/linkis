@@ -169,7 +169,7 @@ public class UDFRestfulApi {
       UDFTree udfTree = udfTreeService.getTreeById(treeId, userName, type, category);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to list Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -295,7 +295,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, id);
       udfService.deleteUDF(id, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to delete UDF: ", e);
       message = Message.error(e.getMessage());
     }
@@ -321,7 +321,7 @@ public class UDFRestfulApi {
         udfService.deleteLoadInfo(udfId, userName);
       }
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to isLoad UDF: ", e);
       message = Message.error(e.getMessage());
     }
@@ -354,7 +354,7 @@ public class UDFRestfulApi {
       udfTree = udfTreeService.addTree(udfTree, userName);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to add Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -387,7 +387,7 @@ public class UDFRestfulApi {
       udfTree = udfTreeService.updateTree(udfTree, userName);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to update Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -406,7 +406,7 @@ public class UDFRestfulApi {
     try {
       udfTreeService.deleteTree(id, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to delete Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -425,7 +425,7 @@ public class UDFRestfulApi {
       Boolean boo = udfService.isUDFManager(userName);
       message = Message.ok();
       message.data("isUDFManager", boo);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to authenticate identification: ", e);
       message = Message.error(e.getMessage());
     }
@@ -455,7 +455,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, udfId);
       udfService.setUdfExpire(udfId, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to setExpire: ", e);
       message = Message.error(e.getMessage());
     }
@@ -520,7 +520,7 @@ public class UDFRestfulApi {
       }
       udfService.setUDFSharedInfo(true, udfInfo.getId());
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to share: ", e);
       message = Message.error(e.getMessage());
     }
@@ -548,7 +548,7 @@ public class UDFRestfulApi {
       List<String> shareUsers = udfService.getAllSharedUsersByUdfId(userName, udfId);
       message = Message.ok();
       message.data("sharedUsers", shareUsers);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to setExpire: ", e);
       message = Message.error(e.getMessage());
     }
@@ -601,7 +601,7 @@ public class UDFRestfulApi {
       }
       udfService.handoverUdf(udfId, handoverUser);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to handover udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -649,7 +649,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, udfId);
       udfService.publishUdf(udfId, version);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to publish udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -685,7 +685,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, udfId);
       udfService.rollbackUDF(udfId, version, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to rollback udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -707,7 +707,7 @@ public class UDFRestfulApi {
       List<UDFVersionVo> versionList = udfService.getUdfVersionList(udfId);
       message = Message.ok();
       message.data("versionList", versionList);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf versionList: ", e);
       message = Message.error(e.getMessage());
     }
@@ -768,7 +768,7 @@ public class UDFRestfulApi {
       message.data("infoList", pageInfo.getList());
       message.data("totalPage", pageInfo.getPages());
       message.data("total", pageInfo.getTotal());
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf infoList: ", e);
       message = Message.error(e.getMessage());
     }
@@ -805,7 +805,7 @@ public class UDFRestfulApi {
       String content = udfService.downLoadUDF(udfId, version, userName);
       message = Message.ok();
       message.data("content", content);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to download udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -893,7 +893,7 @@ public class UDFRestfulApi {
       List<String> udfUsers = udfService.allUdfUsers();
       message = Message.ok();
       message.data("udfUsers", udfUsers);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf users: ", e);
       message = Message.error(e.getMessage());
     }
@@ -917,7 +917,7 @@ public class UDFRestfulApi {
       List<String> userDirectory = udfService.getUserDirectory(userName, category);
       message = Message.ok();
       message.data("userDirectory", userDirectory);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get user directory: ", e);
       message = Message.error(e.getMessage());
     }

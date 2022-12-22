@@ -108,7 +108,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.3.1</revision>
+    <revision>1.3.1-SNAPSHOT</revision>
     <jedis.version>2.9.2</jedis.version>
     <hadoop.version>2.7.2</hadoop.version>
     <zookeeper.version>3.5.9</zookeeper.version>

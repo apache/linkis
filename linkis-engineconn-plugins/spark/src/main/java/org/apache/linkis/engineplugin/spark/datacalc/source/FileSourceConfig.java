@@ -28,9 +28,9 @@ public class FileSourceConfig extends SourceConfig {
 
   @NotBlank
   @Pattern(
-      regexp = "^(file|hdfs)://.*",
+      regexp = "^(((file|hdfs)://)|/).*",
       message =
-          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'.")
+          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'(default).")
   private String path;
 
   @NotBlank private String serializer = "parquet";
@@ -40,6 +40,7 @@ public class FileSourceConfig extends SourceConfig {
   private Map<String, String> options;
 
   public String getPath() {
+    if (path.startsWith("/")) return "hdfs://" + path;
     return path;
   }
 

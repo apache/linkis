@@ -20,20 +20,10 @@ package org.apache.linkis.engineplugin.spark.datacalc.model;
 import java.io.Serializable;
 
 public class DataCalcDataSource implements Serializable {
-  private String typeName;
   private String driver;
   private String url;
-  private String databaseName;
   private String user;
   private String password;
-
-  public String getTypeName() {
-    return typeName;
-  }
-
-  public void setTypeName(String typeName) {
-    this.typeName = typeName;
-  }
 
   public String getDriver() {
     return driver;
@@ -51,14 +41,6 @@ public class DataCalcDataSource implements Serializable {
     this.url = url;
   }
 
-  public String getDatabaseName() {
-    return databaseName;
-  }
-
-  public void setDatabaseName(String databaseName) {
-    this.databaseName = databaseName;
-  }
-
   public String getUser() {
     return user;
   }
@@ -73,5 +55,23 @@ public class DataCalcDataSource implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  @Override
+  public String toString() {
+    return "DataCalcDataSource{"
+        + "driver='"
+        + driver
+        + '\''
+        + ", url='"
+        + url
+        + '\''
+        + ", user='"
+        + user
+        + '\''
+        + ", password='"
+        + password
+        + '\''
+        + '}';
   }
 }

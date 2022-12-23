@@ -284,14 +284,13 @@ public class QueryTaskVO {
 
   public void setObserveInfo(String observeInfo) {
     this.observeInfo = observeInfo;
-   }
-   
+  }
+
   public String getExecuteUser() {
     return executeUser;
   }
 
   public void setExecuteUser(String executeUser) {
     this.executeUser = executeUser;
-
   }
 }

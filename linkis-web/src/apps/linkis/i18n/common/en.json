@@ -549,7 +549,11 @@
         "rollback": "Rollback",
         "action": "Operate",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
-        "upload": "Please click the button to upload the engine plug-in"
+        "upload": "Please click the button to upload the engine plug-in",
+        "hasUpload": "The file has been uploaded, you can click to upload again",
+        "force": "Whether to overwrite",
+        "yes": "Yes",
+        "no": "No"
       }
     }
   }

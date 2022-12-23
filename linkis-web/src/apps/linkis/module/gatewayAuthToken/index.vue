@@ -216,6 +216,10 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
+      if(row.elapseDay === -1) {
+        row.permanentlyValid = true;
+        this.$refs.editForm.formModel.rule[5].hidden = true;
+      }
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true

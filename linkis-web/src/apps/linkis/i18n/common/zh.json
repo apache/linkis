@@ -551,7 +551,11 @@
         "rollback": "回滚",
         "action": "操作",
         "checkEngineConnTypeAndVersion": "请选择引擎类型及版本",
-        "upload": "请点击上传引擎插件"
+        "upload": "请点击上传引擎插件",
+        "hasUpload": "文件已上传，可以点击按钮重新上传",
+        "force": "是否覆盖",
+        "yes": "是",
+        "no": "否"
       }
     }
   }

@@ -253,23 +253,6 @@ public class ContextRestfulApi implements CsRestfulParent {
   }
 
   @ApiOperation(
-      value = "removeAllValueByKey",
-      notes = "remove all value by key ",
-      response = Message.class)
-  @ApiImplicitParams({
-    @ApiImplicitParam(name = "contextID", dataType = "String"),
-    @ApiImplicitParam(name = "contextKey", dataType = "String")
-  })
-  @RequestMapping(path = "removeAllValueByKey", method = RequestMethod.POST)
-  public Message removeAllValueByKey(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
-    ContextID contextID = getContextIDFromJsonNode(jsonNode);
-    String keyStr = jsonNode.get(ContextHTTPConstant.CONTEXT_KEY_STR).textValue();
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVEVALUEBYKEY, contextID, keyStr);
-    return generateResponse(answerJob, "");
-  }
-
-  @ApiOperation(
       value = "clearAllContextByID",
       notes = "clear all context by id",
       response = Message.class)

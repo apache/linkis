@@ -740,18 +740,6 @@ public class HttpContextClient extends AbstractContextClient {
   }
 
   @Override
-  public void removeValueByKey(ContextID contextID, String key) throws ErrorException {
-    String contextIDStr = SerializeHelper.serializeContextID(contextID);
-    DefaultContextPostAction action =
-        ContextPostActionBuilder.of(ContextServerHttpConf.removeAllValueByKeyURL())
-            .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
-            .with(ContextHTTPConstant.CONTEXT_KEY_STR, key)
-            .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
-            .build();
-    checkDWSResult(execute(action));
-  }
-
-  @Override
   public List<String> searchHAIDByTime(
       String createTimeStart,
       String createTimeEnd,

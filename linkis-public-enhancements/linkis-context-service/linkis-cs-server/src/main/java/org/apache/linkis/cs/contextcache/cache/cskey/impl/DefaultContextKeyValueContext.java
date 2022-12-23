@@ -213,17 +213,6 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
   }
 
   @Override
-  public void removeByKey(String keyStr) {
-    List<ContextKey> removeKeys = getContextValueMapSet().findByKey(keyStr);
-    if (CollectionUtils.isNotEmpty(removeKeys)) {
-      for (ContextKey key : removeKeys) {
-        remove(key);
-      }
-      logger.warn("Remove keyValue by keyStr: " + keyStr);
-    }
-  }
-
-  @Override
   public void removeByKeyPrefix(String preFix, ContextType csType) {
     List<ContextKey> removeKeys = getContextValueMapSet().findByKeyPrefix(preFix, csType);
     if (CollectionUtils.isNotEmpty(removeKeys)) {

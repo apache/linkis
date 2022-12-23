@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Linkis Project Parent POM</name>
   <description>Linkis helps easily connect to various back-end computation/storage engines</description>
-  <url>https://github.com/apache/incubator-linkis</url>
+  <url>https://github.com/apache/linkis</url>
 
   <organization>
     <name>The Apache Software Foundation</name>
@@ -84,15 +84,15 @@
     <module>linkis-dist</module>
   </modules>
   <scm>
-    <connection>scm:git:https://github.com/apache/incubator-linkis.git</connection>
-    <developerConnection>scm:git:https://github.com/apache/incubator-linkis.git</developerConnection>
+    <connection>scm:git:https://github.com/apache/linkis.git</connection>
+    <developerConnection>scm:git:https://github.com/apache/linkis.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/apache/incubator-linkis</url>
+    <url>https://github.com/apache/linkis</url>
   </scm>
 
   <issueManagement>
     <system>Github Issues</system>
-    <url>https://github.com/apache/linkis-incubator/issues</url>
+    <url>https://github.com/apache/linkis/issues</url>
   </issueManagement>
 
   <distributionManagement>

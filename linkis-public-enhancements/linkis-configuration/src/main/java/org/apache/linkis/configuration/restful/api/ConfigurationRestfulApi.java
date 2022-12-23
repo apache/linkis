@@ -134,10 +134,10 @@ public class ConfigurationRestfulApi {
       creator = "*";
     }
     String username =
-            ModuleUserUtils.getOperationUser(
-                    req,
-                    MessageFormat.format(
-                            "ConfigurationException,engineType:{0},version:{1}", engineType, version));
+        ModuleUserUtils.getOperationUser(
+            req,
+            MessageFormat.format(
+                "ConfigurationException,engineType:{0},version:{1}", engineType, version));
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
             username, creator, engineType, version);

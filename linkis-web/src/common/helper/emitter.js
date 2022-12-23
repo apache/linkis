@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 /**
  * brocast event to component
@@ -29,7 +29,7 @@ function broadcast(componentName, eventName, params) {
     if (name === componentName) {
       child.$emit(...[eventName].concat(params));
     } else {
-      // todo 如果 params 是空数组，接收到的会是 undefined
+      // todo if params is an empty array, it will be undefined(todo 如果 params 是空数组，接收到的会是 undefined)
       broadcast.apply(child, [componentName, eventName].concat([params]));
     }
   });

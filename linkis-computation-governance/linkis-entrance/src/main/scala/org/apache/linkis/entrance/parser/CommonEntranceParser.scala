@@ -86,7 +86,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     if (labelMap.isEmpty) {
       throw new EntranceIllegalParamException(
         EntranceErrorCode.PARAM_CANNOT_EMPTY.getErrCode,
-        EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc + s",  labels is null"
+        s"${EntranceErrorCode.PARAM_CANNOT_EMPTY.getDesc},  labels is null"
       )
     }
     // 3. set Code
@@ -154,7 +154,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   ): Unit = {
     val engineRunTypeLabel = labels.getOrDefault(LabelKeyConstant.CODE_TYPE_KEY, null)
     if (StringUtils.isBlank(runType) && null == engineRunTypeLabel) {
-      val msg = s"You need to specify runType in execution content, such as sql"
+      val msg = "You need to specify runType in execution content, such as sql"
       logger.warn(msg)
       throw new EntranceIllegalParamException(
         EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
@@ -260,7 +260,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
         .asInstanceOf[util.Map[String, Object]]
       if (null != labelMap && !labelMap.isEmpty) {
         val list: util.List[Label[_]] =
-          labelBuilderFactory.getLabels(labelMap.asInstanceOf[util.Map[String, AnyRef]])
+          labelBuilderFactory.getLabels(labelMap)
         labelList.addAll(list)
       }
     }

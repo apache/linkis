@@ -145,7 +145,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
               wdStr
             } else {
               logger.warn(
-                "User-specified working-directory: \'" + wdStr + "\' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact BDP!"
+                "User-specified working-directory: \'" + wdStr + "\' does not exist or user does not have access permission. " +
+                  "Will execute shell task under default working-directory. Please contact the administrator!"
               )
               null
             }
@@ -160,7 +161,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
           null
         }
 
-      val generatedCode = if (argsArr == null || argsArr.length == 0) {
+      val generatedCode = if (argsArr == null || argsArr.isEmpty) {
         generateRunCode(code)
       } else {
         generateRunCodeWithArgs(code, argsArr)
@@ -173,7 +174,6 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
       processBuilder.redirectErrorStream(false)
       extractor = new YarnAppIdExtractor
-      extractor.startExtraction()
       process = processBuilder.start()
 
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
@@ -200,13 +200,10 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
         logger.error("Execute shell code failed, reason:", e)
         ErrorExecuteResponse("run shell failed", e)
     } finally {
-      if (!completed.get()) {
-        Utils.tryAndWarn(errReaderThread.interrupt())
-        Utils.tryAndWarn(inputReaderThread.interrupt())
-      }
-      Utils.tryAndWarn {
-        extractor.onDestroy()
+      if (null != errorsReader) {
         inputReaderThread.onDestroy()
+      }
+      if (null != inputReaderThread) {
         errReaderThread.onDestroy()
       }
       IOUtils.closeQuietly(bufferedReader)
@@ -302,10 +299,8 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       Kill yarn-applications
      */
     val yarnAppIds = extractor.getExtractedYarnAppIds()
-    GovernanceUtils.killYarnJobApp(yarnAppIds.toList.asJava)
-    logger.info(
-      s"Finished kill yarn app ids in the engine of (${getId()}). The yarn app ids are ${yarnAppIds.mkString(",")}"
-    )
+    GovernanceUtils.killYarnJobApp(yarnAppIds)
+    logger.info(s"Finished kill yarn app ids in the engine of (${getId()}).}")
     super.killTask(taskID)
 
   }

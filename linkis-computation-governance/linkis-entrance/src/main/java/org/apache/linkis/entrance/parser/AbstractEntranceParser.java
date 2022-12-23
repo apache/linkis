@@ -19,16 +19,12 @@ package org.apache.linkis.entrance.parser;
 
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceParser;
-import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.exception.EntranceErrorCode;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.job.EntranceExecutionJob;
 import org.apache.linkis.entrance.persistence.PersistenceManager;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
-import org.apache.linkis.governance.common.paser.CodeParser;
-import org.apache.linkis.governance.common.paser.CodeParserFactory;
-import org.apache.linkis.governance.common.paser.CodeType;
 import org.apache.linkis.governance.common.paser.EmptyCodeParser;
 import org.apache.linkis.governance.common.utils.GovernanceConstant;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
@@ -143,24 +139,7 @@ public abstract class AbstractEntranceParser extends EntranceParser {
     job.setListenerEventBus(null);
     job.setProgress(0f);
     job.setJobRequest(jobReq);
-    Label<?> codeTypeLabel =
-        jobReq.getLabels().stream()
-            .filter(l -> l.getLabelKey().equalsIgnoreCase(LabelKeyConstant.CODE_TYPE_KEY))
-            .findFirst()
-            .orElse(null);
-    if (null != codeTypeLabel) {
-      CodeParser codeParser =
-          CodeParserFactory.getCodeParser(CodeType.getType(codeTypeLabel.getStringValue()));
-      if (null != codeParser && !isNoNeedParser()) {
-        job.setCodeParser(codeParser);
-      } else {
-        job.setCodeParser(new EmptyCodeParser());
-      }
-    }
+    job.setCodeParser(new EmptyCodeParser());
     return job;
-  }
-
-  private boolean isNoNeedParser() {
-    return !EntranceConfiguration.ENTRANCE_CODEPARSER_ENABLE().getValue();
   }
 }

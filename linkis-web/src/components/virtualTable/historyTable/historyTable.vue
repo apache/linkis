@@ -280,9 +280,9 @@ export default {
             transfer: true,
           },
         }, [
-          // 这个是表格上面的span
+          // This is the span above the table(这个是表格上面的span)
           h('span', {}, value),
-          // 这个是tooltip上面的span
+          // This is the span on the tooltip(这个是tooltip上面的span)
           h('div', {
             slot: 'content',
             style: {

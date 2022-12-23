@@ -51,12 +51,7 @@ class SeatunnelEngineConnPlugin extends EngineConnPlugin {
   }
 
   override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
-    engineLaunchBuilderLocker.synchronized {
-      if (null == engineConnLaunchBuilder) {
-        engineConnLaunchBuilder = new SeatunnelEngineConnLaunchBuilder()
-      }
-      engineConnLaunchBuilder
-    }
+    new SeatunnelEngineConnLaunchBuilder()
   }
 
   override def getEngineConnFactory: EngineConnFactory = {

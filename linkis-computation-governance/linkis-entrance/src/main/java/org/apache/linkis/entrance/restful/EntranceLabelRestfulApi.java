@@ -52,7 +52,7 @@ public class EntranceLabelRestfulApi {
   @RequestMapping(path = "/update", method = RequestMethod.POST)
   public Message updateRouteLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
     String userName = ModuleUserUtils.getOperationUser(req, "updateRouteLabel");
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       return Message.error("Non-administrators cannot update Route Label");
     }
     String routeLabel = jsonNode.get("routeLabel").textValue();
@@ -70,6 +70,7 @@ public class EntranceLabelRestfulApi {
   @ApiOperation(value = "markoffline", notes = "add offline label", response = Message.class)
   @RequestMapping(path = "/markoffline", method = RequestMethod.GET)
   public Message updateRouteLabel(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "markoffline");
     Map<String, Object> labels = new HashMap<String, Object>();
     logger.info("Prepare to modify the routelabel of entry to offline");
     labels.put(LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE);

@@ -27,6 +27,9 @@ import java.io.File
  */
 object SparkConfiguration extends Logging {
 
+  val SPARK_HOME_ENV = "SPARK_HOME"
+  val SPARK_CONF_DIR_ENV = "SPARK_CONF_DIR"
+
   val PROCESS_MAX_THREADS = CommonVars[Int]("wds.linkis.process.threadpool.max", 100)
 
   val SPARK_SESSION_HOOK = CommonVars[String]("wds.linkis.engine.spark.session.hook", "")
@@ -39,11 +42,13 @@ object SparkConfiguration extends Logging {
 
   val SPARK_REPL_CLASSDIR = CommonVars[String]("spark.repl.classdir", "", "默认master")
 
-  val PROXY_USER = CommonVars[String]("spark.proxy.user", "${UM}")
+  val PROXY_USER = CommonVars[String]("spark.proxy.user", "")
 
   val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", "client")
 
   val SPARK_APP_NAME = CommonVars[String]("spark.app.name", "Linkis-EngineConn-Spark")
+  val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
+  val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
 
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
@@ -120,6 +125,17 @@ object SparkConfiguration extends Logging {
   )
 
   val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
+
+  val SPARK_APPLICATION_ARGS = CommonVars("spark.app.args", "")
+  val SPARK_APPLICATION_MAIN_CLASS = CommonVars("spark.app.main.class", "")
+
+  val SPARK_ONCE_APP_STATUS_FETCH_INTERVAL =
+    CommonVars("linkis.spark.once.app.fetch.status.interval", new TimeType("5s"))
+
+  val SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX =
+    CommonVars("linkis.spark.once.app.fetch.status.failed.num", 3)
+
+  val SPARK_ONCE_YARN_RESTFUL_URL = CommonVars[String]("linkis.spark.once.yarn.restful.url", "")
 
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])

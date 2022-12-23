@@ -20,9 +20,13 @@ import api from '@/common/service/api';
 const udfTreeBaseUrl = '/basedata-manager/udf-tree'
 
 const getList = (params)=> {
-  console.log(params)
   return api.fetch(udfTreeBaseUrl, params , 'get')
 }
+
+const getAll = ()=> {
+  return api.fetch(udfTreeBaseUrl+"/all",  'get')
+}
+
 
 const add = (data)=> {
   return api.fetch(udfTreeBaseUrl, data , 'post')
@@ -40,5 +44,6 @@ export{
   getList,
   add,
   edit,
-  del
+  del,
+  getAll
 }

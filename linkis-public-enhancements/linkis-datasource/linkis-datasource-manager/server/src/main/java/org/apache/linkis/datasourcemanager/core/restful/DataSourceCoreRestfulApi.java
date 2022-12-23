@@ -253,10 +253,21 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           dataSource.setKeyDefinitions(keyDefinitionList);
+
+          Map<String, Object> connectParams = dataSource.getConnectParams();
+          // add default value filed
+          keyDefinitionList.forEach(
+              keyDefinition -> {
+                String key = keyDefinition.getKey();
+                if (!connectParams.containsKey(key)) {
+                  connectParams.put(key, keyDefinition.getDefaultValue());
+                }
+              });
+
           for (DataSourceParamsHook hook : dataSourceParamsHooks) {
-            hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+            hook.beforePersist(connectParams, keyDefinitionList);
           }
-          String parameter = Json.toJson(dataSource.getConnectParams(), null);
+          String parameter = Json.toJson(connectParams, null);
           dataSource.setParameter(parameter);
           dataSourceInfoService.updateDataSourceInfo(dataSource);
           return Message.ok().data("updateId", dataSourceId);
@@ -299,6 +310,16 @@ public class DataSourceCoreRestfulApi {
           }
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+
+          // add default value filed
+          keyDefinitionList.forEach(
+              keyDefinition -> {
+                String key = keyDefinition.getKey();
+                if (!connectParams.containsKey(key)) {
+                  connectParams.put(key, keyDefinition.getDefaultValue());
+                }
+              });
+
           parameterValidator.validate(keyDefinitionList, connectParams);
           // Encrypt password value type
           RestfulApiHelper.encryptPasswordKey(keyDefinitionList, connectParams);
@@ -808,10 +829,21 @@ public class DataSourceCoreRestfulApi {
     List<DataSourceParamKeyDefinition> keyDefinitionList =
         dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
     dataSource.setKeyDefinitions(keyDefinitionList);
+
+    Map<String, Object> connectParams = dataSource.getConnectParams();
+    // add default value filed
+    keyDefinitionList.forEach(
+        keyDefinition -> {
+          String key = keyDefinition.getKey();
+          if (!connectParams.containsKey(key)) {
+            connectParams.put(key, keyDefinition.getDefaultValue());
+          }
+        });
+
     for (DataSourceParamsHook hook : dataSourceParamsHooks) {
-      hook.beforePersist(dataSource.getConnectParams(), keyDefinitionList);
+      hook.beforePersist(connectParams, keyDefinitionList);
     }
-    String parameter = Json.toJson(dataSource.getConnectParams(), null);
+    String parameter = Json.toJson(connectParams, null);
     dataSource.setParameter(parameter);
     dataSourceInfoService.saveDataSourceInfo(dataSource);
   }

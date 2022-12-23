@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     ref="bottomPanel"
@@ -148,7 +148,7 @@ export default {
   watch: {
     stop(val, oldval) {
       if (oldval && this.execute) {
-        // 先保留工作流页，应该会用到
+        // Keep the workflow page first, it should be used(先保留工作流页，应该会用到)
         this.killExecute();
       }
     },
@@ -251,13 +251,13 @@ export default {
         this.script.result = storeResult;
         this.script.resultList = this.execute.resultList;
         this.script.resultSet = 0;
-        // 获取过progress的情况下设置为1
+        // Set to 1 if progress has been obtained(获取过progress的情况下设置为1)
         if (this.script.progress.current) {
           this.script.progress.current = 1;
         }
       });
       this.execute.on('progress', ({ progress, progressInfo, waitingSize }) => {
-        // 这里progressInfo可能只是个空数组，或者数据第一个数据是一个空对象
+        // Here progressInfo may just be an empty array, or the first data of the data is an empty object(这里progressInfo可能只是个空数组，或者数据第一个数据是一个空对象)
         if (progressInfo.length && !isEmpty(progressInfo[0])) {
           progressInfo.forEach((newProgress) => {
             let newId = newProgress.id;
@@ -297,7 +297,7 @@ export default {
           const lastStep = last(this.script.steps);
           if (this.script.steps.indexOf(status) === -1) {
             this.script.steps.push(status);
-            // 针对可能有WaitForRetry状态后，后台会重新推送Scheduled或running状态的时候
+            // When there may be a WaitForRetry state, the background will re-push the Scheduled or running state(针对可能有WaitForRetry状态后，后台会重新推送Scheduled或running状态的时候)
           } else if (lastStep !== status) {
             this.script.steps.push(status);
           }
@@ -492,7 +492,7 @@ export default {
           path: resultPath,
           pageSize,
         }
-        // 如果是api执行需要带上taskId
+        // If it is api execution, you need to bring taskId(如果是api执行需要带上taskId)
         if (this.getResultUrl !== 'filesystem') {
           params.taskId = this.comData.taskID
         }
@@ -504,9 +504,9 @@ export default {
             const result = {
               'headRows': ret.metadata,
               'bodyRows': ret.fileContent,
-              // 如果totalLine是null，就显示为0
+              // If totalLine is null, it will be displayed as 0(如果totalLine是null，就显示为0)
               'total': ret.totalLine ? ret.totalLine : 0,
-              // 如果内容为null,就显示暂无数据
+              // If the content is null, it will display no data(如果内容为null,就显示暂无数据)
               'type': ret.fileContent ? ret.type : 0,
               'cache': {
                 offsetX: 0,
@@ -543,7 +543,7 @@ export default {
       }
     },
     checkFromCache() {
-      // 每次右键控制台，都会创建一个新实例，所以把上一个执行的实例先停掉
+      // Every time you right-click the console, a new instance will be created, so stop the last executed instance first(每次右键控制台，都会创建一个新实例，所以把上一个执行的实例先停掉)
       if (this.execute) {
         this.killExecute();
       }

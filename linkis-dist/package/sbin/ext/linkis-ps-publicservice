@@ -17,9 +17,19 @@
 #
 # Modified for Linkis 1.0.0
 
-
+source $LINKIS_CONF_DIR/linkis-env.sh
 export SERVER_SUFFIX="linkis-public-enhancements/linkis-ps-publicservice"
 
+
+if test -z "$PUBLICSERVICE_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$PUBLICSERVICE_HEAP_SIZE
+fi
 
 #export DEBUG_PORT=
 

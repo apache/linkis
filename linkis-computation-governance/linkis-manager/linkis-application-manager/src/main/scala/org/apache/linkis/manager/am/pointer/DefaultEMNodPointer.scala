@@ -24,7 +24,7 @@ import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node.{EngineNode, Node}
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.{EngineStopRequest, EngineStopResponse}
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.manager.service.common.pointer.EMNodPointer
 
 class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNodPointer {
@@ -36,9 +36,9 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
    */
   override def getNode(): Node = node
 
-  override def createEngine(engineBuildRequest: EngineConnBuildRequest): EngineNode = {
+  override def createEngine(engineConnLaunchRequest: EngineConnLaunchRequest): EngineNode = {
     logger.info(s"Start to createEngine ask em ${getNode().getServiceInstance}")
-    getSender.ask(engineBuildRequest) match {
+    getSender.ask(engineConnLaunchRequest) match {
       case engineNode: EngineNode =>
         logger.info(
           s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode "

@@ -242,6 +242,9 @@ class CategoryService extends Logging {
       )
       if (linkedEngineTypeLabelInDb != null) {
         associateConfigKey(linkedEngineTypeLabelInDb.getId, linkedEngineTypeLabel.getStringValue)
+      } else {
+        val engineLabel = LabelEntityParser.parseToConfigLabel(linkedEngineTypeLabel)
+        labelMapper.insertLabel(engineLabel)
       }
     }
   }

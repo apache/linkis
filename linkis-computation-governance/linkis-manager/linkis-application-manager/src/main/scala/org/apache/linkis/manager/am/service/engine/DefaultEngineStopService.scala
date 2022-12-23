@@ -20,6 +20,7 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{
@@ -68,7 +69,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     )
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {
-      logger.info(s" engineConn is not exists in db: $engineStopRequest ")
+      logger.info(s" engineConn does not exist in db: $engineStopRequest ")
       return
     }
     // 1. request em to kill ec
@@ -78,6 +79,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       logger.info(s"Finished to kill engine invoke enginePointer ${node.getServiceInstance}")
     }(s"Failed to stop engine ${node.getServiceInstance}")
     node.setLabels(nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance))
+    if (null == node.getNodeStatus) {
+      node.setNodeStatus(NodeStatus.ShuttingDown)
+    }
     engineConnInfoClear(node)
     logger.info(
       s" user ${engineStopRequest.getUser} finished to stop engine ${engineStopRequest.getServiceInstance}"
@@ -92,10 +96,10 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     logger.info(s"Start to clear ec info $ecNode")
     // 1. to clear engine resource
     Utils.tryCatch {
-      resourceManager.resourceReleased(ecNode.getLabels)
+      resourceManager.resourceReleased(ecNode)
     } {
       case exception: RMErrorException =>
-        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode) {
+        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode) {
           throw exception
         }
       case exception: Exception => throw exception
@@ -136,6 +140,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
         s"Send stop  engine request ${engineConnReleaseRequest.getServiceInstance.toString}"
       )
       engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
+      engineNode.setNodeStatus(engineConnReleaseRequest.getNodeStatus)
       engineConnInfoClear(engineNode)
     } else {
       logger.warn(

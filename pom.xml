@@ -139,19 +139,20 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
-    <commons-text.version>1.9</commons-text.version>
+    <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
-    <protobuf.version>3.15.8</protobuf.version>
+    <protobuf.version>3.16.3</protobuf.version>
     <cglib.version>3.3.0</cglib.version>
     <asm-bom.version>9.3</asm-bom.version>
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <poi.version>5.2.3</poi.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- jakarta -->
     <annotation-api.version>1.3.5</annotation-api.version>
@@ -192,6 +193,7 @@
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <scala-maven-plugin.version>4.7.1</scala-maven-plugin.version>
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
@@ -442,6 +444,11 @@
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-apache-client4</artifactId>
         <version>${jersey.version}</version>
@@ -540,10 +547,6 @@
           <exclusion>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.commons</groupId>
@@ -923,6 +926,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -996,6 +1000,11 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -1067,9 +1076,14 @@
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin.version}</version>
           <configuration>
-            <scalaVersion>${scala.version}</scalaVersion>
             <recompileMode>incremental</recompileMode>
-            <addScalacArgs>-target:jvm-${java.version}</addScalacArgs>
+            <args>
+              <arg>-unchecked</arg>
+              <arg>-deprecation</arg>
+              <arg>-feature</arg>
+              <arg>-explaintypes</arg>
+              <arg>-target:jvm-${java.version}</arg>
+            </args>
           </configuration>
           <executions>
             <execution>
@@ -1097,7 +1111,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>${maven-jar-plugin.version}</version>
         </plugin>
 
         <!--mvn apache-rat:check-->

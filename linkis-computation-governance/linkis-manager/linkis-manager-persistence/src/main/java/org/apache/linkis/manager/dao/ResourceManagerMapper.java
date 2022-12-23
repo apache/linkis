@@ -42,7 +42,6 @@ public interface ResourceManagerMapper {
 
   void deleteResourceByInstance(@Param("instance") String instance);
 
-  @Delete("delete from linkis_cg_manager_linkis_resources where ticketId = #{ticketId}")
   void deleteResourceByTicketId(@Param("ticketId") String ticketId);
 
   List<PersistenceResource> getResourceByInstanceAndResourceType(

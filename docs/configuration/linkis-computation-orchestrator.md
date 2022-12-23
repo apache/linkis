@@ -8,7 +8,7 @@
 |linkis-computation-orchestrator|wds.linkis.orchestrator.computation.code.executor.manager.class|    |orchestrator.computation.code.executor.manager.class|
 |linkis-computation-orchestrator|wds.linkis.orchestrator.max.ask.executor.time| 10m  |orchestrator.max.ask.executor.time|
 |linkis-computation-orchestrator|wds.linkis.shell.danger.usage|rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn |danger.usage|
-|linkis-computation-orchestrator|wds.linkis.shell.white.usage| cd,ls| shell.white.usage |
+|linkis-computation-orchestrator|wds.linkis.shell.white.usage|sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while| shell.white.usage |
 |linkis-computation-orchestrator|wds.linkis.shell.white.usage.enabled|false| white.usage.enabled|
 |linkis-computation-orchestrator|wds.linkis.cache.service.application.name| linkis-ps-publicservice |service.application.nam|
 |linkis-computation-orchestrator|wds.linkis.orchestrator.computation.session.factory.class|  | orchestrator.computation.session.factory.class|

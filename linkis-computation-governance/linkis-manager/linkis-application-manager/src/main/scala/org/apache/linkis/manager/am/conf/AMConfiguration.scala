@@ -23,8 +23,6 @@ import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 object AMConfiguration {
 
-  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
-
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 
   val ENGINE_START_MAX_TIME =
@@ -66,7 +64,7 @@ object AMConfiguration {
   )
 
   val ALLOW_BATCH_KILL_ENGINE_TYPES =
-    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,flink,sqoop,datax")
+    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python")
 
   val MULTI_USER_ENGINE_USER =
     CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
@@ -115,10 +113,6 @@ object AMConfiguration {
     } else {
       false
     }
-  }
-
-  def isAdmin(userName: String): Boolean = {
-    GOVERNANCE_STATION_ADMIN.getValue.split(",").contains(userName)
   }
 
 }

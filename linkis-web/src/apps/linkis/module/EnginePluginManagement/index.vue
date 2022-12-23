@@ -118,10 +118,10 @@
         </div>
       </Col>
       <Col span="12">
-        <Button type="primary" :style="{width: '60px', marginRight: '5px', padding: '5px'}" @click="resetSearch">{{
-          $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
         <Button type="primary" class="button" :style="{width: '60px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="initECMList()">{{
           $t('message.linkis.search') }}</Button>
+        <Button type="primary" :style="{width: '60px', marginRight: '5px', padding: '5px'}" @click="resetSearch">{{
+                  $t('message.linkis.EnginePluginManagement.Reset')}}</Button>
         <!-- <Button type="primary" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="createOrUpdate(1)">{{
           $t('message.linkis.EnginePluginManagement.update')}}</Button>
         <Button type="error" :style="{width: '120px', marginRight: '5px', padding: '5px'}" @click="deleteBML">{{
@@ -176,6 +176,7 @@
 </template>
 <script>
 import api from '@/common/service/api';
+import moment from 'moment';
 export default {
   data() {
     return {
@@ -232,7 +233,7 @@ export default {
           tooltip: true,
           align: 'center',
           render: (h, params) => {
-            let time = new Date(parseInt(params.row.lastModified)).toLocaleString().replace(/:\d(1,2)$/, ' ')
+            let time = moment(new Date(params.row.lastModified)).format('YYYY-MM-DD HH:mm:ss')
             return h('span', time);
           }
         },
@@ -447,7 +448,7 @@ export default {
         this.version = row.version;
         this.updWay = 'table';
         this.createOrUpdate(1);
-      } 
+      }
     },
     async openVersionList(row) {
       this.currentEnginpluginData = row

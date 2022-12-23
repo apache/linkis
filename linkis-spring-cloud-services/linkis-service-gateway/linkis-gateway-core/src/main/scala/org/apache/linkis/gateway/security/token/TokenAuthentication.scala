@@ -51,7 +51,9 @@ object TokenAuthentication extends Logging {
     }
     var token = gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)(0)
     var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
-    var host = gatewayContext.getRequest.getRemoteAddress.getAddress.getHostAddress
+
+    var host = gatewayContext.getRequest.getRequestRealIpAddr()
+
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
       token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
       tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue

@@ -182,7 +182,7 @@ export default {
         id: '',
         modifyTime: '',
         modifyUser: '',
-        parameter: '',
+        parameter: {},
         uris: '',
         keytab: '',
         principle: '',
@@ -282,6 +282,7 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
+        this.modalEditData.parameter = {}
         console.log(key);
       }
       this.modalEditData.hasKeyTab = false;

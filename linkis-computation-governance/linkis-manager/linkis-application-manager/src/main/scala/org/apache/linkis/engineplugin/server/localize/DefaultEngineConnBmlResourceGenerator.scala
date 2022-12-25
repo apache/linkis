@@ -18,7 +18,6 @@
 package org.apache.linkis.engineplugin.server.localize
 
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
-import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
@@ -32,7 +31,7 @@ class DefaultEngineConnBmlResourceGenerator
   override def generate(engineConnType: String): Map[String, Array[EngineConnLocalizeResource]] =
     getEngineConnDistHomeList(engineConnType).map { path =>
       val distFile = new File(path)
-      val key = if (distFile.getName.startsWith("v")) distFile.getName else NO_VERSION_MARK
+      val key = distFile.getName
       Utils.tryCatch {
         key -> generateDir(path)
       } { case t: Throwable =>
@@ -75,7 +74,7 @@ class DefaultEngineConnBmlResourceGenerator
           )
         }
         ZipUtils.fileToZip(file.getPath, path, file.getName + ".zip")
-        // 如果是文件夹，这里的最后更新时间，采用文件夹的最后更新时间，而不是ZIP的最后更新时间.
+        // If it is a folder, the last update time here is the last update time of the folder, not the last update time of ZIP.(如果是文件夹，这里的最后更新时间，采用文件夹的最后更新时间，而不是ZIP的最后更新时间.)
         EngineConnLocalizeResourceImpl(
           newFile.getPath,
           newFile.getName,

@@ -47,7 +47,7 @@
             </includes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
-            <outputDirectory>/dist/v${seatunnel.version}/conf</outputDirectory>
+            <outputDirectory>/dist/${seatunnel.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
         <fileSet>

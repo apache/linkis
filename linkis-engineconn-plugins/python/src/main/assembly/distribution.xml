@@ -51,7 +51,7 @@
                 <exclude>python</exclude>
             </excludes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${python.version}/conf</outputDirectory>
+            <outputDirectory>dist/${python.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

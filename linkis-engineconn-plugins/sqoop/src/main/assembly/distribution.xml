@@ -299,7 +299,7 @@
             </includes>
             <fileMode>0777</fileMode>
             <directoryMode>0755</directoryMode>
-            <outputDirectory>dist/v${sqoop.version}/conf</outputDirectory>
+            <outputDirectory>dist/${sqoop.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

@@ -48,7 +48,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${jdbc.version}/conf</outputDirectory>
+            <outputDirectory>dist/${jdbc.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

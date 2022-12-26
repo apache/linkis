@@ -61,7 +61,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${python.version}/conf</outputDirectory>
+            <outputDirectory>dist/${python.version}/conf</outputDirectory>
         </fileSet>
 
         <fileSet>

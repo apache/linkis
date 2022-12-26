@@ -48,7 +48,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${shell.version}/bin</outputDirectory>
+            <outputDirectory>dist/${shell.version}/bin</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

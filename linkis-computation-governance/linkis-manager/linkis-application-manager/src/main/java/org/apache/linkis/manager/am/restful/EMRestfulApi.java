@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
@@ -98,7 +99,7 @@ public class EMRestfulApi {
   private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
-    if (AMConfiguration.isNotAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       throw new AMErrorException(210003, "Only admin can modify ECMs(只有管理员才能修改ECM).");
     }
   }
@@ -200,7 +201,6 @@ public class EMRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "onlyEditable", required = false) Boolean onlyEditable) {
     NodeHealthy[] nodeHealthy = NodeHealthy.values();
-    ModuleUserUtils.getOperationUser(req, "listAllNodeHealthyStatus");
     if (onlyEditable) {
       nodeHealthy =
           new NodeHealthy[] {
@@ -224,13 +224,13 @@ public class EMRestfulApi {
         name = "emStatus",
         dataType = "String",
         example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110:9102"),
+    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:9102"),
     @ApiImplicitParam(name = "labels", dataType = "List", value = "Labels"),
     @ApiImplicitParam(name = "labelKey", dataType = "String", example = "emInstance"),
     @ApiImplicitParam(
         name = "stringValue",
         dataType = "String",
-        example = "linkis-cg-engineconn-bdpujes110003:12295")
+        example = "linkis-cg-engineconn-bdp110:12295")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
@@ -319,7 +319,7 @@ public class EMRestfulApi {
               + ExceptionUtils.getRootCauseMessage(e));
     }
     parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
-    if (!userName.equals(engineNode.getOwner()) && AMConfiguration.isNotAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
     }
@@ -363,8 +363,8 @@ public class EMRestfulApi {
         name = "applicationName",
         dataType = "String",
         example = "linkis-cg-engineconn"),
-    @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdpujes110003:910"),
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:21976"),
+    @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdp110:9100"),
+    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:21976"),
     @ApiImplicitParam(name = "parameters", dataType = "Map", value = "Parameters"),
     @ApiImplicitParam(name = "logType", dataType = "String", example = "stdout"),
     @ApiImplicitParam(name = "fromLine", dataType = "String", example = "0"),
@@ -419,7 +419,7 @@ public class EMRestfulApi {
   private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     if (ArrayUtils.contains(adminOperations, operationName)
-        && AMConfiguration.isNotAdmin(ecmOperateRequest.user())) {
+        && Configuration.isNotAdmin(ecmOperateRequest.user())) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
           ecmOperateRequest.user(),

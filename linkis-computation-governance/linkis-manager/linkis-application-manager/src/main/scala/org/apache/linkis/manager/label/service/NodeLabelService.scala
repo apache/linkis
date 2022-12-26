@@ -90,16 +90,4 @@ trait NodeLabelService {
       instanceList: util.List[ServiceInstance]
   ): util.HashMap[String, util.List[Label[_]]]
 
-  /**
-   * Get instance labels by instances name list
-   *
-   * @param instanceList
-   *   instance name list
-   * @return
-   *   Map of:instance name -> label list
-   */
-  def getNodeLabelsByInstanceList2(
-      instanceList: util.List[String]
-  ): util.HashMap[String, util.List[Label[_]]]
-
 }

@@ -211,7 +211,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "expire", dataType = "boolean", example = "false"),
     @ApiImplicitParam(name = "file", dataType = "String", example = "adn"),
     @ApiImplicitParam(name = "modifyTime", dataType = "String", example = "1657611440000"),
-    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "johnnwang"),
+    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "hadoop"),
     @ApiImplicitParam(name = "versionId", dataType = "String", example = "18")
   })
   @ApiOperationSupport(ignoreParameters = {"dataSource"})

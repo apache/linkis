@@ -36,4 +36,6 @@ public interface DataSourceTypeDao {
    * @return
    */
   DataSourceType selectOne(Long typeId);
+
+  List<DataSourceType> getAllTypesEn();
 }

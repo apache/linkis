@@ -33,8 +33,9 @@ class DefaultEngineConnBmlResourceGenerator
   override def generate(engineConnType: String): Map[String, Array[EngineConnLocalizeResource]] =
     getEngineConnDistHomeList(engineConnType).map { path =>
       val distFile = new File(path)
-      val key = distFile.getName
-      logger.info("chengbinbin+key:" + key)
+      logger.info("chengbinbin+path:" + path)
+      val key = if (!distFile.getName.equals("dist")) distFile.getName else NO_VERSION_MARK
+      logger.info("chengbinbin+key:" + key + "path:" + path)
       Utils.tryCatch {
         key -> generateDir(path)
       } { case t: Throwable =>

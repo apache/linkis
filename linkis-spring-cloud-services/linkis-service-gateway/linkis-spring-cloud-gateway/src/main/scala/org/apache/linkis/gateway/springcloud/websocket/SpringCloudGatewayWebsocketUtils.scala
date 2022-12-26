@@ -35,7 +35,7 @@ import java.net.InetSocketAddress
 import java.util
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import reactor.core.publisher.{Flux, Mono}
 
@@ -66,7 +66,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {
     new Runnable {
 
       override def run(): Unit = Utils.tryQuietly {
-        cachedWebSocketSessions
+        cachedWebSocketSessions.asScala
           .filter { case (_, session) =>
             session.removeDeadProxySessions()
             session.canRelease
@@ -78,7 +78,7 @@ object SpringCloudGatewayWebsocketUtils extends Logging {
             session.release()
             cachedWebSocketSessions.remove(key)
           }
-        cachedWebSocketSessions.foreach(_._2.heartbeat())
+        cachedWebSocketSessions.asScala.foreach(_._2.heartbeat())
       }
 
     },
@@ -88,12 +88,12 @@ object SpringCloudGatewayWebsocketUtils extends Logging {
   )
 
   def removeAllGatewayWebSocketSessionConnection(user: String): Unit =
-    cachedWebSocketSessions.filter(_._2.user == user).values.foreach { session =>
+    cachedWebSocketSessions.asScala.filter(_._2.user == user).values.foreach { session =>
       session.release()
     }
 
   def removeGatewayWebSocketSessionConnection(inetSocketAddress: InetSocketAddress): Unit =
-    cachedWebSocketSessions
+    cachedWebSocketSessions.asScala
       .find(_._2.getAddress == inetSocketAddress)
       .foreach { case (_, session) =>
         session.release()
@@ -113,9 +113,9 @@ object SpringCloudGatewayWebsocketUtils extends Logging {
     val key = getWebSocketSessionKey(webSocketSession)
     if (cachedWebSocketSessions.containsKey(key)) cachedWebSocketSessions synchronized {
       val webSocketSession = cachedWebSocketSessions.get(key)
-      if (webSocketSession != null)
+      if (webSocketSession != null) {
         webSocketSession.getProxyWebSocketSession(serviceInstance).orNull
-      else null
+      } else null
     }
     else null
   }

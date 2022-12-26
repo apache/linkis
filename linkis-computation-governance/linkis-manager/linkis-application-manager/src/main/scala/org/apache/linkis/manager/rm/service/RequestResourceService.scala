@@ -27,7 +27,6 @@ import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 
-import java.text
 import java.text.MessageFormat
 
 abstract class RequestResourceService(labelResourceService: LabelResourceService) extends Logging {
@@ -163,8 +162,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val loadInstanceMax = maxResource.asInstanceOf[LoadInstanceResource]
         if (li.cores > loadInstanceAvailable.cores) {
           (
-            RMErrorCode.ECM_CPU_INSUFFICIENT.getCode,
-            RMErrorCode.ECM_CPU_INSUFFICIENT.getMessage +
+            RMErrorCode.ECM_CPU_INSUFFICIENT.getErrorCode,
+            RMErrorCode.ECM_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
@@ -175,8 +174,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else if (li.memory > loadInstanceAvailable.memory) {
           (
-            RMErrorCode.ECM_MEMORY_INSUFFICIENT.getCode,
-            RMErrorCode.ECM_MEMORY_INSUFFICIENT.getMessage +
+            RMErrorCode.ECM_MEMORY_INSUFFICIENT.getErrorCode,
+            RMErrorCode.ECM_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
@@ -187,8 +186,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else {
           (
-            RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getCode,
-            RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getMessage +
+            RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getErrorCode,
+            RMErrorCode.ECM_INSTANCES_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
@@ -200,8 +199,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         }
       case _ =>
         (
-          RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getCode,
-          RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getMessage + " Unusual insufficient queue memory."
+          RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getErrorCode,
+          RMErrorCode.ECM_RESOURCE_INSUFFICIENT.getErrorDesc + " Unusual insufficient queue memory."
         )
     }
   }
@@ -216,8 +215,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val avail = availableResource.asInstanceOf[MemoryResource]
         val max = maxResource.asInstanceOf[MemoryResource]
         (
-          RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode,
-          RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+          RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorCode,
+          RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorDesc +
             RMUtils.getResourceInfoMsg(
               RMConstant.MEMORY,
               RMConstant.MEMORY_UNIT_BYTE,
@@ -230,8 +229,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val avail = availableResource.asInstanceOf[InstanceResource]
         val max = maxResource.asInstanceOf[InstanceResource]
         (
-          RMErrorCode.INSTANCES_INSUFFICIENT.getCode,
-          RMErrorCode.INSTANCES_INSUFFICIENT.getMessage +
+          RMErrorCode.INSTANCES_INSUFFICIENT.getErrorCode,
+          RMErrorCode.INSTANCES_INSUFFICIENT.getErrorDesc +
             RMUtils.getResourceInfoMsg(
               RMConstant.APP_INSTANCE,
               RMConstant.INSTANCE_UNIT,
@@ -244,8 +243,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val avail = availableResource.asInstanceOf[CPUResource]
         val max = maxResource.asInstanceOf[CPUResource]
         (
-          RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode,
-          RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+          RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorCode,
+          RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorDesc +
             RMUtils.getResourceInfoMsg(
               RMConstant.CPU,
               RMConstant.CPU_UNIT,
@@ -260,8 +259,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val max = maxResource.asInstanceOf[LoadResource]
         if (l.cores > loadAvailable.cores) {
           (
-            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode,
-            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorCode,
+            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
@@ -272,8 +271,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else {
           (
-            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode,
-            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorCode,
+            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
@@ -289,8 +288,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val max = maxResource.asInstanceOf[LoadInstanceResource]
         if (li.cores > loadInstanceAvailable.cores) {
           (
-            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getCode,
-            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getMessage +
+            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorCode,
+            RMErrorCode.DRIVER_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
@@ -301,8 +300,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else if (li.memory > loadInstanceAvailable.memory) {
           (
-            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getCode,
-            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getMessage +
+            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorCode,
+            RMErrorCode.DRIVER_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
@@ -313,8 +312,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else {
           (
-            RMErrorCode.INSTANCES_INSUFFICIENT.getCode,
-            RMErrorCode.INSTANCES_INSUFFICIENT.getMessage +
+            RMErrorCode.INSTANCES_INSUFFICIENT.getErrorCode,
+            RMErrorCode.INSTANCES_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,
@@ -330,8 +329,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
         val max = maxResource.asInstanceOf[YarnResource]
         if (yarn.queueCores > yarnAvailable.queueCores) {
           (
-            RMErrorCode.QUEUE_CPU_INSUFFICIENT.getCode,
-            RMErrorCode.QUEUE_CPU_INSUFFICIENT.getMessage +
+            RMErrorCode.QUEUE_CPU_INSUFFICIENT.getErrorCode,
+            RMErrorCode.QUEUE_CPU_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.CPU,
                 RMConstant.CPU_UNIT,
@@ -342,8 +341,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
           (
-            RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getCode,
-            RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getMessage +
+            RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getErrorCode,
+            RMErrorCode.QUEUE_MEMORY_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.MEMORY,
                 RMConstant.MEMORY_UNIT_BYTE,
@@ -354,8 +353,8 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           )
         } else {
           (
-            RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getCode,
-            RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getMessage +
+            RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getErrorCode,
+            RMErrorCode.QUEUE_INSTANCES_INSUFFICIENT.getErrorDesc +
               RMUtils.getResourceInfoMsg(
                 RMConstant.APP_INSTANCE,
                 RMConstant.INSTANCE_UNIT,

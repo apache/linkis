@@ -1052,18 +1052,17 @@ public class UDFServiceImpl implements UDFService {
 
   @Override
   public List<UDFAddVo> getUdfByNameList(List<String> udfNameList, String creator) {
-    logger.info("begin to get managerPages.");
     List<UDFAddVo> retList = new ArrayList<>();
     retList = udfDao.getUdfInfoByNameList(udfNameList, creator);
+    boolean ismanager = isUDFManager(creator);
+    List<Long> loadedUdf = udfDao.getLoadedUDFIds(creator);
     retList.forEach(
         udfInfo -> {
-          String createUser = udfInfo.getCreateUser();
-          boolean ismanager = isUDFManager(createUser);
-          List<Long> loadedUdf = udfDao.getLoadedUDFIds(createUser);
           udfInfo.setLoad(loadedUdf.contains(udfInfo.getId()));
           boolean canExpire = false;
           if (Boolean.TRUE.equals(udfInfo.getShared())) {
-            long loadCount = udfDao.getUserLoadCountByUdfId(udfInfo.getId(), createUser);
+            long loadCount =
+                udfDao.getUserLoadCountByUdfId(udfInfo.getId(), udfInfo.getCreateUser());
             if (loadCount > 0) {
               canExpire = true;
             }

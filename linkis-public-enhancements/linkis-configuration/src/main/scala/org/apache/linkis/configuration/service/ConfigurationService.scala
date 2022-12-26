@@ -407,7 +407,7 @@ class ConfigurationService extends Logging {
       labelList: java.util.List[Label[_]],
       useDefaultConfig: Boolean = true
   ): util.ArrayList[ConfigTree] = {
-    var (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig)
+    var (configs, defaultEngineConfigs) = getConfigsByLabelList(labelList, useDefaultConfig, null)
     configs = Lists.newArrayList()
     buildTreeResult(configs, defaultEngineConfigs)
   }

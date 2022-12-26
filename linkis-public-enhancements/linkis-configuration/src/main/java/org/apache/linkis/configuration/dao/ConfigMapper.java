@@ -72,4 +72,6 @@ public interface ConfigMapper {
   void updateCategory(CategoryLabel categoryLabel);
 
   void insertKey(ConfigKey key);
+
+  List<ConfigKeyValue> getConfigEnKeyValueByLabelId(@Param("labelId") Integer labelId);
 }

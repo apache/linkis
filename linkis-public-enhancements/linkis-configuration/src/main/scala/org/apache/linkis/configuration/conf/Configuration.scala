@@ -36,6 +36,8 @@ object Configuration {
 
   val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
 
+  val GLOBAL_CONF_CHN_EN_NAME = "GlobalSettings"
+
   val GLOBAL_CONF_LABEL = "*-*,*-*"
 
   val USE_CREATOR_DEFAULE_VALUE =

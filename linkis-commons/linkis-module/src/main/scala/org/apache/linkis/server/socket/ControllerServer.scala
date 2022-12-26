@@ -63,8 +63,8 @@ private[server] class ControllerServer(serverListenerEventBus: ServerListenerEve
     val socket = socketList.get(id)
     if (socket == null) {
       throw new BDPServerErrorException(
-        SERVERSSOCKET_NOT_EXIST.getErrorCode,
-        MessageFormat.format(SERVERSSOCKET_NOT_EXIST.getErrorDesc, id.toString)
+        SERVERSOCKET_NOT_EXIST.getErrorCode,
+        MessageFormat.format(SERVERSOCKET_NOT_EXIST.getErrorDesc, id.toString)
       )
     }
     socket.sendMessage(message)

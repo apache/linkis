@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.label.errorcode;
 
-public enum LabelCommonErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LabelCommonErrorCodeSummary implements LinkisErrorCode {
   UPDATE_LABEL_FAILED(40001, "Update label realtion failed(更新标签属性失败)"),
   LABEL_ERROR_CODE(
       40001,
@@ -31,33 +33,22 @@ public enum LabelCommonErrorCodeSummary {
       "ServiceInstance in request is null, please check label remove request(请求中的 ServiceInstance 为空，请检查标签删除请求)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LabelCommonErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

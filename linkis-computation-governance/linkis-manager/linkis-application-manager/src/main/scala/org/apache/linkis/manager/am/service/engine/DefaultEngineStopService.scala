@@ -202,7 +202,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       resourceManager.resourceReleased(ecNode)
     } {
       case exception: RMErrorException =>
-        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode) {
+        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode) {
           throw exception
         }
       case exception: Exception => throw exception

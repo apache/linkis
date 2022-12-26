@@ -119,8 +119,7 @@ private[conf] object BDPConfiguration extends Logging {
           tmpConfig = config
         }
         lock.writeLock().lock()
-        configReload.clear()
-        configReload.putAll(tmpConfig)
+        tmpConfig.asScala.foreach(keyValue => configReload.setProperty(keyValue._1, keyValue._2))
         lock.writeLock().unlock()
       }
     }

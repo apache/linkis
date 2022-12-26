@@ -17,7 +17,9 @@
 
 package org.apache.linkis.storage.errorcode;
 
-public enum LinkisIoFileClientErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisIoFileClientErrorCodeSummary implements LinkisErrorCode {
   NO_PROXY_USER(
       52002,
       "proxy user not set, can not get the permission information.(没有设置代理 proxy 用户，无法获取权限信息)"),
@@ -26,33 +28,22 @@ public enum LinkisIoFileClientErrorCodeSummary {
   STORAGE_HAS_BEEN_CLOSED(52002, "storage has been closed.(存储已关闭.)");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisIoFileClientErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

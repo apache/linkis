@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.spark.common
 
 import scala.collection.Iterable
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -70,6 +70,6 @@ class LogContainer(val logSize: Int) {
     else tail - flag
   }
 
-  def getLogList: java.util.List[String] = getLogs
+  def getLogList: java.util.List[String] = getLogs.asJava
 
 }

@@ -17,8 +17,10 @@
 
 package org.apache.linkis.rpc.errorcode;
 
-public enum LinkisRpcErrorCodeSummary {
-  METHON_CALL_FAILED(10000, "method call failed:(方法调用失败：)"),
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisRpcErrorCodeSummary implements LinkisErrorCode {
+  METHOD_CALL_FAILED(10000, "method call failed:(方法调用失败：)"),
   TRANSMITTED_BEAN_IS_NULL(10001, "The transmitted bean is Null.(传输的bean为Null."),
   TIMEOUT_PERIOD(10002, "The timeout period is not set!(超时时间未设置！)"),
   CORRESPONDING_NOT_FOUND(
@@ -29,33 +31,22 @@ public enum LinkisRpcErrorCodeSummary {
       10051, "The instance:{0} of application {1} does not exist(应用程序:{0} 的实例:{1} 不存在).");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisRpcErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

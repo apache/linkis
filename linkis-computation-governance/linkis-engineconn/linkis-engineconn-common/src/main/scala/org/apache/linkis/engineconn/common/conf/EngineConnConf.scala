@@ -35,6 +35,11 @@ object EngineConnConf {
     "org.apache.linkis.engineconn.computation.executor.hook.ComputationEngineConnHook"
   )
 
+  val ENGINE_CONN_ONCE_HOOKS = CommonVars(
+    "linkis.engine.connector.once.hooks",
+    "org.apache.linkis.engineconn.computation.executor.hook.ComputationEngineConnHook"
+  )
+
   val ENGINE_LAUNCH_CMD_PARAMS_USER_KEY =
     CommonVars("wds.linkis.engine.launch.cmd.params.user.key", "user")
 

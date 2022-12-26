@@ -17,52 +17,29 @@
 
 package org.apache.linkis.manager.engineplugin.shell.errorcode;
 
-public enum LinkisCommonsErrorCodeSummary {
-  NO_ILLEGAL_USER_HOLDS(
-      50036,
-      "No illegal user holds this process(没有非法用户持有这个进程)",
-      "No illegal user holds this process(没有非法用户持有这个进程)"),
-  SHELL_CODE_IS_WRONG(50037, "shell code is wrong(shell代码错误)", "shell code is wrong(shell代码错误)");
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisCommonsErrorCodeSummary implements LinkisErrorCode {
+  NO_ILLEGAL_USER_HOLDS(50036, "No illegal user holds this process(没有非法用户持有这个进程)"),
+  SHELL_CODE_IS_WRONG(50037, "shell code is wrong(shell代码错误)");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
-  /** 错误可能出现的原因 */
-  private String comment;
+  private final String errorDesc;
 
-  LinkisCommonsErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  LinkisCommonsErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -29,7 +29,11 @@ import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorCo
 import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.ecm.{EngineConnManager, EngineConnManagerBuilder}
 import org.apache.linkis.orchestrator.ecm.entity._
-import org.apache.linkis.orchestrator.exception.OrchestratorLabelConflictException
+import org.apache.linkis.orchestrator.exception.{
+  OrchestratorErrorCodeSummary,
+  OrchestratorLabelConflictException,
+  OrchestratorRetryException
+}
 import org.apache.linkis.orchestrator.listener.task.TaskLogEvent
 
 import org.apache.commons.lang3.StringUtils
@@ -43,7 +47,7 @@ import scala.concurrent.duration.Duration
 class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager with Logging {
 
   private val instanceToExecutors =
-    new util.concurrent.ConcurrentHashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+    new util.concurrent.ConcurrentHashMap[EngineConnTaskInfo, CodeExecTaskExecutor]
 
   private val execTaskToExecutor =
     new util.concurrent.ConcurrentHashMap[String, CodeExecTaskExecutor]()
@@ -182,14 +186,12 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
       serviceInstance: ServiceInstance,
       engineConnTaskId: String
   ): Option[CodeExecTaskExecutor] = {
-    val maybeExecutors = instanceToExecutors.get(serviceInstance)
-    if (null != maybeExecutors) {
-      val executors = maybeExecutors.filter(_.getEngineConnTaskId == engineConnTaskId)
-      if (null != executors && executors.nonEmpty) {
-        return Some(executors(0))
-      }
-    }
-    None
+
+    val maybeExecutors =
+      instanceToExecutors.get(EngineConnTaskInfo(serviceInstance, engineConnTaskId))
+    if (null != maybeExecutors && maybeExecutors.getEngineConnTaskId == engineConnTaskId) {
+      Some(maybeExecutors)
+    } else None
   }
 
   override def getByExecTaskId(execTaskId: String): Option[CodeExecTaskExecutor] = {
@@ -229,35 +231,30 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
 
   private def removeExecutorFromInstanceToExecutors(executor: CodeExecTaskExecutor): Unit = {
     logger.debug(s"To delete codeExecTaskExecutor  ${executor} from instanceToExecutors")
-    val maybeExecutors =
-      instanceToExecutors.get(executor.getEngineConnExecutor.getServiceInstance)
-    if (null != maybeExecutors) {
-      val executors =
-        maybeExecutors.filter(_.getEngineConnTaskId != executor.getEngineConnTaskId)
-      if (null != executors && executors.nonEmpty) {
-        instanceToExecutors.put(executor.getEngineConnExecutor.getServiceInstance, executors)
-      } else {
-        instanceToExecutors.remove(executor.getEngineConnExecutor.getServiceInstance)
-      }
-    }
+    val engineConnTaskInfo = EngineConnTaskInfo(
+      executor.getEngineConnExecutor.getServiceInstance,
+      executor.getEngineConnTaskId
+    )
+    instanceToExecutors.remove(engineConnTaskInfo)
+    execTaskToExecutor.remove(executor.getExecTaskId)
     logger.info(
       s"To delete exec task ${executor.getExecTask.getIDInfo()} and CodeExecTaskExecutor ${executor.getEngineConnExecutor.getServiceInstance} relation"
     )
-    execTaskToExecutor.remove(executor.getExecTaskId)
   }
 
-  override def addEngineConnTaskID(executor: CodeExecTaskExecutor): Unit = {
-    if (null == executor) return
-    execTaskToExecutor.put(executor.getExecTaskId, executor)
-    logger.info(s"To add codeExecTaskExecutor  $executor to instanceToExecutors")
-    val executors = instanceToExecutors.getOrDefault(
+  override def addEngineConnTaskInfo(executor: CodeExecTaskExecutor): Unit = {
+    if (null == executor || StringUtils.isBlank(executor.getExecTaskId)) {
+      throw new OrchestratorRetryException(
+        OrchestratorErrorCodeSummary.EXECUTION_ERROR_CODE,
+        "Failed to store task information"
+      )
+    }
+    val engineConnTaskInfo = EngineConnTaskInfo(
       executor.getEngineConnExecutor.getServiceInstance,
-      Array.empty[CodeExecTaskExecutor]
+      executor.getEngineConnTaskId
     )
-    instanceToExecutors.put(
-      executor.getEngineConnExecutor.getServiceInstance,
-      executors.+:(executor)
-    )
+    instanceToExecutors.put(engineConnTaskInfo, executor)
+    logger.info(s"Finished To add codeExecTaskExecutor  $executor to instanceToExecutors")
   }
 
   private def getEngineConnManager(labels: util.List[Label[_]]): EngineConnManager = {
@@ -268,8 +265,8 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
     defaultEngineConnManager
   }
 
-  override def getAllInstanceToExecutorCache()
-      : util.Map[ServiceInstance, Array[CodeExecTaskExecutor]] = instanceToExecutors
+  override def getAllInstanceToExecutorCache(): util.Map[EngineConnTaskInfo, CodeExecTaskExecutor] =
+    instanceToExecutors
 
   override def getAllExecTaskToExecutorCache(): util.Map[String, CodeExecTaskExecutor] =
     execTaskToExecutor

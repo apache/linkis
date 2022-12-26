@@ -39,9 +39,6 @@ trait EngineStopService {
    *
    * @param ecmInstance
    *   the specified ecm.
-   * @param withMultiUserEngine
-   *   include multi user engine type see
-   * @org.apache.linkis.manager.am.conf.AMConfiguration#getDefaultMultiEngineUser()
    * @param operatorName
    *   the username who request this operation
    * @return

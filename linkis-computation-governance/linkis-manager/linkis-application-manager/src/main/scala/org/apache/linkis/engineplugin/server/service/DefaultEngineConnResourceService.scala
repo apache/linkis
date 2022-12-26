@@ -239,7 +239,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     val engineConnType = engineConnBMLResourceRequest.getEngineConnType
     val version = engineConnBMLResourceRequest.getVersion
     val engineConnBmlResources = asScalaBufferConverter(
-      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
+      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, version)
     )
     val confBmlResource = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip")

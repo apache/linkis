@@ -84,6 +84,9 @@ SERVER_IP="`hostname --fqdn`"
 if test -z "$EUREKA_INSTALL_IP"
 then
   export EUREKA_INSTALL_IP=$SERVER_IP
+
+
+
 fi
 if [ "true" != "$EUREKA_PREFER_IP" ]
 then

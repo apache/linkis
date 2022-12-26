@@ -17,10 +17,20 @@
 #
 # Modified for Linkis 1.0.0
 
-
+source $LINKIS_CONF_DIR/linkis-env.sh
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-entrance"
 
 export SERVER_CLASS=org.apache.linkis.entrance.LinkisEntranceApplication
+
+if test -z "$ENTRANCE_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$ENTRANCE_HEAP_SIZE
+fi
 
 #export DEBUG_PORT=
 

@@ -73,7 +73,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "createContextID,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
@@ -87,7 +87,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
       throws InterruptedException, CSErrorException {
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "getContextID,contextID:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
@@ -103,7 +103,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "updateContextID,contextID:" + contextID.getContextId());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
@@ -121,7 +121,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     }
     String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "resetContextID,contextID:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
@@ -136,7 +136,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       throws InterruptedException, CSErrorException {
     String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
     if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contxtId cannot be empty");
+      throw new CSErrorException(97000, "contextId cannot be empty");
     }
     ModuleUserUtils.getOperationUser(req, "removeContextID,contextID:" + id);
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
@@ -170,7 +170,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     String username = ModuleUserUtils.getOperationUser(req, "searchContextIDByTime");
-    if (!Configuration.isAdmin(username)) {
+    if (Configuration.isNotAdmin(username)) {
       throw new CSErrorException(97018, "Only station admins are allowed.");
     }
     logger.info(
@@ -188,7 +188,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     if (null == createTimeStart
         && null == createTimeEnd
         && null == updateTimeStart
-        && null == createTimeEnd
+        && null == updateTimeEnd
         && null == accessTimeStart
         && null == accessTimeEnd) {
       throw new CSErrorException(

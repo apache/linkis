@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.errorcode;
 
-public enum FlinkErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   CANNOT_MODULE_ALREADY(
       16020,
       "Cannot register module:{0}, because a module with this name is already registered(无法注册模块：{0},因为已注册具有此名称的模块)."),
@@ -36,7 +38,7 @@ public enum FlinkErrorCodeSummary {
   EXECUTION_MUST_THESE(16020, "Execution type must be one of:{}(Execution 类型必须是以下之一)."),
   NOT_SUPPORTED_YARNTARGET(16020, "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)"),
   UNKNOWN_CHECKPOINT_MODE(16020, "Unknown checkpoint mode:{0}(未知的 checkpoint 模式)."),
-  HUDIJARS_NOT_EXISTS(16020, "hudi jars is not exists(hudi jars 不存在)."),
+  HUDIJARS_NOT_EXISTS(16020, "hudi jars does not exist(hudi jars 不存在)."),
   PATH_NOT_EXIST(16020, "The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)"),
   BOT_PARSE_ENVIRONMENT(16020, "Could not parse environment file，because:{0}(无法解析 environment 文件)"),
   CONFIGURATION_ENTRY_INVALID(16020, "Invalid configuration entry(无效的配置项)"),
@@ -89,7 +91,7 @@ public enum FlinkErrorCodeSummary {
   OPERATION_FAILED(16023, "Job: operation failed(作业：操作失败)"),
   NOT_FLINK_VERSION(
       16023,
-      "Not support flink version, StreamExecutionEnvironment.class is not exists getConfiguration method!(不支持flink版本，StreamExecutionEnvironment.class不存在getConfiguration方法!)"),
+      "Not support flink version, StreamExecutionEnvironment.class does not exist getConfiguration method!(不支持flink版本，StreamExecutionEnvironment.class不存在getConfiguration方法!)"),
   EXECUTE_FAILED(
       16023,
       "StreamExecutionEnvironment.getConfiguration() execute failed!(StreamExecutionEnvironment.getConfiguration() 执行失败！)"),
@@ -109,33 +111,22 @@ public enum FlinkErrorCodeSummary {
   EXECUTORINIT_ID(20001, "");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   FlinkErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

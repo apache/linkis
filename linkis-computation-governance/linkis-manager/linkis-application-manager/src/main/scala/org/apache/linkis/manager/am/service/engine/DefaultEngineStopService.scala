@@ -69,7 +69,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     )
     val node = getEngineNodeManager.getEngineNode(engineStopRequest.getServiceInstance)
     if (null == node) {
-      logger.info(s" engineConn is not exists in db: $engineStopRequest ")
+      logger.info(s" engineConn does not exist in db: $engineStopRequest ")
       return
     }
     // 1. request em to kill ec
@@ -99,7 +99,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       resourceManager.resourceReleased(ecNode)
     } {
       case exception: RMErrorException =>
-        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode) {
+        if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode) {
           throw exception
         }
       case exception: Exception => throw exception

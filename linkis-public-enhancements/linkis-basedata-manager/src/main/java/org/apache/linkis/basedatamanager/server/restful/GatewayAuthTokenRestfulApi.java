@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity;
 import org.apache.linkis.basedatamanager.server.service.GatewayAuthTokenService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -80,12 +81,16 @@ public class GatewayAuthTokenRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(
       HttpServletRequest request, @RequestBody GatewayAuthTokenEntity gatewayAuthToken) {
-    ModuleUserUtils.getOperationUser(
-        request, "Add a Gateway Auth Token Record," + gatewayAuthToken.toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a Gateway Auth Token Record," + gatewayAuthToken.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     gatewayAuthToken.setCreateTime(new Date());
     gatewayAuthToken.setUpdateTime(new Date());
     gatewayAuthToken.setBusinessOwner("BDP");
-    gatewayAuthToken.setUpdateBy("LINKIS");
+    gatewayAuthToken.setUpdateBy(username);
 
     ModuleUserUtils.getOperationUser(
         request, "Add a Gateway Auth Token Record," + gatewayAuthToken.toString());
@@ -99,10 +104,15 @@ public class GatewayAuthTokenRestfulApi {
   @ApiOperation(value = "update", notes = "Update a Gateway Auth Token Record", httpMethod = "PUT")
   @RequestMapping(path = "", method = RequestMethod.PUT)
   public Message update(HttpServletRequest request, @RequestBody GatewayAuthTokenEntity token) {
-    ModuleUserUtils.getOperationUser(
-        request, "Update a Gateway Auth Token Record,id:" + token.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a Gateway Auth Token Record,id:" + token.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+
     token.setUpdateTime(new Date());
-    token.setUpdateBy("LINKIS");
+    token.setUpdateBy(username);
 
     boolean result = gatewayAuthTokenService.updateById(token);
     return Message.ok("").data("result", result);

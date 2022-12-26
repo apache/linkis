@@ -22,8 +22,6 @@ import org.apache.linkis.engineconn.computation.executor.execute.EngineExecution
 import org.apache.linkis.engineplugin.spark.common.SparkKind
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.extension.SparkPreExecutionHook
-import org.apache.linkis.governance.common.paser.CodeType
-import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import org.apache.commons.lang3.StringUtils

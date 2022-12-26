@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconnplugin.seatunnel.executor
 
 import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor}
-import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.NOT_SUPPORT_METHON
+import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.NOT_SUPPORT_METHOD
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
 import org.apache.linkis.manager.common.entity.resource.NodeResource
@@ -34,7 +34,7 @@ trait SeatunnelSparkExecutor extends LabelExecutor with ResourceExecutor {
   override def setExecutorLabels(labels: util.List[Label[_]]): Unit = this.executorLabels = labels
 
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource =
-    throw new JobExecutionException(NOT_SUPPORT_METHON.getErrorDesc)
+    throw new JobExecutionException(NOT_SUPPORT_METHOD.getErrorDesc)
 
   protected val seatunnelEngineConnContext: SeatunnelEngineConnContext
 }

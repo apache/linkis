@@ -17,21 +17,13 @@
 
 package org.apache.linkis.engineplugin.spark.launch
 
-import org.apache.linkis.engineplugin.spark.launch.SparkSubmitProcessEngineConnLaunchBuilder.RelativePath
-
 import org.junit.jupiter.api.{Assertions, Test}
 
 class TestSparkSubmitProcessEngineConnLaunchBuilder {
 
   @Test
   def testCreateContext: Unit = {
-    val ddd = SparkSubmitProcessEngineConnLaunchBuilder
-      .newBuilder()
-      .master("local[1]")
-      .deployMode("client")
-      .className("org.apache.linkis.engineplugin.spark.launch")
-      .driverClassPath("")
-      .archive(RelativePath(""))
+    val ddd = new SparkEngineConnLaunchBuilder()
     Assertions.assertNotNull(ddd)
   }
 

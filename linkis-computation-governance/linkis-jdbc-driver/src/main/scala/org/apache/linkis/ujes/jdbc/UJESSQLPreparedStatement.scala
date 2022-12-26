@@ -5,26 +5,40 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ujes.jdbc
 
 import java.io.{InputStream, Reader}
 import java.net.URL
-import java.sql.{Blob, Clob, Date, NClob, ParameterMetaData, PreparedStatement, Ref, ResultSetMetaData, RowId, SQLXML, Time, Timestamp}
+import java.sql.{
+  Blob,
+  Clob,
+  Date,
+  NClob,
+  ParameterMetaData,
+  PreparedStatement,
+  Ref,
+  ResultSetMetaData,
+  RowId,
+  SQLXML,
+  Time,
+  Timestamp
+}
 import java.util
 import java.util.Calendar
 
-
-class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String) extends UJESSQLStatement(ujesSQLConnection) with PreparedStatement {
+class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String)
+    extends UJESSQLStatement(ujesSQLConnection)
+    with PreparedStatement {
 
   private val parameters = new util.HashMap[Int, Any]
 
@@ -165,8 +179,11 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
       case x: Byte => setByte(parameterIndex, x)
       case x: Char => setString(parameterIndex, x.toString)
       case x: Timestamp => setTimestamp(parameterIndex, x)
-      case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
-        s"Can''t infer the SQL type to use for an instance of ${x.getClass.getName}. Use setObject() with an explicit Types value to specify the type to use")
+      case _ =>
+        throw new UJESSQLException(
+          UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
+          s"Can''t infer the SQL type to use for an instance of ${x.getClass.getName}. Use setObject() with an explicit Types value to specify the type to use"
+        )
     }
   }
 
@@ -278,7 +295,12 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
-  override def setObject(parameterIndex: Int, x: scala.Any, targetSqlType: Int, scaleOrLength: Int): Unit = {
+  override def setObject(
+      parameterIndex: Int,
+      x: scala.Any,
+      targetSqlType: Int,
+      scaleOrLength: Int
+  ): Unit = {
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
@@ -325,6 +347,5 @@ class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String
   override def getResultSetType: Int = {
     super.getResultSetType
   }
-
 
 }

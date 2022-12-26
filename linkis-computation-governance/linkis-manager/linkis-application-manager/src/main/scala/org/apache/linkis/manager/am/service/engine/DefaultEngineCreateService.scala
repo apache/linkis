@@ -190,7 +190,7 @@ class DefaultEngineCreateService
         logger.info(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
         val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
         if (null == failedEcNode) {
-          logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+          logger.info(s" engineConn does not exist in db: $oldServiceInstance ")
         } else {
           failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
           failedEcNode.getLabels.addAll(
@@ -215,7 +215,7 @@ class DefaultEngineCreateService
       engineStopService.asyncStopEngine(stopEngineRequest)
       val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
       if (null == failedEcNode) {
-        logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+        logger.info(s" engineConn does not exist in db: $oldServiceInstance ")
       } else {
         failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
         failedEcNode.getLabels.addAll(

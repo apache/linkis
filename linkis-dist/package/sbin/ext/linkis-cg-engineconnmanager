@@ -16,11 +16,20 @@
 # description:  ecm start cmd
 #
 # Modified for Linkis 1.0.0
-
+source $LINKIS_CONF_DIR/linkis-env.sh
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-engineconnmanager"
 
 export SERVER_CLASS=org.apache.linkis.ecm.server.LinkisECMApplication
 
+if test -z "$ENGINECONNMANAGER_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$ENGINECONNMANAGER_HEAP_SIZE
+fi
 #export DEBUG_PORT=
 
 export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start

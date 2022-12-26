@@ -6,8 +6,8 @@
 |linkis-engineconn-plugin-core |10001|EngineTypeLabel are requested(需要参数 EngineTypeLabel)|ETL_REQUESTED|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)|CANNOT_INSTANCE_ECE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)|CANNOT_DEFAULT_EF|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |20000|EngineTypeLabel is not exists(EngineTypeLabel 不存在)|ETL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |20000|UserCreatorLabel is not exists(UserCreatorLabel 不存在)|UCL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20000|EngineTypeLabel does not exist(EngineTypeLabel 不存在)|ETL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20000|UserCreatorLabel does not exist(UserCreatorLabel 不存在)|UCL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})|DIST_IS_EMPTY|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|Cannot find the home path of engineConn(找不到engineConn的home路径)|CANNOT_HOME_PATH_EC|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径|ENGIN_VERSION_NOT_FOUND|EngineconnCoreErrorCodeSummary|

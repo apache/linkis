@@ -78,7 +78,7 @@ public class DataSourceAdminRestfulApi {
     return RestfulApiHelper.doAndResponse(
         () -> {
           String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnv");
-          if (!RestfulApiHelper.isAdminUser(userName)) {
+          if (RestfulApiHelper.isNotAdminUser(userName)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
           }
           // Bean validation
@@ -114,7 +114,7 @@ public class DataSourceAdminRestfulApi {
       HttpServletRequest req)
       throws ErrorException {
     String userName = ModuleUserUtils.getOperationUser(req, "insertJsonEnvBatch");
-    if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
+    if (RestfulApiHelper.isNotAdminUser(userName) && !permitSystemList.contains(system)) {
       return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
     }
     for (DataSourceEnv dataSourceEnv : dataSourceEnvList) {
@@ -160,7 +160,7 @@ public class DataSourceAdminRestfulApi {
       HttpServletRequest request)
       throws ErrorException {
     String userName = ModuleUserUtils.getOperationUser(request, "updateJsonEnvBatch");
-    if (!RestfulApiHelper.isAdminUser(userName) && !permitSystemList.contains(system)) {
+    if (RestfulApiHelper.isNotAdminUser(userName) && !permitSystemList.contains(system)) {
       return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
     }
     for (DataSourceEnv dataSourceEnv : dataSourceEnvList) {
@@ -255,7 +255,7 @@ public class DataSourceAdminRestfulApi {
         () -> {
           String userName =
               ModuleUserUtils.getOperationUser(request, "removeEnvEntity,envId:" + envId);
-          if (!RestfulApiHelper.isAdminUser(userName)) {
+          if (RestfulApiHelper.isNotAdminUser(userName)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
           }
           Long removeId = dataSourceInfoService.removeDataSourceEnv(envId);
@@ -283,7 +283,7 @@ public class DataSourceAdminRestfulApi {
         () -> {
           String userName =
               ModuleUserUtils.getOperationUser(request, "updateJsonEnv,envId:" + envId);
-          if (!RestfulApiHelper.isAdminUser(userName)) {
+          if (RestfulApiHelper.isNotAdminUser(userName)) {
             return Message.error("User '" + userName + "' is not admin user[非管理员用户]");
           }
           // Bean validation

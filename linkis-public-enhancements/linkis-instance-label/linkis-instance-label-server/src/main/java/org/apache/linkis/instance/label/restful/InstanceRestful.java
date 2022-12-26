@@ -74,7 +74,7 @@ public class InstanceRestful {
   @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
   public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "listAllInstanceWithLabel");
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
               ONLY_ADMIN_CAN_VIEW.getErrorDesc() + "The user [%s] is not admin.", userName));
@@ -104,7 +104,7 @@ public class InstanceRestful {
   public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws Exception {
     String userName = ModuleUserUtils.getOperationUser(req, "upDateInstanceLabel");
-    if (!Configuration.isAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
               ONLY_ADMIN_CAN_MODIFY.getErrorDesc() + " The user [%s] is not admin", userName));

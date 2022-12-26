@@ -505,12 +505,12 @@ public class EngineRestfulApi {
     String instance = jsonNode.get("instance").asText();
     if (StringUtils.isEmpty(applicationName)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "applicationName cannot be null(请求参数applicationName不能为空)");
     }
     if (StringUtils.isEmpty(instance)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(), "instance cannot be null(请求参数instance不能为空)");
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(), "instance cannot be null(请求参数instance不能为空)");
     }
     return ServiceInstance.apply(applicationName, instance);
   }

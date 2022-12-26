@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,8 @@ package org.apache.linkis.ujes.jdbc.hook.impl
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain
 import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
+class NoLimitExecutionHook extends JDBCDriverPreExecutionHook {
 
-class NoLimitExecutionHook extends JDBCDriverPreExecutionHook{
   override def callPreExecutionHook(sql: String): String = {
     if (UJESSQLDriverMain.LIMIT_ENABLED.toLowerCase.equals("false")) {
       var noLimitSql = "--set ide.engine.no.limit.allow=true\n" + sql
@@ -36,4 +36,5 @@ class NoLimitExecutionHook extends JDBCDriverPreExecutionHook{
     }
 
   }
+
 }

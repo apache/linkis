@@ -24,7 +24,7 @@ import org.apache.linkis.orchestrator.parser.Parser
 import org.apache.linkis.orchestrator.plans.ast.{ASTContext, Job}
 import org.apache.linkis.orchestrator.plans.unit.CodeLogicalUnit
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 import com.google.common.collect.Lists
@@ -63,7 +63,7 @@ class DefaultCodeJobParserTransform extends ParserTransform with Logging {
 
   def splitCode(codeJob: CodeJob): Array[CodeLogicalUnit] = {
     val codeLogicalUnits = new ArrayBuffer[CodeLogicalUnit]
-    codeJob.getCodeLogicalUnit.getCodes.foreach { code =>
+    codeJob.getCodeLogicalUnit.getCodes.asScala.foreach { code =>
       code.split(codeJob.getCodeLogicalUnit.getSeparator).foreach { line =>
         codeLogicalUnits.append(
           new CodeLogicalUnit(

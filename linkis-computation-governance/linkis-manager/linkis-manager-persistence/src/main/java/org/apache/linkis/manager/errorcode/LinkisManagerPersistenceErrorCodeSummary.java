@@ -17,40 +17,31 @@
 
 package org.apache.linkis.manager.errorcode;
 
-public enum LinkisManagerPersistenceErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisManagerPersistenceErrorCodeSummary implements LinkisErrorCode {
   BEANUTILS_POPULATE_FAILED(10000, "beanutils populate failed (beanutils 填充失败)"),
   NODE_INSTANCE_ALREADY_EXISTS(41001, "Node instance already exists(Node实例已存在)"),
   NODE_INSTANCE_DOES_NOT_EXIST(41002, "Node instance does not exist(Node实例不存在)"),
   THE_EMNODE_IS_NULL(410002, "The emNode:{0} is null (emNode:{0} 为空)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisManagerPersistenceErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

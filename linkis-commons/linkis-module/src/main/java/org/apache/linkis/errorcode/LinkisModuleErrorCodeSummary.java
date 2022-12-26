@@ -17,7 +17,9 @@
 
 package org.apache.linkis.errorcode;
 
-public enum LinkisModuleErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisModuleErrorCodeSummary implements LinkisErrorCode {
   DATAWORKCLOUD_MUST_VERSION(
       10010,
       "DataWorkCloud service must set the version, please add property [wds.linkis.server.version] to properties file(DataWorkCloud 服务必须设置版本，请将属性 [wds.linkis.server.version] 添加到属性文件)."),
@@ -33,7 +35,7 @@ public enum LinkisModuleErrorCodeSummary {
   NOT_LOGGED(11002, "Login has expired, please log in again!(登录已过期，请重新登录！)"),
   ILLEGAL_ID(11003, ""),
   ILLEGAL_USER_TOKEN(11003, "Illegal user token information(非法的用户token信息)."),
-  SERVERSSOCKET_NOT_EXIST(11004, "ServerSocket:{0} does not exist!(ServerSocket:{0}不存在！)"),
+  SERVERSOCKET_NOT_EXIST(11004, "ServerSocket:{0} does not exist!(ServerSocket:{0}不存在！)"),
   WEBSOCKET_IS_FULL(
       11005,
       "The receive queue for WebSocket is full, please try again later(WebSocket的接收队列已满，请稍后重试)!"),
@@ -41,34 +43,23 @@ public enum LinkisModuleErrorCodeSummary {
       11035,
       "WebSocket consumer has stopped, please contact the administrator to handle(WebSocket的消费器已停止，请联系管理员处理)!");
 
-  /** (errorCode)错误码 */
-  private int errorCode;
-  /** (errorDesc)错误描述 */
-  private String errorDesc;
+  /** error code(错误码) */
+  private final int errorCode;
+  /** wrong description(错误描述 ) */
+  private final String errorDesc;
 
   LinkisModuleErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

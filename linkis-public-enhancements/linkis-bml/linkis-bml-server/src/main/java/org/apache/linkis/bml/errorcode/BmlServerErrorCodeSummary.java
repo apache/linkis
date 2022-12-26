@@ -17,7 +17,9 @@
 
 package org.apache.linkis.bml.errorcode;
 
-public enum BmlServerErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum BmlServerErrorCodeSummary implements LinkisErrorCode {
   CANNOT_ACCESSED_EXPIRED(
       60036, "Store cannot be accessed without login or expired login(未登录或登录过期，无法访问物料库)"),
   FIRST_UPLOAD_FAILED(60050, "The first upload of the resource failed(首次上传资源失败)"),
@@ -63,33 +65,22 @@ public enum BmlServerErrorCodeSummary {
       "The basic information of the resource is not passed into the ResourceId parameter or the parameter is illegal(获取资源基本信息未传入resourceId参数或参数非法)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   BmlServerErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

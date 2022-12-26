@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.common.errorcode;
 
-public enum ManagerCommonErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum ManagerCommonErrorCodeSummary implements LinkisErrorCode {
   RESOURCE_LATER_CREATED(
       10022,
       "The tag resource was created later than the used resource was created(无需清理该标签的资源,该标签资源的创建时间晚于已用资源的创建时间)"),
@@ -54,33 +56,22 @@ public enum ManagerCommonErrorCodeSummary {
   ONLY_ADMIN_READ(120010, "Only admin can read all user's resource.(只有管理员可以读取所有用户的资源.)"),
   ONLY_ADMIN_RESET(120011, "Only admin can reset user's resource.(只有管理员可以重置用户的资源.)");
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   ManagerCommonErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -46,7 +46,10 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
   @Autowired
   private var engineConnResourceGenerator: EngineConnResourceGenerator = _
 
-  private def getEngineLaunchBuilder(engineTypeLabel: EngineTypeLabel): EngineConnLaunchBuilder = {
+  private def getEngineLaunchBuilder(
+      engineTypeLabel: EngineTypeLabel,
+      engineBuildRequest: EngineConnBuildRequest
+  ): EngineConnLaunchBuilder = {
     val engineConnPluginInstance =
       EngineConnPluginsLoader.getEngineConnPluginsLoader().getEngineConnPlugin(engineTypeLabel)
     val builder = engineConnPluginInstance.plugin.getEngineConnLaunchBuilder
@@ -56,6 +59,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
           engineConnResourceGenerator
         )
     }
+    builder.setBuildRequest(engineBuildRequest)
     builder
   }
 
@@ -66,16 +70,14 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
     val engineTypeOption = engineBuildRequest.labels.asScala.find(_.isInstanceOf[EngineTypeLabel])
     if (engineTypeOption.isDefined) {
       val engineTypeLabel = engineTypeOption.get.asInstanceOf[EngineTypeLabel]
-      Utils.tryCatch(getEngineLaunchBuilder(engineTypeLabel).buildEngineConn(engineBuildRequest)) {
-        t =>
-          logger.error(
-            s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
-            t
-          )
-          throw new EngineConnPluginErrorException(
-            FAILED_CREATE_ELR.getErrorCode,
-            s"${FAILED_CREATE_ELR.getErrorDesc}, ${ExceptionUtils.getRootCauseMessage(t)}"
-          )
+      Utils.tryCatch(
+        getEngineLaunchBuilder(engineTypeLabel, engineBuildRequest).buildEngineConn()
+      ) { t =>
+        logger.error(s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})", t)
+        throw new EngineConnPluginErrorException(
+          FAILED_CREATE_ELR.getErrorCode,
+          s"${FAILED_CREATE_ELR.getErrorDesc}, ${ExceptionUtils.getRootCauseMessage(t)}"
+        )
       }
     } else {
       throw new EngineConnPluginErrorException(

@@ -20,9 +20,9 @@ package org.apache.linkis.ujes.client.response
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.protocol.engine.JobProgressInfo
 
-import java.util.{List, Map}
+import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import org.json4s._
 import org.json4s.jackson.Serialization._
@@ -31,7 +31,7 @@ import org.json4s.jackson.Serialization._
 class JobProgressResult extends UJESJobResult {
 
   private var progress: Float = _
-  private var progressInfo: List[Map[String, AnyRef]] = _
+  private var progressInfo: util.List[util.Map[String, AnyRef]] = _
   private var progressInfos: Array[JobProgressInfo] = _
 
   private implicit val formats = DefaultFormats
@@ -39,9 +39,10 @@ class JobProgressResult extends UJESJobResult {
   def setProgress(progress: Float): Unit = this.progress = progress
   def getProgress: Float = progress
 
-  def setProgressInfo(progressInfo: List[Map[String, AnyRef]]): Unit = {
+  def setProgressInfo(progressInfo: util.List[util.Map[String, AnyRef]]): Unit = {
     this.progressInfo = progressInfo
-    progressInfos = progressInfo.map(map => read[JobProgressInfo](write(map.toMap))).toArray
+    progressInfos =
+      progressInfo.asScala.map(map => read[JobProgressInfo](write(map.asScala.toMap))).toArray
   }
 
   def getProgressInfo: Array[JobProgressInfo] = progressInfos

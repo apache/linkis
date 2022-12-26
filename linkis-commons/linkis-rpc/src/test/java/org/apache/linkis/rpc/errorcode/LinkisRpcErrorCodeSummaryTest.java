@@ -26,22 +26,15 @@ public class LinkisRpcErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   public void enumTest() {
-
-    int methodCallFailedCode = LinkisRpcErrorCodeSummary.METHON_CALL_FAILED.getErrorCode();
-    int transmittedBeanIsNull = LinkisRpcErrorCodeSummary.TRANSMITTED_BEAN_IS_NULL.getErrorCode();
-    int timeoutPeriodErrorCode = LinkisRpcErrorCodeSummary.TIMEOUT_PERIOD.getErrorCode();
-    int correspondingNotFoundErrorCode =
-        LinkisRpcErrorCodeSummary.CORRESPONDING_NOT_FOUND.getErrorCode();
-    int correspondingToInitializeErrorCode =
-        LinkisRpcErrorCodeSummary.CORRESPONDING_TO_INITIALIZE.getErrorCode();
-    int applicationIsNotExistsErrorCode =
-        LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode();
-
-    Assertions.assertTrue(10000 == methodCallFailedCode);
-    Assertions.assertTrue(10001 == transmittedBeanIsNull);
-    Assertions.assertTrue(10002 == timeoutPeriodErrorCode);
-    Assertions.assertTrue(10003 == correspondingNotFoundErrorCode);
-    Assertions.assertTrue(10004 == correspondingToInitializeErrorCode);
-    Assertions.assertTrue(10051 == applicationIsNotExistsErrorCode);
+    Assertions.assertEquals(10000, LinkisRpcErrorCodeSummary.METHOD_CALL_FAILED.getErrorCode());
+    Assertions.assertEquals(
+        10001, LinkisRpcErrorCodeSummary.TRANSMITTED_BEAN_IS_NULL.getErrorCode());
+    Assertions.assertEquals(10002, LinkisRpcErrorCodeSummary.TIMEOUT_PERIOD.getErrorCode());
+    Assertions.assertEquals(
+        10003, LinkisRpcErrorCodeSummary.CORRESPONDING_NOT_FOUND.getErrorCode());
+    Assertions.assertEquals(
+        10004, LinkisRpcErrorCodeSummary.CORRESPONDING_TO_INITIALIZE.getErrorCode());
+    Assertions.assertEquals(
+        10051, LinkisRpcErrorCodeSummary.APPLICATION_IS_NOT_EXISTS.getErrorCode());
   }
 }

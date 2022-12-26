@@ -26,36 +26,22 @@ public class LinkisModuleErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   public void enumTest() {
-
-    int dataworkcloudMustVersionErrorCode =
-        LinkisModuleErrorCodeSummary.DATAWORKCLOUD_MUST_VERSION.getErrorCode();
-    int fetchMapcacheErrorErrorCode =
-        LinkisModuleErrorCodeSummary.FETCH_MAPCACHE_ERROR.getErrorCode();
-    int notExistsApplicationErrorCode =
-        LinkisModuleErrorCodeSummary.NOT_EXISTS_APPLICATION.getErrorCode();
-    int haveNotSetErrorCode = LinkisModuleErrorCodeSummary.HAVE_NOT_SET.getErrorCode();
-    int verificationCannotEmptyErrorCode =
-        LinkisModuleErrorCodeSummary.VERIFICATION_CANNOT_EMPTY.getErrorCode();
-    int loggedIdErrorCode = LinkisModuleErrorCodeSummary.LOGGED_ID.getErrorCode();
-    int notLoggedErrorCode = LinkisModuleErrorCodeSummary.NOT_LOGGED.getErrorCode();
-    int illegalIdErrorCode = LinkisModuleErrorCodeSummary.ILLEGAL_ID.getErrorCode();
-    int illegalUserTokenErrorCode = LinkisModuleErrorCodeSummary.ILLEGAL_USER_TOKEN.getErrorCode();
-    int serverssocketNotExistErrorCode =
-        LinkisModuleErrorCodeSummary.SERVERSSOCKET_NOT_EXIST.getErrorCode();
-    int websocketIsFullErrorCode = LinkisModuleErrorCodeSummary.WEBSOCKET_IS_FULL.getErrorCode();
-    int websocketStoppedErrorCode = LinkisModuleErrorCodeSummary.WEBSOCKET_STOPPED.getErrorCode();
-
-    Assertions.assertTrue(10010 == dataworkcloudMustVersionErrorCode);
-    Assertions.assertTrue(10021 == fetchMapcacheErrorErrorCode);
-    Assertions.assertTrue(10050 == notExistsApplicationErrorCode);
-    Assertions.assertTrue(11000 == haveNotSetErrorCode);
-    Assertions.assertTrue(11001 == verificationCannotEmptyErrorCode);
-    Assertions.assertTrue(11002 == loggedIdErrorCode);
-    Assertions.assertTrue(11002 == notLoggedErrorCode);
-    Assertions.assertTrue(11003 == illegalIdErrorCode);
-    Assertions.assertTrue(11003 == illegalUserTokenErrorCode);
-    Assertions.assertTrue(11004 == serverssocketNotExistErrorCode);
-    Assertions.assertTrue(11005 == websocketIsFullErrorCode);
-    Assertions.assertTrue(11035 == websocketStoppedErrorCode);
+    Assertions.assertEquals(
+        10010, LinkisModuleErrorCodeSummary.DATAWORKCLOUD_MUST_VERSION.getErrorCode());
+    Assertions.assertEquals(
+        10021, LinkisModuleErrorCodeSummary.FETCH_MAPCACHE_ERROR.getErrorCode());
+    Assertions.assertEquals(
+        10050, LinkisModuleErrorCodeSummary.NOT_EXISTS_APPLICATION.getErrorCode());
+    Assertions.assertEquals(11000, LinkisModuleErrorCodeSummary.HAVE_NOT_SET.getErrorCode());
+    Assertions.assertEquals(
+        11001, LinkisModuleErrorCodeSummary.VERIFICATION_CANNOT_EMPTY.getErrorCode());
+    Assertions.assertEquals(11002, LinkisModuleErrorCodeSummary.LOGGED_ID.getErrorCode());
+    Assertions.assertEquals(11002, LinkisModuleErrorCodeSummary.NOT_LOGGED.getErrorCode());
+    Assertions.assertEquals(11003, LinkisModuleErrorCodeSummary.ILLEGAL_ID.getErrorCode());
+    Assertions.assertEquals(11003, LinkisModuleErrorCodeSummary.ILLEGAL_USER_TOKEN.getErrorCode());
+    Assertions.assertEquals(
+        11004, LinkisModuleErrorCodeSummary.SERVERSOCKET_NOT_EXIST.getErrorCode());
+    Assertions.assertEquals(11005, LinkisModuleErrorCodeSummary.WEBSOCKET_IS_FULL.getErrorCode());
+    Assertions.assertEquals(11035, LinkisModuleErrorCodeSummary.WEBSOCKET_STOPPED.getErrorCode());
   }
 }

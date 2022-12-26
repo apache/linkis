@@ -17,7 +17,9 @@
 
 package org.apache.linkis.gateway.authentication.errorcode;
 
-public enum LinkisGwAuthenticationErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum LinkisGwAuthenticationErrorCodeSummary implements LinkisErrorCode {
   TOKEN_IS_NULL(15205, "token is null(token 令牌为空)!"),
   FAILED_TO_LOAD_TOKEN(15200, "Failed to load token from DB into cache(无法将 token 令牌从数据库加载到缓存中)!"),
   TOKEN_VALID_OR_STALE(15201, "Token is not valid or stale(token 令牌无效或已过期)!"),
@@ -26,33 +28,22 @@ public enum LinkisGwAuthenticationErrorCodeSummary {
   INVALID_TOKEN(15204, "Invalid Token(令牌无效)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   LinkisGwAuthenticationErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

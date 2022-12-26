@@ -17,40 +17,31 @@
 
 package org.apache.linkis.engineplugin.elasticsearch.errorcode;
 
-public enum EasticsearchErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum EasticsearchErrorCodeSummary implements LinkisErrorCode {
   CLUSTER_IS_BLANK(70112, "The elasticsearch cluster is empty(es集群为空)!"),
   RESPONSE_FAIL_IS_EMPTY(
       70113,
       "EsEngineExecutor convert response fail, response content is empty(EsEngineExecutor response解析失败，response 内容为空).");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   EasticsearchErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

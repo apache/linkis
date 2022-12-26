@@ -54,8 +54,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnPackageHomeFile = new File(engineConnPackageHome)
     if (!engineConnPackageHomeFile.exists()) {
       throw new EngineConnPluginErrorException(
-        ENGIN_VERSION_NOT_FOUND.getErrorCode,
-        MessageFormat.format(ENGIN_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+        ENGINE_VERSION_NOT_FOUND.getErrorCode,
+        MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
       )
     }
     engineConnPackageHome

@@ -31,41 +31,11 @@ public class JDBCErrorCodeSummaryTest {
   }
 
   @Test
-  void testSetErrorCode() {
-    JDBC_GET_DATASOURCEINFO_ERROR.setErrorCode(1);
-    assertEquals(1, JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode());
-    JDBC_GET_DATASOURCEINFO_ERROR.setErrorCode(26010);
-    assertEquals(26010, JDBC_GET_DATASOURCEINFO_ERROR.getErrorCode());
-
-    JDBC_PARAMS_ILLEGAL.setErrorCode(1);
-    assertEquals(1, JDBC_PARAMS_ILLEGAL.getErrorCode());
-    JDBC_PARAMS_ILLEGAL.setErrorCode(26011);
-    assertEquals(26011, JDBC_PARAMS_ILLEGAL.getErrorCode());
-  }
-
-  @Test
   void testGetErrorDesc() {
     assertEquals(
         "Failed to get datasource info from datasource server(从数据源服务器获取数据源信息失败)",
         JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc());
     assertEquals(
-        "JDBC related parameters are illegal(JDBC相关参数非法)", JDBC_PARAMS_ILLEGAL.getErrorDesc());
-  }
-
-  @Test
-  void testSetErrorDesc() {
-    JDBC_GET_DATASOURCEINFO_ERROR.setErrorDesc("test");
-    assertEquals("test", JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc());
-    JDBC_GET_DATASOURCEINFO_ERROR.setErrorDesc(
-        "Failed to get datasource info from datasource server(从数据源服务器获取数据源信息失败)");
-    assertEquals(
-        "Failed to get datasource info from datasource server(从数据源服务器获取数据源信息失败)",
-        JDBC_GET_DATASOURCEINFO_ERROR.getErrorDesc());
-
-    JDBC_PARAMS_ILLEGAL.setErrorDesc("test");
-    assertEquals("test", JDBC_PARAMS_ILLEGAL.getErrorDesc());
-    JDBC_PARAMS_ILLEGAL.setErrorDesc("JDBC related parameters are illegal(JDBC相关参数非法)");
-    assertEquals(
-        "JDBC related parameters are illegal(JDBC相关参数非法)", JDBC_PARAMS_ILLEGAL.getErrorDesc());
+        "JDBC related parameters are illegal(JDBC 相关参数非法)", JDBC_PARAMS_ILLEGAL.getErrorDesc());
   }
 }

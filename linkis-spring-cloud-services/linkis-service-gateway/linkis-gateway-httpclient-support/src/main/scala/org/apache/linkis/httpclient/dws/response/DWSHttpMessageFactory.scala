@@ -22,7 +22,7 @@ import org.apache.linkis.httpclient.response.Result
 
 import org.apache.commons.lang3.ClassUtils
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object DWSHttpMessageFactory {
 
@@ -30,6 +30,7 @@ object DWSHttpMessageFactory {
 
   private val methodToHttpMessageClasses = reflections
     .getTypesAnnotatedWith(classOf[DWSHttpMessageResult])
+    .asScala
     .filter(ClassUtils.isAssignable(_, classOf[Result]))
     .map { c =>
       val httpMessageResult = c.getAnnotation(classOf[DWSHttpMessageResult])

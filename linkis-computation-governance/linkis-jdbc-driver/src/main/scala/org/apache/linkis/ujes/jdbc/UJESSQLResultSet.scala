@@ -5,37 +5,64 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.ujes.jdbc
 
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.ujes.client.request.ResultSetAction
+import org.apache.linkis.ujes.client.response.ResultSetResult
+
+import org.apache.commons.lang3.StringUtils
+
+import java.{sql, util}
 import java.io.{InputStream, Reader}
 import java.math.MathContext
 import java.net.URL
-import java.sql.{Blob, Clob, Connection, Date, NClob, Ref, ResultSet, RowId, SQLWarning, SQLXML, Statement, Time, Timestamp}
+import java.sql.{
+  Blob,
+  Clob,
+  Connection,
+  Date,
+  NClob,
+  Ref,
+  ResultSet,
+  RowId,
+  SQLWarning,
+  SQLXML,
+  Statement,
+  Time,
+  Timestamp
+}
 import java.util.Calendar
-import java.{sql, util}
-import org.apache.linkis.ujes.client.request.ResultSetAction
-import org.apache.linkis.ujes.client.response.ResultSetResult
-import org.apache.commons.lang3.StringUtils
-import org.apache.linkis.common.utils.Logging
+
 import org.joda.time.DateTimeZone
-import org.joda.time.format.{DateTimeFormat, DateTimeFormatterBuilder, DateTimeParser, ISODateTimeFormat}
+import org.joda.time.format.{
+  DateTimeFormat,
+  DateTimeFormatterBuilder,
+  DateTimeParser,
+  ISODateTimeFormat
+}
 
-
-class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLStatement, maxRows: Int, fetchSize: Int) extends ResultSet with Logging {
+class UJESSQLResultSet(
+    resultSetList: Array[String],
+    ujesStatement: UJESSQLStatement,
+    maxRows: Int,
+    fetchSize: Int
+) extends ResultSet
+    with Logging {
 
   private var currentRowCursor: Int = -1
 
-  //All data of table, where each element represents a row
+  // All data of table, where each element represents a row
   private var resultSetRow: util.ArrayList[util.ArrayList[String]] = _
   private var resultSetResult: ResultSetResult = _
   private var resultSetMetaData: UJESSQLResultSetMetaData = new UJESSQLResultSetMetaData
@@ -49,16 +76,25 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   private var path: String = _
   private var metaData: util.List[util.Map[String, String]] = _
   private val statement: UJESSQLStatement = ujesStatement
-  private val connection: UJESSQLConnection = ujesStatement.getConnection.asInstanceOf[UJESSQLConnection]
+
+  private val connection: UJESSQLConnection =
+    ujesStatement.getConnection.asInstanceOf[UJESSQLConnection]
+
   private var valueWasNull: Boolean = false
   private var warningChain: SQLWarning = _
 
   private[jdbc] val DATE_FORMATTER = ISODateTimeFormat.date
-  private[jdbc] val TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder().
-    append(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getPrinter,
-      Array[DateTimeParser](DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser,
-      DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getParser))
-    .toFormatter.withOffsetParsed
+
+  private[jdbc] val TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder()
+    .append(
+      DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getPrinter,
+      Array[DateTimeParser](
+        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").getParser,
+        DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS").getParser
+      )
+    )
+    .toFormatter
+    .withOffsetParsed
 
   private def getResultSetPath(resultSetList: Array[String]): String = {
     if (resultSetList.length > 0) {
@@ -72,13 +108,15 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (path == null) path = getResultSetPath(resultSetList)
     val user = connection.getProps.getProperty("user")
     if (StringUtils.isNotBlank(path)) {
-      val resultAction = ResultSetAction.builder().setUser(user).setPageSize(pageSize).setPath(path).build()
+      val resultAction =
+        ResultSetAction.builder().setUser(user).setPageSize(pageSize).setPath(path).build()
       resultSetResult = connection.ujesClient.resultSet(resultAction)
       totalLine = resultSetResult.totalLine
-      logger.info(s"Currently page is $currentPage, and already fetched $totalLine lines of the resultset")
+      logger.info(
+        s"Currently page is $currentPage, and already fetched $totalLine lines of the resultset"
+      )
     }
   }
-
 
   /**
    * currentRowCursor应被更新为0，而非-1，因为需要马上updateCurrentRow
@@ -86,20 +124,28 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   private def updateResultSet(): Unit = {
     if (path == null) path = getResultSetPath(resultSetList)
     val user = connection.getProps.getProperty("user")
-    if(resultSetResult.totalLine > 0 && resultSetResult.totalLine <= pageSize) {
+    if (resultSetResult.totalLine > 0 && resultSetResult.totalLine <= pageSize) {
       currentPage = currentPage + 1
-      resultSetResult = connection.ujesClient.resultSet(ResultSetAction.builder()
-      .setPath(path).setUser(user)
-      .setPage(currentPage).setPageSize(pageSize)
-      .build())
+      resultSetResult = connection.ujesClient.resultSet(
+        ResultSetAction
+          .builder()
+          .setPath(path)
+          .setUser(user)
+          .setPage(currentPage)
+          .setPageSize(pageSize)
+          .build()
+      )
       if (resultSetResult.totalLine == 0) {
         isCompleted = true
         return
       }
-      resultSetRow = resultSetResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[String]]]
+      resultSetRow =
+        resultSetResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[String]]]
       totalLine = totalLine + resultSetResult.totalLine
       currentRowCursor = 0
-      logger.info(s"Currently page is $currentPage, and already fetched $totalLine lines of the resultset")
+      logger.info(
+        s"Currently page is $currentPage, and already fetched $totalLine lines of the resultset"
+      )
     } else {
       isCompleted = true
     }
@@ -122,7 +168,8 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (null == resultSetResult) {
       return
     }
-    resultSetRow = resultSetResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[String]]]
+    resultSetRow =
+      resultSetResult.getFileContent.asInstanceOf[util.ArrayList[util.ArrayList[String]]]
   }
 
   private def init(): Unit = {
@@ -142,7 +189,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (metaData == null) init()
     currentRowCursor += 1
     if (null == resultSetRow || currentRowCursor > resultSetRow.size() - 1) {
-      if(UJESSQLDriverMain.LIMIT_ENABLED.equals("false") && !isCompleted) {
+      if (UJESSQLDriverMain.LIMIT_ENABLED.equals("false") && !isCompleted) {
         updateResultSet()
         if (isCompleted) {
           return false
@@ -152,8 +199,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
         }
       }
       false
-    }
-    else {
+    } else {
       updateCurrentRow(currentRowCursor)
       true
     }
@@ -205,8 +251,11 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
         case "decimal" => value.toDouble
         case "array" => value.toArray
         case "map" => value
-        case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
-          s"Can't infer the SQL type to use for an instance of ${dataType}. Use getObject() with an explicit Types value to specify the type to use")
+        case _ =>
+          throw new UJESSQLException(
+            UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
+            s"Can't infer the SQL type to use for an instance of ${dataType}. Use getObject() with an explicit Types value to specify the type to use"
+          )
       }
     }
   }
@@ -215,9 +264,15 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (currentRow == null) {
       throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "No row found.")
     } else if (currentRow.size() <= 0) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "RowSet does not contain any columns!")
+      throw new UJESSQLException(
+        UJESSQLErrorCode.RESULTSET_ROWERROR,
+        "RowSet does not contain any columns!"
+      )
     } else if (columnIndex > currentRow.size()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, s" Invalid columnIndex: ${columnIndex}")
+      throw new UJESSQLException(
+        UJESSQLErrorCode.RESULTSET_ROWERROR,
+        s" Invalid columnIndex: ${columnIndex}"
+      )
     } else {
       val dataType = resultSetMetaData.getColumnTypeName(columnIndex)
       val evaluateValue = evaluate(dataType, currentRow.get(columnIndex - 1))
@@ -246,7 +301,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     } else {
       any match {
         case s: String =>
-          if(s.toLowerCase().equals("true")){
+          if (s.toLowerCase().equals("true")) {
             return true
           }
           false
@@ -309,17 +364,16 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   }
 
   override def getDouble(columnIndex: Int): Double = {
-    val any  = getColumnValue(columnIndex)
-    if(wasNull()) {
+    val any = getColumnValue(columnIndex)
+    if (wasNull()) {
       throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
-    }else{
+    } else {
       any match {
-        case _: String => 0.0D
+        case _: String => 0.0d
         case _ => any.asInstanceOf[Double]
       }
     }
   }
-
 
   override def getBigDecimal(columnIndex: Int, scale: Int): java.math.BigDecimal = {
     val mc = new MathContext(scale)
@@ -488,7 +542,10 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
       }
     }
     if (columnIndex == -1) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, s"can not find column: ${columnLabel}")
+      throw new UJESSQLException(
+        UJESSQLErrorCode.RESULTSET_ROWERROR,
+        s"can not find column: ${columnLabel}"
+      )
     } else columnIndex
   }
 
@@ -580,7 +637,10 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (resultSetRow == null) {
       throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
     } else if (row > resultSetRow.size()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "The specified number of rows is greater than the maximum number of rows")
+      throw new UJESSQLException(
+        UJESSQLErrorCode.RESULTSET_ROWERROR,
+        "The specified number of rows is greater than the maximum number of rows"
+      )
     } else {
       currentRowCursor = row match {
         case row if row > 0 => row + 1
@@ -596,7 +656,10 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     if (resultSetRow == null) {
       throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
     } else if (rows > resultSetRow.size()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "The specified number of rows is greater than the maximum number of rows")
+      throw new UJESSQLException(
+        UJESSQLErrorCode.RESULTSET_ROWERROR,
+        "The specified number of rows is greater than the maximum number of rows"
+      )
     } else {
       currentRowCursor = rows match {
         case rows if rows > 0 => currentRowCursor + rows
@@ -832,9 +895,9 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   }
 
   override def getStatement: Statement = {
-    if (statement != null && !hasClosed)
+    if (statement != null && !hasClosed) {
       statement.asInstanceOf[Statement]
-    else throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
+    } else throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
   }
 
   override def getObject(columnIndex: Int, map: util.Map[String, Class[_]]): AnyRef = {
@@ -877,7 +940,6 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
-
   private def getDate(columnIndex: Int, localTimeZone: DateTimeZone): Date = {
     val value = getColumnValue(columnIndex)
     logger.info(s"the value of value is $value and the value of localTimeZone is $localTimeZone")
@@ -908,11 +970,14 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
     logger.info(s"the value of value is $value and the value of localTimeZone is $localTimeZone")
     if (wasNull()) {
       null
-    } else new Timestamp(TIMESTAMP_FORMATTER.withZone(localTimeZone).parseMillis(String.valueOf(value)))
+    } else
+      new Timestamp(TIMESTAMP_FORMATTER.withZone(localTimeZone).parseMillis(String.valueOf(value)))
   }
 
   override def getTimestamp(columnIndex: Int, cal: Calendar): Timestamp = {
-    logger.info(s"======getTimestamp(columnIndex: Int, cal: Calendar): Timestamp is being called======")
+    logger.info(
+      s"======getTimestamp(columnIndex: Int, cal: Calendar): Timestamp is being called======"
+    )
     getTimestamp(columnIndex, DateTimeZone.forTimeZone(cal.getTimeZone))
   }
 
@@ -1143,6 +1208,7 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   override def updateClob(columnLabel: String, reader: Reader): Unit = {
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
   }
+
   override def updateNClob(columnIndex: Int, reader: Reader): Unit = {
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
   }
@@ -1166,4 +1232,5 @@ class UJESSQLResultSet(resultSetList: Array[String], ujesStatement: UJESSQLState
   override def isWrapperFor(iface: Class[_]): Boolean = {
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
   }
+
 }

@@ -26,15 +26,15 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 class SQLCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
-    val engineType = {
-      val engineType = LabelUtil.getCodeType(jobRequest.getLabels)
-      if (null != engineType) {
-        engineType.toLowerCase()
+    val codeType = {
+      val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
+      if (null != codeType) {
+        codeType.toLowerCase()
       } else {
         ""
       }
     }
-    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(engineType)
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         val sb: StringBuilder = new StringBuilder

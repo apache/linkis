@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineplugin.server.localize
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
+import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
@@ -32,6 +34,7 @@ class DefaultEngineConnBmlResourceGenerator
     getEngineConnDistHomeList(engineConnType).map { path =>
       val distFile = new File(path)
       val key = distFile.getName
+      logger.info("chengbinbin+key:" + key)
       Utils.tryCatch {
         key -> generateDir(path)
       } { case t: Throwable =>

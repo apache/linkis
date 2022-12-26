@@ -217,8 +217,8 @@ export default {
     },
     onTableDelete(row){
       deleteTemplateByID(row.id).then((data) => {
-        if(data['success: ']) {this.$Message.success('删除成功'); this.queryEngineTemplateList(this.labelId);}
-        else this.$Message.error('删除失败');
+        if(data['success: ']) {this.$Message.success(this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.delSuccess')); this.queryEngineTemplateList(this.labelId);}
+        else this.$Message.error(this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.delFail'));
       });
     },
     onTableEdit(row){
@@ -237,8 +237,8 @@ export default {
       //console.log(this.$refs['editForm'].formData);
       this.modalShow = false;
       changeTemplate(this.$refs['editForm'].formData).then((data) => {
-        if(data['success: ']) {this.$Message.success('修改成功'); this.queryEngineTemplateList(this.labelId);}
-        else this.$Message.error('修改失败');
+        if(data['success: ']) {this.$Message.success('message.linkis.basedataManagement.engineConfigurationTemplate.ModSuccess'); this.queryEngineTemplateList(this.labelId);}
+        else this.$Message.error('message.linkis.basedataManagement.engineConfigurationTemplate.ModSuccess');
       });
     },
     onModalCancel(){

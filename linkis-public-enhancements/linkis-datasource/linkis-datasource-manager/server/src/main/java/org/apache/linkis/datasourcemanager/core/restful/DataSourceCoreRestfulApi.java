@@ -147,7 +147,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String"),
     @ApiImplicitParam(name = "labels", required = true, dataType = "String"),
     @ApiImplicitParam(name = "connectParams", required = true, dataType = "List"),
-    @ApiImplicitParam(name = "host", dataType = "String", example = "10.107.93.146"),
+    @ApiImplicitParam(name = "host", dataType = "String", example = "127.0.0.1"),
     @ApiImplicitParam(name = "password", dataType = "String"),
     @ApiImplicitParam(name = "port", dataType = "String", example = "9523"),
     @ApiImplicitParam(name = "subSystem", dataType = "String"),
@@ -203,7 +203,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String"),
     @ApiImplicitParam(name = "labels", required = true, dataType = "String"),
     @ApiImplicitParam(name = "connectParams", required = true, dataType = "List"),
-    @ApiImplicitParam(name = "host", dataType = "String", example = "10.107.93.146"),
+    @ApiImplicitParam(name = "host", dataType = "String", example = "127.0.0.1"),
     @ApiImplicitParam(name = "password", dataType = "String"),
     @ApiImplicitParam(name = "port", dataType = "String", example = "9523"),
     @ApiImplicitParam(name = "subSystem", dataType = "String"),
@@ -211,7 +211,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "expire", dataType = "boolean", example = "false"),
     @ApiImplicitParam(name = "file", dataType = "String", example = "adn"),
     @ApiImplicitParam(name = "modifyTime", dataType = "String", example = "1657611440000"),
-    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "johnnwang"),
+    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "hadoop"),
     @ApiImplicitParam(name = "versionId", dataType = "String", example = "18")
   })
   @ApiOperationSupport(ignoreParameters = {"dataSource"})

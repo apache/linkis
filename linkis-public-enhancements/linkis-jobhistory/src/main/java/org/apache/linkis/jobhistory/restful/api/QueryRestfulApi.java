@@ -70,7 +70,7 @@ public class QueryRestfulApi {
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
     return Message.ok()
-        .data("admin", Configuration.isStationAdmin(username))
+        .data("admin", Configuration.isAdmin(username))
         .data("historyAdmin", Configuration.isJobHistoryAdmin(username));
   }
 

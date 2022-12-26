@@ -15,37 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.errorcode;
+package org.apache.linkis.engineplugin.spark.client.deployment;
 
-public class LinkisSpringCloudServiceErrorCodeSummary {;
+import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 
-  private int errorCode;
-  private String errorDesc;
+public class ClusterDescriptorAdapterFactory {
 
-  LinkisSpringCloudServiceErrorCodeSummary(int errorCode, String errorDesc) {
-    ErrorCodeUtils.validateErrorCode(errorCode, 13000, 14999);
-    this.errorCode = errorCode;
-    this.errorDesc = errorDesc;
-  }
-
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
-  public String getErrorDesc() {
-    return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
+  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
+    ClusterDescriptorAdapter clusterDescriptorAdapter =
+        new YarnApplicationClusterDescriptorAdapter(executionContext);
+    return clusterDescriptorAdapter;
   }
 }

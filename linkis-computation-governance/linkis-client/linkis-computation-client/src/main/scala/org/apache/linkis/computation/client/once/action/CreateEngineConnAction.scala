@@ -89,7 +89,7 @@ object CreateEngineConnAction {
       action.addRequestPayload("properties", properties)
       action.addRequestPayload("labels", labels)
       action.addRequestPayload("createService", createService)
-      action.addRequestPayload("timeOut", maxSubmitTime)
+      action.addRequestPayload("timeout", maxSubmitTime)
       action.addRequestPayload("description", description)
       action.addRequestPayload("ignoreTimeout", ignoreTimeout)
       action

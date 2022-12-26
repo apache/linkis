@@ -31,39 +31,10 @@ public class PrestoErrorCodeSummaryTest {
   }
 
   @Test
-  void testSetErrorCode() {
-    PRESTO_STATE_INVALID.setErrorCode(1);
-    assertEquals(1, PRESTO_STATE_INVALID.getErrorCode());
-    PRESTO_STATE_INVALID.setErrorCode(26001);
-    assertEquals(26001, PRESTO_STATE_INVALID.getErrorCode());
-
-    PRESTO_CLIENT_ERROR.setErrorCode(1);
-    assertEquals(1, PRESTO_CLIENT_ERROR.getErrorCode());
-    PRESTO_CLIENT_ERROR.setErrorCode(26002);
-    assertEquals(26002, PRESTO_CLIENT_ERROR.getErrorCode());
-  }
-
-  @Test
   void testGetErrorDesc() {
     assertEquals(
         "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)",
         PRESTO_STATE_INVALID.getErrorDesc());
-    assertEquals("Presto client error(Presto客户端异常)", PRESTO_CLIENT_ERROR.getErrorDesc());
-  }
-
-  @Test
-  void testSetErrorDesc() {
-    PRESTO_STATE_INVALID.setErrorDesc("test");
-    assertEquals("test", PRESTO_STATE_INVALID.getErrorDesc());
-    PRESTO_STATE_INVALID.setErrorDesc(
-        "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)");
-    assertEquals(
-        "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)",
-        PRESTO_STATE_INVALID.getErrorDesc());
-
-    PRESTO_CLIENT_ERROR.setErrorDesc("test");
-    assertEquals("test", PRESTO_CLIENT_ERROR.getErrorDesc());
-    PRESTO_CLIENT_ERROR.setErrorDesc("Presto client error(Presto客户端异常)");
     assertEquals("Presto client error(Presto客户端异常)", PRESTO_CLIENT_ERROR.getErrorDesc());
   }
 }

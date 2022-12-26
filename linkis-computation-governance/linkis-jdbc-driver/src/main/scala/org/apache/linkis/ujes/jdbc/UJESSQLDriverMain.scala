@@ -5,35 +5,41 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-package org.apache.linkis.ujes.jdbc
 
-import java.sql.{Connection, Driver, DriverManager, DriverPropertyInfo, SQLFeatureNotSupportedException}
-import java.util.Properties
-import java.util.logging.Logger
+package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
+
 import org.apache.commons.lang3.StringUtils
+
+import java.sql.{
+  Connection,
+  Driver,
+  DriverManager,
+  DriverPropertyInfo,
+  SQLFeatureNotSupportedException
+}
+import java.util.Properties
+import java.util.logging.Logger
 
 import scala.collection.JavaConversions
 
-
-class UJESSQLDriverMain extends Driver with Logging{
+class UJESSQLDriverMain extends Driver with Logging {
 
   override def connect(url: String, properties: Properties): Connection = if (acceptsURL(url)) {
     val props = if (properties != null) properties else new Properties
     props.putAll(parseURL(url))
-    info(s"input url:$url, properties:$properties")
+    logger.info(s"input url:$url, properties:$properties")
     val ujesClient = UJESClientFactory.getUJESClient(props)
     new UJESSQLConnection(ujesClient, props)
   } else throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)
@@ -42,7 +48,7 @@ class UJESSQLDriverMain extends Driver with Logging{
 
   private def parseURL(url: String): Properties = {
     val props = new Properties
-    //add an entry to get url
+    // add an entry to get url
     props.setProperty("URL", url)
     url match {
       case URL_REGEX(host, port, db, params) =>
@@ -72,7 +78,8 @@ class UJESSQLDriverMain extends Driver with Logging{
               if (StringUtils.isBlank(key)) {
                 throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
               } else true
-            case _ => throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
+            case _ =>
+              throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
           }
           props.setProperty(PARAMS, kvs.map(_.mkString(KV_SPLIT)).mkString(PARAM_SPLIT))
         }
@@ -105,7 +112,10 @@ class UJESSQLDriverMain extends Driver with Logging{
 
   override def jdbcCompliant(): Boolean = false
 
-  override def getParentLogger: Logger = throw new SQLFeatureNotSupportedException("Method not supported")
+  override def getParentLogger: Logger = throw new SQLFeatureNotSupportedException(
+    "Method not supported"
+  )
+
 }
 
 object UJESSQLDriverMain {
@@ -136,26 +146,50 @@ object UJESSQLDriverMain {
 
   val VARIABLE_HEADER = UJESSQLDriver.VARIABLE_HEADER
 
-  def getConnectionParams(connectionParams: String, variableMap: java.util.Map[String, Any]): String = {
-    val variables = JavaConversions.mapAsScalaMap(variableMap).map(kv => VARIABLE_HEADER + kv._1 + KV_SPLIT + kv._2).mkString(PARAM_SPLIT)
+  def getConnectionParams(
+      connectionParams: String,
+      variableMap: java.util.Map[String, Any]
+  ): String = {
+    val variables = JavaConversions
+      .mapAsScalaMap(variableMap)
+      .map(kv => VARIABLE_HEADER + kv._1 + KV_SPLIT + kv._2)
+      .mkString(PARAM_SPLIT)
     if (StringUtils.isNotBlank(connectionParams)) connectionParams + PARAM_SPLIT + variables
     else variables
   }
 
-  def getConnectionParams(version: String, creator: String): String = getConnectionParams(version, creator, 10, 45000)
+  def getConnectionParams(version: String, creator: String): String =
+    getConnectionParams(version, creator, 10, 45000)
 
-  def getConnectionParams(version: String, creator: String, maxConnectionSize: Int, readTimeout: Long): String =
+  def getConnectionParams(
+      version: String,
+      creator: String,
+      maxConnectionSize: Int,
+      readTimeout: Long
+  ): String =
     getConnectionParams(version, creator, maxConnectionSize, readTimeout, false, false)
 
-  def getConnectionParams(version: String, creator: String, maxConnectionSize: Int, readTimeout: Long,
-                          enableDiscovery: Boolean, enableLoadBalancer: Boolean): String = {
+  def getConnectionParams(
+      version: String,
+      creator: String,
+      maxConnectionSize: Int,
+      readTimeout: Long,
+      enableDiscovery: Boolean,
+      enableLoadBalancer: Boolean
+  ): String = {
     val sb = new StringBuilder
     if (StringUtils.isNotBlank(version)) sb.append(VERSION).append(KV_SPLIT).append(version)
-    if (maxConnectionSize > 0) sb.append(PARAM_SPLIT).append(MAX_CONNECTION_SIZE).append(KV_SPLIT).append(maxConnectionSize)
-    if (readTimeout > 0) sb.append(PARAM_SPLIT).append(READ_TIMEOUT).append(KV_SPLIT).append(readTimeout)
+    if (maxConnectionSize > 0)
+      sb.append(PARAM_SPLIT).append(MAX_CONNECTION_SIZE).append(KV_SPLIT).append(maxConnectionSize)
+    if (readTimeout > 0)
+      sb.append(PARAM_SPLIT).append(READ_TIMEOUT).append(KV_SPLIT).append(readTimeout)
     if (enableDiscovery) {
       sb.append(PARAM_SPLIT).append(ENABLE_DISCOVERY).append(KV_SPLIT).append(enableDiscovery)
-      if (enableLoadBalancer) sb.append(PARAM_SPLIT).append(ENABLE_LOADBALANCER).append(KV_SPLIT).append(enableLoadBalancer)
+      if (enableLoadBalancer)
+        sb.append(PARAM_SPLIT)
+          .append(ENABLE_LOADBALANCER)
+          .append(KV_SPLIT)
+          .append(enableLoadBalancer)
     }
     if (sb.startsWith(PARAM_SPLIT)) sb.toString.substring(PARAM_SPLIT.length) else sb.toString
   }
@@ -163,7 +197,5 @@ object UJESSQLDriverMain {
   private[jdbc] val PARAM_SPLIT = UJESSQLDriver.PARAM_SPLIT
   private[jdbc] val KV_SPLIT = UJESSQLDriver.KV_SPLIT
 
-  def main(args: Array[String]): Unit = {
-
-  }
+  def main(args: Array[String]): Unit = {}
 }

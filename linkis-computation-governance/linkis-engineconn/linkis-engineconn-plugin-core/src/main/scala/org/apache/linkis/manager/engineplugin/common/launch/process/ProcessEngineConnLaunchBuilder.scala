@@ -52,9 +52,7 @@ trait ProcessEngineConnLaunchBuilder extends EngineConnLaunchBuilder {
       engineConnBuildRequest: EngineConnBuildRequest
   ): util.List[String] = new util.ArrayList[String]
 
-  override def buildEngineConn(
-      engineConnBuildRequest: EngineConnBuildRequest
-  ): EngineConnLaunchRequest = {
+  override def buildEngineConn(): EngineConnLaunchRequest = {
     implicit val engineConnBuildRequestImplicit: EngineConnBuildRequest = engineConnBuildRequest
     val bmlResources = new util.ArrayList[BmlResource]
     engineConnBuildRequest match {

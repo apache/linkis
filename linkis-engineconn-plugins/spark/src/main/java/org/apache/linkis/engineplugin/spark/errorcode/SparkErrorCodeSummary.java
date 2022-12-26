@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.errorcode;
 
-public enum SparkErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum SparkErrorCodeSummary implements LinkisErrorCode {
   READ_RECORD_EXCEPTION(40001, "read record  exception(读取记录异常)"),
   DATAFRAME_EXCEPTION(40002, "dataFrame to local exception(dataFrame 到本地异常)"),
   OUT_ID(40003, ""),
@@ -55,36 +57,32 @@ public enum SparkErrorCodeSummary {
       "{0} requires that the data to be inserted have the same number of columns as the target table: target table has {1} column(s) but the inserted data has {2} column(s)"),
   DATA_CALC_FIELD_NOT_EXIST(43023, "{0} columns({1}) are not exist in source columns"),
   DATA_CALC_VARIABLE_NOT_EXIST(43024, "Please set [{0}] in variables"),
+
+  NOT_SUPPORT_ADAPTER(43031, "Not support Adapter for spark application."),
+
+  YARN_APPLICATION_START_FAILED(
+      43032, "The application start failed, since yarn applicationId is null."),
+
+  NOT_SUPPORT_METHOD(43040, "Not support method for requestExpectedResource."),
   ;
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   SparkErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -243,17 +243,17 @@ public class EMRestfulApi {
     String instance = jsonNode.get("instance").asText();
     if (StringUtils.isEmpty(applicationName)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "applicationName cannot be null(请求参数applicationName不能为空)");
     }
     if (StringUtils.isEmpty(instance)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(), "instance cannot be null(请求参数instance不能为空)");
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(), "instance cannot be null(请求参数instance不能为空)");
     }
     ServiceInstance serviceInstance = ServiceInstance.apply(applicationName, instance);
     if (serviceInstance == null) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "serviceInstance:" + applicationName + " non-existent(" + applicationName + ")");
     }
     String healthyStatus = jsonNode.get("emStatus").asText();
@@ -394,7 +394,7 @@ public class EMRestfulApi {
       String logType = (String) parameters.get("logType");
       if (!logType.equals("stdout") && !logType.equals("stderr")) {
         throw new AMErrorException(
-            AMErrorCode.PARAM_ERROR.getCode(), AMErrorCode.PARAM_ERROR.getMessage());
+            AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }
       parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
       parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);

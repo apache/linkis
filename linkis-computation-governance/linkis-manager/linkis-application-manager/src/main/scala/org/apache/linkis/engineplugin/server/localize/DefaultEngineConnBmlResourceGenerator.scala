@@ -40,7 +40,7 @@ class DefaultEngineConnBmlResourceGenerator
         )
       }
       val key = if (!distFile.getName.equals("dist")) distFile.listFiles().apply(0).getName else NO_VERSION_MARK
-      logger.info("chengbinbin+key:" + key + "path:" + path)
+      logger.info("chengbinbin+key:" + key + "path:" + distFile.listFiles().apply(0).getPath)
       Utils.tryCatch {
         key -> generateDir(distFile.listFiles().apply(0).getPath)
       } { case t: Throwable =>

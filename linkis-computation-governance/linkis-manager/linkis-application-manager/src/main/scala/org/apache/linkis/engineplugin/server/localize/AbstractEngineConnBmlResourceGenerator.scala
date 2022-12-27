@@ -87,8 +87,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
         MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
     } else if (!children.exists(_.getName.startsWith("v"))) {
-      Array(engineConnDistHome)
       logger.info("chengbinbin+Array(engineConnDistHome):" + engineConnDistHome)
+      Array(engineConnDistHome)
     } else if (children.forall(_.getName.startsWith("v"))) {
       children.map(_.getPath)
     } else {

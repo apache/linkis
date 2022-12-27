@@ -258,6 +258,21 @@ public class DataSourceServiceImpl implements DataSourceService {
     return partitionJson;
   }
 
+  @DataSource(name = DSEnum.FIRST_DATA_SOURCE)
+  @Override
+  public JsonNode partitionExists(MetadataQueryParam queryParam) {
+    List<String> partitions = hiveMetaDao.getPartitions(queryParam);
+    ObjectNode res = jsonMapper.createObjectNode();
+    if (CollectionUtils.isEmpty(partitions)) {
+      res.put("partitionExists", Boolean.FALSE);
+    }else {
+      if (partitions.contains(queryParam.getPartitionName())) {
+        res.put("partitionExists", Boolean.TRUE);
+      }
+    }
+    return res;
+  }
+
   private FileStatus getFileStatus(String location) throws IOException {
     try {
       return getRootHdfs().getFileStatus(new Path(location));

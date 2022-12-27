@@ -71,6 +71,42 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
   }
 
   @ApiOperation(
+          value = "queryPartitionExists",
+          notes = "query partition exists",
+          response = Message.class)
+  @ApiImplicitParams({
+          @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
+          @ApiImplicitParam(name = "tableName", dataType = "String", value = "table"),
+          @ApiImplicitParam(name = "partitionName", dataType = "String", value = "table")
+  })
+  @RequestMapping(path = "partitionExists", method = RequestMethod.GET)
+  public Message partitionExists(
+          @RequestParam(value = "database") String database,
+          @RequestParam(value = "tableName") String table,
+          @RequestParam(value = "partitionName") String partition,
+          HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "query partition exists");
+    try {
+      if (StringUtils.isEmpty(database)) {
+        return Message.error("'database' is missing[缺少数据库]");
+      }
+      if (StringUtils.isEmpty(table)) {
+        return Message.error("'table' is missing[缺少表名]");
+      }
+      if (StringUtils.isEmpty(partition)) {
+        return Message.error("'partitionName' is missing[缺少分区名]");
+      }
+      MetadataQueryParam queryParam =
+              MetadataQueryParam.of(userName).withDbName(database).withTableName(table).withPartitionName(partition);
+      JsonNode res = dataSourceService.partitionExists(queryParam);
+      return Message.ok("").data("partitionExists", res);
+    } catch (Exception e) {
+      logger.error("Failed to get partition(获取数据库失败)", e);
+      return Message.error("Failed to get database(获取数据库失败)", e);
+    }
+  }
+
+  @ApiOperation(
       value = "queryDbsWithTables",
       notes = "query dbs with tables",
       response = Message.class)

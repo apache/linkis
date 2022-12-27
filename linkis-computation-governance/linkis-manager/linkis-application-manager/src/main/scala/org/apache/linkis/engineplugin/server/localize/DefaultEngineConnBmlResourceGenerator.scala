@@ -39,7 +39,7 @@ class DefaultEngineConnBmlResourceGenerator
           MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
         )
       }
-      val key = if (!distFile.getName.equals("dist")) distFile.listFiles().apply(0).getName else NO_VERSION_MARK
+      val key = if (distFile.getName.equals("dist")) distFile.listFiles().apply(0).getName else distFile.getName
       logger.info("chengbinbin+key:" + key + "path:" + distFile.listFiles().apply(0).getPath)
       Utils.tryCatch {
         key -> generateDir(distFile.listFiles().apply(0).getPath)

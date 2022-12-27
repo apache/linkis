@@ -223,13 +223,15 @@ object EngineConnMonitor extends Logging {
 
   private def updateExecutorActivityTime(
       serviceInstance: ServiceInstance,
-      engineConnExecutorCache: mutable.HashMap[ServiceInstance, CodeExecTaskExecutor]
+      engineConnExecutorCache: mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]]
   ): Unit = {
     if (null != serviceInstance) {
-      val executor = engineConnExecutorCache.getOrDefault(serviceInstance, null)
-      if (null != executor) {
-        if (executor.getEngineConnExecutor.getServiceInstance.equals(serviceInstance)) {
-          executor.getEngineConnExecutor.updateLastUpdateTime()
+      val executors = engineConnExecutorCache.getOrDefault(serviceInstance, null)
+      if (null != executors) {
+        executors.foreach { executor =>
+          if (executor.getEngineConnExecutor.getServiceInstance.equals(serviceInstance)) {
+            executor.getEngineConnExecutor.updateLastUpdateTime()
+          }
         }
       } else {
         logger.warn(

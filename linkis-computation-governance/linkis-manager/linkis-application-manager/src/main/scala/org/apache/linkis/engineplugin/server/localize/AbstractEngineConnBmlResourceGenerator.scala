@@ -22,8 +22,8 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.storage.io.IOClient.logger
 
 import java.io.File
 import java.nio.file.Paths
@@ -77,6 +77,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
+    logger.info("chengbinbin+engineConnDistHome:" + engineConnDistHome)
     val engineConnDistHomeFile = new File(engineConnDistHome)
     checkEngineConnDistHome(engineConnDistHomeFile)
     val children = engineConnDistHomeFile.listFiles()
@@ -87,6 +88,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
       )
     } else if (!children.exists(_.getName.startsWith("v"))) {
       Array(engineConnDistHome)
+      logger.info("chengbinbin+Array(engineConnDistHome):" + engineConnDistHome)
     } else if (children.forall(_.getName.startsWith("v"))) {
       children.map(_.getPath)
     } else {

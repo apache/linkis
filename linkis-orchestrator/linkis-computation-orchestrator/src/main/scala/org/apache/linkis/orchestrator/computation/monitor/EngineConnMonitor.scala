@@ -193,8 +193,9 @@ object EngineConnMonitor extends Logging {
   }
 
   private def killTask(mayExecutors: Option[ArrayBuffer[CodeExecTaskExecutor]]): Unit = {
-    if (mayExecutors.isDefined) {
+    if (mayExecutors.isEmpty) {
       logger.error("executor is not Defined")
+      return
     }
     val executors = mayExecutors.get
     executors.foreach { executor =>

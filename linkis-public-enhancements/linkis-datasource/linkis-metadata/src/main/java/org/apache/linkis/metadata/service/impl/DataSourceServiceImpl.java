@@ -265,7 +265,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     ObjectNode res = jsonMapper.createObjectNode();
     if (CollectionUtils.isEmpty(partitions)) {
       res.put("partitionExists", Boolean.FALSE);
-    }else {
+    } else {
       if (partitions.contains(queryParam.getPartitionName())) {
         res.put("partitionExists", Boolean.TRUE);
       }

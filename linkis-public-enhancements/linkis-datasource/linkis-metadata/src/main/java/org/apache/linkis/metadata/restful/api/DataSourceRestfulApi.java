@@ -71,20 +71,20 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
   }
 
   @ApiOperation(
-          value = "queryPartitionExists",
-          notes = "query partition exists",
-          response = Message.class)
+      value = "queryPartitionExists",
+      notes = "query partition exists",
+      response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
-          @ApiImplicitParam(name = "tableName", dataType = "String", value = "table"),
-          @ApiImplicitParam(name = "partitionName", dataType = "String", value = "table")
+    @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
+    @ApiImplicitParam(name = "tableName", dataType = "String", value = "table"),
+    @ApiImplicitParam(name = "partitionName", dataType = "String", value = "table")
   })
   @RequestMapping(path = "partitionExists", method = RequestMethod.GET)
   public Message partitionExists(
-          @RequestParam(value = "database") String database,
-          @RequestParam(value = "tableName") String table,
-          @RequestParam(value = "partitionName") String partition,
-          HttpServletRequest req) {
+      @RequestParam(value = "database") String database,
+      @RequestParam(value = "tableName") String table,
+      @RequestParam(value = "partitionName") String partition,
+      HttpServletRequest req) {
     String userName = ModuleUserUtils.getOperationUser(req, "query partition exists");
     try {
       if (StringUtils.isEmpty(database)) {
@@ -97,7 +97,10 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         return Message.error("'partitionName' is missing[缺少分区名]");
       }
       MetadataQueryParam queryParam =
-              MetadataQueryParam.of(userName).withDbName(database).withTableName(table).withPartitionName(partition);
+          MetadataQueryParam.of(userName)
+              .withDbName(database)
+              .withTableName(table)
+              .withPartitionName(partition);
       JsonNode res = dataSourceService.partitionExists(queryParam);
       return Message.ok("").data("partitionExists", res);
     } catch (Exception e) {

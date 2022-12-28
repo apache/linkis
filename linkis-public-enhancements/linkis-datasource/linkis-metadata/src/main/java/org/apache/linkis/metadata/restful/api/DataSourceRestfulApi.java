@@ -76,14 +76,14 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
       response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
-    @ApiImplicitParam(name = "tableName", dataType = "String", value = "table"),
-    @ApiImplicitParam(name = "partitionName", dataType = "String", value = "table")
+    @ApiImplicitParam(name = "table", dataType = "String", value = "table"),
+    @ApiImplicitParam(name = "partition", dataType = "String", value = "table")
   })
   @RequestMapping(path = "partitionExists", method = RequestMethod.GET)
   public Message partitionExists(
       @RequestParam(value = "database") String database,
-      @RequestParam(value = "tableName") String table,
-      @RequestParam(value = "partitionName") String partition,
+      @RequestParam(value = "table") String table,
+      @RequestParam(value = "partition") String partition,
       HttpServletRequest req) {
     String userName = ModuleUserUtils.getOperationUser(req, "query partition exists");
     try {
@@ -101,7 +101,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
               .withDbName(database)
               .withTableName(table)
               .withPartitionName(partition);
-      JsonNode res = dataSourceService.partitionExists(queryParam);
+      boolean res = dataSourceService.partitionExists(queryParam);
       return Message.ok("").data("partitionExists", res);
     } catch (Exception e) {
       logger.error("Failed to get partition(获取数据库失败)", e);

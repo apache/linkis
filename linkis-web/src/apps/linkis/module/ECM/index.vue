@@ -90,13 +90,13 @@
         <div class="tip">
           {{$t('message.linkis.tipForKill', {instance: killInfo.curInstance})}}
         </div>
-        <div class="radio">
+        <!-- <div class="radio">
           {{$t('message.linkis.allEngine')}}
           <RadioGroup v-model="killInfo.all">
             <Radio :label="0">{{$t('message.linkis.no')}}</Radio>
             <Radio :label="1">{{$t('message.linkis.yes')}}</Radio>
           </RadioGroup>
-        </div>
+        </div> -->
       </div>
     </Modal>
   </div>
@@ -430,7 +430,7 @@ export default {
       try {
         const res = await api.fetch('/linkisManager/rm/killUnlockEngineByEM', {
           instance: this.killInfo.curInstance,
-          withMultiUserEngine: this.killInfo.all === 1 ? true : false,
+          // withMultiUserEngine: this.killInfo.all === 1 ? true : false,
         }, 'post');
         const { killEngineNum, memory, cores } = res.result
         console.log(res);

@@ -360,7 +360,11 @@ export default {
               console.log(res);
               await this.getTableData();
               this.cancel();
-              this.$Message.success(this.$t('message.linkis.ipListManagement.addSuccessful'));
+              if (this.mode !== 'edit') {
+                this.$Message.success(this.$t('message.linkis.ipListManagement.addSuccessful'));
+              } else {
+                this.$Message.success(this.$t('message.linkis.ipListManagement.editSuccessful'));
+              }
             });
             this.isRequesting = false
           } catch(err) {

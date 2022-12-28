@@ -367,7 +367,7 @@ export default {
         if(valid) {
           this.clearSearch();
           try {
-            if(this.mode !== 'edit') {
+            if (this.mode !== 'edit') {
               this.page.pageNow = 1;
             }
             this.isRequesting = true;
@@ -375,7 +375,11 @@ export default {
               console.log(res);
               await this.getTableData();
               this.cancel();
-              this.$Message.success(this.$t('message.linkis.tenantTagManagement.addSuccessful'));
+              if (this.mode !== 'edit') {
+                this.$Message.success(this.$t('message.linkis.tenantTagManagement.addSuccessful'));
+              } else {
+                this.$Message.success(this.$t('message.linkis.tenantTagManagement.editSuccessful'));
+              }
             });
             this.isRequesting = false;
           } catch(err) {

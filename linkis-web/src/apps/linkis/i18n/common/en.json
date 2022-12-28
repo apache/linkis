@@ -374,6 +374,7 @@
         "delete": "Delete",
         "userIsExisted": "User Tag Already Exists",
         "addSuccessful": "Successfully Addded",
+        "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
         "isConfirmDel": "Are you sure you want to delete this tag"
       },
@@ -408,6 +409,7 @@
         "delete": "Delete",
         "userIsExisted": "User Tag Already Exists",
         "addSuccessful": "Successfully Addded",
+        "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
         "isConfirmDel": "Are you sure you want to delete this tag"
       },

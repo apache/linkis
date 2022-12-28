@@ -375,6 +375,7 @@
                 "delete": "删除",
                 "userIsExisted": "用户标签已存在",
                 "addSuccessful": "添加成功",
+                "editSuccessful": "编辑成功",
                 "confirmDel": "确认删除",
                 "isConfirmDel": "确定要删除这条数据吗"
             },
@@ -409,6 +410,7 @@
                 "delete": "删除",
                 "userIsExisted": "用户标签已存在",
                 "addSuccessful": "添加成功",
+                "editSuccessful": "编辑成功",
                 "confirmDel": "确认删除",
                 "isConfirmDel": "确定要删除这条数据吗"
             },

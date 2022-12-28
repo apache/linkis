@@ -422,7 +422,6 @@ class HttpBmlClient(
     result match {
       case bmlUploadResult: BmlUploadResult =>
         val isSuccess = if (bmlUploadResult.getStatus == 0) true else false
-        logger.info("chengbinbin+bmlUploadResult:" + bmlUploadResult.getVersion + "resourceId:" + bmlUploadResult.getResourceId)
         if (isSuccess) {
           val resourceId = bmlUploadResult.getResourceId
           val version = bmlUploadResult.getVersion

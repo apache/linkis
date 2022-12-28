@@ -17,11 +17,12 @@
 
 package org.apache.linkis.engineplugin.server.localize
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
+
+import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, FileInputStream, InputStream}
 import java.text.MessageFormat
@@ -32,17 +33,10 @@ class DefaultEngineConnBmlResourceGenerator
 
   override def generate(engineConnType: String): Map[String, Array[EngineConnLocalizeResource]] =
     getEngineConnDistHomeList(engineConnType).map { path =>
-      val distFile = new File(path)
-      if (distFile.listFiles().isEmpty) {
-        throw new EngineConnPluginErrorException(
-          DIST_IS_EMPTY.getErrorCode,
-          MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
-        )
-      }
-      val key = if (distFile.getName.equals("dist")) distFile.listFiles().apply(0).getName else distFile.getName
-      logger.info("chengbinbin+key:" + key + "path:" + distFile.listFiles().apply(0).getPath)
+      val versionFile = new File(path)
+      val key = versionFile.getName
       Utils.tryCatch {
-        key -> generateDir(distFile.listFiles().apply(0).getPath)
+        key -> generateDir(versionFile.getPath)
       } { case t: Throwable =>
         logger.error(s"Generate dir : $path error, msg : " + t.getMessage, t)
         throw t

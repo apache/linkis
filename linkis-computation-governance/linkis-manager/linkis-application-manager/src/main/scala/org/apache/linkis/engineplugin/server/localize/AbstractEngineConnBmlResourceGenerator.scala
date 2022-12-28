@@ -22,8 +22,9 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.storage.io.IOClient.logger
+
+import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.nio.file.Paths
@@ -77,7 +78,6 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
 
   protected def getEngineConnDistHomeList(engineConnType: String): Array[String] = {
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
-    logger.info("chengbinbin+engineConnDistHome:" + engineConnDistHome)
     val engineConnDistHomeFile = new File(engineConnDistHome)
     checkEngineConnDistHome(engineConnDistHomeFile)
     val children = engineConnDistHomeFile.listFiles()
@@ -86,16 +86,13 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
         DIST_IS_EMPTY.getErrorCode,
         MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
-    } else if (!children.exists(_.getName.startsWith("v"))) {
-      logger.info("chengbinbin+Array(engineConnDistHome):" + engineConnDistHome)
-      Array(engineConnDistHome)
-    } else if (children.forall(_.getName.startsWith("v"))) {
-      children.map(_.getPath)
-    } else {
+    } else if (children.apply(0).getName.contains("-")) {
       throw new EngineConnPluginErrorException(
-        DIST_IRREGULAR_EXIST.getErrorCode,
-        MessageFormat.format(DIST_IRREGULAR_EXIST.getErrorDesc, engineConnType)
+        CONTAINS_SPECIAL_CHARCATERS.getErrorCode,
+        MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc, engineConnType)
       )
+    } else {
+      Array(children.apply(0).getPath)
     }
   }
 

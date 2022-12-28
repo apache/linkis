@@ -45,7 +45,8 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   LIB_CONF_DIR_NECESSARY(
       20001,
       "The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)"),
-
+  CONTAINS_SPECIAL_CHARCATERS(
+      20002, "Version cannot contain special character '-'(版本中不能包含特殊字符‘-’)"),
   NOT_SUPPORTED_EF(20011, "Not supported ExecutorFactory(不支持 ExecutorFactory)"),
   DERTL_CANNOT_NULL(
       70101, "DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)"),

@@ -39,7 +39,6 @@ class JobTimeoutManager extends Logging {
     new ConcurrentHashMap[String, EntranceJob]
 
   val timeoutCheck: Boolean = EntranceConfiguration.ENABLE_JOB_TIMEOUT_CHECK.getValue
-  val timeoutScanInterval: Int = EntranceConfiguration.TIMEOUT_SCAN_INTERVAL.getHotValue()
 
   def add(jobKey: String, job: EntranceJob): Unit = {
     logger.info(s"Adding timeout job: ${job.getId()}")
@@ -143,7 +142,7 @@ class JobTimeoutManager extends Logging {
 
     },
     0,
-    timeoutScanInterval,
+    EntranceConfiguration.TIMEOUT_SCAN_INTERVAL.getHotValue(),
     TimeUnit.SECONDS
   )
 

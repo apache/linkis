@@ -235,6 +235,11 @@ public class ContextMapPersistenceImpl implements ContextMapPersistence {
   }
 
   @Override
+  public void removeByKey(ContextID contextID, ContextType contextType, String keyStr) {
+    contextMapMapper.removeByKeyAndContextType(contextID, contextType, keyStr);
+  }
+
+  @Override
   public List<ContextKeyValue> searchContextIDByTime(
       Date createTimeStart,
       Date createTimeEnd,

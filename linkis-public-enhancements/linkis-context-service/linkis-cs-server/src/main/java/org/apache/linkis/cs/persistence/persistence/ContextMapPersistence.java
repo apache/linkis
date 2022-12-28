@@ -59,6 +59,8 @@ public interface ContextMapPersistence {
 
   void removeByKeyPrefix(ContextID contextID, ContextType contextType, String keyPrefix);
 
+  void removeByKey(ContextID contextID, ContextType contextType, String keyPrefix);
+
   List<ContextKeyValue> searchContextIDByTime(
       Date createTimeStart,
       Date createTimeEnd,

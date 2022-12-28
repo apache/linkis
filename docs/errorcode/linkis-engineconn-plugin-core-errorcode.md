@@ -15,7 +15,7 @@
 |linkis-engineconn-plugin-core |20001|The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在)|DIST_IRREGULAR_EXIST|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|System have no permission to delete old engineConn file:{0}(系统无权删除旧的engineConn文件:{0})|NO_PERMISSION_FILE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)|LIB_CONF_DIR_NECESSARY|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |20001|Version cannot contain special character `-`(版本中不能包含特殊字符`-`)|CONTAINS_SPECIAL_CHARCATERS|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20001|Version name in engineConnType:{0} cannot contain special character '-'(Version name in engineConnType: {0} cannot contain special character '-')|CONTAINS_SPECIAL_CHARCATERS|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20011| Not supported ExecutorFactory(不支持 ExecutorFactory)|NOT_SUPPORTED_EF|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70101| DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)|DERTL_CANNOT_NULL|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70102|Cannot get label key. labels (无法获取标签key,标签):{0}|CANNOT_GET_LABEL_KEY|EngineconnCoreErrorCodeSummary|

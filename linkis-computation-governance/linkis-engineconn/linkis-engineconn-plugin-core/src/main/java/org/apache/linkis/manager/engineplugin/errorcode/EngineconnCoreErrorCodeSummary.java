@@ -32,7 +32,7 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
       20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
   DIST_IS_EMPTY(
       20001,
-      "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})"),
+      "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{0})"),
   ENGINE_VERSION_NOT_FOUND(
       20001,
       "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
@@ -46,7 +46,8 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
       20001,
       "The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)"),
   CONTAINS_SPECIAL_CHARCATERS(
-      20002, "Version cannot contain special character '-'(版本中不能包含特殊字符‘-’)"),
+      20002,
+      "Version name in engineConnType:{0} cannot contain special character '-'(Version name in engineConnType: {0} cannot contain special character '-')"),
   NOT_SUPPORTED_EF(20011, "Not supported ExecutorFactory(不支持 ExecutorFactory)"),
   DERTL_CANNOT_NULL(
       70101, "DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)"),

@@ -85,3 +85,61 @@ CREATE TABLE `linkis_ps_dm_datasource_type`
     PRIMARY KEY (`id`),
     UNIQUE INDEX `uniq_name` (`name`)
 );
+
+DROP TABLE IF EXISTS `linkis_ps_error_code`;
+CREATE TABLE `linkis_ps_error_code` (
+                                        `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                        `error_code` varchar(50) NOT NULL,
+                                        `error_desc` varchar(1024) NOT NULL,
+                                        `error_regex` varchar(1024) DEFAULT NULL,
+                                        `error_type` int(3) DEFAULT 0,
+                                        PRIMARY KEY (`id`)
+);
+
+
+DROP TABLE IF EXISTS `linkis_mg_gateway_auth_token`;
+CREATE TABLE `linkis_mg_gateway_auth_token` (
+                                                `id` int(11) NOT NULL AUTO_INCREMENT,
+                                                `token_name` varchar(128) NOT NULL,
+                                                `legal_users` text,
+                                                `legal_hosts` text,
+                                                `business_owner` varchar(32),
+                                                `create_time` DATE DEFAULT NULL,
+                                                `update_time` DATE DEFAULT NULL,
+                                                `elapse_day` BIGINT DEFAULT NULL,
+                                                `update_by` varchar(32),
+                                                PRIMARY KEY (`id`),
+                                                UNIQUE KEY `uniq_token_name` (`token_name`)
+);
+
+
+DROP TABLE IF EXISTS `linkis_cg_rm_external_resource_provider`;
+CREATE TABLE `linkis_cg_rm_external_resource_provider` (
+                                                           `id` int(10) NOT NULL AUTO_INCREMENT,
+                                                           `resource_type` varchar(32) NOT NULL,
+                                                           `name` varchar(32) NOT NULL,
+                                                           `labels` varchar(32) DEFAULT NULL,
+                                                           `config` text NOT NULL,
+                                                           PRIMARY KEY (`id`)
+);
+
+
+DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
+CREATE TABLE `linkis_ps_udf_manager` (
+                                         `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                         `user_name` varchar(20) DEFAULT NULL,
+                                         PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `linkis_ps_udf_tree`;
+CREATE TABLE `linkis_ps_udf_tree` (
+                                      `id` bigint(20) NOT NULL AUTO_INCREMENT,
+                                      `parent` bigint(20) NOT NULL,
+                                      `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
+                                      `user_name` varchar(50) NOT NULL,
+                                      `description` varchar(255) DEFAULT NULL,
+                                      `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                      `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                      `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
+                                      PRIMARY KEY (`id`)
+);

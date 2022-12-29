@@ -152,7 +152,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       logger.warn(s"${serviceInstance} has been registered, now update resource.")
       if (!emResource.getResourceType.equals(resource.getResourceType)) {
         throw new RMErrorException(
-          RMErrorCode.LABEL_DUPLICATED.getCode,
+          RMErrorCode.LABEL_DUPLICATED.getErrorCode,
           s"${serviceInstance} has been registered in ${emResource.getResourceType}, cannot be updated to ${resource.getResourceType}"
         )
       }
@@ -375,7 +375,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val labelContainer = labelResourceService.enrichLabels(labels)
     if (null == labelContainer.getEngineInstanceLabel) {
       throw new RMErrorException(
-        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode,
         "engine instance label is null"
       )
     }
@@ -396,7 +396,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       nodeManagerPersistence.getEngineNode(labelContainer.getEngineInstanceLabel.getServiceInstance)
     if (nodeInstance == null) {
       throw new RMErrorException(
-        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode,
         s"No serviceInstance found by engine ${labelContainer.getEngineInstanceLabel}, current label resource ${lockedResource}"
       )
     }
@@ -406,7 +406,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         )
     ) {
       throw new RMErrorException(
-        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode,
         s"No locked resource found by engine ${labelContainer.getEngineInstanceLabel}, current label resource ${lockedResource}"
       )
     }
@@ -598,8 +598,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val locked = resourceLockService.tryLock(persistenceLock, timeOut)
     if (!locked) {
       throw new RMLockFailedRetryException(
-        RMErrorCode.LOCK_LABEL_FAILED.getCode,
-        s"${RMErrorCode.LOCK_LABEL_FAILED.getMessage} + ${label.getStringValue} over $timeOut ms, please wait a moment and try again!"
+        RMErrorCode.LOCK_LABEL_FAILED.getErrorCode,
+        s"${RMErrorCode.LOCK_LABEL_FAILED.getErrorDesc} + ${label.getStringValue} over $timeOut ms, please wait a moment and try again!"
       )
     }
     persistenceLock
@@ -614,7 +614,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     val labelContainer = labelResourceService.enrichLabels(ecNode.getLabels)
     if (null == labelContainer.getEngineInstanceLabel) {
       throw new RMErrorException(
-        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+        RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode,
         "engine instance label is null"
       )
     }
@@ -629,7 +629,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       val usedResource = ResourceUtils.fromPersistenceResource(persistenceResource)
       if (usedResource == null) {
         throw new RMErrorException(
-          RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
+          RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode,
           s"No used resource found by engine ${labelContainer.getEngineInstanceLabel}"
         )
       }

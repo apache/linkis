@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.restful;
 
 import org.apache.linkis.basedatamanager.server.domain.UdfManagerEntity;
 import org.apache.linkis.basedatamanager.server.service.UdfManagerService;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -77,10 +79,21 @@ public class UdfManagerRestfulApi {
   @ApiOperation(value = "add", notes = "Add a UDF Manager Record", httpMethod = "POST")
   @RequestMapping(path = "", method = RequestMethod.POST)
   public Message add(HttpServletRequest request, @RequestBody UdfManagerEntity udfManagerEntity) {
-    ModuleUserUtils.getOperationUser(
-        request, "Add a UDF Manager Record," + udfManagerEntity.toString());
-    boolean result = udfManagerService.save(udfManagerEntity);
-    return Message.ok("").data("result", result);
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a UDF Manager Record," + udfManagerEntity.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+    QueryWrapper<UdfManagerEntity> queryWrapper =
+        new QueryWrapper<>(udfManagerEntity).eq("user_name", udfManagerEntity.getUserName());
+    UdfManagerEntity udfManager = udfManagerService.getOne(queryWrapper);
+    if (udfManager == null) {
+      boolean result = udfManagerService.save(udfManagerEntity);
+      return Message.ok("").data("result", result);
+    } else {
+      return Message.error("The username already exists,Please add again!");
+    }
   }
 
   @ApiImplicitParams({@ApiImplicitParam(paramType = "path", dataType = "long", name = "id")})
@@ -102,8 +115,12 @@ public class UdfManagerRestfulApi {
   @RequestMapping(path = "", method = RequestMethod.PUT)
   public Message update(
       HttpServletRequest request, @RequestBody UdfManagerEntity udfManagerEntity) {
-    ModuleUserUtils.getOperationUser(
-        request, "Update a Datasource Access Record,id:" + udfManagerEntity.getId().toString());
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a Datasource Access Record,id:" + udfManagerEntity.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
     boolean result = udfManagerService.updateById(udfManagerEntity);
     return Message.ok("").data("result", result);
   }

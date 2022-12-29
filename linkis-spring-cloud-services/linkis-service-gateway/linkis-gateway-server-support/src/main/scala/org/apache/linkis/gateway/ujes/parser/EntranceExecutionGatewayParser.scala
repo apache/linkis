@@ -33,7 +33,7 @@ import javax.annotation.Resource
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class EntranceExecutionGatewayParser extends AbstractGatewayParser {
@@ -64,7 +64,7 @@ class EntranceExecutionGatewayParser extends AbstractGatewayParser {
       gatewayContext: GatewayContext
   ): Option[util.List[RouteLabel]] = {
     var routeLabels: Option[util.List[RouteLabel]] = None
-    for (parser <- routeLabelParsers if routeLabels.isEmpty || routeLabels.get.isEmpty) {
+    for (parser <- routeLabelParsers.asScala if routeLabels.isEmpty || routeLabels.get.isEmpty) {
       routeLabels = Option(parser.parse(gatewayContext))
     }
     routeLabels

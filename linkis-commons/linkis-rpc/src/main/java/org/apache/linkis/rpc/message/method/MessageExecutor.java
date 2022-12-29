@@ -32,7 +32,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.METHON_CALL_FAILED;
+import static org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.METHOD_CALL_FAILED;
 
 public class MessageExecutor {
   private static final Logger logger = LoggerFactory.getLogger(MessageExecutor.class);
@@ -94,7 +94,7 @@ public class MessageExecutor {
                 ? "method call failed: "
                     + ((InvocationTargetException) t).getTargetException().getMessage()
                 : "method call failed.";
-        throw new MessageWarnException(METHON_CALL_FAILED.getErrorCode(), errorMsg, t);
+        throw new MessageWarnException(METHOD_CALL_FAILED.getErrorCode(), errorMsg, t);
       }
     }
     return result;

@@ -59,7 +59,7 @@ import java.nio.file.Files
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class SeatunnelFlinkSQLOnceCodeExecutor(
     override val id: Long,
@@ -80,7 +80,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
       .asInstanceOf[util.Map[String, String]]
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
-        info("Try to execute codes." + code)
+        logger.info("Try to execute codes." + code)
         if (runCode(code) != 0) {
           isFailed = true
           setResponse(
@@ -91,7 +91,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
           )
           tryFailed()
         }
-        info("All codes completed, now stop SeatunnelEngineConn.")
+        logger.info("All codes completed, now stop SeatunnelEngineConn.")
         closeDaemon()
         if (!isFailed) {
           trySucceed()
@@ -102,7 +102,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    info("Execute SeatunnelFlink Process")
+    logger.info("Execute SeatunnelFlink Process")
 
     var args: Array[String] = Array.empty
     val flinkRunMode = LINKIS_FLINK_RUNMODE.getValue
@@ -122,7 +122,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
 
       if (params.containsKey(variable)) {
         val variableMap = GSON.fromJson(params.get(variable), classOf[util.HashMap[String, String]])
-        variableMap.foreach(f => {
+        variableMap.asScala.foreach(f => {
           args ++ Array(GET_LINKIS_FLINK_VARIABLE, s"${f._1}=${f._2}")
         })
       }
@@ -130,22 +130,22 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
     } else {
       args = localArray(code)
     }
-    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue));
+    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue))
     Files.createSymbolicLink(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    info(s"Execute SeatunnelFlinkSQL Process end args:${args.mkString(" ")}")
+    logger.info(s"Execute SeatunnelFlinkSQL Process end args:${args.mkString(" ")}")
     LinkisSeatunnelFlinkSQLClient.main(args)
   }
 
   override protected def waitToRunning(): Unit = {
-    if (!isCompleted)
+    if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              info("The SeatunnelFlinkSQL Process In Running")
+              logger.info("The SeatunnelFlinkSQL Process In Running")
             }
           }
         },
@@ -153,6 +153,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
         SeatunnelEnvConfiguration.SEATUNNEL_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    }
   }
 
   override def getCurrentNodeResource(): NodeResource = {

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+
+ALTER TABLE `linkis_ps_job_history_group_history` ADD COLUMN `observe_info` VARCHAR(500) NULL DEFAULT NULL ;
+
 update linkis_cg_manager_label set label_value ="*-GlobalSettings,*-*"  where label_key ="combined_userCreator_engineType" and id = 1;
 update linkis_ps_configuration_config_key set en_treeName ="QueueResources" where treeName  = '队列资源';
 update linkis_ps_configuration_config_key set en_treeName ="SparkResourceSettings" where treeName  = 'spark资源设置';
@@ -246,5 +249,4 @@ update linkis_ps_dm_datasource_type_key set description_en="Default Library" whe
 update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where description ="mongodb Host";
 update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
-
 

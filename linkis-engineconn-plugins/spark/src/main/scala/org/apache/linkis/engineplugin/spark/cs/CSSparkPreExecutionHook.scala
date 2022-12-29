@@ -63,6 +63,7 @@ class CSSparkPreExecutionHook extends SparkPreExecutionHook with Logging {
     logger.info(
       s"Start to call CSSparkPreExecutionHook,contextID is $contextIDValueStr, nodeNameStr is $nodeNameStr"
     )
+
     parsedCode = Utils.tryCatch {
       CSTableParser.parse(engineExecutionContext, parsedCode, contextIDValueStr, nodeNameStr)
     } { case t: Throwable =>

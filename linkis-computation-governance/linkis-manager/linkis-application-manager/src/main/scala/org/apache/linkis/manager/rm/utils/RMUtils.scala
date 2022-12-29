@@ -37,7 +37,6 @@ import org.json4s.jackson.Serialization.{read, write}
 
 object RMUtils extends Logging {
 
-  lazy val GSON = BDPJettyServerHelper.gson
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = BDPJettyServerHelper.jacksonJson
 
@@ -62,8 +61,6 @@ object RMUtils extends Logging {
     "wds.linkis.configuration.engine.type",
     EngineType.getAllEngineTypes().asScala.mkString(",")
   )
-
-  val AM_SERVICE_NAME = "linkis-cg-linkismanager"
 
   val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", true)
 

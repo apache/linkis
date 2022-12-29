@@ -17,7 +17,9 @@
 
 package org.apache.linkis.cs.client.errorcode;
 
-public enum CsClientErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum CsClientErrorCodeSummary implements LinkisErrorCode {
   CREATE_CONTEXT_FAILED(80015, "create context failed(创建上下文失败)"),
   GET_CONTEXT_VALUE_FAILED(80015, "get context value failed(获取上下文值失败)"),
   UPDATE_CONTEXT_FAILED(80015, "update context failed(更新上下文失败)"),
@@ -30,33 +32,22 @@ public enum CsClientErrorCodeSummary {
   CLEAR_CONTEXT_HAID_FAILED(80017, "batch Clear Context By HAID failed(通过 HAID 批量清除上下文失败)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   CsClientErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

@@ -20,7 +20,6 @@ package org.apache.linkis.ecm.server.operator
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.exception.ECMErrorException

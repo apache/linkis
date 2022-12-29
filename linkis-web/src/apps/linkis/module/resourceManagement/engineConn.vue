@@ -28,7 +28,7 @@
           <span>{{row.serviceInstance ? row.serviceInstance : '-'}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
-          <!-- 后台未做返回时的处理，下面几个可按照处理 -->
+          <!-- The background does not do the processing when returning, the following can be processed according to(后台未做返回时的处理，下面几个可按照处理) -->
           <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G,${calcCompany(row.usedResource.instance)}apps`}}</span>
           <span v-else>-</span>
         </template>
@@ -99,12 +99,12 @@ export default {
       },
       tagTitle: [],
       applicationList: {},
-      addTagForm: { // 新增标签的form表单
+      addTagForm: { // form with new label(新增标签的form表单)
         key: '',
         value: ''
       },
       isShowTable: false,
-      addTagFormRule: { // 验证规则
+      addTagFormRule: { // validation rules(验证规则)
         key: [
           { required: true, message: this.$t('message.linkis.keyTip'), trigger: 'blur' }
         ]
@@ -112,7 +112,7 @@ export default {
       tableData: [],
       allEngines: [],
       tableWidth: 0,
-      // 开启标签修改弹框
+      // Open the label modification popup(开启标签修改弹框)
       isTagEdit: false,
       page: {
         totalSize: 0,
@@ -220,7 +220,7 @@ export default {
   },
   created() {
     this.initExpandList();
-    // 获取状态信息列表
+    // Get a list of status information(获取状态信息列表)
     this.getListAllNodeHealthyStatus();
     this.getSearchStatus();
     this.getKeyList();
@@ -229,20 +229,20 @@ export default {
     selctionChange(selection) {
       this.selection = selection
     },
-    // 刷新进度条
+    // refresh progress bar(刷新进度条)
     refreshResource() {
       this.initExpandList();
     },
-    // 初始化引擎列表
+    // Initialize the engine list(初始化引擎列表)
     async initExpandList() {
-      // 获取引擎数据
+      // Get engine data(获取引擎数据)
       this.loading = true;
       try {
         let url = '/linkisManager/ecinfo/ecrHistoryList?';
         if (this.page.pageNow) url += `pageNow=${this.page.pageNow}&`
         if (this.page.pageSize) url += `pageSize=${this.page.pageSize}`
         let engines = await api.fetch(url, 'get') || {};
-        // 获取使用的引擎资源列表
+        // Get a list of used engine resources(获取使用的引擎资源列表)
         let enginesList = engines.engineList || [];
         this.page.totalSize = engines.totalPage ? engines.totalPage : enginesList.length;
         this.allEngines = [ ...enginesList ];
@@ -255,7 +255,7 @@ export default {
         this.loading = false;
       }
     },
-    // 获取所有可修改的labelKey
+    // Get all modifiable labelKeys(获取所有可修改的labelKey)
     getKeyList() {
       api.fetch('/microservice/modifiableLabelKey', 'get').then((res) => {
         let list = res.keyList || [];
@@ -267,7 +267,7 @@ export default {
         })
       })
     },
-    // 获取所有可修改的状态信息
+    // Get all modifiable state information(获取所有可修改的状态信息)
     async getListAllNodeHealthyStatus() {
       try {
         let healthyStatusList = await api.fetch('/linkisManager/listAllECMHealthyStatus', { onlyEditable: true }, 'get') || {};
@@ -277,7 +277,7 @@ export default {
         console.log(err)
       }
     },
-    // 获取搜索的状态列表
+    // Get a list of states for a search(获取搜索的状态列表)
     async getSearchStatus() {
       try {
         let statusList = await api.fetch('/linkisManager/listAllNodeHealthyStatus', 'get') || {};
@@ -287,12 +287,12 @@ export default {
         console.log(err)
       }
     },
-    // 添加tag
+    // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labelValue.push({ key, value });
 
     },
-    //  提交修改
+    //  Submit changes(提交修改)
     submitTagEdit() {
       let param = JSON.parse(JSON.stringify(this.formItem));
       param.instance = param.serviceInstance
@@ -314,18 +314,18 @@ export default {
         this.isTagEdit = false;
       })
     },
-    // 切换分页
+    // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
       this.$refs.search.search(true);
     },
-    // 页容量变化
+    // page size change(页容量变化)
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
       this.$refs.search.search(true);
     },
-    // 搜索
+    // search(搜索)
     search(e) {
       let url = '/linkisManager/ecinfo/ecrHistoryList?';
       if (e.instance) url += `instance=${e.instance}&`
@@ -333,7 +333,7 @@ export default {
       if (e.shortcut[0]) url += `startDate=${moment(new Date(e.shortcut[0])).format('YYYY-MM-DD HH:mm:ss')}&`
       if (e.shortcut[1]) {
         if (moment(new Date(e.shortcut[1])).format('YYYY-MM-DD HH:mm:ss') === moment(new Date(e.shortcut[0])).format('YYYY-MM-DD HH:mm:ss')) {
-          // 如果起始时间选的是同一天，则endDate要加到第二天的零点
+          // If the start time is selected on the same day, the endDate will be added to the zero o'clock of the next day(如果起始时间选的是同一天，则endDate要加到第二天的零点)
           url += `endDate=${moment(new Date(e.shortcut[1]).getTime() + 24 * 60 * 60 * 1000).format('YYYY-MM-DD HH:mm:ss')}&`
         } else {
           url += `endDate=${moment(new Date(e.shortcut[1])).format('YYYY-MM-DD HH:mm:ss')}&`
@@ -347,7 +347,7 @@ export default {
         this.page.totalSize = res.totalPage ? res.totalPage : this.page.totalSize;
       })
     },
-    // 时间格式转换
+    // time format conversion(时间格式转换)
     timeFormat(row) {
       return moment(new Date(row.usedTime)).format('YYYY-MM-DD HH:mm:ss')
     },
@@ -373,7 +373,7 @@ export default {
   .ivu-table:before {
     height: 0
   }
-  
+
   .ivu-table:after {
     width: 0
   }

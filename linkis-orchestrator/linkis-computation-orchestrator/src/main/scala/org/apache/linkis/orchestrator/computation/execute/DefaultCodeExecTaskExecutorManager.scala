@@ -20,7 +20,7 @@ package org.apache.linkis.orchestrator.computation.execute
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.entrance.LoadBalanceLabel
@@ -83,8 +83,10 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
         case t: Throwable => throw t
       } match {
         case Some(e) =>
-          logger.info(s"Finished to askExecutor for execId ${execTask
-            .getIDInfo()}, wait ${System.currentTimeMillis() - startTime}")
+          logger.info(
+            s"Finished to askExecutor for execId ${execTask
+              .getIDInfo()}, wait ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)}"
+          )
           executor = Option(e)
         case _ =>
           if (System.currentTimeMillis - startTime < wait.toMillis) {

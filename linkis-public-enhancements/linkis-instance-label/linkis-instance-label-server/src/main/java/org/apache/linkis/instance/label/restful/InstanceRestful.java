@@ -73,8 +73,8 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
   public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
-    if (!Configuration.isAdmin(userName)) {
+    String userName = ModuleUserUtils.getOperationUser(req, "listAllInstanceWithLabel");
+    if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
               ONLY_ADMIN_CAN_VIEW.getErrorDesc() + "The user [%s] is not admin.", userName));
@@ -103,8 +103,8 @@ public class InstanceRestful {
   @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
   public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
-    if (!Configuration.isAdmin(userName)) {
+    String userName = ModuleUserUtils.getOperationUser(req, "upDateInstanceLabel");
+    if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
               ONLY_ADMIN_CAN_MODIFY.getErrorDesc() + " The user [%s] is not admin", userName));
@@ -153,6 +153,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
   public Message listAllModifiableLabelKey(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "upDateInstanceLabel");
     Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
     return Message.ok().data("keyList", keyList);
   }
@@ -161,6 +162,7 @@ public class InstanceRestful {
   @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
   public Message getEurekaURL(HttpServletRequest request) throws Exception {
     String eurekaURL = insLabelService.getEurekaURL();
+    ModuleUserUtils.getOperationUser(request, "upDateInstanceLabel");
     return Message.ok().data("url", eurekaURL);
   }
 }

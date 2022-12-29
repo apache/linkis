@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.1.8-webank</version>
+    <version>${revision}</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
   <artifactId>linkis-udf-client</artifactId>
@@ -82,10 +82,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
       </plugin>
     </plugins>
   </build>

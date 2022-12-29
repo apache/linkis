@@ -53,9 +53,6 @@ object AMConfiguration {
 
   val EM_NEW_WAIT_MILLS = CommonVars("wds.linkis.manager.am.em.new.wait.mills", 1000 * 60L)
 
-  val ENGINECONN_SPRING_APPLICATION_NAME =
-    CommonVars("wds.linkis.engineconn.application.name", "linkis-cg-engineplugin")
-
   val ENGINECONN_DEBUG_ENABLED = CommonVars("wds.linkis.engineconn.debug.mode.enable", false)
 
   val MULTI_USER_ENGINE_TYPES = CommonVars(
@@ -113,6 +110,10 @@ object AMConfiguration {
     } else {
       false
     }
+  }
+
+  def isNotAdmin(userName: String): Boolean = {
+    !isAdmin(userName)
   }
 
 }

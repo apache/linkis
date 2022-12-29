@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
@@ -145,11 +145,12 @@ object SQLSession extends Logging {
         t
       )
     }
-    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
+    val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
+    logger.warn(s"Time taken: ${taken}, Fetched $index row(s).")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
     )
     engineExecutionContext.sendResultSet(writer)
   }
@@ -243,7 +244,9 @@ object SQLSession extends Logging {
     val metaData = new LineMetaData(null)
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
-    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
+    logger.warn(
+      s"Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}"
+    )
 
     engineExecutionContext.sendResultSet(writer)
   }

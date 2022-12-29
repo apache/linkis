@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 object JobObserveActionTest extends App {
 
   val clientConfig = DWSClientConfigBuilder.newBuilder()
-    .addServerUrl("") // 改成测试gateway地址
+    .addServerUrl("127.0.0.1:9001") // Change to test gateway address
     .connectionTimeout(30000)
     .discoveryEnabled(false)
     .discoveryFrequency(1, TimeUnit.MINUTES)
@@ -48,7 +48,7 @@ object JobObserveActionTest extends App {
   map.put("detail", "ss");
   val build = JobObserveAction.builder()
     .setUser("hadoop")
-    .setTaskId("73695")  // 这个需要真实的id
+    .setTaskId("73695")  // This needs a real ID
     .setSubSystemId("4523")
     .setMonitorLevel("minor")
     .setReceiver("alexyang")

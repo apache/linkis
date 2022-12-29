@@ -29,14 +29,14 @@ import scala.collection.JavaConverters._
 @DWSHttpMessageResult("/api/rest_j/v\\d+/filesystem/getDirFileTrees")
 class ResultSetListResult extends DWSResult with UserAction {
 
-  @BeanProperty var dirFileTrees: util.Map[String, Object] = _
+  @BeanProperty var dirFileTrees: util.Map[String, AnyRef] = _
 
-  def getResultSetList: Array[String] = if (dirFileTrees != null)
+  def getResultSetList: Array[String] = if (dirFileTrees != null) {
     dirFileTrees.get("children") match {
-      case list: util.List[util.Map[String, Object]] =>
+      case list: util.List[util.Map[_, _]] =>
         list.asScala.map(_.get("path").asInstanceOf[String]).toArray
       case _ => Array.empty[String]
     }
-  else Array.empty[String]
+  } else Array.empty[String]
 
 }

@@ -153,8 +153,6 @@ public interface ContextClient extends Closeable {
   void removeAllValueByKeyAndContextType(
       ContextID contextID, ContextType contextType, String keyStr) throws ErrorException;
 
-  void removeValueByKey(ContextID contextID, String keyStr) throws ErrorException;
-
   List<String> searchHAIDByTime(
       String createTimeStart,
       String createTimeEnd,

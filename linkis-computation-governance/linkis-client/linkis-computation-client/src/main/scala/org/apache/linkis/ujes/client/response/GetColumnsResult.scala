@@ -27,5 +27,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/columns")
 class GetColumnsResult extends DWSResult with UserAction {
-  @BeanProperty var columns: util.List[util.Map[String, Object]] = _
+  @BeanProperty var columns: util.List[util.Map[String, AnyRef]] = _
 }

@@ -49,7 +49,7 @@ class OpenLooKengECPlugin extends EngineConnPlugin {
 
   private val defaultLabels: List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     val engineTypeLabel =
       EngineTypeLabelCreator.createEngineTypeLabel(EngineType.OPENLOOKENG.toString)
     this.defaultLabels.add(engineTypeLabel)

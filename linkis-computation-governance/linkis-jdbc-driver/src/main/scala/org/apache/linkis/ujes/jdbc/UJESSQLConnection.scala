@@ -53,7 +53,7 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   private[jdbc] val variableMap = {
     val params = props.getProperty(PARAMS)
-    val map = new mutable.HashMap[String, Any]
+    val map = new mutable.HashMap[String, AnyRef]
     if (params != null) {
       params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
         case Array(k, v) if k.startsWith(VARIABLE_HEADER) =>

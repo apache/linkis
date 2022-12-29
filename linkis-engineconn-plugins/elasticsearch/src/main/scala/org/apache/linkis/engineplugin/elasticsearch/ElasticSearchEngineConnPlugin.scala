@@ -44,7 +44,7 @@ class ElasticSearchEngineConnPlugin extends EngineConnPlugin {
 
   private val engineFactoryLocker = new Array[Byte](0)
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     val typeLabel = new EngineTypeLabel()
     typeLabel.setEngineType(EngineType.ELASTICSEARCH.toString)
     typeLabel.setVersion(ElasticSearchConfiguration.DEFAULT_VERSION.getValue)

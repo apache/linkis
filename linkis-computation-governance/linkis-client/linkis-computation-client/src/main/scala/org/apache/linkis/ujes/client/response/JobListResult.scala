@@ -28,7 +28,7 @@ import scala.beans.BeanProperty
 class JobListResult extends DWSResult {
 
   @BeanProperty
-  var tasks: util.ArrayList[util.Map[String, Object]] = _
+  var tasks: util.ArrayList[util.Map[String, AnyRef]] = _
 
   @BeanProperty
   var totalPage: Int = _

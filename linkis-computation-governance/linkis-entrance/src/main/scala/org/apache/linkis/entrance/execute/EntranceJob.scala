@@ -50,7 +50,7 @@ abstract class EntranceJob extends Job {
   var user: String = _
 
   @BeanProperty
-  var params: util.Map[String, Any] = new util.HashMap[String, Any](1)
+  var params: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef](4)
 
   @BeanProperty
   var jobRequest: JobRequest = _

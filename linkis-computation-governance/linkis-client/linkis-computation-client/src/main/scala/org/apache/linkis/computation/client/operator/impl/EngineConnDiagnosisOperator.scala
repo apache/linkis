@@ -22,9 +22,9 @@ import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import java.util
 
-class EngineConnDiagnosisOperator extends OnceJobOperator[util.Map[String, Object]] {
+class EngineConnDiagnosisOperator extends OnceJobOperator[util.Map[String, AnyRef]] {
 
-  override protected def resultToObject(result: EngineConnOperateResult): util.Map[String, Object] =
+  override protected def resultToObject(result: EngineConnOperateResult): util.Map[String, AnyRef] =
     result.getAs("diagnosis")
 
   override def getName: String = EngineConnDiagnosisOperator.OPERATOR_NAME

@@ -104,6 +104,7 @@ object TaskConversions extends Logging {
     jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
     jobReq.setExecutionCode(job.getExecutionCode)
+    jobReq.setObserveInfo(job.getObserveInfo)
     jobReq
   }
 
@@ -145,6 +146,9 @@ object TaskConversions extends Logging {
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
+    if (null != jobReq.getObserveInfo) {
+      jobHistory.setObserveInfo(jobReq.getObserveInfo)
+    }
     jobHistory
   }
 
@@ -295,6 +299,7 @@ object TaskConversions extends Logging {
         logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
+    taskVO.setObserveInfo(job.getObserveInfo)
     taskVO
   }
 

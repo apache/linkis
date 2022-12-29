@@ -59,6 +59,7 @@ public class JobHistoryMapperTest extends BaseDaoTest {
     jobHistory.setEngineType("spark");
     jobHistory.setExecutionCode("show databases;");
     jobHistory.setResultLocation("hdfs:///tmp/linkis/hadoop/linkis/20220714_185840/LINKISCLI/1");
+    jobHistory.setObserveInfo("");
     return jobHistory;
   }
 

@@ -48,5 +48,9 @@ public interface ContextValueMapSet {
 
   List<ContextKey> findByKeyPrefix(String preFix);
 
+  List<ContextKey> findByKey(String keyStr);
+
   List<ContextKey> findByKeyPrefix(String preFix, ContextType csType);
+
+  List<ContextKey> findByKey(String keyStr, ContextType csType);
 }

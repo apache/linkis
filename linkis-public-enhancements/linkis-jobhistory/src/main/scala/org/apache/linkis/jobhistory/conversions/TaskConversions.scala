@@ -106,6 +106,7 @@ object TaskConversions extends Logging {
     jobReq.setResultLocation(job.getResultLocation)
     QueryUtils.exchangeExecutionCode(job)
     jobReq.setExecutionCode(job.getExecutionCode)
+    jobReq.setObserveInfo(job.getObserveInfo)
     jobReq
   }
 
@@ -165,6 +166,8 @@ object TaskConversions extends Logging {
         case e: JsonProcessingException =>
           logger.debug("convert jobRequest2JobHistory to string with error:" + e.getMessage)
       }
+    if (null != jobReq.getObserveInfo) {
+      jobHistory.setObserveInfo(jobReq.getObserveInfo)
     }
     jobHistory
   }
@@ -316,6 +319,7 @@ object TaskConversions extends Logging {
         logger.warn("sourceJson deserialization failed, this task may be the old data.")
       }
     }
+    taskVO.setObserveInfo(job.getObserveInfo)
     taskVO
   }
 

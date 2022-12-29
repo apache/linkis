@@ -24,6 +24,7 @@ public enum ServiceMethod {
   SEARCH,
   REMOVE,
   REMOVEALL,
+  REMOVEVALUEBYKEY,
   UPDATE,
   RESET,
   SET,

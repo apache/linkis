@@ -86,6 +86,7 @@ class JobHistoryDetailQueryServiceTest {
     jobRequest.setUpdatedTime(new Date());
     jobRequest.setInstances("");
     jobRequest.setMetrics(Maps.newHashMap());
+    jobRequest.setObserveInfo("");
 
     subJobInfo.setJobReq(jobRequest);
     subJobInfo.setProgress(0.0F);

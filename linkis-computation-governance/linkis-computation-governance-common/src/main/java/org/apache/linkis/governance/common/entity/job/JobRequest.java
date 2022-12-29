@@ -49,6 +49,8 @@ public class JobRequest {
   /** result location */
   private String resultLocation;
 
+  private String observeInfo;
+
   private Map<String, Object> metrics = new HashMap<>();
 
   public Long getId() {
@@ -193,6 +195,14 @@ public class JobRequest {
 
   public void setResultLocation(String resultLocation) {
     this.resultLocation = resultLocation;
+  }
+
+  public String getObserveInfo() {
+    return observeInfo;
+  }
+
+  public void setObserveInfo(String observeInfo) {
+    this.observeInfo = observeInfo;
   }
 
   @Override

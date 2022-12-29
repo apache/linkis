@@ -27,7 +27,7 @@ ARG JDK_VERSION=1.8.0-openjdk
 ARG JDK_BUILD_REVISION=1.8.0.332.b09-1.el7_9
 
 # if you want to set specific yum repos conf file, you can put its at linkis-dist/docker/CentOS-Base.repo
-# and exec [COPY  apache-linkis-*-incubating-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
+# and exec [COPY  apache-linkis-*-bin/docker/CentOS-Epel.repo  /etc/yum.repos.d/CentOS-Epel.repo]
 
 # TODO: remove install mysql client when schema-init-tools is ready
 RUN yum install -y \
@@ -74,7 +74,7 @@ ENV LINKIS_CLIENT_CONF_DIR ${LINKIS_CONF_DIR}
 ENV LINKIS_HOME ${LINKIS_HOME}
 
 # can do some pre-operations
-ADD apache-linkis-${LINKIS_VERSION}-incubating-bin /opt/tmp/
+ADD apache-linkis-${LINKIS_VERSION}-bin /opt/tmp/
 
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
     && mv /opt/tmp/LICENSE  ${LINKIS_HOME}/ \

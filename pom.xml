@@ -1127,8 +1127,6 @@
               <exclude>**/*.log</exclude>
               <exclude>CONTRIBUTING.md</exclude>
               <exclude>CONTRIBUTING_CN.md</exclude>
-              <exclude>DISCLAIMER</exclude>
-              <exclude>DISCLAIMER</exclude>
               <exclude>README.md</exclude>
               <exclude>**/META-INF/**</exclude>
               <exclude>.github/**</exclude>

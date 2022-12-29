@@ -56,7 +56,7 @@ abstract class EntranceServer extends Logging {
    * @param params
    * @return
    */
-  def execute(params: java.util.Map[String, Any]): Job = {
+  def execute(params: java.util.Map[String, AnyRef]): Job = {
     if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) {
       logger.debug("received a request: " + params)
     } else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
@@ -111,7 +111,7 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-          val infoMap = new util.HashMap[String, Object]
+          val infoMap = new util.HashMap[String, AnyRef]
           infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
           infoMap.put("message", "Task interception failed and cannot be retried")
           JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)

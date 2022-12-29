@@ -17,4 +17,23 @@
 
 package org.apache.linkis.entrance.persistence;
 
-public abstract class AbstractPersistenceEngine implements PersistenceEngine {}
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.governance.common.entity.job.SubJobDetail;
+import org.apache.linkis.governance.common.entity.job.SubJobInfo;
+
+public abstract class AbstractPersistenceEngine implements PersistenceEngine {
+
+  @Deprecated
+  @Override
+  public SubJobDetail retrieveJobDetailReq(Long jobDetailId) throws ErrorException {
+    return null;
+  }
+
+  @Deprecated
+  @Override
+  public void persist(SubJobInfo subjobInfo) throws ErrorException {}
+
+  @Deprecated
+  @Override
+  public void updateIfNeeded(SubJobInfo subJobInfo) throws ErrorException {}
+}

@@ -19,7 +19,6 @@ package org.apache.linkis.basedatamanager.server.service;
 
 import org.apache.linkis.basedatamanager.server.dao.UdfTreeMapper;
 import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
-import org.apache.linkis.basedatamanager.server.restful.DatasourceTypeRestfulApiTest;
 import org.apache.linkis.basedatamanager.server.service.impl.UdfTreeServiceImpl;
 
 import org.springframework.util.Assert;
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 @ExtendWith(MockitoExtension.class)
 public class UdfTreeServiceTest {
-  private Logger logger = LoggerFactory.getLogger(DatasourceTypeRestfulApiTest.class);
+  private Logger logger = LoggerFactory.getLogger(UdfTreeServiceTest.class);
   @InjectMocks private UdfTreeServiceImpl udfTreeService;
   @Mock private UdfTreeMapper udfTreeMapper;
 

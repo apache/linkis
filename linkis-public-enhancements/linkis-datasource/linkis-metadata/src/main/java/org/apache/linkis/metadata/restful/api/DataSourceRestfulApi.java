@@ -94,7 +94,7 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
         return Message.error("'table' is missing[缺少表名]");
       }
       if (StringUtils.isEmpty(partition)) {
-        return Message.error("'partitionName' is missing[缺少分区名]");
+        return Message.error("'partition' is missing[缺少分区名]");
       }
       MetadataQueryParam queryParam =
           MetadataQueryParam.of(userName)
@@ -104,8 +104,8 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
       boolean res = dataSourceService.partitionExists(queryParam);
       return Message.ok("").data("partitionExists", res);
     } catch (Exception e) {
-      logger.error("Failed to get partition(获取数据库失败)", e);
-      return Message.error("Failed to get database(获取数据库失败)", e);
+      logger.error("Failed to examine whether a partition exists(检查分区是否存在失败)", e);
+      return Message.error("Failed to examine whether a partition exists (检查分区是否存在失败)", e);
     }
   }
 

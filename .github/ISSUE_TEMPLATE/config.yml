@@ -18,6 +18,6 @@
 blank_issues_enabled: fasle
 contact_links:
   - name: Get Support
-    url: https://github.com/apache/incubator-linkis/discussions
+    url: https://github.com/apache/linkis/discussions
     about: Ask a question or request support for using Linkis
 

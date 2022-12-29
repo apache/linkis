@@ -86,7 +86,7 @@ body:
         ````
         log file:
          <!-- 拖拽上传后，会自动生成如下示例格式的附件url -->
-        [linkis-xxx.log](https://github.com/apache/incubator-linkis/files/9219529/yarn-error.log)
+        [linkis-xxx.log](https://github.com/apache/linkis/files/9219529/yarn-error.log)
 
     validations:
       required: true

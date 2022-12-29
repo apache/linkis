@@ -57,8 +57,12 @@ public class DataSourceRelateServiceImpl implements DataSourceRelateService {
   }
 
   @Override
-  public List<DataSourceType> getAllDataSourceTypes() {
-    return dataSourceTypeDao.getAllTypes();
+  public List<DataSourceType> getAllDataSourceTypes(String languageType) {
+    if (!"en".equals(languageType)) {
+      return dataSourceTypeDao.getAllTypes();
+    } else {
+      return dataSourceTypeDao.getAllTypesEn();
+    }
   }
 
   @Override

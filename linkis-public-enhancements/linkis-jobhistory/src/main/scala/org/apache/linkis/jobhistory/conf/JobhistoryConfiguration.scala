@@ -35,4 +35,7 @@ object JobhistoryConfiguration {
   val UNDONE_JOB_REFRESH_TIME_DAILY: CommonVars[String] =
     CommonVars("wds.linkis.jobhistory.undone.job.refreshtime.daily", "00:15")
 
+  val DIRTY_DATA_UNFINISHED_JOB_STATUS =
+    "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
+
 }

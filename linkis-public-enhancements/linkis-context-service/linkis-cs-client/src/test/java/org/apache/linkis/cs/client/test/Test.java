@@ -114,6 +114,17 @@ public class Test {
     context.setContextKeyAndValue(contextKeyValue);
     ContextValue myValue = context.getContextValue(contextKey);
     System.out.println(SerializeHelper.serializeContextID(context.getContextID()));
+    contextClient.removeAllValueByKeyAndContextType(
+        context.getContextID(), contextKey.getContextType(), contextKey.getKey());
+    ContextValue delValue = context.getContextValue(contextKey);
+    if (null != delValue) {
+      System.err.println(
+          "contextValue : "
+              + myValue.getValue()
+              + " with key : "
+              + contextKey.getKey()
+              + " was not deleted.");
+    }
 
     List<String> idList = new ArrayList<>();
     idList.add(csid);

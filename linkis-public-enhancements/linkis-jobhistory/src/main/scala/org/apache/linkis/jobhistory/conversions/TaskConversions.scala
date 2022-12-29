@@ -166,6 +166,7 @@ object TaskConversions extends Logging {
         case e: JsonProcessingException =>
           logger.debug("convert jobRequest2JobHistory to string with error:" + e.getMessage)
       }
+    }
     if (null != jobReq.getObserveInfo) {
       jobHistory.setObserveInfo(jobReq.getObserveInfo)
     }

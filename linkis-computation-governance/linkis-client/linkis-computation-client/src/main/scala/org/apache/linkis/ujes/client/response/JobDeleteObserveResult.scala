@@ -15,21 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.cs.server.enumeration;
+package org.apache.linkis.ujes.client.response
 
-public enum ServiceMethod {
-  /** */
-  CREATE,
-  GET,
-  SEARCH,
-  REMOVE,
-  REMOVEALL,
-  REMOVEVALUEBYKEY,
-  UPDATE,
-  RESET,
-  SET,
-  BIND,
-  HEARTBEAT,
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-  CLEAR
-}
+@DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/setting/deleteObserveInfo")
+class JobDeleteObserveResult extends JobExecuteResult {}

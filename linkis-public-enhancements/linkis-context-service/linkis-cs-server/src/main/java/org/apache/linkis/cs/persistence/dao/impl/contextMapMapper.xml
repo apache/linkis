@@ -156,4 +156,13 @@
         </where>
     </delete>
 
+    <delete id="removeByKeyAndContextType">
+        delete from linkis_ps_cs_context_map
+        <where>
+            <if test="#{contextID.contextId} !=null">context_id = #{contextID.contextId} and </if>
+            <if test="#{contextType} !=null">context_type = #{contextType} and </if>
+            <if test="#{keyStr} !=null">`key` = #{keyStr}</if>
+        </where>
+    </delete>
+
 </mapper>

@@ -167,6 +167,24 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
   }
 
   @Override
+  public List<ContextKey> findByKey(String keyStr) {
+    if (StringUtils.isBlank(keyStr)) {
+      return null;
+    }
+    List<ContextKey> contextKeyValueList = new ArrayList<>();
+    for (Map<String, ContextKeyValue> contextKeyValueMap : contextValueMapSet.values()) {
+      Iterator<String> iterator = contextKeyValueMap.keySet().iterator();
+      while (iterator.hasNext()) {
+        String key = iterator.next();
+        if (key.equals(keyStr)) {
+          contextKeyValueList.add(contextKeyValueMap.get(key).getContextKey());
+        }
+      }
+    }
+    return contextKeyValueList;
+  }
+
+  @Override
   public List<ContextKey> findByKeyPrefix(String preFix, ContextType csType) {
     if (StringUtils.isBlank(preFix)) {
       return null;
@@ -177,6 +195,23 @@ public class ContextValueMapSetImpl implements ContextValueMapSet {
     while (iterator.hasNext()) {
       String key = iterator.next();
       if (key.startsWith(preFix)) {
+        contextKeyValueList.add(contextValueMap.get(key).getContextKey());
+      }
+    }
+    return contextKeyValueList;
+  }
+
+  @Override
+  public List<ContextKey> findByKey(String keyStr, ContextType csType) {
+    if (StringUtils.isBlank(keyStr)) {
+      return null;
+    }
+    Map<String, ContextKeyValue> contextValueMap = getContextValueMap(csType);
+    List<ContextKey> contextKeyValueList = new ArrayList<>();
+    Iterator<String> iterator = contextValueMap.keySet().iterator();
+    while (iterator.hasNext()) {
+      String key = iterator.next();
+      if (key.equals(keyStr)) {
         contextKeyValueList.add(contextValueMap.get(key).getContextKey());
       }
     }

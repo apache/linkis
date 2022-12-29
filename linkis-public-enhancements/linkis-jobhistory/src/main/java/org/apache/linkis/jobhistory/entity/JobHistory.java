@@ -70,6 +70,8 @@ public class JobHistory {
   /** result location */
   private String resultLocation;
 
+  private String observeInfo;
+
   public Long getId() {
     return id;
   }
@@ -224,6 +226,14 @@ public class JobHistory {
 
   public void setResultLocation(String resultLocation) {
     this.resultLocation = resultLocation;
+  }
+
+  public String getObserveInfo() {
+    return observeInfo;
+  }
+
+  public void setObserveInfo(String observeInfo) {
+    this.observeInfo = observeInfo;
   }
 
   @Override

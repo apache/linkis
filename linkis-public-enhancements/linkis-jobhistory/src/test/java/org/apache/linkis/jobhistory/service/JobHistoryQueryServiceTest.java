@@ -57,6 +57,7 @@ public class JobHistoryQueryServiceTest {
     jobRequest.setMetrics(new HashMap<>());
     jobRequest.setExecutionCode("show databases;");
     jobRequest.setResultLocation("hdfs:///tmp/linkis/hadoop/linkis/20220714_185840/LINKISCLI/1");
+    jobRequest.setObserveInfo("");
     return jobRequest;
   }
 

@@ -69,6 +69,8 @@ trait PersistenceEngine extends Closeable with Flushable {
 
   @deprecated
   @throws[ErrorException]
-  def retrieveJobDetailReq(jobDetailId: java.lang.Long): SubJobDetail = null
+  def retrieveJobDetailReq(jobDetailId: java.lang.Long): SubJobDetail = {
+    null
+  }
 
 }

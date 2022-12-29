@@ -31,7 +31,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
           body: |
-            ## :blush:  Welcome to the Apache Linkis (incubating) community!!
+            ## :blush:  Welcome to the Apache Linkis community!!
             We are glad that you are contributing by opening this issue.
 
             Please make sure to include all the relevant context.

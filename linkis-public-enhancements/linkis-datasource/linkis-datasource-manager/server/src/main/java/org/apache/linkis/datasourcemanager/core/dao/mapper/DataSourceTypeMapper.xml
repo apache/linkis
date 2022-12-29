@@ -28,11 +28,26 @@
         <result property="layers" column="layers"/>
     </resultMap>
 
+    <sql id="DataSource_Column">
+        id ,name,description,option,classifier,icon,layers
+    </sql>
+
+    <sql id="DataSource_En_Column">
+        id ,name,COALESCE(description_en, description) as description,option_en as option,classifier_en as classifier,icon,layers
+
+    </sql>
+
     <select id="getAllTypes" resultMap="dataSourceTypeMap">
-        SELECT * FROM `linkis_ps_dm_datasource_type`;
+        SELECT <include refid="DataSource_Column"/>
+        FROM `linkis_ps_dm_datasource_type`;
     </select>
 
     <select id="selectOne" resultMap="dataSourceTypeMap">
         SELECT * FROM `linkis_ps_dm_datasource_type` WHERE id = #{id};
+    </select>
+
+    <select id="getAllTypesEn" resultMap="dataSourceTypeMap">
+        SELECT <include refid="DataSource_En_Column"/>
+        FROM `linkis_ps_dm_datasource_type`;
     </select>
 </mapper>

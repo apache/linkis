@@ -15,32 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.conf
+package org.apache.linkis.ujes.client.response
 
-import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.manager.label.entity.engine.EngineType
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-import scala.collection.JavaConverters.asScalaBufferConverter
-
-object Configuration {
-
-  val ENGINE_TYPE = CommonVars.apply(
-    "wds.linkis.configuration.engine.type",
-    EngineType.getAllEngineTypes.asScala.mkString(",")
-  )
-
-  val MANAGER_SPRING_NAME =
-    CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
-
-  val GLOBAL_CONF_CHN_NAME = "全局设置"
-
-  val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
-
-  val GLOBAL_CONF_CHN_EN_NAME = "GlobalSettings"
-
-  val GLOBAL_CONF_LABEL = "*-*,*-*"
-
-  val USE_CREATOR_DEFAULE_VALUE =
-    CommonVars.apply("wds.linkis.configuration.use.creator.default.value", true).getValue
-
-}
+@DWSHttpMessageResult("/api/rest_j/v\\d+/jobhistory/setting/deleteObserveInfo")
+class JobDeleteObserveResult extends JobExecuteResult {}

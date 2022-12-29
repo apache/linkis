@@ -48,7 +48,7 @@ class SparkEngineConnPlugin extends EngineConnPlugin {
 
   private var engineFactory: EngineConnFactory = _
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SPARK.toString)
     this.defaultLabels.add(engineTypeLabel)
   }

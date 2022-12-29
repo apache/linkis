@@ -38,7 +38,7 @@ class ParserVarLabelInterceptor extends EntranceInterceptor {
           tenantLabel.setTenant(variableMap.get(LabelKeyConstant.TENANT_KEY).toString)
           labels.add(tenantLabel)
         }
-      case _ => jobRequest
+      case _ =>
     }
     jobRequest
   }

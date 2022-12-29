@@ -27,5 +27,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/tables")
 class GetTablesResult extends DWSResult with UserAction {
-  @BeanProperty var tables: util.List[util.Map[String, Object]] = _
+  @BeanProperty var tables: util.List[util.Map[String, AnyRef]] = _
 }

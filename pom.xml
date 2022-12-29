@@ -46,9 +46,9 @@
   </licenses>
   <developers>
     <developer>
-      <id>Apache Linkis(incubating)</id>
+      <id>Apache Linkis</id>
       <name>The Linkis Project Contributors</name>
-      <email>dev-subscribe@linkis.incubator.apache.org</email>
+      <email>dev-subscribe@linkis.apache.org</email>
       <url>http://linkis.apache.org/</url>
     </developer>
   </developers>
@@ -56,21 +56,15 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>dev-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>dev@linkis.incubator.apache.org</post>
+      <subscribe>dev-subscribe@linkis.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@linkis.apache.org</unsubscribe>
+      <post>dev@linkis.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>commits-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>commits-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>commits@linkis.incubator.apache.org</post>
-    </mailingList>
-    <mailingList>
-      <name>Issues List</name>
-      <subscribe>issues-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>issues-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>issues@linkis.incubator.apache.org</post>
+      <subscribe>commits-subscribe@linkis.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@linkis.apache.org</unsubscribe>
+      <post>commits@linkis.apache.org</post>
     </mailingList>
   </mailingLists>
   <modules>

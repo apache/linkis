@@ -1,5 +1,5 @@
 <h2 align="center">
-  Apache Linkis(Incubating)
+  Apache Linkis
 </h2>
 
 <p align="center">
@@ -33,13 +33,13 @@
     </a>
 
    <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
+        <img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/>
    </a>
    <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/stars/apache/incubator-linkis.svg" alt="github stars"/>
+        <img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/>
    </a>
    <a target="_blank" href='https://github.com/apache/linkis'>
-        <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
+        <img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/>
    </a>
   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
        <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />

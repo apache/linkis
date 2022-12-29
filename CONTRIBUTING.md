@@ -38,8 +38,8 @@ The Linkis source code may have some temporary branches, but only the following 
 
 #### 2.1.1 Concept
 
-- Upstream repository: <https://github.com/apache/incubator-linkis> The apache repository of linkis is called Upstream repository in the text
-- Fork repository: From <https://github.com/apache/incubator-linkis> fork to your own personal repository called Fork repository
+- Upstream repository: <https://github.com/apache/linkis> The apache repository of linkis is called Upstream repository in the text
+- Fork repository: From <https://github.com/apache/linkis> fork to your own personal repository called Fork repository
 
 #### 2.1.2   Synchronize Upstream Repository
 
@@ -60,7 +60,7 @@ Operate in your own clone's local project
 - Step1 Add the apacheUpstream repository image to the local
 
 ```shell script
-git remote add apache git@github.com:apache/incubator-linkis.git
+git remote add apache git@github.com:apache/linkis.git
 ```
 
 - Step2 Pull the apache image information to the local
@@ -126,7 +126,7 @@ We recommend to clone the dev branch and name it dev-fix for development. At the
 
 ```shell script
 #pull the branch
-git clone https://github.com/{githubid}/incubator-linkis.git --branch dev
+git clone https://github.com/{githubid}/linkis.git --branch dev
 
 #Generate local dev-fix branch according to dev
 git checkout -b dev-fix dev
@@ -139,7 +139,7 @@ git push origin dev-fix dev-fix
 
 - If you still don’t know how to initiate a PR to an open source project, please refer to [About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
 - Issue name, which should briefly describe your problem or suggestion in one sentence; for the international promotion of the project, please write the issue in English or both Chinese and English
-- For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/apache/incubator-linkis/issues/590)
+- For each Issue, please bring at least two labels, component and type, such as component=Computation Governance/EngineConn, type=Improvement. Reference: [issue #590](https://github.com/apache/linkis/issues/590)
 
 ### 2.4 Pull Request(PR) Submission Guidelines
 

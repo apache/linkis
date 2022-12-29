@@ -30,11 +30,11 @@ body:
     attributes:
       label: Search before asking
       description: >
-        Please make sure to search in the [issues](https://github.com/apache/incubator-linkis/issues) first to see
+        Please make sure to search in the [issues](https://github.com/apache/linkis/issues) first to see
         whether the same feature was requested already.
       options:
         - label: >
-            I had searched in the [issues](https://github.com/apache/incubator-linkis/issues) and found no similar
+            I had searched in the [issues](https://github.com/apache/linkis/issues) and found no similar
             feature requirement.
           required: true
   - type: textarea

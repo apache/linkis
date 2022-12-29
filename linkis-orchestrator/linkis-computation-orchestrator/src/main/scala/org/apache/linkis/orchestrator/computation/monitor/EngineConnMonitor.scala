@@ -18,9 +18,10 @@
 package org.apache.linkis.orchestrator.computation.monitor
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.entity.NodeExistStatus
+import org.apache.linkis.governance.common.entity.{ExecutionNodeStatus, NodeExistStatus}
 import org.apache.linkis.governance.common.protocol.engineconn.{
   RequestEngineStatusBatch,
   ResponseEngineStatusBatch
@@ -29,15 +30,21 @@ import org.apache.linkis.governance.common.utils.GovernanceConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
-import org.apache.linkis.orchestrator.computation.execute.CodeExecTaskExecutor
+import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, EngineConnTaskInfo}
 import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
+import org.apache.linkis.orchestrator.listener.task.{
+  TaskErrorResponseEvent,
+  TaskLogEvent,
+  TaskStatusEvent
+}
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.{toJavaMap, BDPJettyServerHelper}
 
 import java.util
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -47,43 +54,46 @@ object EngineConnMonitor extends Logging {
     ComputationOrchestratorConf.ENGINECONN_LASTUPDATE_TIMEOUT.getValue.toLong
 
   private[linkis] def addEngineExecutorStatusMonitor(
-      engineConnExecutorCache: util.Map[ServiceInstance, Array[CodeExecTaskExecutor]],
-      endJobByEngineInstance: ServiceInstance => Unit
+      engineConnExecutorCache: util.Map[EngineConnTaskInfo, CodeExecTaskExecutor]
   ): Unit = {
     val task = new Runnable {
       override def run(): Unit = Utils.tryAndWarn {
         val startTime = System.currentTimeMillis()
-        val engineExecutorCache = engineConnExecutorCache
-        val unActivityEngines = new mutable.HashSet[EngineConnExecutor]()
-        val allTaskExecutors = engineExecutorCache.values().iterator()
-        while (allTaskExecutors.hasNext) {
-          val taskExecutors = allTaskExecutors.next()
-          taskExecutors.foreach(executor => {
-            val interval = startTime - executor.getEngineConnExecutor.getLastUpdateTime()
-            if (interval > ENGINECONN_LASTUPDATE_TIMEOUT) {
-              unActivityEngines.add(executor.getEngineConnExecutor)
-            }
-          })
-        }
-        if (null != unActivityEngines && unActivityEngines.nonEmpty) {
-          logger.info(s"There are ${unActivityEngines.size} unActivity engines.")
-          val engineList = new util.ArrayList[ServiceInstance]()
-          val instanceAndExecutors =
-            new mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]()
-          unActivityEngines.foreach(engine => {
-            engineList.add(engine.getServiceInstance)
-            val executors = engineConnExecutorCache.get(engine.getServiceInstance)
-            if (null != executors) {
-              instanceAndExecutors.put(engine.getServiceInstance, executors)
-            }
-            if (engineList.size() >= GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT) {
-              queryEngineStatusAndHandle(instanceAndExecutors, engineList, endJobByEngineInstance)
+        val unActivityExecutors =
+          new mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]]()
+        val allTaskExecutors = new ArrayBuffer[CodeExecTaskExecutor]()
+        allTaskExecutors.appendAll(engineConnExecutorCache.values().asScala)
+        allTaskExecutors
+          .filter(executor =>
+            (startTime - executor.getEngineConnExecutor
+              .getLastUpdateTime()) > ENGINECONN_LASTUPDATE_TIMEOUT
+          )
+          .foreach { executor =>
+            val executors = unActivityExecutors.getOrElseUpdate(
+              executor.getEngineConnExecutor.getServiceInstance,
+              new ArrayBuffer[CodeExecTaskExecutor]()
+            )
+            executors.append(executor)
+          }
+
+        if (unActivityExecutors.nonEmpty) {
+          logger.info("There are {} unActivity engineConn.", unActivityExecutors.size)
+
+          if (unActivityExecutors.size > GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT) {
+            queryEngineStatusAndHandle(unActivityExecutors, unActivityExecutors.keys.toList.asJava)
+          } else {
+            val engineList = new util.ArrayList[ServiceInstance]()
+            unActivityExecutors.keys.foreach(serviceInstance => {
+              engineList.add(serviceInstance)
+              if (engineList.size() >= GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT) {
+                queryEngineStatusAndHandle(unActivityExecutors, engineList)
+                engineList.clear()
+              }
+            })
+            if (!engineList.isEmpty) {
+              queryEngineStatusAndHandle(unActivityExecutors, engineList)
               engineList.clear()
             }
-          })
-          if (!engineList.isEmpty) {
-            queryEngineStatusAndHandle(instanceAndExecutors, engineList, endJobByEngineInstance)
-            engineList.clear()
           }
         }
         val endTime = System.currentTimeMillis()
@@ -106,9 +116,8 @@ object EngineConnMonitor extends Logging {
   }
 
   private def queryEngineStatusAndHandle(
-      engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
-      engineList: util.List[ServiceInstance],
-      endJobByEngineInstance: ServiceInstance => Unit
+      unActivityExecutors: mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]],
+      engineList: util.List[ServiceInstance]
   ): Unit = {
     val requestEngineStatus = RequestEngineStatusBatch(engineList)
     Utils.tryAndError {
@@ -117,11 +126,14 @@ object EngineConnMonitor extends Logging {
         .ask(requestEngineStatus) match {
         case response: ResponseEngineStatusBatch =>
           if (null != response.msg) {
-            logger.info(s"ResponseEngineStatusBatch msg : ${response.msg}")
+            logger.info("ResponseEngineStatusBatch msg: {}", response.msg)
           }
           if (response.engineStatus.size() != requestEngineStatus.engineList.size()) {
-            logger.warn(s"ResponseEngineStatusBatch engines size : ${response.engineStatus
-              .size()} is not euqal requet : ${requestEngineStatus.engineList.size()}.")
+            logger.warn(
+              "ResponseEngineStatusBatch engines size: {} is not equal request: {}.",
+              response.engineStatus.size(): Any,
+              requestEngineStatus.engineList.size(): Any
+            )
             val unKnownEngines = new ArrayBuffer[ServiceInstance]()
             requestEngineStatus.engineList.asScala.foreach(instance => {
               if (!response.engineStatus.containsKey(instance)) {
@@ -130,14 +142,15 @@ object EngineConnMonitor extends Logging {
               }
             })
             val instances = unKnownEngines.map(_.getInstance).mkString(",")
-            logger.warn(s"These engine instances cannot be found in manager : ${instances}")
+            logger.warn("These engine instances cannot be found in manager : {}", instances)
           }
           response.engineStatus.asScala.foreach(status =>
-            dealWithEngineStatus(status, engineConnExecutorCache, endJobByEngineInstance)
+            dealWithEngineStatus(status, unActivityExecutors)
           )
         case _ =>
           logger.warn(
-            s"Invalid response. request : ${BDPJettyServerHelper.gson.toJson(requestEngineStatus)}"
+            "Invalid response. request : {}",
+            BDPJettyServerHelper.gson.toJson(requestEngineStatus)
           )
       }
     }
@@ -145,28 +158,26 @@ object EngineConnMonitor extends Logging {
 
   private def dealWithEngineStatus(
       status: (ServiceInstance, NodeExistStatus),
-      engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]],
-      endJobByEngineInstance: ServiceInstance => Unit
+      unActivityExecutors: mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]]
   ): Unit = {
     status._2 match {
       case NodeExistStatus.UnExist =>
-        logger.warn(s"Engine ${status._1} is Failed, now go to clear its task.")
-        endJobByEngineInstance(status._1)
+        logger.warn("Engine {} is Failed, now go to clear its task.", status._1)
+        killTask(unActivityExecutors.get(status._1))
       case NodeExistStatus.Exist | NodeExistStatus.Unknown =>
-        val engineConnExecutor = engineConnExecutorCache.getOrDefault(status._1, null)
+        val engineConnExecutor = unActivityExecutors.getOrDefault(status._1, null)
         if (null != engineConnExecutor) {
           Utils.tryCatch {
-            // todo check - only for engine with accessible executor
             val requestNodeStatus = new RequestNodeStatus
             Sender.getSender(status._1).ask(requestNodeStatus) match {
               case rs: ResponseNodeStatus =>
                 if (NodeStatus.isCompleted(rs.getNodeStatus)) {
-                  endJobByEngineInstance(status._1)
+                  killTask(unActivityExecutors.get(status._1))
                 } else {
                   if (logger.isDebugEnabled()) {
-                    logger.debug(s"Will update engineConnExecutor(${status._1}) lastupdated time")
+                    logger.debug("Will update engineConnExecutor({}) lastupdated time", status._1)
                   }
-                  updateExecutorActivityTime(status._1, engineConnExecutorCache)
+                  updateExecutorActivityTime(status._1, unActivityExecutors)
                 }
               case _ =>
                 logger.warn(
@@ -175,27 +186,58 @@ object EngineConnMonitor extends Logging {
             }
           } { t: Throwable =>
             logger.error(s"Failed to get status of engineConn : ${status._1}, now end the job. ", t)
-            endJobByEngineInstance(status._1)
+            killTask(unActivityExecutors.get(status._1))
           }
         }
     }
   }
 
+  private def killTask(mayExecutors: Option[ArrayBuffer[CodeExecTaskExecutor]]): Unit = {
+    if (mayExecutors.isEmpty) {
+      logger.error("executor is not Defined")
+      return
+    }
+    val executors = mayExecutors.get
+    executors.foreach { executor =>
+      val execTask = executor.getExecTask
+      Utils.tryAndError {
+        logger.warn(
+          s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly."
+        )
+        val errLog = LogUtils.generateERROR(
+          s"Your job : ${execTask.getIDInfo()} was failed because the engine quitted unexpectedly(任务${execTask
+            .getIDInfo()}失败，" +
+            s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
+        )
+        val logEvent = TaskLogEvent(execTask, errLog)
+        execTask.getPhysicalContext.pushLog(logEvent)
+        val errorResponseEvent = TaskErrorResponseEvent(
+          execTask,
+          "task failed，Engine quitted unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
+        )
+        execTask.getPhysicalContext.broadcastSyncEvent(errorResponseEvent)
+        val statusEvent = TaskStatusEvent(execTask, ExecutionNodeStatus.Failed)
+        execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
+      }
+    }
+  }
+
   private def updateExecutorActivityTime(
       serviceInstance: ServiceInstance,
-      engineConnExecutorCache: mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+      engineConnExecutorCache: mutable.HashMap[ServiceInstance, ArrayBuffer[CodeExecTaskExecutor]]
   ): Unit = {
     if (null != serviceInstance) {
-      val taskExecutorList = engineConnExecutorCache.getOrDefault(serviceInstance, null)
-      if (null != taskExecutorList) {
-        taskExecutorList.foreach(executor =>
+      val executors = engineConnExecutorCache.getOrDefault(serviceInstance, null)
+      if (null != executors) {
+        executors.foreach { executor =>
           if (executor.getEngineConnExecutor.getServiceInstance.equals(serviceInstance)) {
             executor.getEngineConnExecutor.updateLastUpdateTime()
           }
-        )
+        }
       } else {
         logger.warn(
-          s"EngineConnExecutor ${serviceInstance.toString} cannot be found in engineConnExecutorCache"
+          "EngineConnExecutor {} cannot be found in engineConnExecutorCache",
+          serviceInstance.toString
         )
       }
     }

@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,90 +47,87 @@ import org.slf4j.LoggerFactory;
 @RequestMapping(path = "/entrance/operation/metrics")
 public class EntranceMetricRestfulApi {
 
-    private EntranceServer entranceServer;
+  private EntranceServer entranceServer;
 
-    private static final Logger logger = LoggerFactory.getLogger(EntranceMetricRestfulApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(EntranceMetricRestfulApi.class);
 
-    @Autowired
-    public void setEntranceServer(EntranceServer entranceServer) {
-        this.entranceServer = entranceServer;
+  @Autowired
+  public void setEntranceServer(EntranceServer entranceServer) {
+    this.entranceServer = entranceServer;
+  }
+
+  @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "user", dataType = "String", value = "User"),
+    @ApiImplicitParam(name = "creator", dataType = "String", value = "Creator"),
+    @ApiImplicitParam(name = "engineTypeLabel", dataType = "String", value = "engine type lable")
+  })
+  @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
+  public Message taskinfo(
+      HttpServletRequest req,
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "engineTypeLabel", required = false) String engineTypeLabelValue) {
+    String userName = ModuleUserUtils.getOperationUser(req, "taskinfo");
+    String queryUser = user;
+    if (Configuration.isNotAdmin(userName)) {
+      if (StringUtils.isBlank(queryUser)) {
+        queryUser = userName;
+      } else if (!userName.equalsIgnoreCase(queryUser)) {
+        return Message.error("Non-administrators cannot view other users' task information");
+      }
     }
-
-    @ApiOperation(value = "taskinfo", notes = "get task info", response = Message.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "User"),
-        @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "Creator"),
-        @ApiImplicitParam(name = "engineTypeLabel",required = false, dataType = "String",  value = "engine type lable")
-    })
-    @RequestMapping(path = "/taskinfo", method = RequestMethod.GET)
-    public Message taskinfo(
-            HttpServletRequest req,
-            @RequestParam(value = "user", required = false) String user,
-            @RequestParam(value = "creator", required = false) String creator,
-            @RequestParam(value = "engineTypeLabel", required = false)
-                    String engineTypeLabelValue) {
-        String userName = ModuleUserUtils.getOperationUser(req, "taskinfo");
-        String queryUser = user;
-        if (!Configuration.isAdmin(userName)) {
-            if (StringUtils.isBlank(queryUser)) {
-                queryUser = userName;
-            } else if (!userName.equalsIgnoreCase(queryUser)) {
-                return Message.error(
-                        "Non-administrators cannot view other users' task information");
-            }
-        }
-        String filterWords = creator;
-        if (StringUtils.isNotBlank(filterWords) && StringUtils.isNotBlank(queryUser)) {
-            filterWords = filterWords + "_" + queryUser;
-        } else if (StringUtils.isBlank(creator)) {
-            filterWords = queryUser;
-        }
-        EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask(filterWords);
-        int taskNumber = 0;
-        int runningNumber = 0;
-        int queuedNumber = 0;
-
-        if (null != undoneTasks) {
-            for (EntranceJob task : undoneTasks) {
-                if (StringUtils.isNotBlank(engineTypeLabelValue)) {
-                    EngineTypeLabel engineTypeLabel =
-                            LabelUtil.getEngineTypeLabel(task.getJobRequest().getLabels());
-                    // Task types do not match, do not count
-                    if (null == engineTypeLabel
-                            || !engineTypeLabelValue.equalsIgnoreCase(
-                                    engineTypeLabel.getStringValue())) {
-                        continue;
-                    }
-                }
-                taskNumber++;
-                if (task.isRunning()) {
-                    runningNumber++;
-                } else {
-                    queuedNumber++;
-                }
-            }
-        }
-        return Message.ok("success")
-                .data("taskNumber", taskNumber)
-                .data("runningNumber", runningNumber)
-                .data("queuedNumber", queuedNumber);
+    String filterWords = creator;
+    if (StringUtils.isNotBlank(filterWords) && StringUtils.isNotBlank(queryUser)) {
+      filterWords = filterWords + "_" + queryUser;
+    } else if (StringUtils.isBlank(creator)) {
+      filterWords = queryUser;
     }
+    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask(filterWords);
+    int taskNumber = 0;
+    int runningNumber = 0;
+    int queuedNumber = 0;
 
-    @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
-    @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
-    public Message status(HttpServletRequest req) {
-
-        EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
-        Boolean isCompleted = false;
-        if (null == undoneTasks || undoneTasks.length < 1) {
-            isCompleted = true;
+    if (null != undoneTasks) {
+      for (EntranceJob task : undoneTasks) {
+        if (StringUtils.isNotBlank(engineTypeLabelValue)) {
+          EngineTypeLabel engineTypeLabel =
+              LabelUtil.getEngineTypeLabel(task.getJobRequest().getLabels());
+          // Task types do not match, do not count
+          if (null == engineTypeLabel
+              || !engineTypeLabelValue.equalsIgnoreCase(engineTypeLabel.getStringValue())) {
+            continue;
+          }
         }
-        int runningTaskNumber = 0;
-        if (undoneTasks != null) {
-            runningTaskNumber = undoneTasks.length;
+        taskNumber++;
+        if (task.isRunning()) {
+          runningNumber++;
+        } else {
+          queuedNumber++;
         }
-        return Message.ok("success")
-                .data("runningTaskNumber", runningTaskNumber)
-                .data("isCompleted", isCompleted);
+      }
     }
+    return Message.ok("success")
+        .data("taskNumber", taskNumber)
+        .data("runningNumber", runningNumber)
+        .data("queuedNumber", queuedNumber);
+  }
+
+  @ApiOperation(value = "Status", notes = "get running task number ", response = Message.class)
+  @RequestMapping(path = "/runningtask", method = RequestMethod.GET)
+  public Message status(HttpServletRequest req) {
+
+    EntranceJob[] undoneTasks = entranceServer.getAllUndoneTask("");
+    Boolean isCompleted = false;
+    if (null == undoneTasks || undoneTasks.length < 1) {
+      isCompleted = true;
+    }
+    int runningTaskNumber = 0;
+    if (undoneTasks != null) {
+      runningTaskNumber = undoneTasks.length;
+    }
+    return Message.ok("success")
+        .data("runningTaskNumber", runningTaskNumber)
+        .data("isCompleted", isCompleted);
+  }
 }

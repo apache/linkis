@@ -144,7 +144,10 @@ object EntranceConfiguration {
   val SHELL_DANGER_CHECK_SWITCH =
     CommonVars("wds.linkis.entrance.shell.danger.check.enabled", true)
 
-  val SHELL_DANGER_USAGE = CommonVars("wds.linkis.shell.danger.usage", "bdp-client")
+  val SHELL_DANGER_USAGE = CommonVars(
+    "wds.linkis.shell.danger.usage",
+    "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn"
+  )
 
   val SHELL_WHITE_USAGE = CommonVars(
     "wds.linkis.shell.white.usage",
@@ -215,9 +218,9 @@ object EntranceConfiguration {
   val LOG_PUSH_INTERVAL_TIME =
     CommonVars("wds.linkis.entrance.log.push.interval.time", 5 * 60 * 1000)
 
-  val GRORUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000)
+  val GROUP_CACHE_MAX = CommonVars("wds.linkis.consumer.group.cache.capacity", 5000)
 
-  val GRORUP_CACHE_EXPITE_TIME = CommonVars("wds.linkis.consumer.group.expire.time.hour", 50)
+  val GROUP_CACHE_EXPIRE_TIME = CommonVars("wds.linkis.consumer.group.expire.time", 50)
 
   val CLIENT_MONITOR_CREATOR =
     CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")

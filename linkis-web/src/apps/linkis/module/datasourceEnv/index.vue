@@ -16,61 +16,61 @@
 -->
 
 <template>
-  <div>
+  <div :style="{height: '100%', overflow: 'hidden'}">
     <Row class="search-bar" type="flex">
       <Col span="6">
-        <Input v-model="searchName" clearable suffix="ios-search" class="input" placeholder="搜索"></Input>
+        <span :style="{ whiteSpace: 'nowrap', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}" :title="$t('message.linkis.basedataManagement.searchLabel')">{{$t('message.linkis.basedataManagement.searchLabel')}}</span>
+        <Input v-model="searchName" clearable suffix="ios-search" class="input" :placeholder="$t('message.linkis.basedataManagement.datasourceEnv.searchPlaceholder')"></Input>
       </Col>
       <Col span="3">
         <Button type="primary" class="Button" @click="load()">{{
-          $t('message.linkis.search')
+          $t('message.linkis.basedataManagement.search')
         }}
         </Button>
         <Button type="success" class="Button" style="margin-left: 10px" @click="onAdd()">{{
-          $t('message.linkis.basedata.add')
+          $t('message.linkis.basedataManagement.add')
         }}
         </Button>
       </Col>
       <Col span="15">
       </Col>
     </Row>
-    <div style="height: 600px">
-      <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist" max-height="420"
-        class="table-content">
-        <template slot-scope="{ row,index }" slot="action">
-          <ButtonGroup size="small">
-            <Button
-              :disabled="row.expire"
-              size="small"
-              type="primary"
-              @click="onTableEdit(row, index)"
-            >{{ $t('message.linkis.edit') }}
-            </Button
-            >
-            <Button
-              :disabled="row.expire"
-              size="small"
-              type="primary"
-              @click="onTableDelete(row, index)"
-            >
-              {{ $t('message.linkis.basedata.remove') }}
-            </Button>
-          </ButtonGroup>
-        </template>
-      </Table>
-    </div>
+    <Table border size="small" align="center" :columns="tableColumnNum" :data="pageDatalist"
+      class="table-content mytable">
+      <template slot-scope="{ row,index }" slot="action">
+        <ButtonGroup size="small">
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="primary"
+            @click="onTableEdit(row, index)"
+            style="margin-right: 5px"
+          >{{ $t('message.linkis.basedataManagement.edit') }}
+          </Button
+          >
+          <Button
+            :disabled="row.expire"
+            size="small"
+            type="error"
+            @click="onTableDelete(row, index)"
+          >
+            {{ $t('message.linkis.basedataManagement.remove') }}
+          </Button>
+        </ButtonGroup>
+      </template>
+    </Table>
     <Modal
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="modalAddMode=='add' ? $t('message.linkis.basedata.add') : $t('message.linkis.basedata.edit')"
+      :title="modalAddMode=='add' ? $t('message.linkis.basedataManagement.add') : $t('message.linkis.basedataManagement.edit')"
       :loading="modalLoading"
     >
       <div slot="footer">
-        <Button type="text" size="large" @click="onModalCancel()">取消</Button>
-        <Button type="primary" size="large" @click="onModalOk('userConfirm')">确定</Button>
+        <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
+        <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <EditForm ref="editForm" :data="modalEditData" :typeOptions=datasourceTypeOptions></EditForm>
     </Modal>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
@@ -90,12 +90,12 @@
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import ErrorCodeForm from './EditForm/index'
+import EditForm from './EditForm/index'
 import {add, del, edit, getList, getAllEnv} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {ErrorCodeForm},
+  components: {EditForm},
   data() {
     return {
       searchName: "",
@@ -113,32 +113,32 @@ export default {
           align: 'center',
         },
         {
-          title: "环境名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envName'),
           key: 'envName',
           minWidth: 50,
           tooltip: true,
           align: 'center',
         },
         {
-          title: "环境描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.envDesc'),
           key: 'envDesc',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "数据源名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.name'),
           key: 'name',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "参数",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
           key: 'parameter',
           tooltip: true,
           align: 'center',
         },
         {
-          title: "创建时间",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.createTime'),
           key: 'createTime',
           minWidth: 50,
           tooltip: true,
@@ -150,13 +150,7 @@ export default {
           }
         },
         {
-          title: "创建者",
-          key: 'create_user',
-          tooltip: true,
-          align: 'center',
-        },
-        {
-          title: "更新时间",
+          title: this.$t('message.linkis.basedataManagement.datasourceEnv.updateTime'),
           key: 'updateTime',
           minWidth: 50,
           tooltip: true,
@@ -168,12 +162,6 @@ export default {
           }
         },
         {
-          title: "更新者",
-          key: 'modify_user',
-          tooltip: true,
-          align: 'center',
-        },
-        {
           title: this.$t('message.linkis.datasource.action'),
           width: 150,
           slot: 'action',
@@ -182,7 +170,7 @@ export default {
 
       ],
       pageDatalist: [],
-      allEnv: [],
+      // allEnv: [],
       modalShow: false,
       modalAddMode: 'add',
       modalEditData: {
@@ -194,15 +182,20 @@ export default {
         id: '',
         modifyTime: '',
         modifyUser: '',
-        parameter: '',
+        parameter: {},
+        uris: '',
+        keytab: '',
+        principle: '',
+        hadoopConf: '',
         _index: '',
         _rowKey: ''
       },
-      modalLoading: false
+      modalLoading: false,
+      datasourceTypeOptions: []
     };
   },
   created() {
-    this.load()
+    // this.load()
   },
   mounted() {
     this.init();
@@ -218,20 +211,23 @@ export default {
         pageSize: this.page.pageSize
       }
       getAllEnv().then((res) => {
-        this.allEnv = [...res.typeList]
-        this.allEnv.sort((a, b) => a.id - b.id)
+        let options = [...res.typeList].sort((a, b) => a.id - b.id)
+          .map(item => { return {value: +item.id, label: item.name, disabled: ![2, 4].includes(+item.id)}})
+        this.datasourceTypeOptions= options
+        // 获取列表
         getList(params).then((data) => {
           this.pageDatalist = data.list.list
           this.page.totalSize = data.list.total
-          let options = []
-          //console.log(this.pageDatalist)
-          this.pageDatalist.map(item => { item.name = this.allEnv[item.datasourceTypeId - 1].name})
-          this.allEnv.map(item => {
-            options.push({value: +item.id, label: item.name})
+          // 类型ID转类型名称
+          this.pageDatalist.map(item => {
+            let filter = options.filter(optionsItem=>{
+              return optionsItem.value === item.datasourceTypeId
+            })
+            item.name = filter[0].label
           })
-          this.$refs['errorCodeForm'].changeSelector(options)
         })
       })
+
     },
     changePage(value) {
       this.page.pageNow = value
@@ -243,17 +239,24 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
-      row.keytab = JSON.parse(row.parameter).keytab ? true : false;
+      row.hasKeyTab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
-      //console.log(this.modalEditData)
+      // format parameter for modal
+      if (this.modalEditData.parameter) {
+        this.modalEditData.parameter = JSON.parse(this.modalEditData.parameter)
+        const { uris, principle, keytab, hadoopConf } = this.modalEditData.parameter
+        this.modalEditData.uris = uris;
+        this.modalEditData.principle = principle;
+        this.modalEditData.keytab = keytab;
+        this.modalEditData.hadoopConf = hadoopConf;
+      }
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
-
       this.$Modal.confirm({
-        title: "提示信息",
-        content: "确认是否删除该记录?",
+        title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.envName}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -262,16 +265,16 @@ export default {
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "删除成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "删除失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
+            this.load()
           })
-          this.load()
         }
       })
 
@@ -279,53 +282,71 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
+        this.modalEditData.parameter = {}
+        console.log(key);
       }
-      this.modalEditData.keytab = false;
+      this.modalEditData.hasKeyTab = false;
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
-        if('keytab' in formData) delete formData['keytab'];
+      this.$refs.editForm.formModel.submit((formData)=>{
         if('pic' in formData) delete formData['pic'];
+        delete formData._index
+        delete formData._rowKey
         this.modalLoading = true
+        const { uris, keytab, principle, hadoopConf } = formData;
+        if (formData.hasKeyTab) {
+          // inject props to parameter
+          formData.parameter = {
+            keytab, principle
+          }
+        }
+        formData.parameter.uris = uris
+        formData.parameter.hadoopConf = hadoopConf
         formData.parameter = JSON.stringify(formData.parameter)
+        if('hasKeyTab' in formData) delete formData['hasKeyTab'];
+        if('principle' in formData) delete formData['principle'];
+        if('hadoopConf' in formData) delete formData['hadoopConf'];
+        if('keytab' in formData) delete formData['keytab'];
+        if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "添加成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "添加失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
+            this.load()
           })
         }else {
           edit(formData).then((data)=>{
-            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
-                content: "编辑成功"
+                content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
-              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
-                content: "编辑失败"
+                content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
+            this.load()
           })
         }
+        console.log(formData);
         this.modalLoading=false
         this.modalShow = false
+
       })
     },
     onModalCancel(){
-      this.modalLoading=false
+      this.modalLoading = false
       this.modalShow = false
     }
   },
@@ -333,4 +354,28 @@ export default {
 </script>
 
 <style lang="scss" src="./index.scss" scoped>
+</style>
+
+
+<style lang="scss">
+.mytable {
+  border: 0;
+  height: calc(100% - 110px);
+  width: 100%;
+  overflow-y: auto;
+
+  .ivu-table:before {
+    height: 0
+  }
+
+  .ivu-table:after {
+    width: 0
+  }
+
+  .ivu-table {
+    height: auto;
+    border: 1px solid #dcdee2;
+    width: 100%;
+  }
+}
 </style>

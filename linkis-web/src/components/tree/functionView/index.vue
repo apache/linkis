@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <Poptip
     popper-class="fn-view"
@@ -97,7 +97,7 @@ export default {
       this.drawWaterMark(type, x, y);
     },
     drawWaterMark(type, x, y) {
-      // 由于id是唯一的，所以这里canvas的id使用动态的字符串，让每个元素的id都不一样，否则会出现无法渲染的情况
+      // Since the id is unique, the id of the canvas here uses a dynamic string, so that the id of each element is different, otherwise it will fail to render.(由于id是唯一的，所以这里canvas的id使用动态的字符串，让每个元素的id都不一样，否则会出现无法渲染的情况)
       const cvs = document.getElementById(`cvs${this.node.id}`);
       const ctx = cvs.getContext('2d');
       cvs.height = 140;

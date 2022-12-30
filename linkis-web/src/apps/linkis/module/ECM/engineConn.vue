@@ -28,7 +28,7 @@
           <span>{{row.instance}}</span>
         </template>
         <template slot-scope="{row}" slot="usedResource">
-          <!-- 后台未做返回时的处理，下面几个可按照处理 -->
+          <!-- The background does not do the processing when returning, the following can be processed according to(后台未做返回时的处理，下面几个可按照处理) -->
           <span v-if="row.usedResource">{{`${calcCompany(row.usedResource.cores)}cores,${calcCompany(row.usedResource.memory, true)}G,${calcCompany(row.usedResource.instance)}apps`}}</span>
           <span v-else>Null cores,Null G</span>
         </template>
@@ -118,12 +118,12 @@ export default {
       },
       tagTitle: [],
       applicationList: {},
-      addTagForm: { // 新增标签的form表单
+      addTagForm: { // form with new label(新增标签的form表单)
         key: '',
         value: ''
       },
       isShowTable: false,
-      addTagFormRule: { // 验证规则
+      addTagFormRule: { // validation rules(验证规则)
         key: [
           { required: true, message: this.$t('message.linkis.keyTip'), trigger: 'blur' }
         ]
@@ -131,7 +131,7 @@ export default {
       tableData: [],
       allEngines: [],
       tableWidth: 0,
-      // 开启标签修改弹框
+      // Open the label modification popup(开启标签修改弹框)
       isTagEdit: false,
       page: {
         totalSize: 0,
@@ -244,7 +244,7 @@ export default {
                     let obj = {};
                     obj.instance = params.row.instance;
                     let labels = params.row.labels || [];
-                    // 将标签数据转换成组件可渲染格式
+                    // Convert label data to a component-renderable format(将标签数据转换成组件可渲染格式)
                     obj.labels = labels.map(item => {
                       return {
                         key: item.labelKey,
@@ -300,7 +300,7 @@ export default {
     ViewLog
   },
   computed: {
-    pageDatalist() {// 展示的数据
+    pageDatalist() {// Displayed data(展示的数据)
       return this.tableData.filter((item, index) => {
         return (this.page.pageNow - 1) * this.page.pageSize <= index && index < this.page.pageNow * this.page.pageSize;
       })
@@ -310,7 +310,7 @@ export default {
     this.applicationName = this.$route.query.applicationName || '';
     this.instance = this.$route.query.instance || '';
     this.initExpandList();
-    // 获取状态信息列表
+    // Get a list of status information(获取状态信息列表)
     this.getListAllNodeHealthyStatus();
     this.getSearchStatus();
     this.getKeyList();
@@ -341,13 +341,13 @@ export default {
     selctionChange(selection) {
       this.selection = selection
     },
-    // 刷新进度条
+    // refresh progress bar(刷新进度条)
     refreshResource() {
       this.initExpandList();
     },
-    // 初始化引擎列表
+    // Initialize the engine list(初始化引擎列表)
     async initExpandList() {
-      // 获取引擎数据
+      // Get engine data(获取引擎数据)
       this.loading = true;
       try {
         let params = {
@@ -359,7 +359,7 @@ export default {
           }
         }
         let engines = await api.fetch('/linkisManager/listEMEngines', params, 'post') || {};
-        // 获取使用的引擎资源列表
+        // Get a list of used engine resources(获取使用的引擎资源列表)
         let enginesList = engines.engines || [];
         this.allEngines = [ ...enginesList ];
         this.tableData = [ ...enginesList ];
@@ -379,7 +379,7 @@ export default {
         this.loading = false;
       }
     },
-    // 获取所有可修改的labelKey
+    // Get all modifiable labelKeys(获取所有可修改的labelKey)
     getKeyList() {
       api.fetch('/microservice/modifiableLabelKey', 'get').then((res) => {
         let list = res.keyList || [];
@@ -391,7 +391,7 @@ export default {
         })
       })
     },
-    // 获取所有可修改的状态信息
+    // Get all modifiable state information(获取所有可修改的状态信息)
     async getListAllNodeHealthyStatus() {
       try {
         let healthyStatusList = await api.fetch('/linkisManager/listAllECMHealthyStatus', { onlyEditable: true }, 'get') || {};
@@ -401,7 +401,7 @@ export default {
         console.log(err)
       }
     },
-    // 获取搜索的状态列表
+    // Get a list of states for a search(获取搜索的状态列表)
     async getSearchStatus() {
       try {
         let statusList = await api.fetch('/linkisManager/listAllNodeHealthyStatus', 'get') || {};
@@ -411,12 +411,12 @@ export default {
         console.log(err)
       }
     },
-    // 添加tag
+    // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
-
+      
     },
-    // 修改标签
+    // Edit tags(修改标签)
     editEnter(editInputKey, editInputValue,editedInputValue) {
       let index = this.formItem.labels.findIndex((item)=>{
         return  item.value === editInputValue
@@ -425,11 +425,11 @@ export default {
     },
 
 
-    // 删除tag
+    //delete tag( 删除tag)
     onCloseTag (name, index) {
       this.formItem.labels.splice(index, 1);
     },
-    //  提交修改
+    //  Submit changes(提交修改)
     submitTagEdit() {
       let param = JSON.parse(JSON.stringify(this.formItem));
       param.labels = param.labels.map(item => {
@@ -441,21 +441,21 @@ export default {
       api.fetch('/linkisManager/modifyEngineInfo', param, 'put').then(() => {
         this.isTagEdit = false;
         this.$Message.success(this.$t('message.linkis.editedSuccess'));
-        this.refreshResource(); // 刷新
+        this.refreshResource(); // refresh(刷新)
       }).catch(() => {
         this.isTagEdit = false;
       })
     },
-    // 切换分页
+    // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
     },
-    // 页容量变化
+    // page size change(页容量变化)
     changeSize(val) {
       this.page.pageSize = val;
       this.page.pageNow = 1;
     },
-    // 搜索
+    // search(搜索)
     search(e) {
       let param = {
         em: {
@@ -476,7 +476,7 @@ export default {
       this.page.pageNow = 1;
       this.page.totalSize = this.tableData.length;
     },
-    // 时间格式转换
+    // time format conversion(时间格式转换)
     timeFormat(row) {
       return moment(new Date(row.startTime)).format('YYYY-MM-DD HH:mm:ss')
     },
@@ -502,7 +502,7 @@ export default {
   .ivu-table:before {
     height: 0
   }
-  
+
   .ivu-table:after {
     width: 0
   }

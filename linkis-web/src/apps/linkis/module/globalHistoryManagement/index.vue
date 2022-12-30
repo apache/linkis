@@ -48,6 +48,14 @@
           :editable="false"
         />
       </FormItem>
+      <FormItem prop="instance" :label="$t('message.linkis.formItems.instance.label')">
+        <Input
+          :maxlength="50"
+          v-model="searchBar.instance"
+          :placeholder="$t('message.linkis.formItems.instance.placeholder')"
+          style="width:100px;"
+        />
+      </FormItem>
       <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
         <Input
           :maxlength="50"
@@ -257,7 +265,7 @@ export default {
     }
   },
   created() {
-    // 获取是否是历史管理员权限
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
       this.isLogAdmin = res.admin
     })
@@ -268,11 +276,11 @@ export default {
   mounted() {
     this.init()
     this.moduleHeight = this.$parent.$el.clientHeight - 220
-    // 监听窗口变化，获取浏览器宽高
+    // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
     window.addEventListener('resize', this.getHeight)
   },
   beforeDestroy() {
-    // 监听窗口变化，获取浏览器宽高
+    // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
     storage.set('last-admin-model', this.isAdminModel)
     // storage.set('last-searchbar-status', this.searchBar)
     window.removeEventListener('resize', this.getHeight)
@@ -326,7 +334,7 @@ export default {
         'message.linkis.time.day'
       )}`
     },
-    // 点击查看历史详情日志和返回结果
+    // Click to view historical details log and return results(点击查看历史详情日志和返回结果)
     async viewHistory(params) {
       let sourceJson = params.row.sourceJson
       if (typeof sourceJson === 'string') {
@@ -354,7 +362,7 @@ export default {
       }
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)
-      // 跳转查看历史详情页面
+      // Jump to view the history details page(跳转查看历史详情页面)
       this.$router.push({
         path: '/console/viewHistory',
         query
@@ -374,7 +382,8 @@ export default {
         pageNow: page || this.pageSetting.current,
         pageSize: this.pageSetting.pageSize,
         proxyUser: this.searchBar.proxyUser,
-        isAdminView: this.isAdminModel
+        isAdminView: this.isAdminModel,
+        instance: this.searchBar.instance
       }
       if (!this.isAdminModel) {
         delete params.proxyUser
@@ -386,6 +395,7 @@ export default {
         delete params.startDate
         delete params.endDate
         delete params.proxyUser
+        delete params.instance
       } else {
         let { engine, status, shortcut } = this.searchBar
         if (engine === 'all') {
@@ -522,7 +532,7 @@ export default {
           key: 'executionCode',
           align: 'center',
           width: 440,
-          // 溢出以...显示
+          // overflow to show(溢出以...显示)
           ellipsis: true
           // renderType: 'tooltip',
         },

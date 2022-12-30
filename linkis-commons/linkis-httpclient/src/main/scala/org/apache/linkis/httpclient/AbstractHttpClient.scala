@@ -44,7 +44,7 @@ import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.{HttpResponse, _}
-import org.apache.http.client.{CookieStore, ResponseHandler}
+import org.apache.http.client.CookieStore
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.{
   DeflateDecompressingEntity,
@@ -149,6 +149,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           logger.warn("failed to parse entity", t)
           ""
         }
+        IOUtils.closeQuietly(response)
         throw new HttpClientRetryException(
           "The user is not logged in, please log in first, you can set a retry, message: " + msg
         )
@@ -421,7 +422,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       } catch {
         case connectionPoolTimeOutException: ConnectionPoolTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionPoolTimeOutException")
           throw new HttpClientRetryException(
             "connectionPoolTimeOutException",
@@ -429,7 +430,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case connectionTimeOutException: ConnectTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionTimeOutException")
           throw new HttpClientRetryException(
             "connectionTimeOutException",
@@ -437,7 +438,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case httpHostConnectException: HttpHostConnectException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for httpHostConnectException")
           throw new HttpClientRetryException("httpHostConnectException", httpHostConnectException)
         case t: Throwable =>
@@ -446,7 +447,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     response
   }
 
-  private def addUnHealThyUrlToDiscovery(serverUrl: String): Unit = {
+  private def addUnHealthyUrlToDiscovery(serverUrl: String): Unit = {
     discovery.foreach {
       case d: AbstractDiscovery =>
         d.addUnhealthyServerInstances(serverUrl)
@@ -474,78 +475,85 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     response
   }
 
-  protected def responseToResult(response: HttpResponse, requestAction: Action): Result = {
-    val entity = response.getEntity
-    val result = requestAction match {
-      case download: DownloadAction =>
-        val statusCode = response.getStatusLine.getStatusCode
-        if (statusCode != 200) {
+  protected def responseToResult(response: HttpResponse, requestAction: Action): Result =
+    Utils.tryFinally {
+      val entity = response.getEntity
+      val result = requestAction match {
+        case download: DownloadAction =>
+          val statusCode = response.getStatusLine.getStatusCode
+          if (statusCode != 200) {
+            var responseBody: String = null
+            if (entity != null) {
+              responseBody = EntityUtils.toString(entity, "UTF-8")
+            }
+            response match {
+              case r: CloseableHttpResponse =>
+                IOUtils.closeQuietly(r)
+              case _ =>
+            }
+            throw new HttpClientResultException(s"request failed! ResponseBody is $responseBody.")
+          }
+          val inputStream =
+            if (
+                entity.getContentEncoding != null && StringUtils.isNotBlank(
+                  entity.getContentEncoding.getValue
+                )
+            ) {
+              entity.getContentEncoding.getValue.toLowerCase(Locale.getDefault) match {
+                case "gzip" => new GzipDecompressingEntity(entity).getContent
+                case "deflate" => new DeflateDecompressingEntity(entity).getContent
+                case str =>
+                  throw new HttpClientResultException(
+                    s"request failed! Reason: not support decompress type $str."
+                  )
+              }
+            } else entity.getContent
+          download.write(inputStream, response)
+          Result()
+        case heartbeat: HeartbeatAction =>
+          discovery
+            .map { case d: AbstractDiscovery =>
+              d.getHeartbeatResult(response, heartbeat)
+            }
+            .getOrElse(
+              throw new HttpMessageParseException(
+                "Discovery is not enable, HeartbeatAction is not needed!"
+              )
+            )
+        case auth: AuthenticationAction =>
+          clientConfig.getAuthenticationStrategy match {
+            case a: AbstractAuthenticationStrategy => a.getAuthenticationResult(response, auth)
+            case _ =>
+              throw new HttpMessageParseException(
+                "AuthenticationStrategy is not enable, login is not needed!"
+              )
+          }
+        case httpAction: HttpAction =>
           var responseBody: String = null
           if (entity != null) {
             responseBody = EntityUtils.toString(entity, "UTF-8")
           }
-          throw new HttpClientResultException(s"request failed! ResponseBody is $responseBody.")
-        }
-        val inputStream =
-          if (
-              entity.getContentEncoding != null && StringUtils.isNotBlank(
-                entity.getContentEncoding.getValue
-              )
-          ) {
-            entity.getContentEncoding.getValue.toLowerCase(Locale.getDefault) match {
-              case "gzip" => new GzipDecompressingEntity(entity).getContent
-              case "deflate" => new DeflateDecompressingEntity(entity).getContent
-              case str =>
-                throw new HttpClientResultException(
-                  s"request failed! Reason: not support decompress type $str."
-                )
-            }
-          } else entity.getContent
-        download.write(inputStream, response)
-        Result()
-      case heartbeat: HeartbeatAction =>
-        discovery
-          .map { case d: AbstractDiscovery =>
-            d.getHeartbeatResult(response, heartbeat)
+          httpResponseToResult(response, httpAction, responseBody)
+            .getOrElse(throw new HttpMessageParseException("cannot parse message: " + responseBody))
+      }
+      result match {
+        case userAction: UserAction =>
+          requestAction match {
+            case _userAction: UserAction => userAction.setUser(_userAction.getUser)
+            case _ =>
           }
-          .getOrElse(
-            throw new HttpMessageParseException(
-              "Discovery is not enable, HeartbeatAction is not needed!"
-            )
-          )
-      case auth: AuthenticationAction =>
-        clientConfig.getAuthenticationStrategy match {
-          case a: AbstractAuthenticationStrategy => a.getAuthenticationResult(response, auth)
-          case _ =>
-            throw new HttpMessageParseException(
-              "AuthenticationStrategy is not enable, login is not needed!"
-            )
-        }
-      case httpAction: HttpAction =>
-        var responseBody: String = null
-        if (entity != null) {
-          responseBody = EntityUtils.toString(entity, "UTF-8")
-        }
-        httpResponseToResult(response, httpAction, responseBody)
-          .getOrElse(throw new HttpMessageParseException("cannot parse message: " + responseBody))
-    }
-    if (!requestAction.isInstanceOf[DownloadAction]) {
-      response match {
-        case r: CloseableHttpResponse =>
-          r.close()
         case _ =>
       }
-    }
-    result match {
-      case userAction: UserAction =>
-        requestAction match {
-          case _userAction: UserAction => userAction.setUser(_userAction.getUser)
+      result
+    } {
+      if (!requestAction.isInstanceOf[DownloadAction]) {
+        response match {
+          case r: CloseableHttpResponse =>
+            IOUtils.closeQuietly(r)
           case _ =>
         }
-      case _ =>
+      }
     }
-    result
-  }
 
   protected def httpResponseToResult(
       response: HttpResponse,

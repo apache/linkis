@@ -578,5 +578,9 @@ zstd-jni-1.4.5-6.jar
 commons-pool2-2.8.1.jar
 jedis-2.9.2.jar
 dss-gateway-support-1.1.0.jar
+seatunnel-core-flink-2.1.2.jar
+seatunnel-core-flink-sql-2.1.2.jar
+seatunnel-core-spark-2.1.2.jar
 clickhouse-jdbc-0.3.2-patch11.jar
-postgresql-42.3.1.jar
+postgresql-42.3.8.jar
+

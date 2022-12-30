@@ -75,7 +75,7 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 - **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
 
-- **Resource management capabilities**  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger, but also able to provide label-based multi-level resource allocation and recycling, allowing itself to have powerful resource management capabilities across mutiple Yarn clusters and mutiple computation resource types
+- **Resource management capabilities**  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger, but also able to provide label-based multi-level resource allocation and recycling, allowing itself to have powerful resource management capabilities across multiple Yarn clusters and multiple computation resource types
 
 - **Unified Context Service** Generate Context ID for each task/request,  associate and manage user and system resource files (JAR, ZIP, Properties, etc.), result set, parameter variable, function, etc., across user, system, and computing engine. Set in one place, automatic reference everywhere
 
@@ -151,7 +151,7 @@ npm run build
 ### Bundled with MySQL JDBC Driver
 Due to the MySQL licensing restrictions, the MySQL Java Database Connectivity (JDBC) driver is not bundled with the 
 official released linkis image by default. However, at current stage, linkis still relies on this library to work properly.
-To solve this problem, we provide a script which can help to creating an custom image with mysql jdbc from the official 
+To solve this problem, we provide a script which can help to creating a custom image with mysql jdbc from the official 
 linkis image by yourself, the image created by this tool will be tagged as `linkis:with-jdbc` by default.
 
 ```shell

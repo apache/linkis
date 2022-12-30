@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     :class="editorName"
@@ -70,7 +70,7 @@ export default {
       editor: null,
       editorModel: null,
       decorations: null,
-      isParserClose: true,// 默认关闭语法验证
+      isParserClose: true,// Syntax validation is turned off by default(默认关闭语法验证)
       closeParser: null,
       openParser: null,
       sqlParser: null,
@@ -116,7 +116,7 @@ export default {
         }
         let readOnly = this.currentConfig.readOnly;
         if (readOnly) {
-          // editor.setValue 和 model.setValue 都会丢失撤销栈
+          // Both editor.setValue and model.setValue lose the undo stack(editor.setValue 和 model.setValue 都会丢失撤销栈)
           // this.editorModel.setValue(newValue);
           let range = this.editor.getModel().getFullModelRange();
           const text = newValue;
@@ -128,7 +128,7 @@ export default {
           this.editorModel.pushEditOperations('insertValue', [op]);
 
         } else {
-        // 有撤销栈
+        // With undo stack(有撤销栈)
           let range = this.editor.getModel().getFullModelRange();
           const text = newValue;
           const op = {
@@ -152,11 +152,11 @@ export default {
     this.initMonaco();
   },
   beforeDestroy: function() {
-    // 销毁 editor，进行gc
+    // 销毁 editor，进行gc(销毁 editor，进行gc)
     this.editor && this.editor.dispose();
   },
   methods: {
-    // 初始化
+    // initialization(初始化)
     initMonaco() {
       this.editor = monaco.editor.create(this.$el, this.currentConfig);
       this.monaco = monaco;
@@ -177,7 +177,7 @@ export default {
         this.$emit('input', this.getValue());
       }), 100);
       this.editor.onContextMenu(debounce(() => {
-        // 需要调换文字的右键菜单功能
+        // The right-click menu function that needs to change the text(需要调换文字的右键菜单功能)
         const selectList = [{label: 'Change All Occurrences', text: '改变所有出现'}, {label: 'Format Document', text: '格式化'}, {label: 'Command Palette', text: '命令面板'}, {label: 'Cut', text: '剪切'}, {label: 'Copy', text: '复制'}];
         if (localStorage.getItem('locale') === 'zh-CN') {
           selectList.forEach((item) => {
@@ -198,13 +198,13 @@ export default {
     redo() {
       this.editor.trigger('anyString', 'redo');
     },
-    // 保存当前的值
+    // save the current value(保存当前的值)
     save() {
       if (this.editorModel) {
         this.deltaDecorations();
       }
     },
-    // 保存的编辑状态 ViewState
+    // Saved edit state ViewState(保存的编辑状态 ViewState)
     /**
      *  Yes, editor.saveViewState stores:
         cursor position
@@ -225,25 +225,25 @@ export default {
         this.editorModel.viewState = this.editor.saveViewState();
       }
     },
-    // 重置之前保存的编辑状态 ViewState
+    // Reset the previously saved edit state ViewState(重置之前保存的编辑状态 ViewState)
     restoreViewState() {
       if (this.editorModel && this.editorModel.viewState) {
         this.editor.restoreViewState(this.editorModel.viewState);
       }
     },
-    // 获取编辑器内容
+    // Get editor content(获取编辑器内容)
     getValue() {
       return this.editor.getValue({
         lineEnding: '\n',
         preserveBOM: false,
       });
     },
-    // 获取选择的内容
+    // Get selected content(获取选择的内容)
     getValueInRange() {
       const selection = this.editor.getSelection();
       return selection.isEmpty() ? null : this.editor.getModel().getValueInRange(selection);
     },
-    // 在编辑器选中的范围插入值
+    // Insert a value in the selected range in the editor(在编辑器选中的范围插入值)
     insertValueIntoEditor(value) {
       if (this.editor) {
         const SelectedRange = this.editor.getSelection();
@@ -270,22 +270,22 @@ export default {
       }
     },
     addCommands() {
-      // 保存当前脚本
+      // save the current script(保存当前脚本)
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_S, () => {
         this.$emit('on-save');
       });
-      // 运行当前脚本
+      // run the current script(运行当前脚本)
       if (this.executable) {
         this.editor.addCommand(monaco.KeyCode.F3, () => {
           this.$emit('on-run');
         });
       }
-      // 调用浏览器本身的转换小写动作
+      // Invokes the convert lowercase action of the browser itself(调用浏览器本身的转换小写动作)
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyMod.Shift
                     + monaco.KeyCode.KEY_U, () => {
         this.editor.trigger('toLowerCase', 'editor.action.transformToLowercase');
       });
-      // 调用浏览器本身的转换大写动作
+      // Invokes the convert caps action of the browser itself(调用浏览器本身的转换大写动作)
       this.editor.addCommand(monaco.KeyMod.CtrlCmd + monaco.KeyCode.KEY_U, () => {
         this.editor.trigger('toUpperCase', 'editor.action.transformToUppercase');
       });
@@ -384,7 +384,7 @@ export default {
       });
 
       if (this.language === 'hql') {
-        // 控制语法检查
+        // Control grammar check(控制语法检查)
         this.closeParser = this.editor.createContextKey('closeParser', !this.isParserClose);
         this.openParser = this.editor.createContextKey('openParser', this.isParserClose);
         this.editor.addAction({
@@ -392,13 +392,13 @@ export default {
           label: this.$t('message.common.monacoMenu.GBYFJC'),
           keybindings: [],
           keybindingContext: null,
-          // 用于控制右键菜单的显示
+          // Used to control the display of the right-click menu(用于控制右键菜单的显示)
           precondition: 'closeParser',
           contextMenuGroupId: 'control',
           contextMenuOrder: 2.0,
           run() {
             vm.isParserClose = true;
-            // 控制右键菜单的显示
+            // Controls the display of the right-click menu(控制右键菜单的显示)
             vm.openParser.set(true);
             vm.closeParser.set(false);
             vm.deltaDecorations();
@@ -429,7 +429,7 @@ export default {
         const lang = vm.language;
         const app = vm.application;
         if (lang === 'python' || (app === 'spark' && ['java', 'hql'].indexOf(lang) !== -1) || app === 'hive') {
-          // 高危语法的高亮
+          // High-risk syntax highlighting(高危语法的高亮)
           highRiskList = vm.setHighRiskGrammar();
           const decora = vm.decorations || [];
           let isParseSuccess = true;
@@ -446,7 +446,7 @@ export default {
                 validParser.loc.last_line,
                 validParser.loc.last_column + 1,
               );
-              // 第一个元素是对错误的关键词做高亮的，第二个元素是对行和margin块做高亮的
+              // The first element is highlighting the wrong keywords, the second is highlighting lines and margin blocks(第一个元素是对错误的关键词做高亮的，第二个元素是对行和margin块做高亮)的
               newDecora = [{
                 range,
                 options: {
@@ -457,16 +457,16 @@ export default {
                 options: {
                   isWholeLine: true,
                   className: 'contentClass',
-                  // 要在margin中使用色块，编辑器必须将glyphMargin设置为true
+                  // To use color blocks in margin, the editor must set glyphMargin to true(要在margin中使用色块，编辑器必须将glyphMargin设置为true)
                   glyphMarginClassName: 'glyphMarginClass',
-                  // hover提示，文档中使用glyphHoverMessage是错的
+                  // hover prompt, the use of glyphHoverMessage in the documentation is wrong(hover提示，文档中使用glyphHoverMessage是错的)
                   hoverMessage: {
                     value: warningLalbel,
                   },
                 },
               }];
             }
-            // 第一个参数是旧的，用于清空decorations
+            // The first parameter is old, used to clear decorations(第一个参数是旧的，用于清空decorations)
             vm.decorations = vm.editor.deltaDecorations(decora, newDecora.concat(highRiskList));
             vm.$emit('is-parse-success', isParseSuccess);
           } else {
@@ -481,7 +481,7 @@ export default {
           }
         }
       } else {
-        // 关闭语法检查时，如果编辑器上有错误色块，先清除
+        // When the grammar check is turned off, if there is an error color block on the editor, clear it first(关闭语法检查时，如果编辑器上有错误色块，先清除)
         const decora = vm.decorations || [];
         vm.decorations = vm.editor.deltaDecorations(decora, []);
         if (cb) {
@@ -497,14 +497,14 @@ export default {
         highRiskGrammarToken = highRiskGrammar.scala;
       }
       if (highRiskGrammarToken && highRiskGrammarToken.length) {
-        // 因为正则的token有多个，所以要用所有的规则去遍历
+        // Because there are multiple regular tokens, use all the rules to traverse(因为正则的token有多个，所以要用所有的规则去遍历)
         highRiskGrammarToken.forEach((key) => {
-          // 使用正则去抓取编辑器中的匹配文本，是一个数组
+          // Use regular to grab the matching text in the editor, which is an array(使用正则去抓取编辑器中的匹配文本，是一个数组)
           const errorLabel = this.editorModel.findMatches(key, false, true, false, null, true);
           if (errorLabel.length) {
             let formatedRiskGrammer = [];
             errorLabel.forEach((item) => {
-              // 拿到当前整行的内容
+              // Get the content of the current entire line(拿到当前整行的内容)
               const lineContent = this.editorModel.getLineContent(item.range.startLineNumber);
               let reg = /^[^\-\-]\s*/;
               if (this.language === 'python') {
@@ -513,7 +513,7 @@ export default {
                 reg = /^[^\/\/]\s*/;
               }
               const isHasComment = reg.test(lineContent);
-              // 判断是否有注释
+              // Determine if there are annotations(判断是否有注释)
               if (isHasComment) {
                 formatedRiskGrammer.push({
                   range: item.range,

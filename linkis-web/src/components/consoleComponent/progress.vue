@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     class="progress"
@@ -71,8 +71,8 @@
 import steps from './steps.vue';
 import weToolbar from './toolbar_progress.vue';
 /**
- * 脚本执行进度tab面板
- * ! 1. 与工作流节点执行console.vue 共用
+ * Script execution progress tab panel(脚本执行进度tab面板)
+ * ! 1. Shared with workflow node execution console.vue(与工作流节点执行console.vue 共用)
  */
 export default {
   components: {
@@ -173,7 +173,7 @@ export default {
       return Number((this.current * 100).toFixed(2));
     },
     isWaittingSizeShow() {
-      // 当waitingSize等于null时，waitingSize >= 0为true；
+      // When waitingSize is equal to null, waitingSize >= 0 is true;(当waitingSize等于null时，waitingSize >= 0为true；)
       return (this.status === 'Scheduled' || this.status === 'Inited') && (this.waitingSize !== null && this.waitingSize >= 0);
     },
     isStatusOk() {

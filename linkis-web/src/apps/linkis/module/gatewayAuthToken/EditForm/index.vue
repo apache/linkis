@@ -21,7 +21,6 @@
       :rule="rule"
       v-model="formModel"
       :option="options"
-      :value.sync="formData"
     />
   </div>
 </template>
@@ -30,12 +29,14 @@
 export default {
   props: {
     mode: String,
-    data: Object,
   },
   data() {
     return {
-      formModel: {},
-      formData: {},
+      formModel: {
+        elapseDay: 1,
+        permanentlyValid: false,
+      },
+      // formData: {},
       options: {
         submitBtn: false,
       },
@@ -60,94 +61,126 @@ export default {
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
           field: 'tokenName',
+          info: 'Token Name,Example: TEST-AUTH',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. TEST-AUTH",
           },
           validate: [
             {
               required: true,
+              pattern: /^[A-Za-z]+-[A-Za-z]+$/g,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )}`+this.$t('message.linkis.basedataManagement.gatewayAuthToken.tokenName'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "用户",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsers'),
           field: 'legalUsers',
           value: '',
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersInfo'),
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"用户"`,
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.empty'))
+                  }
+                  if(value<-1){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalUsersValidate.format'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "主机",
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHosts'),
           field: 'legalHosts',
           value: '',
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfo'),
           props: {
-            placeholder: "",
+            placeholder: "eg. *",
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"主机"`,
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.legalHostsInfoValidate.empty'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],
         },
         {
-          type: 'input',
-          title: "过期天数",
+          type: 'radio',
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.permanentlyValid'),
+          field: "permanentlyValid",
+          value: false,
+          hidden: false,
+          options: [
+            {value: false,label: "否",disabled: false},
+            {value: true,label: "是",disabled: false},
+          ],
+          on: {
+            'on-change': () => {
+              this.rule[5].hidden = !this.rule[5].hidden;
+              if(!this.rule[5].hidden) {
+                this.rule[5].value = 1;
+              } else {
+                this.rule[5].value = -1;
+              }
+            }
+          }
+        },
+        {
+          type: 'inputNumber',
+          title: this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDay'),
           field: 'elapseDay',
-          value: '',
+          value: 1,
+          hidden: false,
+          info: this.$t('message.linkis.basedataManagement.gatewayAuthToken.info'),
           props: {
-            placeholder: "",
+            placeholder: "eg . 1",
           },
           validate: [
             {
               required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"过期天数"`,
+              validator: (rule, value)=>{
+                return new Promise((resolve, reject)=>{
+                  if(!value){
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.empty'))
+                  }
+                  if(!this.formModel.permanentlyValid && value < 1) {
+                    reject(this.$t('message.linkis.basedataManagement.gatewayAuthToken.elapseDayValidate.GT0'))
+                  }
+                  resolve()
+                })
+              },
               trigger: 'blur',
             },
           ],
-        }
+        },
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

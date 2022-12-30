@@ -1,5 +1,5 @@
-Apache Linkis (incubating)
-Copyright 2021-2022 The Apache Software Foundation
+Apache Linkis
+Copyright 2021-2023 The Apache Software Foundation
 
 This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
@@ -3490,3 +3490,10 @@ The Apache Software Foundation (http://www.apache.org/).
 The code for the t-digest was originally authored by Ted Dunning
 
 Adrien Grand contributed the heart of the AVLTreeDigest (https://github.com/jpountz)
+
+-------------------------------------- Seatunnel NOTICE --------------------------------------
+Apache SeaTunnel (incubating)
+Copyright 2021-2022 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).

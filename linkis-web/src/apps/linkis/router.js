@@ -22,7 +22,7 @@ export const subAppRoutes = {
   redirect: '/console',
   meta: {
     title: 'Linkis',
-    publicPage: true, // 权限公开
+    publicPage: true, // Permission disclosure(权限公开)
   },
   children: []
 }
@@ -159,12 +159,32 @@ export default [
       },
     },
     {
+      name: 'tenantTagManagement',
+      path: 'tenantTagManagement',
+      component: () =>
+        import('./module/tenantTagManagement/index.vue'),
+      meta: {
+        title: 'tenantTagManagement',
+        publicPage: true,
+      }
+    },
+    {
       name: 'errorCode',
       path: 'errorCode',
       component: () =>
         import('./module/errorCode/index.vue'),
       meta: {
         title: 'errorCode',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'ipListManagement',
+      path: 'ipListManagement',
+      component: () =>
+        import('./module/ipListManagement/index.vue'),
+      meta: {
+        title: 'ipListManagement',
         publicPage: true,
       },
     },
@@ -235,6 +255,16 @@ export default [
         import('./module/datasourceType/index.vue'),
       meta: {
         title: 'datasourceType',
+        publicPage: true,
+      }
+    },
+    {
+      name: 'datasourceTypeKey',
+      path: 'datasourceTypeKey',
+      component: () =>
+        import('./module/datasourceTypeKey/index.vue'),
+      meta: {
+        title: 'datasourceTypeKey',
         publicPage: true,
       }
     },

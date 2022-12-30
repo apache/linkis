@@ -32,17 +32,24 @@ import org.apache.linkis.manager.exception.NodeInstanceNotFoundException;
 import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import org.springframework.dao.DuplicateKeyException;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.manager.errorcode.LinkisManagerPersistenceErrorCodeSummary.*;
 
 public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
-
+  private Logger logger = LoggerFactory.getLogger(DefaultNodeManagerPersistence.class);
   private NodeManagerMapper nodeManagerMapper;
 
   private NodeMetricManagerMapper metricManagerMapper;
@@ -299,5 +306,66 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       amEngineNodeList.add(amEngineNode);
     }
     return amEngineNodeList;
+  }
+
+  @Override
+  public List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstanceList)
+      throws PersistenceErrorException {
+    List<EngineNode> amEngineNodeList = new ArrayList<>();
+    // Limit database size per query
+    List<List<ServiceInstance>> partition = Lists.partition(serviceInstanceList, 100);
+    // Batch query
+    partition.forEach(
+        instanceList -> {
+          // Get each batch of ServiceInstances
+          List<String> collect =
+              instanceList.stream().map(ServiceInstance::getInstance).collect(Collectors.toList());
+          if (CollectionUtils.isNotEmpty(collect)) {
+            // Get engineNodes in batches through ServiceInstance
+            List<PersistenceNode> engineNodeList = nodeManagerMapper.getNodesByInstances(collect);
+            if (CollectionUtils.isNotEmpty(engineNodeList)) {
+              // Assembly data amEngineNodeList
+              instanceList.forEach(
+                  serviceInstance -> {
+                    PersistenceNode engineNode =
+                        engineNodeList.stream()
+                            .filter(
+                                engineNodeInfo ->
+                                    engineNodeInfo
+                                        .getInstance()
+                                        .equals(serviceInstance.getInstance()))
+                            .findFirst()
+                            .orElse(new PersistenceNode());
+                    AMEngineNode amEngineNode = new AMEngineNode();
+                    amEngineNode.setServiceInstance(serviceInstance);
+                    amEngineNode.setOwner(engineNode.getOwner());
+                    amEngineNode.setMark(engineNode.getMark());
+                    amEngineNode.setStartTime(engineNode.getCreateTime());
+                    amEngineNodeList.add(amEngineNode);
+                  });
+            }
+          }
+        });
+    return amEngineNodeList;
+  }
+
+  @Override
+  public List<Node> getNodesByOwnerList(List<String> ownerlist) {
+    List<PersistenceNode> nodeInstances = nodeManagerMapper.getNodeInstancesByOwnerList(ownerlist);
+    List<Node> persistenceNodeEntitys = new ArrayList<>();
+    if (!nodeInstances.isEmpty()) {
+      for (PersistenceNode persistenceNode : nodeInstances) {
+        PersistenceNodeEntity persistenceNodeEntity = new PersistenceNodeEntity();
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setApplicationName(persistenceNode.getName());
+        serviceInstance.setInstance(persistenceNode.getInstance());
+        persistenceNodeEntity.setServiceInstance(serviceInstance);
+        persistenceNodeEntity.setMark(persistenceNode.getMark());
+        persistenceNodeEntity.setOwner(persistenceNode.getOwner());
+        persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
+        persistenceNodeEntitys.add(persistenceNodeEntity);
+      }
+    }
+    return persistenceNodeEntitys;
   }
 }

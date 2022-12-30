@@ -114,4 +114,24 @@ public interface NodeManagerPersistence {
    */
   List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
       throws PersistenceErrorException;
+
+  /**
+   * Get the information of the Engine and EM information through the ServiceInstance of the Engine
+   * (batch query)
+   *
+   * @param serviceInstances
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstances)
+      throws PersistenceErrorException;
+
+  /**
+   * Get the node list according to ownerList
+   *
+   * @param owner
+   * @return
+   * @throws PersistenceErrorException
+   */
+  List<Node> getNodesByOwnerList(List<String> owner);
 }

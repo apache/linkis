@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "错误代码",
+          title: this.$t('message.linkis.basedataManagement.errorCode.errorCode'),
           field: 'errorCode',
           value: '',
           props: {
@@ -71,14 +71,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"错误代码"`,
+              )}`+this.$t('message.linkis.basedataManagement.errorCode.errorCode'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "错误描述",
+          title: this.$t('message.linkis.basedataManagement.errorCode.errorDesc'),
           field: 'errorDesc',
           value: '',
           props: {
@@ -89,14 +89,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"错误描述"`,
+              )}`+this.$t('message.linkis.basedataManagement.errorCode.errorDesc'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "错误正则",
+          title: this.$t('message.linkis.basedataManagement.errorCode.errorRegex'),
           field: 'errorRegex',
           value: '',
           props: {
@@ -107,7 +107,7 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"错误正则"`,
+              )}`+this.$t('message.linkis.basedataManagement.errorCode.errorRegex'),
               trigger: 'blur',
             },
           ],

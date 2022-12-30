@@ -28,9 +28,9 @@ abstract class EngineConnResourceService extends EngineConnResourceGenerator {
 
   def init(): Unit
 
-  def refreshAll(wait: Boolean): Unit
+  def refreshAll(wait: Boolean, force: Boolean = false): Unit
 
-  def refresh(engineConnRefreshRequest: RefreshEngineConnResourceRequest): Boolean
+  def refresh(engineConnRefreshRequest: RefreshEngineConnResourceRequest, force: Boolean): Boolean
 
   def getEngineConnBMLResources(
       engineConnBMLResourceRequest: GetEngineConnResourceRequest
@@ -50,6 +50,8 @@ abstract class EngineConnResourceRequest extends RequestProtocol with RequestMet
   private var engineConnType: String = _
   private var version: String = _
 
+  private var force: Boolean = false
+
   def getEngineConnType: String = engineConnType
 
   def setEngineConnType(engineConnType: String): Unit = this.engineConnType = engineConnType
@@ -57,6 +59,10 @@ abstract class EngineConnResourceRequest extends RequestProtocol with RequestMet
   def getVersion: String = version
 
   def setVersion(version: String): Unit = this.version = version
+
+  def getForce: Boolean = force
+
+  def setForce(force: Boolean): Unit = this.force = force
 }
 
 class RefreshEngineConnResourceRequest extends EngineConnResourceRequest {

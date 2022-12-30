@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,24 +29,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.List;
 
 @Api(tags = "linkis error code restful")
 @RestController
 @RequestMapping(path = "/errorcode")
 public class LinkisErrorCodeRestful {
 
-    @Autowired private LinkisErrorCodeService linkisErrorCodeService;
+  @Autowired private LinkisErrorCodeService linkisErrorCodeService;
 
-    @ApiOperation(value = "getErrorCodes", notes = "get error codes", response = Message.class)
-    @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
-    public Message getErrorCodes(HttpServletRequest request) {
-        List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();
-        Message message = Message.ok();
-        message.data("errorCodes", errorCodes);
-        return message;
-    }
+  @ApiOperation(value = "getErrorCodes", notes = "get error codes", response = Message.class)
+  @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
+  public Message getErrorCodes(HttpServletRequest request) {
+    List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();
+    Message message = Message.ok();
+    message.data("errorCodes", errorCodes);
+    return message;
+  }
 }

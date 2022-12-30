@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,78 +14,110 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.linkis.basedatamanager.server.restful;
+
+import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
+import org.apache.linkis.basedatamanager.server.service.UdfTreeService;
+import org.apache.linkis.common.conf.Configuration;
+import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
-import org.apache.linkis.basedatamanager.server.service.UdfTreeService;
-import org.apache.linkis.server.Message;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-@Api(tags="UdfTreeRestfulApi")
+@Api(tags = "UdfTreeRestfulApi")
 @RestController
 @RequestMapping(path = "/basedata-manager/udf-tree")
 public class UdfTreeRestfulApi {
 
-    @Autowired
-    UdfTreeService udfTreeService;
+  @Autowired UdfTreeService udfTreeService;
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName", value = ""),
-            @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage", value = ""),
-            @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize", value = "")
-    })
-    @ApiOperation(value = "list", notes = "get list data", httpMethod = "GET")
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public Message list(String searchName,Integer currentPage,Integer pageSize) {
-        PageInfo pageList = udfTreeService.getListByPage(searchName,currentPage,pageSize);
-        return Message.ok("").data("list", pageList);
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName"),
+    @ApiImplicitParam(paramType = "query", dataType = "int", name = "currentPage"),
+    @ApiImplicitParam(paramType = "query", dataType = "int", name = "pageSize")
+  })
+  @ApiOperation(value = "list", notes = "Query list data of UDF Tree", httpMethod = "GET")
+  @RequestMapping(path = "", method = RequestMethod.GET)
+  public Message list(
+      HttpServletRequest request, String searchName, Integer currentPage, Integer pageSize) {
+    ModuleUserUtils.getOperationUser(
+        request, "Query list data of UDF Tree,search name:" + searchName);
+    PageInfo pageList = udfTreeService.getListByPage(searchName, currentPage, pageSize);
+    return Message.ok("").data("list", pageList);
+  }
+
+  @ApiOperation(value = "all", notes = "Query all data of UDF Tree", httpMethod = "GET")
+  @RequestMapping(path = "/all", method = RequestMethod.GET)
+  public Message all(HttpServletRequest request, String searchName) {
+    ModuleUserUtils.getOperationUser(
+        request, "Query all data of UDF Tree,search name:" + searchName);
+    List<UdfTreeEntity> udfTreeEntityList = udfTreeService.list();
+    return Message.ok("").data("list", udfTreeEntityList);
+  }
+
+  @ApiImplicitParams({@ApiImplicitParam(paramType = "path", dataType = "long", name = "id")})
+  @ApiOperation(value = "get", notes = "Get a UDF Tree Record by id", httpMethod = "GET")
+  @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+  public Message get(HttpServletRequest request, @PathVariable("id") Long id) {
+    ModuleUserUtils.getOperationUser(request, "Get a UDF Tree Record,id:" + id.toString());
+    UdfTreeEntity errorCode = udfTreeService.getById(id);
+    return Message.ok("").data("item", errorCode);
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "udfTreeEntity")
+  })
+  @ApiOperation(value = "add", notes = "Add a UDF Tree Record", httpMethod = "POST")
+  @RequestMapping(path = "", method = RequestMethod.POST)
+  public Message add(HttpServletRequest request, @RequestBody UdfTreeEntity udfTreeEntity) {
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Add a UDF Tree Record," + udfTreeEntity.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
     }
+    boolean result = udfTreeService.save(udfTreeEntity);
+    return Message.ok("").data("result", result);
+  }
 
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
-    })
-    @ApiOperation(value = "get", notes = "get data by id", httpMethod = "GET")
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    public Message get(@PathVariable("id") Long id) {
-        UdfTreeEntity errorCode = udfTreeService.getById(id);
-        return Message.ok("").data("item", errorCode);
+  @ApiImplicitParams({@ApiImplicitParam(paramType = "path", dataType = "long", name = "id")})
+  @ApiOperation(value = "remove", notes = "Remove a UDF Tree Record by id", httpMethod = "DELETE")
+  @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+  public Message remove(HttpServletRequest request, @PathVariable("id") Long id) {
+    ModuleUserUtils.getOperationUser(request, "Remove a UDF Tree Record,id:" + id.toString());
+    boolean result = udfTreeService.removeById(id);
+    return Message.ok("").data("result", result);
+  }
+
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "udfTreeEntity")
+  })
+  @ApiOperation(value = "update", notes = "Update a UDF Tree Record", httpMethod = "PUT")
+  @RequestMapping(path = "", method = RequestMethod.PUT)
+  public Message update(HttpServletRequest request, @RequestBody UdfTreeEntity udfTreeEntity) {
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "Update a UDF Tree Record,id:" + udfTreeEntity.getId().toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
     }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
-    })
-    @ApiOperation(value = "add", notes = "add data", httpMethod = "POST")
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    public Message add(@RequestBody UdfTreeEntity errorCode) {
-        boolean result = udfTreeService.save(errorCode);
-        return Message.ok("").data("result", result);
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "path", dataType = "long", name = "id", value = "")
-    })
-    @ApiOperation(value = "remove", notes = "remove data by id", httpMethod = "DELETE")
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public Message remove(@PathVariable("id") Long id) {
-        boolean result = udfTreeService.removeById(id);
-        return Message.ok("").data("result", result);
-    }
-
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "body", dataType = "UdfTreeEntity", name = "errorCode", value = "")
-    })
-    @ApiOperation(value = "update", notes = "update data", httpMethod = "PUT")
-    @RequestMapping(path = "", method = RequestMethod.PUT)
-    public Message update(@RequestBody UdfTreeEntity errorCode) {
-        boolean result = udfTreeService.updateById(errorCode);
-        return Message.ok("").data("result", result);
-    }
-
-
+    boolean result = udfTreeService.updateById(udfTreeEntity);
+    return Message.ok("").data("result", result);
+  }
 }

@@ -87,6 +87,7 @@
         :data="currentSourceData"
         ref="datasourceForm"
         v-if="showDataSource && currentStep === 1"
+        :type="actionType"
       />
 
       <div slot="footer">
@@ -489,7 +490,7 @@ export default {
         for (let index = 0; index < this.currentVersionList.length; index++) {
           const element = this.currentVersionList[index]
           if (lastPulishIndex < index) {
-            //不能发布
+            //can't post(不能发布)
             element.status = 2
           } else {
             element.status = 0
@@ -574,7 +575,7 @@ export default {
           return false
         }
       }
-      // 否则全相等
+      // otherwise all equal(否则全相等)
       return true
     },
     onSubmit() {
@@ -591,7 +592,7 @@ export default {
         let postDataSource = createDataSource
         let commentMsg = this.$t('message.linkis.datasource.initVersion')
         if (!this.currentSourceData.id) {
-          //新增数据源
+          //Add data source(新增数据源)
           postDataSource = createDataSource
         } else {
           postDataSource = updateDataSource
@@ -601,8 +602,6 @@ export default {
         postDataSource(realFormData, this.currentSourceData.id)
           .then((data) => {
             this.loadingForm = false
-            // if(连接信息有变化)
-
             const sourceId = data.id || data.insertId || data.updateId
 
             console.log()
@@ -751,7 +750,7 @@ export default {
   .ivu-table:before {
     height: 0
   }
-  
+
   .ivu-table:after {
     width: 0
   }

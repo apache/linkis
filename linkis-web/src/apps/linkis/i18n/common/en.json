@@ -154,6 +154,8 @@
             "udfFunctionManage": "UDF Management",
             "dataSourceManage": "DataSource Manage",
             "userResourceManagement": "User Resource Management",
+            "tenantTagManagement": "Tenant Tag Management",
+            "ipListManagement": "White List Management",
             "errorCode": "Error Manage",
             "gatewayAuthToken": "Token Manage",
             "rmExternalResourceProvider": "External Resource Provider Manage",
@@ -162,8 +164,9 @@
             "datasourceAccess": "Data source access permissions",
             "datasourceEnv": "Datasource Environment",
             "datasourceType": "Datasource Type",
+            "datasourceTypeKey": "Datasource Config Options",
             "EnginePluginManagement": "Engine Plugin Management",
-            "basedataManagement": "Base data management"
+            "basedataManagement": "Base Data Management"
           }
         }
       },
@@ -175,6 +178,10 @@
           "label": " Start Date",
           "placeholder": "Please choose the start date"
         },
+        "instance": {
+          "label": "Instance",
+          "placeholder": "Please search by entering the instance"
+      },
         "creator": {
           "label": "Creator",
           "placeholder": "Please search by entering the creator"
@@ -290,6 +297,7 @@
       "resetAllTip": "Whether to reset all user resources (this operation will only clean up user resource records, not the resources that have been generated)?",
       "viewlog": "View Log",
       "datasource": {
+        "pleaseUpload": "Please upload",
         "pleaseInput": "Please input",
         "datasourceSrc": "Datasource",
         "connectTest": "Test Connection",
@@ -327,11 +335,225 @@
         "commentValue": "Roll back from version {text}",
         "undefinedVersion": "Cannot find the version of DataSource"
       },
-      "basedata": {
-        "add": "add",
-        "remove": "remove",
-        "edit": "edit",
-        "addUDFAdmin": "add UDF administrator"
+      "tenantTagManagement": {
+        "userName": "User Name",
+        "appName": "Application Name",
+        "tenantTag": "Tenant Tag",
+        "search": "Search",
+        "clear": "Clear",
+        "create": "Create",
+        "userCreator": "User-Creator",
+        "createUser": "Create User",
+        "createTime": "Create Time",
+        "desc": "Description",
+        "inputUser": "Please Input User",
+        "inputApp": "Please Input Application",
+        "inputTenant": "Please Input Tenant Tag",
+        "inputDesc": "Please Input Description",
+        "inputCreateUser": "Please Input Creare User",
+        "yourTagMapping": "Your Tag Mapping",
+        "notEmpty": "Cannot be empty",
+        "maxLen": "A maximum of 100 characters is allowed",
+        "contentError": "English, numbers, asterisk and underline only",
+        "contentError1": "English, numbers and underline only",
+        "contentError2": "English, numbers, underscores and dashes only",
+        "check": "Check",
+        "OK": "OK",
+        "Cancel": "Cancel",
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete",
+        "userIsExisted": "User Tag Already Exists",
+        "addSuccessful": "Successfully Addded",
+        "confirmDel": "Confirm Deletion",
+        "isConfirmDel": "Are you sure you want to delete this tag"
+      },
+      "ipListManagement": {
+        "userName": "User Name",
+        "appName": "Application Name",
+        "ipList": "IP List",
+        "search": "Search",
+        "clear": "Clear",
+        "create": "Create",
+        "userCreator": "User-Creator",
+        "createUser": "Create User",
+        "createTime": "Create Time",
+        "desc": "Description",
+        "inputUser": "Please Input User",
+        "inputApp": "Please Input Application",
+        "inputIpList": "Please Input IP List",
+        "inputDesc": "Please Input Description",
+        "inputCreateUser": "Please Input Creare User",
+        "yourTagMapping": "Your Tag Mapping",
+        "notEmpty": "Cannot be empty",
+        "maxLen": "A maximum of 100 characters is allowed",
+        "contentError": "English, numbers, asterisk and underline only",
+        "contentError1": "English, numbers and underline only",
+        "contentError2": "English, numbers, underscores and dashes only",
+        "ipContentError": "Please enter IP addresses in correct format.(Multiple IP addresses pass through, separate)",
+        "check": "Check",
+        "OK": "OK",
+        "Cancel": "Cancel",
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete",
+        "userIsExisted": "User Tag Already Exists",
+        "addSuccessful": "Successfully Addded",
+        "confirmDel": "Confirm Deletion",
+        "isConfirmDel": "Are you sure you want to delete this tag"
+      },
+      "basedataManagement": {
+        "add": "Add",
+        "remove": "Remove",
+        "edit": "Edit",
+        "searchLabel": "Fuzzy Search:",
+        "searchPlaceholder": "Please enter your search",
+        "search": "Search",
+        "action": "Action",
+        "modal":{
+          "confirm": "Confirm",
+          "cancel": "Cancel",
+          "modalTitle": "Info",
+          "modalFormat": "Confirm deleting the {0} record?",
+          "modalDelete": "Confirm that the record [{name}] should be deleted?",
+          "modalDeleteSuccess": "Successfully delete",
+          "modalDeleteFail": "Fail to delete",
+          "modalAddSuccess": "Successfully added",
+          "modalAddFail": "Fail to add",
+          "modalEditSuccess": "Edit successful",
+          "modalEditFail": "Edit failure"
+        },
+        "addUDFAdmin": "Add UDF administrator",
+        "gatewayAuthToken": {
+          "tokenName": "Token Name",
+          "legalUsers": "Legal Users",
+          "legalHosts": "Legal Hosts",
+          "elapseDay": "Elapse Day",
+          "permanentlyValid": "Permanently Valid",
+          "businessOwner": "Owner",
+          "createTime":"Create Time",
+          "updateTime": "Update Time",
+          "updateBy": "Update By",
+          "searchPlaceholder": "TokenName/Users/Hosts",
+          "info":"Elapse Day: -1 means permanent",
+          "legalUsersInfo": "* Allow all users; Multi-user use, separated, for example :user1,user2",
+          "legalUsersValidate": {
+            "empty": "Please enter the Users"
+          },
+          "legalHostsInfo": "* Allow all hosts; Use multiple hosts, separated, for example :host1,host2",
+          "legalHostsInfoValidate": {
+            "empty": "Please enter the Hosts"
+          },
+          "elapseDayValidate": {
+            "size": "The Elapse Day cannot be less than -1",
+            "empty": "Please enter the elapse day",
+            "GT0": "Valid days must be greater than 0"
+          }
+        },
+        "errorCode": {
+          "errorCode": "Code",
+          "errorDesc": "Desc",
+          "errorRegex": "Regex",
+          "searchPlaceholder": "Code/Desc/Regex"
+        },
+        "rmExternalResourceProvider": {
+          "resourceType": "Resource Type",
+          "name": "Name",
+          "labels": "Labels",
+          "config": "Config",
+          "searchPlaceholder": "Name/Labels/Config"
+        },
+        "udfManager": {
+          "userName": "User Name",
+          "searchPlaceholder": "UserName",
+          "userNameValidate": {
+            "size": "Usernames cannot be longer than 20 characters",
+            "empty": "Please enter your username"
+          }
+        },
+        "udfTree": {
+          "name": "Name",
+          "category": "Category",
+          "userName": "User Name",
+          "description": "Description",
+          "parent": "Parent",
+          "createTime": "Create Time",
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name/Category/Desc/UserName",
+          "parentInfo": "Parent classification, Root is the root directory"
+        },
+        "datasourceEnv": {
+          "envName": "Env Name",
+          "envDesc": "Env Desc",
+          "name": "Name",
+          "datasourceType": "Datasource Type",
+          "keytab": "Kerboros",
+          "parameter": "Parameter",
+          "createTime": "Create Time",
+          "createUser": "Create User",
+          "updateTime": "Update Time",
+          "modifyUser": "Modify User",
+          "searchPlaceholder": "EnvName/EnvDesc/Param"
+        },
+        "datasourceType": {
+          "name": "Name",
+          "description": "Description",
+          "option": "Option",
+          "classifier": "Classifier",
+          "icon": "Icon",
+          "layers": "Layers",
+          "searchPlaceholder": "Name/Desc/Classifier",
+          "layersValidate": {
+            "range": "The minimum is 0"
+          }
+        },
+        "datasourceTypeKey": {
+          "key": "Key",
+          "dataSourceType": "Datasource Type",
+          "name": "Name(Chinese)",
+          "nameEn": "Name",
+          "valueType": "Value Type",
+          "scope": "Scope",
+          "require": "Require",
+          "defaultValue": "Default Value",
+          "description": "Description(Chinese)",
+          "descriptionEn": "Description",
+          "valueRegex": "Value Regex",
+          "createTime": "Create Time",
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name",
+          "searchName": "名称",
+          "searchType": "类型",
+          "all": "All"
+        }
+      },
+      "EnginePluginManagement": {
+        "engineConnType": "EngineConn Type",
+        "engineConnVersion": "Engine Conn Version",
+        "create": "Create",
+        "fileName": "File Name",
+        "fileSize": "File Size",
+        "lastModified": "Last Modified",
+        "bmlResourceId": "Material Resource Id",
+        "bmlResourceVersion": "Material Resource version",
+        "lastUpdateTime": "Last Update Time",
+        "createTime": "Create Time",
+        "Reset": "Reset",
+        "delete": "Delete",
+        "update": "Update",
+        "updateFileOnly": "Update",
+        "resourceVersion": "Resource Version",
+        "user": "User",
+        "deleteCurrentbml": "Delete",
+        "versionList": "Version List",
+        "rollback": "Rollback",
+        "action": "Operate",
+        "checkEngineConnTypeAndVersion": "Please select the engine type and version",
+        "upload": "Please click the button to upload the engine plug-in",
+        "hasUpload": "The file has been uploaded, you can click to upload again",
+        "force": "Whether to overwrite",
+        "yes": "Yes",
+        "no": "No"
       }
     }
   }

@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div
     :class="getClass"
@@ -107,7 +107,7 @@ export default {
       }
       this.readyToAllocationItemLength = 0;
       if (this.diretion == 'horizontal') {
-        // 如果item设置了width，则根据width计算出它的currentWidth。如果没设置width，则平均 总宽度减去已经设置过的宽度
+        // If the item has width set, its currentWidth is calculated based on width. If width is not set, the average total width minus the width that has been set(如果item设置了width，则根据width计算出它的currentWidth。如果没设置width，则平均 总宽度减去已经设置过的宽度)
         this.readyToAllocationWidth = this.clientWidth;
         this.items.forEach((element) => {
           // element.index = this.$children.indexOf(element) + 1;
@@ -132,7 +132,7 @@ export default {
         });
       }
       if (this.diretion == 'vertical') {
-        // 高度同上
+        // Same height(高度同上)
         this.readyToAllocationHeight = this.clientHeight;
         this.items.forEach((element) => {
           if (element.height) {
@@ -242,7 +242,7 @@ export default {
         } else if (this.secondItem.maxSize && secondSize > this.secondItem.maxSize) {
           this.currentChange = this.secondItem[variable] - this.secondItem.maxSize;
         } else if (fristSize < 10) {
-          // 最小宽度为10，不要就要拖的重合了
+          // The minimum width is 10, don't drag and overlap(最小宽度为10，不要就要拖的重合了)
           this.currentChange = 10 - this.fristItem[variable];
         } else if (secondSize < 10) {
           this.currentChange = this.secondItem[variable] - 10;
@@ -269,7 +269,7 @@ export default {
           variable = 'currentHeight';
         }
         const AnimationFrameId = elementResizeEvent.requestAnimationFrame(() => {
-          // 停止后记录更新当前的currentWidth或者currentHeight
+          // After stopping, the record updates the current currentWidth or currentHeight(停止后记录更新当前的currentWidth或者currentHeight)
           let fristSize = this.fristItem[variable] + this.currentChange;
           let secondSize = this.secondItem[variable] - this.currentChange;
           this.fristItem[variable] = fristSize;

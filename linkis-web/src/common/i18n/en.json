@@ -205,6 +205,8 @@
         "RWGLQ": "Task Management",
         "YQGLQ": "Engine Management",
         "DLGLQ": "Queue Management",
+        "QX": "Select All",
+        "QXQX": "Deselect All",
         "SX": "Refresh",
         "JSRW": "Cancel Task",
         "JSYQ": "Shut Down Engine",

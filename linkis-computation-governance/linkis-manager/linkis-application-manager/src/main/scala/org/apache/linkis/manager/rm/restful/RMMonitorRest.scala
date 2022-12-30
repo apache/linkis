@@ -49,10 +49,11 @@ import org.apache.linkis.manager.rm.service.{LabelResourceService, ResourceManag
 import org.apache.linkis.manager.rm.service.impl.UserResourceService
 import org.apache.linkis.manager.rm.utils.{RMUtils, UserConfiguration}
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
-import org.apache.linkis.server.{BDPJettyServerHelper, Message}
+import org.apache.linkis.server.{toScalaBuffer, BDPJettyServerHelper, Message}
 import org.apache.linkis.server.security.SecurityFilter
 import org.apache.linkis.server.utils.ModuleUserUtils
 
+import org.apache.commons.collections4.ListUtils
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -62,7 +63,7 @@ import javax.servlet.http.HttpServletRequest
 
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util
-import java.util.{Comparator, TimeZone}
+import java.util.{Comparator, List, TimeZone}
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -468,12 +469,11 @@ class RMMonitorRest extends Logging {
         .get
         .asInstanceOf[EngineTypeLabel]
       val record = new mutable.HashMap[String, Any]
-      record.put("applicationName", node.getServiceInstance.getApplicationName)
-      record.put("engineInstance", node.getServiceInstance.getInstance)
-      if (null != node.getEMNode) {
-        record.put("moduleName", node.getEMNode.getServiceInstance.getApplicationName)
-        record.put("engineManagerInstance", node.getEMNode.getServiceInstance.getInstance)
+      if (node.getServiceInstance != null) {
+        record.put("applicationName", node.getServiceInstance.getApplicationName)
+        record.put("engineInstance", node.getServiceInstance.getInstance)
       }
+
       record.put("creator", userCreatorLabel.getCreator)
       record.put("engineType", engineTypeLabel.getEngineType)
       if (node.getNodeResource != null) {
@@ -539,26 +539,28 @@ class RMMonitorRest extends Logging {
     val userResourceRecords = new ArrayBuffer[mutable.HashMap[String, Any]]()
     val yarnAppsInfo =
       externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier)
+    val userList =
+      yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).keys.toList.asJava
     Utils.tryCatch {
+      val nodesList = getEngineNodesByUserList(userList, true)
       yarnAppsInfo.asScala.groupBy(_.asInstanceOf[YarnAppInfo].user).foreach { userAppInfo =>
-        var nodes = getEngineNodes(userAppInfo._1, true)
         var busyResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         var idleResource = Resource.initResource(ResourceType.Yarn).asInstanceOf[YarnResource]
         val appIdToEngineNode = new mutable.HashMap[String, EngineNode]()
-        if (nodes == null) {
-          nodes = new Array[EngineNode](0)
-        }
-        nodes.foreach { node =>
-          if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null) {
-            node.getNodeResource.getUsedResource match {
-              case driverYarn: DriverAndYarnResource
-                  if driverYarn.yarnResource.queueName.equals(yarnIdentifier.getQueueName) =>
-                appIdToEngineNode.put(driverYarn.yarnResource.applicationId, node)
-              case yarn: YarnResource if yarn.queueName.equals(yarnIdentifier.getQueueName) =>
-                appIdToEngineNode.put(yarn.applicationId, node)
-              case _ =>
+        val nodesplus = nodesList.get(userAppInfo._1)
+        if (nodesplus.isDefined) {
+          nodesplus.get.foreach(node => {
+            if (node.getNodeResource != null && node.getNodeResource.getUsedResource != null) {
+              node.getNodeResource.getUsedResource match {
+                case driverYarn: DriverAndYarnResource
+                    if driverYarn.yarnResource.queueName.equals(yarnIdentifier.getQueueName) =>
+                  appIdToEngineNode.put(driverYarn.yarnResource.applicationId, node)
+                case yarn: YarnResource if yarn.queueName.equals(yarnIdentifier.getQueueName) =>
+                  appIdToEngineNode.put(yarn.applicationId, node)
+                case _ =>
+              }
             }
-          }
+          })
         }
         userAppInfo._2.foreach { appInfo =>
           appIdToEngineNode.get(appInfo.asInstanceOf[YarnAppInfo].id) match {
@@ -661,22 +663,23 @@ class RMMonitorRest extends Logging {
   }
 
   private def getEngineNodes(user: String, withResource: Boolean = false): Array[EngineNode] = {
-    val nodes = nodeManagerPersistence
+    val serviceInstancelist = nodeManagerPersistence
       .getNodes(user)
-      .asScala
       .map(_.getServiceInstance)
-      .map(nodeManagerPersistence.getEngineNode)
-      .filter(_ != null)
       .asJava
+    val nodes = nodeManagerPersistence.getEngineNodeByServiceInstance(serviceInstancelist)
     val metrics = nodeMetricManagerPersistence
       .getNodeMetrics(nodes)
       .asScala
       .map(m => (m.getServiceInstance.toString, m))
       .toMap
     val configurationMap = new mutable.HashMap[String, Resource]
+    val labelsMap =
+      nodeLabelService.getNodeLabelsByInstanceList(nodes.map(_.getServiceInstance).asJava)
     nodes.asScala
       .map { node =>
-        node.setLabels(nodeLabelService.getNodeLabels(node.getServiceInstance))
+//        node.setLabels(nodeLabelService.getNodeLabels(node.getServiceInstance))
+        node.setLabels(labelsMap.get(node.getServiceInstance.toString))
         if (!node.getLabels.asScala.exists(_.isInstanceOf[UserCreatorLabel])) {
           null
         } else {
@@ -731,6 +734,50 @@ class RMMonitorRest extends Logging {
       }
       .filter(_ != null)
       .toArray
+  }
+
+  private def getEngineNodesByUserList(
+      userList: List[String],
+      withResource: Boolean = false
+  ): Map[String, Array[EngineNode]] = {
+    val serviceInstance =
+      nodeManagerPersistence.getNodesByOwnerList(userList).map(_.getServiceInstance).asJava
+    val engineNodesList = nodeManagerPersistence.getEngineNodeByServiceInstance(serviceInstance)
+    val metrics = nodeMetricManagerPersistence
+      .getNodeMetrics(engineNodesList)
+      .asScala
+      .map(m => (m.getServiceInstance.toString, m))
+      .toMap
+    val labelsMap =
+      nodeLabelService.getNodeLabelsByInstanceList(engineNodesList.map(_.getServiceInstance).asJava)
+    engineNodesList
+      .map(nodeInfo => {
+        nodeInfo.setLabels(labelsMap.get(nodeInfo.getServiceInstance.toString))
+        if (nodeInfo.getLabels.exists(_.isInstanceOf[UserCreatorLabel])) {
+          metrics
+            .get(nodeInfo.getServiceInstance.toString)
+            .foreach(metricsConverter.fillMetricsToNode(nodeInfo, _))
+          if (withResource) {
+            val engineInstanceOption = nodeInfo.getLabels.find(_.isInstanceOf[EngineInstanceLabel])
+            if (engineInstanceOption.isDefined) {
+              val engineInstanceLabel = engineInstanceOption.get.asInstanceOf[EngineInstanceLabel]
+              engineInstanceLabel.setServiceName(nodeInfo.getServiceInstance.getApplicationName)
+              engineInstanceLabel.setInstance(nodeInfo.getServiceInstance.getInstance)
+              val nodeResource = labelResourceService.getLabelResource(engineInstanceLabel)
+              if (nodeResource != null) {
+                if (null == nodeResource.getUsedResource) {
+                  nodeResource.setUsedResource(nodeResource.getLockedResource)
+                }
+                nodeInfo.setNodeResource(nodeResource)
+              }
+            }
+          }
+        }
+        nodeInfo
+      })
+      .filter(_ != null)
+      .toArray
+      .groupBy(_.getOwner)
   }
 
 }

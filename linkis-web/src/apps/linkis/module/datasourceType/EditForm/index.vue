@@ -60,130 +60,134 @@ export default {
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.name'),
           field: 'name',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql",
           },
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.name'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "描述",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.description'),
           field: 'description',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql database",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"描述"`,
-              trigger: 'blur',
-            },
-          ],
+          // validate: [
+          //   {
+          //     required: true,
+          //     message: `${this.$t(
+          //       'message.linkis.datasource.pleaseInput'
+          //     )} `+this.$t('message.linkis.basedataManagement.datasourceType.description'),
+          //     trigger: 'blur',
+          //   },
+          // ],
         },
         {
           type: 'input',
-          title: "选项",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.option'),
           field: 'option',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "mysql database",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )}"选项"`,
-              trigger: 'blur',
-            },
-          ],
+          // validate: [
+          //   {
+          //     required: true,
+          //     message: `${this.$t(
+          //       'message.linkis.datasource.pleaseInput'
+          //     )} `+this.$t('message.linkis.basedataManagement.datasourceType.option'),
+          //     trigger: 'blur',
+          //   },
+          // ],
         },
         {
-          type: 'input',
-          title: "分类",
+          type: 'select',
+          title: this.$t('message.linkis.basedataManagement.datasourceType.classifier'),
           field: 'classifier',
           value: '',
+          options: [
+            {label: "关系型数据库",value: "关系型数据库"},
+            {label: "消息队列",value: "消息队列"},
+            {label: "大数据存储",value: "大数据存储"},
+            {label: "olap",value: "olap"},
+            {label: "分布式全文索引",value: "分布式全文索引"},
+          ],
           props: {
-            placeholder: "",
+            placeholder: "relational database",
+            "filterable": true
           },
           validate: [
             {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"分类"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.classifier'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "图标",
+          title: this.$t('message.linkis.basedataManagement.datasourceType.icon'),
           field: 'icon',
+          info: 'example：https://linkis.apache.org/img/logo.png',
           value: '',
           props: {
-            placeholder: "",
+            placeholder: "eg. https://linkis.apache.org/img/logo.png",
           },
           validate: [
             {
-              required: true,
+              required: false,
+              type: "url",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"图标"`,
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.icon'),
               trigger: 'blur',
             },
           ],
         },
         {
-          type: 'input',
-          title: "层级",
+          type: 'inputNumber',
+          title: this.$t('message.linkis.basedataManagement.datasourceType.layers'),
           field: 'layers',
-          value: '',
+          value: 0,
           props: {
-            placeholder: "",
+            placeholder: "eg. 1-3",
+            type: "number",
+            min: 0
           },
           validate: [
             {
               required: true,
+              "mode": "required",
+              type: "number",
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"层级"`,
-              trigger: 'blur',
+              )} `+this.$t('message.linkis.basedataManagement.datasourceType.layers'),
+              trigger: 'change',
+            },
+            {
+              min: 0,
+              type: "number",
+              message: this.$t('message.linkis.basedataManagement.datasourceType.layersValidate.range'),
+              trigger: 'change',
             },
           ],
         }
       ]
     }
-  },
-  created() {
-    this.getData(this.data)
-  },
-  methods: {
-    getData(data){
-      this.formData = {...data}
-    }
-  },
-  watch: {
-    data: {
-      handler(newV) {
-        this.getData(newV)
-      },
-      deep: true,
-    },
   },
 }
 </script>

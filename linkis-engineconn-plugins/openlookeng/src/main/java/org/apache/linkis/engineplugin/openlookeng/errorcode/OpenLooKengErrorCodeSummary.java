@@ -34,10 +34,6 @@ public enum OpenLooKengErrorCodeSummary {
 
   private String errorDesc;
 
-  private String comment;
-
-  private String module;
-
   OpenLooKengErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 26000, 29999);
     this.errorCode = errorCode;

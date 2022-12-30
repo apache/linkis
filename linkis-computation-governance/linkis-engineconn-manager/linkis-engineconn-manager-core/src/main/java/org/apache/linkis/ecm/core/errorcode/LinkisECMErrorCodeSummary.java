@@ -19,10 +19,10 @@ package org.apache.linkis.ecm.core.errorcode;
 
 public enum LinkisECMErrorCodeSummary {
   CAN_NOT_GET_INPUTSTREAM(
-      20001, "process is not be launch, can not get InputStream(进程未启动，无法获取 InputStream)!"),
+      20001, "Process is not be launch, can not get InputStream(进程未启动，无法获取 InputStream)!"),
   CAN_NOT_GET_TERMINATED(
       20001,
-      "process is not be launch, can not get terminated code by wait(进程未启动，无法获得 terminated code)");
+      "Process is not be launch, can not get terminated code by wait(进程未启动，无法获得 terminated code)");
 
   /** (errorCode)错误码 */
   private int errorCode;

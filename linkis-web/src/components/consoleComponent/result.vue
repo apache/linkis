@@ -47,7 +47,7 @@
       :style="{'height': resultHeight+'px'}"
       class="text-result-div">
       <div v-if="result.bodyRows">
-        <!-- 数据格式不统一，先循环外部数据，再循环内部 -->
+        <!-- The data format is not uniform, first loop the external data, and then loop the internal(数据格式不统一，先循环外部数据，再循环内部 )-->
         <div v-for="(item,index) in result.bodyRows" :key="index">
           <div
             v-for="(row, subindex) in item[0].split('\n')"
@@ -175,8 +175,8 @@ import filter from './filter.vue';
 import dataWrangler from './dataWrangler.vue';
 import mixin from '@/common/service/mixin';
 /**
- * 脚本执行结果集tab面板
- * ! 1. 与工作流节点执行后的管理台console.vue 共用
+ * Script execution result set tab panel(脚本执行结果集tab面板)
+ * ! 1. Shared with the management console console.vue after the workflow node is executed(与工作流节点执行后的管理台console.vue 共用)
  */
 export default {
   name: 'scriptResult',
@@ -234,7 +234,7 @@ export default {
         sizeOpts: [20, 50, 80, 100],
       },
       isLoading: false,
-      // 当前高亮的行
+      // currently highlighted line(当前高亮的行)
       hightLightRow: null,
       isFilterViewShow: false
     };
@@ -312,15 +312,15 @@ export default {
           sortIndex = index
         }
       })
-      // 大于50列排序现将要排序的列和原始index保持
+      // 大于50列排序现将要排序的列和原始index保持(大于50列排序现将要排序的列和原始index保持)
       let sortColumnAll = this.originRows.map((row, index) => {
         return {
           originIndex: index,
           value: row[sortIndex]
         }
       })
-      // 将找出的列排序
-      sortColumnAll = this.arraySortByName(sortColumnAll, col.columnType, 'value');// 从小到大
+      // Sort the found columns(将找出的列排序)
+      sortColumnAll = this.arraySortByName(sortColumnAll, col.columnType, 'value');// From small to large(从小到大)
       let newRow = [];
       sortColumnAll.map((item, index) => {
         newRow[index] = this.originRows[item.originIndex];
@@ -329,7 +329,7 @@ export default {
     },
     sortChange({column, key, order, cb}) {
       let list = []
-      if (order === 'normal') {// 恢复原来数据
+      if (order === 'normal') {// restore original data(恢复原来数据)
         if (this.tableData.type === 'normal') {
           list = this.result.bodyRows.map((row) => {
             let newItem = {};
@@ -357,9 +357,9 @@ export default {
       }
       this.originRows = list;
       this.sortType = order;
-      // 排序后的数据进行存储
+      // The sorted data is stored(排序后的数据进行存储)
       const tmpResult = this.getResult();
-      // 还原初始字段
+      // restore original fields(还原初始字段)
       tmpResult.sortBodyRows = this.originRows.map(items => {
         return Object.values(items);
       });
@@ -384,14 +384,14 @@ export default {
       list.sort((a, b) => {
         let strA = a[key];
         let strB = b[key];
-        // 谁为非法值谁在前面
+        // Who is the illegal value and who is in front(谁为非法值谁在前面)
         if (strA === undefined || strA === null || strA === '' || strA === ' ' || strA === '　' || strA === 'NULL') {
           return -1;
         }
         if (strB === undefined || strB === null || strB === '' || strB === ' ' || strB === '　' || strB === 'NULL') {
           return 1;
         }
-        // 如果为整数型大小
+        // if integer size(如果为整数型大小)
         if (['int', 'float', 'double', 'long', 'short', 'bigint', 'decimal'].includes(valueType.toLowerCase())) {
 
           return strA - strB;
@@ -402,13 +402,13 @@ export default {
             return this.charCompare(strA[i], strB[i]);
           }
         }
-        // 如果通过上面的循环对比还比不出来，就无解了，直接返回-1
+        // If you can't compare it through the above loop comparison, there is no solution, and return -1 directly(如果通过上面的循环对比还比不出来，就无解了，直接返回-1)
         return -1;
       });
       return list;
     },
     charCompare(charA, charB) {
-      // 谁为非法值谁在前面
+      // Who is the illegal value and who is in front(谁为非法值谁在前面)
       if (charA === undefined || charA === null || charA === '' || charA === ' ' || charA === '　') {
         return -1;
       }
@@ -435,7 +435,7 @@ export default {
         let headRows = this.result.headRows || [];
         let heads = [];
         let bodyRows = [];
-        // 判断是否进行过排序
+        // Determine whether to sort(判断是否进行过排序)
         switch(this.result.sortType) {
           case 'asc':
           case 'desc':
@@ -491,7 +491,7 @@ export default {
             row.forEach((item, index) => {
               try {
                 Object.assign(newItem, {
-                // 结果集数据改造后不能直接当key使用，得用表字段作为唯一的key
+                // After the result set data is transformed, it cannot be used directly as a key, and the table field must be used as the only key.(结果集数据改造后不能直接当key使用，得用表字段作为唯一的key)
                   [headRows[index].columnName]: item,
                 });
               } catch (error) {
@@ -535,7 +535,7 @@ export default {
     change(page = 1) {
       this.hightLightRow = null;
       this.page.current = page;
-      // 分页后的数据进行存储
+      // paging data for storage(分页后的数据进行存储)
       const tmpResult = this.getResult();
       tmpResult.current = this.page.current;
       tmpResult.size = this.pagesize;
@@ -553,7 +553,7 @@ export default {
       this.hightLightRow = null;
       this.page.size = size;
       this.page.current = 1;
-      // 分页后的数据进行存储
+      // paging data for storage(分页后的数据进行存储)
       const tmpResult = this.getResult();
       tmpResult.current = this.page.current;
       tmpResult.size = this.pagesize;
@@ -605,7 +605,7 @@ export default {
       });
     },
     onRowClick(currentRow) {
-      // 通过列命名去查找当前的类型
+      // Find the current type by column name(通过列命名去查找当前的类型)
       const row = Object.values(currentRow);
       this.rowToColumnData(row);
     },
@@ -700,7 +700,7 @@ export default {
     width: 100%;
     height: 42px;
     text-align: center;
-    padding-top: 10px;
+    margin-top: 10px;
     padding-left: 10px;
     .page-hint {
       display: inline-flex;
@@ -714,7 +714,7 @@ export default {
         margin-left: 5px;
       }
     }
-    
+
     .set {
       width: 90px;
       // padding-right: 20px;

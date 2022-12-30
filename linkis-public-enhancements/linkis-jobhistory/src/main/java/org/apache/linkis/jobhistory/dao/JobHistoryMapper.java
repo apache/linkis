@@ -105,4 +105,6 @@ public interface JobHistoryMapper {
   String selectJobHistoryStatusForUpdate(Long jobId);
 
   void updateOberverById(@Param("taskid") Long taskid, @Param("observeInfo") String observeInfo);
+
+  void updateJobHistoryCancel(@Param("idList") List<Long> idList);
 }

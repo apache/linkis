@@ -225,4 +225,7 @@ object EntranceConfiguration {
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
+  val SEND_INSTANCE =
+    CommonVars("wds.linkis.entrance.whether.open.send.instance", true)
+
 }

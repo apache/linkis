@@ -17,11 +17,6 @@
 
 <template>
   <div :style="{height: '100%', overflow: 'hidden'}">
-    <Row>
-      <Col>
-        <Button type="success" class="enginBtn" @click="onTableEdit()">{{$t('message.linkis.basedataManagement.add')}}</Button>
-      </Col>
-    </Row>
     <Row class="search-bar" type="flex">
       <Col span="4">
         <Card style="margin-right: 10px;">
@@ -35,24 +30,15 @@
           </Menu>
         </Card>
       </Col>
-      <!--<Col>
-        <div>
-          <Button type="success" class="enginBtn" @click="onTableEdit()">{{$t('message.linkis.basedataManagement.add')}}</Button>
-          <Dropdown >
-            <Button type="primary" class="enginBtn">
-              {{$t('message.linkis.basedataManagement.engineConfigurationTemplate.engineLabelList')}}
-              <Icon type="ios-arrow-down"></Icon>
-            </Button>
-            <template #list>
-              <DropdownMenu>
-                <p class="drowdownItem" v-for="engName in engineList" :key="engName.labelId" @click="queryEngineTemplateList(engName.labelId)">{{engName.engineName}}</p>
-            </template>
-          </Dropdown>
-        </div>
-      </Col>-->
       <Col span="20">
         <Card>
-          <Table stripe :columns="tableColumnNum" :data="showInTableList" height="600">
+          <Button type="success" class="enginBtn" @click="onTableEdit()">{{$t('message.linkis.basedataManagement.add')}}</Button>
+          <Space direction="vertical" type="flex">
+            <Select v-model="model" multiple :max-tag-count="2" style="width: 300px" class="enginBtn">
+              <Option v-for="item in showList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+          </Space>
+          <Table stripe :columns="columns" :data="showInTableList" height="600">
             <template slot-scope="{ row,index }" slot="action">
               <ButtonGroup size="small">
                 <Button
@@ -81,7 +67,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      title="修改"
+      :title="$t('message.linkis.basedataManagement.engineConfigurationTemplate.edit')"
     >
       <div slot="footer">
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
@@ -107,12 +93,60 @@ export default {
   },
   data(){
     return {
+      visible: false,
       modalEditData: {},
       labelId: 5,
       modalShow: false,
       engineList: [],
       engineTemplateList: [],
       showInTableList: [],
+      showList: [
+        {
+          value: 'advanced',
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.advanced'),
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.defaultValue'),
+          value: 'defaultValue',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.description'),
+          value: 'description',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.engineConnType'),
+          value: 'engineConnType',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.hidden'),
+          value: 'hidden',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.key'),
+          value: 'key',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.level'),
+          value: 'level',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.name'),
+          value: 'name',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.treeName'),
+          value: 'treeName',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.validateRange'),
+          value: 'validateRange',
+        },
+        {
+          label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.validateType'),
+          value: 'validateType',
+        }
+      ],
+      model: ['advanced','defaultValue','description','engineConnType','hidden','key','level','name','treeName','validateRange','validateType'],
       tableColumnNum: [
         {
           title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.advanced'),
@@ -199,15 +233,29 @@ export default {
         },
         {
           title: this.$t('message.linkis.basedataManagement.action'),
+          key: "action",
           width: 150,
           slot: 'action',
           align: 'center',
         },
-
       ],
+      copyList: []
+    }
+  },
+  computed: {
+    columns(){
+      return this.tableColumnNum.filter(ele => {
+        return this.model.includes(ele.key);
+      }).concat([this.tableColumnNum[this.tableColumnNum.length - 1]]);
     }
   },
   methods: {
+    handleOpen () {
+      this.visible = true;
+    },
+    handleClose () {
+      this.visible = false;
+    },
     queryEngineTemplateList(labelId){
       this.labelId = labelId;
       queryEngineByID(labelId).then((data) => {

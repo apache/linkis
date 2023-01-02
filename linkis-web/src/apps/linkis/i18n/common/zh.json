@@ -517,7 +517,8 @@
           "yes": "是",
           "no": "否",
           "delSuccess": "删除成功",
-          "delFail": "删除失败"
+          "delFail": "删除失败",
+          "edit": "编辑"
         },
         "datasourceType": {
           "name": "名称",

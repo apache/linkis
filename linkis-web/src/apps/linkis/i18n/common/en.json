@@ -446,7 +446,8 @@
           "delSuccess": "Deletion succeeded",
           "delFail": "Deletion failed",
           "ModSuccess": "Modification succeeded",
-          "ModFail": "Modification failed"
+          "ModFail": "Modification failed",
+          "edit": "edit"
         },
         "gatewayAuthToken": {
           "tokenName": "Token Name",

@@ -60,9 +60,6 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceEngine.class);
   private static final int MAX_DESC_LEN = GovernanceCommonConf.ERROR_CODE_DESC_LEN();
 
-  private static final int RETRY_NUMBER =
-      EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue();
-
   public QueryPersistenceEngine() {
     /*
        Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
@@ -77,7 +74,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     JobRespProtocol jobRespProtocol = null;
     int retryTimes = 0;
     boolean retry = true;
-    while (retry && retryTimes < RETRY_NUMBER) {
+    while (retry
+        && retryTimes < EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue()) {
       try {
         retryTimes++;
         jobRespProtocol = (JobRespProtocol) sender.ask(jobReq);

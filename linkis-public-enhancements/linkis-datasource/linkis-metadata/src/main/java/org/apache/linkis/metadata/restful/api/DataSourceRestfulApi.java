@@ -87,13 +87,13 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
       HttpServletRequest req) {
     String userName = ModuleUserUtils.getOperationUser(req, "query partition exists");
     try {
-      if (StringUtils.isEmpty(database)) {
+      if (StringUtils.isBlank(database)) {
         return Message.error("'database' is missing[缺少数据库]");
       }
-      if (StringUtils.isEmpty(table)) {
+      if (StringUtils.isBlank(table)) {
         return Message.error("'table' is missing[缺少表名]");
       }
-      if (StringUtils.isEmpty(partition)) {
+      if (StringUtils.isBlank(partition)) {
         return Message.error("'partition' is missing[缺少分区名]");
       }
       MetadataQueryParam queryParam =

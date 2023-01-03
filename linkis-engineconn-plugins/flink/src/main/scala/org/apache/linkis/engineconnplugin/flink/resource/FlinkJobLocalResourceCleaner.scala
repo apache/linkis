@@ -24,7 +24,7 @@ import java.io.File
 /**
  * Cleaner for local resource
  */
-class FlinkJobLocalResourceCleaner extends FlinkJobResourceCleaner with Logging{
+class FlinkJobLocalResourceCleaner extends FlinkJobResourceCleaner with Logging {
 
   /**
    * Clean up path array
@@ -67,4 +67,3 @@ class FlinkJobLocalResourceCleaner extends FlinkJobResourceCleaner with Logging{
   }
 
 }
-

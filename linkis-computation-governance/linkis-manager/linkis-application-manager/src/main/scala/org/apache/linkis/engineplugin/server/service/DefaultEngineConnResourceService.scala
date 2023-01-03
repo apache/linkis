@@ -200,6 +200,8 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setFileName(localizeResource.fileName)
         engineConnBmlResource.setFileSize(localizeResource.fileSize)
         engineConnBmlResource.setLastModified(localizeResource.lastModified)
+        if (version.startsWith("v")) engineConnBmlResource.setVersion(version.substring(1))
+        else engineConnBmlResource.setVersion(version)
         engineConnBmlResource.setVersion(version)
         engineConnBmlResourceDao.save(engineConnBmlResource)
       } else {

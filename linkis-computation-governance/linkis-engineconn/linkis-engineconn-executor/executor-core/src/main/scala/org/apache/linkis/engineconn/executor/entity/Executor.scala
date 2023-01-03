@@ -50,4 +50,6 @@ trait ConcurrentExecutor extends Executor {
 
   def killAll(): Unit
 
+  def hasTaskRunning(): Boolean
+
 }

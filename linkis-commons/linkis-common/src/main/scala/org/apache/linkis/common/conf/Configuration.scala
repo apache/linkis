@@ -65,14 +65,11 @@ object Configuration extends Logging {
 
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
-  private val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
-  private val historyAdminUsers = JOB_HISTORY_ADMIN.getHotValue.split(",")
-
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
-      return false
+      false
     } else {
-      return token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
     }
   }
 
@@ -99,6 +96,7 @@ object Configuration extends Logging {
   }
 
   def isAdmin(username: String): Boolean = {
+    val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
     adminUsers.exists(username.equalsIgnoreCase)
   }
 
@@ -112,6 +110,8 @@ object Configuration extends Logging {
   }
 
   def getJobHistoryAdmin(): Array[String] = {
+    val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
+    val historyAdminUsers = JOB_HISTORY_ADMIN.getHotValue.split(",")
     (adminUsers ++ historyAdminUsers).distinct
   }
 

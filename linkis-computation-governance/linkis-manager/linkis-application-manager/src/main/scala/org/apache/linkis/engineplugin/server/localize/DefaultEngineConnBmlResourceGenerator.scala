@@ -35,6 +35,12 @@ class DefaultEngineConnBmlResourceGenerator
     getEngineConnDistHomeList(engineConnType).map { path =>
       val versionFile = new File(path)
       val key = versionFile.getName
+      if (key.contains("-")) {
+        throw new EngineConnPluginErrorException(
+          CONTAINS_SPECIAL_CHARCATERS.getErrorCode,
+          MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc, engineConnType)
+        )
+      }
       Utils.tryCatch {
         key -> generateDir(versionFile.getPath)
       } { case t: Throwable =>

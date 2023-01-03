@@ -86,13 +86,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
         DIST_IS_EMPTY.getErrorCode,
         MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
-    } else if (children.apply(0).getName.contains("-")) {
-      throw new EngineConnPluginErrorException(
-        CONTAINS_SPECIAL_CHARCATERS.getErrorCode,
-        MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc, engineConnType)
-      )
     } else {
-      Array(children.apply(0).getPath)
+      children.map(_.getPath)
     }
   }
 

@@ -222,7 +222,7 @@
         update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
     </update>
 
-    <update id="updateJobHistoryCancel" >
+    <update id="updateJobHistoryCancelById" >
         update linkis_ps_job_history_group_history set status = 'Cancelled'
         WHERE id IN
         <foreach collection="idList" item="id" separator="," open="(" close=")">

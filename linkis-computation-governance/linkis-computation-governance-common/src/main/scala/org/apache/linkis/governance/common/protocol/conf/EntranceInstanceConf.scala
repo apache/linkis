@@ -19,8 +19,8 @@ package org.apache.linkis.governance.common.protocol.conf
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-trait SendInstanceConf extends RequestProtocol
+trait EntranceInstanceConf extends RequestProtocol
 
-case class SendInstanceConfRequest(instance: String) extends SendInstanceConf
+case class EntranceInstanceConfRequest(instance: String) extends EntranceInstanceConf
 
-case class SendInstanceConfResponse(user: String, creator: String, tenant: String)
+case class EntranceInstanceConfResponse()

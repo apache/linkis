@@ -29,36 +29,4 @@
 
     <artifactId>linkis-streaming-engineconn</artifactId>
 
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <!--<excludes>-->
-                    <!--<exclude>**/*.yml</exclude>-->
-                    <!--<exclude>**/*.properties</exclude>-->
-                    <!--<exclude>**/*.sh</exclude>-->
-                    <!--</excludes>-->
-                </configuration>
-            </plugin>
-        </plugins>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-            </resource>
-        </resources>
-        <finalName>${project.artifactId}-${project.version}</finalName>
-    </build>
-
 </project>

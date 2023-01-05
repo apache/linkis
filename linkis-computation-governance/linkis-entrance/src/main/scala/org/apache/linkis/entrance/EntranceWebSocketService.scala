@@ -175,9 +175,8 @@ class EntranceWebSocketService
   }
 
   def dealExecute(event: ServerEvent): Message = {
-    val params = event.getData.map { case (k, v) =>
-      k -> v.asInstanceOf[Any]
-    } // TODO Convert to a suitable Map(转换成合适的Map)
+    // TODO Convert to a suitable Map(转换成合适的Map)
+    val params = event.getData
     val websocketTag = event.getWebsocketTag
     params.put(TaskConstant.EXECUTE_USER, event.getUser)
     val job = entranceServer.execute(params)

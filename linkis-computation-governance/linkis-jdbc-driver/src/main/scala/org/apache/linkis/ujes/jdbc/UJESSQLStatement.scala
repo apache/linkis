@@ -27,7 +27,7 @@ import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 import java.sql.{Connection, ResultSet, SQLWarning, Statement}
 import java.util.concurrent.TimeUnit
 
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration
 
@@ -120,8 +120,9 @@ class UJESSQLStatement(private[jdbc] val ujesSQLConnection: UJESSQLConnection)
       .addExecuteCode(parsedSQL)
       .setCreator(ujesSQLConnection.creator)
       .setUser(ujesSQLConnection.user)
-    if (ujesSQLConnection.variableMap.nonEmpty)
-      action.setVariableMap(JavaConversions.mapAsJavaMap(ujesSQLConnection.variableMap))
+    if (ujesSQLConnection.variableMap.nonEmpty) {
+      action.setVariableMap(ujesSQLConnection.variableMap.asJava)
+    }
     jobExecuteResult =
       Utils.tryCatch(ujesSQLConnection.ujesClient.execute(action.build())) { t: Throwable =>
         logger.error("UJESClient failed to get result", t)

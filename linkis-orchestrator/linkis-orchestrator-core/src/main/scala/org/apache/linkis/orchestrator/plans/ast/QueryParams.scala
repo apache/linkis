@@ -22,8 +22,6 @@ import org.apache.linkis.protocol.utils.TaskUtils
 
 import java.util
 
-import scala.collection.JavaConverters.mapAsScalaMapConverter
-
 /**
  */
 trait QueryParams {
@@ -36,7 +34,7 @@ trait QueryParams {
 
 }
 
-class QueryParamsImpl(params: java.util.Map[String, Any]) extends QueryParams {
+class QueryParamsImpl(params: java.util.Map[String, AnyRef]) extends QueryParams {
 
   private var startupParams: StartupParams = _
 
@@ -45,33 +43,13 @@ class QueryParamsImpl(params: java.util.Map[String, Any]) extends QueryParams {
   def init(): Unit = {
     var paramMap = params
     if (null == params) {
-      paramMap = new util.HashMap[String, Any]()
+      paramMap = new util.HashMap[String, AnyRef]()
     }
-    val startUp = {
-      val mapOri = TaskUtils.getStartupMap(paramMap)
-      val map = new util.HashMap[String, AnyRef]()
-      mapOri.asScala.foreach(kv => map.put(kv._1, kv._2.asInstanceOf[AnyRef]))
-      map
-    }
+    val startUp = TaskUtils.getStartupMap(paramMap)
     startupParams = new StartupParamsImpl(startUp)
-    val runtime = {
-      val mapOri = TaskUtils.getRuntimeMap(paramMap)
-      val map = new util.HashMap[String, AnyRef]()
-      mapOri.asScala.foreach(kv => map.put(kv._1, kv._2.asInstanceOf[AnyRef]))
-      map
-    }
-    val variable = {
-      val mapOri = TaskUtils.getVariableMap(paramMap)
-      val map = new util.HashMap[String, AnyRef]()
-      mapOri.asScala.foreach(kv => map.put(kv._1, kv._2.asInstanceOf[AnyRef]))
-      map
-    }
-    val special = {
-      val mapOri = TaskUtils.getSpecialMap(paramMap)
-      val map = new util.HashMap[String, AnyRef]()
-      mapOri.asScala.foreach(kv => map.put(kv._1, kv._2.asInstanceOf[AnyRef]))
-      map
-    }
+    val runtime = TaskUtils.getRuntimeMap(paramMap)
+    val variable = TaskUtils.getVariableMap(paramMap)
+    val special = TaskUtils.getSpecialMap(paramMap)
     runtimeParams = new RuntimeParamsImpl(runtime, variable, special)
   }
 

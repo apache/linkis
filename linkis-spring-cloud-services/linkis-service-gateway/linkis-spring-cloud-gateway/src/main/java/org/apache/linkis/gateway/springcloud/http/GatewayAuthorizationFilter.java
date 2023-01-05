@@ -164,7 +164,7 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
         return gatewayHttpResponse.getResponseMono();
       }
       serviceInstance = router.route(gatewayContext);
-      if (serviceInstance != null){
+      if (serviceInstance != null) {
         logger.info("route uri: " + serviceInstance.getInstance());
       }
     } catch (Throwable t) {

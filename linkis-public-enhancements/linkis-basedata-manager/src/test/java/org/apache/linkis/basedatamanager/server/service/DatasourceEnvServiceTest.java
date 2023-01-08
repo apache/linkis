@@ -16,12 +16,15 @@
  */
 
 package org.apache.linkis.basedatamanager.server.service;
-import java.util.Date;
 
-import com.github.pagehelper.PageInfo;
 import org.apache.linkis.basedatamanager.server.dao.DatasourceEnvMapper;
 import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
 import org.apache.linkis.basedatamanager.server.service.impl.DatasourceEnvServiceImpl;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,35 +35,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-
 @ExtendWith(MockitoExtension.class)
 class DatasourceEnvServiceTest {
-    private Logger logger = LoggerFactory.getLogger(DatasourceEnvServiceTest.class);
+  private Logger logger = LoggerFactory.getLogger(DatasourceEnvServiceTest.class);
 
-    @InjectMocks
-    private DatasourceEnvServiceImpl datasourceEnvService;
+  @InjectMocks private DatasourceEnvServiceImpl datasourceEnvService;
 
-    @Mock
-    private DatasourceEnvMapper datasourceEnvMapper;
+  @Mock private DatasourceEnvMapper datasourceEnvMapper;
 
-    @Test
-    void getListByPageTest() {
-        ArrayList<DatasourceEnvEntity> t = new ArrayList<>();
-        DatasourceEnvEntity datasourceEnvEntity = new DatasourceEnvEntity();
-        datasourceEnvEntity.setId(0);
-        datasourceEnvEntity.setEnvName("test");
-        datasourceEnvEntity.setEnvDesc("test");
-        datasourceEnvEntity.setDatasourceTypeId(0);
-        datasourceEnvEntity.setParameter("test");
-        datasourceEnvEntity.setCreateTime(new Date());
-        datasourceEnvEntity.setCreateUser("test");
-        datasourceEnvEntity.setModifyTime(new Date());
-        datasourceEnvEntity.setModifyUser("test");
-        t.add(datasourceEnvEntity);
-        Mockito.when(datasourceEnvMapper.getListByPage("")).thenReturn(t);
-        PageInfo listByPage = datasourceEnvService.getListByPage("", 1, 1);
-        Assertions.assertTrue(listByPage.getSize() > 0);
-        logger.info(listByPage.toString());
-    }
+  @Test
+  void getListByPageTest() {
+    ArrayList<DatasourceEnvEntity> t = new ArrayList<>();
+    DatasourceEnvEntity datasourceEnvEntity = new DatasourceEnvEntity();
+    datasourceEnvEntity.setId(0);
+    datasourceEnvEntity.setEnvName("test");
+    datasourceEnvEntity.setEnvDesc("test");
+    datasourceEnvEntity.setDatasourceTypeId(0);
+    datasourceEnvEntity.setParameter("test");
+    datasourceEnvEntity.setCreateTime(new Date());
+    datasourceEnvEntity.setCreateUser("test");
+    datasourceEnvEntity.setModifyTime(new Date());
+    datasourceEnvEntity.setModifyUser("test");
+    t.add(datasourceEnvEntity);
+    Mockito.when(datasourceEnvMapper.getListByPage("")).thenReturn(t);
+    PageInfo listByPage = datasourceEnvService.getListByPage("", 1, 1);
+    Assertions.assertTrue(listByPage.getSize() > 0);
+    logger.info(listByPage.toString());
+  }
 }

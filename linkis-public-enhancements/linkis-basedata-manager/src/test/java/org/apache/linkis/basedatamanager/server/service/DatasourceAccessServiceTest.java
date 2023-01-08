@@ -17,11 +17,14 @@
 
 package org.apache.linkis.basedatamanager.server.service;
 
-import com.github.pagehelper.PageInfo;
 import org.apache.linkis.basedatamanager.server.dao.DatasourceAccessMapper;
 import org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity;
-import org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity;
 import org.apache.linkis.basedatamanager.server.service.impl.DatasourceAccessServiceImpl;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,34 +35,29 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 @ExtendWith(MockitoExtension.class)
 class DatasourceAccessServiceTest {
-    private Logger logger = LoggerFactory.getLogger(DatasourceAccessServiceTest.class);
+  private Logger logger = LoggerFactory.getLogger(DatasourceAccessServiceTest.class);
 
-    @InjectMocks
-    private DatasourceAccessServiceImpl datasourceAccessService;
+  @InjectMocks private DatasourceAccessServiceImpl datasourceAccessService;
 
-    @Mock
-    private DatasourceAccessMapper datasourceAccessMapper;
+  @Mock private DatasourceAccessMapper datasourceAccessMapper;
 
-    @Test
-    void getListByPageTest() {
-        ArrayList<DatasourceAccessEntity> t = new ArrayList<>();
-        DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
-        datasourceAccessEntity.setId(0L);
-        datasourceAccessEntity.setTableId(0L);
-        datasourceAccessEntity.setVisitor("test");
-        datasourceAccessEntity.setFields("test");
-        datasourceAccessEntity.setApplicationId(0);
-        datasourceAccessEntity.setAccessTime(new Date());
+  @Test
+  void getListByPageTest() {
+    ArrayList<DatasourceAccessEntity> t = new ArrayList<>();
+    DatasourceAccessEntity datasourceAccessEntity = new DatasourceAccessEntity();
+    datasourceAccessEntity.setId(0L);
+    datasourceAccessEntity.setTableId(0L);
+    datasourceAccessEntity.setVisitor("test");
+    datasourceAccessEntity.setFields("test");
+    datasourceAccessEntity.setApplicationId(0);
+    datasourceAccessEntity.setAccessTime(new Date());
 
-        t.add(datasourceAccessEntity);
-        Mockito.when(datasourceAccessMapper.getListByPage("")).thenReturn(t);
-        PageInfo listByPage = datasourceAccessService.getListByPage("", 1, 1);
-        Assertions.assertTrue(listByPage.getSize() > 0);
-        logger.info(listByPage.toString());
-    }
+    t.add(datasourceAccessEntity);
+    Mockito.when(datasourceAccessMapper.getListByPage("")).thenReturn(t);
+    PageInfo listByPage = datasourceAccessService.getListByPage("", 1, 1);
+    Assertions.assertTrue(listByPage.getSize() > 0);
+    logger.info(listByPage.toString());
+  }
 }

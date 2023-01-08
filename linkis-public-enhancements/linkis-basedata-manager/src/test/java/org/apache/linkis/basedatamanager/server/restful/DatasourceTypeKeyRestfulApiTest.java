@@ -56,24 +56,24 @@ public class DatasourceTypeKeyRestfulApiTest {
 
   @BeforeAll
   public static void setup() {
-    datasourceTypeKeyEntity = Mockito.mock(DatasourceTypeKeyEntity.class);
-    Mockito.when(datasourceTypeKeyEntity.getKey()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getValueType()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getCreateTime()).thenReturn(new Date());
-    Mockito.when(datasourceTypeKeyEntity.getUpdateTime()).thenReturn(new Date());
-    Mockito.when(datasourceTypeKeyEntity.getId()).thenReturn(1);
-    Mockito.when(datasourceTypeKeyEntity.getDataSourceTypeId()).thenReturn(1);
-    Mockito.when(datasourceTypeKeyEntity.getDataSource()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getName()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getDefaultValue()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getDescription()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getDescriptionEn()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getNameEn()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getRefId()).thenReturn(1L);
-    Mockito.when(datasourceTypeKeyEntity.getRefValue()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getRequire()).thenReturn(1);
-    Mockito.when(datasourceTypeKeyEntity.getScope()).thenReturn("test");
-    Mockito.when(datasourceTypeKeyEntity.getValueRegex()).thenReturn("test");
+    datasourceTypeKeyEntity = new DatasourceTypeKeyEntity();
+    datasourceTypeKeyEntity.setId(0);
+    datasourceTypeKeyEntity.setDataSourceTypeId(0);
+    datasourceTypeKeyEntity.setKey("test");
+    datasourceTypeKeyEntity.setName("test");
+    datasourceTypeKeyEntity.setNameEn("test");
+    datasourceTypeKeyEntity.setDefaultValue("test");
+    datasourceTypeKeyEntity.setValueType("test");
+    datasourceTypeKeyEntity.setScope("test");
+    datasourceTypeKeyEntity.setRequire(0);
+    datasourceTypeKeyEntity.setDescription("test");
+    datasourceTypeKeyEntity.setDescriptionEn("test");
+    datasourceTypeKeyEntity.setValueRegex("test");
+    datasourceTypeKeyEntity.setRefId(0L);
+    datasourceTypeKeyEntity.setRefValue("test");
+    datasourceTypeKeyEntity.setDataSource("test");
+    datasourceTypeKeyEntity.setUpdateTime(new Date());
+    datasourceTypeKeyEntity.setCreateTime(new Date());
   }
 
   @Test

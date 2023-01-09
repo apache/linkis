@@ -291,14 +291,16 @@ then
   export GATEWAY_INSTALL_IP=$SERVER_IP
 fi
 
+currentTime=`date +%Y%m%d%H%M%S`
+
 ##eureka
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-eureka.yml
 sed -i ${txt}  "s#port:.*#port: $EUREKA_PORT#g" $LINKIS_HOME/conf/application-eureka.yml
-sed -i ${txt}  "s#service.version:.*#service.version: $LINKIS_VERSION#g" $LINKIS_HOME/conf/application-eureka.yml
+sed -i ${txt}  "s#linkis.version:.*#linkis.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-eureka.yml
 
 ##server application.yml
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.yml
-sed -i ${txt}  "s#service.version:.*#service.version: $LINKIS_VERSION#g" $LINKIS_HOME/conf/application-linkis.yml
+sed -i ${txt}  "s#linkis.version:.*#linkis.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.yml
 
 echo "update conf $common_conf"
 sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_SERVER_VERSION#g" $common_conf

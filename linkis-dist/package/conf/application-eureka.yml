@@ -25,7 +25,7 @@ eureka:
   instance:
     metadata-map:
       prometheus.path: ${prometheus.path:/actuator/prometheus}
-      service.version: ${service.version}
+      linkis.version: ${linkis.version}
     hostname:
 #    preferIpAddress: true
   client:

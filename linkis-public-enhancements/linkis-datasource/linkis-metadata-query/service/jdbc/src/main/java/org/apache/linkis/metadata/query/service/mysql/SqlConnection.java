@@ -85,7 +85,8 @@ public class SqlConnection implements Closeable {
 
     // enable strong security
     if (MYSQL_STRONG_SECURITY_ENABLE.getValue()) {
-      LOG.info("mysql metadata use strong security configuration. Remove all connection parameters.");
+      LOG.info(
+          "mysql metadata use strong security configuration. Remove all connection parameters.");
       extraParams.clear();
     }
 
@@ -107,6 +108,7 @@ public class SqlConnection implements Closeable {
           || keyAndValueIsNotSecurity(key, value, "allowUrlInLocalInfile")
           || keyAndValueIsNotSecurity(key, value, "#")) {
         iterator.remove();
+        LOG.warn("mysql metadata sensitive param : key={} and value={}", key, value);
       }
     }
 
@@ -118,7 +120,7 @@ public class SqlConnection implements Closeable {
 
     // print extraParams
     StringBuilder sb = new StringBuilder("mysql metadata url extraParams: [ ");
-    for(Map.Entry<String, Object> paramEntry : extraParams.entrySet()){
+    for (Map.Entry<String, Object> paramEntry : extraParams.entrySet()) {
       sb.append(paramEntry.getKey()).append("=").append(paramEntry.getValue()).append(" ,");
     }
     sb.deleteCharAt(sb.length() - 1);

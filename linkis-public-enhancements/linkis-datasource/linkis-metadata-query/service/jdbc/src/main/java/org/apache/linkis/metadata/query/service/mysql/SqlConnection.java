@@ -20,13 +20,15 @@ package org.apache.linkis.metadata.query.service.mysql;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import scala.annotation.meta.param;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class SqlConnection implements Closeable {
 
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
+
+  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars.apply("linkis.mysql.strong.security.enable", false);
 
   private Connection conn;
 
@@ -74,8 +79,15 @@ public class SqlConnection implements Closeable {
    * @param extraParams
    */
   private void validateParams(Map<String, Object> extraParams) {
-    if (CollectionUtils.isEmpty(extraParams)) {
+    if (extraParams == null) {
       return;
+    }
+
+    // enable strong security
+    if (MYSQL_STRONG_SECURITY_ENABLE.getValue()) {
+      LOG.info(
+          "mysql metadata use strong security configuration. Remove all connection parameters.");
+      extraParams.clear();
     }
 
     // Delete suspected vulnerability parameters
@@ -83,12 +95,20 @@ public class SqlConnection implements Closeable {
     while (iterator.hasNext()) {
       Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
-      if ("allowLoadLocalInfile".equalsIgnoreCase(key)
-          || "autoDeserialize".equalsIgnoreCase(key)
-          || "allowLocalInfile".equalsIgnoreCase(key)
-          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
-        extraParams.remove(key);
+      if (StringUtils.isBlank(key)
+          || entry.getValue() == null
+          || StringUtils.isBlank(entry.getValue().toString())) {
         iterator.remove();
+        continue;
+      }
+      String value = entry.getValue().toString();
+      if (keyAndValueIsNotSecurity(key, value, "allowLoadLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "autoDeserialize")
+          || keyAndValueIsNotSecurity(key, value, "allowLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "allowUrlInLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "#")) {
+        iterator.remove();
+        LOG.warn("mysql metadata sensitive param : key={} and value={}", key, value);
       }
     }
 
@@ -97,6 +117,26 @@ public class SqlConnection implements Closeable {
     extraParams.put("autoDeserialize", "false");
     extraParams.put("allowLocalInfile", "false");
     extraParams.put("allowUrlInLocalInfile", "false");
+
+    // print extraParams
+    StringBuilder sb = new StringBuilder("mysql metadata url extraParams: [ ");
+    for (Map.Entry<String, Object> paramEntry : extraParams.entrySet()) {
+      sb.append(paramEntry.getKey()).append("=").append(paramEntry.getValue()).append(" ,");
+    }
+    sb.deleteCharAt(sb.length() - 1);
+    sb.append("]");
+    LOG.info(sb.toString());
+  }
+
+  private boolean keyAndValueIsNotSecurity(String key, String value, String param) {
+    return !(isSecurity(key, param) && isSecurity(value, param));
+  }
+
+  private boolean isSecurity(String noSecurityKey, String param) {
+    if (StringUtils.isBlank(param) || StringUtils.isBlank(noSecurityKey)) {
+      return true;
+    }
+    return !noSecurityKey.toLowerCase().contains(param.toLowerCase());
   }
 
   public List<String> getAllDatabases() throws SQLException {

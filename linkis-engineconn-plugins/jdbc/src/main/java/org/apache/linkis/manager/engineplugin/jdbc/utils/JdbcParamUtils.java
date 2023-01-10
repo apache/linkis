@@ -17,6 +17,8 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.utils;
 
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars$;
 import org.apache.linkis.manager.engineplugin.jdbc.JDBCPropertiesParser;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
@@ -44,6 +46,9 @@ public class JdbcParamUtils {
 
   private static final String APPEND_PARAMS =
       "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false";
+
+  public static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
   private static final char AND_SYMBOL = '&';
 
@@ -78,6 +83,12 @@ public class JdbcParamUtils {
     if (!url.contains(String.valueOf(QUESTION_MARK))) {
       return url + QUESTION_MARK + APPEND_PARAMS;
     }
+
+    // enable strong security
+    if (Boolean.valueOf(MYSQL_STRONG_SECURITY_ENABLE.getValue())) {
+      return url + QUESTION_MARK + APPEND_PARAMS;
+    }
+
     int two = 2;
 
     // deal with params

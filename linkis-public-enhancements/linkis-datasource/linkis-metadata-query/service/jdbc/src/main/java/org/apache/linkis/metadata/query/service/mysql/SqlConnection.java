@@ -22,8 +22,6 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.springframework.util.CollectionUtils;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
@@ -50,6 +48,9 @@ public class SqlConnection implements Closeable {
 
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
+
+  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars.apply("linkis.mysql.strong.security.enable", false);
 
   private Connection conn;
 
@@ -78,8 +79,13 @@ public class SqlConnection implements Closeable {
    * @param extraParams
    */
   private void validateParams(Map<String, Object> extraParams) {
-    if (CollectionUtils.isEmpty(extraParams)) {
+    if (extraParams == null) {
       return;
+    }
+
+    // enable strong security
+    if (MYSQL_STRONG_SECURITY_ENABLE.getValue()) {
+      extraParams.clear();
     }
 
     // Delete suspected vulnerability parameters

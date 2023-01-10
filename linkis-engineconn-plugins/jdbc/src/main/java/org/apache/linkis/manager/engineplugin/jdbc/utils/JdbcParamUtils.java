@@ -86,15 +86,14 @@ public class JdbcParamUtils {
 
     // enable strong security
     if (Boolean.valueOf(MYSQL_STRONG_SECURITY_ENABLE.getValue())) {
+      LOG.info("mysql engine use strong security configuration. Remove all connection parameters.");
       return url + QUESTION_MARK + APPEND_PARAMS;
     }
-
-    int two = 2;
 
     // deal with params
     String[] items = url.split("\\?");
     // params error: multiple question marks
-    if (items.length != two) {
+    if (items.length != 2) {
       LOG.warn("JDBC params error, the url is : " + url);
       return items[0];
     }
@@ -104,7 +103,7 @@ public class JdbcParamUtils {
     for (String param : params) {
       String[] keyAndValues = param.split("=");
       // params error: key and value error
-      if (keyAndValues.length != two) {
+      if (keyAndValues.length != 2) {
         continue;
       }
       String key = keyAndValues[0];

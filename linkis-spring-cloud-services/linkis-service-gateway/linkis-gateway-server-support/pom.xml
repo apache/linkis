@@ -99,6 +99,12 @@
       <groupId>com.webank.wedatasphere.dss</groupId>
       <artifactId>dss-gateway-support</artifactId>
       <version>1.1.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-gateway-server-support</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>

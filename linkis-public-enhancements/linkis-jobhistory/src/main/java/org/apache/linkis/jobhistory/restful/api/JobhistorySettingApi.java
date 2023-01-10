@@ -59,19 +59,26 @@ public class JobhistorySettingApi {
   public Message addObserveInfo(HttpServletRequest req, @RequestBody MonitorVO monitor) {
     String username = ModuleUserUtils.getOperationUser(req, "addObserveInfo");
     // Parameter verification
-    if (null == monitor.getTaskId()) return Message.error("TaskId can't be empty ");
-    if (StringUtils.isBlank(monitor.getReceiver())) return Message.error("Receiver can't be empty");
+    if (null == monitor.getTaskId()) {
+      return Message.error("TaskId can't be empty ");
+    }
+    if (StringUtils.isBlank(monitor.getReceiver())) {
+      return Message.error("Receiver can't be empty");
+    }
     if (null == monitor.getExtra()) {
       return Message.error("Extra can't be empty ");
     } else {
       Map<String, String> extra = monitor.getExtra();
-      if (StringUtils.isBlank(extra.getOrDefault("title", "")))
+      if (StringUtils.isBlank(extra.getOrDefault("title", ""))) {
         return Message.error("title can't be empty ");
-      if (StringUtils.isBlank(extra.getOrDefault("detail", "")))
+      }
+      if (StringUtils.isBlank(extra.getOrDefault("detail", ""))) {
         return Message.error("detail can't be empty ");
+      }
     }
-    if (StringUtils.isBlank(monitor.getMonitorLevel()))
+    if (StringUtils.isBlank(monitor.getMonitorLevel())) {
       return Message.error("MonitorLevel can't be empty ");
+    }
     if (StringUtils.isBlank(monitor.getSubSystemId()))
       return Message.error("SubSystemId can't be empty ");
     // Get jobInfo according to ID
@@ -81,13 +88,7 @@ public class JobhistorySettingApi {
       return Message.error("Only submitUser can change");
     }
 
-    //    Map<String, Object> map =
-    //        BDPJettyServerHelper.gson().fromJson(jobHistory.getParams(), new
-    // HashMap<>().getClass());
-    //    Map<String, Object> runtimeMap = TaskUtils.getRuntimeMap(map);
-    //    if (runtimeMap.containsKey("task.notification.conditions")) {
-    // Judge whether the task has been completed, and cannot be modified when it is completed
-    if (TaskConversions.isJobFinished(jobHistory.getStatus())) {
+    if (!TaskConversions.isJobFinished(jobHistory.getStatus())) {
       // Task not completed, update job record
       String observeInfoJson = BDPJettyServerHelper.gson().toJson(monitor);
       jobHistory.setObserveInfo(observeInfoJson);

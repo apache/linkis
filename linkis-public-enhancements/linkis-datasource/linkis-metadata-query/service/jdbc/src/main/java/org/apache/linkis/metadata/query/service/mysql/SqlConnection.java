@@ -20,6 +20,8 @@ package org.apache.linkis.metadata.query.service.mysql;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.springframework.util.CollectionUtils;
 
 import java.io.Closeable;
@@ -27,6 +29,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import scala.annotation.meta.param;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,11 +87,18 @@ public class SqlConnection implements Closeable {
     while (iterator.hasNext()) {
       Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
-      if ("allowLoadLocalInfile".equalsIgnoreCase(key)
-          || "autoDeserialize".equalsIgnoreCase(key)
-          || "allowLocalInfile".equalsIgnoreCase(key)
-          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
-        extraParams.remove(key);
+      if (StringUtils.isBlank(key)
+          || entry.getValue() == null
+          || StringUtils.isBlank(entry.getValue().toString())) {
+        iterator.remove();
+        continue;
+      }
+      String value = entry.getValue().toString();
+      if (keyAndValueIsNotSecurity(key, value, "allowLoadLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "autoDeserialize")
+          || keyAndValueIsNotSecurity(key, value, "allowLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "allowUrlInLocalInfile")
+          || keyAndValueIsNotSecurity(key, value, "#")) {
         iterator.remove();
       }
     }
@@ -97,6 +108,17 @@ public class SqlConnection implements Closeable {
     extraParams.put("autoDeserialize", "false");
     extraParams.put("allowLocalInfile", "false");
     extraParams.put("allowUrlInLocalInfile", "false");
+  }
+
+  private boolean keyAndValueIsNotSecurity(String key, String value, String param) {
+    return !(isSecurity(key, param) && isSecurity(value, param));
+  }
+
+  private boolean isSecurity(String noSecurityKey, String param) {
+    if (StringUtils.isBlank(param) || StringUtils.isBlank(noSecurityKey)) {
+      return true;
+    }
+    return !noSecurityKey.toLowerCase().contains(param.toLowerCase());
   }
 
   public List<String> getAllDatabases() throws SQLException {

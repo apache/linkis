@@ -23,7 +23,9 @@ import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalEx
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,20 +66,58 @@ public class JdbcParamUtils {
   }
 
   public static String filterJdbcUrl(String url) {
-    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
-    if (!url.startsWith(JDBC_MYSQL_PROTOCOL) && !url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
+    if (StringUtils.isBlank(url)) {
       return url;
     }
-    if (url.contains(SENSITIVE_PARAM)) {
-      int index = url.indexOf(SENSITIVE_PARAM);
-      String tmp = SENSITIVE_PARAM;
-      if (url.charAt(index - 1) == AND_SYMBOL) {
-        tmp = AND_SYMBOL + tmp;
-      } else if (url.charAt(index + 1) == AND_SYMBOL) {
-        tmp = tmp + AND_SYMBOL;
+    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
+    if (!url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
+      return url;
+    }
+
+    // no params
+    if (!url.contains(String.valueOf(QUESTION_MARK))) {
+      return url;
+    }
+    int two = 2;
+
+    // deal with params
+    String[] items = url.split(String.valueOf(QUESTION_MARK));
+    // params error: multiple question marks
+    if (items.length != two) {
+      LOG.warn("JDBC params error, the url is : " + url);
+      return items[0];
+    }
+
+    String[] params = items[1].split("&");
+    Map<String, String> paramsMap = new HashMap<>(params.length);
+    for (String param : params) {
+      String[] keyAndValues = param.split("=");
+      // params error: key and value error
+      if (keyAndValues.length != two) {
+        continue;
       }
-      LOG.warn("Sensitive param: {} in jdbc url is filtered.", tmp);
-      url = url.replace(tmp, "");
+      String key = keyAndValues[0];
+      String value = keyAndValues[1];
+      // key and value is blank
+      if (StringUtils.isBlank(key) || StringUtils.isBlank(value)) {
+        continue;
+      }
+      if (isSecurity(key, value)) {
+        paramsMap.put(key, value);
+      } else {
+        LOG.warn("Sensitive param : {} and {}", key, value);
+      }
+    }
+    String extraParamString =
+        paramsMap.entrySet().stream()
+            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+            .collect(Collectors.joining("&"));
+
+    if (StringUtils.isBlank(extraParamString)) {
+      url = items[0];
+    } else {
+
+      url = items + String.valueOf(QUESTION_MARK) + extraParamString;
     }
     if (url.endsWith(String.valueOf(QUESTION_MARK))) {
       url = url + APPEND_PARAMS;
@@ -88,6 +128,18 @@ public class JdbcParamUtils {
     }
     LOG.info("The filtered jdbc url is: {}", url);
     return url;
+  }
+
+  private static boolean isSecurity(String key, String value) {
+    return !(isNotSecurity(key) || isNotSecurity(value));
+  }
+
+  private static boolean isNotSecurity(String key) {
+    return key.toLowerCase().contains("allowLoadLocalInfile".toLowerCase())
+        || key.toLowerCase().contains("autoDeserialize".toLowerCase())
+        || key.toLowerCase().contains("allowLocalInfile".toLowerCase())
+        || key.toLowerCase().contains("allowUrlInLocalInfile".toLowerCase())
+        || key.toLowerCase().contains("#".toLowerCase());
   }
 
   public static String getJdbcUsername(Map<String, String> properties)

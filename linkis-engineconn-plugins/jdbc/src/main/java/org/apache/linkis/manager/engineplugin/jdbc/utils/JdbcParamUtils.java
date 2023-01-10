@@ -76,12 +76,12 @@ public class JdbcParamUtils {
 
     // no params
     if (!url.contains(String.valueOf(QUESTION_MARK))) {
-      return url;
+      return url + QUESTION_MARK + APPEND_PARAMS;
     }
     int two = 2;
 
     // deal with params
-    String[] items = url.split(String.valueOf(QUESTION_MARK));
+    String[] items = url.split("\\?");
     // params error: multiple question marks
     if (items.length != two) {
       LOG.warn("JDBC params error, the url is : " + url);
@@ -105,7 +105,7 @@ public class JdbcParamUtils {
       if (isSecurity(key, value)) {
         paramsMap.put(key, value);
       } else {
-        LOG.warn("Sensitive param : {} and {}", key, value);
+        LOG.warn("Sensitive param : key={} and value={}", key, value);
       }
     }
     String extraParamString =
@@ -116,8 +116,7 @@ public class JdbcParamUtils {
     if (StringUtils.isBlank(extraParamString)) {
       url = items[0];
     } else {
-
-      url = items + String.valueOf(QUESTION_MARK) + extraParamString;
+      url = items[0] + String.valueOf(QUESTION_MARK) + extraParamString;
     }
     if (url.endsWith(String.valueOf(QUESTION_MARK))) {
       url = url + APPEND_PARAMS;

@@ -31,7 +31,19 @@ public class JdbcParamUtilsTest {
   @Test
   @DisplayName("testFilterJdbcUrl")
   public void testFilterJdbcUrl() {
-    String url = "jdbc:mysql://localhost:3306/db_name";
+    String url = "jdbc:mysql://localhost:3306/db_name?allowLoadLocalInfile=true&autoDeserialize=true&#sk=13&p1=v1";
+    url = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(
+            "jdbc:mysql://localhost:3306/db_name?p1=v1&allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
+            url);
+
+    url = "jdbc:mysql://localhost:3306/db_name?\\#allowLoadLocalInfile=true&autoDeserialize=true&#sk=13&p1=v1";
+    url = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(
+            "jdbc:mysql://localhost:3306/db_name?p1=v1&allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
+            url);
+
+    url = "jdbc:mysql://localhost:3306/db_name";
     url = JdbcParamUtils.filterJdbcUrl(url);
     Assertions.assertEquals(
         "jdbc:mysql://localhost:3306/db_name?allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",

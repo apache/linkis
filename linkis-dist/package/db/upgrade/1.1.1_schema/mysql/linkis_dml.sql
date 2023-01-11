@@ -211,6 +211,6 @@ INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hos
 
 
 
--- https://github.com/apache/incubator-linkis/issues/1899
+-- https://github.com/apache/linkis/issues/1899
 update `linkis_cg_rm_external_resource_provider` set `name` = 'default' where name = 'sit' and `resource_type` = 'Yarn';
 

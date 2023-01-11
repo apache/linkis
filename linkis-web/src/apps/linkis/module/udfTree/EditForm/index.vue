@@ -155,6 +155,7 @@ export default {
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.udfTree.parent'),
               trigger: 'blur',
+              type: 'number'
             },
           ],
         }

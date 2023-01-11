@@ -32,7 +32,10 @@ export default {
   },
   data() {
     return {
-      formModel: {},
+      formModel: {
+        elapseDay: 1,
+        permanentlyValid: false,
+      },
       // formData: {},
       options: {
         submitBtn: false,
@@ -140,10 +143,10 @@ export default {
           on: {
             'on-change': () => {
               this.rule[5].hidden = !this.rule[5].hidden;
-              if(this.rule[5].hidden) {
-                this.formModel.elapseDay = -1;
+              if(!this.rule[5].hidden) {
+                this.rule[5].value = 1;
               } else {
-                this.formModel.elapseDay = 1;
+                this.rule[5].value = -1;
               }
             }
           }

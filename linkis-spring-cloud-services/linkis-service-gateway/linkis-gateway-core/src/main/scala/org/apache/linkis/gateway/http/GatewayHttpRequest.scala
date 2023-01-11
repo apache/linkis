@@ -19,6 +19,8 @@ package org.apache.linkis.gateway.http
 
 import org.apache.linkis.server.JMap
 
+import org.springframework.http.server.reactive.AbstractServerHttpRequest
+
 import javax.servlet.http.Cookie
 
 import java.net.{InetSocketAddress, URI}
@@ -40,6 +42,8 @@ trait GatewayHttpRequest {
   def getCookies: JMap[String, Array[Cookie]]
 
   def getRemoteAddress: InetSocketAddress
+
+  def getRequestRealIpAddr(): String
 
   def getMethod: String
 

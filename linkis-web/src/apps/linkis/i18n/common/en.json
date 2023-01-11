@@ -415,8 +415,7 @@
           "cancel": "Cancel",
           "modalTitle": "Info",
           "modalFormat": "Confirm deleting the {0} record?",
-          "modalDelete1": "Confirm that the record [{username}] should be deleted?",
-          "modalDelete": "Confirm that the record [{envName}] should be deleted?",
+          "modalDelete": "Confirm that the record [{name}] should be deleted?",
           "modalDeleteSuccess": "Successfully delete",
           "modalDeleteFail": "Fail to delete",
           "modalAddSuccess": "Successfully added",
@@ -550,7 +549,11 @@
         "rollback": "Rollback",
         "action": "Operate",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
-        "upload": "Please click the button to upload the engine plug-in"
+        "upload": "Please click the button to upload the engine plug-in",
+        "hasUpload": "The file has been uploaded, you can click to upload again",
+        "force": "Whether to overwrite",
+        "yes": "Yes",
+        "no": "No"
       }
     }
   }

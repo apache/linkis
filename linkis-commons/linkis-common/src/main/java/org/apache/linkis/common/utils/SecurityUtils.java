@@ -71,9 +71,8 @@ public abstract class SecurityUtils {
     if (StringUtils.isBlank(url)) {
       return "";
     }
-    Map<String, Object> forceParams = parseMysqlUrlParamsToMap(MYSQL_FORCE_PARAMS.getValue());
 
-    String extraParamString = parseParamsMapToMysqlParamUrl(forceParams);
+    String extraParamString = MYSQL_FORCE_PARAMS.getValue();
 
     if (url.endsWith(QUESTION_MARK)) {
       url = url + extraParamString;

@@ -90,7 +90,7 @@
     <dependency>
       <groupId>com.github.pjfanning</groupId>
       <artifactId>excel-streaming-reader</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.5</version>
     </dependency>
 
   </dependencies>

@@ -15,41 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.executor.entity
+package org.apache.linkis.engineconnplugin.flink.resource
 
-import org.apache.linkis.common.utils.Logging
-
-trait Executor extends Logging {
-
-  def getId: String
-
-  def init(): Unit
-
-  def tryReady(): Boolean
-
-  def tryShutdown(): Boolean
-
-  def tryFailed(): Boolean
-
-  def trySucceed(): Boolean
+trait FlinkJobResourceCleaner {
 
   /**
-   * 仅用于Kill Executor EngineConn kill 在AccessibleService
+   * Clean up resource array
+   *
+   * @param resArray
+   *   resource array
    */
-  def close(): Unit = {
-    logger.warn(s"Executor($getId) exit by close.")
-  }
+  def cleanup(resArray: Array[String]): Unit
 
-  def isClosed: Boolean
-
-}
-
-trait ConcurrentExecutor extends Executor {
-
-  def getConcurrentLimit: Int
-
-  def killAll(): Unit
-
-  def hasTaskRunning(): Boolean
-
+  /**
+   * If accept the resource
+   *
+   * @param resource
+   *   resource
+   * @return
+   */
+  def accept(resource: String): Boolean
 }

@@ -64,4 +64,8 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
       executeResponse: ExecuteResponse
   ): Unit = {}
 
+  override def hasTaskRunning(): Boolean = {
+    getRunningTask > 0
+  }
+
 }

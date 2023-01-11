@@ -655,7 +655,8 @@ CREATE TABLE `linkis_ps_error_code` (
   `error_desc` varchar(1024) NOT NULL,
   `error_regex` varchar(1024) DEFAULT NULL,
   `error_type` int(3) DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `idx_error_regex` (error_regex(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance`;

@@ -60,18 +60,18 @@ help() {
 
 #pull the container image of the linkis
 pull(){
-    debug ${MIRRORS}/apache/incubator-linkis/linkis-ldh:${TAG}
-    docker pull ${MIRRORS}/apache/incubator-linkis/linkis-ldh:${TAG}
-    debug ${MIRRORS}/apache/incubator-linkis/linkis:${TAG}
-    docker pull ${MIRRORS}/apache/incubator-linkis/linkis:${TAG}
-    debug ${MIRRORS}/apache/incubator-linkis/linkis-web:${TAG}
-    docker pull ${MIRRORS}/apache/incubator-linkis/linkis-web:${TAG}
+    debug ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    debug ${MIRRORS}/apache/linkis/linkis:${TAG}
+    docker pull ${MIRRORS}/apache/linkis/linkis:${TAG}
+    debug ${MIRRORS}/apache/linkis/linkis-web:${TAG}
+    docker pull ${MIRRORS}/apache/linkis/linkis-web:${TAG}
 }
 #change the label
 tag(){
-    docker tag  ${MIRRORS}/apache/incubator-linkis/linkis:${TAG} linkis:dev
-    docker tag  ${MIRRORS}/apache/incubator-linkis/linkis-web:${TAG} linkis-web:dev
-    docker tag  ${MIRRORS}/apache/incubator-linkis/linkis-ldh:${TAG} linkis-ldh:dev
+    docker tag  ${MIRRORS}/apache/linkis/linkis:${TAG} linkis:dev
+    docker tag  ${MIRRORS}/apache/linkis/linkis-web:${TAG} linkis-web:dev
+    docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
 }
 #create an image to carry mysql
 make_linikis_image_with_mysql_jdbc(){

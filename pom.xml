@@ -656,49 +656,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
-        <version>${hadoop.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>netty</groupId>
-            <artifactId>io.netty</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-auth</artifactId>
         <version>${hadoop.version}</version>
         <exclusions>
@@ -717,64 +674,6 @@
           <exclusion>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-mapreduce-client-core</artifactId>
-        <version>${hadoop.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-yarn-api</artifactId>
-        <version>${hadoop.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.jboss.netty</groupId>
-            <artifactId>netty</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.jersey.jersey-test-framework</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>jdk.tools</groupId>
-            <artifactId>jdk.tools</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1349,6 +1248,20 @@
   </build>
 
   <profiles>
+    <!-- hadoop version: mvn validate -Phadoop3  -->
+    <profile>
+      <id>hadoop3</id>
+      <properties>
+        <hadoop.version>3.3.1</hadoop.version>
+      </properties>
+    </profile>
+    <!-- hadoop version: mvn validate -Phadoop2  -->
+    <profile>
+      <id>hadoop2</id>
+      <properties>
+        <hadoop.version>2.7.2</hadoop.version>
+      </properties>
+    </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->
     <profile>
       <id>jacoco</id>

@@ -115,7 +115,7 @@ public class JobhistorySettingApi {
     if (!username.equals(jobHistory.getSubmitUser())) {
       return Message.error("Only submitUser can change");
     }
-    if (TaskConversions.isJobFinished(jobHistory.getStatus())) {
+    if (!TaskConversions.isJobFinished(jobHistory.getStatus())) {
       jobHistory.setObserveInfo("");
       jobHistoryQueryService.changeObserveInfoById(jobHistory);
     } else {

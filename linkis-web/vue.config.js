@@ -163,10 +163,10 @@ module.exports = {
               { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'}
             ],
             // 先删除根目录下的zip包
-            delete: [`./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`],
+            delete: [`./apache-linkis-${getVersion()}-web-bin.tar.gz`],
             // 将dist文件夹下的文件进行打包
             archive: [
-              { source: './dist', destination: `./apache-linkis-${getVersion()}-incubating-web-bin.tar.gz`,format: 'tar' ,
+              { source: './dist', destination: `./apache-linkis-${getVersion()}-web-bin.tar.gz`,format: 'tar' ,
                 options: {
                   gzip: true,
                   gzipOptions: {

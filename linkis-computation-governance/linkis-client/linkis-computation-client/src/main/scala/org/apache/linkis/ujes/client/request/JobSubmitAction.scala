@@ -42,24 +42,24 @@ object JobSubmitAction {
     // TODO: remove executeUser in the future
     private var executeUser: String = _
 
-    private var executionContent: util.Map[String, Any] = _
+    private var executionContent: util.Map[String, AnyRef] = _
 
     private var formatCode: Boolean = false
 
-    private var labels: util.Map[String, Any] = _
+    private var labels: util.Map[String, AnyRef] = _
 
-    private var params: util.Map[String, Any] = _
+    private var params: util.Map[String, AnyRef] = _
 
-    private var source: util.Map[String, Any] = _
+    private var source: util.Map[String, AnyRef] = _
 
     def addExecuteCode(executeCode: String): Builder = {
-      if (null == executionContent) executionContent = new util.HashMap[String, Any]()
+      if (null == executionContent) executionContent = new util.HashMap[String, AnyRef]()
       executionContent.put("code", executeCode)
       this
     }
 
     def setRunTypeStr(runTypeStr: String): Builder = {
-      if (null == executionContent) executionContent = new util.HashMap[String, Any]()
+      if (null == executionContent) executionContent = new util.HashMap[String, AnyRef]()
       executionContent.put("runType", runTypeStr)
       this
     }
@@ -79,54 +79,52 @@ object JobSubmitAction {
       this
     }
 
-    def setExecutionContent(executionContent: util.Map[String, Any]): Builder = {
+    def setExecutionContent(executionContent: util.Map[String, AnyRef]): Builder = {
       this.executionContent = executionContent
       this
     }
 
-    def setLabels(labels: util.Map[String, Any]): Builder = {
+    def setLabels(labels: util.Map[String, AnyRef]): Builder = {
       this.labels = labels
       this
     }
 
-    def setParams(params: util.Map[String, Any]): Builder = {
+    def setParams(params: util.Map[String, AnyRef]): Builder = {
       this.synchronized(this.params = params)
       this
     }
 
-    def setSource(source: util.Map[String, Any]): Builder = {
+    def setSource(source: util.Map[String, AnyRef]): Builder = {
       this.synchronized(this.source = source)
       this
     }
 
-    def setStartupParams(startupMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setStartupParams(startupMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addStartupMap(this.params, startupMap)
       this
     }
 
-    def setRuntimeParams(runtimeMap: util.Map[String, Any]): Builder = {
+    private def initParams(): Unit = {
       if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
+        if (this.params == null) this.params = new util.HashMap[String, AnyRef]
       }
+    }
+
+    def setRuntimeParams(runtimeMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addRuntimeMap(this.params, runtimeMap)
       this
     }
 
-    def setSpecialParams(specialMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setSpecialParams(specialMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addSpecialMap(this.params, specialMap)
       this
     }
 
-    def setVariableMap(variableMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setVariableMap(variableMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addVariableMap(this.params, variableMap)
       this
     }
@@ -140,12 +138,12 @@ object JobSubmitAction {
         throw new UJESClientBuilderException("executionContent is needed!")
       }
       submitAction.addRequestPayload(TaskConstant.EXECUTION_CONTENT, executionContent)
-      if (params == null) params = new util.HashMap[String, Any]()
+      if (params == null) params = new util.HashMap[String, AnyRef]()
       submitAction.addRequestPayload(TaskConstant.PARAMS, params)
-      if (this.source == null) this.source = new util.HashMap[String, Any]()
+      if (this.source == null) this.source = new util.HashMap[String, AnyRef]()
       submitAction.addRequestPayload(TaskConstant.SOURCE, this.source)
 
-      if (this.labels == null) this.labels = new util.HashMap[String, Any]()
+      if (this.labels == null) this.labels = new util.HashMap[String, AnyRef]()
       submitAction.addRequestPayload(TaskConstant.LABELS, this.labels)
       submitAction
     }

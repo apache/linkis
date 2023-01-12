@@ -61,21 +61,20 @@ class StorePathEntranceInterceptor extends EntranceInterceptor with Logging {
     // multi linkis cluster should not use same root folder , in which case result file may be overwrite
     parentPath += DateFormatUtils.format(System.currentTimeMillis, "yyyy-MM-dd/HHmmss") + "/" +
       userCreator._2 + "/" + jobReq.getId
-    val paramsMap = {
-      val map = new util.HashMap[String, Any]()
-      if (null != jobReq.getParams) {
-        jobReq.getParams.asScala.foreach(kv => map.put(kv._1, kv._2.asInstanceOf[Any]))
-      }
-      map
+    val paramsMap = if (null != jobReq.getParams) {
+      jobReq.getParams
+    } else {
+      new util.HashMap[String, AnyRef]()
     }
+
     var runtimeMap = TaskUtils.getRuntimeMap(paramsMap)
     if (null == runtimeMap || runtimeMap.isEmpty) {
-      runtimeMap = new util.HashMap[String, Any]()
+      runtimeMap = new util.HashMap[String, AnyRef]()
     }
     runtimeMap.put(GovernanceCommonConf.RESULT_SET_STORE_PATH.key, parentPath)
     TaskUtils.addRuntimeMap(paramsMap, runtimeMap)
-    val params = new util.HashMap[String, Object]()
-    paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2.asInstanceOf[Object]))
+    val params = new util.HashMap[String, AnyRef]()
+    paramsMap.asScala.foreach(kv => params.put(kv._1, kv._2))
     jobReq.setResultLocation(parentPath)
     jobReq.setParams(params)
     jobReq

@@ -36,7 +36,7 @@ class FlinkEngineConnPlugin extends EngineConnPlugin {
 
   private val engineFactoryLocker = new Array[Byte](0)
 
-  override def init(params: java.util.Map[String, Any]): Unit = {}
+  override def init(params: java.util.Map[String, AnyRef]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker.synchronized {

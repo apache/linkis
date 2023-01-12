@@ -199,7 +199,7 @@ class DefaultEntranceExecutor(id: Long)
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
     jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
+    jobReqBuilder.setParams(entranceExecuteRequest.properties())
     jobReqBuilder.build()
   }
 

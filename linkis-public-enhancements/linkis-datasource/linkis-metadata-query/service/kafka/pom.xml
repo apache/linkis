@@ -25,10 +25,6 @@
   </parent>
   <artifactId>linkis-metadata-query-service-kafka</artifactId>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -58,38 +54,7 @@
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-          <exclude>**/application.yml</exclude>
-          <exclude>**/bootstrap.yml</exclude>
-          <exclude>**/log4j2.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -110,11 +75,6 @@
               <goal>single</goal>
             </goals>
             <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/distribution.xml</descriptor>
-              </descriptors>
-            </configuration>
           </execution>
         </executions>
       </plugin>

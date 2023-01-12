@@ -22,11 +22,11 @@ import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import java.util
 
-class EngineConnMetricsOperator extends OnceJobOperator[util.Map[String, Object]] {
+class EngineConnMetricsOperator extends OnceJobOperator[util.Map[String, AnyRef]] {
 
   override protected def resultToObject(
       result: EngineConnOperateResult
-  ): util.Map[String, Object] = {
+  ): util.Map[String, AnyRef] = {
     result.getAs("metrics")
   }
 

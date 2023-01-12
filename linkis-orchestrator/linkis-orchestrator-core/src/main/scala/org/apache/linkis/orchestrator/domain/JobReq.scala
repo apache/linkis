@@ -29,7 +29,7 @@ trait JobReq extends Node {
 
   def getLabels: util.List[Label[_]]
 
-  def getParams: java.util.Map[String, Any]
+  def getParams: java.util.Map[String, AnyRef]
 
   def getPriority: Int
 
@@ -39,14 +39,14 @@ abstract class AbstractJobReq extends JobReq {
 
   private var executeUser: String = _
   private var labels: util.List[Label[_]] = _
-  private var params: util.Map[String, Any] = _
+  private var params: util.Map[String, AnyRef] = _
   private var priority: Int = _
 
   override def getExecuteUser: String = executeUser
 
   override def getLabels: util.List[Label[_]] = labels
 
-  override def getParams: util.Map[String, Any] = params
+  override def getParams: util.Map[String, AnyRef] = params
 
   override def getPriority: Int = priority
 
@@ -75,7 +75,7 @@ object AbstractJobReq {
       this
     }
 
-    def setParams(params: util.Map[String, Any]): AbstractJobReqBuilder = {
+    def setParams(params: util.Map[String, AnyRef]): AbstractJobReqBuilder = {
       jobReq.params = params
       this
     }

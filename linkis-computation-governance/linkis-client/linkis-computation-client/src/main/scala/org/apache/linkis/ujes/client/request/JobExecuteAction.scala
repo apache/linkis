@@ -51,9 +51,9 @@ object JobExecuteAction {
     private var runTypeStr: String = _
 
     private var scriptPath: String = _
-    private var params: util.Map[String, Any] = _
+    private var params: util.Map[String, AnyRef] = _
 
-    private var source: util.Map[String, Any] = _
+    private var source: util.Map[String, AnyRef] = _
 
     def setUser(user: String): Builder = {
       this.user = user
@@ -100,44 +100,42 @@ object JobExecuteAction {
       this
     }
 
-    def setParams(params: util.Map[String, Any]): Builder = {
+    def setParams(params: util.Map[String, AnyRef]): Builder = {
       this.synchronized(this.params = params)
       this
     }
 
-    def setSource(source: util.Map[String, Any]): Builder = {
+    def setSource(source: util.Map[String, AnyRef]): Builder = {
       this.synchronized(this.source = source)
       this
     }
 
-    def setStartupParams(startupMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setStartupParams(startupMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addStartupMap(this.params, startupMap)
       this
     }
 
-    def setRuntimeParams(runtimeMap: util.Map[String, Any]): Builder = {
+    private def initParams(): Unit = {
       if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
+        if (this.params == null) this.params = new util.HashMap[String, AnyRef]
       }
+    }
+
+    def setRuntimeParams(runtimeMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addRuntimeMap(this.params, runtimeMap)
       this
     }
 
-    def setSpecialParams(specialMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setSpecialParams(specialMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addSpecialMap(this.params, specialMap)
       this
     }
 
-    def setVariableMap(variableMap: util.Map[String, Any]): Builder = {
-      if (this.params == null) this synchronized {
-        if (this.params == null) this.params = new util.HashMap[String, Any]
-      }
+    def setVariableMap(variableMap: util.Map[String, AnyRef]): Builder = {
+      initParams
       TaskUtils.addVariableMap(this.params, variableMap)
       this
     }
@@ -173,9 +171,9 @@ object JobExecuteAction {
       }
       executeAction.addRequestPayload(TaskConstant.EXECUTIONCODE, executeCode)
       executeAction.addRequestPayload(TaskConstant.SCRIPTPATH, scriptPath)
-      if (params == null) params = new util.HashMap[String, Any]()
+      initParams
       executeAction.addRequestPayload(TaskConstant.PARAMS, params)
-      if (this.source == null) this.source = new util.HashMap[String, Any]()
+      if (this.source == null) this.source = new util.HashMap[String, AnyRef]()
       executeAction.addRequestPayload(TaskConstant.SOURCE, this.source)
       executeAction
     }

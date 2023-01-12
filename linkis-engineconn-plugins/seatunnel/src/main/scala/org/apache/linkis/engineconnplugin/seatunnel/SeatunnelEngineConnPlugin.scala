@@ -38,7 +38,7 @@ class SeatunnelEngineConnPlugin extends EngineConnPlugin {
   private var engineResourceFactory: EngineResourceFactory = _
   private var engineConnLaunchBuilder: EngineConnLaunchBuilder = _
   private var engineConnFactory: EngineConnFactory = _
-  override def init(params: java.util.Map[String, Any]): Unit = {}
+  override def init(params: java.util.Map[String, AnyRef]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
 

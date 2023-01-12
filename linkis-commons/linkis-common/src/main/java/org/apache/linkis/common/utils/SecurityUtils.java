@@ -23,6 +23,8 @@ import org.apache.linkis.common.exception.LinkisSecurityException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -93,6 +95,12 @@ public abstract class SecurityUtils {
     if (StringUtils.isBlank(url)) {
       throw new LinkisSecurityException(35000, "Invalid mysql connection cul, url is empty");
     }
+    // deal with url encode
+    try {
+      url = URLDecoder.decode(url, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new LinkisSecurityException(35000, "mysql connection cul decode error: " + e);
+    }
     if (url.endsWith(QUESTION_MARK) || !url.contains(QUESTION_MARK)) {
       logger.info("checkJdbcSecurity target url: {}", url);
       return url;
@@ -125,6 +133,18 @@ public abstract class SecurityUtils {
       paramsMap.clear();
       return paramsMap;
     }
+
+    // deal with url encode
+    String paramUrl = parseParamsMapToMysqlParamUrl(paramsMap);
+    try {
+      paramUrl = URLDecoder.decode(paramUrl, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new LinkisSecurityException(35000, "mysql connection cul decode error: " + e);
+    }
+
+    Map<String, Object> newParamsMap = parseMysqlUrlParamsToMap(paramUrl);
+    paramsMap.clear();
+    paramsMap.putAll(newParamsMap);
 
     Iterator<Map.Entry<String, Object>> iterator = paramsMap.entrySet().iterator();
     while (iterator.hasNext()) {

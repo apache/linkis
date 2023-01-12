@@ -102,7 +102,6 @@
             <outputDirectory></outputDirectory>
             <includes>
                 <include>README*</include>
-                <include>DISCLAIMER*</include>
             </includes>
         </fileSet>
 

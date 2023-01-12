@@ -135,6 +135,6 @@ DELETE FROM `linkis_ps_error_code` WHERE error_code = 43008;
 ALTER TABLE `linkis_ps_dm_datasource_env` ADD UNIQUE INDEX `env_name_datasource_type_id` (`env_name`, `datasource_type_id`);
 ALTER TABLE `linkis_ps_dm_datasource` ADD UNIQUE INDEX `datasource_name_un` (`datasource_name`);
 ALTER TABLE `linkis_ps_dm_datasource_type` ADD UNIQUE INDEX `name_un` (`name`);
-ALTER TABLE `linkis_ps_error_code` ADD UNIQUE INDEX `idx_error_regex` (error_regex(100));
+ALTER TABLE `linkis_ps_error_code` ADD UNIQUE INDEX `idx_error_regex` (error_regex(255));
 
 

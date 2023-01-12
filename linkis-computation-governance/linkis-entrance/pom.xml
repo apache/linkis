@@ -31,7 +31,6 @@
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-scheduler</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
       <exclusions>
         <exclusion>
           <groupId>org.apache.linkis</groupId>

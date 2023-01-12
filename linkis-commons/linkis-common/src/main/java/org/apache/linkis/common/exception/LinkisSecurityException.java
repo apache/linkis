@@ -18,9 +18,6 @@
 package org.apache.linkis.common.exception;
 
 public class LinkisSecurityException extends LinkisRuntimeException {
-  LinkisSecurityException(int errCode, String desc, String ip, int port, String serviceKind) {
-    super(errCode, desc, ip, port, serviceKind);
-  }
 
   @Override
   public ExceptionLevel getLevel() {

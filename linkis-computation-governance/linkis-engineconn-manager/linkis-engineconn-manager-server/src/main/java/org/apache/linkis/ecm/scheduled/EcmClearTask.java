@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
-public class ScheduledTask {
+public class EcmClearTask {
 
-  private Logger logger = LoggerFactory.getLogger(ScheduledTask.class);
+  private Logger logger = LoggerFactory.getLogger(EcmClearTask.class);
 
   private class CleanExpiredThread implements Runnable {
     @Override

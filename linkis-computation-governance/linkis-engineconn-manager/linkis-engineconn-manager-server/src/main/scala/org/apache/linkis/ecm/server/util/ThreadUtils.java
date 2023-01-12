@@ -36,7 +36,7 @@ public class ThreadUtils extends ApplicationContextEvent {
     public static final String shellPath = Configuration.getLinkisHome() + "/admin/";
 
     public static ExecutionContextExecutorService executors =
-            Utils.newCachedExecutionContext(5, "alert-pool-thread-", false);
+            Utils.newCachedExecutionContext(5, "clean-ec-pool-thred", false);
 
     public ThreadUtils(ApplicationContext source) {
         super(source);

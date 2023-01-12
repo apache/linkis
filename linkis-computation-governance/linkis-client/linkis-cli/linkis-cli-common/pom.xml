@@ -22,13 +22,8 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis-cli</artifactId>
     <version>${revision}</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>linkis-cli-common</artifactId>
   <packaging>jar</packaging>
-
-  <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-  </build>
 
 </project>

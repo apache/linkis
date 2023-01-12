@@ -15,38 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.http
+package org.apache.linkis.common.exception;
 
-import org.apache.linkis.server.JMap
+public class LinkisSecurityException extends LinkisRuntimeException {
 
-import org.springframework.http.server.reactive.AbstractServerHttpRequest
+  @Override
+  public ExceptionLevel getLevel() {
+    return null;
+  }
 
-import javax.servlet.http.Cookie
-
-import java.net.{InetSocketAddress, URI}
-
-trait GatewayHttpRequest {
-
-  def getRequestURI: String
-
-  def getURI: URI
-
-  def getHeaders: JMap[String, Array[String]]
-
-  def addHeader(headerName: String, headers: Array[String]): Unit
-
-  def getQueryParams: JMap[String, Array[String]]
-
-  def addCookie(cookieName: String, cookies: Array[Cookie]): Unit
-
-  def getCookies: JMap[String, Array[Cookie]]
-
-  def getRemoteAddress: InetSocketAddress
-
-  def getRequestRealIpAddr(): String
-
-  def getMethod: String
-
-  def getRequestBody: String
-
+  public LinkisSecurityException(int errCode, String desc) {
+    super(errCode, desc);
+  }
 }

@@ -32,7 +32,7 @@ trait StorePathExecuteRequest {
 }
 
 trait RuntimePropertiesExecuteRequest {
-  val properties: java.util.Map[String, Object]
+  val properties: java.util.Map[String, AnyRef]
 }
 
 trait UserExecuteRequest {

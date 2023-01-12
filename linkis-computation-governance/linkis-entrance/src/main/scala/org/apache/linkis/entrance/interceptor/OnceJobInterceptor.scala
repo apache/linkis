@@ -45,7 +45,7 @@ class OnceJobInterceptor extends EntranceInterceptor {
 
   /**
    * The apply function is to supplement the information of the incoming parameter task, making the
-   * content of this task more complete.    * Additional information includes: database information
+   * content of this task more complete. Additional information includes: database information
    * supplement, custom variable substitution, code check, limit limit, etc.
    * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
    *
@@ -65,17 +65,15 @@ class OnceJobInterceptor extends EntranceInterceptor {
     jobLabel.setJobId(task.getId.toString)
     task.getLabels.add(jobLabel)
     val onceExecutorContent = new OnceExecutorContent
-    val params = task.getParams.map { case (k, v) => k -> v.asInstanceOf[Any] }
-    implicit def toMap(map: util.Map[String, Any]): util.Map[String, Object] = map.map {
-      case (k, v) => k -> v.asInstanceOf[Object]
-    }
+    val params = task.getParams
+
     onceExecutorContent.setSourceMap(task.getSource.map { case (k, v) =>
       k -> v.asInstanceOf[Object]
     })
     onceExecutorContent.setVariableMap(TaskUtils.getVariableMap(params))
     onceExecutorContent.setRuntimeMap(TaskUtils.getRuntimeMap(params))
     onceExecutorContent.setJobContent(getJobContent(task))
-    onceExecutorContent.setExtraLabels(new util.HashMap[String, Object]) // TODO Set it if needed
+    onceExecutorContent.setExtraLabels(new util.HashMap[String, AnyRef]) // TODO Set it if needed
     val contentMap = OnceExecutorContentUtils.contentToMap(onceExecutorContent)
     val bytes = BDPJettyServerHelper.jacksonJson.writeValueAsBytes(contentMap)
     val response = bmlClient.uploadResource(
@@ -87,7 +85,7 @@ class OnceJobInterceptor extends EntranceInterceptor {
       OnceExecutorContentUtils.resourceToValue(BmlResource(response.resourceId, response.version))
     TaskUtils.addStartupMap(
       params,
-      Map(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY -> value.asInstanceOf[Any])
+      Map(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY -> value.asInstanceOf[Object])
     )
     task
   }
@@ -95,9 +93,9 @@ class OnceJobInterceptor extends EntranceInterceptor {
   protected def getFilePath(task: JobRequest): String =
     s"/tmp/${task.getExecuteUser}/${task.getId}"
 
-  protected def getJobContent(task: JobRequest): util.Map[String, Object] = {
+  protected def getJobContent(task: JobRequest): util.Map[String, AnyRef] = {
     // TODO Wait for optimizing since the class `JobRequest` is waiting for optimizing .
-    val jobContent = new util.HashMap[String, Object]
+    val jobContent = new util.HashMap[String, AnyRef]
     jobContent.put(TaskConstant.CODE, task.getExecutionCode)
     task.getLabels.foreach {
       case label: CodeLanguageLabel =>

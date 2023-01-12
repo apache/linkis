@@ -19,16 +19,14 @@ package org.apache.linkis.entrance.interceptor
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.governance.common.protocol.job.JobReq
-import org.apache.linkis.protocol.task.Task
 
 trait EntranceInterceptor {
 
   /**
    * The apply function is to supplement the information of the incoming parameter task, making the
-   * content of this task more complete.    * Additional information includes: database information
+   * content of this task more complete. Additional information includes: database information
    * supplement, custom variable substitution, code check, limit limit, etc.
-   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等
+   * apply函数是对传入参数task进行信息的补充，使得这个task的内容更加完整。 补充的信息包括: 数据库信息补充、自定义变量替换、代码检查、limit限制等。
    *
    * @param task
    * @param logAppender

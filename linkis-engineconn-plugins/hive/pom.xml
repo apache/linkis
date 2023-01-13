@@ -28,6 +28,7 @@
 
   <properties>
     <hive.version>2.3.3</hive.version>
+    <hadoop.version>2.7.2</hadoop.version>
   </properties>
 
   <dependencies>

@@ -36,7 +36,7 @@ jobs:
         java-version: 8
     - name: Build backend by maven
       run:
-        ./mvnw clean package -T 1C -Dmaven.compile.fork=true
+        ./mvnw clean package
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

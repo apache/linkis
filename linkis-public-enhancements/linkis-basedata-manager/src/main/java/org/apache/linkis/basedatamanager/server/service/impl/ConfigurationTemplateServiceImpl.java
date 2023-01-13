@@ -17,10 +17,7 @@
 
 package org.apache.linkis.basedatamanager.server.service.impl;
 
-import org.apache.linkis.basedatamanager.server.dao.CgManagerLabelMapper;
-import org.apache.linkis.basedatamanager.server.dao.ConfigurationConfigKeyMapper;
-import org.apache.linkis.basedatamanager.server.dao.ConfigurationConfigValueMapper;
-import org.apache.linkis.basedatamanager.server.dao.ConfigurationKeyEngineRelationMapper;
+import org.apache.linkis.basedatamanager.server.dao.*;
 import org.apache.linkis.basedatamanager.server.domain.CgManagerLabel;
 import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey;
 import org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigValue;
@@ -52,6 +49,7 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
   @Resource ConfigurationKeyEngineRelationMapper relationMapper;
   @Resource CgManagerLabelMapper managerLabelMapper;
   @Resource ConfigurationConfigValueMapper configValueMapper;
+  @Resource EngineConnPluginBmlResourcesMapper engineConnPluginBmlResourcesMapper;
 
   @Override
   @Transactional(rollbackFor = Exception.class)
@@ -115,18 +113,26 @@ public class ConfigurationTemplateServiceImpl implements ConfigurationTemplateSe
 
   @Override
   public List<EngineLabelResponse> getEngineList() {
+    // engine label list
     List<CgManagerLabel> cgEngineList = managerLabelMapper.getEngineList();
     if (CollectionUtils.isEmpty(cgEngineList)) {
       return Lists.newArrayList();
     }
+
+    // engine installed list
+    List<String> installedList = engineConnPluginBmlResourcesMapper.getEngineTypeList();
+
     return cgEngineList.stream()
         .map(
             e -> {
               String labelValue = e.getLabelValue().split(",")[1];
+              String installedFlag = installedList.contains(labelValue) ? "yes" : "no";
               if ("*-*".equals(labelValue)) {
                 labelValue = "全局设置";
+                installedFlag = "yes";
               }
-              return new EngineLabelResponse(e.getId(), labelValue);
+
+              return new EngineLabelResponse(e.getId(), labelValue, installedFlag);
             })
         .collect(Collectors.toList());
   }

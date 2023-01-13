@@ -1248,7 +1248,7 @@
   </build>
 
   <profiles>
-    <!-- hadoop version: mvn validate -Phadoop3  -->
+    <!-- hadoop version: mvn validate -Phadoop3-3.3  -->
     <profile>
       <id>hadoop-3.3</id>
       <properties>
@@ -1256,7 +1256,7 @@
         <curator.version>4.2.0</curator.version>
       </properties>
     </profile>
-    <!-- hadoop version: mvn validate -Phadoop2  -->
+    <!-- hadoop version: mvn validate -Phadoop-2.7  -->
     <profile>
       <id>hadoop-2.7</id>
       <properties>

@@ -36,9 +36,6 @@ public class LinkisJobDataSerializer extends AbstractSerializer<LinkisJobData> {
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(LinkisJobData.class.getName())) {
-      return true;
-    }
-    return false;
+    return obj instanceof LinkisJobData;
   }
 }

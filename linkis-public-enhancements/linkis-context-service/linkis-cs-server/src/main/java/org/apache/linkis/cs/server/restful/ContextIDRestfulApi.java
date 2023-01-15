@@ -72,11 +72,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   public Message createContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, ClassNotFoundException, IOException, CSErrorException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
-    }
-    ModuleUserUtils.getOperationUser(req, "createContextID,contextID:" + contextID.getContextId());
+    ModuleUserUtils.getOperationUser(
+        req, "createContextID,contextIDType: " + contextID.getContextIDType());
     HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
+
     return generateResponse(answerJob, "contextId");
   }
 

@@ -36,9 +36,6 @@ public class CSTableSerializer extends AbstractSerializer<CSTable> {
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(CSTable.class.getName())) {
-      return true;
-    }
-    return false;
+    return obj instanceof CSTable;
   }
 }

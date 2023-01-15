@@ -75,6 +75,7 @@
   </mailingLists>
   <modules>
     <module>linkis-commons</module>
+    <module>linkis-hadoop-client-shade</module>
     <module>linkis-spring-cloud-services</module>
     <module>linkis-orchestrator</module>
     <module>linkis-public-enhancements</module>
@@ -1248,7 +1249,7 @@
   </build>
 
   <profiles>
-    <!-- hadoop version: mvn validate -Phadoop3-3.3  -->
+    <!-- hadoop version: mvn validate -Phadoop-3.3  -->
     <profile>
       <id>hadoop-3.3</id>
       <properties>

@@ -101,7 +101,7 @@ object Configuration extends Logging {
   }
 
   def isNotAdmin(username: String): Boolean = {
-     !isAdmin(username)
+    !isAdmin(username)
   }
 
   def isJobHistoryAdmin(username: String): Boolean = {

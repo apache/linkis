@@ -34,7 +34,6 @@ public class ModuleUserUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ModuleUserUtils.class);
 
-  // todo
   private static String TOKEN_KEY = "Token-Code";
   private static String TOKEN_USER_KEY = "Token-User";
 

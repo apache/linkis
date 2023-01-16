@@ -121,11 +121,11 @@ export default {
         pageNow: 1
       },
       columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
           key: 'serviceInstance',

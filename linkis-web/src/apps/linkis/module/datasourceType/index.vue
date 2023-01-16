@@ -207,6 +207,7 @@ export default {
       this.modalShow = true
     },
     onTableDelete(row){
+      //console.log(row)
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
         content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name),
@@ -226,8 +227,8 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
+          this.load()
         }
       })
 
@@ -252,7 +253,6 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
@@ -261,13 +261,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
-            this.load()
           })
         }
         this.modalLoading=false

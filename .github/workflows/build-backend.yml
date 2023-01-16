@@ -34,6 +34,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 8
+        cache: 'maven'
     - name: Build backend by maven
       run:
         ./mvnw -B package --file pom.xml

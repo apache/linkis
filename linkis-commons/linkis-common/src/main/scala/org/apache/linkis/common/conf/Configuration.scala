@@ -19,6 +19,8 @@ package org.apache.linkis.common.conf
 
 import org.apache.linkis.common.utils.Logging
 
+import org.apache.commons.lang3.StringUtils
+
 object Configuration extends Logging {
 
   val BDP_ENCODING = CommonVars("wds.linkis.encoding", "utf-8")
@@ -56,16 +58,19 @@ object Configuration extends Logging {
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
+  val JOB_HISTORY_ADMIN = CommonVars("wds.linkis.jobhistory.admin", "hadoop")
+
+  // Only the specified token has permission to call some api
+  val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
+
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
-  private val adminUsers = GOVERNANCE_STATION_ADMIN.getValue.split(",")
-
-  def isAdmin(username: String): Boolean = {
-    adminUsers.exists(username.equals)
-  }
-
-  def isNotAdmin(username: String): Boolean = {
-    !isAdmin(username)
+  def isAdminToken(token: String): Boolean = {
+    if (StringUtils.isBlank(token)) {
+      false
+    } else {
+      token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+    }
   }
 
   def getGateWayURL(): String = {
@@ -88,6 +93,26 @@ object Configuration extends Logging {
     }
     logger.info(s"linkisHome is $linkisHome")
     linkisHome
+  }
+
+  def isAdmin(username: String): Boolean = {
+    val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
+    adminUsers.exists(username.equalsIgnoreCase)
+  }
+
+  def isNotAdmin(username: String): Boolean = {
+    !isAdmin(username)
+  }
+
+  def isJobHistoryAdmin(username: String): Boolean = {
+    getJobHistoryAdmin()
+      .exists(username.equalsIgnoreCase)
+  }
+
+  def getJobHistoryAdmin(): Array[String] = {
+    val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
+    val historyAdminUsers = JOB_HISTORY_ADMIN.getHotValue.split(",")
+    (adminUsers ++ historyAdminUsers).distinct
   }
 
 }

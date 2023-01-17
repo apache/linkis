@@ -21,6 +21,8 @@ import org.apache.linkis.proxy.ProxyUserEntity;
 import org.apache.linkis.server.security.ProxyUserSSOUtils;
 import org.apache.linkis.server.security.SecurityFilter;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 
 import scala.Option;
@@ -31,6 +33,9 @@ import org.slf4j.LoggerFactory;
 public class ModuleUserUtils {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ModuleUserUtils.class);
+
+  private static String TOKEN_KEY = "Token-Code";
+  private static String TOKEN_USER_KEY = "Token-User";
 
   /**
    * get ProxyUserEntity 1.if not support proxy return loginUser 2.if proxy user exist return
@@ -91,5 +96,21 @@ public class ModuleUserUtils {
     } else {
       return proxyUserEntity.getUsername();
     }
+  }
+
+  public static String getToken(HttpServletRequest httpServletRequest) {
+    String token = httpServletRequest.getHeader(TOKEN_KEY);
+    if (StringUtils.isBlank(token)) {
+      LOGGER.info("Cannot get token from this http request!");
+    }
+    return token;
+  }
+
+  public static String getTokenUser(HttpServletRequest httpServletRequest) {
+    String tokenUser = httpServletRequest.getHeader(TOKEN_USER_KEY);
+    if (StringUtils.isBlank(tokenUser)) {
+      LOGGER.info("Cannot get token user from this http request!");
+    }
+    return tokenUser;
   }
 }

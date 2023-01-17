@@ -15,12 +15,40 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.instance.label.service.conf
+package org.apache.linkis.manager.common.entity.persistence;
 
-import org.apache.linkis.common.conf.Configuration
+/** engine instance info entity */
+public class PersistencerEcNodeInfo extends PersistenceNode {
 
-object InstanceConfigration {
+  private Integer instanceStatus;
 
-  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
+  private String engineType;
 
+  public Integer getInstanceStatus() {
+    return instanceStatus;
+  }
+
+  public void setInstanceStatus(Integer instanceStatus) {
+    this.instanceStatus = instanceStatus;
+  }
+
+  public String getEngineType() {
+    return engineType;
+  }
+
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
+  }
+
+  @Override
+  public String toString() {
+    return "PersistencerEcNodeInfo{"
+        + "instanceStatus="
+        + instanceStatus
+        + ", engineType='"
+        + engineType
+        + '\''
+        + "} "
+        + super.toString();
+  }
 }

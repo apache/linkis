@@ -26,7 +26,12 @@ import org.apache.linkis.engineconn.common.execution.EngineConnExecution
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
-import org.apache.linkis.engineconn.executor.entity.{Executor, LabelExecutor, ResourceExecutor}
+import org.apache.linkis.engineconn.executor.entity.{
+  ConcurrentExecutor,
+  Executor,
+  LabelExecutor,
+  ResourceExecutor
+}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -111,7 +116,10 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
               ) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
               && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime
           ) {
-            if (ifECCanMaintain()) {
+            if (isConcurrentExecutorHasTaskRunning(accessibleExecutor)) {
+              logger.info("ConcurrentExecutor has task running ec will not be killed at this time")
+              accessibleExecutor.updateLastActivityTime()
+            } else if (isECCanMaintain()) {
               logger.info("ec will not be killed at this time")
               accessibleExecutor.updateLastActivityTime()
             } else {
@@ -159,7 +167,15 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     }
   }
 
-  private def ifECCanMaintain(): Boolean = {
+  private def isConcurrentExecutorHasTaskRunning(executor: Executor): Boolean = {
+    executor match {
+      case concurrentExecutor: ConcurrentExecutor =>
+        concurrentExecutor.hasTaskRunning()
+      case _ => false
+    }
+  }
+
+  private def isECCanMaintain(): Boolean = {
     if (!isMaintainSupported()) return false
     val engineTypeLabel =
       LabelUtil.getEngineTypeLabel(EngineConnObject.getEngineCreationContext.getLabels())

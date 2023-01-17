@@ -114,7 +114,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       response match {
         case SubmitResponse(engineConnExecId) =>
           codeExecutor.setEngineConnTaskId(engineConnExecId)
-          codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
+          codeExecTaskExecutorManager.addEngineConnTaskInfo(codeExecutor)
           val infoMap = new util.HashMap[String, Object]
           infoMap.put(
             TaskConstant.ENGINE_INSTANCE,

@@ -15,41 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.executor.entity
+package org.apache.linkis.orchestrator.computation.execute
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.ServiceInstance
 
-trait Executor extends Logging {
-
-  def getId: String
-
-  def init(): Unit
-
-  def tryReady(): Boolean
-
-  def tryShutdown(): Boolean
-
-  def tryFailed(): Boolean
-
-  def trySucceed(): Boolean
-
-  /**
-   * 仅用于Kill Executor EngineConn kill 在AccessibleService
-   */
-  def close(): Unit = {
-    logger.warn(s"Executor($getId) exit by close.")
-  }
-
-  def isClosed: Boolean
-
-}
-
-trait ConcurrentExecutor extends Executor {
-
-  def getConcurrentLimit: Int
-
-  def killAll(): Unit
-
-  def hasTaskRunning(): Boolean
-
-}
+case class EngineConnTaskInfo(ecServiceInstance: ServiceInstance, ecTaskId: String)

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -68,9 +69,9 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
-    String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-    boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
-    return Message.ok().data("admin", match);
+    return Message.ok()
+        .data("admin", Configuration.isAdmin(username))
+        .data("historyAdmin", Configuration.isJobHistoryAdmin(username));
   }
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
@@ -80,7 +81,7 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
   public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
     String username = SecurityFilter.getLoginUsername(req);
-    if (QueryUtils.isJobHistoryAdmin(username)
+    if (Configuration.isJobHistoryAdmin(username)
         || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
       username = null;
     }
@@ -176,7 +177,7 @@ public class QueryRestfulApi {
     if (isAdminView == null) {
       isAdminView = false;
     }
-    if (QueryUtils.isJobHistoryAdmin(username)) {
+    if (Configuration.isJobHistoryAdmin(username)) {
       if (isAdminView) {
         if (proxyUser != null) {
           username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;

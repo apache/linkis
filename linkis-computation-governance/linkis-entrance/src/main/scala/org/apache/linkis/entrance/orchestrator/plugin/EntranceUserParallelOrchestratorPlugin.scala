@@ -43,11 +43,13 @@ import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlugin with Logging {
 
-  private val DEFAULT_MAX_RUNNING = EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()
-
   private val SPLIT = ","
 
   private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+
+  private def getDefaultMaxRuningNum: Int = {
+    EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()
+  }
 
   private val sender: Sender =
     Sender.getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
@@ -88,7 +90,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
   override def getUserMaxRunningJobs(user: String, labels: util.List[Label[_]]): Int = {
 
     if (null == labels || labels.isEmpty) {
-      return DEFAULT_MAX_RUNNING
+      return getDefaultMaxRuningNum
     }
     var userCreatorLabel: UserCreatorLabel = null
     var engineTypeLabel: EngineTypeLabel = null
@@ -98,7 +100,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
       case _ =>
     }
     if (null == userCreatorLabel || null == engineTypeLabel) {
-      return DEFAULT_MAX_RUNNING
+      return getDefaultMaxRuningNum
     }
     configCache.get(getKey(userCreatorLabel, engineTypeLabel))
   }

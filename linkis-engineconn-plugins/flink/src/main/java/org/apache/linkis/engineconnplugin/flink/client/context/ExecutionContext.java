@@ -490,7 +490,7 @@ public class ExecutionContext {
   private ExecutionEnvironment createExecutionEnvironment() {
     final ExecutionEnvironment execEnv = ExecutionEnvironment.getExecutionEnvironment();
     execEnv.setRestartStrategy(environment.getExecution().getRestartStrategy());
-    execEnv.setParallelism(environment.getExecution().getParallelism().get());
+    execEnv.setParallelism(environment.getExecution().getParallelism().orElse(1));
     return execEnv;
   }
 
@@ -500,7 +500,7 @@ public class ExecutionContext {
     final StreamExecutionEnvironment env =
         StreamExecutionEnvironment.getExecutionEnvironment(flinkConfig);
     env.setRestartStrategy(environment.getExecution().getRestartStrategy());
-    env.setParallelism(environment.getExecution().getParallelism().get());
+    env.setParallelism(environment.getExecution().getParallelism().orElse(1));
     env.setMaxParallelism(environment.getExecution().getMaxParallelism());
     env.setStreamTimeCharacteristic(environment.getExecution().getTimeCharacteristic());
     if (env.getStreamTimeCharacteristic() == TimeCharacteristic.EventTime) {

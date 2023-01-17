@@ -79,4 +79,14 @@
     <select id="getAllNodeMetrics" resultMap="PersistenceNodeMetrics">
         select A.name,B.* from linkis_cg_manager_service_instance A join linkis_cg_manager_service_instance_metrics B where A.instance =  B.instance
     </select>
+
+
+    <update id="updateNodeStatus">
+      update linkis_cg_manager_service_instance_metrics
+      set instance_status = #{instanceStatus},
+      update_time= now()
+      where instance = #{instance} and instance_status=#{oldStatus}
+    </update>
+
+
 </mapper>

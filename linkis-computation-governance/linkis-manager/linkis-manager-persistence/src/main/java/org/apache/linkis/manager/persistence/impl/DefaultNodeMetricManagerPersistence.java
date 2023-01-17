@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
@@ -106,11 +107,23 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       // todo 异常信息后面统一处理
       nodeMetricManagerMapper.addNodeMetrics(persistenceNodeMetrics);
     } else if (isInstanceIdExist == 1) {
+      // ec node metircs report ignore update Shutingdown node (for case: asyn stop engine)
+      PersistenceNodeMetrics oldMetrics =
+          nodeMetricManagerMapper.getNodeMetricsByInstance(instance);
+      if (NodeStatus.ShuttingDown.ordinal() == oldMetrics.getStatus()) {
+        logger.info(
+            "ignore update ShuttingDown status node:{} to status:{}",
+            instance,
+            NodeStatus.values()[nodeMetrics.getStatus()].name());
+        persistenceNodeMetrics.setStatus(null);
+      } else {
+        persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
+      }
       persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
       persistenceNodeMetrics.setHealthy(nodeMetrics.getHealthy());
       persistenceNodeMetrics.setHeartBeatMsg(nodeMetrics.getHeartBeatMsg());
       persistenceNodeMetrics.setOverLoad(nodeMetrics.getOverLoad());
-      persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
+
       persistenceNodeMetrics.setUpdateTime(new Date());
       nodeMetricManagerMapper.updateNodeMetrics(persistenceNodeMetrics, instance);
     } else {

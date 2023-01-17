@@ -198,7 +198,7 @@ public class UDFRestfulApi {
         name = "path",
         dataType = "String",
         value = "path",
-        example = "file:///mnt/bdap/johnnwang/test1012_01.jar"),
+        example = "file:///mnt/bdap/hadoop/test1012_01.jar"),
     @ApiImplicitParam(
         name = "registerFormat",
         dataType = "String",
@@ -247,7 +247,7 @@ public class UDFRestfulApi {
         required = true,
         dataType = "String",
         value = "path",
-        example = "file:///mnt/bdap/johnnwang/test.py"),
+        example = "file:///mnt/bdap/hadoop/test.py"),
     @ApiImplicitParam(
         name = "registerFormat",
         required = true,

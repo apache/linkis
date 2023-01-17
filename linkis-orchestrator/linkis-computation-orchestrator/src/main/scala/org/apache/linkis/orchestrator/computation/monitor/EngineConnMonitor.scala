@@ -31,13 +31,11 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.node.{RequestNodeStatus, ResponseNodeStatus}
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, EngineConnTaskInfo}
-import org.apache.linkis.orchestrator.ecm.service.EngineConnExecutor
 import org.apache.linkis.orchestrator.listener.task.{
   TaskErrorResponseEvent,
   TaskLogEvent,
   TaskStatusEvent
 }
-import org.apache.linkis.orchestrator.plans.physical.ExecTask
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.server.{toJavaMap, BDPJettyServerHelper}
 

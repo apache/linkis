@@ -37,7 +37,7 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
     if (getRunningTask >= getConcurrentLimit) EXECUTOR_STATUS_LOCKER.synchronized {
       if (getRunningTask >= getConcurrentLimit && NodeStatus.isIdle(getStatus)) {
         logger.info(
-          s"running task($getRunningTask) > concurrent limit $getConcurrentLimit, now to mark engine to busy "
+          s"running task: $getRunningTask > concurrent limit: $getConcurrentLimit, now to mark engine to busy"
         )
         transition(NodeStatus.Busy)
       }
@@ -48,7 +48,7 @@ abstract class ConcurrentComputationExecutor(override val outputPrintLimit: Int 
       EXECUTOR_STATUS_LOCKER.synchronized {
         if (getStatus == NodeStatus.Busy && getConcurrentLimit > getRunningTask) {
           logger.info(
-            s"running task($getRunningTask) < concurrent limit $getConcurrentLimit, now to mark engine to Unlock "
+            s"running task($getRunningTask) < concurrent limit:$getConcurrentLimit, now to mark engine to Unlock "
           )
           transition(NodeStatus.Unlock)
         }

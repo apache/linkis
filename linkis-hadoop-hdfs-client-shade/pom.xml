@@ -24,18 +24,15 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-hadoop-client-shade</artifactId>
+  <artifactId>linkis-hadoop-hdfs-client-shade</artifactId>
   <packaging>jar</packaging>
-
-  <properties>
-    <hadoop.version>2.7.2</hadoop.version>
-  </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-client</artifactId>
-      <version>${hadoop.version}</version>
+      <artifactId>${hadoop-hdfs-client-shade.artifact}</artifactId>
+      <version>${hadoop-hdfs-client-shade.version}</version>
+      <optional>true</optional>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -121,6 +118,83 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>${hadoop-hdfs-client-shade.version}</version>
+      <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>net.java.dev.jets3t</groupId>
+          <artifactId>jets3t</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.jcraft</groupId>
+          <artifactId>jsch</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xmlenc</groupId>
+          <artifactId>xmlenc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.avro</groupId>
+          <artifactId>avro</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-auth</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-compress</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
+        </exclusion>
+        <exclusion>
+          <!-- BeanUtils >= 1.9.0 no longer splits out -core; exclude it -->
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <build>
     <finalName>${project.artifactId}-${project.version}</finalName>
@@ -149,104 +223,6 @@
               </excludes>
             </filter>
           </filters>
-          <relocations>
-            <relocation>
-              <pattern>org.apache.html.dom</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.html.dom</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.hadoop</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.hadoop</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.commons</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.commons</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>com.google</pattern>
-              <shadedPattern>org.apache.linkis.shade.com.google</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>io.netty</pattern>
-              <shadedPattern>org.apache.linkis.shade.io.netty</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.curator</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.curator</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.htrace</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.htrace</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.xerces</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.xerces</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.zookeeper</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.zookeeper</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.wml</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.wml</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.yetus</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.yetus</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.checkerframework</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.checkerframework</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.jute</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.jute</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>javax.activation</pattern>
-              <shadedPattern>org.apache.linkis.shade.javax.activation</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>javax.servlet.jsp</pattern>
-              <shadedPattern>org.apache.linkis.shade.javax.servlet.jsp</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>javax.el</pattern>
-              <shadedPattern>org.apache.linkis.shade.javax.el</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>javax.xml</pattern>
-              <shadedPattern>org.apache.linkis.shade.javax.xml</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>javax.activation</pattern>
-              <shadedPattern>org.apache.linkis.shade.javax.activation</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>google.protobuf</pattern>
-              <shadedPattern>org.apache.linkis.shade.google.protobuf</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.apache.xml</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.apache.xml</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.w3c</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.w3c</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.xml.sax</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.xml.sax</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.yaml</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.yaml</shadedPattern>
-            </relocation>
-            <relocation>
-              <pattern>org.znerd</pattern>
-              <shadedPattern>org.apache.linkis.shade.org.znerd</shadedPattern>
-            </relocation>
-          </relocations>
           <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
           </transformers>

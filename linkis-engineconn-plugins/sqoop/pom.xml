@@ -161,7 +161,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
+          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

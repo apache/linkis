@@ -104,13 +104,14 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       future onComplete {
         case Failure(t) =>
           logger.error(
-            "TaskId: {} init {} failed. {}",
+            "TaskId: {} init {} failed. {} with request {}",
             Array(
               taskId,
               conn.getServiceInstance,
               conn.getEngineConnLaunchRunner.getEngineConnLaunch
                 .getEngineConnManagerEnv()
-                .engineConnWorkDir
+                .engineConnWorkDir,
+              request
             ): _*
           )
           LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
@@ -118,25 +119,27 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
           )
         case Success(_) =>
           logger.info(
-            "TaskId: {} init {} succeed. {}",
+            "TaskId: {} init {} succeed. {} with request {}",
             Array(
               taskId,
               conn.getServiceInstance,
               conn.getEngineConnLaunchRunner.getEngineConnLaunch
                 .getEngineConnManagerEnv()
-                .engineConnWorkDir
+                .engineConnWorkDir,
+              request
             ): _*
           )
       }
     } { t =>
       logger.error(
-        "TaskId: {} init {} failed, {}, now stop and delete it. message: {}",
+        "TaskId: {} init {} failed, {}, with request {} now stop and delete it. message: {}",
         Array(
           taskId,
           conn.getServiceInstance,
           conn.getEngineConnLaunchRunner.getEngineConnLaunch
             .getEngineConnManagerEnv()
             .engineConnWorkDir,
+          request,
           t.getMessage,
           t
         ): _*

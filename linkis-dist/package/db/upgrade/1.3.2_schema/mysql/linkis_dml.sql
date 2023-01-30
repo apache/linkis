@@ -250,3 +250,6 @@ update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where 
 update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 
+
+alter table `linkis_cg_ec_resource_info_record`  add column `metrics` VARCHAR(1024) DEFAULT NULL COMMENT 'ec metrics';
+

@@ -15,12 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.acessible.executor.info
+package org.apache.linkis.governance.common.constant.ec
 
-import org.apache.linkis.engineconn.executor.entity.Executor
+object ECConstants {
 
-trait NodeHeartbeatMsgManager {
+  val EC_TICKET_ID_KEY = "ticketId"
 
-  def getHeartBeatMsg(executor: Executor): String
+  val EC_TOTAL_UNLOCK_TIME_MILLS_KEY = "totalUnlockTimeMills"
+
+  val EC_TOTAL_IDLE_TIME_MILLS_KEY = "totalIdleTimeMills"
+
+  val EC_TOTAL_BUSY_TIME_MILLS_KEY = "totalBusyTimeMills"
+
+  val EC_UNLOCK_TO_SHUTDOWN_TIME_MILLS_KEY = "unlockToShutdownTimeMills"
+
+  val EC_TOTAL_LOCK_TIME_MILLS_KEY = "totalLockTimeMills"
 
 }

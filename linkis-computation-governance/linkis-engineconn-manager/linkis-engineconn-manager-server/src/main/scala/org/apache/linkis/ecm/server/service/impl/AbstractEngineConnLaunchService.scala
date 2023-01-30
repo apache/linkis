@@ -99,9 +99,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       val future = Future {
         logger.info(
           "TaskId: {} with request {} wait engineConn {} start",
-          taskId: Any,
-          request: Any,
-          conn.getServiceInstance
+          Array(taskId, request, conn.getServiceInstance): _*
         )
         waitEngineConnStart(request, conn, duration)
       }

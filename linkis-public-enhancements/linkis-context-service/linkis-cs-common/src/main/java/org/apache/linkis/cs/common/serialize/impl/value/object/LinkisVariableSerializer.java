@@ -35,9 +35,6 @@ public class LinkisVariableSerializer extends AbstractSerializer<LinkisVariable>
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(LinkisVariable.class.getName())) {
-      return true;
-    }
-    return false;
+    return obj instanceof LinkisVariable;
   }
 }

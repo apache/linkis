@@ -17,6 +17,7 @@ eureka:
   instance:
     metadata-map:
       prometheus.path: ${prometheus.path:${prometheus.endpoint}}
+      linkis.app.version: ${linkis.app.version}
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/

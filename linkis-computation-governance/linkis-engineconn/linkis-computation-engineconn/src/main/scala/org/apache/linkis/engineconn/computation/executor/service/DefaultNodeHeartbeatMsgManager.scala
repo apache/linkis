@@ -40,28 +40,35 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
     msgMap.put(ECConstants.EC_TICKET_ID_KEY, EngineConnObject.getEngineCreationContext.getTicketId)
     msgMap.put(
       ECConstants.EC_UNLOCK_TO_SHUTDOWN_TIME_MILLS_KEY,
-      ComputationEngineConnMetrics.getUnlockToShutdownDurationMills()
+      ComputationEngineConnMetrics.getUnlockToShutdownDurationMills().asInstanceOf[Object]
     )
     executor match {
       case sensibleExecutor: SensibleExecutor =>
         val status = sensibleExecutor.getStatus
         msgMap.put(
           ECConstants.EC_TOTAL_UNLOCK_TIME_MILLS_KEY,
-          ComputationEngineConnMetrics.getTotalUnLockTimeMills(status)
+          ComputationEngineConnMetrics.getTotalUnLockTimeMills(status).asInstanceOf[Object]
         )
         msgMap.put(
           ECConstants.EC_TOTAL_IDLE_TIME_MILLS_KEY,
-          ComputationEngineConnMetrics.getTotalIdleTimeMills(status)
+          ComputationEngineConnMetrics.getTotalIdleTimeMills(status).asInstanceOf[Object]
         )
         msgMap.put(
           ECConstants.EC_TOTAL_BUSY_TIME_MILLS_KEY,
-          ComputationEngineConnMetrics.getTotalBusyTimeMills(status)
+          ComputationEngineConnMetrics.getTotalBusyTimeMills(status).asInstanceOf[Object]
         )
         msgMap.put(
           ECConstants.EC_TOTAL_LOCK_TIME_MILLS_KEY,
-          ComputationEngineConnMetrics.getTotalLockTimeMills(status)
+          ComputationEngineConnMetrics.getTotalLockTimeMills(status).asInstanceOf[Object]
         )
       case _ =>
+    }
+    val engineParams = EngineConnObject.getEngineCreationContext.getOptions
+    if (engineParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
+      msgMap.put(
+        ECConstants.YARN_QUEUE_NAME_KEY,
+        engineParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY).asInstanceOf[Object]
+      )
     }
     Utils.tryCatch(BDPJettyServerHelper.gson.toJson(msgMap)) { case e: Exception =>
       val msgs = msgMap.asScala

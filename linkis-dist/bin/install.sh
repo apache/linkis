@@ -291,12 +291,16 @@ then
   export GATEWAY_INSTALL_IP=$SERVER_IP
 fi
 
+currentTime=`date +%Y%m%d%H%M%S`
+
 ##eureka
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-eureka.yml
 sed -i ${txt}  "s#port:.*#port: $EUREKA_PORT#g" $LINKIS_HOME/conf/application-eureka.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-eureka.yml
 
 ##server application.yml
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.yml
 
 echo "update conf $common_conf"
 sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_SERVER_VERSION#g" $common_conf
@@ -338,17 +342,19 @@ sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$L
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
 sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$deployPwd#g" $gateway_conf
+
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
 fi
-
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $gateway_conf
 
 manager_conf=$LINKIS_HOME/conf/linkis-cg-linkismanager.properties
 if [ "$MANAGER_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$MANAGER_PORT#g" $manager_conf
 fi
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $manager_conf
 
 # ecm install
 ecm_conf=$LINKIS_HOME/conf/linkis-cg-engineconnmanager.properties
@@ -356,6 +362,7 @@ if test -z $ENGINECONN_ROOT_PATH
 then
   ENGINECONN_ROOT_PATH=$LINKIS_HOME/engineroot
 fi
+
 sed -i ${txt}  "s#wds.linkis.engineconn.root.dir.*#wds.linkis.engineconn.root.dir=$ENGINECONN_ROOT_PATH#g" $ecm_conf
 
 if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
@@ -369,11 +376,16 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf
 fi
 
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $ecm_conf
+
 entrance_conf=$LINKIS_HOME/conf/linkis-cg-entrance.properties
 if [ "$ENTRANCE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENTRANCE_PORT#g" $entrance_conf
 fi
+
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $entrance_conf
+
 if [ "$RESULT_SET_ROOT_PATH" != "" ]
 then
   sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
@@ -384,6 +396,8 @@ if [ "$PUBLICSERVICE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
+
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $publicservice_conf
 
 echo "update conf $publicservice_conf"
 if [ "$HIVE_META_URL" != "" ]

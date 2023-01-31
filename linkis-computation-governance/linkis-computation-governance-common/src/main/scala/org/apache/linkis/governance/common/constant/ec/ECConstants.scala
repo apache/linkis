@@ -31,4 +31,8 @@ object ECConstants {
 
   val EC_TOTAL_LOCK_TIME_MILLS_KEY = "totalLockTimeMills"
 
+  val YARN_QUEUE_NAME_KEY = "yarnqueueName"
+
+  val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
+
 }

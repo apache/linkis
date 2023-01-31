@@ -443,6 +443,13 @@ class TaskExecutionServiceImpl
               ECConstants.EC_TICKET_ID_KEY,
               EngineConnObject.getEngineCreationContext.getTicketId
             )
+            val ecParams = EngineConnObject.getEngineCreationContext.getOptions
+            if (ecParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
+              extraInfoMap.put(
+                ECConstants.YARN_QUEUE_NAME_KEY,
+                ecParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)
+              )
+            }
             // todo add other info
             var respRunningInfo: ResponseTaskRunningInfo = null
             if (null != resourceResponse) {

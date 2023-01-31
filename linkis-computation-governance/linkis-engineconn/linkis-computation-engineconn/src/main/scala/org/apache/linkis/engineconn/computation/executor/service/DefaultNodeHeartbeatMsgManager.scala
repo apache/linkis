@@ -63,6 +63,13 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
         )
       case _ =>
     }
+    val engineParams = EngineConnObject.getEngineCreationContext.getOptions
+    if (engineParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
+      msgMap.put(
+        ECConstants.YARN_QUEUE_NAME_KEY,
+        engineParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY).asInstanceOf[Object]
+      )
+    }
     Utils.tryCatch(BDPJettyServerHelper.gson.toJson(msgMap)) { case e: Exception =>
       val msgs = msgMap.asScala
         .map { case (k, v) => if (null == v) s"${k}->null" else s"${k}->${v.toString}" }

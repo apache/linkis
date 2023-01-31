@@ -122,10 +122,10 @@ public class EngineRestfulApi {
     EngineCreateRequest engineCreateRequest =
         objectMapper.treeToValue(jsonNode, EngineCreateRequest.class);
     engineCreateRequest.setUser(userName);
-    long timeout = engineCreateRequest.getTimeOut();
+    long timeout = engineCreateRequest.getTimeout();
     if (timeout <= 0) {
       timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME().getValue().toLong();
-      engineCreateRequest.setTimeOut(timeout);
+      engineCreateRequest.setTimeout(timeout);
     }
     logger.info(
         "User {} try to create a engineConn with maxStartTime {}. EngineCreateRequest is {}.",
@@ -510,12 +510,12 @@ public class EngineRestfulApi {
     String instance = jsonNode.get("instance").asText();
     if (StringUtils.isEmpty(applicationName)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "applicationName cannot be null(请求参数applicationName不能为空)");
     }
     if (StringUtils.isEmpty(instance)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(), "instance cannot be null(请求参数instance不能为空)");
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(), "instance cannot be null(请求参数instance不能为空)");
     }
     return ServiceInstance.apply(applicationName, instance);
   }

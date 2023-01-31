@@ -56,7 +56,7 @@ object UserCreatorIPCheckUtils extends Logging {
               ""
           }
         }
-        if (cacheValue.isEmpty) {
+        if (StringUtils.isNotBlank(cacheValue)) {
           logger.warn(s"UserIpCache data loading failed , plaese check warn log")
           cacheValue = ""
         }

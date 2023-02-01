@@ -68,11 +68,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-client</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>

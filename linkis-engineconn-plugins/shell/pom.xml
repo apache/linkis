@@ -110,11 +110,6 @@
       <artifactId>netty-all</artifactId>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-client</artifactId>
-    </dependency>
   </dependencies>
 
   <build>

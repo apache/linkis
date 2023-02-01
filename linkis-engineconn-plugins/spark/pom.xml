@@ -457,11 +457,13 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
+      <version>${hadoop-hdfs-client-shade.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+      <artifactId>${hadoop-hdfs-client-shade.artifact}</artifactId>
+      <version>${hadoop-hdfs-client-shade.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -533,8 +535,7 @@
     <profile>
       <id>spark-2.4-hadoop-3.3</id>
       <properties>
-        <hadoop.version>2.7.2</hadoop.version>
-        <hadoop-hdfs-client.artifact>hadoop-hdfs</hadoop-hdfs-client.artifact>
+        <hadoop.version>${hadoop-hdfs-client-shade.version}</hadoop.version>
       </properties>
       <dependencies>
         <dependency>

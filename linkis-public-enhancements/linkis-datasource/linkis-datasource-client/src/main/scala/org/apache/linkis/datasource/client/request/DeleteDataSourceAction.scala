@@ -55,7 +55,7 @@ object DeleteDataSourceAction {
 
     def builder(): DeleteDataSourceAction = {
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
-      if (dataSourceId == null) {
+      if (dataSourceId <= 0) {
         throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
 

@@ -155,6 +155,7 @@ public class HttpContextClient extends AbstractContextClient {
   public Context createContext(ContextID contextID) throws ErrorException {
     ContextCreateAction contextCreateAction = new ContextCreateAction();
     String contextIDStr = SerializeHelper.serializeContextID(contextID);
+    LOGGER.info("contextIDStr: {}", contextIDStr);
     contextCreateAction.addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr);
     contextCreateAction.getRequestPayloads().put(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr);
     Result result = null;
@@ -739,17 +740,6 @@ public class HttpContextClient extends AbstractContextClient {
     checkDWSResult(execute(action));
   }
 
-  @Override
-  public void removeValueByKey(ContextID contextID, String key) throws ErrorException {
-    String contextIDStr = SerializeHelper.serializeContextID(contextID);
-    DefaultContextPostAction action =
-        ContextPostActionBuilder.of(ContextServerHttpConf.removeAllValueByKeyURL())
-            .with(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
-            .with(ContextHTTPConstant.CONTEXT_KEY_STR, key)
-            .addHeader(ContextHTTPConstant.CONTEXT_ID_STR, contextIDStr)
-            .build();
-    checkDWSResult(execute(action));
-  }
 
   @Override
   public List<String> searchHAIDByTime(

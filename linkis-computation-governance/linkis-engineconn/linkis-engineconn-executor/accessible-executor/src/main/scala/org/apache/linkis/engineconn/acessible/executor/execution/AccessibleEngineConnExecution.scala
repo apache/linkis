@@ -116,10 +116,10 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
               ) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
               && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime
           ) {
-            if (ifConcurrentExecutorHasTaskRunning(accessibleExecutor)) {
+            if (isConcurrentExecutorHasTaskRunning(accessibleExecutor)) {
               logger.info("ConcurrentExecutor has task running ec will not be killed at this time")
               accessibleExecutor.updateLastActivityTime()
-            } else if (ifECCanMaintain()) {
+            } else if (isECCanMaintain()) {
               logger.info("ec will not be killed at this time")
               accessibleExecutor.updateLastActivityTime()
             } else {
@@ -167,7 +167,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     }
   }
 
-  private def ifConcurrentExecutorHasTaskRunning(executor: Executor): Boolean = {
+  private def isConcurrentExecutorHasTaskRunning(executor: Executor): Boolean = {
     executor match {
       case concurrentExecutor: ConcurrentExecutor =>
         concurrentExecutor.hasTaskRunning()
@@ -175,7 +175,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     }
   }
 
-  private def ifECCanMaintain(): Boolean = {
+  private def isECCanMaintain(): Boolean = {
     if (!isMaintainSupported()) return false
     val engineTypeLabel =
       LabelUtil.getEngineTypeLabel(EngineConnObject.getEngineCreationContext.getLabels())

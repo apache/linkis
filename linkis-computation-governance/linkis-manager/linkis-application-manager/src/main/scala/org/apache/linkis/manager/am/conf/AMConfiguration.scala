@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
+import org.apache.linkis.common.conf.Configuration.isAdmin
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 

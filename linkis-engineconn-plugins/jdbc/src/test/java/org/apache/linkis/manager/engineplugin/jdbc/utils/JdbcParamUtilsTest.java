@@ -17,11 +17,13 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.utils;
 
+import org.apache.linkis.common.exception.LinkisSecurityException;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -31,35 +33,56 @@ public class JdbcParamUtilsTest {
   @Test
   @DisplayName("testFilterJdbcUrl")
   public void testFilterJdbcUrl() {
-    String url = "jdbc:mysql://localhost:3306/db_name";
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(
-        "jdbc:mysql://localhost:3306/db_name?allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        url);
+    String securityParam =
+        "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false";
+    String url = "jdbc:mysql://127.0.0.1:10000/db_name";
+    String newUrl = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(url + "?" + securityParam, newUrl);
 
-    url = "jdbc:mysql://localhost:3306/db_name?p1=v1";
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(
-        "jdbc:mysql://localhost:3306/db_name?p1=v1&allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        url);
+    // not mysql url
+    url = "h2:mysql";
+    newUrl = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(url, newUrl);
 
-    url = "jdbc:mysql://localhost:3306/db_name?autoDeserialize=true";
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(
-        "jdbc:mysql://localhost:3306/db_name?allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        url);
+    // start with JDBC
+    url = "JDBC:mysql://127.0.0.1:10000/db_name?";
+    newUrl = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(url + securityParam, newUrl);
 
-    url = "jdbc:mysql://localhost:3306/db_name?p1=v1&autoDeserialize=true";
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(
-        "jdbc:mysql://localhost:3306/db_name?p1=v1&allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        url);
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?";
+    newUrl = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(url + securityParam, newUrl);
 
-    url = "jdbc:mysql://localhost:3306/db_name?p1=v1&autoDeserialize=true&p2=v2";
-    url = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(
-        "jdbc:mysql://localhost:3306/db_name?p1=v1&p2=v2&allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        url);
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1";
+    newUrl = JdbcParamUtils.filterJdbcUrl(url);
+    Assertions.assertEquals(url + "&" + securityParam, newUrl);
+
+    // key is not security
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&allowLocalInfile=true";
+    AtomicReference<String> atomUrl = new AtomicReference<>(url);
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
+        });
+
+    // value is not security
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=allowLocalInfile";
+    atomUrl.set(url);
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
+        });
+
+    // contains #
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&#p2=v2";
+    atomUrl.set(url);
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
+        });
   }
 
   @Test

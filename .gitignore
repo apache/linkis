@@ -15,6 +15,7 @@
 .scala_dependencies
 .settings
 .classpath
+.flattened-pom.xml
 
 # For SBT
 .jvmopts

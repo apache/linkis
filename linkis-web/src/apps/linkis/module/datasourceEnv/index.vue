@@ -182,7 +182,7 @@ export default {
         id: '',
         modifyTime: '',
         modifyUser: '',
-        parameter: '',
+        parameter: {},
         uris: '',
         keytab: '',
         principle: '',
@@ -256,7 +256,7 @@ export default {
     onTableDelete(row){
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {envName: row.envName}),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.envName}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -273,8 +273,8 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
+          this.load()
         }
       })
 
@@ -282,6 +282,7 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
+        this.modalEditData.parameter = {}
         console.log(key);
       }
       this.modalEditData.hasKeyTab = false;
@@ -309,6 +310,7 @@ export default {
         if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -320,28 +322,27 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
-            this.load()
           })
         }
         console.log(formData);
         this.modalLoading=false
         this.modalShow = false
-
       })
     },
     onModalCancel(){

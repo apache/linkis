@@ -1,5 +1,5 @@
 <h2 align="center">
-  Apache Linkis(Incubating)
+  Apache Linkis
 </h2>
 
 <p align="center">
@@ -23,24 +23,24 @@
     <a target="_blank" href="https://search.maven.org/search?q=g:org.apache.linkis%20AND%20a:linkis">
         <img src="https://img.shields.io/maven-central/v/org.apache.linkis/linkis.svg?label=maven%20central" />
     </a>
-    <a target="_blank" href="https://github.com/apache/incubator-linkis/blob/master/LICENSE">
+    <a target="_blank" href="https://github.com/apache/linkis/blob/master/LICENSE">
         <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license" />
     </a>
     <a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
         <img src="https://img.shields.io/badge/JDK-8-green.svg" />
     </a>
-    <a target="_blank" href="https://github.com/apache/incubator-linkis/actions">
-        <img src="https://github.com/apache/incubator-linkis/actions/workflows//build-backend.yml/badge.svg" />
+    <a target="_blank" href="https://github.com/apache/linkis/actions">
+        <img src="https://github.com/apache/linkis/actions/workflows//build-backend.yml/badge.svg" />
     </a>
 
-   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
-        <img src="https://img.shields.io/github/forks/apache/incubator-linkis.svg" alt="github forks"/>
+   <a target="_blank" href='https://github.com/apache/linkis'>
+        <img src="https://img.shields.io/github/forks/apache/linkis.svg" alt="github forks"/>
    </a>
-   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
-        <img src="https://img.shields.io/github/stars/apache/incubator-linkis.svg" alt="github stars"/>
+   <a target="_blank" href='https://github.com/apache/linkis'>
+        <img src="https://img.shields.io/github/stars/apache/linkis.svg" alt="github stars"/>
    </a>
-   <a target="_blank" href='https://github.com/apache/incubator-linkis'>
-        <img src="https://img.shields.io/github/contributors/apache/incubator-linkis.svg" alt="github contributors"/>
+   <a target="_blank" href='https://github.com/apache/linkis'>
+        <img src="https://img.shields.io/github/contributors/apache/linkis.svg" alt="github contributors"/>
    </a>
   <a target="_blank" href="https://badges.toozhao.com/stats/01G7TRNN1PH9PMSCYWDF3EK4QT">
        <img src="https://badges.toozhao.com/badges/01G7TRNN1PH9PMSCYWDF3EK4QT/green.svg" />
@@ -143,7 +143,7 @@ mvnw.cmd -N install
 mvnw.cmd clean install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
 ## compile web
-cd incubator-linkis/linkis-web
+cd linkis/linkis-web
 npm install
 npm run build
 ```
@@ -169,7 +169,7 @@ Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deploym
 
 # Documentation & Vedio
 
-- The documentation of linkis is in [Linkis-Website Git Repository](https://github.com/apache/incubator-linkis-website)
+- The documentation of linkis is in [Linkis-Website Git Repository](https://github.com/apache/linkis-website)
 - Meetup videos on [Bilibili](https://space.bilibili.com/598542776?from=search&seid=14344213924133040656)
 
 # Architecture
@@ -189,7 +189,7 @@ For code and documentation contributions, please follow the [contribution guide]
 # Contact Us
 
 
-- Any questions or suggestions please kindly submit an [issue](https://github.com/apache/incubator-linkis/issues).  
+- Any questions or suggestions please kindly submit an [issue](https://github.com/apache/linkis/issues).  
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
@@ -198,5 +198,5 @@ For code and documentation contributions, please follow the [contribution guide]
 
 # Who is Using Linkis
 
-We opened an issue [[Who is Using Linkis]](https://github.com/apache/incubator-linkis/issues/23) for users to feedback and record who is using Linkis.  
+We opened an issue [[Who is Using Linkis]](https://github.com/apache/linkis/issues/23) for users to feedback and record who is using Linkis.  
 Since the first release of Linkis in 2019, it has accumulated more than **700** trial companies and **1000+** sandbox trial users, which involving diverse industries, from finance, banking, tele-communication, to manufactory, internet companies and so on.

@@ -17,5 +17,6 @@
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.lastupdate.timeout|5s| orchestrator.engine.lastupdate.timeout |
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.timeout| 10s| orchestrator.engine.timeout|
 |linkis-computation-orchestrator|wds.linkis.orchestrator.engine.activity_monitor.interval|10s| orchestrator.engine.activity_monitor.interval||
+|linkis-computation-orchestrator|wds.linkis.shell.white.usage|cd,ls| orchestrator.engine.activity_monitor.interval|The shell whitelist configuration has expired|
  
 

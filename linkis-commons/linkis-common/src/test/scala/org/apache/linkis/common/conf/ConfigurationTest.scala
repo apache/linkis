@@ -23,7 +23,8 @@ class ConfigurationTest {
 
   @Test private[conf] def testIsAdmin(): Unit = {
     Assertions.assertTrue(Configuration.isAdmin("hadoop"))
-    Assertions.assertFalse(Configuration.isAdmin("HaDoop"))
+    Assertions.assertTrue(Configuration.isAdmin("HaDoop"))
+    Assertions.assertFalse(Configuration.isAdmin("HaDooop"))
   }
 
 }

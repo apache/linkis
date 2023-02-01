@@ -139,6 +139,7 @@ git push origin dev-fix dev-fix
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
 - 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支
+
 - PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南](https://linkis.apache.org/zh-CN/docs/latest/development/development-specification/commit-message)
 - 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中
 - 如果本次 PR 尚未准备好合并，请在名称头部加上 [WIP] 前缀（WIP = work-in-progress）

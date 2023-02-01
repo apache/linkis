@@ -1359,7 +1359,7 @@
   </build>
 
   <profiles>
-    <!-- hadoop version: mvn validate -Phadoop-3.3 ,spark still use hadoop2.7.2 by default, More details please check SPARK-23534   -->
+    <!-- hadoop version: mvn validate -Phadoop-3.3 ,when used with spark2.x ,please add -Pspark-2.4-hadoop-3.3 together, More details please check SPARK-23534   -->
     <profile>
       <id>hadoop-3.3</id>
       <properties>
@@ -1376,28 +1376,6 @@
         <curator.version>2.7.1</curator.version>
       </properties>
     </profile>
-    <!-- spark2-hadoop3 version:spark2.4 shade use hadoop2.7.2 by default mvn validate -Pspark-2.4-hadoop-3.3  -->
-    <profile>
-      <id>spark-2.4-hadoop-3.3</id>
-      <properties>
-        <hadoop.version>3.3.1</hadoop.version>
-        <curator.version>4.2.0</curator.version>
-        <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
-      </properties>
-    </profile>
-    <!-- TODO support spark3-hadoop3 version:spark3.2 shade use hadoop3.3.1 by default mvn validate -Pspark-3.2-hadoop-3.3  -->
-    <!--    <profile>-->
-    <!--      <id>spark-3.2-hadoop-3.3</id>-->
-    <!--      <properties>-->
-    <!--        <json4s.version>3.7.0-M11</json4s.version>-->
-    <!--        <hadoop-hdfs-client-shade.version>3.3.1</hadoop-hdfs-client-shade.version>-->
-    <!--        <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>-->
-    <!--        <hadoop-hdfs-client-shade.artifact>hadoop-hdfs-client</hadoop-hdfs-client-shade.artifact>-->
-    <!--        <spark.version>3.2.1</spark.version>-->
-    <!--        <hadoop.version>3.3.1</hadoop.version>-->
-    <!--        <curator.version>4.2.0</curator.version>-->
-    <!--      </properties>-->
-    <!--    </profile>-->
     <!-- jacoco: mvn validate -Pjacoco  -->
     <profile>
       <id>jacoco</id>

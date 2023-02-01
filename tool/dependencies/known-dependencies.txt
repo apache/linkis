@@ -369,6 +369,7 @@ netflix-commons-util-0.3.0.jar
 netflix-eventbus-0.3.0.jar
 netflix-infix-0.3.0.jar
 netflix-statistics-0.1.1.jar
+netty-3.6.2.Final.jar
 netty-all-4.1.86.Final.jar
 netty-buffer-4.1.86.Final.jar
 netty-codec-4.1.86.Final.jar
@@ -386,6 +387,7 @@ netty-codec-xml-4.1.86.Final.jar
 netty-common-4.1.86.Final.jar
 netty-handler-4.1.86.Final.jar
 netty-handler-proxy-4.1.86.Final.jar
+netty-handler-ssl-ocsp-4.1.86.Final.jar
 netty-resolver-4.1.86.Final.jar
 netty-resolver-dns-4.1.86.Final.jar
 netty-resolver-dns-classes-macos-4.1.86.Final.jar

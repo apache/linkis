@@ -163,7 +163,7 @@ $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 Please refer to [Quick Deployment](https://linkis.apache.org/docs/latest/deployment/deploy-quick/) to do the deployment.
 
 # Examples and Guidance
-- [User Manual](https://linkis.apache.org/docs/latest/user-guide/overview)
+- [User Manual](https://linkis.apache.org/docs/latest/user-guide/how-to-use)
 - [Engine Usage Documents](https://linkis.apache.org/docs/latest/engine-usage/overview) 
 - [API Documents](https://linkis.apache.org/docs/latest/api/overview)
 

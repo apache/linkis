@@ -104,9 +104,9 @@ public class MetaClassLoaderManager {
                         + componentLib);
                 ClassLoader parentClassLoader = MetaClassLoaderManager.class.getClassLoader();
                 ClassLoader metaClassLoader =
-                    classLoaders.compute(
+                    classLoaders.computeIfAbsent(
                         dsType,
-                        (type, classLoader) -> {
+                        (type) -> {
                           try {
                             return new URLClassLoader(
                                 getJarsUrlsOfPath(componentLib).toArray(new URL[0]),

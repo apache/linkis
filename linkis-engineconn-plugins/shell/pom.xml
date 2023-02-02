@@ -110,7 +110,6 @@
       <artifactId>netty-all</artifactId>
       <scope>provided</scope>
     </dependency>
-
   </dependencies>
 
   <build>

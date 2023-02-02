@@ -34,10 +34,8 @@ public class LinkisDataSourceService {
 
   private static final Logger logger = LoggerFactory.getLogger(LinkisDataSourceService.class);
 
-  private static final LinkisDataSourceRemoteClient dataSourceClient =
-      new LinkisDataSourceRemoteClient();
-
   public static DataCalcDataSource getDatasource(String datasourceName) {
+    LinkisDataSourceRemoteClient dataSourceClient = new LinkisDataSourceRemoteClient();
     GetInfoPublishedByDataSourceNameAction action =
         GetInfoPublishedByDataSourceNameAction.builder()
             .setDataSourceName(datasourceName)

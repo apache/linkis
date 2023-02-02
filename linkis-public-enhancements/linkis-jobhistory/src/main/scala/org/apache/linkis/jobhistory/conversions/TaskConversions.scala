@@ -262,17 +262,17 @@ object TaskConversions extends Logging {
       BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_COMPLETE_TIME) && metrics
+          .get(TaskConstant.JOB_COMPLETE_TIME) != null
     ) {
-      completeTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME).toString)
+      completeTime = dealString2Date(metrics.get(TaskConstant.JOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+          .get(TaskConstant.JOB_SUBMIT_TIME) != null
     ) {
-      createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
+      createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
     if (null != createTime) {
       if (isJobFinished(job.getStatus)) {
@@ -287,9 +287,9 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+    if (metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       val engineMap = metrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .get(TaskConstant.JOB_ENGINECONN_MAP)
         .asInstanceOf[util.Map[String, Object]]
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))

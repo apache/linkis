@@ -54,12 +54,17 @@ import org.slf4j.LoggerFactory;
 
 public class EntranceExecutionJob extends EntranceJob implements LogHandler {
 
+  private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
+
+  private static final ThreadLocal<SimpleDateFormat> dateFormatLocal =
+      ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+
   private LogReader logReader;
   private LogWriter logWriter;
   private Object logWriterLocker = new Object();
   private WebSocketCacheLogReader webSocketCacheLogReader;
   private WebSocketLogWriter webSocketLogWriter;
-  private static final Logger logger = LoggerFactory.getLogger(EntranceExecutionJob.class);
+
   private PersistenceManager persistenceManager;
 
   public EntranceExecutionJob(PersistenceManager persistenceManager) {
@@ -167,37 +172,39 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
   }
 
   @Override
-  public JobInfo getJobInfo() { // TODO You can put this method on LockJob(可以将该方法放到LockJob上去)
+  public JobInfo getJobInfo() {
     String execID = getId();
     String state = this.getState().toString();
     float progress = this.getProgress();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat simpleDateFormat = dateFormatLocal.get();
+
     if (getJobRequest().getMetrics() == null) {
       getJobRequest().setMetrics(new HashMap<>());
     }
+
     Map<String, Object> metricsMap = getJobRequest().getMetrics();
     String createTime =
-        metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME)
-            ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME))
+        metricsMap.containsKey(TaskConstant.JOB_SUBMIT_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_SUBMIT_TIME))
             : "not created";
     String scheduleTime =
-        metricsMap.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)
-            ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME))
+        metricsMap.containsKey(TaskConstant.JOB_SCHEDULE_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_SCHEDULE_TIME))
             : "not scheduled";
     String startTime =
-        metricsMap.containsKey(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR)
-            ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR))
+        metricsMap.containsKey(TaskConstant.JOB_TO_ORCHESTRATOR)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_TO_ORCHESTRATOR))
             : "not submitted to orchestrator";
     String endTime =
-        metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)
-            ? simpleDateFormat.format(metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME))
+        metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_COMPLETE_TIME))
             : "on running or not started";
     String runTime;
-    if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME)) {
+    if (metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)) {
       runTime =
           ByteTimeUtils.msDurationToString(
-              (((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME))).getTime()
-                  - (((Date) metricsMap.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME))).getTime());
+              (((Date) metricsMap.get(TaskConstant.JOB_COMPLETE_TIME))).getTime()
+                  - (((Date) metricsMap.get(TaskConstant.JOB_SUBMIT_TIME))).getTime());
     } else {
       runTime =
           "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)";
@@ -223,12 +230,9 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
   @Override
   public void close() throws IOException {
     logger.info("job:" + jobRequest().getId() + " is closing");
-
     try {
-      // todo  Do a lot of aftercare work when close(close时候要做很多的善后工作)
       if (this.getLogWriter().isDefined()) {
         IOUtils.closeQuietly(this.getLogWriter().get());
-        // this.setLogWriter(null);
       } else {
         logger.info("job:" + jobRequest().getId() + "LogWriter is null");
       }

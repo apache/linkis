@@ -172,22 +172,22 @@ object JobHistoryHelper extends Logging {
       jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
     }
     val metricsMap = jobRequest.getMetrics
-    val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+    val resourceMap = metricsMap.get(TaskConstant.JOB_YARNRESOURCE)
     val ecResourceMap =
       if (resourceInfo == null) new util.HashMap[String, ResourceWithStatus] else resourceInfo
     if (resourceMap != null) {
       resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
     } else {
-      metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
+      metricsMap.put(TaskConstant.JOB_YARNRESOURCE, ecResourceMap)
     }
     var engineInstanceMap: util.HashMap[String, AnyRef] = null
-    if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+    if (metricsMap.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       engineInstanceMap = metricsMap
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .get(TaskConstant.JOB_ENGINECONN_MAP)
         .asInstanceOf[util.HashMap[String, AnyRef]]
     } else {
       engineInstanceMap = new util.HashMap[String, AnyRef]()
-      metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
+      metricsMap.put(TaskConstant.JOB_ENGINECONN_MAP, engineInstanceMap)
     }
     val infoMap = ecInfo
     if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {

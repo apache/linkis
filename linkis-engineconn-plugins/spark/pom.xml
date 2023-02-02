@@ -104,20 +104,9 @@
           <groupId>io.netty</groupId>
           <artifactId>netty-all</artifactId>
         </exclusion>
-
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
-        </exclusion>
-
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
-        </exclusion>
-
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-auth</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
 
         <exclusion>
@@ -457,7 +446,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>${hadoop-hdfs-client-shade.artifact}</artifactId>
+      <artifactId>hadoop-hdfs</artifactId>
       <version>${hadoop.version}</version>
       <scope>provided</scope>
     </dependency>

@@ -30,7 +30,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>${hadoop-hdfs-client-shade.artifact}</artifactId>
+      <artifactId>hadoop-hdfs</artifactId>
       <version>${hadoop-hdfs-client-shade.version}</version>
       <optional>true</optional>
       <exclusions>

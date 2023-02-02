@@ -112,7 +112,6 @@
     <revision>1.3.2-SNAPSHOT</revision>
     <jedis.version>2.9.2</jedis.version>
     <hadoop.version>2.7.2</hadoop.version>
-    <hadoop-hdfs-client-shade.artifact>hadoop-hdfs</hadoop-hdfs-client-shade.artifact>
     <hadoop-hdfs-client.artifact>hadoop-hdfs</hadoop-hdfs-client.artifact>
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <zookeeper.version>3.5.9</zookeeper.version>

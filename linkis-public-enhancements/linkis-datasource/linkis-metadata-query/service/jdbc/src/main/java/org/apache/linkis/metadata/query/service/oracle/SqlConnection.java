@@ -20,7 +20,7 @@ package org.apache.linkis.metadata.query.service.oracle;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

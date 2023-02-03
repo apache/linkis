@@ -24,14 +24,11 @@ import java.util
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 
-case class ECMOperateRequest(user: String, parameters: util.Map[String, Object])
+case class ECMOperateRequest(user: String, parameters: util.Map[String, AnyRef])
     extends OperateRequest
     with RequestProtocol {
 
-  def this(user: String, parameters: Map[String, Any]) = this(
-    user,
-    new util.HashMap[String, Object](parameters.map { case (k, v: Object) => (k, v) }.asJava)
-  )
+  def this(user: String, parameters: Map[String, AnyRef]) = this(user, parameters.asJava)
 
 }
 

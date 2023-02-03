@@ -5,16 +5,16 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <template>
   <div class="we-steps">
     <Row class="we-steps-row-first">
@@ -86,14 +86,14 @@ export default {
   },
   data() {
     return {
-      // completed 是完成状态，完成状态后不会有其他状态产生；
-      // special 是结果集衍生状态，用于判断结果集三个步骤中哪个步骤发生错误；
-      // failure 是错误状态，用于标记错误，红色高亮
-      // retry 是重试状态，需要在前面追加申请资源失败或执行失败两个状态
+      // completed is the completed state, no other state will be generated after the completed state;(completed 是完成状态，完成状态后不会有其他状态产生；)
+      // special is the derived state of the result set, which is used to determine which of the three steps of the result set has an error;(special 是结果集衍生状态，用于判断结果集三个步骤中哪个步骤发生错误；)
+      // failure is the error state, used to mark errors, highlighted in red(failure 是错误状态，用于标记错误，红色高亮)
+      // retry is a retry state, which needs to be preceded by two states: application resource failure or execution failure(retry 是重试状态，需要在前面追加申请资源失败或执行失败两个状态)
       stepsInfo: [
         { label: this.$t('message.common.steps.stepsInfo.Submitted'), value: 'Submitted', status: ['running'], isFinish: false },
-        // websocket不返回Inited，所以把第一个接收的execute接口作为Inited
-        // 这里是为了防止http方式去请求时，或者长时间未返回状态时，前台去主动请求到Inited状态的情况
+        // websocket does not return Inited, so the first received execute interface is used as Inited(websocket不返回Inited，所以把第一个接收的execute接口作为Inited)
+        // This is to prevent the front desk from actively requesting the Inited state when the http method is requested, or when the state has not been returned for a long time.(这里是为了防止http方式去请求时，或者长时间未返回状态时，前台去主动请求到Inited状态的情况)
         { label: this.$t('message.common.steps.stepsInfo.Inited'), value: 'Inited', status: ['running'], isFinish: false },
         { label: '...', value: 'ellipsis', status: ['running'], isFinish: false },
         { label: this.$t('message.common.steps.stepsInfo.Scheduled'), value: 'Scheduled', status: ['running'], isFinish: false },
@@ -143,15 +143,15 @@ export default {
         this.stepListData = list
       }
       this.stepListData.forEach((status, index) => {
-        // 要放每个步骤都不是地址引用，否则会出现isFinish这个状态错误
+        // It is necessary to put each step is not an address reference, otherwise there will be a state error of isFinish(要放每个步骤都不是地址引用，否则会出现isFinish这个状态错误)
         const step = cloneDeep(this.findStep(status));
         if (step) {
-          // 如果是特殊态的情况，要设置hover的列表，渲染的时候要显示它们的父状态：FailedToGetResult
+          // If it is a special state, set the list of hovers, and display their parent state when rendering: FailedToGetResult(如果是特殊态的情况，要设置hover的列表，渲染的时候要显示它们的父状态：FailedToGetResult)
           if (step.status.indexOf('special') !== -1) {
             const FailedToGetResult = this.findStep(FAILED_TO_GET_RESULT_STATUS);
             this.renderList.push(FailedToGetResult);
             this.setHoverList(step);
-          // 如果是重试态，则要在之前插入失败的状态
+          // If it is a retry state, insert the failed state before(如果是重试态，则要在之前插入失败的状态)
           } else if (step.value === RETRY_STATUS) {
             const prevOne = this.stepListData[index - 1];
             const completionValue = prevOne === SCHEDULED_STATUS ? 'FailedToApply' : 'FailedToExecute';
@@ -161,16 +161,16 @@ export default {
           } else {
             this.renderList.push(Object.assign(step, IS_FINISH, IS_LOADING));
           }
-          // 最后一个状态
+          // last state(最后一个状态)
           if (index === this.stepListData.length - 1) {
-          // 如果属于运行态，就在最后插入它的下一个状态
+          // If it belongs to the running state, insert its next state at the end(如果属于运行态，就在最后插入它的下一个状态)
             if (step.status.indexOf('running') !== -1) {
               step.isLoading = true;
               const findIndex = this.stepsInfo.findIndex((i) => i.value === status);
               if (findIndex !== -1) {
                 this.renderList.push(this.stepsInfo[findIndex + 1]);
               }
-            // 如果是重试态，就在后面插入“资源申请”中这个状态
+            // If it is a retry state, insert this state in the "resource application" later(如果是重试态，就在后面插入“资源申请”中这个状态)
             } else if (step.value === RETRY_STATUS) {
               step.isLoading = true;
               const scheduled = this.findStep(SCHEDULED_STATUS);

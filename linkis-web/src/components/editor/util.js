@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 
 import { partition, map, filter, isFunction } from 'lodash';
 import globalcache from '@/apps/scriptis/service/db/globalcache.js';
@@ -22,7 +22,7 @@ import storage from '@/common/helper/storage';
 import debug_log from '@/common/util/debug';
 
 /**
- * 去indexDb中获取hive的列表和udf函数列表
+ * Go to indexDb to get the hive list and udf function list(去indexDb中获取hive的列表和udf函数列表)
  * @param {*} monaco
  * @param {*} lang
  */
@@ -59,11 +59,11 @@ const getHiveList = async (monaco, lang) => {
 
 /**
  *
- * @param {*} match 匹配到的文本
- * @param {*} proposals 需要过滤的列表
- * @param {*} fieldString 过滤条件中的字段名
- * @param {*} attachMatch 附加的过滤条件
- * @param {*} needSplit 是否需要对insertText进行截取
+ * @param {*} match matched text(匹配到的文本)
+ * @param {*} proposals list to filter(需要过滤的列表)
+ * @param {*} fieldString Field name in filter condition(过滤条件中的字段名)
+ * @param {*} attachMatch Additional filters(附加的过滤条件)
+ * @param {*} needSplit Whether to intercept insertText(是否需要对insertText进行截取)
  * @return {*}
  */
 const getReturnList = ({ match, proposals, fieldString, attachMatch, needSplit, position }, monaco) => {
@@ -85,7 +85,7 @@ const getReturnList = ({ match, proposals, fieldString, attachMatch, needSplit, 
   if (attachMatch && !needSplit) {
     items = filter(proposals, (it) => it[fieldString].startsWith(attachMatch) && regexp.test(it[fieldString]));
   } else if (attachMatch && needSplit) {
-    // 这里是对例如create table和drop table的情况进行处理
+    // Here is the processing of situations such as create table and drop table(这里是对例如create table和drop table的情况进行处理)
     proposals.forEach((it) => {
       if (regexp.test(it[fieldString]) && it.label.indexOf(attachMatch[1]) === 0) {
         const text = it.insertText;
@@ -112,13 +112,13 @@ const getReturnList = ({ match, proposals, fieldString, attachMatch, needSplit, 
 }
 
 /**
- * 对拿到的数据格式化成completionList格式
- * @param {*} monaco 编辑器
- * @param {*} list 格式化列表
- * @param {*} lang 脚本类型
- * @param {*} type 类型（函数或者全局变量）
- * @param {*} isDiy 需要对输入进行定制化
- * @return {*} 格式化后的列表
+ * Format the obtained data into completionList format(对拿到的数据格式化成completionList格式)
+ * @param {*} monaco editor(编辑器)
+ * @param {*} list formatted list(格式化列表)
+ * @param {*} lang script type(脚本类型)
+ * @param {*} type Type (function or global variable)(类型（函数或者全局变量）)
+ * @param {*} isDiy 需要对输入进行定制化(需要对输入进行定制化)
+ * @return {*} formatted list(格式化后的列表)
  */
 const getFormatProposalsList = (monaco, list, lang, type, isDiy, isSnippet) => {
   let formatList = [];

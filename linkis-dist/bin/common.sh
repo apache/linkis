@@ -19,7 +19,7 @@ source ~/.bash_profile
 
 export local_host="`hostname --fqdn`"
 
-ipaddr=$(ip addr | awk '/^[0-9]+: / {}; /inet.*global/ {print gensub(/(.*)\/(.*)/, "\\1", "g", $2)}')
+ipaddr=127.0.0.1
 
 ## color
 RED='\033[0;31m'

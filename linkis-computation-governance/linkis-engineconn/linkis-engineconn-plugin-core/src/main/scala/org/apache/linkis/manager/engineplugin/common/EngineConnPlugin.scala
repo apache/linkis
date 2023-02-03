@@ -26,7 +26,7 @@ import java.util
 
 trait EngineConnPlugin {
 
-  def init(params: util.Map[String, Any])
+  def init(params: util.Map[String, AnyRef])
 
   def getEngineResourceFactory: EngineResourceFactory
 

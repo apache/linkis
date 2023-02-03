@@ -222,4 +222,15 @@ public class DefaultContextKeyValueContext implements ContextKeyValueContext {
       logger.warn("Remove keyValue by key preFix{} and csType{} ", preFix, csType);
     }
   }
+
+  @Override
+  public void removeByKey(String keyStr, ContextType csType) {
+    List<ContextKey> removeKeys = getContextValueMapSet().findByKey(keyStr, csType);
+    if (CollectionUtils.isNotEmpty(removeKeys)) {
+      for (ContextKey key : removeKeys) {
+        remove(key);
+      }
+      logger.warn("Remove keyValue by keyStr {} and csType{} ", keyStr, csType);
+    }
+  }
 }

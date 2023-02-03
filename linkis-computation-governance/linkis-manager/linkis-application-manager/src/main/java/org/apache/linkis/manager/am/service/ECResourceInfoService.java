@@ -21,6 +21,7 @@ import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface ECResourceInfoService {
 
@@ -35,6 +36,12 @@ public interface ECResourceInfoService {
   List<ECResourceInfoRecord> getECResourceInfoRecordList(
       String instance, Date endDate, Date startDate, String username, String engineType);
 
-  // TODO add search method
-
+  /**
+   * @param creatorUserList engineconn creator list
+   * @param engineTypeList engineconn type list
+   * @param statusStrList engineconn status string list
+   * @return
+   */
+  List<Map<String, Object>> getECResourceInfoList(
+      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList);
 }

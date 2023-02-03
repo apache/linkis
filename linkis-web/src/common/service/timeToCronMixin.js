@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import i18n from '@/common/i18n'
 const DATELANG = {
   "MIN": i18n.t('message.common.time.MIN'),
@@ -101,8 +101,8 @@ export default {
   },
   computed: {
     timeToCron() {
-      // 将所选时间转换成cron格式
-      // 还是得先确定第一个选择的是什么来决定表达是怎么写
+      // Convert selected time to cron format(将所选时间转换成cron格式)
+      // Still have to determine what is the first choice to decide how to write the expression(还是得先确定第一个选择的是什么来决定表达是怎么写)
       if (this.oneSelect === 'MIN') {
         return `0 0/${this.zeroSelect} * * * ?`;
       } else if (this.oneSelect === 'HOUR') {
@@ -147,7 +147,7 @@ export default {
         this.isSelectYear = false;
         this.towSelect = this.towList[0].value;
         this.selectHourAndMinues = false;
-      } else if (value === 'DAY') {// 如果选择天二三选择框不用展示，展示四五选择框
+      } else if (value === 'DAY') {// If you choose the day two and three selection boxes not to be displayed, display the fourth and fifth selection boxes(如果选择天二三选择框不用展示，展示四五选择框)
         this.selectHourAndMinues = true;
         this.isSelectYear = false;
         this.towList = [];
@@ -194,9 +194,9 @@ export default {
     },
     cronToTime() {
       if (Object.keys(this.scheduleParams).length > 0 && this.scheduleParams.scheduleTime) {
-        // 将corn格式转换成时间格式0 2 2 3 * * ?
+        // Convert corn format to time format 0 2 2 3 * * ?(将corn格式转换成时间格式0 2 2 3 * * ?)
         const tepArr = this.scheduleParams.scheduleTime.split(' ');
-        // 先判断是否选的年
+        // First determine whether to choose the year(先判断是否选的年)
         if (tepArr.length >= 7) {
           this.oneSelect = 'YEAR';
           this.selectHourAndMinues = true;

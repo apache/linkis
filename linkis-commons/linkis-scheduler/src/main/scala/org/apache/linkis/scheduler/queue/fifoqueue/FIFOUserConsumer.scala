@@ -108,7 +108,7 @@ class FIFOUserConsumer(
     }
     var event: Option[SchedulerEvent] = getWaitForRetryEvent
     if (event.isEmpty) {
-      val completedNums = runningJobs.filter(e => e == null || e.isCompleted)
+      val completedNums = runningJobs.filter(job => job == null || job.isCompleted)
       if (completedNums.length < 1) {
         Utils.tryQuietly(Thread.sleep(1000)) // TODO 还可以优化，通过实现JobListener进行优化
         return
@@ -169,8 +169,8 @@ class FIFOUserConsumer(
           job.onFailure(
             "The request engine times out (请求引擎超时，可能是EngineConnManager 启动EngineConn失败导致，可以去查看看EngineConnManager的linkis.out和linkis.log日志).",
             new SchedulerErrorException(
-              REQUEST_ENGINE_TIMES_OUT.getErrorCode,
-              REQUEST_ENGINE_TIMES_OUT.getErrorDesc
+              REQUEST_ENGINE_TIME_OUT.getErrorCode,
+              REQUEST_ENGINE_TIME_OUT.getErrorDesc
             )
           )
         case error: Throwable =>

@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.manager.common.protocol.resource.ResponseTaskRunningInfo
+import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
 import org.apache.linkis.orchestrator.computation.execute.CodeExecTaskExecutorManager
 import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
@@ -44,39 +45,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   @PostConstruct
   private def init(): Unit = {
     EngineConnMonitor.addEngineExecutorStatusMonitor(
-      codeExecTaskExecutorManager.getAllInstanceToExecutorCache(),
-      failedEngineServiceInstance => {
-        val taskToExecutorCache = codeExecTaskExecutorManager.getAllExecTaskToExecutorCache()
-        val failedTaskMap = synchronized {
-          taskToExecutorCache.filter(
-            _._2.getEngineConnExecutor.getServiceInstance.equals(failedEngineServiceInstance)
-          )
-        }
-        if (null != failedTaskMap && failedTaskMap.nonEmpty) {
-          failedTaskMap.foreach { case (taskId, executor) =>
-            val execTask = executor.getExecTask
-            Utils.tryAndError {
-              logger.warn(
-                s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly."
-              )
-              val errLog = LogUtils.generateERROR(
-                s"Your job : ${execTask.getIDInfo()} was failed because the engine quitted unexpectedly(任务${execTask
-                  .getIDInfo()}失败，" +
-                  s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
-              )
-              val logEvent = TaskLogEvent(execTask, errLog)
-              execTask.getPhysicalContext.pushLog(logEvent)
-              val errorResponseEvent = TaskErrorResponseEvent(
-                execTask,
-                "task failed，Engine quitted unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
-              )
-              execTask.getPhysicalContext.broadcastSyncEvent(errorResponseEvent)
-              val statusEvent = TaskStatusEvent(execTask, ExecutionNodeStatus.Failed)
-              execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
-            }
-          }
-        }
-      }
+      codeExecTaskExecutorManager.getAllInstanceToExecutorCache()
     )
   }
 
@@ -117,20 +86,30 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   @Receiver
   override def taskStatusReceiver(taskStatus: ResponseTaskStatus, sender: Sender): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
-    var isExist = false
-    codeExecTaskExecutorManager
-      .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
-      .foreach { codeExecutor =>
-        val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
-        logger.info(
-          s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"
-        )
-        codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
-        codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
-        isExist = true
-      }
-    if (!isExist) {
+    def postStatus(): Boolean = {
+      var isExist = false
+      codeExecTaskExecutorManager
+        .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
+        .foreach { codeExecutor =>
+          val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
+          logger.info(
+            s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"
+          )
+          codeExecutor.getExecTask.getPhysicalContext.broadcastSyncEvent(event)
+          codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
+          isExist = true
+        }
+      isExist
+    }
+
+    if (!postStatus() && ExecutionNodeStatus.isCompleted(taskStatus.status)) {
       logger.warn(s" from $serviceInstance received ${taskStatus} cannot find execTask to deal")
+      Thread.sleep(ComputationOrchestratorConf.TASK_STATUS_COMPLETE_WAIT_TIMEOUT)
+      if (!postStatus()) {
+        logger.warn(
+          s" from $serviceInstance received ${taskStatus} cannot find execTask to deal, by retry 2 times"
+        )
+      }
     }
   }
 

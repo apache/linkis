@@ -35,9 +35,6 @@ public class CSFlowInfosSerializer extends AbstractSerializer<CSFlowInfos> {
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(CSFlowInfos.class.getName())) {
-      return true;
-    }
-    return false;
+    return obj instanceof CSFlowInfos;
   }
 }

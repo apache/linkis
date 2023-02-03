@@ -17,65 +17,34 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.client.errorcode;
 
-public enum SeatunnelErrorCodeSummary {
-  NOT_SUPPORT_METHON_ID(17023, "", ""),
-  ERROR_IN_CLOSING_ID(17025, "", ""),
-  NOT_SUPPORT_METHON(
-      17023,
-      "Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法)",
-      "Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法)"),
-  EXEC_SPARK_CODE_ERROR(
-      17023,
-      "Exec Seatunnel-Spark Code Error(执行 Seatunnel-Spark 代码错误)",
-      "Exec Seatunnel-Spark Code Error(执行 Seatunnel-Spark 代码错误)"),
-  EXEC_FLINK_CODE_ERROR(
-      17023,
-      "Exec Seatunnel-Flink Code Error(执行 Seatunnel-Flink 代码错误)",
-      "Exec Seatunnel-Flink Code Error(执行 Seatunnel-Flink 代码错误)"),
-  EXEC_FLINKSQL_CODE_ERROR(
-      17023,
-      "Exec Seatunnel-FlinkSQL Code Error(执行 Seatunnel-FlinkSQL 代码错误)",
-      "Exec Seatunnel-FlinkSQL Code Error(执行 Seatunnel-FlinkSQL 代码错误)");
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum SeatunnelErrorCodeSummary implements LinkisErrorCode {
+  NOT_SUPPORT_METHOD_ID(17023, ""),
+  ERROR_IN_CLOSING_ID(17025, ""),
+  NOT_SUPPORT_METHOD(
+      17023, "Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法)"),
+  EXEC_SPARK_CODE_ERROR(17023, "Exec Seatunnel-Spark Code Error(执行 Seatunnel-Spark 代码错误)"),
+  EXEC_FLINK_CODE_ERROR(17023, "Exec Seatunnel-Flink Code Error(执行 Seatunnel-Flink 代码错误)"),
+  EXEC_FLINKSQL_CODE_ERROR(17023, "Exec Seatunnel-FlinkSQL Code Error(执行 Seatunnel-FlinkSQL 代码错误)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
-  /** Possible reasons for the error(错误可能出现的原因) */
-  private String comment;
+  private final String errorDesc;
 
-  SeatunnelErrorCodeSummary(int errorCode, String errorDesc, String comment) {
+  SeatunnelErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
-    this.comment = comment;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  public String getComment() {
-    return comment;
-  }
-
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

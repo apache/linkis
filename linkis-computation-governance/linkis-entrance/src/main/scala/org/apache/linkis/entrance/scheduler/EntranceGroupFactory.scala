@@ -83,10 +83,7 @@ class EntranceGroupFactory extends GroupFactory with Logging {
   override def getOrCreateGroup(event: SchedulerEvent): Group = {
     val (labels, params) = event match {
       case job: EntranceJob =>
-        (
-          job.getJobRequest.getLabels,
-          job.getJobRequest.getParams.asInstanceOf[util.Map[String, Any]]
-        )
+        (job.getJobRequest.getLabels, job.getJobRequest.getParams)
     }
     val groupName = EntranceGroupFactory.getGroupNameByLabels(labels, params)
     val cacheGroup = groupNameToGroups.getIfPresent(groupName)
@@ -207,7 +204,7 @@ object EntranceGroupFactory {
   def getGroupName(
       creator: String,
       user: String,
-      params: util.Map[String, Any] = new util.HashMap[String, Any]
+      params: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
   ): String = {
     val runtime = TaskUtils.getRuntimeMap(params)
     val cache =
@@ -224,7 +221,7 @@ object EntranceGroupFactory {
 
   def getGroupNameByLabels(
       labels: java.util.List[Label[_]],
-      params: util.Map[String, Any] = new util.HashMap[String, Any]
+      params: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
   ): String = {
 
     val userCreator = labels.asScala.find(_.isInstanceOf[UserCreatorLabel])

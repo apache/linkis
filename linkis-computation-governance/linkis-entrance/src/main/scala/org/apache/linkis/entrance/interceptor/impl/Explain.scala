@@ -103,10 +103,7 @@ object SQLExplain extends Explain {
   private val LOG: Logger = LoggerFactory.getLogger(getClass)
 
   override def authPass(code: String, error: StringBuilder): Boolean = {
-    if (code.trim.matches(CREATE_DATABASE_SQL)) {
-      error.append("Sorry, you have no permission to create database")
-      false
-    } else true
+    true
   }
 
   /**
@@ -130,11 +127,12 @@ object SQLExplain extends Explain {
       logger.warn("sql limit check error happens")
       executionCode.contains(IDE_ALLOW_NO_LIMIT)
     }
-    if (isNoLimitAllowed)
+    if (isNoLimitAllowed) {
       logAppender.append(
         LogUtils
           .generateWarn("please pay attention ,SQL full export mode opened(请注意,SQL全量导出模式打开)\n")
       )
+    }
     if (tempCode.contains("""\;""")) {
       val semicolonIndexes = findRealSemicolonIndex(tempCode)
       var oldIndex = 0
@@ -306,7 +304,7 @@ object SQLExplain extends Explain {
   }
 
   private def isUpperSelect(selectSql: String): Boolean = {
-    if (selectSql.trim.startsWith("SELECT")) true else false
+    selectSql.trim.startsWith("SELECT")
   }
 
 }

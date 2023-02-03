@@ -102,9 +102,13 @@ object GatewaySSOUtils extends Logging {
     )
   }
 
-  def setLoginUser(request: GatewayHttpRequest, username: String): Unit = {
+  def setLoginUser(
+      request: GatewayHttpRequest,
+      username: String,
+      updateSession: Boolean = true
+  ): Unit = {
     val proxyUser = ProxyUserUtils.getProxyUser(username)
-    SSOUtils.setLoginUser(c => request.addCookie(c.getName, Array(c)), proxyUser)
+    SSOUtils.setLoginUser(c => request.addCookie(c.getName, Array(c)), proxyUser, updateSession)
   }
 
   def removeLoginUser(gatewayContext: GatewayContext): Unit = {

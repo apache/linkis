@@ -53,7 +53,7 @@
                     v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
                     :key="index3"
                     @on-click="clickToRoute">
-                    <div v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-3'">
+                    <div v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-3' || item3.key === '1-9-1'">
                       <Cell
                         :key="index3"
                         :class="{ crrentItem: crrentItem === item3.key }"
@@ -73,6 +73,7 @@
           <Breadcrumb v-if="$route.name !== 'resource' && $route.name !== 'resourceEngineConnList'">
             <BreadcrumbItem :to="skipPath"><Icon v-if="skipPath" type="ios-arrow-back" size="16" color="#338cf0"></Icon>{{ breadcrumbSecondName }}</BreadcrumbItem>
             <BreadcrumbItem v-if="$route.name === 'viewHistory'">{{ $route.query.taskID }}</BreadcrumbItem>
+            <BreadcrumbItem v-if="$route.name === 'codeDetail'">{{ $route.query.id }}</BreadcrumbItem>
             <template v-if="$route.name === 'EngineConnList'">
               <BreadcrumbItem>{{ $route.query.instance }}</BreadcrumbItem>
               <BreadcrumbItem>EngineConnList</BreadcrumbItem>
@@ -115,6 +116,7 @@ export default {
           { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: true },
           { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: true},
           { key: '1-10', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
+          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
         ],
       },
       datasourceNavList: {
@@ -125,8 +127,9 @@ export default {
         children: [
           {key: '1-8-1', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), path: '/console/dataSource' },
           {key: '1-8-2', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
-          {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
+          // {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
           // {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          {key: '1-8-5', name: this.$t('message.linkis.sideNavList.function.children.datasourceTypeKey'), path: '/console/datasourceTypeKey' },
         ]
       },
       basedataNavList: {
@@ -139,9 +142,9 @@ export default {
           {key: '1-10-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
           {key: '1-10-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
           {key: '1-10-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
-          // {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
-          // {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
-          
+          {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
+          {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
+
         ]
       },
       urmSideNavList: {
@@ -152,34 +155,39 @@ export default {
         children: [
           {key: '1-9-1', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionManage'), path: '/console/urm/udfManagement'},
           {key: '1-9-2', name: this.$t('message.linkis.sideNavList.function.children.functionManagement'), path: '/console/urm/functionManagement'},
-          {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
-          {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
+          // {key: '1-9-3', name: this.$t('message.linkis.sideNavList.function.children.udfManager'), path: '/console/udfManager' },
+          // {key: '1-9-4', name: this.$t('message.linkis.sideNavList.function.children.udfTree'), path: '/console/udfTree' },
         ]
       },
-      breadcrumbSecondName: this.$t('message.linkis.sideNavList.function.children.globalHistory')
+      breadcrumbSecondName: this.$t('message.linkis.sideNavList.function.children.globalHistory'),
     };
   },
   computed: {
     skipPath() {
       let path = '';
       if(this.$route.name === 'viewHistory') path = '/console';
+      if(this.$route.name === 'codeDetail') path = '/console/codeQuery';
       if(this.$route.name === 'EngineConnList') path = '/console/ECM';
       return path;
     },
     isEmbedInFrame() {
-      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入
+      // If it is introduced by iframe top !== self returns true, used to distinguish between running alone or being introduced(如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入)
       return top !== self;
     }
   },
 
   created() {
-    // 根据路径显示页面的标题
+    // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach(element => {
       if(element.path === this.$route.path) {
         this.breadcrumbSecondName = element.name
       }
     });
-    // 获取是否是历史管理员权限
+    if(this.$route.name === 'codeDetail') {
+      this.breadcrumbSecondName = this.$t('message.linkis.sideNavList.function.children.codeQuery')
+      this.crrentItem = '1-11'
+    }
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');
@@ -199,8 +207,38 @@ export default {
         this.sideNavList.children[8].showSubMenu = !this.sideNavList.children[8].showSubMenu;
         return;
       }
-      index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
-      const activedCellParent = this.sideNavList;
+      // index = index.split('-')[0] + '-' + index.split('-')[1]; //防止出现三级菜单
+      let activedCellParent
+      switch (index) {
+        case '1-8-1':
+          activedCellParent = this.datasourceNavList
+          this.sideNavList.children[6].showSubMenu = false;
+          break;
+        case '1-8-2':
+          activedCellParent = this.datasourceNavList
+          this.sideNavList.children[6].showSubMenu = false;
+          break;
+        case '1-9-1':
+          activedCellParent = this.urmSideNavList
+          this.sideNavList.children[7].showSubMenu = false;
+          break;
+        case '1-9-2':
+          activedCellParent = this.urmSideNavList
+          this.sideNavList.children[7].showSubMenu = false;
+          break;
+        case '1-10-5':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false;
+          break;
+        case '1-10-6':
+          activedCellParent = this.basedataNavList
+          this.sideNavList.children[8].showSubMenu = false;
+          break;
+        default:
+          activedCellParent = this.sideNavList
+          break;
+      }
+      // const activedCellParent = this.navListMap[index] || this.sideNavList;
       this.crrentItem = index;
       const activedCell = activedCellParent.children.find((item) => item.key === index);
       this.breadcrumbFirstName = activedCellParent.name;
@@ -240,7 +278,7 @@ export default {
     } else if ((to.name === 'Console' && from.name === 'Home') || (to.name === 'Console' && from.name === 'Project') || (to.name === 'Console' && from.name === 'Workflow') || !from.name) {
       const lastActiveConsole = storage.get('lastActiveConsole');
       // 如果为历史详情则直接刷新
-      if(to.name === 'viewHistory') return next();
+      if(to.name === 'viewHistory' || to.name === 'codeDetail') return next();
       next((vm) => {
         if (lastActiveConsole) {
           if (lastActiveConsole.key === '1-9-1' || lastActiveConsole.key === '1-9-2') {

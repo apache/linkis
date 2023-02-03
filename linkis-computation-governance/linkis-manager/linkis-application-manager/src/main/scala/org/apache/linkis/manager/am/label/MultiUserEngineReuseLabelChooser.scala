@@ -47,7 +47,7 @@ class MultiUserEngineReuseLabelChooser extends EngineReuseLabelChooser with Logg
       userMap
     } else {
       throw new AMErrorException(
-        AMErrorCode.AM_CONF_ERROR.getCode,
+        AMErrorCode.AM_CONF_ERROR.getErrorCode,
         s"Multi-user engine parameter configuration error,please check key ${AMConfiguration.MULTI_USER_ENGINE_USER.key}"
       )
     }

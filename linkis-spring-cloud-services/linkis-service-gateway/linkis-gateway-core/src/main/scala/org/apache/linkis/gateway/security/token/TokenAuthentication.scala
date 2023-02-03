@@ -19,6 +19,7 @@ package org.apache.linkis.gateway.security.token
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.authentication.service.TokenService
+import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.config.GatewayConfiguration._
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.security.{GatewaySSOUtils, SecurityFilter}
@@ -51,7 +52,9 @@ object TokenAuthentication extends Logging {
     }
     var token = gatewayContext.getRequest.getHeaders.get(TOKEN_KEY)(0)
     var tokenUser = gatewayContext.getRequest.getHeaders.get(TOKEN_USER_KEY)(0)
-    var host = gatewayContext.getRequest.getRemoteAddress.getAddress.getHostAddress
+
+    var host = gatewayContext.getRequest.getRequestRealIpAddr()
+
     if (StringUtils.isBlank(token) || StringUtils.isBlank(tokenUser)) {
       token = gatewayContext.getRequest.getCookies.get(TOKEN_KEY)(0).getValue
       tokenUser = gatewayContext.getRequest.getCookies.get(TOKEN_USER_KEY)(0).getValue
@@ -61,6 +64,22 @@ object TokenAuthentication extends Logging {
         ) << gatewayContext.getRequest.getRequestURI
         SecurityFilter.filterResponse(gatewayContext, message)
         return false
+      }
+    }
+    var tokenAlive = false
+    val tokenAliveArr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)
+    var tokenAliveStr = ""
+    if (null != tokenAliveArr && !tokenAliveArr.isEmpty) {
+      tokenAliveStr = gatewayContext.getRequest.getHeaders.get(TOKEN_ALIVE_KEY)(0)
+    } else {
+      val tokenAliveCookieArr = gatewayContext.getRequest.getCookies.get(TOKEN_ALIVE_KEY)
+      if (null != tokenAliveCookieArr && !tokenAliveCookieArr.isEmpty) {
+        tokenAliveStr = tokenAliveCookieArr(0).getValue
+      }
+    }
+    if (StringUtils.isNotBlank(tokenAliveStr)) {
+      if (tokenAliveStr.toLowerCase().equals(GatewayConfiguration.TOKEN_ALIVE_TRUE)) {
+        tokenAlive = true
       }
     }
     var authMsg: Message = Message.noLogin(
@@ -76,7 +95,14 @@ object TokenAuthentication extends Logging {
       logger.info(
         s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
       )
-      GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser)
+      if (GatewayConfiguration.ENABLE_TOEKN_AUTHENTICATION_ALIVE.getValue || tokenAlive) {
+        if (logger.isDebugEnabled()) {
+          logger.debug(s"Token auth of user : ${tokenUser} has param : tokenAlive : true.")
+        }
+        GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser, true)
+      } else {
+        GatewaySSOUtils.setLoginUser(gatewayContext.getRequest, tokenUser, false)
+      }
       true
     } else {
       SecurityFilter.filterResponse(gatewayContext, authMsg)

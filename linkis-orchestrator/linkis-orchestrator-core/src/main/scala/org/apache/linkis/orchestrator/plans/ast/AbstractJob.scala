@@ -25,15 +25,15 @@ abstract class AbstractJob extends Job {
 
   private var labels: util.List[Label[_]] = _
 
-  private var params: util.Map[String, Any] = _
+  private var params: util.Map[String, AnyRef] = _
 
   private var priority: Int = _
 
   private var executeUser: String = _
 
-  def getParams: util.Map[String, Any] = params
+  def getParams: util.Map[String, AnyRef] = params
 
-  def setParams(params: util.Map[String, Any]): Unit = this.params = params
+  def setParams(params: util.Map[String, AnyRef]): Unit = this.params = params
 
   def getExecuteUser: String = executeUser
 

@@ -19,7 +19,7 @@ package org.apache.linkis.ecm.server.service.impl;
 
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

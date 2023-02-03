@@ -55,6 +55,12 @@ object Utils extends Logging {
         logger.error("Fatal error, system exit...", e)
         System.exit(-1)
         throw e
+      case exp
+          if (null != exp.getCause && (exp.getCause.isInstanceOf[FatalException] || exp.getCause
+            .isInstanceOf[VirtualMachineError])) =>
+        logger.error("Caused by fatal error, system exit...", exp)
+        System.exit(-1)
+        throw exp
       case er: Error =>
         logger.error("Throw error", er)
         throw er

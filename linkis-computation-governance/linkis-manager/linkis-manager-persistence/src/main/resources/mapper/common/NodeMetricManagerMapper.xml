@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
+
+
+    <!-- 获取 -->
+    <resultMap id="PersistenceNodeMetrics"
+          type="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">
+         <id column="instance" property="instance"/>
+         <id column="instance_status" property="status"/>
+         <id column="overload" property="overLoad"/>
+         <id column="heartbeat_msg" property="heartBeatMsg"/>
+         <id column="healthy_status" property="healthy"/>
+         <id column="update_time" property="updateTime"/>
+         <id column="create_time" property="createTime"/>
+   </resultMap>
+
+
+    <insert id="addNodeMetrics" >
+        insert into  linkis_cg_manager_service_instance_metrics (instance, instance_status, overload, heartbeat_msg,healthy_status,update_time,create_time)
+        values(#{nodeMetrics.instance},#{nodeMetrics.status},#{nodeMetrics.overLoad},#{nodeMetrics.heartBeatMsg},#{nodeMetrics.healthy},now(),now())
+    </insert>
+
+    <select id="checkInstanceExist" resultType="java.lang.Integer">
+        select count(id) from  linkis_cg_manager_service_instance_metrics met inner join linkis_cg_manager_service_instance ins
+        on met.instance = #{instance} and ins.instance = #{instance} and met.instance = ins.instance
+    </select>
+
+    <select id="getNodeMetricsByInstances" resultMap="PersistenceNodeMetrics">
+        select * from linkis_cg_manager_service_instance_metrics where instance in(
+        <foreach collection='instances' separator=',' item='instance'>
+        #{instance}
+        </foreach>
+        )
+    </select>
+
+    <select id="getNodeMetricsByInstance" resultMap="PersistenceNodeMetrics">
+        select * from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+    </select>
+
+    <update id="updateNodeMetrics">
+         update linkis_cg_manager_service_instance_metrics
+        <trim prefix='set' suffixOverrides=','>
+        <if test='nodeMetrics.status != null'>instance_status = #{nodeMetrics.status},</if>
+        <if test='nodeMetrics.overLoad != null'> overload = #{nodeMetrics.overLoad},</if>
+        <if test='nodeMetrics.heartBeatMsg != null'>  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
+        <if test='nodeMetrics.healthy != null'>  healthy_status=#{nodeMetrics.healthy}, </if>
+        <if test='nodeMetrics.updateTime != null'>  update_time=#{nodeMetrics.updateTime},</if>
+        </trim> where instance = #{instance}
+    </update>
+
+    <delete id="deleteNodeMetrics">
+        delete from linkis_cg_manager_service_instance_metrics where instance in
+        (select instance from linkis_cg_manager_service_instance where instance=#{instance})
+    </delete>
+
+    <delete id="deleteNodeMetricsByInstance">
+        delete from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+    </delete>
+
+    <select id="getAllNodeMetrics" resultMap="PersistenceNodeMetrics">
+        select A.name,B.* from linkis_cg_manager_service_instance A join linkis_cg_manager_service_instance_metrics B where A.instance =  B.instance
+    </select>
+
+
+    <update id="updateNodeStatus">
+      update linkis_cg_manager_service_instance_metrics
+      set instance_status = #{instanceStatus},
+      update_time= now()
+      where instance = #{instance} and instance_status=#{oldStatus}
+    </update>
+
+
+</mapper>

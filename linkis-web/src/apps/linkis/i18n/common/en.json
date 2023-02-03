@@ -75,6 +75,7 @@
       "back": "Back",
       "prev": "Previous Step",
       "complete": "Complete",
+      "close": "Close",
       "udfName": "UDF Name",
       "udfType": "UDF Type",
       "nextPage": "Next Page",
@@ -115,6 +116,7 @@
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
+        "addEngineRules": "Engine Name Cannot Have Special Symbols And Spaces",
         "lockedResource": "Locked Resources",
         "usedResources": "Used Resources",
         "maximumAvailableResources": "Maximum Available Resources",
@@ -433,7 +435,7 @@
         "submitUser": "Submit User",
         "createdTime": "Created Time",
         "searchRange": "Only T-1 history code can be queried"
-      
+
       },
       "basedataManagement": {
         "add": "Add",

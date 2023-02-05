@@ -36,7 +36,7 @@ import org.apache.linkis.scheduler.executer.{
 
 import org.apache.arrow.memory.OutOfMemoryException
 import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.orc.storage.common.io.Allocator.AllocatorOutOfMemoryException
+import org.apache.hadoop.hive.common.io.Allocator.AllocatorOutOfMemoryException
 
 import java.lang.reflect.InvocationTargetException
 

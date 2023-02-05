@@ -218,6 +218,7 @@ class TaskExecutionServiceImpl
     task.setLabels(labels)
     val entranceServerInstance = RPCUtils.getServiceInstanceFromSender(sender)
     task.setCallbackServiceInstance(entranceServerInstance)
+    task.setTicketId(requestTask.getTicketID())
     logger.info(s"task $taskId submit executor to execute")
     val runnable = new Runnable {
       override def run(): Unit = Utils.tryCatch {
@@ -436,6 +437,12 @@ class TaskExecutionServiceImpl
               }
             val extraInfoMap = new util.HashMap[String, Object]()
             extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
+            extraInfoMap.put(TaskConstant.TICKET_ID, task.getTicketId)
+            extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
+            extraInfoMap.put(
+              TaskConstant.ENGINE_CONN_SUBMIT_TIME,
+              System.currentTimeMillis.toString
+            )
             // todo add other info
             var respRunningInfo: ResponseTaskRunningInfo = null
             if (null != resourceResponse) {

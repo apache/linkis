@@ -33,6 +33,7 @@ trait RequestTask {
   def getLabels: util.List[Label[_]]
   def setLabels(labels: util.List[Label[_]])
   def getSourceID(): String
+  def getTicketID(): String
 }
 
 object RequestTask {
@@ -48,6 +49,8 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
   private var labels: util.List[Label[_]] = new util.ArrayList[Label[_]](4)
 
   private var sourceID: String = _
+
+  private var ticketID: String = _
 
   override def getCode: String = code
 
@@ -80,11 +83,15 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
   }
 
   override def toString: String =
-    s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels, sourceID=${getSourceID()})"
+    s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels, sourceID=${getSourceID()}), ticketID=${getTicketID()})"
 
   override def getSourceID(): String = sourceID
 
   def setSourceID(sourceID: String): Unit = this.sourceID = sourceID
+
+  override def getTicketID(): String = ticketID
+
+  def setTicketID(ticketID: String): Unit = this.ticketID = ticketID
 }
 
 trait TaskState extends RequestProtocol {}

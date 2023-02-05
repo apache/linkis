@@ -24,16 +24,9 @@ import org.apache.linkis.governance.common.protocol.task.{RequestTask, RequestTa
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.orchestrator.computation.conf.ComputationOrchestratorConf
-import org.apache.linkis.orchestrator.computation.execute.{
-  CodeExecTaskExecutor,
-  CodeExecTaskExecutorManager
-}
+import org.apache.linkis.orchestrator.computation.execute.{CodeExecTaskExecutor, CodeExecTaskExecutorManager}
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
-import org.apache.linkis.orchestrator.exception.{
-  OrchestratorErrorCodeSummary,
-  OrchestratorErrorException,
-  OrchestratorRetryException
-}
+import org.apache.linkis.orchestrator.exception.{OrchestratorErrorCodeSummary, OrchestratorErrorException, OrchestratorRetryException}
 import org.apache.linkis.orchestrator.execution.{AsyncTaskResponse, TaskResponse}
 import org.apache.linkis.orchestrator.execution.AsyncTaskResponse.NotifyListener
 import org.apache.linkis.orchestrator.execution.impl.DefaultFailedTaskResponse
@@ -46,12 +39,11 @@ import org.apache.linkis.orchestrator.strategy.async.AsyncExecTask
 import org.apache.linkis.orchestrator.utils.OrchestratorIDCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitResponse}
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 
 import java.util
 import java.util.concurrent.TimeUnit
-
 import scala.collection.convert.decorateAsScala._
 import scala.concurrent.duration.Duration
 
@@ -95,8 +87,8 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     }
 
     if (executor.isDefined && !isCanceled) {
-      val requestTask = toRequestTask
       val codeExecutor = executor.get
+      val requestTask = toRequestTask(codeExecutor)
       val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
         s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       } else {
@@ -120,6 +112,20 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
             TaskConstant.ENGINE_INSTANCE,
             codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
           )
+          infoMap.put(
+            TaskConstant.TICKET_ID,
+            codeExecutor.getEngineConnExecutor match {
+              case computationEngineConnExecutor: ComputationEngineConnExecutor =>
+                if (computationEngineConnExecutor.isReuse()) {
+                  computationEngineConnExecutor.getServiceInstance.getInstance
+                } else {
+                  computationEngineConnExecutor.getTicketId
+                }
+              case _ => ""
+            }
+          )
+          infoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, engineConnExecId)
+          infoMap.put(TaskConstant.ENGINE_CONN_SUBMIT_TIME, System.currentTimeMillis.toString)
           val event = TaskRunningInfoEvent(
             this,
             0f,
@@ -167,7 +173,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
 
   }
 
-  private def toRequestTask: RequestTask = {
+  private def toRequestTask(codeExecutor: CodeExecTaskExecutor): RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
     requestTask.setLabels(getLabels)
@@ -176,6 +182,15 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     }
     requestTask.getProperties.putAll(getParams.getRuntimeParams.toMap)
     requestTask.setSourceID(getIDInfo())
+    requestTask.setTicketID(codeExecutor.getEngineConnExecutor match {
+      case computationEngineConnExecutor: ComputationEngineConnExecutor =>
+        if (computationEngineConnExecutor.isReuse()) {
+          computationEngineConnExecutor.getServiceInstance.getInstance
+        } else {
+          computationEngineConnExecutor.getTicketId
+        }
+      case _ => ""
+    })
     requestTask
   }
 

@@ -20,6 +20,7 @@ name: Publish Snapshot
 on:
   schedule:
     - cron: '0 0 * * *'
+  [push]
 
 jobs:
   publish-snapshot:

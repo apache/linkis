@@ -20,7 +20,10 @@ name: Publish Snapshot
 on:
   schedule:
     - cron: '0 0 * * *'
-  [push]
+  push:
+    branches:
+      - dev-1.3.2
+      - dev-1.3.2-snapshot
 
 jobs:
   publish-snapshot:

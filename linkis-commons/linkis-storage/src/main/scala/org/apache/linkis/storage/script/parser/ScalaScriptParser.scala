@@ -24,7 +24,10 @@ class ScalaScriptParser private extends CommonScriptParser {
   override def prefix: String = "//@set"
 
   override def belongTo(suffix: String): Boolean =
-    CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_SCALA)
+    CodeAndRunTypeUtils.getSuffixBelongToLanguageTypeOrNot(
+      suffix,
+      CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA
+    )
 
   override def prefixConf: String = "//conf@set"
 }

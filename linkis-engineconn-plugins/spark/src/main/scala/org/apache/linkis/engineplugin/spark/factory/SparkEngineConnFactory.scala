@@ -18,19 +18,27 @@
 package org.apache.linkis.engineplugin.spark.factory
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineplugin.spark.client.context.{ExecutionContext, SparkConfig}
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration._
+import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
+import org.apache.linkis.engineplugin.spark.context.{EnvironmentContext, SparkEngineConnContext}
 import org.apache.linkis.engineplugin.spark.entity.SparkEngineSession
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
 import org.apache.linkis.engineplugin.spark.exception.{
   SparkCreateFileException,
   SparkSessionNullException
 }
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
   ExecutorFactory,
   MultiExecutorEngineConnFactory
 }
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.server.JMap
@@ -51,8 +59,72 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   override protected def createEngineConnSession(
       engineCreationContext: EngineCreationContext
   ): Any = {
+    if (EngineConnServer.isOnceMode) {
+      createSparkOnceEngineConnContext(engineCreationContext)
+    } else {
+      createSparkEngineSession(engineCreationContext)
+    }
+  }
+
+  def createSparkOnceEngineConnContext(
+      engineCreationContext: EngineCreationContext
+  ): SparkEngineConnContext = {
+    val environmentContext = createEnvironmentContext(engineCreationContext)
+    val sparkEngineConnContext = new SparkEngineConnContext(environmentContext)
+    val executionContext =
+      createExecutionContext(engineCreationContext.getOptions, environmentContext)
+    sparkEngineConnContext.setExecutionContext(executionContext)
+    sparkEngineConnContext
+  }
+
+  protected def createEnvironmentContext(
+      engineCreationContext: EngineCreationContext
+  ): EnvironmentContext = {
     val options = engineCreationContext.getOptions
-    val useSparkSubmit = true
+    val hadoopConfDir = EnvConfiguration.HADOOP_CONF_DIR.getValue(options)
+    val sparkHome = SPARK_HOME.getValue(options)
+    val sparkConfDir = SPARK_CONF_DIR.getValue(options)
+    val sparkConfig: SparkConfig = getSparkConfig(options)
+    val context = new EnvironmentContext(sparkConfig, hadoopConfDir, sparkConfDir, sparkHome, null)
+    context
+  }
+
+  def getSparkConfig(options: util.Map[String, String]): SparkConfig = {
+    logger.info("options: " + JsonUtils.jackson.writeValueAsString(options))
+    val sparkConfig: SparkConfig = new SparkConfig()
+    sparkConfig.setJavaHome(variable(Environment.JAVA_HOME))
+    sparkConfig.setSparkHome(SPARK_HOME.getValue(options))
+    sparkConfig.setMaster(SPARK_MASTER.getValue(options))
+    sparkConfig.setDeployMode(SPARK_DEPLOY_MODE.getValue(options))
+    sparkConfig.setAppResource(SPARK_APP_RESOURCE.getValue(options))
+    sparkConfig.setAppName(SPARK_APP_NAME.getValue(options))
+    sparkConfig.setJars(SPARK_EXTRA_JARS.getValue(options)) // todo
+    sparkConfig.setDriverMemory(LINKIS_SPARK_DRIVER_MEMORY.getValue(options))
+    sparkConfig.setDriverJavaOptions(SPARK_DRIVER_EXTRA_JAVA_OPTIONS.getValue(options))
+    sparkConfig.setDriverClassPath(SPARK_DRIVER_CLASSPATH.getValue(options))
+    sparkConfig.setExecutorMemory(LINKIS_SPARK_EXECUTOR_MEMORY.getValue(options))
+    sparkConfig.setProxyUser(PROXY_USER.getValue(options))
+    sparkConfig.setDriverCores(LINKIS_SPARK_DRIVER_CORES.getValue(options))
+    sparkConfig.setExecutorCores(LINKIS_SPARK_EXECUTOR_CORES.getValue(options))
+    sparkConfig.setNumExecutors(LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(options))
+    sparkConfig.setQueue(LINKIS_QUEUE_NAME.getValue(options))
+
+    logger.info(s"spark_info: ${sparkConfig}")
+    sparkConfig
+  }
+
+  def createExecutionContext(
+      options: util.Map[String, String],
+      environmentContext: EnvironmentContext
+  ): ExecutionContext = {
+    val context = new ExecutionContext()
+    context.setSparkConfig(environmentContext.getSparkConfig)
+    // todo
+    context
+  }
+
+  def createSparkEngineSession(engineCreationContext: EngineCreationContext): SparkEngineSession = {
+    val options = engineCreationContext.getOptions
     val sparkConf: SparkConf = new SparkConf(true)
     val master =
       sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
@@ -187,7 +259,9 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   private val executorFactoryArray = Array[ExecutorFactory](
     new SparkSqlExecutorFactory,
     new SparkPythonExecutorFactory,
-    new SparkScalaExecutorFactory
+    new SparkScalaExecutorFactory,
+    new SparkDataCalcExecutorFactory,
+    new SparkOnceExecutorFactory
   )
 
   override def getExecutorFactories: Array[ExecutorFactory] = {

@@ -102,18 +102,4 @@ object RPCUtils {
     }
   }
 
-  def isLinkisManageMerged(appName: String): Boolean = {
-    if (!RPCConfiguration.LINKIS_MANAGER_SERVICE_MERGED.getValue || StringUtils.isBlank(appName)) {
-      return false
-    }
-    val appNameLower = appName.toLowerCase()
-    if (appNameLower.startsWith(RPCConfiguration.COMPUTATION_GOVERNANCE_APP_PREFIX)) {
-      val serviceName =
-        appNameLower.replaceFirst(RPCConfiguration.COMPUTATION_GOVERNANCE_APP_PREFIX, "")
-      RPCConfiguration.LINKIS_MANAGER_SERVICE_LIST.exists(_.equalsIgnoreCase(serviceName))
-    } else {
-      false
-    }
-  }
-
 }

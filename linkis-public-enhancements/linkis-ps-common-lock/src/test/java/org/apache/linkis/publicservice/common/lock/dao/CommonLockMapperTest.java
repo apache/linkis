@@ -34,7 +34,6 @@ public class CommonLockMapperTest extends BaseDaoTest {
   @Test
   @DisplayName("getAll")
   public void getAllTest() {
-
     List<CommonLock> locks = commonLockMapper.getAll();
     Assertions.assertTrue(locks.size() == 1);
   }

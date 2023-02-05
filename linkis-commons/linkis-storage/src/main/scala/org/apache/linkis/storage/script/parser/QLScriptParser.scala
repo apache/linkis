@@ -23,7 +23,10 @@ class QLScriptParser private extends CommonScriptParser {
   override def prefix: String = "--@set"
 
   override def belongTo(suffix: String): Boolean =
-    CodeAndRunTypeUtils.getSuffixBelongToRunTypeOrNot(suffix, CodeAndRunTypeUtils.RUN_TYPE_SQL)
+    CodeAndRunTypeUtils.getSuffixBelongToLanguageTypeOrNot(
+      suffix,
+      CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL
+    )
 
   override def prefixConf: String = "--conf@set"
 }

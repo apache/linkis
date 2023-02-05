@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.am.exception;
 
-public enum AMErrorCode {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum AMErrorCode implements LinkisErrorCode {
   QUERY_PARAM_NULL(21001, "query param cannot be null(请求参数不能为空)"),
 
   UNSUPPORT_VALUE(21002, "unsupport value(不支持的值类型)"),
@@ -28,28 +30,22 @@ public enum AMErrorCode {
 
   AM_CONF_ERROR(210004, "AM configuration error(AM配置错误)");
 
-  AMErrorCode(int errorCode, String message) {
-    this.code = errorCode;
-    this.message = message;
+  private final int errorCode;
+
+  private final String errorDesc;
+
+  AMErrorCode(int errorCode, String errorDesc) {
+    this.errorCode = errorCode;
+    this.errorDesc = errorDesc;
   }
 
-  private int code;
-
-  private String message;
-
-  public int getCode() {
-    return code;
+  @Override
+  public int getErrorCode() {
+    return errorCode;
   }
 
-  public void setCode(int code) {
-    this.code = code;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
+  @Override
+  public String getErrorDesc() {
+    return errorDesc;
   }
 }

@@ -273,8 +273,8 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
+          this.load()
         }
       })
 
@@ -310,6 +310,7 @@ export default {
         if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -321,28 +322,27 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
+            //console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
-            this.load()
           })
         }
         console.log(formData);
         this.modalLoading=false
         this.modalShow = false
-
       })
     },
     onModalCancel(){

@@ -26,7 +26,7 @@
 
   <groupId>org.apache.linkis</groupId>
   <artifactId>linkis</artifactId>
-  <version>1.3.1</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>Linkis Project Parent POM</name>
   <description>Linkis helps easily connect to various back-end computation/storage engines</description>
@@ -69,6 +69,7 @@
   </mailingLists>
   <modules>
     <module>linkis-commons</module>
+    <module>linkis-hadoop-hdfs-client-shade</module>
     <module>linkis-spring-cloud-services</module>
     <module>linkis-orchestrator</module>
     <module>linkis-public-enhancements</module>
@@ -102,8 +103,11 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
+    <revision>1.3.2-SNAPSHOT</revision>
     <jedis.version>2.9.2</jedis.version>
     <hadoop.version>2.7.2</hadoop.version>
+    <hadoop-hdfs-client.artifact>hadoop-hdfs</hadoop-hdfs-client.artifact>
+    <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <zookeeper.version>3.5.9</zookeeper.version>
     <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
     <curator.version>2.7.1</curator.version>
@@ -133,6 +137,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-io.version>2.11.0</commons-io.version>
@@ -140,12 +145,13 @@
     <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
-    <protobuf.version>3.15.8</protobuf.version>
+    <protobuf.version>3.16.3</protobuf.version>
     <cglib.version>3.3.0</cglib.version>
     <asm-bom.version>9.3</asm-bom.version>
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <poi.version>5.2.3</poi.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- jakarta -->
     <annotation-api.version>1.3.5</annotation-api.version>
@@ -184,8 +190,10 @@
     <apache-rat-plugin.version>0.13</apache-rat-plugin.version>
     <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
     <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+    <flatten-maven-plugin.version>1.3.0</flatten-maven-plugin.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
     <scala-maven-plugin.version>4.7.1</scala-maven-plugin.version>
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
@@ -436,6 +444,11 @@
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-apache-client4</artifactId>
         <version>${jersey.version}</version>
@@ -534,10 +547,6 @@
           <exclusion>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>*</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.commons</groupId>
@@ -644,8 +653,13 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
+        <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
         <version>${hadoop.version}</version>
         <exclusions>
           <exclusion>
@@ -917,6 +931,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -990,6 +1005,11 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -1035,6 +1055,31 @@
           <version>${maven-compiler-plugin.version}</version>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>flatten-maven-plugin</artifactId>
+          <version>${flatten-maven-plugin.version}</version>
+          <configuration>
+            <updatePomFile>true</updatePomFile>
+            <flattenMode>resolveCiFriendliesOnly</flattenMode>
+          </configuration>
+          <executions>
+            <execution>
+              <id>flatten</id>
+              <goals>
+                <goal>flatten</goal>
+              </goals>
+              <phase>process-resources</phase>
+            </execution>
+            <execution>
+              <id>flatten.clean</id>
+              <goals>
+                <goal>clean</goal>
+              </goals>
+              <phase>clean</phase>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>${maven-site-plugin.version}</version>
@@ -1061,9 +1106,14 @@
           <artifactId>scala-maven-plugin</artifactId>
           <version>${scala-maven-plugin.version}</version>
           <configuration>
-            <scalaVersion>${scala.version}</scalaVersion>
             <recompileMode>incremental</recompileMode>
-            <addScalacArgs>-target:jvm-${java.version}</addScalacArgs>
+            <args>
+              <arg>-unchecked</arg>
+              <arg>-deprecation</arg>
+              <arg>-feature</arg>
+              <arg>-explaintypes</arg>
+              <arg>-target:jvm-${java.version}</arg>
+            </args>
           </configuration>
           <executions>
             <execution>
@@ -1091,7 +1141,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>${maven-jar-plugin.version}</version>
         </plugin>
 
         <!--mvn apache-rat:check-->
@@ -1292,10 +1342,31 @@
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
+    <!-- hadoop version: mvn validate -Phadoop-3.3 ,when used with spark2.x ,please add -Pspark-2.4-hadoop-3.3 together, More details please check SPARK-23534   -->
+    <profile>
+      <id>hadoop-3.3</id>
+      <properties>
+        <hadoop.version>3.3.1</hadoop.version>
+        <curator.version>4.2.0</curator.version>
+        <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
+      </properties>
+    </profile>
+    <!-- hadoop version: mvn validate -Phadoop-2.7  -->
+    <profile>
+      <id>hadoop-2.7</id>
+      <properties>
+        <hadoop.version>2.7.2</hadoop.version>
+        <curator.version>2.7.1</curator.version>
+      </properties>
+    </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->
     <profile>
       <id>jacoco</id>

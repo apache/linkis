@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.1</version>
+    <version>${revision}</version>
     <relativePath>../../../pom.xml</relativePath>
   </parent>
   <artifactId>linkis-storage-script-dev-server</artifactId>
@@ -49,7 +49,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-quartz</artifactId>
-      <version>${spring.boot.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework.boot</groupId>
@@ -80,35 +79,10 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-          <exclude>**/application.yml</exclude>
-          <exclude>**/bootstrap.yml</exclude>
-          <exclude>**/log4j2.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

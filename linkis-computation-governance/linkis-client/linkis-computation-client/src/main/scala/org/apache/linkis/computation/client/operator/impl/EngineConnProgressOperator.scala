@@ -30,7 +30,7 @@ class EngineConnProgressOperator extends OnceJobOperator[EngineConnProgressInfo]
   override def getName: String = EngineConnProgressOperator.OPERATOR_NAME
 
   override protected def resultToObject(result: EngineConnOperateResult): EngineConnProgressInfo = {
-    val progressInfoList: util.ArrayList[util.Map[String, Object]] = result.getAs("progressInfo")
+    val progressInfoList: util.ArrayList[util.Map[String, AnyRef]] = result.getAs("progressInfo")
     val progressInfo = progressInfoList.asScala
       .map(map =>
         JobProgressInfo(

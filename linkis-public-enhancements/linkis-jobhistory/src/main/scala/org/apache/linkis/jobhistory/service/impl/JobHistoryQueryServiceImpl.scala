@@ -243,14 +243,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     jobResp
   }
 
-  /* private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
-    val tasks = new util.ArrayList[RequestPersistTask]
-    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
-    queryTask.foreach(f => tasks.add(f))
-    tasks
-  } */
-
   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory
     jobReq.setId(jobId)
@@ -260,19 +252,29 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
   }
 
   override def search(
-      jobId: java.lang.Long,
+      jobId: lang.Long,
       username: String,
       status: String,
       creator: String,
       sDate: Date,
       eDate: Date,
       engineType: String,
-      startJobId: java.lang.Long
+      startJobId: lang.Long,
+      instance: String
   ): util.List[JobHistory] = {
 
     val split: util.List[String] = if (status != null) status.split(",").toList.asJava else null
     val result = if (StringUtils.isBlank(creator)) {
-      jobHistoryMapper.search(jobId, username, split, sDate, eDate, engineType, startJobId)
+      jobHistoryMapper.search(
+        jobId,
+        username,
+        split,
+        sDate,
+        eDate,
+        engineType,
+        startJobId,
+        instance
+      )
     } else if (StringUtils.isBlank(username)) {
       val fakeLabel = new UserCreatorLabel
       jobHistoryMapper.searchWithCreatorOnly(
@@ -284,7 +286,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         sDate,
         eDate,
         engineType,
-        startJobId
+        startJobId,
+        instance
       )
     } else {
       val fakeLabel = new UserCreatorLabel
@@ -304,7 +307,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
         sDate,
         eDate,
         engineType,
-        startJobId
+        startJobId,
+        instance
       )
     }
     result
@@ -326,7 +330,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def searchOne(jobId: lang.Long, sDate: Date, eDate: Date): JobHistory = {
     Iterables.getFirst(
-      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null), {
+      jobHistoryMapper.search(jobId, null, null, sDate, eDate, null, null, null), {
         val queryJobHistory = new QueryJobHistory
         queryJobHistory.setId(jobId)
         queryJobHistory.setStatus(TaskStatus.Inited.toString)
@@ -418,6 +422,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       )
     }
     count
+  }
+
+  override def changeObserveInfoById(jobHistory: JobHistory): Unit = {
+    jobHistoryMapper.updateOberverById(jobHistory.getId, jobHistory.getObserveInfo)
   }
 
 }

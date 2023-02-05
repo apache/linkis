@@ -32,7 +32,6 @@ class HadoopConfTest {
     Assertions.assertFalse(HadoopConf.KEYTAB_HOST_ENABLED.getValue)
     Assertions.assertFalse(HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue)
     Assertions.assertEquals("hadoop", HadoopConf.KEYTAB_PROXYUSER_SUPERUSER.getValue)
-    Assertions.assertEquals("", HadoopConf.hadoopConfDir)
     Assertions.assertEquals(
       "/appcom/config/external-conf/hadoop",
       HadoopConf.HADOOP_EXTERNAL_CONF_DIR_PREFIX.getValue

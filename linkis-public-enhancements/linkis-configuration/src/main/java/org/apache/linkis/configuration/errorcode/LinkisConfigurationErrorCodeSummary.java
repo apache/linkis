@@ -18,8 +18,9 @@
 package org.apache.linkis.configuration.errorcode;
 
 import org.apache.linkis.common.errorcode.ErrorCodeUtils;
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
-public enum LinkisConfigurationErrorCodeSummary {
+public enum LinkisConfigurationErrorCodeSummary implements LinkisErrorCode {
   BUILD_LABEL_ID(14100, ""),
   CONFIGURATION_NOT_TYPE(14100, "Configuration does not support engine type:{0}(配置暂不支持{0}引擎类型)"),
   CORRESPONDING_ENGINE_TYPE(
@@ -46,9 +47,9 @@ public enum LinkisConfigurationErrorCodeSummary {
   TYPE_OF_LABEL_NOT_SUPPORTED(14100, "This type of label is not supported:{0}(不支持这种类型的标签：{0})");
 
   /** 错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** 错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
   /** 错误可能出现的原因 */
   LinkisConfigurationErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 10000, 24999);
@@ -56,24 +57,13 @@ public enum LinkisConfigurationErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

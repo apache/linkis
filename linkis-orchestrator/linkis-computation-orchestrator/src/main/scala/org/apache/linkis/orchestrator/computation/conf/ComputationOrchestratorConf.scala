@@ -40,10 +40,7 @@ object ComputationOrchestratorConf {
     "rm,sh,find,kill,python,for,source,hdfs,hadoop,spark-sql,spark-submit,pyspark,spark-shell,hive,yarn"
   )
 
-  val SHELL_WHITE_USAGE = CommonVars(
-    "wds.linkis.shell.white.usage",
-    "sqoop,cd,ll,ls,echo,cat,tree,diff,who,grep,whoami,set,pwd,cut,file,head,less,if,while"
-  )
+  val SHELL_WHITE_USAGE = CommonVars("wds.linkis.shell.white.usage", "cd,ls")
 
   val SHELL_WHITE_USAGE_ENABLED = CommonVars("wds.linkis.shell.white.usage.enabled", false)
 
@@ -59,12 +56,12 @@ object ComputationOrchestratorConf {
   val LOG_LEN = CommonVars("wds.linkis.computation.orchestrator.log.len", 100)
 
   val ENGINECONN_LASTUPDATE_TIMEOUT =
-    CommonVars("wds.linkis.orchestrator.engine.lastupdate.timeout", new TimeType("5s"))
-
-  val ENGINECONN_ACTIVITY_TIMEOUT =
-    CommonVars("wds.linkis.orchestrator.engine.timeout", new TimeType("10s"))
+    CommonVars("wds.linkis.orchestrator.engine.lastupdate.timeout", new TimeType("10s"))
 
   val ENGINECONN_ACTIVITY_MONITOR_INTERVAL =
     CommonVars("wds.linkis.orchestrator.engine.activity_monitor.interval", new TimeType("10s"))
+
+  val TASK_STATUS_COMPLETE_WAIT_TIMEOUT =
+    CommonVars("linkis.orchestrator.task.complete.timeout", new TimeType("10s")).getValue.toLong
 
 }

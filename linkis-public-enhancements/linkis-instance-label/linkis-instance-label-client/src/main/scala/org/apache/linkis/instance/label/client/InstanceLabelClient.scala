@@ -85,6 +85,9 @@ class InstanceLabelClient extends Logging {
       request.setLabels(labelMap.asInstanceOf[util.HashMap[String, Object]])
       Sender.getSender(PUBLIC_SERVICE_APPLICATION_NAME.getValue).ask(request) match {
         case resp: LabelInsQueryResponse =>
+          if (null == resp.getInsList || resp.getInsList.isEmpty) {
+            return new util.ArrayList[ServiceInstance]()
+          }
           if (resp.getInsList.size() != 1) {
             logger.warn(
               s"Instance num ${resp.getInsList.size()} with labels ${BDPJettyServerHelper.gson.toJson(labelMap)} is not single one."

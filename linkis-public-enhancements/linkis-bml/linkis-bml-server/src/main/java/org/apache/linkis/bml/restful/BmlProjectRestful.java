@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -138,7 +139,8 @@ public class BmlProjectRestful {
       @RequestParam(name = "projectName") String projectName,
       @RequestParam(name = "file") List<MultipartFile> files)
       throws ErrorException {
-    String username = ModuleUserUtils.getOperationUser(request, "uploadShareResource");
+    String username =
+        ModuleUserUtils.getOperationUser(request, "uploadShareResource projectName:" + projectName);
     Message message;
     try {
       LOGGER.info(
@@ -308,6 +310,10 @@ public class BmlProjectRestful {
     resp.setHeader("Content-Disposition", "attachment");
     String ip = HttpRequestHelper.getIp(request);
     DownloadModel downloadModel = new DownloadModel(resourceId, version, user, ip);
+    ModuleUserUtils.getOperationUser(
+        request,
+        MessageFormat.format(
+            "downloadShareResource,resourceId:{0},version:{1}", resourceId, version));
     try {
       String projectName = bmlProjectService.getProjectNameByResourceId(resourceId);
       if (!bmlProjectService.checkAccessPriv(projectName, user)) {
@@ -381,13 +387,17 @@ public class BmlProjectRestful {
           user,
           user,
           resourceId,
-          version);
+          version,
+          t);
       downloadModel.setEndTime(new Date());
       downloadModel.setState(1);
       downloadService.addDownloadRecord(downloadModel);
-      throw new ErrorException(
-          73561,
-          "Sorry, the background service error caused you to download the resources failed (抱歉，后台服务出错导致您本次下载资源失败)");
+      ErrorException errorException =
+          new ErrorException(
+              73561,
+              "Sorry, the background service error caused you to download the resources failed (抱歉，后台服务出错导致您本次下载资源失败)");
+      errorException.initCause(t);
+      throw errorException;
     } finally {
       IOUtils.closeQuietly(resp.getOutputStream());
     }
@@ -403,6 +413,7 @@ public class BmlProjectRestful {
   public Message getProjectInfo(
       HttpServletRequest request,
       @RequestParam(value = "projectName", required = false) String projectName) {
+    ModuleUserUtils.getOperationUser(request, "getProjectInfo");
     return Message.ok("Obtain project information successfully (获取工程信息成功)");
   }
 
@@ -418,9 +429,14 @@ public class BmlProjectRestful {
   @RequestMapping(path = "attachResourceAndProject", method = RequestMethod.POST)
   public Message attachResourceAndProject(
       HttpServletRequest request, @RequestBody JsonNode jsonNode) throws ErrorException {
-    String username = ModuleUserUtils.getOperationUser(request, "attachResourceAndProject");
     String projectName = jsonNode.get(PROJECT_NAME_STR).textValue();
     String resourceId = jsonNode.get("resourceId").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "attachResourceAndProject,resourceId:{0},projectName:{1}",
+                resourceId, projectName));
     LOGGER.info("begin to attach {}  and {}", projectName, username);
     bmlProjectService.attach(projectName, resourceId);
     return Message.ok("attach resource and project ok");
@@ -439,8 +455,9 @@ public class BmlProjectRestful {
   @RequestMapping(path = "updateProjectUsers", method = RequestMethod.POST)
   public Message updateProjectUsers(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws ErrorException {
-    String username = ModuleUserUtils.getOperationUser(request, "updateProjectUsers");
     String projectName = jsonNode.get("projectName").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(request, "updateProjectUsers,projectName:" + projectName);
     LOGGER.info("{} begins to update project users for {}", username, projectName);
     List<String> editUsers = new ArrayList<>();
     List<String> accessUsers = new ArrayList<>();

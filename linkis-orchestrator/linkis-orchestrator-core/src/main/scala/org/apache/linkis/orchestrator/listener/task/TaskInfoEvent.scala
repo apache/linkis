@@ -95,7 +95,7 @@ case class TaskRunningInfoEvent(
     progress: Float,
     progressInfo: Array[JobProgressInfo],
     resourceMap: util.HashMap[String, ResourceWithStatus],
-    infoMap: util.HashMap[String, Object]
+    infoMap: util.HashMap[String, AnyRef]
 ) extends TaskInfoEvent
     with OrchestratorAsyncEvent {
 

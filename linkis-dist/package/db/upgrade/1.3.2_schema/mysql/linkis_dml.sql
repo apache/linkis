@@ -250,3 +250,6 @@ update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where 
 update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12015','您好，您设置的执行器内存已经超过了集群的限定值，请减少到限定值以下','Required executor memory (-?[1-9]\\d*)',0);
+
+

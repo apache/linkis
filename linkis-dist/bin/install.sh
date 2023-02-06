@@ -263,10 +263,22 @@ MYSQL_PASSWORD=$(echo ${MYSQL_PASSWORD//'#'/'\#'})
 #init db
 if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
   mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
-  mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql"
-  isSuccess "source linkis_ddl.sql"
-  mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_dml.sql"
-  isSuccess "source linkis_dml.sql"
+  ddl_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql" 2>&1`
+  # Check ddl-sql execution result
+  if [[ $? -ne 0 || $ddl_result =~ "ERROR" ]];then
+      echoErrMsgAndExit "$ddl_result"
+  else
+      echoSuccessMsg "source linkis_ddl.sql"
+  fi
+
+  dml_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_dml.sql" 2>&1`
+  # Check dml-sql execution result
+  if [[ $? -ne 0 || $dml_result =~ "ERROR" ]];then
+      echoErrMsgAndExit "$dml_result"
+  else
+      echoSuccessMsg "source linkis_dml.sql"
+  fi
+
   echo "Rebuild the table"
 fi
 ###########################################################################

@@ -28,10 +28,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.hive</groupId>
-      <artifactId>hive-storage-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-engineconn-plugin-core</artifactId>
       <version>${project.version}</version>

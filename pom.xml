@@ -1388,6 +1388,7 @@
         <spark.version>3.2.1</spark.version>
         <scala.version>2.12.15</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
+        <hive-storage-api.version>2.7.2</hive-storage-api.version>
       </properties>
     </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->

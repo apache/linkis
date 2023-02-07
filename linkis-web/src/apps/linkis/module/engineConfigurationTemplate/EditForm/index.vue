@@ -44,6 +44,12 @@ export default {
       },
       rule: [
         {
+          type: 'hidden',
+          title: "id",
+          field: 'id',
+          value: ''
+        },
+        {
           type: "select",
           field: "engineLabelId",
           title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.engineLabelId'),
@@ -61,14 +67,40 @@ export default {
           ],
         },
         {
-          type: "radio",
-          title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.advanced'),
-          field: 'advanced',
+          type: 'input',
+          title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.name'),
+          field: 'name',
           value: '',
-          options: [
-            {value: 0, label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.no'),},
-            {value: 1, label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.yes'),},
-          ]
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.name'),
+              trigger: 'blur',
+            },
+          ],
+        },
+        {
+          type: 'input',
+          title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.key'),
+          field: 'key',
+          value: '',
+          props: {
+            placeholder: "",
+          },
+          validate: [
+            {
+              required: true,
+              message: `${this.$t(
+                'message.linkis.datasource.pleaseInput'
+              )} `+this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.key'),
+              trigger: 'blur',
+            },
+          ],
         },
         {
           type: 'input',
@@ -105,6 +137,16 @@ export default {
               trigger: 'blur',
             },
           ],
+        },
+        {
+          type: "radio",
+          title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.advanced'),
+          field: 'advanced',
+          value: '',
+          options: [
+            {value: 0, label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.no'),},
+            {value: 1, label: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.yes'),},
+          ]
         },
         {
           type: 'input',
@@ -147,24 +189,6 @@ export default {
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
               )} `+this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.level'),
-              trigger: 'blur',
-            },
-          ],
-        },
-        {
-          type: 'input',
-          title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.name'),
-          field: 'name',
-          value: '',
-          props: {
-            placeholder: "",
-          },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.name'),
               trigger: 'blur',
             },
           ],
@@ -239,6 +263,7 @@ export default {
     data: {
       handler(newV) {
         this.getData(newV)
+        console.log(newV)
       },
       deep: true
     },

@@ -32,11 +32,12 @@ const deleteTemplateByID = (keyID) => {
   return api.fetch(dataSourceEnvBaseUrl + `/${keyID}`, 'delete')
 }
 
-const changeTemplate = (params) => {
+const changeTemplate = (params, editType) => {
   let postData = {...params};
   delete postData['_index'];
   delete postData['_rowKey'];
   delete postData['__ob__'];
+  if(editType == 'add') delete postData['id'];
   return api.fetch(dataSourceEnvBaseUrl + '/save', postData, 'post')
 }
 

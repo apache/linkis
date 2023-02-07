@@ -18,26 +18,26 @@
 <template>
   <div :style="{height: '100%', overflow: 'hidden'}">
     <Row class="search-bar" type="flex">
-      <Col span="4">
+      <Col span="5">
         <Card style="margin-right: 10px;">
           <template #title>
             {{$t('message.linkis.basedataManagement.engineConfigurationTemplate.engineLabelList')}}
           </template>
           <Menu width="auto" @on-select="queryEngineTemplateList">
             <MenuItem v-for="item in engineList" :key="item.labelId" :name="item.labelId">
+              <Tag checkable color="success" v-if="item.install=='yes'">已安装</Tag>
+              <Tag checkable color="error" v-else>未安装</Tag>
               {{item.engineName}}
             </MenuItem>
           </Menu>
         </Card>
       </Col>
-      <Col span="20">
+      <Col span="19">
         <Card>
           <Button type="success" class="enginBtn" @click="onTableEdit()">{{$t('message.linkis.basedataManagement.add')}}</Button>
-          <Space direction="vertical" type="flex">
             <Select v-model="model" multiple :max-tag-count="2" style="width: 300px" class="enginBtn">
               <Option v-for="item in showList" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
-          </Space>
           <Table stripe :columns="columns" :data="showInTableList" height="600">
             <template slot-scope="{ row,index }" slot="action">
               <ButtonGroup size="small">
@@ -67,7 +67,7 @@
       width="800"
       class="modal"
       v-model="modalShow"
-      :title="$t('message.linkis.basedataManagement.engineConfigurationTemplate.edit')"
+      :title="editType == 'add' ? $t('message.linkis.basedataManagement.engineConfigurationTemplate.add') : $t('message.linkis.basedataManagement.engineConfigurationTemplate.edit')"
     >
       <div slot="footer">
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
@@ -87,13 +87,13 @@ export default {
   created(){
     getEngineList().then((data) => {
       this.engineList = data['success: '];
-      //console.log(this.engineList)
+      console.log(this.engineList)
     })
-    this.queryEngineTemplateList(this.labelId); //默认获取全局设置
+    this.queryEngineTemplateList(this.labelId);
   },
   data(){
     return {
-      visible: false,
+      editType: 'add',
       modalEditData: {},
       labelId: 5,
       modalShow: false,
@@ -146,7 +146,7 @@ export default {
           value: 'validateType',
         }
       ],
-      model: ['advanced','defaultValue','description','engineConnType','hidden','key','level','name','treeName','validateRange','validateType'],
+      model: ['defaultValue','description','engineConnType','key','name','validateRange','validateType'],
       tableColumnNum: [
         {
           title: this.$t('message.linkis.basedataManagement.engineConfigurationTemplate.advanced'),
@@ -270,21 +270,20 @@ export default {
       });
     },
     onTableEdit(row){
-      if(!row) row = {};
-      else row.engineLabelId = this.labelId;
+      if(!row) {row = {}; this.editType = 'add';}
+      else {row.engineLabelId = this.labelId; this.editType = 'edit';}
       this.engineList.forEach(ele => {
-        return this.$refs.editForm.rule[0].options.push({value: +ele.labelId, label: ele.engineName});
+        return this.$refs.editForm.rule[1].options.push({value: +ele.labelId, label: ele.engineName});
       })
       this.modalShow = true;
       let tmp = this.engineTemplateList.find(ele => ele.id == row.id);
       tmp.engineLabelId = this.labelId;
-      this.modalEditData = tmp;
-
+      this.modalEditData = {...tmp};
     },
     onModalOk(){
       //console.log(this.$refs['editForm'].formData);
       this.modalShow = false;
-      changeTemplate(this.$refs['editForm'].formData).then((data) => {
+      changeTemplate(this.$refs['editForm'].formData, this.editType).then((data) => {
         if(data['success: ']) {this.$Message.success('message.linkis.basedataManagement.engineConfigurationTemplate.ModSuccess'); this.queryEngineTemplateList(this.labelId);}
         else this.$Message.error('message.linkis.basedataManagement.engineConfigurationTemplate.ModSuccess');
       });

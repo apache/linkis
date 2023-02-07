@@ -192,8 +192,8 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
             ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_SCHEDULE_TIME))
             : "not scheduled";
     String startTime =
-        metricsMap.containsKey(TaskConstant.JOB_TO_ORCHESTRATOR)
-            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_TO_ORCHESTRATOR))
+        metricsMap.containsKey(TaskConstant.JOB_RUNNING_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_RUNNING_TIME))
             : "not submitted to orchestrator";
     String endTime =
         metricsMap.containsKey(TaskConstant.JOB_COMPLETE_TIME)
@@ -209,21 +209,46 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
       runTime =
           "The task did not end normally and the usage time could not be counted.(任务并未正常结束，无法统计使用时间)";
     }
-    String metric =
-        "Task creation time(任务创建时间): "
-            + createTime
-            + ", Task scheduling time(任务调度时间): "
-            + scheduleTime
-            + ", Task start time(任务开始时间): "
-            + startTime
-            + ", Mission end time(任务结束时间): "
-            + endTime
-            + "\n\n\n"
-            + LogUtils.generateInfo(
+
+    String jobToOrchestrator =
+        metricsMap.containsKey(TaskConstant.JOB_TO_ORCHESTRATOR)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_TO_ORCHESTRATOR))
+            : "not to orchestrator";
+    String jobRequestEC =
+        metricsMap.containsKey(TaskConstant.JOB_REQUEST_EC_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_REQUEST_EC_TIME))
+            : "not request ec";
+    String jobSubmitToEC =
+        metricsMap.containsKey(TaskConstant.JOB_SUBMIT_TO_EC_TIME)
+            ? simpleDateFormat.format(metricsMap.get(TaskConstant.JOB_SUBMIT_TO_EC_TIME))
+            : "not submit to  ec";
+
+    StringBuffer sb = new StringBuffer();
+    sb.append("Task creation time(任务创建时间): ")
+        .append(createTime)
+        .append(", Task scheduling time(任务调度时间): ")
+        .append(scheduleTime)
+        .append(", Task start time(任务开始时间): ")
+        .append(startTime)
+        .append(", Mission end time(任务结束时间): ")
+        .append(endTime)
+        .append("\n")
+        .append("Task submit to Orchestrator time:")
+        .append(jobToOrchestrator)
+        .append(", Task request EngineConn time")
+        .append(jobRequestEC)
+        .append(", Task submit to EngineConn time")
+        .append(jobSubmitToEC)
+        .append("\n")
+        .append(
+            LogUtils.generateInfo(
                 "Your mission(您的任务) "
                     + this.getJobRequest().getId()
                     + " The total time spent is(总耗时时间为): "
-                    + runTime);
+                    + runTime));
+
+    String metric = sb.toString();
+
     return new JobInfo(execID, null, state, progress, metric);
   }
 

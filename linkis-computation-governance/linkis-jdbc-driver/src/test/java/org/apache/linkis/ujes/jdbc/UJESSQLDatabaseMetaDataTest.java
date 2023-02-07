@@ -24,17 +24,20 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UJESSQLDatabaseMetaDataTest {
   private static UJESSQLConnection conn;
   private static UJESSQLDatabaseMetaData dbmd;
 
-  @BeforeClass
+  @BeforeAll
   public static void preWork() {
     try {
       conn = CreateConnection.getConnection();
@@ -46,34 +49,34 @@ public class UJESSQLDatabaseMetaDataTest {
     }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsMinimumSQLGrammar() {
-    dbmd.supportsMinimumSQLGrammar();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsMinimumSQLGrammar());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getResultSetHoldability() {
-    dbmd.getResultSetHoldability();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getResultSetHoldability());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxColumnsInGroupBy() {
-    dbmd.getMaxColumnsInGroupBy();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInGroupBy());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsSubqueriesInComparisons() {
-    dbmd.supportsSubqueriesInComparisons();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsSubqueriesInComparisons());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxColumnsInSelect() {
-    dbmd.getMaxColumnsInSelect();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInSelect());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void nullPlusNonNullIsNull() {
-    dbmd.nullPlusNonNullIsNull();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullPlusNonNullIsNull());
   }
 
   @Test
@@ -81,14 +84,15 @@ public class UJESSQLDatabaseMetaDataTest {
     assertFalse(dbmd.supportsCatalogsInDataManipulation());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsDataDefinitionAndDataManipulationTransactions() {
-    dbmd.supportsDataDefinitionAndDataManipulationTransactions();
+    Assertions.assertThrows(
+        UJESSQLException.class, () -> dbmd.supportsDataDefinitionAndDataManipulationTransactions());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsTableCorrelationNames() {
-    dbmd.supportsTableCorrelationNames();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsTableCorrelationNames());
   }
 
   @Test
@@ -101,9 +105,9 @@ public class UJESSQLDatabaseMetaDataTest {
     assertTrue(dbmd.supportsFullOuterJoins());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsExpressionsInOrderBy() {
-    dbmd.supportsExpressionsInOrderBy();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsExpressionsInOrderBy());
   }
 
   @Test
@@ -111,14 +115,14 @@ public class UJESSQLDatabaseMetaDataTest {
     assertFalse(dbmd.allProceduresAreCallable());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxTablesInSelect() {
-    dbmd.getMaxTablesInSelect();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxTablesInSelect());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void nullsAreSortedAtStart() {
-    dbmd.nullsAreSortedAtStart();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullsAreSortedAtStart());
   }
 
   @Test
@@ -126,9 +130,9 @@ public class UJESSQLDatabaseMetaDataTest {
     assertFalse(dbmd.supportsPositionedUpdate());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void ownDeletesAreVisible() {
-    dbmd.ownDeletesAreVisible(0);
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.ownDeletesAreVisible(0));
   }
 
   @Test
@@ -136,14 +140,14 @@ public class UJESSQLDatabaseMetaDataTest {
     assertFalse(dbmd.supportsResultSetHoldability(0));
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxStatements() {
-    dbmd.getMaxStatements();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxStatements());
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getRowIdLifetime() {
-    dbmd.getRowIdLifetime();
+    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getRowIdLifetime());
   }
 
   @Test
@@ -151,7 +155,7 @@ public class UJESSQLDatabaseMetaDataTest {
     assertEquals(dbmd.getDriverVersion(), String.valueOf(UJESSQLDriverMain.DEFAULT_VERSION()));
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeStateAndConn() {
     conn.close();
     dbmd = null;

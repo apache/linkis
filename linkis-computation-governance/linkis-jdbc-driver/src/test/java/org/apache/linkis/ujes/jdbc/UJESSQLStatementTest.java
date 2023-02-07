@@ -19,12 +19,14 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * Notice:
@@ -42,7 +44,7 @@ public class UJESSQLStatementTest {
   private static String sqlSelect;
   private static String sqlDrop;
 
-  @BeforeClass
+  @BeforeAll
   public static void createConnection() {
     try {
       conn = CreateConnection.getConnection();
@@ -54,7 +56,7 @@ public class UJESSQLStatementTest {
     }
   }
 
-  @Before
+  @BeforeEach
   public void setParams() {
     sql = "show tables";
     sqlCreate = "CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10";
@@ -125,7 +127,7 @@ public class UJESSQLStatementTest {
     assertEquals(statement.getConnection(), conn);
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeStateAndConn() {
     statement.close();
     conn.close();

@@ -19,7 +19,12 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -33,7 +38,7 @@ public class UJESSQLResultSetTest {
   private UJESSQLResultSet resultSet;
   private UJESSQLResultSetMetaData metaData;
 
-  @BeforeClass
+  @BeforeAll
   public static void getConnection() {
     try {
       conn = CreateConnection.getConnection();
@@ -44,19 +49,19 @@ public class UJESSQLResultSetTest {
     }
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeConnection() {
     conn.close();
   }
 
-  @Before
+  @BeforeEach
   public void getResultSet() {
     preStatement = conn.prepareStatement("show tables");
     preStatement.execute();
     resultSet = preStatement.getResultSet();
   }
 
-  @After
+  @AfterEach
   public void closeStatement() {
     preStatement.close();
   }
@@ -67,7 +72,7 @@ public class UJESSQLResultSetTest {
       metaData = resultSet.getMetaData();
       int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
       int columnTypeFromMetaData = metaData.getColumnType(1);
-      Assert.assertTrue(columnTypeFromVal == columnTypeFromMetaData);
+      Assertions.assertEquals(columnTypeFromVal, columnTypeFromMetaData);
     }
   }
 
@@ -76,29 +81,29 @@ public class UJESSQLResultSetTest {
     resultSet.next();
     Object oldColumnVal = resultSet.getObject(1);
     while (resultSet.next()) {} // move to the end
-    Assert.assertTrue(resultSet.first());
+    Assertions.assertTrue(resultSet.first());
     Object newColumnVal = resultSet.getObject(1);
-    Assert.assertTrue(oldColumnVal == newColumnVal);
+    Assertions.assertSame(oldColumnVal, newColumnVal);
   }
 
   @Test
   public void afterLast() {
     resultSet.next();
     resultSet.afterLast();
-    Assert.assertTrue(resultSet.isAfterLast());
+    Assertions.assertTrue(resultSet.isAfterLast());
   }
 
   @Test
   public void beforeFirst() {
     resultSet.next();
     resultSet.beforeFirst();
-    Assert.assertTrue(resultSet.isBeforeFirst());
+    Assertions.assertTrue(resultSet.isBeforeFirst());
   }
 
   @Test
   public void getMetaData() {
     resultSet.next();
-    Assert.assertTrue(resultSet.getMetaData() != null);
+    Assertions.assertNotNull(resultSet.getMetaData());
   }
 
   @Test
@@ -110,6 +115,6 @@ public class UJESSQLResultSetTest {
       }
       System.out.println();
     }
-    Assert.assertTrue(resultSet.isAfterLast());
+    Assertions.assertTrue(resultSet.isAfterLast());
   }
 }

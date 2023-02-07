@@ -24,10 +24,10 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -38,7 +38,7 @@ public class UJESSQLPreparedStatementTest {
   private static UJESSQLConnection conn;
   private UJESSQLPreparedStatement preStatement;
 
-  @BeforeClass
+  @BeforeAll
   public static void getConnection() {
     try {
       conn = JDBCSpiTest.getConnection();
@@ -60,10 +60,10 @@ public class UJESSQLPreparedStatementTest {
     UJESSQLResultSet resultSet = preStatement.getResultSet();
     showResult(resultSet);
     preStatement.execute("drop table db.test1236");
-    Assert.assertTrue(resultSet.isAfterLast());
+    Assertions.assertTrue(resultSet.isAfterLast());
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeConnection() {
     conn.close();
   }
@@ -73,13 +73,13 @@ public class UJESSQLPreparedStatementTest {
     preStatement = conn.prepareStatement("? ?");
     preStatement.setObject(1, "show");
     preStatement.setObject(2, "tables");
-    Assert.assertTrue(preStatement.execute());
+    Assertions.assertTrue(preStatement.execute());
   }
 
   @Test
   public void execute() {
     preStatement = conn.prepareStatement("show tables");
-    Assert.assertTrue(preStatement.execute());
+    Assertions.assertTrue(preStatement.execute());
   }
 
   @Test
@@ -87,7 +87,7 @@ public class UJESSQLPreparedStatementTest {
     preStatement = conn.prepareStatement("select * from db.table limit 10");
     UJESSQLResultSet resultSet = preStatement.executeQuery();
     showResult(resultSet);
-    Assert.assertTrue(resultSet.isAfterLast());
+    Assertions.assertTrue(resultSet.isAfterLast());
   }
 
   private void showResult(UJESSQLResultSet resultSet) {
@@ -109,12 +109,12 @@ public class UJESSQLPreparedStatementTest {
   @Test
   public void executeUpdate() {
     preStatement = conn.prepareStatement("show tables");
-    Assert.assertEquals(preStatement.executeUpdate(), 0);
+    Assertions.assertEquals(preStatement.executeUpdate(), 0);
   }
 
   @Test
   public void executeQuery() {
     preStatement = conn.prepareStatement("show tables");
-    Assert.assertTrue(preStatement.executeQuery() instanceof UJESSQLResultSet);
+    Assertions.assertTrue(preStatement.executeQuery() instanceof UJESSQLResultSet);
   }
 }

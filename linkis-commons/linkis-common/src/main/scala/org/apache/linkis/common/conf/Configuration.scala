@@ -54,7 +54,10 @@ object Configuration extends Logging {
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
   // read from env
-  val EUREKA_PREFER_IP: Boolean = CommonVars("EUREKA_PREFER_IP", false).getValue
+  val PREFER_IP_ADDRESS: Boolean = CommonVars(
+    "linkis.discovery.prefer-ip-address",
+    CommonVars("EUREKA_PREFER_IP", false).getValue
+  ).getValue
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 

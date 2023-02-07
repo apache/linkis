@@ -85,16 +85,6 @@ if test -z "$EUREKA_INSTALL_IP"
 then
   export EUREKA_INSTALL_IP=$SERVER_IP
 fi
-if [ "true" != "$EUREKA_PREFER_IP" ]
-then
-  export EUREKA_HOSTNAME=$EUREKA_INSTALL_IP
-fi
-
-if [ "$EUREKA_PREFER_IP" == "true" ]; then
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.preferIpAddress=true "
-else
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.hostname=$EUREKA_HOSTNAME"
-fi
 
 SPRING_ARGS="$SPRING_ARGS --spring.profiles.active=eureka"
 

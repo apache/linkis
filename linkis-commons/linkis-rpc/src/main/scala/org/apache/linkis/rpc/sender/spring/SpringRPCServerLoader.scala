@@ -15,25 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.core.launch
+package org.apache.linkis.rpc.sender.spring
 
-import java.util
+import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.rpc.conf.RPCConfiguration
+import org.apache.linkis.rpc.interceptor.AbstractRPCServerLoader
 
-import scala.collection.JavaConverters._
+import scala.concurrent.duration.Duration
 
-trait DiscoveryMsgGenerator {
+class SpringRPCServerLoader extends AbstractRPCServerLoader {
 
-  def generate(engineConnManagerEnv: EngineConnManagerEnv): java.util.Map[String, String]
+  override def refreshAllServers(): Unit = {}
 
-}
+  override val refreshMaxWaitTime: Duration =
+    RPCConfiguration.RPC_SERVICE_REFRESH_MAX_WAIT_TIME.getValue.toDuration
 
-class EurekaDiscoveryMsgGenerator extends DiscoveryMsgGenerator {
-
-  override def generate(engineConnManagerEnv: EngineConnManagerEnv): util.Map[String, String] =
-    engineConnManagerEnv.properties
-      .get("eureka.client.serviceUrl.defaultZone")
-      .map(v => Map("eureka.client.serviceUrl.defaultZone" -> v))
-      .getOrElse[Map[String, String]](Map.empty)
-      .asJava
+  override def getDWCServiceInstance(
+      serviceInstance: SpringCloudServiceInstance
+  ): ServiceInstance = {
+    val applicationName = serviceInstance.getServiceId
+    ServiceInstance(applicationName, s"${serviceInstance.getHost}:${serviceInstance.getPort}")
+  }
 
 }

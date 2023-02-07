@@ -25,12 +25,8 @@
   </parent>
 
   <artifactId>linkis-engineplugin-spark</artifactId>
-  <properties>
-    <spark.version>2.4.3</spark.version>
-  </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-engineconn-plugin-core</artifactId>

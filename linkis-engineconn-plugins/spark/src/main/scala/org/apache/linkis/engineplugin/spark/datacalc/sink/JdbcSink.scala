@@ -59,7 +59,7 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
       spark
         .sql("select 1")
         .repartition(1)
-        .foreachPartition(_ => {
+        .foreachPartition((_: Iterator[Row]) => {
           val jdbcOptions = new JDBCOptions(options)
           val conn: Connection = JdbcUtils.createConnectionFactory(jdbcOptions)()
           try {

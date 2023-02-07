@@ -23,14 +23,14 @@ import org.apache.linkis.instance.label.service.InsLabelAccessService;
 import org.apache.linkis.instance.label.service.annotation.AdapterMode;
 import org.apache.linkis.manager.label.entity.Label;
 
-import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 import java.util.List;
 
 @AdapterMode
-public class EurekaInsLabelService implements InsLabelAccessService {
+public class SpringInsLabelService implements InsLabelAccessService {
 
-  public EurekaInsLabelService(EurekaDiscoveryClient discoveryClient) {}
+  public SpringInsLabelService(DiscoveryClient discoveryClient) {}
 
   @Override
   public void attachLabelToInstance(Label<?> label, ServiceInstance serviceInstance) {}

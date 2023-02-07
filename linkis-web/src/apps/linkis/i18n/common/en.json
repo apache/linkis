@@ -14,7 +14,7 @@
       "addAppType": "Add Application Type",
       "editContents": "Add Contents",
       "ConfirmEdit": "Done",
-      "eurekaRegisterCenter": "Eureka Register Center",
+      "serviceRegistryCenter": "Service Registry Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",

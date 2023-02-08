@@ -462,7 +462,7 @@ abstract class EntranceServer extends Logging {
       val msg =
         MessageFormat.format(
           EntranceErrorCodeSummary.FAILOVER_RUNNING_TO_CANCELLED.getErrorDesc,
-          jobRequest.getId
+          jobRequest.getId.toString
         )
       // init jobRequest properties
       jobRequest.setStatus(SchedulerEventState.Cancelled.toString)

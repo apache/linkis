@@ -18,9 +18,8 @@
 package org.apache.linkis.metadata.query.service.mysql;
 
 import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-
-import org.springframework.util.CollectionUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -46,6 +45,9 @@ public class SqlConnection implements Closeable {
 
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
+
+  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars.apply("linkis.mysql.strong.security.enable", false);
 
   private Connection conn;
 
@@ -74,29 +76,19 @@ public class SqlConnection implements Closeable {
    * @param extraParams
    */
   private void validateParams(Map<String, Object> extraParams) {
-    if (CollectionUtils.isEmpty(extraParams)) {
+    if (extraParams == null) {
       return;
     }
 
-    // Delete suspected vulnerability parameters
-    Iterator<Map.Entry<String, Object>> iterator = extraParams.entrySet().iterator();
-    while (iterator.hasNext()) {
-      Map.Entry<String, Object> entry = iterator.next();
-      String key = entry.getKey();
-      if ("allowLoadLocalInfile".equalsIgnoreCase(key)
-          || "autoDeserialize".equalsIgnoreCase(key)
-          || "allowLocalInfile".equalsIgnoreCase(key)
-          || "allowUrlInLocalInfile".equalsIgnoreCase(key)) {
-        extraParams.remove(key);
-        iterator.remove();
-      }
-    }
+    // security check
+    SecurityUtils.checkJdbcSecurity(extraParams);
 
-    // Set all vulnerability parameters to false
-    extraParams.put("allowLoadLocalInfile", "false");
-    extraParams.put("autoDeserialize", "false");
-    extraParams.put("allowLocalInfile", "false");
-    extraParams.put("allowUrlInLocalInfile", "false");
+    // append force params
+    SecurityUtils.appendMysqlForceParams(extraParams);
+
+    // print extraParams
+    String logStr = SecurityUtils.parseParamsMapToMysqlParamUrl(extraParams);
+    LOG.info("mysql metadata url extraParams: {}", logStr);
   }
 
   public List<String> getAllDatabases() throws SQLException {

@@ -25,12 +25,8 @@
   </parent>
 
   <artifactId>linkis-engineplugin-spark</artifactId>
-  <properties>
-    <spark.version>2.4.3</spark.version>
-  </properties>
 
   <dependencies>
-
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-engineconn-plugin-core</artifactId>
@@ -104,20 +100,9 @@
           <groupId>io.netty</groupId>
           <artifactId>netty-all</artifactId>
         </exclusion>
-
         <exclusion>
           <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-common</artifactId>
-        </exclusion>
-
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-hdfs</artifactId>
-        </exclusion>
-
-        <exclusion>
-          <groupId>org.apache.hadoop</groupId>
-          <artifactId>hadoop-auth</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
 
         <exclusion>
@@ -202,13 +187,20 @@
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.spark</groupId>
       <artifactId>spark-core_${scala.binary.version}</artifactId>
       <version>${spark.version}</version>
       <scope>provided</scope>
       <exclusions>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-annotations</artifactId>
@@ -267,6 +259,14 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-annotations</artifactId>
         </exclusion>
@@ -317,6 +317,14 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-annotations</artifactId>
         </exclusion>
@@ -366,6 +374,14 @@
       <scope>provided</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
         </exclusion>
@@ -392,7 +408,7 @@
     <dependency>
       <groupId>com.github.pjfanning</groupId>
       <artifactId>excel-streaming-reader</artifactId>
-      <version>4.0.1</version>
+      <version>4.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -418,40 +434,27 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.xml</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-          <exclude>**/application.yml</exclude>
-          <exclude>**/bootstrap.yml</exclude>
-          <exclude>**/log4j2.xml</exclude>
-        </excludes>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
-
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -482,4 +485,98 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <!-- spark2-hadoop3 version:spark2.4 use hadoop2.7.2 by default mvn validate -Pspark-2.4-hadoop-3.3  -->
+    <profile>
+      <id>spark-2.4-hadoop-3.3</id>
+      <properties>
+        <hadoop.version>${hadoop-hdfs-client-shade.version}</hadoop.version>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-hadoop-hdfs-client-shade</artifactId>
+          <version>${project.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>commmons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>log4j</groupId>
+              <artifactId>log4j</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.mortbay.jetty</groupId>
+              <artifactId>jetty</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.mortbay.jetty</groupId>
+              <artifactId>jetty-util</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-core</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-server</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-json</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>javax.ws.rs</groupId>
+              <artifactId>jsr311-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>net.java.dev.jets3t</groupId>
+              <artifactId>jets3t</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.jcraft</groupId>
+              <artifactId>jsch</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.google.code.findbugs</groupId>
+              <artifactId>jsr305</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>xmlenc</groupId>
+              <artifactId>xmlenc</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>net.java.dev.jets3t</groupId>
+              <artifactId>jets3t</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.apache.avro</groupId>
+              <artifactId>avro</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.jcraft</groupId>
+              <artifactId>jsch</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>com.google.code.findbugs</groupId>
+              <artifactId>jsr305</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>javax.servlet</groupId>
+              <artifactId>servlet-api</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>slf4j-log4j12</artifactId>
+            </exclusion>
+            <exclusion>
+              <groupId>org.eclipse.jetty</groupId>
+              <artifactId>*</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

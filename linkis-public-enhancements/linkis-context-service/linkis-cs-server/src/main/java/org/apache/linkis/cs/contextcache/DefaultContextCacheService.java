@@ -290,4 +290,21 @@ public class DefaultContextCacheService implements ContextCacheService {
           e);
     }
   }
+
+  @Override
+  public void removeByKey(ContextID contextID, String keyStr, ContextType csType) {
+    if (null == contextID || StringUtils.isBlank(keyStr) || null == csType) {
+      return;
+    }
+    try {
+      ContextIDValue contextIDValue = contextCache.getContextIDValue(contextID);
+      contextIDValue.getContextKeyValueContext().removeByKey(keyStr, csType);
+    } catch (Exception e) {
+      logger.error(
+          String.format(
+              "Failed to removeByKey contextID(%s) of key keyStr(%s) and csyTye(%s)",
+              contextID.getContextId(), keyStr, csType.name()),
+          e);
+    }
+  }
 }

@@ -33,7 +33,7 @@ abstract class GetAction extends HttpAction {
 
   override def getRequestBody: String = {
     val queryString = new StringBuilder
-    queryParams.asScala.foreach { case (k, v) =>
+    queryParams.asScala.retain((k, v) => v != null && k != null).foreach { case (k, v) =>
       queryString
         .append(URLEncoder.encode(k, Configuration.BDP_ENCODING.getValue))
         .append("=")

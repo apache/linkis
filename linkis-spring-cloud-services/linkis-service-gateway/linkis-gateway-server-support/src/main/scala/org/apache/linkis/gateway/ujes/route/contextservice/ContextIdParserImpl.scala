@@ -56,7 +56,7 @@ class ContextIdParserImpl extends ContextIDParser with Logging {
       } else {
         logger.error(s"parse HAID instance invalid. haIDKey : " + contextId)
       }
-      val backupInstance = getInstanceByAlias(haContextID.getInstance())
+      val backupInstance = getInstanceByAlias(haContextID.getBackupInstance())
       if (null != backupInstance) {
         instances.add(backupInstance.getInstance)
       } else {

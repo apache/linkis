@@ -27,7 +27,7 @@ import org.apache.linkis.manager.engineplugin.common.resource.{
 import org.apache.linkis.manager.engineplugin.shell.builder.ShellProcessEngineConnLaunchBuilder
 import org.apache.linkis.manager.engineplugin.shell.factory.ShellEngineConnFactory
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel}
+import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 
 import java.util
@@ -48,7 +48,7 @@ class ShellEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.SHELL.toString)
     this.defaultLabels.add(engineTypeLabel)
   }

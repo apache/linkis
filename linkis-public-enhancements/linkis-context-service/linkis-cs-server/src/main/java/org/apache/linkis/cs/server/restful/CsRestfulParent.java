@@ -42,8 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public interface CsRestfulParent {
+
+  Logger logger = LoggerFactory.getLogger(CsRestfulParent.class);
 
   default HttpAnswerJob submitRestJob(
       HttpServletRequest req, ServiceMethod method, Object... objects) throws InterruptedException {
@@ -102,6 +106,7 @@ public interface CsRestfulParent {
 
   default <T> T deserialize(JsonNode jsonNode, String key) throws CSErrorException {
     String str = jsonNode.get(key).textValue();
+    logger.info("the contextID: {}", str);
     return (T) CsUtils.SERIALIZE.deserialize(str);
   }
 

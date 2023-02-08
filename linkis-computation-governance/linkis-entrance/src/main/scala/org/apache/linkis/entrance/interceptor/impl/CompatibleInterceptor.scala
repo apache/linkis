@@ -22,7 +22,7 @@ import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.protocol.utils.TaskUtils
 
-import java.{lang, util}
+import java.lang
 
 /**
  * Compatible with linkis 0.X client
@@ -33,7 +33,7 @@ class CompatibleInterceptor extends EntranceInterceptor with Logging {
   private val newQueueKey = "wds.linkis.rm.yarnqueue"
 
   override def apply(task: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
-    val startMap = TaskUtils.getStartupMap(task.getParams.asInstanceOf[util.Map[String, Any]])
+    val startMap = TaskUtils.getStartupMap(task.getParams)
     if (null != startMap && startMap.containsKey(oldQueueKey)) {
       logger.info(
         s"Compatible with queue parameters, the queue $newQueueKey will be set to ${startMap.get(oldQueueKey)}"

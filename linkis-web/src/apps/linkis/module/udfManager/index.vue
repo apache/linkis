@@ -177,7 +177,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete1', {username: row.userName}),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.userName}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -227,6 +227,7 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,

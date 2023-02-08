@@ -45,4 +45,6 @@ public interface JobHistoryQueryService {
     JobHistory searchOne(Long jobId, Date sDate, Date eDate);
 
     List<JobRequest> getQueryVOList(List<JobHistory> list);
+
+    void changeObserveInfoById(JobHistory jobHistory);
 }

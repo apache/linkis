@@ -165,7 +165,7 @@ object JobHistoryHelper extends Logging {
   def updateJobRequestMetrics(
       jobRequest: JobRequest,
       resourceInfo: util.Map[String, ResourceWithStatus],
-      ecInfo: util.Map[String, AnyRef]
+      infoMap: util.Map[String, AnyRef]
   ): Unit = {
     // update resource
     if (jobRequest.getMetrics == null) {
@@ -189,7 +189,6 @@ object JobHistoryHelper extends Logging {
       engineInstanceMap = new util.HashMap[String, AnyRef]()
       metricsMap.put(TaskConstant.JOB_ENGINECONN_MAP, engineInstanceMap)
     }
-    val infoMap = ecInfo
     if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
       val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
@@ -200,6 +199,20 @@ object JobHistoryHelper extends Logging {
     } else {
       logger.warn("Ec info map must contains ECInstance")
     }
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_REQUEST_EC_TIME)) {
+      metricsMap.put(
+        TaskConstant.JOB_REQUEST_EC_TIME,
+        infoMap.get(TaskConstant.JOB_REQUEST_EC_TIME)
+      )
+    }
+
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_SUBMIT_TO_EC_TIME)) {
+      metricsMap.put(
+        TaskConstant.JOB_SUBMIT_TO_EC_TIME,
+        infoMap.get(TaskConstant.JOB_SUBMIT_TO_EC_TIME)
+      )
+    }
+
   }
 
 }

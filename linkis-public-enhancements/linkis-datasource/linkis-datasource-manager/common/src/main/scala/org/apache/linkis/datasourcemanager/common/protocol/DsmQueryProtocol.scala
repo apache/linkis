@@ -28,7 +28,8 @@ trait DsmQueryProtocol extends RequestProtocol {}
 
 /**
  * Query request of Data Source Information
- * @param id datasource id
+ * @param id
+ *   datasource id
  */
 case class DsInfoQueryRequest(id: String, name: String, system: String, envId: String = null)
     extends DsmQueryProtocol {
@@ -50,4 +51,3 @@ case class DsInfoResponse(
     creator: String = "",
     errorMsg: String = ""
 ) extends DsmQueryProtocol
-

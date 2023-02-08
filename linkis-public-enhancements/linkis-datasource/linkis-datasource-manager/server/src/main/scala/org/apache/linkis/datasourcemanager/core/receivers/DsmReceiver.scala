@@ -21,17 +21,23 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.datasourcemanager.common.domain.DataSource
 import org.apache.linkis.datasourcemanager.common.protocol.{DsInfoQueryRequest, DsInfoResponse}
 import org.apache.linkis.datasourcemanager.core.restful.RestfulApiHelper
-import org.apache.linkis.datasourcemanager.core.service.{DataSourceInfoService, DataSourceRelateService}
+import org.apache.linkis.datasourcemanager.core.service.{
+  DataSourceInfoService,
+  DataSourceRelateService
+}
 import org.apache.linkis.rpc.message.annotation.Receiver
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+
 import java.text.MessageFormat
 import java.util
 
-import org.apache.commons.lang3.StringUtils
-import org.slf4j.LoggerFactory
-
 import scala.tools.scalap.scalax.util.StringUtil
+
+import org.slf4j.LoggerFactory
 
 @Component
 class DsmReceiver {
@@ -50,11 +56,11 @@ class DsmReceiver {
       Utils.tryCatch {
         var dataSource: DataSource = null
         if (Option(dsInfoQueryRequest.name).isDefined) {
-          if (Option(dsInfoQueryRequest.envId).isDefined)
-          {
-            logger.info("Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name + ", envId:" + dsInfoQueryRequest.envId)
-          } else
-          {
+          if (Option(dsInfoQueryRequest.envId).isDefined) {
+            logger.info(
+              "Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name + ", envId:" + dsInfoQueryRequest.envId
+            )
+          } else {
             logger.info("Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name)
           }
           dataSource = dataSourceInfoService.getDataSourceInfoForConnect(

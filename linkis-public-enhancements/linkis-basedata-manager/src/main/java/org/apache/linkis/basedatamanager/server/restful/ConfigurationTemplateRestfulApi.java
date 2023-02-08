@@ -53,7 +53,6 @@ public class ConfigurationTemplateRestfulApi {
     if (Objects.isNull(request)
         || StringUtils.isEmpty(request.getEngineLabelId())
         || StringUtils.isEmpty(request.getKey())
-        || StringUtils.isEmpty(request.getEngineConnType())
         || StringUtils.isEmpty(request.getName())
         || StringUtils.isEmpty(request.getTreeName())) {
       throw new InvalidParameterException("please check your parameter.");

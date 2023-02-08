@@ -308,12 +308,7 @@ abstract class EntranceServer extends Logging {
     }
 
     val logAppender = new java.lang.StringBuilder()
-    logAppender.append(
-      LogUtils
-        .generateInfo(
-          s"\n\n*************************************FAILOVER************************************** \n\n"
-        )
-    )
+    logAppender.append("*************************************FAILOVER**************************************")
 
     // try to kill ec
     killOldEC(jobRequest, logAppender);
@@ -339,7 +334,7 @@ abstract class EntranceServer extends Logging {
     Utils.tryCatch {
       logAppender.append(
         LogUtils
-          .generateInfo(s"job ${jobRequest.getId} start to kill ec \n")
+          .generateInfo(s"job ${jobRequest.getId} start to kill old ec \n")
       )
       if (
           !SchedulerEventState.isRunning(SchedulerEventState.withName(jobRequest.getStatus))

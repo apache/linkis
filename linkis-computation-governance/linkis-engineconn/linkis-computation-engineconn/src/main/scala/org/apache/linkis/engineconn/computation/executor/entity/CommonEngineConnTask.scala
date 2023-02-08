@@ -31,7 +31,6 @@ class CommonEngineConnTask(val taskId: String, var taskSupportRetry: Boolean = f
   private var status: ExecutionNodeStatus = ExecutionNodeStatus.Inited
   private var labels: Array[Label[_]] = new Array[Label[_]](0)
   private var serviceInstance: ServiceInstance = _
-  private var ticketID: String = _
 
   override def getTaskId: String = taskId
 
@@ -60,7 +59,4 @@ class CommonEngineConnTask(val taskId: String, var taskSupportRetry: Boolean = f
   override def setCallbackServiceInstance(serviceInstance: ServiceInstance): Unit =
     this.serviceInstance = serviceInstance
 
-  override def getTicketId: String = ticketID
-
-  def setTicketId(ticketID: String): Unit = this.ticketID = ticketID
 }

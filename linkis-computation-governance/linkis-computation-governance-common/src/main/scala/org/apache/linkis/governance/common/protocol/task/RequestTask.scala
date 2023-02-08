@@ -50,8 +50,6 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
 
   private var sourceID: String = _
 
-  private var ticketID: String = _
-
   override def getCode: String = code
 
   override def setCode(code: String): Unit = this.code = code
@@ -83,15 +81,11 @@ class RequestTaskExecute extends RequestTask with RequestProtocol {
   }
 
   override def toString: String =
-    s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels, sourceID=${getSourceID()}), ticketID=${getTicketID()})"
+    s"RequestTaskExecute(code=${getCodeByLimit()}, lock=$lock, properties=$properties, labels=$labels, sourceID=${getSourceID()})"
 
   override def getSourceID(): String = sourceID
 
   def setSourceID(sourceID: String): Unit = this.sourceID = sourceID
-
-  override def getTicketID(): String = ticketID
-
-  def setTicketID(ticketID: String): Unit = this.ticketID = ticketID
 }
 
 trait TaskState extends RequestProtocol {}

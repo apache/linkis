@@ -50,6 +50,4 @@ trait EngineConnTask {
   def getCallbackServiceInstance(): ServiceInstance
 
   def setCallbackServiceInstance(serviceInstance: ServiceInstance): Unit
-
-  def getTicketId: String
 }

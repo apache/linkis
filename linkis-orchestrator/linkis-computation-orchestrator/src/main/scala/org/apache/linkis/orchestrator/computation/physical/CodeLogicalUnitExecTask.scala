@@ -96,8 +96,8 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     }
 
     if (executor.isDefined && !isCanceled) {
+      val requestTask = toRequestTask
       val codeExecutor = executor.get
-      val requestTask = toRequestTask(codeExecutor)
       val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
         s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       } else {
@@ -123,14 +123,12 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
           )
           infoMap.put(
             TaskConstant.TICKET_ID,
-            codeExecutor.getEngineConnExecutor match {
-              case computationEngineConnExecutor: ComputationEngineConnExecutor =>
-                if (computationEngineConnExecutor.isReuse()) {
-                  computationEngineConnExecutor.getServiceInstance.getInstance
-                } else {
-                  computationEngineConnExecutor.getTicketId
-                }
-              case _ => ""
+            // Ensure that the job metric has at least one EC record.
+            // When the EC is reuse, the same EC may have two records, One key is Instance, and the other key is ticketId
+            if (codeExecutor.getEngineConnExecutor.isReuse()) {
+              codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
+            } else {
+              codeExecutor.getEngineConnExecutor.getTicketId
             }
           )
           infoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, engineConnExecId)
@@ -182,7 +180,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
 
   }
 
-  private def toRequestTask(codeExecutor: CodeExecTaskExecutor): RequestTask = {
+  private def toRequestTask: RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
     requestTask.setLabels(getLabels)
@@ -191,15 +189,6 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     }
     requestTask.getProperties.putAll(getParams.getRuntimeParams.toMap)
     requestTask.setSourceID(getIDInfo())
-    requestTask.setTicketID(codeExecutor.getEngineConnExecutor match {
-      case computationEngineConnExecutor: ComputationEngineConnExecutor =>
-        if (computationEngineConnExecutor.isReuse()) {
-          computationEngineConnExecutor.getServiceInstance.getInstance
-        } else {
-          computationEngineConnExecutor.getTicketId
-        }
-      case _ => ""
-    })
     requestTask
   }
 

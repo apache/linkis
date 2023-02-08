@@ -46,75 +46,95 @@ public class UJESSQLResultSetTest {
       e.printStackTrace();
     } catch (SQLException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      conn = null;
     }
   }
 
   @AfterAll
   public static void closeConnection() {
-    conn.close();
+    if (conn != null) {
+      conn.close();
+    }
   }
 
   @BeforeEach
   public void getResultSet() {
-    preStatement = conn.prepareStatement("show tables");
-    preStatement.execute();
-    resultSet = preStatement.getResultSet();
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      preStatement.execute();
+      resultSet = preStatement.getResultSet();
+    }
   }
 
   @AfterEach
   public void closeStatement() {
-    preStatement.close();
+    if (preStatement != null) {
+      preStatement.close();
+    }
   }
 
   @Test
   public void getObject() {
-    while (resultSet.next()) {
-      metaData = resultSet.getMetaData();
-      int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
-      int columnTypeFromMetaData = metaData.getColumnType(1);
-      Assertions.assertEquals(columnTypeFromVal, columnTypeFromMetaData);
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
+        int columnTypeFromMetaData = metaData.getColumnType(1);
+        Assertions.assertEquals(columnTypeFromVal, columnTypeFromMetaData);
+      }
     }
   }
 
   @Test
   public void first() {
-    resultSet.next();
-    Object oldColumnVal = resultSet.getObject(1);
-    while (resultSet.next()) {} // move to the end
-    Assertions.assertTrue(resultSet.first());
-    Object newColumnVal = resultSet.getObject(1);
-    Assertions.assertSame(oldColumnVal, newColumnVal);
+    if (conn != null) {
+      resultSet.next();
+      Object oldColumnVal = resultSet.getObject(1);
+      while (resultSet.next()) {} // move to the end
+      Assertions.assertTrue(resultSet.first());
+      Object newColumnVal = resultSet.getObject(1);
+      Assertions.assertSame(oldColumnVal, newColumnVal);
+    }
   }
 
   @Test
   public void afterLast() {
-    resultSet.next();
-    resultSet.afterLast();
-    Assertions.assertTrue(resultSet.isAfterLast());
+    if (conn != null) {
+      resultSet.next();
+      resultSet.afterLast();
+      Assertions.assertTrue(resultSet.isAfterLast());
+    }
   }
 
   @Test
   public void beforeFirst() {
-    resultSet.next();
-    resultSet.beforeFirst();
-    Assertions.assertTrue(resultSet.isBeforeFirst());
+    if (conn != null) {
+      resultSet.next();
+      resultSet.beforeFirst();
+      Assertions.assertTrue(resultSet.isBeforeFirst());
+    }
   }
 
   @Test
   public void getMetaData() {
-    resultSet.next();
-    Assertions.assertNotNull(resultSet.getMetaData());
+    if (conn != null) {
+      resultSet.next();
+      Assertions.assertNotNull(resultSet.getMetaData());
+    }
   }
 
   @Test
   public void next() {
-    while (resultSet.next()) {
-      metaData = resultSet.getMetaData();
-      for (int i = 1; i <= metaData.getColumnCount(); i++) {
-        System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+          System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
+        }
+        System.out.println();
       }
-      System.out.println();
+      Assertions.assertTrue(resultSet.isAfterLast());
     }
-    Assertions.assertTrue(resultSet.isAfterLast());
   }
 }

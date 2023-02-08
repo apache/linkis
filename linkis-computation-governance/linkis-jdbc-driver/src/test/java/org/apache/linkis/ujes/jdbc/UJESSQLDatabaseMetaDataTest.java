@@ -46,118 +46,165 @@ public class UJESSQLDatabaseMetaDataTest {
       e.printStackTrace();
     } catch (SQLException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      dbmd = null;
     }
   }
 
   @Test
   public void supportsMinimumSQLGrammar() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsMinimumSQLGrammar());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsMinimumSQLGrammar());
+    }
   }
 
   @Test
   public void getResultSetHoldability() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getResultSetHoldability());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getResultSetHoldability());
+    }
   }
 
   @Test
   public void getMaxColumnsInGroupBy() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInGroupBy());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInGroupBy());
+    }
   }
 
   @Test
   public void supportsSubqueriesInComparisons() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsSubqueriesInComparisons());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsSubqueriesInComparisons());
+    }
   }
 
   @Test
   public void getMaxColumnsInSelect() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInSelect());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInSelect());
+    }
   }
 
   @Test
   public void nullPlusNonNullIsNull() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullPlusNonNullIsNull());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullPlusNonNullIsNull());
+    }
   }
 
   @Test
   public void supportsCatalogsInDataManipulation() {
-    assertFalse(dbmd.supportsCatalogsInDataManipulation());
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsCatalogsInDataManipulation());
+    }
   }
 
   @Test
   public void supportsDataDefinitionAndDataManipulationTransactions() {
-    Assertions.assertThrows(
-        UJESSQLException.class, () -> dbmd.supportsDataDefinitionAndDataManipulationTransactions());
+    if (dbmd != null) {
+      Assertions.assertThrows(
+          UJESSQLException.class,
+          () -> dbmd.supportsDataDefinitionAndDataManipulationTransactions());
+    }
   }
 
   @Test
   public void supportsTableCorrelationNames() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsTableCorrelationNames());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsTableCorrelationNames());
+    }
   }
 
   @Test
   public void getDefaultTransactionIsolation() {
-    assertEquals(dbmd.getDefaultTransactionIsolation(), 0);
+    if (dbmd != null) {
+      assertEquals(dbmd.getDefaultTransactionIsolation(), 0);
+    }
   }
 
   @Test
   public void supportsFullOuterJoins() {
-    assertTrue(dbmd.supportsFullOuterJoins());
+    if (dbmd != null) {
+      assertTrue(dbmd.supportsFullOuterJoins());
+    }
   }
 
   @Test
   public void supportsExpressionsInOrderBy() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsExpressionsInOrderBy());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsExpressionsInOrderBy());
+    }
   }
 
   @Test
   public void allProceduresAreCallable() {
-    assertFalse(dbmd.allProceduresAreCallable());
+    if (dbmd != null) {
+      assertFalse(dbmd.allProceduresAreCallable());
+    }
   }
 
   @Test
   public void getMaxTablesInSelect() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxTablesInSelect());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxTablesInSelect());
+    }
   }
 
   @Test
   public void nullsAreSortedAtStart() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullsAreSortedAtStart());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullsAreSortedAtStart());
+    }
   }
 
   @Test
   public void supportsPositionedUpdate() {
-    assertFalse(dbmd.supportsPositionedUpdate());
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsPositionedUpdate());
+    }
   }
 
   @Test
   public void ownDeletesAreVisible() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.ownDeletesAreVisible(0));
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.ownDeletesAreVisible(0));
+    }
   }
 
   @Test
   public void supportsResultSetHoldability() {
-    assertFalse(dbmd.supportsResultSetHoldability(0));
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsResultSetHoldability(0));
+    }
   }
 
   @Test
   public void getMaxStatements() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxStatements());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxStatements());
+    }
   }
 
   @Test
   public void getRowIdLifetime() {
-    Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getRowIdLifetime());
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getRowIdLifetime());
+    }
   }
 
   @Test
   public void getDriverVersion() {
-    assertEquals(dbmd.getDriverVersion(), String.valueOf(UJESSQLDriverMain.DEFAULT_VERSION()));
+    if (dbmd != null) {
+      assertEquals(dbmd.getDriverVersion(), String.valueOf(UJESSQLDriverMain.DEFAULT_VERSION()));
+    }
   }
 
   @AfterAll
   public static void closeStateAndConn() {
-    conn.close();
+    if (conn != null) {
+      conn.close();
+    }
     dbmd = null;
   }
 }

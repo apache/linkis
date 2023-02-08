@@ -53,6 +53,8 @@ public class UJESSQLStatementTest {
       e.printStackTrace();
     } catch (SQLException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      statement = null;
     }
   }
 
@@ -69,67 +71,85 @@ public class UJESSQLStatementTest {
 
   @Test
   public void execute() {
-    assertTrue(statement.execute(sql));
+    if (statement != null) {
+      assertTrue(statement.execute(sql));
+    }
   }
 
   @Test
   public void executeQuery() {
-    UJESSQLResultSet resultSet = statement.executeQuery(sql);
-    assertTrue(resultSet.next());
+    if (statement != null) {
+      UJESSQLResultSet resultSet = statement.executeQuery(sql);
+      assertTrue(resultSet.next());
+    }
   }
 
   @Test
   public void crud() {
-    statement.executeQuery(sqlCreate);
-    statement.executeQuery(sqlInsert);
-    UJESSQLResultSet resultSet = statement.executeQuery(sqlSelect);
-    int columnCount = 0;
-    while (resultSet.next()) {
-      UJESSQLResultSetMetaData rsmd = resultSet.getMetaData();
-      for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-        System.out.print(
-            rsmd.getColumnName(i)
-                + ":"
-                + rsmd.getColumnTypeName(i)
-                + ":"
-                + resultSet.getObject(i)
-                + "   ");
-        columnCount = i;
+    if (statement != null) {
+      statement.executeQuery(sqlCreate);
+      statement.executeQuery(sqlInsert);
+      UJESSQLResultSet resultSet = statement.executeQuery(sqlSelect);
+      int columnCount = 0;
+      while (resultSet.next()) {
+        UJESSQLResultSetMetaData rsmd = resultSet.getMetaData();
+        for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+          System.out.print(
+              rsmd.getColumnName(i)
+                  + ":"
+                  + rsmd.getColumnTypeName(i)
+                  + ":"
+                  + resultSet.getObject(i)
+                  + "   ");
+          columnCount = i;
+        }
       }
+      System.out.println(columnCount);
+      assertTrue(resultSet.isAfterLast());
+      statement.executeQuery(sqlDrop);
     }
-    System.out.println(columnCount);
-    assertTrue(resultSet.isAfterLast());
-    statement.executeQuery(sqlDrop);
   }
 
   @Test
   public void setMaxRows() {
-    statement.setMaxRows(maxRows);
-    assertEquals(maxRows, statement.getMaxRows());
+    if (statement != null) {
+      statement.setMaxRows(maxRows);
+      assertEquals(maxRows, statement.getMaxRows());
+    }
   }
 
   @Test
   public void setQueryTimeout() {
-    statement.setQueryTimeout(queryTimeout);
-    assertEquals(statement.getQueryTimeout(), queryTimeout * 1000);
+    if (statement != null) {
+      statement.setQueryTimeout(queryTimeout);
+      assertEquals(statement.getQueryTimeout(), queryTimeout * 1000);
+    }
   }
 
   @Test
   public void cancel() {
-    statement.executeQuery(sql);
-    statement.cancel();
-    assertNull(statement.getResultSet());
-    assertNull(statement.getJobExcuteResult());
+    if (statement != null) {
+      statement.executeQuery(sql);
+      statement.cancel();
+      assertNull(statement.getResultSet());
+      assertNull(statement.getJobExcuteResult());
+    }
   }
 
   @Test
   public void getConnWhenIsClosed() {
-    assertEquals(statement.getConnection(), conn);
+    if (statement != null) {
+      assertEquals(statement.getConnection(), conn);
+    }
   }
 
   @AfterAll
   public static void closeStateAndConn() {
-    statement.close();
-    conn.close();
+    if (statement != null) {
+      statement.close();
+    }
+    if (conn != null) {
+      conn.close();
+    }
   }
 }

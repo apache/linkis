@@ -51,12 +51,10 @@ class DsmReceiver {
     if (dsInfoQueryRequest.isValid) {
       Utils.tryCatch {
         var dataSource: DataSource = null
-        if (
-            Option(dsInfoQueryRequest.name).isDefined && Option(dsInfoQueryRequest.envId).isDefined
-        ) {
-          logger.info(
-            "Try to get dataSource by dataSourceName and envId:" + dsInfoQueryRequest.name + ", envId:" + dsInfoQueryRequest.envId
-          )
+        if (Option(dsInfoQueryRequest.name).isDefined && Option(dsInfoQueryRequest.envId).isDefined) {
+            logger.info(
+              "Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name + ", envId:" + dsInfoQueryRequest.envId
+            )
           dataSource = dataSourceInfoService.getDataSourceInfoForConnect(
             dsInfoQueryRequest.name,
             dsInfoQueryRequest.envId

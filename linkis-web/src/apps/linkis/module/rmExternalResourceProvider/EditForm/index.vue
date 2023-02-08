@@ -60,7 +60,7 @@ export default {
         },
         {
           type: 'input',
-          title: "资源类型",
+          title: this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.resourceType'),
           field: 'resourceType',
           value: '',
           props: {
@@ -71,14 +71,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"资源类型"`,
+              )} `+this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.resourceType'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "名称",
+          title: this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.name'),
           field: 'name',
           value: '',
           props: {
@@ -89,14 +89,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"名称"`,
+              )} `+this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.name'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'input',
-          title: "标签",
+          title: this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.labels'),
           field: 'labels',
           value: '',
           props: {
@@ -107,14 +107,14 @@ export default {
               required: true,
               message: `${this.$t(
                 'message.linkis.datasource.pleaseInput'
-              )}"标签"`,
+              )} `+this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.labels'),
               trigger: 'blur',
             },
           ],
         },
         {
           type: 'v-jsoneditor',
-          title: "配置信息",
+          title: this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.config'),
           field: 'config',
           value: '',
           props: {
@@ -135,7 +135,12 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
-      this.formData.config = JSON.parse(this.formData.config)
+      console.log(this.formData)
+      if(this.formData.config.length>0){
+        this.formData.config = JSON.parse(this.formData.config)
+      }else{
+        this.formData.config= {}
+      }
     }
   },
   watch: {

@@ -204,10 +204,6 @@ class HiveEngineConnExecutor(
       val startTime = System.currentTimeMillis()
       try {
         Utils.tryCatch {
-          val compileRet = driver.compile(realCode)
-          if (0 != compileRet) {
-            logger.warn(s"compile realCode error status : ${compileRet}")
-          }
           val queryPlan = driver.getPlan
           val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
           numberOfMRJobs = numberOfJobs

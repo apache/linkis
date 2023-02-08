@@ -17,20 +17,20 @@
 
 package org.apache.linkis.engineconnplugin.seatunnel.util
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.acessible.executor.log.LogHelper
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.logging.{Log, LogFactory}
 
 import java.io.{BufferedReader, File, InputStreamReader, PrintWriter}
 
-object SeatunnelUtils extends Logging {
+object SeatunnelUtils {
+  val LOGGER: Log = LogFactory.getLog(SeatunnelUtils.getClass)
   private var process: Process = _
 
   def localArray(code: String): Array[String] = {
-    Array(SeatunnelSparkEnvConfiguration.LINKIS_SPARK_CONFIG.getValue, generateExecFile(code))
+    Array(SeatunnelSparkEnvConfiguration.GET_LINKIS_SPARK_CONFIG, generateExecFile(code))
   }
 
   def generateExecFile(code: String): String = {
@@ -54,10 +54,9 @@ object SeatunnelUtils extends Logging {
       while ({
         line = bufferedReader.readLine(); line != null
       }) {
-        LogHelper.logCache.cacheLog(line)
+        LOGGER.info(line)
       }
       val exitcode = process.waitFor()
-      logger.info("executeLine exitcode:" + exitcode)
       exitcode
     } finally {
       IOUtils.closeQuietly(bufferedReader)

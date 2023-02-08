@@ -101,7 +101,7 @@ export default {
   mounted() {
   },
   methods: {
-    // 获取公钥接口
+    // Get public key interface(获取公钥接口)
     getPublicKey() {
       api.fetch('/user/publicKey', 'get').then((res) => {
         this.publicKeyData = res;
@@ -115,7 +115,7 @@ export default {
             storage.remove('saveUserNameAndPass', 'local');
           }
           this.loginForm.user = this.loginForm.user.toLocaleLowerCase();
-          // 需要判断是否需要给密码加密
+          // Need to determine whether the password needs to be encrypted(需要判断是否需要给密码加密)
           let password = this.loginForm.password;
           let params = {};
           if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
@@ -133,8 +133,8 @@ export default {
               password
             };
           }
-          // 登录清掉本地缓存
-          // 连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用
+          // Log in to clear the local cache(登录清掉本地缓存)
+          // After logging out twice in a row, data will be lost, so it is necessary to judge whether it has been saved and not used.(连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用)
           let tabs = await tab.get() || [];
           const tablist = storage.get(this.loginForm.user + 'tabs', 'local');
           if (!tablist || tablist.length <= 0) {
@@ -149,7 +149,7 @@ export default {
               this.loading = false;
               storage.set('userName',rst.userName,'session')
               storage.set('enableWatermark',rst.enableWatermark ? true : false,'session')
-              // 保存用户名
+              // save username(保存用户名)
               if (this.rememberUserNameAndPass) {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');
               }
@@ -175,7 +175,7 @@ export default {
         }
       });
     },
-    // 清楚本地缓存
+    // clear local cache(清楚本地缓存)
     clearSession() {
       storage.clear();
     },

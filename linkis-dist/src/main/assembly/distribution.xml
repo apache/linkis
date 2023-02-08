@@ -102,7 +102,6 @@
             <outputDirectory></outputDirectory>
             <includes>
                 <include>README*</include>
-                <include>DISCLAIMER*</include>
             </includes>
         </fileSet>
 
@@ -210,7 +209,7 @@
         <!--application-manager-->
         <fileSet>
             <directory>
-                ../linkis-computation-governance/linkis-manager/target/out/lib
+                ../linkis-computation-governance/linkis-manager/linkis-application-manager/target/out/lib
             </directory>
             <outputDirectory>
                 linkis-package/lib/linkis-computation-governance/linkis-cg-linkismanager

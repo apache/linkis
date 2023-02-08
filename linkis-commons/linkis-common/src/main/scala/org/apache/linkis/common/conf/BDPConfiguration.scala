@@ -60,7 +60,7 @@ private[conf] object BDPConfiguration extends Logging {
       configList.append(configFileURL.getPath)
     } else {
       logger.warn(
-        s"************ Notice: The Linkis configuration file $propertyFile is not exists! *******************"
+        s"************ Notice: The Linkis configuration file $propertyFile does not exist! *******************"
       )
     }
 
@@ -75,7 +75,7 @@ private[conf] object BDPConfiguration extends Logging {
       configList.append(serverConfFileURL.getPath)
     } else {
       logger.warn(
-        s"**************** Notice: The Linkis serverConf file $serverConf is not exists! *******************"
+        s"**************** Notice: The Linkis serverConf file $serverConf does not exist! *******************"
       )
     }
 
@@ -93,7 +93,7 @@ private[conf] object BDPConfiguration extends Logging {
           configList.append(configFileURL.getPath)
         } else {
           logger.warn(
-            s"********** Notice: The Linkis server.confs file $propertyF is not exists! **************"
+            s"********** Notice: The Linkis server.confs file $propertyF does not exist! **************"
           )
         }
       }
@@ -119,8 +119,7 @@ private[conf] object BDPConfiguration extends Logging {
           tmpConfig = config
         }
         lock.writeLock().lock()
-        configReload.clear()
-        configReload.putAll(tmpConfig)
+        tmpConfig.asScala.foreach(keyValue => configReload.setProperty(keyValue._1, keyValue._2))
         lock.writeLock().unlock()
       }
     }
@@ -267,10 +266,15 @@ private[conf] object BDPConfiguration extends Logging {
   def get(key: String, hotload: Boolean = false): String =
     getOption(key, hotload).getOrElse(throw new NoSuchElementException(key))
 
+  def get(key: String): String =
+    getOption(key).getOrElse(throw new NoSuchElementException(key))
+
   def getInt(key: String, default: Int, hotload: Boolean = false): Int =
     getOption(key, hotload).map(_.toInt).getOrElse(default)
 
   def getInt(commonVars: CommonVars[Int]): Option[Int] = getOption(commonVars)
+
+  def contains(key: String): Boolean = getOption(key).isDefined
 
   def contains(key: String, hotload: Boolean = false): Boolean = getOption(key, hotload).isDefined
 

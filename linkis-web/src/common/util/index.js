@@ -35,8 +35,8 @@ let util = {
   },
   md5,
   /**
-   * 替换url中 形如 ${projectId} 格式的参数占位符为真实参数
-   * ! url应该是转义过的符合URI规范的链接地址，参数如未在obj定义则最终地址会丢失该参数
+   * Replace the parameter placeholders in the format of ${projectId} in the url with real parameters(替换url中 形如 ${projectId} 格式的参数占位符为真实参数)
+   * ! url should be an escaped link address that conforms to the URI specification. If the parameter is not defined in obj, the final address will lose the parameter(url应该是转义过的符合URI规范的链接地址，参数如未在obj定义则最终地址会丢失该参数)
    */
   replaceHolder(url, obj = {}) {
     obj = {
@@ -64,7 +64,7 @@ let util = {
     const distUrl = dist.length > 1 ? `${dist[0]}?${qs.stringify(result)}` : dist[0]
     return distUrl
   },
-  // 打开新tab浏览器也方法
+  // How to open a new tab browser(打开新tab浏览器也方法)
   windowOpen(url) {
     const newTab = window.open("about:blank");
     setTimeout(() => {
@@ -79,7 +79,7 @@ let util = {
     }, 500);
   },
   /**
-   * 生成guid
+   * generate guid(生成guid)
    */
   guid() {
     let key;

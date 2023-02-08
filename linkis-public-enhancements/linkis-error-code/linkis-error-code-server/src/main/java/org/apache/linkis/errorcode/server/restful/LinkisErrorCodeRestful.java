@@ -21,6 +21,7 @@ import org.apache.linkis.errorcode.common.CommonConf;
 import org.apache.linkis.errorcode.common.LinkisErrorCode;
 import org.apache.linkis.errorcode.server.service.LinkisErrorCodeService;
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,7 @@ public class LinkisErrorCodeRestful {
   @ApiOperation(value = "getErrorCodes", notes = "get error codes", response = Message.class)
   @RequestMapping(path = CommonConf.GET_ERRORCODE_URL, method = RequestMethod.GET)
   public Message getErrorCodes(HttpServletRequest request) {
+    ModuleUserUtils.getOperationUser(request, "getErrorCodes ");
     List<LinkisErrorCode> errorCodes = linkisErrorCodeService.getAllErrorCodes();
     Message message = Message.ok();
     message.data("errorCodes", errorCodes);

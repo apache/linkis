@@ -17,6 +17,7 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -103,14 +104,14 @@ public class FsRestfulApi {
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (WorkspaceUtil.isLogAdmin(userName)) {
+    if (Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
     LOGGER.debug("requestPath:" + requestPath);
     LOGGER.debug("workspacePath:" + workspacePath);
     LOGGER.debug("enginconnPath:" + enginconnPath);
-    LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue());
+    LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
   }
 
@@ -141,7 +142,7 @@ public class FsRestfulApi {
     if (!fileSystem.exists(fsPath)) {
       if (!FsPath.WINDOWS && !UserGroupUtils.isUserExist(userName)) {
         LOGGER.warn("User {} not exist in linkis node.", userName);
-        throw WorkspaceExceptionManager.createException(80031);
+        throw WorkspaceExceptionManager.createException(80031, userName);
       }
       if (FILESYSTEM_PATH_AUTO_CREATE.getValue()) {
         try {
@@ -149,10 +150,10 @@ public class FsRestfulApi {
           return Message.ok().data(String.format("user%sRootPath", returnType), path);
         } catch (IOException e) {
           LOGGER.error(e.getMessage(), e);
-          throw WorkspaceExceptionManager.createException(80030);
+          throw WorkspaceExceptionManager.createException(80030, path);
         }
       }
-      throw WorkspaceExceptionManager.createException(80003);
+      throw WorkspaceExceptionManager.createException(80003, path);
     }
     return Message.ok().data(String.format("user%sRootPath", returnType), path);
   }
@@ -172,13 +173,13 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     if (fileSystem.exists(fsPath)) {
-      throw WorkspaceExceptionManager.createException(80005);
+      throw WorkspaceExceptionManager.createException(80005, path);
     }
     fileSystem.mkdirs(fsPath);
     return Message.ok();
@@ -198,13 +199,13 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     WorkspaceUtil.fileAndDirNameSpecialCharCheck(path);
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     if (fileSystem.exists(fsPath)) {
-      throw WorkspaceExceptionManager.createException(80006);
+      throw WorkspaceExceptionManager.createException(80006, path);
     }
     fileSystem.createNewFile(fsPath);
     return Message.ok();
@@ -231,7 +232,7 @@ public class FsRestfulApi {
       PathValidator$.MODULE$.validate(newDest, userName);
     }
     if (!checkIsUsersDirectory(newDest, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, newDest);
+      throw WorkspaceExceptionManager.createException(80010, userName, newDest);
     }
     if (StringUtils.isEmpty(oldDest)) {
       throw WorkspaceExceptionManager.createException(80004, oldDest);
@@ -245,7 +246,7 @@ public class FsRestfulApi {
     FsPath fsPathNew = new FsPath(newDest);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPathOld);
     if (fileSystem.exists(fsPathNew)) {
-      throw WorkspaceExceptionManager.createException(80007);
+      throw WorkspaceExceptionManager.createException(80007, newDest);
     }
     fileSystem.renameTo(fsPathOld, fsPathNew);
     return Message.ok();
@@ -278,7 +279,7 @@ public class FsRestfulApi {
       PathValidator$.MODULE$.validate(newDir, userName);
     }
     if (!checkIsUsersDirectory(filePath, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, filePath);
+      throw WorkspaceExceptionManager.createException(80010, userName, filePath);
     }
     FsPath flieOldPath = new FsPath(filePath);
     String name =
@@ -288,7 +289,7 @@ public class FsRestfulApi {
     WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieOldPath.getPath());
     WorkspaceUtil.fileAndDirNameSpecialCharCheck(flieNewPath.getPath());
     if (!fileSystem.exists(flieOldPath)) {
-      throw WorkspaceExceptionManager.createException(80013);
+      throw WorkspaceExceptionManager.createException(80013, filePath);
     }
     fileSystem.renameTo(flieOldPath, flieNewPath);
     return Message.ok();
@@ -312,7 +313,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "upload " + path);
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -344,7 +345,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -373,7 +374,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "getDirFileTrees " + path);
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -385,7 +386,7 @@ public class FsRestfulApi {
     // if(!isInUserWorkspace(path,userName)) throw new WorkSpaceException("The user does not
     // have permission to view the contents of the directory");
     if (!fileSystem.canExecute(fsPath) || !fileSystem.canRead(fsPath)) {
-      throw WorkspaceExceptionManager.createException(80010);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     dirFileTree.setName(new File(path).getName());
     dirFileTree.setChildren(new ArrayList<>());
@@ -434,14 +435,14 @@ public class FsRestfulApi {
         charset = Consts.UTF_8.toString();
       }
       if (!checkIsUsersDirectory(path, userName)) {
-        throw WorkspaceExceptionManager.createException(80010, path);
+        throw WorkspaceExceptionManager.createException(80010, userName, path);
       }
       FsPath fsPath = new FsPath(path);
       // TODO: 2018/11/29 Judging the directory, the directory cannot be
       // downloaded(判断目录,目录不能下载)
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
-        throw WorkspaceExceptionManager.createException(8011);
+        throw WorkspaceExceptionManager.createException(8011, path);
       }
       inputStream = fileSystem.read(fsPath);
       byte[] buffer = new byte[1024];
@@ -484,7 +485,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     return Message.ok().data("isExist", fileSystem.exists(fsPath));
@@ -566,7 +567,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openFile " + path);
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
@@ -618,7 +619,7 @@ public class FsRestfulApi {
       charset = Consts.UTF_8.toString();
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     String scriptContent = (String) json.get("scriptContent");
     Object params = json.get("params");
@@ -627,7 +628,7 @@ public class FsRestfulApi {
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     if (!fileSystem.exists(fsPath)) {
-      throw WorkspaceExceptionManager.createException(80013);
+      throw WorkspaceExceptionManager.createException(80013, path);
     }
     if (!fileSystem.canWrite(fsPath)) {
       throw WorkspaceExceptionManager.createException(80014);
@@ -719,7 +720,7 @@ public class FsRestfulApi {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
       if (!checkIsUsersDirectory(path, userName)) {
-        throw WorkspaceExceptionManager.createException(80010, path);
+        throw WorkspaceExceptionManager.createException(80010, userName, path);
       }
       response.addHeader(
           "Content-Disposition",
@@ -823,7 +824,7 @@ public class FsRestfulApi {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
       if (!checkIsUsersDirectory(path, userName)) {
-        throw WorkspaceExceptionManager.createException(80010, path);
+        throw WorkspaceExceptionManager.createException(80010, userName, path);
       }
       // list目录下的文件
       FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
@@ -915,7 +916,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "formate " + path);
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
@@ -978,11 +979,11 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
-    if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
+    if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
     if (!checkIsUsersDirectory(path, userName)) {
-      throw WorkspaceExceptionManager.createException(80010, path);
+      throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);

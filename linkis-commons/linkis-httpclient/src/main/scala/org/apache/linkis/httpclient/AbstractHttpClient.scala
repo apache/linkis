@@ -19,7 +19,7 @@ package org.apache.linkis.httpclient
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.io.{Fs, FsPath}
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.httpclient.authentication.{
   AbstractAuthenticationStrategy,
   AuthenticationAction,
@@ -44,7 +44,7 @@ import org.apache.linkis.httpclient.response._
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.{HttpResponse, _}
-import org.apache.http.client.{CookieStore, ResponseHandler}
+import org.apache.http.client.CookieStore
 import org.apache.http.client.config.RequestConfig
 import org.apache.http.client.entity.{
   DeflateDecompressingEntity,
@@ -156,7 +156,8 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       }
       val taken = System.currentTimeMillis - startTime
       attempts.add(taken)
-      logger.info(s"invoke ${req.getURI} taken: ${taken}")
+      val costTime = ByteTimeUtils.msDurationToString(taken)
+      logger.info(s"invoke ${req.getURI} taken: ${costTime}.")
       response
     }
 
@@ -422,7 +423,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       } catch {
         case connectionPoolTimeOutException: ConnectionPoolTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionPoolTimeOutException")
           throw new HttpClientRetryException(
             "connectionPoolTimeOutException",
@@ -430,7 +431,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case connectionTimeOutException: ConnectTimeoutException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for connectionTimeOutException")
           throw new HttpClientRetryException(
             "connectionTimeOutException",
@@ -438,7 +439,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           )
         case httpHostConnectException: HttpHostConnectException =>
           val serverUrl = getServerUrl(req.getURI)
-          addUnHealThyUrlToDiscovery(serverUrl)
+          addUnHealthyUrlToDiscovery(serverUrl)
           logger.warn("will be server url add unhealthy for httpHostConnectException")
           throw new HttpClientRetryException("httpHostConnectException", httpHostConnectException)
         case t: Throwable =>
@@ -447,7 +448,7 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
     response
   }
 
-  private def addUnHealThyUrlToDiscovery(serverUrl: String): Unit = {
+  private def addUnHealthyUrlToDiscovery(serverUrl: String): Unit = {
     discovery.foreach {
       case d: AbstractDiscovery =>
         d.addUnhealthyServerInstances(serverUrl)

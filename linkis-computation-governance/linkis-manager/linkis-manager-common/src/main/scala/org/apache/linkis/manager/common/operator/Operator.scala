@@ -38,7 +38,7 @@ trait Operator {
       case Some(t: Any) =>
         throw new GovernanceErrorException(20305, s"Unknown class type, cannot cast $t.")
       case None =>
-        throw new GovernanceErrorException(20305, s"The parameter of $key is not exists.")
+        throw new GovernanceErrorException(20305, s"The parameter of $key does not exist.")
     }
 
 }

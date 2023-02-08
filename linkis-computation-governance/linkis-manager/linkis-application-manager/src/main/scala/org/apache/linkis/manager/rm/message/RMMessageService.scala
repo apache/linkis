@@ -48,10 +48,9 @@ class RMMessageService extends Logging {
           .map(_.getStringValue)
           .getOrElse("")
         logger.warn(
-          s"usedResource failed, request from:$value, request engine: ${nodeLabels.getEngineInstanceLabel}, " +
-            s"reason:${exception.getMessage}"
+          s"usedResource failed, request from:$value, request engine: ${nodeLabels.getEngineInstanceLabel}, ",
+          exception
         )
-        throw exception
     }
   }
 

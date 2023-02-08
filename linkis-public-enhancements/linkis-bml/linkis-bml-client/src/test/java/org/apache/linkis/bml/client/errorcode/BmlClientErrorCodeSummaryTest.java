@@ -33,24 +33,6 @@ public class BmlClientErrorCodeSummaryTest {
   }
 
   @Test
-  void testSetErrorCode() {
-    POST_REQUEST_RESULT_NOT_MATCH.setErrorCode(1);
-    assertEquals(1, POST_REQUEST_RESULT_NOT_MATCH.getErrorCode());
-    POST_REQUEST_RESULT_NOT_MATCH.setErrorCode(20060);
-    assertEquals(20060, POST_REQUEST_RESULT_NOT_MATCH.getErrorCode());
-
-    BML_CLIENT_FAILED.setErrorCode(1);
-    assertEquals(1, BML_CLIENT_FAILED.getErrorCode());
-    BML_CLIENT_FAILED.setErrorCode(20061);
-    assertEquals(20061, BML_CLIENT_FAILED.getErrorCode());
-
-    SERVER_URL_NOT_NULL.setErrorCode(1);
-    assertEquals(1, SERVER_URL_NOT_NULL.getErrorCode());
-    SERVER_URL_NOT_NULL.setErrorCode(20062);
-    assertEquals(20062, SERVER_URL_NOT_NULL.getErrorCode());
-  }
-
-  @Test
   void testGetErrorDesc() {
     assertEquals(
         "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)",
@@ -58,30 +40,6 @@ public class BmlClientErrorCodeSummaryTest {
     assertEquals(
         "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
         BML_CLIENT_FAILED.getErrorDesc());
-    assertEquals("serverUrl cannot be null(服务器URL不能为空)", SERVER_URL_NOT_NULL.getErrorDesc());
-  }
-
-  @Test
-  void testSetErrorDesc() {
-    POST_REQUEST_RESULT_NOT_MATCH.setErrorDesc("test");
-    assertEquals("test", POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc());
-    POST_REQUEST_RESULT_NOT_MATCH.setErrorDesc(
-        "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)");
-    assertEquals(
-        "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)",
-        POST_REQUEST_RESULT_NOT_MATCH.getErrorDesc());
-
-    BML_CLIENT_FAILED.setErrorDesc("test");
-    assertEquals("test", BML_CLIENT_FAILED.getErrorDesc());
-    BML_CLIENT_FAILED.setErrorDesc(
-        "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)");
-    assertEquals(
-        "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)",
-        BML_CLIENT_FAILED.getErrorDesc());
-
-    SERVER_URL_NOT_NULL.setErrorDesc("test");
-    assertEquals("test", SERVER_URL_NOT_NULL.getErrorDesc());
-    SERVER_URL_NOT_NULL.setErrorDesc("serverUrl cannot be null(服务器URL不能为空)");
-    assertEquals("serverUrl cannot be null(服务器URL不能为空)", SERVER_URL_NOT_NULL.getErrorDesc());
+    assertEquals("serverUrl cannot be null(serverUrl 不能为空)", SERVER_URL_NOT_NULL.getErrorDesc());
   }
 }

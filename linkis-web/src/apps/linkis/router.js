@@ -22,7 +22,7 @@ export const subAppRoutes = {
   redirect: '/console',
   meta: {
     title: 'Linkis',
-    publicPage: true, // 权限公开
+    publicPage: true, // Permission disclosure(权限公开)
   },
   children: []
 }
@@ -259,6 +259,16 @@ export default [
       }
     },
     {
+      name: 'datasourceTypeKey',
+      path: 'datasourceTypeKey',
+      component: () =>
+        import('./module/datasourceTypeKey/index.vue'),
+      meta: {
+        title: 'datasourceTypeKey',
+        publicPage: true,
+      }
+    },
+    {
       name: 'EnginePluginManagement',
       path: 'EnginePluginManagement',
       component: () =>
@@ -267,7 +277,27 @@ export default [
         title: 'EnginePluginManagement',
         publicPage: true,
       },
-    }
+    },
+    {
+      name: 'codeQuery',
+      path: 'codeQuery',
+      component: () =>
+        import('./module/codeQuery/index.vue'),
+      meta: {
+        title: 'codeQuery',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'codeDetail',
+      path: 'codeDetail',
+      component: () =>
+        import('./module/codeQuery/codeDetail/index.vue'),
+      meta: {
+        title: 'codeDetail',
+        publicPage: true,
+      },
+    },
     ],
   },
 ]

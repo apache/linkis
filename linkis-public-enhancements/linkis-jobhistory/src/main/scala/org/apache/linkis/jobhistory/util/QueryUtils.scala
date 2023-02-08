@@ -32,7 +32,8 @@ import org.apache.commons.lang3.time.DateFormatUtils
 
 import java.io.{InputStream, OutputStream}
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util
+import java.util.{Arrays, Date}
 import java.util.regex.Pattern
 
 object QueryUtils extends Logging {
@@ -150,16 +151,6 @@ object QueryUtils extends Logging {
     } else {
       s"${CODE_STORE_PREFIX.getValue}${user}${CODE_STORE_SUFFIX.getValue}/executionCode/${date}/$suffix"
     }
-  }
-
-  def isJobHistoryAdmin(username: String): Boolean = {
-    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue
-      .split(",")
-      .exists(username.equalsIgnoreCase)
-  }
-
-  def getJobHistoryAdmin(): Array[String] = {
-    JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue.split(",")
   }
 
   def dateToString(date: Date): String = {

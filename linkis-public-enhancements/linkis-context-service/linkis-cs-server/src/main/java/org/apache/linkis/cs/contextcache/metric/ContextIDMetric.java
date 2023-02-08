@@ -17,6 +17,7 @@
 
 package org.apache.linkis.cs.contextcache.metric;
 
+@Deprecated
 public interface ContextIDMetric extends Metrtic {
 
   int getUsedCount();

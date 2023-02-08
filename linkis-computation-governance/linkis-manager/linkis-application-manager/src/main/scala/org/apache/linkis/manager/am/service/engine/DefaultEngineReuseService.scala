@@ -36,15 +36,13 @@ import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelServi
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.apache.commons.lang3.exception.ExceptionUtils
-
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeoutException, TimeUnit}
-
+import java.util.concurrent.{TimeUnit, TimeoutException}
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
@@ -66,10 +64,21 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   @Autowired
   private var engineStopService: EngineStopService = _
 
+  /**
+   * 1. Obtain the EC corresponding to all labels
+   * 2. Judging reuse exclusion tags and fixed engine labels
+   * 3. Select the EC with the lowest load available
+   * 4. Lock the corresponding EC
+   * @param engineReuseRequest
+   * @param sender
+   * @throws
+   * @return
+   */
   @Receiver
   @throws[LinkisRetryException]
   override def reuseEngine(engineReuseRequest: EngineReuseRequest, sender: Sender): EngineNode = {
-    logger.info(s"Start to reuse Engine for request: $engineReuseRequest")
+    val taskId = JobUtils.getJobIdFromStringMap(engineReuseRequest.getProperties)
+    logger.info(s"Task $taskId Start to reuse Engine for request: $engineReuseRequest")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val labelList = LabelUtils
       .distinctLabel(
@@ -85,6 +94,12 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
         case None =>
           Array.empty[String]
       }
+
+
+    if (exclusionInstances.length == 1 && exclusionInstances(0) == GovernanceCommonConf.WILDCARD_CONSTANT) {
+      logger.info(s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC")
+      return null
+    }
 
     var filterLabelList = labelList.filter(_.isInstanceOf[EngineNodeLabel]).asJava
 
@@ -121,7 +136,7 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
       )
     }
     var engineScoreList =
-      getEngineNodeManager.getEngineNodes(instances.asScala.map(_._1).toSeq.toArray)
+      getEngineNodeManager.getEngineNodes(instances.asScala.keys.toSeq.toArray)
 
     var engine: EngineNode = null
     var count = 1
@@ -140,14 +155,10 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           s"Engine reuse exceeds limit: $reuseLimit"
         )
       }
-      // 3. 执行Select 判断label分数、判断是否可用、判断负载
       val choseNode = nodeSelector.choseNode(engineScoreList.toArray)
-      // 4. 获取Select后排在第一的engine，修改EngineNode的Label为新标签，并调用EngineNodeManager的reuse请求
       if (choseNode.isEmpty) {
         throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused")
       }
-
-      // 5. 调用EngineNodeManager 进行reuse 如果reuse失败，则去掉该engine进行重新reuse走3和4
       val engineNode = choseNode.get.asInstanceOf[EngineNode]
       logger.info(s"prepare to reuse engineNode: ${engineNode.getServiceInstance}")
       engine = Utils.tryCatch(getEngineNodeManager.reuseEngine(engineNode)) { t: Throwable =>

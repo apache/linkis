@@ -19,7 +19,7 @@ package org.apache.linkis.orchestrator.core
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.{Fs, FsPath}
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.{Orchestration, OrchestratorSession}
 import org.apache.linkis.orchestrator.core.OrchestrationFuture.NotifyListener
@@ -143,11 +143,16 @@ abstract class AbstractOrchestration(
 
   protected def createOrchestration(logicalPlan: Task): Orchestration
 
-  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse) extends OrchestrationFuture {
+  class OrchestrationFutureImpl(asyncTaskResponse: AsyncTaskResponse)
+      extends OrchestrationFuture
+      with Logging {
 
     private val waitLock = new Array[Byte](0)
 
-    override def cancel(errorMsg: String, cause: Throwable): Unit = operate(Operation.CANCEL)
+    override def cancel(errorMsg: String, cause: Throwable): Unit = {
+      logger.info("Orchestrator to kill job {} ", self.physicalPlan.getIDInfo())
+      operate(Operation.CANCEL)
+    }
 
     override def getResponse: OrchestrationResponse = orchestrationResponse
 

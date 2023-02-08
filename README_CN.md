@@ -155,7 +155,7 @@ $> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
 
 # 示例和使用指引
 
-- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/overview),
+- [用户手册 ](https://linkis.apache.org/zh-CN/docs/latest/user-guide/how-to-use),
 - [各引擎使用指引 ](https://linkis.apache.org/zh-CN/docs/latest/engine-usage/overview) 
 - [API 文档 ](https://linkis.apache.org/zh-CN/docs/latest/api/overview)
 

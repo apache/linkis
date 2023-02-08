@@ -183,6 +183,23 @@ public class DataSourceInfoServiceTest {
   }
 
   @Test
+  void testGetDataSourceInfoForConnectByNameAndEnvId() {
+    DataSource dataSource = buildDataSource();
+    Mockito.when(dataSourceDao.selectOneDetailByName(dataSource.getDataSourceName()))
+        .thenReturn(dataSource);
+    Mockito.when(
+            dataSourceVersionDao.selectOneVersion(
+                dataSource.getId(), dataSource.getPublishedVersionId()))
+        .thenReturn("{\"a\":\"b\"}");
+    String res =
+        dataSourceInfoService
+            .getDataSourceInfoForConnect(dataSource.getDataSourceName(), "1")
+            .getConnectParams()
+            .toString();
+    assertTrue("{a=b}".equals(res));
+  }
+
+  @Test
   void testGetDataSourceInfoForConnectByIdAndVerId() {
     DataSource dataSource = buildDataSource();
     Mockito.when(dataSourceDao.selectOneDetail(dataSource.getId())).thenReturn(dataSource);

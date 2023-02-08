@@ -33,7 +33,6 @@ trait RequestTask {
   def getLabels: util.List[Label[_]]
   def setLabels(labels: util.List[Label[_]])
   def getSourceID(): String
-  def getTicketID(): String
 }
 
 object RequestTask {

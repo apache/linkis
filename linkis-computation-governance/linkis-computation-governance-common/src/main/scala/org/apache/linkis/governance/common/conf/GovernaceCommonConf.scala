@@ -25,7 +25,6 @@ object GovernanceCommonConf {
 
   val WILDCARD_CONSTANT = "*"
 
-
   val SPARK_ENGINE_VERSION = CommonVars("wds.linkis.spark.engine.version", "2.4.3")
 
   val HIVE_ENGINE_VERSION = CommonVars("wds.linkis.hive.engine.version", "1.2.1")

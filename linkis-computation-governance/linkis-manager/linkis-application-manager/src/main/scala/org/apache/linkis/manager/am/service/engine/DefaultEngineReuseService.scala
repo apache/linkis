@@ -20,6 +20,7 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
 import org.apache.linkis.manager.am.selector.NodeSelector
@@ -36,13 +37,15 @@ import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelServi
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.linkis.governance.common.utils.JobUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.util
-import java.util.concurrent.{TimeUnit, TimeoutException}
+import java.util.concurrent.{TimeoutException, TimeUnit}
+
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 
@@ -65,10 +68,8 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
   private var engineStopService: EngineStopService = _
 
   /**
-   * 1. Obtain the EC corresponding to all labels
-   * 2. Judging reuse exclusion tags and fixed engine labels
-   * 3. Select the EC with the lowest load available
-   * 4. Lock the corresponding EC
+   *   1. Obtain the EC corresponding to all labels 2. Judging reuse exclusion tags and fixed engine
+   *      labels 3. Select the EC with the lowest load available 4. Lock the corresponding EC
    * @param engineReuseRequest
    * @param sender
    * @throws
@@ -95,9 +96,14 @@ class DefaultEngineReuseService extends AbstractEngineService with EngineReuseSe
           Array.empty[String]
       }
 
-
-    if (exclusionInstances.length == 1 && exclusionInstances(0) == GovernanceCommonConf.WILDCARD_CONSTANT) {
-      logger.info(s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC")
+    if (
+        exclusionInstances.length == 1 && exclusionInstances(
+          0
+        ) == GovernanceCommonConf.WILDCARD_CONSTANT
+    ) {
+      logger.info(
+        s"Task $taskId exists ReuseExclusionLabel and the configuration does not choose to reuse EC"
+      )
       return null
     }
 

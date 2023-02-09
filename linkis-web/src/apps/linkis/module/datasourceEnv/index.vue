@@ -289,6 +289,10 @@ export default {
     },
     onModalOk(){
       this.$refs.editForm.formModel.submit((formData)=>{
+        if (!('parameter' in formData)) {
+          formData['parameter'] = {}
+        }
+
         if('pic' in formData) delete formData['pic'];
         delete formData._index
         delete formData._rowKey

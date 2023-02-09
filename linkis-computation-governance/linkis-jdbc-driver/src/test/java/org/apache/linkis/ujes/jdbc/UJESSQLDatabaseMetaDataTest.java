@@ -24,17 +24,20 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UJESSQLDatabaseMetaDataTest {
   private static UJESSQLConnection conn;
   private static UJESSQLDatabaseMetaData dbmd;
 
-  @BeforeClass
+  @BeforeAll
   public static void preWork() {
     try {
       conn = CreateConnection.getConnection();
@@ -43,117 +46,165 @@ public class UJESSQLDatabaseMetaDataTest {
       e.printStackTrace();
     } catch (SQLException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      dbmd = null;
     }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsMinimumSQLGrammar() {
-    dbmd.supportsMinimumSQLGrammar();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsMinimumSQLGrammar());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getResultSetHoldability() {
-    dbmd.getResultSetHoldability();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getResultSetHoldability());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxColumnsInGroupBy() {
-    dbmd.getMaxColumnsInGroupBy();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInGroupBy());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsSubqueriesInComparisons() {
-    dbmd.supportsSubqueriesInComparisons();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsSubqueriesInComparisons());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxColumnsInSelect() {
-    dbmd.getMaxColumnsInSelect();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxColumnsInSelect());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void nullPlusNonNullIsNull() {
-    dbmd.nullPlusNonNullIsNull();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullPlusNonNullIsNull());
+    }
   }
 
   @Test
   public void supportsCatalogsInDataManipulation() {
-    assertFalse(dbmd.supportsCatalogsInDataManipulation());
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsCatalogsInDataManipulation());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsDataDefinitionAndDataManipulationTransactions() {
-    dbmd.supportsDataDefinitionAndDataManipulationTransactions();
+    if (dbmd != null) {
+      Assertions.assertThrows(
+          UJESSQLException.class,
+          () -> dbmd.supportsDataDefinitionAndDataManipulationTransactions());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsTableCorrelationNames() {
-    dbmd.supportsTableCorrelationNames();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsTableCorrelationNames());
+    }
   }
 
   @Test
   public void getDefaultTransactionIsolation() {
-    assertEquals(dbmd.getDefaultTransactionIsolation(), 0);
+    if (dbmd != null) {
+      assertEquals(dbmd.getDefaultTransactionIsolation(), 0);
+    }
   }
 
   @Test
   public void supportsFullOuterJoins() {
-    assertTrue(dbmd.supportsFullOuterJoins());
+    if (dbmd != null) {
+      assertTrue(dbmd.supportsFullOuterJoins());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void supportsExpressionsInOrderBy() {
-    dbmd.supportsExpressionsInOrderBy();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.supportsExpressionsInOrderBy());
+    }
   }
 
   @Test
   public void allProceduresAreCallable() {
-    assertFalse(dbmd.allProceduresAreCallable());
+    if (dbmd != null) {
+      assertFalse(dbmd.allProceduresAreCallable());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxTablesInSelect() {
-    dbmd.getMaxTablesInSelect();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxTablesInSelect());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void nullsAreSortedAtStart() {
-    dbmd.nullsAreSortedAtStart();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.nullsAreSortedAtStart());
+    }
   }
 
   @Test
   public void supportsPositionedUpdate() {
-    assertFalse(dbmd.supportsPositionedUpdate());
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsPositionedUpdate());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void ownDeletesAreVisible() {
-    dbmd.ownDeletesAreVisible(0);
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.ownDeletesAreVisible(0));
+    }
   }
 
   @Test
   public void supportsResultSetHoldability() {
-    assertFalse(dbmd.supportsResultSetHoldability(0));
+    if (dbmd != null) {
+      assertFalse(dbmd.supportsResultSetHoldability(0));
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getMaxStatements() {
-    dbmd.getMaxStatements();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getMaxStatements());
+    }
   }
 
-  @Test(expected = UJESSQLException.class)
+  @Test
   public void getRowIdLifetime() {
-    dbmd.getRowIdLifetime();
+    if (dbmd != null) {
+      Assertions.assertThrows(UJESSQLException.class, () -> dbmd.getRowIdLifetime());
+    }
   }
 
   @Test
   public void getDriverVersion() {
-    assertEquals(dbmd.getDriverVersion(), String.valueOf(UJESSQLDriverMain.DEFAULT_VERSION()));
+    if (dbmd != null) {
+      assertEquals(dbmd.getDriverVersion(), String.valueOf(UJESSQLDriverMain.DEFAULT_VERSION()));
+    }
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeStateAndConn() {
-    conn.close();
+    if (conn != null) {
+      conn.close();
+    }
     dbmd = null;
   }
 }

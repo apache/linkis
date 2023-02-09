@@ -64,7 +64,8 @@
       @on-visible-change="resetTagAdd"
       :title="$t('message.linkis.tagEdit')"
       v-model="isTagEdit"
-      :mask-closable="false">
+      :mask-closable="false"
+      :ok-text="$t('message.common.ok')">
       <Form :label-width="80" @submit.native.prevent>
         <FormItem :label="`${$t('message.linkis.instanceName')}：`">
           <Input disabled v-model="formItem.instance" />
@@ -85,7 +86,8 @@
     </Modal>
     <Modal
       @on-ok="confirmKill"
-      v-model="killModal">
+      v-model="killModal"
+      :ok-text="$t('message.common.ok')">
       <div>
         <div class="tip">
           {{$t('message.linkis.tipForKill', {instance: killInfo.curInstance})}}
@@ -278,9 +280,9 @@ export default {
       const calcCompany = function(num, isCompany = false) {
         let data = num > 0 ? num : 0;
         if (isCompany) {
-          return data / 1024 / 1024 / 1024;
+          return Math.floor(data / 1024 / 1024 / 1024);
         }
-        return data;
+        return Math.floor(data);
       }
       return  v && (v.cores !== undefined || v.memory !== undefined || v.instance !== undefined) ? `${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G,${calcCompany(v.instance)}apps` : ''
     }

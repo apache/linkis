@@ -120,7 +120,7 @@ const api = {
     codePath: 'status',
     successCode: '0',
     messagePath: 'message',
-    resultPath: 'data',
+    resultPath: 'data'
   },
 };
 
@@ -152,23 +152,28 @@ const success = function(response) {
   }
   let data;
   if (response) {
+    const linkis_errorMsgTip = (sessionStorage.getItem('linkis.errorMsgTip') || '').replace(/%s/g, response.config.url)
     if (util.isString(response.data)) {
       data = JSON.parse(response.data);
     } else if (util.isObject(response.data)) {
       data = response.data;
     } else {
-      throw new Error('后台接口异常，请联系开发处理！');
+      throw new Error(linkis_errorMsgTip || '后台接口异常，请联系开发处理！');
     }
     let res = getData(data);
     let code = res.codePath;
     let message = res.messagePath;
     let result = res.resultPath;
+    let errorMsgTip = result.errorMsgTip;
+    if (errorMsgTip) {
+      sessionStorage.setItem('linkis.errorMsgTip', errorMsgTip)
+    }
     if (code != api.constructionOfResponse.successCode) {
       if (api.error[code]) {
         api.error[code](response);
         throw new Error('');
       } else {
-        throw new Error(message || '后台接口异常，请联系开发处理！');
+        throw new Error(message || linkis_errorMsgTip || '后台接口异常，请联系开发处理！');
       }
     }
     if (result) {
@@ -195,6 +200,7 @@ const fail = function(error) {
     api.error[response.status].forEach((fn) => fn(response));
   } else {
     _message = '后台接口异常，请联系开发处理！';
+    if (response && response.config) _message = (sessionStorage.getItem('linkis.errorMsgTip') || '').replace(/%s/g, response.config.url) || '后台接口异常，请联系开发处理！';
     if (response && response.data) {
       let data;
       if (util.isString(response.data)) {

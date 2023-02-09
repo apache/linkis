@@ -136,7 +136,9 @@
         "queueTop": "Queue Max",
         "engineRemain": "Engine Remain",
         "engineUsed": "Engine Used",
-        "engineTop": "Engine Max"
+        "engineTop": "Engine Max",
+        "versioTips": "If no engine version is available, check whether the engine materials of the corresponding version are installed",
+        "applicationRole": "Application role"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -180,6 +182,15 @@
           }
         }
       },
+      "modal": {
+        "modalTitle": "Prompt message ",
+        "modalDelete": "Confirm whether to delete the [{envName} option?",
+        "modalDeleteRecord": "Confirm whether to delete the record?",
+        "modalDeleteTask": "Confirm whether to stop the selected task?",
+        "modalDeleteInstance": "Determines whether to stop the current selected instance?",
+        "modalDeleteSuccess": "Deleted successfully",
+        "modalDeleteFail": "Delete failed"
+      }, 
       "formItems": {
         "id": {
           "placeholder": "Please search by entering the ID"

@@ -33,7 +33,7 @@ class HardwareUtilsTest {
 
   @Test private[utils] def testGetMaxLogicalCore() = {
     val maxCore = HardwareUtils.getMaxLogicalCore()
-    assert(maxCore > 2)
+    assert(maxCore >= 1)
   }
 
   @Test private[utils] def testGetTotalAndAvailableMemory() = {

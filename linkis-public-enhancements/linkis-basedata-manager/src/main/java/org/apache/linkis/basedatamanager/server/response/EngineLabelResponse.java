@@ -33,9 +33,13 @@ public class EngineLabelResponse implements Serializable {
   @ApiModelProperty(value = "engine name. eg: spark-2.4.3")
   private String engineName;
 
-  public EngineLabelResponse(Integer labelId, String engineName) {
+  @ApiModelProperty(value = "install. eg: yes")
+  private String install;
+
+  public EngineLabelResponse(Integer labelId, String engineName, String install) {
     this.labelId = labelId;
     this.engineName = engineName;
+    this.install = install;
   }
 
   public Integer getLabelId() {
@@ -52,5 +56,13 @@ public class EngineLabelResponse implements Serializable {
 
   public void setEngineName(String engineName) {
     this.engineName = engineName;
+  }
+
+  public String getInstall() {
+    return install;
+  }
+
+  public void setInstall(String install) {
+    this.install = install;
   }
 }

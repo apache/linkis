@@ -13,13 +13,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
--- ----------------------------
--- add corresponding table fields for linkis_ps_dm_datasource_type_key
--- ----------------------------
+package org.apache.linkis.basedatamanager.server.dao;
 
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) COLLATE utf8_bin  NOT NULL;
-ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) COLLATE utf8_bin NULL DEFAULT NULL;
-ALTER TABLE `linkis_ps_instance_label_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
+import org.apache.linkis.basedatamanager.server.domain.EngineConnPluginBmlResources;
 
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+public interface EngineConnPluginBmlResourcesMapper
+    extends BaseMapper<EngineConnPluginBmlResources> {
+  /**
+   * query installed engine type and version lists
+   *
+   * @return List
+   */
+  List<String> getEngineTypeList();
+}

@@ -40,14 +40,14 @@ public class FixedEngineConnLabel extends GenericLabel implements EngineNodeLabe
     if (getValue() == null) {
       setValue(new HashMap<>());
     }
-    getValue().put(getLabelKey(), SessionId);
+    getValue().put("sessionId", SessionId);
   }
 
   public String getSessionId() {
     if (getValue() == null) {
       return null;
     }
-    return getValue().get(getLabelKey());
+    return getValue().get("sessionId");
   }
 
   @Override

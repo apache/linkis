@@ -178,7 +178,8 @@
                       "datasourceType": "数据源分类",
                       "EnginePluginManagement": "引擎物料管理",
                       "basedataManagement": "基础数据管理",
-                      "codeQuery": "代码检索"
+                      "codeQuery": "代码检索",
+                      "engineConfigurationTemplate": "引擎配置模板"
                   }
               }
           },
@@ -506,6 +507,27 @@
               "updateTime": "更新时间",
               "modifyUser": "更新者",
               "searchPlaceholder": "环境名称/环境描述/参数"
+            },
+            "engineConfigurationTemplate": {
+              "engineLabelId": "引擎类型ID",
+              "advanced": "是否优先",
+              "defaultValue": "默认值",
+              "description": "描述",
+              "engineConnType": "引擎类型",
+              "key": "键值",
+              "level": "等级",
+              "name": "名称",
+              "treeName": "树名称",
+              "validateRange": "验证范围",
+              "validateType": "验证类型",
+              "hidden": "隐藏",
+              "id": "ID",
+              "engineLabelList": "引擎类型列表",
+              "yes": "是",
+              "no": "否",
+              "delSuccess": "删除成功",
+              "delFail": "删除失败",
+              "edit": "编辑"
             },
             "datasourceType": {
               "name": "名称",

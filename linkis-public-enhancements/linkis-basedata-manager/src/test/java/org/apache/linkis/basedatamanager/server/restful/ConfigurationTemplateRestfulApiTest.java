@@ -78,48 +78,52 @@ class ConfigurationTemplateRestfulApiTest {
     }
 
     @Test
-    void delete() {
+    void delete() throws Exception {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        String url = "/basedata-manager/configuration-template/"+"5";
+        MvcResult mvcResult =
+                mockMvc
+                        .perform(MockMvcRequestBuilders.delete(url).params(paramsMap))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
+        Message message =
+                JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+        Assertions.assertEquals(MessageStatus.SUCCESS(), message.getStatus());
+        logger.info(String.valueOf(message));
     }
 
     @Test
-    void getEngineList() {
+    void getEngineList() throws Exception {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        String url = "/basedata-manager/configuration-template/engin-list";
+        MvcResult mvcResult =
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get(url).params(paramsMap))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
+        Message message =
+                JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+        Assertions.assertEquals(MessageStatus.SUCCESS(), message.getStatus());
+        logger.info(String.valueOf(message));
     }
 
     @Test
-    void getTemplateListByLabelId() {
+    void getTemplateListByLabelId() throws Exception {
+        MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
+        paramsMap.add("engineLabelId","5");
+        String url = "/basedata-manager/configuration-template/template-list-by-label";
+        MvcResult mvcResult =
+                mockMvc
+                        .perform(MockMvcRequestBuilders.get(url).params(paramsMap))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                        .andReturn();
+        Message message =
+                JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);
+        Assertions.assertEquals(MessageStatus.SUCCESS(), message.getStatus());
+        logger.info(String.valueOf(message));
     }
 
-    public void sendUrl(String url, MultiValueMap<String, String> paramsMap, String type, String msg)
-            throws Exception {
-        MvcUtils mvcUtils = new MvcUtils(mockMvc);
-        Message mvcResult = null;
-        if (type.equals("get")) {
-            if (paramsMap != null) {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, paramsMap));
-            } else {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url));
-            }
-        }
-
-        if (type.equals("delete")) {
-            mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultDelete(url));
-        }
-
-        if (type.equals("post")) {
-            if (msg != null) {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, msg));
-            } else {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
-            }
-        }
-        if (type.equals("put")) {
-            if (msg != null) {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url, msg));
-            } else {
-                mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
-            }
-        }
-        assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
-        logger.info(String.valueOf(mvcResult));
-    }
 }

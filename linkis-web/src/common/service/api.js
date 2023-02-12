@@ -21,7 +21,6 @@
  */
 import util from '@/common/util';
 import axios from 'axios';
-import router from '@/router';
 import { Message } from 'iview';
 import cache from './apiCache';
 
@@ -112,8 +111,12 @@ const api = {
       if (res.data && res.data.enableSSO && res.data.SSOURL) {
         return window.location.replace(res.data.SSOURL);
       }
-      router.push('/login');
-      throw new Error('您尚未登录，请先登录!');
+
+      const isLoginPath = window.location.hash == "#/login";
+      if (!isLoginPath) {
+        window.location.hash = "#/login";
+        throw new Error('您尚未登录，请先登录!');
+      }
     },
   },
   constructionOfResponse: {

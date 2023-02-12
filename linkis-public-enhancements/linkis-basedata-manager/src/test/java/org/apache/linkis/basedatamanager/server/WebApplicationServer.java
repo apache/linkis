@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.eureka.conf;
+package org.apache.linkis.basedatamanager.server;
 
-// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-// import
-// org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ComponentScan;
 
-/*@EnableWebSecurity
-public class EurekaSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        super.configure(http);
-    }
-}*/
+@EnableAutoConfiguration
+@ServletComponentScan
+@ComponentScan
+public class WebApplicationServer extends SpringBootServletInitializer {
+
+  public static void main(String[] args) {
+    new SpringApplicationBuilder(WebApplicationServer.class).run(args);
+  }
+}

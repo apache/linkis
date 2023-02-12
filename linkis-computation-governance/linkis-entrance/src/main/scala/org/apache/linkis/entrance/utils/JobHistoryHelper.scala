@@ -190,15 +190,15 @@ object JobHistoryHelper extends Logging {
       metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
     }
     val infoMap = ecInfo
-    if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
-      val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
+    if (null != infoMap && infoMap.containsKey(TaskConstant.TICKET_ID)) {
+      val ticketId = infoMap.get(TaskConstant.TICKET_ID).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
-        .getOrDefault(instance, new util.HashMap[String, AnyRef])
+        .getOrDefault(ticketId, new util.HashMap[String, AnyRef])
         .asInstanceOf[util.HashMap[String, AnyRef]]
       engineExtraInfoMap.putAll(infoMap)
-      engineInstanceMap.put(instance, engineExtraInfoMap)
+      engineInstanceMap.put(ticketId, engineExtraInfoMap)
     } else {
-      logger.warn("Ec info map must contains ECInstance")
+      logger.warn("Ec info map must contains ticketID")
     }
   }
 

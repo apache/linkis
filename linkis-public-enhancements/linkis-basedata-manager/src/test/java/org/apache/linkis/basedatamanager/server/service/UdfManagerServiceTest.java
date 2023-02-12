@@ -17,27 +17,43 @@
 
 package org.apache.linkis.basedatamanager.server.service;
 
-import org.apache.linkis.basedatamanager.server.Scan;
-import org.apache.linkis.basedatamanager.server.WebApplicationServer;
+import org.apache.linkis.basedatamanager.server.dao.UdfManagerMapper;
+import org.apache.linkis.basedatamanager.server.domain.UdfManagerEntity;
+import org.apache.linkis.basedatamanager.server.service.impl.UdfManagerServiceImpl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SpringBootTest(classes = {WebApplicationServer.class, Scan.class})
+@ExtendWith(MockitoExtension.class)
 public class UdfManagerServiceTest {
   private Logger logger = LoggerFactory.getLogger(UdfManagerServiceTest.class);
-  @Autowired private UdfManagerService udfManagerService;
+  @InjectMocks private UdfManagerServiceImpl udfManagerService;
+  @Mock private UdfManagerMapper udfManagerMapper;
 
   @Test
   public void getListByPage() {
-    PageInfo listByPage = udfManagerService.getListByPage("", 1, 10);
+    List<UdfManagerEntity> udfManagerEntities = new ArrayList<>();
+    UdfManagerEntity udfManagerEntity = new UdfManagerEntity();
+    udfManagerEntity.setId(3L);
+    udfManagerEntity.setUserName("userName");
+    udfManagerEntities.add(udfManagerEntity);
+    Mockito.when(udfManagerMapper.getListByPage(Mockito.any())).thenReturn(udfManagerEntities);
+
+    PageInfo<UdfManagerEntity> listByPage = udfManagerService.getListByPage("", 1, 10);
     Assertions.assertTrue(listByPage.getSize() > 0);
+    Assertions.assertEquals(listByPage.getSize(), 1);
+    Assertions.assertEquals(listByPage.getList().get(0).getUserName(), "userName");
     logger.info(listByPage.toString());
   }
 }

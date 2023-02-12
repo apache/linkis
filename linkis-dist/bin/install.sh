@@ -102,6 +102,7 @@ else
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
+cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 

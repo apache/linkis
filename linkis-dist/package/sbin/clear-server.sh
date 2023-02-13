@@ -14,7 +14,6 @@
 # limitations under the License.
 #
 
-
 source ${LINKIS_HOME}/conf/db.sh
 echo 'DELETE FROM  `linkis_cg_manager_label_value_relation` where label_value_key="alias";
 DELETE FROM  `linkis_cg_manager_label_value_relation` where label_value_key="serviceName";

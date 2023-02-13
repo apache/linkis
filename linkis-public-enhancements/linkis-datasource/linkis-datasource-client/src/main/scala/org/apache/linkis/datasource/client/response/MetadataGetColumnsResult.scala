@@ -26,7 +26,9 @@ import java.util
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getColumns")
+@DWSHttpMessageResult(
+  "/api/rest_j/v\\d+/(metadataQuery|metadatamanager)/(getColumns|columns)(\\S+/db/\\S+/table/\\S+)?"
+)
 class MetadataGetColumnsResult extends DWSResult {
   @BeanProperty var columns: util.List[java.util.Map[String, Any]] = _
 

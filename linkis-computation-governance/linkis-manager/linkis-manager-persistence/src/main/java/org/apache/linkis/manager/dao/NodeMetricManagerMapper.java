@@ -43,4 +43,9 @@ public interface NodeMetricManagerMapper {
   void deleteNodeMetricsByInstance(@Param("instance") String instance);
 
   List<PersistenceNodeMetricsEntity> getAllNodeMetrics();
+
+  int updateNodeStatus(
+      @Param("instance") String instance,
+      @Param("instanceStatus") int instanceStatus,
+      @Param("oldStatus") int oldStatus);
 }

@@ -417,10 +417,6 @@ export default {
           reqList.push(it.bmlResourceId);
         }
       })
-      if(!reqList || reqList.length<1){
-        this.$Message.info(this.$t('message.linkis.EnginePluginManagement.checkEngineConnTypeAndVersion'));
-        return
-      }
       api.fetch('/bml/deleteResources', {'resourceIds': reqList}, 'post').then(response => {
         window.console.log(response);
         api.fetch('/engineplugin/deleteEnginePluginBML', {'ecType': th.ecType, 'version': th.version}, 'get').then(response2 => {
@@ -446,12 +442,6 @@ export default {
       // })
     },
     createOrUpdate(num) {
-
-      if(!this.ecType || !this.version){
-        this.$Message.info(this.$t('message.linkis.EnginePluginManagement.checkEngineConnTypeAndVersion'));
-        return
-      }
-
       this.actionNum = num
       if(num === 0){
         this.actionType=this.$t('message.linkis.EnginePluginManagement.create')

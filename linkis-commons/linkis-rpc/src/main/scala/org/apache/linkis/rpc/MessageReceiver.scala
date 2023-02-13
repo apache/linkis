@@ -17,23 +17,27 @@
 
 package org.apache.linkis.rpc
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.message.RequestProtocol
 import org.apache.linkis.rpc.message.method.{MessageExecutor, ReceiverMethodSearcher}
+import org.apache.linkis.rpc.utils.RPCUtils
 
 import scala.concurrent.duration.Duration
 import scala.language.implicitConversions
 
-class MessageReceiver extends Receiver {
+class MessageReceiver extends Receiver with Logging {
 
   private val receiverMethodSearcher = new ReceiverMethodSearcher
 
   private val messageExecutor = new MessageExecutor
 
   override def receive(message: Any, sender: Sender): Unit = {
+    logger.info("From caller {} get async message", RPCUtils.getServiceInstanceFromSender(sender))
     receiveAndReply(message, sender)
   }
 
   override def receiveAndReply(message: Any, sender: Sender): Any = {
+    logger.info("From caller {} get sync message", RPCUtils.getServiceInstanceFromSender(sender))
     message match {
       case requestProtocol: RequestProtocol =>
         val methodExecuteWrapper =

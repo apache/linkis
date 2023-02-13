@@ -104,15 +104,15 @@ class DefaultEngineAskEngineService
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
       engineCreateRequest.setLabels(engineAskRequest.getLabels)
-      engineCreateRequest.setTimeOut(engineAskRequest.getTimeOut)
+      engineCreateRequest.setTimeout(engineAskRequest.getTimeOut)
       engineCreateRequest.setUser(engineAskRequest.getUser)
       engineCreateRequest.setProperties(engineAskRequest.getProperties)
       engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
       val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
       val timeout =
-        if (engineCreateRequest.getTimeOut <= 0) {
+        if (engineCreateRequest.getTimeout <= 0) {
           AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-        } else engineCreateRequest.getTimeOut
+        } else engineCreateRequest.getTimeout
       // useEngine 需要加上超时
       val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
       if (null == createEngineNode) {
@@ -143,10 +143,14 @@ class DefaultEngineAskEngineService
                 false
             }
         }
-        logger.info(
-          s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag",
-          exception
-        )
+        val msg =
+          s"Task: $taskId Failed  to async($engineAskAsyncId) createEngine, can Retry $retryFlag";
+        if (!retryFlag) {
+          logger.info(msg, exception)
+        } else {
+          logger.info(s"msg: ${msg} canRetry Exception: ${exception.getClass.getName}")
+        }
+
         sender.send(
           EngineCreateError(
             engineAskAsyncId,

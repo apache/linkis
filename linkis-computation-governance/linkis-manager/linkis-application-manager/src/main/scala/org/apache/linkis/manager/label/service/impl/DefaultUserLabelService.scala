@@ -20,7 +20,6 @@ package org.apache.linkis.manager.label.service.impl
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.constant.LabelConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary._
 import org.apache.linkis.manager.label.exception.LabelErrorException

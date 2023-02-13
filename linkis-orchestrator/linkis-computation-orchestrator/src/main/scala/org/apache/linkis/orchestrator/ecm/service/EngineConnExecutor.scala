@@ -70,6 +70,12 @@ trait EngineConnExecutor extends Closeable {
 
   def updateLastUpdateTime(): Unit
 
+  def isReuse(): Boolean
+
+  def setReuse(reuse: Boolean): EngineConnExecutor
+
+  def getTicketId: String
+
   override def equals(other: Any): Boolean = other match {
     case that: EngineConnExecutor =>
       (that canEqual this) &&
@@ -99,6 +105,8 @@ abstract class AbstractEngineConnExecutor extends EngineConnExecutor with Loggin
   private val runningTask: util.Map[String, RequestTask] =
     new ConcurrentHashMap[String, RequestTask]()
 
+  private var reuse: Boolean = false
+
   override def getLastUpdateTime(): Long = lastUpdateTime
 
   override def updateLastUpdateTime(): Unit = lastUpdateTime = System.currentTimeMillis()
@@ -121,6 +129,13 @@ abstract class AbstractEngineConnExecutor extends EngineConnExecutor with Loggin
     } else {
       null
     }
+  }
+
+  override def isReuse(): Boolean = reuse
+
+  override def setReuse(reuse: Boolean): EngineConnExecutor = {
+    this.reuse = reuse
+    this
   }
 
 }

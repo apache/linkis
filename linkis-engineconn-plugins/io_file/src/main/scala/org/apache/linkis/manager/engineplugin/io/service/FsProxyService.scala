@@ -29,18 +29,5 @@ class FsProxyService extends Logging {
       case StorageConfiguration.HDFS_ROOT_USER.getValue => StorageUtils.HDFS == fsType
       case _ => true // creatorUser.equals(proxyUser)
     }
-  /*  if(creatorUser.equals(proxyUser)) {
-     return true
-    }
-    if(creatorUser == StorageConfiguration.STORAGE_ROOT_USER.getValue ) return t
-    if(StorageUtils.FILE == fsType && creatorUser == StorageConfiguration.LOCAL_ROOT_USER.getValue) {
-      return true
-    }
-    if(StorageUtils.HDFS == fsType && creatorUser == StorageConfiguration.HDFS_ROOT_USER.getValue) {
-      return true
-    }
-    info(s"$creatorUser Failed to proxy user:$proxyUser of FsType:$fsType") {
-    true
-    } */
 
 }

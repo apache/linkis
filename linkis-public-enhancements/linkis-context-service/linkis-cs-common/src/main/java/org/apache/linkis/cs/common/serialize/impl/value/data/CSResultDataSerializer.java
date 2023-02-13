@@ -35,9 +35,6 @@ public class CSResultDataSerializer extends AbstractSerializer<CSResultData> {
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj.getClass().getName().equals(CSResultData.class.getName())) {
-      return true;
-    }
-    return false;
+    return obj instanceof CSResultData;
   }
 }

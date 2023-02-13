@@ -20,6 +20,7 @@ package org.apache.linkis.entrance.restful;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.instance.label.client.InstanceLabelClient;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.constant.LabelValueConstant;
 import org.apache.linkis.protocol.label.InsLabelRefreshRequest;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
@@ -69,9 +70,10 @@ public class EntranceLabelRestfulApi {
   @ApiOperation(value = "markoffline", notes = "add offline label", response = Message.class)
   @RequestMapping(path = "/markoffline", method = RequestMethod.GET)
   public Message updateRouteLabel(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "markoffline");
     Map<String, Object> labels = new HashMap<String, Object>();
     logger.info("Prepare to modify the routelabel of entry to offline");
-    labels.put(LabelKeyConstant.ROUTE_KEY, "offline");
+    labels.put(LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE);
     InsLabelRefreshRequest insLabelRefreshRequest = new InsLabelRefreshRequest();
     insLabelRefreshRequest.setLabels(labels);
     insLabelRefreshRequest.setServiceInstance(Sender.getThisServiceInstance());

@@ -463,7 +463,7 @@ class HttpBmlClient(
     val result = dwsClient.execute(deleteAction)
     result match {
       case bmlDeleteResult: BmlDeleteResult =>
-        val isSuccess = if (bmlDeleteResult.getStatus == 0) true else false
+        val isSuccess = (bmlDeleteResult.getStatus == 0)
         if (isSuccess) {
           BmlDeleteResponse(isSuccess)
         } else {

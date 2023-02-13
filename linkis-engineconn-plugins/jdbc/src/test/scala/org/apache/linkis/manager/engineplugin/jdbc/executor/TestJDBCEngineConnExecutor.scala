@@ -31,7 +31,6 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.utils.EngineConnArgumentsParser
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
-import org.apache.linkis.manager.engineplugin.jdbc.executor.JDBCEngineConnExecutor
 import org.apache.linkis.manager.engineplugin.jdbc.factory.JDBCEngineConnFactory
 import org.apache.linkis.manager.engineplugin.jdbc.monitor.ProgressMonitor
 import org.apache.linkis.manager.label.builder.factory.{
@@ -45,7 +44,7 @@ import org.apache.linkis.scheduler.executer.SuccessExecuteResponse
 import java.sql.Statement
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
 import org.h2.tools.Server
@@ -131,7 +130,7 @@ class TestJDBCEngineConnExecutor {
     engineExecutionContext.setLabels(anyArray.map(_.asInstanceOf[Label[_]]))
     val testPath = this.getClass.getClassLoader.getResource("").getPath
     engineExecutionContext.setStorePath(testPath)
-    engineCreationContext.getOptions.foreach({ case (key, value) =>
+    engineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       engineExecutionContext.addProperty(key, value)
     })
     Assertions.assertNotNull(jdbcExecutor.getProgressInfo(taskId))
@@ -184,13 +183,13 @@ class TestJDBCEngineConnExecutor {
         labels += labelBuilderFactory
           .createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
       }
-      engineCreationContext.setLabels(labels.toList)
+      engineCreationContext.setLabels(labels.toList.asJava)
     }
     val jMap = new java.util.HashMap[String, String](engineConf.size)
     jMap.put("jdbc.url", "jdbc:h2:~/test")
     jMap.put("jdbc.username", "sas")
     jMap.put("jdbc.password", "sa")
-    jMap.putAll(engineConf)
+    jMap.putAll(engineConf.asJava)
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
   }

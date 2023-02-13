@@ -148,7 +148,7 @@
         "formItems": {
           "name": "Funtion Name",
           "createUser": "Creator/Department",
-          "updateTime": "Updated At",
+          "updateTime": "Updated at",
           "useFormat": "Using Format",
           "description": "Funtion Description"
         }
@@ -218,8 +218,8 @@
         "WZJBMC": "Unknown Script Name",
         "ZHJB": "Visualis Script",
         "GZLJB": "Workflow Script",
-        "YQRW": "Engine And Task",
-        "JSYQRW": "Terminate Engine And Tasks",
+        "YQRW": "Engine and Task",
+        "JSYQRW": "Terminate Engine and Tasks",
         "CKJBXX": "View Script Information",
         "FZJBXX": "Copy Script Information",
         "QXZYTJL": "Please choose a record!",
@@ -227,14 +227,14 @@
         "WHQDENGINE": "Failed to get engineInstance, please contact admin for investigation or waiting!",
         "YXTS": "Execution Hints",
         "YJTZZXJB": "Stopped Executing Script",
-        "JSYQHRWCG": "Successfully Terminated Engine And Tasks",
+        "JSYQHRWCG": "Successfully Terminated Engine and Tasks",
         "DKCG": "Successfully Open",
         "JBFZDZTRB": "Copied script information to clipboard, please use ctrl+v to paste!",
         "XZDL": "Please choose a queue",
         "ZYSYL": "Resource Consumption Rate",
         "H": "Cores",
         "NC": "Memory",
-        "ZYSYPHB": "Ranking Of Resource Consumption",
+        "ZYSYPHB": "Ranking of Resource Consumption",
         "ZW": "No data yet"
       },
       "headerNavBar": {

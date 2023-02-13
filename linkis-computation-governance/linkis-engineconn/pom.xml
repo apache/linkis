@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.1</version>
+    <version>${revision}</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -34,7 +34,6 @@
     <module>linkis-clustered-engineconn/linkis-once-engineconn</module>
     <module>linkis-computation-engineconn</module>
     <module>linkis-engineconn-plugin-core</module>
-    <module>linkis-engineconn-plugin-server</module>
   </modules>
 
 </project>

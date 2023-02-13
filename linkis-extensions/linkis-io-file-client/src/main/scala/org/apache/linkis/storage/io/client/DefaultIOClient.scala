@@ -59,7 +59,7 @@ class DefaultIOClient extends IOClient with Logging {
       methodEntity: MethodEntity,
       bindEngineLabel: BindEngineLabel
   ): String = {
-    val params = new util.HashMap[String, Any]()
+    val params = new util.HashMap[String, AnyRef]()
     if (null != bindEngineLabel) {
       IOClientUtils.addLabelToParams(bindEngineLabel, params)
     }
@@ -69,7 +69,7 @@ class DefaultIOClient extends IOClient with Logging {
   def executeResult(
       user: String,
       methodEntity: MethodEntity,
-      params: java.util.Map[String, Any],
+      params: java.util.Map[String, AnyRef],
       retryLimit: Int = 0
   ): String = {
     val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(
@@ -164,7 +164,7 @@ class DefaultIOClient extends IOClient with Logging {
       bindEngineLabel: BindEngineLabel,
       reTryLimit: Int = defaultRetry
   ): String = {
-    val params = new util.HashMap[String, Any]()
+    val params = new util.HashMap[String, AnyRef]()
     if (null != bindEngineLabel) {
       IOClientUtils.addLabelToParams(bindEngineLabel, params)
     }

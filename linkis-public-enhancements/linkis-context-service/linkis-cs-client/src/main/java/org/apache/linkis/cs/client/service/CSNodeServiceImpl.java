@@ -55,7 +55,7 @@ public class CSNodeServiceImpl implements CSNodeService {
       ContextClient contextClient = ContextClientFactory.getOrCreateContextClient();
       ContextID contextID = SerializeHelper.deserializeContextID(contextIDStr);
       contextClient.removeAllValueByKeyPrefixAndContextType(
-          contextID, ContextType.METADATA, CSCommonUtils.NODE_PREFIX + ndeName);
+          contextID, ContextType.METADATA, CSCommonUtils.NODE_PREFIX + ndeName + ".");
       logger.info("contextIDStr: {} and  nodeName: {} init cs info", contextIDStr, ndeName);
     } catch (Exception e) {
       logger.error("Failed to init node cs Info", e);

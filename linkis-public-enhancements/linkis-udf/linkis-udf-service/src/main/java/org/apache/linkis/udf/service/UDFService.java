@@ -28,7 +28,7 @@ import com.github.pagehelper.PageInfo;
 
 public interface UDFService {
 
-  void addUDF(UDFAddVo udfInfo, String userName) throws Exception;
+  long addUDF(UDFAddVo udfInfo, String userName) throws Exception;
 
   void updateUDF(UDFUpdateVo udfUpdateVo, String userName) throws Exception;
 
@@ -51,6 +51,8 @@ public interface UDFService {
 
   List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category)
       throws UDFException;
+
+  List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) throws UDFException;
 
   Map<String, List<String>> generateInitSql(String userName) throws UDFException;
 
@@ -113,4 +115,22 @@ public interface UDFService {
   List<String> getUserDirectory(String user, String category);
 
   List<UDFInfoVo> getAllUDFSByUserName(String userName) throws UDFException;
+
+  /**
+   * * Get udf information according to udfnameList
+   *
+   * @param userNameList
+   * @param createUser
+   * @return
+   */
+  List<UDFAddVo> getUdfByNameList(List<String> userNameList, String createUser);
+
+  /**
+   * * Get the udf version information according to udfname and creator
+   *
+   * @param udfName
+   * @param createUser
+   * @return
+   */
+  UDFVersionVo getUdfVersionInfo(String udfName, String createUser);
 }

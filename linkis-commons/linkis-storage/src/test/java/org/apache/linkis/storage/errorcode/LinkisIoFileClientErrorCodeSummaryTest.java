@@ -26,18 +26,12 @@ public class LinkisIoFileClientErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   public void enumTest() {
-
-    int noProxyUserErrorCode = LinkisIoFileClientErrorCodeSummary.NO_PROXY_USER.getErrorCode();
-    int failedToInitUserErrorCode =
-        LinkisIoFileClientErrorCodeSummary.FAILED_TO_INIT_USER.getErrorCode();
-    int engineClosedIoIllegalErrorCode =
-        LinkisIoFileClientErrorCodeSummary.ENGINE_CLOSED_IO_ILLEGAL.getErrorCode();
-    int storageHasBeenClosedErrorCode =
-        LinkisIoFileClientErrorCodeSummary.STORAGE_HAS_BEEN_CLOSED.getErrorCode();
-
-    Assertions.assertTrue(52002 == noProxyUserErrorCode);
-    Assertions.assertTrue(52002 == failedToInitUserErrorCode);
-    Assertions.assertTrue(52002 == engineClosedIoIllegalErrorCode);
-    Assertions.assertTrue(52002 == storageHasBeenClosedErrorCode);
+    Assertions.assertEquals(52002, LinkisIoFileClientErrorCodeSummary.NO_PROXY_USER.getErrorCode());
+    Assertions.assertEquals(
+        52002, LinkisIoFileClientErrorCodeSummary.FAILED_TO_INIT_USER.getErrorCode());
+    Assertions.assertEquals(
+        52002, LinkisIoFileClientErrorCodeSummary.ENGINE_CLOSED_IO_ILLEGAL.getErrorCode());
+    Assertions.assertEquals(
+        52002, LinkisIoFileClientErrorCodeSummary.STORAGE_HAS_BEEN_CLOSED.getErrorCode());
   }
 }

@@ -31,9 +31,14 @@ if [ ! -w "$LINKIS_LOG_DIR" ] ; then
   mkdir -p "$LINKIS_LOG_DIR"
 fi
 
-if test -z "$SERVER_HEAP_SIZE"
-then
-  export SERVER_HEAP_SIZE="512M"
+if test -z "$GATEWAY_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$GATEWAY_HEAP_SIZE
 fi
 
 if [ "$DEBUG_PORT" ];
@@ -51,16 +56,7 @@ then
   export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD"
 fi
 
-
 export SERVER_CLASS=org.apache.linkis.gateway.springcloud.LinkisGatewayApplication
-
-
-#SPRING_ARGS
-if [ "$EUREKA_PREFER_IP" == "true" ]; then
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.prefer-ip-address=true "
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.instance-id=\${spring.cloud.client.ip-address}:\${spring.application.name}:\${server.port} "
-fi
-
 
 ## conf dir
 export SERVER_CONF_PATH=$LINKIS_CONF_DIR

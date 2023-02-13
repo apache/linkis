@@ -48,4 +48,6 @@ object RunType extends Enumeration {
   val SEATUNNEL_FLINK = Value("sflink")
   val SEATUNNEL_SPARK = Value("sspark")
 
+  val DATA_CALC = Value("data_calc") // spark datacalc (ETL)
+
 }

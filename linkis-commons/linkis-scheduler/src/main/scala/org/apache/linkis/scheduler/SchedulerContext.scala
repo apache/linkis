@@ -21,7 +21,6 @@ import org.apache.linkis.common.listener.ListenerEventBus
 import org.apache.linkis.scheduler.event.{ScheduleEvent, SchedulerEventListener}
 import org.apache.linkis.scheduler.executer.ExecutorManager
 import org.apache.linkis.scheduler.queue.{ConsumerManager, GroupFactory}
-import org.apache.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
 
 trait SchedulerContext {
 
@@ -34,9 +33,4 @@ trait SchedulerContext {
   def getOrCreateSchedulerListenerBus
       : ListenerEventBus[_ <: SchedulerEventListener, _ <: ScheduleEvent]
 
-}
-
-object SchedulerContext {
-  val schedulerContext: SchedulerContext = new FIFOSchedulerContextImpl(100)
-  def getSchedulerContext: SchedulerContext = schedulerContext
 }

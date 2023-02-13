@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.dao.ECResourceRecordMapper">
+
+    <select id="getECResourceInfoRecord" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+        SELECT * FROM linkis_cg_ec_resource_info_record WHERE ticket_id = #{ticketId}
+    </select>
+
+    <select id="getECResourceInfoRecordByInstance" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance} ORDER BY id DESC LIMIT 1
+    </select>
+
+
+    <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+        INSERT INTO linkis_cg_ec_resource_info_record(label_value,create_user, ticket_id, service_instance, request_times, request_resource,
+                                                        used_times, used_resource, release_times, released_resource,release_time,used_time,ecm_instance,log_dir_suffix,status)
+        VALUES (#{labelValue},#{createUser},#{ticketId},#{serviceInstance},#{requestTimes},
+        #{requestResource},#{usedTimes},#{usedResource},
+        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirSuffix},#{status})
+    </insert>
+
+    <update id="updateECResourceInfoRecord" flushCache="true" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
+        UPDATE linkis_cg_ec_resource_info_record
+        <trim prefix="set" suffixOverrides=",">
+            <if test="serviceInstance != null">service_instance = #{serviceInstance},</if>
+            <if test="requestTimes != null">request_times = #{requestTimes},</if>
+            <if test="usedTimes != null">used_times = #{usedTimes},</if>
+            <if test="releaseTimes != null">release_times = #{releaseTimes},</if>
+            <if test="usedTime != null">used_time = #{usedTime},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            <if test="usedResource != null">used_resource = #{usedResource},</if>
+            <if test="requestResource != null">request_resource = #{requestResource},</if>
+            <if test="releasedResource != null">released_resource = #{releasedResource},</if>
+            <if test="ecmInstance != null">ecm_instance = #{ecmInstance},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        <![CDATA[
+        WHERE id = #{id}
+        ]]>
+    </update>
+
+    <delete id="deleteECResourceInfoRecordByTicketId">
+        delete from linkis_cg_ec_resource_info_record  WHERE ticket_id = #{ticketId}
+    </delete>
+
+    <delete id="deleteECResourceInfoRecord">
+        delete from linkis_cg_ec_resource_info_record  WHERE id = #{id}
+    </delete>
+
+
+    <select id="getECResourceInfoHistory" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
+        select * from linkis_cg_ec_resource_info_record
+        <where>
+            <if test="instance != null"> service_instance = #{instance}</if>
+            <if test="username != null"> and create_user = #{username}</if>
+<!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+            <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>
+            <if test="startDate != null">and create_time BETWEEN  #{startDate} AND #{endDate}</if>
+        </where>
+        ORDER BY linkis_cg_ec_resource_info_record.create_time DESC
+    </select>
+
+
+    <select id="getECResourceInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
+        select * from linkis_cg_ec_resource_info_record
+        where id in (
+            <!-- choose the latest record of this ec -->
+            select max(ecr.id) as id from linkis_cg_ec_resource_info_record ecr
+            WHERE 1=1
+            <if test="instances != null and instances.size() > 0">
+                and ecr.service_instance in
+                <foreach collection="instances" item="i" open="(" close=")" separator=",">
+                    #{i}
+                </foreach>
+            </if>
+
+            <if test="engineTypes != null and engineTypes.size() > 0">
+                <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+                and SUBSTRING_INDEX(SUBSTRING_INDEX(ecr.label_value,',',-1),"-",1) in
+                <foreach collection="engineTypes" item="i" open="(" close=")" separator=",">
+                    #{i}
+                </foreach>
+            </if>
+            GROUP BY  ecr.service_instance
+        );
+    </select>
+
+</mapper>

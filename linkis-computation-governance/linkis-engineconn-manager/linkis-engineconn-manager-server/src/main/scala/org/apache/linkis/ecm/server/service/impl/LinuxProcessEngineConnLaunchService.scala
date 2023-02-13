@@ -17,47 +17,24 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
-import org.apache.linkis.ecm.core.launch.{
-  DiscoveryMsgGenerator,
-  EngineConnLaunch,
-  EurekaDiscoveryMsgGenerator
-}
+import org.apache.linkis.ecm.core.launch.EngineConnLaunch
 import org.apache.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.engineplugin.common.launch.entity.{
-  EngineConnBuildRequest,
-  EngineConnLaunchRequest
-}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService {
 
   @Receiver
-  def launchEngineConn(
-      engineConnBuildRequest: EngineConnBuildRequest,
-      sender: Sender
-  ): EngineNode = {
-    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
-      case request: EngineConnLaunchRequest if ENGINECONN_CREATE_DURATION._1 != 0L =>
-        launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
-    }
+  override def launchEngineConn(engineConnLaunchRequest: EngineConnLaunchRequest): EngineNode = {
+    if (ENGINECONN_CREATE_DURATION._1 != 0L) {
+      launchEngineConn(engineConnLaunchRequest, ENGINECONN_CREATE_DURATION._1)
+    } else null
   }
-
-  override def launchEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineNode = {
-    Sender.getSender(ENGINECONN_PLUGIN_SPRING_NAME).ask(engineConnBuildRequest) match {
-      case request: EngineConnLaunchRequest =>
-        launchEngineConn(request, ENGINECONN_CREATE_DURATION._1)
-    }
-  }
-
-  def createDiscoveryMsgGenerator: DiscoveryMsgGenerator = new EurekaDiscoveryMsgGenerator
 
   override def createEngineConnLaunch: EngineConnLaunch = {
-    val launch = new LinuxProcessEngineConnLaunch
-    launch.setDiscoveryMsgGenerator(createDiscoveryMsgGenerator)
-    launch
+    new LinuxProcessEngineConnLaunch
   }
 
 }

@@ -29,10 +29,10 @@ class ScalaCodeInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
     val errorBuilder = new StringBuilder("")
-    runType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_SCALA =>
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         Utils.tryThrow(ScalaExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
           case ScalaCodeCheckException(errorCode, errDesc) =>
             jobRequest.setErrorCode(errorCode)

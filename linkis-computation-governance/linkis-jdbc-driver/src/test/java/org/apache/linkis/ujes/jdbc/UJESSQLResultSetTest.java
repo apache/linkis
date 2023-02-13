@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,14 @@
 
 package org.apache.linkis.ujes.jdbc;
 
-import org.junit.*;
-
 import java.sql.SQLException;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -28,88 +33,108 @@ import java.sql.SQLException;
 
 public class UJESSQLResultSetTest {
 
-    private static UJESSQLConnection conn;
-    private UJESSQLPreparedStatement preStatement;
-    private UJESSQLResultSet resultSet;
-    private UJESSQLResultSetMetaData metaData;
+  private static UJESSQLConnection conn;
+  private UJESSQLPreparedStatement preStatement;
+  private UJESSQLResultSet resultSet;
+  private UJESSQLResultSetMetaData metaData;
 
-    @BeforeClass
-    public static void getConnection() {
-        try {
-            conn = CreateConnection.getConnection();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+  @BeforeAll
+  public static void getConnection() {
+    try {
+      conn = CreateConnection.getConnection();
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      conn = null;
+    }
+  }
+
+  @AfterAll
+  public static void closeConnection() {
+    if (conn != null) {
+      conn.close();
+    }
+  }
+
+  @BeforeEach
+  public void getResultSet() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      preStatement.execute();
+      resultSet = preStatement.getResultSet();
+    }
+  }
+
+  @AfterEach
+  public void closeStatement() {
+    if (preStatement != null) {
+      preStatement.close();
+    }
+  }
+
+  @Test
+  public void getObject() {
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
+        int columnTypeFromMetaData = metaData.getColumnType(1);
+        Assertions.assertEquals(columnTypeFromVal, columnTypeFromMetaData);
+      }
+    }
+  }
+
+  @Test
+  public void first() {
+    if (conn != null) {
+      resultSet.next();
+      Object oldColumnVal = resultSet.getObject(1);
+      while (resultSet.next()) {} // move to the end
+      Assertions.assertTrue(resultSet.first());
+      Object newColumnVal = resultSet.getObject(1);
+      Assertions.assertSame(oldColumnVal, newColumnVal);
+    }
+  }
+
+  @Test
+  public void afterLast() {
+    if (conn != null) {
+      resultSet.next();
+      resultSet.afterLast();
+      Assertions.assertTrue(resultSet.isAfterLast());
+    }
+  }
+
+  @Test
+  public void beforeFirst() {
+    if (conn != null) {
+      resultSet.next();
+      resultSet.beforeFirst();
+      Assertions.assertTrue(resultSet.isBeforeFirst());
+    }
+  }
+
+  @Test
+  public void getMetaData() {
+    if (conn != null) {
+      resultSet.next();
+      Assertions.assertNotNull(resultSet.getMetaData());
+    }
+  }
+
+  @Test
+  public void next() {
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+          System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
         }
+        System.out.println();
+      }
+      Assertions.assertTrue(resultSet.isAfterLast());
     }
-
-    @AfterClass
-    public static void closeConnection() {
-        conn.close();
-    }
-
-    @Before
-    public void getResultSet() {
-        preStatement = conn.prepareStatement("show tables");
-        preStatement.execute();
-        resultSet = preStatement.getResultSet();
-    }
-
-    @After
-    public void closeStatement() {
-        preStatement.close();
-    }
-
-    @Test
-    public void getObject() {
-        while (resultSet.next()) {
-            metaData = resultSet.getMetaData();
-            int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
-            int columnTypeFromMetaData = metaData.getColumnType(1);
-            Assert.assertTrue(columnTypeFromVal == columnTypeFromMetaData);
-        }
-    }
-
-    @Test
-    public void first() {
-        resultSet.next();
-        Object oldColumnVal = resultSet.getObject(1);
-        while (resultSet.next()) {} // move to the end
-        Assert.assertTrue(resultSet.first());
-        Object newColumnVal = resultSet.getObject(1);
-        Assert.assertTrue(oldColumnVal == newColumnVal);
-    }
-
-    @Test
-    public void afterLast() {
-        resultSet.next();
-        resultSet.afterLast();
-        Assert.assertTrue(resultSet.isAfterLast());
-    }
-
-    @Test
-    public void beforeFirst() {
-        resultSet.next();
-        resultSet.beforeFirst();
-        Assert.assertTrue(resultSet.isBeforeFirst());
-    }
-
-    @Test
-    public void getMetaData() {
-        resultSet.next();
-        Assert.assertTrue(resultSet.getMetaData() != null);
-    }
-
-    @Test
-    public void next() {
-        while (resultSet.next()) {
-            metaData = resultSet.getMetaData();
-            for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
-            }
-            System.out.println();
-        }
-        Assert.assertTrue(resultSet.isAfterLast());
-    }
+  }
 }

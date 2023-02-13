@@ -60,15 +60,12 @@ class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[Submittab
   }
 
   protected def getOnceExecutorContent: String = {
-    implicit def toMap(map: util.Map[String, Any]): util.Map[String, Object] = map.map {
-      case (k, v) => k -> v.asInstanceOf[Object]
-    }
     val onceExecutorContent = new OnceExecutorContent
-    onceExecutorContent.setSourceMap(source.map { case (k, v) => k -> v.asInstanceOf[Object] })
+    onceExecutorContent.setSourceMap(source.map { case (k, v) => k -> v })
     onceExecutorContent.setVariableMap(TaskUtils.getVariableMap(params))
     onceExecutorContent.setRuntimeMap(TaskUtils.getRuntimeMap(params))
     onceExecutorContent.setJobContent(jobContent)
-    onceExecutorContent.setExtraLabels(new util.HashMap[String, Object]) // TODO Set it if needed
+    onceExecutorContent.setExtraLabels(new util.HashMap[String, AnyRef]) // TODO Set it if needed
     val contentMap = OnceExecutorContentUtils.contentToMap(onceExecutorContent)
     val bytes = DWSHttpClient.jacksonJson.writeValueAsBytes(contentMap)
     val response =
@@ -80,10 +77,10 @@ class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[Submittab
     ensureNotNull(labels, "labels")
     ensureNotNull(jobContent, "jobContent")
     nullThenSet(params) {
-      params = new util.HashMap[String, Any]
+      params = new util.HashMap[String, AnyRef]
     }
     nullThenSet(source) {
-      source = new util.HashMap[String, Any]()
+      source = new util.HashMap[String, AnyRef]()
     }
     addStartupParam("label." + LabelKeyConstant.CODE_TYPE_KEY, jobContent.get("runType"))
     if (!labels.containsKey(SimpleOnceJobBuilder.ONCE_ENGINE_CONN_MODE_LABEL_KEY)) {
@@ -91,7 +88,7 @@ class SimpleOnceJobBuilder private[simple] () extends LinkisJobBuilder[Submittab
     }
     val properties = new util.HashMap[String, String]
     properties.put(OnceExecutorContentUtils.ONCE_EXECUTOR_CONTENT_KEY, getOnceExecutorContent)
-    properties.putAll(TaskUtils.getStartupMap(params))
+    properties.putAll(TaskUtils.getStartupMap(params).asInstanceOf[util.Map[String, String]])
     val createEngineConnAction = CreateEngineConnAction
       .newBuilder()
       .setCreateService(createService)

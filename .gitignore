@@ -28,7 +28,8 @@ node_modules/
 dist/
 out/
 target/
-
+.flattened-pom.xml
+**/dependency-reduced-pom.xml
 # log folder
 *.log
 logs/

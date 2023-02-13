@@ -304,7 +304,7 @@ export default {
                             content: 'Stop Success！！'
                           });
                         }).catch((err) => {
-                          console.err(err)
+                          window.console.err(err)
                         });
                       }
                     })
@@ -460,7 +460,7 @@ export default {
         if(enginesList.length) await this.expandChange(enginesList[0])
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -503,7 +503,7 @@ export default {
         this.formItem.applicationName = this.tableData[0].engineType;
         this.page.totalSize = this.tableData.length;
       } catch (errorMsg) {
-        console.error(errorMsg);
+        window.console.error(errorMsg);
         this.loading = false;
       }
     },

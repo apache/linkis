@@ -158,7 +158,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -195,7 +195,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-       content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
 
         onOk: ()=>{
           let params = {

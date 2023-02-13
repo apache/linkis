@@ -172,7 +172,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {

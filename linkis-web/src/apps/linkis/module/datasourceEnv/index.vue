@@ -283,7 +283,7 @@ export default {
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
         this.modalEditData.parameter = {}
-        console.log(key);
+        window.console.log(key);
       }
       this.modalEditData.hasKeyTab = false;
     },
@@ -339,7 +339,7 @@ export default {
             this.load()
           })
         }
-        console.log(formData);
+        window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
 

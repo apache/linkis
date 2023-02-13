@@ -274,7 +274,7 @@ export default {
         this.page.totalSize = this.tableData.length;
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -298,7 +298,7 @@ export default {
         let list = healthyStatusList.nodeHealthy || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -308,7 +308,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)

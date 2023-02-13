@@ -26,7 +26,9 @@ import java.util
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getPartitions")
+@DWSHttpMessageResult(
+  "/api/rest_j/v\\d+/(metadataQuery|metadatamanager)/(getPartitions|partitions)(\\S+/db/\\S+/table/\\S+)?"
+)
 class MetadataGetPartitionsResult extends DWSResult {
   @BeanProperty var partitions: util.Map[String, Any] = _
 

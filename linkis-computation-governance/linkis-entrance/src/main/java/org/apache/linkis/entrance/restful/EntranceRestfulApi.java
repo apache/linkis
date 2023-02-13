@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.restful;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
@@ -512,7 +513,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     JsonNode idNode = jsonNode.get("idList");
     JsonNode taskIDNode = jsonNode.get("taskIDList");
     ArrayList<Long> waitToForceKill = new ArrayList<>();
-    ModuleUserUtils.getOperationUser(req, "killJobs");
+    String userName = ModuleUserUtils.getOperationUser(req, "killJobs");
+
     if (idNode.size() != taskIDNode.size()) {
       return Message.error(
           "The length of the ID list does not match the length of the TASKID list(id列表的长度与taskId列表的长度不一致)");
@@ -549,6 +551,14 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       } else {
         try {
           logger.info("begin to kill job {} ", job.get().getId());
+
+          if (job.get() instanceof EntranceJob) {
+            EntranceJob entranceJob = (EntranceJob) job.get();
+            JobRequest jobReq = entranceJob.getJobRequest();
+            if (!userName.equals(jobReq.getExecuteUser()) && Configuration.isNotAdmin(userName)) {
+              return Message.error("You have no permission to kill this job, excecute by user:" + jobReq.getExecuteUser());
+            }
+          }
           job.get().kill();
           message = Message.ok("Successfully killed the job(成功kill了job)");
           message.setMethod("/api/entrance/" + id + "/kill");
@@ -606,7 +616,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       @PathVariable("id") String id,
       @RequestParam(value = "taskID", required = false) Long taskID) {
     String realId = ZuulEntranceUtils.parseExecID(id)[3];
-    ModuleUserUtils.getOperationUser(req, "kill realId:" + realId);
+    String userName = ModuleUserUtils.getOperationUser(req, "kill task realId:" + realId);
+
     Option<Job> job = Option.apply(null);
     try {
       job = entranceServer.getJob(realId);
@@ -630,6 +641,15 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       return message;
     } else {
       try {
+
+        if (job.get() instanceof EntranceJob) {
+          EntranceJob entranceJob = (EntranceJob) job.get();
+          JobRequest jobReq = entranceJob.getJobRequest();
+          if (!userName.equals(jobReq.getExecuteUser()) && Configuration.isNotAdmin(userName)) {
+            return Message.error("You have no permission to kill this job, excecute by user:" + jobReq.getExecuteUser());
+          }
+        }
+
         logger.info("begin to kill job {} ", job.get().getId());
         job.get().kill();
         message = Message.ok("Successfully killed the job(成功kill了job)");

@@ -740,7 +740,6 @@ public class HttpContextClient extends AbstractContextClient {
     checkDWSResult(execute(action));
   }
 
-
   @Override
   public List<String> searchHAIDByTime(
       String createTimeStart,

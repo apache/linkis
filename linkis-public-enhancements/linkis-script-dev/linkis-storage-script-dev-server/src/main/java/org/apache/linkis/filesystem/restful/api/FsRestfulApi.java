@@ -705,8 +705,7 @@ public class FsRestfulApi {
     FsWriter fsWriter = null;
     PrintWriter writer = null;
     FileSource fileSource = null;
-    if (csvSeparator.equals(",") && !csvSeperator.equals(","))
-    {
+    if (csvSeparator.equals(",") && !csvSeperator.equals(",")) {
       csvSeparator = csvSeperator;
     }
     try {

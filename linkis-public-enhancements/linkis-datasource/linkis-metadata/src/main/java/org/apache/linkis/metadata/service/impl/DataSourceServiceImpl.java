@@ -264,7 +264,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     List<String> partitions = hiveMetaDao.getPartitions(queryParam);
     boolean res = Boolean.FALSE;
     if (CollectionUtils.isNotEmpty(partitions)
-            && partitions.contains(queryParam.getPartitionName())) {
+        && partitions.contains(queryParam.getPartitionName())) {
       res = Boolean.TRUE;
     }
     return res;

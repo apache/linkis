@@ -35,9 +35,9 @@
       <Col span="19">
         <Card>
           <Button type="success" class="enginBtn" @click="onTableEdit()">{{$t('message.linkis.basedataManagement.add')}}</Button>
-            <Select v-model="model" multiple :max-tag-count="2" style="width: 300px" class="enginBtn">
-              <Option v-for="item in showList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
+          <Select v-model="model" multiple :max-tag-count="2" style="width: 300px" class="enginBtn">
+            <Option v-for="item in showList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
           <Table stripe :columns="columns" :data="showInTableList" height="600">
             <template slot-scope="{ row,index }" slot="action">
               <ButtonGroup size="small">

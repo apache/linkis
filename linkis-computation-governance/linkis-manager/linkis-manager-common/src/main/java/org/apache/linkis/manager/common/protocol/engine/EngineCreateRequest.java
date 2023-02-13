@@ -17,11 +17,12 @@
 
 package org.apache.linkis.manager.common.protocol.engine;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.linkis.protocol.message.RequestMethod;
 
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EngineCreateRequest implements EngineRequest, RequestMethod {
 

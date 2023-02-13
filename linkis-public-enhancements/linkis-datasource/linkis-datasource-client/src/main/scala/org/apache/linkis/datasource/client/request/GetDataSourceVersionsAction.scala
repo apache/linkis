@@ -53,7 +53,7 @@ object GetDataSourceVersionsAction {
     }
 
     def build(): GetDataSourceVersionsAction = {
-      if (dataSourceId == null) {
+      if (dataSourceId <= 0) {
         throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)

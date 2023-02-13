@@ -192,7 +192,7 @@ public class MetadataCoreRestful {
       MetaPartitionInfo partitionInfo =
           metadataAppService.getPartitionsByDsId(
               dataSourceId, database, table, system, traverse, userName);
-      return Message.ok().data("props", partitionInfo);
+      return Message.ok().data("partitions", partitionInfo).data("props", partitionInfo);
     } catch (Exception e) {
       return errorToResponseMessage(
           "Fail to get partitions[获取表分区信息失败], id:["

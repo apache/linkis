@@ -26,7 +26,6 @@ DELETE FROM  `linkis_cg_manager_service_instance_metrics`;
 DELETE FROM  `linkis_cg_manager_lock` ;
 DELETE FROM  `linkis_cg_manager_label_resource`;
 DELETE FROM  `linkis_cg_manager_service_instance`;
-DELETE FROM  `linkis_cg_manager_service_instance_metrics`;
 DELETE FROM  `linkis_cg_manager_engine_em`;
 ' > /tmp/clearserver.command
 mysql -h ${MYSQL_HOST} -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DB} < /tmp/clearserver.command

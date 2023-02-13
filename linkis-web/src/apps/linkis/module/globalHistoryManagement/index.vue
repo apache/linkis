@@ -368,7 +368,7 @@ export default {
         fileName
       }
       if (this.isAdminModel) {
-        query.proxyUser = params.row.umUser
+        query.proxyUser = params.row.executeUser
       }
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)

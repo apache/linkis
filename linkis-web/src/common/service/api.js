@@ -164,7 +164,7 @@ const success = function(response) {
     let code = res.codePath;
     let message = res.messagePath;
     let result = res.resultPath;
-    let errorMsgTip = result.errorMsgTip;
+    let errorMsgTip = result ? result.errorMsgTip : '';
     if (errorMsgTip) {
       sessionStorage.setItem('linkis.errorMsgTip', errorMsgTip)
     }

@@ -116,11 +116,10 @@ public class EngineRestfulApi {
       response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
-  public Message createEngineConn(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+  public Message createEngineConn(
+      HttpServletRequest req, @RequestBody EngineCreateRequest engineCreateRequest)
       throws IOException, InterruptedException {
     String userName = ModuleUserUtils.getOperationUser(req, "createEngineConn");
-    EngineCreateRequest engineCreateRequest =
-        objectMapper.treeToValue(jsonNode, EngineCreateRequest.class);
     engineCreateRequest.setUser(userName);
     long timeout = engineCreateRequest.getTimeout();
     if (timeout <= 0) {
@@ -175,7 +174,7 @@ public class EngineRestfulApi {
     try {
       engineNode = engineNodeManager.getEngineNodeInfo(serviceInstance);
     } catch (Exception e) {
-      logger.info("Instances {} is not exists", serviceInstance.getInstance());
+      logger.info("Instances {} does not exist", serviceInstance.getInstance());
     }
     if (null == engineNode) {
       ECResourceInfoRecord ecInfo = null;
@@ -183,7 +182,7 @@ public class EngineRestfulApi {
         try {
           ecInfo = ecResourceInfoService.getECResourceInfoRecord(ticketIdNode.asText());
         } catch (Exception e) {
-          logger.info("TicketId  {} is not exists", ticketIdNode.asText());
+          logger.info("TicketId  {} does not exist", ticketIdNode.asText());
         }
       }
       if (null == ecInfo) {
@@ -268,8 +267,7 @@ public class EngineRestfulApi {
   })
   @ApiOperationSupport(ignoreParameters = {"param"})
   @RequestMapping(path = "/rm/enginekill", method = RequestMethod.POST)
-  public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param)
-      throws Exception {
+  public Message killEngine(HttpServletRequest req, @RequestBody Map<String, String>[] param) {
     String userName = ModuleUserUtils.getOperationUser(req, "enginekill");
 
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());

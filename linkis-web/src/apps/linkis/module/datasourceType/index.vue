@@ -207,7 +207,7 @@ export default {
       this.modalShow = true
     },
     onTableDelete(row){
-      //console.log(row)
+      //window.console.log(row)
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
         content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name),

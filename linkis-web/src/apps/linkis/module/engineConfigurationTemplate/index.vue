@@ -87,7 +87,7 @@ export default {
   created(){
     getEngineList().then((data) => {
       this.engineList = data['success: '];
-      console.log(this.engineList)
+      window.console.log(this.engineList)
     })
     this.queryEngineTemplateList(this.labelId);
   },
@@ -281,7 +281,7 @@ export default {
       this.modalEditData = {...tmp};
     },
     onModalOk(){
-      //console.log(this.$refs['editForm'].formData);
+      //window.console.log(this.$refs['editForm'].formData);
       this.modalShow = false;
       changeTemplate(this.$refs['editForm'].formData, this.editType).then((data) => {
         if(data['success: ']) {this.$Message.success('message.linkis.basedataManagement.engineConfigurationTemplate.ModSuccess'); this.queryEngineTemplateList(this.labelId);}

@@ -21,12 +21,21 @@ import org.apache.linkis.protocol.message.RequestMethod;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class EngineCreateRequest implements EngineRequest, RequestMethod {
 
   private Map<String, String> properties;
 
   private Map<String, Object> labels;
 
+  /*
+  `timeOut` compatible with older versions
+  It is recommended to use `timeout`
+   */
+  @JsonProperty("timeOut")
+  @JsonAlias("timeout")
   private long timeout;
 
   private String user;

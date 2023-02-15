@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.GET_FIELD_SCHEMAS_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
@@ -202,23 +203,27 @@ class HiveEngineConnExecutor(
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
-        if (HiveEngineConfiguration.ENABLE_HIVE_COMPILE) {
-          Utils.tryCatch {
-            val compileRet = driver.compile(realCode)
-            if (0 != compileRet) {
-              logger.warn(s"compile realCode error status : ${compileRet}")
-            }
-            val queryPlan = driver.getPlan
-            val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
-            numberOfMRJobs = numberOfJobs
-            logger.info(s"there are ${numberOfMRJobs} jobs.")
-          } {
-            case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
-            case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
+        var compileRet = -1
+        Utils.tryCatch {
+          compileRet = driver.compile(realCode)
+          logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+          if (0 != compileRet) {
+            logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+            throw HiveQueryFailedException(
+              COMPILE_HIVE_QUERY_ERROR.getErrorCode,
+              COMPILE_HIVE_QUERY_ERROR.getErrorDesc
+            )
           }
-          if (numberOfMRJobs > 0) {
-            engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
-          }
+          val queryPlan = driver.getPlan()
+          val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
+          numberOfMRJobs = numberOfJobs
+          logger.info(s"there are ${numberOfMRJobs} jobs.")
+        } {
+          case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
+          case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
+        }
+        if (numberOfMRJobs > 0) {
+          engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         }
         if (thread.isInterrupted) {
           logger.error(
@@ -229,7 +234,7 @@ class HiveEngineConnExecutor(
             null
           )
         }
-        val hiveResponse: CommandProcessorResponse = driver.run(realCode)
+        val hiveResponse: CommandProcessorResponse = driver.run(realCode, compileRet == 0)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)
@@ -629,6 +634,13 @@ class HiveDriverProxy(driver: Any) extends Logging {
     driver.getClass
       .getMethod("run", classOf[String])
       .invoke(driver, command.asInstanceOf[AnyRef])
+      .asInstanceOf[CommandProcessorResponse]
+  }
+
+  def run(command: String, alreadyCompiled: Boolean): CommandProcessorResponse = {
+    driver.getClass
+      .getMethod("run", classOf[String], classOf[Boolean])
+      .invoke(driver, command.asInstanceOf[AnyRef], alreadyCompiled.asInstanceOf[AnyRef])
       .asInstanceOf[CommandProcessorResponse]
   }
 

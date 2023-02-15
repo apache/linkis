@@ -202,7 +202,9 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:9001', // linkis
+        // You can set BACKEND_URL in .env.development(ignored by git) file
+        // BACKEND_URL=http://127.0.0.1:9001
+        target: process.env.BACKEND_URL,
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'

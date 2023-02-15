@@ -188,6 +188,10 @@ module.exports = {
       alias: {
         '@': path.resolve(__dirname, './src'),
         '@component': path.resolve(__dirname, './src/components')
+      },
+      fallback: {
+        "path": false,
+        "fs": false
       }
     },
     plugins

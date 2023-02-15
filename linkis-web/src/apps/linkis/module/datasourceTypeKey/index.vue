@@ -289,7 +289,7 @@ export default {
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

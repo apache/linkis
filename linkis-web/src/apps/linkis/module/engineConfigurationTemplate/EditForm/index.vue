@@ -263,7 +263,7 @@ export default {
     data: {
       handler(newV) {
         this.getData(newV)
-        console.log(newV)
+        window.console.log(newV)
       },
       deep: true
     },

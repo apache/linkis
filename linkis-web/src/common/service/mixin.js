@@ -38,7 +38,7 @@ export default {
       return vsBi.url;
     },
     getProjectJsonResult(key, name = 'visualis') {
-      console.log(key,name)
+      window.console.log(key,name)
       // Used to determine what return value to return(用于判断返回什么样的返回值)
       const baseInfo = storage.get('baseInfo', 'local');
       if (!baseInfo) {

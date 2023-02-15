@@ -201,7 +201,7 @@ export default {
   created() {
     // 获取函数类型
     // api.fetch('/configuration/engineType', 'get').then(res => {
-    //   console.log('res.engineType: ', res.engineType);
+    //   window.console.log('res.engineType: ', res.engineType);
     //   this.getFunctionTypes = ['all', ...res.engineType]
     // })
     // this.getFunctionTypes = ['all', '0', '1,2']

@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -105,9 +105,9 @@
       @on-visible-change="changUserModalChange"
     >
       <span>{{$t('message.linkis.udf.changeUserTo')}}</span>
-      <Select ref="userSelect" v-model="handleUser" filterable 
+      <Select ref="userSelect" v-model="handleUser" filterable
         v-if="allUsers.length"
-        :remoteMethod="filterSelect" 
+        :remoteMethod="filterSelect"
         @on-query-change="queryChange"
         :placeholder="$t('message.linkis.udf.inputUser')" style="width:200px;">
         <Option
@@ -203,7 +203,7 @@ export default {
   created() {
     // 获取函数类型
     // api.fetch('/configuration/engineType', 'get').then(res => {
-    //   console.log('res.engineType: ', res.engineType);
+    //   window.console.log('res.engineType: ', res.engineType);
     //   this.getFunctionTypes = ['all', ...res.engineType]
     // })
     // this.getFunctionTypes = ['all', '0', '1,2']
@@ -402,7 +402,7 @@ export default {
       this.loading = true
       const params = {
         udfUpdateVo: {
-          id: this.handleRow.id,	
+          id: this.handleRow.id,
           udfName: data.name,
           udfType: data.udfType,
           description: data.description,
@@ -412,7 +412,7 @@ export default {
           // sys: 'all',
           // clusterName: data.clusterName,
           // directory: data.directory
-        }	
+        }
       }
       api
         .fetch('/udf/update', params, 'post')
@@ -576,7 +576,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     vlist(args) {
@@ -608,7 +608,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },
@@ -621,7 +621,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     changeUser(args) {
@@ -651,7 +651,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },

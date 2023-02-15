@@ -179,7 +179,7 @@ export default {
   },
   methods: {
     init() {
-      //console.log(this.$route.query.isSkip);
+      //window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -207,7 +207,7 @@ export default {
       this.modalShow = true
     },
     onTableDelete(row){
-      //console.log(row)
+      //window.console.log(row)
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
         content: this.$t('message.linkis.basedataManagement.modal.modalFormat').format(row.name),
@@ -241,7 +241,7 @@ export default {
         if(this.modalAddMode=='add') {
 
           add(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

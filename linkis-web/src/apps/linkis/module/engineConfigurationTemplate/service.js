@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const dataSourceEnvBaseUrl = '/basedata-manager/configuration-template'
 
 const getEngineList = ()=> {
-  //console.log(params)
+  //window.console.log(params)
   return api.fetch(dataSourceEnvBaseUrl + '/engin-list', 'get')
 }
 

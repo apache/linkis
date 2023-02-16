@@ -387,8 +387,8 @@ export default {
       const activedCell = activedCellParent.children.find(
         (item) => item.key === index
       )
-      this.breadcrumbFirstName = activedCellParent.name
-      this.breadcrumbSecondName = activedCell.name
+      this.breadcrumbFirstName = activedCellParent ? activedCellParent.name : '';
+      this.breadcrumbSecondName = activedCell ? activedCell.name : '';
       storage.set('lastActiveConsole', activedCell)
       this.$router.push({
         path: activedCell.path,

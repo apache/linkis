@@ -17,7 +17,10 @@
 
 package org.apache.linkis.storage.io.utils
 
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
+}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{
@@ -84,7 +87,7 @@ object IOClientUtils {
     "io_jobGrup_" + jobGroupIDGenerator.getAndIncrement()
   }
 
-  def getLabelBuilderFactory = labelBuilderFactory
+  def getLabelBuilderFactory: LabelBuilderFactory = labelBuilderFactory
 
   def getDefaultLoadBalanceLabel: LoadBalanceLabel = {
     loadBalanceLabel
@@ -94,14 +97,14 @@ object IOClientUtils {
     val labelJson = IOFileClientConf.IO_EXTRA_LABELS.getValue
     if (StringUtils.isNotBlank(labelJson)) {
       val labelMap =
-        BDPJettyServerHelper.gson.fromJson(labelJson, classOf[java.util.Map[String, Object]])
+        BDPJettyServerHelper.gson.fromJson(labelJson, classOf[java.util.Map[String, AnyRef]])
       labelBuilderFactory.getLabels(labelMap).asScala.toArray
     } else {
       Array.empty[Label[_]]
     }
   }
 
-  def addLabelToParams(label: Label[_], params: util.Map[String, Any]): Unit = {
+  def addLabelToParams(label: Label[_], params: util.Map[String, AnyRef]): Unit = {
     val labelMap = TaskUtils.getLabelsMap(params)
     labelMap.put(label.getLabelKey, label.getStringValue)
     TaskUtils.addLabelsMap(params, labelMap)
@@ -110,12 +113,12 @@ object IOClientUtils {
   def buildJobReq(
       user: String,
       methodEntity: MethodEntity,
-      params: java.util.Map[String, Any]
+      params: java.util.Map[String, AnyRef]
   ): JobReq = {
 
     val labelMap = TaskUtils.getLabelsMap(params)
     val labels: util.List[Label[_]] =
-      labelBuilderFactory.getLabels(labelMap.asInstanceOf[java.util.Map[String, Object]])
+      labelBuilderFactory.getLabels(labelMap)
     labels.add(codeTypeLabel)
     labels.add(conCurrentLabel)
 

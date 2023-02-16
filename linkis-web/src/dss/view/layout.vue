@@ -79,7 +79,7 @@ export default {
     setWaterMark() {
       let userNameAndPass = storage.get('saveUserNameAndPass', 'local');
       let watermark = null;
-      const username = userNameAndPass.split('&')[0];
+      const username = userNameAndPass ? userNameAndPass.split('&')[0] : '';
       if (username) {
         watermark = username + ' ' + this.showTime(new Date());
         Vue.prototype.$watermark.set(watermark)

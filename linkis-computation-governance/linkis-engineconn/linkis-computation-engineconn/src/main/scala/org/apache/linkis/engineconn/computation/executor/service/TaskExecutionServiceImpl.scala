@@ -49,6 +49,7 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
+import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
@@ -436,6 +437,15 @@ class TaskExecutionServiceImpl
               }
             val extraInfoMap = new util.HashMap[String, Object]()
             extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
+            extraInfoMap.put(
+              TaskConstant.TICKET_ID,
+              EngineConnServer.getEngineCreationContext.getTicketId
+            )
+            extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
+            extraInfoMap.put(
+              TaskConstant.ENGINE_CONN_SUBMIT_TIME,
+              System.currentTimeMillis.toString
+            )
             // todo add other info
             var respRunningInfo: ResponseTaskRunningInfo = null
             if (null != resourceResponse) {

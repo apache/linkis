@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const dataSourceEnvBaseUrl = '/basedata-manager/datasource-env'
 
 const getList = (params)=> {
-  //console.log(params)
+  //window.console.log(params)
   return api.fetch(dataSourceEnvBaseUrl, params , 'get')
 }
 

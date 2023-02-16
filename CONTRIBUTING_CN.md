@@ -38,8 +38,8 @@ Linkis 源码可能会产生一些临时分支，但真正有明确意义的只�
 
 #### 2.1.1 概念
 
-- Upstream 仓库:<https://github.com/apache/incubator-linkis> linkis 的 apache 仓库文中称为 Upstream 仓库
-- Fork 仓库: 从 <https://github.com/apache/incubator-linkis> fork 到自己个人仓库 称为 Fork 仓库  
+- Upstream 仓库:<https://github.com/apache/linkis> linkis 的 apache 仓库文中称为 Upstream 仓库
+- Fork 仓库: 从 <https://github.com/apache/linkis> fork 到自己个人仓库 称为 Fork 仓库  
 
 #### 2.1.2 同步 Upstream 仓库分支最新代码到自己的 Fork 仓库
 
@@ -56,7 +56,7 @@ Linkis 源码可能会产生一些临时分支，但真正有明确意义的只�
 - step1 添加 apacheUpstream 仓库镜像到本地  
 
 ```shell script
-git remote add apache git@github.com:apache/incubator-linkis.git
+git remote add apache git@github.com:apache/linkis.git
 ```
 
 - step2 拉去 apache 镜像信息到本地  
@@ -122,7 +122,7 @@ Linkis 前后端代码共用同一个代码库，但在开发上是分离的。�
 
 ```shell script
 #拉取分支
-git clone https://github.com/{githubid}/incubator-linkis.git --branch dev
+git clone https://github.com/{githubid}/linkis.git --branch dev
 #根据 dev 生成本地 dev-fix 分支
 git checkout -b dev-fix dev
 #把本地 dev-fix 分支推到自己的仓库
@@ -133,13 +133,14 @@ git push origin dev-fix dev-fix
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About issues](https://docs.github.com/en/github/managing-your-work-on-github/about-issues)
 - Issue 名称，应一句话简单描述您的问题或建议；为了项目的国际化推广，请用英文，或中英文双语书写 issue
-- 每个 Issue，请至少带上 component 和 type 两个 label，如 component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/apache/incubator-linkis/issues/590)
+- 每个 Issue，请至少带上 component 和 type 两个 label，如 component=Computation Governance/EngineConn，type=Improvement.参考:[issue #590](https://github.com/apache/linkis/issues/590)
 
 ### 2.4 Pull Request(PR) 提交指引
 
 - 如果您还不知道怎样向开源项目发起 PR，请参考[About pull requests](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests)
 - 无论是 Bug 修复，还是新功能开发，请将 PR 提交到 dev-* 分支
-- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南](https://linkis.apache.org/zh-CN/community/development-specification/commit-message)
+
+- PR 和提交名称遵循 `<type>(<scope>): <subject>` 原则，详情可以参考[Commit message 和 Change log 编写指南](https://linkis.apache.org/zh-CN/docs/latest/development/development-specification/commit-message)
 - 如果 PR 中包含新功能，理应将文档更新包含在本次 PR 中
 - 如果本次 PR 尚未准备好合并，请在名称头部加上 [WIP] 前缀（WIP = work-in-progress）
 - 所有提交到 dev-* 分支的提交至少需要经过一次 Review 才可以被合并

@@ -49,15 +49,15 @@ CREATE TABLE `linkis_cg_user_ip_config` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
---Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
---The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
---It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
---The index name should not exceed 50 characters, and the name should be lowercase
+-- Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
+-- The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
+-- It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
+-- The index name should not exceed 50 characters, and the name should be lowercase
 --
---非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
---唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
---组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
---索引名尽量不超过50个字符，命名应该使用小写
+-- 非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
+-- 唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
+-- 组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
+-- 索引名尽量不超过50个字符，命名应该使用小写
 
 ALTER TABLE `linkis_ps_configuration_key_engine_relation`
         DROP INDEX IF EXISTS `config_key_id`,
@@ -203,3 +203,19 @@ ALTER TABLE `linkis_cg_user_ip_config`
 ALTER TABLE `linkis_cg_tenant_label_config`
         DROP INDEX IF EXISTS `user_creator`,
         ADD  UNIQUE KEY `uniq_user_creator` (`user`,`creator`);
+
+
+
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_description` varchar(200) DEFAULT NULL COMMENT 'english description';
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_name` varchar(100) DEFAULT NULL COMMENT 'english name';
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName';
+
+
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `description_en` varchar(255) DEFAULT NULL COMMENT 'english description';
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `option_en` varchar(32) DEFAULT NULL COMMENT 'english option';
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `classifier_en` varchar(32) DEFAULT NULL COMMENT 'english classifier';
+
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) DEFAULT NULL COMMENT 'english name';
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) DEFAULT NULL COMMENT 'english description';
+
+

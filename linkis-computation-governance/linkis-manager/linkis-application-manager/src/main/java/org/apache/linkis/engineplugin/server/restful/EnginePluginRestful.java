@@ -162,9 +162,9 @@ public class EnginePluginRestful {
       @RequestParam(value = "force", required = false, defaultValue = "false") Boolean force,
       HttpServletRequest req) {
 
-    if (StringUtils.isNotBlank(ecType)) {
+    if (StringUtils.isBlank(ecType)) {
       return Message.error("ecType cannot be null");
-    } else if (StringUtils.isNotBlank(version)) {
+    } else if (StringUtils.isBlank(version)) {
       return Message.error("version cannot be null");
     }
     if (file.getOriginalFilename().toLowerCase().endsWith(".zip")) {

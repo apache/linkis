@@ -25,7 +25,6 @@ class JobhistoryConfigurationTest {
   @DisplayName("constTest")
   def constTest(): Unit = {
 
-    val governaceStationAdmin = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN.getValue
     val jobHistorySafeTrigger = JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER
     val entranceSpringName = JobhistoryConfiguration.ENTRANCE_SPRING_NAME.getValue
     val entranceInstanceDelemiter = JobhistoryConfiguration.ENTRANCE_INSTANCE_DELEMITER.getValue
@@ -34,7 +33,6 @@ class JobhistoryConfigurationTest {
     val undoneJobMinimum = JobhistoryConfiguration.UNDONE_JOB_MINIMUM_ID.getValue
     val undoneJobRefreshTimeDaily = JobhistoryConfiguration.UNDONE_JOB_REFRESH_TIME_DAILY.getValue
 
-    Assertions.assertEquals("hadoop", governaceStationAdmin)
     Assertions.assertTrue(jobHistorySafeTrigger.booleanValue())
     Assertions.assertNotNull(entranceSpringName)
     Assertions.assertNotNull(entranceInstanceDelemiter)

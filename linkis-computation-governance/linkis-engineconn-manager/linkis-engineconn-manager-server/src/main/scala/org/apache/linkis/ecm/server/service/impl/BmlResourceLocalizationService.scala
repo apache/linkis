@@ -21,7 +21,6 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{Logging, Utils, ZipUtils}
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
 import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.launch.EngineConnManagerEnv
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
@@ -42,7 +41,7 @@ import org.springframework.core.env.Environment
 import java.io.File
 import java.nio.file.Paths
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 
 class BmlResourceLocalizationService extends ResourceLocalizationService with Logging {
@@ -89,7 +88,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
         val tmpDirs = createDirIfNotExit(
           localDirsHandleService.getEngineConnTmpDir(user, ticketId, engineType)
         )
-        files.foreach(downloadBmlResource(request, linkDirsP, _, workDir))
+        files.asScala.foreach(downloadBmlResource(request, linkDirsP, _, workDir))
         engineConn.getEngineConnLaunchRunner.getEngineConnLaunch.setEngineConnManagerEnv(
           new EngineConnManagerEnv {
             override val engineConnManagerHomeDir: String = emHomeDir
@@ -98,13 +97,13 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
             override val engineConnTempDirs: String = tmpDirs
             override val engineConnManagerHost: String = {
               var hostName = Utils.getComputerName
-              val eurekaPreferIp = Configuration.EUREKA_PREFER_IP
-              logger.info("eurekaPreferIp:" + eurekaPreferIp)
-              if (eurekaPreferIp) {
+              val preferIpAddress = Configuration.PREFER_IP_ADDRESS
+              logger.info("preferIpAddress:" + preferIpAddress)
+              if (preferIpAddress) {
                 hostName = springEnv.getProperty("spring.cloud.client.ip-address")
                 logger.info("hostName:" + hostName)
                 logger.info(
-                  "using ip address replace hostname,beacause eureka.instance.prefer-ip-address:" + eurekaPreferIp
+                  "using ip address replace hostname, because linkis.discovery.prefer-ip-address: true"
                 )
               }
               hostName
@@ -114,8 +113,7 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
                 "server.port"
               )
             override val linkDirs: mutable.HashMap[String, String] = linkDirsP
-            override val properties: Map[String, String] =
-              Map("eureka.client.serviceUrl.defaultZone" -> ECM_EUREKA_DEFAULTZONE)
+            override val properties: Map[String, String] = Map()
           }
         )
       case _ =>
@@ -168,13 +166,15 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
         }
         // 2.软连，并且添加到map
         val dirAndFileList = fs.listPathWithError(fsPath)
-        var paths = dirAndFileList.getFsPaths.toList
+
+        var paths = dirAndFileList.getFsPaths.asScala
+
         if (paths.exists(_.getPath.endsWith(".zip"))) {
           logger.info(s"Start to wait fs path to init ${fsPath.getPath}")
           resourceId.intern().synchronized {
             logger.info(s"Finished to wait fs path to init ${fsPath.getPath} ")
           }
-          paths = fs.listPathWithError(fsPath).getFsPaths.toList
+          paths = fs.listPathWithError(fsPath).getFsPaths.asScala
         }
         paths.foreach { path =>
           val name = new File(path.getPath).getName

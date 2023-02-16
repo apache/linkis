@@ -47,7 +47,7 @@ import scala.collection.JavaConverters._
 
 object CSEntranceHelper extends Logging {
 
-  def getContextInfo(params: util.Map[String, Any]): (String, String) = {
+  def getContextInfo(params: util.Map[String, AnyRef]): (String, String) = {
 
     val runtimeMap = params.get(TaskConstant.PARAMS_CONFIGURATION) match {
       case map: util.Map[String, AnyRef] => map.get(TaskConstant.PARAMS_CONFIGURATION_RUNTIME)
@@ -65,7 +65,7 @@ object CSEntranceHelper extends Logging {
     (null, null)
   }
 
-  def setContextInfo(params: util.Map[String, Any], copyMap: util.Map[String, String]): Unit = {
+  def setContextInfo(params: util.Map[String, AnyRef], copyMap: util.Map[String, String]): Unit = {
     val (contextIDValueStr, nodeNameStr) = getContextInfo(params)
     if (StringUtils.isNotBlank(contextIDValueStr)) {
       copyMap.put(CSCommonUtils.CONTEXT_ID_STR, contextIDValueStr)
@@ -117,9 +117,7 @@ object CSEntranceHelper extends Logging {
    */
   def initNodeCSInfo(requestPersistTask: JobRequest): Unit = {
 
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(
-      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
-    )
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams)
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
       logger.info("init node({}) cs info", nodeNameStr)
@@ -136,9 +134,7 @@ object CSEntranceHelper extends Logging {
    */
   def resetCreator(requestPersistTask: JobRequest): Unit = {
 
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(
-      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
-    )
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams)
 
     if (StringUtils.isNotBlank(contextIDValueStr) && StringUtils.isNotBlank(nodeNameStr)) {
       val userCreatorLabel = LabelUtil.getUserCreatorLabel(requestPersistTask.getLabels)
@@ -177,15 +173,13 @@ object CSEntranceHelper extends Logging {
    * @return
    */
   def addCSVariable(requestPersistTask: JobRequest): Unit = {
-    val variableMap = new util.HashMap[String, Any]()
-    val (contextIDValueStr, nodeNameStr) = getContextInfo(
-      requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]]
-    )
+    val variableMap = new util.HashMap[String, AnyRef]()
+    val (contextIDValueStr, nodeNameStr) = getContextInfo(requestPersistTask.getParams)
 
     if (StringUtils.isNotBlank(contextIDValueStr)) {
       logger.info("parse variable nodeName: {}", nodeNameStr)
       val linkisVariableList: util.List[LinkisVariable] =
-        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr);
+        CSVariableService.getInstance().getUpstreamVariables(contextIDValueStr, nodeNameStr)
       if (null != linkisVariableList) {
         linkisVariableList.asScala.foreach { linkisVariable =>
           variableMap.put(linkisVariable.getKey, linkisVariable.getValue)
@@ -194,16 +188,13 @@ object CSEntranceHelper extends Logging {
       if (!variableMap.isEmpty) {
         // 1.cs priority is low, the same ones are not added
         val varMap =
-          TaskUtils.getVariableMap(requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]])
+          TaskUtils.getVariableMap(requestPersistTask.getParams)
         variableMap.asScala.foreach { keyAndValue =>
           if (!varMap.containsKey(keyAndValue._1)) {
             varMap.put(keyAndValue._1, keyAndValue._2)
           }
         }
-        TaskUtils.addVariableMap(
-          requestPersistTask.getParams.asInstanceOf[util.Map[String, Any]],
-          varMap
-        )
+        TaskUtils.addVariableMap(requestPersistTask.getParams, varMap)
       }
 
       logger.info("parse variable end nodeName: {}", nodeNameStr)

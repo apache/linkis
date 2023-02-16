@@ -29,6 +29,7 @@ import org.apache.linkis.orchestrator.computation.execute.{
   CodeExecTaskExecutorManager
 }
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
+import org.apache.linkis.orchestrator.ecm.service.impl.ComputationEngineConnExecutor
 import org.apache.linkis.orchestrator.exception.{
   OrchestratorErrorCodeSummary,
   OrchestratorErrorException,
@@ -114,12 +115,24 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       response match {
         case SubmitResponse(engineConnExecId) =>
           codeExecutor.setEngineConnTaskId(engineConnExecId)
-          codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
+          codeExecTaskExecutorManager.addEngineConnTaskInfo(codeExecutor)
           val infoMap = new util.HashMap[String, Object]
           infoMap.put(
             TaskConstant.ENGINE_INSTANCE,
             codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
           )
+          infoMap.put(
+            TaskConstant.TICKET_ID,
+            // Ensure that the job metric has at least one EC record.
+            // When the EC is reuse, the same EC may have two records, One key is Instance, and the other key is ticketId
+            if (codeExecutor.getEngineConnExecutor.isReuse()) {
+              codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
+            } else {
+              codeExecutor.getEngineConnExecutor.getTicketId
+            }
+          )
+          infoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, engineConnExecId)
+          infoMap.put(TaskConstant.ENGINE_CONN_SUBMIT_TIME, System.currentTimeMillis.toString)
           val event = TaskRunningInfoEvent(
             this,
             0f,

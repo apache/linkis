@@ -25,7 +25,7 @@ object Environment extends Enumeration {
 
   val USER, ECM_HOME, PWD, PATH, SHELL, JAVA_HOME, CLASSPATH, HADOOP_HOME, HADOOP_CONF_DIR,
       HIVE_CONF_DIR, LOG_DIRS, TEMP_DIRS, ECM_HOST, ECM_PORT, RANDOM_PORT, SERVICE_DISCOVERY,
-      EUREKA_PREFER_IP, UDF_JARS, ENGINECONN_ENVKEYS = Value
+      PREFER_IP_ADDRESS, UDF_JARS, ENGINECONN_ENVKEYS = Value
 
   def variable(environment: Environment): String =
     LaunchConstants.EXPANSION_MARKER_LEFT + environment + LaunchConstants.EXPANSION_MARKER_RIGHT

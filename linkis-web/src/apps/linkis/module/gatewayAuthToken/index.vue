@@ -81,18 +81,18 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <EditForm ref="editForm" :data="modalEditData"></EditForm>
+      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
     </Modal>
   </div>
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import EditForm from './EditForm/index'
+import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {EditForm},
+  components: {ErrorCodeForm},
   data() {
     return {
       searchName: "",
@@ -154,7 +154,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
             )
           }
         },
@@ -166,7 +166,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.updateTime),'yyyy-MM-dd')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
             )
           }
         },
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -216,6 +216,10 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
+      if(row.elapseDay === -1) {
+        row.permanentlyValid = true;
+        this.$refs.editForm.formModel.rule[5].hidden = true;
+      }
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
@@ -224,7 +228,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.tokenName}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -248,12 +252,11 @@ export default {
 
     },
     onModalOk(){
-      this.$refs.editForm.formModel.submit((formData)=>{
-        console.log(formData);
+      this.$refs.errorCodeForm.formModel.submit((formData)=>{
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -269,7 +272,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

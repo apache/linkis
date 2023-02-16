@@ -16,15 +16,15 @@
  */
 
 
---Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
---The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
---It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
---The index name should not exceed 50 characters, and the name should be lowercase
+-- Non-unique indexes are named according to "idx_fieldname[_fieldname]". For example idx_age_name
+-- The unique index is named according to "uniq_field name[_field name]". For example uniq_age_name
+-- It is recommended to include all field names for composite indexes, and the long field names can be abbreviated. For example idx_age_name_add
+-- The index name should not exceed 50 characters, and the name should be lowercase
 --
---非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
---唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
---组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
---索引名尽量不超过50个字符，命名应该使用小写
+-- 非唯一索引按照“idx_字段名称[_字段名称]”进用行命名。例如idx_age_name
+-- 唯一索引按照“uniq_字段名称[_字段名称]”进用行命名。例如uniq_age_name
+-- 组合索引建议包含所有字段名,过长的字段名可以采用缩写形式。例如idx_age_name_add
+-- 索引名尽量不超过50个字符，命名应该使用小写
 
 SET FOREIGN_KEY_CHECKS=0;
 
@@ -106,6 +106,7 @@ CREATE TABLE `linkis_ps_job_history_group_history` (
   `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
   `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
   `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+  `observe_info` varchar(500) DEFAULT NULL COMMENT 'Click the notification information',
   PRIMARY KEY (`id`),
   KEY `idx_created_time` (`created_time`),
   KEY `idx_submit_user` (`submit_user`)
@@ -655,7 +656,8 @@ CREATE TABLE `linkis_ps_error_code` (
   `error_desc` varchar(1024) NOT NULL,
   `error_regex` varchar(1024) DEFAULT NULL,
   `error_type` int(3) DEFAULT 0,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `idx_error_regex` (error_regex(255))
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 DROP TABLE IF EXISTS `linkis_cg_manager_service_instance`;
@@ -1002,4 +1004,4 @@ CREATE TABLE `linkis_cg_user_ip_config` (
   `bussiness_user` varchar(50) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uniq_user_creator` (`user`,`creator`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

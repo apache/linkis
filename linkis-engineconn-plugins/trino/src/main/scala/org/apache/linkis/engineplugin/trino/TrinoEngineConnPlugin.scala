@@ -41,7 +41,7 @@ class TrinoEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {}
+  override def init(params: util.Map[String, AnyRef]): Unit = {}
 
   override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker synchronized {

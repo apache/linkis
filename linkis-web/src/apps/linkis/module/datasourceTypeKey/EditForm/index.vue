@@ -211,16 +211,7 @@ export default {
             placeholder: "",
             trueValue: 1,
             falseValue: 0,
-          },
-          validate: [
-            {
-              required: false,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.datasourceTypeKey.require'),
-              trigger: 'blur',
-            },
-          ],
+          }
         },
         {
           type: 'input',

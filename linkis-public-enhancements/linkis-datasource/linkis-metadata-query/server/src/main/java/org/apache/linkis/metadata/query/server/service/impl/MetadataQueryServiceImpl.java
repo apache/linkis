@@ -203,6 +203,21 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   @Override
+  public List<String> getDatabasesByDsNameAndEnvId(
+      String dataSourceName, String system, String userName, String envId) throws ErrorException {
+    DsInfoResponse dsInfoResponse =
+        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getDatabases",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params()},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
+  @Override
   public Map<String, String> getConnectionInfoByDsName(
       String dataSourceName, Map<String, String> queryParams, String system, String userName)
       throws ErrorException {
@@ -222,6 +237,22 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       String dataSourceName, String database, String system, String userName)
       throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getTables",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), database},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<String> getTablesByDsNameAndEnvId(
+      String dataSourceName, String database, String system, String userName, String envId)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse =
+        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
     if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
       return invokeMetaMethod(
           dsInfoResponse.dsType(),
@@ -306,6 +337,27 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     return new ArrayList<>();
   }
 
+  @Override
+  public List<MetaColumnInfo> getColumnsByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse =
+        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+    if (StringUtils.isNotBlank(dsInfoResponse.dsType())) {
+      return invokeMetaMethod(
+          dsInfoResponse.dsType(),
+          "getColumns",
+          new Object[] {dsInfoResponse.creator(), dsInfoResponse.params(), database, table},
+          List.class);
+    }
+    return new ArrayList<>();
+  }
+
   /**
    * Request to get data source information (type and connection parameters)
    *
@@ -319,7 +371,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       throws ErrorException {
     Object rpcResult = null;
     try {
-      rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(dataSourceId, null, system));
+      rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(dataSourceId, null, system, null));
     } catch (Exception e) {
       throw new ErrorException(-1, "Remote Service Error[远端服务出错, 联系运维处理]");
     }
@@ -353,12 +405,28 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    */
   public DsInfoResponse queryDataSourceInfoByName(
       String dataSourceName, String system, String userName) throws ErrorException {
+    return queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, null);
+  }
+
+  /**
+   * Request to get data source information (type and connection parameters)
+   *
+   * @param dataSourceName
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  public DsInfoResponse queryDataSourceInfoByNameAndEnvId(
+      String dataSourceName, String system, String userName, String envId) throws ErrorException {
     Object rpcResult = null;
     boolean useDefault = false;
     try {
       rpcResult = reqGetDefaultDataSource(dataSourceName);
       if (Objects.isNull(rpcResult)) {
-        rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system));
+        rpcResult =
+            dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system, envId));
       } else {
         useDefault = true;
       }

@@ -17,19 +17,37 @@
 
 package org.apache.linkis.datasource.client.request
 
-import org.apache.linkis.datasource.client.config.DatasourceClientConfig.METADATA_SERVICE_MODULE
+import org.apache.linkis.datasource.client.config.DatasourceClientConfig.{
+  METADATA_OLD_SERVICE_MODULE,
+  METADATA_SERVICE_MODULE
+}
 import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSummary._
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
+import org.apache.commons.lang3.StringUtils
+
 class MetadataGetTablePropsAction extends GetAction with DataSourceAction {
+
+  private var dataSourceId: Long = _
   private var dataSourceName: String = _
 
   private var database: String = _
   private var table: String = _
 
-  override def suffixURLs: Array[String] =
+  override def suffixURLs: Array[String] = if (StringUtils.isNotBlank(dataSourceName)) {
     Array(METADATA_SERVICE_MODULE.getValue, "getTableProps")
+  } else {
+    Array(
+      METADATA_OLD_SERVICE_MODULE.getValue,
+      "props",
+      dataSourceId.toString,
+      "db",
+      database,
+      "table",
+      table
+    )
+  }
 
   private var user: String = _
 
@@ -42,6 +60,7 @@ object MetadataGetTablePropsAction {
   def builder(): Builder = new Builder
 
   class Builder private[MetadataGetTablePropsAction] () {
+    private var dataSourceId: Long = _
     private var dataSourceName: String = _
     private var database: String = _
     private var table: String = _
@@ -50,6 +69,19 @@ object MetadataGetTablePropsAction {
 
     def setUser(user: String): Builder = {
       this.user = user
+      this
+    }
+
+    /**
+     * get value form dataSourceId is deprecated, suggest to use dataSourceName
+     * @param dataSourceId
+     *   datasourceId
+     * @return
+     *   builder
+     */
+    @deprecated
+    def setDataSourceId(dataSourceId: Long): Builder = {
+      this.dataSourceId = dataSourceId
       this
     }
 
@@ -74,7 +106,7 @@ object MetadataGetTablePropsAction {
     }
 
     def build(): MetadataGetTablePropsAction = {
-      if (dataSourceName == null) {
+      if (dataSourceName == null && dataSourceId <= 0) {
         throw new DataSourceClientBuilderException(DATASOURCENAME_NEEDED.getErrorDesc)
       }
       if (database == null) throw new DataSourceClientBuilderException(DATABASE_NEEDED.getErrorDesc)
@@ -83,6 +115,7 @@ object MetadataGetTablePropsAction {
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val metadataGetTablePropsAction = new MetadataGetTablePropsAction
+      metadataGetTablePropsAction.dataSourceId = this.dataSourceId
       metadataGetTablePropsAction.dataSourceName = this.dataSourceName
       metadataGetTablePropsAction.database = this.database
       metadataGetTablePropsAction.table = this.table

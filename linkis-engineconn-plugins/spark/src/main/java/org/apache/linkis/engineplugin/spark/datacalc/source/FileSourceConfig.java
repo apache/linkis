@@ -22,24 +22,21 @@ import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import java.util.Map;
-
 public class FileSourceConfig extends SourceConfig {
 
   @NotBlank
   @Pattern(
-      regexp = "^(file|hdfs)://.*",
+      regexp = "^(((file|hdfs)://)|/).*",
       message =
-          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'.")
+          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'(default).")
   private String path;
 
   @NotBlank private String serializer = "parquet";
 
   private String[] columnNames;
 
-  private Map<String, String> options;
-
   public String getPath() {
+    if (path.startsWith("/")) return "hdfs://" + path;
     return path;
   }
 
@@ -61,13 +58,5 @@ public class FileSourceConfig extends SourceConfig {
 
   public void setColumnNames(String[] columnNames) {
     this.columnNames = columnNames;
-  }
-
-  public Map<String, String> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, String> options) {
-    this.options = options;
   }
 }

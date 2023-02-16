@@ -22,6 +22,8 @@ import org.apache.linkis.datasource.client.errorcode.DatasourceClientErrorCodeSu
 import org.apache.linkis.datasource.client.exception.DataSourceClientBuilderException
 import org.apache.linkis.httpclient.request.GetAction
 
+import org.apache.commons.lang3.StringUtils
+
 class GetInfoPublishedByDataSourceNameAction extends GetAction with DataSourceAction {
   private var dataSourceName: String = _
 
@@ -62,12 +64,14 @@ object GetInfoPublishedByDataSourceNameAction {
       if (dataSourceName == null) {
         throw new DataSourceClientBuilderException(DATASOURCENAME_NEEDED.getErrorDesc)
       }
-      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
+//      if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val getPublishedInfoByDataSourceNameAction = new GetInfoPublishedByDataSourceNameAction
       getPublishedInfoByDataSourceNameAction.dataSourceName = this.dataSourceName
-      getPublishedInfoByDataSourceNameAction.setParameter("system", system)
+      if (StringUtils.isNotBlank(system)) {
+        getPublishedInfoByDataSourceNameAction.setParameter("system", system)
+      }
       getPublishedInfoByDataSourceNameAction.setUser(user)
       getPublishedInfoByDataSourceNameAction
     }

@@ -21,8 +21,6 @@ import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Map;
-
 public class JdbcSourceConfig extends SourceConfig {
 
   @NotBlank private String url;
@@ -34,8 +32,6 @@ public class JdbcSourceConfig extends SourceConfig {
   @NotBlank private String password;
 
   @NotBlank private String query;
-
-  private Map<String, String> options;
 
   public String getUrl() {
     return url;
@@ -75,13 +71,5 @@ public class JdbcSourceConfig extends SourceConfig {
 
   public void setQuery(String query) {
     this.query = query;
-  }
-
-  public Map<String, String> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, String> options) {
-    this.options = options;
   }
 }

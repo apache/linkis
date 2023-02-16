@@ -15,31 +15,32 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.datacalc.source;
+package org.apache.linkis.engineplugin.spark.datacalc.service.strategy;
 
-import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
+public class DB2Strategy extends NormalStrategy {
 
-import javax.validation.constraints.NotBlank;
-
-public class ManagedJdbcSourceConfig extends SourceConfig {
-
-  @NotBlank private String datasource;
-
-  @NotBlank private String query;
-
-  public String getDatasource() {
-    return datasource;
+  @Override
+  public String defaultDriver() {
+    return "com.ibm.db2.jcc.DB2Driver";
   }
 
-  public void setDatasource(String datasource) {
-    this.datasource = datasource;
+  @Override
+  public String defaultPort() {
+    return "5021";
   }
 
-  public String getQuery() {
-    return query;
+  @Override
+  public String getDatabaseType() {
+    return "db2";
   }
 
-  public void setQuery(String query) {
-    this.query = query;
+  @Override
+  protected String getParamsStartCharacter() {
+    return ":";
+  }
+
+  @Override
+  protected String getParamsSplitCharacter() {
+    return ";";
   }
 }

@@ -15,31 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.datacalc.source;
+package org.apache.linkis.engineplugin.spark.datacalc.service.strategy;
 
-import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.validation.constraints.NotBlank;
+import java.util.Map;
 
-public class ManagedJdbcSourceConfig extends SourceConfig {
+public abstract class NormalStrategy extends DataSourceStrategy {
 
-  @NotBlank private String datasource;
-
-  @NotBlank private String query;
-
-  public String getDatasource() {
-    return datasource;
+  @Override
+  public String getJdbcUrl(String address, Map<String, String> paramsJson, String paramsStr) {
+    String databaseName = paramsJson.getOrDefault("databaseName", "");
+    StringBuilder builder = new StringBuilder();
+    builder.append("jdbc:").append(this.getDatabaseType()).append("://");
+    if (StringUtils.isNotBlank(address)) builder.append(address);
+    if (StringUtils.isNotBlank(databaseName)) builder.append("/").append(databaseName);
+    if (!paramsStr.isEmpty()) builder.append(getConnectParams(paramsStr));
+    return builder.toString();
   }
 
-  public void setDatasource(String datasource) {
-    this.datasource = datasource;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
-  }
+  public abstract String getDatabaseType();
 }

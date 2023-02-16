@@ -47,7 +47,9 @@ public enum SparkErrorCodeSummary implements LinkisErrorCode {
   DATA_CALC_CONFIG_VALID_FAILED(43001, "Config data validate failed"),
   DATA_CALC_CONFIG_TYPE_NOT_VALID(43002, "[{0}] is not a valid type"),
 
-  DATA_CALC_DATASOURCE_NOT_CONFIG(43011, "Datasource {0} is not configured!"),
+  DATA_CALC_DATASOURCE_NOT_CONFIG(43011, "DataSource {0} is not configured!"),
+
+  DATA_CALC_DATABASE_NOT_SUPPORT(43012, "DataSource [{0}] type [{1}] is not supported"),
 
   DATA_CALC_COLUMN_NOT_MATCH(
       43021,

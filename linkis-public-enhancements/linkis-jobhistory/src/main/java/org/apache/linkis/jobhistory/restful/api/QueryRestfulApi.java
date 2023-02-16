@@ -71,7 +71,8 @@ public class QueryRestfulApi {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
     return Message.ok()
         .data("admin", Configuration.isAdmin(username))
-        .data("historyAdmin", Configuration.isJobHistoryAdmin(username));
+        .data("historyAdmin", Configuration.isJobHistoryAdmin(username))
+        .data("errorMsgTip", JobhistoryConfiguration.ERROR_MSG_TIP().getValue());
   }
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 
 import org.apache.commons.lang3.StringUtils
@@ -27,11 +28,7 @@ import java.sql.Connection
 
 import scala.collection.JavaConverters._
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[JdbcSink])
+class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     val targetTable =
@@ -64,11 +61,11 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
           val conn: Connection = JdbcUtils.createConnectionFactory(jdbcOptions)()
           try {
             config.getPreQueries.asScala.foreach(query => {
-              log.info(s"Execute pre query: $query")
+              logger.info(s"Execute pre query: $query")
               execute(conn, jdbcOptions, query)
             })
           } catch {
-            case e: Exception => log.error("Execute preQueries failed. ", e)
+            case e: Exception => logger.error("Execute preQueries failed. ", e)
           } finally {
             conn.close()
           }
@@ -79,21 +76,21 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] {
     if (StringUtils.isNotBlank(config.getSaveMode)) {
       writer.mode(config.getSaveMode)
     }
-    log.info(
+    logger.info(
       s"Save data to jdbc url: ${config.getUrl}, driver: ${config.getDriver}, username: ${config.getUser}, table: $targetTable"
     )
     writer.options(options).save()
   }
 
   private def execute(conn: Connection, jdbcOptions: JDBCOptions, query: String): Unit = {
-    log.info("Execute query: {}", query)
+    logger.info("Execute query: {}", query)
     val statement = conn.prepareStatement(query)
     try {
       statement.setQueryTimeout(jdbcOptions.queryTimeout)
       val rows = statement.executeUpdate()
-      log.info("{} rows affected", rows)
+      logger.info("{} rows affected", rows)
     } catch {
-      case e: Exception => log.error("Execute query failed. ", e)
+      case e: Exception => logger.error("Execute query failed. ", e)
     } finally {
       statement.close()
     }

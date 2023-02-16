@@ -15,31 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.datacalc.source;
+package org.apache.linkis.engineplugin.spark.datacalc.service.strategy;
 
-import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
+public class DorisStrategy extends BaseMySqlStrategy {
 
-import javax.validation.constraints.NotBlank;
-
-public class ManagedJdbcSourceConfig extends SourceConfig {
-
-  @NotBlank private String datasource;
-
-  @NotBlank private String query;
-
-  public String getDatasource() {
-    return datasource;
-  }
-
-  public void setDatasource(String datasource) {
-    this.datasource = datasource;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
+  @Override
+  public String defaultPort() {
+    return "9030";
   }
 }

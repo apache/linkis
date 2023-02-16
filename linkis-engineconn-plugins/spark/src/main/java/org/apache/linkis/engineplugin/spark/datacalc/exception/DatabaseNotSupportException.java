@@ -15,31 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.datacalc.source;
+package org.apache.linkis.engineplugin.spark.datacalc.exception;
 
-import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 
-import javax.validation.constraints.NotBlank;
+public class DatabaseNotSupportException extends LinkisRuntimeException {
 
-public class ManagedJdbcSourceConfig extends SourceConfig {
-
-  @NotBlank private String datasource;
-
-  @NotBlank private String query;
-
-  public String getDatasource() {
-    return datasource;
+  public DatabaseNotSupportException(int errCode, String desc) {
+    super(errCode, desc);
   }
 
-  public void setDatasource(String datasource) {
-    this.datasource = datasource;
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

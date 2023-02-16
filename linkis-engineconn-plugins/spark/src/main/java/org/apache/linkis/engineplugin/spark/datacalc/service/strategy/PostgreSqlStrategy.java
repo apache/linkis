@@ -15,19 +15,6 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.datacalc.exception;
+package org.apache.linkis.engineplugin.spark.datacalc.service.strategy;
 
-import org.apache.linkis.common.exception.ExceptionLevel;
-import org.apache.linkis.common.exception.LinkisRuntimeException;
-
-public class DatabaseNotConfigException extends LinkisRuntimeException {
-
-  public DatabaseNotConfigException(int errCode, String desc) {
-    super(errCode, desc);
-  }
-
-  @Override
-  public ExceptionLevel getLevel() {
-    return ExceptionLevel.ERROR;
-  }
-}
+public class PostgreSqlStrategy extends BasePostgreSqlStrategy {}

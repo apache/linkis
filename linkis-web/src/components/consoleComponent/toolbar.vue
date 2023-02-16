@@ -131,6 +131,21 @@
                 </RadioGroup>
               </Row>
             </div>
+            <div v-if="+download.format === 1">
+              <Row>
+                {{$t('message.common.toolbar.selectSeparator')}}
+              </Row>
+              <Row>
+                <Select v-model="download.csvSeparator" size="small">
+                  <Option
+                    v-for="(item) in separators"
+                    :label="item.label"
+                    :value="item.value"
+                    :key="item.value"
+                  />
+                </Select>
+              </Row>
+            </div>
             <div v-if="isAll">
               <Row>
                 {{$t('message.common.toolbar.downloadMode')}}
@@ -251,11 +266,19 @@ export default {
         format: '1',
         coding: '1',
         nullValue: '1',
+        csvSeparator: '1',
       },
       isIconLabelShow: true,
       iconSize: 14,
       allDownload: false, // whether to download all result sets(是否下载全部结果集)
-      resultsShowType: '2'
+      resultsShowType: '2',
+      separators: [
+        { key: ',', label: this.$t('message.common.separator.comma'), value: '1'},
+        { key: '\t', label: this.$t('message.common.separator.tab'), value: '2'},
+        { key: ';', label: this.$t('message.common.separator.semicolon'), value: '3'},
+        { key: '_', label: this.$t('message.common.separator.space'), value: '4'},
+        { key: '|', label: this.$t('message.common.separator.vertical'), value: '5'}
+      ]
     };
   },
   computed: {
@@ -284,6 +307,7 @@ export default {
           format: '1',
           coding: '1',
           nullValue: '1',
+          csvSeparator: '1',
         }
       }
       if (type === 'export') {
@@ -341,10 +365,13 @@ export default {
       if(this.getResultUrl !== 'filesystem') {
         url += `&taskId=${this.comData.taskID}`
       }
-
+      if (+this.download.format === 1) {
+        let separatorItem = this.separators.find(item => item.value === this.download.csvSeparator) || {};
+        let separator = encodeURIComponent(separatorItem.key || '');
+        url += `&csvSeparator=${separator}`
+      }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)
       await api.fetch('/user/heartbeat', 'get');
-
       const link = document.createElement('a');
       link.setAttribute('href', url);
       link.setAttribute('download', '');
@@ -413,5 +440,12 @@ export default {
       }
     }
   }
+</style>
+<style lang="scss">
+.we-poptip {
+  .ivu-poptip-body-content {
+    overflow: inherit;
+  }
+}
 </style>
 

@@ -394,7 +394,7 @@ public class EMRestfulApi {
       String logType = (String) parameters.get("logType");
       if (!logType.equals("stdout") && !logType.equals("stderr")) {
         throw new AMErrorException(
-            AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
+            AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorMessage());
       }
       parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
       parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);

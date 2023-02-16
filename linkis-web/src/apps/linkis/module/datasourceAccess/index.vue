@@ -207,8 +207,8 @@ export default {
     onTableDelete(row){
 
       this.$Modal.confirm({
-        title: "提示信息",
-        content: "确认是否删除该记录?",
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDeleteRecord'),
         onOk: ()=>{
           let params = {
             id: row.id

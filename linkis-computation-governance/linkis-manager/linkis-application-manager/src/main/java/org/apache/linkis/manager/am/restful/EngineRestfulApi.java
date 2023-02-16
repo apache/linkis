@@ -110,7 +110,10 @@ public class EngineRestfulApi {
 
   private static final Logger logger = LoggerFactory.getLogger(EngineRestfulApi.class);
 
-  @ApiOperation(value = "createEngineConn", response = Message.class)
+  @ApiOperation(
+      value = "createEngineConn",
+      notes = "create an engineconn",
+      response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/createEngineConn", method = RequestMethod.POST)
   public Message createEngineConn(
@@ -354,7 +357,7 @@ public class EngineRestfulApi {
     @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdp110:9102"),
     @ApiImplicitParam(name = "engineType", dataType = "String"),
     @ApiImplicitParam(name = "nodeStatus", dataType = "String"),
-    @ApiImplicitParam(name = "owner", dataType = "String", value = "owner")
+    @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "owner"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/listEMEngines", method = RequestMethod.POST)

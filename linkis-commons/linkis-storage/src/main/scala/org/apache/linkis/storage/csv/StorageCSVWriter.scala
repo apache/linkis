@@ -36,6 +36,7 @@ class StorageCSVWriter(
     with Logging {
 
   private val delimiter = separator match {
+    case separ if StringUtils.isNotEmpty(separ) => separ
     case "," => ','
     case _ => '\t'
   }
@@ -59,6 +60,7 @@ class StorageCSVWriter(
       }
     }
 
+    logger.debug("delimiter:" + delimiter.toString)
     row.map(x => decorateValue(x)).toList.mkString(delimiter.toString) + "\n"
   }
 

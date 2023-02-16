@@ -189,7 +189,7 @@ public class QueryRestfulApi {
     if (StringUtils.isEmpty(instance)) {
       instance = null;
     } else {
-      if (!QueryUtils.checkNameValid(instance)) {
+      if (!QueryUtils.checkInstanceNameValid(instance)) {
         return Message.error("Invalid instances : " + instance);
       }
     }

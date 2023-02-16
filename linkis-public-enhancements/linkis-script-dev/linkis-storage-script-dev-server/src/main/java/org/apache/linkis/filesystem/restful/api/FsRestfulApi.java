@@ -692,6 +692,7 @@ public class FsRestfulApi {
       @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
       @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
       @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+      @RequestParam(value = "csvSeparator", defaultValue = ",") String csvSeparator,
       @RequestParam(value = "quoteRetouchEnable", required = false) boolean quoteRetouchEnable,
       @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
           String outputFileName,
@@ -704,6 +705,9 @@ public class FsRestfulApi {
     FsWriter fsWriter = null;
     PrintWriter writer = null;
     FileSource fileSource = null;
+    if (csvSeparator.equals(",") && !csvSeperator.equals(",")) {
+      csvSeparator = csvSeperator;
+    }
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
       FsPath fsPath = new FsPath(path);
@@ -737,7 +741,7 @@ public class FsRestfulApi {
         case "csv":
           if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
             fsWriter =
-                CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouchEnable, outputStream);
+                CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
           } else {
             fsWriter =
                 ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);

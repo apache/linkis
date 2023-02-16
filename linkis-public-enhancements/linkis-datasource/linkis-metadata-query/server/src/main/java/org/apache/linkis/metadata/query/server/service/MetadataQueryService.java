@@ -136,6 +136,17 @@ public interface MetadataQueryService {
       throws ErrorException;
 
   /**
+   * @param dataSourceName
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  List<String> getDatabasesByDsNameAndEnvId(
+      String dataSourceName, String system, String userName, String envId) throws ErrorException;
+
+  /**
    * @param dataSourceName data source name
    * @param system system
    * @param database database
@@ -143,6 +154,19 @@ public interface MetadataQueryService {
    */
   List<String> getTablesByDsName(
       String dataSourceName, String database, String system, String userName) throws ErrorException;
+
+  /**
+   * @param dataSourceName
+   * @param database
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  List<String> getTablesByDsNameAndEnvId(
+      String dataSourceName, String database, String system, String userName, String envId)
+      throws ErrorException;
 
   /**
    * @param dataSourceName data source name
@@ -198,5 +222,24 @@ public interface MetadataQueryService {
    */
   List<MetaColumnInfo> getColumnsByDsName(
       String dataSourceName, String database, String table, String system, String userName)
+      throws ErrorException;
+
+  /**
+   * @param dataSourceName
+   * @param database
+   * @param table
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  List<MetaColumnInfo> getColumnsByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
       throws ErrorException;
 }

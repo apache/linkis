@@ -378,7 +378,8 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     if (rpcResult instanceof DsInfoResponse) {
       DsInfoResponse response = (DsInfoResponse) rpcResult;
       if (!response.status()) {
-        throw new ErrorException(-1, "Error in Data Source Manager Server[数据源服务出错]");
+        throw new ErrorException(
+            -1, "Error in Data Source Manager Server[数据源服务出错] " + response.errorMsg());
       }
       boolean hasPermission =
           (AuthContext.isAdministrator(userName)

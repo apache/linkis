@@ -17,6 +17,7 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
@@ -103,14 +104,14 @@ public class FsRestfulApi {
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (WorkspaceUtil.isLogAdmin(userName)) {
+    if (Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
     LOGGER.debug("requestPath:" + requestPath);
     LOGGER.debug("workspacePath:" + workspacePath);
     LOGGER.debug("enginconnPath:" + enginconnPath);
-    LOGGER.debug("adminUser:" + WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue());
+    LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
   }
 
@@ -691,6 +692,7 @@ public class FsRestfulApi {
       @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
       @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
       @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+      @RequestParam(value = "csvSeparator", defaultValue = ",") String csvSeparator,
       @RequestParam(value = "quoteRetouchEnable", required = false) boolean quoteRetouchEnable,
       @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
           String outputFileName,
@@ -703,6 +705,9 @@ public class FsRestfulApi {
     FsWriter fsWriter = null;
     PrintWriter writer = null;
     FileSource fileSource = null;
+    if (csvSeparator.equals(",") && !csvSeperator.equals(",")) {
+      csvSeparator = csvSeperator;
+    }
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
       FsPath fsPath = new FsPath(path);
@@ -736,7 +741,7 @@ public class FsRestfulApi {
         case "csv":
           if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
             fsWriter =
-                CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouchEnable, outputStream);
+                CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
           } else {
             fsWriter =
                 ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);
@@ -978,7 +983,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80004, path);
     }
     String userName = ModuleUserUtils.getOperationUser(req, "openLog " + path);
-    if (proxyUser != null && WorkspaceUtil.isLogAdmin(userName)) {
+    if (proxyUser != null && Configuration.isJobHistoryAdmin(userName)) {
       userName = proxyUser;
     }
     if (!checkIsUsersDirectory(path, userName)) {

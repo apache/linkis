@@ -277,7 +277,38 @@ export default [
         title: 'EnginePluginManagement',
         publicPage: true,
       },
-    }
+    },
+    {
+      name: 'codeQuery',
+      path: 'codeQuery',
+      component: () =>
+        import('./module/codeQuery/index.vue'),
+      meta: {
+        title: 'codeQuery',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'codeDetail',
+      path: 'codeDetail',
+      component: () =>
+        import('./module/codeQuery/codeDetail/index.vue'),
+      meta: {
+        title: 'codeDetail',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'viewHistoryDetail',
+      path: 'viewHistoryDetail',
+      component: () =>
+        import('./module/globalHistoryManagement/viewHistory.vue'),
+      meta: {
+        title: 'viewHistoryDetail',
+        publicPage: true,
+        noLayout: true
+      },
+    },
     ],
   },
 ]

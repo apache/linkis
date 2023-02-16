@@ -17,7 +17,7 @@
 
 package org.apache.linkis.jobhistory.conversions
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.job.{JobRequest, SubJobDetail}
 import org.apache.linkis.governance.common.entity.task.RequestQueryTask
 import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration
@@ -40,6 +40,8 @@ import java.util
 import java.util.Date
 
 import scala.collection.JavaConverters.{asScalaBufferConverter, mapAsScalaMapConverter}
+
+import com.fasterxml.jackson.core.JsonProcessingException
 
 object TaskConversions extends Logging {
 
@@ -110,6 +112,15 @@ object TaskConversions extends Logging {
 
   def jobRequest2JobHistory(jobReq: JobRequest): JobHistory = {
     if (null == jobReq) return null
+
+    if (logger.isDebugEnabled) {
+      try logger.debug("input jobReq:" + JsonUtils.jackson.writeValueAsString(jobReq))
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobReq to string with error:" + e.getMessage)
+      }
+    }
+
     val jobHistory = new JobHistory
     jobHistory.setId(jobReq.getId)
     jobHistory.setJobReqId(jobReq.getReqId)
@@ -146,6 +157,16 @@ object TaskConversions extends Logging {
     val engineType = LabelUtil.getEngineType(jobReq.getLabels)
     jobHistory.setEngineType(engineType)
     jobHistory.setExecutionCode(jobReq.getExecutionCode)
+
+    if (logger.isDebugEnabled) {
+      try logger.debug(
+        "after jobRequest2JobHistory:" + JsonUtils.jackson.writeValueAsString(jobHistory)
+      )
+      catch {
+        case e: JsonProcessingException =>
+          logger.debug("convert jobRequest2JobHistory to string with error:" + e.getMessage)
+      }
+    }
     if (null != jobReq.getObserveInfo) {
       jobHistory.setObserveInfo(jobReq.getObserveInfo)
     }
@@ -241,17 +262,17 @@ object TaskConversions extends Logging {
       BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_COMPLETE_TIME) && metrics
+          .get(TaskConstant.JOB_COMPLETE_TIME) != null
     ) {
-      completeTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME).toString)
+      completeTime = dealString2Date(metrics.get(TaskConstant.JOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+          .get(TaskConstant.JOB_SUBMIT_TIME) != null
     ) {
-      createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
+      createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
     if (null != createTime) {
       if (isJobFinished(job.getStatus)) {
@@ -266,9 +287,9 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+    if (metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       val engineMap = metrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .get(TaskConstant.JOB_ENGINECONN_MAP)
         .asInstanceOf[util.Map[String, Object]]
       if (null != engineMap && !engineMap.isEmpty) {
         taskVO.setEngineInstance(engineMap.map(_._1).toList.mkString(","))

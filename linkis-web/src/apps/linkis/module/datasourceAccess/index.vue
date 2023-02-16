@@ -139,13 +139,13 @@ export default {
         },
         {
           title: "访问时间",
-          key: 'accessTime',
+          key: 'access_time',
           minWidth: 50,
           tooltip: true,
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.accessTime),'yyyy-MM-dd hh:mm')
+              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm')
             )
           }
         },
@@ -200,8 +200,6 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
-      row.tableId = row.tableId+""
-      row.applicationId= row.applicationId+""
       this.modalEditData = row
       this.modalAddMode = 'edit'
       this.modalShow = true
@@ -209,8 +207,8 @@ export default {
     onTableDelete(row){
 
       this.$Modal.confirm({
-        title: "提示信息",
-        content: "确认是否删除该记录?",
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDeleteRecord'),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -227,8 +225,8 @@ export default {
                 content: "删除失败"
               })
             }
-            this.load()
           })
+          this.load()
         }
       })
 
@@ -238,6 +236,7 @@ export default {
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
+            console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -249,10 +248,10 @@ export default {
                 content: "添加失败"
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
+            console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -266,7 +265,6 @@ export default {
               })
             }
           })
-          this.load()
         }
         this.modalLoading=false
         this.modalShow = false

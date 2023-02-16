@@ -38,6 +38,14 @@
       "result": "任务结果",
       "startUp": "启动",
       "tagEdit": "编辑",
+      "tipForKill": "将要停止此ECM实例 【{instance}】上的空闲引擎",
+      "killAll": "停止空闲引擎",
+      "allEngine": "包含多用户引擎？",
+      "killFinishedInfo": "预计停止{killEngineNum}个引擎, 将释放 ECM {cores}cores,{memory}G 资源",
+      "noDataTextBeforeSearch": "请输入执行代码进行查询",
+      "noDataTextAfterSearch": "暂无数据",
+      "yes": "是",
+      "no": "否",
       "keyTip": "不能为空",
       "rename": "重命名",
       "resources": "资源",
@@ -74,6 +82,8 @@
       "previousPage": "上一页",
       "all": "全部",
       "common": "通用",
+      "tenant": "租户标签",
+      "inputTenant": "请输入租户标签",
       "warning": {
         "api": "接口请求中，请稍候！",
         "data": "数据请求中，请稍候！",
@@ -127,7 +137,9 @@
         "queueTop": "队列上限资源",
         "engineRemain": "引擎剩余资源",
         "engineUsed": "引擎已用资源",
-        "engineTop": "引擎上限资源"
+        "engineTop": "引擎上限资源",
+        "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
+        "applicationRole": "应用方"
       },
       "logLoading": "日志请求中，请稍后",
       "title": "Linkis管理台",
@@ -168,9 +180,19 @@
             "datasourceType": "数据源分类",
             "datasourceTypeKey": "数据源配置项",
             "EnginePluginManagement": "引擎物料管理",
-            "basedataManagement": "基础数据管理"
+            "basedataManagement": "基础数据管理",
+            "codeQuery": "代码检索"
           }
         }
+      },
+      "modal": {
+        "modalTitle": "提示信息",
+        "modalDelete": "确认是否删除[{envName}]项?",
+        "modalDeleteRecord": "确认是否删除该记录?",
+        "modalDeleteTask": "确认是否停止当前选择任务?",
+        "modalDeleteInstance": "确认是否停止当前选择实例?",
+        "modalDeleteSuccess": "删除成功",
+        "modalDeleteFail": "删除失败"
       },
       "formItems": {
         "id": {
@@ -553,6 +575,25 @@
         "action": "操作",
         "checkEngineConnTypeAndVersion": "请选择引擎类型及版本",
         "upload": "请点击上传引擎插件"
+      },
+      "codeQuery": {
+        "executionCode": "执行代码",
+        "dateRange": "时间范围",
+        "placeholder": {
+            "executionCode": "请输入执行代码",
+            "dateRange": "时间范围",
+            "status": "状态"
+        },
+        "inputCode": "请输入执行代码",
+        "id": "任务ID",
+        "code": "代码",
+        "check": "查看",
+        "search": "搜索",
+        "clear": "清空",
+        "status": "状态",
+        "submitUser": "提交用户",
+        "createdTime": "创建时间",
+        "searchRange": "仅可查询T-1的历史代码"
       }
     }
   }

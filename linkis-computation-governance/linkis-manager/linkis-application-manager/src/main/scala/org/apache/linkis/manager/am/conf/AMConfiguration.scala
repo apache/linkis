@@ -18,12 +18,11 @@
 package org.apache.linkis.manager.am.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
+import org.apache.linkis.common.conf.Configuration.isAdmin
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 object AMConfiguration {
-
-  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
 
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 
@@ -62,6 +61,9 @@ object AMConfiguration {
     "jdbc,es,presto,io_file,appconn,openlookeng,trino"
   )
 
+  val ALLOW_BATCH_KILL_ENGINE_TYPES =
+    CommonVars("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python")
+
   val MULTI_USER_ENGINE_USER =
     CommonVars("wds.linkis.multi.user.engine.user", getDefaultMultiEngineUser)
 
@@ -91,8 +93,24 @@ object AMConfiguration {
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""
   }
 
-  def isAdmin(userName: String): Boolean = {
-    GOVERNANCE_STATION_ADMIN.getValue.split(",").contains(userName)
+  def isMultiUserEngine(engineType: String): Boolean = {
+    val multiUserEngine = AMConfiguration.MULTI_USER_ENGINE_TYPES.getValue.split(",")
+    val findResult = multiUserEngine.find(_.equalsIgnoreCase(engineType))
+    if (findResult.isDefined) {
+      true
+    } else {
+      false
+    }
+  }
+
+  def isAllowKilledEngineType(engineType: String): Boolean = {
+    val allowBatchKillEngine = AMConfiguration.ALLOW_BATCH_KILL_ENGINE_TYPES.getValue.split(",")
+    val findResult = allowBatchKillEngine.find(_.equalsIgnoreCase(engineType))
+    if (findResult.isDefined) {
+      true
+    } else {
+      false
+    }
   }
 
   def isNotAdmin(userName: String): Boolean = {

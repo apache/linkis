@@ -37,6 +37,8 @@ import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -148,7 +150,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String"),
     @ApiImplicitParam(name = "labels", required = true, dataType = "String"),
     @ApiImplicitParam(name = "connectParams", required = true, dataType = "List"),
-    @ApiImplicitParam(name = "host", dataType = "String", example = "10.107.93.146"),
+    @ApiImplicitParam(name = "host", dataType = "String", example = "127.0.0.1"),
     @ApiImplicitParam(name = "password", dataType = "String"),
     @ApiImplicitParam(name = "port", dataType = "String", example = "9523"),
     @ApiImplicitParam(name = "subSystem", dataType = "String"),
@@ -204,7 +206,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "dataSourceTypeId", required = true, dataType = "String"),
     @ApiImplicitParam(name = "labels", required = true, dataType = "String"),
     @ApiImplicitParam(name = "connectParams", required = true, dataType = "List"),
-    @ApiImplicitParam(name = "host", dataType = "String", example = "10.107.93.146"),
+    @ApiImplicitParam(name = "host", dataType = "String", example = "127.0.0.1"),
     @ApiImplicitParam(name = "password", dataType = "String"),
     @ApiImplicitParam(name = "port", dataType = "String", example = "9523"),
     @ApiImplicitParam(name = "subSystem", dataType = "String"),
@@ -212,7 +214,7 @@ public class DataSourceCoreRestfulApi {
     @ApiImplicitParam(name = "expire", dataType = "boolean", example = "false"),
     @ApiImplicitParam(name = "file", dataType = "String", example = "adn"),
     @ApiImplicitParam(name = "modifyTime", dataType = "String", example = "1657611440000"),
-    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "johnnwang"),
+    @ApiImplicitParam(name = "modifyUser", dataType = "String", example = "hadoop"),
     @ApiImplicitParam(name = "versionId", dataType = "String", example = "18")
   })
   @ApiOperationSupport(ignoreParameters = {"dataSource"})
@@ -259,7 +261,8 @@ public class DataSourceCoreRestfulApi {
           keyDefinitionList.forEach(
               keyDefinition -> {
                 String key = keyDefinition.getKey();
-                if (!connectParams.containsKey(key)) {
+                if (StringUtils.isNotBlank(keyDefinition.getDefaultValue())
+                    && !connectParams.containsKey(key)) {
                   connectParams.put(key, keyDefinition.getDefaultValue());
                 }
               });
@@ -315,7 +318,8 @@ public class DataSourceCoreRestfulApi {
           keyDefinitionList.forEach(
               keyDefinition -> {
                 String key = keyDefinition.getKey();
-                if (!connectParams.containsKey(key)) {
+                if (StringUtils.isNotBlank(keyDefinition.getDefaultValue())
+                    && !connectParams.containsKey(key)) {
                   connectParams.put(key, keyDefinition.getDefaultValue());
                 }
               });
@@ -361,10 +365,11 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
+
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              dataSource.getConnectParams());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -396,10 +401,11 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
+
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              dataSource.getConnectParams());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
 
           return Message.ok().data("info", dataSource);
         },
@@ -432,10 +438,10 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              dataSource.getConnectParams());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
 
           return Message.ok().data("info", dataSource);
         },
@@ -477,10 +483,10 @@ public class DataSourceCoreRestfulApi {
           if (!AuthContext.hasPermission(dataSource, userName)) {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              dataSource.getConnectParams());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, dataSource.getConnectParams());
           return Message.ok().data("info", dataSource);
         },
         "Fail to access data source[获取数据源信息失败]");
@@ -514,14 +520,15 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
           List<DatasourceVersion> versions = dataSourceInfoService.getVersionList(dataSourceId);
+
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
           // Decrypt
           if (null != versions) {
             versions.forEach(
                 version -> {
                   RestfulApiHelper.decryptPasswordKey(
-                      dataSourceRelateService.getKeyDefinitionsByType(
-                          dataSource.getDataSourceTypeId()),
-                      version.getConnectParams());
+                      keyDefinitionList, version.getConnectParams());
                 });
           }
           return Message.ok().data("versions", versions);
@@ -665,9 +672,9 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
           Map<String, Object> connectParams = dataSource.getConnectParams();
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              connectParams);
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
           return Message.ok().data("connectParams", connectParams);
         },
         "Fail to connect data source[连接数据源失败]");
@@ -700,9 +707,10 @@ public class DataSourceCoreRestfulApi {
             return Message.error("Don't have query permission for data source [没有数据源的查询权限]");
           }
           Map<String, Object> connectParams = dataSource.getConnectParams();
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              connectParams);
+
+          List<DataSourceParamKeyDefinition> keyDefinitionList =
+              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
           return Message.ok().data("connectParams", connectParams);
         },
         "Fail to connect data source[连接数据源失败]");
@@ -736,12 +744,12 @@ public class DataSourceCoreRestfulApi {
           String dataSourceTypeName = dataSource.getDataSourceType().getName();
           String mdRemoteServiceName = MdmConfiguration.METADATA_SERVICE_APPLICATION.getValue();
           Map<String, Object> connectParams = dataSource.getConnectParams();
-          RestfulApiHelper.decryptPasswordKey(
-              dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId()),
-              connectParams);
+
           // Get definitions
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
+          RestfulApiHelper.decryptPasswordKey(keyDefinitionList, connectParams);
+
           // For connecting, also need to handle the parameters
           for (DataSourceParamsHook hook : dataSourceParamsHooks) {
             hook.beforePersist(connectParams, keyDefinitionList);
@@ -835,7 +843,8 @@ public class DataSourceCoreRestfulApi {
     keyDefinitionList.forEach(
         keyDefinition -> {
           String key = keyDefinition.getKey();
-          if (!connectParams.containsKey(key)) {
+          if (StringUtils.isNotBlank(keyDefinition.getDefaultValue())
+              && !connectParams.containsKey(key)) {
             connectParams.put(key, keyDefinition.getDefaultValue());
           }
         });

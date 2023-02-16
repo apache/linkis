@@ -62,7 +62,8 @@
         @on-ok="submitTagEdit"
         :title="$t('message.linkis.tagEdit')"
         v-model="isTagEdit"
-        :mask-closable="false">
+        :mask-closable="false"
+        :ok-text="$t('message.common.ok')">
         <Form :model="formItem" :label-width="80">
           <FormItem :label="`${$t('message.linkis.instanceName')}`">
             <Input disabled v-model="formItem.serviceInstance" ></Input>
@@ -121,11 +122,11 @@ export default {
         pageNow: 1
       },
       columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
           key: 'serviceInstance',

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.dao;
 
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNode;
+import org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo;
 
 import org.apache.ibatis.annotations.*;
 
@@ -74,4 +75,7 @@ public interface NodeManagerMapper {
       @Param("tickedId") String tickedId, @Param("instance") String instance);
 
   List<PersistenceNode> getNodeInstancesByOwnerList(@Param("owner") List<String> owner);
+
+  List<PersistencerEcNodeInfo> getEMNodeInfoList(
+      @Param("creatorUsers") List<String> creatorUsers, @Param("statuss") List<Integer> statuss);
 }

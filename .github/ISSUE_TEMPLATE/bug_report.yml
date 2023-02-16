@@ -24,17 +24,17 @@ body:
       value: |
         Thank you for reporting the problem!
         Please make sure what you are reporting is a bug with reproducible steps.
-        To ask questions or share ideas, pleae post on our [Discussion page](https://github.com/apache/incubator-linkis/discussions) instead.
+        To ask questions or share ideas, pleae post on our [Discussion page](https://github.com/apache/linkis/discussions) instead.
 
   - type: checkboxes
     attributes:
       label: Search before asking
       description: >
-        Please make sure to search in the [issues](https://github.com/apache/incubator-linkis/issues) first to see
+        Please make sure to search in the [issues](https://github.com/apache/linkis/issues) first to see
         whether the same issue was reported already.
       options:
         - label: >
-            I searched the [issues](https://github.com/apache/incubator-linkis/issues) and found no similar issues.
+            I searched the [issues](https://github.com/apache/linkis/issues) and found no similar issues.
           required: true
 
   - type: dropdown

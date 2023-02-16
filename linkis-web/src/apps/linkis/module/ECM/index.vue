@@ -64,7 +64,8 @@
       @on-visible-change="resetTagAdd"
       :title="$t('message.linkis.tagEdit')"
       v-model="isTagEdit"
-      :mask-closable="false">
+      :mask-closable="false"
+      :ok-text="$t('message.common.ok')">
       <Form :label-width="80" @submit.native.prevent>
         <FormItem :label="`${$t('message.linkis.instanceName')}：`">
           <Input disabled v-model="formItem.instance" />
@@ -83,6 +84,23 @@
         </FormItem>
       </Form>
     </Modal>
+    <Modal
+      @on-ok="confirmKill"
+      v-model="killModal"
+      :ok-text="$t('message.common.ok')">
+      <div>
+        <div class="tip">
+          {{$t('message.linkis.tipForKill', {instance: killInfo.curInstance})}}
+        </div>
+        <!-- <div class="radio">
+          {{$t('message.linkis.allEngine')}}
+          <RadioGroup v-model="killInfo.all">
+            <Radio :label="0">{{$t('message.linkis.no')}}</Radio>
+            <Radio :label="1">{{$t('message.linkis.yes')}}</Radio>
+          </RadioGroup>
+        </div> -->
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -90,6 +108,7 @@ import api from '@/common/service/api';
 import moment from "moment";
 import Search from '@/apps/linkis/module/ECM/search.vue';
 import WbTag from '@/apps/linkis/components/tag';
+import { debounce } from 'lodash'
 export default {
   name: 'ECM',
   data() {
@@ -119,6 +138,12 @@ export default {
       tableWidth: 0,
       // Open the label modification popup(开启标签修改弹框)
       isTagEdit: false,
+      // 删除实例instance
+      killInfo: {
+        curInstance: '',
+        all: 0,
+      },
+      killModal: false,
       tableData: [],
       page: {
         totalSize: 0,
@@ -184,7 +209,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.control.title'),
           key: 'action',
-          width: '80',
+          width: '230',
           // fixed: 'right',
           align: 'center',
           render: (h, params) => {
@@ -192,7 +217,10 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small'
+                  size: 'small',
+                },
+                style: {
+                  marginRight: '5px'
                 },
                 on: {
                   click: () => {
@@ -213,7 +241,23 @@ export default {
                     this.formItem = Object.assign(this.formItem, obj)
                   }
                 }
-              }, this.$t('message.linkis.tagEdit'))
+              }, this.$t('message.linkis.tagEdit')),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  display: sessionStorage.getItem('isLogAdmin') ? 'inline-block' : 'none'
+                },
+                on: {
+                  click: () => {
+                    this.killModal = true;
+                    console.log(params.row);
+                    this.killInfo.curInstance = params.row.instance;
+                  }
+                }
+              }, this.$t('message.linkis.killAll'))
             ]);
           }
         }
@@ -236,9 +280,9 @@ export default {
       const calcCompany = function(num, isCompany = false) {
         let data = num > 0 ? num : 0;
         if (isCompany) {
-          return data / 1024 / 1024 / 1024;
+          return Math.floor(data / 1024 / 1024 / 1024);
         }
-        return data;
+        return Math.floor(data);
       }
       return  v && (v.cores !== undefined || v.memory !== undefined || v.instance !== undefined) ? `${calcCompany(v.cores)}cores,${calcCompany(v.memory, true)}G,${calcCompany(v.instance)}apps` : ''
     }
@@ -360,7 +404,8 @@ export default {
       let param = {
         instance: e.instance,
         nodeHealthy: e.nodeHealthy,
-        owner: e.owner
+        owner: e.owner,
+        tenantLabel: e.tenant,
       }
       api.fetch('/linkisManager/listAllEMs',param,'get').then((res)=>{
         this.tableData = res.EMs
@@ -382,7 +427,30 @@ export default {
       if (v===false && this.$refs.wbtags) {
         this.$refs.wbtags.resetTagAdd()
       }
-    }
+    },
+    confirmKill: debounce(async function() {
+      try {
+        const res = await api.fetch('/linkisManager/rm/killUnlockEngineByEM', {
+          instance: this.killInfo.curInstance,
+          // withMultiUserEngine: this.killInfo.all === 1 ? true : false,
+        }, 'post');
+        const { killEngineNum, memory, cores } = res.result
+        console.log(res);
+        this.killModal = false;
+        this.killInfo = {
+          curInstance: '',
+          all: 0,
+        }
+        // 传回的是Byte
+        this.$Message.success(this.$t('message.linkis.killFinishedInfo', { killEngineNum, memory: memory / 1024 / 1024 / 1024, cores }))
+      } catch (err) {
+        console.warn(err);
+        this.killInfo = {
+          curInstance: '',
+          all: 0,
+        }
+      }
+    }, 1000, { leading: true })
   }
 }
 </script>

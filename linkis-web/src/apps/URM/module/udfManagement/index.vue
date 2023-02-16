@@ -101,12 +101,12 @@
       :mask-closable="false"
       @on-visible-change="changUserModalChange"
     >
-      <span>移交给：</span>
+      <span>{{$t('message.linkis.udf.changeUserTo')}}</span>
       <Select ref="userSelect" v-model="handleUser" filterable
-        v-if=allUsers.length
+        v-if="allUsers.length"
         :remoteMethod="filterSelectTransUser"
         @on-query-change="queryChange"
-        placeholder="请输入用户名" style="width:200px;">
+        :placeholder="$t('message.linkis.udf.inputUser')" style="width:200px;">
         <Option
           v-for="(item) in transUsers"
           :label="item"
@@ -114,28 +114,29 @@
           :key="item"
         />
       </Select>
-      <Input v-if=!allUsers.length v-model="handleUser" placeholder="请输入用户名" style="width: 300px" />
+      <Input v-if="!allUsers.length" v-model="handleUser" :placeholder="$t('message.linkis.udf.inputUser')" style="width: 300px" />
       <div slot="footer">
-        <Button @click="changUserModal=false">取消</Button>
-        <Button type="primary" :disabled="!this.handleUser" @click="changeUser">确定</Button>
+        <Button @click="changUserModal=false">{{$t('message.linkis.udf.cancel')}}</Button>
+        <Button type="primary" :disabled="!this.handleUser" @click="changeUser">{{$t('message.linkis.udf.confirm')}}</Button>
       </div>
     </Modal>
     <Modal
-      title="共享"
+      :title="$t('message.linkis.udf.share')"
       v-model="shareModal"
       :mask-closable="false"
       @on-ok="share"
+      :ok-text="$t('message.common.ok')"
     >
-      <span>共享用户:</span>
+      <span>{{$t('message.linkis.udf.shareUser')}}</span>
       <Input
         v-model="sharedUsers"
         type="textarea"
         :autosize="{ minRows: 2, maxRows: 5 }"
-        placeholder="使用逗号分隔"
+        :placeholder="$t('message.linkis.udf.separateWithCommas')"
       />
     </Modal>
     <Modal
-      title="版本列表"
+      :title="$t('message.linkis.udf.versionList')"
       v-model="vlistModal"
       width="1024"
       :mask-closable="false"
@@ -415,6 +416,7 @@ export default {
           this.isLoading = false
           this.loading = false
           this.search()
+          this.$Message.success(this.$t('message.linkis.udf.success'));
         })
         .catch(() => {
           this.isLoading = false
@@ -562,15 +564,21 @@ export default {
       this.showAddModal(true, args.row)
     },
     delete(args) {
-      if(!args.row) return
-      api
-        .fetch(`/udf/delete/${args.row.id}`, {}, 'post')
-        .then(() => {
-          this.search()
-        })
-        .catch(() => {
+      if (!args.row) return
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDelete', {envName: args.row.udfName}),
+        onOk: ()=>{
+          api.fetch(`/udf/delete/${args.row.id}`, {}, 'post')
+            .then(() => {
+              this.search()
+              this.$Message.success(this.$t('message.linkis.udf.success'));
+            })
+            .catch(() => {
 
-        })
+            })
+        }
+      })
     },
     vlist(args) {
       this.handleRow = args.row

@@ -50,6 +50,7 @@ import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, SubmitRespons
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 import scala.collection.convert.decorateAsScala._
@@ -84,6 +85,10 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     logger.info(s"Start to execute CodeLogicalUnitExecTask(${getIDInfo()}).")
     var executor: Option[CodeExecTaskExecutor] = None
     var retryException: LinkisRetryException = null
+    if (!getPhysicalContext.exists(TaskConstant.JOB_REQUEST_EC_TIME)) {
+      // Here you should use the time when you first applied for EC
+      getPhysicalContext.set(TaskConstant.JOB_REQUEST_EC_TIME, new Date(System.currentTimeMillis))
+    }
     executor = Utils.tryCatch(codeExecTaskExecutorManager.askExecutor(this)) {
       case retry: LinkisRetryException =>
         retryException = retry
@@ -114,12 +119,19 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
       response match {
         case SubmitResponse(engineConnExecId) =>
           codeExecutor.setEngineConnTaskId(engineConnExecId)
-          codeExecTaskExecutorManager.addEngineConnTaskID(codeExecutor)
+          codeExecTaskExecutorManager.addEngineConnTaskInfo(codeExecutor)
           val infoMap = new util.HashMap[String, Object]
           infoMap.put(
             TaskConstant.ENGINE_INSTANCE,
             codeExecutor.getEngineConnExecutor.getServiceInstance.getInstance
           )
+          infoMap.put(TaskConstant.JOB_SUBMIT_TO_EC_TIME, new Date(System.currentTimeMillis))
+          if (getPhysicalContext.exists(TaskConstant.JOB_REQUEST_EC_TIME)) {
+            infoMap.put(
+              TaskConstant.JOB_REQUEST_EC_TIME,
+              getPhysicalContext.get(TaskConstant.JOB_REQUEST_EC_TIME).asInstanceOf[Object]
+            )
+          }
           val event = TaskRunningInfoEvent(
             this,
             0f,

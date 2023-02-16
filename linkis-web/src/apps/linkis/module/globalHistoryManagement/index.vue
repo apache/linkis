@@ -94,7 +94,7 @@
         <Button
           type="primary"
           @click="switchAdmin"
-          v-if="isLogAdmin"
+          v-if="isLogAdmin || isHistoryAdmin"
         >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
       </FormItem>
     </Form>
@@ -260,6 +260,7 @@ export default {
         }
       ],
       isLogAdmin: false,
+      isHistoryAdmin: false,
       isAdminModel: false,
       moduleHeight: 300
     }
@@ -268,6 +269,7 @@ export default {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
       this.isLogAdmin = res.admin
+      this.isHistoryAdmin = res.historyAdmin
     })
     api.fetch('/configuration/engineType', 'get').then(res => {
       this.getEngineTypes = ['all', ...res.engineType]
@@ -284,6 +286,14 @@ export default {
     storage.set('last-admin-model', this.isAdminModel)
     // storage.set('last-searchbar-status', this.searchBar)
     window.removeEventListener('resize', this.getHeight)
+  },
+  beforeRouteEnter(to, from, next) {
+    if(from.name !== 'viewHistory') {
+      sessionStorage.removeItem('last-admin-model');
+      sessionStorage.removeItem('last-searchbar-status');
+      sessionStorage.removeItem('last-pageSetting-status');
+    }
+    next();
   },
   activated() {
     this.init()
@@ -358,7 +368,7 @@ export default {
         fileName
       }
       if (this.isAdminModel) {
-        query.proxyUser = params.row.umUser
+        query.proxyUser = params.row.executeUser
       }
       storage.set('last-searchbar-status', this.searchBar)
       storage.set('last-pageSetting-status', this.pageSetting)
@@ -524,7 +534,7 @@ export default {
           title: this.$t('message.linkis.tableColumns.fileName'),
           key: 'source',
           align: 'center',
-          tooltip: true,
+          ellipsis: true,
           width: 190
         },
         {
@@ -649,31 +659,37 @@ export default {
     },
     stop() {
       const selected = this.list.filter(it => it.checked)
-      if (selected.length) {
-        const inst = {}
-        selected.forEach(it => {
-          if (inst[it.instance]) {
-            inst[it.instance].taskIDList.push(it.taskID)
-            inst[it.instance].idList.push(it.strongerExecId)
-          } else {
-            inst[it.instance] = {
-              taskIDList: [it.taskID],
-              idList: [it.strongerExecId]
-            }
-          }
-        })
-        const p = []
-        Object.keys(inst).forEach(instkey => {
-          if (instkey) p.push(api.fetch(`/entrance/${inst[instkey].idList[0]}/killJobs`, { idList: inst[instkey].idList, taskIDList: inst[instkey].taskIDList }, 'post'))
-        })
-
-        Promise.all(p).then(()=> {
-          this.$Message.success(this.$t('message.linkis.editedSuccess'))
-          this.search()
-        })
-      } else {
+      if (!selected.length) {
         this.$Message.warning(this.$t('message.linkis.unselect'))
+        return;
       }
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDeleteTask'),
+        onOk: ()=>{
+          const inst = {}
+          selected.forEach(it => {
+            if (inst[it.instance]) {
+              inst[it.instance].taskIDList.push(it.taskID)
+              inst[it.instance].idList.push(it.strongerExecId)
+            } else {
+              inst[it.instance] = {
+                taskIDList: [it.taskID],
+                idList: [it.strongerExecId]
+              }
+            }
+          })
+          const p = []
+          Object.keys(inst).forEach(instkey => {
+            if (instkey) p.push(api.fetch(`/entrance/${inst[instkey].idList[0]}/killJobs`, { idList: inst[instkey].idList, taskIDList: inst[instkey].taskIDList }, 'post'))
+          })
+
+          Promise.all(p).then(()=> {
+            this.$Message.success(this.$t('message.linkis.udf.success'));
+            this.search()
+          })
+        }
+      })
     }
   }
 }

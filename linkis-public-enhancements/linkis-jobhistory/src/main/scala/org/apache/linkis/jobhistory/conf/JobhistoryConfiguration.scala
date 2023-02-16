@@ -20,8 +20,7 @@ package org.apache.linkis.jobhistory.conf
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 
 object JobhistoryConfiguration {
-  // modify this param in linkis.properties
-  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
+
   val JOB_HISTORY_SAFE_TRIGGER = CommonVars("wds.linkis.jobhistory.safe.trigger", true).getValue
 
   val ENTRANCE_SPRING_NAME = CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance")
@@ -38,5 +37,8 @@ object JobhistoryConfiguration {
 
   val DIRTY_DATA_UNFINISHED_JOB_STATUS =
     "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
+
+  val ERROR_MSG_TIP =
+    CommonVars("wds.linkis.jobhistory.error.msg.tip", "请求接口 %s 异常，您可以通过知识库文档常见问题尝试排查解决")
 
 }

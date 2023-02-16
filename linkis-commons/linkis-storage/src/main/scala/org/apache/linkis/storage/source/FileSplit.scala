@@ -22,6 +22,7 @@ import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.linkis.storage.script.{ScriptMetaData, VariableParser}
+import org.apache.linkis.storage.script.reader.StorageScriptFsReader
 
 import org.apache.commons.io.IOUtils
 import org.apache.commons.math3.util.Pair
@@ -74,9 +75,22 @@ class FileSplit(
     }
     count = start
     while (fsReader.hasNext && ifContinueRead) {
-      r(shuffler(fsReader.getRecord))
-      totalLine += 1
-      count += 1
+      val record = fsReader.getRecord
+      var needRemove = false
+      if (fsReader.isInstanceOf[StorageScriptFsReader]) {
+        val parser = fsReader.asInstanceOf[StorageScriptFsReader].getScriptParser()
+        if (
+            parser != null && metaData.asInstanceOf[ScriptMetaData].getMetaData.length > 0
+            && parser.getAnnotationSymbol().equals(record.toString)
+        ) {
+          needRemove = true
+        }
+      }
+      if (needRemove == false) {
+        r(shuffler(record))
+        totalLine += 1
+        count += 1
+      }
     }
     t
   }

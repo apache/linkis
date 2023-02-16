@@ -278,19 +278,19 @@ public class QueryTaskVO {
     this.canRetry = canRetry;
   }
 
-  public String getObserveInfo() {
-    return observeInfo;
-  }
-
-  public void setObserveInfo(String observeInfo) {
-    this.observeInfo = observeInfo;
-  }
-
   public String getExecuteUser() {
     return executeUser;
   }
 
   public void setExecuteUser(String executeUser) {
     this.executeUser = executeUser;
+  }
+
+  public String getObserveInfo() {
+    return observeInfo;
+  }
+
+  public void setObserveInfo(String observeInfo) {
+    this.observeInfo = observeInfo;
   }
 }

@@ -26,6 +26,7 @@ import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.contextcache.ContextCacheService;
+import org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary;
 import org.apache.linkis.cs.exception.ContextSearchFailedException;
 import org.apache.linkis.cs.highavailable.ha.ContextHAChecker;
 import org.apache.linkis.cs.persistence.ContextPersistenceManager;
@@ -78,7 +79,6 @@ public class ContextServiceImpl extends ContextService {
 
   @Override
   public ContextValue getContextValue(ContextID contextID, ContextKey contextKey) {
-    // 从缓存取即可,缓存中无会去数据库中拉取
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
     if (keyValue == null) {
       logger.info(
@@ -88,56 +88,44 @@ public class ContextServiceImpl extends ContextService {
       return null;
     }
     logger.info(
-        String.format(
-            "getContextValue,csId:%s,key:%s,csType:%s,csScope:%s",
-            contextID.getContextId(),
-            contextKey.getKey(),
-            contextKey.getContextType(),
-            contextKey.getContextScope()));
+        "getContextValue,csId:{},key:{},csType:{},csScope:{}",
+        contextID.getContextId(),
+        contextKey.getKey(),
+        contextKey.getContextType(),
+        contextKey.getContextScope());
     return keyValue.getContextValue();
   }
 
   @Override
   public List<ContextKeyValue> searchContextValue(
       ContextID contextID, Map<Object, Object> conditionMap) throws ContextSearchFailedException {
-    // return List<ContextKeyValue>
-    logger.info(String.format("searchContextValue,csId:%s", contextID.getContextId()));
+    logger.info("searchContextValue,csId:{}", contextID.getContextId());
     return contextSearch.search(contextCacheService, contextID, conditionMap);
   }
 
-  /*    @Override
-  public List<ContextKeyValue> searchContextValueByCondition(Condition condition) throws ContextSearchFailedException {
-      //return List<ContextKeyValue>
-      return contextSearch.search(contextCacheService, null, condition);
-  }*/
-
   @Override
   public void setValueByKey(ContextID contextID, ContextKey contextKey, ContextValue contextValue)
-      throws CSErrorException, ClassNotFoundException, JsonProcessingException {
-    // 1.获取value
+      throws CSErrorException, JsonProcessingException {
     Object value = contextValue.getValue();
-    // 2.解析keywords,放入contextKey的keys中
     Set<String> keys = keywordParser.parse(value);
     keys.add(contextKey.getKey());
     contextValue.setKeywords(jackson.writeValueAsString(keys));
-    // 3.缓存中是否有这个key,没有创建,有就更新
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKey);
     if (keyValue == null) {
-      // 创建校验scope和tye
       if (contextKey.getContextScope() == null || contextKey.getContextType() == null) {
-        throw new CSErrorException(97000, "try to create context ,type or scope cannot be empty");
+        throw new CSErrorException(
+            LinkisCsServerErrorCodeSummary.PARAMS_CANNOT_EMPTY.getErrorCode(),
+            "try to create context ,type or scope cannot be empty");
       }
-      // 这里没有给出contextKeyvalue的具体实现,给个默认的persistence
-      logger.warn(
-          String.format(
-              "setValueByKey, keyValue is not exist, csId:%s,key:%s",
-              contextID.getContextId(), contextKey.getKey()));
+      logger.info(
+          "Create cs key value setValueByKey, csId:{}},key:{}",
+          contextID.getContextId(),
+          contextKey.getKey());
       keyValue = new PersistenceContextKeyValue();
       keyValue.setContextKey(contextKey);
       keyValue.setContextValue(contextValue);
       getPersistence().create(contextID, keyValue);
     } else {
-      // update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到
       if (contextKey.getContextScope() == null) {
         contextKey.setContextScope(keyValue.getContextKey().getContextScope());
       }
@@ -148,23 +136,22 @@ public class ContextServiceImpl extends ContextService {
       keyValue.setContextValue(contextValue);
       getPersistence().update(contextID, keyValue);
     }
-    // 4.更新缓存
     contextCacheService.put(contextID, keyValue);
     logger.info(
-        String.format(
-            "setValueByKey, csId:%s,key:%s,keywords:%s",
-            contextID.getContextId(), contextKey.getKey(), contextValue.getKeywords()));
+        "setValueByKey, csId:{},key: {},keywords:{}",
+        contextID.getContextId(),
+        contextKey.getKey(),
+        contextValue.getKeywords());
   }
 
   @Override
   public void setValue(ContextID contextID, ContextKeyValue contextKeyValue)
       throws CSErrorException, ClassNotFoundException, JsonProcessingException {
-    // 1.解析keywords
+    // parse keywords
     Object value = contextKeyValue.getContextValue().getValue();
     Set<String> keys = keywordParser.parse(value);
     keys.add(contextKeyValue.getContextKey().getKey());
     contextKeyValue.getContextValue().setKeywords(jackson.writeValueAsString(keys));
-    // 2.数据库中是否有这个key,没有就创建,有就更新
     ContextKeyValue keyValue = contextCacheService.get(contextID, contextKeyValue.getContextKey());
     if (keyValue == null) {
       logger.warn(
@@ -185,7 +172,8 @@ public class ContextServiceImpl extends ContextService {
       }
       getPersistence().create(contextID, contextKeyValue);
     } else {
-      // update的话,如果scope和type 是空的,要用数据库中的值,因为update缓存要用到
+      // For update, if the scope and type are empty, use the value in the database, because the
+      // update cache needs to be used
       if (contextKeyValue.getContextKey().getContextScope() == null) {
         contextKeyValue.getContextKey().setContextScope(keyValue.getContextKey().getContextScope());
       }
@@ -194,22 +182,24 @@ public class ContextServiceImpl extends ContextService {
       }
       getPersistence().update(contextID, contextKeyValue);
     }
-    // 3.更新缓存
+    // refresh cache
     contextCacheService.put(contextID, contextKeyValue);
     logger.info(
-        String.format(
-            "setValue, csId:%s,key:%s",
-            contextID.getContextId(), contextKeyValue.getContextKey().getKey()));
+        "From db and cache  to setValue, csId:{},key:{}",
+        contextID.getContextId(),
+        contextKeyValue.getContextKey().getKey());
   }
 
   @Override
   public void resetValue(ContextID contextID, ContextKey contextKey) throws CSErrorException {
-    // 1.reset 数据库
+    // 1.reset db
     getPersistence().reset(contextID, contextKey);
-    // 2.reset 缓存
+    // 2.reset cache
     contextCacheService.rest(contextID, contextKey);
     logger.info(
-        String.format("resetValue, csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
+        "From db and cache  resetValue, csId:{},key:{}",
+        contextID.getContextId(),
+        contextKey.getKey());
   }
 
   @Override
@@ -218,30 +208,28 @@ public class ContextServiceImpl extends ContextService {
     if (contextKeyValue == null) {
       return;
     }
-    // 如果scope和type 不为空,则从原数据中进行赋值
+
     if (contextKey.getContextScope() == null) {
       contextKey.setContextScope(contextKeyValue.getContextKey().getContextScope());
     }
     if (contextKey.getContextType() == null) {
       contextKey.setContextType(contextKeyValue.getContextKey().getContextType());
     }
-    // 1.remove 数据库
+    // 1.remove db
     getPersistence().remove(contextID, contextKey);
-    // 2.remove 缓存
+    // 2.remove cache
     contextCacheService.remove(contextID, contextKey);
     logger.info(
-        String.format(
-            "removeValue, csId:%s,key:%s", contextID.getContextId(), contextKey.getKey()));
+        "From db and cache removeValue, csId:{},key:{}",
+        contextID.getContextId(),
+        contextKey.getKey());
   }
 
   @Override
   public void removeAllValue(ContextID contextID) throws CSErrorException {
-    // 移除数据库
     getPersistence().removeAll(contextID);
-    // 移除缓存
     contextCacheService.removeAll(contextID);
-
-    logger.info(String.format("removeAllValue, csId:%s", contextID.getContextId()));
+    logger.info("From db and cache removeAllValue, csId:{}", contextID.getContextId());
   }
 
   @Override
@@ -250,9 +238,10 @@ public class ContextServiceImpl extends ContextService {
     contextCacheService.removeByKeyPrefix(contextID, keyPrefix, contextType);
     getPersistence().removeByKeyPrefix(contextID, contextType, keyPrefix);
     logger.info(
-        String.format(
-            "removeAllValueByKeyPrefixAndContextType, csId:%s,csType:%s,keyPrefix:%s",
-            contextID.getContextId(), contextType, keyPrefix));
+        "From db and cache  removeAllValueByKeyPrefixAndContextType, csId:{},csType:{},keyPrefix:{}",
+        contextID.getContextId(),
+        contextType,
+        keyPrefix);
   }
 
   @Override
@@ -261,9 +250,10 @@ public class ContextServiceImpl extends ContextService {
     contextCacheService.removeByKey(contextID, keyStr, contextType);
     getPersistence().removeByKey(contextID, contextType, keyStr);
     logger.info(
-        String.format(
-            "removeAllValueByKeyAndContextType, csId:%s,csType:%s,keyStr:%s",
-            contextID.getContextId(), contextType, keyStr));
+        "From db and cache  removeAllValueByKeyAndContextType, csId:{},csType:{},keyStr:{}",
+        contextID.getContextId(),
+        contextType,
+        keyStr);
   }
 
   @Override
@@ -272,9 +262,9 @@ public class ContextServiceImpl extends ContextService {
     contextCacheService.removeByKeyPrefix(contextID, keyPrefix);
     getPersistence().removeByKeyPrefix(contextID, keyPrefix);
     logger.info(
-        String.format(
-            "removeAllValueByKeyPrefix, csId:%s,keyPrefix:%s",
-            contextID.getContextId(), keyPrefix));
+        "From db and cache  removeAllValueByKeyPrefix, csId:{},keyPrefix:{}",
+        contextID.getContextId(),
+        keyPrefix);
   }
 
   @Override
@@ -289,7 +279,7 @@ public class ContextServiceImpl extends ContextService {
         getIDPersistence().deleteContextID(csid);
         num++;
       } catch (Exception e) {
-        logger.warn("clear all for haid : {} failed, {}", haid, e.getMessage(), e);
+        logger.warn("clear all for haid : {}", haid, e);
       }
     }
     return num;

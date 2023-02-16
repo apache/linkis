@@ -95,7 +95,7 @@
               @click="handleCancel"
             >{{ $t('message.linkis.cancel') }}</Button>
             <Button type="primary" @click="onSubmit" :disabled="!hasFile" :loading="isUploading">{{
-              $t('message.linkis.complete')}}</Button>
+              $t('message.linkis.ok')}}</Button>
           </div>
         </div>
       </div>

@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.GET_FIELD_SCHEMAS_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
@@ -52,7 +53,6 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
@@ -203,8 +203,18 @@ class HiveEngineConnExecutor(
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
+        var compileRet = -1
         Utils.tryCatch {
-          val queryPlan = driver.getPlan
+          compileRet = driver.compile(realCode)
+          logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+          if (0 != compileRet) {
+            logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+            throw HiveQueryFailedException(
+              COMPILE_HIVE_QUERY_ERROR.getErrorCode,
+              COMPILE_HIVE_QUERY_ERROR.getErrorDesc
+            )
+          }
+          val queryPlan = driver.getPlan()
           val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
           numberOfMRJobs = numberOfJobs
           logger.info(s"there are ${numberOfMRJobs} jobs.")
@@ -215,10 +225,18 @@ class HiveEngineConnExecutor(
         if (numberOfMRJobs > 0) {
           engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         }
-        val hiveResponse: CommandProcessorResponse = driver.run(realCode)
+        if (thread.isInterrupted) {
+          logger.error(
+            "The thread of execution has been interrupted and the task should be terminated"
+          )
+          return ErrorExecuteResponse(
+            "The thread of execution has been interrupted and the task should be terminated",
+            null
+          )
+        }
+        val hiveResponse: CommandProcessorResponse = driver.run(realCode, compileRet == 0)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
-          // todo check uncleared context ?
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)
         }
         engineExecutorContext.appendStdout(
@@ -402,6 +420,7 @@ class HiveEngineConnExecutor(
     singleSqlProgressMap.clear()
     Utils.tryAndWarnMsg(sessionState.close())("close session failed")
     super.close()
+    killTask("close")
   }
 
   override def FetchResource: util.HashMap[String, ResourceWithStatus] = {
@@ -529,6 +548,7 @@ class HiveEngineConnExecutor(
       case "mr" =>
         HadoopJobExecHelper.killRunningJobs()
         Utils.tryQuietly(HiveInterruptUtils.interrupt())
+        Utils.tryAndWarn(driver.close())
         if (null != thread) {
           Utils.tryAndWarn(thread.interrupt())
         }
@@ -614,6 +634,13 @@ class HiveDriverProxy(driver: Any) extends Logging {
     driver.getClass
       .getMethod("run", classOf[String])
       .invoke(driver, command.asInstanceOf[AnyRef])
+      .asInstanceOf[CommandProcessorResponse]
+  }
+
+  def run(command: String, alreadyCompiled: Boolean): CommandProcessorResponse = {
+    driver.getClass
+      .getMethod("run", classOf[String], classOf[Boolean])
+      .invoke(driver, command.asInstanceOf[AnyRef], alreadyCompiled.asInstanceOf[AnyRef])
       .asInstanceOf[CommandProcessorResponse]
   }
 

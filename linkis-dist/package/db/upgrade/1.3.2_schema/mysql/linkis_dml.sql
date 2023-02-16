@@ -250,4 +250,12 @@ update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where 
 update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 
+
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43041','用户UDF加载失败，请检查后再执行','Invalid function',0);
+
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12015','您好，您设置的执行器内存已经超过了集群的限定值%s，请减少到限定值以下','Required executor memory (-?[1-9]\\d*)',0);
+
+alter table `linkis_cg_ec_resource_info_record`  add column `metrics` VARCHAR(1024) DEFAULT NULL COMMENT 'ec metrics';
+
+
+

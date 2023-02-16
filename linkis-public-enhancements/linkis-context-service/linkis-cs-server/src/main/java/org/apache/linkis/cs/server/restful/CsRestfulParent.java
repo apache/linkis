@@ -23,21 +23,13 @@ import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.entity.source.ContextKeyValue;
 import org.apache.linkis.cs.common.entity.source.ContextValue;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
-import org.apache.linkis.cs.server.protocol.HttpRequestProtocol;
 import org.apache.linkis.cs.server.protocol.HttpResponseProtocol;
 import org.apache.linkis.cs.server.protocol.RestResponseProtocol;
-import org.apache.linkis.cs.server.scheduler.CsScheduler;
 import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
-import org.apache.linkis.cs.server.scheduler.RestJobBuilder;
 import org.apache.linkis.cs.server.util.CsUtils;
 import org.apache.linkis.server.Message;
-import org.apache.linkis.server.utils.ModuleUserUtils;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,18 +40,6 @@ import org.slf4j.LoggerFactory;
 public interface CsRestfulParent {
 
   Logger logger = LoggerFactory.getLogger(CsRestfulParent.class);
-
-  default HttpAnswerJob submitRestJob(
-      HttpServletRequest req, ServiceMethod method, Object... objects) throws InterruptedException {
-    // TODO: 2020/3/3 单例
-    HttpAnswerJob job = (HttpAnswerJob) new RestJobBuilder().build(getServiceType());
-    HttpRequestProtocol protocol = job.getRequestProtocol();
-    protocol.setUsername(ModuleUserUtils.getOperationUser(req));
-    protocol.setServiceMethod(method);
-    protocol.setRequestObjects(objects);
-    getScheduler().submit(job);
-    return job;
-  }
 
   default Message generateResponse(HttpAnswerJob job, String responseKey) throws CSErrorException {
     HttpResponseProtocol responseProtocol = job.getResponseProtocol();
@@ -95,12 +75,28 @@ public interface CsRestfulParent {
     return Message.ok();
   }
 
+  default Message generateMessage(Object data, String responseKey) throws CSErrorException {
+    if (null != data) {
+      if (data instanceof List && ((List) data).isEmpty()) {
+        return Message.ok().data(responseKey, new String[] {});
+      } else if (data instanceof List) {
+        ArrayList<String> strings = new ArrayList<>();
+        for (Object d : (List) data) {
+          strings.add(CsUtils.serialize(d));
+        }
+        return Message.ok().data(responseKey, strings);
+      } else {
+        String dataStr = CsUtils.serialize(data);
+        return Message.ok().data(responseKey, dataStr);
+      }
+    } else {
+      return Message.ok().data(responseKey, null);
+    }
+  }
+
   ServiceType getServiceType();
 
-  CsScheduler getScheduler();
-
-  default ContextID getContextIDFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
+  default ContextID getContextIDFromJsonNode(JsonNode jsonNode) throws CSErrorException {
     return deserialize(jsonNode, "contextID");
   }
 
@@ -110,23 +106,20 @@ public interface CsRestfulParent {
     return (T) CsUtils.SERIALIZE.deserialize(str);
   }
 
-  default ContextKey getContextKeyFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
+  default ContextKey getContextKeyFromJsonNode(JsonNode jsonNode) throws CSErrorException {
     return deserialize(jsonNode, "contextKey");
   }
 
-  default ContextValue getContextValueFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
+  default ContextValue getContextValueFromJsonNode(JsonNode jsonNode) throws CSErrorException {
     return deserialize(jsonNode, "contextValue");
   }
 
   default ContextKeyValue getContextKeyValueFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
+      throws CSErrorException {
     return deserialize(jsonNode, "contextKeyValue");
   }
 
-  default ContextHistory getContextHistoryFromJsonNode(JsonNode jsonNode)
-      throws CSErrorException, IOException, ClassNotFoundException {
+  default ContextHistory getContextHistoryFromJsonNode(JsonNode jsonNode) throws CSErrorException {
     return deserialize(jsonNode, "contextHistory");
   }
 }

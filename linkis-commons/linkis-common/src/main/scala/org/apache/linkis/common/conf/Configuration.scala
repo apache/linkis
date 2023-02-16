@@ -67,9 +67,9 @@ object Configuration extends Logging {
 
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
-      false
+      return false
     } else {
-      token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
+      return token.toUpperCase().startsWith(GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH)
     }
   }
 
@@ -101,7 +101,7 @@ object Configuration extends Logging {
   }
 
   def isNotAdmin(username: String): Boolean = {
-    !isAdmin(username)
+    return !isAdmin(username)
   }
 
   def isJobHistoryAdmin(username: String): Boolean = {

@@ -71,8 +71,10 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   SHELL_BLACKLISTED_CODE(50081, "Shell code contains blacklisted code(shell中包含黑名单代码)"),
   JOB_HISTORY_FAILED_ID(50081, ""),
 
-  LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)");
-
+  LOGPATH_NOT_NULL(20301, "The logPath cannot be empty(日志路径不能为空)"),
+  VARIABLE_NULL_EXCEPTION(20017, "variable is null"),
+  USER_NULL_EXCEPTION(20018, "User information not obtained"),
+  USER_IP_EXCEPTION(20019, "User IP address is not configured");
   /** (errorCode)错误码 */
   private final int errorCode;
   /** (errorDesc)错误描述 */

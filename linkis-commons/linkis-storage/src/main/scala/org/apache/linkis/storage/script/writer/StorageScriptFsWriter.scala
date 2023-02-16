@@ -40,16 +40,20 @@ class StorageScriptFsWriter(
 
   @scala.throws[IOException]
   override def addMetaData(metaData: MetaData): Unit = {
-    val compactions = Compaction
-      .listCompactions()
-      .filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
+
     val metadataLine = new util.ArrayList[String]()
-    if (compactions.length > 0) {
+    val compaction = getScriptCompaction()
+    if (compaction != null) {
+
       metaData
         .asInstanceOf[ScriptMetaData]
         .getMetaData
-        .map(compactions(0).compact)
+        .map(compaction.compact)
         .foreach(metadataLine.add)
+      // add annotition symbol
+      if (metadataLine.size() > 0) {
+        metadataLine.add(compaction.getAnnotationSymbol())
+      }
       if (outputStream != null) {
         IOUtils.writeLines(metadataLine, "\n", outputStream, charset)
       } else {
@@ -57,6 +61,7 @@ class StorageScriptFsWriter(
         metadataLine.asScala.foreach(m => stringBuilder.append(s"$m\n"))
       }
     }
+
   }
 
   @scala.throws[IOException]
@@ -91,6 +96,25 @@ class StorageScriptFsWriter(
     new ByteArrayInputStream(
       stringBuilder.toString().getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue)
     )
+  }
+
+  /**
+   * get the script compaction according to the path(根据文件路径 获取对应的script Compaction )
+   * @return
+   *   Scripts Compaction
+   */
+
+  def getScriptCompaction(): Compaction = {
+
+    val compactions = Compaction
+      .listCompactions()
+      .filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
+
+    if (compactions.length > 0) {
+      compactions(0)
+    } else {
+      null
+    }
   }
 
 }

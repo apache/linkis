@@ -107,6 +107,9 @@
     <jedis.version>2.9.2</jedis.version>
     <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
+    <spark.hadoop.version>2.7</spark.hadoop.version>
+    <flink.version>1.12.2</flink.version>
+    <hive.version>2.3.4</hive.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs</hadoop-hdfs-client.artifact>
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <zookeeper.version>3.5.9</zookeeper.version>

@@ -27,7 +27,6 @@
   <artifactId>linkis-engineplugin-hive</artifactId>
 
   <properties>
-    <hive.version>2.3.4</hive.version>
   </properties>
 
   <dependencies>

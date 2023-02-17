@@ -4,6 +4,4 @@
 |------------------| ----- |----------------------------------------------------------------------|------| ------------------------------------------------------- |
 | linkis-jobhistory | 新增  | wds.linkis.jobhistory.admin | hadoop |可以查看所有历史任务的用户 注意：wds.linkis.governance.station.admin 为管理用户（也具有可以查看所有历史任务的权限）|
 | linkis | 新增  | wds.linkis.governance.station.admin.token |   /具有管理员权限的特殊token|
-
-
-| cg-entrance | 新增  | wds.linkis.entrance.whether.open.send.instance | true |取值范围：true或false|
+| cg-entrance | 新增  | wds.linkis.entrance.auto.check.job.status.enable | true |取值范围：true或false|

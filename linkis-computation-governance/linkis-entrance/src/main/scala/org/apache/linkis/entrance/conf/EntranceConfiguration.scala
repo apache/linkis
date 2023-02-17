@@ -226,6 +226,6 @@ object EntranceConfiguration {
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
   val SEND_INSTANCE =
-    CommonVars("wds.linkis.entrance.whether.open.send.instance", true)
+    CommonVars("wds.linkis.entrance.auto.check.job.status.enable", true)
 
 }

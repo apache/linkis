@@ -223,7 +223,7 @@
     </update>
 
     <update id="updateJobHistoryCancelById" >
-        update linkis_ps_job_history_group_history set status = 'Cancelled'
+        update linkis_ps_job_history_group_history set status = 'Cancelled' ,error_desc = #{errorDesc}
         WHERE id IN
         <foreach collection="idList" item="id" separator="," open="(" close=")">
             #{id}

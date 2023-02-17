@@ -83,7 +83,7 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 | **引擎名** | **支持底层组件版本 <br/>(默认依赖版本)** | **Linkis 版本要求** | **是否默认包含在发布包中** | **说明** |
 |:---- |:---- |:---- |:---- |:---- |
 |Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>（默认 Apache Spark 2.4.3）|\>=1.0.3|是|Spark EngineConn， 支持 SQL, Scala, Pyspark 和 R 代码|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 2.3.3）|\>=1.0.3|是|Hive EngineConn， 支持 HiveQL 代码|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 2.3.4）|\>=1.0.3|是|Hive EngineConn， 支持 HiveQL 代码|
 |Python|Python >= 2.6, <br/>（默认 Python2*）|\>=1.0.3|是|Python EngineConn， 支持 python 代码|
 |Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持 Bash shell 代码|
 |JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持 MySQL 和 HiveQL，可快速扩展支持其他有 JDBC Driver 包的引擎, 如 Oracle|

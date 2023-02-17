@@ -94,7 +94,7 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #SPARK_VERSION=2.4.3
 
 ##HIVE_VERSION
-#HIVE_VERSION=2.3.3
+#HIVE_VERSION=2.3.4
 
 #PYTHON_VERSION=python2
 

@@ -202,7 +202,7 @@ $> kind delete cluster --name test-helm
 We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
 
 * Hadoop 2.7.2 , including HDFS and YARN
-* Hive 2.3.3
+* Hive 2.3.4
 * Spark 2.4.3
 * Flink 1.12.2
 * ZooKeeper 3.5.9
@@ -245,10 +245,10 @@ drwxrwxrwx   - root supergroup          0 2022-07-31 02:48 /user
 
 [root@ldh-96bdc757c-dnkbs /]# beeline -u jdbc:hive2://ldh.ldh.svc.cluster.local:10000/ -n hadoop
 Connecting to jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
-Connected to: Apache Hive (version 2.3.3)
-Driver: Hive JDBC (version 2.3.3)
+Connected to: Apache Hive (version 2.3.4)
+Driver: Hive JDBC (version 2.3.4)
 Transaction isolation: TRANSACTION_REPEATABLE_READ
-Beeline version 2.3.3 by Apache Hive
+Beeline version 2.3.4 by Apache Hive
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create database demo;
 No rows affected (1.306 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> use demo;

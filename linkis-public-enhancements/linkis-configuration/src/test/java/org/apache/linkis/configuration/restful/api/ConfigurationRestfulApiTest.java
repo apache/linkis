@@ -127,7 +127,7 @@ public class ConfigurationRestfulApiTest {
     //                "    }\n" +
     //                "  ],\n" +
     //                "  \"creator\": \"LINKISCLI\",\n" +
-    //                "  \"engineType\": \"hive-2.3.3\"\n" +
+    //                "  \"engineType\": \"hive-2.3.4\"\n" +
     //                "}";
     //        String url = "/configuration/saveFullTree";
     //

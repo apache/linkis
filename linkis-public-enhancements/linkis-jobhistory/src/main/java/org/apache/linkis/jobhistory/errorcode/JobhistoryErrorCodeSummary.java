@@ -20,9 +20,9 @@ package org.apache.linkis.jobhistory.errorcode;
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum JobhistoryErrorCodeSummary implements LinkisErrorCode {
-  USER_IP_EXCEPTION(20020, "entrance service restart, automatically cancel tasks that have not been completed for a long time (24h)");
-
-
+  USER_IP_EXCEPTION(
+      20020,
+      "entrance service restart, automatically cancel tasks that have not been completed for a long time (24h)");
 
   /** (errorCode)错误码 */
   private final int errorCode;

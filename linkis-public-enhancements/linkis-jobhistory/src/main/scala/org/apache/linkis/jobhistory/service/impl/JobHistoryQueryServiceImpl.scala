@@ -20,21 +20,29 @@ package org.apache.linkis.jobhistory.service.impl
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants
-import org.apache.linkis.governance.common.entity.job.{JobRequest, JobRequestWithDetail, QueryException, SubJobDetail}
+import org.apache.linkis.governance.common.entity.job.{
+  JobRequest,
+  JobRequestWithDetail,
+  QueryException,
+  SubJobDetail
+}
 import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
+import org.apache.linkis.jobhistory.errorcode.JobhistoryErrorCodeSummary
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.commons.lang3.time.DateUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -42,10 +50,11 @@ import java.{lang, util}
 import java.sql.Timestamp
 import java.util.{Calendar, Date}
 import java.util.concurrent.{Callable, TimeUnit}
+
 import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
 import com.google.common.collect.{Iterables, Lists}
-import org.apache.linkis.jobhistory.errorcode.JobhistoryErrorCodeSummary
 
 @Service
 class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
@@ -444,7 +453,10 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     // Modify task status
     val errorMsg = JobhistoryErrorCodeSummary.USER_IP_EXCEPTION.getErrorDesc
     if (!idlist.isEmpty) {
-      Lists.partition(idlist, 100).asScala.foreach(idlist => jobHistoryMapper.updateJobHistoryCancelById(idlist, errorMsg))
+      Lists
+        .partition(idlist, 100)
+        .asScala
+        .foreach(idlist => jobHistoryMapper.updateJobHistoryCancelById(idlist, errorMsg))
     }
   }
 

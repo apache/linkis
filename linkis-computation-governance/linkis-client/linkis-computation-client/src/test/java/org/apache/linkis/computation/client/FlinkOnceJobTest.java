@@ -27,7 +27,7 @@ import org.apache.linkis.computation.client.utils.LabelKeyUtils;
 public class FlinkOnceJobTest {
   public static void main(String[] args) {
     // TODO First, set the right gateway url.
-    LinkisJobClient.config().setDefaultServerUrl("http://127.0.0.1:9002");
+    LinkisJobClient.config().setDefaultServerUrl("http://10.107.118.104:9001");
     // TODO Second, modify the sql, so Flink engineConn can run it successfully.
     String sql =
         "CREATE TABLE mysql_binlog (\n"

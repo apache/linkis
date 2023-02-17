@@ -224,7 +224,7 @@ fi
 
 if [ "$HIVE_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#hive-2.3.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#hive-2.3.4#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#\#wds.linkis.hive.engine.version.*#wds.linkis.hive.engine.version=$HIVE_VERSION#g" $common_conf
 fi
 

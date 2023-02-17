@@ -141,7 +141,7 @@ data:
     spark.sql.autoBroadcastJoinThreshold 26214400
     spark.sql.hive.convertMetastoreOrc true
     spark.sql.hive.metastore.jars /opt/ldh/current/spark/jars/*
-    spark.sql.hive.metastore.version 2.3.3
+    spark.sql.hive.metastore.version 2.3.4
     spark.sql.orc.filterPushdown true
     spark.sql.orc.impl native
     spark.sql.queryExecutionListeners

@@ -19,7 +19,7 @@
 
 -- 变量：
 SET @SPARK_LABEL="spark-2.4.3";
-SET @HIVE_LABEL="hive-2.3.3";
+SET @HIVE_LABEL="hive-2.3.4";
 SET @PYTHON_LABEL="python-python2";
 SET @PIPELINE_LABEL="pipeline-1";
 SET @JDBC_LABEL="jdbc-4";

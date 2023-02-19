@@ -45,15 +45,17 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
           @Override
           public void stateChanged(SparkAppHandle sparkAppHandle) {
             jobState = sparkAppHandle.getState();
+            // print log when state change
             if (sparkAppHandle.getAppId() != null) {
-              countDownLatch.countDown();
-              applicationId = sparkAppHandle.getAppId();
               logger.info("{} stateChanged: {}", applicationId, jobState.toString());
             } else {
-              if (jobState.isFinal()) {
-                countDownLatch.countDown();
-              }
               logger.info("stateChanged: {}", jobState.toString());
+            }
+
+            // countDownLatch.countDown when job complete
+            if (jobState.isFinal()) {
+              countDownLatch.countDown();
+              logger.info("job completed, state: {}", jobState.toString());
             }
           }
 
@@ -117,6 +119,9 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
   }
 
   public boolean initJobId() {
-    return null != getApplicationId();
+    this.applicationId = sparkAppHandle.getAppId();
+    // When the job is not finished, the appId is monitored; otherwise, the status is
+    // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
+    return null != getApplicationId() || jobState.isFinal();
   }
 }

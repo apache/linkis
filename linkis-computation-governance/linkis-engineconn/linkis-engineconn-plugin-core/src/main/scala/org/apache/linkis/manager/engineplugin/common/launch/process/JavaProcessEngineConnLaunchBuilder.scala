@@ -65,12 +65,20 @@ abstract class JavaProcessEngineConnLaunchBuilder
     val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
     commandLine += (variable(JAVA_HOME) + "/bin/java")
     commandLine += "-server"
-    val engineConnMemoryXmx = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
-    commandLine += ("-Xmx" + engineConnMemoryXmx)
-    val engineConnMemoryXms = EnvConfiguration.ENGINE_CONN_MEMORY
-      .getValue(engineConnBuildRequest.engineConnCreationDesc.properties)
-      .toString
-    commandLine += ("-Xms" + engineConnMemoryXms)
+
+    val properties = engineConnBuildRequest.engineConnCreationDesc.properties
+    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
+      var settingClientMemory =
+        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+      if (!settingClientMemory.toLowerCase().endsWith("g")) {
+        settingClientMemory = settingClientMemory + "g"
+      }
+      commandLine += ("-Xmx" + settingClientMemory)
+    } else {
+      val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
+      commandLine += ("-Xmx" + engineConnMemory)
+    }
+
     val javaOPTS = getExtractJavaOpts
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
       EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue

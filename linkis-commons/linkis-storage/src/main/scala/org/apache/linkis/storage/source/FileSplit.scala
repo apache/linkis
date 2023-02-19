@@ -74,19 +74,22 @@ class FileSplit(
       fsReader.skip(start)
     }
     count = start
+    var hasRemovedFlag = false
     while (fsReader.hasNext && ifContinueRead) {
       val record = fsReader.getRecord
-      var needRemove = false
-      if (fsReader.isInstanceOf[StorageScriptFsReader]) {
+      var needRemoveFlag = false
+       if (hasRemovedFlag == false && fsReader.isInstanceOf[StorageScriptFsReader]) {
+       // if (fsReader.isInstanceOf[StorageScriptFsReader]) {
         val parser = fsReader.asInstanceOf[StorageScriptFsReader].getScriptParser()
         if (
             parser != null && metaData.asInstanceOf[ScriptMetaData].getMetaData.length > 0
             && parser.getAnnotationSymbol().equals(record.toString)
         ) {
-          needRemove = true
+          needRemoveFlag = true
+          hasRemovedFlag = true
         }
       }
-      if (needRemove == false) {
+      if (needRemoveFlag == false) {
         r(shuffler(record))
         totalLine += 1
         count += 1

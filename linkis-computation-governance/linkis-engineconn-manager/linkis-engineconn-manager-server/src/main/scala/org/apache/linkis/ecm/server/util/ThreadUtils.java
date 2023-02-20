@@ -49,7 +49,7 @@ public class ThreadUtils extends ApplicationContextEvent {
         try {
             msg = future.get(30, TimeUnit.MINUTES).toString();
         } catch (TimeoutException e) {
-            logger.info("shell执行超时 {}", shellName);
+            logger.info("shell execution timeout {}", shellName);
         } catch (ExecutionException | InterruptedException e) {
             logger.error("Thread error msg {}", e.getMessage());
         }

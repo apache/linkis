@@ -21,13 +21,12 @@ import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.launcher.CustomSparkSubmitLauncher;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
@@ -35,42 +34,10 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     super(executionContext);
   }
 
-  public void deployCluster(String mainClass, String args, Map<String, String> confMap)
-      throws IOException, InterruptedException {
+  public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
     SparkConfig sparkConfig = executionContext.getSparkConfig();
 
-    CountDownLatch countDownLatch = new CountDownLatch(1);
-    SparkAppHandle.Listener listener =
-        new SparkAppHandle.Listener() {
-          @Override
-          public void stateChanged(SparkAppHandle sparkAppHandle) {
-            jobState = sparkAppHandle.getState();
-            // print log when state change
-            if (sparkAppHandle.getAppId() != null) {
-              logger.info("{} stateChanged: {}", applicationId, jobState.toString());
-            } else {
-              logger.info("stateChanged: {}", jobState.toString());
-            }
-
-            // countDownLatch.countDown when job complete
-            if (jobState.isFinal()) {
-              countDownLatch.countDown();
-              logger.info("job completed, state: {}", jobState.toString());
-            }
-          }
-
-          @Override
-          public void infoChanged(SparkAppHandle sparkAppHandle) {
-            jobState = sparkAppHandle.getState();
-            if (sparkAppHandle.getAppId() != null) {
-              logger.info("{} infoChanged: {}", sparkAppHandle.getAppId(), jobState.toString());
-            } else {
-              logger.info("infoChanged: {}", jobState.toString());
-            }
-          }
-        };
-
-    sparkLauncher = new SparkLauncher();
+    sparkLauncher = new CustomSparkSubmitLauncher();
     // region set args
     sparkLauncher
         .setJavaHome(sparkConfig.getJavaHome())
@@ -107,9 +74,24 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
         .filter(StringUtils::isNotBlank)
         .forEach(arg -> sparkLauncher.addAppArgs(arg));
     // sparkLauncher.addAppArgs(args);
-    // endregion
-    sparkAppHandle = sparkLauncher.startApplication(listener);
-    countDownLatch.await();
+    sparkAppHandle =
+        sparkLauncher.startApplication(
+            new SparkAppHandle.Listener() {
+              @Override
+              public void stateChanged(SparkAppHandle sparkAppHandle) {
+                jobState = sparkAppHandle.getState();
+                // print log when state change
+                if (sparkAppHandle.getAppId() != null) {
+                  logger.info(
+                      "{} stateChanged: {}", sparkAppHandle.getAppId(), jobState.toString());
+                } else {
+                  logger.info("stateChanged: {}", jobState.toString());
+                }
+              }
+
+              @Override
+              public void infoChanged(SparkAppHandle sparkAppHandle) {}
+            });
   }
 
   private void addSparkArg(SparkLauncher sparkLauncher, String key, String value) {
@@ -122,6 +104,6 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     this.applicationId = sparkAppHandle.getAppId();
     // When the job is not finished, the appId is monitored; otherwise, the status is
     // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
-    return null != getApplicationId() || jobState.isFinal();
+    return null != getApplicationId() || (jobState != null && jobState.isFinal());
   }
 }

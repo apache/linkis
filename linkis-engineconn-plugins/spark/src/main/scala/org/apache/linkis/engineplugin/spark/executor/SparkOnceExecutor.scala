@@ -94,25 +94,28 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
           private val printInterval =
             math.max(SPARK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, 5 * 60 * 1000)
 
-          override def run(): Unit = if (!isCompleted) {
+          override def run(): Unit = {
             val jobState = clusterDescriptorAdapter.getJobState
             if (
-                (jobState != null && jobState != lastStatus) ||
-                System.currentTimeMillis - lastPrintTime >= printInterval
+                (jobState != null && jobState != lastStatus) || System.currentTimeMillis - lastPrintTime >= printInterval
             ) {
               logger.info(s"The jobState of $getApplicationId is $jobState.")
               lastPrintTime = System.currentTimeMillis
             }
+
             lastStatus = jobState
-            if (lastStatus.isFinal) {
-              logger.info(s"spark job state is final, state ${lastStatus}")
+            if (clusterDescriptorAdapter.isDisposed) {
+              // get final state again
+              lastStatus = clusterDescriptorAdapter.getJobState
+              logger.info(s"spark process is not alive, state ${lastStatus}")
               lastStatus match {
+                case SparkAppHandle.State.FINISHED =>
+                  trySucceed()
                 case SparkAppHandle.State.FAILED | SparkAppHandle.State.KILLED |
                     SparkAppHandle.State.LOST =>
                   tryFailed()
-                case SparkAppHandle.State.FINISHED =>
-                  trySucceed()
                 case _ =>
+                  tryFailed()
               }
             }
           }

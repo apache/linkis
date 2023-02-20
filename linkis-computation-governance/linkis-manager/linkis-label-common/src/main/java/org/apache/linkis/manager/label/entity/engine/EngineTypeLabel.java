@@ -74,4 +74,12 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
   public Boolean isEmpty() {
     return StringUtils.isBlank(getEngineType()) || StringUtils.isBlank(getVersion());
   }
+
+  @Override
+  protected void setStringValue(String stringValue) {
+    String engineType = stringValue.split("-")[0];
+    String version = stringValue.replaceFirst(stringValue.split("-")[0] + "-", "");
+    setEngineType(engineType);
+    setVersion(version);
+  }
 }

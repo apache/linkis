@@ -32,7 +32,6 @@ public class EngineTypeLabelTest {
 
     EngineTypeLabelCreator.registerVersion(engineType, version);
     EngineTypeLabel engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engineType);
-    engineTypeLabel.setStringValue(engineType + "-" + version);
 
     Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType);
     Assertions.assertEquals(engineTypeLabel.getVersion(), version);

@@ -36,8 +36,8 @@ jobs:
         java-version: 8
     - name: Build backend by maven
       run:
-        ./mvn -N install
         ./mvnw clean package
+        ./mvn -N install
         ./mvn clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
         ./mvn clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov

@@ -61,6 +61,12 @@ public class TenantConfigServiceImpl implements TenantConfigService {
       String user, String creator, String tenantValue, Integer pageNow, Integer pageSize) {
     Map<String, Object> result = new HashMap<>(2);
     List<TenantVo> tenantVos = null;
+    if (Objects.isNull(pageNow)) {
+      pageNow = 1;
+    }
+    if (Objects.isNull(pageSize)) {
+      pageSize = 20;
+    }
     PageHelper.startPage(pageNow, pageSize);
     try {
       tenantVos = userTenantMapper.queryTenantList(user, creator, tenantValue);
@@ -155,11 +161,10 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   @Override
-  public Boolean checkUserCteator(String user, String creator, String tenantValue)
-      throws ConfigurationException {
+  public Boolean userExists(String user, String creator, String tenantValue) {
     boolean result = true;
     Map<String, Object> resultMap =
-        queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, null, null);
+        queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, 1, 20);
     Object tenantList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
     int total = Integer.parseInt(tenantList.toString());
     if (total == 0) result = false;

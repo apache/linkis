@@ -25,6 +25,7 @@ import org.apache.spark.launcher.CustomSparkSubmitLauncher;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -34,7 +35,8 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     super(executionContext);
   }
 
-  public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
+  public void deployCluster(String mainClass, String args, Map<String, String> confMap)
+      throws IOException {
     SparkConfig sparkConfig = executionContext.getSparkConfig();
 
     sparkLauncher = new CustomSparkSubmitLauncher();
@@ -92,6 +94,7 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
               @Override
               public void infoChanged(SparkAppHandle sparkAppHandle) {}
             });
+    sparkLauncher.setSparkAppHandle(sparkAppHandle);
   }
 
   private void addSparkArg(SparkLauncher sparkLauncher, String key, String value) {

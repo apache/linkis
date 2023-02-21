@@ -21,10 +21,14 @@ class CustomSparkSubmitLauncher extends SparkLauncher {
 
   var sparkAppHandle: SparkAppHandle = _
 
-  override def startApplication(listeners: SparkAppHandle.Listener*): SparkAppHandle = {
-    sparkAppHandle = super.startApplication(listeners: _*)
-    sparkAppHandle
+  def setSparkAppHandle(sparkAppHandle: SparkAppHandle): Unit = this.sparkAppHandle = sparkAppHandle
+
+  def isDisposed: Boolean = {
+    if (sparkAppHandle != null) {
+      sparkAppHandle.asInstanceOf[AbstractAppHandle].isDisposed
+    } else {
+      false
+    }
   }
 
-  def isDisposed: Boolean = sparkAppHandle.asInstanceOf[AbstractAppHandle].isDisposed
 }

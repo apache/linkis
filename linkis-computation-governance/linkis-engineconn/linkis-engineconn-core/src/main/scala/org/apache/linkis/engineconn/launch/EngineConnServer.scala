@@ -46,6 +46,7 @@ import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactoryContext
 }
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.EngineConnMode
 
 import org.apache.commons.lang3.exception.ExceptionUtils
 
@@ -58,6 +59,8 @@ object EngineConnServer extends Logging {
 
   private val labelBuilderFactory: LabelBuilderFactory =
     LabelBuilderFactoryContext.getLabelBuilderFactory
+
+  private var onceMode: Boolean = false
 
   def main(args: Array[String]): Unit = {
     logger.info("<<---------------------EngineConnServer Start --------------------->>")
@@ -76,14 +79,13 @@ object EngineConnServer extends Logging {
         "Finished to create EngineCreationContext, EngineCreationContext content: " + EngineConnUtils.GSON
           .toJson(engineCreationContext)
       )
-      EngineConnHook.getEngineConnHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
+      val ecHooks = EngineConnHook.getEngineConnHooks(onceMode)
+      ecHooks.foreach(_.beforeCreateEngineConn(getEngineCreationContext))
       logger.info("Finished to execute hook of beforeCreateEngineConn.")
-      // 2. cresate EngineConn
+      // 2. create EngineConn
       val engineConn = getEngineConnManager.createEngineConn(getEngineCreationContext)
       logger.info(s"Finished to create ${engineConn.getEngineConnType} EngineConn.")
-      EngineConnHook.getEngineConnHooks.foreach(
-        _.beforeExecutionExecute(getEngineCreationContext, engineConn)
-      )
+      ecHooks.foreach(_.beforeExecutionExecute(getEngineCreationContext, engineConn))
       logger.info("Finished to execute all hooks of beforeExecutionExecute.")
       // 3. register executions
       Utils.tryThrow(executeEngineConn(engineConn)) { t =>
@@ -96,19 +98,14 @@ object EngineConnServer extends Logging {
       }
       EngineConnObject.setReady()
       logger.info("Finished to execute executions.")
-      EngineConnHook.getEngineConnHooks.foreach(
-        _.afterExecutionExecute(getEngineCreationContext, engineConn)
-      )
+      ecHooks.foreach(_.afterExecutionExecute(getEngineCreationContext, engineConn))
       logger.info("Finished to execute hook of afterExecutionExecute")
-      EngineConnHook.getEngineConnHooks.foreach(
-        _.afterEngineServerStartSuccess(getEngineCreationContext, engineConn)
-      )
+      ecHooks.foreach(_.afterEngineServerStartSuccess(getEngineCreationContext, engineConn))
     } catch {
       case t: Throwable =>
         logger.error("EngineConnServer Start Failed.", t)
-        EngineConnHook.getEngineConnHooks.foreach(
-          _.afterEngineServerStartFailed(getEngineCreationContext, t)
-        )
+        val ecHooks = EngineConnHook.getEngineConnHooks(onceMode)
+        ecHooks.foreach(_.afterEngineServerStartFailed(getEngineCreationContext, t))
         System.exit(1)
     }
 
@@ -132,8 +129,11 @@ object EngineConnServer extends Logging {
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))
     if (labelArgs.nonEmpty) {
       labelArgs.foreach { case (key, value) =>
-        labels += labelBuilderFactory
-          .createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
+        val realKey = key.substring(EngineConnArgumentsParser.LABEL_PREFIX.length)
+        if ("engineConnMode".equals(realKey)) {
+          onceMode = EngineConnMode.isOnceMode(value)
+        }
+        labels += labelBuilderFactory.createLabel[Label[_]](realKey, value)
       }
       engineCreationContext.setLabels(labels.toList.asJava)
     }
@@ -159,6 +159,8 @@ object EngineConnServer extends Logging {
         execution.execute(getEngineCreationContext, engineConn)
     }
   }
+
+  def isOnceMode: Boolean = this.onceMode
 
   def getEngineCreationContext: EngineCreationContext = this.engineCreationContext
 

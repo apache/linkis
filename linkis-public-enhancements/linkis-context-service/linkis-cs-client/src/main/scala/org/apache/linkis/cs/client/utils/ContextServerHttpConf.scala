@@ -64,6 +64,9 @@ object ContextServerHttpConf {
   val removeAllValueByKeyPrefixAndContextTypeURL: String =
     urlPrefix + "/removeAllValueByKeyPrefixAndContextType"
 
+  val removeAllValueByKeyAndContextTypeURL: String =
+    urlPrefix + "/removeAllValueByKeyAndContextType"
+
   val removeAllValueByKeyPrefixURL: String = urlPrefix + "/removeAllValueByKeyPrefix"
 
   val searchContextIDByTime: String = urlPrefix + "/searchContextIDByTime"

@@ -37,7 +37,7 @@ trait CodeExecTaskExecutorManager {
 
   def askExecutor(execTask: CodeLogicalUnitExecTask, wait: Duration): Option[CodeExecTaskExecutor]
 
-  def addEngineConnTaskID(executor: CodeExecTaskExecutor): Unit
+  def addEngineConnTaskInfo(executor: CodeExecTaskExecutor): Unit
 
   def getByEngineConnAndTaskId(
       serviceInstance: ServiceInstance,
@@ -93,9 +93,9 @@ trait CodeExecTaskExecutorManager {
       isSucceed: Boolean
   ): Unit
 
-  def getAllInstanceToExecutorCache(): mutable.HashMap[ServiceInstance, Array[CodeExecTaskExecutor]]
+  def getAllInstanceToExecutorCache(): java.util.Map[EngineConnTaskInfo, CodeExecTaskExecutor]
 
-  def getAllExecTaskToExecutorCache(): mutable.HashMap[String, CodeExecTaskExecutor]
+  def getAllExecTaskToExecutorCache(): java.util.Map[String, CodeExecTaskExecutor]
 
 }
 

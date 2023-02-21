@@ -47,6 +47,9 @@
           :key="item"/>
       </Select>
     </FormItem>
+    <FormItem prop="tenant" :label="$t('message.linkis.tenant')" >
+      <Input :maxlength="50" v-model="searchBar.tenant" style="width:120px" :placeholder="$t('message.linkis.inputTenant')"/>
+    </FormItem>
     <FormItem>
       <Button type="primary" @click="search">
         {{ $t('message.linkis.search') }}
@@ -87,6 +90,7 @@ export default {
         instance: "",
         nodeHealthy: "",
         owner: "",
+        tenant: "",
       },
     };
   },

@@ -21,7 +21,7 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.rpc.RPCReceiveRestful
 import org.apache.linkis.rpc.interceptor.RPCServerLoader
-import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
+import org.apache.linkis.rpc.sender.spring.SpringRPCServerLoader
 import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.lang3.StringUtils
@@ -31,20 +31,19 @@ import org.springframework.boot.autoconfigure.condition.{
   ConditionalOnMissingBean
 }
 import org.springframework.boot.context.event.ApplicationPreparedEvent
+import org.springframework.cloud.client.discovery.DiscoveryClient
 import org.springframework.cloud.openfeign.EnableFeignClients
 import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.context.event.EventListener
-
-import com.netflix.discovery.EurekaClient
 
 @Configuration
 @EnableFeignClients
 class RPCSpringConfiguration extends Logging {
 
   @Bean(Array("rpcServerLoader"))
-  @ConditionalOnClass(Array(classOf[EurekaClient]))
+  @ConditionalOnClass(Array(classOf[DiscoveryClient]))
   @ConditionalOnMissingBean
-  def createRPCServerLoader(): RPCServerLoader = new EurekaRPCServerLoader
+  def createRPCServerLoader(): RPCServerLoader = new SpringRPCServerLoader
 
   @EventListener
   def completeInitialize(applicationPreparedEvent: ApplicationPreparedEvent): Unit = {

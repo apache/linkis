@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.restful;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
@@ -78,6 +79,8 @@ import org.slf4j.LoggerFactory;
 @RestController
 public class EMRestfulApi {
 
+  public static final String KEY_TENANT = "tenant";
+
   @Autowired private EMInfoService emInfoService;
 
   @Autowired private NodeLabelService nodeLabelService;
@@ -96,7 +99,7 @@ public class EMRestfulApi {
   private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
-    if (AMConfiguration.isNotAdmin(userName)) {
+    if (Configuration.isNotAdmin(userName)) {
       throw new AMErrorException(210003, "Only admin can modify ECMs(只有管理员才能修改ECM).");
     }
   }
@@ -109,7 +112,8 @@ public class EMRestfulApi {
         dataType = "String",
         value = "node  healthy status",
         example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-    @ApiImplicitParam(name = "owner", required = false, dataType = "String", value = "Owner")
+    @ApiImplicitParam(name = "owner", dataType = "String", value = "Owner"),
+    @ApiImplicitParam(name = "tenantLabel", dataType = "String", value = "tenantLabel like")
   })
   // todo add healthInfo
   @RequestMapping(path = "/listAllEMs", method = RequestMethod.GET)
@@ -117,7 +121,8 @@ public class EMRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "instance", required = false) String instance,
       @RequestParam(value = "nodeHealthy", required = false) String nodeHealthy,
-      @RequestParam(value = "owner", required = false) String owner)
+      @RequestParam(value = "owner", required = false) String owner,
+      @RequestParam(value = "tenantLabel", required = false) String tenantLabel)
       throws AMErrorException {
     checkAdmin(ModuleUserUtils.getOperationUser(req, "listAllEMs"));
     List<EMNodeVo> emNodeVos = AMUtils.copyToEMVo(emInfoService.getAllEM());
@@ -136,7 +141,50 @@ public class EMRestfulApi {
       if (StringUtils.isNotBlank(owner)) {
         stream = stream.filter(em -> em.getOwner().equalsIgnoreCase(owner));
       }
+
+      if (StringUtils.isNotBlank(tenantLabel)) {
+        stream =
+            stream.filter(
+                em -> {
+                  List<Label> labels = em.getLabels();
+                  labels =
+                      labels.stream()
+                          .filter(
+                              label ->
+                                  KEY_TENANT.equals(label.getLabelKey())
+                                      && label.getStringValue().contains(tenantLabel))
+                          .collect(Collectors.toList());
+                  return labels.size() > 0 ? true : false;
+                });
+      }
+
       emNodeVos = stream.collect(Collectors.toList());
+
+      // sort
+      if (StringUtils.isNotBlank(tenantLabel)) {
+        Collections.sort(
+            emNodeVos,
+            new Comparator<EMNodeVo>() {
+              @Override
+              public int compare(EMNodeVo a, EMNodeVo b) {
+                String aLabelStr =
+                    a.getLabels().stream()
+                        .filter(label -> KEY_TENANT.equals(label.getLabelKey()))
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getStringValue();
+                String bLabelStr =
+                    b.getLabels().stream()
+                        .filter(label -> KEY_TENANT.equals(label.getLabelKey()))
+                        .collect(Collectors.toList())
+                        .get(0)
+                        .getStringValue();
+                return aLabelStr.compareTo(bLabelStr);
+              }
+            });
+      } else {
+        Collections.sort(emNodeVos, Comparator.comparing(EMNodeVo::getInstance));
+      }
     }
     return Message.ok().data("EMs", emNodeVos);
   }
@@ -176,13 +224,13 @@ public class EMRestfulApi {
         name = "emStatus",
         dataType = "String",
         example = "Healthy, UnHealthy, WARN, StockAvailable, StockUnavailable"),
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110:9102"),
+    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:9102"),
     @ApiImplicitParam(name = "labels", dataType = "List", value = "Labels"),
     @ApiImplicitParam(name = "labelKey", dataType = "String", example = "emInstance"),
     @ApiImplicitParam(
         name = "stringValue",
         dataType = "String",
-        example = "linkis-cg-engineconn-bdpujes110003:12295")
+        example = "linkis-cg-engineconn-bdp110:12295")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/modifyEMInfo", method = RequestMethod.PUT)
@@ -195,17 +243,17 @@ public class EMRestfulApi {
     String instance = jsonNode.get("instance").asText();
     if (StringUtils.isEmpty(applicationName)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "applicationName cannot be null(请求参数applicationName不能为空)");
     }
     if (StringUtils.isEmpty(instance)) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(), "instance cannot be null(请求参数instance不能为空)");
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(), "instance cannot be null(请求参数instance不能为空)");
     }
     ServiceInstance serviceInstance = ServiceInstance.apply(applicationName, instance);
     if (serviceInstance == null) {
       throw new AMErrorException(
-          AMErrorCode.QUERY_PARAM_NULL.getCode(),
+          AMErrorCode.QUERY_PARAM_NULL.getErrorCode(),
           "serviceInstance:" + applicationName + " non-existent(" + applicationName + ")");
     }
     String healthyStatus = jsonNode.get("emStatus").asText();
@@ -271,7 +319,7 @@ public class EMRestfulApi {
               + ExceptionUtils.getRootCauseMessage(e));
     }
     parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
-    if (!userName.equals(engineNode.getOwner()) && AMConfiguration.isNotAdmin(userName)) {
+    if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
     }
@@ -315,8 +363,8 @@ public class EMRestfulApi {
         name = "applicationName",
         dataType = "String",
         example = "linkis-cg-engineconn"),
-    @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdpujes110003:910"),
-    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdpujes110003:21976"),
+    @ApiImplicitParam(name = "emInstance", dataType = "String", example = "bdp110:9100"),
+    @ApiImplicitParam(name = "instance", dataType = "String", example = "bdp110:21976"),
     @ApiImplicitParam(name = "parameters", dataType = "Map", value = "Parameters"),
     @ApiImplicitParam(name = "logType", dataType = "String", example = "stdout"),
     @ApiImplicitParam(name = "fromLine", dataType = "String", example = "0"),
@@ -346,7 +394,7 @@ public class EMRestfulApi {
       String logType = (String) parameters.get("logType");
       if (!logType.equals("stdout") && !logType.equals("stderr")) {
         throw new AMErrorException(
-            AMErrorCode.PARAM_ERROR.getCode(), AMErrorCode.PARAM_ERROR.getMessage());
+            AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }
       parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
       parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
@@ -371,7 +419,7 @@ public class EMRestfulApi {
   private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     if (ArrayUtils.contains(adminOperations, operationName)
-        && AMConfiguration.isNotAdmin(ecmOperateRequest.user())) {
+        && Configuration.isNotAdmin(ecmOperateRequest.user())) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
           ecmOperateRequest.user(),

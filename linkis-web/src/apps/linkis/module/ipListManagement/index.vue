@@ -44,10 +44,10 @@
         <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="search">{{
           $t('message.linkis.ipListManagement.search')
         }}</Button>
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
+        <Button type="warning" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="clearSearch">{{
           $t('message.linkis.ipListManagement.clear')
         }}</Button>
-        <Button type="primary" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="createTenant">{{
+        <Button type="success" class="button" :style="{width: '70px', marginRight: '5px', marginLeft: '5px', padding: '5px'}" @click="createTenant">{{
           $t('message.linkis.ipListManagement.create')
         }}</Button>
       </Col>
@@ -70,7 +70,7 @@
       size="small"
       show-elevator
       :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
-      style="margin: 10px; overflow: hidden; text-align: center;"
+      style="position: absoulute; bottom: 10px; overflow: hidden; text-align: center;"
     ></Page>
     <Modal
       v-model="showCreateModal"
@@ -96,13 +96,13 @@
         </Form>
         <div style="margin-top: 60px">
           <span style="width: 60px">{{ $t('message.linkis.ipListManagement.yourTagMapping') }}</span>
-          <Input class="input" v-model="mapping" style="width: 240px; margin-left: 10px" disabled></Input>
-          <Button type="primary" @click="checkUserTag" style="margin-left: 10px">{{$t('message.linkis.ipListManagement.check')}}</Button>
+          <Input class="input" v-model="mapping" style="width: 220px; margin-left: 10px" disabled></Input>
+          <Button type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.ipListManagement.check')}}</Button>
         </div>
       </div>
       <div slot="footer">
         <Button @click="cancel">{{$t('message.linkis.ipListManagement.Cancel')}}</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag">{{$t('message.linkis.ipListManagement.OK')}}</Button>
+        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.linkis.ipListManagement.OK')}}</Button>
       </div>
     </Modal>
   </div>
@@ -236,6 +236,7 @@ export default {
         totalPage: 0,
       },
       userName: '',
+      isRequesting: false,
     }
   },
   computed: {
@@ -267,10 +268,10 @@ export default {
           })
         this.tableLoading = false;
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
         this.tableLoading = false;
       }
-      
+
     },
     async init() {
       this.loading = true;
@@ -295,6 +296,7 @@ export default {
       this.modalData.bussinessUser = this.userName;
     },
     async checkUserTag() {
+      if(this.isRequesting) return;
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
           const {user, creator} = this.modalData;
@@ -303,6 +305,7 @@ export default {
             return;
           }
           try {
+            this.isRequesting = true
             await api.fetch("/configuration/user-ip-mapping/check-user-creator",
               {
                 user,
@@ -313,9 +316,10 @@ export default {
               }
               this.tagIsExist = res.exist;
             })
+            this.isRequesting = false
           } catch (err) {
-            console.log(err);
-            this.cancel();
+            window.console.log(err);
+            this.isRequesting = false
           }
         }
         else {
@@ -342,6 +346,7 @@ export default {
       }
     },
     addTenantTag() {
+      if(this.isRequesting) return;
       const target = this.mode === 'edit' ? '/configuration/user-ip-mapping/update-user-ip' : '/configuration/user-ip-mapping/create-user-ip'
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
@@ -350,21 +355,23 @@ export default {
             if(this.mode !== 'edit') {
               this.page.pageNow = 1;
             }
+            this.isRequesting = true
             await api.fetch(target, this.modalData, "post").then(async (res) => {
-              console.log(res);
+              window.console.log(res);
               await this.getTableData();
               this.cancel();
               this.$Message.success(this.$t('message.linkis.ipListManagement.addSuccessful'));
             });
+            this.isRequesting = false
           } catch(err) {
-            this.cancel();
-            console.log(err);
+            this.isRequesting = false
+            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
         }
       })
-      
+
     },
     edit(data) {
       const {
@@ -388,7 +395,7 @@ export default {
           await this.getTableData();
         },
         onCancel: () => {
-          console.log('cancel');
+          window.console.log('cancel');
         }
       })
     },
@@ -396,7 +403,7 @@ export default {
       try {
         await api.fetch('configuration/user-ip-mapping/delete-user-ip', {id: data.id}, 'get');
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
       }
     },
     async handleChange() {
@@ -439,7 +446,7 @@ export default {
 <style lang="scss" scoped>
 
 .modal {
-  
+
   .input-area {
     padding: 20px 50px;
     .item {

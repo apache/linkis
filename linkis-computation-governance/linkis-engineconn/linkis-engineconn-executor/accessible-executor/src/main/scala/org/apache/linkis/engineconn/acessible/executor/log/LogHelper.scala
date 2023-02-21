@@ -104,14 +104,15 @@ object LogHelper extends Logging {
           }
           if (reachRegularInterval || logCache.size > CACHE_SIZE) {
 
-            val logs = logCache.getRemain
-            val sb = new StringBuilder
-
-            for (log <- logs.asScala) {
-              sb.append(log).append("\n")
-            }
-            if (EngineConnObject.isReady) {
-              logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
+            val logs = logCache.getRemain.asScala
+            if (logs.nonEmpty) {
+              val sb = new StringBuilder
+              for (log <- logs) {
+                sb.append(log).append("\n")
+              }
+              if (EngineConnObject.isReady) {
+                logListener.onLogUpdate(TaskLogUpdateEvent(null, sb.toString))
+              }
             }
           }
         }

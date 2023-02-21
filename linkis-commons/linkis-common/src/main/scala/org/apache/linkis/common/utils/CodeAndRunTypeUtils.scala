@@ -24,20 +24,37 @@ import org.apache.commons.lang3.StringUtils
 object CodeAndRunTypeUtils {
   private val CONF_LOCK = new Object()
 
+  /**
+   * sql Language type sql/hql/jdbc code Type
+   */
   val CODE_TYPE_AND_RUN_TYPE_RELATION = CommonVars(
-    "wds.linkis.codeType.runType.relation",
-    "sql=>sql|hql|jdbc|hive|psql|fql|tsql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell"
+    "linkis.codeType.language.relation",
+    "sql=>sql|hql|jdbc|hive|psql|fql|tsql,python=>python|py|pyspark,java=>java,scala=>scala,shell=>sh|shell,json=>json|data_calc"
   )
 
-  val RUN_TYPE_SQL = "sql"
-  val RUN_TYPE_PYTHON = "python"
-  val RUN_TYPE_JAVA = "java"
-  val RUN_TYPE_SCALA = "scala"
-  val RUN_TYPE_SHELL = "shell"
+  val LANGUAGE_TYPE_SQL = "sql"
 
-  private var codeTypeAndRunTypeRelationMap: Map[String, List[String]] = null
+  val LANGUAGE_TYPE_PYTHON = "python"
 
-  private def codeTypeAndRunTypeRelationMapParser(configV: String): Map[String, List[String]] = {
+  val LANGUAGE_TYPE_JAVA = "java"
+
+  val LANGUAGE_TYPE_SCALA = "scala"
+
+  val LANGUAGE_TYPE_SHELL = "shell"
+
+  val LANGUAGE_TYPE_JSON = "json"
+
+  private var codeTypeAndLanguageTypeRelationMap: Map[String, List[String]] = null
+
+  /**
+   * Used to parse the wds.linkis.codeType.runType.relation parameter
+   *   1. Get scripting language type by "=>" 2. Get the code type by "|"
+   * @param configV
+   * @return
+   */
+  private def codeTypeAndLanguageTypeRelationMapParser(
+      configV: String
+  ): Map[String, List[String]] = {
     val confDelimiter = ","
     if (configV == null || "".equals(configV)) {
       Map()
@@ -51,40 +68,59 @@ object CodeAndRunTypeUtils {
             (confArr(0), for (x <- confArr(1).split("\\|").toList) yield x.trim)
           } else null
         })
-        .filter(x => x != null)
+        .filter(runTypeCodeTypes =>
+          runTypeCodeTypes != null && StringUtils.isNotBlank(
+            runTypeCodeTypes._1
+          ) && null != runTypeCodeTypes._2
+        )
         .toMap
     }
   }
 
-  def getCodeTypeAndRunTypeRelationMap: Map[String, List[String]] = {
-    if (codeTypeAndRunTypeRelationMap == null) {
+  /**
+   * Obtain the mapping relationship between code Type and script type key: Language Type value:
+   * list[code type]
+   * @return
+   */
+  def getCodeTypeAndLanguageTypeRelationMap: Map[String, List[String]] = {
+    if (codeTypeAndLanguageTypeRelationMap == null) {
       CONF_LOCK.synchronized {
-        if (codeTypeAndRunTypeRelationMap == null) {
-          codeTypeAndRunTypeRelationMap =
-            codeTypeAndRunTypeRelationMapParser(CODE_TYPE_AND_RUN_TYPE_RELATION.getValue)
+        if (codeTypeAndLanguageTypeRelationMap == null) {
+          codeTypeAndLanguageTypeRelationMap =
+            codeTypeAndLanguageTypeRelationMapParser(CODE_TYPE_AND_RUN_TYPE_RELATION.getValue)
         }
       }
     }
-    codeTypeAndRunTypeRelationMap
+    codeTypeAndLanguageTypeRelationMap
   }
 
-  def getRunTypeAndCodeTypeRelationMap: Map[String, String] = {
-    val codeTypeAndRunTypeRelationMap = getCodeTypeAndRunTypeRelationMap
+  /**
+   * Obtain the Map of script type and CodeType key: script type value: Language Type
+   * @return
+   */
+  def getLanguageTypeAndCodeTypeRelationMap: Map[String, String] = {
+    val codeTypeAndRunTypeRelationMap = getCodeTypeAndLanguageTypeRelationMap
     if (codeTypeAndRunTypeRelationMap.isEmpty) Map()
     else codeTypeAndRunTypeRelationMap.flatMap(x => x._2.map(y => (y, x._1)))
   }
 
-  def getRunTypeByCodeType(codeType: String, defaultRunType: String = ""): String = {
+  def getLanguageTypeByCodeType(codeType: String, defaultLanguageType: String = ""): String = {
     if (StringUtils.isBlank(codeType)) {
       return ""
     }
-    getRunTypeAndCodeTypeRelationMap.getOrElse(codeType, defaultRunType)
+    getLanguageTypeAndCodeTypeRelationMap.getOrElse(codeType, defaultLanguageType)
   }
 
-  def getSuffixBelongToRunTypeOrNot(suffix: String, runType: String): Boolean = {
-    val codeTypeAndRunTypeRelationMap = getCodeTypeAndRunTypeRelationMap
+  /**
+   * Determine whether the corresponding file suffix is the corresponding Language type
+   * @param suffix
+   * @param languageType
+   * @return
+   */
+  def getSuffixBelongToLanguageTypeOrNot(suffix: String, languageType: String): Boolean = {
+    val codeTypeAndRunTypeRelationMap = getCodeTypeAndLanguageTypeRelationMap
     if (codeTypeAndRunTypeRelationMap.isEmpty) return false
-    val suffixListOfRunType = codeTypeAndRunTypeRelationMap.getOrElse(runType, List())
+    val suffixListOfRunType = codeTypeAndRunTypeRelationMap.getOrElse(languageType, List())
     if (suffixListOfRunType.isEmpty) return false
     if (suffixListOfRunType.contains(suffix)) return true
     false

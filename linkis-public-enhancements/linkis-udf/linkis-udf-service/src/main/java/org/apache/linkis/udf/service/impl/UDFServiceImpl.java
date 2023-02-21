@@ -108,7 +108,7 @@ public class UDFServiceImpl implements UDFService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void addUDF(UDFAddVo udfVo, String userName) throws Exception {
+  public long addUDF(UDFAddVo udfVo, String userName) throws Exception {
     logger.info(userName + " add udfVo: " + udfVo.getUdfName());
     // 锁同一用户
     CommonLock commonLock = new CommonLock();
@@ -186,6 +186,7 @@ public class UDFServiceImpl implements UDFService {
         addLoadInfo(udfInfo.getId(), userName);
       }
       logger.info("end for " + userName + " add udfVo: " + udfVo.getUdfName());
+      return udfInfo.getId();
     } finally {
       commonLockService.unlock(commonLock);
     }
@@ -806,6 +807,14 @@ public class UDFServiceImpl implements UDFService {
     return udfDao.getUDFInfoByTreeId(treeId, userName, categoryToCodes.get(category));
   }
 
+  @Override
+  public List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) {
+    if (ids == null || ids.length == 0) {
+      return new ArrayList<>(0);
+    }
+    return udfDao.getUDFInfoByIds(ids, categoryToCodes.get(category));
+  }
+
   /**
    * Generate sql needs content: divided into jar, python, scala Save Path and registration syntax
    * separately 生成sql需要内容： 分为jar，python，scala 分别保存Path和注册语法
@@ -1039,5 +1048,43 @@ public class UDFServiceImpl implements UDFService {
       udfDao.deleteSharedUser(oldsharedUser, udfId);
       udfDao.deleteLoadInfo(udfId, oldsharedUser);
     }
+  }
+
+  @Override
+  public List<UDFAddVo> getUdfByNameList(List<String> udfNameList, String creator) {
+    List<UDFAddVo> retList = new ArrayList<>();
+    retList = udfDao.getUdfInfoByNameList(udfNameList, creator);
+    boolean ismanager = isUDFManager(creator);
+    List<Long> loadedUdf = udfDao.getLoadedUDFIds(creator);
+    retList.forEach(
+        udfInfo -> {
+          udfInfo.setLoad(loadedUdf.contains(udfInfo.getId()));
+          boolean canExpire = false;
+          if (Boolean.TRUE.equals(udfInfo.getShared())) {
+            long loadCount =
+                udfDao.getUserLoadCountByUdfId(udfInfo.getId(), udfInfo.getCreateUser());
+            if (loadCount > 0) {
+              canExpire = true;
+            }
+          }
+          boolean finalCanExpire = canExpire;
+          udfInfo.setOperationStatus(
+              new HashMap<String, Boolean>() {
+                {
+                  put("canUpdate", true);
+                  put("canDelete", !finalCanExpire);
+                  put("canExpire", finalCanExpire);
+                  put("canShare", ismanager);
+                  put("canPublish", ismanager && Boolean.TRUE.equals(udfInfo.getShared()));
+                  put("canHandover", true);
+                }
+              });
+        });
+    return retList;
+  }
+
+  @Override
+  public UDFVersionVo getUdfVersionInfo(String udfName, String createUser) {
+    return udfVersionDao.getUdfVersionInfoByName(udfName, createUser);
   }
 }

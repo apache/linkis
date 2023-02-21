@@ -27,9 +27,15 @@ if [ ! -w "$LINKIS_LOG_DIR" ] ; then
   mkdir -p "$LINKIS_LOG_DIR"
 fi
 
-if test -z "$SERVER_HEAP_SIZE"
+#export DYNAMIC_JVM=
+if test -z "$DYNAMIC_JVM"
 then
-  export SERVER_HEAP_SIZE="512M"
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE="${DYNAMIC_JVM}"
 fi
 
 if [ "$DEBUG_PORT" ];
@@ -44,12 +50,6 @@ fi
 if test -z "$SERVER_JAVA_OPTS"
 then
   export SERVER_JAVA_OPTS=" $JAVA_AGENT_OPTS -DserviceName=$SERVER_NAME -Xmx$SERVER_HEAP_SIZE -XX:+UseG1GC -Xloggc:$LINKIS_LOG_DIR/${SERVER_NAME}-gc.log $DEBUG_CMD "
-fi
-
-#SPRING_ARGS
-if [ "$EUREKA_PREFER_IP" == "true" ]; then
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.prefer-ip-address=true "
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.instance-id=\${spring.cloud.client.ip-address}:\${spring.application.name}:\${server.port}"
 fi
 
 ## conf dir

@@ -118,7 +118,7 @@ public class BmlRestfulApi {
           resourceId);
       throw new BmlServerParaErrorException(SUBMITTED_INVALID.getErrorDesc());
     }
-
+    ModuleUserUtils.getOperationUser(request, "getVersions,resourceId:" + resourceId);
     Integer current = 0;
     Integer size = 0;
     if (StringUtils.isEmpty(currentPage) || !StringUtils.isNumeric(currentPage)) {
@@ -203,7 +203,7 @@ public class BmlRestfulApi {
       // 默认系统是wtss
       system = Constant.DEFAULT_SYSTEM;
     }
-
+    ModuleUserUtils.getOperationUser(request, "getResources,system:" + system);
     Integer current = 0;
     Integer size = 0;
     if (StringUtils.isEmpty(currentPage) || !StringUtils.isNumeric(currentPage)) {
@@ -296,6 +296,9 @@ public class BmlRestfulApi {
 
     String resourceId = jsonNode.get("resourceId").textValue();
     String version = jsonNode.get("version").textValue();
+    ModuleUserUtils.getOperationUser(
+        request,
+        MessageFormat.format("deleteVersion,resourceId:{0},version:{1}", resourceId, version));
     // 检查资源和版本是否存在
     if (!resourceService.checkResourceId(resourceId)
         || !versionService.checkVersion(resourceId, version)
@@ -384,7 +387,7 @@ public class BmlRestfulApi {
               + resourceId
               + "为空,非法或者已被删除!)");
     }
-
+    ModuleUserUtils.getOperationUser(request, "deleteResource,resourceId:" + resourceId);
     Message message = null;
     ResourceTask resourceTask =
         taskService.createDeleteResourceTask(resourceId, user, HttpRequestHelper.getIp(request));
@@ -446,7 +449,7 @@ public class BmlRestfulApi {
   @RequestMapping(path = "deleteResources", method = RequestMethod.POST)
   public Message deleteResources(HttpServletRequest request, @RequestBody JsonNode jsonNode)
       throws IOException, ErrorException {
-    String user = RestfulUtils.getUserName(request);
+    String user = ModuleUserUtils.getOperationUser(request, "deleteResources");
     List<String> resourceIds = new ArrayList<>();
 
     if (null == jsonNode.get("resourceIds")) {
@@ -550,6 +553,8 @@ public class BmlRestfulApi {
     if (StringUtils.isBlank(version)) {
       version = versionService.getNewestVersion(resourceId);
     }
+    ModuleUserUtils.getOperationUser(
+        request, MessageFormat.format("download,resourceId:{0},version:{1}", resourceId, version));
     // check version
     if (!versionService.checkVersion(resourceId, version)) {
       throw new BmlQueryFailException(
@@ -656,7 +661,7 @@ public class BmlRestfulApi {
       @RequestParam(name = "maxVersion", required = false) Integer maxVersion,
       @RequestParam(name = "file") List<MultipartFile> files)
       throws ErrorException {
-    String user = RestfulUtils.getUserName(req);
+    String user = ModuleUserUtils.getOperationUser(req, "uploadResource");
     Message message;
     try {
       logger.info("User {} starts uploading resources (用户 {} 开始上传资源)", user, user);
@@ -715,12 +720,13 @@ public class BmlRestfulApi {
       @RequestParam("resourceId") String resourceId,
       @RequestParam("file") MultipartFile file)
       throws Exception {
-    String user = RestfulUtils.getUserName(request);
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       logger.error("error resourceId  is {} ", resourceId);
       throw new BmlServerParaErrorException(
           "resourceId: " + resourceId + " is Null, illegal, or deleted!");
     }
+    String user =
+        ModuleUserUtils.getOperationUser(request, "updateVersion，resourceId：" + resourceId);
     if (StringUtils.isEmpty(versionService.getNewestVersion(resourceId))) {
       logger.error(
           "If the material has not been uploaded or has been deleted, please call the upload interface first .(resourceId:{} 之前未上传物料,或物料已被删除,请先调用上传接口.)",
@@ -773,12 +779,10 @@ public class BmlRestfulApi {
       @RequestParam(value = "resourceId", required = false) String resourceId,
       HttpServletRequest request)
       throws ErrorException {
-    String user = RestfulUtils.getUserName(request);
-
     if (StringUtils.isEmpty(resourceId) || !resourceService.checkResourceId(resourceId)) {
       throw new BmlServerParaErrorException(PARAMETER_IS_ILLEGAL.getErrorDesc());
     }
-
+    String user = ModuleUserUtils.getOperationUser(request, "getBasic，resourceId：" + resourceId);
     Message message = null;
     try {
       Resource resource = resourceService.getResource(resourceId);
@@ -853,6 +857,10 @@ public class BmlRestfulApi {
     String resourceId = jsonNode.get("resourceId").textValue();
     String oldOwner = jsonNode.get("oldOwner").textValue();
     String newOwner = jsonNode.get("newOwner").textValue();
+    ModuleUserUtils.getOperationUser(
+        request,
+        MessageFormat.format(
+            "download,resourceId:{0},oldOwner:{1},newOwner:{2}", resourceId, oldOwner, newOwner));
     resourceService.changeOwnerByResourceId(resourceId, oldOwner, newOwner);
     return Message.ok("更新owner成功！");
   }
@@ -869,9 +877,11 @@ public class BmlRestfulApi {
   @RequestMapping(path = "copyResourceToAnotherUser", method = RequestMethod.POST)
   public Message copyResourceToAnotherUser(
       HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "copyResourceToAnotherUser");
     String resourceId = jsonNode.get("resourceId").textValue();
     String anotherUser = jsonNode.get("anotherUser").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request, "copyResourceToAnotherUser，resourceId：" + resourceId);
     Message message = null;
     try {
       logger.info("用户 {} 开始 copy bml resource: {}", username, resourceId);
@@ -905,9 +915,13 @@ public class BmlRestfulApi {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "rollbackVersion", method = RequestMethod.POST)
   public Message rollbackVersion(HttpServletRequest request, @RequestBody JsonNode jsonNode) {
-    String username = ModuleUserUtils.getOperationUser(request, "rollbackVersion");
     String resourceId = jsonNode.get("resourceId").textValue();
     String rollbackVersion = jsonNode.get("version").textValue();
+    String username =
+        ModuleUserUtils.getOperationUser(
+            request,
+            MessageFormat.format(
+                "download,resourceId:{0},rollbackVersion:{1}", resourceId, rollbackVersion));
     Message message = null;
     try {
       logger.info(

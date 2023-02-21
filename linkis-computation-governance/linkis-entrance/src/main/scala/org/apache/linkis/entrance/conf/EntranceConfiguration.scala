@@ -201,9 +201,6 @@ object EntranceConfiguration {
   val CODE_PARSER_SELECTIVE_IGNORED =
     CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.selective.ignored", true)
 
-  val ENTRANCE_CODEPARSER_ENABLE =
-    CommonVars[java.lang.Boolean]("wds.linkis.entrance.code.parser.enable", false)
-
   val YARN_QUEUE_CORES_MAX = CommonVars[Integer]("wds.linkis.entrance.yarn.queue.core.max", 300)
 
   val YARN_QUEUE_MEMORY_MAX =
@@ -224,5 +221,8 @@ object EntranceConfiguration {
 
   val CLIENT_MONITOR_CREATOR =
     CommonVars("wds.linkis.entrance.client.monitor.creator", "LINKISCLI")
+
+  val CREATOR_IP_SWITCH =
+    CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
 }

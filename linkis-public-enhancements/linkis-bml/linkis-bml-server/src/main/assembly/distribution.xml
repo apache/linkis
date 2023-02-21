@@ -35,25 +35,6 @@
             <unpack>false</unpack>
             <useStrictFiltering>false</useStrictFiltering>
             <useTransitiveFiltering>true</useTransitiveFiltering>
-            <!--<excludes>
-                <exclude>log4j:log4j:*</exclude>
-                <exclude>org.springframework.cloud:spring-*:*</exclude>
-                <exclude>org.springframework.*</exclude>
-                <exclude>org.glassfish.*</exclude>
-                <exclude>org.scala*</exclude>
-                <exclude>org.slf4j:*</exclude>
-                <exclude>org.json*</exclude>
-                <exclude>org.mybatis</exclude>
-                <exclude>cglib:*</exclude>
-                <exclude>com.google*</exclude>
-                <exclude>com.fasterxml*</exclude>
-                <exclude>com.sun.jersey*</exclude>
-                <exclude>org.eclipse.jetty*</exclude>
-                <exclude>org.apache.commons:commons*</exclude>
-                <exclude>commons*</exclude>
-                <exclude>org.apache.hadoop:*</exclude>
-                <exclude>io.netty:netty*</exclude>
-            </excludes>-->
             <excludes>
                 <exclude>antlr:antlr:jar</exclude>
                 <exclude>aopalliance:aopalliance:jar</exclude>

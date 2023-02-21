@@ -24,8 +24,11 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, FileInputStream, InputStream, IOException}
 import java.util.Properties
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 private[conf] object BDPConfiguration extends Logging {
 
@@ -33,10 +36,16 @@ private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
 
+  val DEFAULT_CONFIG_HOT_LOAD_DELAY_MILLS = 3 * 60 * 1000L
+
   private val extractConfig = new Properties
   private val config = new Properties
   private val sysProps = sys.props
   private val env = sys.env
+
+  private val configList = new ArrayBuffer[String]
+  private val configReload = new Properties
+  private val lock = new ReentrantReadWriteLock()
 
   private def init: Unit = {
 
@@ -48,9 +57,10 @@ private[conf] object BDPConfiguration extends Logging {
         s"******************* Notice: The Linkis configuration file is $propertyFile ! *******************"
       )
       initConfig(config, configFileURL.getPath)
+      configList.append(configFileURL.getPath)
     } else {
       logger.warn(
-        s"************ Notice: The Linkis configuration file $propertyFile is not exists! *******************"
+        s"************ Notice: The Linkis configuration file $propertyFile does not exist! *******************"
       )
     }
 
@@ -62,9 +72,10 @@ private[conf] object BDPConfiguration extends Logging {
         s"*********************** Notice: The Linkis serverConf file is $serverConf ! ******************"
       )
       initConfig(config, serverConfFileURL.getPath)
+      configList.append(serverConfFileURL.getPath)
     } else {
       logger.warn(
-        s"**************** Notice: The Linkis serverConf file $serverConf is not exists! *******************"
+        s"**************** Notice: The Linkis serverConf file $serverConf does not exist! *******************"
       )
     }
 
@@ -79,14 +90,46 @@ private[conf] object BDPConfiguration extends Logging {
             s"************** Notice: The Linkis server.confs  is file $propertyF ****************"
           )
           initConfig(config, configFileURL.getPath)
+          configList.append(configFileURL.getPath)
         } else {
           logger.warn(
-            s"********** Notice: The Linkis server.confs file $propertyF is not exists! **************"
+            s"********** Notice: The Linkis server.confs file $propertyF does not exist! **************"
           )
         }
       }
     }
 
+    // init hot-load config task
+    val hotLoadTask = new Runnable {
+      override def run(): Unit = {
+        var tmpConfigPath = ""
+        var tmpConfig = new Properties()
+        Utils.tryCatch {
+          // refresh configuration
+          configList.foreach(configPath => {
+            if (logger.isDebugEnabled()) {
+              logger.debug(s"reload config file : ${configPath}")
+            }
+            tmpConfigPath = configPath
+            initConfig(tmpConfig, configPath)
+          })
+        } { case e: Exception =>
+          logger.error(s"reload config file : ${tmpConfigPath} failed, because : ${e.getMessage}")
+          logger.warn("Will reset config to origin config.")
+          tmpConfig = config
+        }
+        lock.writeLock().lock()
+        tmpConfig.asScala.foreach(keyValue => configReload.setProperty(keyValue._1, keyValue._2))
+        lock.writeLock().unlock()
+      }
+    }
+    Utils.defaultScheduler.scheduleWithFixedDelay(
+      hotLoadTask,
+      3000L,
+      DEFAULT_CONFIG_HOT_LOAD_DELAY_MILLS,
+      TimeUnit.MILLISECONDS
+    )
+    logger.info("hotload config task inited.")
   }
 
   Utils.tryCatch {
@@ -110,11 +153,18 @@ private[conf] object BDPConfiguration extends Logging {
     }
   }
 
-  def getOption(key: String): Option[String] = {
+  def getOption(key: String, hotload: Boolean = false): Option[String] = {
     if (extractConfig.containsKey(key)) {
       return Some(extractConfig.getProperty(key))
     }
-    val value = config.getProperty(key)
+    var value = ""
+    if (hotload) {
+      lock.readLock().lock()
+      value = configReload.getProperty(key)
+      lock.readLock().unlock()
+    } else {
+      value = config.getProperty(key)
+    }
     if (StringUtils.isNotEmpty(value)) {
       return Some(value)
     }
@@ -134,16 +184,45 @@ private[conf] object BDPConfiguration extends Logging {
     props
   }
 
+  def hotProperties(): Properties = {
+    val props = new Properties
+    mergePropertiesFromMap(props, env)
+    mergePropertiesFromMap(props, sysProps.toMap)
+    lock.readLock().lock()
+    mergePropertiesFromMap(props, configReload.asScala.toMap)
+    lock.readLock().unlock()
+    mergePropertiesFromMap(props, extractConfig.asScala.toMap)
+    props
+  }
+
   def mergePropertiesFromMap(props: Properties, mapProps: Map[String, String]): Unit = {
     mapProps.foreach { case (k, v) => props.put(k, v) }
   }
 
-  def getOption[T](commonVars: CommonVars[T]): Option[T] = if (commonVars.value != null) {
-    Option(commonVars.value)
-  } else {
-    val value = BDPConfiguration.getOption(commonVars.key)
-    if (value.isEmpty) Option(commonVars.defaultValue)
-    else formatValue(commonVars.defaultValue, value)
+  def getOption[T](commonVars: CommonVars[T], hotload: Boolean): Option[T] = {
+    if (hotload) {
+      val value = BDPConfiguration.getOption(commonVars.key, hotload = true)
+      if (value.isEmpty) Option(commonVars.defaultValue)
+      else formatValue(commonVars.defaultValue, value)
+    } else {
+      if (commonVars.value != null) {
+        Option(commonVars.value)
+      } else {
+        val value = BDPConfiguration.getOption(commonVars.key)
+        if (value.isEmpty) Option(commonVars.defaultValue)
+        else formatValue(commonVars.defaultValue, value)
+      }
+    }
+  }
+
+  def getOption[T](commonVars: CommonVars[T]): Option[T] = {
+    if (commonVars.value != null) {
+      Option(commonVars.value)
+    } else {
+      val value = BDPConfiguration.getOption(commonVars.key)
+      if (value.isEmpty) Option(commonVars.defaultValue)
+      else formatValue(commonVars.defaultValue, value)
+    }
   }
 
   private[common] def formatValue[T](defaultValue: T, value: Option[String]): Option[T] = {
@@ -170,19 +249,33 @@ private[conf] object BDPConfiguration extends Logging {
   def setIfNotExists(key: String, value: String): Any =
     if (!config.containsKey(key)) set(key, value)
 
-  def getBoolean(key: String, default: Boolean): Boolean =
-    getOption(key).map(_.toBoolean).getOrElse(default)
+  def getBoolean(key: String, default: Boolean, hotload: Boolean = false): Boolean =
+    getOption(key, hotload).map(_.toBoolean).getOrElse(default)
 
   def getBoolean(commonVars: CommonVars[Boolean]): Option[Boolean] = getOption(commonVars)
 
-  def get(key: String, default: String): String = getOption(key).getOrElse(default)
+  def get(key: String, default: String): String =
+    getOption(key, false).getOrElse(default)
+
+  def get(key: String, default: String, hotload: Boolean): String = {
+    getOption(key, hotload).getOrElse(default)
+  }
+
   def get(commonVars: CommonVars[String]): Option[String] = getOption(commonVars)
 
-  def get(key: String): String = getOption(key).getOrElse(throw new NoSuchElementException(key))
+  def get(key: String, hotload: Boolean = false): String =
+    getOption(key, hotload).getOrElse(throw new NoSuchElementException(key))
 
-  def getInt(key: String, default: Int): Int = getOption(key).map(_.toInt).getOrElse(default)
+  def get(key: String): String =
+    getOption(key).getOrElse(throw new NoSuchElementException(key))
+
+  def getInt(key: String, default: Int, hotload: Boolean = false): Int =
+    getOption(key, hotload).map(_.toInt).getOrElse(default)
+
   def getInt(commonVars: CommonVars[Int]): Option[Int] = getOption(commonVars)
 
   def contains(key: String): Boolean = getOption(key).isDefined
+
+  def contains(key: String, hotload: Boolean = false): Boolean = getOption(key, hotload).isDefined
 
 }

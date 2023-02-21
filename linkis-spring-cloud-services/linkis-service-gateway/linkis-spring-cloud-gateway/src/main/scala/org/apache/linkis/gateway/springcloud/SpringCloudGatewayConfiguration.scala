@@ -43,7 +43,7 @@ import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.web.reactive.socket.client.WebSocketClient
 import org.springframework.web.reactive.socket.server.WebSocketService
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import com.netflix.loadbalancer.Server
 import org.slf4j.{Logger, LoggerFactory}
@@ -137,7 +137,7 @@ class SpringCloudGatewayConfiguration {
         val serviceInstance = getServiceInstance(serviceId)
         logger.info("redirect to " + serviceInstance)
         val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-        lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
+        lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
       } else super.getServer(serviceId)
 
       def isSecure(server: Server, serviceId: String) = {
@@ -158,13 +158,22 @@ class SpringCloudGatewayConfiguration {
           val serviceInstance = getServiceInstance(serviceId)
           logger.info("redirect to " + serviceInstance)
           val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-          val server = lb.getAllServers.find(_.getHostPort == serviceInstance.getInstance).get
-          new RibbonLoadBalancerClient.RibbonServer(
-            serviceId,
-            server,
-            isSecure(server, serviceId),
-            serverIntrospectorFun(serviceId).getMetadata(server)
-          )
+          val serverOption =
+            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance)
+          if (serverOption.isDefined) {
+            val server = serverOption.get
+            new RibbonLoadBalancerClient.RibbonServer(
+              serviceId,
+              server,
+              isSecure(server, serviceId),
+              serverIntrospectorFun(serviceId).getMetadata(server)
+            )
+          } else {
+            logger.warn(
+              "RibbonLoadBalancer not have Server, execute default super choose method" + serviceInstance
+            )
+            super.choose(serviceInstance.getApplicationName, hint)
+          }
         } else super.choose(serviceId, hint)
 
     }

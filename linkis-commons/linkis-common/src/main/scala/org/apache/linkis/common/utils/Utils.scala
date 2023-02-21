@@ -25,6 +25,7 @@ import org.apache.linkis.common.exception.{
 }
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.SystemUtils
 
 import java.io.{BufferedReader, InputStreamReader}
 import java.net.InetAddress
@@ -55,6 +56,12 @@ object Utils extends Logging {
         logger.error("Fatal error, system exit...", e)
         System.exit(-1)
         throw e
+      case exp
+          if (null != exp.getCause && (exp.getCause.isInstanceOf[FatalException] || exp.getCause
+            .isInstanceOf[VirtualMachineError])) =>
+        logger.error("Caused by fatal error, system exit...", exp)
+        System.exit(-1)
+        throw exp
       case er: Error =>
         logger.error("Throw error", er)
         throw er
@@ -200,7 +207,7 @@ object Utils extends Logging {
   def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
   def getComputerName: String =
-    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
+    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(_ => SystemUtils.getHostName)
 
   /**
    * Checks if event has occurred during some time period. This performs an exponential backoff to

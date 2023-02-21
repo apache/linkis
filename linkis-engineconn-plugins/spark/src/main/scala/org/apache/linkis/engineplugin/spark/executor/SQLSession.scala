@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary._
@@ -32,7 +32,17 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.types.{BinaryType, DateType, DecimalType, TimestampType, _}
 import org.apache.spark.sql.types.{StructField, StructType}
+import org.apache.spark.sql.types.BooleanType
+import org.apache.spark.sql.types.ByteType
+import org.apache.spark.sql.types.DoubleType
+import org.apache.spark.sql.types.FloatType
+import org.apache.spark.sql.types.IntegerType
+import org.apache.spark.sql.types.LongType
+import org.apache.spark.sql.types.ShortType
+import org.apache.spark.sql.types.StringType
 
 import java.text.NumberFormat
 import java.util.Locale
@@ -122,7 +132,9 @@ object SQLSession extends Logging {
     Utils.tryThrow({
       while (index < maxResult && iterator.hasNext) {
         val row = iterator.next()
-        val r: Array[Any] = columns.indices.map { i => toHiveString(row(i)) }.toArray
+        val r: Array[Any] = columns.indices.map { i =>
+          toHiveString((row(i), columnsSet.fields(i).dataType))
+        }.toArray
         writer.addRecord(new TableRecord(r))
         index += 1
       }
@@ -133,35 +145,94 @@ object SQLSession extends Logging {
         t
       )
     }
-    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s).")
+    val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)
+    logger.warn(s"Time taken: ${taken}, Fetched $index row(s).")
     // to register TempTable
     // Utils.tryAndErrorMsg(CSTableRegister.registerTempTable(engineExecutorContext, writer, alias, columns))("Failed to register tmp table:")
     engineExecutionContext.appendStdout(
-      s"${EngineUtils.getName} >> Time taken: ${System.currentTimeMillis() - startTime}, Fetched $index row(s)."
+      s"${EngineUtils.getName} >> Time taken: ${taken}, Fetched $index row(s)."
     )
     engineExecutionContext.sendResultSet(writer)
   }
 
-  private def toHiveString(value: Any): String = {
+  /** also see org.apache.spark.sql.execution.QueryExecution#toHiveString */
 
-    value match {
-      case value: String => value.replaceAll("\n|\t", " ")
-      case value: Double => nf.format(value)
-      case value: java.math.BigDecimal => formatDecimal(value)
-      case value: Any => value.toString
+  /** Formats a datum (based on the given data type) and returns the string representation. */
+  private def toHiveString(a: (Any, org.apache.spark.sql.types.DataType)): String = {
+
+    def formatDecimal(d: java.math.BigDecimal): String = {
+      if (d.compareTo(java.math.BigDecimal.ZERO) == 0) {
+        java.math.BigDecimal.ZERO.toPlainString
+      } else {
+        d.stripTrailingZeros().toPlainString
+      }
+    }
+
+    /** Hive outputs fields of structs slightly differently than top level attributes. */
+    def toHiveStructString(a: (Any, org.apache.spark.sql.types.DataType)): String = a match {
+      case (struct: Row, StructType(fields)) =>
+        struct.toSeq
+          .zip(fields)
+          .map { case (v, t) =>
+            s""""${t.name}":${toHiveStructString((v, t.dataType))}"""
+          }
+          .mkString("{", ",", "}")
+      case (seq: Seq[_], ArrayType(typ, _)) =>
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+      case (map: Map[_, _], MapType(kType, vType, _)) =>
+        map
+          .map { case (key, value) =>
+            toHiveStructString((key, kType)) + ":" + toHiveStructString((value, vType))
+          }
+          .toSeq
+          .sorted
+          .mkString("{", ",", "}")
+      case (null, _) => "null"
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case (other: Any, tpe) => other.toString
       case _ => null
     }
+    a match {
+      case (struct: Row, StructType(fields)) =>
+        struct.toSeq
+          .zip(fields)
+          .map { case (v, t) =>
+            s""""${t.name}":${toHiveStructString((v, t.dataType))}"""
+          }
+          .mkString("{", ",", "}")
+      case (seq: Seq[_], ArrayType(typ, _)) =>
+        seq.map(v => (v, typ)).map(toHiveStructString).mkString("[", ",", "]")
+      case (map: Map[_, _], MapType(kType, vType, _)) =>
+        map
+          .map { case (key, value) =>
+            toHiveStructString((key, kType)) + ":" + toHiveStructString((value, vType))
+          }
+          .toSeq
+          .sorted
+          .mkString("{", ",", "}")
 
-  }
+      case (str: String, StringType) => str.replaceAll("\n|\t", " ")
+      case (double: Double, DoubleType) => nf.format(double)
+      case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
+      case (other: Any, tpe) => other.toString
+      case _ => null
 
-  private def formatDecimal(d: java.math.BigDecimal): String = {
-    if (null == d || d.compareTo(java.math.BigDecimal.ZERO) == 0) {
-      java.math.BigDecimal.ZERO.toPlainString
-    } else {
-      d.stripTrailingZeros().toPlainString
     }
   }
 
+//  private def toHiveString(value: Any): String = {
+//
+//    value match {
+//      case value: String => value.replaceAll("\n|\t", " ")
+//      case value: Double => nf.format(value)
+//      case value: java.math.BigDecimal => formatDecimal(value)
+//      case value: Any => value.toString
+//      case _ => null
+//    }
+//
+//  }
   def showHTML(
       sc: SparkContext,
       jobGroup: String,
@@ -173,7 +244,9 @@ object SQLSession extends Logging {
     val metaData = new LineMetaData(null)
     writer.addMetaData(metaData)
     writer.addRecord(new LineRecord(htmlContent.toString))
-    logger.warn(s"Time taken: ${System.currentTimeMillis() - startTime}")
+    logger.warn(
+      s"Time taken: ${ByteTimeUtils.msDurationToString(System.currentTimeMillis() - startTime)}"
+    )
 
     engineExecutionContext.sendResultSet(writer)
   }

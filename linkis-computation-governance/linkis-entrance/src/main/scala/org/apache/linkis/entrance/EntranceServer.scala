@@ -52,14 +52,14 @@ abstract class EntranceServer extends Logging {
   def getEntranceContext: EntranceContext
 
   /**
-   * Execute a task and return an execId(执行一个task，返回一个execId)
+   * Execute a task and return an job(执行一个task，返回一个job)
    * @param params
    * @return
    */
-  def execute(params: java.util.Map[String, Any]): String = {
-    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG))
+  def execute(params: java.util.Map[String, AnyRef]): Job = {
+    if (!params.containsKey(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)) {
       logger.debug("received a request: " + params)
-    else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
+    } else params.remove(EntranceServer.DO_NOT_PRINT_PARAMS_LOG)
     var jobRequest = getEntranceContext.getOrCreateEntranceParser().parseToTask(params)
     // todo: multi entrance instances
     jobRequest.setInstances(Sender.getThisInstance)
@@ -111,8 +111,9 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-          val infoMap = new util.HashMap[String, Object]
+          val infoMap = new util.HashMap[String, AnyRef]
           infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put(TaskConstant.TICKET_ID, "")
           infoMap.put("message", "Task interception failed and cannot be retried")
           JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
         case _ =>
@@ -131,14 +132,14 @@ abstract class EntranceServer extends Logging {
       job.setProgressListener(getEntranceContext.getOrCreatePersistenceManager())
       job.setJobListener(getEntranceContext.getOrCreatePersistenceManager())
       job match {
-        case entranceJob: EntranceJob => {
+        case entranceJob: EntranceJob =>
           entranceJob.setEntranceListenerBus(getEntranceContext.getOrCreateEventListenerBus)
-        }
         case _ =>
       }
       Utils.tryCatch {
-        if (logAppender.length() > 0)
+        if (logAppender.length() > 0) {
           job.getLogListener.foreach(_.onLogUpdate(job, logAppender.toString.trim))
+        }
       } { t =>
         logger.error("Failed to write init log, reason: ", t)
       }
@@ -158,13 +159,13 @@ abstract class EntranceServer extends Logging {
       job match {
         case entranceJob: EntranceJob =>
           entranceJob.getJobRequest.setReqId(job.getId())
-          if (jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob))
+          if (jobTimeoutManager.timeoutCheck && JobTimeoutManager.hasTimeoutLabel(entranceJob)) {
             jobTimeoutManager.add(job.getId(), entranceJob)
+          }
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
-
-      job.getId()
+      job
     } { t =>
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
       val _jobRequest: JobRequest =

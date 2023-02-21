@@ -129,6 +129,18 @@ abstract class UJESClient extends Closeable {
     executeUJESJob(getPartitionStatisticInfoAction).asInstanceOf[GetPartitionStatisticInfoResult]
   }
 
+  def listECM(emsListAction: EmsListAction): EmsListResult = {
+    executeUJESJob(emsListAction).asInstanceOf[EmsListResult]
+  }
+
+  def addJobObserve(jobObserveAction: JobObserveAction): JobObserveResult = {
+    executeUJESJob(jobObserveAction).asInstanceOf[JobObserveResult]
+  }
+
+  def deleteJobObserve(jobDeleteObserveAction: JobDeleteObserveAction): JobDeleteObserveResult = {
+    executeUJESJob(jobDeleteObserveAction).asInstanceOf[JobDeleteObserveResult]
+  }
+
 }
 
 object UJESClient {

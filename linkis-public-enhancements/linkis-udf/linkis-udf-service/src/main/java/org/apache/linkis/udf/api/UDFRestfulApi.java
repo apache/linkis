@@ -25,6 +25,7 @@ import org.apache.linkis.udf.excepiton.UDFException;
 import org.apache.linkis.udf.service.UDFService;
 import org.apache.linkis.udf.service.UDFTreeService;
 import org.apache.linkis.udf.utils.ConstantVar;
+import org.apache.linkis.udf.utils.UdfConfiguration;
 import org.apache.linkis.udf.vo.*;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -42,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -168,7 +170,7 @@ public class UDFRestfulApi {
       UDFTree udfTree = udfTreeService.getTreeById(treeId, userName, type, category);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to list Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -196,7 +198,7 @@ public class UDFRestfulApi {
         name = "path",
         dataType = "String",
         value = "path",
-        example = "file:///mnt/bdap/johnnwang/test1012_01.jar"),
+        example = "file:///mnt/bdap/hadoop/test1012_01.jar"),
     @ApiImplicitParam(
         name = "registerFormat",
         dataType = "String",
@@ -217,9 +219,7 @@ public class UDFRestfulApi {
       udfvo.setCreateUser(userName);
       udfvo.setCreateTime(new Date());
       udfvo.setUpdateTime(new Date());
-      udfService.addUDF(udfvo, userName);
-      message = Message.ok();
-      //            message.data("udf", udfvo);
+      message = Message.ok().data("udfId", udfService.addUDF(udfvo, userName));
     } catch (Exception e) {
       logger.error("Failed to add UDF: ", e);
       message = Message.error(e.getMessage());
@@ -247,7 +247,7 @@ public class UDFRestfulApi {
         required = true,
         dataType = "String",
         value = "path",
-        example = "file:///mnt/bdap/johnnwang/test.py"),
+        example = "file:///mnt/bdap/hadoop/test.py"),
     @ApiImplicitParam(
         name = "registerFormat",
         required = true,
@@ -296,7 +296,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, id);
       udfService.deleteUDF(id, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to delete UDF: ", e);
       message = Message.error(e.getMessage());
     }
@@ -305,14 +305,14 @@ public class UDFRestfulApi {
 
   @ApiOperation(value = "isLoad", notes = "is load", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "udfId", dataType = "Long", value = "udf id"),
-    @ApiImplicitParam(name = "isLoad", dataType = "Boolean", value = "is load")
+    @ApiImplicitParam(name = "udfId", required = true, dataType = "Long", value = "udf id"),
+    @ApiImplicitParam(name = "isLoad", required = true, dataType = "Boolean", value = "is load")
   })
   @RequestMapping(path = "isload", method = RequestMethod.GET)
   public Message isLoad(
       HttpServletRequest req,
-      @RequestParam(value = "udfId", required = false) Long udfId,
-      @RequestParam(value = "isLoad", required = false) Boolean isLoad) {
+      @RequestParam(value = "udfId") Long udfId,
+      @RequestParam(value = "isLoad") Boolean isLoad) {
     String userName = ModuleUserUtils.getOperationUser(req, "isload ");
     Message message = null;
     try {
@@ -322,7 +322,7 @@ public class UDFRestfulApi {
         udfService.deleteLoadInfo(udfId, userName);
       }
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to isLoad UDF: ", e);
       message = Message.error(e.getMessage());
     }
@@ -355,7 +355,7 @@ public class UDFRestfulApi {
       udfTree = udfTreeService.addTree(udfTree, userName);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to add Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -388,7 +388,7 @@ public class UDFRestfulApi {
       udfTree = udfTreeService.updateTree(udfTree, userName);
       message = Message.ok();
       message.data("udfTree", udfTree);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to update Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -407,7 +407,7 @@ public class UDFRestfulApi {
     try {
       udfTreeService.deleteTree(id, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to delete Tree: ", e);
       message = Message.error(e.getMessage());
     }
@@ -419,14 +419,14 @@ public class UDFRestfulApi {
   public Message Authenticate(HttpServletRequest req) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "Authenticate");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("UserName is Empty!");
       }
       Boolean boo = udfService.isUDFManager(userName);
       message = Message.ok();
       message.data("isUDFManager", boo);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to authenticate identification: ", e);
       message = Message.error(e.getMessage());
     }
@@ -456,7 +456,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, udfId);
       udfService.setUdfExpire(udfId, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to setExpire: ", e);
       message = Message.error(e.getMessage());
     }
@@ -487,7 +487,7 @@ public class UDFRestfulApi {
   public Message shareUDF(HttpServletRequest req, @RequestBody JsonNode json) throws Throwable {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "shareUDF");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("UserName is Empty!");
       }
@@ -521,7 +521,7 @@ public class UDFRestfulApi {
       }
       udfService.setUDFSharedInfo(true, udfInfo.getId());
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to share: ", e);
       message = Message.error(e.getMessage());
     }
@@ -541,7 +541,7 @@ public class UDFRestfulApi {
   public Message getSharedUsers(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "getSharedUsers");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("UserName is Empty!");
       }
@@ -549,7 +549,7 @@ public class UDFRestfulApi {
       List<String> shareUsers = udfService.getAllSharedUsersByUdfId(userName, udfId);
       message = Message.ok();
       message.data("sharedUsers", shareUsers);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to setExpire: ", e);
       message = Message.error(e.getMessage());
     }
@@ -602,7 +602,7 @@ public class UDFRestfulApi {
       }
       udfService.handoverUdf(udfId, handoverUser);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to handover udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -638,7 +638,7 @@ public class UDFRestfulApi {
   public Message publishUDF(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "publishUDF");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -650,7 +650,7 @@ public class UDFRestfulApi {
       verifyOperationUser(userName, udfId);
       udfService.publishUdf(udfId, version);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to publish udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -677,16 +677,18 @@ public class UDFRestfulApi {
   public Message rollbackUDF(HttpServletRequest req, @RequestBody JsonNode json) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      long udfId = json.get("udfId").longValue();
+      String version = json.get("version").textValue();
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("rollbackUDF,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
-      long udfId = json.get("udfId").longValue();
-      String version = json.get("version").textValue();
       verifyOperationUser(userName, udfId);
       udfService.rollbackUDF(udfId, version, userName);
       message = Message.ok();
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to rollback udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -701,14 +703,14 @@ public class UDFRestfulApi {
   public Message versionList(HttpServletRequest req, @RequestParam("udfId") long udfId) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "versionList,udfId:" + udfId);
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
       List<UDFVersionVo> versionList = udfService.getUdfVersionList(udfId);
       message = Message.ok();
       message.data("versionList", versionList);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf versionList: ", e);
       message = Message.error(e.getMessage());
     }
@@ -750,7 +752,7 @@ public class UDFRestfulApi {
   public Message managerPages(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req);
+      String userName = ModuleUserUtils.getOperationUser(req, "managerPages");
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -769,7 +771,7 @@ public class UDFRestfulApi {
       message.data("infoList", pageInfo.getList());
       message.data("totalPage", pageInfo.getPages());
       message.data("total", pageInfo.getTotal());
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf infoList: ", e);
       message = Message.error(e.getMessage());
     }
@@ -799,14 +801,16 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("downloadUdf,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
       String content = udfService.downLoadUDF(udfId, version, userName);
       message = Message.ok();
       message.data("content", content);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to download udf: ", e);
       message = Message.error(e.getMessage());
     }
@@ -841,7 +845,9 @@ public class UDFRestfulApi {
 
       long udfId = json.get("udfId").longValue();
       String version = json.get("version").textValue();
-      String userName = ModuleUserUtils.getOperationUser(req, "downloadUdf " + udfId);
+      String userName =
+          ModuleUserUtils.getOperationUser(
+              req, MessageFormat.format("downloadUdf,udfId:{0},version:{1}", udfId, version));
       if (StringUtils.isEmpty(userName)) {
         throw new UDFException("username is empty!");
       }
@@ -894,7 +900,7 @@ public class UDFRestfulApi {
       List<String> udfUsers = udfService.allUdfUsers();
       message = Message.ok();
       message.data("udfUsers", udfUsers);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get udf users: ", e);
       message = Message.error(e.getMessage());
     }
@@ -918,8 +924,91 @@ public class UDFRestfulApi {
       List<String> userDirectory = udfService.getUserDirectory(userName, category);
       message = Message.ok();
       message.data("userDirectory", userDirectory);
-    } catch (Throwable e) {
+    } catch (Exception e) {
       logger.error("Failed to get user directory: ", e);
+      message = Message.error(e.getMessage());
+    }
+    return message;
+  }
+
+  /** get UDF info by nameList */
+  @ApiOperation(value = "getUdfList", notes = "get user directory", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "nameList", required = true, dataType = "String", value = "category"),
+    @ApiImplicitParam(
+        name = "createUser",
+        required = true,
+        dataType = "String",
+        value = "category"),
+  })
+  @RequestMapping(path = "/getUdfByNameList", method = RequestMethod.GET)
+  public Message getUdfList(
+      HttpServletRequest req,
+      @RequestParam("nameList") String nameList,
+      @RequestParam("createUser") String createUser) {
+    Message message = null;
+    try {
+      //      String userName = ModuleUserUtils.getOperationUser(req, "getUdfByNameList ");
+      String userName = "hadoop";
+      if (StringUtils.isEmpty(userName)) {
+        throw new UDFException("username is empty!");
+      }
+      if (StringUtils.isEmpty(nameList)) {
+        throw new UDFException("nameList is empty!");
+      }
+      if (!UdfConfiguration.nameRegexPattern().matcher(nameList).matches()) {
+        throw new UDFException("nameList is invalid!");
+      }
+      if (StringUtils.isEmpty(createUser)) {
+        throw new UDFException("creator is empty!");
+      }
+      List<String> collect = Arrays.stream(nameList.split(",")).collect(Collectors.toList());
+      List<UDFAddVo> udfInfoList = udfService.getUdfByNameList(collect, createUser);
+      message = Message.ok().data("infoList", udfInfoList);
+    } catch (Throwable e) {
+      logger.error("Failed to get user udfinfo : ", e);
+      message = Message.error(e.getMessage());
+    }
+    return message;
+  }
+
+  /** get version info by udfName && createUser */
+  @ApiOperation(value = "versionInfo", notes = "version list", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "udfName", required = true, dataType = "String", value = "udf name"),
+    @ApiImplicitParam(
+        name = "createUser",
+        required = true,
+        dataType = "String",
+        value = "create user")
+  })
+  @RequestMapping(path = "/versionInfo", method = RequestMethod.GET)
+  public Message versionInfo(
+      HttpServletRequest req,
+      @RequestParam("udfName") String udfName,
+      @RequestParam("createUser") String createUser) {
+    Message message = null;
+    try {
+      String userName = ModuleUserUtils.getOperationUser(req, "versionInfo ");
+      if (StringUtils.isEmpty(userName)) {
+        throw new UDFException("userName is empty!");
+      }
+      if (StringUtils.isEmpty(udfName)) {
+        throw new UDFException("udfName is empty!");
+      }
+      if (StringUtils.isEmpty(createUser)) {
+        throw new UDFException("createUser is empty!");
+      }
+      if (!UdfConfiguration.nameRegexPattern().matcher(udfName).matches()) {
+        throw new UDFException("udfName is invalid!");
+      }
+      if (!UdfConfiguration.nameRegexPattern().matcher(createUser).matches()) {
+        throw new UDFException("createUser is invalid!");
+      }
+      UDFVersionVo versionList = udfService.getUdfVersionInfo(udfName, createUser);
+      message = Message.ok().data("versionInfo", versionList);
+    } catch (Throwable e) {
+      logger.error("Failed to get udf versionInfo: ", e);
       message = Message.error(e.getMessage());
     }
     return message;

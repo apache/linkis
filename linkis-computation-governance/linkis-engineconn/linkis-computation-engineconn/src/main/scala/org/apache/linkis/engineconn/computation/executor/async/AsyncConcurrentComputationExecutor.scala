@@ -255,4 +255,8 @@ abstract class AsyncConcurrentComputationExecutor(override val outputPrintLimit:
     }
   }
 
+  override def hasTaskRunning(): Boolean = {
+    getRunningTask > 0
+  }
+
 }

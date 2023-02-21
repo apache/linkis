@@ -17,6 +17,7 @@
 
 package org.apache.linkis.jobhistory.restful.api;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 import org.apache.linkis.governance.common.entity.job.QueryException;
 import org.apache.linkis.jobhistory.cache.impl.DefaultQueryCacheManager;
@@ -68,9 +69,9 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/governanceStationAdmin", method = RequestMethod.GET)
   public Message governanceStationAdmin(HttpServletRequest req) {
     String username = ModuleUserUtils.getOperationUser(req, "governanceStationAdmin");
-    String[] split = JobhistoryConfiguration.GOVERNANCE_STATION_ADMIN().getValue().split(",");
-    boolean match = Arrays.stream(split).anyMatch(username::equalsIgnoreCase);
-    return Message.ok().data("admin", match);
+    return Message.ok()
+        .data("admin", Configuration.isAdmin(username))
+        .data("historyAdmin", Configuration.isJobHistoryAdmin(username));
   }
 
   @ApiOperation(value = "getTaskByID", notes = "get task by id", response = Message.class)
@@ -80,7 +81,7 @@ public class QueryRestfulApi {
   @RequestMapping(path = "/{id}/get", method = RequestMethod.GET)
   public Message getTaskByID(HttpServletRequest req, @PathVariable("id") Long jobId) {
     String username = SecurityFilter.getLoginUsername(req);
-    if (QueryUtils.isJobHistoryAdmin(username)
+    if (Configuration.isJobHistoryAdmin(username)
         || !JobhistoryConfiguration.JOB_HISTORY_SAFE_TRIGGER()) {
       username = null;
     }
@@ -117,6 +118,7 @@ public class QueryRestfulApi {
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
     @ApiImplicitParam(name = "jobId", required = false, dataType = "String", value = "job id"),
     @ApiImplicitParam(name = "isAdminView", dataType = "Boolean"),
+    @ApiImplicitParam(name = "instance", required = false, dataType = "String", value = "instance")
   })
   @RequestMapping(path = "/list", method = RequestMethod.GET)
   public Message list(
@@ -131,7 +133,8 @@ public class QueryRestfulApi {
           String executeApplicationName,
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "proxyUser", required = false) String proxyUser,
-      @RequestParam(value = "isAdminView", required = false) Boolean isAdminView)
+      @RequestParam(value = "isAdminView", required = false) Boolean isAdminView,
+      @RequestParam(value = "instance", required = false) String instance)
       throws IOException, QueryException {
     String username = SecurityFilter.getLoginUsername(req);
     if (StringUtils.isEmpty(status)) {
@@ -166,15 +169,15 @@ public class QueryRestfulApi {
     Date sDate = new Date(startDate);
     Date eDate = new Date(endDate);
     if (sDate.getTime() == eDate.getTime()) {
-      Calendar instance = Calendar.getInstance();
-      instance.setTimeInMillis(endDate);
-      instance.add(Calendar.DAY_OF_MONTH, 1);
-      eDate = new Date(instance.getTime().getTime()); // todo check
+      Calendar calendar = Calendar.getInstance();
+      calendar.setTimeInMillis(endDate);
+      calendar.add(Calendar.DAY_OF_MONTH, 1);
+      eDate = new Date(calendar.getTime().getTime()); // todo check
     }
     if (isAdminView == null) {
       isAdminView = false;
     }
-    if (QueryUtils.isJobHistoryAdmin(username)) {
+    if (Configuration.isJobHistoryAdmin(username)) {
       if (isAdminView) {
         if (proxyUser != null) {
           username = StringUtils.isEmpty(proxyUser) ? null : proxyUser;
@@ -183,12 +186,27 @@ public class QueryRestfulApi {
         }
       }
     }
+    if (StringUtils.isEmpty(instance)) {
+      instance = null;
+    } else {
+      if (!QueryUtils.checkNameValid(instance)) {
+        return Message.error("Invalid instances : " + instance);
+      }
+    }
     List<JobHistory> queryTasks = null;
     PageHelper.startPage(pageNow, pageSize);
     try {
       queryTasks =
           jobHistoryQueryService.search(
-              taskID, username, status, creator, sDate, eDate, executeApplicationName, null);
+              taskID,
+              username,
+              status,
+              creator,
+              sDate,
+              eDate,
+              executeApplicationName,
+              null,
+              instance);
     } finally {
       PageHelper.clearPage();
     }
@@ -199,17 +217,8 @@ public class QueryRestfulApi {
     List<QueryTaskVO> vos = new ArrayList<>();
     for (JobHistory jobHistory : list) {
       QueryUtils.exchangeExecutionCode(jobHistory);
-      //            List<JobDetail> jobDetails =
-      // jobDetailMapper.selectJobDetailByJobHistoryId(jobHistory.getId());
       QueryTaskVO taskVO = TaskConversions.jobHistory2TaskVO(jobHistory, null);
       vos.add(taskVO);
-      /*// todo add first resultLocation to taskVO
-      for (JobDetail subjob : jobDetails) {
-          if (!StringUtils.isEmpty(subjob.getResult_location())) {
-              taskVO.setResultLocation(subjob.getResult_location());
-          }
-          break;
-      }*/
     }
     return Message.ok().data(TaskConstant.TASKS, vos).data(JobRequestConstants.TOTAL_PAGE(), total);
   }
@@ -291,7 +300,8 @@ public class QueryRestfulApi {
               sDate,
               eDate,
               engineType,
-              queryCacheManager.getUndoneTaskMinId());
+              queryCacheManager.getUndoneTaskMinId(),
+              null);
     } finally {
       PageHelper.clearPage();
     }

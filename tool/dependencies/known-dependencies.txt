@@ -304,6 +304,7 @@ jna-platform-5.12.1.jar
 joda-time-2.3.jar
 joda-time-2.8.1.jar
 joda-time-2.9.3.jar
+joda-time-2.10.5.jar
 jol-core-0.2.jar
 joni-2.1.2.jar
 jpam-1.1.jar
@@ -427,8 +428,7 @@ presto-client-0.234.jar
 presto-client-1.5.0.jar
 presto-resource-group-managers-0.234.jar
 presto-spi-0.234.jar
-protobuf-java-3.14.0.jar
-protobuf-java-3.15.8.jar
+protobuf-java-3.16.3.jar
 protostuff-api-1.6.2.jar
 protostuff-collectionschema-1.6.2.jar
 protostuff-core-1.6.2.jar
@@ -467,7 +467,7 @@ simpleclient_common-0.8.1.jar
 slf4j-api-1.7.30.jar
 slice-0.38.jar
 slider-core-0.90.2-incubating.jar
-snakeyaml-1.26.jar
+snakeyaml-1.33.jar
 snappy-java-1.0.4.1.jar
 snappy-java-1.0.5.jar
 snappy-java-1.1.4.jar
@@ -582,6 +582,7 @@ dss-gateway-support-1.1.1.jar
 seatunnel-core-flink-2.1.2.jar
 seatunnel-core-flink-sql-2.1.2.jar
 seatunnel-core-spark-2.1.2.jar
+mongo-java-driver-3.12.7.jar
 clickhouse-jdbc-0.3.2-patch11.jar
 postgresql-42.3.8.jar
 

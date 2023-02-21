@@ -17,6 +17,10 @@
 
 package org.apache.linkis.manager.label.entity.engine;
 
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel;
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator;
 
 import org.junit.jupiter.api.Assertions;
@@ -30,8 +34,10 @@ public class EngineTypeLabelTest {
     String engineType = "hive";
     String version = "1.1.0-cdh5.12.0";
 
-    EngineTypeLabelCreator.registerVersion(engineType, version);
-    EngineTypeLabel engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(engineType);
+    LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
+    EngineTypeLabel engineTypeLabel =
+            labelBuilderFactory.createLabel(EngineTypeLabel.class);
+    engineTypeLabel.setStringValue(engineType + "-" + version);
 
     Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType);
     Assertions.assertEquals(engineTypeLabel.getVersion(), version);

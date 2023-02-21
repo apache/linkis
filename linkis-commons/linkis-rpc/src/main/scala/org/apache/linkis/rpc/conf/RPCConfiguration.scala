@@ -98,6 +98,10 @@ object RPCConfiguration {
   val ENABLE_SPRING_PARAMS: Boolean =
     CommonVars("wds.linkis.rpc.spring.params.enable", false).getValue
 
+  // unit is HOUR
+  val SENDER_CACHE_CLEANING_HOUR =
+    CommonVars("linkis.rpc.sender.cache.cleaning.time.hour", 6).getValue
+
   val REFLECTIONS = new Reflections(
     SERVICE_SCAN_PACKAGE,
     new MethodAnnotationsScanner(),

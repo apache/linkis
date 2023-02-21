@@ -54,6 +54,7 @@ CREATE TABLE linkis_ps_job_history_group_history (
   engine_type varchar(32) DEFAULT NULL COMMENT 'Engine type',
   execution_code text COMMENT 'Job origin code or code path',
   result_location varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+  observe_info varchar(500) DEFAULT NULL COMMENT 'demo',
   PRIMARY KEY (id),
   KEY created_time (created_time),
   KEY submit_user (submit_user)

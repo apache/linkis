@@ -24,6 +24,11 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 
 trait EngineConnLaunchBuilder {
 
-  def buildEngineConn(engineConnBuildRequest: EngineConnBuildRequest): EngineConnLaunchRequest
+  protected var engineConnBuildRequest: EngineConnBuildRequest = _
+
+  def setBuildRequest(engineConnBuildRequest: EngineConnBuildRequest): Unit =
+    this.engineConnBuildRequest = engineConnBuildRequest
+
+  def buildEngineConn(): EngineConnLaunchRequest
 
 }

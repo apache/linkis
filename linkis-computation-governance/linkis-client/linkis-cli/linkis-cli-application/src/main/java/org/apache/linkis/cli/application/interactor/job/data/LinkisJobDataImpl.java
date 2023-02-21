@@ -72,6 +72,8 @@ public class LinkisJobDataImpl
   private TriggerEvent resultFinEvent = new TriggerEvent();
   private TriggerEventListener resultFinListener = new TriggerEventListener();
 
+  private boolean hasResult = true;
+
   {
     logFinevent.register(logFinListener);
     resultFinEvent.register(resultFinListener);
@@ -285,6 +287,16 @@ public class LinkisJobDataImpl
   @Override
   public boolean resultFinReceived() {
     return this.resultFinListener.isTriggered();
+  }
+
+  @Override
+  public boolean hasResult() {
+    return hasResult;
+  }
+
+  @Override
+  public void setHasResult(boolean hasResult) {
+    this.hasResult = hasResult;
   }
 
   @Override

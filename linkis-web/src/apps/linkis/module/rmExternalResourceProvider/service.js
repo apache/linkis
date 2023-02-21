@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const resourceProviderBaseUrl = '/basedata-manager/rm-external-resource-provider'
 
 const getList = (params)=> {
-  console.log(params)
+  window.console.log(params)
   return api.fetch(resourceProviderBaseUrl, params , 'get')
 }
 

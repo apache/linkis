@@ -61,6 +61,9 @@ public interface UDFDao {
   List<UDFInfoVo> getUDFInfoByTreeId(
       Long treeId, String userName, Collection<Integer> categoryCodes);
 
+  List<UDFInfoVo> getUDFInfoByIds(
+      @Param("ids") Long[] ids, @Param("categoryCodes") Collection<Integer> categoryCodes);
+
   List<UDFInfo> getLoadedUDFs(String userName);
 
   List<Long> getLoadedUDFIds(String userName);
@@ -129,4 +132,7 @@ public interface UDFDao {
   List<UDFInfoVo> getLatesetPublishedUDF(
       @Param("userName") String userName,
       @Param("categoryCodes") Collection<Integer> categoryCodes);
+
+  List<UDFAddVo> getUdfInfoByNameList(
+      @Param("udfNameList") Collection<String> udfNameList, @Param("createUser") String createUser);
 }

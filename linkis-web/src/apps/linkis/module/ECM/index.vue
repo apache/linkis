@@ -83,6 +83,22 @@
         </FormItem>
       </Form>
     </Modal>
+    <Modal
+      @on-ok="confirmKill"
+      v-model="killModal">
+      <div>
+        <div class="tip">
+          {{$t('message.linkis.tipForKill', {instance: killInfo.curInstance})}}
+        </div>
+        <div class="radio">
+          {{$t('message.linkis.allEngine')}}
+          <RadioGroup v-model="killInfo.all">
+            <Radio :label="0">{{$t('message.linkis.no')}}</Radio>
+            <Radio :label="1">{{$t('message.linkis.yes')}}</Radio>
+          </RadioGroup>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -90,6 +106,7 @@ import api from '@/common/service/api';
 import moment from "moment";
 import Search from '@/apps/linkis/module/ECM/search.vue';
 import WbTag from '@/apps/linkis/components/tag';
+import { debounce } from 'lodash'
 export default {
   name: 'ECM',
   data() {
@@ -119,6 +136,12 @@ export default {
       tableWidth: 0,
       // Open the label modification popup(开启标签修改弹框)
       isTagEdit: false,
+      // 删除实例instance
+      killInfo: {
+        curInstance: '',
+        all: 0,
+      },
+      killModal: false,
       tableData: [],
       page: {
         totalSize: 0,
@@ -184,7 +207,7 @@ export default {
         {
           title: this.$t('message.linkis.tableColumns.control.title'),
           key: 'action',
-          width: '80',
+          width: '230',
           // fixed: 'right',
           align: 'center',
           render: (h, params) => {
@@ -192,7 +215,10 @@ export default {
               h('Button', {
                 props: {
                   type: 'primary',
-                  size: 'small'
+                  size: 'small',
+                },
+                style: {
+                  marginRight: '5px'
                 },
                 on: {
                   click: () => {
@@ -213,7 +239,23 @@ export default {
                     this.formItem = Object.assign(this.formItem, obj)
                   }
                 }
-              }, this.$t('message.linkis.tagEdit'))
+              }, this.$t('message.linkis.tagEdit')),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small'
+                },
+                style: {
+                  display: sessionStorage.getItem('isLogAdmin') ? 'inline-block' : 'none'
+                },
+                on: {
+                  click: () => {
+                    this.killModal = true;
+                    window.console.log(params.row);
+                    this.killInfo.curInstance = params.row.instance;
+                  }
+                }
+              }, this.$t('message.linkis.killAll'))
             ]);
           }
         }
@@ -274,7 +316,7 @@ export default {
         this.page.totalSize = this.tableData.length;
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -298,7 +340,7 @@ export default {
         let list = healthyStatusList.nodeHealthy || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -308,7 +350,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)
@@ -360,7 +402,8 @@ export default {
       let param = {
         instance: e.instance,
         nodeHealthy: e.nodeHealthy,
-        owner: e.owner
+        owner: e.owner,
+        tenantLabel: e.tenant,
       }
       api.fetch('/linkisManager/listAllEMs',param,'get').then((res)=>{
         this.tableData = res.EMs
@@ -382,7 +425,30 @@ export default {
       if (v===false && this.$refs.wbtags) {
         this.$refs.wbtags.resetTagAdd()
       }
-    }
+    },
+    confirmKill: debounce(async function() {
+      try {
+        const res = await api.fetch('/linkisManager/rm/killUnlockEngineByEM', {
+          instance: this.killInfo.curInstance,
+          withMultiUserEngine: this.killInfo.all === 1 ? true : false,
+        }, 'post');
+        const { killEngineNum, memory, cores } = res.result
+        window.console.log(res);
+        this.killModal = false;
+        this.killInfo = {
+          curInstance: '',
+          all: 0,
+        }
+        // 传回的是Byte
+        this.$Message.success(this.$t('message.linkis.killFinishedInfo', { killEngineNum, memory: memory / 1024 / 1024 / 1024, cores }))
+      } catch (err) {
+        window.console.warn(err);
+        this.killInfo = {
+          curInstance: '',
+          all: 0,
+        }
+      }
+    }, 1000, { leading: true })
   }
 }
 </script>

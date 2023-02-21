@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,12 +22,12 @@ package org.apache.linkis.ujes.jdbc;
  * if you want to test this module,you must rewrite default SQL we used for local test
  * */
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.sql.SQLException;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -35,86 +35,102 @@ import java.sql.SQLException;
  * */
 
 public class UJESSQLPreparedStatementTest {
-    private static UJESSQLConnection conn;
-    private UJESSQLPreparedStatement preStatement;
+  private static UJESSQLConnection conn;
+  private UJESSQLPreparedStatement preStatement;
 
-    @BeforeClass
-    public static void getConnection() {
-        try {
-            conn = JDBCSpiTest.getConnection();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+  @BeforeAll
+  public static void getConnection() {
+    try {
+      conn = JDBCSpiTest.getConnection();
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      conn = null;
     }
+  }
 
-    @Test
-    public void crud() {
-        preStatement = conn.prepareStatement("");
-        preStatement.executeUpdate(
-                "CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10");
-        preStatement.executeUpdate("insert into db.test1236 select * from ai_fmi_ods.1000_10");
-        //  preStatement.executeUpdate("update db.test1236 set label=6 where label=1");
-        preStatement.executeUpdate("select * from db.test1236");
-        UJESSQLResultSet resultSet = preStatement.getResultSet();
-        showResult(resultSet);
-        preStatement.execute("drop table db.test1236");
-        Assert.assertTrue(resultSet.isAfterLast());
+  @Test
+  public void crud() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("");
+      preStatement.executeUpdate(
+          "CREATE TABLE if not exists db.test1236 as select * from ai_fmi_ods.1000_10");
+      preStatement.executeUpdate("insert into db.test1236 select * from ai_fmi_ods.1000_10");
+      //  preStatement.executeUpdate("update db.test1236 set label=6 where label=1");
+      preStatement.executeUpdate("select * from db.test1236");
+      UJESSQLResultSet resultSet = preStatement.getResultSet();
+      showResult(resultSet);
+      preStatement.execute("drop table db.test1236");
+      Assertions.assertTrue(resultSet.isAfterLast());
     }
+  }
 
-    @AfterClass
-    public static void closeConnection() {
-        conn.close();
+  @AfterAll
+  public static void closeConnection() {
+    if (conn != null) {
+      conn.close();
     }
+  }
 
-    @Test
-    public void setObject() {
-        preStatement = conn.prepareStatement("? ?");
-        preStatement.setObject(1, "show");
-        preStatement.setObject(2, "tables");
-        Assert.assertTrue(preStatement.execute());
+  @Test
+  public void setObject() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("? ?");
+      preStatement.setObject(1, "show");
+      preStatement.setObject(2, "tables");
+      Assertions.assertTrue(preStatement.execute());
     }
+  }
 
-    @Test
-    public void execute() {
-        preStatement = conn.prepareStatement("show tables");
-        Assert.assertTrue(preStatement.execute());
+  @Test
+  public void execute() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      Assertions.assertTrue(preStatement.execute());
     }
+  }
 
-    @Test
-    public void selectTest() {
-        preStatement = conn.prepareStatement("select * from db.table limit 10");
-        UJESSQLResultSet resultSet = preStatement.executeQuery();
-        showResult(resultSet);
-        Assert.assertTrue(resultSet.isAfterLast());
+  @Test
+  public void selectTest() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("select * from db.table limit 10");
+      UJESSQLResultSet resultSet = preStatement.executeQuery();
+      showResult(resultSet);
+      Assertions.assertTrue(resultSet.isAfterLast());
     }
+  }
 
-    private void showResult(UJESSQLResultSet resultSet) {
-        while (resultSet.next()) {
-            UJESSQLResultSetMetaData metaData = resultSet.getMetaData();
-            for (int i = 1; i <= metaData.getColumnCount(); i++) {
-                System.out.print(
-                        metaData.getColumnName(i)
-                                + ":"
-                                + metaData.getColumnTypeName(i)
-                                + ": "
-                                + resultSet.getObject(i)
-                                + "    ");
-            }
-            System.out.println();
-        }
+  private void showResult(UJESSQLResultSet resultSet) {
+    while (resultSet.next()) {
+      UJESSQLResultSetMetaData metaData = resultSet.getMetaData();
+      for (int i = 1; i <= metaData.getColumnCount(); i++) {
+        System.out.print(
+            metaData.getColumnName(i)
+                + ":"
+                + metaData.getColumnTypeName(i)
+                + ": "
+                + resultSet.getObject(i)
+                + "    ");
+      }
+      System.out.println();
     }
+  }
 
-    @Test
-    public void executeUpdate() {
-        preStatement = conn.prepareStatement("show tables");
-        Assert.assertEquals(preStatement.executeUpdate(), 0);
+  @Test
+  public void executeUpdate() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      Assertions.assertEquals(preStatement.executeUpdate(), 0);
     }
+  }
 
-    @Test
-    public void executeQuery() {
-        preStatement = conn.prepareStatement("show tables");
-        Assert.assertTrue(preStatement.executeQuery() instanceof UJESSQLResultSet);
+  @Test
+  public void executeQuery() {
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      Assertions.assertTrue(preStatement.executeQuery() instanceof UJESSQLResultSet);
     }
+  }
 }

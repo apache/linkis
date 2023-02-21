@@ -59,7 +59,7 @@ object GetInfoByDataSourceIdAction {
     }
 
     def build(): GetInfoByDataSourceIdAction = {
-      if (dataSourceId == null) {
+      if (dataSourceId <= 0) {
         throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
       if (system == null) throw new DataSourceClientBuilderException(SYSTEM_NEEDED.getErrorDesc)

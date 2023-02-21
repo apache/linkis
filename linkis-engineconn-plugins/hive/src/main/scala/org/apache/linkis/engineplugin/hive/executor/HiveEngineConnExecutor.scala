@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.GET_FIELD_SCHEMAS_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
@@ -41,6 +42,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 }
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{
@@ -203,8 +205,18 @@ class HiveEngineConnExecutor(
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
+        var compileRet = -1
         Utils.tryCatch {
-          val queryPlan = driver.getPlan
+          compileRet = driver.compile(realCode)
+          logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+          if (0 != compileRet) {
+            logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+            throw HiveQueryFailedException(
+              COMPILE_HIVE_QUERY_ERROR.getErrorCode,
+              COMPILE_HIVE_QUERY_ERROR.getErrorDesc
+            )
+          }
+          val queryPlan = driver.getPlan()
           val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
           numberOfMRJobs = numberOfJobs
           logger.info(s"there are ${numberOfMRJobs} jobs.")
@@ -215,7 +227,7 @@ class HiveEngineConnExecutor(
         if (numberOfMRJobs > 0) {
           engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         }
-        val hiveResponse: CommandProcessorResponse = driver.run(realCode)
+        val hiveResponse: CommandProcessorResponse = driver.run(realCode, compileRet == 0)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
           // todo check uncleared context ?
@@ -562,24 +574,11 @@ class HiveEngineConnExecutor(
   }
 
   override def getCurrentNodeResource(): NodeResource = {
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
-      }
-    }
-    val actualUsedResource = new LoadInstanceResource(
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties),
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE
-    )
     val resource = new CommonNodeResource
-    resource.setUsedResource(actualUsedResource)
+    resource.setUsedResource(
+      NodeResourceUtils
+        .applyAsLoadInstanceResource(EngineConnObject.getEngineCreationContext.getOptions)
+    )
     resource
   }
 
@@ -614,6 +613,13 @@ class HiveDriverProxy(driver: Any) extends Logging {
     driver.getClass
       .getMethod("run", classOf[String])
       .invoke(driver, command.asInstanceOf[AnyRef])
+      .asInstanceOf[CommandProcessorResponse]
+  }
+
+  def run(command: String, alreadyCompiled: Boolean): CommandProcessorResponse = {
+    driver.getClass
+      .getMethod("run", classOf[String], classOf[Boolean])
+      .invoke(driver, command.asInstanceOf[AnyRef], alreadyCompiled.asInstanceOf[AnyRef])
       .asInstanceOf[CommandProcessorResponse]
   }
 

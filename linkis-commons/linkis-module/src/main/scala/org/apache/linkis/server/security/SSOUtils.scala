@@ -106,10 +106,14 @@ object SSOUtils extends Logging {
     ServerConfiguration.getTicketByUsername(timeoutUser)
   }
 
-  def setLoginUser(addCookie: Cookie => Unit, username: String): Unit = {
+  def setLoginUser(
+      addCookie: Cookie => Unit,
+      username: String,
+      updateSession: Boolean = true
+  ): Unit = {
     logger.info(s"add login userTicketCookie for user $username.")
     val userTicketId = getUserTicketId(username)
-    userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
+    if (updateSession) userTicketIdToLastAccessTime.put(userTicketId, System.currentTimeMillis())
     val cookie = new Cookie(USER_TICKET_ID_STRING, userTicketId)
     cookie.setMaxAge(-1)
     if (sslEnable) cookie.setSecure(true)

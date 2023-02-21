@@ -28,17 +28,17 @@ class RuntypeInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(task: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(task.getLabels)
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
-    runType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON =>
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON =>
         val code = task.getExecutionCode
         task.setExecutionCode("%python\n" + code)
         task
-      case CodeAndRunTypeUtils.RUN_TYPE_SQL =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         val code = task.getExecutionCode
         task.setExecutionCode("%sql\n" + code)
         task
-      case CodeAndRunTypeUtils.RUN_TYPE_SCALA =>
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         val code = task.getExecutionCode
         task.setExecutionCode("%scala\n" + code)
         task

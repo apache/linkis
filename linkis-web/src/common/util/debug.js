@@ -23,8 +23,8 @@
 function debug_log (type = 'log', ...info) {
   const isDev = process.env.NODE_ENV === 'dev'
   if (isDev || window.debug_log === true) {
-    if( console[type]) {
-      console[type](...info)
+    if( window.console[type]) {
+      window.console[type](...info)
     }
   }
 }

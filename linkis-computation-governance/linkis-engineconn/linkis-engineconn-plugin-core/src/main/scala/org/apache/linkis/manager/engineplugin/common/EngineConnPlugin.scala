@@ -22,11 +22,11 @@ import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuil
 import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory
 import org.apache.linkis.manager.label.entity.Label
 
-import java.util
+import java.util.{List, Map}
 
 trait EngineConnPlugin {
 
-  def init(params: util.Map[String, Any])
+  def init(params: Map[String, AnyRef])
 
   def getEngineResourceFactory: EngineResourceFactory
 
@@ -34,6 +34,6 @@ trait EngineConnPlugin {
 
   def getEngineConnFactory: EngineConnFactory
 
-  def getDefaultLabels: util.List[Label[_]]
+  def getDefaultLabels: List[Label[_]]
 
 }

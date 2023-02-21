@@ -91,7 +91,6 @@ public class QueryPersistenceManager extends PersistenceManager {
               + progress
               + ", job : "
               + ((EntranceJob) job).getJobRequest().getId());
-      // todo check
       updatedProgress = -1 * progress;
     }
     if (Double.isNaN(updatedProgress)) {
@@ -107,6 +106,10 @@ public class QueryPersistenceManager extends PersistenceManager {
     if (job.getProgress() >= 0
         && persistedProgress >= updatedProgress
         && entranceJob.getUpdateMetrisFlag()) {
+      return;
+    }
+    if (updatedProgress > 1) {
+      logger.debug("Progress {} beyond 1 will not be updated", updatedProgress);
       return;
     }
     job.setProgress(updatedProgress);

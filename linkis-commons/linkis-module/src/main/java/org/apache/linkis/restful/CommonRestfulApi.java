@@ -18,16 +18,17 @@
 package org.apache.linkis.restful;
 
 import org.apache.linkis.server.Message;
+import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.serviceregistry.Registration;
+import org.springframework.cloud.client.serviceregistry.ServiceRegistry;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.netflix.discovery.DiscoveryManager;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -35,12 +36,14 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(path = "/")
 public class CommonRestfulApi {
-  @Autowired private DiscoveryClient client;
+  @Autowired private ServiceRegistry serviceRegistry;
+  @Autowired private Registration registration;
 
   @ApiOperation(value = "Offline", notes = "offline this service", response = Message.class)
   @RequestMapping(path = "/offline", method = RequestMethod.GET)
   public Message offline(HttpServletRequest req) {
-    DiscoveryManager.getInstance().shutdownComponent();
+    ModuleUserUtils.getOperationUser(req, "offline");
+    serviceRegistry.deregister(registration);
     return Message.ok().data("msg", "Offline successfully.");
   }
 }

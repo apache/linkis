@@ -4,7 +4,8 @@
 | Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
 |linkis-manager-common|wds.linkis.default.engine.type |spark|engine.type|
-|linkis-manager-common|wds.linkis.manager.admin|2.4.3|manager.admin|
+|linkis-manager-common|wds.linkis.default.engine.version |2.4.3|engine.version|
+|linkis-manager-common|wds.linkis.manager.admin|hadoop|manager.admin|
 |linkis-manager-common|wds.linkis.rm.application.name|ResourceManager|rm.application.name|
 |linkis-manager-common|wds.linkis.rm.wait.event.time.out| 1000 * 60 * 12L |event.time.out|
 |linkis-manager-common|wds.linkis.rm.register.interval.time|1000 * 60 * 2L |interval.time|

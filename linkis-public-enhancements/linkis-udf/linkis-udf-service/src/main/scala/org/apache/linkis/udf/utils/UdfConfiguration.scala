@@ -19,6 +19,8 @@ package org.apache.linkis.udf.utils
 
 import org.apache.linkis.common.conf.CommonVars
 
+import java.util.regex.Pattern
+
 object UdfConfiguration {
 
   val UDF_HIVE_EXEC_PATH = CommonVars(
@@ -29,5 +31,9 @@ object UdfConfiguration {
   val UDF_TMP_PATH = CommonVars("wds.linkis.udf.tmp.path", "/tmp/udf/")
   val UDF_SHARE_PATH = CommonVars("wds.linkis.udf.share.path", "/mnt/bdap/udf/")
   val UDF_SHARE_PROXY_USER = CommonVars("wds.linkis.udf.share.proxy.user", "hadoop")
+
+  val NAME_REGEX: String = "^[a-zA-Z\\-\\d_\\.=/,]+$"
+
+  val nameRegexPattern: Pattern = Pattern.compile(NAME_REGEX)
 
 }

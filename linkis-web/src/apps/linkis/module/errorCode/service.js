@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const errorCodeBaseUrl = '/basedata-manager/error-code'
 
 const getList = (params)=> {
-  console.log(params)
+  window.console.log(params)
   return api.fetch(errorCodeBaseUrl, params , 'get')
 }
 

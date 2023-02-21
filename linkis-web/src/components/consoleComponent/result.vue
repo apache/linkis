@@ -495,7 +495,7 @@ export default {
                   [headRows[index].columnName]: item,
                 });
               } catch (error) {
-                console.error(error, row.length, i);
+                window.console.error(error, row.length, i);
               }
             });
             return newItem;

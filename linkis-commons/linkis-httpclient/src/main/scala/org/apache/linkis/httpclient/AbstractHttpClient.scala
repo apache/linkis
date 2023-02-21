@@ -19,7 +19,7 @@ package org.apache.linkis.httpclient
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.io.{Fs, FsPath}
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.httpclient.authentication.{
   AbstractAuthenticationStrategy,
   AuthenticationAction,
@@ -156,7 +156,8 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
       }
       val taken = System.currentTimeMillis - startTime
       attempts.add(taken)
-      logger.info(s"invoke ${req.getURI} taken: ${taken}")
+      val costTime = ByteTimeUtils.msDurationToString(taken)
+      logger.info(s"invoke ${req.getURI} taken: ${costTime}.")
       response
     }
 
@@ -320,14 +321,14 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           case get: GetAction =>
             get.getParameters.asScala.retain((k, v) => v != null && k != null).foreach {
               case (k, v) =>
-                if (k != null && v != null) builder.addTextBody(k.toString, v.toString)
+                if (k != null && v != null) builder.addTextBody(k, v.toString)
             }
           case _ =>
         }
         upload match {
           case get: GetAction =>
             get.getHeaders.asScala.retain((k, v) => v != null && k != null).foreach { case (k, v) =>
-              if (k != null && v != null) httpPost.addHeader(k.toString, v.toString)
+              if (k != null && v != null) httpPost.addHeader(k, v)
             }
           case _ =>
         }

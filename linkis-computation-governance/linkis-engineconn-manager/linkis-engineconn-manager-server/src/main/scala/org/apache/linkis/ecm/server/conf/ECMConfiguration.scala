@@ -82,9 +82,6 @@ object ECMConfiguration {
   val ECM_HEALTH_REPORT_DELAY: Long =
     CommonVars("wds.linkis.ecm.health.report.delay", 10).getValue
 
-  val ENGINECONN_PLUGIN_SPRING_NAME: String =
-    GovernanceCommonConf.ENGINE_CONN_PLUGIN_SPRING_NAME.getValue
-
   val ECM_HOME_DIR: String =
     CommonVars("wds.linkis.ecm.home.dir", this.getClass.getResource("/").getPath).getValue
 
@@ -98,9 +95,6 @@ object ECMConfiguration {
 
   val ECM_LAUNCH_MAX_THREAD_SIZE: Int =
     CommonVars("wds.linkis.ecm.launch.max.thread.size", 100).getValue
-
-  val ECM_EUREKA_DEFAULTZONE: String =
-    CommonVars("wds.linkis.eureka.defaultZone", "http://127.0.0.1:20303/eureka/").getValue
 
   /**
    * engineconn创建时间，如果为0，则使用ms中默认的 engineconn created time

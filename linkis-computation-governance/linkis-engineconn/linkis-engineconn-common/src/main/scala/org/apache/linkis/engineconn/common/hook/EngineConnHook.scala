@@ -52,27 +52,33 @@ trait EngineConnHook {
 
 object EngineConnHook extends Logging {
 
-  private val engineConnHooks = initEngineConnHooks
+  private var engineConnHooks: Array[EngineConnHook] = _
 
-  private def initEngineConnHooks: Array[EngineConnHook] = {
+  private def initEngineConnHooks(isOnceMode: Boolean): Unit = {
 
-    val hooks = EngineConnConf.ENGINE_CONN_HOOKS.getValue
-    if (StringUtils.isNotBlank(hooks)) {
-      val clazzArr = hooks.split(",")
-      if (null != clazzArr && clazzArr.nonEmpty) {
-        clazzArr
-          .map { clazz =>
-            Utils.tryAndWarn(Utils.getClassInstance[EngineConnHook](clazz))
-          }
-          .filter(_ != null)
-      } else {
-        Array.empty
-      }
+    val hooks = if (isOnceMode) {
+      EngineConnConf.ENGINE_CONN_ONCE_HOOKS.getValue
     } else {
-      Array.empty
+      EngineConnConf.ENGINE_CONN_HOOKS.getValue
+    }
+    if (StringUtils.isNotBlank(hooks)) {
+      engineConnHooks = hooks
+        .split(",")
+        .map(_.trim)
+        .filter(StringUtils.isNotBlank)
+        .map(Utils.tryAndWarn(Utils.getClassInstance[EngineConnHook](_)))
+        .filter(_ != null)
+    } else {
+      engineConnHooks = Array.empty
     }
 
   }
 
-  def getEngineConnHooks: Array[EngineConnHook] = engineConnHooks
+  def getEngineConnHooks(isOnceMode: Boolean = false): Array[EngineConnHook] = {
+    if (engineConnHooks == null) {
+      initEngineConnHooks(isOnceMode)
+    }
+    engineConnHooks
+  }
+
 }

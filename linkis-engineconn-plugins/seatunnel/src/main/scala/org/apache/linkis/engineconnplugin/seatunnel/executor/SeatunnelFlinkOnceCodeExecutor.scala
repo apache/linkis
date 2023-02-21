@@ -50,6 +50,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
@@ -59,7 +60,7 @@ import java.nio.file.Files
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class SeatunnelFlinkOnceCodeExecutor(
     override val id: Long,
@@ -122,7 +123,7 @@ class SeatunnelFlinkOnceCodeExecutor(
 
       if (params.containsKey(variable)) {
         val variableMap = GSON.fromJson(params.get(variable), classOf[util.HashMap[String, String]])
-        variableMap.foreach(f => {
+        variableMap.asScala.foreach(f => {
           args ++ Array(GET_LINKIS_FLINK_VARIABLE, s"${f._1}=${f._2}")
         })
       }
@@ -130,7 +131,7 @@ class SeatunnelFlinkOnceCodeExecutor(
     } else {
       args = localArray(code)
     }
-    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue));
+    System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue))
     Files.createSymbolicLink(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
@@ -157,23 +158,11 @@ class SeatunnelFlinkOnceCodeExecutor(
   }
 
   override def getCurrentNodeResource(): NodeResource = {
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
-      }
-    }
-    val actualUsedResource = new LoadInstanceResource(
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties),
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE
-    )
     val resource = new CommonNodeResource
-    resource.setUsedResource(actualUsedResource)
+    resource.setUsedResource(
+      NodeResourceUtils
+        .applyAsLoadInstanceResource(EngineConnObject.getEngineCreationContext.getOptions)
+    )
     resource
   }
 

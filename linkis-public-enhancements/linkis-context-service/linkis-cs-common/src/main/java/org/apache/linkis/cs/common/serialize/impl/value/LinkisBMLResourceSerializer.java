@@ -35,9 +35,6 @@ public class LinkisBMLResourceSerializer extends AbstractSerializer<LinkisBMLRes
 
   @Override
   public boolean accepts(Object obj) {
-    if (null != obj && obj instanceof LinkisBMLResource) {
-      return true;
-    }
-    return false;
+    return obj instanceof LinkisBMLResource;
   }
 }

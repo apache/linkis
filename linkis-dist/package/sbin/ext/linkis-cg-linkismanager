@@ -17,12 +17,22 @@
 #
 # Modified for Linkis 1.0.0
 
-
+source $LINKIS_CONF_DIR/linkis-env.sh
 export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-linkismanager"
 
 export SERVER_HEAP_SIZE="1G"
 
 export SERVER_CLASS=org.apache.linkis.manager.am.LinkisManagerApplication
+
+if test -z "$MANAGER_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$MANAGER_HEAP_SIZE
+fi
 
 #export DEBUG_PORT=
 

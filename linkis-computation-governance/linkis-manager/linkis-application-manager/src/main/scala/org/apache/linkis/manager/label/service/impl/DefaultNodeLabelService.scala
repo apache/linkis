@@ -37,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.CollectionUtils
 
 import java.util
+import java.util.List
+import java.util.stream.Collectors
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -135,7 +137,7 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
      * update step:
      * 1.delete relations of old labels 2.add new relation between new labels and instance
      */
-    if (null != willBeDelete && willBeDelete.nonEmpty) {
+    if (null != willBeUpdate && willBeUpdate.nonEmpty) {
       labels.asScala.foreach(label => {
         if (
             modifiableKeyList.contains(label.getLabelKey) && willBeUpdate

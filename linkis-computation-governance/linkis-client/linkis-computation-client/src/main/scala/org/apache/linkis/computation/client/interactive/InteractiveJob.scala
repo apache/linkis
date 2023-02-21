@@ -155,7 +155,7 @@ object InteractiveJob {
 
   /**
    * When use this method to create a InteractiveJob, ProgressListener and LogListener cannot be
-   * used, because execID is not exists.
+   * used, because execID does not exist.
    *
    * @param taskId
    *   the id of InteractiveJob

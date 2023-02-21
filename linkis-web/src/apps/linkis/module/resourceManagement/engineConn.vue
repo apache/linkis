@@ -121,11 +121,11 @@ export default {
         pageNow: 1
       },
       columns: [
-        {
-          type: 'selection',
-          width: 60,
-          align: 'center'
-        },
+        // {
+        //   type: 'selection',
+        //   width: 60,
+        //   align: 'center'
+        // },
         {
           title: this.$t('message.linkis.tableColumns.engineInstance'),
           key: 'serviceInstance',
@@ -251,7 +251,7 @@ export default {
         this.engineTypes = data && data.engineType ? data.engineType : []
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -274,7 +274,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -284,7 +284,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)

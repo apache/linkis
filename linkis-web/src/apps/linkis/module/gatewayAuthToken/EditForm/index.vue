@@ -178,7 +178,7 @@ export default {
               trigger: 'blur',
             },
           ],
-        },
+        }
       ]
     }
   },

@@ -26,7 +26,12 @@ import org.apache.linkis.engineconn.common.execution.EngineConnExecution
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
-import org.apache.linkis.engineconn.executor.entity.{Executor, LabelExecutor, ResourceExecutor}
+import org.apache.linkis.engineconn.executor.entity.{
+  ConcurrentExecutor,
+  Executor,
+  LabelExecutor,
+  ResourceExecutor
+}
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -94,15 +99,16 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
               )
               return
           }
+          val nodeStatus = accessibleExecutor.getStatus
           if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
             logger.error(
               s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it."
             )
-            requestManagerReleaseExecutor("Completed release")
+            requestManagerReleaseExecutor("Completed release", nodeStatus)
             ShutdownHook.getShutdownHook.notifyStop()
           } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
             logger.warn(s"${accessibleExecutor.getId} is ShuttingDown...")
-            requestManagerReleaseExecutor(" ShuttingDown release")
+            requestManagerReleaseExecutor(" ShuttingDown release", nodeStatus)
             ShutdownHook.getShutdownHook.notifyStop()
           } else if (
               maxFreeTime > 0 && (NodeStatus.Unlock.equals(
@@ -110,15 +116,18 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
               ) || NodeStatus.Idle.equals(accessibleExecutor.getStatus))
               && System.currentTimeMillis - accessibleExecutor.getLastActivityTime > maxFreeTime
           ) {
-            if (ifECCanMaintain()) {
+            if (isConcurrentExecutorHasTaskRunning(accessibleExecutor)) {
+              logger.info("ConcurrentExecutor has task running ec will not be killed at this time")
+              accessibleExecutor.updateLastActivityTime()
+            } else if (isECCanMaintain()) {
               logger.info("ec will not be killed at this time")
               accessibleExecutor.updateLastActivityTime()
             } else {
               logger.warn(
                 s"${accessibleExecutor.getId} has not been used for $maxFreeTimeStr, now try to shutdown it."
               )
-              accessibleExecutor.tryShutdown()
-              requestManagerReleaseExecutor(" idle release")
+              accessibleExecutor.trySucceed()
+              requestManagerReleaseExecutor(" idle release", NodeStatus.Success)
               ShutdownHook.getShutdownHook.notifyStop()
             }
 
@@ -131,14 +140,14 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     )
   }
 
-  def requestManagerReleaseExecutor(msg: String): Unit = {
+  def requestManagerReleaseExecutor(msg: String, nodeStatus: NodeStatus): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(
       Sender.getThisServiceInstance,
       Utils.getJvmUser,
       msg,
       EngineConnObject.getEngineCreationContext.getTicketId
     )
-    Utils.tryAndWarn(Thread.sleep(100))
+    engineReleaseRequest.setNodeStatus(nodeStatus)
     logger.info("To send release request to linkis manager")
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
   }
@@ -158,7 +167,15 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     }
   }
 
-  private def ifECCanMaintain(): Boolean = {
+  private def isConcurrentExecutorHasTaskRunning(executor: Executor): Boolean = {
+    executor match {
+      case concurrentExecutor: ConcurrentExecutor =>
+        concurrentExecutor.hasTaskRunning()
+      case _ => false
+    }
+  }
+
+  private def isECCanMaintain(): Boolean = {
     if (!isMaintainSupported()) return false
     val engineTypeLabel =
       LabelUtil.getEngineTypeLabel(EngineConnObject.getEngineCreationContext.getLabels())

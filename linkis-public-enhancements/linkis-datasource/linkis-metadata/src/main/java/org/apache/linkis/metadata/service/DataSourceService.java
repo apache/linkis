@@ -38,4 +38,6 @@ public interface DataSourceService {
   JsonNode getPartitionSize(MetadataQueryParam queryParam);
 
   JsonNode getPartitions(MetadataQueryParam queryParam);
+
+  boolean partitionExists(MetadataQueryParam queryParam);
 }

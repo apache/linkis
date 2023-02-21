@@ -31,10 +31,17 @@ if [ ! -w "$LINKIS_LOG_DIR" ] ; then
   mkdir -p "$LINKIS_LOG_DIR"
 fi
 
-if test -z "$SERVER_HEAP_SIZE"
-then
-  export SERVER_HEAP_SIZE="512M"
+
+if test -z "$EUREKA_HEAP_SIZE"
+  then
+  if test -z "$SERVER_HEAP_SIZE"
+  then
+    export SERVER_HEAP_SIZE="512M"
+  fi
+else
+  export SERVER_HEAP_SIZE=$EUREKA_HEAP_SIZE
 fi
+
 
 if [ "$DEBUG_PORT" ];
 then
@@ -77,16 +84,6 @@ SERVER_IP="`hostname --fqdn`"
 if test -z "$EUREKA_INSTALL_IP"
 then
   export EUREKA_INSTALL_IP=$SERVER_IP
-fi
-if [ "true" != "$EUREKA_PREFER_IP" ]
-then
-  export EUREKA_HOSTNAME=$EUREKA_INSTALL_IP
-fi
-
-if [ "$EUREKA_PREFER_IP" == "true" ]; then
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.preferIpAddress=true "
-else
-  SPRING_ARGS="$SPRING_ARGS --eureka.instance.hostname=$EUREKA_HOSTNAME"
 fi
 
 SPRING_ARGS="$SPRING_ARGS --spring.profiles.active=eureka"

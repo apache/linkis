@@ -17,7 +17,7 @@
 
 package org.apache.linkis.filesystem.quartz
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.filesystem.cache.FsCache
 import org.apache.linkis.filesystem.entity.FSInfo
 
@@ -43,7 +43,8 @@ class FSQuartz extends QuartzJobBean with Logging {
     }
     clearFS.par.foreach { fsInfo =>
       logger.info(
-        s"${fsInfo.id} --> ${fsInfo.fs.fsName()} time out ${System.currentTimeMillis() - fsInfo.lastAccessTime}"
+        s"${fsInfo.id} --> ${fsInfo.fs.fsName()} time out" +
+          s"${ByteTimeUtils.msDurationToString(System.currentTimeMillis - fsInfo.lastAccessTime)}"
       )
       Utils.tryCatch {
         fsInfo.fs.close()

@@ -136,10 +136,22 @@ public interface ContextClient extends Closeable {
 
   List<ContextHistory> searchHistory(ContextID contextID, String... keywords) throws ErrorException;
 
+  /**
+   * If you want to remove some type of key starting with keyPrefix, please make sure the keyPrefix
+   * is end up with '.'. In this way, you will not remove the value by mistake those node name
+   * contains your node name. eg : Suppose you hava a workflow with node1 and node1_xxx , you want
+   * to clear values of the type 'METADATA' and prefix 'node.node1', but this will also clear values
+   * of node1_xxx . So you can use the prefix 'node.node1.', which is safe.
+   *
+   * @throws ErrorException
+   */
   void removeAllValueByKeyPrefixAndContextType(
       ContextID contextID, ContextType contextType, String keyPrefix) throws ErrorException;
 
   void removeAllValueByKeyPrefix(ContextID contextID, String keyPrefix) throws ErrorException;
+
+  void removeAllValueByKeyAndContextType(
+      ContextID contextID, ContextType contextType, String keyStr) throws ErrorException;
 
   List<String> searchHAIDByTime(
       String createTimeStart,

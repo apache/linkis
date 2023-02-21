@@ -17,6 +17,8 @@
 
 package org.apache.linkis.scheduler
 
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOSchedulerContextImpl
+
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
@@ -24,7 +26,7 @@ class SchedulerContextTest {
 
   @Test
   def testSchedulerContext: Unit = {
-    val schedulerContext = SchedulerContext
+    val schedulerContext = new FIFOSchedulerContextImpl(100);
     assertNotNull(schedulerContext)
   }
 

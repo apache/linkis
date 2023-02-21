@@ -163,6 +163,21 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
         return gatewayHttpResponse.getResponseMono();
       }
       serviceInstance = router.route(gatewayContext);
+      if (serviceInstance != null) {
+        logger.info(
+            "Client request ip: "
+                + gatewayContext.getRequest().getRemoteAddress()
+                + " and uri: "
+                + gatewayContext.getRequest().getRequestURI()
+                + "GatewayRouter route requestUri: "
+                + gatewayContext.getGatewayRoute().getRequestURI()
+                + " with parsedService "
+                + gatewayContext.getGatewayRoute().getServiceInstance().getApplicationName()
+                + " to "
+                + serviceInstance);
+      } else {
+        logger.info("Client request uri: " + gatewayContext.getRequest().getRequestURI());
+      }
     } catch (Throwable t) {
       logger.warn("", t);
       Message message = Message.error(t).$less$less(gatewayContext.getRequest().getRequestURI());
@@ -216,6 +231,11 @@ public class GatewayAuthorizationFilter implements GlobalFilter, Ordered {
                 httpHeaders,
                 ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddCookies());
           });
+    }
+    if (!((SpringCloudGatewayHttpRequest) gatewayContext.getRequest()).getAddHeaders().isEmpty()) {
+      ((SpringCloudGatewayHttpRequest) gatewayContext.getRequest())
+          .getAddHeaders()
+          .forEach(builder::header);
     }
     return chain.filter(exchange.mutate().request(builder.build()).build());
   }

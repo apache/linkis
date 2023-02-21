@@ -54,9 +54,9 @@ class LinkisErrorCode extends AbstractErrorCode {
 
   def setErrorRegex(errorRegex: Regex): Unit = this.errorRegex = errorRegex
 
-  def setType(errorType: Integer): Unit = this.errorType = errorType
+  def setErrorType(errorType: Integer): Unit = this.errorType = errorType
 
-  def getType: Int = this.errorType
+  def getErrorType: Int = this.errorType
 
   def setErrorRegexStr(errorRegexStr: String): Unit = {
     this.errorRegexStr = errorRegexStr

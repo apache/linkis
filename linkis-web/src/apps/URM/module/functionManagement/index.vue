@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -104,12 +104,12 @@
       :mask-closable="false"
       @on-visible-change="changUserModalChange"
     >
-      <span>移交给：</span>
-      <Select ref="userSelect" v-model="handleUser" filterable 
-        v-if=allUsers.length
-        :remoteMethod="filterSelect" 
+      <span>{{$t('message.linkis.udf.changeUserTo')}}</span>
+      <Select ref="userSelect" v-model="handleUser" filterable
+        v-if="allUsers.length"
+        :remoteMethod="filterSelect"
         @on-query-change="queryChange"
-        placeholder="请输入用户名" style="width:200px;">
+        :placeholder="$t('message.linkis.udf.inputUser')" style="width:200px;">
         <Option
           v-for="(item) in udfUsers"
           :label="item"
@@ -117,28 +117,28 @@
           :key="item"
         />
       </Select>
-      <Input v-if=!allUsers.length v-model="handleUser" placeholder="请输入用户名" style="width: 250px" />
+      <Input v-if="!allUsers.length" v-model="handleUser" :placeholder="$t('message.linkis.udf.inputUser')" style="width: 250px" />
       <div slot="footer">
-        <Button @click="changUserModal=false">取消</Button>
-        <Button type="primary" :disabled="!this.handleUser" @click="changeUser">确定</Button>
+        <Button @click="changUserModal=false">{{$t('message.linkis.udf.cancel')}}</Button>
+        <Button type="primary" :disabled="!this.handleUser" @click="changeUser">{{$t('message.linkis.udf.confirm')}}</Button>
       </div>
     </Modal>
     <Modal
-      title="共享"
+      :title="$t('message.linkis.udf.share')"
       v-model="shareModal"
       :mask-closable="false"
       @on-ok="share"
     >
-      <span>共享用户:</span>
+      <span>{{$t('message.linkis.udf.shareUser')}}</span>
       <Input
         v-model="sharedUsers"
         type="textarea"
         :autosize="{ minRows: 2, maxRows: 5 }"
-        placeholder="使用逗号分隔"
+        :placeholder="$t('message.linkis.udf.separateWithCommas')"
       />
     </Modal>
     <Modal
-      title="版本列表"
+      :title="$t('message.linkis.udf.versionList')"
       v-model="vlistModal"
       width="1024"
       :mask-closable="false"
@@ -203,7 +203,7 @@ export default {
   created() {
     // 获取函数类型
     // api.fetch('/configuration/engineType', 'get').then(res => {
-    //   console.log('res.engineType: ', res.engineType);
+    //   window.console.log('res.engineType: ', res.engineType);
     //   this.getFunctionTypes = ['all', ...res.engineType]
     // })
     // this.getFunctionTypes = ['all', '0', '1,2']
@@ -402,7 +402,7 @@ export default {
       this.loading = true
       const params = {
         udfUpdateVo: {
-          id: this.handleRow.id,	
+          id: this.handleRow.id,
           udfName: data.name,
           udfType: data.udfType,
           description: data.description,
@@ -412,7 +412,7 @@ export default {
           // sys: 'all',
           // clusterName: data.clusterName,
           // directory: data.directory
-        }	
+        }
       }
       api
         .fetch('/udf/update', params, 'post')
@@ -576,7 +576,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     vlist(args) {
@@ -608,7 +608,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },
@@ -621,7 +621,7 @@ export default {
           this.search()
         })
         .catch(() => {
-      
+
         })
     },
     changeUser(args) {
@@ -651,7 +651,7 @@ export default {
             this.search()
           })
           .catch(() => {
-        
+
           })
       }
     },

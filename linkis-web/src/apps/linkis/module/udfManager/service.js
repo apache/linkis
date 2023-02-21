@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const udfManagerBaseUrl = '/basedata-manager/udf-manager'
 
 const getList = (params)=> {
-  console.log(params)
+  window.console.log(params)
   return api.fetch(udfManagerBaseUrl, params , 'get')
 }
 

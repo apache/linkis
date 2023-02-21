@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{ByteTimeUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
@@ -347,7 +347,9 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       () => sparkILoop.intp != null && sparkILoop.intp.isInitializeComplete,
       SparkConfiguration.SPARK_LANGUAGE_REPL_INIT_TIME.getValue.toDuration
     )
-    logger.warn(s"Start to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+    logger.warn(
+      s"Start to init sparkILoop cost ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)}."
+    )
     sparkILoop.beSilentDuring {
       sparkILoop.command(":silent")
       sparkILoop.bind("sc", "org.apache.spark.SparkContext", sparkContext, List("""@transient"""))
@@ -404,7 +406,9 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
       )
       sparkILoop.interpret("implicit val sparkSession = spark")
       bindFlag = true
-      logger.warn(s"Finished to init sparkILoop cost ${System.currentTimeMillis() - startTime}.")
+      logger.warn(
+        s"Finished to init sparkILoop cost ${ByteTimeUtils.msDurationToString(System.currentTimeMillis - startTime)}."
+      )
     }
   }
 

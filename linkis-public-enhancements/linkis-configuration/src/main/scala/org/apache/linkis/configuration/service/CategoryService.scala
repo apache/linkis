@@ -35,7 +35,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 import java.util
-import java.util.Locale
+import java.util.{List, Locale}
 
 import scala.collection.JavaConverters._
 
@@ -107,14 +107,19 @@ class CategoryService extends Logging {
     firstCategoryList
   }
 
-  def getAllCategory(): util.List[CategoryLabelVo] = {
+  def getAllCategory(language: String): util.List[CategoryLabelVo] = {
     val categoryLabelList = configMapper.getCategory()
     val categoryLabelTreeList = buildCategoryTree(categoryLabelList)
+    if (!"en".equals(language)) {
+      categoryLabelTreeList.asScala
+        .filter(_.getCategoryId == 1)
+        .foreach(_.setCategoryName(Configuration.GLOBAL_CONF_CHN_NAME))
+    }
     categoryLabelTreeList
   }
 
   def getCategoryById(categoryId: Integer): Option[CategoryLabelVo] = {
-    val categoryLabelTreeList = getAllCategory()
+    val categoryLabelTreeList = getAllCategory(null)
     categoryLabelTreeList.asScala.find(_.getCategoryId == categoryId)
   }
 
@@ -133,7 +138,7 @@ class CategoryService extends Logging {
   @Transactional
   def createFirstCategory(categoryName: String, description: String): Unit = {
     val categoryList =
-      getAllCategory().asScala.map(category => category.getCategoryName.toLowerCase())
+      getAllCategory(null).asScala.map(category => category.getCategoryName.toLowerCase())
     if (categoryList.contains(categoryName.toLowerCase(Locale.ROOT))) {
       throw new ConfigurationException(
         s"category name : ${categoryName} is exist, cannot be created(目录名：${categoryName}已存在，无法创建)"
@@ -141,7 +146,14 @@ class CategoryService extends Logging {
     }
     val combinedLabel = configurationService.generateCombinedLabel(null, null, null, categoryName)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
-    labelMapper.insertLabel(parsedLabel)
+    // New Query Avoid Repeated Insertion
+    val configValue =
+      labelMapper.getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue)
+    if (configValue != null) {
+      parsedLabel.setId(configValue.getId)
+    } else {
+      labelMapper.insertLabel(parsedLabel)
+    }
     if (parsedLabel.getId != null) {
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 1)
       configMapper.insertCategory(categoryLabel)
@@ -237,6 +249,9 @@ class CategoryService extends Logging {
       )
       if (linkedEngineTypeLabelInDb != null) {
         associateConfigKey(linkedEngineTypeLabelInDb.getId, linkedEngineTypeLabel.getStringValue)
+      } else {
+        val engineLabel = LabelEntityParser.parseToConfigLabel(linkedEngineTypeLabel)
+        labelMapper.insertLabel(engineLabel)
       }
     }
   }

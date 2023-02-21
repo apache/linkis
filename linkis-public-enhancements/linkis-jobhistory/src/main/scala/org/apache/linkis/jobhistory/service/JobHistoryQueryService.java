@@ -38,11 +38,13 @@ public interface JobHistoryQueryService {
 
     JobHistory getJobHistoryByIdAndName(Long jobID, String userName);
 
-    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId);
+    List<JobHistory> search(Long jobId, String username, String creator, String status, Date sDate, Date eDate, String engineType, Long startJobId, String instance);
 
     Integer countUndoneTasks(String username, String creator, Date sDate, Date eDate, String engineType, Long startJobId);
 
     JobHistory searchOne(Long jobId, Date sDate, Date eDate);
 
     List<JobRequest> getQueryVOList(List<JobHistory> list);
+
+    void changeObserveInfoById(JobHistory jobHistory);
 }

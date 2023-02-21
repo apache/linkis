@@ -165,11 +165,11 @@ object JobHistoryHelper extends Logging {
   def updateJobRequestMetrics(
       jobRequest: JobRequest,
       resourceInfo: util.Map[String, ResourceWithStatus],
-      ecInfo: util.Map[String, Object]
+      ecInfo: util.Map[String, AnyRef]
   ): Unit = {
     // update resource
     if (jobRequest.getMetrics == null) {
-      jobRequest.setMetrics(new util.HashMap[String, Object]())
+      jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
     }
     val metricsMap = jobRequest.getMetrics
     val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
@@ -180,25 +180,25 @@ object JobHistoryHelper extends Logging {
     } else {
       metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
     }
-    var engineInstanceMap: util.HashMap[String, Object] = null
+    var engineInstanceMap: util.HashMap[String, AnyRef] = null
     if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
       engineInstanceMap = metricsMap
         .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
-        .asInstanceOf[util.HashMap[String, Object]]
+        .asInstanceOf[util.HashMap[String, AnyRef]]
     } else {
-      engineInstanceMap = new util.HashMap[String, Object]()
+      engineInstanceMap = new util.HashMap[String, AnyRef]()
       metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
     }
     val infoMap = ecInfo
-    if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
-      val instance = infoMap.get(TaskConstant.ENGINE_INSTANCE).asInstanceOf[String]
+    if (null != infoMap && infoMap.containsKey(TaskConstant.TICKET_ID)) {
+      val ticketId = infoMap.get(TaskConstant.TICKET_ID).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
-        .getOrDefault(instance, new util.HashMap[String, Object])
-        .asInstanceOf[util.HashMap[String, Object]]
+        .getOrDefault(ticketId, new util.HashMap[String, AnyRef])
+        .asInstanceOf[util.HashMap[String, AnyRef]]
       engineExtraInfoMap.putAll(infoMap)
-      engineInstanceMap.put(instance, engineExtraInfoMap)
+      engineInstanceMap.put(ticketId, engineExtraInfoMap)
     } else {
-      logger.warn("Ec info map must contains ECInstance")
+      logger.warn("Ec info map must contains ticketID")
     }
   }
 

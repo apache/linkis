@@ -18,7 +18,7 @@
 package org.apache.linkis.udf.api.rpc
 
 import org.apache.linkis.rpc.{Receiver, ReceiverChooser, RPCMessageEvent}
-import org.apache.linkis.udf.service.UDFTreeService
+import org.apache.linkis.udf.service.{UDFService, UDFTreeService}
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -31,10 +31,13 @@ class UdfReceiverChooser extends ReceiverChooser {
   @Autowired
   private var udfTreeService: UDFTreeService = _
 
+  @Autowired
+  private var udfService: UDFService = _
+
   private var udfReceiver: Option[UdfReceiver] = None
 
   @PostConstruct
-  def init(): Unit = udfReceiver = Some(new UdfReceiver(udfTreeService))
+  def init(): Unit = udfReceiver = Some(new UdfReceiver(udfTreeService, udfService))
 
   override def chooseReceiver(event: RPCMessageEvent): Option[Receiver] = event.message match {
     case _: UdfProtocol => udfReceiver

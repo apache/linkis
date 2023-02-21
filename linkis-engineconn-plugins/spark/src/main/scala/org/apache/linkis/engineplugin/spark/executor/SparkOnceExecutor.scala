@@ -26,10 +26,7 @@ import org.apache.linkis.engineplugin.spark.client.deployment.{
   ClusterDescriptorAdapter,
   ClusterDescriptorAdapterFactory
 }
-import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
-  SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX,
-  SPARK_ONCE_APP_STATUS_FETCH_INTERVAL
-}
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.SPARK_ONCE_APP_STATUS_FETCH_INTERVAL
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 import org.apache.linkis.engineplugin.spark.exception.ExecutorInitException
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -62,14 +59,6 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
       case (k, _) => k -> null
     }.toMap
     doSubmit(onceExecutorExecutionContext, options)
-    if (isCompleted) return
-    if (null == clusterDescriptorAdapter.getApplicationId)
-      throw new ExecutorInitException(
-        SparkErrorCodeSummary.YARN_APPLICATION_START_FAILED.getErrorCode,
-        SparkErrorCodeSummary.YARN_APPLICATION_START_FAILED.getErrorDesc
-      )
-    setApplicationId(clusterDescriptorAdapter.getApplicationId)
-    logger.info(s"Application is started, applicationId: $getApplicationId.")
   }
 
   protected def isCompleted: Boolean = isClosed || NodeStatus.isCompleted(getStatus)
@@ -96,61 +85,49 @@ trait SparkOnceExecutor[T <: ClusterDescriptorAdapter]
   }
 
   override protected def waitToRunning(): Unit = {
-    var waitingToFinished = false
-    if (!isCompleted)
+    if (!isCompleted) {
+      logger.info("start spark monitor thread")
       daemonThread = Utils.defaultScheduler.scheduleAtFixedRate(
         new Runnable {
           private var lastStatus: SparkAppHandle.State = _
           private var lastPrintTime = 0L
           private val printInterval =
             math.max(SPARK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong, 5 * 60 * 1000)
-          private var fetchJobStatusFailedNum = 0
 
-          override def run(): Unit = if (!isCompleted && !waitingToFinished) {
-            val jobState = Utils.tryCatch(clusterDescriptorAdapter.getJobState) { t =>
-              val maxFailedNum = SPARK_ONCE_APP_STATUS_FETCH_FAILED_MAX.getValue
-              if (fetchJobStatusFailedNum >= maxFailedNum) {
-                val errMsg =
-                  s"Fetch job status has failed max $maxFailedNum times, now stop this SparkEngineConn."
-                logger.error(errMsg, t)
-                tryFailed()
-                close()
-              } else {
-                fetchJobStatusFailedNum += 1
-                logger.error(s"Fetch job status failed! retried ++$fetchJobStatusFailedNum...", t)
-              }
-              return
-            }
-
-            fetchJobStatusFailedNum = 0
+          override def run(): Unit = {
+            val jobState = clusterDescriptorAdapter.getJobState
             if (
-                jobState != lastStatus || System.currentTimeMillis - lastPrintTime >= printInterval
+                (jobState != null && jobState != lastStatus) || System.currentTimeMillis - lastPrintTime >= printInterval
             ) {
               logger.info(s"The jobState of $getApplicationId is $jobState.")
               lastPrintTime = System.currentTimeMillis
             }
+
             lastStatus = jobState
-            if (SparkAppHandle.State.FINISHED == lastStatus) {
-              waitingToFinished = true
-              logger.info("Job has finished, waiting for final status.")
-              Thread.sleep(5000)
-              logger.info(s"Job's final status ${clusterDescriptorAdapter.getJobState}.")
+            if (clusterDescriptorAdapter.isDisposed) {
+              // get final state again
+              lastStatus = clusterDescriptorAdapter.getJobState
+              logger.info(s"spark process is not alive, state ${lastStatus}")
+              lastStatus match {
+                case SparkAppHandle.State.FINISHED =>
+                  trySucceed()
+                case SparkAppHandle.State.FAILED | SparkAppHandle.State.KILLED |
+                    SparkAppHandle.State.LOST =>
+                  tryFailed()
+                case _ =>
+                  tryFailed()
+              }
             }
-            clusterDescriptorAdapter.getJobState match {
-              case SparkAppHandle.State.FAILED | SparkAppHandle.State.KILLED |
-                  SparkAppHandle.State.LOST =>
-                tryFailed()
-              case SparkAppHandle.State.FINISHED =>
-                trySucceed()
-              case _ =>
-            }
-            waitingToFinished = false
           }
         },
         SPARK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong,
         SPARK_ONCE_APP_STATUS_FETCH_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+    } else {
+      close()
+      logger.info("ready to start spark monitor thread, but job is final, so execute close")
+    }
   }
 
   override def supportCallBackLogs(): Boolean = true

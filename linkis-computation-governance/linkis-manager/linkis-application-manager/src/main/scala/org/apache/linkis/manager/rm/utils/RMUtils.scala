@@ -37,7 +37,6 @@ import org.json4s.jackson.Serialization.{read, write}
 
 object RMUtils extends Logging {
 
-  lazy val GSON = BDPJettyServerHelper.gson
   implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = BDPJettyServerHelper.jacksonJson
 
@@ -56,16 +55,12 @@ object RMUtils extends Logging {
   val EXTERNAL_RESOURCE_REFRESH_TIME =
     CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
 
-  val GOVERNANCE_STATION_ADMIN = Configuration.GOVERNANCE_STATION_ADMIN
-
   val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
 
   val ENGINE_TYPE = CommonVars.apply(
     "wds.linkis.configuration.engine.type",
     EngineType.getAllEngineTypes().asScala.mkString(",")
   )
-
-  val AM_SERVICE_NAME = "linkis-cg-linkismanager"
 
   val RM_RESOURCE_ACTION_RECORD = CommonVars("wds.linkis.manager.rm.resource.action.record", true)
 

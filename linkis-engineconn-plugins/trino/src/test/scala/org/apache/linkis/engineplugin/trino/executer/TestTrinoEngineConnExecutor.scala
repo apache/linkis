@@ -41,10 +41,10 @@ import org.apache.linkis.manager.label.entity.Label
 
 import java.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions
 
 class TestTrinoEngineConnExecutor {
 
@@ -105,7 +105,7 @@ class TestTrinoEngineConnExecutor {
     engineExecutionContext.setLabels(anyArray.map(_.asInstanceOf[Label[_]]))
     val testPath = this.getClass.getClassLoader.getResource("").getPath
     engineExecutionContext.setStorePath(testPath)
-    engineCreationContext.getOptions.foreach({ case (key, value) =>
+    engineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
       engineExecutionContext.addProperty(key, value)
     })
     Assertions.assertNotNull(jdbcExecutor.getProgressInfo(taskId))
@@ -130,13 +130,13 @@ class TestTrinoEngineConnExecutor {
         labels += labelBuilderFactory
           .createLabel[Label[_]](key.replace(EngineConnArgumentsParser.LABEL_PREFIX, ""), value)
       }
-      engineCreationContext.setLabels(labels.toList)
+      engineCreationContext.setLabels(labels.toList.asJava)
     }
     val jMap = new java.util.HashMap[String, String](engineConf.size)
-    jMap.putAll(engineConf)
+    jMap.putAll(engineConf.asJava)
     this.engineCreationContext.setOptions(jMap)
     this.engineCreationContext.setArgs(args)
-    sys.props.putAll(jMap)
+    sys.props.asJava.putAll(jMap)
   }
 
 }

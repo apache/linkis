@@ -35,10 +35,10 @@ import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
 trait LinkisJobBuilder[Job <: LinkisJob] {
 
   protected var executeUser: String = _
-  protected var jobContent: util.Map[String, Any] = _
-  protected var labels: util.Map[String, Any] = _
-  protected var params: util.Map[String, Any] = _
-  protected var source: util.Map[String, Any] = _
+  protected var jobContent: util.Map[String, AnyRef] = _
+  protected var labels: util.Map[String, AnyRef] = _
+  protected var params: util.Map[String, AnyRef] = _
+  protected var source: util.Map[String, AnyRef] = _
 
   protected def ensureNotNull(obj: Any, errorMsg: String): Unit = if (obj == null) {
     throw new UJESJobException(s"$errorMsg cannot be null.")
@@ -51,80 +51,82 @@ trait LinkisJobBuilder[Job <: LinkisJob] {
     this
   }
 
-  def setJobContent(jobContent: util.Map[String, Any]): this.type = {
+  def setJobContent(jobContent: util.Map[String, AnyRef]): this.type = {
     this.jobContent = jobContent
     this
   }
 
-  def addJobContent(key: String, value: Any): this.type = {
-    if (jobContent == null) jobContent = new util.HashMap[String, Any]
+  def addJobContent(key: String, value: AnyRef): this.type = {
+    if (jobContent == null) jobContent = new util.HashMap[String, AnyRef]
     jobContent.put(key, value)
     this
   }
 
-  def setLabels(labels: util.Map[String, Any]): this.type = {
+  def setLabels(labels: util.Map[String, AnyRef]): this.type = {
     this.labels = labels
     this
   }
 
-  def addLabel(key: String, value: Any): this.type = {
-    if (labels == null) labels = new util.HashMap[String, Any]
+  def addLabel(key: String, value: AnyRef): this.type = {
+    if (labels == null) labels = new util.HashMap[String, AnyRef]
     labels.put(key, value)
     this
   }
 
-  def setParams(params: util.Map[String, Any]): this.type = {
+  def setParams(params: util.Map[String, AnyRef]): this.type = {
     this.synchronized(this.params = params)
     this
   }
 
-  def setSource(source: util.Map[String, Any]): this.type = {
+  def setSource(source: util.Map[String, AnyRef]): this.type = {
     this.synchronized(this.source = source)
     this
   }
 
-  def addSource(key: String, value: Any): this.type = {
-    if (source == null) source = new util.HashMap[String, Any]
+  def addSource(key: String, value: AnyRef): this.type = {
+    if (source == null) source = new util.HashMap[String, AnyRef]
     source.put(key, value)
     this
   }
 
-  def setStartupParams(startupMap: util.Map[String, Any]): this.type = {
+  def setStartupParams(startupMap: util.Map[String, AnyRef]): this.type = {
     if (this.params == null) this synchronized {
-      if (this.params == null) this.params = new util.HashMap[String, Any]
+      if (this.params == null) this.params = new util.HashMap[String, AnyRef]
     }
     TaskUtils.addStartupMap(this.params, startupMap)
     this
   }
 
-  def addStartupParam(key: String, value: Any): this.type = addToMap(key, value, setStartupParams)
+  def addStartupParam(key: String, value: AnyRef): this.type =
+    addToMap(key, value, setStartupParams)
 
-  def setRuntimeParams(runtimeMap: util.Map[String, Any]): this.type = {
+  def setRuntimeParams(runtimeMap: util.Map[String, AnyRef]): this.type = {
     if (this.params == null) this synchronized {
-      if (this.params == null) this.params = new util.HashMap[String, Any]
+      if (this.params == null) this.params = new util.HashMap[String, AnyRef]
     }
     TaskUtils.addRuntimeMap(this.params, runtimeMap)
     this
   }
 
-  def addRuntimeParam(key: String, value: Any): this.type = addToMap(key, value, setRuntimeParams)
+  def addRuntimeParam(key: String, value: AnyRef): this.type =
+    addToMap(key, value, setRuntimeParams)
 
-  def setVariableMap(variableMap: util.Map[String, Any]): this.type = {
+  def setVariableMap(variableMap: util.Map[String, AnyRef]): this.type = {
     if (this.params == null) this synchronized {
-      if (this.params == null) this.params = new util.HashMap[String, Any]
+      if (this.params == null) this.params = new util.HashMap[String, AnyRef]
     }
     TaskUtils.addVariableMap(this.params, variableMap)
     this
   }
 
-  def addVariable(key: String, value: Any): this.type = addToMap(key, value, setVariableMap)
+  def addVariable(key: String, value: AnyRef): this.type = addToMap(key, value, setVariableMap)
 
   protected def addToMap(
       key: String,
-      value: Any,
-      op: util.Map[String, Any] => this.type
+      value: AnyRef,
+      op: util.Map[String, AnyRef] => this.type
   ): this.type = {
-    val map = new util.HashMap[String, Any]
+    val map = new util.HashMap[String, AnyRef]
     map.put(key, value)
     op(map)
   }

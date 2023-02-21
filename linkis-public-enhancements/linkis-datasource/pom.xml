@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.1</version>
+    <version>${revision}</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
@@ -35,6 +35,7 @@
     <module>linkis-metadata-query/service/kafka</module>
     <module>linkis-metadata-query/service/jdbc</module>
     <module>linkis-metadata-query/service/hdfs</module>
+    <module>linkis-metadata-query/service/mongodb</module>
     <module>linkis-metadata-query/server</module>
     <module>linkis-datasource-client</module>
   </modules>

@@ -57,6 +57,7 @@ public class JobHistoryQueryServiceTest {
     jobRequest.setMetrics(new HashMap<>());
     jobRequest.setExecutionCode("show databases;");
     jobRequest.setResultLocation("hdfs:///tmp/linkis/hadoop/linkis/20220714_185840/LINKISCLI/1");
+    jobRequest.setObserveInfo("");
     return jobRequest;
   }
 
@@ -106,7 +107,7 @@ public class JobHistoryQueryServiceTest {
   public void searchTest() {
     List<JobHistory> histories =
         jobRequestQueryService.search(
-            1L, "hadoop", "hadoop", "Succeed", new Date(), new Date(), "spark", 1L);
+            1L, "hadoop", "hadoop", "Succeed", new Date(), new Date(), "spark", 1L, null);
     Assertions.assertTrue(histories.size() == 0);
   }
 

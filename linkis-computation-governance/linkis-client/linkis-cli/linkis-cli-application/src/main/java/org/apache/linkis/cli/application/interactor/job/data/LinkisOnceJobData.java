@@ -27,6 +27,8 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
 
   private SimpleOnceJobAdapter onceJobAdapter;
 
+  private boolean hasResult = true;
+
   public SimpleOnceJobAdapter getOnceJobAdapter() {
     return onceJobAdapter;
   }
@@ -146,6 +148,16 @@ public class LinkisOnceJobData implements LinkisJobData, LinkisLogData, LinkisRe
   @Override
   public boolean resultFinReceived() {
     return onceJobAdapter.resultFinReceived();
+  }
+
+  @Override
+  public boolean hasResult() {
+    return hasResult;
+  }
+
+  @Override
+  public void setHasResult(boolean hasResult) {
+    this.hasResult = hasResult;
   }
 
   @Override

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.rm.restful
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -239,10 +240,10 @@ class RMMonitorRest extends Logging {
       @RequestParam(value = "resourceId", required = false) resourceId: Integer
   ): Message = {
     val queryUser = SecurityFilter.getLoginUser(request)
-    val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
-    if (!admins.contains(queryUser.get)) {
+    if (Configuration.isNotAdmin(queryUser.get)) {
       throw new RMErrorException(ONLY_ADMIN_RESET.getErrorCode, ONLY_ADMIN_RESET.getErrorDesc)
     }
+
     if (resourceId == null || resourceId <= 0) {
       userResourceService.resetAllUserResource(COMBINED_USERCREATOR_ENGINETYPE)
     } else {
@@ -270,8 +271,7 @@ class RMMonitorRest extends Logging {
       @RequestParam(value = "size", required = false) size: Int
   ): Message = {
     val queryUser = SecurityFilter.getLoginUser(request)
-    val admins = RMUtils.GOVERNANCE_STATION_ADMIN.getValue.split(",")
-    if (!admins.contains(queryUser.get)) {
+    if (Configuration.isNotAdmin(queryUser.get)) {
       throw new RMErrorException(ONLY_ADMIN_READ.getErrorCode, ONLY_ADMIN_READ.getErrorDesc)
     }
     // 1. Construct a string for SQL LIKE query, query the label_value of the label table

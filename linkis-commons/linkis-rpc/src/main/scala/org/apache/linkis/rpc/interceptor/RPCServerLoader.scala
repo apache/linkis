@@ -108,23 +108,6 @@ abstract class AbstractRPCServerLoader extends RPCServerLoader with Logging {
       serviceInstance
     )
     lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
-//    {
-//      var servers = lb.getAllServers
-//      val instanceNotExists = new NoInstanceExistsException(10051, "The instance " +
-//        serviceInstance.getInstance + " of application " + serviceInstance.getApplicationName + " is not exists.")
-//      var server = servers.find(_.getHostPort == serviceInstance.getInstance)
-//      if(server.isEmpty) Utils.tryThrow(Utils.waitUntil(() =>{
-//        refreshServerList(lb)
-//        servers = lb.getAllServers
-//        server = servers.find(_.getHostPort == serviceInstance.getInstance)
-//        if(server.isEmpty) info(s"Need a $serviceInstance, but cannot find in eureka refresh list ${servers.map(_.getHostPort).toList}.")
-//        server.isDefined
-//      }, refreshMaxWaitTime, 500, 2000)) { t =>
-//        instanceNotExists.initCause(t)
-//        instanceNotExists
-//      }
-//      server.getOrElse(throw instanceNotExists)
-//    }
   }
 
   def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance

@@ -49,31 +49,31 @@ class OpenLooKengECPlugin extends EngineConnPlugin {
 
   private val defaultLabels: List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     val engineTypeLabel =
       EngineTypeLabelCreator.createEngineTypeLabel(EngineType.OPENLOOKENG.toString)
     this.defaultLabels.add(engineTypeLabel)
   }
 
-  override def getEngineResourceFactory(): EngineResourceFactory = {
+  override def getEngineResourceFactory: EngineResourceFactory = {
     if (null == engineResourceFactory) resourceLocker synchronized {
       engineResourceFactory = new GenericEngineResourceFactory
     }
     engineResourceFactory
   }
 
-  override def getEngineConnLaunchBuilder(): EngineConnLaunchBuilder = {
-    new OpenLooKengProcessECLaunchBuilder;
+  override def getEngineConnLaunchBuilder: EngineConnLaunchBuilder = {
+    new OpenLooKengProcessECLaunchBuilder
   }
 
-  override def getEngineConnFactory(): EngineConnFactory = {
+  override def getEngineConnFactory: EngineConnFactory = {
     if (null == engineFactory) engineFactoryLocker synchronized {
       engineFactory = new OpenLooKengEngineConnFactory
     }
     engineFactory
   }
 
-  override def getDefaultLabels(): util.List[Label[_]] = {
+  override def getDefaultLabels: util.List[Label[_]] = {
     this.defaultLabels
   }
 

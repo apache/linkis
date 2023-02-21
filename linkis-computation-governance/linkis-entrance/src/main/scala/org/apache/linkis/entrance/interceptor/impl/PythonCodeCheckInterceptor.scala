@@ -33,10 +33,10 @@ class PythonCodeCheckInterceptor extends EntranceInterceptor with Logging {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
     val errorBuilder = new StringBuilder
-    runType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_PYTHON =>
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON =>
         Utils.tryThrow {
           if (PythonExplain.authPass(jobRequest.getExecutionCode, errorBuilder)) {
             jobRequest

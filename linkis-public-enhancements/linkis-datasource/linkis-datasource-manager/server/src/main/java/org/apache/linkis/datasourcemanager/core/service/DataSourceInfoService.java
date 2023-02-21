@@ -240,6 +240,19 @@ public interface DataSourceInfoService {
    * @return
    */
   DataSource getDataSourceInfoForConnect(String dataSourceName) throws JsonErrorException;
+
+  /**
+   * get datasource info for connect for published version by name and env, if there is a dependency
+   * environment, merge datasource parameter and environment parameter.
+   *
+   * @param dataSourceName
+   * @param envId
+   * @return
+   * @throws JsonErrorException
+   */
+  DataSource getDataSourceInfoForConnect(String dataSourceName, String envId)
+      throws JsonErrorException;
+
   /**
    * get datasource info for connect, if there is a dependency environment, merge datasource
    * parameter and environment parameter.

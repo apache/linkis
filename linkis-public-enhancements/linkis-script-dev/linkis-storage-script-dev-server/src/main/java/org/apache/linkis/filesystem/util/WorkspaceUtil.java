@@ -17,14 +17,12 @@
 
 package org.apache.linkis.filesystem.util;
 
-import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.LogLevel;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -90,16 +88,11 @@ public class WorkspaceUtil {
     if (i != -1) {
       name = name.substring(0, i);
     }
-    // 只支持数字,字母大小写,下划线,中文
+    // Only support numbers, uppercase letters, underscores, Chinese(只支持数字,字母大小写,下划线,中文)
     String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
     Pattern specialPattern = Pattern.compile(specialRegEx);
     if (!specialPattern.matcher(name).find()) {
       WorkspaceExceptionManager.createException(80028);
     }
-  }
-
-  public static boolean isLogAdmin(String username) {
-    return Arrays.stream(WorkSpaceConfiguration.FILESYSTEM_LOG_ADMIN.getValue().split(","))
-        .anyMatch(username::equalsIgnoreCase);
   }
 }

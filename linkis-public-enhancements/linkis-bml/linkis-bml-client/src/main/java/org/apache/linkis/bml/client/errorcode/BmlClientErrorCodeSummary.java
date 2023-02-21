@@ -18,13 +18,9 @@
 package org.apache.linkis.bml.client.errorcode;
 
 import org.apache.linkis.common.errorcode.ErrorCodeUtils;
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
-public enum BmlClientErrorCodeSummary {
-  /**
-   * 10000-10999 linkis-frame 11000-12999 linkis-commons 13000-14999 linkis-spring-cloud-services
-   * 15000-19999 linkis-public-enhancements 20000-24999 linkis-computation-governance 25000-25999
-   * linkis-extensions 26000-29999 linkis-engineconn-plugins
-   */
+public enum BmlClientErrorCodeSummary implements LinkisErrorCode {
   POST_REQUEST_RESULT_NOT_MATCH(
       20060,
       "the result returned by the repository client POST request does not match(物料库客户端POST请求返回的result不匹配)"),
@@ -33,9 +29,9 @@ public enum BmlClientErrorCodeSummary {
       20061, "failed to copy inputStream and outputStream (inputStream和outputStream流copy失败)"),
   SERVER_URL_NOT_NULL(20062, "serverUrl cannot be null(serverUrl 不能为空)");
 
-  private int errorCode;
+  private final int errorCode;
 
-  private String errorDesc;
+  private final String errorDesc;
 
   BmlClientErrorCodeSummary(int errorCode, String errorDesc) {
     ErrorCodeUtils.validateErrorCode(errorCode, 20000, 24999);
@@ -43,24 +39,13 @@ public enum BmlClientErrorCodeSummary {
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

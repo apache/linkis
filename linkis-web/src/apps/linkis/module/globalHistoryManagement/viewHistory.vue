@@ -326,7 +326,7 @@ export default {
         }
         this.isLoading = false
       } catch (errorMsg) {
-        console.error(errorMsg)
+        window.console.error(errorMsg)
         this.isLoading = false
       }
     },
@@ -407,7 +407,7 @@ export default {
         }
       } catch (error) {
         this.isLoading = false
-        console.error(error)
+        window.console.error(error)
       }
     },
     // go back to the last page(返回上一页)

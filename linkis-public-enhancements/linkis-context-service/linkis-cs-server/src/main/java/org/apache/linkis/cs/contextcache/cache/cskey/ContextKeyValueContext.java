@@ -63,4 +63,6 @@ public interface ContextKeyValueContext {
   void removeByKeyPrefix(String preFix);
 
   void removeByKeyPrefix(String preFix, ContextType csType);
+
+  void removeByKey(String keyStr, ContextType csType);
 }

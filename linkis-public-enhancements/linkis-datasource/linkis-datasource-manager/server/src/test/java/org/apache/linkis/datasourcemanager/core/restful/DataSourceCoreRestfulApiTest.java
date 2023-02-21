@@ -107,7 +107,7 @@ class DataSourceCoreRestfulApiTest {
   void getAllDataSourceTypes() throws Exception {
     MvcUtils mvcUtils = new MvcUtils(mockMvc);
     List<DataSourceType> dataSourceTypes = new ArrayList<>();
-    Mockito.when(dataSourceRelateService.getAllDataSourceTypes()).thenReturn(dataSourceTypes);
+    Mockito.when(dataSourceRelateService.getAllDataSourceTypes(null)).thenReturn(dataSourceTypes);
     MvcResult mvcResult = mvcUtils.buildMvcResultGet("/data-source-manager/type/all");
     Message res = mvcUtils.getMessage(mvcResult);
     assertThat(dataSourceTypes).usingRecursiveComparison().isEqualTo(res.getData().get("typeList"));

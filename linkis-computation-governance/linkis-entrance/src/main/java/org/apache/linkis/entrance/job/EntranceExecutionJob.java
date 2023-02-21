@@ -118,7 +118,7 @@ public class EntranceExecutionJob extends EntranceJob implements LogHandler {
   @Override
   public ExecuteRequest jobToExecuteRequest() throws EntranceErrorException {
     // add resultSet path root
-    Map<String, String> starupMapTmp = new HashMap<String, String>();
+    Map<String, String> starupMapTmp = new HashMap<>();
     Map<String, Object> starupMapOri = TaskUtils.getStartupMap(getParams());
     if (starupMapOri.isEmpty()) {
       TaskUtils.addStartupMap(getParams(), starupMapOri);

@@ -82,13 +82,19 @@ class DefaultEntranceExecutor(id: Long)
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
       if (null != entranceJob) {
+        // Make sure to update the database, put it in front
+        try {
+          JobHistoryHelper.updateJobRequestMetrics(
+            entranceJob.getJobRequest,
+            progressInfoEvent.resourceMap,
+            progressInfoEvent.infoMap
+          )
+        } catch {
+          case e: Exception =>
+            logger.error("update job metrics error", e)
+        }
         entranceJob.getProgressListener.foreach(
           _.onProgressUpdate(entranceJob, progressInfoEvent.progress, entranceJob.getProgressInfo)
-        )
-        JobHistoryHelper.updateJobRequestMetrics(
-          entranceJob.getJobRequest,
-          progressInfoEvent.resourceMap,
-          progressInfoEvent.infoMap
         )
       }
     })
@@ -199,7 +205,7 @@ class DefaultEntranceExecutor(id: Long)
     jobReqBuilder.setCodeLogicalUnit(codeLogicalUnit)
     jobReqBuilder.setLabels(entranceExecuteRequest.getLabels)
     jobReqBuilder.setExecuteUser(entranceExecuteRequest.executeUser())
-    jobReqBuilder.setParams(entranceExecuteRequest.properties().asInstanceOf[util.Map[String, Any]])
+    jobReqBuilder.setParams(entranceExecuteRequest.properties())
     jobReqBuilder.build()
   }
 

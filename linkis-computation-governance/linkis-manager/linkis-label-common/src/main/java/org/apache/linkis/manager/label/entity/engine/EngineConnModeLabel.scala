@@ -5,29 +5,28 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.label.entity.engine
 
-import org.apache.linkis.manager.label.entity.annon.ValueSerialNum
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Feature, GenericLabel}
+import org.apache.linkis.manager.label.entity.annon.ValueSerialNum
 
 import java.util
-
 
 class EngineConnModeLabel extends GenericLabel with EngineNodeLabel {
 
   setLabelKey("engineConnMode")
 
-  override def getFeature = Feature.CORE
+  override def getFeature: Feature = Feature.CORE
 
   @ValueSerialNum(0)
   def setEngineConnMode(engineConnMode: String): Unit = {
@@ -58,6 +57,12 @@ object EngineConnMode extends Enumeration {
     case "computation_once" => Computation_With_Once
     case "once_cluster" => Once_With_Cluster
     case _ => Unknown
+  }
+
+  val ONCE_MODES = Set(Once, Computation_With_Once, Once_With_Cluster)
+
+  def isOnceMode(ecMode: String): Boolean = {
+    ONCE_MODES.contains(toEngineConnMode(ecMode))
   }
 
 }

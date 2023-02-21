@@ -21,7 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.common.entity.node.{EMNode, EngineNode, Node, ScoreServiceInstance}
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
-import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
+import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 
 trait EMNodeManager {
 
@@ -52,11 +52,14 @@ trait EMNodeManager {
   /**
    *   1. request engineManager to launch engine 2. persist engine info
    *
-   * @param engineBuildRequest
+   * @param engineConnLaunchRequest
+   *   engine launch request
    * @param emNode
+   *   ecm node
    * @return
+   *   engine node
    */
-  def createEngine(engineBuildRequest: EngineConnBuildRequest, emNode: EMNode): EngineNode
+  def createEngine(engineConnLaunchRequest: EngineConnLaunchRequest, emNode: EMNode): EngineNode
 
   def stopEngine(engineStopRequest: EngineStopRequest, emNode: EMNode): Unit
 

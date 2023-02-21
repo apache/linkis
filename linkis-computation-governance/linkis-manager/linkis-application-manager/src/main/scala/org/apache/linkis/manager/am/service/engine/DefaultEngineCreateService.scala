@@ -20,13 +20,13 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
+import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.am.conf.{AMConfiguration, EngineConnConfigurationService}
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser
-import org.apache.linkis.manager.am.pointer.EngineConnPluginPointer
 import org.apache.linkis.manager.am.selector.{ECAvailableRule, NodeSelector}
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -92,7 +92,7 @@ class DefaultEngineCreateService
   private var engineConnConfigurationService: EngineConnConfigurationService = _
 
   @Autowired
-  private var engineConnPluginPointer: EngineConnPluginPointer = _
+  private var engineConnResourceFactoryService: EngineConnResourceFactoryService = _
 
   @Autowired
   private var nodeMetricManagerPersistence: NodeMetricManagerPersistence = _
@@ -114,9 +114,9 @@ class DefaultEngineCreateService
     logger.info(s"Task: $taskId start to create Engine for request: $engineCreateRequest.")
     val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
     val timeout =
-      if (engineCreateRequest.getTimeOut <= 0) {
+      if (engineCreateRequest.getTimeout <= 0) {
         AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-      } else engineCreateRequest.getTimeOut
+      } else engineCreateRequest.getTimeout
 
     // 1. 检查Label是否合法
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
@@ -190,12 +190,13 @@ class DefaultEngineCreateService
         logger.info(s"Failed to create ec($resourceTicketId) ask ecm ${emNode.getServiceInstance}")
         val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
         if (null == failedEcNode) {
-          logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+          logger.info(s" engineConn does not exist in db: $oldServiceInstance ")
         } else {
           failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
           failedEcNode.getLabels.addAll(
             LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels)
           )
+          failedEcNode.setNodeStatus(NodeStatus.Failed)
           engineStopService.engineConnInfoClear(failedEcNode)
         }
         throw t
@@ -214,12 +215,13 @@ class DefaultEngineCreateService
       engineStopService.asyncStopEngine(stopEngineRequest)
       val failedEcNode = getEngineNodeManager.getEngineNode(oldServiceInstance)
       if (null == failedEcNode) {
-        logger.info(s" engineConn is not exists in db: $oldServiceInstance ")
+        logger.info(s" engineConn does not exist in db: $oldServiceInstance ")
       } else {
         failedEcNode.setLabels(nodeLabelService.getNodeLabels(oldServiceInstance))
         failedEcNode.getLabels.addAll(
           LabelUtils.distinctLabel(labelFilter.choseEngineLabel(labelList), emNode.getLabels)
         )
+        failedEcNode.setNodeStatus(NodeStatus.Failed)
         engineStopService.engineConnInfoClear(failedEcNode)
       }
       throw new LinkisRetryException(
@@ -288,8 +290,8 @@ class DefaultEngineCreateService
       labelList,
       engineCreateRequest.getProperties
     )
-    val resource = engineConnPluginPointer.createEngineResource(timeoutEngineResourceRequest)
-    /*  emNode.setLabels(nodeLabelService.getNodeLabels(emNode.getServiceInstance)) */
+    val resource =
+      engineConnResourceFactoryService.createEngineResource(timeoutEngineResourceRequest)
 
     resourceManager.requestResource(
       LabelUtils.distinctLabel(labelList, emNode.getLabels),

@@ -44,7 +44,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -53,7 +58,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
-import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.*;
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.INCLUDE_REPEAT;
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.ONLY_ADMIN_CAN_MODIFY;
+import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.ONLY_ADMIN_CAN_VIEW;
 
 @Api(tags = "instance restful")
 @RestController
@@ -73,7 +80,7 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/allInstance", method = RequestMethod.GET)
   public Message listAllInstanceWithLabel(HttpServletRequest req) throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "listAllInstanceWithLabel");
     if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -103,7 +110,7 @@ public class InstanceRestful {
   @RequestMapping(path = "/instanceLabel", method = RequestMethod.PUT)
   public Message upDateInstanceLabel(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws Exception {
-    String userName = ModuleUserUtils.getOperationUser(req);
+    String userName = ModuleUserUtils.getOperationUser(req, "upDateInstanceLabel");
     if (Configuration.isNotAdmin(userName)) {
       throw new InstanceErrorException(
           String.format(
@@ -153,14 +160,16 @@ public class InstanceRestful {
       response = Message.class)
   @RequestMapping(path = "/modifiableLabelKey", method = RequestMethod.GET)
   public Message listAllModifiableLabelKey(HttpServletRequest req) {
+    ModuleUserUtils.getOperationUser(req, "upDateInstanceLabel");
     Set<String> keyList = LabelUtils.listAllUserModifiableLabel();
     return Message.ok().data("keyList", keyList);
   }
 
-  @ApiOperation(value = "getEurekaURL", notes = "get eureka URL", response = Message.class)
-  @RequestMapping(path = "/eurekaURL", method = RequestMethod.GET)
-  public Message getEurekaURL(HttpServletRequest request) throws Exception {
-    String eurekaURL = insLabelService.getEurekaURL();
-    return Message.ok().data("url", eurekaURL);
+  @ApiOperation(value = "getServiceRegistryURL", response = Message.class)
+  @RequestMapping(path = "/serviceRegistryURL", method = RequestMethod.GET)
+  public Message getServiceRegistryURL(HttpServletRequest request) throws Exception {
+    String serviceRegistryURL = insLabelService.getServiceRegistryURL();
+    ModuleUserUtils.getOperationUser(request, "getServiceRegistryURL");
+    return Message.ok().data("url", serviceRegistryURL);
   }
 }

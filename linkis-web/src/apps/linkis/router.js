@@ -199,6 +199,16 @@ export default [
       },
     },
     {
+      name: 'engineConfigurationTemplate',
+      path: 'engineConfigurationTemplate',
+      component: () =>
+        import('./module/engineConfigurationTemplate/index.vue'),
+      meta: {
+        title: 'engineConfigurationTemplate',
+        publicPage: true,
+      },
+    },
+    {
       name: 'rmExternalResourceProvider',
       path: 'rmExternalResourceProvider',
       component: () =>
@@ -277,7 +287,27 @@ export default [
         title: 'EnginePluginManagement',
         publicPage: true,
       },
-    }
+    },
+    {
+      name: 'codeQuery',
+      path: 'codeQuery',
+      component: () =>
+        import('./module/codeQuery/index.vue'),
+      meta: {
+        title: 'codeQuery',
+        publicPage: true,
+      },
+    },
+    {
+      name: 'codeDetail',
+      path: 'codeDetail',
+      component: () =>
+        import('./module/codeQuery/codeDetail/index.vue'),
+      meta: {
+        title: 'codeDetail',
+        publicPage: true,
+      },
+    },
     ],
   },
 ]

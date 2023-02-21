@@ -27,7 +27,10 @@ public class QueryTaskVO {
   private Long taskID;
   private String instance;
   private String execId;
+  /** submit User* */
   private String umUser;
+
+  private String executeUser;
   private String engineInstance;
   private String executionCode;
   private String progress;
@@ -54,6 +57,8 @@ public class QueryTaskVO {
   private List<String> labels;
 
   private boolean canRetry;
+
+  private String observeInfo;
 
   public List<SubJobDetail> getSubJobs() {
     return subJobs;
@@ -271,5 +276,21 @@ public class QueryTaskVO {
 
   public void setCanRetry(boolean canRetry) {
     this.canRetry = canRetry;
+  }
+
+  public String getObserveInfo() {
+    return observeInfo;
+  }
+
+  public void setObserveInfo(String observeInfo) {
+    this.observeInfo = observeInfo;
+  }
+
+  public String getExecuteUser() {
+    return executeUser;
+  }
+
+  public void setExecuteUser(String executeUser) {
+    this.executeUser = executeUser;
   }
 }

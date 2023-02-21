@@ -17,7 +17,9 @@
 
 package org.apache.linkis.datasource.client.errorcode;
 
-public enum DatasourceClientErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum DatasourceClientErrorCodeSummary implements LinkisErrorCode {
   CLIENT_ERROR_CODE(31000, ""),
   SERVERURL_CANNOT_NULL(31000, "serverUrl cannot be null.(serverUrl 不能为空.)"),
   VERSION_NEEDED(31000, "version is needed(版本为空)!"),
@@ -31,33 +33,22 @@ public enum DatasourceClientErrorCodeSummary {
   DATABASE_NEEDED(31000, "database is needed(数据库为空)!"),
   TABLE_NEEDED(31000, "table is needed(表为空)!");
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   DatasourceClientErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

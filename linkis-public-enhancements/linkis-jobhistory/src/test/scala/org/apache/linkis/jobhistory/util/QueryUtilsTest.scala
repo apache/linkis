@@ -23,24 +23,7 @@ import org.junit.jupiter.api.{Assertions, DisplayName, Test}
 
 class QueryUtilsTest {
 
-  @Test
-  @DisplayName("isJobHistoryAdminTest")
-  def isJobHistoryAdminTest(): Unit = {
-    val defaultName = "hadoop"
-    val otherName = "hadoops"
-    val defaultVal = QueryUtils.isJobHistoryAdmin(defaultName)
-    val otherVal = QueryUtils.isJobHistoryAdmin(otherName)
-
-    Assertions.assertTrue(defaultVal)
-    Assertions.assertFalse(otherVal)
-  }
-
-  @Test
-  @DisplayName("getJobHistoryAdminTest")
-  def getJobHistoryAdminTest(): Unit = {
-    val admins = QueryUtils.getJobHistoryAdmin()
-    Assertions.assertTrue(admins.size == 1)
-  }
+  private val username = "hadoop"
 
   @Test
   @DisplayName("dateToStringTest")

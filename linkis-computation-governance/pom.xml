@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
-    <version>1.3.1</version>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>linkis-computation-governance</artifactId>
@@ -35,7 +35,7 @@
     <module>linkis-entrance</module>
     <module>linkis-client/linkis-computation-client</module>
     <module>linkis-client/linkis-cli</module>
-    <!--<module>linkis-jdbc-driver</module>-->
+    <module>linkis-jdbc-driver</module>
 
   </modules>
 

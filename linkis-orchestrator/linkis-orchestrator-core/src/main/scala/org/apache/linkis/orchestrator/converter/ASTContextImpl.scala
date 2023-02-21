@@ -61,7 +61,7 @@ object ASTContextImpl {
       this
     }
 
-    def setParams(params: java.util.Map[String, Any]): Builder = {
+    def setParams(params: java.util.Map[String, AnyRef]): Builder = {
 
       astContext.params = new QueryParamsImpl(params)
 

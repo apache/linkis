@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -54,7 +54,7 @@
           <Radio
             v-if="isUdf"
             :disabled="isUdf && model === 1"
-            label="spark"/>
+            label="Spark"/>
           <Radio
             v-if="!isUdf"
             :label="$t('message.linkis.udf.ZDYHS')"/>
@@ -115,7 +115,7 @@
       <FormItem
         v-else-if="fnType === 2 && fnCategory.isSpark"
         :label="$t('message.linkis.udf.registerFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem prop="scalaTypeL">
             <Input
@@ -160,7 +160,7 @@
       </FormItem>
       <FormItem
         :label="$t('message.linkis.udf.useFormat')"
-        required>
+        class="ivu-form-item-required">
         <div class="format-div">
           <FormItem class="format-item">
             <Input
@@ -201,10 +201,11 @@
           type="textarea"/>
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.class')" prop="directory">
-        <Select 
-          ref="directory" 
-          v-model="setting.directory" filterable 
-          :remoteMethod="filterAdd" 
+        <Select
+          ref="directory"
+          v-model="setting.directory"
+          filterable
+          :remoteMethod="filterAdd"
           @on-query-change="queryChange"
           :disabled="isUdf && model === 1">
           <Option
@@ -216,7 +217,7 @@
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.clusterName')">
         <Select v-model="setting.clusterName" :disabled="isUdf && model === 1">
-          <Option   
+          <Option
             label="all"
             value="all" />
         </Select>
@@ -277,7 +278,7 @@ export default {
       },
       TYPELIB: {
         jar: 0,
-        spark: {
+        Spark: {
           py: 1,
           scala: 2,
         },
@@ -327,8 +328,7 @@ export default {
           {
             type: 'string',
             pattern: /^[a-zA-Z][a-zA-Z0-9_\u4e00-\u9fa5]*$/,
-            message:
-                            this.$t('message.linkis.udf.BXYZMKT'),
+            message: this.$t('message.linkis.udf.BXYZMKT'),
             trigger: 'change',
           },
         ],
@@ -348,8 +348,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(jar)$/,
-            message: this.$t('message.linkis.udf.HZMZC'),
+            validator: this.jarValidator,
             trigger: 'change',
           },
         ],
@@ -362,8 +361,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -376,8 +374,7 @@ export default {
           // $t('message.linkis.udf.KHDBJZPP')
           {
             type: 'string',
-            pattern: /^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/,
-            message: this.$t('message.linkis.udf.ZCPYSCA'),
+            validator: this.pyValidator,
             trigger: 'change',
           },
         ],
@@ -424,7 +421,7 @@ export default {
             type: 'string',
             required: true,
             message: this.$t('message.linkis.udf.SRFL'),
-            trigger: 'blur',
+            trigger: 'change',
           },
         ]
       },
@@ -449,7 +446,7 @@ export default {
       if (this.fnCategory.isCommon) {
         prop = 'jar';
       } else if (this.fnCategory.isSpark) {
-        prop = `spark.${suffix}`;
+        prop = `Spark.${suffix}`;
       } else {
         prop = `custom.${suffix}`;
       }
@@ -500,7 +497,7 @@ export default {
     'setting.fnType'(val) {
       let map = {};
       map[this.$t('message.linkis.udf.common')] = 'isCommon';
-      map['spark'] = 'isSpark';
+      map['Spark'] = 'isSpark';
       map[this.$t('message.linkis.udf.ZDYHS')] = 'isCustom';
       let type = map[val];
       Object.keys(this.fnCategory).forEach((key) => this.fnCategory[key] = false);
@@ -541,7 +538,7 @@ export default {
       }
       this.title = titleMap[this.model];
       this.btnLabel = btnLabelMap[this.model];
-      if (this.setting.fnType === 'spark') {
+      if (this.setting.fnType === 'Spark') {
         this.filterNode = (node) => {
           const name = node.label;
           const tabSuffix = name.substr(name.lastIndexOf('.'), name.length);
@@ -558,7 +555,7 @@ export default {
 
     init() {
       let { name, shared, description, path, udfName, directory, udfType, registerFormat, load, useFormat } = this.node;
-      let fnType = 'spark'
+      let fnType = 'Spark'
       if (udfType === 0) {
         fnType = this.$t('message.linkis.udf.common');
       } else if (udfType > 2) {
@@ -597,11 +594,23 @@ export default {
       } else if (this.node.udfType === 1) {
         this.setting.pyPara = conver(',', ')', 'indexOf', 'lastIndexOf');
       } else {
-        const type = rf.slice(rf.indexOf('['), rf.indexOf(']'));
+        const type = rf.slice(rf.indexOf('[') + 1, rf.indexOf(']'));
+        window.console.log(type, rf, '=====');
         // 如果存在多个逗号，就只用使用格式来截取，否则会出现多个类型填入input异常的问题
         if (type.indexOf(',') !== type.lastIndexOf(',')) {
-          this.setting.scalaTypeL = '';
-          this.setting.scalaTypeR = '';
+          // there are 2 case:
+          // 1. tuple,  return params in ();
+          // 2. multi params, the first params is return params
+          if (type.indexOf('(') !== -1) {
+            // tuple
+            this.setting.scalaTypeL = type.slice(type.indexOf('('), type.indexOf(')') + 1)
+            this.setting.scalaTypeR = type.slice(type.indexOf(')')+2)
+          } else {
+            // multi params
+            this.setting.scalaTypeL = type.split(',')[0];
+            this.setting.scalaTypeR = type.split(',').slice(1).toString();
+          }
+
           this.showScalaRF = this.node.registerFormat;
         } else {
           this.setting.scalaTypeL = conver('[', ',', 'indexOf', 'indexOf');
@@ -699,7 +708,7 @@ export default {
 
     onTypeChange() {
       this.$emit('type-change', this.setting.fnType);
-      if (this.setting.fnType === 'spark') {
+      if (this.setting.fnType === 'Spark') {
         this.filterNode = (node) => {
           const name = node.label;
           const tabSuffix = name.substr(name.lastIndexOf('.'), name.length);
@@ -761,6 +770,26 @@ export default {
         this.$refs.directory.setQuery(null)
         this.directories = [...this.remoteDirectories]
       }
+    },
+    jarValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(jar)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.HZMZC')));
+      }
+      cb();
+    },
+    pyValidator(rule, val, cb) {
+      if (!val) {
+        cb(new Error(this.$t('message.linkis.udf.QSRWZLJ')));
+      }
+      const fileName = val.split('/')[val.split('/').length - 1]
+      if (!/^[\w\u4e00-\u9fa5:.\\/]*(py|scala)$/.test(fileName)) {
+        cb(new Error(this.$t('message.linkis.udf.ZCPYSCA')));
+      }
+      cb();
     }
   },
 };
@@ -797,7 +826,7 @@ export default {
         height: 100% !important;
       }
     }
-  
+
     .ivu-modal-content {
       height: 100% !important;
     }

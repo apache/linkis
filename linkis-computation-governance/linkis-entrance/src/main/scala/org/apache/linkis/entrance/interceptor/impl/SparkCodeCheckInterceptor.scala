@@ -27,9 +27,9 @@ class SparkCodeCheckInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: java.lang.StringBuilder): JobRequest = {
     val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
-    val runType = CodeAndRunTypeUtils.getRunTypeByCodeType(codeType)
-    runType match {
-      case CodeAndRunTypeUtils.RUN_TYPE_SCALA =>
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
+    languageType match {
+      case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         val codeBuilder: StringBuilder = new StringBuilder()
         val isAuth = SparkExplain.authPass(jobRequest.getExecutionCode, codeBuilder)
         if (!isAuth) {

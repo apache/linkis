@@ -17,21 +17,23 @@
 
 package org.apache.linkis.manager.engineplugin.errorcode;
 
-public enum EngineconnCoreErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   FAILED_CREATE_ELR(10001, "Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)"),
   ETL_REQUESTED(10001, "EngineTypeLabel are requested(需要参数 EngineTypeLabel)"),
   CANNOT_INSTANCE_ECE(20000, "Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)"),
 
   CANNOT_DEFAULT_EF(20000, "Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)"),
-  ETL_NOT_EXISTS(20000, "EngineTypeLabel is not exists(EngineTypeLabel 不存在)"),
-  UCL_NOT_EXISTS(20000, "UserCreatorLabel is not exists(UserCreatorLabel 不存在)"),
+  ETL_NOT_EXISTS(20000, "EngineTypeLabel does not exist(EngineTypeLabel 不存在)"),
+  UCL_NOT_EXISTS(20000, "UserCreatorLabel does not exist(UserCreatorLabel 不存在)"),
   CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
   CANNOT_HOME_PATH_DIST(
       20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
   DIST_IS_EMPTY(
       20001,
       "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})"),
-  ENGIN_VERSION_NOT_FOUND(
+  ENGINE_VERSION_NOT_FOUND(
       20001,
       "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
   DIST_IRREGULAR_EXIST(
@@ -66,33 +68,22 @@ public enum EngineconnCoreErrorCodeSummary {
   PLUGIN_FAIL_TO_LOAD_RES(70064, "");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   EngineconnCoreErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

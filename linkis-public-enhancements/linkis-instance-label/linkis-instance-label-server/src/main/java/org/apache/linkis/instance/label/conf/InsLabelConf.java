@@ -46,9 +46,6 @@ public class InsLabelConf {
   public static final CommonVars<String> CACHE_NAMES =
       CommonVars.apply("wds.linkis.instance.label.cache.names", "instance,label,appInstance");
 
-  public static final CommonVars<String> EUREKA_URL =
-      CommonVars.apply("wds.linkis.eureka.defaultZone", "http://localhost:20303");
-
-  public static final CommonVars<String> EUREKA_IPADDRESS =
-      CommonVars.apply("wds.linkis.eureka.url", "");
+  public static final CommonVars<String> SERVICE_REGISTRY_ADDRESS =
+      CommonVars.apply("linkis.discovery.server-address", "http://localhost:20303");
 }

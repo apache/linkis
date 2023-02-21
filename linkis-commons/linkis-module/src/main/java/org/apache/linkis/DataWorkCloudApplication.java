@@ -23,7 +23,6 @@ import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.LinkisException;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.server.BDPJettyServerHelper;
-import org.apache.linkis.server.conf.DataWorkCloudCustomExcludeFilter;
 import org.apache.linkis.server.conf.ServerConfiguration;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,8 +45,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
@@ -66,15 +63,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"org.apache.linkis", "com.webank.wedatasphere"})
 @EnableDiscoveryClient
 @RefreshScope
-@ComponentScan(
-    basePackages = {"org.apache.linkis", "com.webank.wedatasphere"},
-    excludeFilters =
-        @ComponentScan.Filter(
-            type = FilterType.CUSTOM,
-            classes = {DataWorkCloudCustomExcludeFilter.class}))
 public class DataWorkCloudApplication extends SpringBootServletInitializer {
   private static final Log logger = LogFactory.getLog(DataWorkCloudApplication.class);
 
@@ -152,12 +143,11 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
 
   private static void initDWCApplication() {
     String hostName = Utils.getComputerName();
-    boolean eurekaPreferIp = Configuration.EUREKA_PREFER_IP();
-    if (eurekaPreferIp) {
+    boolean preferIpAddress = Configuration.PREFER_IP_ADDRESS();
+    if (preferIpAddress) {
       hostName = applicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address");
       logger.info(
-          "using ip address replace hostname,beacause eureka.instance.prefer-ip-address:"
-              + eurekaPreferIp);
+          "using ip address replace hostname, because linkis.discovery.prefer-ip-address: true");
     }
     serviceInstance = new ServiceInstance();
     serviceInstance.setApplicationName(

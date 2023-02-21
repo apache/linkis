@@ -95,14 +95,16 @@ class MetadataQueryRestfulTest {
           MessageStatus.ERROR() == res.getStatus()
               && res.getMessage().contains("'system' is missing"));
       params.set("system", system);
-      Mockito.when(metadataQueryService.getDatabasesByDsName(dataSourceName, system, "hadoop"))
+      Mockito.when(
+              metadataQueryService.getDatabasesByDsNameAndEnvId(
+                  dataSourceName, system, "hadoop", null))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getDatabasesByDsName(dataSourceName, system, "hadoop");
+          .getDatabasesByDsNameAndEnvId(dataSourceName, system, "hadoop", null);
 
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
@@ -134,14 +136,16 @@ class MetadataQueryRestfulTest {
             && res.getMessage().contains("'system' is missing"));
 
     params.set("system", system);
-    Mockito.when(metadataQueryService.getTablesByDsName(dataSourceName, database, system, "hadoop"))
+    Mockito.when(
+            metadataQueryService.getTablesByDsNameAndEnvId(
+                dataSourceName, database, system, "hadoop", null))
         .thenReturn(new ArrayList<>());
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
     Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
     Mockito.doThrow(new ErrorException(1, ""))
         .when(metadataQueryService)
-        .getTablesByDsName(dataSourceName, database, system, "hadoop");
+        .getTablesByDsNameAndEnvId(dataSourceName, database, system, "hadoop", null);
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
     Assertions.assertTrue(
         MessageStatus.ERROR() == res.getStatus()
@@ -302,15 +306,15 @@ class MetadataQueryRestfulTest {
 
       params.set("system", system);
       Mockito.when(
-              metadataQueryService.getColumnsByDsName(
-                  dataSourceName, database, table, system, "hadoop"))
+              metadataQueryService.getColumnsByDsNameAndEnvId(
+                  dataSourceName, database, table, system, "hadoop", null))
           .thenReturn(new ArrayList<>());
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(MessageStatus.SUCCESS() == res.getStatus());
 
       Mockito.doThrow(new ErrorException(1, ""))
           .when(metadataQueryService)
-          .getColumnsByDsName(dataSourceName, database, table, system, "hadoop");
+          .getColumnsByDsNameAndEnvId(dataSourceName, database, table, system, "hadoop", null);
       res = mvcUtils.getMessage(mvcUtils.buildMvcResultGet(url, params));
       Assertions.assertTrue(
           MessageStatus.ERROR() == res.getStatus()

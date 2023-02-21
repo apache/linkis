@@ -21,5 +21,5 @@
 
 ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) COLLATE utf8_bin  NOT NULL;
 ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) COLLATE utf8_bin NULL DEFAULT NULL;
-ALTER TABLE `linkis_ps_instance_label_value_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
+ALTER TABLE `linkis_ps_instance_label_relation` ADD  UNIQUE KEY `label_instance` (`label_id`,`service_instance`);
 

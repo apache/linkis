@@ -17,7 +17,9 @@
 
 package org.apache.linkis.manager.engineplugin.pipeline.errorcode;
 
-public enum PopelineErrorCodeSummary {
+import org.apache.linkis.common.errorcode.LinkisErrorCode;
+
+public enum PopelineErrorCodeSummary implements LinkisErrorCode {
   NOT_A_RESULT_SET_FILE(70001, "Not a result set file(不是结果集文件)"),
   ONLY_RESULT_CONVERTED_TO_CSV(
       70002, "Only result sets of type TABLE can be converted to CSV(只有table类型的结果集才能转为csv)"),
@@ -30,33 +32,22 @@ public enum PopelineErrorCodeSummary {
   UNSUPPORT_OUTPUT_TYPE(70008, "unsupport output type(不支持输出类型)");
 
   /** (errorCode)错误码 */
-  private int errorCode;
+  private final int errorCode;
   /** (errorDesc)错误描述 */
-  private String errorDesc;
+  private final String errorDesc;
 
   PopelineErrorCodeSummary(int errorCode, String errorDesc) {
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }
 
+  @Override
   public int getErrorCode() {
     return errorCode;
   }
 
-  public void setErrorCode(int errorCode) {
-    this.errorCode = errorCode;
-  }
-
+  @Override
   public String getErrorDesc() {
     return errorDesc;
-  }
-
-  public void setErrorDesc(String errorDesc) {
-    this.errorDesc = errorDesc;
-  }
-
-  @Override
-  public String toString() {
-    return "errorCode: " + this.errorCode + ", errorDesc:" + this.errorDesc;
   }
 }

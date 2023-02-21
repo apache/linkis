@@ -46,7 +46,7 @@ class JDBCEngineConnPlugin extends EngineConnPlugin {
 
   private val defaultLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]()
 
-  override def init(params: util.Map[String, Any]): Unit = {
+  override def init(params: util.Map[String, AnyRef]): Unit = {
     /* val engineTypeLabel = new EngineTypeLabel()
     engineTypeLabel.setEngineType(EngineType.IO_ENGINE.toString)
     engineTypeLabel.setVersion(IOEngineConnConfiguration.DEFAULT_VERSION.getValue)

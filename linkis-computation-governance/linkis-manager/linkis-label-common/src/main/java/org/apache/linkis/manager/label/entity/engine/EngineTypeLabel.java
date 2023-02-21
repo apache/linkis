@@ -77,8 +77,15 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
 
   @Override
   protected void setStringValue(String stringValue) {
+    String version;
     String engineType = stringValue.split("-")[0];
-    String version = stringValue.replaceFirst(engineType + "-", "");
+
+    if (engineType.equals("*")) {
+      version = stringValue.replaceFirst("[" + engineType + "]-", "");
+    } else {
+      version = stringValue.replaceFirst(engineType + "-", "");
+    }
+
     setEngineType(engineType);
     setVersion(version);
   }

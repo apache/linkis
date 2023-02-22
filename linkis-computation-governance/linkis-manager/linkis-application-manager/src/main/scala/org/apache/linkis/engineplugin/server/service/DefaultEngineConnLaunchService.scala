@@ -74,7 +74,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
         getEngineLaunchBuilder(engineTypeLabel, engineBuildRequest).buildEngineConn()
       ) { t =>
         logger.error(
-          s"The engine plug-in material resource is abnormal, please check whether the material is uploaded successfully(引擎插件物料资源异常，请检查物料是否上传成功),ticketId：${engineBuildRequest.ticketId}",
+          s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
           t
         )
         throw new EngineConnPluginErrorException(

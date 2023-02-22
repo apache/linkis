@@ -22,30 +22,21 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
 import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource
-import org.apache.linkis.engineplugin.server.localize.{
-  EngineConnBmlResourceGenerator,
-  EngineConnLocalizeResource
-}
+import org.apache.linkis.engineplugin.server.localize.{EngineConnBmlResourceGenerator, EngineConnLocalizeResource}
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.common.protocol.bml.BmlResource.BmlResourceVisibility
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
-import org.apache.linkis.manager.engineplugin.common.launch.process.{
-  EngineConnResource,
-  LaunchConstants
-}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{EngineConnResource, LaunchConstants}
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.apache.commons.lang3.StringUtils
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
-
 import java.text.MessageFormat
 import java.util.Date
-
 import scala.collection.JavaConverters._
 
 @Component
@@ -241,21 +232,27 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     val engineConnBmlResources = asScalaBufferConverter(
       engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
     )
-    val confBmlResource = engineConnBmlResources.asScala
+    val confBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip")
       .map(parseToBmlResource)
-      .get
-    val libBmlResource = engineConnBmlResources.asScala
+    val libBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip")
       .map(parseToBmlResource)
-      .get
-    val otherBmlResources = engineConnBmlResources.asScala
+    val otherBmlResourcesMap = engineConnBmlResources.asScala
       .filterNot(r =>
         r.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||
           r.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip"
       )
       .map(parseToBmlResource)
-      .toArray
+    if(confBmlResourceMap.isEmpty || libBmlResourceMap.isEmpty ||otherBmlResourcesMap.isEmpty) {
+      throw new EngineConnPluginErrorException(
+        EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorCode,
+        EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorDesc
+      )
+    }
+    val confBmlResource = confBmlResourceMap.get
+    val libBmlResource = libBmlResourceMap.get
+    val otherBmlResources = otherBmlResourcesMap.toArray
     new EngineConnResource {
       override def getConfBmlResource: BmlResource = confBmlResource
 

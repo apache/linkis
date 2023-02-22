@@ -20,7 +20,9 @@ package org.apache.linkis.manager.engineplugin.errorcode;
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
-  FAILED_CREATE_ELR(10001, "Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)"),
+  FAILED_CREATE_ELR(
+      10001,
+      "The engine plug-in material resource is abnormal, please check whether the material is uploaded successfully(引擎插件物料资源异常，请检查物料是否上传成功)"),
   ETL_REQUESTED(10001, "EngineTypeLabel are requested(需要参数 EngineTypeLabel)"),
   CANNOT_INSTANCE_ECE(20000, "Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)"),
 

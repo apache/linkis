@@ -248,13 +248,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     val libBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip")
       .map(parseToBmlResource)
-    val otherBmlResourcesMap = engineConnBmlResources.asScala
-      .filterNot(r =>
-        r.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||
-          r.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip"
-      )
-      .map(parseToBmlResource)
-    if (confBmlResourceMap.isEmpty || libBmlResourceMap.isEmpty || otherBmlResourcesMap.isEmpty) {
+    if (confBmlResourceMap.isEmpty || libBmlResourceMap.isEmpty) {
       throw new EngineConnPluginErrorException(
         EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorCode,
         EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorDesc
@@ -262,7 +256,13 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     }
     val confBmlResource = confBmlResourceMap.get
     val libBmlResource = libBmlResourceMap.get
-    val otherBmlResources = otherBmlResourcesMap.toArray
+    val otherBmlResources = engineConnBmlResources.asScala
+      .filterNot(r =>
+        r.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||
+          r.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip"
+      )
+      .map(parseToBmlResource)
+      .toArray
     new EngineConnResource {
       override def getConfBmlResource: BmlResource = confBmlResource
 

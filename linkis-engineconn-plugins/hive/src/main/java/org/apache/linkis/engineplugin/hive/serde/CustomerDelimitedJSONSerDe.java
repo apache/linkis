@@ -349,12 +349,8 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
                 binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
               }
-            } catch (IllegalAccessException e) {
-              e.printStackTrace();
-            } catch (InvocationTargetException e) {
-              e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-              e.printStackTrace();
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+              LOG.error("Fail to invoke method:[getPrimitiveWritableObject]!", e);
             }
           }
           if (containsIntervalYearMonth || containsIntervalDayTime) {

@@ -53,10 +53,10 @@ object SparkConfiguration extends Logging {
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =
-    CommonVars[Boolean]("wds.linkis.spark.python.test.mode.enable", false)
+    CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
 
   val SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH = CommonVars[String](
-    "wds.linkis.spark.python.mix.pyshell.path",
+    "linkis.spark.python.mix.pyshell.path",
     "/appcom/Install/linkis/mix_pyspark.py"
   )
 

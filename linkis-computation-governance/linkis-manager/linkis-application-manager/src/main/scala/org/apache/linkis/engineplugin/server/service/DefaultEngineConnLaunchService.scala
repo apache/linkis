@@ -73,10 +73,7 @@ class DefaultEngineConnLaunchService extends EngineConnLaunchService with Loggin
       Utils.tryCatch(
         getEngineLaunchBuilder(engineTypeLabel, engineBuildRequest).buildEngineConn()
       ) { t =>
-        logger.error(
-          s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})",
-          t
-        )
+        logger.error(s"Failed to createEngineConnLaunchRequest(${engineBuildRequest.ticketId})", t)
         throw new EngineConnPluginErrorException(
           FAILED_CREATE_ELR.getErrorCode,
           s"${FAILED_CREATE_ELR.getErrorDesc}, ${ExceptionUtils.getRootCauseMessage(t)}"

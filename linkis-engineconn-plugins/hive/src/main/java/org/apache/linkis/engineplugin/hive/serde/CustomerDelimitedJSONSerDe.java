@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineplugin.hive.serde;
 
+import org.apache.linkis.common.utils.ClassUtils;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.serde2.ByteStream;
 import org.apache.hadoop.hive.serde2.SerDeException;
@@ -38,7 +40,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.linkis.common.utils.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -322,29 +323,29 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
           boolean containsIntervalYearMonth = false;
           boolean containsIntervalDayTime = false;
           for (PrimitiveObjectInspector.PrimitiveCategory primitiveCategory :
-                  PrimitiveObjectInspector.PrimitiveCategory.values()) {
+              PrimitiveObjectInspector.PrimitiveCategory.values()) {
             containsIntervalYearMonth = "INTERVAL_YEAR_MONTH".equals(primitiveCategory.name());
             containsIntervalDayTime = "INTERVAL_DAY_TIME".equals(primitiveCategory.name());
             try {
               if (containsIntervalYearMonth) {
                 wc =
-                        (WritableComparable)
-                                ClassUtils.getClassInstance(
-                                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalYearMonthObjectInspector")
-                                        .getClass()
-                                        .getMethod("getPrimitiveWritableObject", Object.class)
-                                        .invoke(oi, o);
+                    (WritableComparable)
+                        ClassUtils.getClassInstance(
+                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalYearMonthObjectInspector")
+                            .getClass()
+                            .getMethod("getPrimitiveWritableObject", Object.class)
+                            .invoke(oi, o);
                 binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
               }
               if (containsIntervalDayTime) {
                 wc =
-                        (WritableComparable)
-                                ClassUtils.getClassInstance(
-                                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalDayTimeObjectInspector")
-                                        .getClass()
-                                        .getMethod("getPrimitiveWritableObject", Object.class)
-                                        .invoke(oi, o);
+                    (WritableComparable)
+                        ClassUtils.getClassInstance(
+                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalDayTimeObjectInspector")
+                            .getClass()
+                            .getMethod("getPrimitiveWritableObject", Object.class)
+                            .invoke(oi, o);
                 binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
                 break;
               }

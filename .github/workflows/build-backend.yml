@@ -37,13 +37,13 @@ jobs:
         distribution: 'temurin'
         java-version: 8
     - if: ${{ matrix.install == 'backend' }}
-        name: Build backend by maven
-        run:
-          ./mvnw clean package
+      name: Build backend by maven
+      run:
+        ./mvnw clean package
     - if: ${{ matrix.install == 'spark' }}
-        name: install spark
-        run:
-          ./mvnw -N install
+      name: install spark
+      run:
+        ./mvnw -N install
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

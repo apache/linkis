@@ -49,16 +49,13 @@ jobs:
       with:
        distribution: 'temurin'
        java-version: 8
-    - if: ${{ matrix.installSpark == 'init' }}
-      name: build-spark on init
+    - name: build-spark on init
       run:
         ./mvnw -N install
-    - if: ${{ matrix.installSpark == '3.2' }}
-      name: build-spark on 3.2
+    - name: build-spark on 3.2
       run:
         ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
-    - if: ${{ matrix.installSpark == '2.4' }}
-      name: build-spark on 2.4
+    - name: build-spark on 2.4
       run:
         ./mvnw clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov

@@ -43,9 +43,7 @@ jobs:
     - if: ${{ matrix.install == 'spark' }}
       name: install spark
       run:
-        ./mvnw -N install
         ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
-        ./mvnw clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

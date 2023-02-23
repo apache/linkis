@@ -42,8 +42,22 @@ jobs:
         ./mvnw clean package
     - if: ${{ matrix.install == 'spark' }}
       name: install spark
-      run:
-        ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
+      strategy:
+        matrix:
+          installSpark: [ 'init', '3.2','2.4' ]
+      - if: ${{ matrix.installSpark == 'init' }}
+        name: Build backend on ${{ matrix.installSpark }}
+        run:
+          ./mvnw -N install
+      - if: ${{ matrix.installSpark == '3.2' }}
+        name: Build backend on ${{ matrix.installSpark }}
+        run:
+          ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
+      - if: ${{ matrix.installSpark == '2.4' }}
+        name: Build backend on ${{ matrix.installSpark }}
+        run:
+          ./mvnw clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
+
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

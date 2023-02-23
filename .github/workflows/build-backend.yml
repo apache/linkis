@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        install: [ "spark", "backend" ]
+        install: [ 'spark', 'backend' ]
     steps:
     - name: Checkout
       uses: actions/checkout@v2

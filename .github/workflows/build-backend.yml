@@ -36,9 +36,10 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 8
-    - name: Build backend by maven
-      run:
-        ./mvnw clean package
+    - if: ${{ matrix.install == 'backend' }}
+        name: Build backend by maven
+        run:
+          ./mvnw clean package
     - if: ${{ matrix.install == 'spark' }}
       name: install spark
       run:

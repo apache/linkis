@@ -22,6 +22,7 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.TenantLabel
+import org.apache.linkis.protocol.utils.TaskUtils
 
 import java.lang
 
@@ -30,7 +31,7 @@ class ParserVarLabelInterceptor extends EntranceInterceptor {
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     jobRequest match {
       case requestPersistTask: JobRequest =>
-        val variableMap = requestPersistTask.getParams
+        val variableMap = TaskUtils.getVariableMap(requestPersistTask.getParams)
         val labels = requestPersistTask.getLabels
         if (variableMap.containsKey(LabelKeyConstant.TENANT_KEY)) {
           val tenantLabel = LabelBuilderFactoryContext.getLabelBuilderFactory

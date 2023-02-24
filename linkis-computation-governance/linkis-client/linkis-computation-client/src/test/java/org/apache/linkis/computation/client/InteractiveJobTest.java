@@ -29,7 +29,7 @@ public class InteractiveJobTest {
     SubmittableInteractiveJob job =
         LinkisJobClient.interactive()
             .builder()
-            .setEngineType("hive-2.3.3")
+            .setEngineType("hive-3.1.3")
             .setRunTypeStr("sql")
             .setCreator("IDE")
             .setCode("show tables")

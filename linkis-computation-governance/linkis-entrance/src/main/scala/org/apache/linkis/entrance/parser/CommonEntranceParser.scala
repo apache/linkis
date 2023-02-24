@@ -134,7 +134,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   private def checkEngineTypeLabel(labels: util.Map[String, Label[_]]): Unit = {
     val engineTypeLabel = labels.getOrDefault(LabelKeyConstant.ENGINE_TYPE_KEY, null)
     if (null == engineTypeLabel) {
-      val msg = s"You need to specify engineTypeLabel in labels, such as spark-2.4.3"
+      val msg = s"You need to specify engineTypeLabel in labels, such as spark-3.2.1"
       throw new EntranceIllegalParamException(
         EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg

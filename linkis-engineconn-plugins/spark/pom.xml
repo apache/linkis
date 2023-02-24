@@ -486,11 +486,15 @@
     </plugins>
   </build>
   <profiles>
-    <!-- spark2-hadoop3 version:spark2.4 use hadoop2.7.2 by default mvn validate -Pspark-2.4-hadoop-3.3  -->
+    <!-- spark2.4 use hadoop2.7.2 by default mvn validate -Pspark-2.4  -->
     <profile>
-      <id>spark-2.4-hadoop-3.3</id>
+      <id>spark-2.4</id>
       <properties>
         <hadoop.version>${hadoop-hdfs-client-shade.version}</hadoop.version>
+        <json4s.version>3.5.3</json4s.version>
+        <spark.version>2.4.3</spark.version>
+        <scala.version>2.11.12</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
       </properties>
       <dependencies>
         <dependency>

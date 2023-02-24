@@ -27,7 +27,7 @@ public class TestLabelBuilder {
 
   public static void main(String[] args) throws LabelErrorException {
     LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
-    Label<?> engineType = labelBuilderFactory.createLabel("engineType", "hive-1.2.1");
+    Label<?> engineType = labelBuilderFactory.createLabel("engineType", "hive-3.1.3");
     System.out.println(engineType.getFeature());
 
     AliasServiceInstanceLabel emInstanceLabel =

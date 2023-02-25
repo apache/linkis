@@ -582,7 +582,7 @@ dss-gateway-support-1.1.1.jar
 seatunnel-core-flink-2.1.2.jar
 seatunnel-core-flink-sql-2.1.2.jar
 seatunnel-core-spark-2.1.2.jar
-mongo-java-driver-3.12.7.jar
+mongo-java-driver-3.12.8.jar
 clickhouse-jdbc-0.3.2-patch11.jar
 postgresql-42.3.8.jar
 

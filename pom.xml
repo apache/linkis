@@ -164,8 +164,8 @@
     <h2.version>1.4.200</h2.version>
 
     <!-- spring -->
-    <spring.version>5.2.22.RELEASE</spring.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring.version>6.0.5</spring.version>
+    <spring.boot.version>3.0.3</spring.boot.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

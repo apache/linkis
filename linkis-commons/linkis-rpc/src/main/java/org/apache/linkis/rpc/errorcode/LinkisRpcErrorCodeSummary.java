@@ -21,6 +21,7 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum LinkisRpcErrorCodeSummary implements LinkisErrorCode {
   METHOD_CALL_FAILED(10000, "method call failed:(方法调用失败：)"),
+  URL_ERROR(10000, "The service does not exist for the available Receiver.(服务不存在可用的Receiver.)"),
   TRANSMITTED_BEAN_IS_NULL(10001, "The transmitted bean is Null.(传输的bean为Null."),
   TIMEOUT_PERIOD(10002, "The timeout period is not set!(超时时间未设置！)"),
   CORRESPONDING_NOT_FOUND(
@@ -28,7 +29,8 @@ public enum LinkisRpcErrorCodeSummary implements LinkisErrorCode {
   CORRESPONDING_TO_INITIALIZE(
       10004, "The corresponding anti-sequence class:{0} failed to initialize(对应的反序列类:{0} 初始化失败)"),
   APPLICATION_IS_NOT_EXISTS(
-      10051, "The instance:{0} of application {1} does not exist(应用程序:{0} 的实例:{1} 不存在).");
+      10051, "The instance:{0} of application {1} does not exist(应用程序:{0} 的实例:{1} 不存在)."),
+  RPC_INIT_ERROR(10054, "Asyn RPC Consumer Thread has stopped!(Asyn RPC Consumer 线程已停止！)");
 
   /** 错误码 */
   private final int errorCode;

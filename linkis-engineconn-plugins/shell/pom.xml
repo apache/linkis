@@ -25,9 +25,6 @@
   </parent>
 
   <artifactId>linkis-engineplugin-shell</artifactId>
-  <properties>
-    <shell.version>1</shell.version>
-  </properties>
 
   <dependencies>
     <dependency>

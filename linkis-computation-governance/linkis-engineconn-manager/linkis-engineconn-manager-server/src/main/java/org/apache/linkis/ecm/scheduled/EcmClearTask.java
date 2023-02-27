@@ -42,9 +42,9 @@ public class EcmClearTask {
       logger.info("Start to linkis-ec-clear shell");
       List<String> cmdlist = new ArrayList<>();
       cmdlist.add("sh");
-      cmdlist.add(ThreadUtils.shellPath + "linkis-ec-clear.sh");
+      cmdlist.add(ThreadUtils.shellPath + "linkis_ec_clear.sh");
       logger.info("linkis-ec-clear  shell command {}", cmdlist);
-      String exec = ThreadUtils.run(cmdlist, "linkis-ec-clear.sh");
+      String exec = ThreadUtils.run(cmdlist, "linkis_ec_clear.sh");
       logger.info("shell log  {}", exec);
       logger.info("End to linkis-ec-clear shell");
     }

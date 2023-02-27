@@ -655,6 +655,7 @@ hadoop-client-3.3.4.jar
 hadoop-common-3.3.4.jar
 hadoop-hdfs-2.4.1.jar
 hadoop-hdfs-2.7.1.jar
+hadoop-hdfs-3.3.4.jar
 hadoop-hdfs-client-3.3.4.jar
 hadoop-mapreduce-client-common-3.3.4.jar
 hadoop-mapreduce-client-core-3.3.4.jar

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.server;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
@@ -25,18 +26,14 @@ import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.job.EntranceExecutionJob;
 import org.apache.linkis.entrance.log.LogReader;
 import org.apache.linkis.rpc.Sender;
-
-import org.apache.commons.io.IOUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Description: */
 @Component(ServiceNameConsts.ENTRANCE_SERVER)
@@ -91,9 +88,9 @@ public class DefaultEntranceServer extends EntranceServer {
       logger.warn("Entrance exit to stop all job");
       EntranceJob[] allUndoneTask = getAllUndoneTask(null);
       if (null != allUndoneTask) {
-        String msg = "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)";
         for (EntranceJob job : allUndoneTask) {
-          job.onFailure(msg, null);
+          job.onFailure(
+              "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)", null);
           IOUtils.closeQuietly(((EntranceExecutionJob) job).getLogWriter().get());
         }
       }

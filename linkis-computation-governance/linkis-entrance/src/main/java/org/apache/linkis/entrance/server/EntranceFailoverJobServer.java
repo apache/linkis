@@ -29,12 +29,12 @@ import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +42,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component(ServiceNameConsts.ENTRANCE_FAILOVER_SERVER)
 public class EntranceFailoverJobServer {
@@ -61,96 +58,93 @@ public class EntranceFailoverJobServer {
 
   @PostConstruct
   public void init() {
-    this.scheduledExecutor =
-        Executors.newSingleThreadScheduledExecutor(
-            Utils.threadFactory("Linkis-Failover-Scheduler-Thread-", true));
-    failoverTask();
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_ENABLED()) {
+      this.scheduledExecutor =
+          Executors.newSingleThreadScheduledExecutor(
+              Utils.threadFactory("Linkis-Failover-Scheduler-Thread-", true));
+      failoverTask();
+    }
   }
 
   public void failoverTask() {
-    if (EntranceConfiguration.ENTRANCE_FAILOVER_ENABLED()) {
-      scheduledExecutor.scheduleWithFixedDelay(
-          () -> {
-            EntranceSchedulerContext schedulerContext =
-                (EntranceSchedulerContext)
-                    entranceServer
-                        .getEntranceContext()
-                        .getOrCreateScheduler()
-                        .getSchedulerContext();
+    scheduledExecutor.scheduleWithFixedDelay(
+        () -> {
+          EntranceSchedulerContext schedulerContext =
+              (EntranceSchedulerContext)
+                  entranceServer.getEntranceContext().getOrCreateScheduler().getSchedulerContext();
 
-            // entrance do not failover job when it is offline
-            if (schedulerContext.getOfflineFlag()) return;
+          // entrance do not failover job when it is offline
+          if (schedulerContext.getOfflineFlag()) return;
 
-            CommonLock commonLock = new CommonLock();
-            commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
-            Boolean locked = false;
-            try {
-              locked = commonLockService.lock(commonLock, 10 * 1000L);
-              if (!locked) return;
-              logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
+          CommonLock commonLock = new CommonLock();
+          commonLock.setLockObject(ENTRANCE_FAILOVER_LOCK);
+          Boolean locked = false;
+          try {
+            locked = commonLockService.lock(commonLock, 30 * 1000L);
+            if (!locked) return;
+            logger.info("success locked {}", ENTRANCE_FAILOVER_LOCK);
 
-              // get all entrance server from eureka
-              ServiceInstance[] serviceInstances =
-                  Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
-              if (serviceInstances == null || serviceInstances.length <= 0) return;
+            // get all entrance server from eureka
+            ServiceInstance[] serviceInstances =
+                Sender.getInstances(Sender.getThisServiceInstance().getApplicationName());
+            if (serviceInstances == null || serviceInstances.length <= 0) return;
 
-              // serverInstance to map
-              Map<String, Long> serverInstanceMap =
-                  Arrays.stream(serviceInstances)
-                      .collect(
-                          Collectors.toMap(
-                              ServiceInstance::getInstance,
-                              ServiceInstance::getRegistryTimestamp,
-                              (k1, k2) -> k2));
+            // serverInstance to map
+            Map<String, Long> serverInstanceMap =
+                Arrays.stream(serviceInstances)
+                    .collect(
+                        Collectors.toMap(
+                            ServiceInstance::getInstance,
+                            ServiceInstance::getRegistryTimestamp,
+                            (k1, k2) -> k2));
 
-              // It is very important to avoid repeated execute job
-              // when failover self job, if self instance is empty, the job can be repeated execute
-              if (!serverInstanceMap.containsKey(Sender.getThisInstance())) {
-                logger.warn(
-                    "server has just started and has not get self info, it does not failover");
-                return;
-              }
-
-              // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
-              long expiredTimestamp = 0L;
-              if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
-                expiredTimestamp =
-                    System.currentTimeMillis()
-                        - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
-              }
-
-              // get uncompleted status
-              List<String> statusList =
-                  Arrays.stream(SchedulerEventState.uncompleteStatusArray())
-                      .map(Object::toString)
-                      .collect(Collectors.toList());
-
-              List<JobRequest> jobRequests =
-                  JobHistoryHelper.queryWaitForFailoverTask(
-                      serverInstanceMap,
-                      statusList,
-                      expiredTimestamp,
-                      EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
-              if (jobRequests.isEmpty()) return;
-              List<Long> ids =
-                  jobRequests.stream().map(JobRequest::getId).collect(Collectors.toList());
-              logger.info("success query failover jobs , job size: {}, ids: {}", ids.size(), ids);
-
-              // failover to local server
-              for (JobRequest jobRequest : jobRequests) {
-                entranceServer.failoverExecute(jobRequest);
-              }
-              logger.info("finished execute failover jobs, job ids: {}", ids);
-
-            } catch (Exception e) {
-              logger.error("failover failed", e);
-            } finally {
-              if (locked) commonLockService.unlock(commonLock);
+            // It is very important to avoid repeated execute job
+            // when failover self job, if self instance is empty, the job can be repeated execute
+            if (!serverInstanceMap.containsKey(Sender.getThisInstance())) {
+              logger.warn(
+                  "server has just started and has not get self info, it does not failover");
+              return;
             }
-          },
-          EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
-          EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
-          TimeUnit.MILLISECONDS);
-    }
+
+            // get failover job expired time (获取任务故障转移过期时间，配置为0表示不过期, 过期则不处理)
+            long expiredTimestamp = 0L;
+            if (EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME() > 0) {
+              expiredTimestamp =
+                  System.currentTimeMillis()
+                      - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
+            }
+
+            // get uncompleted status
+            List<String> statusList =
+                Arrays.stream(SchedulerEventState.uncompleteStatusArray())
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
+
+            List<JobRequest> jobRequests =
+                JobHistoryHelper.queryWaitForFailoverTask(
+                    serverInstanceMap,
+                    statusList,
+                    expiredTimestamp,
+                    EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
+            if (jobRequests.isEmpty()) return;
+            List<Long> ids =
+                jobRequests.stream().map(JobRequest::getId).collect(Collectors.toList());
+            logger.info("success query failover jobs , job size: {}, ids: {}", ids.size(), ids);
+
+            // failover to local server
+            for (JobRequest jobRequest : jobRequests) {
+              entranceServer.failoverExecute(jobRequest);
+            }
+            logger.info("finished execute failover jobs, job ids: {}", ids);
+
+          } catch (Exception e) {
+            logger.error("failover failed", e);
+          } finally {
+            if (locked) commonLockService.unlock(commonLock);
+          }
+        },
+        EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
+        EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
+        TimeUnit.MILLISECONDS);
   }
 }

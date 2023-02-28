@@ -241,7 +241,7 @@ object EntranceConfiguration {
 
   // if true, the waitForRetry job in runningJobs can be failover
   val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED =
-    CommonVars("linkis.entrance.failover.retry.job.enable", true)
+    CommonVars("linkis.entrance.failover.retry.job.enable", false)
 
   val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
 
@@ -255,12 +255,12 @@ object EntranceConfiguration {
   val ENTRANCE_GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
 
   val ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED =
-    CommonVars("linkis.entrance.failover.retain.engine.conn.enable", true)
+    CommonVars("linkis.entrance.failover.retain.engine.conn.enable", false)
 
   val ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED =
-    CommonVars("linkis.entrance.failover.retain.yarn.resource.enable", true)
+    CommonVars("linkis.entrance.failover.retain.yarn.resource.enable", false)
 
   val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
-    CommonVars("linkis.entrance.failover.running.kill.enable", true)
+    CommonVars("linkis.entrance.failover.running.kill.enable", false)
 
 }

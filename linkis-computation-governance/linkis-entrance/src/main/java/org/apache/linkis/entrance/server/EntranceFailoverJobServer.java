@@ -29,12 +29,12 @@ import org.apache.linkis.publicservice.common.lock.entity.CommonLock;
 import org.apache.linkis.publicservice.common.lock.service.CommonLockService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.scheduler.queue.SchedulerEventState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +42,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(ServiceNameConsts.ENTRANCE_FAILOVER_SERVER)
 public class EntranceFailoverJobServer {

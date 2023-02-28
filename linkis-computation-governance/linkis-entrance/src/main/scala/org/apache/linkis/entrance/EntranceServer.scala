@@ -390,7 +390,7 @@ abstract class EntranceServer extends Logging {
         engineStopRequest.setServiceInstance(ecInstance)
         // send to linkismanager kill ec
         Sender
-          .getSender(RPCConfiguration.LINKIS_MANAGER_APPLICATION_NAME.getValue)
+          .getSender(RPCConfiguration.LINKIS_MANAGER_SERVICE_NAME.getValue)
           .send(engineStopRequest)
         val msg =
           s"job ${jobRequest.getId} send EngineStopRequest to linkismanager, kill EC instance $ecInstance"

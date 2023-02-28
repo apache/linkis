@@ -28,6 +28,7 @@ import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
 import org.apache.linkis.entrance.exception.{EntranceErrorException, SubmitFailedException}
 import org.apache.linkis.entrance.execute.EntranceJob
+import org.apache.linkis.entrance.job.EntranceExecutionJob
 import org.apache.linkis.entrance.log.{Cache, CacheLogWriter, HDFSCacheLogWriter, LogReader}
 import org.apache.linkis.entrance.parser.ParserUtils
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
@@ -43,16 +44,16 @@ import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.scheduler.queue.{Job, SchedulerEventState}
 import org.apache.linkis.server.conf.ServerConfiguration
 import org.apache.linkis.storage.utils.StorageUtils
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
-import org.apache.linkis.common.log.LogUtils
 
 import org.springframework.beans.BeanUtils
-import org.apache.linkis.entrance.job.EntranceExecutionJob
 
 import java.{lang, util}
 import java.text.{MessageFormat, SimpleDateFormat}
 import java.util.Date
+
 import scala.collection.JavaConverters._
 
 abstract class EntranceServer extends Logging {
@@ -280,8 +281,10 @@ abstract class EntranceServer extends Logging {
       consumeQueueTasks.foreach(job => {
         taskIds.add(job.getJobRequest.getId.asInstanceOf[Long])
         job match {
-          case entranceExecutionJob : EntranceExecutionJob =>
-            val msg = LogUtils.generateWarn(s"job ${job.getJobRequest.getId} clean from ConsumeQueue, wait for failover")
+          case entranceExecutionJob: EntranceExecutionJob =>
+            val msg = LogUtils.generateWarn(
+              s"job ${job.getJobRequest.getId} clean from ConsumeQueue, wait for failover"
+            )
             entranceExecutionJob.getLogListener.foreach(_.onLogUpdate(entranceExecutionJob, msg))
             entranceExecutionJob.getLogWriter.foreach(_.close())
           case _ =>
@@ -308,7 +311,9 @@ abstract class EntranceServer extends Logging {
     }
 
     val logAppender = new java.lang.StringBuilder()
-    logAppender.append("*************************************FAILOVER**************************************")
+    logAppender.append(
+      "*************************************FAILOVER**************************************"
+    )
 
     // try to kill ec
     killOldEC(jobRequest, logAppender);

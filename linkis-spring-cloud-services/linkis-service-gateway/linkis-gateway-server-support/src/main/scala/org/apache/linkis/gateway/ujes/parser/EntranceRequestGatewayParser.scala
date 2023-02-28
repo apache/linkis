@@ -17,10 +17,8 @@
 
 package org.apache.linkis.gateway.ujes.parser
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.entity.JobInstance
-import org.apache.linkis.common.utils.JsonUtils
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.parser.AbstractGatewayParser
@@ -30,13 +28,15 @@ import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.server.conf.ServerConfiguration
+
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
 
 @Component
 class EntranceRequestGatewayParser extends AbstractGatewayParser {
-
 
   @Resource
   private var jobHistoryQueryService: JobHistoryQueryService = _
@@ -49,9 +49,9 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
         val serviceInstance = if (execId.startsWith(EntranceRequestGatewayParser.API_REQUEST)) {
           if (
-            gatewayContext.getRequest.getQueryParams.containsKey(
-              EntranceRequestGatewayParser.INSTANCE
-            )
+              gatewayContext.getRequest.getQueryParams.containsKey(
+                EntranceRequestGatewayParser.INSTANCE
+              )
           ) {
             val instances =
               gatewayContext.getRequest.getQueryParams.get(EntranceRequestGatewayParser.INSTANCE)
@@ -83,7 +83,8 @@ class EntranceRequestGatewayParser extends AbstractGatewayParser {
     }
 
   def buildJobInstance(taskId: Long, gatewayContext: GatewayContext): JobInstance = {
-    val histories = jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null)
+    val histories =
+      jobHistoryQueryService.search(taskId, null, null, null, null, null, null, null, null)
     if (histories.isEmpty) {
       sendErrorResponse(s"taskId $taskId is not exists.", gatewayContext)
       return null

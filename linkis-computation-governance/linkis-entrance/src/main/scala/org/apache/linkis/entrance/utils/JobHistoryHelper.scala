@@ -30,13 +30,15 @@ import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.query.cache.{CacheTaskResult, RequestReadCache}
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.queue.SchedulerEventState
+
 import org.apache.commons.lang3.StringUtils
 
 import javax.servlet.http.HttpServletRequest
+
 import java.util
 import java.util.Date
+
 import scala.collection.JavaConverters._
-import sun.net.util.IPAddressUtil
 
 import com.google.common.net.InetAddresses
 
@@ -316,15 +318,15 @@ object JobHistoryHelper extends Logging {
     val ecResourceMap =
       if (resourceInfo == null) new util.HashMap[String, ResourceWithStatus] else resourceInfo
     if (resourceMap != null) {
-      resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
+      resourceMap.asInstanceOf[util.Map[String, ResourceWithStatus]].putAll(ecResourceMap)
     } else {
       metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
     }
-    var engineInstanceMap: util.HashMap[String, AnyRef] = null
+    var engineInstanceMap: util.Map[String, AnyRef] = null
     if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
       engineInstanceMap = metricsMap
         .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
-        .asInstanceOf[util.HashMap[String, AnyRef]]
+        .asInstanceOf[util.Map[String, AnyRef]]
     } else {
       engineInstanceMap = new util.HashMap[String, AnyRef]()
       metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
@@ -334,7 +336,7 @@ object JobHistoryHelper extends Logging {
       val ticketId = infoMap.get(TaskConstant.TICKET_ID).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
         .getOrDefault(ticketId, new util.HashMap[String, AnyRef])
-        .asInstanceOf[util.HashMap[String, AnyRef]]
+        .asInstanceOf[util.Map[String, AnyRef]]
       engineExtraInfoMap.putAll(infoMap)
       engineInstanceMap.put(ticketId, engineExtraInfoMap)
     } else {

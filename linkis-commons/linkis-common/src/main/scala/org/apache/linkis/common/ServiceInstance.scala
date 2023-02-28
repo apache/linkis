@@ -25,7 +25,10 @@ class ServiceInstance {
   def getApplicationName: String = applicationName
   def setInstance(instance: String): Unit = this.instance = instance
   def getInstance: String = instance
-  def setRegistryTimestamp(registryTimestamp: Long): Unit = this.registryTimestamp = registryTimestamp
+
+  def setRegistryTimestamp(registryTimestamp: Long): Unit = this.registryTimestamp =
+    registryTimestamp
+
   def getRegistryTimestamp: Long = registryTimestamp
 
   override def equals(other: Any): Boolean = other match {
@@ -45,7 +48,9 @@ class ServiceInstance {
       .foldLeft(0)((a, b) => 31 * a + b)
   }
 
-  override def toString: String = s"ServiceInstance($applicationName, $instance, $registryTimestamp)"
+  override def toString: String =
+    s"ServiceInstance($applicationName, $instance, $registryTimestamp)"
+
 }
 
 object ServiceInstance {

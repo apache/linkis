@@ -252,7 +252,8 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     logger.info(s"query failover jobs, start timestamp:${startTimestamp}， limit:${limit}")
     val jobResp = new JobRespProtocol
     Utils.tryCatch {
-      val jobList = jobHistoryMapper.selectFailoverJobHistory(reqMap, statusList, startTimestamp, limit)
+      val jobList =
+        jobHistoryMapper.selectFailoverJobHistory(reqMap, statusList, startTimestamp, limit)
       val jobReqList = jobList.asScala.map(jobHistory2JobRequest).toList
       val map = new util.HashMap[String, Object]()
       map.put(JobRequestConstants.JOB_HISTORY_LIST, jobReqList)
@@ -265,14 +266,6 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     }
     jobResp
   }
-
-  /* private def queryTaskList2RequestPersistTaskList(queryTask: java.util.List[QueryTask]): java.util.List[RequestPersistTask] = {
-    import scala.collection.JavaConversions._
-    val tasks = new util.ArrayList[RequestPersistTask]
-    import org.apache.linkis.jobhistory.conversions.TaskConversions.queryTask2RequestPersistTask
-    queryTask.foreach(f => tasks.add(f))
-    tasks
-  } */
 
   override def getJobHistoryByIdAndName(jobId: java.lang.Long, userName: String): JobHistory = {
     val jobReq = new JobHistory

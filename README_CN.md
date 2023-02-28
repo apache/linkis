@@ -75,15 +75,15 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 - **统一数据源管理**：  提供了Hive、ElasticSearch、Mysql、Kafka、MongoDB 等类型数据源信息的增删查改、版本控制、连接测试和对应数据源的元数据信息查询能力；
 - **错误码能力**：提供了任务常见错误的错误码和解决方案，方便用户自助定位问题；
 
-# 支持的引擎类型
+# 引擎类型
 
 | **引擎名** | **支持底层组件版本<br/>(默认依赖版本)** | **Linkis 1.X 版本要求** | **是否默认包含在发布包中** | **说明** |
 |:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>（默认Apache Spark 2.4.3）|\>=1.0.0_rc1|是|Spark EngineConn， 支持SQL, Scala, Pyspark 和R 代码。|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认Apache Hive 2.3.3）|\>=1.0.0_rc1|是|Hive EngineConn， 支持HiveQL 代码。|
-|Python|Python >= 2.6, <br/>（默认Python2*）|\>=1.0.0_rc1|是|Python EngineConn， 支持python 代码。|
-|Shell|Bash >= 2.0|\>=1.0.0_rc1|是|Shell EngineConn， 支持Bash shell 代码。|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.0_rc1|否|JDBC EngineConn， 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle。|
+|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>（默认Apache Spark 2.4.3）|\>=1.0.3|是|Spark EngineConn， 支持SQL, Scala, Pyspark 和R 代码。|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认Apache Hive 2.3.3）|\>=1.0.3|是|Hive EngineConn， 支持HiveQL 代码。|
+|Python|Python >= 2.6, <br/>（默认Python2*）|\>=1.0.3|是|Python EngineConn， 支持python 代码。|
+|Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持Bash shell 代码。|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle。|
 |Flink |Flink >= 1.12.2, <br/>(默认Apache Flink 1.12.2)|\>=1.0.2|否|Flink EngineConn， 支持FlinkSQL 代码，也支持以Flink Jar 形式启动一个新的Yarn 应用程序。|
 |Pipeline|-|\>=1.0.2|否|Pipeline EngineConn， 支持文件的导入和导出。|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(默认openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用Sql查询数据虚拟化引擎openLooKeng。|
@@ -185,7 +185,8 @@ Linkis 基于微服务架构开发，其服务可以分为 3 类:计算治理服
 - 通过邮件方式 [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - 可以扫描下面的二维码，加入我们的微信群，以获得更快速的响应
 
-![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
+<img src="https://linkis.apache.org/Images/wedatasphere_contact_01.png" width="256"/>
+
 
 # 谁在使用 Linkis
 

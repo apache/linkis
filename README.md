@@ -82,7 +82,7 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 - **Error code capability** : provides error codes and solutions for common errors of tasks, which is convenient for users to locate problems by themselves;
 
-# Supported Engine Types
+# Engine Type
 
 | **Engine name** | **Support underlying component version<br/>(default dependency version)** | **Linkis Version Requirements** | **Included in Release Package By Default** | **Description** |
 |:---- |:---- |:---- |:---- |:---- |
@@ -191,8 +191,7 @@ For code and documentation contributions, please follow the [contribution guide]
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
-![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
+<img src="https://linkis.apache.org/Images/wedatasphere_contact_01.png" width="256"/>
 
 # Who is Using Linkis
 

@@ -29,9 +29,11 @@ abstract class AbstractGroup extends Group {
   def setMaxRunningJobs(maxRunningJobs: Int): Unit = this.maxRunningJobs = maxRunningJobs
   def getMaxRunningJobs: Int = maxRunningJobs
 
-  def setMaxAllowRunningJobs(maxAllowRunningJobs: Int): Unit = this.maxAllowRunningJobs = maxAllowRunningJobs
+  def setMaxAllowRunningJobs(maxAllowRunningJobs: Int): Unit = this.maxAllowRunningJobs =
+    maxAllowRunningJobs
+
   def getMaxAllowRunningJobs: Int =
-    if(maxAllowRunningJobs <= 0) maxRunningJobs else Math.min(maxAllowRunningJobs, maxRunningJobs)
+    if (maxAllowRunningJobs <= 0) maxRunningJobs else Math.min(maxAllowRunningJobs, maxRunningJobs)
 
   def setMaxAskExecutorTimes(maxAskExecutorTimes: Long): Unit = this.maxAskExecutorTimes =
     maxAskExecutorTimes

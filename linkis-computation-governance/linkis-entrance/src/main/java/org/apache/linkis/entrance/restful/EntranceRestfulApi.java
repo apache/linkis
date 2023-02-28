@@ -614,7 +614,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         logger.warn("The job {} wait failover, return customer log", id);
         message = Message.ok();
         message.setMethod("/api/entrance/" + id + "/log");
-        String log = LogUtils.generateInfo("The job will failover soon, please try again later.(job很快就会failover，请稍后再试)");
+        String log =
+            LogUtils.generateInfo(
+                "The job will failover soon, please try again later.(job很快就会failover，请稍后再试)");
         Object retLog;
         if (distinctLevel) {
           String[] array = new String[4];

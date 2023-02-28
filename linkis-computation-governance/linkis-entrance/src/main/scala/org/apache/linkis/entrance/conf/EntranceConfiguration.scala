@@ -233,12 +233,15 @@ object EntranceConfiguration {
   val ENTRANCE_FAILOVER_SCAN_INTERVAL =
     CommonVars("linkis.entrance.failover.scan.interval", 30 * 1000).getValue
 
-  val ENTRANCE_FAILOVER_DATA_NUM_LIMIT = CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
+  val ENTRANCE_FAILOVER_DATA_NUM_LIMIT =
+    CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
 
-  val ENTRANCE_FAILOVER_DATA_INTERVAL_TIME = CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("7d").toLong).getValue
+  val ENTRANCE_FAILOVER_DATA_INTERVAL_TIME =
+    CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("7d").toLong).getValue
 
   // if true, the waitForRetry job in runningJobs can be failover
-  val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED = CommonVars("linkis.entrance.failover.retry.job.enable", true)
+  val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED =
+    CommonVars("linkis.entrance.failover.retry.job.enable", true)
 
   val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
 

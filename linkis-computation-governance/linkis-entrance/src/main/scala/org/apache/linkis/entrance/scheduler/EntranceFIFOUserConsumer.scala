@@ -27,6 +27,7 @@ import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 
 import java.util
 import java.util.concurrent.ExecutorService
+
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
 class EntranceFIFOUserConsumer(

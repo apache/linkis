@@ -132,7 +132,8 @@ public class EntranceFailoverJobServer {
                       expiredTimestamp,
                       EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
               if (jobRequests.isEmpty()) return;
-              List<Long> ids = jobRequests.stream().map(JobRequest::getId).collect(Collectors.toList());
+              List<Long> ids =
+                  jobRequests.stream().map(JobRequest::getId).collect(Collectors.toList());
               logger.info("success query failover jobs , job size: {}, ids: {}", ids.size(), ids);
 
               // failover to local server

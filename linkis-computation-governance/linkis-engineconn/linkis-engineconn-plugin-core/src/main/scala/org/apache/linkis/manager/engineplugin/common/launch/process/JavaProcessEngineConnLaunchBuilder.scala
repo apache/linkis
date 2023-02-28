@@ -70,7 +70,11 @@ abstract class JavaProcessEngineConnLaunchBuilder
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
       var settingClientMemory =
         properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
+      if (
+          !settingClientMemory
+            .toLowerCase()
+            .endsWith("g") && !settingClientMemory.toLowerCase().endsWith("m")
+      ) {
         settingClientMemory = settingClientMemory + "g"
       }
       commandLine += ("-Xmx" + settingClientMemory)

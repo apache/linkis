@@ -225,7 +225,8 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key())) {
       String settingClientMemory =
           properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key());
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
+      if (!settingClientMemory.toLowerCase().endsWith("g")
+          && !settingClientMemory.toLowerCase().endsWith("m")) {
         properties.put(
             EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key(), settingClientMemory + "g");
       }

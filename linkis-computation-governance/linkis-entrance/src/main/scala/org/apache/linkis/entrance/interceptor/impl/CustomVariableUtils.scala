@@ -63,7 +63,7 @@ object CustomVariableUtils extends Logging {
     }
     val variableMap = TaskUtils
       .getVariableMap(jobRequest.getParams)
-      .asInstanceOf[util.HashMap[String, String]]
+      .asInstanceOf[util.Map[String, String]]
     variables.putAll(variableMap)
     if (!variables.containsKey("user")) {
       variables.put("user", jobRequest.getExecuteUser)

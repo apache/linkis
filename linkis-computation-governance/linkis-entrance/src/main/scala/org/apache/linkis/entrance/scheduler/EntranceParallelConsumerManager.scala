@@ -18,7 +18,6 @@
 package org.apache.linkis.entrance.scheduler
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.instance.label.client.InstanceLabelClient
@@ -32,10 +31,11 @@ import org.apache.linkis.scheduler.queue.parallelqueue.{ParallelConsumerManager,
 
 import java.util
 import java.util.concurrent.TimeUnit
+
 import scala.collection.JavaConverters._
 
 class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
-  extends ParallelConsumerManager(maxParallelismUsers, schedulerName){
+    extends ParallelConsumerManager(maxParallelismUsers, schedulerName) {
 
   override protected def createConsumer(groupName: String): FIFOUserConsumer = {
     val group = getSchedulerContext.getOrCreateGroupFactory.getGroup(groupName)

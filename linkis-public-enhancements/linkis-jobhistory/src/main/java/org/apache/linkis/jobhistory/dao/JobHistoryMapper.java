@@ -110,25 +110,13 @@ public interface JobHistoryMapper {
   /**
    * query wait for failover job
    *
-   * Sql example:
-   * SELECT a.* FROM linkis_ps_job_history_group_history a
-   *     where (a.instances = ''
-   *         or a.instances is null
-   *         or a.instances not in ('192.168.1.123:9104','192.168.1.124:9104')
-   *         or EXISTS (
-   *             select 1 from
-   *                 (
-   *                         select '192.168.1.123:9104' as instances, 1697775054098 as registryTime
-   *                         union all
-   *                         select '192.168.1.124:9104' as instances, 1666239054098 as registryTime
-   *                 ) b
-   *                 where a.instances = b.instances and UNIX_TIMESTAMP(a.created_time) * 1000  < b.registryTime
-   *             )
-   *         )
-   *         and
-   *         status in ('Inited','Running','Scheduled','WaitForRetry')
-   *         and UNIX_TIMESTAMP(a.created_time) * 1000 >= 1666239054098
-   *         limit 10
+   * <p>Sql example: SELECT a.* FROM linkis_ps_job_history_group_history a where (a.instances = ''
+   * or a.instances is null or a.instances not in ('192.168.1.123:9104','192.168.1.124:9104') or
+   * EXISTS ( select 1 from ( select '192.168.1.123:9104' as instances, 1697775054098 as
+   * registryTime union all select '192.168.1.124:9104' as instances, 1666239054098 as registryTime
+   * ) b where a.instances = b.instances and UNIX_TIMESTAMP(a.created_time) * 1000 < b.registryTime
+   * ) ) and status in ('Inited','Running','Scheduled','WaitForRetry') and
+   * UNIX_TIMESTAMP(a.created_time) * 1000 >= 1666239054098 limit 10
    *
    * @param instancesMap
    * @param statusList
@@ -136,8 +124,9 @@ public interface JobHistoryMapper {
    * @param limit
    * @return
    */
-  List<JobHistory> selectFailoverJobHistory(@Param("instancesMap") Map<String, Long> instancesMap,
-                                            @Param("statusList") List<String> statusList,
-                                            @Param("startTimestamp") Long startTimestamp,
-                                            @Param("limit") Integer limit);
+  List<JobHistory> selectFailoverJobHistory(
+      @Param("instancesMap") Map<String, Long> instancesMap,
+      @Param("statusList") List<String> statusList,
+      @Param("startTimestamp") Long startTimestamp,
+      @Param("limit") Integer limit);
 }

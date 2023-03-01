@@ -312,7 +312,7 @@ abstract class EntranceServer extends Logging {
 
     val logAppender = new java.lang.StringBuilder()
     logAppender.append(
-      "*************************************FAILOVER**************************************\n"
+      "*************************************FAILOVER************************************** \n"
     )
 
     // try to kill ec

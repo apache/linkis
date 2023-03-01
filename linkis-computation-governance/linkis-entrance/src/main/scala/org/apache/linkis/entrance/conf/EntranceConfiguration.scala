@@ -237,7 +237,7 @@ object EntranceConfiguration {
     CommonVars("linkis.entrance.failover.data.num.limit", 10).getValue
 
   val ENTRANCE_FAILOVER_DATA_INTERVAL_TIME =
-    CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("7d").toLong).getValue
+    CommonVars("linkis.entrance.failover.data.interval.time", new TimeType("1d").toLong).getValue
 
   // if true, the waitForRetry job in runningJobs can be failover
   val ENTRANCE_FAILOVER_RETRY_JOB_ENABLED =

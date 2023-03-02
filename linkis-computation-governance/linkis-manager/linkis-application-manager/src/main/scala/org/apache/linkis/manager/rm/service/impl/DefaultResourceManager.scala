@@ -608,7 +608,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         MessageFormat.format(
           RMErrorCode.LOCK_LABEL_FAILED.getErrorDesc,
           label.getStringValue,
-          timeOut
+          timeOut.toString
         )
       )
     }

@@ -311,10 +311,10 @@ jpam-1.1.jar
 json-0.191.jar
 json-0.193.jar
 json-1.8.jar
-json4s-ast_2.11-3.5.3.jar
-json4s-core_2.11-3.5.3.jar
-json4s-jackson_2.11-3.5.3.jar
-json4s-scalap_2.11-3.5.3.jar
+json4s-ast_2.11-3.7.0-M11.jar
+json4s-core_2.11-3.7.0-M11.jar
+json4s-jackson_2.11-3.7.0-M11.jar
+json4s-scalap_2.11-3.7.0-M11.jar
 jsp-api-2.1.jar
 jsqlparser-1.0.jar
 jsqlparser-4.2.jar

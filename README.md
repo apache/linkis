@@ -66,41 +66,39 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 # Features
 
-- **Support for diverse underlying computation storage engines**  
-  - Currently supported computation/storage engines: Spark、Hive、Flink、Python、Pipeline、Sqoop、openLooKeng、Presto、ElasticSearch、JDBC, Shell, etc
-  - Computation/storage engines to be supported: Trino (planned 1.3.1), SeaTunnel (planned 1.3.1), etc
-  - Supported scripting languages: SparkSQL、HiveQL、Python、Shell、Pyspark、R、Scala and JDBC, etc
+- **Support for diverse underlying computation storage engines** : Spark, Hive, Python, Shell, Flink, JDBC, Pipeline, Sqoop, OpenLooKeng, Presto, ElasticSearch, Trino, SeaTunnel, etc.;
 
-- **Powerful task/request governance capabilities** With services such as Orchestrator, Label Manager and customized Spring Cloud Gateway, Linkis is able to provide multi-level labels based, cross-cluster/cross-IDC fine-grained routing, load balance, multi-tenancy, traffic control, resource control, and orchestration strategies like dual-active, active-standby, etc
+- **Support for diverse language** : SparkSQL, HiveSQL, Python, Shell, Pyspark, Scala, JSON and Java;
 
-- **Support full stack computation/storage engine** As a computation middleware, it will receive, execute and manage tasks and requests for various computation storage engines, including batch tasks, interactive query tasks, real-time streaming tasks and storage tasks
+- **Powerful computing governance capability** : It can provide task routing, load balancing, multi-tenant, traffic control, resource control and other capabilities based on multi-level labels;
 
-- **Resource management capabilities**  ResourceManager is not only capable of managing resources for Yarn and Linkis EngineManger, but also able to provide label-based multi-level resource allocation and recycling, allowing itself to have powerful resource management capabilities across multiple Yarn clusters and multiple computation resource types
+- **Support full stack computation/storage engine** : The ability to receive, execute and manage tasks and requests for various compute and storage engines, including offline batch tasks, interactive query tasks, real-time streaming tasks and data lake tasks;
 
-- **Unified Context Service** Generate Context ID for each task/request,  associate and manage user and system resource files (JAR, ZIP, Properties, etc.), result set, parameter variable, function, etc., across user, system, and computing engine. Set in one place, automatic reference everywhere
+- **Unified context service** : supports cross-user, system and computing engine to associate and manage user and system resource files (JAR, ZIP, Properties, etc.), result sets, parameter variables, functions, UDFs, etc., one setting, automatic reference everywhere;
 
-- **Unified materials** System and user-level unified material management, which can be shared and transferred across users and systems
+- **Unified materials** : provides system and user level material management, can share and flow, share materials across users, across systems;
 
-# Supported Engine Types
+- **Unified data source management** : provides the ability to add, delete, check and change information of Hive, ElasticSearch, Mysql, Kafka, MongoDB and other data sources, version control, connection test, and query metadata information of corresponding data sources;
 
-| **Engine Name** | **Suppor Component Version<br/>(Default Dependent Version)** | **Linkis Version Requirements** | **Included in Release Package<br/> By Default** | **Description** |
+- **Error code capability** : provides error codes and solutions for common errors of tasks, which is convenient for users to locate problems by themselves;
+
+# Engine Type
+
+| **Engine name** | **Support underlying component version<br/>(default dependency version)** | **Linkis Version Requirements** | **Included in Release Package By Default** | **Description** |
 |:---- |:---- |:---- |:---- |:---- |
 |Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 2.4.3)|\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 2.3.3)|\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
-|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes |Python EngineConn, supports python code|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 2.3.3)|\>=1.0.3|Yes|Hive EngineConn, supports HiveQL code|
+|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes|Python EngineConn, supports python code|
 |Shell|Bash >= 2.0|\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No|JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
-|Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.3|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application |
-|Pipeline|-|\>=1.0.3|No|Pipeline EngineConn, supports file import and export|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No |JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
+|Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.2|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application|
+|Pipeline|-|\>=1.0.2|No|Pipeline EngineConn, supports file import and export|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)|\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|
 |Sqoop| Sqoop >= 1.4.6, <br/>(default Apache Sqoop 1.4.6)|\>=1.1.2|No|Sqoop EngineConn, support data migration tool Sqoop engine|
-|Presto|Presto >= 0.180, <br/>(default Presto 0.234)|\>=1.2.0|-|Presto EngineConn, supports Presto SQL code|
-|ElasticSearch|ElasticSearch >=6.0, <br/>(default ElasticSearch 7.6.2)|\>=1.2.0|-|ElasticSearch EngineConn, supports SQL and DSL code|
-|Impala|Impala >= 3.2.0, CDH >=6.3.0|ongoing|-|Impala EngineConn, supports Impala SQL code|
-|MLSQL| MLSQL >=1.1.0|ongoing|-|MLSQL EngineConn, supports MLSQL code.|
-|Hadoop|Apache >=2.6.0, <br/>CDH >=5.4.0|ongoing|-|Hadoop EngineConn, supports Hadoop MR/YARN application|
-|TiSpark|1.1|ongoing|-|TiSpark EngineConn, supports querying TiDB with SparkSQL|
-
+|Presto|Presto >= 0.180|\>=1.2.0|No|Presto EngineConn, supports Presto SQL code|
+|ElasticSearch|ElasticSearch >=6.0|\>=1.2.0|No|ElasticSearch EngineConn, supports SQL and DSL code|
+|Trino | Trino >=371 | >=1.3.1 | No |   Trino EngineConn， supports Trino SQL code |
+|Seatunnel | Seatunnel >=2.1.2 | >=1.3.1 | No | Seatunnel EngineConn， supportt Seatunnel SQL code |
 
 # Download
 
@@ -193,8 +191,7 @@ For code and documentation contributions, please follow the [contribution guide]
 - By mail [dev@linkis.apache.org](mailto:dev@linkis.apache.org)
 - You can scan the QR code below to join our WeChat group to get more immediate response
 
-![wechatgroup](https://linkis.apache.org/Images/wedatasphere_contact_01.png)
-
+<img src="https://linkis.apache.org/Images/wedatasphere_contact_01.png" width="256"/>
 
 # Who is Using Linkis
 

@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 
-import org.json4s._
-
 /**
  */
 abstract class ProcessInterpreter(process: Process) extends Interpreter with Logging {
@@ -99,7 +97,7 @@ abstract class ProcessInterpreter(process: Process) extends Interpreter with Log
 
   protected def waitUntilReady(): Unit
 
-  protected def sendExecuteRequest(request: String): Option[JValue]
+  protected def sendExecuteRequest(request: String): Option[Any]
 
   protected def sendShutdownRequest(): Unit = {}
 

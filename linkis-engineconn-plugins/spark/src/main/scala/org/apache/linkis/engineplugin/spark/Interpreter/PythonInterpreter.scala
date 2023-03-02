@@ -22,9 +22,11 @@ import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.spark.common.LineBufferedStream
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.storage.FSFactory
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.{SparkContext, SparkException}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.catalyst.expressions.Attribute
@@ -36,9 +38,6 @@ import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-import org.json4s.{DefaultFormats, JValue}
-import org.json4s.jackson.JsonMethods._
-import org.json4s.jackson.Serialization
 import py4j.GatewayServer
 
 /**
@@ -130,7 +129,6 @@ object PythonInterpreter {
 private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     extends ProcessInterpreter(process)
     with Logging {
-  implicit val formats = DefaultFormats
 
   override def close(): Unit = {
     try {
@@ -164,14 +162,20 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     initOut.close
   }
 
-  override protected def sendExecuteRequest(code: String): Option[JValue] = {
+  def getMapValue[T](map: Map[String, Any], key: String, default: T = null.asInstanceOf[T]): T = {
+    val value = map.get(key).map(_.asInstanceOf[T]).getOrElse(default)
+    if (StringUtils.isEmpty(value.toString)) {
+      default
+    } else {
+      value
+    }
+  }
+
+  override protected def sendExecuteRequest(code: String): Option[Any] = {
     val rep = sendRequest(Map("msg_type" -> "execute_request", "content" -> Map("code" -> code)))
     rep.map { rep =>
-      assert((rep \ "msg_type").extract[String] == "execute_reply")
-
-      val content: JValue = rep \ "content"
-
-      content
+      assert(getMapValue[String](rep, "msg_type", "") == "execute_reply")
+      getMapValue[String](rep, "content", "")
     }
   }
 
@@ -181,12 +185,14 @@ private class PythonInterpreter(process: Process, gatewayServer: GatewayServer)
     }
   }
 
-  private def sendRequest(request: Map[String, Any]): Option[JValue] = {
+  private def sendRequest(request: Map[String, Any]): Option[Map[String, Any]] = {
     // scalastyle:off println
-    stdin.println(Serialization.write(request))
+    stdin.println(BDPJettyServerHelper.gson.toJson(request))
     stdin.flush()
 
-    Option(stdout.readLine()).map { line => parse(line) }
+    Option(stdout.readLine()).map { line =>
+      BDPJettyServerHelper.gson.fromJson(line, classOf[Map[String, Any]])
+    }
   }
 
   def pythonPath: String = {

@@ -34,14 +34,14 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_ps_error_code
+        FROM linkis_ps_error_code
         <if test="searchName != null and searchName!=''">
-            where error_code like concat('%',#{searchName},'%')
-            or error_desc like concat('%',#{searchName},'%')
-            or error_regex like concat('%',#{searchName},'%')
-            or error_type like concat('%',#{searchName},'%')
+            WHERE error_code LIKE concat('%',#{searchName},'%')
+            OR error_desc LIKE concat('%',#{searchName},'%')
+            OR error_regex LIKE concat('%',#{searchName},'%')
+            OR error_type LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

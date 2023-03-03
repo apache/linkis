@@ -849,6 +849,13 @@ public class DataSourceCoreRestfulApi {
           }
         });
 
+    connectParams.forEach(
+        (k, v) -> {
+          if (v instanceof String) {
+            connectParams.put(k, v.toString().trim());
+          }
+        });
+
     for (DataSourceParamsHook hook : dataSourceParamsHooks) {
       hook.beforePersist(connectParams, keyDefinitionList);
     }

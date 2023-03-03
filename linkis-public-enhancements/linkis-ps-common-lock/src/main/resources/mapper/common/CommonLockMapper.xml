@@ -21,15 +21,17 @@
 <mapper namespace="org.apache.linkis.publicservice.common.lock.dao.CommonLockMapper">
 
     <insert id="lock">
-        insert into linkis_ps_common_lock (lock_object, time_out, update_time, create_time)
-        values(#{jsonObject}, #{timeOut}, now(), now())
+        INSERT INTO linkis_ps_common_lock (lock_object, time_out, update_time, create_time)
+        VALUES (#{jsonObject}, #{timeOut}, now(), now())
     </insert>
     
     <delete id="unlock">
-        delete  from linkis_ps_common_lock where lock_object = #{jsonObject}
+        DELETE FROM linkis_ps_common_lock
+        WHERE lock_object = #{jsonObject}
     </delete>
 
     <select id="getAll" resultType="org.apache.linkis.publicservice.common.lock.entity.CommonLock">
-        select * from linkis_ps_common_lock
+        SELECT *
+        FROM linkis_ps_common_lock
     </select>
 </mapper>

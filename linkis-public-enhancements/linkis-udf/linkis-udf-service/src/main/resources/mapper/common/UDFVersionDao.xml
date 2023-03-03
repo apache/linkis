@@ -47,36 +47,43 @@
     </insert>
 
     <select id="selectLatestByUdfId" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
+        SELECT
         <include refid="udf_Version_List"/>
-        from linkis_ps_udf_version where udf_id=#{udfId} and bml_resource_version in
-        (select max(bml_resource_version) from linkis_ps_udf_version where udf_id=#{udfId})
+        FROM linkis_ps_udf_version WHERE udf_id=#{udfId} AND bml_resource_version in
+        (SELECT max(bml_resource_version) FROM linkis_ps_udf_version WHERE udf_id=#{udfId})
     </select>
 
     <select id="selectByUdfIdAndVersion" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
+        SELECT
         <include refid="udf_Version_List"/>
-        from linkis_ps_udf_version where udf_id=#{udfId} and bml_resource_version=#{version}
+        FROM linkis_ps_udf_version WHERE udf_id=#{udfId} AND bml_resource_version=#{version}
     </select>
 
     <update id="updatePublishStatus">
-        update linkis_ps_udf_version set is_published=#{isPublished} where udf_id=#{udfId} and
-        bml_resource_version=#{version}
+        UPDATE linkis_ps_udf_version
+        SET is_published = #{isPublished}
+        WHERE udf_id = #{udfId}
+        AND bml_resource_version = #{version}
     </update>
 
     <select id="getAllVersionByUdfId" resultType="org.apache.linkis.udf.vo.UDFVersionVo">
-        select
-        puv.*, is_expire, create_user
-        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on pu.id=puv.udf_id and pu.id=#{udfId} order by puv.bml_resource_version desc
+        SELECT puv.*, is_expire, create_user
+        FROM linkis_ps_udf_baseinfo pu
+        JOIN linkis_ps_udf_version puv
+        ON pu.id = puv.udf_id
+        AND pu.id = #{udfId}
+        ORDER BY puv.bml_resource_version DESC
     </select>
 
     <select id="getAllVersions" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
-        puv.* from linkis_ps_udf_version puv where puv.udf_id=#{udfId}
+        SELECT puv.*
+        FROM linkis_ps_udf_version puv
+        WHERE puv.udf_id = #{udfId}
     </select>
 
     <delete id="deleteVersionByUdfId">
-        delete from linkis_ps_udf_version where udf_id=#{udfId}
+        DELETE FROM linkis_ps_udf_version
+        WHERE udf_id = #{udfId}
     </delete>
 
     <select id="getSameJarCount" resultType="java.lang.Integer">
@@ -86,14 +93,19 @@
     </select>
 
     <select id="getOtherSameJarCount" resultType="java.lang.Integer">
-        select count(1) from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on
-        pu.id=puv.udf_id where pu.create_user=#{userName} and pu.udf_type=0 and pu.id!=#{udfId}
-        and SUBSTRING_INDEX(puv.path,'/',-1)=#{jarName}
+        SELECT count(1)
+        FROM linkis_ps_udf_baseinfo pu
+        JOIN linkis_ps_udf_version puv ON pu.id = puv.udf_id
+        WHERE pu.create_user = #{userName}
+        AND pu.udf_type = 0
+        AND pu.id != #{udfId}
+        AND SUBSTRING_INDEX(puv.path, '/', -1) = #{jarName}
     </select>
 
     <update id="updateResourceIdByUdfId">
-        update linkis_ps_udf_version set bml_resource_id=#{resourceId},path=replace(`path`,#{oldUser},#{newUser})
-        where udf_id=#{udfId}
+        UPDATE linkis_ps_udf_version
+        SET bml_resource_id = #{resourceId}, path = replace(`path`, #{oldUser}, #{newUser})
+        WHERE udf_id = #{udfId}
     </update>
 
     <update id="updateUDFVersion" parameterType="org.apache.linkis.udf.entity.UDFVersion">
@@ -106,9 +118,13 @@
     </update>
 
     <select id="getUdfVersionInfoByName" resultType="org.apache.linkis.udf.vo.UDFVersionVo">
-        select
-        puv.*, is_expire, create_user
-        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on pu.id=puv.udf_id and pu.udf_name=#{udfName} and pu.create_user=#{createUser}
-        order by puv.bml_resource_version desc  limit 1
+        SELECT puv.*, is_expire, create_user
+        FROM linkis_ps_udf_baseinfo pu
+        JOIN linkis_ps_udf_version puv
+        ON pu.id = puv.udf_id
+        AND pu.udf_name = #{udfName}
+        AND pu.create_user = #{createUser}
+        ORDER BY puv.bml_resource_version DESC
+        LIMIT 1
     </select>
 </mapper>

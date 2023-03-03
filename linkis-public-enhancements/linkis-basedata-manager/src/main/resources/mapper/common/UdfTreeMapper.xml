@@ -38,14 +38,14 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_ps_udf_tree
+        FROM linkis_ps_udf_tree
         <if test="searchName != null and searchName!=''">
-            where user_name like concat('%',#{searchName},'%')
-            or name like concat('%',#{searchName},'%')
-            or description like concat('%',#{searchName},'%')
-            or category like concat('%',#{searchName},'%')
+            WHERE user_name LIKE concat('%',#{searchName},'%')
+            OR name LIKE concat('%',#{searchName},'%')
+            OR description LIKE concat('%',#{searchName},'%')
+            OR category LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

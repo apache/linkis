@@ -39,9 +39,9 @@
     </sql>
 
     <select id="selectByResourceType" resultMap="ExternalResourceProviderMap">
-        select
+        SELECT
         <include refid="ExternalResourceProvider_Column_List"/>
-        from linkis_cg_rm_external_resource_provider where resource_type=#{resourceType}
+        FROM linkis_cg_rm_external_resource_provider WHERE resource_type=#{resourceType}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"

@@ -17,14 +17,16 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
+import org.apache.linkis.common.utils.ClassUtils.getFieldVal
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.spark.SPARK_VERSION
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-import org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcUtils}
+import org.apache.spark.sql.execution.datasources.jdbc.{DriverRegistry, DriverWrapper, JDBCOptions}
 
-import java.sql.Connection
+import java.sql.{Connection, Driver, DriverManager}
 
 import scala.collection.JavaConverters._
 
@@ -58,7 +60,7 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
         .repartition(1)
         .foreachPartition((_: Iterator[Row]) => {
           val jdbcOptions = new JDBCOptions(options)
-          val conn: Connection = JdbcUtils.createConnectionFactory(jdbcOptions)()
+          val conn: Connection = createConnectionFactory(jdbcOptions)()
           try {
             config.getPreQueries.asScala.foreach(query => {
               logger.info(s"Execute pre query: $query")
@@ -82,11 +84,34 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
     writer.options(options).save()
   }
 
+  // rewrite spark method
+  // for method `createConnectionFactory` will be removed from JdbcUtils after spark3.0.0
+  private def createConnectionFactory(options: JDBCOptions): () => Connection = {
+    val driverClass: String = options.driverClass
+    () => {
+      DriverRegistry.register(driverClass)
+      val driver: Driver = DriverManager.getDrivers.asScala
+        .collectFirst {
+          case d: DriverWrapper if d.wrapped.getClass.getCanonicalName == driverClass => d
+          case d if d.getClass.getCanonicalName == driverClass => d
+        }
+        .getOrElse {
+          throw new IllegalStateException(s"Did not find registered driver with class $driverClass")
+        }
+      driver.connect(options.url, options.asConnectionProperties)
+    }
+  }
+
   private def execute(conn: Connection, jdbcOptions: JDBCOptions, query: String): Unit = {
     logger.info("Execute query: {}", query)
     val statement = conn.prepareStatement(query)
     try {
-      statement.setQueryTimeout(jdbcOptions.queryTimeout)
+      // `queryTimeout` was added after spark2.4.0, more details please check SPARK-23856
+      if (SPARK_VERSION >= "2.4") {
+        val queryTimeout = getFieldVal(jdbcOptions, "queryTimeout").asInstanceOf[Int]
+        statement.setQueryTimeout(queryTimeout)
+      }
+
       val rows = statement.executeUpdate()
       logger.info("{} rows affected", rows)
     } catch {

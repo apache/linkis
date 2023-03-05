@@ -17,20 +17,20 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 import org.apache.linkis.engineplugin.spark.datacalc.exception.HiveSinkException
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.catalog.HiveTableRelation
-import org.apache.spark.sql.execution.datasources.{HadoopFsRelation, LogicalRelation}
+import org.apache.spark.sql.execution.datasources.{FileFormat, HadoopFsRelation, LogicalRelation}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.sources.DataSourceRegister
 import org.apache.spark.sql.types.StructField
 
-import org.slf4j.{Logger, LoggerFactory}
+import scala.collection.JavaConverters.asScalaSetConverter
+import scala.util.control.Breaks.{break, breakable}
 
 class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
 
@@ -184,17 +184,26 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
           logicalRelation.relation match {
             case hadoopFsRelation: HadoopFsRelation =>
               hadoopFsRelation.fileFormat match {
-                case _: org.apache.spark.sql.execution.datasources.orc.OrcFileFormat =>
-                  fileFormat = FileFormat.ORC
                 case _: org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat =>
                   fileFormat = FileFormat.PARQUET
                 case dataSourceRegister: DataSourceRegister =>
                   fileFormat = FileFormat.withName(dataSourceRegister.shortName.toUpperCase)
                 case _ =>
+                  val allSubClasses = ClassUtils.reflections.getSubTypesOf(classOf[FileFormat])
+                  breakable {
+                    allSubClasses.asScala
+                      .filter(!ClassUtils.isInterfaceOrAbstract(_))
+                      .foreach(subclass => {
+                        if (subclass.getSimpleName.equals("OrcFileFormat")) {
+                          fileFormat = FileFormat.ORC
+                          break()
+                        }
+                      })
+                  }
               }
           }
-        case hiveTableRelation: HiveTableRelation =>
-        // todo
+        // case hiveTableRelation: HiveTableRelation =>
+        // todo please note `HiveTableRelation` was added after spark 2.2.1
       }
       fileFormat
     } catch {

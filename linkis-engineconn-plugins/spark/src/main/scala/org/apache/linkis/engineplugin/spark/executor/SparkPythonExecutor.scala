@@ -126,7 +126,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
         // process.destroy will kills the subprocess,not need to force kill with -9,
         // kill -9 may cause resources not to be released
         pid.foreach(p => {
-          logger.info(s"skip Try to kill Pyspark process with: [kill -9 ${p}]")
+          logger.info(s"skip Try to kill Pyspark process with: [kill -15 ${p}]")
           Utils.exec(Array("kill", "-9", p), 3000L)
         })
 
@@ -210,7 +210,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     cmd.addArgument(pythonClasspath.toString(), false)
 
     // add java process pid
-    cmd.addArgument(Utils.getProcessId(), false)
+    // cmd.addArgument(Utils.getProcessId(), false)
 
     cmd.addArgument(pyFiles, false)
 

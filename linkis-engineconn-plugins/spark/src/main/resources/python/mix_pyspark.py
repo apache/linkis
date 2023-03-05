@@ -21,9 +21,6 @@ paths = zipPaths.split(':')
 for i in range(len(paths)):
     sys.path.insert(0, paths[i])
 
-# java process pid
-parentPid = int(sys.argv[5])
-
 from py4j.protocol import Py4JJavaError, Py4JNetworkError
 from py4j.java_gateway import java_import, JavaGateway, GatewayClient, GatewayParameters
 from pyspark.conf import SparkConf
@@ -44,18 +41,6 @@ except ImportError:
 
 import time
 import threading
-
-
-
-#Check For the existence of a unix pid.
-# Sending signal 0 to a pid will raise an OSError exception if the pid is not running, and do nothing otherwise.
-def check_pid(pid):
-    try:
-      os.kill(pid, 0)
-    except OSError:
-      return False
-    else:
-      return True
 
 try:
   import matplotlib
@@ -245,25 +230,15 @@ class UDF(object):
 udf = UDF(intp, sqlc)
 intp.onPythonScriptInitialized(os.getpid())
 
-checkTimes = 0
-
 def java_watchdog_thread(sleep=10):
     while True :
-      try:
         time.sleep(sleep)
-        global checkTimes
-        checkTimes = checkTimes + 1
-
-        parentJavaProcessExist = check_pid(parentPid)
-        intp.printLog("java_watchdog_thread check parent pid of:"+str(parentPid)+" status, parent java process dose exist:"+str(parentJavaProcessExist))
-        if parentJavaProcessExist == False:
+        try:
+            intp.getKind()
+        except Exception as e:
             # Failed to detect java daemon, now exit python process
             #just exit thread see https://stackoverflow.com/questions/905189/why-does-sys-exit-not-exit-when-called-inside-a-thread-in-python
             os._exit(1)
-      except Exception as e:
-        intp.printLog("java_watchdog_thread error")
-        intp.printLog(e)
-
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
 watchdog_thread.daemon = True
 watchdog_thread.start()

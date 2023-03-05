@@ -24,11 +24,11 @@ object GovernanceCommonConf {
 
   val CONF_FILTER_RM = "wds.linkis.rm"
 
-  val SPARK_ENGINE_VERSION = CommonVars("wds.linkis.spark.engine.version",
-    LabelCommonConfig.SPARK_ENGINE_VERSION.getValue)
+  val SPARK_ENGINE_VERSION =
+    CommonVars("wds.linkis.spark.engine.version", LabelCommonConfig.SPARK_ENGINE_VERSION.getValue)
 
-  val HIVE_ENGINE_VERSION = CommonVars("wds.linkis.hive.engine.version",
-    LabelCommonConfig.HIVE_ENGINE_VERSION.getValue)
+  val HIVE_ENGINE_VERSION =
+    CommonVars("wds.linkis.hive.engine.version", LabelCommonConfig.HIVE_ENGINE_VERSION.getValue)
 
   val PYTHON_ENGINE_VERSION = CommonVars("wds.linkis.python.engine.version", "python2")
 

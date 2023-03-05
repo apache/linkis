@@ -24,8 +24,10 @@ object ManagerCommonConf {
 
   val DEFAULT_ENGINE_TYPE = CommonVars("wds.linkis.default.engine.type", "spark")
 
-  val DEFAULT_ENGINE_VERSION = CommonVars("wds.linkis.default.engine.version",
-    LabelCommonConfig.SPARK_ENGINE_VERSION.defaultValue)
+  val DEFAULT_ENGINE_VERSION = CommonVars(
+    "wds.linkis.default.engine.version",
+    LabelCommonConfig.SPARK_ENGINE_VERSION.defaultValue
+  )
 
   val DEFAULT_ADMIN = CommonVars("wds.linkis.manager.admin", "hadoop")
 

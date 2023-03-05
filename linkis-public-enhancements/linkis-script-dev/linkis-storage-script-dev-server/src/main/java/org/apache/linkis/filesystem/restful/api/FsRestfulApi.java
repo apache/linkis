@@ -705,10 +705,15 @@ public class FsRestfulApi {
     FsWriter fsWriter = null;
     PrintWriter writer = null;
     FileSource fileSource = null;
-    if (csvSeparator.equals(",") && !csvSeperator.equals(","))
-    {
+    if (csvSeparator.equals(",") && !csvSeperator.equals(",")) {
       csvSeparator = csvSeperator;
     }
+    LOGGER.info(
+        "resultsetToExcel with outputFileType:{}, csvSeparator:{}, quoteRetouchEnable:{}, charset:{}",
+        outputFileType,
+        csvSeparator,
+        quoteRetouchEnable,
+        charset);
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
       FsPath fsPath = new FsPath(path);

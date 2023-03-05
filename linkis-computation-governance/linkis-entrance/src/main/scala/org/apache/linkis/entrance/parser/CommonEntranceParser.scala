@@ -24,22 +24,18 @@ import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceIllegalP
 import org.apache.linkis.entrance.persistence.PersistenceManager
 import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.governance.common.entity.job.JobRequest
-import org.apache.linkis.manager.label.builder.factory.{
-  LabelBuilderFactory,
-  LabelBuilderFactoryContext
-}
+import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.queue.SchedulerEventState
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 
 import java.util
 import java.util.Date
-
 import scala.collection.JavaConverters._
 
 class CommonEntranceParser(val persistenceManager: PersistenceManager)
@@ -134,7 +130,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   private def checkEngineTypeLabel(labels: util.Map[String, Label[_]]): Unit = {
     val engineTypeLabel = labels.getOrDefault(LabelKeyConstant.ENGINE_TYPE_KEY, null)
     if (null == engineTypeLabel) {
-      val msg = s"You need to specify engineTypeLabel in labels, such as spark-3.2.1"
+      val msg = s"You need to specify engineTypeLabel in labels," +
+        s"such as spark-${LabelCommonConfig.SPARK_ENGINE_VERSION.getValue}"
       throw new EntranceIllegalParamException(
         EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg

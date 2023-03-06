@@ -38,7 +38,4 @@ object JobhistoryConfiguration {
   val DIRTY_DATA_UNFINISHED_JOB_STATUS =
     "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
 
-  val ERROR_MSG_TIP =
-    CommonVars("wds.linkis.jobhistory.error.msg.tip", "请求接口 %s 异常，您可以通过知识库文档常见问题尝试排查解决")
-
 }

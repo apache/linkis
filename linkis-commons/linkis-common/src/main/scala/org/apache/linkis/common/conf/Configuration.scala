@@ -65,6 +65,9 @@ object Configuration extends Logging {
 
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
 
+  val ERROR_MSG_TIP =
+    CommonVars("linkis.jobhistory.error.msg.tip", "请求接口 %s 异常，您可以通过知识库文档常见问题尝试排查解决")
+
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
       false

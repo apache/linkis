@@ -53,8 +53,8 @@
     </insert>
 
     <select id="queryUserIPList" resultMap="UserIpMap">
-        select <include refid="UserIp_Column_List"/>
-        from linkis_cg_user_ip_config
+        SELECT <include refid="UserIp_Column_List"/>
+        FROM linkis_cg_user_ip_config
         <where>
             <if test="user != null">`user` = #{user}</if>
             <if test="creator != null">and `creator` = #{creator}</if>
@@ -81,8 +81,8 @@
     </update>
 
     <select id="queryUserIP" resultType="org.apache.linkis.configuration.entity.UserIpVo">
-        select <include refid="UserIp_Column_List"/>
-        from linkis_cg_user_ip_config
+        SELECT <include refid="UserIp_Column_List"/>
+        FROM linkis_cg_user_ip_config
         <where>
             <if test="user != null">`user` = #{user}</if>
             <if test="creator != null">and `creator` = #{creator}</if>

@@ -29,7 +29,6 @@ import org.apache.linkis.storage.source.FileSource$;
 
 import org.apache.commons.math3.util.Pair;
 
-import org.junit.jupiter.api.Assertions;
 import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
@@ -49,6 +48,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class StorageScriptFsWriterTest {
@@ -58,7 +58,8 @@ class StorageScriptFsWriterTest {
   // ${qq};\n","projectName":"test1122a1","metadata":{"variable":{"qq":"123"},"configuration":{"special":{},"runtime":{},"startup":{}}},"resourceId":"c9755cad-619b-4c1c-9204-cc4bb9836194"}
   //
 
-  String scriptContent = ""
+  String scriptContent =
+      ""
           + "select ${qq};\n"
           + "--@set test=123\n"
           + "select ${test};\n"
@@ -72,17 +73,18 @@ class StorageScriptFsWriterTest {
 
   String resultMetaData = "{\"variable\":{\"qq\":\"123\"}}";
 
-  String resultString=""
-      + "--@set qq=123\n"
-      + "--\n"
-      + "select ${qq};\n"
-      + "--@set test=123\n"
-      + "select ${test};\n"
-      + "--@set qq=222\n"
-      + "select ${qq};\n"
-      + "--\n"
-      + "--\n"
-      + "select 1;";
+  String resultString =
+      ""
+          + "--@set qq=123\n"
+          + "--\n"
+          + "select ${qq};\n"
+          + "--@set test=123\n"
+          + "select ${test};\n"
+          + "--@set qq=222\n"
+          + "select ${qq};\n"
+          + "--\n"
+          + "--\n"
+          + "select 1;";
 
   Map<String, Object> params;
 
@@ -101,8 +103,7 @@ class StorageScriptFsWriterTest {
   @Test
   void TestSave() {
     ScriptFsWriter writer =
-        StorageScriptFsWriter.getScriptFsWriter(
-            new FsPath(fileName), "UTF-8", null);
+        StorageScriptFsWriter.getScriptFsWriter(new FsPath(fileName), "UTF-8", null);
     Variable[] v = VariableParser.getVariables(params);
     List<Variable> variableList =
         Arrays.stream(v)
@@ -119,7 +120,7 @@ class StorageScriptFsWriterTest {
           new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
               .lines()
               .collect(Collectors.joining("\n"));
-      Assertions.assertEquals(text,resultString);
+      Assertions.assertEquals(text, resultString);
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -129,9 +130,9 @@ class StorageScriptFsWriterTest {
   @Test
   void TestOpen() throws FileNotFoundException {
 
-    // http://sit.dss.bdp.weoa.com/api/rest_j/v1/filesystem/openScriptFromBML?fileName=229cf765-6839-4c82-829d-1907c2ccf668.sql&resourceId=c9755cad-619b-4c1c-9204-cc4bb9836194&version=v000008&creator=&projectName=test1122a1
+    // /api/rest_j/v1/filesystem/openScriptFromBML?fileName=229cf765-6839-4c82-829d-1907c2ccf668.sql&resourceId=c9755cad-619b-4c1c-9204-cc4bb9836194&version=v000008&creator=&projectName=test1122a1
 
-    String filePath = this.getClass().getResource("/bml.sql").getFile().toString();
+    String filePath = this.getClass().getResource("/scritpis-test.sql").getFile().toString();
 
     File file = new File(filePath);
 
@@ -143,18 +144,8 @@ class StorageScriptFsWriterTest {
     String scriptRes = collect.getSecond().get(0)[0];
     String metadataRes = new Gson().toJson(collect.getFirst());
 
-    System.out.println(scriptRes);
-    System.out.println("################");
-    System.out.println(scriptContent);
-
-    System.out.println("///////");
-    System.out.println(metadataRes);
-    System.out.println("################");
-    System.out.println(resultMetaData);
-
-    Assertions.assertEquals(scriptRes, scriptContent+"\n");
+    Assertions.assertEquals(scriptRes, scriptContent + "\n");
 
     Assertions.assertEquals(metadataRes, resultMetaData);
-
   }
 }

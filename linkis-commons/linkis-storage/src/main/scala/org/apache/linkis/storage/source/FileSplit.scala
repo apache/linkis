@@ -78,8 +78,7 @@ class FileSplit(
     while (fsReader.hasNext && ifContinueRead) {
       val record = fsReader.getRecord
       var needRemoveFlag = false
-       if (hasRemovedFlag == false && fsReader.isInstanceOf[StorageScriptFsReader]) {
-       // if (fsReader.isInstanceOf[StorageScriptFsReader]) {
+      if (hasRemovedFlag == false && fsReader.isInstanceOf[StorageScriptFsReader]) {
         val parser = fsReader.asInstanceOf[StorageScriptFsReader].getScriptParser()
         if (
             parser != null && metaData.asInstanceOf[ScriptMetaData].getMetaData.length > 0

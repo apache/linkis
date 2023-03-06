@@ -287,21 +287,8 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
-      val engineMap = metrics
-        .get(TaskConstant.JOB_ENGINECONN_MAP)
-        .asInstanceOf[util.Map[String, Object]]
-      if (null != engineMap && !engineMap.isEmpty) {
-        // the engineInstance in metrics may be repeat, so it needs to be distinct
-        val engineInstances =
-          engineMap.asScala
-            .map(_._2.asInstanceOf[util.Map[String, Object]])
-            .map(_.get(TaskConstant.ENGINE_INSTANCE))
-            .toList
-            .distinct
-            .mkString(",")
-        taskVO.setEngineInstance(engineInstances)
-      }
+    if (metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+      taskVO.setEngineInstance(metrics.get(TaskConstant.ENGINE_INSTANCE).toString)
     } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
       taskVO.setCanRetry(true)
     }

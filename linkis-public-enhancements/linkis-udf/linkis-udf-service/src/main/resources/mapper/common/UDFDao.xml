@@ -261,12 +261,12 @@
         WHERE user_name = #{userName}
     </select>
 
-    <select id="selectAllUser" resultType="String">
+    <select id="selectAllUser" resultType="java.lang.String">
         SELECT DISTINCT create_user
         FROM linkis_ps_udf_baseinfo
     </select>
 
-    <select id="getShareSameNameCountByUser" resultType="Long">
+    <select id="getShareSameNameCountByUser" resultType="java.lang.Long">
         SELECT COUNT(1)
         FROM linkis_ps_udf_shared_info busu
         JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
@@ -274,7 +274,7 @@
         AND busu.user_name = #{userName}
     </select>
 
-    <select id="getShareSameNameCountExcludeUser" resultType="Long">
+    <select id="getShareSameNameCountExcludeUser" resultType="java.lang.Long">
         SELECT COUNT(1)
         FROM linkis_ps_udf_shared_info busu
         JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
@@ -294,7 +294,7 @@
         WHERE id=#{id}
     </update>
 
-    <select id="selectAllShareUDFInfoIdByUDFId" resultType="Long">
+    <select id="selectAllShareUDFInfoIdByUDFId" resultType="java.lang.Long">
         SELECT id
         FROM linkis_ps_udf_baseinfo
         WHERE create_user =#{userName} AND udf_name=#{udfName}
@@ -307,14 +307,14 @@
         WHERE id = #{udfId}
     </update>
 
-    <select id="selectAllShareUsersByUDFId" resultType="String">
+    <select id="selectAllShareUsersByUDFId" resultType="java.lang.String">
         SELECT busu.user_name
         FROM linkis_ps_udf_shared_info busu
         JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
         WHERE bu.id = #{udfId}
     </select>
 
-    <select id="selectIdByUserName" resultType="Long">
+    <select id="selectIdByUserName" resultType="java.lang.Long">
         SELECT id
         FROM linkis_user
         WHERE username =#{userName}

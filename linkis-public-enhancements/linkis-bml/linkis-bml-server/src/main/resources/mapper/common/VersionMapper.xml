@@ -188,14 +188,14 @@
         AND enable_flag = 1
     </select>
 
-    <select id="getStartByteForResource" resultType="Long">
+    <select id="getStartByteForResource" resultType="java.lang.Long">
         SELECT start_byte
         FROM linkis_ps_bml_resources_version
         WHERE resource_id = #{resourceId}
         AND version = #{version}
     </select>
 
-    <select id="getEndByte" resultType="Long">
+    <select id="getEndByte" resultType="java.lang.Long">
         SELECT end_byte
         FROM linkis_ps_bml_resources_version
         WHERE resource_id = #{resourceId}

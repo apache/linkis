@@ -24,9 +24,9 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.SPARK_VERSION
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-import org.apache.spark.sql.execution.datasources.jdbc.{DriverRegistry, DriverWrapper, JDBCOptions}
+import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
 
-import java.sql.{Connection, Driver, DriverManager}
+import java.sql.{Connection, DriverManager}
 
 import scala.collection.JavaConverters._
 

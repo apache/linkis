@@ -351,7 +351,7 @@ export default {
         try {
           sourceJson = JSON.parse(sourceJson)
         } catch (error) {
-          console.log(sourceJson)
+          window.console.log(sourceJson)
         }
       }
       let fileName = ''

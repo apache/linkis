@@ -74,6 +74,8 @@ trait EngineConnExecutor extends Closeable {
 
   def setReuse(reuse: Boolean): EngineConnExecutor
 
+  def getTicketId: String
+
   override def equals(other: Any): Boolean = other match {
     case that: EngineConnExecutor =>
       (that canEqual this) &&

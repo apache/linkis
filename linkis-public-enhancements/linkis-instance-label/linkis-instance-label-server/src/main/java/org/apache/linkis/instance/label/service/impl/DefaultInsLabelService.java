@@ -49,16 +49,20 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.google.common.net.InetAddresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang3.math.NumberUtils.isCreatable;
 import static org.apache.linkis.instance.label.errorcode.LinkisInstanceLabelErrorCodeSummary.INSERT_SERVICE_INSTANCE;
 
 @AdapterMode
@@ -247,58 +251,23 @@ public class DefaultInsLabelService implements InsLabelAccessService {
     instanceInfoDao.updateInstance(instanceInfo);
   }
 
-  public String getEurekaURL() throws Exception {
-    String eurekaURL = InsLabelConf.EUREKA_IPADDRESS.getValue();
-    String realURL = eurekaURL;
-    if (eurekaURL.isEmpty()) {
-      String defaultZone = InsLabelConf.EUREKA_URL.getValue();
-      String tmpURL = urlPreDeal(defaultZone);
-      realURL = replaceEurekaURL(tmpURL);
-    }
-    return realURL;
+  public String getServiceRegistryURL() throws Exception {
+    return transferToIpAddress(InsLabelConf.SERVICE_REGISTRY_ADDRESS.getValue());
   }
 
-  private String urlPreDeal(String defaultZone) {
-    if (defaultZone.contains(",")) {
-      defaultZone = defaultZone.split(",")[0];
-    }
-    String url = defaultZone;
-    if (defaultZone.matches("https?://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]")) {
-      if (defaultZone.toLowerCase().contains("eureka")) {
-        url = defaultZone.split("eureka", 2)[0];
-      }
-    }
-    return url;
-  }
-
-  private String replaceEurekaURL(String tmpURL) throws URISyntaxException, UnknownHostException {
-    URI uri = new URI(tmpURL);
-    if (isIPAddress(uri.getHost())) {
-      if (uri.getHost().equals("127.0.0.1")) {
-        String ip = Utils.getLocalHostname();
-        return tmpURL.replace("127.0.0.1", ip);
+  private String transferToIpAddress(String url) throws URISyntaxException, UnknownHostException {
+    URI uri = new URI(url);
+    String hostname = uri.getHost();
+    InetAddress address = InetAddress.getByName(hostname);
+    if (InetAddresses.isInetAddress(hostname)) {
+      if (address.isLoopbackAddress()) {
+        return url.replace(hostname, Utils.getLocalHostname());
       } else {
-        return tmpURL;
+        return url;
       }
     } else {
-      String hostname = uri.getHost();
-      InetAddress address = InetAddress.getByName(hostname);
-      String realAddress = address.getHostAddress();
-      return tmpURL.replace(hostname, realAddress);
+      return url.replace(hostname, address.getHostAddress());
     }
-  }
-
-  private boolean isIPAddress(String tmpURL) {
-    String[] urlArray = tmpURL.split(".");
-    if (urlArray.length == 4) {
-      if (isCreatable(urlArray[0])
-          && isCreatable(urlArray[1])
-          && isCreatable(urlArray[2])
-          && isCreatable(urlArray[3])) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

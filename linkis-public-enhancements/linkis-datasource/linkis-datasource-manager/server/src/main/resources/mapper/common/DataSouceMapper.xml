@@ -89,10 +89,7 @@
         d.`modify_user`, d.`modify_time`, d.`labels`, d.`version_id`,d.`published_version_id`, d.`expire`
     </sql>
     <sql id="data_source_join_type">
-        t
-        .
-        `name`
-        , t.`icon`,
+        t.`name`, t.`icon`,
         d.`id`, d.`datasource_name`, d.`datasource_type_id`, d.`datasource_desc`,
         d.`create_identify`, d.`create_system`, d.`create_user`, d.`parameter`, d.`create_time`,
         d.`modify_user`, d.`modify_time`, d.`version_id`,d.`published_version_id`, d.`labels`, d.`expire`

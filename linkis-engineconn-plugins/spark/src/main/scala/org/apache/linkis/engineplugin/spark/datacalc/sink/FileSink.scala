@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 
 import org.apache.commons.text.StringSubstitutor
@@ -24,11 +25,7 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.collection.JavaConverters._
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class FileSink extends DataCalcSink[FileSinkConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[FileSink])
+class FileSink extends DataCalcSink[FileSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     val writer = ds.write.mode(config.getSaveMode)
@@ -43,7 +40,7 @@ class FileSink extends DataCalcSink[FileSinkConfig] {
     }
     val substitutor = new StringSubstitutor(config.getVariables)
     val path = substitutor.replace(config.getPath)
-    log.info(s"Save data to file, path: $path")
+    logger.info(s"Save data to file, path: $path")
 
     config.getSerializer match {
       case "csv" => writer.csv(path)

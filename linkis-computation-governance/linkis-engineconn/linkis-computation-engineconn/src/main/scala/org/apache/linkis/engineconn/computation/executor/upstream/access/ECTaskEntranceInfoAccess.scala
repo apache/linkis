@@ -26,7 +26,6 @@ import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorC
 import org.apache.linkis.rpc.sender.SpringCloudFeignConfigurationCache
 
 import org.springframework.cloud.client.{ServiceInstance => SpringCloudServiceInstance}
-import org.springframework.cloud.netflix.eureka.EurekaServiceInstance
 
 import java.util
 import java.util.Locale
@@ -34,7 +33,7 @@ import java.util.Locale
 import scala.collection.JavaConverters._
 
 /**
- * check entrance in eureka by DiscoveryClient
+ * check entrance by DiscoveryClient
  */
 class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
   val discoveryClient = SpringCloudFeignConfigurationCache.getDiscoveryClient
@@ -60,15 +59,15 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
             }
           }
         })) { t =>
-          throw new EngineConnException(
+          throw EngineConnException(
             ComputationErrorCode.UPSTREAM_MONITOR_EXCEPTION,
-            "Failed to get services from eureka"
+            "Failed to get services from Service Registry"
           ).initCause(t)
         }
         if (instanceMap.size() == 0) {
-          throw new EngineConnException(
+          throw EngineConnException(
             ComputationErrorCode.UPSTREAM_MONITOR_EXCEPTION,
-            "Got none serviceInstances from eureka"
+            "Got none serviceInstances from Service Registry"
           )
         }
 
@@ -99,7 +98,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
           }
         }
       case _ =>
-        throw new EngineConnException(
+        throw EngineConnException(
           ComputationErrorCode.INVALID_DATA_TYPE_ERROR_CODE,
           "invalid data-type: " + request.getClass.getCanonicalName
         )
@@ -107,26 +106,15 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
     ret.iterator().asScala.toList
   }
 
-  private def getDWCServiceInstance(serviceInstance: SpringCloudServiceInstance): ServiceInstance =
-    serviceInstance match {
-      case instance: EurekaServiceInstance =>
-        val applicationName = instance.getInstanceInfo.getAppName
-        val instanceId = instance.getInstanceInfo.getInstanceId
-        ServiceInstance(
-          applicationName.toLowerCase(Locale.getDefault),
-          getInstance(applicationName, instanceId)
-        )
-    }
-
-  private def getInstance(applicationName: String, instanceId: String): String =
-    if (
-        instanceId
-          .toLowerCase(Locale.getDefault)
-          .indexOf(applicationName.toLowerCase(Locale.getDefault)) > 0
-    ) {
-      val instanceInfos = instanceId.split(":")
-      instanceInfos(0) + ":" + instanceInfos(2)
-    } else instanceId
+  private def getDWCServiceInstance(
+      serviceInstance: SpringCloudServiceInstance
+  ): ServiceInstance = {
+    val applicationName = serviceInstance.getServiceId
+    ServiceInstance(
+      applicationName.toLowerCase(Locale.getDefault),
+      s"${serviceInstance.getHost}:${serviceInstance.getPort}"
+    )
+  }
 
   private def isConnectionAlive(
       instance: ServiceInstance,
@@ -138,7 +126,7 @@ class ECTaskEntranceInfoAccess extends ConnectionInfoAccess with Logging {
 
   protected def panicIfNull(obj: Any, msg: String): Unit = {
     if (obj == null) {
-      throw new EngineConnException(ComputationErrorCode.VARIABLE_NULL_ERROR_CODE, msg)
+      throw EngineConnException(ComputationErrorCode.VARIABLE_NULL_ERROR_CODE, msg)
     }
   }
 

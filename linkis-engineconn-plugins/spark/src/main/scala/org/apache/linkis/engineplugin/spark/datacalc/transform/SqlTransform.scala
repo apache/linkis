@@ -17,18 +17,15 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.transform
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcTransform
 
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class SqlTransform extends DataCalcTransform[SqlTransformConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[SqlTransform])
+class SqlTransform extends DataCalcTransform[SqlTransformConfig] with Logging {
 
   override def process(spark: SparkSession, ds: Dataset[Row]): Dataset[Row] = {
-    log.info(s"Load data from query: ${config.getSql}")
+    logger.info(s"Load data from query: ${config.getSql}")
     spark.sql(config.getSql)
   }
 

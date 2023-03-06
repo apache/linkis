@@ -27,11 +27,15 @@ import org.apache.linkis.datasourcemanager.core.service.{
 }
 import org.apache.linkis.rpc.message.annotation.Receiver
 
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 import java.text.MessageFormat
 import java.util
+
+import scala.tools.scalap.scalax.util.StringUtil
 
 import org.slf4j.LoggerFactory
 
@@ -51,7 +55,17 @@ class DsmReceiver {
     if (dsInfoQueryRequest.isValid) {
       Utils.tryCatch {
         var dataSource: DataSource = null
-        if (Option(dsInfoQueryRequest.name).isDefined) {
+        if (
+            Option(dsInfoQueryRequest.name).isDefined && Option(dsInfoQueryRequest.envId).isDefined
+        ) {
+          logger.info(
+            "Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name + ", envId:" + dsInfoQueryRequest.envId
+          )
+          dataSource = dataSourceInfoService.getDataSourceInfoForConnect(
+            dsInfoQueryRequest.name,
+            dsInfoQueryRequest.envId
+          )
+        } else if (Option(dsInfoQueryRequest.name).isDefined) {
           logger.info("Try to get dataSource by dataSourceName:" + dsInfoQueryRequest.name)
           dataSource = dataSourceInfoService.getDataSourceInfoForConnect(dsInfoQueryRequest.name)
         } else if (dsInfoQueryRequest.id.toLong > 0) {

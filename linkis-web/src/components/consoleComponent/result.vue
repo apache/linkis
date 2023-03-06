@@ -96,7 +96,7 @@
           ref="watermask"></we-water-mask>
       </template>
       <div v-if="result.hugeData" :style="{height: resultHeight+'px', padding: '15px'}">
-        因为您的结果集较大，为了更好的体验，<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">点击查看结果集</a>
+        {{ $t('message.linkis.resultSet.prefixText') }}<a :href="`/#/results?resultPath=${resultPath}&fileName=${$route.query.fileName}`" target="_blank">{{ $t('message.linkis.resultSet.linkText') }}</a>
       </div>
     </div>
     <div v-else-if="['visual', 'dataWrangler'].includes(visualShow)  && resultType === '2'">
@@ -150,7 +150,7 @@
           :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
           @on-change="change"
           @on-page-size-change="changeSize" />
-        <span class="hint-text">{{tableData.total === 5000 ? '前端只展示5000条数据' : ''}}</span>
+        <span class="hint-text">{{result.total === 5000 ? $t('message.linkis.resultSet.largeResultTips') : ''}}</span>
       </div>
     </div>
     <we-menu

@@ -95,7 +95,7 @@
               @click="handleCancel"
             >{{ $t('message.linkis.cancel') }}</Button>
             <Button type="primary" @click="onSubmit" :disabled="!hasFile" :loading="isUploading">{{
-              $t('message.linkis.complete')}}</Button>
+              $t('message.common.ok')}}</Button>
           </div>
         </div>
       </div>
@@ -237,6 +237,18 @@ export default {
           key: 'fileSize',
           tooltip: true,
           align: 'center',
+          render: (h, params) => {
+            if (!params.row.fileSize || isNaN(Number(params.row.fileSize)) ) {
+              return h('span', '');
+            }
+            let size = +params.row.fileSize;
+            let format = size >= 1024 * 1024 ?
+              Math.floor(size / (1024 * 1024)) + 'MB' :
+              size >= 1024 ?
+                Math.floor(size / 1024) + 'KB' :
+                size + 'B';
+            return h('span', format);
+          }
         },
         {
           title: this.$t('message.linkis.EnginePluginManagement.lastModified'),
@@ -274,12 +286,12 @@ export default {
           tooltip: true,
           align: 'center',
         },
-        {
-          title: this.$t('message.linkis.EnginePluginManagement.action'),
-          slot: 'action',
-          minWidth: 20,
-          align: 'center',
-        },
+        // {
+        //   title: this.$t('message.linkis.EnginePluginManagement.action'),
+        //   slot: 'action',
+        //   minWidth: 20,
+        //   align: 'center',
+        // },
       ],
       pageDatalist: [],
       currentVersionList: [],
@@ -302,14 +314,14 @@ export default {
           minWidth: 60,
           align: 'center',
         },
-        {
-          title: this.$t('message.linkis.EnginePluginManagement.action'),
-          key: 'action',
-          tooltip: true,
-          minWidth: 120,
-          align: 'center',
-          slot: 'action',
-        },
+        // {
+        //   title: this.$t('message.linkis.EnginePluginManagement.action'),
+        //   key: 'action',
+        //   tooltip: true,
+        //   minWidth: 120,
+        //   align: 'center',
+        //   slot: 'action',
+        // },
       ],
     }
   },

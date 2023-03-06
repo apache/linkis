@@ -22,7 +22,7 @@
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
     </Tabs>
-    <Button class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+    <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
     <log v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" />
     <result
@@ -100,7 +100,12 @@ export default {
     let taskID = this.$route.query.taskID
     this.initHistory(taskID)
     const node = document.getElementsByClassName('global-history')[0];
-    this.scriptViewState.bottomContentHeight = node.clientHeight - 55
+    this.scriptViewState.bottomContentHeight = node.clientHeight - 85
+  },
+  computed: {
+    isHistoryDetail() {
+      return this.$route.path === '/console/viewHistoryDetail'
+    }
   },
   methods: {
     // The request is triggered when the tab is clicked, and the log is requested at the beginning, and no judgment is made.(点击tab时触发请求，log初始就请求了，不做判断)

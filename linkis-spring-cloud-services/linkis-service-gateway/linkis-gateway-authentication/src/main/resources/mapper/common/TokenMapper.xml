@@ -36,7 +36,7 @@
 
     <sql id="tableName">linkis_mg_gateway_auth_token</sql>
 
-    <select id="selectTokenByName" parameterType="String" resultMap="tokenEntityMap">
+    <select id="selectTokenByName" parameterType="java.lang.String" resultMap="tokenEntityMap">
         SELECT * FROM
         <include refid="tableName"/>
         <where>

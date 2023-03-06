@@ -30,7 +30,7 @@ public class EngineLabelResponse implements Serializable {
   @ApiModelProperty(value = "label id.")
   private Integer labelId;
 
-  @ApiModelProperty(value = "engine name. eg: spark-2.4.3")
+  @ApiModelProperty(value = "engine name. eg: spark-3.2.1")
   private String engineName;
 
   @ApiModelProperty(value = "install. eg: yes")

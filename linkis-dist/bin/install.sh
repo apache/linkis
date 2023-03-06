@@ -219,13 +219,13 @@ SERVER_IP=$local_host
 ##Label set start
 if [ "$SPARK_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#spark-2.4.3#spark-$SPARK_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#spark-3.2.1#spark-$SPARK_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#\#wds.linkis.spark.engine.version.*#wds.linkis.spark.engine.version=$SPARK_VERSION#g" $common_conf
 fi
 
 if [ "$HIVE_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#hive-2.3.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#hive-3.1.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
   sed -i ${txt}  "s#\#wds.linkis.hive.engine.version.*#wds.linkis.hive.engine.version=$HIVE_VERSION#g" $common_conf
 fi
 

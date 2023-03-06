@@ -254,11 +254,11 @@ object EntranceConfiguration {
 
   val ENTRANCE_GROUP_SCAN_INTERVAL = CommonVars("linkis.entrance.group.scan.interval", 60 * 1000)
 
-  val ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED =
-    CommonVars("linkis.entrance.failover.retain.engine.conn.enable", false)
+  val ENTRANCE_FAILOVER_RETAIN_METRIC_ENGINE_CONN_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.metric.engine.conn.enable", false)
 
-  val ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED =
-    CommonVars("linkis.entrance.failover.retain.yarn.resource.enable", false)
+  val ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED =
+    CommonVars("linkis.entrance.failover.retain.metric.yarn.resource.enable", false)
 
   val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
     CommonVars("linkis.entrance.failover.running.kill.enable", false)

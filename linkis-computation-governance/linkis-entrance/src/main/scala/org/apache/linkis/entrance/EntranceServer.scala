@@ -625,7 +625,7 @@ abstract class EntranceServer extends Logging {
     )
 
     val metricMap = new util.HashMap[String, Object]()
-    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_ENGINE_CONN_ENABLED.getValue) {
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_ENGINE_CONN_ENABLED.getValue) {
       if (
           jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
             TaskConstant.ENTRANCEJOB_ENGINECONN_MAP
@@ -638,7 +638,7 @@ abstract class EntranceServer extends Logging {
       }
     }
 
-    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_YARN_RESOURCE_ENABLED.getValue) {
+    if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED.getValue) {
       if (
           jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
             TaskConstant.ENTRANCEJOB_YARNRESOURCE

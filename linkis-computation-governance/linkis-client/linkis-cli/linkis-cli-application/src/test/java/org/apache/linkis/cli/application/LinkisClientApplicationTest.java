@@ -85,12 +85,12 @@ public class LinkisClientApplicationTest {
 
           /* Test different task type */
 
-          //                "-engineType", "spark-2.4.3",
+          //                "-engineType", "spark-3.2.1",
           //                "-codeType", "sql",
           //                "-code", "show tables;show tables;show tables",
 
           //
-          //        "-engineType", "hive-1.2.1",
+          //        "-engineType", "hive-3.1.3",
           //        "-codeType", "sql",
           //        "-code", "show tables;",
 
@@ -101,11 +101,11 @@ public class LinkisClientApplicationTest {
           "-code",
           "whoami",
 
-          //        "-engineType", "spark-2.4.3",
+          //        "-engineType", "spark-3.2.1",
           //        "-codeType", "py",
           //        "-code", "print ('hello')",
 
-          //        "-engineType", "spark-2.4.3",
+          //        "-engineType", "spark-3.2.1",
           //        "-codeType", "scala",
           //        "-codePath", "src/test/resources/testScala.scala",
 

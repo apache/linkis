@@ -37,7 +37,7 @@ function checkPythonAndJava(){
 
 function checkHdfs(){
     hadoopVersion="`hdfs version`"
-    defaultHadoopVersion="2.7"
+    defaultHadoopVersion="3.3"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
 }
 

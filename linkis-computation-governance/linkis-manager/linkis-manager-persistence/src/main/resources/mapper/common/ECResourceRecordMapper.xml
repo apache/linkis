@@ -71,7 +71,7 @@
         <where>
             <if test="instance != null"> service_instance = #{instance}</if>
             <if test="username != null"> and create_user = #{username}</if>
-<!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+<!--            label_value in db eg：`hadoop-spark,spark-3.2.1`-->
             <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>
             <if test="startDate != null">and create_time BETWEEN  #{startDate} AND #{endDate}</if>
         </where>
@@ -93,7 +93,7 @@
             </if>
 
             <if test="engineTypes != null and engineTypes.size() > 0">
-                <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+                <!--            label_value in db eg：`hadoop-spark,spark-3.2.1`-->
                 and SUBSTRING_INDEX(SUBSTRING_INDEX(ecr.label_value,',',-1),"-",1) in
                 <foreach collection="engineTypes" item="i" open="(" close=")" separator=",">
                     #{i}

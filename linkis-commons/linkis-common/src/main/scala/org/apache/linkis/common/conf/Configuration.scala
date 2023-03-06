@@ -107,6 +107,10 @@ object Configuration extends Logging {
     !isAdmin(username)
   }
 
+  def isNotJobHistoryAdmin(username: String): Boolean = {
+    !isJobHistoryAdmin(username)
+  }
+
   def isJobHistoryAdmin(username: String): Boolean = {
     getJobHistoryAdmin()
       .exists(username.equalsIgnoreCase)

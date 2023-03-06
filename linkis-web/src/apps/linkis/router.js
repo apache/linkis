@@ -199,6 +199,16 @@ export default [
       },
     },
     {
+      name: 'engineConfigurationTemplate',
+      path: 'engineConfigurationTemplate',
+      component: () =>
+        import('./module/engineConfigurationTemplate/index.vue'),
+      meta: {
+        title: 'engineConfigurationTemplate',
+        publicPage: true,
+      },
+    },
+    {
       name: 'rmExternalResourceProvider',
       path: 'rmExternalResourceProvider',
       component: () =>

@@ -134,14 +134,11 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   }
 
   @Override
-  public Boolean checkUserCteator(String user, String creator) {
-    boolean result = true;
+  public boolean userExists(String user, String creator) {
     Map<String, Object> resultMap =
-        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), null, null);
+        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), 1, 20);
     Object userIpList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
-    int total = Integer.parseInt(userIpList.toString());
-    if (total == 0) result = false;
-    return result;
+    return Integer.parseInt(String.valueOf(userIpList)) > 0;
   }
 
   @Override

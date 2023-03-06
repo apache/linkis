@@ -5,9 +5,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -201,11 +201,11 @@
           type="textarea"/>
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.class')" prop="directory">
-        <Select 
-          ref="directory" 
+        <Select
+          ref="directory"
           v-model="setting.directory"
-          filterable 
-          :remoteMethod="filterAdd" 
+          filterable
+          :remoteMethod="filterAdd"
           @on-query-change="queryChange"
           :disabled="isUdf && model === 1">
           <Option
@@ -217,7 +217,7 @@
       </FormItem>
       <FormItem :label="$t('message.linkis.udf.clusterName')">
         <Select v-model="setting.clusterName" :disabled="isUdf && model === 1">
-          <Option   
+          <Option
             label="all"
             value="all" />
         </Select>
@@ -595,7 +595,7 @@ export default {
         this.setting.pyPara = conver(',', ')', 'indexOf', 'lastIndexOf');
       } else {
         const type = rf.slice(rf.indexOf('[') + 1, rf.indexOf(']'));
-        console.log(type, rf, '=====');
+        window.console.log(type, rf, '=====');
         // 如果存在多个逗号，就只用使用格式来截取，否则会出现多个类型填入input异常的问题
         if (type.indexOf(',') !== type.lastIndexOf(',')) {
           // there are 2 case:
@@ -610,7 +610,7 @@ export default {
             this.setting.scalaTypeL = type.split(',')[0];
             this.setting.scalaTypeR = type.split(',').slice(1).toString();
           }
-         
+
           this.showScalaRF = this.node.registerFormat;
         } else {
           this.setting.scalaTypeL = conver('[', ',', 'indexOf', 'indexOf');
@@ -829,7 +829,7 @@ export default {
         height: 100% !important;
       }
     }
-  
+
     .ivu-modal-content {
       height: 100% !important;
     }

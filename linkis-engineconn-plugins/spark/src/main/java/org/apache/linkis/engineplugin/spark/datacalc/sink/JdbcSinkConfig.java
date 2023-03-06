@@ -24,7 +24,6 @@ import javax.validation.constraints.Pattern;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class JdbcSinkConfig extends SinkConfig {
 
@@ -50,8 +49,6 @@ public class JdbcSinkConfig extends SinkConfig {
   private List<String> preQueries = new ArrayList<>();
 
   private Integer numPartitions = 10;
-
-  private Map<String, String> options;
 
   public String getUrl() {
     return url;
@@ -124,13 +121,5 @@ public class JdbcSinkConfig extends SinkConfig {
   public void setNumPartitions(Integer numPartitions) {
     if (numPartitions == null) return;
     this.numPartitions = numPartitions > 20 ? 20 : numPartitions;
-  }
-
-  public Map<String, String> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, String> options) {
-    this.options = options;
   }
 }

@@ -21,7 +21,6 @@
  */
 import util from '@/common/util';
 import axios from 'axios';
-import router from '@/router';
 import { Message } from 'iview';
 import cache from './apiCache';
 
@@ -112,8 +111,12 @@ const api = {
       if (res.data && res.data.enableSSO && res.data.SSOURL) {
         return window.location.replace(res.data.SSOURL);
       }
-      router.push('/login');
-      throw new Error('您尚未登录，请先登录!');
+
+      const isLoginPath = window.location.hash == "#/login";
+      if (!isLoginPath) {
+        window.location.hash = "#/login";
+        throw new Error('您尚未登录，请先登录!');
+      }
     },
   },
   constructionOfResponse: {
@@ -134,7 +137,7 @@ const getData = function (data) {
       result = result[pathArray[j]];
       if (!result) {
         if (j < pathArray.length - 1) {
-          console.error(`【FEX】ConstructionOfResponse配置错误：${item}拿到的值是undefined，请检查配置`);
+          window.console.error(`【FEX】ConstructionOfResponse配置错误：${item}拿到的值是undefined，请检查配置`);
         }
         break;
       }
@@ -146,8 +149,8 @@ const getData = function (data) {
 
 const success = function (response) {
   if (util.isNull(api.constructionOfResponse.codePath) || util.isNull(api.constructionOfResponse.successCode) ||
-    util.isNull(api.constructionOfResponse.messagePath) || util.isNull(api.constructionOfResponse.resultPath)) {
-    console.error('【FEX】Api配置错误: 请调用setConstructionOfResponse来设置API的响应结构');
+        util.isNull(api.constructionOfResponse.messagePath) || util.isNull(api.constructionOfResponse.resultPath)) {
+    window.console.error('【FEX】Api配置错误: 请调用setConstructionOfResponse来设置API的响应结构');
     return;
   }
   let data;
@@ -185,7 +188,7 @@ const success = function (response) {
         }
       })
       if (hasBigData) {
-        console.log(response.data, '潜在性能问题大数据量', len)
+        window.console.log(response.data, '潜在性能问题大数据量', len)
       }
     }
 
@@ -221,7 +224,7 @@ const fail = function (error) {
 const param = function (url, data, option) {
   let method = 'post';
   if (util.isNull(url)) {
-    return console.error('请传入URL');
+    return window.console.error('请传入URL');
   } else if (!util.isNull(url) && util.isNull(data) && util.isNull(option)) {
     option = {
       method: method,

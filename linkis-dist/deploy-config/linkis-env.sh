@@ -73,10 +73,12 @@ YARN_RESTFUL_URL="http://127.0.0.1:8088"
 #         You can also set these variables as system environment in ~/.bashrc file
 
 #HADOOP
-HADOOP_HOME=/appcom/Install/hadoop
-HADOOP_CONF_DIR=/appcom/config/hadoop-config
-#HADOOP_KERBEROS_ENABLE=true
-#HADOOP_KEYTAB_PATH=/appcom/keytab/
+HADOOP_HOME=${HADOOP_HOME:-"/appcom/Install/hadoop"}
+HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/appcom/config/hadoop-config"}
+HADOOP_KERBEROS_ENABLE=${HADOOP_KERBEROS_ENABLE:-"false"}
+HADOOP_KEYTAB_PATH=${HADOOP_KEYTAB_PATH:-"/appcom/keytab/"}
+## Hadoop env version
+HADOOP_VERSION=${HADOOP_VERSION:-"2.7.2"}
 
 #Hive
 HIVE_HOME=/appcom/Install/hive
@@ -95,9 +97,6 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 #HIVE_VERSION=2.3.3
 
 #PYTHON_VERSION=python2
-
-## Hadoop env version
-HADOOP_VERSION=2.7.2
 
 ################### The install Configuration of all Micro-Services #####################
 #

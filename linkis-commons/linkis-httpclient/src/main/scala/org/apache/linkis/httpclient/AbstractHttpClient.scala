@@ -321,14 +321,14 @@ abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String
           case get: GetAction =>
             get.getParameters.asScala.retain((k, v) => v != null && k != null).foreach {
               case (k, v) =>
-                if (k != null && v != null) builder.addTextBody(k.toString, v.toString)
+                if (k != null && v != null) builder.addTextBody(k, v.toString)
             }
           case _ =>
         }
         upload match {
           case get: GetAction =>
             get.getHeaders.asScala.retain((k, v) => v != null && k != null).foreach { case (k, v) =>
-              if (k != null && v != null) httpPost.addHeader(k.toString, v.toString)
+              if (k != null && v != null) httpPost.addHeader(k, v)
             }
           case _ =>
         }

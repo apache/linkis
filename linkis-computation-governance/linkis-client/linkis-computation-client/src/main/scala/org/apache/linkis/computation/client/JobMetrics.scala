@@ -21,9 +21,11 @@ import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 
 import java.util
 
+import scala.collection.JavaConverters._
+
 trait ClientMetrics {
 
-  def getMetrics: Map[String, Any]
+  def getMetrics: Map[String, AnyRef]
   def getMetricString: String
   def printIt(): Unit
 
@@ -33,15 +35,13 @@ abstract class AbstractJobMetrics extends ClientMetrics with Logging {
   override def printIt(): Unit = logger.info(getMetricString)
 }
 
-import scala.collection.convert.WrapAsScala._
-
 class LinkisJobMetrics(taskId: String) extends AbstractJobMetrics {
 
   private var clientSubmitTime: Long = 0
   private var clientFinishedTime: Long = 0
   private var clientGetJobInfoTime: Long = 0
   private var clientFetchResultSetTime: Long = 0
-  private val metricsMap = new util.HashMap[String, Any]
+  private val metricsMap = new util.HashMap[String, AnyRef]
 
   def setClientSubmitTime(clientSubmitTime: Long): Unit = this.clientSubmitTime = clientSubmitTime
 
@@ -54,19 +54,19 @@ class LinkisJobMetrics(taskId: String) extends AbstractJobMetrics {
   def addClientFetchResultSetTime(fetchResultSetTime: Long): Unit =
     this.clientFetchResultSetTime = clientFetchResultSetTime
 
-  def setLong(key: String, value: Long): Unit = metricsMap.put(key, value)
+  def setLong(key: String, value: Long): Unit = metricsMap.put(key, value: java.lang.Long)
 
   def addLong(key: String, value: Long): Unit = {
     val v = if (metricsMap.containsKey(key)) metricsMap.get(key).asInstanceOf[Long] else 0
-    setLong(key, value + v)
+    setLong(key, value + v: java.lang.Long)
   }
 
-  override def getMetrics: Map[String, Any] = {
-    metricsMap.put("clientSubmitTime", clientSubmitTime)
-    metricsMap.put("clientFinishedTime", clientFinishedTime)
-    metricsMap.put("clientGetJobInfoTime", clientGetJobInfoTime)
-    metricsMap.put("clientFetchResultSetTime", clientFetchResultSetTime)
-    metricsMap.toMap
+  override def getMetrics: Map[String, AnyRef] = {
+    metricsMap.put("clientSubmitTime", clientSubmitTime: java.lang.Long)
+    metricsMap.put("clientFinishedTime", clientFinishedTime: java.lang.Long)
+    metricsMap.put("clientGetJobInfoTime", clientGetJobInfoTime: java.lang.Long)
+    metricsMap.put("clientFetchResultSetTime", clientFetchResultSetTime: java.lang.Long)
+    metricsMap.asScala.toMap
   }
 
   override def getMetricString: String =

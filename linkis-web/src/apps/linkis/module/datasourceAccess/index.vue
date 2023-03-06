@@ -172,7 +172,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -236,7 +236,7 @@ export default {
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -251,7 +251,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

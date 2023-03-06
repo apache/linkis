@@ -22,9 +22,6 @@ import org.apache.linkis.engineplugin.spark.datacalc.model.SinkConfig;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class HiveSinkConfig extends SinkConfig {
 
   private String targetDatabase;
@@ -43,8 +40,6 @@ public class HiveSinkConfig extends SinkConfig {
   private Boolean writeAsFile = false;
 
   private Integer numPartitions = 10;
-
-  private Map<String, String> options = new HashMap<>();
 
   public String getTargetDatabase() {
     return targetDatabase;
@@ -93,13 +88,5 @@ public class HiveSinkConfig extends SinkConfig {
   public void setNumPartitions(Integer numPartitions) {
     if (numPartitions == null) return;
     this.numPartitions = numPartitions > 20 ? 20 : numPartitions;
-  }
-
-  public Map<String, String> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, String> options) {
-    this.options = options;
   }
 }

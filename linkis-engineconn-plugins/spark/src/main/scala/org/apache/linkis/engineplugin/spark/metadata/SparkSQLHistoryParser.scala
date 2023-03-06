@@ -23,6 +23,7 @@ import org.apache.linkis.cs.common.entity.metadata.CSColumn
 import org.apache.linkis.engineplugin.spark.metadata.{SparkHiveObject => HPO}
 
 import org.apache.hadoop.hive.ql.security.authorization.plugin.HivePrivilegeObject.HivePrivilegeObjectType
+import org.apache.spark.SPARK_VERSION
 import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.analysis.UnresolvedRelation
 import org.apache.spark.sql.catalyst.catalog.CatalogTable
@@ -262,7 +263,14 @@ object SparkSQLHistoryParser {
           columns = toCSColumnsByNamed(c.output),
           actionType = TableOperationType.CREATE
         )
-        ParseQuery(c.child, inputObjects)
+
+        // after spark 3.2.0, `child` field will be replaced by `plan` in CreateViewCommand
+        val logicalPlan = if (SPARK_VERSION < "3.2") {
+          getFieldVal(c, "child").asInstanceOf[LogicalPlan]
+        } else {
+          getFieldVal(c, "plan").asInstanceOf[LogicalPlan]
+        }
+        ParseQuery(logicalPlan, inputObjects)
 
       case l: LoadDataCommand => addTableOrViewLevelObjs(l.table, outputObjects)
 

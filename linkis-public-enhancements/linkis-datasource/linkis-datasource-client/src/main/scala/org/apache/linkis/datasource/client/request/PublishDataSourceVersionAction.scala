@@ -65,11 +65,12 @@ object PublishDataSourceVersionAction {
     }
 
     def build(): PublishDataSourceVersionAction = {
-      if (dataSourceId == null) {
+      if (dataSourceId <= 0) {
         throw new DataSourceClientBuilderException(DATASOURCEID_NEEDED.getErrorDesc)
       }
-      if (versionId == null)
+      if (versionId == null) {
         throw new DataSourceClientBuilderException(VERSIONID_NEEDED.getErrorDesc)
+      }
       if (user == null) throw new DataSourceClientBuilderException(USER_NEEDED.getErrorDesc)
 
       val action = new PublishDataSourceVersionAction()

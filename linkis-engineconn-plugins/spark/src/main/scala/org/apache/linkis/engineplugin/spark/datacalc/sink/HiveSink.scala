@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 import org.apache.linkis.engineplugin.spark.datacalc.exception.HiveSinkException
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
@@ -31,9 +32,7 @@ import org.apache.spark.sql.types.StructField
 
 import org.slf4j.{Logger, LoggerFactory}
 
-class HiveSink extends DataCalcSink[HiveSinkConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[HiveSink])
+class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     val targetTable =
@@ -50,7 +49,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
       val location = getLocation(spark, targetTable, partitionsColumns)
       val fileFormat = getTableFileFormat(spark, targetTable)
 
-      log.info(
+      logger.info(
         s"Write $fileFormat into target table: $targetTable, location: $location, file format: $fileFormat"
       )
       val writer = getSaveWriter(
@@ -68,12 +67,12 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
         .map(colName => s"$colName='${config.getVariables.get(colName)}'")
         .mkString(",")
       if (StringUtils.isNotBlank(partition)) {
-        log.info(s"Refresh table partition: $partition")
+        logger.info(s"Refresh table partition: $partition")
         refreshPartition(spark, targetTable, partition)
       }
     } else {
       val writer = getSaveWriter(ds, targetFields, targetTable)
-      log.info(s"InsertInto data to hive table: $targetTable")
+      logger.info(s"InsertInto data to hive table: $targetTable")
       writer.format("hive").insertInto(targetTable)
     }
   }
@@ -109,8 +108,8 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
   }
 
   def logFields(sourceFields: Array[StructField], targetFields: Array[StructField]): Unit = {
-    log.info(s"sourceFields: ${sourceFields.mkString("Array(", ", ", ")")}")
-    log.info(s"targetFields: ${targetFields.mkString("Array(", ", ", ")")}")
+    logger.info(s"sourceFields: ${sourceFields.mkString("Array(", ", ", ")")}")
+    logger.info(s"targetFields: ${targetFields.mkString("Array(", ", ", ")")}")
   }
 
   def sequenceFields(
@@ -136,7 +135,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] {
       // sort column
       dsSource.select(targetFields.map(field => col(field.name)): _*)
     } else if (subSet.size == targetFieldMap.size) {
-      log.info("None target table fields match with source fields, write in order")
+      logger.info("None target table fields match with source fields, write in order")
       dsSource.toDF(targetFields.map(field => field.name): _*)
     } else {
       throw new HiveSinkException(

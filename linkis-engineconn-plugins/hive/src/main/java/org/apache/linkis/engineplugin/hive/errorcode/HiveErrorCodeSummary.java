@@ -25,7 +25,9 @@ public enum HiveErrorCodeSummary implements LinkisErrorCode {
   HIVE_EXEC_JAR_ERROR(
       26041, "cannot find hive-exec.jar, start session failed(找不到 hive-exec.jar，启动会话失败)"),
   GET_FIELD_SCHEMAS_ERROR(26042, "cannot get the field schemas(无法获取字段 schemas)"),
-  INVALID_VALUE(26043, "invalid value(无效值)");
+  INVALID_VALUE(26043, "invalid value(无效值)"),
+  COMPILE_HIVE_QUERY_ERROR(26044, "failed to compile hive query(hive语句编译失败)"),
+  ;
 
   private final int errorCode;
 

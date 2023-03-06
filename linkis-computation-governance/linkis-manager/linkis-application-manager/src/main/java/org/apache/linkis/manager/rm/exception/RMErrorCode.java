@@ -22,11 +22,15 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 public enum RMErrorCode implements LinkisErrorCode {
 
   /** */
-  LABEL_RESOURCE_NOT_FOUND(110021, "label resource not found, please check!"),
+  LABEL_RESOURCE_NOT_FOUND(110021, "label resource not found, please check!(未找到标签资源，请检查！)"),
 
-  LOCK_LABEL_FAILED(110022, "lock label failed!"),
+  LOCK_LABEL_FAILED(
+      110022,
+      "lock label failed! {0} over {1} ms,please wait a moment and try again!(锁定标签失败！ {0} 超过 {1} 毫秒，请稍等片刻，然后重试！)"),
 
-  LABEL_DUPLICATED(110019, "label has exist"),
+  LABEL_DUPLICATED(
+      110019,
+      "Label has exist! {0} has been registered in {1}, cannot be updated to {2}(标签已存在！ {0} 已在 {1} 注册，无法更新到 {2})"),
 
   DRIVER_MEMORY_INSUFFICIENT(
       12004,
@@ -40,7 +44,8 @@ public enum RMErrorCode implements LinkisErrorCode {
       12006, "Insufficient number of instances, idle engines can be killed(实例数不足，可以kill空闲的引擎)"),
 
   QUEUE_MEMORY_INSUFFICIENT(
-      12002, "Insufficient queue memory resources, reduce the executor memory"),
+      12002,
+      "Insufficient queue memory resources, reduce the executor memory(queue内存资源不足，减少executor内存)"),
 
   QUEUE_CPU_INSUFFICIENT(
       12001,
@@ -50,11 +55,11 @@ public enum RMErrorCode implements LinkisErrorCode {
       12003,
       "Insufficient number of queue instances, idle engines can be killed(队列实例数不足，可以kill空闲的引擎)"),
 
-  CLUSTER_QUEUE_MEMORY_INSUFFICIENT(12010, "Insufficient cluster queue memory"),
+  CLUSTER_QUEUE_MEMORY_INSUFFICIENT(12010, "Insufficient cluster queue memory(集群队列内存不足)"),
 
-  CLUSTER_QUEUE_CPU_INSUFFICIENT(12011, "Insufficient cluster queue cpu"),
+  CLUSTER_QUEUE_CPU_INSUFFICIENT(12011, "Insufficient cluster queue cpu(集群队列cpu不足)"),
 
-  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance"),
+  CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance(集群队列实例不足)"),
 
   ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
 

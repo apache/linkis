@@ -102,6 +102,7 @@ else
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
+cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 
@@ -263,10 +264,22 @@ MYSQL_PASSWORD=$(echo ${MYSQL_PASSWORD//'#'/'\#'})
 #init db
 if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
   mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
-  mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql"
-  isSuccess "source linkis_ddl.sql"
-  mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_dml.sql"
-  isSuccess "source linkis_dml.sql"
+  ddl_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql" 2>&1`
+  # Check ddl-sql execution result
+  if [[ $? -ne 0 || $ddl_result =~ "ERROR" ]];then
+      echoErrMsgAndExit "$ddl_result"
+  else
+      echoSuccessMsg "source linkis_ddl.sql"
+  fi
+
+  dml_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_dml.sql" 2>&1`
+  # Check dml-sql execution result
+  if [[ $? -ne 0 || $dml_result =~ "ERROR" ]];then
+      echoErrMsgAndExit "$dml_result"
+  else
+      echoSuccessMsg "source linkis_dml.sql"
+  fi
+
   echo "Rebuild the table"
 fi
 ###########################################################################
@@ -280,10 +293,7 @@ if test -z "$EUREKA_INSTALL_IP"
 then
   export EUREKA_INSTALL_IP=$SERVER_IP
 fi
-if [ "true" != "$EUREKA_PREFER_IP" ]
-then
-  export EUREKA_HOSTNAME=$EUREKA_INSTALL_IP
-fi
+
 export EUREKA_URL=http://$EUREKA_INSTALL_IP:$EUREKA_PORT/eureka/
 
 if test -z "$GATEWAY_INSTALL_IP"
@@ -291,17 +301,36 @@ then
   export GATEWAY_INSTALL_IP=$SERVER_IP
 fi
 
+currentTime=`date +%Y%m%d%H%M%S`
+
 ##eureka
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-eureka.yml
 sed -i ${txt}  "s#port:.*#port: $EUREKA_PORT#g" $LINKIS_HOME/conf/application-eureka.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-eureka.yml
 
 ##server application.yml
 sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-linkis.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-linkis.yml
+
+sed -i ${txt}  "s#defaultZone:.*#defaultZone: $EUREKA_URL#g" $LINKIS_HOME/conf/application-engineconn.yml
+sed -i ${txt}  "s#linkis.app.version:.*#linkis.app.version: $LINKIS_VERSION-$currentTime#g" $LINKIS_HOME/conf/application-engineconn.yml
+
+if [ "$EUREKA_PREFER_IP" == "true" ]; then
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-eureka.yml
+
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-linkis.yml
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+
+  sed -i ${txt}  "s/# prefer-ip-address:/prefer-ip-address:/g" $LINKIS_HOME/conf/application-engineconn.yml
+  sed -i ${txt}  "s/# instance-id:/instance-id:/g" $LINKIS_HOME/conf/application-linkis.yml
+
+  sed -i ${txt}  "s#linkis.discovery.prefer-ip-address.*#linkis.discovery.prefer-ip-address=true#g" $common_conf
+fi
 
 echo "update conf $common_conf"
 sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_SERVER_VERSION#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.gateway.url.*#wds.linkis.gateway.url=http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT#g" $common_conf
-sed -i ${txt}  "s#wds.linkis.eureka.defaultZone.*#wds.linkis.eureka.defaultZone=$EUREKA_URL#g" $common_conf
+sed -i ${txt}  "s#linkis.discovery.server-address.*#linkis.discovery.server-address=http://$EUREKA_INSTALL_IP:$EUREKA_PORT#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g" $common_conf
@@ -338,17 +367,19 @@ sed -i ${txt}  "s#wds.linkis.ldap.proxy.baseDN.*#wds.linkis.ldap.proxy.baseDN=$L
 sed -i ${txt}  "s#wds.linkis.ldap.proxy.userNameFormat.*#wds.linkis.ldap.proxy.userNameFormat=$LDAP_USER_NAME_FORMAT#g" $gateway_conf
 sed -i ${txt}  "s#wds.linkis.admin.user.*#wds.linkis.admin.user=$deployUser#g" $gateway_conf
 sed -i ${txt}  "s#\#wds.linkis.admin.password.*#wds.linkis.admin.password=$deployPwd#g" $gateway_conf
+
 if [ "$GATEWAY_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$GATEWAY_PORT#g" $gateway_conf
 fi
-
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $gateway_conf
 
 manager_conf=$LINKIS_HOME/conf/linkis-cg-linkismanager.properties
 if [ "$MANAGER_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$MANAGER_PORT#g" $manager_conf
 fi
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $manager_conf
 
 # ecm install
 ecm_conf=$LINKIS_HOME/conf/linkis-cg-engineconnmanager.properties
@@ -356,6 +387,7 @@ if test -z $ENGINECONN_ROOT_PATH
 then
   ENGINECONN_ROOT_PATH=$LINKIS_HOME/engineroot
 fi
+
 sed -i ${txt}  "s#wds.linkis.engineconn.root.dir.*#wds.linkis.engineconn.root.dir=$ENGINECONN_ROOT_PATH#g" $ecm_conf
 
 if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
@@ -369,11 +401,16 @@ then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENGINECONNMANAGER_PORT#g" $ecm_conf
 fi
 
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $ecm_conf
+
 entrance_conf=$LINKIS_HOME/conf/linkis-cg-entrance.properties
 if [ "$ENTRANCE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$ENTRANCE_PORT#g" $entrance_conf
 fi
+
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $entrance_conf
+
 if [ "$RESULT_SET_ROOT_PATH" != "" ]
 then
   sed -i ${txt}  "s#wds.linkis.resultSet.store.path.*#wds.linkis.resultSet.store.path=$RESULT_SET_ROOT_PATH#g" $entrance_conf
@@ -384,6 +421,8 @@ if [ "$PUBLICSERVICE_PORT" != "" ]
 then
   sed -i ${txt}  "s#spring.server.port.*#spring.server.port=$PUBLICSERVICE_PORT#g" $publicservice_conf
 fi
+
+sed -i ${txt}  "s#spring.eureka.instance.metadata-map.linkis.conf.version.*#spring.eureka.instance.metadata-map.linkis.conf.version=$LINKIS_VERSION-$currentTime#g" $publicservice_conf
 
 echo "update conf $publicservice_conf"
 if [ "$HIVE_META_URL" != "" ]
@@ -407,6 +446,7 @@ then
   sed -i ${txt}  "s#\#wds.linkis.prometheus.enable.*#wds.linkis.prometheus.enable=true#g" $common_conf
   sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-linkis.yml
   sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-eureka.yml
+  sed -i ${txt}  's#include: refresh,info.*#include: refresh,info,health,metrics,prometheus#g' $LINKIS_HOME/conf/application-engineconn.yml
 fi
 
 echo "preveliges linkis command shells"

@@ -337,7 +337,7 @@ export default {
         this.page.totalPage = res.tasks.totalElements
         this.tableLoading = false
       } catch (err) {
-        console.warn(err);
+        window.console.warn(err);
         this.tableLoading = false
       }
     },
@@ -407,7 +407,7 @@ export default {
   border-color: transparent;
 }
 .modal {
-  
+
   .input-area {
     padding: 20px 50px;
     .item {

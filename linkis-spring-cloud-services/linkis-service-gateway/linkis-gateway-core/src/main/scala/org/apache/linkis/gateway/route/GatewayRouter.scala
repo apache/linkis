@@ -187,9 +187,6 @@ class DefaultGatewayRouter(var gatewayRouters: Array[GatewayRouter]) extends Abs
         gatewayContext.getResponse.sendResponse()
         return null
       }
-      logger.info(
-        "GatewayRouter route requestUri " + gatewayContext.getGatewayRoute.getRequestURI + " with parsedService " + parsedService + " to " + serviceInstance
-      )
       serviceInstance
     } else null
 

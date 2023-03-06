@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const dataSourceAccessBaseUrl = '/basedata-manager/datasource-access'
 
 const getList = (params)=> {
-  console.log(params)
+  window.console.log(params)
   return api.fetch(dataSourceAccessBaseUrl, params , 'get')
 }
 

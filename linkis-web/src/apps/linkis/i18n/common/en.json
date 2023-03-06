@@ -14,7 +14,7 @@
       "addAppType": "Add Application Type",
       "editContents": "Add Contents",
       "ConfirmEdit": "Done",
-      "eurekaRegisterCenter": "Eureka Register Center",
+      "serviceRegistryCenter": "Service Registry Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
@@ -75,6 +75,7 @@
       "back": "Back",
       "prev": "Previous Step",
       "complete": "Complete",
+      "close": "Close",
       "udfName": "UDF Name",
       "udfType": "UDF Type",
       "nextPage": "Next Page",
@@ -120,6 +121,7 @@
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
+        "addEngineRules": "Engine Name Cannot Have Special Symbols And Spaces",
         "lockedResource": "Locked Resources",
         "usedResources": "Used Resources",
         "maximumAvailableResources": "Maximum Available Resources",
@@ -175,6 +177,7 @@
             "ipListManagement": "White List Management",
             "errorCode": "Error Manage",
             "gatewayAuthToken": "Token Manage",
+            "engineConfigurationTemplate": "Engine Configuration Template",
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
@@ -196,7 +199,7 @@
         "modalDeleteInstance": "Determines whether to stop the current selected instance?",
         "modalDeleteSuccess": "Deleted successfully",
         "modalDeleteFail": "Delete failed"
-      }, 
+      },
       "formItems": {
         "id": {
           "placeholder": "Please search by entering the ID"
@@ -324,6 +327,7 @@
       "resetAllTip": "Whether to reset all user resources (this operation will only clean up user resource records, not the resources that have been generated)?",
       "viewlog": "View Log",
       "datasource": {
+        "pleaseUpload": "Please upload",
         "pleaseInput": "Please input",
         "datasourceSrc": "DataSource",
         "connectTest": "Test Connection",
@@ -448,22 +452,7 @@
         "submitUser": "Submit User",
         "createdTime": "Created Time",
         "searchRange": "Only T-1 history code can be queried"
-      },
-      "basedata": {
-        "add": "Add",
-        "remove": "Remove",
-        "edit": "Edit",
-        "addUDFAdmin": "Add UDF Administrator",
-        "search": "Search",
-        "envName": "Environment Name",
-        "envDesc": "Environment Description",
-        "dataSourceName": "DataSource Name",
-        "parameter": "Parameter",
-        "createTime": "Create Time",
-        "creator": "Creator",
-        "modifyUser": "Modify User",
-        "updateTime": "Update Time",
-        "action": "Action"
+
       },
       "basedataManagement": {
         "add": "Add",
@@ -488,6 +477,29 @@
           "modalEditFail": "Edit failure"
         },
         "addUDFAdmin": "Add UDF administrator",
+        "engineConfigurationTemplate": {
+          "engineLabelId": "Engine Label Id",
+          "advanced": "Advanced",
+          "defaultValue": "Default Value",
+          "description": "Description",
+          "engineConnType": "Engine Type",
+          "key": "Key",
+          "level": "Level",
+          "name": "Name",
+          "treeName": "Tree Name",
+          "validateRange": "Validate Range",
+          "validateType": "Validate Type",
+          "hidden": "hidden",
+          "id": "ID",
+          "engineLabelList": "Engine Label List",
+          "yes": "yes",
+          "no": "no",
+          "delSuccess": "Deletion succeeded",
+          "delFail": "Deletion failed",
+          "ModSuccess": "Modification succeeded",
+          "ModFail": "Modification failed",
+          "edit": "edit"
+        },
         "gatewayAuthToken": {
           "tokenName": "Token Name",
           "legalUsers": "Legal Users",
@@ -591,17 +603,21 @@
           "all": "All"
         }
       },
-      "EnginePluginManagement": {
-        "engineConnType": "EngineConn Type",
-        "engineConnVersion": "Engine Conn Version",
-        "create": "Create",
-        "fileName": "File Name",
-        "fileSize": "File Size",
-        "lastModified": "Last Modified",
-        "bmlResourceId": "Material Resource Id",
-        "bmlResourceVersion": "Material Resource version",
-        "lastUpdateTime": "Last Update Time",
+      "basedata": {
+        "add": "Add",
+        "remove": "Remove",
+        "edit": "Edit",
+        "addUDFAdmin": "Add UDF Administrator",
+        "search": "Search",
+        "envName": "Environment Name",
+        "envDesc": "Environment Description",
+        "dataSourceName": "DataSource Name",
+        "parameter": "Parameter",
         "createTime": "Create Time",
+        "creator": "Creator",
+        "modifyUser": "Modify User",
+        "updateTime": "Update Time",
+        "action": "Action",
         "Reset": "Reset",
         "delete": "Delete",
         "update": "Update",
@@ -611,13 +627,8 @@
         "deleteCurrentbml": "Delete",
         "versionList": "Version List",
         "rollback": "Rollback",
-        "action": "Operate",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
-        "upload": "Please click the button to upload the engine plug-in",
-        "hasUpload": "The file has been uploaded, you can click to upload again",
-        "force": "Whether to overwrite",
-        "yes": "Yes",
-        "no": "No"
+        "upload": "Please click the button to upload the engine plug-in"
       }
     }
   }

@@ -604,7 +604,7 @@ export default {
             this.loadingForm = false
             const sourceId = data.id || data.insertId || data.updateId
 
-            console.log()
+            window.console.log()
             if (
               !this.currentSourceData.id ||
               !this.isEqual(

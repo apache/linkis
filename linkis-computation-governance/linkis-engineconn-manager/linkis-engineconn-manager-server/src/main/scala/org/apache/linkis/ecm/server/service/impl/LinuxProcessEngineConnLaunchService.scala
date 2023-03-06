@@ -17,11 +17,7 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
-import org.apache.linkis.ecm.core.launch.{
-  DiscoveryMsgGenerator,
-  EngineConnLaunch,
-  EurekaDiscoveryMsgGenerator
-}
+import org.apache.linkis.ecm.core.launch.EngineConnLaunch
 import org.apache.linkis.ecm.linux.launch.LinuxProcessEngineConnLaunch
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.manager.common.entity.node.EngineNode
@@ -37,12 +33,8 @@ class LinuxProcessEngineConnLaunchService extends ProcessEngineConnLaunchService
     } else null
   }
 
-  def createDiscoveryMsgGenerator: DiscoveryMsgGenerator = new EurekaDiscoveryMsgGenerator
-
   override def createEngineConnLaunch: EngineConnLaunch = {
-    val launch = new LinuxProcessEngineConnLaunch
-    launch.setDiscoveryMsgGenerator(createDiscoveryMsgGenerator)
-    launch
+    new LinuxProcessEngineConnLaunch
   }
 
 }

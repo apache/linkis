@@ -267,7 +267,7 @@ export default {
             params[[keys[i]]] = this.confirmQuery[keys[i]];
           }
         }
-        
+
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
         await api.fetch("/configuration/tenant-mapping/query-tenant-list", params, "get")
@@ -281,10 +281,10 @@ export default {
           })
         this.tableLoading = false;
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
         this.tableLoading = false;
       }
-      
+
     },
     async init() {
       this.loading = true;
@@ -332,7 +332,7 @@ export default {
             })
             this.isRequesting = false
           } catch (err) {
-            console.log(err);
+            window.console.log(err);
             this.isRequesting = false
           }
         }
@@ -372,7 +372,7 @@ export default {
             }
             this.isRequesting = true;
             await api.fetch(target, this.modalData, "post").then(async (res) => {
-              console.log(res);
+              window.console.log(res);
               await this.getTableData();
               this.cancel();
               this.$Message.success(this.$t('message.linkis.udf.success'));
@@ -380,13 +380,13 @@ export default {
             this.isRequesting = false;
           } catch(err) {
             this.isRequesting = false;
-            console.log(err);
+            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
         }
       })
-      
+
     },
     edit(data) {
       const {
@@ -410,7 +410,7 @@ export default {
           await this.getTableData();
         },
         onCancel: () => {
-          console.log('cancel');
+          window.console.log('cancel');
         }
       })
     },
@@ -418,7 +418,7 @@ export default {
       try {
         await api.fetch('configuration/tenant-mapping/delete-tenant', {id: data.id}, 'get');
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
       }
     },
     async handleChange() {
@@ -445,7 +445,7 @@ export default {
 <style lang="scss" src="./index.scss" scoped></style>
 <style lang="scss" scoped>
 .modal {
-  
+
   .input-area {
     padding: 20px 50px;
     .item {

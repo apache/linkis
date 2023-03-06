@@ -142,7 +142,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       mergeVersionParams(dataSource, dataSource.getPublishedVersionId());
-      mergeEnvParams(dataSource);
+      mergeEnvParamsByDefault(dataSource);
     }
     return dataSource;
   }
@@ -152,31 +152,53 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
     if (Objects.nonNull(dataSource)) {
       mergeVersionParams(dataSource, dataSource.getPublishedVersionId());
-      mergeEnvParams(dataSource);
+      mergeEnvParamsByDefault(dataSource);
     }
     return dataSource;
   }
 
-  private void mergeEnvParams(DataSource dataSource) {
+  @Override
+  public DataSource getDataSourceInfoForConnect(String dataSourceName, String envId) {
+    DataSource dataSource = dataSourceDao.selectOneDetailByName(dataSourceName);
+    if (Objects.nonNull(dataSource)) {
+      mergeVersionParams(dataSource, dataSource.getPublishedVersionId());
+      mergeEnvParamsByEnvId(dataSource, envId);
+    }
+    return dataSource;
+  }
+
+  private void mergeEnvParamsByEnvId(DataSource dataSource, String specialEnvId) {
+    List<String> envIdList = getEnvIdsFrom(dataSource);
+    if (envIdList.contains(specialEnvId)) {
+      addEnvParamsToDataSource(Long.valueOf(specialEnvId), dataSource);
+    }
+  }
+
+  private void mergeEnvParamsByDefault(DataSource dataSource) {
+    List<String> envIdList = getEnvIdsFrom(dataSource);
+    if (CollectionUtils.isNotEmpty(envIdList)) {
+      addEnvParamsToDataSource(Long.valueOf(envIdList.get(0)), dataSource);
+    }
+  }
+
+  private List<String> getEnvIdsFrom(DataSource dataSource) {
     Map<String, Object> connectParams = dataSource.getConnectParams();
     if (connectParams.containsKey("envId")) {
-      Long envId = Long.valueOf(connectParams.get("envId").toString());
+      String envId = connectParams.get("envId").toString();
       // remove envId for connect
       connectParams.remove("envId");
-      addEnvParamsToDataSource(envId, dataSource);
-    }
-    //    if exists multi env
-    if (connectParams.containsKey("envIdArray")) {
+      return Arrays.asList(envId);
+    } else if (connectParams.containsKey("envIdArray")) {
+      //    if exists multi env
       Object envIdArray = connectParams.get("envIdArray");
       if (envIdArray instanceof List) {
         List<String> envIdList = (List<String>) envIdArray;
-        if (CollectionUtils.isNotEmpty(envIdList)) {
-          addEnvParamsToDataSource(Long.valueOf(envIdList.get(0)), dataSource);
-        }
         // remove envIdArray for connect
         connectParams.remove("envIdArray");
+        return envIdList;
       }
     }
+    return Collections.emptyList();
   }
 
   /**
@@ -192,7 +214,7 @@ public class DataSourceInfoServiceImpl implements DataSourceInfoService {
     DataSource dataSource = dataSourceDao.selectOneDetail(dataSourceId);
     if (Objects.nonNull(dataSource)) {
       mergeVersionParams(dataSource, version);
-      mergeEnvParams(dataSource);
+      mergeEnvParamsByDefault(dataSource);
     }
     return dataSource;
   }

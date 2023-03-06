@@ -84,7 +84,7 @@
             <Radio label="no">{{$t('message.linkis.EnginePluginManagement.no')}}</Radio>
           </RadioGroup>
         </div>
-        
+
       </div>
 
       <div slot="footer">
@@ -327,7 +327,7 @@ export default {
   },
   watch: {
     ecType(newName, oldName) {
-      console.log(oldName);
+      window.console.log(oldName);
       if(!newName) return;
       this.getTypeVersionList(newName)
     }
@@ -375,13 +375,13 @@ export default {
         formData.append('file', this.file);
         this.isUploading = true;
         api.fetch('/engineplugin/uploadEnginePluginBML', formData, {method: 'post', 'Content-Type': 'multipart/form-data'}).then(response => {
-          console.log(response);
+          window.console.log(response);
           this.$Message.success(response.msg);
           this.getTypeList();
           this.showFileOperate = false;
         }).catch(e => {
           this.isUploading = false
-          console.log(e);
+          window.console.log(e);
           this.$Message.error(e);
           this.showFileOperate = false;
         })
@@ -404,7 +404,7 @@ export default {
           this.showFileOperate = false;
           this.isUploading = false;
         }).catch(e => {
-          console.log(e);
+          window.console.log(e);
           this.$Message.error(e);
           this.showFileOperate = false;
           this.isUploading = false;
@@ -430,18 +430,18 @@ export default {
         }
       })
       api.fetch('/bml/deleteResources', {'resourceIds': reqList}, 'post').then(response => {
-        console.log(response);
+        window.console.log(response);
         api.fetch('/engineplugin/deleteEnginePluginBML', {'ecType': th.ecType, 'version': th.version}, 'get').then(response2 => {
           th.getTypeList();
           th.resetSearch();
           this.$Message.success(response2.msg);
         }).catch(e2 => {
-          console.log(e2);
+          window.console.log(e2);
           this.$Message.error(e2);
         })
       }).catch(e => {
         th.$Message.error(e);
-        console.log(e);
+        window.console.log(e);
       })
 
       //暂存后续相关bug修复后修改
@@ -449,7 +449,7 @@ export default {
       // api.fetch('/engineplugin/deleteEnginePluginBML', {'ecType': th.ecType, 'version': th.version}, 'get').then(response => {
       //   this.$Message.success(response.mes);
       // }).catch(e => {
-      //   console.log(e);
+      //   window.console.log(e);
       //   this.$Message.error(e);
       // })
     },
@@ -463,7 +463,7 @@ export default {
       this.showFileOperate = true
     },
     async tableActionHandler(row, type) {
-      console.log(row);
+      window.console.log(row);
       if(type === 'upd') {
         this.ecType = row.engineConnType;
         this.version = row.version;
@@ -490,9 +490,9 @@ export default {
         th.showVersionList = true
       }).catch(e => {
         th.$Message.error(e);
-        console.log(e);
+        window.console.log(e);
       })
-      console.log(th.currentVersionList);
+      window.console.log(th.currentVersionList);
     },
     changePage(value) {
       this.page.pageNow = value

@@ -268,10 +268,10 @@ export default {
           })
         this.tableLoading = false;
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
         this.tableLoading = false;
       }
-      
+
     },
     async init() {
       this.loading = true;
@@ -318,7 +318,7 @@ export default {
             })
             this.isRequesting = false
           } catch (err) {
-            console.log(err);
+            window.console.log(err);
             this.isRequesting = false
           }
         }
@@ -357,7 +357,7 @@ export default {
             }
             this.isRequesting = true
             await api.fetch(target, this.modalData, "post").then(async (res) => {
-              console.log(res);
+              window.console.log(res);
               await this.getTableData();
               this.cancel();
               this.$Message.success(this.$t('message.linkis.udf.success'));
@@ -365,13 +365,13 @@ export default {
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false
-            console.log(err);
+            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
         }
       })
-      
+
     },
     edit(data) {
       const {
@@ -395,7 +395,7 @@ export default {
           await this.getTableData();
         },
         onCancel: () => {
-          console.log('cancel');
+          window.console.log('cancel');
         }
       })
     },
@@ -403,7 +403,7 @@ export default {
       try {
         await api.fetch('configuration/user-ip-mapping/delete-user-ip', {id: data.id}, 'get');
       } catch(err) {
-        console.log(err);
+        window.console.log(err);
       }
     },
     async handleChange() {
@@ -446,7 +446,7 @@ export default {
 <style lang="scss" scoped>
 
 .modal {
-  
+
   .input-area {
     padding: 20px 50px;
     .item {

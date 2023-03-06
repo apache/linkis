@@ -20,7 +20,7 @@ import api from '@/common/service/api';
 const authTokenBaseUrl = '/basedata-manager/gateway-auth-token'
 
 const getList = (params)=> {
-  console.log(params)
+  window.console.log(params)
   return api.fetch(authTokenBaseUrl, params , 'get')
 }
 

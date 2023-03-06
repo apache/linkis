@@ -75,7 +75,7 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
-      if (tenantConfigService.checkUserCteator(tenantVo.getUser(), tenantVo.getCreator(), null)) {
+      if (tenantConfigService.userExists(tenantVo.getUser(), tenantVo.getCreator(), null)) {
         throw new ConfigurationException("User-creator is existed");
       }
       parameterVerification(tenantVo);
@@ -243,7 +243,7 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to check-user-creator,msg: only administrators can configure");
       }
-      result = tenantConfigService.checkUserCteator(user, creator, tenantValue);
+      result = tenantConfigService.userExists(user, creator, tenantValue);
     } catch (ConfigurationException e) {
       return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
     }

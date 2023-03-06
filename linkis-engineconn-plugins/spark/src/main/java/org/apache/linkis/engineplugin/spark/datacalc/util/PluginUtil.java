@@ -21,6 +21,9 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.*;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SinkConfig;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
 import org.apache.linkis.engineplugin.spark.datacalc.model.TransformConfig;
+import org.apache.linkis.engineplugin.spark.datacalc.sink.*;
+import org.apache.linkis.engineplugin.spark.datacalc.source.*;
+import org.apache.linkis.engineplugin.spark.datacalc.transform.*;
 import org.apache.linkis.server.BDPJettyServerHelper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,26 +41,24 @@ public class PluginUtil {
 
   private static Map<String, Class<?>> getSourcePlugins() {
     Map<String, Class<?>> classMap = new HashMap<>();
-    // classMap.put("managed_jdbc",
-    // org.apache.linkis.engineplugin.spark.datacalc.source.ManagedJdbcSource.class);
-    classMap.put("jdbc", org.apache.linkis.engineplugin.spark.datacalc.source.JdbcSource.class);
-    classMap.put("file", org.apache.linkis.engineplugin.spark.datacalc.source.FileSource.class);
+    classMap.put("managed_jdbc", ManagedJdbcSource.class);
+    classMap.put("jdbc", JdbcSource.class);
+    classMap.put("file", FileSource.class);
     return classMap;
   }
 
   private static Map<String, Class<?>> getTransformPlugins() {
     Map<String, Class<?>> classMap = new HashMap<>();
-    classMap.put("sql", org.apache.linkis.engineplugin.spark.datacalc.transform.SqlTransform.class);
+    classMap.put("sql", SqlTransform.class);
     return classMap;
   }
 
   private static Map<String, Class<?>> getSinkPlugins() {
     Map<String, Class<?>> classMap = new HashMap<>();
-    // classMap.put("managed_jdbc",
-    // org.apache.linkis.engineplugin.spark.datacalc.sink.ManagedJdbcSink.class);
-    classMap.put("jdbc", org.apache.linkis.engineplugin.spark.datacalc.sink.JdbcSink.class);
-    classMap.put("hive", org.apache.linkis.engineplugin.spark.datacalc.sink.HiveSink.class);
-    classMap.put("file", org.apache.linkis.engineplugin.spark.datacalc.sink.FileSink.class);
+    classMap.put("managed_jdbc", ManagedJdbcSink.class);
+    classMap.put("jdbc", JdbcSink.class);
+    classMap.put("hive", HiveSink.class);
+    classMap.put("file", FileSink.class);
     return classMap;
   }
 

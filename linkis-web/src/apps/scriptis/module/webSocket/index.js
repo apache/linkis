@@ -49,7 +49,7 @@ const module = {
       });
       manager.socket.on('inconnect', () => {
         module.methods.downgrade();
-        console.warn('socket连接失败，后续请求将使用http');
+        window.console.warn('socket连接失败，后续请求将使用http');
       });
       manager.socket.on('close', (e) => {
         module.methods.clearTimer();
@@ -91,14 +91,14 @@ const module = {
         module.methods.reconnect(data, 1001);
         module.methods.reSend(data);
       } else {
-        console.warn(`socket readystate${manager.socket.readyState}：本次请求将使用http`);
+        window.console.warn(`socket readystate${manager.socket.readyState}：本次请求将使用http`);
         module.methods.downgrade(data);
       }
     },
     delaySend(data) {
       if (manager.delayCounter > 10) {
         manager.delayCounter = 0;
-        console.warn(`socket readystate重试多次不为open：本次请求将使用http`);
+        window.console.warn(`socket readystate重试多次不为open：本次请求将使用http`);
         return module.methods.downgrade(data);
       }
       module.methods.reSend(data);
@@ -121,7 +121,7 @@ const module = {
         manager.socket.reconnect(data);
       } else {
         module.methods.downgrade(data);
-        console.warn(`错误码${code}：本次请求将使用http`);
+        window.console.warn(`错误码${code}：本次请求将使用http`);
       }
     },
     reSend(data) {

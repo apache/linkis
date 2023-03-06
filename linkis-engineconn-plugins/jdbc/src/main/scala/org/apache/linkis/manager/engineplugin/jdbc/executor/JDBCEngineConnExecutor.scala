@@ -35,6 +35,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.jdbc.ConnectionManager
 import org.apache.linkis.manager.engineplugin.jdbc.conf.JDBCConfiguration
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant
@@ -356,21 +357,10 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource = null
 
   override def getCurrentNodeResource(): NodeResource = {
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (
-          !settingClientMemory
-            .toLowerCase()
-            .endsWith(JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT)
-      ) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + JDBCEngineConnConstant.JDBC_ENGINE_MEMORY_UNIT
-        )
-      }
-    }
+    NodeResourceUtils.appendMemoryUnitIfMissing(
+      EngineConnObject.getEngineCreationContext.getOptions
+    )
+
     val resource = new CommonNodeResource
     val usedResource = new LoadResource(OverloadUtils.getProcessMaxMemory, 1)
     resource.setUsedResource(usedResource)

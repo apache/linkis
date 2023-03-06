@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.NotBlank;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class SourceConfig extends DataCalcPluginConfig
     implements ResultTableConfig, Serializable {
@@ -31,6 +33,8 @@ public abstract class SourceConfig extends DataCalcPluginConfig
   private Boolean persist = false;
 
   private String storageLevel = "MEMORY_AND_DISK";
+
+  protected Map<String, String> options = new HashMap<>();
 
   public String getResultTable() {
     return resultTable;
@@ -54,5 +58,13 @@ public abstract class SourceConfig extends DataCalcPluginConfig
 
   public void setStorageLevel(String storageLevel) {
     if (StringUtils.isNotBlank(storageLevel)) this.storageLevel = storageLevel;
+  }
+
+  public Map<String, String> getOptions() {
+    return options;
+  }
+
+  public void setOptions(Map<String, String> options) {
+    this.options = options;
   }
 }

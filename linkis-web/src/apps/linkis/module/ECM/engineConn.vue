@@ -281,7 +281,7 @@ export default {
                             content: 'Stop Success！！'
                           });
                         }).catch((err) => {
-                          console.err(err)
+                          window.console.err(err)
                         });
                       }
                     })
@@ -332,7 +332,7 @@ export default {
             content: 'Stop Success！！'
           });
         }).catch((err) => {
-          console.err(err)
+          window.console.err(err)
         });
       } else {
         this.$Message.warning(this.$t('message.linkis.noselection'));
@@ -375,7 +375,7 @@ export default {
         })
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -398,7 +398,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -408,13 +408,13 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
-      
+
     },
     // Edit tags(修改标签)
     editEnter(editInputKey, editInputValue,editedInputValue) {

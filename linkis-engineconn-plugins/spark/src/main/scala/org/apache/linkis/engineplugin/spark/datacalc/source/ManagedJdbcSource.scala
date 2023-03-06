@@ -17,8 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.source
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
-import org.apache.linkis.engineplugin.spark.datacalc.exception.DatabaseNotConfigException
+import org.apache.linkis.engineplugin.spark.datacalc.exception.DataSourceNotConfigException
 import org.apache.linkis.engineplugin.spark.datacalc.service.LinkisDataSourceService
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
@@ -26,16 +27,12 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import java.text.MessageFormat
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class ManagedJdbcSource extends DataCalcSource[ManagedJdbcSourceConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[ManagedJdbcSource])
+class ManagedJdbcSource extends DataCalcSource[ManagedJdbcSourceConfig] with Logging {
 
   override def getData(spark: SparkSession): Dataset[Row] = {
     val db = LinkisDataSourceService.getDatasource(config.getDatasource)
     if (db == null) {
-      throw new DatabaseNotConfigException(
+      throw new DataSourceNotConfigException(
         SparkErrorCodeSummary.DATA_CALC_DATASOURCE_NOT_CONFIG.getErrorCode,
         MessageFormat.format(
           SparkErrorCodeSummary.DATA_CALC_DATASOURCE_NOT_CONFIG.getErrorDesc,

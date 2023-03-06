@@ -23,8 +23,11 @@ import org.apache.linkis.rpc.conf.RPCConfiguration
 import org.apache.linkis.rpc.utils.RPCUtils
 
 import java.util
+import java.util.concurrent.TimeUnit
 
 import scala.concurrent.duration.Duration
+
+import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 abstract class Sender {
 
@@ -74,25 +77,26 @@ abstract class Sender {
 }
 
 object Sender {
-  // TODO needs to consider whether the sender will be a singleton, will there be communication problems?
-  // TODO 需要考虑将sender做成单例后，会不会出现通信问题
 
   private val senderFactory: SenderFactory = SenderFactory.getFactory
 
-  private val serviceInstanceToSenders = new util.HashMap[ServiceInstance, Sender]
+  private val serviceInstanceToSenders: LoadingCache[ServiceInstance, Sender] = CacheBuilder
+    .newBuilder()
+    .maximumSize(50000)
+    .expireAfterAccess(RPCConfiguration.SENDER_CACHE_CLEANING_HOUR, TimeUnit.HOURS)
+    .build(new CacheLoader[ServiceInstance, Sender]() {
+
+      override def load(serviceInstance: ServiceInstance): Sender = {
+        senderFactory.createSender(serviceInstance)
+      }
+
+    })
 
   def getSender(applicationName: String): Sender = getSender(ServiceInstance(applicationName, null))
 
   def getSender(serviceInstance: ServiceInstance): Sender = {
     if (RPCUtils.isPublicService(serviceInstance.getApplicationName)) {
       serviceInstance.setApplicationName(RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue)
-    }
-    if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
-      serviceInstanceToSenders synchronized {
-        if (!serviceInstanceToSenders.containsKey(serviceInstance)) {
-          serviceInstanceToSenders.put(serviceInstance, senderFactory.createSender(serviceInstance))
-        }
-      }
     }
     serviceInstanceToSenders.get(serviceInstance)
   }

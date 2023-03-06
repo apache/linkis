@@ -135,7 +135,7 @@ export default {
   methods: {
     getData(data){
       this.formData = {...data}
-      console.log(this.formData)
+      window.console.log(this.formData)
       if(this.formData.config.length>0){
         this.formData.config = JSON.parse(this.formData.config)
       }else{

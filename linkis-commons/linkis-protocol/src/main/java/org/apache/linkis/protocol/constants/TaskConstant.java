@@ -66,6 +66,9 @@ public interface TaskConstant {
 
   String JOB_ENGINECONN_MAP = "engineconnMap";
   String ENGINE_INSTANCE = "engineInstance";
+  String TICKET_ID = "ticketId";
+  String ENGINE_CONN_TASK_ID = "engineConnTaskId";
+  String ENGINE_CONN_SUBMIT_TIME = "engineConnSubmitTime";
 
   String PARAMS_DATA_SOURCE = "dataSources";
 

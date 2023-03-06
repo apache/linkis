@@ -25,7 +25,7 @@ import storage from '@/common/helper/storage';
 
 let module = function(config) {
   if (!config.name) {
-    return console.error('请配置独一无二的ModuleName');
+    return window.console.error('请配置独一无二的ModuleName');
   }
   // Control events thrown out(控制对外抛出的事件)
   let dispatchs = config.dispatchs || [];

@@ -55,7 +55,7 @@ const type = {
           self.file = file
           source.props.value = res.data ? res.data.resourceId : res.data
           file.url = res.id
-          console.log("resourceId:"+res.data.resourceId);
+          window.console.log("resourceId:"+res.data.resourceId);
         },
       },
     }
@@ -88,7 +88,7 @@ const typesMap = {
           source.options = result.envList.map((item) => {
             return { label: item.envName, value: '' + item.id }
           })
-          // console.log('self.rule',self.rule)
+          // window.console.log('self.rule',self.rule)
           fApi.refreshOptions()
         })
         return { options: [] }

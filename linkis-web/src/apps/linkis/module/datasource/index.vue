@@ -115,9 +115,9 @@
               @click="showDataSource = false"
             >{{ $t('message.linkis.close') }}</Button
             >
-            <Button v-else type="primary" @click="onSubmit">{{
-              $t('message.linkis.complete')
-            }}</Button>
+            <Button v-else type="primary" @click="onSubmit">
+              {{ $t('message.common.ok') }}
+            </Button>
           </div>
         </div>
       </div>

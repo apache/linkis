@@ -29,9 +29,6 @@ object HiveEngineConfiguration {
   val ENABLE_FETCH_BASE64 =
     CommonVars[Boolean]("linkis.hive.enable.fetch.base64", false).getValue
 
-  val ENABLE_HIVE_COMPILE =
-    CommonVars[Boolean]("linkis.hive.enable.compile", true).getValue
-
   val BASE64_SERDE_CLASS = CommonVars[String](
     "linkis.hive.base64.serde.class",
     "org.apache.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe"

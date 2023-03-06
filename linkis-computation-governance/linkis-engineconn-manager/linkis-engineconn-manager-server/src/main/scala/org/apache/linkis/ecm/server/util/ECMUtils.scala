@@ -28,7 +28,6 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration.{
   ECM_PROTECTED_CORES,
   ECM_PROTECTED_INSTANCES,
   ECM_PROTECTED_MEMORY,
-  ECM_STIMATE_ACTUAL_CORE_ENABLE,
   ECM_STIMATE_ACTUAL_MEMORY_ENABLE
 }
 import org.apache.linkis.ecm.server.exception.ECMErrorException
@@ -89,7 +88,7 @@ object ECMUtils extends Logging {
     Sender.getThisInstance.substring(0, Sender.getThisInstance.lastIndexOf(":"))
 
   val initMaxResource: LoadInstanceResource = {
-    new LoadInstanceResource(inferDefaultMemory, inferDefaultCore, ECM_MAX_CREATE_INSTANCES)
+    new LoadInstanceResource(inferDefaultMemory, ECM_MAX_CORES_AVAILABLE, ECM_MAX_CREATE_INSTANCES)
   }
 
   val initMinResource: LoadInstanceResource = {
@@ -103,32 +102,18 @@ object ECMUtils extends Logging {
     // if enable estimate actual memory
     if (ECM_STIMATE_ACTUAL_MEMORY_ENABLE) {
 
-      var totalByte = HardwareUtils.getMaxMemory()
+      // 90%
+      val totalByte = (HardwareUtils.getMaxMemory() * 0.9).asInstanceOf[Long]
+
       val resultMemory = math.max(totalByte, ECM_PROTECTED_MEMORY)
       // max of PhysicalMemory or ECM_PROTECTED_MEMORY
       logger.info(
-        s"Ecm protected memory:${ECM_PROTECTED_MEMORY} byte, ecm machine physical  max memory:${totalByte} byte, will use the lager one:${resultMemory}"
+        s"Ecm protected memory:${ECM_PROTECTED_MEMORY} byte, ecm machine physical max memory:${totalByte} byte, will use the lager one:${resultMemory}"
       )
       resultMemory
 
     } else {
       ECM_MAX_MEMORY_AVAILABLE
-    }
-  }
-
-  // ecm machine core
-  def inferDefaultCore(): Int = {
-    // if enable estimate actual core
-    if (ECM_STIMATE_ACTUAL_CORE_ENABLE) {
-      var core = HardwareUtils.getMaxLogicalCore()
-      val resultCore = math.max(core, ECM_PROTECTED_CORES)
-      // max of AvailableProcessors or ECM_PROTECTED_CORES
-      logger.info(
-        s"Ecm protected core:${ECM_PROTECTED_CORES} num, ecm machine available logical core:${core} num, will use the lager one:${resultCore}"
-      )
-      resultCore
-    } else {
-      ECM_MAX_CORES_AVAILABLE
     }
   }
 

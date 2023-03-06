@@ -46,13 +46,8 @@ object ECMConfiguration {
     CommonVars("wds.linkis.ecm.async.bus.waittoempty.time", 5000L).getValue
 
   // resource
-
-  // resource
   val ECM_STIMATE_ACTUAL_MEMORY_ENABLE: Boolean =
-    CommonVars[Boolean]("linkis.ecm.stimate.actual.memory.enable", true).getValue
-
-  val ECM_STIMATE_ACTUAL_CORE_ENABLE: Boolean =
-    CommonVars[Boolean]("linkis.ecm.stimate.actual.core.enable", true).getValue
+    CommonVars[Boolean]("linkis.ecm.stimate.actual.memory.enable", false).getValue
 
   val ECM_MAX_MEMORY_AVAILABLE: Long =
     CommonVars[Long]("wds.linkis.ecm.memory.max", ByteTimeUtils.byteStringAsBytes("100g")).getValue

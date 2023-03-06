@@ -19,8 +19,19 @@ package org.apache.linkis.ecm.server.util
 
 import org.apache.linkis.bml.client.{BmlClient, BmlClientFactory}
 import org.apache.linkis.bml.protocol.BmlDownloadResponse
+import org.apache.linkis.common.utils.{HardwareUtils, Logging}
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary.FAILED_TO_DOWNLOAD
+import org.apache.linkis.ecm.server.conf.ECMConfiguration.{
+  ECM_MAX_CORES_AVAILABLE,
+  ECM_MAX_CREATE_INSTANCES,
+  ECM_MAX_MEMORY_AVAILABLE,
+  ECM_PROTECTED_CORES,
+  ECM_PROTECTED_INSTANCES,
+  ECM_PROTECTED_MEMORY,
+  ECM_STIMATE_ACTUAL_MEMORY_ENABLE
+}
 import org.apache.linkis.ecm.server.exception.ECMErrorException
+import org.apache.linkis.manager.common.entity.resource.LoadInstanceResource
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.storage.fs.FileSystem
@@ -32,7 +43,7 @@ import java.util
 
 import scala.collection.JavaConverters._
 
-object ECMUtils {
+object ECMUtils extends Logging {
 
   @volatile var bmlClient: BmlClient = _
   val lock = new Object()
@@ -76,6 +87,34 @@ object ECMUtils {
   private val address =
     Sender.getThisInstance.substring(0, Sender.getThisInstance.lastIndexOf(":"))
 
+  val initMaxResource: LoadInstanceResource = {
+    new LoadInstanceResource(inferDefaultMemory, ECM_MAX_CORES_AVAILABLE, ECM_MAX_CREATE_INSTANCES)
+  }
+
+  val initMinResource: LoadInstanceResource = {
+    new LoadInstanceResource(ECM_PROTECTED_MEMORY, ECM_PROTECTED_CORES, ECM_PROTECTED_INSTANCES)
+  }
+
   def getInstanceByPort(port: String): String = address + ":" + port
+
+  // ecm machine memory
+  def inferDefaultMemory(): Long = {
+    // if enable estimate actual memory
+    if (ECM_STIMATE_ACTUAL_MEMORY_ENABLE) {
+
+      // 90%
+      val totalByte = (HardwareUtils.getMaxMemory() * 0.9).asInstanceOf[Long]
+
+      val resultMemory = math.max(totalByte, ECM_PROTECTED_MEMORY)
+      // max of PhysicalMemory or ECM_PROTECTED_MEMORY
+      logger.info(
+        s"Ecm protected memory:${ECM_PROTECTED_MEMORY} byte, ecm machine physical max memory:${totalByte} byte, will use the lager one:${resultMemory}"
+      )
+      resultMemory
+
+    } else {
+      ECM_MAX_MEMORY_AVAILABLE
+    }
+  }
 
 }

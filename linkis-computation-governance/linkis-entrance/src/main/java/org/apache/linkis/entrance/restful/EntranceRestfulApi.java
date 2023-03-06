@@ -556,8 +556,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
           if (job.get() instanceof EntranceJob) {
             EntranceJob entranceJob = (EntranceJob) job.get();
             JobRequest jobReq = entranceJob.getJobRequest();
-            if (!userName.equals(jobReq.getExecuteUser()) && Configuration.isNotAdmin(userName)) {
-              return Message.error("You have no permission to kill this job, excecute by user:" + jobReq.getExecuteUser());
+            if (!userName.equals(jobReq.getExecuteUser())
+                && Configuration.isNotJobHistoryAdmin(userName)) {
+              return Message.error(
+                  "You have no permission to kill this job, excecute by user:"
+                      + jobReq.getExecuteUser());
             }
           }
           job.get().kill();
@@ -646,8 +649,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         if (job.get() instanceof EntranceJob) {
           EntranceJob entranceJob = (EntranceJob) job.get();
           JobRequest jobReq = entranceJob.getJobRequest();
-          if (!userName.equals(jobReq.getExecuteUser()) && Configuration.isNotAdmin(userName)) {
-            return Message.error("You have no permission to kill this job, excecute by user:" + jobReq.getExecuteUser());
+          if (!userName.equals(jobReq.getExecuteUser())
+              && Configuration.isNotJobHistoryAdmin(userName)) {
+            return Message.error(
+                "You have no permission to kill this job, excecute by user:"
+                    + jobReq.getExecuteUser());
           }
         }
 

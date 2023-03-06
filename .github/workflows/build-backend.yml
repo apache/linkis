@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        installSpark: [ 'init', '3.2','2.4' ]
+        installSpark: [ 'spark2.4-hadoop2.3', 'spark3.2-hadoop3.3','spark2.4-hadoop3.3' ]
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -49,15 +49,15 @@ jobs:
       with:
        distribution: 'temurin'
        java-version: 8
-    - if: ${{ matrix.installSpark == 'init' }}
+    - if: ${{ matrix.installSpark == 'spark2.4-hadoop2.3' }}
       name: build-spark on init
       run:
-        ./mvnw -N install
-    - if: ${{ matrix.installSpark == '3.2' }}
+        ./mvnw clean install -Pspark-2.4 -Phadoop-2.3 -Dmaven.test.skip=true
+    - if: ${{ matrix.installSpark == 'spark3.2-hadoop3.3' }}
       name: build-spark on 3.2
       run:
         ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
-    - if: ${{ matrix.installSpark == '2.4' }}
+    - if: ${{ matrix.installSpark == 'spark2.4-hadoop3.3' }}
       name: build-spark on 2.4
       run:
         ./mvnw clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true

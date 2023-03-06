@@ -1183,6 +1183,8 @@
               <exclude>.github/**</exclude>
               <exclude>compiler/**</exclude>
               <exclude>**/generated/**</exclude>
+              <exclude>**/scritpis-test.sql</exclude>
+
             </excludes>
           </configuration>
           <executions>

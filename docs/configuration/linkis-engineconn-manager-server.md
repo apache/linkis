@@ -22,7 +22,6 @@
 |linkis-engineconn-manager-server|wds.linkis.engineconn.root.dir| |root.dir|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.public.dir|   |ngineconn.public.dir|
 |linkis-engineconn-manager-server|wds.linkis.ecm.launch.max.thread.size| 100|thread.size|
-|linkis-engineconn-manager-server|wds.linkis.eureka.defaultZone| http://127.0.0.1:20303/eureka/ |eureka.defaultZone|
 |linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.create.duration| 1000 * 60 * 10 |engineconn.create.duration|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.wait.callback.pid|3s |wait.callback.pid|
 |linkis-engineconn-manager-server|wds.linkis.ecm.engine.start.error.msg.max.len|  500 |msg.max.len|

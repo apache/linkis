@@ -113,6 +113,7 @@ abstract class EntranceServer extends Logging {
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
           val infoMap = new util.HashMap[String, AnyRef]
           infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
+          infoMap.put(TaskConstant.TICKET_ID, "")
           infoMap.put("message", "Task interception failed and cannot be retried")
           JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
         case _ =>

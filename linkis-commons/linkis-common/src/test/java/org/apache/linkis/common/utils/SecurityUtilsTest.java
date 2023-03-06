@@ -91,6 +91,15 @@ public class SecurityUtilsTest {
           SecurityUtils.checkJdbcSecurity(atomUrl.get());
         });
 
+    // url encode
+    url = "jdbc:mysql://127.0.0.1:10000/db_name?allowLocalInfil%65=true";
+    atomUrl.set(url);
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          SecurityUtils.checkJdbcSecurity(atomUrl.get());
+        });
+
     // value is not security
     url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=allowLocalInfile";
     atomUrl.set(url);
@@ -118,6 +127,11 @@ public class SecurityUtilsTest {
     Assertions.assertEquals("v1", newMap.get("p1"));
 
     // key not security
+    paramsMap.put("allowLocalInfil%67", "true");
+    SecurityUtils.checkJdbcSecurity(paramsMap);
+    Assertions.assertEquals("true", newMap.get("allowLocalInfilg"));
+
+    // key not security
     paramsMap.put("allowLocalInfile", "false");
     Assertions.assertThrows(
         LinkisSecurityException.class,
@@ -128,6 +142,15 @@ public class SecurityUtilsTest {
     // value not security
     paramsMap.clear();
     paramsMap.put("p1", "allowLocalInfile");
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          SecurityUtils.checkJdbcSecurity(paramsMap);
+        });
+
+    // value not security
+    paramsMap.clear();
+    paramsMap.put("p1", "allowLocalInfil%65");
     Assertions.assertThrows(
         LinkisSecurityException.class,
         () -> {

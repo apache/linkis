@@ -133,7 +133,7 @@ export default {
         this.$emit('update-job', tasks.length);
       }).catch((err) => {
         this.loading = false;
-        console.error(err)
+        window.console.error(err)
       });
     },
     // delete current job(删除当前工作)

@@ -106,7 +106,7 @@ CREATE TABLE `linkis_ps_job_history_group_history` (
   `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
   `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
   `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
-  `observe_info` varchar(500) DEFAULT NULL COMMENT 'Click the notification information',
+  `observe_info` varchar(500) DEFAULT NULL COMMENT 'The notification information configuration of this job',
   PRIMARY KEY (`id`),
   KEY `idx_created_time` (`created_time`),
   KEY `idx_submit_user` (`submit_user`)

@@ -71,7 +71,7 @@ export default {
               required: true,
               len: 20,
               validator: (rule, value)=>{
-                console.log(rule,value,value.length)
+                window.console.log(rule,value,value.length)
                 return new Promise((resolve,reject)=>{
                   if(value.length>20){
                     reject(this.$t('message.linkis.basedataManagement.udfManager.userNameValidate.size'))

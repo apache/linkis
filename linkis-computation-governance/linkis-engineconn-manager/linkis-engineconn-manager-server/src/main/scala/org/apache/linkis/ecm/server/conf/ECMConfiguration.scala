@@ -96,9 +96,6 @@ object ECMConfiguration {
   val ECM_LAUNCH_MAX_THREAD_SIZE: Int =
     CommonVars("wds.linkis.ecm.launch.max.thread.size", 100).getValue
 
-  val ECM_EUREKA_DEFAULTZONE: String =
-    CommonVars("wds.linkis.eureka.defaultZone", "http://127.0.0.1:20303/eureka/").getValue
-
   /**
    * engineconn创建时间，如果为0，则使用ms中默认的 engineconn created time
    */

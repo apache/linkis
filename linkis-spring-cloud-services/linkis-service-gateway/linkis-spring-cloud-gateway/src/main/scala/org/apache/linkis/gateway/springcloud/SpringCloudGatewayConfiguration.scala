@@ -158,14 +158,22 @@ class SpringCloudGatewayConfiguration {
           val serviceInstance = getServiceInstance(serviceId)
           logger.info("redirect to " + serviceInstance)
           val lb = this.getLoadBalancer(serviceInstance.getApplicationName)
-          val server =
-            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance).get
-          new RibbonLoadBalancerClient.RibbonServer(
-            serviceId,
-            server,
-            isSecure(server, serviceId),
-            serverIntrospectorFun(serviceId).getMetadata(server)
-          )
+          val serverOption =
+            lb.getAllServers.asScala.find(_.getHostPort == serviceInstance.getInstance)
+          if (serverOption.isDefined) {
+            val server = serverOption.get
+            new RibbonLoadBalancerClient.RibbonServer(
+              serviceId,
+              server,
+              isSecure(server, serviceId),
+              serverIntrospectorFun(serviceId).getMetadata(server)
+            )
+          } else {
+            logger.warn(
+              "RibbonLoadBalancer not have Server, execute default super choose method" + serviceInstance
+            )
+            super.choose(serviceInstance.getApplicationName, hint)
+          }
         } else super.choose(serviceId, hint)
 
     }

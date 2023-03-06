@@ -43,6 +43,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
@@ -188,17 +189,10 @@ class ElasticSearchEngineConnExecutor(
   override def requestExpectedResource(expectedResource: NodeResource): NodeResource = null
 
   override def getCurrentNodeResource(): NodeResource = {
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
-      }
-    }
+    NodeResourceUtils.appendMemoryUnitIfMissing(
+      EngineConnObject.getEngineCreationContext.getOptions
+    )
+
     val resource = new CommonNodeResource
     val usedResource = new LoadResource(OverloadUtils.getProcessMaxMemory, 1)
     resource.setUsedResource(usedResource)

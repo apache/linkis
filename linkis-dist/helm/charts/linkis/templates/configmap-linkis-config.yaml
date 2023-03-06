@@ -128,7 +128,9 @@ data:
         enable-self-preservation: false
         eviction-interval-timer-in-ms: 3000
       server:
-        response-cache-update-interval-ms: 2000
+        enable-self-preservation: false
+        eviction-interval-timer-in-ms: 5000
+        response-cache-update-interval-ms: 3000
 
   linkis-cli.properties: |
     #wds.linkis.client.common.creator=LINKISCLI
@@ -153,6 +155,10 @@ data:
     wds.linkis.server.mybatis.datasource.password={{ .Values.linkis.datasource.password }}
     # mysql
     wds.linkis.mysql.is.encrypt=false
+    linkis.mysql.strong.security.enable=false
+    linkis.mysql.force.params=allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false
+    linkis.mysql.sensitive.params=allowLoadLocalInfile,autoDeserialize,allowLocalInfile,allowUrlInLocalInfile,#
+
     #hadoop/hive/spark config
     hadoop.config.dir=/etc/hadoop-conf
     hive.config.dir=/etc/hive-conf
@@ -197,7 +203,7 @@ data:
     wds.linkis.gateway.conf.url.pass.auth=/dss/
     wds.linkis.gateway.conf.enable.token.auth=true
     wds.linkis.is.gateway=true
-    wds.linkis.server.mybatis.mapperLocations=classpath*:org/apache/linkis/instance/label/dao/impl/*.xml,classpath*:org/apache/linkis/gateway/authentication/dao/impl/*.xml
+    wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.instance.label.entity
     wds.linkis.server.mybatis.BasePackage=org.apache.linkis.instance.label.dao,org.apache.linkis.gateway.authentication.dao
     wds.linkis.label.entity.packages=org.apache.linkis.gateway.ujes.route.label
@@ -210,14 +216,24 @@ data:
     wds.linkis.admin.password=4f90c1b13
     ##Spring
     spring.server.port={{ .Values.mgGateway.port }}
+    ## you may set service version if you want to distinguish different configuration version
+    spring.eureka.instance.metadata-map.linkis.conf.version=v1
 
   linkis-cg-linkismanager.properties: |
     ##restful
     wds.linkis.server.restful.scan.packages=org.apache.linkis.manager.am.restful,org.apache.linkis.resourcemanager.restful
     ##mybatis
-    wds.linkis.server.mybatis.mapperLocations=classpath:org/apache/linkis/manager/dao/impl/*.xml,org/apache/linkis/manager/rm/external/dao/impl/ExternalResourceProviderDaoImpl.xml
+    wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=
-    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao
+    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao,org.apache.linkis.engineplugin.server.dao
+
+    wds.linkis.engineConn.plugin.cache.expire-in-seconds=100000
+    wds.linkis.engineConn.dist.load.enable=true
+    #wds.linkis.engineconn.home=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
+    #wds.linkis.engineconn.plugin.loader.store.path=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
+
+    ## you may set service version if you want to distinguish different configuration version
+    spring.eureka.instance.metadata-map.linkis.conf.version=v1
     ##Spring
     spring.server.port={{ .Values.cgLinkisManager.port }}
 
@@ -232,6 +248,8 @@ data:
 
     ##set engine environment in econn start script, such as SPARK3_HOME,the value of env will read from ecm host by key.
     #wds.linkis.engineconn.env.keys=SPARK3_HOME,
+
+    spring.eureka.instance.metadata-map.linkis.conf.version=v1
 
 
   linkis-cg-engineplugin.properties: |
@@ -265,16 +283,21 @@ data:
     ##Spring
     spring.server.port={{ .Values.cgEntrance.port }}
 
+    wds.linkis.entrance.user.creator.ip.interceptor.switch=false
+
+    ## you may set service version if you want to distinguish different configuration version
+    spring.eureka.instance.metadata-map.linkis.conf.version=v1
+
   linkis-ps-publicservice.properties: |
     wds.linkis.server.mdm.service.instance.expire-in-seconds=1800
     linkis.workspace.filesystem.auto.create=true
     ##restful
-    wds.linkis.server.restful.scan.packages=org.apache.linkis.cs.server.restful,org.apache.linkis.datasourcemanager.core.restful,org.apache.linkis.metadata.query.server.restful,org.apache.linkis.jobhistory.restful,org.apache.linkis.variable.restful,org.apache.linkis.configuration.restful,org.apache.linkis.udf.api,org.apache.linkis.filesystem.restful,org.apache.linkis.filesystem.restful,org.apache.linkis.instance.label.restful,org.apache.linkis.metadata.restful.api,org.apache.linkis.cs.server.restful,org.apache.linkis.bml.restful,org.apache.linkis.errorcode.server.restful
+    wds.linkis.server.restful.scan.packages=org.apache.linkis.cs.server.restful,org.apache.linkis.datasourcemanager.core.restful,org.apache.linkis.metadata.query.server.restful,org.apache.linkis.jobhistory.restful,org.apache.linkis.variable.restful,org.apache.linkis.configuration.restful,org.apache.linkis.udf.api,org.apache.linkis.filesystem.restful,org.apache.linkis.filesystem.restful,org.apache.linkis.instance.label.restful,org.apache.linkis.metadata.restful.api,org.apache.linkis.cs.server.restful,org.apache.linkis.bml.restful,org.apache.linkis.errorcode.server.restful,org.apache.linkis.basedatamanager.server.restful
 
     ##mybatis
-    wds.linkis.server.mybatis.mapperLocations=classpath*:org/apache/linkis/cs/persistence/dao/impl/*.xml,classpath:org/apache/linkis/datasourcemanager/core/dao/mapper/*.xml,classpath:org/apache/linkis/jobhistory/dao/impl/*.xml,classpath:org/apache/linkis/variable/dao/impl/*.xml,classpath:org/apache/linkis/configuration/dao/impl/*.xml,classpath:org/apache/linkis/udf/dao/impl/*.xml,classpath:org/apache/linkis/instance/label/dao/impl/*.xml,classpath:org/apache/linkis/metadata/hive/dao/impl/*.xml,org/apache/linkis/metadata/dao/impl/*.xml,classpath:org/apache/linkis/bml/dao/impl/*.xml
-    wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.cs.persistence.entity,org.apache.linkis.datasourcemanager.common.domain,org.apache.linkis.datasourcemanager.core.vo,org.apache.linkis.configuration.entity,org.apache.linkis.jobhistory.entity,org.apache.linkis.udf.entity,org.apache.linkis.variable.entity,org.apache.linkis.instance.label.entity,org.apache.linkis.manager.entity,org.apache.linkis.metadata.domain,org.apache.linkis.bml.entity
-    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.cs.persistence.dao,org.apache.linkis.datasourcemanager.core.dao,org.apache.linkis.jobhistory.dao,org.apache.linkis.variable.dao,org.apache.linkis.configuration.dao,org.apache.linkis.udf.dao,org.apache.linkis.instance.label.dao,org.apache.linkis.metadata.hive.dao,org.apache.linkis.metadata.dao,org.apache.linkis.bml.dao,org.apache.linkis.errorcode.server.dao,org.apache.linkis.publicservice.common.lock.dao
+    wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml
+    wds.linkis.server.mybatis.typeAliasesPackage=org.apache.linkis.cs.persistence.entity,org.apache.linkis.datasourcemanager.common.domain,org.apache.linkis.datasourcemanager.core.vo,org.apache.linkis.configuration.entity,org.apache.linkis.jobhistory.entity,org.apache.linkis.udf.entity,org.apache.linkis.variable.entity,org.apache.linkis.instance.label.entity,org.apache.linkis.manager.entity,org.apache.linkis.metadata.domain,org.apache.linkis.bml.entity,org.apache.linkis.bml.Entity,org.apache.linkis.basedatamanager.server.domain
+    wds.linkis.server.mybatis.BasePackage=org.apache.linkis.cs.persistence.dao,org.apache.linkis.datasourcemanager.core.dao,org.apache.linkis.jobhistory.dao,org.apache.linkis.variable.dao,org.apache.linkis.configuration.dao,org.apache.linkis.udf.dao,org.apache.linkis.instance.label.dao,org.apache.linkis.metadata.hive.dao,org.apache.linkis.metadata.dao,org.apache.linkis.bml.dao,org.apache.linkis.errorcode.server.dao,org.apache.linkis.publicservice.common.lock.dao,org.apache.linkis.basedatamanager.server.dao
 
     ##workspace
     wds.linkis.workspace.filesystem.hdfsuserrootpath.suffix=/
@@ -301,3 +324,6 @@ data:
     spring.spring.jackson.serialization.FAIL_ON_EMPTY_BEANS=false
     # ps-cs prefix must be started with 'cs_'
     spring.eureka.instance.metadata-map.route=cs_1_dev
+
+    ## you may set service version if you want to distinguish different configuration version
+    spring.eureka.instance.metadata-map.linkis.conf.version=v1

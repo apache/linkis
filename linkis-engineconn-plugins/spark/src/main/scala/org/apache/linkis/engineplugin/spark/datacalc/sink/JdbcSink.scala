@@ -60,7 +60,8 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
         .repartition(1)
         .foreachPartition((_: Iterator[Row]) => {
           val jdbcOptions = new JDBCOptions(options)
-          val conn: Connection = createConnectionFactory(jdbcOptions)()
+          val conn: Connection =
+            DriverManager.getConnection(config.getUrl, config.getUser, config.getPassword)
           try {
             config.getPreQueries.asScala.foreach(query => {
               logger.info(s"Execute pre query: $query")
@@ -82,24 +83,6 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
       s"Save data to jdbc url: ${config.getUrl}, driver: ${config.getDriver}, username: ${config.getUser}, table: $targetTable"
     )
     writer.options(options).save()
-  }
-
-  // rewrite spark method
-  // for method `createConnectionFactory` will be removed from JdbcUtils after spark3.0.0
-  private def createConnectionFactory(options: JDBCOptions): () => Connection = {
-    val driverClass: String = options.driverClass
-    () => {
-      DriverRegistry.register(driverClass)
-      val driver: Driver = DriverManager.getDrivers.asScala
-        .collectFirst {
-          case d: DriverWrapper if d.wrapped.getClass.getCanonicalName == driverClass => d
-          case d if d.getClass.getCanonicalName == driverClass => d
-        }
-        .getOrElse {
-          throw new IllegalStateException(s"Did not find registered driver with class $driverClass")
-        }
-      driver.connect(options.url, options.asConnectionProperties)
-    }
   }
 
   private def execute(conn: Connection, jdbcOptions: JDBCOptions, query: String): Unit = {

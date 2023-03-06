@@ -189,16 +189,8 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
                 case dataSourceRegister: DataSourceRegister =>
                   fileFormat = FileFormat.withName(dataSourceRegister.shortName.toUpperCase)
                 case _ =>
-                  val allSubClasses = ClassUtils.reflections.getSubTypesOf(classOf[FileFormat])
-                  breakable {
-                    allSubClasses.asScala
-                      .filter(!ClassUtils.isInterfaceOrAbstract(_))
-                      .foreach(subclass => {
-                        if (subclass.getSimpleName.equals("OrcFileFormat")) {
-                          fileFormat = FileFormat.ORC
-                          break()
-                        }
-                      })
+                  if (hadoopFsRelation.fileFormat.getClass.getSimpleName.equals("OrcFileFormat")) {
+                    fileFormat = FileFormat.ORC
                   }
               }
           }

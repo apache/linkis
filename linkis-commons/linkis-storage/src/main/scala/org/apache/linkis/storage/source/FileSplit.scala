@@ -80,9 +80,10 @@ class FileSplit(
       var needRemoveFlag = false
       if (hasRemovedFlag == false && fsReader.isInstanceOf[StorageScriptFsReader]) {
         val parser = fsReader.asInstanceOf[StorageScriptFsReader].getScriptParser()
+        val meta = metaData.asInstanceOf[ScriptMetaData].getMetaData
         if (
-            parser != null && metaData.asInstanceOf[ScriptMetaData].getMetaData.length > 0
-            && parser.getAnnotationSymbol().equals(record.toString)
+            meta != null && meta.length > 0
+            && parser != null && parser.getAnnotationSymbol().equals(record.toString)
         ) {
           needRemoveFlag = true
           hasRemovedFlag = true

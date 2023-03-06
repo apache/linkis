@@ -17,20 +17,17 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
-import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 import org.apache.linkis.engineplugin.spark.datacalc.exception.HiveSinkException
 import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql._
-import org.apache.spark.sql.execution.datasources.{FileFormat, HadoopFsRelation, LogicalRelation}
+import org.apache.spark.sql.execution.datasources.{HadoopFsRelation, LogicalRelation}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.sources.DataSourceRegister
 import org.apache.spark.sql.types.StructField
-
-import scala.collection.JavaConverters.asScalaSetConverter
-import scala.util.control.Breaks.{break, breakable}
 
 class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
 
@@ -122,7 +119,9 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
       logFields(sourceFields, targetFields)
       throw new HiveSinkException(
         SparkErrorCodeSummary.DATA_CALC_COLUMN_NUM_NOT_MATCH.getErrorCode,
-        s"$targetTable requires that the data to be inserted have the same number of columns as the target table: target table has ${targetFields.length} column(s) but the inserted data has ${sourceFields.length} column(s)"
+        s"$targetTable requires that the data to be inserted have the same number of columns " +
+          s"as the target table: target table has ${targetFields.length} column(s) " +
+          s"but the inserted data has ${sourceFields.length} column(s)"
       )
     }
 

@@ -289,7 +289,7 @@ export default {
       },
       title: '',
       show: false,
-      btnLabel: this.$t('message.linkis.udf.LJCJ'),
+      btnLabel: this.$t('message.common.ok'),
       modalHeight: '',
       // 1是修改，0是新增)
       model: 0,
@@ -525,7 +525,7 @@ export default {
     open(node) {
       this.resetData();
       const titleMap = [this.$t('message.linkis.udf.addFunction'), this.$t('message.linkis.udf.updateFunction')];
-      const btnLabelMap = [this.$t('message.linkis.udf.LJCJ'), this.$t('message.linkis.udf.XG')];
+      const btnLabelMap = [this.$t('message.common.ok'), this.$t('message.linkis.udf.XG')];
       this.show = true;
       this.node = node;
       if (node) {
@@ -694,7 +694,10 @@ export default {
     },
 
     setNodePath(node) {
-      this.$set(this.setting, this.getTypes(), node.path);
+      ['jarPath', 'sparkPath', 'customPath'].forEach(item => {
+        const temp = item === this.getTypes() ? node.path : '';
+        this.$set(this.setting, item, temp);
+      })
     },
 
     getTypes() {

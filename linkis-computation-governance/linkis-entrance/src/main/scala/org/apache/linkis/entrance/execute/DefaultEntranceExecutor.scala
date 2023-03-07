@@ -285,11 +285,11 @@ class DefaultEntranceExecutor(id: Long)
       } else {
         if (
             !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
-              TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR
+              TaskConstant.JOB_TO_ORCHESTRATOR
             )
         ) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics
-            .put(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
+            .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
         }
       }
       // 2. deal log And Response

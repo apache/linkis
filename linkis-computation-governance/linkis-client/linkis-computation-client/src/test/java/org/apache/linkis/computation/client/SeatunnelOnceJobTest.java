@@ -23,7 +23,7 @@ import org.apache.linkis.computation.client.utils.LabelKeyUtils;
 
 public class SeatunnelOnceJobTest {
   public static void main(String[] args) {
-    LinkisJobClient.config().setDefaultServerUrl("http://10.107.97.166:9001");
+    LinkisJobClient.config().setDefaultServerUrl("http://127.0.0.1:9001");
     String code =
         "\n"
             + "env {\n"

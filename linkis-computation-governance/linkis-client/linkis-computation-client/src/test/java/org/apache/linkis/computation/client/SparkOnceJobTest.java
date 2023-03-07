@@ -31,7 +31,7 @@ public class SparkOnceJobTest {
 
   public static void main(String[] args) throws InterruptedException {
 
-    LinkisJobClient.config().setDefaultServerUrl("http://10.107.118.104:9001");
+    LinkisJobClient.config().setDefaultServerUrl("http://127.0.0.1:9001");
 
     String submitUser = "linkis";
     String engineType = "spark";
@@ -50,7 +50,7 @@ public class SparkOnceJobTest {
             .addJobContent("spark.app.args", "hdfs:///tmp/log.log -a 10 -b=12")
             .addJobContent(
                 "spark.extconf", "spark.a=d\nspark.c=d\nspark.args.start_date=2022-06-14")
-            .addLabel("engineType", engineType + "-2.4.3")
+            .addLabel("engineType", engineType + "-2.4.7")
             .addLabel("userCreator", submitUser + "-IDE")
             .addLabel("engineConnMode", "once")
             .addStartupParam("spark.app.name", "spark-submit-jar-test-xi")
@@ -59,7 +59,7 @@ public class SparkOnceJobTest {
             .addStartupParam("spark.executor.cores", "1")
             .addStartupParam("spark.executor.instance", "1")
             .addStartupParam(
-                "spark.app.resource", "hdfs:///appcom/tmp/spark-examples_2.12-3.3.1.jar")
+                "spark.app.resource", "hdfs:///spark/spark-examples_2.11-2.3.0.2.6.5.0-292.jar")
             .addSource("jobName", "OnceJobTest")
             .build();
     // endregion

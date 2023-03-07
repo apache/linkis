@@ -209,7 +209,7 @@ spark = SparkSession(sc, intp.getSparkSession())
 
 ##add pyfiles
 try:
-    pyfile = sys.argv[6]
+    pyfile = sys.argv[5]
     pyfiles = pyfile.split(',')
     for i in range(len(pyfiles)):
         if ""!=pyfiles[i]:

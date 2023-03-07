@@ -197,7 +197,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     if (SparkConfiguration.SPARK_PYTHON_TEST_MODE_ENABLE.getValue) {
       val path = SparkConfiguration.SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH.getValue
       logger.info(
-        s"wds.linkis.spark.python.test.mode.enable => true, will use wds.linkis.spark.python.mix.pyshell.path:${path}"
+        s"${SparkConfiguration.SPARK_PYTHON_TEST_MODE_ENABLE.key} => true, will use ${SparkConfiguration.SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH.key}:${path}"
       )
       cmd.addArgument(path, false)
     } else {

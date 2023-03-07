@@ -58,18 +58,15 @@ public class DefaultEntranceServer extends EntranceServer {
   public void init() {
     getEntranceWebSocketService();
     addRunningJobEngineStatusMonitor();
-    sendEntranceInstanceToJobhistory();
+    cleanUpEntranceDirtyData();
   }
 
-  private void sendEntranceInstanceToJobhistory() {
-    if ((Boolean) EntranceConfiguration$.MODULE$.SEND_INSTANCE().getValue()) {
+  private void cleanUpEntranceDirtyData() {
+    if ((Boolean) EntranceConfiguration$.MODULE$.ENABLE_ENTRANCE_DIRTY_DATA_CLEAR().getValue()) {
       Sender sender =
           Sender.getSender(
               EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
       ServiceInstance thisServiceInstance = Sender.getThisServiceInstance();
-      logger.info(
-          "-------------------------------Start  ServiceInstance ----------: "
-              + thisServiceInstance.getInstance());
       sender.ask(new EntranceInstanceConfRequest(thisServiceInstance.getInstance()));
     }
   }

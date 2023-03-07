@@ -74,7 +74,7 @@ class DefaultEngineAskEngineService
       engineReuseRequest.setLabels(engineAskRequest.getLabels)
       engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut)
       engineReuseRequest.setUser(engineAskRequest.getUser)
-
+      engineReuseRequest.setProperties(engineAskRequest.getProperties)
       val reuseNode = Utils.tryCatch(engineReuseService.reuseEngine(engineReuseRequest, sender)) {
         t: Throwable =>
           t match {

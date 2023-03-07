@@ -35,7 +35,10 @@ object NodeResourceUtils {
         properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
       if (StringUtils.isBlank(settingClientMemory)) {
         properties.remove(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      } else if (!settingClientMemory.toLowerCase().endsWith("g")) {
+      } else if (
+          !settingClientMemory.toLowerCase().endsWith("g")
+          && !settingClientMemory.toLowerCase().endsWith("m")
+      ) {
         properties.put(
           EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
           settingClientMemory + "g"

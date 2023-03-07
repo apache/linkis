@@ -251,4 +251,43 @@ update linkis_ps_dm_datasource_type_key set description_en="Port" where descript
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43041','用户UDF函数 %s 加载失败，请检查后再执行','Invalid function (\\S+)',0);

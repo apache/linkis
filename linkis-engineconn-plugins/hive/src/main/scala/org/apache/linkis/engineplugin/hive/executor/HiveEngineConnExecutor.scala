@@ -28,20 +28,17 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineplugin.hive.conf.{Counters, HiveEngineConfiguration}
 import org.apache.linkis.engineplugin.hive.cs.CSHiveHelper
-import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.COMPILE_HIVE_QUERY_ERROR
-import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.GET_FIELD_SCHEMAS_ERROR
+import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.{
+  COMPILE_HIVE_QUERY_ERROR,
+  GET_FIELD_SCHEMAS_ERROR
+}
 import org.apache.linkis.engineplugin.hive.exception.HiveQueryFailedException
 import org.apache.linkis.engineplugin.hive.progress.HiveProgressHelper
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.hadoop.common.conf.HadoopConf
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadInstanceResource,
-  NodeResource
-}
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource}
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -54,7 +51,6 @@ import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
@@ -105,8 +101,6 @@ class HiveEngineConnExecutor(
   private val totalTask = 200.0f
 
   private var singleLineProgress: Float = 0.0f
-
-  private var stage: Int = 0
 
   private var engineExecutorContext: EngineExecutionContext = _
 
@@ -227,10 +221,18 @@ class HiveEngineConnExecutor(
         if (numberOfMRJobs > 0) {
           engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
         }
+        if (thread.isInterrupted) {
+          logger.error(
+            "The thread of execution has been interrupted and the task should be terminated"
+          )
+          return ErrorExecuteResponse(
+            "The thread of execution has been interrupted and the task should be terminated",
+            null
+          )
+        }
         val hiveResponse: CommandProcessorResponse = driver.run(realCode, compileRet == 0)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
-          // todo check uncleared context ?
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)
         }
         engineExecutorContext.appendStdout(
@@ -541,6 +543,7 @@ class HiveEngineConnExecutor(
       case "mr" =>
         HadoopJobExecHelper.killRunningJobs()
         Utils.tryQuietly(HiveInterruptUtils.interrupt())
+        Utils.tryAndWarn(driver.close())
         if (null != thread) {
           Utils.tryAndWarn(thread.interrupt())
         }

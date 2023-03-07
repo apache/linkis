@@ -223,5 +223,4 @@ object EntranceConfiguration {
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", true)
 
-
 }

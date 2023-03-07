@@ -137,7 +137,7 @@ public class UserIpConfigServiceImpl implements UserIpConfigService {
   public Boolean checkUserCteator(String user, String creator) {
     boolean result = true;
     Map<String, Object> resultMap =
-        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), 1, 10);
+        queryUserIPList(user.toLowerCase(), creator.toLowerCase(), 1, 20);
     Object userIpList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
     int total = Integer.parseInt(userIpList.toString());
     if (total == 0) result = false;

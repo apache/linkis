@@ -192,9 +192,9 @@ else
 fi
 
 if [ "$IS_PYSPARK"x == "true"x ]; then
-    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 -codeType py "${PARSED_CMD[@]}"
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 -codeType py "${PARSED_CMD[@]}"
 elif [ "IS_SCALA"x == "true"x ]; then
-    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 -codeType scala "${PARSED_CMD[@]}"
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 -codeType scala "${PARSED_CMD[@]}"
 else
-    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-2.4.3 "${PARSED_CMD[@]}"
+    exec ${WORK_DIR}/bin/linkis-cli-pre -engineType spark-3.2.1 "${PARSED_CMD[@]}"
 fi

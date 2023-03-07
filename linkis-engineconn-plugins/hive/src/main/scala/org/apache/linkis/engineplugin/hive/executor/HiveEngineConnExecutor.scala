@@ -416,7 +416,6 @@ class HiveEngineConnExecutor(
     singleSqlProgressMap.clear()
     Utils.tryAndWarnMsg(sessionState.close())("close session failed")
     super.close()
-    killTask("close")
   }
 
   override def FetchResource: util.HashMap[String, ResourceWithStatus] = {

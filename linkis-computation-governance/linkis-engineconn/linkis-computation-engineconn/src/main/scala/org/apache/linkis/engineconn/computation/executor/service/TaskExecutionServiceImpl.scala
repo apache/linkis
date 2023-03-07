@@ -50,8 +50,8 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,

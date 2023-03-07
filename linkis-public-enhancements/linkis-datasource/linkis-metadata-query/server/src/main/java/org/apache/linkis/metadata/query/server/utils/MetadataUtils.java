@@ -53,7 +53,7 @@ public class MetadataUtils {
   private static final Logger LOG = LoggerFactory.getLogger(MetadataUtils.class);
 
   public static final String NAME_REGEX =
-      CommonVars.apply("wds.linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/:]+$").getValue();
+      CommonVars.apply("linkis.metadata.query.regex", "^[a-zA-Z\\-\\d_\\.=/:,]+$").getValue();
 
   public static final Pattern nameRegexPattern = Pattern.compile(NAME_REGEX);
 

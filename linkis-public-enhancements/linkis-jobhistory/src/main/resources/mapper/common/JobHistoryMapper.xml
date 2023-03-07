@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="org.apache.linkis.jobhistory.dao.JobHistoryMapper">
@@ -149,7 +149,7 @@
             <if test="jobReqId != null">job_req_id = #{jobReqId},</if>
             <if test="submitUser != null">submit_user = #{submitUser},</if>
             <if test="executeUser != null">execute_user = #{executeUser},</if>
-            <if test="source != null">source = #{source},</if>
+            <if test="source != null">`source` = #{source},</if>
             <if test="labels != null">labels = #{labels},</if>
             <if test="params != null">params = #{params},</if>
             <if test="progress != null">progress = #{progress},</if>
@@ -220,5 +220,13 @@
 
     <update id="updateOberverById">
         update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
+    </update>
+
+    <update id="updateJobHistoryCancelById" >
+        update linkis_ps_job_history_group_history set status = 'Cancelled' ,error_desc = #{errorDesc}
+        WHERE id IN
+        <foreach collection="idList" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
     </update>
 </mapper>

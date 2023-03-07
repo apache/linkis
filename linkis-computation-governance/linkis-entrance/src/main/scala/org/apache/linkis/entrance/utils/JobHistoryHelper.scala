@@ -45,7 +45,7 @@ import com.google.common.net.InetAddresses
 object JobHistoryHelper extends Logging {
 
   private val sender =
-    Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
+    Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
 
   private val SUCCESS_FLAG = 0
 

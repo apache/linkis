@@ -213,21 +213,21 @@ def java_watchdog_thread(sleep=10):
     while True :
         time.sleep(sleep)
         try:
-            intp.kind()
+            intp.getKind()
         except Exception as e:
-            print("Failed to detect java daemon, now exit python process")
-            print(e)
-            sys.exit(1)
+            # Failed to detect java daemon, now exit python process
+            #just exit thread see https://stackoverflow.com/questions/905189/why-does-sys-exit-not-exit-when-called-inside-a-thread-in-python
+            os._exit(1)
 watchdog_thread = threading.Thread(target=java_watchdog_thread)
 watchdog_thread.daemon = True
 watchdog_thread.start()
 
 while True :
-  req = intp.getStatements()
-  if req == None:
-    break
-
   try:
+    req = intp.getStatements()
+    if req == None:
+      break
+
     stmts = req.statements().split("\n")
     final_code = None
 #     ori_code = req.statements()

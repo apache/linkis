@@ -21,7 +21,6 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicLong}
 
-// 是否手动释放、空闲资源空闲至主动释放时长； 新增引擎非占用空闲总时长、占用时长、占用但空闲总时长、占用且忙碌时长
 object ComputationEngineConnMetrics {
 
   private var lastUpdateTimeMills = System.currentTimeMillis()

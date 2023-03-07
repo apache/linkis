@@ -34,8 +34,10 @@ import scala.collection.JavaConverters.mapAsScalaMapConverter
 @Component
 class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Logging {
 
+  /*
+  add unlock-to-shutdown time, total unlock time, total idle time, total busy time, total lock time
+   */
   override def getHeartBeatMsg(executor: Executor): String = {
-    // 是否手动释放、空闲资源空闲至主动释放时长； 新增引擎非占用空闲总时长、占用时长、占用但空闲总时长、占用且忙碌时长
     val msgMap = new util.HashMap[String, Object]()
     msgMap.put(ECConstants.EC_TICKET_ID_KEY, EngineConnObject.getEngineCreationContext.getTicketId)
     msgMap.put(

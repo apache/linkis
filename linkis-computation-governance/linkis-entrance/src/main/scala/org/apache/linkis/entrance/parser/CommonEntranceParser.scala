@@ -123,10 +123,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
     // Entry indicator: task submission time
     jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
-    jobRequest.getMetrics.put(
-      TaskConstant.ENTRANCEJOB_SUBMIT_TIME,
-      new Date(System.currentTimeMillis)
-    )
+    jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobRequest.setParams(configMap)
     jobRequest
   }
@@ -272,7 +269,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     // Package labels
     jobReq.setLabels(labelList)
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
-    jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
+    jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 

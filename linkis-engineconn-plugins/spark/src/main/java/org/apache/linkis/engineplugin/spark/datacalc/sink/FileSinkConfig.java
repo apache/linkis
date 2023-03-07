@@ -23,17 +23,15 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FileSinkConfig extends SinkConfig {
 
   @NotBlank
   @Pattern(
-      regexp = "^(file|hdfs)://.*",
+      regexp = "^(((file|hdfs)://)|/).*",
       message =
-          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'.")
+          "Invalid path URI, please set the following allowed schemas: 'file://' or 'hdfs://'(default).")
   private String path;
 
   @NotBlank private String serializer = "parquet";
@@ -47,9 +45,8 @@ public class FileSinkConfig extends SinkConfig {
           "Unknown save mode: {saveMode}. Accepted save modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'.")
   private String saveMode = "overwrite";
 
-  private Map<String, String> options = new HashMap<>();
-
   public String getPath() {
+    if (path.startsWith("/")) return "hdfs://" + path;
     return path;
   }
 
@@ -79,13 +76,5 @@ public class FileSinkConfig extends SinkConfig {
 
   public void setSaveMode(String saveMode) {
     this.saveMode = saveMode;
-  }
-
-  public Map<String, String> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, String> options) {
-    this.options = options;
   }
 }

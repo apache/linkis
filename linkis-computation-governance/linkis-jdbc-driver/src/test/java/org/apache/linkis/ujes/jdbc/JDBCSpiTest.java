@@ -20,8 +20,8 @@ package org.apache.linkis.ujes.jdbc;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -35,7 +35,7 @@ public class JDBCSpiTest {
     Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
     conn =
         (UJESSQLConnection)
-            DriverManager.getConnection("jdbc:linkis://127.0.0.1:9001", "root", "123456");
+            DriverManager.getConnection("jdbc:linkis://hostname:port", "root", "123456");
     return conn;
   }
 
@@ -45,8 +45,10 @@ public class JDBCSpiTest {
       UJESSQLConnection conn =
           (UJESSQLConnection)
               DriverManager.getConnection("jdbc:linkis://hostname:port", "username", "password");
-      Assert.assertNotNull(conn);
+      Assertions.assertNotNull(conn);
     } catch (SQLException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }

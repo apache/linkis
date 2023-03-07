@@ -71,6 +71,45 @@ public class DataSourceRestfulApi implements DataSourceRestfulRemote {
   }
 
   @ApiOperation(
+      value = "queryPartitionExists",
+      notes = "query partition exists",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "database", dataType = "String", value = "database"),
+    @ApiImplicitParam(name = "table", dataType = "String", value = "table"),
+    @ApiImplicitParam(name = "partition", dataType = "String", value = "table")
+  })
+  @RequestMapping(path = "partitionExists", method = RequestMethod.GET)
+  public Message partitionExists(
+      @RequestParam(value = "database") String database,
+      @RequestParam(value = "table") String table,
+      @RequestParam(value = "partition") String partition,
+      HttpServletRequest req) {
+    String userName = ModuleUserUtils.getOperationUser(req, "query partition exists");
+    try {
+      if (StringUtils.isBlank(database)) {
+        return Message.error("'database' is missing[缺少数据库]");
+      }
+      if (StringUtils.isBlank(table)) {
+        return Message.error("'table' is missing[缺少表名]");
+      }
+      if (StringUtils.isBlank(partition)) {
+        return Message.error("'partition' is missing[缺少分区名]");
+      }
+      MetadataQueryParam queryParam =
+          MetadataQueryParam.of(userName)
+              .withDbName(database)
+              .withTableName(table)
+              .withPartitionName(partition);
+      boolean res = dataSourceService.partitionExists(queryParam);
+      return Message.ok("").data("partitionExists", res);
+    } catch (Exception e) {
+      logger.error("Failed to examine whether a partition exists(检查分区是否存在失败)", e);
+      return Message.error("Failed to examine whether a partition exists (检查分区是否存在失败)", e);
+    }
+  }
+
+  @ApiOperation(
       value = "queryDbsWithTables",
       notes = "query dbs with tables",
       response = Message.class)

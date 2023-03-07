@@ -8,6 +8,7 @@
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.consumer.size|30|bus.consumer.size|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.max.free.time| 2m|bus.max.free.time|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.waittoempty.time|5000L |bus.waittoempty.time|
+|linkis-engineconn-manager-server|linkis.ecm.stimate.actual.memory.enable|false |stimate actual memory enable|
 |linkis-engineconn-manager-server|wds.linkis.ecm.memory.max| 100g|ecm.memory.max |
 |linkis-engineconn-manager-server|wds.linkis.ecm.cores.max|100| ecm.cores.max |
 |linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.instances.max| 50 |engineconn.instances.max|
@@ -22,7 +23,6 @@
 |linkis-engineconn-manager-server|wds.linkis.engineconn.root.dir| |root.dir|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.public.dir|   |ngineconn.public.dir|
 |linkis-engineconn-manager-server|wds.linkis.ecm.launch.max.thread.size| 100|thread.size|
-|linkis-engineconn-manager-server|wds.linkis.eureka.defaultZone| http://127.0.0.1:20303/eureka/ |eureka.defaultZone|
 |linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.create.duration| 1000 * 60 * 10 |engineconn.create.duration|
 |linkis-engineconn-manager-server|wds.linkis.engineconn.wait.callback.pid|3s |wait.callback.pid|
 |linkis-engineconn-manager-server|wds.linkis.ecm.engine.start.error.msg.max.len|  500 |msg.max.len|

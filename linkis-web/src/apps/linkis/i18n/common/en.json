@@ -14,7 +14,7 @@
       "addAppType": "Add Application Type",
       "editContents": "Add Contents",
       "ConfirmEdit": "Done",
-      "eurekaRegisterCenter": "Eureka Register Center",
+      "serviceRegistryCenter": "Service Registry Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
@@ -75,6 +75,7 @@
       "back": "Back",
       "prev": "Previous Step",
       "complete": "Complete",
+      "close": "Close",
       "udfName": "UDF Name",
       "udfType": "UDF Type",
       "nextPage": "Next Page",
@@ -115,6 +116,7 @@
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
+        "addEngineRules": "Engine Name Cannot Have Special Symbols And Spaces",
         "lockedResource": "Locked Resources",
         "usedResources": "Used Resources",
         "maximumAvailableResources": "Maximum Available Resources",
@@ -168,15 +170,17 @@
             "ipListManagement": "White List Management",
             "errorCode": "Error Manage",
             "gatewayAuthToken": "Token Manage",
+            "engineConfigurationTemplate": "Engine Configuration Template",
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
             "datasourceAccess": "Data source access permissions",
-            "datasourceEnv": "DataSource Environment",
-            "datasourceType": "DataSource Type",
+            "codeQuery": "Code Retrieval",
+            "datasourceEnv": "Datasource Environment",
+            "datasourceType": "Datasource Type",
+            "datasourceTypeKey": "Datasource Config Options",
             "EnginePluginManagement": "Engine Plugin Management",
-            "basedataManagement": "Basic Data Management",
-            "codeQuery": "Code Retrieval"
+            "basedataManagement": "Base Data Management"
           }
         }
       },
@@ -307,6 +311,7 @@
       "resetAllTip": "Whether to reset all user resources (this operation will only clean up user resource records, not the resources that have been generated)?",
       "viewlog": "View Log",
       "datasource": {
+        "pleaseUpload": "Please upload",
         "pleaseInput": "Please input",
         "datasourceSrc": "DataSource",
         "connectTest": "Test Connection",
@@ -431,6 +436,156 @@
         "submitUser": "Submit User",
         "createdTime": "Created Time",
         "searchRange": "Only T-1 history code can be queried"
+
+      },
+      "basedataManagement": {
+        "add": "Add",
+        "remove": "Remove",
+        "edit": "Edit",
+        "searchLabel": "Fuzzy Search:",
+        "searchPlaceholder": "Please enter your search",
+        "search": "Search",
+        "action": "Action",
+        "modal":{
+          "confirm": "Confirm",
+          "cancel": "Cancel",
+          "modalTitle": "Info",
+          "modalFormat": "Confirm deleting the {0} record?",
+          "modalDelete1": "Confirm that the record [{username}] should be deleted?",
+          "modalDelete": "Confirm that the record [{envName}] should be deleted?",
+          "modalDeleteSuccess": "Successfully delete",
+          "modalDeleteFail": "Fail to delete",
+          "modalAddSuccess": "Successfully added",
+          "modalAddFail": "Fail to add",
+          "modalEditSuccess": "Edit successful",
+          "modalEditFail": "Edit failure"
+        },
+        "addUDFAdmin": "Add UDF administrator",
+        "engineConfigurationTemplate": {
+          "engineLabelId": "Engine Label Id",
+          "advanced": "Advanced",
+          "defaultValue": "Default Value",
+          "description": "Description",
+          "engineConnType": "Engine Type",
+          "key": "Key",
+          "level": "Level",
+          "name": "Name",
+          "treeName": "Tree Name",
+          "validateRange": "Validate Range",
+          "validateType": "Validate Type",
+          "hidden": "hidden",
+          "id": "ID",
+          "engineLabelList": "Engine Label List",
+          "yes": "yes",
+          "no": "no",
+          "delSuccess": "Deletion succeeded",
+          "delFail": "Deletion failed",
+          "ModSuccess": "Modification succeeded",
+          "ModFail": "Modification failed",
+          "edit": "edit"
+        },
+        "gatewayAuthToken": {
+          "tokenName": "Token Name",
+          "legalUsers": "Legal Users",
+          "legalHosts": "Legal Hosts",
+          "elapseDay": "Elapse Day",
+          "permanentlyValid": "Permanently Valid",
+          "businessOwner": "Owner",
+          "createTime":"Create Time",
+          "updateTime": "Update Time",
+          "updateBy": "Update By",
+          "searchPlaceholder": "TokenName/Users/Hosts",
+          "info":"Elapse Day: -1 means permanent",
+          "legalUsersInfo": "* Allow all users; Multi-user use, separated, for example :user1,user2",
+          "legalUsersValidate": {
+            "empty": "Please enter the Users"
+          },
+          "legalHostsInfo": "* Allow all hosts; Use multiple hosts, separated, for example :host1,host2",
+          "legalHostsInfoValidate": {
+            "empty": "Please enter the Hosts"
+          },
+          "elapseDayValidate": {
+            "size": "The Elapse Day cannot be less than -1",
+            "empty": "Please enter the elapse day",
+            "GT0": "Valid days must be greater than 0"
+          }
+        },
+        "errorCode": {
+          "errorCode": "Code",
+          "errorDesc": "Desc",
+          "errorRegex": "Regex",
+          "searchPlaceholder": "Code/Desc/Regex"
+        },
+        "rmExternalResourceProvider": {
+          "resourceType": "Resource Type",
+          "name": "Name",
+          "labels": "Labels",
+          "config": "Config",
+          "searchPlaceholder": "Name/Labels/Config"
+        },
+        "udfManager": {
+          "userName": "User Name",
+          "searchPlaceholder": "UserName",
+          "userNameValidate": {
+            "size": "Usernames cannot be longer than 20 characters",
+            "empty": "Please enter your username"
+          }
+        },
+        "udfTree": {
+          "name": "Name",
+          "category": "Category",
+          "userName": "User Name",
+          "description": "Description",
+          "parent": "Parent",
+          "createTime": "Create Time",
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name/Category/Desc/UserName",
+          "parentInfo": "Parent classification, Root is the root directory"
+        },
+        "datasourceEnv": {
+          "envName": "Env Name",
+          "envDesc": "Env Desc",
+          "name": "Name",
+          "datasourceType": "Datasource Type",
+          "keytab": "Kerboros",
+          "parameter": "Parameter",
+          "createTime": "Create Time",
+          "createUser": "Create User",
+          "updateTime": "Update Time",
+          "modifyUser": "Modify User",
+          "searchPlaceholder": "EnvName/EnvDesc/Param"
+        },
+        "datasourceType": {
+          "name": "Name",
+          "description": "Description",
+          "option": "Option",
+          "classifier": "Classifier",
+          "icon": "Icon",
+          "layers": "Layers",
+          "searchPlaceholder": "Name/Desc/Classifier",
+          "layersValidate": {
+            "range": "The minimum is 0"
+          }
+        },
+        "datasourceTypeKey": {
+          "key": "Key",
+          "dataSourceType": "Datasource Type",
+          "name": "Name(Chinese)",
+          "nameEn": "Name",
+          "valueType": "Value Type",
+          "scope": "Scope",
+          "require": "Require",
+          "defaultValue": "Default Value",
+          "description": "Description(Chinese)",
+          "descriptionEn": "Description",
+          "valueRegex": "Value Regex",
+          "createTime": "Create Time",
+          "updateTime": "Update Time",
+          "searchPlaceholder": "Name",
+          "searchName": "名称",
+          "searchType": "类型",
+          "all": "All"
+        }
       },
       "basedata": {
         "add": "Add",
@@ -446,7 +601,18 @@
         "creator": "Creator",
         "modifyUser": "Modify User",
         "updateTime": "Update Time",
-        "action": "Action"
+        "action": "Action",
+        "Reset": "Reset",
+        "delete": "Delete",
+        "update": "Update",
+        "updateFileOnly": "Update",
+        "resourceVersion": "Resource Version",
+        "user": "User",
+        "deleteCurrentbml": "Delete",
+        "versionList": "Version List",
+        "rollback": "Rollback",
+        "checkEngineConnTypeAndVersion": "Please select the engine type and version",
+        "upload": "Please click the button to upload the engine plug-in"
       }
     }
   }

@@ -185,7 +185,7 @@
             <phase>package</phase>
             <configuration>
               <skipAssembly>false</skipAssembly>
-              <finalName>apache-linkis-${project.version}-incubating-bin</finalName>
+              <finalName>apache-linkis-${project.version}-bin</finalName>
               <appendAssemblyId>false</appendAssemblyId>
               <attach>false</attach>
               <descriptors>

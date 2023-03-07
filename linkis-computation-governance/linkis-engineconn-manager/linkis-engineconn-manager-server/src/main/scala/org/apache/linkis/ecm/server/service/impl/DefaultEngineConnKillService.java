@@ -94,7 +94,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         return response;
     }
 
-    private  void killYarnAppIdOfOneEc(EngineConn engineConn) {
+    public void killYarnAppIdOfOneEc(EngineConn engineConn) {
         String engineConnInstance = engineConn.getServiceInstance().toString();
         logger.info("try to kill yarn app ids in the engine of ({}).", engineConnInstance);
         String engineLogDir = engineConn.getEngineConnManagerEnv().engineConnLogDirs();

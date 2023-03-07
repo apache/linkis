@@ -17,11 +17,14 @@
 
 package org.apache.linkis.entrance.server;
 
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.entrance.EntranceContext;
 import org.apache.linkis.entrance.EntranceServer;
+import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.constant.ServiceNameConsts;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.LogReader;
+import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest;
 import org.apache.linkis.rpc.Sender;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +58,17 @@ public class DefaultEntranceServer extends EntranceServer {
   public void init() {
     getEntranceWebSocketService();
     addRunningJobEngineStatusMonitor();
+    cleanUpEntranceDirtyData();
+  }
+
+  private void cleanUpEntranceDirtyData() {
+    if ((Boolean) EntranceConfiguration$.MODULE$.ENABLE_ENTRANCE_DIRTY_DATA_CLEAR().getValue()) {
+      Sender sender =
+          Sender.getSender(
+              EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
+      ServiceInstance thisServiceInstance = Sender.getThisServiceInstance();
+      sender.ask(new EntranceInstanceConfRequest(thisServiceInstance.getInstance()));
+    }
   }
 
   @Override

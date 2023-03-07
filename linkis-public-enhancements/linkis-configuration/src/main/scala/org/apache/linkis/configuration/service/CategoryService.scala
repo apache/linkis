@@ -146,7 +146,14 @@ class CategoryService extends Logging {
     }
     val combinedLabel = configurationService.generateCombinedLabel(null, null, null, categoryName)
     val parsedLabel = LabelEntityParser.parseToConfigLabel(combinedLabel)
-    labelMapper.insertLabel(parsedLabel)
+    // New Query Avoid Repeated Insertion
+    val configValue =
+      labelMapper.getLabelByKeyValue(parsedLabel.getLabelKey, parsedLabel.getStringValue)
+    if (configValue != null) {
+      parsedLabel.setId(configValue.getId)
+    } else {
+      labelMapper.insertLabel(parsedLabel)
+    }
     if (parsedLabel.getId != null) {
       val categoryLabel = generateCategoryLabel(parsedLabel.getId, description, 1)
       configMapper.insertCategory(categoryLabel)

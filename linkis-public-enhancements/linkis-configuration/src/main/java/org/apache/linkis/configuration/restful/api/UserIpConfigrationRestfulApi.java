@@ -71,7 +71,7 @@ public class UserIpConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-user-ip,msg: only administrators can configure");
       }
-      if (userIpConfigService.checkUserCteator(userIpVo.getUser(), userIpVo.getCreator())) {
+      if (userIpConfigService.userExists(userIpVo.getUser(), userIpVo.getCreator())) {
         throw new ConfigurationException("User-creator is existed");
       }
       parameterVerification(userIpVo);
@@ -154,8 +154,8 @@ public class UserIpConfigrationRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "user", required = false) String user,
       @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "pageNow", required = false) Integer pageNow,
-      @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+      @RequestParam(value = "pageNow") Integer pageNow,
+      @RequestParam(value = "pageSize") Integer pageSize) {
     String userName = ModuleUserUtils.getOperationUser(req, "queryUserIPList");
     if (!Configuration.isAdmin(userName)) {
       return Message.error("Failed to query-user-ip-list,msg: only administrators can configure");
@@ -184,9 +184,9 @@ public class UserIpConfigrationRestfulApi {
   @RequestMapping(path = "/check-user-creator", method = RequestMethod.GET)
   public Message checkUserCreator(
       HttpServletRequest req,
-      @RequestParam(value = "user", required = false) String user,
-      @RequestParam(value = "creator", required = false) String creator) {
-    Boolean result = false;
+      @RequestParam(value = "user") String user,
+      @RequestParam(value = "creator") String creator) {
+    boolean result = false;
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
       if (!Configuration.isAdmin(userName)) {
@@ -202,7 +202,7 @@ public class UserIpConfigrationRestfulApi {
       if (creator.equals("*")) {
         throw new ConfigurationException("Application Name couldn't be '*' ");
       }
-      result = userIpConfigService.checkUserCteator(user, creator);
+      result = userIpConfigService.userExists(user, creator);
     } catch (ConfigurationException e) {
       return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
     }

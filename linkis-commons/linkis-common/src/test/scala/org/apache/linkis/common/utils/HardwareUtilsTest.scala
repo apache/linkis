@@ -31,6 +31,11 @@ class HardwareUtilsTest {
     assert(maxMemory > 1000L)
   }
 
+  @Test private[utils] def testGetMaxLogicalCore() = {
+    val maxCore = HardwareUtils.getMaxLogicalCore()
+    assert(maxCore >= 1)
+  }
+
   @Test private[utils] def testGetTotalAndAvailableMemory() = {
     val (maxMemory, availableMemory) = HardwareUtils.getTotalAndAvailableMemory()
     assert(maxMemory >= availableMemory)

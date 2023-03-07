@@ -26,11 +26,6 @@
 
   <artifactId>linkis-metadata-query-service-mongodb</artifactId>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <es.version>6.7.1</es.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -58,28 +53,13 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.12.7</version>
+      <version>3.12.8</version>
     </dependency>
 
   </dependencies>
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-      </resource>
-    </resources>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -100,11 +80,6 @@
               <goal>single</goal>
             </goals>
             <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/distribution.xml</descriptor>
-              </descriptors>
-            </configuration>
           </execution>
         </executions>
       </plugin>

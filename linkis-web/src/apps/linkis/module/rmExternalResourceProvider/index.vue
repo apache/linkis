@@ -158,7 +158,7 @@ export default {
   },
   methods: {
     init() {
-      console.log(this.$route.query.isSkip);
+      window.console.log(this.$route.query.isSkip);
     },
     load() {
       let params = {
@@ -195,7 +195,8 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
+
         onOk: ()=>{
           let params = {
             id: row.id
@@ -224,7 +225,7 @@ export default {
         formData.config = JSON.stringify(formData.config)
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -239,7 +240,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            console.log(data)
+            window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,

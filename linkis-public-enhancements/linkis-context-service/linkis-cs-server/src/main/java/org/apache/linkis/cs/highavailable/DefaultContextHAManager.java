@@ -60,12 +60,12 @@ public class DefaultContextHAManager extends AbstractContextHAManager {
   }
 
   @Override
-  public HAContextID convertProxyHAID(HAContextID haContextID) throws CSErrorException {
-
-    if (null == haContextID) {
+  public HAContextID convertProxyHAID(HAContextID oriHaContextID) throws CSErrorException {
+    if (null == oriHaContextID) {
       logger.error("HaContextID cannot be null.");
       throw new CSErrorException(CSErrorCode.INVALID_HAID, "HaContextID cannot be null.");
     }
+    HAContextID haContextID = oriHaContextID.copy();
     if (StringUtils.isBlank(haContextID.getContextId())) {
       // generate new haid
       HAContextID tmpHAID = contextHAIDGenerator.generateHAContextID(null);

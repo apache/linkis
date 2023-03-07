@@ -37,6 +37,7 @@ import org.apache.linkis.manager.common.entity.resource.{
   NodeResource
 }
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse
@@ -136,23 +137,11 @@ class SeatunnelSparkOnceCodeExecutor(
   }
 
   override def getCurrentNodeResource(): NodeResource = {
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
-      }
-    }
-    val actualUsedResource = new LoadInstanceResource(
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties),
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE
-    )
     val resource = new CommonNodeResource
-    resource.setUsedResource(actualUsedResource)
+    resource.setUsedResource(
+      NodeResourceUtils
+        .applyAsLoadInstanceResource(EngineConnObject.getEngineCreationContext.getOptions)
+    )
     resource
   }
 

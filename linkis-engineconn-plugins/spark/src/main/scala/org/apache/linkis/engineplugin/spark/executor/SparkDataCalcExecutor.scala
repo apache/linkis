@@ -34,9 +34,7 @@ import org.apache.linkis.scheduler.executer.{
   SuccessExecuteResponse
 }
 
-import org.apache.arrow.memory.OutOfMemoryException
 import org.apache.commons.lang.exception.ExceptionUtils
-import org.apache.orc.storage.common.io.Allocator.AllocatorOutOfMemoryException
 
 import java.lang.reflect.InvocationTargetException
 
@@ -74,16 +72,10 @@ class SparkDataCalcExecutor(sparkEngineSession: SparkEngineSession, id: Long)
         var cause = ExceptionUtils.getCause(e)
         if (cause == null) cause = e
         ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(e), cause)
-      case e: OutOfMemoryException =>
-        getErrorResponse(e, true)
-      case e: AllocatorOutOfMemoryException =>
-        getErrorResponse(e, true)
       case e: FatalException =>
         getErrorResponse(e, true)
       case e: Exception =>
         getErrorResponse(e, false)
-      case err: OutOfMemoryError =>
-        getErrorResponse(err, true)
       case err: VirtualMachineError =>
         getErrorResponse(err, true)
       case err: Error =>

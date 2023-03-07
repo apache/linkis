@@ -17,10 +17,13 @@
 
 package org.apache.linkis.cs.errorcode;
 
+import org.apache.linkis.common.errorcode.ErrorCodeUtils;
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum LinkisCsServerErrorCodeSummary implements LinkisErrorCode {
-  UNKNOWN_CONDITION_TYPE(1200001, "Unknown Condition Type(未知条件类型)");
+  UNKNOWN_CONDITION_TYPE(20031, "Unknown Condition Type(未知条件类型)"),
+  PARAMS_CANNOT_EMPTY(20032, "Params [{0}] cannot be empty"),
+  NO_PERMISSION(20033, "Only station admins are allowed.");
 
   /** (errorCode)错误码 */
   private final int errorCode;
@@ -28,6 +31,7 @@ public enum LinkisCsServerErrorCodeSummary implements LinkisErrorCode {
   private final String errorDesc;
 
   LinkisCsServerErrorCodeSummary(int errorCode, String errorDesc) {
+    ErrorCodeUtils.validateErrorCode(errorCode, 20031, 20040);
     this.errorCode = errorCode;
     this.errorDesc = errorDesc;
   }

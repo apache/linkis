@@ -17,6 +17,7 @@
 
 package org.apache.linkis.orchestrator.extensions.operation
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.orchestrator.{Orchestration, OrchestratorSession}
 import org.apache.linkis.orchestrator.core.AbstractOrchestration
 import org.apache.linkis.orchestrator.extensions.operation.Operation.OperationBuilder
@@ -25,13 +26,17 @@ import org.apache.linkis.orchestrator.listener.task.KillRootExecTaskEvent
 
 /**
  */
-class CancelOperation extends Operation[Unit] {
+class CancelOperation extends Operation[Unit] with Logging {
 
   override def apply(orchestration: Orchestration): Unit = orchestration match {
     case abstractOrchestration: AbstractOrchestration =>
       if (null != abstractOrchestration.physicalPlan) {
-        orchestration.orchestratorSession.getOrchestratorSessionState.getOrchestratorAsyncListenerBus
-          .post(KillRootExecTaskEvent(abstractOrchestration.physicalPlan))
+        logger.info(
+          "Orchestrator to kill job {} post kill event",
+          abstractOrchestration.physicalPlan.getIDInfo()
+        )
+        orchestration.orchestratorSession.getOrchestratorSessionState.getOrchestratorSyncListenerBus
+          .postToAll(KillRootExecTaskEvent(abstractOrchestration.physicalPlan))
       }
     case _ =>
   }

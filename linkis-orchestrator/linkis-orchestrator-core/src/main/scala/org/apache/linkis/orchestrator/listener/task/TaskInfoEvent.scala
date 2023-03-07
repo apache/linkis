@@ -86,7 +86,7 @@ case class RootTaskResponseEvent(execTask: ExecTask, taskResponse: CompletedTask
 
 case class KillRootExecTaskEvent(execTask: ExecTask)
     extends TaskInfoEvent
-    with OrchestratorAsyncEvent
+    with OrchestratorSyncEvent
 
 case class TaskReheaterEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent
 

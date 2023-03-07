@@ -51,6 +51,7 @@ import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.governance.common.constant.ec.ECConstants
+import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
@@ -450,6 +451,11 @@ class TaskExecutionServiceImpl
                 ecParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)
               )
             }
+            extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
+            extraInfoMap.put(
+              TaskConstant.ENGINE_CONN_SUBMIT_TIME,
+              System.currentTimeMillis.toString
+            )
             // todo add other info
             var respRunningInfo: ResponseTaskRunningInfo = null
             if (null != resourceResponse) {

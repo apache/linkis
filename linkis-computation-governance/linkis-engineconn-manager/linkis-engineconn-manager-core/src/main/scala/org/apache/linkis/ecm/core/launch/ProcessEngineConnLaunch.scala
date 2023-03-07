@@ -28,7 +28,6 @@ import org.apache.linkis.governance.common.utils.{
   EngineConnArgumentsBuilder,
   EngineConnArgumentsParser
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.{
   Environment,
@@ -36,7 +35,6 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
-import org.apache.linkis.server.conf.ServerConfiguration
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
@@ -49,7 +47,6 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   private var request: ProcessEngineConnLaunchRequest = _
   private var engineConnManagerEnv: EngineConnManagerEnv = _
-  private var discoveryMsgGenerator: DiscoveryMsgGenerator = _
   private var processBuilder: ProcessEngineCommandBuilder = _
   private var preparedExecFile: String = _
   private var process: Process = _
@@ -78,9 +75,6 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
   override def getEngineConnManagerEnv(): EngineConnManagerEnv = this.engineConnManagerEnv
 
-  def setDiscoveryMsgGenerator(discoveryMsgGenerator: DiscoveryMsgGenerator): Unit =
-    this.discoveryMsgGenerator = discoveryMsgGenerator
-
   def getEngineConnLaunchRequest: EngineConnLaunchRequest = request
 
   private def initializeEnv(): Unit = {
@@ -108,8 +102,8 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case JAVA_HOME => putIfExists(JAVA_HOME)
       case RANDOM_PORT =>
         environment.put(RANDOM_PORT.toString, PortUtils.findAvailPort().toString)
-      case EUREKA_PREFER_IP =>
-        environment.put(EUREKA_PREFER_IP.toString, Configuration.EUREKA_PREFER_IP.toString)
+      case PREFER_IP_ADDRESS =>
+        environment.put(PREFER_IP_ADDRESS.toString, Configuration.PREFER_IP_ADDRESS.toString)
       case ENGINECONN_ENVKEYS =>
         environment.put(ENGINECONN_ENVKEYS.toString, GovernanceCommonConf.ENGINECONN_ENVKEYS)
       case _ =>
@@ -171,34 +165,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     engineConnPort = PortUtils
       .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_PORT_RANGE.getValue)
       .toString
-    var springConf = Map(
-      "spring.application.name" -> GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue,
-      "server.port" -> engineConnPort,
-      "spring.profiles.active" -> "engineconn",
-      "logging.config" -> s"classpath:${EnvConfiguration.LOG4J2_XML_FILE.getValue}"
-    ) ++: discoveryMsgGenerator.generate(engineConnManagerEnv).asScala
 
-    val eurekaPreferIp: Boolean = Configuration.EUREKA_PREFER_IP
-    logger.info(s"EUREKA_PREFER_IP: " + eurekaPreferIp)
-    if (eurekaPreferIp) {
-      springConf = springConf + ("eureka.instance.prefer-ip-address" -> "true")
-      springConf =
-        springConf + ("eureka.instance.instance-id" -> "\\${spring.cloud.client.ip-address}:\\${spring.application.name}:\\${server.port}")
-    }
-    if (Configuration.IS_PROMETHEUS_ENABLE.getValue) {
-      logger.info(s"IS_PROMETHEUS_ENABLE: true")
-      springConf =
-        springConf + ("management.endpoints.web.exposure.include" -> "refresh,info,health,metrics,prometheus")
-      val endpoint =
-        ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue + Configuration.PROMETHEUS_ENDPOINT.getValue
-      springConf =
-        springConf + ("eureka.instance.metadata-map.prometheus.path" -> ("\\${prometheus.path:" + endpoint + "}"))
-    }
+    var springConf = Map("server.port" -> engineConnPort, "spring.profiles.active" -> "engineconn")
+
     request.creationDesc.properties.asScala.filter(_._1.startsWith("spring.")).foreach {
       case (k, v) =>
-        springConf = springConf += (k -> v)
+        springConf = springConf + (k -> v)
     }
-    arguments.addSpringConf(springConf.toMap)
+
+    arguments.addSpringConf(springConf)
     var engineConnConf = Map("ticketId" -> request.ticketId, "user" -> request.user)
     engineConnConf = engineConnConf ++: request.labels.asScala
       .map(l => EngineConnArgumentsParser.LABEL_PREFIX + l.getLabelKey -> l.getStringValue)

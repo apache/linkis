@@ -54,7 +54,10 @@ object Configuration extends Logging {
     CommonVars("wds.linkis.console.variable.application.name", "linkis-ps-publicservice")
 
   // read from env
-  val EUREKA_PREFER_IP: Boolean = CommonVars("EUREKA_PREFER_IP", false).getValue
+  val PREFER_IP_ADDRESS: Boolean = CommonVars(
+    "linkis.discovery.prefer-ip-address",
+    CommonVars("EUREKA_PREFER_IP", false).getValue
+  ).getValue
 
   val GOVERNANCE_STATION_ADMIN = CommonVars("wds.linkis.governance.station.admin", "hadoop")
 
@@ -64,6 +67,12 @@ object Configuration extends Logging {
   val GOVERNANCE_STATION_ADMIN_TOKEN_STARTWITH = "ADMIN-"
 
   val VARIABLE_OPERATION: Boolean = CommonVars("wds.linkis.variable.operation", false).getValue
+
+  val ERROR_MSG_TIP =
+    CommonVars(
+      "linkis.jobhistory.error.msg.tip",
+      "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
+    )
 
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
@@ -102,6 +111,10 @@ object Configuration extends Logging {
 
   def isNotAdmin(username: String): Boolean = {
     !isAdmin(username)
+  }
+
+  def isNotJobHistoryAdmin(username: String): Boolean = {
+    !isJobHistoryAdmin(username)
   }
 
   def isJobHistoryAdmin(username: String): Boolean = {

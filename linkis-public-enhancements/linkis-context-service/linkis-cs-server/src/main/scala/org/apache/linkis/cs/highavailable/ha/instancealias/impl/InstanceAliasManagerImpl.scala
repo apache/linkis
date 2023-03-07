@@ -24,7 +24,7 @@ import org.apache.linkis.cs.highavailable.ha.instancealias.{
   InstanceAliasManager
 }
 import org.apache.linkis.rpc.conf.RPCConfiguration
-import org.apache.linkis.rpc.sender.eureka.EurekaRPCServerLoader
+import org.apache.linkis.rpc.sender.spring.SpringRPCServerLoader
 import org.apache.linkis.rpc.utils.RPCUtils
 
 import org.apache.commons.lang3.StringUtils
@@ -39,7 +39,7 @@ import scala.collection.JavaConverters._
 @Component
 class InstanceAliasManagerImpl extends InstanceAliasManager with Logging {
 
-  private val serverLoader = new EurekaRPCServerLoader()
+  private val serverLoader = new SpringRPCServerLoader()
 
   @Autowired
   var instanceAliasConverter: InstanceAliasConverter = _

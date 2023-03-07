@@ -92,15 +92,12 @@ class DefaultAccessibleService extends AccessibleService with Logging {
       return
     }
     var executor: Executor = ExecutorManager.getInstance.getReportExecutor
-    if (null != executor) {
-      Utils.tryAndWarn {
-        executor.close()
-        executor.tryShutdown()
-      }
-      logger.warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
-    } else {
+    if (null == executor) {
       executor = SensibleExecutor.getDefaultErrorSensibleExecutor
     }
+    Utils.tryAndWarn(executor.tryShutdown())
+    logger.warn(s"Engine : ${Sender.getThisInstance} with state has stopped successfully.")
+
     ExecutorManager.getInstance.getExecutors.foreach { closeExecutor =>
       Utils.tryAndWarn(closeExecutor.close())
       logger.warn(s"executorShutDownHook  start to close executor... $executor")

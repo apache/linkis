@@ -70,6 +70,7 @@ import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
+import java.text.MessageFormat
 import java.util
 import java.util.{Date, UUID}
 import java.util.concurrent.TimeUnit
@@ -156,7 +157,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       if (!emResource.getResourceType.equals(resource.getResourceType)) {
         throw new RMErrorException(
           RMErrorCode.LABEL_DUPLICATED.getErrorCode,
-          s"${serviceInstance} has been registered in ${emResource.getResourceType}, cannot be updated to ${resource.getResourceType}"
+          MessageFormat.format(
+            RMErrorCode.LABEL_DUPLICATED.getErrorDesc,
+            serviceInstance,
+            emResource.getResourceType,
+            resource.getResourceType
+          )
         )
       }
     }
@@ -602,7 +608,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     if (!locked) {
       throw new RMLockFailedRetryException(
         RMErrorCode.LOCK_LABEL_FAILED.getErrorCode,
-        s"${RMErrorCode.LOCK_LABEL_FAILED.getErrorDesc} + ${label.getStringValue} over $timeOut ms, please wait a moment and try again!"
+        MessageFormat.format(
+          RMErrorCode.LOCK_LABEL_FAILED.getErrorDesc,
+          label.getStringValue,
+          timeOut.toString
+        )
       )
     }
     persistenceLock

@@ -22,6 +22,7 @@ import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.service.ECMRegisterService
+import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.em.{
   RegisterEMRequest,
@@ -62,7 +63,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
 
   private def getEMRegiterResourceFromConfiguration: NodeResource = {
     val maxResource = new LoadInstanceResource(
-      ECM_MAX_MEMORY_AVAILABLE,
+      ECMUtils.inferDefaultMemory(),
       ECM_MAX_CORES_AVAILABLE,
       ECM_MAX_CREATE_INSTANCES
     )

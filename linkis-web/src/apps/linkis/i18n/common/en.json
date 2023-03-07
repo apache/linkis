@@ -14,7 +14,7 @@
       "addAppType": "Add Application Type",
       "editContents": "Add Contents",
       "ConfirmEdit": "Done",
-      "eurekaRegisterCenter": "Eureka Register Center",
+      "serviceRegistryCenter": "Service Registry Center",
       "addTags": "Add Tags",
       "unfold": "Unfold",
       "fold": "Fold",
@@ -75,6 +75,7 @@
       "back": "Back",
       "prev": "Previous Step",
       "complete": "Complete",
+      "close": "Close",
       "udfName": "UDF Name",
       "udfType": "UDF Type",
       "nextPage": "Next Page",
@@ -115,6 +116,7 @@
         "label": "Label",
         "engineVersion": "Engine Version",
         "engineVersionCannotBeNull": "Engine Version Cannot Be Null",
+        "addEngineRules": "Engine Name Cannot Have Special Symbols And Spaces",
         "lockedResource": "Locked Resources",
         "usedResources": "Used Resources",
         "maximumAvailableResources": "Maximum Available Resources",
@@ -168,6 +170,7 @@
             "ipListManagement": "White List Management",
             "errorCode": "Error Manage",
             "gatewayAuthToken": "Token Manage",
+            "engineConfigurationTemplate": "Engine Configuration Template",
             "rmExternalResourceProvider": "External Resource Provider Manage",
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
@@ -433,7 +436,7 @@
         "submitUser": "Submit User",
         "createdTime": "Created Time",
         "searchRange": "Only T-1 history code can be queried"
-      
+
       },
       "basedataManagement": {
         "add": "Add",
@@ -458,6 +461,29 @@
           "modalEditFail": "Edit failure"
         },
         "addUDFAdmin": "Add UDF administrator",
+        "engineConfigurationTemplate": {
+          "engineLabelId": "Engine Label Id",
+          "advanced": "Advanced",
+          "defaultValue": "Default Value",
+          "description": "Description",
+          "engineConnType": "Engine Type",
+          "key": "Key",
+          "level": "Level",
+          "name": "Name",
+          "treeName": "Tree Name",
+          "validateRange": "Validate Range",
+          "validateType": "Validate Type",
+          "hidden": "hidden",
+          "id": "ID",
+          "engineLabelList": "Engine Label List",
+          "yes": "yes",
+          "no": "no",
+          "delSuccess": "Deletion succeeded",
+          "delFail": "Deletion failed",
+          "ModSuccess": "Modification succeeded",
+          "ModFail": "Modification failed",
+          "edit": "edit"
+        },
         "gatewayAuthToken": {
           "tokenName": "Token Name",
           "legalUsers": "Legal Users",

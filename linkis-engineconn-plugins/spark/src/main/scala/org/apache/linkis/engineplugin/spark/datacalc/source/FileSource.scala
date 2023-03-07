@@ -17,16 +17,13 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.source
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
 
 import org.apache.commons.text.StringSubstitutor
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class FileSource extends DataCalcSource[FileSourceConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[FileSource])
+class FileSource extends DataCalcSource[FileSourceConfig] with Logging {
 
   override def getData(spark: SparkSession): Dataset[Row] = {
     val reader = spark.read
@@ -36,7 +33,7 @@ class FileSource extends DataCalcSource[FileSourceConfig] {
     }
     val substitutor = new StringSubstitutor(config.getVariables)
     val path = substitutor.replace(config.getPath)
-    log.info(s"Load data from file <$path>")
+    logger.info(s"Load data from file <$path>")
 
     var df = config.getSerializer match {
       case "csv" => reader.csv(path)

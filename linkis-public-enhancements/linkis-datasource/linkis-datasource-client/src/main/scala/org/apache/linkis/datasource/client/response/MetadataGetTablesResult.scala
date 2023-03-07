@@ -24,7 +24,9 @@ import java.util
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/metadataQuery/getTables")
+@DWSHttpMessageResult(
+  "/api/rest_j/v\\d+/(metadataQuery|metadatamanager)/(getTables|tables)(\\S+/db/\\S+)?"
+)
 class MetadataGetTablesResult extends DWSResult {
   @BeanProperty var tables: util.List[String] = _
 }

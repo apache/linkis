@@ -22,25 +22,20 @@ import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
 import org.apache.linkis.cs.common.protocol.ContextHTTPConstant;
 import org.apache.linkis.cs.common.utils.CSCommonUtils;
-import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
-import org.apache.linkis.cs.server.scheduler.CsScheduler;
-import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.service.ContextIDService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -55,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.cs.common.utils.CSCommonUtils.localDatetimeToDate;
+import static org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary.NO_PERMISSION;
+import static org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary.PARAMS_CANNOT_EMPTY;
 
 @Api(tags = "cs(contextservice) recording operation")
 @RestController
@@ -63,7 +60,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
 
   private static final Logger logger = LoggerFactory.getLogger(ContextIDRestfulApi.class);
 
-  @Autowired private CsScheduler csScheduler;
+  @Autowired private ContextIDService contextIDService;
 
   @ApiOperation(value = "createContextID", notes = "create context Id", response = Message.class)
   @ApiImplicitParams({@ApiImplicitParam(name = "contextID", dataType = "String")})
@@ -74,9 +71,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     ModuleUserUtils.getOperationUser(
         req, "createContextID,contextIDType: " + contextID.getContextIDType());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID);
-
-    return generateResponse(answerJob, "contextId");
+    String res = contextIDService.createContextID(contextID);
+    return generateMessage(res, "contextId");
   }
 
   @ApiOperation(value = "GetContextID", notes = "Get_Context_Id", response = Message.class)
@@ -85,13 +81,14 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   public Message getContextID(
       HttpServletRequest req, @RequestParam(value = "contextId", required = false) String id)
       throws InterruptedException, CSErrorException {
-    if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(id)) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "getContextID,contextID:" + id);
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, id);
-    Message message = generateResponse(answerJob, "contextID");
-    return message;
+    Object res = contextIDService.getContextID(id);
+    return generateMessage(res, "contextId");
   }
 
   @ApiOperation(value = "updateContextID", notes = "update content id", response = Message.class)
@@ -101,12 +98,14 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   public Message updateContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "updateContextID,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.UPDATE, contextID);
-    return generateResponse(answerJob, "");
+    contextIDService.updateContextID(contextID);
+    return generateMessage(null, "contextId");
   }
 
   @ApiOperation(value = "resetContextID", notes = "reset context Id", response = Message.class)
@@ -114,17 +113,21 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "resetContextID", method = RequestMethod.POST)
   public Message resetContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, CSErrorException {
+      throws CSErrorException {
     if (!jsonNode.has(ContextHTTPConstant.CONTEXT_ID_STR)) {
-      throw new CSErrorException(97000, ContextHTTPConstant.CONTEXT_ID_STR + " cannot be empty");
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
-    if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(id)) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "resetContextID,contextID:" + id);
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.RESET, id);
-    return generateResponse(answerJob, "");
+    contextIDService.resetContextID(id);
+    return generateMessage(null, "contextId");
   }
 
   @ApiOperation(value = "removeContextID", notes = "remove context ID", response = Message.class)
@@ -132,14 +135,16 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "removeContextID", method = RequestMethod.POST)
   public Message removeContextID(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, CSErrorException {
+      throws CSErrorException {
     String id = jsonNode.get(ContextHTTPConstant.CONTEXT_ID_STR).textValue();
-    if (StringUtils.isEmpty(id)) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(id)) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "removeContextID,contextID:" + id);
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, id);
-    return generateResponse(answerJob, "");
+    contextIDService.removeContextID(id);
+    return generateMessage(null, "contextId");
   }
 
   @ApiOperation(
@@ -167,10 +172,10 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       @RequestParam(value = "accessTimeEnd", required = false) String accessTimeEnd,
       @RequestParam(value = "pageNow", required = false) Integer paramPageNow,
       @RequestParam(value = "pageSize", required = false) Integer paramPageSize)
-      throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+      throws CSErrorException {
     String username = ModuleUserUtils.getOperationUser(req, "searchContextIDByTime");
     if (Configuration.isNotAdmin(username)) {
-      throw new CSErrorException(97018, "Only station admins are allowed.");
+      throw new CSErrorException(NO_PERMISSION.getErrorCode(), NO_PERMISSION.getErrorDesc());
     }
     logger.info(
         "user: {}, searchContextIDByTime : createTimeStart : {}, createTimeEnd : {}, updateTimeStart : {}, updateTimeEnd : {}, accessTimeStart : {}, accessTimeEnd : {}, pageNow : {}, pageSize : {}.",
@@ -191,16 +196,18 @@ public class ContextIDRestfulApi implements CsRestfulParent {
         && null == accessTimeStart
         && null == accessTimeEnd) {
       throw new CSErrorException(
-          97000,
-          "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd, accessTimeStart, accessTimeEnd cannot be all null.");
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(
+              PARAMS_CANNOT_EMPTY.getErrorDesc(),
+              "createTimeStart, createTimeEnd, updateTimeStart, updateTimeEnd, accessTimeStart, accessTimeEnd cannot be all null."));
     }
-    int pageStart = 0;
+    int pageStart;
     if (null == paramPageNow || paramPageNow <= 0) {
       pageStart = 1;
     } else {
       pageStart = paramPageNow;
     }
-    int pageSize = 0;
+    int pageSize;
     if (null == paramPageSize
         || paramPageSize <= 0
         || paramPageSize > CSCommonUtils.CONTEXT_MAX_PAGE_SIZE) {
@@ -228,10 +235,8 @@ public class ContextIDRestfulApi implements CsRestfulParent {
       accessTimeStartDate = localDatetimeToDate(LocalDateTime.parse(accessTimeStart, dtf));
     if (StringUtils.isNotBlank(accessTimeEnd))
       accessTimeEndDate = localDatetimeToDate(LocalDateTime.parse(accessTimeEnd, dtf));
-    HttpAnswerJob answerJob =
-        submitRestJob(
-            req,
-            ServiceMethod.SEARCH,
+    Object res =
+        contextIDService.searchCSIDByTime(
             createTimeStartDate,
             createTimeEndDate,
             updateTimeStartDate,
@@ -240,7 +245,7 @@ public class ContextIDRestfulApi implements CsRestfulParent {
             accessTimeEndDate,
             pageStart,
             pageSize);
-    Message resp = generateResponse(answerJob, "contextIDs");
+    Message resp = generateMessage(res, "contextIds");
     resp.setMethod("/api/contextservice/searchContextIDByTime");
     return resp;
   }
@@ -248,10 +253,5 @@ public class ContextIDRestfulApi implements CsRestfulParent {
   @Override
   public ServiceType getServiceType() {
     return ServiceType.CONTEXT_ID;
-  }
-
-  @Override
-  public CsScheduler getScheduler() {
-    return this.csScheduler;
   }
 }

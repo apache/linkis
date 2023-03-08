@@ -27,10 +27,10 @@ object HiveEngineConfiguration {
   )
 
   val ENABLE_FETCH_BASE64 =
-    CommonVars[Boolean]("wds.linkis.hive.enable.fetch.base64", false).getValue
+    CommonVars[Boolean]("linkis.hive.enable.fetch.base64", false).getValue
 
   val BASE64_SERDE_CLASS = CommonVars[String](
-    "wds.linkis.hive.base64.serde.class",
+    "linkis.hive.base64.serde.class",
     "org.apache.linkis.engineplugin.hive.serde.CustomerDelimitedJSONSerDe"
   ).getValue
 
@@ -39,5 +39,5 @@ object HiveEngineConfiguration {
     CommonVars[String]("HIVE_AUX_JARS_PATH", "").getValue
   ).getValue
 
-  val HIVE_ENGINE_TYPE = CommonVars[String]("wds.linkis.hive.engine.type", "mr").getValue
+  val HIVE_ENGINE_TYPE = CommonVars[String]("linkis.hive.engine.type", "mr").getValue
 }

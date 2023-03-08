@@ -23,7 +23,7 @@ import org.apache.linkis.computation.client.utils.LabelKeyUtils;
 
 public class SeatunnelOnceJobTest {
   public static void main(String[] args) {
-    LinkisJobClient.config().setDefaultServerUrl("http://ip:9001");
+    LinkisJobClient.config().setDefaultServerUrl("http://127.0.0.1:9001");
     String code =
         "\n"
             + "env {\n"
@@ -57,7 +57,7 @@ public class SeatunnelOnceJobTest {
             .addLabel(LabelKeyUtils.ENGINE_CONN_MODE_LABEL_KEY(), "once")
             .addStartupParam(Configuration.IS_TEST_MODE().key(), true)
             .addExecuteUser("hadoop")
-            .addJobContent("runType", "sspark")
+            .addJobContent("runType", "spark")
             .addJobContent("code", code)
             .addJobContent("master", "local[4]")
             .addJobContent("deploy-mode", "client")

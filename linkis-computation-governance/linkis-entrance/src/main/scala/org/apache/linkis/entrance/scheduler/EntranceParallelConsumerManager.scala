@@ -90,7 +90,7 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
                   group.getMaxRunningJobs,
                   validInsCount,
                   maxAllowRunningJobs
-                )
+                ): _*
               )
           case _ =>
         }

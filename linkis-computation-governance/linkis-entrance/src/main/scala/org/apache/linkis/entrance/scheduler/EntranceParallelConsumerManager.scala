@@ -87,9 +87,9 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
                 "group {} refresh maxAllowRunningJobs => {}/{}={}",
                 Array(
                   group.getGroupName,
-                  group.getMaxRunningJobs,
-                  validInsCount,
-                  maxAllowRunningJobs
+                  group.getMaxRunningJobs.toString,
+                  validInsCount.toString,
+                  maxAllowRunningJobs.toString
                 ): _*
               )
           case _ =>

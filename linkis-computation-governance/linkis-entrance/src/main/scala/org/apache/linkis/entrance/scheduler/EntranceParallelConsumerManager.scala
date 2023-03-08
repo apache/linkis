@@ -30,9 +30,11 @@ import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 import org.apache.linkis.scheduler.queue.parallelqueue.{ParallelConsumerManager, ParallelGroup}
 
 import java.util
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ScheduledFuture, TimeUnit}
 
 import scala.collection.JavaConverters._
+
+import com.sun.javafx.util.Logging
 
 class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
     extends ParallelConsumerManager(maxParallelismUsers, schedulerName) {
@@ -84,7 +86,11 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
             group.setMaxAllowRunningJobs(maxAllowRunningJobs)
             logger
               .info(
-                s"group ${group.getGroupName} refresh maxAllowRunningJobs => ${group.getMaxRunningJobs}/$validInsCount=$maxAllowRunningJobs"
+                "group {} refresh maxAllowRunningJobs => {}/{}={}",
+                group.getGroupName,
+                group.getMaxRunningJobs,
+                validInsCount,
+                maxAllowRunningJobs
               )
           case _ =>
         }

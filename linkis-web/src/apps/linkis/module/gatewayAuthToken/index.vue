@@ -81,18 +81,18 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <EditForm ref="editForm" :data="modalEditData"></EditForm>
     </Modal>
   </div>
 </template>
 <script>
 import mixin from '@/common/service/mixin';
-import ErrorCodeForm from './EditForm/index'
+import EditForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
 import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
-  components: {ErrorCodeForm},
+  components: {EditForm},
   data() {
     return {
       searchName: "",
@@ -252,7 +252,7 @@ export default {
 
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.editForm.formModel.submit((formData)=>{
         this.modalLoading = true
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{

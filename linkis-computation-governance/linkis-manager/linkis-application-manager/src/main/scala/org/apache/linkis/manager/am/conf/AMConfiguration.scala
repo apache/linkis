@@ -87,6 +87,9 @@ object AMConfiguration {
   val EC_MAINTAIN_WORK_END_TIME =
     CommonVars("wds.linkis.ec.maintain.time.work.end.time", 19).getValue
 
+  val NODE_SELECT_HOTSPOT_EXCLUSION_RULE =
+    CommonVars("linkis.node.select.hotspot.exclusion.rule.enable", true).getValue
+
   private def getDefaultMultiEngineUser(): String = {
     val jvmUser = Utils.getJvmUser
     s""" {jdbc:"$jvmUser", es: "$jvmUser", presto:"$jvmUser", appconn:"$jvmUser", openlookeng:"$jvmUser", trino:"$jvmUser", io_file:"root"}"""

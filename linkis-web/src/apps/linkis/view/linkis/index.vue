@@ -116,7 +116,7 @@ export default {
           { key: '1-8', name: this.$t('message.linkis.sideNavList.function.children.dataSourceManage'), showSubMenu: true },
           { key: '1-9', name: this.$t('message.linkis.sideNavList.function.children.udfFunctionTitle'), path: '/console/urm/udfManagement', showSubMenu: true},
           { key: '1-10', name: this.$t('message.linkis.sideNavList.function.children.basedataManagement'), showSubMenu: true},
-          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
+          // { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
         ],
       },
       datasourceNavList: {

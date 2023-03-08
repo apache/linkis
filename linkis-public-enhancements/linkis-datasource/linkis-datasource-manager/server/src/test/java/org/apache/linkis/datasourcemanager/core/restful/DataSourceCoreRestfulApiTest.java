@@ -48,7 +48,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Validator;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.AfterAll;
@@ -576,8 +580,7 @@ class DataSourceCoreRestfulApiTest {
 
     Mockito.doNothing()
         .when(metadataOperateService)
-        .doRemoteConnect(
-            "metadata-manager", dataSourceType.getName(), "hadoop", new HashMap<String, Object>());
+        .doRemoteConnect("metadata-manager", dataSourceType.getName(), "hadoop", new HashMap<>());
     res = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
     assertTrue(MessageStatus.SUCCESS() == res.getStatus());
   }

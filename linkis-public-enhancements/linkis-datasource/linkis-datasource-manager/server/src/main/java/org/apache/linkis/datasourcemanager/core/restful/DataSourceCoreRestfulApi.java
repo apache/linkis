@@ -314,15 +314,7 @@ public class DataSourceCoreRestfulApi {
           List<DataSourceParamKeyDefinition> keyDefinitionList =
               dataSourceRelateService.getKeyDefinitionsByType(dataSource.getDataSourceTypeId());
 
-          // add default value filed
-          keyDefinitionList.forEach(
-              keyDefinition -> {
-                String key = keyDefinition.getKey();
-                if (StringUtils.isNotBlank(keyDefinition.getDefaultValue())
-                    && !connectParams.containsKey(key)) {
-                  connectParams.put(key, keyDefinition.getDefaultValue());
-                }
-              });
+          formatConnectParams(keyDefinitionList, connectParams);
 
           parameterValidator.validate(keyDefinitionList, connectParams);
           // Encrypt password value type
@@ -839,6 +831,18 @@ public class DataSourceCoreRestfulApi {
     dataSource.setKeyDefinitions(keyDefinitionList);
 
     Map<String, Object> connectParams = dataSource.getConnectParams();
+    formatConnectParams(keyDefinitionList, connectParams);
+
+    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
+      hook.beforePersist(connectParams, keyDefinitionList);
+    }
+    String parameter = Json.toJson(connectParams, null);
+    dataSource.setParameter(parameter);
+    dataSourceInfoService.saveDataSourceInfo(dataSource);
+  }
+
+  private void formatConnectParams(
+      List<DataSourceParamKeyDefinition> keyDefinitionList, Map<String, Object> connectParams) {
     // add default value filed
     keyDefinitionList.forEach(
         keyDefinition -> {
@@ -849,11 +853,11 @@ public class DataSourceCoreRestfulApi {
           }
         });
 
-    for (DataSourceParamsHook hook : dataSourceParamsHooks) {
-      hook.beforePersist(connectParams, keyDefinitionList);
-    }
-    String parameter = Json.toJson(connectParams, null);
-    dataSource.setParameter(parameter);
-    dataSourceInfoService.saveDataSourceInfo(dataSource);
+    connectParams.forEach(
+        (k, v) -> {
+          if (v instanceof String) {
+            connectParams.put(k, v.toString().trim());
+          }
+        });
   }
 }

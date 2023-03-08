@@ -65,10 +65,9 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            Object password = connectParams.get(keyDefinition.getKey());
+            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
             if (null != password) {
-              connectParams.put(
-                  keyDefinition.getKey(), CryptoUtils.object2String(String.valueOf(password)));
+              connectParams.put(keyDefinition.getKey(), CryptoUtils.object2String(password));
             }
           }
         });
@@ -85,10 +84,9 @@ public class RestfulApiHelper {
     keyDefinitionList.forEach(
         keyDefinition -> {
           if (keyDefinition.getValueType() == DataSourceParamKeyDefinition.ValueType.PASSWORD) {
-            Object password = connectParams.get(keyDefinition.getKey());
+            String password = String.valueOf(connectParams.get(keyDefinition.getKey()));
             if (null != password) {
-              connectParams.put(
-                  keyDefinition.getKey(), CryptoUtils.string2Object(String.valueOf(password)));
+              connectParams.put(keyDefinition.getKey(), CryptoUtils.string2Object(password));
             }
           }
         });

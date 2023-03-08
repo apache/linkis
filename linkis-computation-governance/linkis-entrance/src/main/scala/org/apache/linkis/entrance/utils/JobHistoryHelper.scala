@@ -45,7 +45,7 @@ import com.google.common.net.InetAddresses
 object JobHistoryHelper extends Logging {
 
   private val sender =
-    Sender.getSender(EntranceConfiguration.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME.getValue)
+    Sender.getSender(EntranceConfiguration.JOBHISTORY_SPRING_APPLICATION_NAME.getValue)
 
   private val SUCCESS_FLAG = 0
 
@@ -165,31 +165,31 @@ object JobHistoryHelper extends Logging {
   def updateJobRequestMetrics(
       jobRequest: JobRequest,
       resourceInfo: util.Map[String, ResourceWithStatus],
-      ecInfo: util.Map[String, AnyRef]
+      infoMap: util.Map[String, AnyRef]
   ): Unit = {
     // update resource
     if (jobRequest.getMetrics == null) {
       jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
     }
     val metricsMap = jobRequest.getMetrics
-    val resourceMap = metricsMap.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+    val resourceMap = metricsMap.get(TaskConstant.JOB_YARNRESOURCE)
     val ecResourceMap =
       if (resourceInfo == null) new util.HashMap[String, ResourceWithStatus] else resourceInfo
     if (resourceMap != null) {
       resourceMap.asInstanceOf[util.HashMap[String, ResourceWithStatus]].putAll(ecResourceMap)
     } else {
-      metricsMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, ecResourceMap)
+      metricsMap.put(TaskConstant.JOB_YARNRESOURCE, ecResourceMap)
     }
     var engineInstanceMap: util.HashMap[String, AnyRef] = null
-    if (metricsMap.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
+    if (metricsMap.containsKey(TaskConstant.JOB_ENGINECONN_MAP)) {
       engineInstanceMap = metricsMap
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .get(TaskConstant.JOB_ENGINECONN_MAP)
         .asInstanceOf[util.HashMap[String, AnyRef]]
     } else {
       engineInstanceMap = new util.HashMap[String, AnyRef]()
-      metricsMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, engineInstanceMap)
+      metricsMap.put(TaskConstant.JOB_ENGINECONN_MAP, engineInstanceMap)
     }
-    val infoMap = ecInfo
+
     if (null != infoMap && infoMap.containsKey(TaskConstant.TICKET_ID)) {
       val ticketId = infoMap.get(TaskConstant.TICKET_ID).asInstanceOf[String]
       val engineExtraInfoMap = engineInstanceMap
@@ -199,6 +199,23 @@ object JobHistoryHelper extends Logging {
       engineInstanceMap.put(ticketId, engineExtraInfoMap)
     } else {
       logger.warn("Ec info map must contains ticketID")
+    }
+
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_REQUEST_EC_TIME)) {
+      metricsMap.put(
+        TaskConstant.JOB_REQUEST_EC_TIME,
+        infoMap.get(TaskConstant.JOB_REQUEST_EC_TIME)
+      )
+    }
+
+    if (null != infoMap && infoMap.containsKey(TaskConstant.JOB_SUBMIT_TO_EC_TIME)) {
+      metricsMap.put(
+        TaskConstant.JOB_SUBMIT_TO_EC_TIME,
+        infoMap.get(TaskConstant.JOB_SUBMIT_TO_EC_TIME)
+      )
+    }
+    if (null != infoMap && infoMap.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+      metricsMap.put(TaskConstant.ENGINE_INSTANCE, infoMap.get(TaskConstant.ENGINE_INSTANCE))
     }
   }
 

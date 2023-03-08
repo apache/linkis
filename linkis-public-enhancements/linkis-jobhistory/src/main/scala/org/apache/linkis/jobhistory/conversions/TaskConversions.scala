@@ -262,17 +262,17 @@ object TaskConversions extends Logging {
       BDPJettyServerHelper.gson.fromJson((job.getMetrics), classOf[util.Map[String, Object]])
     var completeTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_COMPLETE_TIME) && metrics
+          .get(TaskConstant.JOB_COMPLETE_TIME) != null
     ) {
-      completeTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_COMPLETE_TIME).toString)
+      completeTime = dealString2Date(metrics.get(TaskConstant.JOB_COMPLETE_TIME).toString)
     }
     var createTime: Date = null
     if (
-        null != metrics && metrics.containsKey(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) && metrics
-          .get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME) != null
+        null != metrics && metrics.containsKey(TaskConstant.JOB_SUBMIT_TIME) && metrics
+          .get(TaskConstant.JOB_SUBMIT_TIME) != null
     ) {
-      createTime = dealString2Date(metrics.get(TaskConstant.ENTRANCEJOB_SUBMIT_TIME).toString)
+      createTime = dealString2Date(metrics.get(TaskConstant.JOB_SUBMIT_TIME).toString)
     }
     if (null != createTime) {
       if (isJobFinished(job.getStatus)) {
@@ -287,21 +287,8 @@ object TaskConversions extends Logging {
         taskVO.setCostTime(System.currentTimeMillis() - createTime.getTime)
       }
     }
-    if (metrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)) {
-      val engineMap = metrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
-        .asInstanceOf[util.Map[String, Object]]
-      if (null != engineMap && !engineMap.isEmpty) {
-        // the engineInstance in metrics may be repeat, so it needs to be distinct
-        val engineInstances =
-          engineMap.asScala
-            .map(_._2.asInstanceOf[util.Map[String, Object]])
-            .map(_.get(TaskConstant.ENGINE_INSTANCE))
-            .toList
-            .distinct
-            .mkString(",")
-        taskVO.setEngineInstance(engineInstances)
-      }
+    if (metrics.containsKey(TaskConstant.ENGINE_INSTANCE)) {
+      taskVO.setEngineInstance(metrics.get(TaskConstant.ENGINE_INSTANCE).toString)
     } else if (TaskStatus.Failed.toString.equals(job.getStatus)) {
       taskVO.setCanRetry(true)
     }

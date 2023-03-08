@@ -15,39 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasourcemanager.common.protocol
+package org.apache.linkis.governance.common.protocol.conf
 
 import org.apache.linkis.protocol.message.RequestProtocol
 
-import java.util
+trait EntranceInstanceConf extends RequestProtocol
 
-/**
- * Store error code map
- */
-trait DsmQueryProtocol extends RequestProtocol {}
+case class EntranceInstanceConfRequest(instance: String) extends EntranceInstanceConf
 
-/**
- * Query request of Data Source Information
- * @param id
- *   datasource id
- */
-case class DsInfoQueryRequest(id: String, name: String, system: String, envId: String = null)
-    extends DsmQueryProtocol {
-
-  def isValid: Boolean = {
-    (Option(id).isDefined || Option(name).isDefined) && Option(system).isDefined
-  }
-
-}
-
-/**
- * Response of parameter map
- * @param params
- */
-case class DsInfoResponse(
-    status: Boolean,
-    dsType: String = "",
-    params: util.Map[String, Object] = new util.HashMap[String, Object](),
-    creator: String = "",
-    errorMsg: String = ""
-) extends DsmQueryProtocol
+case class EntranceInstanceConfResponse()

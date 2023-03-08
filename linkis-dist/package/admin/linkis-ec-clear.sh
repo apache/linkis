@@ -16,8 +16,6 @@
 
 #The cleaning date must be passed in. And ecm will print the actual effective date log.
 
-export LINKIS_DB_CONFIG_PATH=${LINKIS_CONF_DIR}/linkis-env.sh
-source ${LINKIS_DB_CONFIG_PATH}
 end_date=`date -d '-90 days'`
 end_date_t=`date -d '-90 days' +%s`
 echo "Clean up data before this date:$end_date"

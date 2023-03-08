@@ -212,13 +212,20 @@ export default {
     },
     onAdd(){
       this.$refs.editForm.formModel.resetFields()
+      const row = {
+        elapseDay: -1,
+        permanentlyValid: true
+      }
+      this.$refs.editForm.formModel.rule[5].hidden = true
+      this.$refs.editForm.formModel.setValue(row)
+
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
       if(row.elapseDay === -1) {
         row.permanentlyValid = true;
-        this.$refs.editForm.formModel.rule[5].hidden = true;
+        this.$refs.editForm.formModel.rule[5].hidden = true
       }
       this.$refs.editForm.formModel.setValue(row)
       this.modalAddMode = 'edit'

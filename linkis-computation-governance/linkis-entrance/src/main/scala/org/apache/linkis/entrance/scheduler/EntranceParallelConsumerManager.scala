@@ -30,11 +30,9 @@ import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer
 import org.apache.linkis.scheduler.queue.parallelqueue.{ParallelConsumerManager, ParallelGroup}
 
 import java.util
-import java.util.concurrent.{ScheduledFuture, TimeUnit}
+import java.util.concurrent.TimeUnit
 
 import scala.collection.JavaConverters._
-
-import com.sun.javafx.util.Logging
 
 class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: String)
     extends ParallelConsumerManager(maxParallelismUsers, schedulerName) {

@@ -12,7 +12,7 @@
 |linkis-manager-common |11006|Get the Yarn queue information exception(获取Yarn队列信息异常)|YARN_QUEUE_EXCEPTION|ManagerCommonErrorCodeSummary|
 |linkis-manager-common |11006|Get the Yarn Application information exception.(获取Yarn Application信息异常)|YARN_APPLICATION_EXCEPTION|ManagerCommonErrorCodeSummary|
 |linkis-manager-common |11006|Only support fairScheduler or capacityScheduler, not support schedulerType:{0}(仅支持 fairScheduler 或 capacityScheduler)|YARN_NOT_EXISTS_QUEUE|ManagerCommonErrorCodeSummary|
-|linkis-manager-common |11006|Only support fairScheduler or capacityScheduler, schedulerType(仅支持 fairScheduler 或 capacityScheduler、schedulerType):|ONLY_SUPPORT_FAIRORCAPA|ManagerCommonErrorCodeSummary|
+|linkis-manager-common |11006|Only support fairScheduler or capacityScheduler, schedulerType(仅支持 fairScheduler 或 capacityScheduler、schedulerType)|ONLY_SUPPORT_FAIRORCAPA|ManagerCommonErrorCodeSummary|
 |linkis-manager-common |11006|Get active Yarn resourcemanager from:{0} exception.(从 {0} 获取主 Yarn resourcemanager 异常)|GET_YARN_EXCEPTION|ManagerCommonErrorCodeSummary|
 |linkis-manager-common |11201| No resource available found for em:{0}(没有为 em 找到可用的资源)|NO_RESOURCE_AVAILABLE|ManagerCommonErrorCodeSummary|
 |linkis-manager-common |11201|The resource tag has no resource, please check the resource in the database. Label(资源标签没有资源,请检查数据库中的资源.标签):{0}|NO_RESOURCE|ManagerCommonErrorCodeSummary|

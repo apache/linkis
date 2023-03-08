@@ -21,8 +21,8 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum LinkisIoFileErrorCodeSummary implements LinkisErrorCode {
   CANNOT_BE_EMPTY(53002, "The read method parameter cannot be empty(read方法参数不能为空)"),
-  FS_CAN_NOT_PROXY_TO(52002, "FS Can not proxy to:{}(FS 不能代理到：{})"),
-  NOT_EXISTS_METHOD(53003, "not exists method {} in fs {}(方法不存在)"),
+  FS_CAN_NOT_PROXY_TO(52002, "FS Can not proxy to:{0}(FS 不能代理到：{0})"),
+  NOT_EXISTS_METHOD(53003, "method does not exist(方法不存在)"),
   PARAMETER_CALLS(53003, "Unsupported parameter calls(不支持的参数调用)");
   /** 错误码 */
   private final int errorCode;

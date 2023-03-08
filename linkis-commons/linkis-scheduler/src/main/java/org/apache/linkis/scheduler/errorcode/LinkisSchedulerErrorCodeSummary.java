@@ -31,7 +31,7 @@ public enum LinkisSchedulerErrorCodeSummary implements LinkisErrorCode {
   NEED_SUPPORTED_GROUP(
       13000,
       "FIFOConsumerManager just support FIFO group, {0} is not FIFO group.(FIFOConsumerManager只支持FIFO类型的消费组，{0} 不是这类消费组.)"),
-  NODE_STATE_ERROR(20001, "{0} is in state {0}({0} 处于状态 {0}).");
+  NODE_STATE_ERROR(20001, "{0} is in state {1}({0} 处于状态 {1}).");
 
   /** (errorCode)错误码 */
   private final int errorCode;

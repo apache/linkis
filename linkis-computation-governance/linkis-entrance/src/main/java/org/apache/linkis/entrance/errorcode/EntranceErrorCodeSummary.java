@@ -64,7 +64,7 @@ public enum EntranceErrorCodeSummary implements LinkisErrorCode {
   SUBMITTING_QUERY_FAILED(30009, "Submitting the query failed(提交查询失败)!"),
   QUERY_STATUS_FAILED(50081, "Query from jobHistory status failed(从 jobHistory 状态查询失败)"),
   GET_QUERY_RESPONSE(50081, "Get query response incorrectly(获取查询响应结果不正确)"),
-  QUERY_TASKID_ERROR(50081, "Query task of taskId:{0} error(查询任务id：{}的任务出错)"),
+  QUERY_TASKID_ERROR(50081, "Query task of taskId:{0} error(查询任务id：{0}的任务出错)"),
   CORRECT_LIST_TYPR(
       50081,
       "Query from jobhistory with incorrect list type of taskId, the taskId is：{0} (从jobhistory 中查询的参数类型不正确)"),

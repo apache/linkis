@@ -8,8 +8,9 @@
 |linkis-engineconn-plugin-core |20000|Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)|CANNOT_DEFAULT_EF|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|EngineTypeLabel does not exist(EngineTypeLabel 不存在)|ETL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|UserCreatorLabel does not exist(UserCreatorLabel 不存在)|UCL_NOT_EXISTS|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |20001|The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})|DIST_IS_EMPTY|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |20001|Cannot find the home path of engineConn(找不到engineConn的home路径)|CANNOT_HOME_PATH_EC|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20001|The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{0})|DIST_IS_EMPTY|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20001|Could not find engineConn's home path, the path is:{0}(找不到 engineConn 的 home 路径，路径为：{0})|CANNOT_HOME_PATH_EC|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20001|Could not find the home path for engineconn dist at: {0}(找不到 engineconn dist 的 home 路径，路径为:{0})|CANNOT_HOME_PATH_DIST|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径|ENGIN_VERSION_NOT_FOUND|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|The dist of EngineConn is empty,engineConnType(EngineConn 的 dist 为空,engineConnType):{0}|DIST_IS_EMPTY|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在)|DIST_IRREGULAR_EXIST|EngineconnCoreErrorCodeSummary|

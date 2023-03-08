@@ -17,8 +17,8 @@
 
 package org.apache.linkis.ecm.scheduled;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.Utils;
-import org.apache.linkis.ecm.server.util.ThreadUtils;
 
 import org.springframework.stereotype.Component;
 
@@ -36,16 +36,20 @@ public class EcmClearTask {
 
   private Logger logger = LoggerFactory.getLogger(EcmClearTask.class);
 
+  public static final String shellPath = Configuration.getLinkisHome() + "/admin/";
+
   private class CleanExpiredThread implements Runnable {
     @Override
     public void run() {
       logger.info("Start to linkis-ec-clear shell");
       List<String> cmdlist = new ArrayList<>();
       cmdlist.add("sh");
-      cmdlist.add(ThreadUtils.shellPath + "linkis-ec-clear.sh");
-      logger.info("linkis-ec-clear  shell command {}", cmdlist);
-      String exec = ThreadUtils.run(cmdlist, "linkis-ec-clear.sh");
-      logger.info("shell log  {}", exec);
+      cmdlist.add(shellPath + "linkis-ec-clear.sh");
+      try {
+        Utils.exec(cmdlist.toArray(new String[0]), 3000L);
+      } catch (Exception e) {
+        logger.warn("Shell linkis-ec-clear.sh execution failed, msg:" + e.getMessage());
+      }
       logger.info("End to linkis-ec-clear shell");
     }
   }

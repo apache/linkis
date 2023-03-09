@@ -211,24 +211,23 @@ export default {
       this.load()
     },
     onAdd(){
-      this.$refs.editForm.formModel.resetFields()
+      this.$refs.errorCodeForm.formModel.resetFields()
       this.modalAddMode = 'add'
       this.modalShow = true
     },
     onTableEdit(row){
       if(row.elapseDay === -1) {
         row.permanentlyValid = true;
-        this.$refs.editForm.formModel.rule[5].hidden = true;
+        this.$refs.errorCodeForm.formModel.rule[5].hidden = true;
       }
-      this.$refs.editForm.formModel.setValue(row)
+      this.$refs.errorCodeForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
       this.modalShow = true
     },
     onTableDelete(row){
-
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.tokenName}),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {envName: row.tokenName}),
         onOk: ()=>{
           let params = {
             id: row.id

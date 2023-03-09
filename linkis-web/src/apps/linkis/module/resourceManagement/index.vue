@@ -648,7 +648,7 @@ export default {
         onOk: () => {
           const param = resourceId !== undefined ? { resourceId } : { }
           api.fetch('linkisManager/rm/resetResource', param, 'delete').then(() => {
-            this.$Message.success(this.$t('message.linkis.editedSuccess'));
+            this.$Message.success(this.$t('message.linkis.udf.success'));
             this.search()
           }).catch(() => {
           })

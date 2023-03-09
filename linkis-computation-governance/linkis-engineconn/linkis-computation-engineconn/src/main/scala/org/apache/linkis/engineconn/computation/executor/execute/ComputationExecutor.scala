@@ -26,6 +26,7 @@ import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConst
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.hook.ComputationExecutorHook
+import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.computation.executor.upstream.event.TaskStatusChangedForUpstreamMonitorEvent
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
@@ -360,6 +361,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   def clearTaskCache(taskId: String): Unit = {
     taskCache.invalidate(taskId)
+  }
+
+  override protected def onStatusChanged(fromStatus: NodeStatus, toStatus: NodeStatus): Unit = {
+    ComputationEngineConnMetrics.updateMetrics(fromStatus, toStatus)
+    super.onStatusChanged(fromStatus, toStatus)
   }
 
 }

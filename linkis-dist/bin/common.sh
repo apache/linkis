@@ -82,9 +82,9 @@ function echoSuccessMsg() {
 
 function isSuccess(){
 if [ $? -ne 0 ]; then
-    echoErrMsgAndExit $1
+    echoErrMsgAndExit "$1"
 else
-    echoSuccessMsg $1
+    echoSuccessMsg "$1"
 fi
 }
 
@@ -92,6 +92,6 @@ function isSuccessWithoutExit(){
 if [ $? -ne 0 ]; then
     echo -e "WARN failed to $1 , but installation will continue,some function may not work properly"
 else
-    echoSuccessMsg $1
+    echoSuccessMsg "$1"
 fi
 }

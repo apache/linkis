@@ -27,10 +27,14 @@ object RPCConfiguration {
   val BDP_RPC_BROADCAST_THREAD_SIZE: CommonVars[Integer] =
     CommonVars("wds.linkis.rpc.broadcast.thread.num", 25)
 
+  @deprecated
+  private val BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME: CommonVars[TimeType] =
+    CommonVars("wds.linkis.rpc.eureka.client.refresh.wait.time.max", new TimeType("30s"))
+
   val RPC_SERVICE_REFRESH_MAX_WAIT_TIME: CommonVars[TimeType] =
     CommonVars(
       "linkis.rpc.client.refresh.wait.time.max",
-      CommonVars("wds.linkis.rpc.eureka.client.refresh.wait.time.max", new TimeType("30s")).getValue
+      BDP_RPC_EUREKA_SERVICE_REFRESH_MAX_WAIT_TIME.getValue
     )
 
   val BDP_RPC_RECEIVER_ASYN_CONSUMER_THREAD_MAX: CommonVars[Int] =

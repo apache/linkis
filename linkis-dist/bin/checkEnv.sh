@@ -112,8 +112,10 @@ echo "<-----end to check used cmd---->"
 
 checkPythonAndJava
 
-SERVER_PORT=$EUREKA_PORT
-check_service_port
+if [ "$DISCOVERY" == "EUREKA" ]; then
+  SERVER_PORT=$EUREKA_PORT
+  check_service_port
+fi
 
 SERVER_PORT=$GATEWAY_PORT
 check_service_port

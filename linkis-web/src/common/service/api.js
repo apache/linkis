@@ -23,6 +23,7 @@ import util from '@/common/util';
 import axios from 'axios';
 import { Message } from 'iview';
 import cache from './apiCache';
+import i18n from '../../common/i18n'
 
 // what an array is used to store the cancel function and id for each request(什么一个数组用于存储每个请求的取消函数和标识)
 let pending = [];
@@ -161,7 +162,7 @@ const success = function (response) {
     } else if (util.isObject(response.data)) {
       data = response.data;
     } else {
-      throw new Error(linkis_errorMsgTip || '后台接口异常，请联系开发处理！');
+      throw new Error(linkis_errorMsgTip || i18n.t('message.common.exceptionTips'));
     }
     let res = getData(data);
     let code = res.codePath;
@@ -176,7 +177,7 @@ const success = function (response) {
         api.error[code](response);
         throw new Error('');
       } else {
-        throw new Error(message || linkis_errorMsgTip || '后台接口异常，请联系开发处理！');
+        throw new Error(message || linkis_errorMsgTip || i18n.t('message.common.exceptionTips'));
       }
     }
     if (result) {
@@ -202,8 +203,8 @@ const fail = function (error) {
   if (response && api.error[response.status]) {
     api.error[response.status].forEach((fn) => fn(response));
   } else {
-    _message = '后台接口异常，请联系开发处理！';
-    if (response && response.config) _message = (sessionStorage.getItem('linkis.errorMsgTip') || '').replace(/%s/g, response.config.url) || '后台接口异常，请联系开发处理！';
+    _message = i18n.t('message.common.exceptionTips');
+    if (response && response.config) _message = (sessionStorage.getItem('linkis.errorMsgTip') || '').replace(/%s/g, response.config.url) || i18n.t('message.common.exceptionTips');
     if (response && response.data) {
       let data;
       if (util.isString(response.data)) {

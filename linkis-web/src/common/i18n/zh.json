@@ -29,6 +29,7 @@
       "management": "管理台",
       "bbs": "论坛",
       "feedback": "反馈",
+      "exceptionTips": "后台接口异常，请联系开发处理！",
       "separator": {
         "comma": "逗号(,)",
         "tab": "tab键(\\t)",

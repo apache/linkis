@@ -84,6 +84,7 @@
           "common": "通用",
           "tenant": "租户标签",
           "inputTenant": "请输入租户标签",
+          "globalSettings": "全局设置",
           "resultSet": {
             "prefixText": "因为您的结果集较大，为了更好的体验，",
             "linkText": "点击查看结果集",

@@ -28,6 +28,7 @@
       "management": "Console",
       "feedback": "Feedback",
       "bbs": "BBS",
+      "exceptionTips": "Background interface exception, please contact development processing!",
       "separator": {
         "comma": "Comma(,)",
         "tab": "Tab(\\t)",

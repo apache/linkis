@@ -58,7 +58,7 @@
       <Button @click="handleTabsAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin">{{
         $t("message.linkis.addAppType")
       }}</Button>
-      <Button @click="handleEngineAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin" :disabled="currentTabName ==='全局设置'">{{
+      <Button @click="handleEngineAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin" :disabled="currentTabName === $t('message.linkis.globalSettings')">{{
         $t("message.linkis.addEngineType")
       }}</Button>
     </Tabs>

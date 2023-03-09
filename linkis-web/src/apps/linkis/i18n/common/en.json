@@ -84,6 +84,7 @@
       "common": "Common",
       "tenant": "Tenant",
       "inputTenant": "Please Input Tenant",
+      "globalSettings": "GlobalSettings",
       "resultSet": {
         "prefixText": "Because your result set is large, for a better experience, ",
         "linkText": "View result set",

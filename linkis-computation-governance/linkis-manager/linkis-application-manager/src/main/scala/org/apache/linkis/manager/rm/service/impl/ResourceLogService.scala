@@ -140,7 +140,8 @@ class ResourceLogService extends Logging {
       ticketId: String,
       changeType: String,
       resource: Resource,
-      status: NodeStatus = NodeStatus.Starting
+      status: NodeStatus = NodeStatus.Starting,
+      metrics: String = null
   ): Unit = if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue) Utils.tryAndWarn {
     val userCreatorEngineType: CombinedLabel =
       labelContainer.getCombinedUserCreatorEngineTypeLabel
@@ -186,6 +187,9 @@ class ResourceLogService extends Logging {
           ecResourceInfoRecord.setReleasedResource(resource.toJson)
         }
         ecResourceInfoRecord.setReleaseTime(new Date(System.currentTimeMillis))
+        if (null != metrics) {
+          ecResourceInfoRecord.setMetrics(metrics)
+        }
     }
     if (
         StringUtils.isBlank(ecResourceInfoRecord.getStatus) || !NodeStatus

@@ -45,11 +45,13 @@ import org.apache.linkis.engineconn.computation.executor.utlis.{
   ComputationEngineConstant,
   ComputationEngineUtils
 }
+import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
 import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
@@ -62,6 +64,7 @@ import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
   ResponseTaskYarnResource
 }
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.message.RequestProtocol
@@ -438,9 +441,16 @@ class TaskExecutionServiceImpl
             val extraInfoMap = new util.HashMap[String, Object]()
             extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
             extraInfoMap.put(
-              TaskConstant.TICKET_ID,
-              EngineConnServer.getEngineCreationContext.getTicketId
+              ECConstants.EC_TICKET_ID_KEY,
+              EngineConnObject.getEngineCreationContext.getTicketId
             )
+            val ecParams = EngineConnObject.getEngineCreationContext.getOptions
+            if (ecParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
+              extraInfoMap.put(
+                ECConstants.YARN_QUEUE_NAME_KEY,
+                ecParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)
+              )
+            }
             extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
             extraInfoMap.put(
               TaskConstant.ENGINE_CONN_SUBMIT_TIME,

@@ -61,6 +61,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
   public DefaultEngineConnPluginLoader() throws ErrorException {
     // Check store path (is necessary)
     String storePath = EngineConnPluginLoaderConf.ENGINE_PLUGIN_STORE_PATH().getValue();
+    LOG.info("DefaultEngineConnPluginLoader, storePath:" + storePath);
     if (StringUtils.isBlank(storePath)) {
       ExceptionHelper.dealErrorException(
           70061,
@@ -100,6 +101,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
       EngineConnPluginInfo enginePluginInfo) throws Exception {
     // Build save path
     String savePath = rootStorePath;
+    LOG.info("EngineConnPluginInstance, savePath:" + savePath);
     EngineTypeLabel typeLabel = enginePluginInfo.typeLabel();
     if (!savePath.endsWith(String.valueOf(IOUtils.DIR_SEPARATOR))) {
       savePath += IOUtils.DIR_SEPARATOR;

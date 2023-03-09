@@ -26,7 +26,11 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, Ta
 
 import java.io.InputStream
 
+import org.slf4j.LoggerFactory
+
 object ResultSetReader {
+
+  protected lazy implicit val logger = LoggerFactory.getLogger(getClass)
 
   def getResultSetReader[K <: MetaData, V <: Record](
       resultSet: ResultSet[K, V],
@@ -84,6 +88,7 @@ object ResultSetReader {
       }
       val fs = FSFactory.getFs(resPath)
       fs.init(null)
+      logger.info(s"The fs address in getTableResultReader is ${resPath}")
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], fs.read(resPath))
     }
   }

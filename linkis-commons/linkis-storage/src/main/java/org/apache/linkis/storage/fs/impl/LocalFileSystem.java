@@ -251,6 +251,7 @@ public class LocalFileSystem extends FileSystem {
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
+    LOG.info("The path address in listPathWithError is:" + path.getPath());
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       String message = "";
@@ -327,7 +328,7 @@ public class LocalFileSystem extends FileSystem {
     try {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
     } catch (NoSuchFileException e) {
-      LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
+      LOG.warn("File or folder does not exist or file name is garbled,path(文件或者文件夹不存在或者文件名乱码)", e);
       throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
     }
 
@@ -338,6 +339,7 @@ public class LocalFileSystem extends FileSystem {
     fsPath.setPermissions(attr.permissions());
     fsPath.setOwner(attr.owner().getName());
     fsPath.setGroup(attr.group().getName());
+    LOG.info("The obtained address is:" + fsPath.getPath());
     return fsPath;
   }
 

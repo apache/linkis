@@ -45,38 +45,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   @PostConstruct
   private def init(): Unit = {
     EngineConnMonitor.addEngineExecutorStatusMonitor(
-      codeExecTaskExecutorManager.getAllInstanceToExecutorCache(),
-      failedEngineServiceInstance => {
-        val taskToExecutorCache = codeExecTaskExecutorManager.getAllExecTaskToExecutorCache()
-        val allExecutor = taskToExecutorCache.values().iterator()
-        while (allExecutor.hasNext) {
-          val executor = allExecutor.next()
-          if (
-              executor.getEngineConnExecutor.getServiceInstance.equals(failedEngineServiceInstance)
-          ) {
-            val execTask = executor.getExecTask
-            Utils.tryAndError {
-              logger.warn(
-                s"Will kill task ${execTask.getIDInfo()} because the engine ${executor.getEngineConnExecutor.getServiceInstance.toString} quited unexpectedly."
-              )
-              val errLog = LogUtils.generateERROR(
-                s"Your job : ${execTask.getIDInfo()} was failed because the engine quitted unexpectedly(任务${execTask
-                  .getIDInfo()}失败，" +
-                  s"原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
-              )
-              val logEvent = TaskLogEvent(execTask, errLog)
-              execTask.getPhysicalContext.pushLog(logEvent)
-              val errorResponseEvent = TaskErrorResponseEvent(
-                execTask,
-                "task failed，Engine quitted unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
-              )
-              execTask.getPhysicalContext.broadcastSyncEvent(errorResponseEvent)
-              val statusEvent = TaskStatusEvent(execTask, ExecutionNodeStatus.Failed)
-              execTask.getPhysicalContext.broadcastSyncEvent(statusEvent)
-            }
-          }
-        }
-      }
+      codeExecTaskExecutorManager.getAllInstanceToExecutorCache()
     )
   }
 

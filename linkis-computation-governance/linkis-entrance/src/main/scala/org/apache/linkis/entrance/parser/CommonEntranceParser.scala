@@ -54,7 +54,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   /**
    * parse params to be a task params json data from frontend
    */
-  override def parseToTask(params: util.Map[String, Any]): JobRequest = {
+  override def parseToTask(params: util.Map[String, AnyRef]): JobRequest = {
     if (!params.containsKey(TaskConstant.EXECUTION_CONTENT)) {
       return parseToOldTask(params)
     }
@@ -73,13 +73,13 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     // 2. parse params
     val executionContent = params
       .getOrDefault(TaskConstant.EXECUTION_CONTENT, new util.HashMap[String, String]())
-      .asInstanceOf[util.Map[String, Object]]
+      .asInstanceOf[util.Map[String, AnyRef]]
     val configMap = params
-      .getOrDefault(TaskConstant.PARAMS, new util.HashMap[String, Object]())
-      .asInstanceOf[util.Map[String, Object]]
+      .getOrDefault(TaskConstant.PARAMS, new util.HashMap[String, AnyRef]())
+      .asInstanceOf[util.Map[String, AnyRef]]
     val labelMap = params
-      .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]())
-      .asInstanceOf[util.Map[String, Object]]
+      .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, AnyRef]())
+      .asInstanceOf[util.Map[String, AnyRef]]
     val source = params
       .getOrDefault(TaskConstant.SOURCE, new util.HashMap[String, String]())
       .asInstanceOf[util.Map[String, String]]
@@ -122,11 +122,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobRequest.setSource(source)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
     // Entry indicator: task submission time
-    jobRequest.setMetrics(new util.HashMap[String, Object]())
-    jobRequest.getMetrics.put(
-      TaskConstant.ENTRANCEJOB_SUBMIT_TIME,
-      new Date(System.currentTimeMillis)
-    )
+    jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
+    jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobRequest.setParams(configMap)
     jobRequest
   }
@@ -190,7 +187,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     }
   }
 
-  private def parseToOldTask(params: util.Map[String, Any]): JobRequest = {
+  private def parseToOldTask(params: util.Map[String, AnyRef]): JobRequest = {
 
     val jobReq = new JobRequest
     jobReq.setCreatedTime(new Date(System.currentTimeMillis))
@@ -210,7 +207,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     var executionCode = params.get(TaskConstant.EXECUTIONCODE).asInstanceOf[String]
     val _params = params.get(TaskConstant.PARAMS)
     _params match {
-      case mapParams: java.util.Map[String, Object] => jobReq.setParams(mapParams)
+      case mapParams: java.util.Map[String, AnyRef] => jobReq.setParams(mapParams)
       case _ =>
     }
     val formatCode = params.get(TaskConstant.FORMATCODE).asInstanceOf[Boolean]
@@ -238,8 +235,9 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     var runType: String = null
     if (StringUtils.isNotEmpty(executionCode)) {
       runType = params.get(TaskConstant.RUNTYPE).asInstanceOf[String]
-      if (StringUtils.isEmpty(runType))
+      if (StringUtils.isEmpty(runType)) {
         runType = EntranceConfiguration.DEFAULT_RUN_TYPE.getHotValue()
+      }
       // If formatCode is not empty, we need to format it(如果formatCode 不为空的话，我们需要将其进行格式化)
       if (formatCode) executionCode = format(executionCode)
       jobReq.setExecutionCode(executionCode)
@@ -256,8 +254,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     labelList.add(userCreatorLabel)
     if (jobReq.getParams != null) {
       val labelMap = params
-        .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, String]())
-        .asInstanceOf[util.Map[String, Object]]
+        .getOrDefault(TaskConstant.LABELS, new util.HashMap[String, AnyRef]())
+        .asInstanceOf[util.Map[String, AnyRef]]
       if (null != labelMap && !labelMap.isEmpty) {
         val list: util.List[Label[_]] =
           labelBuilderFactory.getLabels(labelMap)
@@ -270,16 +268,16 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobReq.setStatus(SchedulerEventState.Inited.toString)
     // Package labels
     jobReq.setLabels(labelList)
-    jobReq.setMetrics(new util.HashMap[String, Object]())
-    jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
+    jobReq.setMetrics(new util.HashMap[String, AnyRef]())
+    jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 
-  private def buildLabel(labelMap: util.Map[String, Object]): util.Map[String, Label[_]] = {
+  private def buildLabel(labelMap: util.Map[String, AnyRef]): util.Map[String, Label[_]] = {
     val labelKeyValueMap = new util.HashMap[String, Label[_]]()
     if (null != labelMap && !labelMap.isEmpty) {
       val list: util.List[Label[_]] =
-        labelBuilderFactory.getLabels(labelMap.asInstanceOf[util.Map[String, AnyRef]])
+        labelBuilderFactory.getLabels(labelMap)
       if (null != list) {
         list.asScala.filter(_ != null).foreach { label =>
           labelKeyValueMap.put(label.getLabelKey, label)

@@ -46,4 +46,7 @@ public interface ECResourceRecordMapper {
       @Param("endDate") Date endDate,
       @Param("startDate") Date startDate,
       @Param("engineType") String engineType);
+
+  List<ECResourceInfoRecord> getECResourceInfoList(
+      @Param("instances") List<String> instances, @Param("engineTypes") List<String> engineTypes);
 }

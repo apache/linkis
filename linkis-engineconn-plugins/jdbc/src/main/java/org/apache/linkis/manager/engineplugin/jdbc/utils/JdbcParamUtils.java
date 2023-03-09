@@ -17,6 +17,9 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.utils;
 
+import org.apache.linkis.common.conf.CommonVars;
+import org.apache.linkis.common.conf.CommonVars$;
+import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.JDBCPropertiesParser;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
@@ -43,6 +46,9 @@ public class JdbcParamUtils {
   private static final String APPEND_PARAMS =
       "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false";
 
+  public static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
+      CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
+
   private static final char AND_SYMBOL = '&';
 
   private static final String QUOTATION_MARKS = "\"";
@@ -64,28 +70,23 @@ public class JdbcParamUtils {
   }
 
   public static String filterJdbcUrl(String url) {
-    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
-    if (!url.startsWith(JDBC_MYSQL_PROTOCOL) && !url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
+
+    LOG.info("the filter source url is: {}", url);
+
+    if (StringUtils.isBlank(url)) {
       return url;
     }
-    if (url.contains(SENSITIVE_PARAM)) {
-      int index = url.indexOf(SENSITIVE_PARAM);
-      String tmp = SENSITIVE_PARAM;
-      if (url.charAt(index - 1) == AND_SYMBOL) {
-        tmp = AND_SYMBOL + tmp;
-      } else if (url.charAt(index + 1) == AND_SYMBOL) {
-        tmp = tmp + AND_SYMBOL;
-      }
-      LOG.warn("Sensitive param: {} in jdbc url is filtered.", tmp);
-      url = url.replace(tmp, "");
+    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
+    if (!url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
+      return url;
     }
-    if (url.endsWith(String.valueOf(QUESTION_MARK))) {
-      url = url + APPEND_PARAMS;
-    } else if (url.lastIndexOf(QUESTION_MARK) < 0) {
-      url = url + QUESTION_MARK + APPEND_PARAMS;
-    } else {
-      url = url + AND_SYMBOL + APPEND_PARAMS;
-    }
+
+    // security check
+    url = SecurityUtils.checkJdbcSecurity(url);
+
+    // append force params
+    url = SecurityUtils.appendMysqlForceParams(url);
+
     LOG.info("The filtered jdbc url is: {}", url);
     return url;
   }

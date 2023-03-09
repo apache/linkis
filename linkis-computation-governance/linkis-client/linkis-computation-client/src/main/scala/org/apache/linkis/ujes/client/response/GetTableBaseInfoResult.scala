@@ -19,7 +19,6 @@ package org.apache.linkis.ujes.client.request
 
 import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 import org.apache.linkis.httpclient.dws.response.DWSResult
-import org.apache.linkis.ujes.client.request.UserAction
 
 import java.util
 
@@ -27,5 +26,5 @@ import scala.beans.BeanProperty
 
 @DWSHttpMessageResult("/api/rest_j/v\\d+/datasource/getTableBaseInfo")
 class GetTableBaseInfoResult extends DWSResult with UserAction {
-  @BeanProperty var tableBaseInfo: util.Map[String, Object] = _
+  @BeanProperty var tableBaseInfo: util.Map[String, AnyRef] = _
 }

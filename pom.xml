@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Linkis Project Parent POM</name>
   <description>Linkis helps easily connect to various back-end computation/storage engines</description>
-  <url>https://github.com/apache/incubator-linkis</url>
+  <url>https://github.com/apache/linkis</url>
 
   <organization>
     <name>The Apache Software Foundation</name>
@@ -46,9 +46,9 @@
   </licenses>
   <developers>
     <developer>
-      <id>Apache Linkis(incubating)</id>
+      <id>Apache Linkis</id>
       <name>The Linkis Project Contributors</name>
-      <email>dev-subscribe@linkis.incubator.apache.org</email>
+      <email>dev-subscribe@linkis.apache.org</email>
       <url>http://linkis.apache.org/</url>
     </developer>
   </developers>
@@ -56,25 +56,20 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>dev-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>dev-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>dev@linkis.incubator.apache.org</post>
+      <subscribe>dev-subscribe@linkis.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@linkis.apache.org</unsubscribe>
+      <post>dev@linkis.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>commits-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>commits-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>commits@linkis.incubator.apache.org</post>
-    </mailingList>
-    <mailingList>
-      <name>Issues List</name>
-      <subscribe>issues-subscribe@linkis.incubator.apache.org</subscribe>
-      <unsubscribe>issues-unsubscribe@linkis.incubator.apache.org</unsubscribe>
-      <post>issues@linkis.incubator.apache.org</post>
+      <subscribe>commits-subscribe@linkis.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@linkis.apache.org</unsubscribe>
+      <post>commits@linkis.apache.org</post>
     </mailingList>
   </mailingLists>
   <modules>
     <module>linkis-commons</module>
+    <module>linkis-hadoop-hdfs-client-shade</module>
     <module>linkis-spring-cloud-services</module>
     <module>linkis-orchestrator</module>
     <module>linkis-public-enhancements</module>
@@ -84,15 +79,15 @@
     <module>linkis-dist</module>
   </modules>
   <scm>
-    <connection>scm:git:https://github.com/apache/incubator-linkis.git</connection>
-    <developerConnection>scm:git:https://github.com/apache/incubator-linkis.git</developerConnection>
+    <connection>scm:git:https://github.com/apache/linkis.git</connection>
+    <developerConnection>scm:git:https://github.com/apache/linkis.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/apache/incubator-linkis</url>
+    <url>https://github.com/apache/linkis</url>
   </scm>
 
   <issueManagement>
     <system>Github Issues</system>
-    <url>https://github.com/apache/linkis-incubator/issues</url>
+    <url>https://github.com/apache/linkis/issues</url>
   </issueManagement>
 
   <distributionManagement>
@@ -108,14 +103,17 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.3.1</revision>
+    <revision>1.3.2-SNAPSHOT</revision>
     <jedis.version>2.9.2</jedis.version>
+    <spark.version>2.4.3</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
+    <hadoop-hdfs-client.artifact>hadoop-hdfs</hadoop-hdfs-client.artifact>
+    <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <zookeeper.version>3.5.9</zookeeper.version>
     <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
     <curator.version>2.7.1</curator.version>
     <guava.version>30.0-jre</guava.version>
-    <netty.version>4.1.78.Final</netty.version>
+    <netty.version>4.1.86.Final</netty.version>
 
     <!-- json -->
     <gson.version>2.8.9</gson.version>
@@ -131,7 +129,7 @@
     <httpmime.version>${httpclient.version}</httpmime.version>
     <knife4j.version>2.0.9</knife4j.version>
     <springfox.version>2.10.5</springfox.version>
-    <xstream.core.version>1.4.19</xstream.core.version>
+    <xstream.core.version>1.4.20</xstream.core.version>
     <reflections.version>0.9.12</reflections.version>
     <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
@@ -140,6 +138,7 @@
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
+    <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
     <commons-math3.version>3.6.1</commons-math3.version>
     <commons-io.version>2.11.0</commons-io.version>
@@ -655,8 +654,13 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
+        <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
         <version>${hadoop.version}</version>
         <exclusions>
           <exclusion>
@@ -1174,13 +1178,13 @@
               <exclude>**/*.log</exclude>
               <exclude>CONTRIBUTING.md</exclude>
               <exclude>CONTRIBUTING_CN.md</exclude>
-              <exclude>DISCLAIMER</exclude>
-              <exclude>DISCLAIMER</exclude>
               <exclude>README.md</exclude>
               <exclude>**/META-INF/**</exclude>
               <exclude>.github/**</exclude>
               <exclude>compiler/**</exclude>
               <exclude>**/generated/**</exclude>
+              <exclude>**/scritpis-test.sql</exclude>
+
             </excludes>
           </configuration>
           <executions>
@@ -1349,6 +1353,32 @@
   </build>
 
   <profiles>
+    <!-- hadoop version: mvn validate -Phadoop-3.3 ,when used with spark2.x ,please add -Pspark-2.4-hadoop-3.3 together, More details please check SPARK-23534   -->
+    <profile>
+      <id>hadoop-3.3</id>
+      <properties>
+        <hadoop.version>3.3.1</hadoop.version>
+        <curator.version>4.2.0</curator.version>
+        <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
+      </properties>
+    </profile>
+    <!-- hadoop version: mvn validate -Phadoop-2.7  -->
+    <profile>
+      <id>hadoop-2.7</id>
+      <properties>
+        <hadoop.version>2.7.2</hadoop.version>
+        <curator.version>2.7.1</curator.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>spark-3.2</id>
+      <properties>
+        <json4s.version>3.7.0-M11</json4s.version>
+        <spark.version>3.2.1</spark.version>
+        <scala.version>2.12.15</scala.version>
+        <scala.binary.version>2.12</scala.binary.version>
+      </properties>
+    </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->
     <profile>
       <id>jacoco</id>

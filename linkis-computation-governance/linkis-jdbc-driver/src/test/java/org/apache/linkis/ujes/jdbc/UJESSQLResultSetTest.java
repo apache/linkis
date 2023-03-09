@@ -19,7 +19,12 @@ package org.apache.linkis.ujes.jdbc;
 
 import java.sql.SQLException;
 
-import org.junit.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * Notice:
@@ -33,7 +38,7 @@ public class UJESSQLResultSetTest {
   private UJESSQLResultSet resultSet;
   private UJESSQLResultSetMetaData metaData;
 
-  @BeforeClass
+  @BeforeAll
   public static void getConnection() {
     try {
       conn = CreateConnection.getConnection();
@@ -41,75 +46,95 @@ public class UJESSQLResultSetTest {
       e.printStackTrace();
     } catch (SQLException e) {
       e.printStackTrace();
+    } catch (Exception e) {
+      conn = null;
     }
   }
 
-  @AfterClass
+  @AfterAll
   public static void closeConnection() {
-    conn.close();
+    if (conn != null) {
+      conn.close();
+    }
   }
 
-  @Before
+  @BeforeEach
   public void getResultSet() {
-    preStatement = conn.prepareStatement("show tables");
-    preStatement.execute();
-    resultSet = preStatement.getResultSet();
+    if (conn != null) {
+      preStatement = conn.prepareStatement("show tables");
+      preStatement.execute();
+      resultSet = preStatement.getResultSet();
+    }
   }
 
-  @After
+  @AfterEach
   public void closeStatement() {
-    preStatement.close();
+    if (preStatement != null) {
+      preStatement.close();
+    }
   }
 
   @Test
   public void getObject() {
-    while (resultSet.next()) {
-      metaData = resultSet.getMetaData();
-      int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
-      int columnTypeFromMetaData = metaData.getColumnType(1);
-      Assert.assertTrue(columnTypeFromVal == columnTypeFromMetaData);
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        int columnTypeFromVal = UJESSQLTypeParser.parserFromVal(resultSet.getObject(1));
+        int columnTypeFromMetaData = metaData.getColumnType(1);
+        Assertions.assertEquals(columnTypeFromVal, columnTypeFromMetaData);
+      }
     }
   }
 
   @Test
   public void first() {
-    resultSet.next();
-    Object oldColumnVal = resultSet.getObject(1);
-    while (resultSet.next()) {} // move to the end
-    Assert.assertTrue(resultSet.first());
-    Object newColumnVal = resultSet.getObject(1);
-    Assert.assertTrue(oldColumnVal == newColumnVal);
+    if (conn != null) {
+      resultSet.next();
+      Object oldColumnVal = resultSet.getObject(1);
+      while (resultSet.next()) {} // move to the end
+      Assertions.assertTrue(resultSet.first());
+      Object newColumnVal = resultSet.getObject(1);
+      Assertions.assertSame(oldColumnVal, newColumnVal);
+    }
   }
 
   @Test
   public void afterLast() {
-    resultSet.next();
-    resultSet.afterLast();
-    Assert.assertTrue(resultSet.isAfterLast());
+    if (conn != null) {
+      resultSet.next();
+      resultSet.afterLast();
+      Assertions.assertTrue(resultSet.isAfterLast());
+    }
   }
 
   @Test
   public void beforeFirst() {
-    resultSet.next();
-    resultSet.beforeFirst();
-    Assert.assertTrue(resultSet.isBeforeFirst());
+    if (conn != null) {
+      resultSet.next();
+      resultSet.beforeFirst();
+      Assertions.assertTrue(resultSet.isBeforeFirst());
+    }
   }
 
   @Test
   public void getMetaData() {
-    resultSet.next();
-    Assert.assertTrue(resultSet.getMetaData() != null);
+    if (conn != null) {
+      resultSet.next();
+      Assertions.assertNotNull(resultSet.getMetaData());
+    }
   }
 
   @Test
   public void next() {
-    while (resultSet.next()) {
-      metaData = resultSet.getMetaData();
-      for (int i = 1; i <= metaData.getColumnCount(); i++) {
-        System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
+    if (conn != null) {
+      while (resultSet.next()) {
+        metaData = resultSet.getMetaData();
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+          System.out.print(metaData.getColumnName(i) + ":" + resultSet.getObject(i) + "    ");
+        }
+        System.out.println();
       }
-      System.out.println();
+      Assertions.assertTrue(resultSet.isAfterLast());
     }
-    Assert.assertTrue(resultSet.isAfterLast());
   }
 }

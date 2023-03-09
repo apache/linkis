@@ -18,6 +18,7 @@
 package org.apache.linkis.entrance.persistence;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
 import org.apache.linkis.entrance.exception.EntranceIllegalParamException;
@@ -46,6 +47,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,16 +60,13 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
   private static final Logger logger = LoggerFactory.getLogger(QueryPersistenceEngine.class);
   private static final int MAX_DESC_LEN = GovernanceCommonConf.ERROR_CODE_DESC_LEN();
 
-  private static final int RETRY_NUMBER =
-      EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue();
-
   public QueryPersistenceEngine() {
     /*
        Get the corresponding sender through datawork-linkis-publicservice(通过datawork-linkis-publicservice 拿到对应的sender)
     */
     sender =
         Sender.getSender(
-            EntranceConfiguration$.MODULE$.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME().getValue());
+            EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
   }
 
   private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)
@@ -75,7 +74,8 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     JobRespProtocol jobRespProtocol = null;
     int retryTimes = 0;
     boolean retry = true;
-    while (retry && retryTimes < RETRY_NUMBER) {
+    while (retry
+        && retryTimes < EntranceConfiguration.JOBINFO_UPDATE_RETRY_MAX_TIME().getHotValue()) {
       try {
         retryTimes++;
         jobRespProtocol = (JobRespProtocol) sender.ask(jobReq);
@@ -146,7 +146,16 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
       throw new EntranceIllegalParamException(
           JOBREQUEST_NOT_NULL.getErrorCode(), JOBREQUEST_NOT_NULL.getErrorDesc());
     }
+    if (logger.isDebugEnabled()) {
+      try {
+        logger.debug("jobReq:" + JsonUtils.jackson().writeValueAsString(jobReq));
+      } catch (JsonProcessingException e) {
+        logger.debug("convert jobReq to string with error:" + e.getMessage());
+      }
+    }
+
     JobReqInsert jobReqInsert = new JobReqInsert(jobReq);
+
     JobRespProtocol jobRespProtocol = sendToJobHistoryAndRetry(jobReqInsert, "Insert job");
     if (null != jobRespProtocol) {
       Map<String, Object> data = jobRespProtocol.getData();

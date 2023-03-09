@@ -72,16 +72,18 @@ object ExportData extends Logging {
     val sheetName = LoadData.getMapValue[String](dest, "sheetName", "Sheet1")
     val fieldDelimiter = LoadData.getMapValue[String](dest, "fieldDelimiter", ",")
     val nullValue = LoadData.getMapValue[String](dest, "nullValue", "SHUFFLEOFF")
+    val encoding = LoadData.getMapValue[String](dest, "encoding", "uft-8")
 
+    var options = Map(
+      "fieldDelimiter" -> fieldDelimiter,
+      "exportNullValue" -> nullValue,
+      "encoding" -> encoding
+    )
     if (isCsv) {
-      CsvRelation.saveDFToCsv(
-        spark,
-        df,
-        path,
-        hasHeader,
-        isOverwrite,
-        option = Map("fieldDelimiter" -> fieldDelimiter, "exportNullValue" -> nullValue)
+      logger.info(
+        s"Try to saveDFToCsv with path:${path},hasHeader:${hasHeader},isOverwrite:${isOverwrite},options:${options}"
       )
+      CsvRelation.saveDFToCsv(spark, df, path, hasHeader, isOverwrite, options)
     } else {
       df.write
         .format("com.webank.wedatasphere.spark.excel")

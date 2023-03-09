@@ -86,7 +86,7 @@ case class RootTaskResponseEvent(execTask: ExecTask, taskResponse: CompletedTask
 
 case class KillRootExecTaskEvent(execTask: ExecTask)
     extends TaskInfoEvent
-    with OrchestratorAsyncEvent
+    with OrchestratorSyncEvent
 
 case class TaskReheaterEvent(execTask: ExecTask) extends TaskInfoEvent with OrchestratorAsyncEvent
 
@@ -95,7 +95,7 @@ case class TaskRunningInfoEvent(
     progress: Float,
     progressInfo: Array[JobProgressInfo],
     resourceMap: util.HashMap[String, ResourceWithStatus],
-    infoMap: util.HashMap[String, Object]
+    infoMap: util.HashMap[String, AnyRef]
 ) extends TaskInfoEvent
     with OrchestratorAsyncEvent {
 

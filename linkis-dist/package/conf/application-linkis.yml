@@ -15,11 +15,17 @@
 
 eureka:
   instance:
+    # prefer-ip-address: true
+    # instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+    lease-renewal-interval-in-seconds: 4
+    lease-expiration-duration-in-seconds: 12
     metadata-map:
       prometheus.path: ${prometheus.path:${prometheus.endpoint}}
+      linkis.app.version: ${linkis.app.version}
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:20303/eureka/
+    registry-fetch-interval-seconds: 8
 management:
   endpoints:
     web:
@@ -35,6 +41,12 @@ pagehelper:
   support-methods-arguments: true
   params: countSql
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      file-size-threshold: 50MB
 #ribbon:
 #  ReadTimeout: 10000
 #  ConnectTimeout: 10000

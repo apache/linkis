@@ -15,6 +15,7 @@
 .scala_dependencies
 .settings
 .classpath
+.flattened-pom.xml
 
 # For SBT
 .jvmopts
@@ -28,7 +29,7 @@ dist/
 out/
 target/
 .flattened-pom.xml
-
+**/dependency-reduced-pom.xml
 # log folder
 *.log
 logs/

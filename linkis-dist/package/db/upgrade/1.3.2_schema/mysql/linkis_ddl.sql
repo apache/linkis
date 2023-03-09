@@ -203,3 +203,19 @@ ALTER TABLE `linkis_cg_user_ip_config`
 ALTER TABLE `linkis_cg_tenant_label_config`
         DROP INDEX IF EXISTS `user_creator`,
         ADD  UNIQUE KEY `uniq_user_creator` (`user`,`creator`);
+
+
+
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_description` varchar(200) DEFAULT NULL COMMENT 'english description';
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_name` varchar(100) DEFAULT NULL COMMENT 'english name';
+ALTER TABLE `linkis_ps_configuration_config_key` ADD COLUMN `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName';
+
+
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `description_en` varchar(255) DEFAULT NULL COMMENT 'english description';
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `option_en` varchar(32) DEFAULT NULL COMMENT 'english option';
+ALTER TABLE `linkis_ps_dm_datasource_type` ADD COLUMN `classifier_en` varchar(32) DEFAULT NULL COMMENT 'english classifier';
+
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `name_en` varchar(32) DEFAULT NULL COMMENT 'english name';
+ALTER TABLE `linkis_ps_dm_datasource_type_key` ADD COLUMN `description_en` varchar(200) DEFAULT NULL COMMENT 'english description';
+
+

@@ -25,8 +25,10 @@ import org.apache.linkis.common.exception.{
 }
 
 import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.SystemUtils
 
 import java.io.{BufferedReader, InputStreamReader}
+import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
@@ -55,6 +57,12 @@ object Utils extends Logging {
         logger.error("Fatal error, system exit...", e)
         System.exit(-1)
         throw e
+      case exp
+          if (null != exp.getCause && (exp.getCause.isInstanceOf[FatalException] || exp.getCause
+            .isInstanceOf[VirtualMachineError])) =>
+        logger.error("Caused by fatal error, system exit...", exp)
+        System.exit(-1)
+        throw exp
       case er: Error =>
         logger.error("Throw error", er)
         throw er
@@ -200,7 +208,7 @@ object Utils extends Logging {
   def getLocalHostname: String = InetAddress.getLocalHost.getHostAddress
 
   def getComputerName: String =
-    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(t => sys.env("COMPUTERNAME"))
+    Utils.tryCatch(InetAddress.getLocalHost.getCanonicalHostName)(_ => SystemUtils.getHostName)
 
   /**
    * Checks if event has occurred during some time period. This performs an exponential backoff to
@@ -354,5 +362,25 @@ object Utils extends Logging {
   }
 
   def getJvmUser: String = System.getProperty("user.name")
+
+  // Note: may fail in some JVM implementations
+  def getProcessId(): String = {
+    // therefore fallback has to be provided
+    // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
+    val jvmName = ManagementFactory.getRuntimeMXBean.getName
+    val index = jvmName.indexOf('@')
+    // part before '@' empty (index = 0) / '@' not found (index = -1)
+    if (index < 1) {
+      null
+    }
+    Utils.tryCatch {
+      val getpid = jvmName.substring(0, index)
+      logger.info(s"get java process Id:$getpid")
+      getpid
+    } { t =>
+      logger.info(s"Failed to get process Id with error", t.getMessage)
+      null
+    }
+  }
 
 }

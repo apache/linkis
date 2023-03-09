@@ -78,9 +78,9 @@ class ReadCacheConsumer(
                   INVALID_ENGINETYPE_NULL.getErrorDesc
                 )
               }
-              val readCacheBefore = TaskUtils
+              val readCacheBefore: Long = TaskUtils
                 .getRuntimeMap(job.getParams)
-                .getOrDefault(TaskConstant.READ_CACHE_BEFORE, 300L)
+                .getOrDefault(TaskConstant.READ_CACHE_BEFORE, 300L: java.lang.Long)
                 .asInstanceOf[Long]
               val cacheResult = JobHistoryHelper.getCache(
                 jobRequest.getExecutionCode,
@@ -109,7 +109,7 @@ class ReadCacheConsumer(
 //                  persistenceManager.onResultSizeCreated(job, resultSets.size())
                 }
                 val runtime = TaskUtils.getRuntimeMap(job.getParams)
-                runtime.put(TaskConstant.CACHE, false)
+                runtime.put(TaskConstant.CACHE, java.lang.Boolean.FALSE)
                 TaskUtils.addRuntimeMap(job.getParams, runtime)
                 job.transitionCompleted(SuccessExecuteResponse(), "Result found in cache")
               } else {
@@ -141,7 +141,7 @@ class ReadCacheConsumer(
 
   private def submitToExecute(job: EntranceJob): Unit = {
     val runtime = TaskUtils.getRuntimeMap(job.getParams)
-    runtime.put(TaskConstant.READ_FROM_CACHE, false)
+    runtime.put(TaskConstant.READ_FROM_CACHE, java.lang.Boolean.FALSE)
     TaskUtils.addRuntimeMap(job.getParams, runtime)
     val groupName = schedulerContext.getOrCreateGroupFactory.getOrCreateGroup(job).getGroupName
     val consumer = schedulerContext.getOrCreateConsumerManager.getOrCreateConsumer(groupName)

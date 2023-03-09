@@ -126,7 +126,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       if (isEmpty) return ""
       new String(buffer.toArray, Dolphin.CHAR_SET)
     } else {
-      logger.info(s"storePath:${storePath.getPath}")
+      logger.info(s"storePath:${storePath}")
       storePath.getSchemaPath
     }
   }

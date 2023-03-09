@@ -68,6 +68,7 @@ object ResultSetReader {
 
   def getTableResultReader(res: String): ResultSetReader[TableMetaData, TableRecord] = {
     val rsFactory = ResultSetFactory.getInstance
+    logger.info(s"getTableResultReader, file path:${res}")
     if (rsFactory.isResultSet(res)) {
       val resultSet = rsFactory.getResultSet(res)
       if (ResultSetFactory.TABLE_TYPE != resultSet.resultSetType()) {
@@ -88,7 +89,6 @@ object ResultSetReader {
       }
       val fs = FSFactory.getFs(resPath)
       fs.init(null)
-      logger.info(s"The fs address in getTableResultReader is ${resPath}")
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], fs.read(resPath))
     }
   }

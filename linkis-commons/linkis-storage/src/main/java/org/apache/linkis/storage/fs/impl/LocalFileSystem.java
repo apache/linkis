@@ -75,12 +75,14 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public long getTotalSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("getTotalSpace, path:" + path);
     return new File(path).getTotalSpace();
   }
 
   @Override
   public long getFreeSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("getFreeSpace, path:" + path);
     return new File(path).getFreeSpace();
   }
 
@@ -117,6 +119,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setOwner(FsPath dest, String user) throws IOException {
+    LOG.info("setOwner, path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setOwner skip");
       return true;
@@ -133,6 +136,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
+    LOG.info("setGroup, path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;
@@ -155,6 +159,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean mkdirs(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("mkdirs, path:" + path);
     File file = new File(path);
     // Create parent directories one by one and set their permissions to rwxrwxrwx.
     Stack<File> dirsToMake = new Stack<File>();
@@ -182,6 +187,7 @@ public class LocalFileSystem extends FileSystem {
   }
 
   public boolean canMkdir(FsPath destParentDir) throws IOException {
+    LOG.info("canMkdir, path:" + destParentDir.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.debug("io not proxy, not check owner, just check if have write permission ");
       return this.canWrite(destParentDir);
@@ -203,6 +209,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean copy(String origin, String dest) throws IOException {
     File file = new File(dest);
+    LOG.info("copy, path:" + dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
     }
@@ -225,11 +232,13 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setPermission(FsPath dest, String permission) throws IOException {
+    LOG.info("setPermission, dest path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setPermission as parent.");
       try {
         PosixFileAttributes attr =
             Files.readAttributes(Paths.get(dest.getParent().getPath()), PosixFileAttributes.class);
+        LOG.info("setPermission, dest.getParent path:" + dest.getParent().getPath());
         LOG.debug("parent permissions: attr: " + attr);
         Files.setPosixFilePermissions(Paths.get(dest.getPath()), attr.permissions());
 
@@ -251,7 +260,7 @@ public class LocalFileSystem extends FileSystem {
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
-    LOG.info("The path address in listPathWithError is:" + path.getPath());
+    LOG.info("listPathWithError, path:" + path.getPath());
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       String message = "";
@@ -323,12 +332,12 @@ public class LocalFileSystem extends FileSystem {
     } else {
       fsPath = new FsPath(dest);
     }
-
+    LOG.info("LocalFileSytem class, function get, path:" + fsPath.getPath());
     PosixFileAttributes attr = null;
     try {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
     } catch (NoSuchFileException e) {
-      LOG.warn("File or folder does not exist or file name is garbled,path(文件或者文件夹不存在或者文件名乱码)", e);
+      LOG.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)", e);
       throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), e.getMessage());
     }
 
@@ -339,7 +348,6 @@ public class LocalFileSystem extends FileSystem {
     fsPath.setPermissions(attr.permissions());
     fsPath.setOwner(attr.owner().getName());
     fsPath.setGroup(attr.group().getName());
-    LOG.info("The obtained address is:" + fsPath.getPath());
     return fsPath;
   }
 
@@ -367,7 +375,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean create(String dest) throws IOException {
-
+    LOG.info("LocalFileSytem class, function create, path:" + dest);
     File file = new File(dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
@@ -393,6 +401,7 @@ public class LocalFileSystem extends FileSystem {
   public List<FsPath> list(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
+    LOG.info("LocalFileSytem class, function list, path:" + path.getPath());
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       for (File f : files) {

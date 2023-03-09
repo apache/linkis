@@ -20,11 +20,17 @@ package org.apache.linkis.storage.fs;
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.domain.FsPathListWithError;
+import org.apache.linkis.storage.fs.impl.LocalFileSystem;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class FileSystem implements Fs {
+
+  private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystem.class);
 
   protected String user;
   private String defaultFilePerm = "rwxr-----"; // 740
@@ -94,6 +100,7 @@ public abstract class FileSystem implements Fs {
     } else {
       parentPath = path.substring(0, path.lastIndexOf("/"));
     }
+    LOG.info("getParentPath, path:" + parentPath);
     return new FsPath(parentPath);
   }
 

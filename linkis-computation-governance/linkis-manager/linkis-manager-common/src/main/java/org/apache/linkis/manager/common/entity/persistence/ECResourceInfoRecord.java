@@ -56,6 +56,8 @@ public class ECResourceInfoRecord {
 
   private String status;
 
+  private String metrics;
+
   public ECResourceInfoRecord() {}
 
   public ECResourceInfoRecord(
@@ -207,6 +209,14 @@ public class ECResourceInfoRecord {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getMetrics() {
+    return metrics;
+  }
+
+  public void setMetrics(String metrics) {
+    this.metrics = metrics;
   }
 
   @Override

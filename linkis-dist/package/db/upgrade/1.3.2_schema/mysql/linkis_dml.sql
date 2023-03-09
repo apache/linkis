@@ -250,6 +250,16 @@ update linkis_ps_dm_datasource_type_key set description_en="Mongodb Host" where 
 update linkis_ps_dm_datasource_type_key set description_en="Port" where description ="端口";
 update linkis_ps_dm_datasource_type_key set description_en="Input JSON Format: {\"param\":\"value\"}" where description ="输入JSON格式: {\"param\":\"value\"}";
 
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("QML-", MD5(RAND())) WHERE token_name = "QML-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("BML-", MD5(RAND())) WHERE token_name = "BML-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("WS-", MD5(RAND())) WHERE token_name = "WS-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("DSS-", MD5(RAND())) WHERE token_name = "dss-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("QUALITIS-", MD5(RAND())) WHERE token_name = "QUALITIS-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("VALIDATOR-", MD5(RAND())) WHERE token_name = "VALIDATOR-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("LINKISCLI-", MD5(RAND())) WHERE token_name = "LINKISCLI-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("DSM-", MD5(RAND())) WHERE token_name = "DSM-AUTH";
+UPDATE linkis_mg_gateway_auth_token SET token_name = concat("LINKIS_CLI_TEST-", MD5(RAND())) WHERE token_name = "LINKIS_CLI_TEST";
+
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'mysql';
 INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (@data_source_type_id, 'address', '地址', 'Address', NULL, 'TEXT', NULL, 0, '地址(host1:port1,host2:port2...)', 'Address(host1:port1,host2:port2...)', NULL, NULL, NULL, NULL,  now(), now());
 

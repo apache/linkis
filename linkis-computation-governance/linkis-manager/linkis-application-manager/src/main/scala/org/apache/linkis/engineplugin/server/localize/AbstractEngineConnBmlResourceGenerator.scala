@@ -50,8 +50,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     checkEngineConnDistHome(engineConnDistHome)
     if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
-    val formattedVersion = if (version.startsWith("v")) version else "v" + version
-    val engineConnPackageHome = Paths.get(engineConnDistHome, formattedVersion).toFile.getPath
+    val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
+    logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome)
     val engineConnPackageHomeFile = new File(engineConnPackageHome)
     if (!engineConnPackageHomeFile.exists()) {
       throw new EngineConnPluginErrorException(

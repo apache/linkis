@@ -34,6 +34,7 @@ class DefaultEngineConnBmlResourceGenerator
   override def generate(engineConnType: String): Map[String, Array[EngineConnLocalizeResource]] =
     getEngineConnDistHomeList(engineConnType).map { path =>
       val versionFile = new File(path)
+      logger.info("generate, versionFile:" + path)
       val key = versionFile.getName
       if (key.contains("-")) {
         throw new EngineConnPluginErrorException(
@@ -59,6 +60,7 @@ class DefaultEngineConnBmlResourceGenerator
 
   private def generateDir(path: String): Array[EngineConnLocalizeResource] = {
     val distFile = new File(path)
+    logger.info("generateDir, distFile:" + path)
     val validFiles = distFile
       .listFiles()
       .filterNot(f =>

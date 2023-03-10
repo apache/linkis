@@ -1008,11 +1008,6 @@ public class FsRestfulApi {
     }
   }
 
-  private boolean checkFileName(String filename) {
-
-    return true;
-  }
-
   private static void deleteAllFiles(FileSystem fileSystem, FsPath fsPath) throws IOException {
     fileSystem.delete(fsPath);
     List<FsPath> list = null;

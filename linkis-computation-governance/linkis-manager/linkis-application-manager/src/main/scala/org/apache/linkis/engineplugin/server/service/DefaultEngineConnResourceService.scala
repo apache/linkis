@@ -201,6 +201,8 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
         engineConnBmlResource.setFileName(localizeResource.fileName)
         engineConnBmlResource.setFileSize(localizeResource.fileSize)
         engineConnBmlResource.setLastModified(localizeResource.lastModified)
+        if (version.startsWith("v")) engineConnBmlResource.setVersion(version.substring(1))
+        else engineConnBmlResource.setVersion(version)
         engineConnBmlResource.setVersion(version)
         engineConnBmlResourceDao.save(engineConnBmlResource)
       } else {
@@ -240,7 +242,7 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     val engineConnType = engineConnBMLResourceRequest.getEngineConnType
     val version = engineConnBMLResourceRequest.getVersion
     val engineConnBmlResources = asScalaBufferConverter(
-      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
+      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, version)
     )
     val confBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip")

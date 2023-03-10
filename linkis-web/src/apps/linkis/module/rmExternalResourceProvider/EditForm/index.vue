@@ -121,7 +121,7 @@ export default {
             type: 'form-create',
             height: "280px",
             options: {
-              mode: "code",
+              mode: "tree",
               modes: ['code','tree'],
             }
           },

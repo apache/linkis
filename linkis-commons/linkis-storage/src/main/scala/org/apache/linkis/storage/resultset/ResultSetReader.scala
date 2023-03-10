@@ -19,6 +19,7 @@ package org.apache.linkis.storage.resultset
 
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED
 import org.apache.linkis.storage.exception.StorageErrorException
@@ -26,11 +27,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, Ta
 
 import java.io.InputStream
 
-import org.slf4j.LoggerFactory
-
-object ResultSetReader {
-
-  protected lazy implicit val logger = LoggerFactory.getLogger(getClass)
+object ResultSetReader extends Logging{
 
   def getResultSetReader[K <: MetaData, V <: Record](
       resultSet: ResultSet[K, V],

@@ -24,7 +24,7 @@
 |linkis-entrance |30009|Submitting the query failed!(提交查询失败！)|SUBMITTING_QUERY_FAILED|EntranceErrorCodeSummary|
 |linkis-entrance |50081|Query from jobHistory status failed(从 jobHistory 状态查询失败)|QUERY_STATUS_FAILED|EntranceErrorCodeSummary|
 |linkis-entrance |50081|Get query response incorrectly(错误地获取查询响应)|GET_QUERY_RESPONSE|EntranceErrorCodeSummary|
-|linkis-entrance |50081|Query task of taskId:{0} error(查询任务id：{0}的任务出错)|QUERY_TASKID_ERROR|EntranceErrorCodeSummary|
+|linkis-entrance |50081|Query task of taskId:{0} error(查询任务id：{}的任务出错)|QUERY_TASKID_ERROR|EntranceErrorCodeSummary|
 |linkis-entrance |50081|Query from jobhistory with incorrect list type of taskId, the taskId is：{0} (从jobhistory 中查询的参数类型不正确)|CORRECT_LIST_TYPR|EntranceErrorCodeSummary|
 |linkis-entrance |50081|Shell code contains blacklisted code(shell中包含黑名单代码)|SHELL_BLACKLISTED_CODE|EntranceErrorCodeSummary|
 |linkis-entrance |20301|The logPath cannot be empty(日志路径不能为空)|LOGPATH_NOT_NULL|EntranceErrorCodeSummary|

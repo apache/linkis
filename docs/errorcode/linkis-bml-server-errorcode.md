@@ -16,8 +16,8 @@
 |linkis-bml-server |70068|Failed to obtain resource basic information (获取资源基本信息失败)|FAILED_RESOURCE_BASIC|BmlServerErrorCodeSummary|
 |linkis-bml-server |78531| has expired and cannot be downloaded(已经过期,不能下载)|EXPIRED_CANNOT_DOWNLOADED|BmlServerErrorCodeSummary|
 |linkis-bml-server |75569|You do not have permission to download this resource (您没有权限下载此资源)|NOT_HAVE_PERMISSION|BmlServerErrorCodeSummary|
-|linkis-bml-server |75570| {0} does not have edit permission on project {1}. Upload resource failed ({0} 对工程 {1} 没有编辑权限, 上传资源失败)|NOT_PROJECT_PERMISSION|BmlServerErrorCodeSummary|
-|linkis-bml-server |78361|If the material has not been uploaded or has been deleted, please call the upload interface first(resourceId:{0}之前未上传物料,或物料已被删除,请先调用上传接口.!)|MATERIAL_NOTUPLOADED_DELETED|BmlServerErrorCodeSummary|
+|linkis-bml-server |75570| {} does not have edit permission on project {}. Upload resource failed ({} 对工程 {} 没有编辑权限, 上传资源失败)|NOT_PROJECT_PERMISSION|BmlServerErrorCodeSummary|
+|linkis-bml-server |78361|If the material has not been uploaded or has been deleted, please call the upload interface first(resourceId:{}之前未上传物料,或物料已被删除,请先调用上传接口.!)|MATERIAL_NOTUPLOADED_DELETED|BmlServerErrorCodeSummary|
 |linkis-bml-server |78361|Bulk deletion of  resourceIDS parameters is null(批量删除资源操作传入的resourceIds参数为空)|PARAMETERS_IS_NULL|BmlServerErrorCodeSummary|
 |linkis-bml-server |78361|Bulk deletion of unpassed resourceIDS parameters(批量删除未传入resourceIds参数)|BULK_DELETION_PARAMETERS|BmlServerErrorCodeSummary|
 |linkis-bml-server |78361|You did not pass a valid ResourceID(您未传入有效的resourceId)|NOT_BALID_RESOURCEID|BmlServerErrorCodeSummary|

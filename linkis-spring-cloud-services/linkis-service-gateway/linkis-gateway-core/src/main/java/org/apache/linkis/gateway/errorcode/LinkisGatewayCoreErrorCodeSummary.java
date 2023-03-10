@@ -27,7 +27,7 @@ public enum LinkisGatewayCoreErrorCodeSummary implements LinkisErrorCode {
       11011,
       "Cannot route to the corresponding service, URL:{0} RouteLabel:{1}(无法路由到相应的服务，URL：{0} RouteLabel: {1})"),
   NO_SERVICES_REGISTRY(
-      11011, "There are no services available in the registry URL:{0} (注册表 URL 中没有可用的服务，URL：{0})"),
+      11011, "There are no services available in the registry URL:{0} (注册表 URL 中没有可用的服务)"),
   NO_ROUTE_SERVICE(
       11011, "There is no route label service with the corresponding app name (没有对应app名称的路由标签服务)"),
   CANNOT_INSTANCE(

@@ -5,11 +5,11 @@
 |flink |16020|Cannot register module:{0}, because a module with this name is already registered(无法注册模块：{0},因为已注册具有此名称的模块).|CANNOT_MODULE_ALREADY|FlinkErrorCodeSummary|
 |flink |16020|Cannot create catalog:{0}, because a catalog with this name is already registered(无法创建目录：{0},因为同名的目录已注册).|CANNOT_CATALOG_ALREADY|FlinkErrorCodeSummary|
 |flink |16020|Cannot create table:{0}, because a table with this name is already registered(无法创建表：{0}，因为同名的表已注册).|CANNOT_TABLE_ALREADY|FlinkErrorCodeSummary|
-|flink |16020|Cannot create function:{0}, because a function with this name is already registered(无法创建函数：{0}，因为同名函数已注册).|CANNOT_FUNCTION_ALREADY|FlinkErrorCodeSummary|
+|flink |16020|Cannot create function:{}, because a function with this name is already registered(无法创建函数：{0}，因为同名函数已注册).|CANNOT_FUNCTION_ALREADY|FlinkErrorCodeSummary|
 |flink |16020|The sql code is empty.(sql代码为空.)|SQL_CODE_EMPTY|FlinkErrorCodeSummary|
-|flink |16020|Not support the runType:{0}(不支持的runType：{0}).|NOT_SUPPORT_RUNTYPE|FlinkErrorCodeSummary|
-|flink |16020|Planner must be one of:{0}(Planner 必须是以下之一:{0}).|PLANNER_MUST_THESE|FlinkErrorCodeSummary|
-|flink |16020|Execution type must be one of:{0}(Execution 类型必须是以下之一:{0}).|EXECUTION_MUST_THESE|FlinkErrorCodeSummary|
+|flink |16020|Not support the runType:{}(不支持的runType：{}).|NOT_SUPPORT_RUNTYPE|FlinkErrorCodeSummary|
+|flink |16020|Planner must be one of:{}(Planner 必须是以下之一).|PLANNER_MUST_THESE|FlinkErrorCodeSummary|
+|flink |16020|Execution type must be one of:{}(Execution 类型必须是以下之一).|EXECUTION_MUST_THESE|FlinkErrorCodeSummary|
 |flink |16020|Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)|NOT_SUPPORTED_YARNTARGET|FlinkErrorCodeSummary|
 |flink |16020|Unknown checkpoint mode:{0}(未知的 checkpoint 模式).|UNKNOWN_CHECKPOINT_MODE|FlinkErrorCodeSummary|
 |flink |16020|hudi jars does not exist.(hudi jars 不存在.)|HUDIJARS_NOT_EXISTS|FlinkErrorCodeSummary|

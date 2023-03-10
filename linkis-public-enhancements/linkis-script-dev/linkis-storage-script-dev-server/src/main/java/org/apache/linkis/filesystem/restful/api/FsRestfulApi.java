@@ -442,7 +442,7 @@ public class FsRestfulApi {
       // downloaded(判断目录,目录不能下载)
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
-        throw WorkspaceExceptionManager.createException(8011, path);
+        throw WorkspaceExceptionManager.createException(80011, path);
       }
       inputStream = fileSystem.read(fsPath);
       byte[] buffer = new byte[1024];
@@ -1006,6 +1006,11 @@ public class FsRestfulApi {
       return Message.ok()
           .data("log", Arrays.stream(log).map(StringBuilder::toString).toArray(String[]::new));
     }
+  }
+
+  private boolean checkFileName(String filename) {
+
+    return true;
   }
 
   private static void deleteAllFiles(FileSystem fileSystem, FsPath fsPath) throws IOException {

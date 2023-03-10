@@ -20,14 +20,14 @@ end_date=`date -d '-90 days'`
 end_date_t=`date -d '-90 days' +%s`
 echo "Clean up data before this date:$end_date"
 #Directory read ecm engine cache variables
-prefix=$ENGINECONN_ROOT_PATH
-for userdir in `sudo ls $prefix -F | grep '/$'`
+ENGINECONN_ROOT_PATH=
+for userdir in `sudo ls $ENGINECONN_ROOT_PATH -F | grep '/$'`
 do
 #EngineConPublicckDir cannot be cleaned up. Clean it up in the ecm stop script
   if [ "$userdir" != "engineConnPublickDir/" ];then
-    for ecdir in `sudo ls $prefix$userdir -F | grep '/$'`
+    for ecdir in `sudo ls $ENGINECONN_ROOT_PATH$userdir -F | grep '/$'`
     do
-       ecdirpath=$prefix$userdir$ecdir
+       ecdirpath=$ENGINECONN_ROOT_PATH$userdir$ecdir
         #Get the last modification time of the folder, and get the time of the latest modified file under the folder
        modify_time=`sudo find $ecdirpath  -printf "%TY-%Tm-%Td\n" | sort -nr | head -n 1`
        modify_time_t=`date -d "$modify_time" +%s`

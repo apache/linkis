@@ -28,7 +28,10 @@ import org.apache.linkis.engineplugin.hive.entity.HiveSession
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.CREATE_HIVE_EXECUTOR_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.HIVE_EXEC_JAR_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
-import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import org.apache.linkis.engineplugin.hive.executor.{
+  HiveEngineConcurrentConnExecutor,
+  HiveEngineConnExecutor
+}
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
 import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
@@ -41,6 +44,7 @@ import org.apache.hadoop.hive.ql.session.SessionState
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
+import java.util
 
 import scala.collection.JavaConverters._
 
@@ -64,17 +68,22 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
           hiveSession.baos
         )
       case _ =>
-        throw HiveSessionStartFailedException(
-          CREATE_HIVE_EXECUTOR_ERROR.getErrorCode,
-          CREATE_HIVE_EXECUTOR_ERROR.getErrorDesc
-        )
+        new HiveEngineConcurrentConnExecutor(id)
     }
   }
 
   override protected def createEngineConnSession(
       engineCreationContext: EngineCreationContext
   ): HiveSession = {
-    val options = engineCreationContext.getOptions
+    // if hive engine support concurrent, hive session should init later
+    if (HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_SUPPORT) {
+      return null
+    }
+
+    doCreateHiveSession(engineCreationContext.getOptions)
+  }
+
+  def doCreateHiveSession(options: util.Map[String, String]): HiveSession = {
     val hiveConf: HiveConf = HiveUtils.getHiveConf
     hiveConf.setVar(
       HiveConf.ConfVars.HIVEJAR,

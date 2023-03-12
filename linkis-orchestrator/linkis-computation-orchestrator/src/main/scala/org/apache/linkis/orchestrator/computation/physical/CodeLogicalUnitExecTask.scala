@@ -96,8 +96,10 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     }
 
     if (executor.isDefined && !isCanceled) {
-      val requestTask = toRequestTask
       val codeExecutor = executor.get
+
+      val requestTask = toRequestTask(codeExecutor.getMark.getMarkReq.getProperties)
+
       val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
         s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       } else {
@@ -180,12 +182,21 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
 
   }
 
-  private def toRequestTask: RequestTask = {
+  private def toRequestTask(properties: util.Map[String, String]): RequestTask = {
     val requestTask = new RequestTaskExecute
     requestTask.setCode(getCodeLogicalUnit.toStringCode)
     requestTask.setLabels(getLabels)
     if (null != getParams.getRuntimeParams.getJobs) {
       requestTask.getProperties.putAll(getParams.getRuntimeParams.getJobs)
+    }
+    if (null != properties) {
+      logger.info(s"toRequestTask properties size : ${properties.size()}")
+      for (propertyEntry <- properties.asScala) {
+        logger.info(
+          s"toRequestTask properties key : ${propertyEntry._1} value:  ${propertyEntry._2} ."
+        )
+      }
+      requestTask.getProperties.putAll(properties)
     }
     requestTask.getProperties.putAll(getParams.getRuntimeParams.toMap)
     requestTask.setSourceID(getIDInfo())

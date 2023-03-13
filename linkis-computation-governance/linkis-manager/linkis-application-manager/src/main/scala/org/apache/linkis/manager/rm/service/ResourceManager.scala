@@ -21,7 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.rm.{ResourceInfo, ResultResource}
+import org.apache.linkis.manager.rm.ResourceInfo
 
 import java.util
 
@@ -46,7 +46,7 @@ abstract class ResourceManager {
    * @param resource
    * @return
    */
-  def requestResource(labels: util.List[Label[_]], resource: NodeResource): ResultResource
+  def requestResource(labels: util.List[Label[_]], resource: NodeResource): Any
 
   /**
    * Request resources and wait for a certain amount of time until the requested resource is met
@@ -57,11 +57,7 @@ abstract class ResourceManager {
    * @param wait
    * @return
    */
-  def requestResource(
-      labels: util.List[Label[_]],
-      resource: NodeResource,
-      wait: Long
-  ): ResultResource
+  def requestResource(labels: util.List[Label[_]], resource: NodeResource, wait: Long): Any
 
   /**
    * When the resource is instantiated, the total amount of resources actually occupied is returned.

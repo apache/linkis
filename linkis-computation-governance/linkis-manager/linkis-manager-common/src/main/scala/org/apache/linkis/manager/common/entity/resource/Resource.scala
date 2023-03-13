@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.common.entity.resource
 
-import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
+import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging}
 import org.apache.linkis.manager.common.entity.resource.ResourceType._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.ResourceWarnException
@@ -28,12 +28,9 @@ import java.text.MessageFormat
 
 import scala.collection.JavaConverters._
 
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction}
-import org.json4s.JsonAST.JObject
-import org.json4s.JsonDSL._
-import org.json4s.jackson.Serialization
-
 abstract class Resource {
+  val jacksonUtil = JsonUtils.jackson
+
   def add(r: Resource): Resource
 
   def minus(r: Resource): Resource
@@ -760,95 +757,3 @@ class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Reso
 
   override def toJson: String = s"Special:$resources"
 }
-
-object ResourceSerializer
-    extends CustomSerializer[Resource](implicit formats =>
-      (
-        {
-          case JObject(List(("memory", memory))) => new MemoryResource(memory.extract[Long])
-          case JObject(List(("cores", cores))) => new CPUResource(cores.extract[Int])
-          case JObject(List(("instance", instances))) =>
-            new InstanceResource(instances.extract[Int])
-          case JObject(List(("memory", memory), ("cores", cores))) =>
-            new LoadResource(memory.extract[Long], cores.extract[Int])
-          case JObject(List(("memory", memory), ("cores", cores), ("instance", instances))) =>
-            new LoadInstanceResource(
-              memory.extract[Long],
-              cores.extract[Int],
-              instances.extract[Int]
-            )
-          case JObject(
-                List(
-                  ("applicationId", applicationId),
-                  ("queueName", queueName),
-                  ("queueMemory", queueMemory),
-                  ("queueCores", queueCores),
-                  ("queueInstances", queueInstances)
-                )
-              ) =>
-            new YarnResource(
-              queueMemory.extract[Long],
-              queueCores.extract[Int],
-              queueInstances.extract[Int],
-              queueName.extract[String],
-              applicationId.extract[String]
-            )
-          case JObject(
-                List(
-                  (
-                    "DriverAndYarnResource",
-                    JObject(
-                      List(
-                        ("loadInstanceResource", loadInstanceResource),
-                        ("yarnResource", yarnResource)
-                      )
-                    )
-                  )
-                )
-              ) =>
-            implicit val formats = DefaultFormats
-            new DriverAndYarnResource(
-              loadInstanceResource.extract[LoadInstanceResource],
-              yarnResource.extract[YarnResource]
-            )
-          case JObject(List(("resources", resources))) =>
-            new SpecialResource(resources.extract[Map[String, AnyVal]])
-          case JObject(list) =>
-            throw new ResourceWarnException(
-              NOT_RESOURCE_STRING.getErrorCode,
-              NOT_RESOURCE_STRING.getErrorDesc + list
-            )
-        },
-        {
-          case m: MemoryResource => ("memory", m.memory)
-          case c: CPUResource => ("cores", c.cores)
-          case i: InstanceResource => ("instance", i.instances)
-          case l: LoadResource => ("memory", l.memory) ~ ("cores", l.cores)
-          case li: LoadInstanceResource =>
-            ("memory", li.memory) ~ ("cores", li.cores) ~ ("instance", li.instances)
-          case yarn: YarnResource =>
-            (
-              "applicationId",
-              yarn.applicationId
-            ) ~ ("queueName", yarn.queueName) ~ ("queueMemory", yarn.queueMemory) ~ ("queueCores", yarn.queueCores) ~ ("queueInstances", yarn.queueInstances)
-          case dy: DriverAndYarnResource =>
-            implicit val formats = DefaultFormats
-            (
-              "DriverAndYarnResource",
-              new JObject(
-                List(
-                  ("loadInstanceResource", Extraction.decompose(dy.loadInstanceResource)),
-                  ("yarnResource", Extraction.decompose(dy.yarnResource))
-                )
-              )
-            )
-          case s: SpecialResource =>
-            ("resources", Serialization.write(s.resources.asScala.toMap))
-          case r: Resource =>
-            throw new ResourceWarnException(
-              NOT_RESOURCE_TYPE.getErrorCode,
-              MessageFormat.format(NOT_RESOURCE_TYPE.getErrorDesc, r.getClass)
-            )
-        }
-      )
-    )

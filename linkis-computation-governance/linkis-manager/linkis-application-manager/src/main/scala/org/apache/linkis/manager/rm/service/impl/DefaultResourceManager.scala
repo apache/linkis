@@ -45,12 +45,7 @@ import org.apache.linkis.manager.persistence.{
   NodeMetricManagerPersistence,
   ResourceManagerPersistence
 }
-import org.apache.linkis.manager.rm.{
-  AvailableResource,
-  NotEnoughResource,
-  ResourceInfo,
-  ResultResource
-}
+import org.apache.linkis.manager.rm.ResourceInfo
 import org.apache.linkis.manager.rm.entity.{LabelResourceMapping, ResourceOperationType}
 import org.apache.linkis.manager.rm.entity.ResourceOperationType.{LOCK, USED}
 import org.apache.linkis.manager.rm.exception.{RMErrorCode, RMLockFailedRetryException}
@@ -225,10 +220,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    * @param resource
    * @return
    */
-  override def requestResource(
-      labels: util.List[Label[_]],
-      resource: NodeResource
-  ): ResultResource = {
+  override def requestResource(labels: util.List[Label[_]], resource: NodeResource): Any = {
     requestResource(labels, resource, -1)
   }
 
@@ -245,7 +237,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       labels: util.List[Label[_]],
       resource: NodeResource,
       wait: Long
-  ): ResultResource = {
+  ): Any = {
     val labelContainer = labelResourceService.enrichLabels(labels)
     // check resource with lock
     val requestResourceService = getRequestResourceService(resource.getResourceType)
@@ -260,10 +252,14 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       Utils.tryCatch {
         labelContainer.setCurrentLabel(emInstanceLabel)
         if (!requestResourceService.canRequest(labelContainer, resource)) {
-          return NotEnoughResource(s"Labels:${emInstanceLabel.getStringValue} not enough resource")
+          return (
+            "NotEnoughResource",
+            ("reason", s"Labels:${emInstanceLabel.getStringValue} not enough resource")
+          )
         }
       } {
-        case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
+        case exception: RMWarnException =>
+          return ("NotEnoughResource", ("reason", exception.getMessage))
         case exception: Exception =>
           throw exception
       }
@@ -278,12 +274,14 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       Utils.tryCatch {
         labelContainer.setCurrentLabel(userCreatorEngineTypeLabel)
         if (!requestResourceService.canRequest(labelContainer, resource)) {
-          return NotEnoughResource(
-            s"Labels:${userCreatorEngineTypeLabel.getStringValue} not enough resource"
+          return (
+            "NotEnoughResource",
+            ("reason", s"Labels:${userCreatorEngineTypeLabel.getStringValue} not enough resource")
           )
         }
       } {
-        case exception: RMWarnException => return NotEnoughResource(exception.getMessage)
+        case exception: RMWarnException =>
+          return ("NotEnoughResource", ("reason", exception.getMessage))
         case exception: Exception =>
           throw exception
       }
@@ -354,7 +352,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
         TimeUnit.MILLISECONDS
       )
     }
-    AvailableResource(tickedId)
+    ("AvailableResource", ("ticketId", tickedId))
   }
 
   def getRequestResourceService(resourceType: ResourceType): RequestResourceService = {
@@ -782,7 +780,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
 
   override def getResourceInfo(serviceInstances: Array[ServiceInstance]): ResourceInfo = {
-    val resourceInfo = new ResourceInfo(Lists.newArrayList())
+    val resourceInfo = ResourceInfo(Lists.newArrayList())
     serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
       var aggregatedResource: NodeResource = null

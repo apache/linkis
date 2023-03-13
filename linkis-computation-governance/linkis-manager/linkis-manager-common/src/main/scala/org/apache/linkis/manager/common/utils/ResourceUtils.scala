@@ -17,22 +17,18 @@
 
 package org.apache.linkis.manager.common.utils
 
+import org.apache.linkis.common.utils.JsonUtils
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource
 import org.apache.linkis.manager.common.entity.resource._
 
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.{read, write}
-
 object ResourceUtils {
 
-  implicit val formats = DefaultFormats + ResourceSerializer
-
   def deserializeResource(plainResource: String): Resource = {
-    read[Resource](plainResource)
+    JsonUtils.jackson.readValue(plainResource, classOf[Resource])
   }
 
   def serializeResource(resource: Resource): String = {
-    write(resource)
+    JsonUtils.jackson.writeValueAsString(resource, classOf[Map[String, Any]])
   }
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {
@@ -179,7 +175,7 @@ object ResourceUtils {
         return nodeResource
       }
     }
-    return nodeResource
+    nodeResource
   }
 
   /**

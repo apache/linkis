@@ -46,7 +46,6 @@ import org.apache.linkis.manager.label.entity.node.AliasServiceInstanceLabel
 import org.apache.linkis.manager.label.service.{NodeLabelService, UserLabelService}
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence
-import org.apache.linkis.manager.rm.{AvailableResource, NotEnoughResource}
 import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.label.{LabelChecker, LabelFilter}
 import org.apache.linkis.rpc.Sender
@@ -298,9 +297,9 @@ class DefaultEngineCreateService
       resource,
       timeout
     ) match {
-      case AvailableResource(ticketId) =>
-        (ticketId, resource)
-      case NotEnoughResource(reason) =>
+      case ("AvailableResource", ("ticketId", ticketId)) =>
+        (ticketId.toString, resource)
+      case ("NotEnoughResource", ("reason", reason)) =>
         logger.warn(s"not engough resource: $reason")
         throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
     }

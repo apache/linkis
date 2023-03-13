@@ -28,14 +28,10 @@ import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
 import org.apache.linkis.manager.rm.utils.RMUtils
 
-import org.json4s.DefaultFormats
-
 class DriverAndYarnReqResourceService(
     labelResourceService: LabelResourceService,
     externalResourceService: ExternalResourceService
 ) extends RequestResourceService(labelResourceService) {
-
-  implicit val formats = DefaultFormats + ResourceSerializer
 
   override val resourceType: ResourceType = DriverAndYarn
 

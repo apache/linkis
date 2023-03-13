@@ -75,14 +75,14 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public long getTotalSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
-    LOG.info("getTotalSpace, path:" + path);
+    LOG.info("Get total space with path:" + path);
     return new File(path).getTotalSpace();
   }
 
   @Override
   public long getFreeSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
-    LOG.info("getFreeSpace, path:" + path);
+    LOG.info("Get free space with path:" + path);
     return new File(path).getFreeSpace();
   }
 

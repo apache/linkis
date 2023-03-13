@@ -20,7 +20,6 @@ package org.apache.linkis.storage.fs;
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.domain.FsPathListWithError;
-import org.apache.linkis.storage.fs.impl.LocalFileSystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class FileSystem implements Fs {
 
-  private static final Logger LOG = LoggerFactory.getLogger(LocalFileSystem.class);
+  private static final Logger LOG = LoggerFactory.getLogger(FileSystem.class);
 
   protected String user;
   private String defaultFilePerm = "rwxr-----"; // 740

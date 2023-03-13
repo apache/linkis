@@ -65,7 +65,6 @@ object ResultSetReader extends Logging {
 
   def getTableResultReader(res: String): ResultSetReader[TableMetaData, TableRecord] = {
     val rsFactory = ResultSetFactory.getInstance
-    logger.info(s"getTableResultReader, file path:${res}")
     if (rsFactory.isResultSet(res)) {
       val resultSet = rsFactory.getResultSet(res)
       if (ResultSetFactory.TABLE_TYPE != resultSet.resultSetType()) {
@@ -85,6 +84,7 @@ object ResultSetReader extends Logging {
         )
       }
       val fs = FSFactory.getFs(resPath)
+      logger.info("Try to init Fs with path:" + resPath.getPath)
       fs.init(null)
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], fs.read(resPath))
     }

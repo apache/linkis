@@ -319,6 +319,7 @@ public class FsRestfulApi {
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     for (MultipartFile p : files) {
       String fileName = p.getOriginalFilename();
+      WorkspaceUtil.charCheckFileName(fileName);
       FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
       WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
       fileSystem.createNewFile(fsPathNew);

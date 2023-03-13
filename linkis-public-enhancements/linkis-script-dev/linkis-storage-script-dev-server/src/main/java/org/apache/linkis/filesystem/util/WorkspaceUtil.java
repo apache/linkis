@@ -95,4 +95,17 @@ public class WorkspaceUtil {
       WorkspaceExceptionManager.createException(80028);
     }
   }
+
+  public static void charCheckFileName(String fileName) throws WorkSpaceException {
+    int i = fileName.lastIndexOf(".");
+    if (i != -1) {
+      fileName = fileName.substring(0, i);
+    }
+    // Only support numbers, uppercase letters, underscores, Chinese(只支持数字,字母大小写,下划线,中文)
+    String specialRegEx = "^[\\w\\u4e00-\\u9fa5]{1,200}$";
+    Pattern specialPattern = Pattern.compile(specialRegEx);
+    if (!specialPattern.matcher(fileName).find()) {
+      WorkspaceExceptionManager.createException(80028);
+    }
+  }
 }

@@ -27,7 +27,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, Ta
 
 import java.io.InputStream
 
-object ResultSetReader extends Logging{
+object ResultSetReader extends Logging {
 
   def getResultSetReader[K <: MetaData, V <: Record](
       resultSet: ResultSet[K, V],

@@ -119,7 +119,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setOwner(FsPath dest, String user) throws IOException {
-    LOG.info("setOwner, path:" + dest.getPath());
+    LOG.info("Set owner with path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setOwner skip");
       return true;
@@ -136,7 +136,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
-    LOG.info("setGroup, path:" + dest.getPath());
+    LOG.info("Set group with path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;
@@ -159,7 +159,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean mkdirs(FsPath dest) throws IOException {
     String path = dest.getPath();
-    LOG.info("mkdirs, path:" + path);
+    LOG.info("The mkdirs path is " + path);
     File file = new File(path);
     // Create parent directories one by one and set their permissions to rwxrwxrwx.
     Stack<File> dirsToMake = new Stack<File>();
@@ -187,7 +187,7 @@ public class LocalFileSystem extends FileSystem {
   }
 
   public boolean canMkdir(FsPath destParentDir) throws IOException {
-    LOG.info("canMkdir, path:" + destParentDir.getPath());
+    LOG.info("The path to create directory is " + destParentDir.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.debug("io not proxy, not check owner, just check if have write permission ");
       return this.canWrite(destParentDir);
@@ -209,7 +209,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean copy(String origin, String dest) throws IOException {
     File file = new File(dest);
-    LOG.info("copy, path:" + dest);
+    LOG.info("The copy path is " + dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
     }
@@ -232,13 +232,13 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setPermission(FsPath dest, String permission) throws IOException {
-    LOG.info("setPermission, dest path:" + dest.getPath());
+    LOG.info("Set permission dest with path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setPermission as parent.");
       try {
         PosixFileAttributes attr =
             Files.readAttributes(Paths.get(dest.getParent().getPath()), PosixFileAttributes.class);
-        LOG.info("setPermission, dest.getParent path:" + dest.getParent().getPath());
+        LOG.info("Set permission dest.getParent with path:" + dest.getParent().getPath());
         LOG.debug("parent permissions: attr: " + attr);
         Files.setPosixFilePermissions(Paths.get(dest.getPath()), attr.permissions());
 
@@ -260,7 +260,7 @@ public class LocalFileSystem extends FileSystem {
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
-    LOG.info("listPathWithError, path:" + path.getPath());
+    LOG.info("The file collection parent path is " + path.getPath());
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       String message = "";

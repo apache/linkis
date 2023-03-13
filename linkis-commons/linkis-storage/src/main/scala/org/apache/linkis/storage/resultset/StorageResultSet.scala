@@ -34,7 +34,7 @@ abstract class StorageResultSet[K <: MetaData, V <: Record] extends ResultSet[K,
     } else {
       parentDir.toPath + "/" + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
     }
-    logger.info(s"getResultSetPath, path:${path}")
+    logger.info(s"Get result set path:${path}")
     new FsPath(path)
   }
 

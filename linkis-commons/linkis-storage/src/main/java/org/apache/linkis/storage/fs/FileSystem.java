@@ -99,7 +99,7 @@ public abstract class FileSystem implements Fs {
     } else {
       parentPath = path.substring(0, path.lastIndexOf("/"));
     }
-    LOG.info("getParentPath, path:" + parentPath);
+    LOG.info("Get Parent Path:" + parentPath);
     return new FsPath(parentPath);
   }
 

@@ -167,12 +167,13 @@ public class ExecutionUtils {
   }
 
   public static String readFile(String path) {
+    BufferedReader bufReader=null;
     try {
       File inputFile = new File(path);
 
       InputStream inputStream = new FileInputStream(inputFile);
       InputStreamReader iReader = new InputStreamReader(inputStream);
-      BufferedReader bufReader = new BufferedReader(iReader);
+      bufReader = new BufferedReader(iReader);
 
       StringBuilder sb = new StringBuilder();
       StringBuilder line;
@@ -180,7 +181,6 @@ public class ExecutionUtils {
         line = new StringBuilder(bufReader.readLine());
         sb.append(line).append(System.lineSeparator());
       }
-
       return sb.toString();
 
     } catch (FileNotFoundException fe) {
@@ -197,6 +197,12 @@ public class ExecutionUtils {
           CommonErrMsg.BuilderBuildErr,
           "Cannot read user specified script file: " + path,
           e);
+    } finally  {
+      try {
+        bufReader.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 }

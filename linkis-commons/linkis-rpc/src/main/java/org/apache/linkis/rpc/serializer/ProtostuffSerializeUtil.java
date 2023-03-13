@@ -18,6 +18,7 @@
 package org.apache.linkis.rpc.serializer;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import scala.Option;
@@ -49,6 +50,7 @@ public class ProtostuffSerializeUtil {
     }
     Class<T> clazz = (Class<T>) obj.getClass();
     Schema<T> schema = getSchema(clazz);
+    Objects.requireNonNull(schema, "schema must not be null");
     byte[] data;
     LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
     try {
@@ -61,6 +63,7 @@ public class ProtostuffSerializeUtil {
 
   public static <T> T deserialize(String str, Class<T> clazz) {
     Schema<T> schema = getSchema(clazz);
+    Objects.requireNonNull(schema, "schema must not be null");
     T obj = schema.newMessage();
     ProtostuffIOUtil.mergeFrom(toByteArray(str), obj, schema);
     return obj;

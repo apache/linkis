@@ -213,7 +213,9 @@ public class LocalFileSystem extends FileSystem {
         setOwner(new FsPath(dest), user, null);
       }
     } catch (Throwable e) {
-      file.delete();
+      if (!file.delete()) {
+        log.error("File deletion failed(文件删除失败)");
+      }
       if (e instanceof IOException) {
         throw (IOException) e;
       } else {
@@ -370,14 +372,18 @@ public class LocalFileSystem extends FileSystem {
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
     }
-    file.createNewFile();
+    if (!file.createNewFile()) {
+      LOG.error("File creation failed（文件创建失败）");
+    }
     try {
       setPermission(new FsPath(dest), this.getDefaultFilePerm());
       if (!user.equals(getOwner(dest))) {
         setOwner(new FsPath(dest), user, null);
       }
     } catch (Throwable e) {
-      file.delete();
+      if (!file.delete()) {
+        log.error("File deletion failed(文件删除失败)");
+      }
       if (e instanceof IOException) {
         throw (IOException) e;
       } else {

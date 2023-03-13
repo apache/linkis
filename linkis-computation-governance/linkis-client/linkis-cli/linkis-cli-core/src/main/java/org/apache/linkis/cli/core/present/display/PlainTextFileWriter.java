@@ -22,6 +22,8 @@ import org.apache.linkis.cli.core.exception.PresenterException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.present.display.data.DisplayData;
 import org.apache.linkis.cli.core.present.display.data.FileDisplayData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,6 +31,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
 public class PlainTextFileWriter implements DisplayOperator {
+
+  private static final Logger LOG = LoggerFactory.getLogger(PlainTextFileWriter.class);
+
   @Override
   public void doOutput(DisplayData data) {
     if (!(data instanceof FileDisplayData)) {
@@ -62,7 +67,9 @@ public class PlainTextFileWriter implements DisplayOperator {
 
     if (overWrite || !file.exists()) {
       try {
-        file.createNewFile();
+        if (!file.createNewFile()) {
+          LOG.error("File creation failed(文件创建失败)");
+        }
       } catch (Exception e) {
         throw new PresenterException(
             "PST0006",

@@ -136,7 +136,9 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
     ZipUtils.fileToUnzip(engineConnsHome + "/" + mfile.getOriginalFilename(), engineConnsHome);
     File file = new File(engineConnsHome + "/" + mfile.getOriginalFilename());
     if (file.exists()) {
-      file.delete();
+      if (!file.delete()) {
+        log.error("File deletion failed(文件删除失败)");
+      }
       log.info("file {} delete success", mfile.getOriginalFilename());
     }
   }
@@ -147,7 +149,9 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
       if (file.isDirectory()) {
         deleteDir(file);
       } else {
-        file.delete();
+        if (!file.delete()) {
+          log.error("File deletion failed(文件删除失败)");
+        }
       }
     }
     directory.delete();

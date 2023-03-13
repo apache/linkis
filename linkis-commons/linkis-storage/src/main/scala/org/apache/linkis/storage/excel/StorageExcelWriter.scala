@@ -98,7 +98,6 @@ class StorageExcelWriter(
         case TimestampType => style.setDataFormat(format.getFormat("m/d/yy h:mm"))
         case DecimalType => style.setDataFormat(format.getFormat("#.000000000"))
         case BigDecimalType => style.setDataFormat(format.getFormat("#.000000000"))
-        case _ => style.setDataFormat(format.getFormat("@"))
       }
     }
     style

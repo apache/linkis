@@ -199,38 +199,43 @@ class HiveEngineConnExecutor(
       driver.setTryCount(tryCount + 1)
       val startTime = System.currentTimeMillis()
       try {
-        var compileRet = -1
-        Utils.tryCatch {
-          compileRet = driver.compile(realCode)
-          logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
-          if (0 != compileRet) {
-            logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
-            throw HiveQueryFailedException(
-              COMPILE_HIVE_QUERY_ERROR.getErrorCode,
-              COMPILE_HIVE_QUERY_ERROR.getErrorDesc
-            )
+        val hiveResponse: CommandProcessorResponse =
+          if (!HiveDriverProxy.isIDriver(driver.getDriver())) {
+            var compileRet = -1
+            Utils.tryCatch {
+              compileRet = driver.compile(realCode)
+              logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+              if (0 != compileRet) {
+                logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+                throw HiveQueryFailedException(
+                  COMPILE_HIVE_QUERY_ERROR.getErrorCode,
+                  COMPILE_HIVE_QUERY_ERROR.getErrorDesc
+                )
+              }
+              val queryPlan = driver.getPlan()
+              val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
+              numberOfMRJobs = numberOfJobs
+              logger.info(s"there are ${numberOfMRJobs} jobs.")
+            } {
+              case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
+              case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
+            }
+            if (numberOfMRJobs > 0) {
+              engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
+            }
+            if (thread.isInterrupted) {
+              logger.error(
+                "The thread of execution has been interrupted and the task should be terminated"
+              )
+              return ErrorExecuteResponse(
+                "The thread of execution has been interrupted and the task should be terminated",
+                null
+              )
+            }
+            driver.run(realCode, compileRet == 0)
+          } else {
+            driver.run(realCode)
           }
-          val queryPlan = driver.getPlan()
-          val numberOfJobs = Utilities.getMRTasks(queryPlan.getRootTasks).size
-          numberOfMRJobs = numberOfJobs
-          logger.info(s"there are ${numberOfMRJobs} jobs.")
-        } {
-          case e: Exception => logger.warn("obtain hive execute query plan failed,", e)
-          case t: Throwable => logger.warn("obtain hive execute query plan failed,", t)
-        }
-        if (numberOfMRJobs > 0) {
-          engineExecutorContext.appendStdout(s"Your hive sql has $numberOfMRJobs MR jobs to do")
-        }
-        if (thread.isInterrupted) {
-          logger.error(
-            "The thread of execution has been interrupted and the task should be terminated"
-          )
-          return ErrorExecuteResponse(
-            "The thread of execution has been interrupted and the task should be terminated",
-            null
-          )
-        }
-        val hiveResponse: CommandProcessorResponse = driver.run(realCode, compileRet == 0)
         if (hiveResponse.getResponseCode != 0) {
           LOG.error("Hive query failed, response code is {}", hiveResponse.getResponseCode)
           return ErrorExecuteResponse(hiveResponse.getErrorMessage, hiveResponse.getException)

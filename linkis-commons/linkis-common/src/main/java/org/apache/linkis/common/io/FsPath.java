@@ -23,8 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -169,8 +167,8 @@ public class FsPath {
     return new File(uri);
   }
 
-  public Path toPath() {
-    return FileSystems.getDefault().getPath(uri.toString());
+  public String getUriString() {
+    return uri.toString();
   }
 
   public boolean isOwner(String user) {
@@ -272,6 +270,10 @@ public class FsPath {
   public String getSchemaPath() {
     if (WINDOWS && !"hdfs".equals(getFsType())) {
       return getFsType() + "://" + uri.getAuthority() + uri.getPath();
+    }
+
+    if (uri.getPath().startsWith("/")) {
+      return getFsType() + "://" + uri.getPath().substring(1);
     }
     return getFsType() + "://" + uri.getPath();
   }

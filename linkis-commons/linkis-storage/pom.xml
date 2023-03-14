@@ -93,6 +93,20 @@
       <version>4.0.5</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-aliyun</artifactId>
+      <version>3.3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.aliyun.oss</groupId>
+      <artifactId>aliyun-sdk-oss</artifactId>
+      <version>3.16.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

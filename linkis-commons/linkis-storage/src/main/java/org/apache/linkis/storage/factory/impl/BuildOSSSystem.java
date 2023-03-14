@@ -19,18 +19,20 @@ package org.apache.linkis.storage.factory.impl;
 
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
-import org.apache.linkis.storage.fs.FileSystem;
-import org.apache.linkis.storage.fs.impl.HDFSFileSystem;
-import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
+import org.apache.linkis.storage.fs.impl.OSSFileSystem;
 import org.apache.linkis.storage.utils.StorageUtils;
 
-import org.springframework.cglib.proxy.Enhancer;
+import java.io.IOException;
 
-public class BuildHDFSFileSystem implements BuildFactory {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class BuildOSSSystem implements BuildFactory {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BuildOSSSystem.class);
 
   /**
-   * If it is a node with hdfs configuration file, then go to the proxy mode of hdfs, if not go to
-   * io proxy mode 如果是有hdfs配置文件的节点，则走hdfs的代理模式，如果不是走io代理模式
+   * get file system
    *
    * @param user
    * @param proxyUser
@@ -38,24 +40,24 @@ public class BuildHDFSFileSystem implements BuildFactory {
    */
   @Override
   public Fs getFs(String user, String proxyUser) {
-    FileSystem fs = null;
-
-    if (StorageUtils.isHDFSNode()) {
-      fs = new HDFSFileSystem();
-    } else {
-      // TODO Agent user(代理的用户)
-      Enhancer enhancer = new Enhancer();
-      enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
-      enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
-      fs = (FileSystem) enhancer.create();
+    OSSFileSystem fs = new OSSFileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
     }
-    fs.setUser(proxyUser);
+    fs.setUser(user);
     return fs;
   }
 
   @Override
   public Fs getFs(String user, String proxyUser, String label) {
-    HDFSFileSystem fs = new HDFSFileSystem();
+    OSSFileSystem fs = new OSSFileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
+    }
     fs.setUser(proxyUser);
     fs.setLabel(label);
     return fs;
@@ -63,6 +65,6 @@ public class BuildHDFSFileSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return StorageUtils.HDFS();
+    return StorageUtils.OSS();
   }
 }

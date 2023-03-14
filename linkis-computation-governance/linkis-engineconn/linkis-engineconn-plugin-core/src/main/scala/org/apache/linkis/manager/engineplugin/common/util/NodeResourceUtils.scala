@@ -23,14 +23,21 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+import java.util.regex.Pattern
 import java.util.{Locale, Objects}
 
+import org.slf4j.LoggerFactory
+
 object NodeResourceUtils {
+
+  private var LOG = LoggerFactory.getLogger(getClass)
 
   val JAVA_MEMORY_UNIT_G = "G"
   val JAVA_MEMORY_UNIT_M = "M"
   val JAVA_MEMORY_UNIT_K = "K"
   val JAVA_MEMORY_UNIT_B = "B"
+
+  var JAVA_MEMORY_REGEX = "^[1-9]\\d*[gGmMkK]?[bB]?$"
 
   def appendMemoryUnitIfMissing(properties: util.Map[String, String]): Unit = {
     Objects.requireNonNull(properties);
@@ -51,8 +58,11 @@ object NodeResourceUtils {
 
   def formatJavaOptionMemory(memory: String, defaultUnit: String): String = {
     assert(StringUtils.isNotBlank(memory))
-    val memoryTmp = memory.toUpperCase(Locale.getDefault)
-    if (
+    val memoryTmp = memory.toUpperCase(Locale.getDefault).trim()
+    if (!Pattern.matches(JAVA_MEMORY_REGEX, memoryTmp)) {
+      LOG.error("the java option memory: '{}' format error, use default 1G replaced", memory)
+      1 + JAVA_MEMORY_UNIT_G
+    } else if (
         memoryTmp.endsWith(JAVA_MEMORY_UNIT_G) || memoryTmp.endsWith(
           JAVA_MEMORY_UNIT_M
         ) || memoryTmp.endsWith(JAVA_MEMORY_UNIT_K)

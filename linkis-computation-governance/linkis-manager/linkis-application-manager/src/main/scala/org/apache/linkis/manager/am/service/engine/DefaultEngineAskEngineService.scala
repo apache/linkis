@@ -19,7 +19,7 @@ package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
@@ -68,6 +68,7 @@ class DefaultEngineAskEngineService
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {
     val taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties)
+    LoggerUtils.setJobIdMDC(taskId)
     logger.info(s"received task: $taskId, engineAskRequest $engineAskRequest")
     if (!engineAskRequest.getLabels.containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
       val engineReuseRequest = new EngineReuseRequest()
@@ -97,6 +98,7 @@ class DefaultEngineAskEngineService
 
     val engineAskAsyncId = getAsyncId
     val createNodeThread = Future {
+      LoggerUtils.setJobIdMDC(taskId)
       logger.info(
         s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
       )
@@ -108,30 +110,40 @@ class DefaultEngineAskEngineService
       engineCreateRequest.setUser(engineAskRequest.getUser)
       engineCreateRequest.setProperties(engineAskRequest.getProperties)
       engineCreateRequest.setCreateService(engineAskRequest.getCreateService)
-      val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
-      val timeout =
-        if (engineCreateRequest.getTimeout <= 0) {
-          AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
-        } else engineCreateRequest.getTimeout
-      // useEngine 需要加上超时
-      val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
-      if (null == createEngineNode) {
-        throw new LinkisRetryException(
-          AMConstant.EM_ERROR_CODE,
-          s"create engine${createNode.getServiceInstance} success, but to use engine failed"
+      Utils.tryFinally {
+        val createNode = engineCreateService.createEngine(engineCreateRequest, sender)
+        val timeout =
+          if (engineCreateRequest.getTimeout <= 0) {
+            AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
+          } else engineCreateRequest.getTimeout
+        // useEngine 需要加上超时
+        val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
+        if (null == createEngineNode) {
+          throw new LinkisRetryException(
+            AMConstant.EM_ERROR_CODE,
+            s"create engine${createNode.getServiceInstance} success, but to use engine failed"
+          )
+        }
+        logger.info(
+          s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
         )
+        createEngineNode
+      } {
+        LoggerUtils.removeJobIdMDC()
       }
-      logger.info(
-        s"Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode"
-      )
-      createEngineNode
     }
 
     createNodeThread.onComplete {
       case Success(engineNode) =>
-        logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
-        sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+        LoggerUtils.setJobIdMDC(taskId)
+        Utils.tryFinally {
+          logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
+          sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+        } {
+          LoggerUtils.removeJobIdMDC()
+        }
       case Failure(exception) =>
+        LoggerUtils.setJobIdMDC(taskId)
         val retryFlag = exception match {
           case retryException: LinkisRetryException => true
           case retryableException: RetryableException => true
@@ -151,15 +163,19 @@ class DefaultEngineAskEngineService
           logger.info(s"msg: ${msg} canRetry Exception: ${exception.getClass.getName}")
         }
 
-        sender.send(
-          EngineCreateError(
-            engineAskAsyncId,
-            ExceptionUtils.getRootCauseMessage(exception),
-            retryFlag
+        Utils.tryFinally {
+          sender.send(
+            EngineCreateError(
+              engineAskAsyncId,
+              ExceptionUtils.getRootCauseMessage(exception),
+              retryFlag
+            )
           )
-        )
+        } {
+          LoggerUtils.removeJobIdMDC()
+        }
     }
-
+    LoggerUtils.removeJobIdMDC()
     EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
   }
 

@@ -58,7 +58,7 @@ import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorException
 }
 import org.apache.linkis.governance.common.protocol.task._
-import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
@@ -171,7 +171,8 @@ class TaskExecutionServiceImpl
 
   @Receiver
   override def execute(requestTask: RequestTask, sender: Sender): ExecuteResponse = {
-
+    val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
+    LoggerUtils.setJobIdMDC(jobId)
     // check lock
     logger.info("Received a new task, task content is " + requestTask)
     if (StringUtils.isBlank(requestTask.getLock)) {
@@ -208,7 +209,7 @@ class TaskExecutionServiceImpl
       if (null != retry) retry.asInstanceOf[Boolean]
       else false
     }
-    val jobId = JobUtils.getJobIdFromMap(requestTask.getProperties)
+
     if (StringUtils.isNotBlank(jobId)) {
       System.getProperties.put(ComputationExecutorConf.JOB_ID_TO_ENV_KEY, jobId)
       logger.info(s"Received job with id ${jobId}.")
@@ -227,6 +228,7 @@ class TaskExecutionServiceImpl
       override def run(): Unit = Utils.tryCatch {
         // Waiting to run, preventing task messages from being sent to submit services before SubmitResponse, such as entry
         Thread.sleep(ComputationExecutorConf.TASK_SUBMIT_WAIT_TIME_MS)
+        LoggerUtils.setJobIdMDC(jobId)
         submitTaskToExecutor(task, labels) match {
           case ErrorExecuteResponse(message, throwable) =>
             sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
@@ -256,11 +258,11 @@ class TaskExecutionServiceImpl
       case computationExecutor: ComputationExecutor =>
         taskIdCache.put(task.getTaskId, computationExecutor)
         submitTask(task, computationExecutor)
-      case o =>
+      case _ =>
         val labelsStr =
           if (labels != null) labels.filter(_ != null).map(_.getStringValue).mkString(",") else ""
         val msg =
-          "Invalid computationExecutor : " + o.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + task.getTaskId
+          "Invalid computationExecutor : " + executor.getClass.getName + ", labels : " + labelsStr + ", requestTask : " + task.getTaskId
         logger.error(msg)
         ErrorExecuteResponse(
           "Invalid computationExecutor(生成无效的计算引擎，请联系管理员).",
@@ -389,6 +391,8 @@ class TaskExecutionServiceImpl
   }
 
   private def executeTask(task: EngineConnTask, executor: ComputationExecutor): Unit = {
+    val jobId = JobUtils.getJobIdFromMap(task.getProperties)
+    LoggerUtils.setJobIdMDC(jobId)
     val response = executor.execute(task)
     response match {
       case ErrorExecuteResponse(message, throwable) =>

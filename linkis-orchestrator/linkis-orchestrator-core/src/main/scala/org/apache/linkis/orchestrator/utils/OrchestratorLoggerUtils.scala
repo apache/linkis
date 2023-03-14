@@ -15,16 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.orchestrator.utils
 
-import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.governance.common.utils.LoggerUtils
+import org.apache.linkis.orchestrator.plans.physical.ExecTask
 
-trait EngineCreateService {
+object OrchestratorLoggerUtils {
 
-  @throws[LinkisRetryException]
-  def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
+  def setJobIdMDC(task: ExecTask): Unit = {
+    val startUpMap =
+      task.getTaskDesc.getOrigin.getASTOrchestration.getASTContext.getParams.getStartupParams
+    if (null != startUpMap) {
+      LoggerUtils.setJobIdMDC(startUpMap.getConfigurationMap())
+    }
+  }
+
+  def removeJobIdMDC(): Unit = {
+    LoggerUtils.removeJobIdMDC()
+  }
 
 }

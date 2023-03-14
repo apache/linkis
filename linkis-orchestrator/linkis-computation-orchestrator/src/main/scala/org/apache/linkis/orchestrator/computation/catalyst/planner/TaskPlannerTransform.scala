@@ -138,8 +138,6 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
     }
   }
 
-
-
   override def apply(in: Job, context: ASTContext): Task = {
     in match {
       case job: CodeJob =>

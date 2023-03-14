@@ -17,8 +17,10 @@
 
 package org.apache.linkis.engineconn.computation.executor.async
 
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationErrorCode
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
 
@@ -31,10 +33,16 @@ class AsyncExecuteExecutor(executor: AsyncConcurrentComputationExecutor) extends
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
     executeRequest match {
       case asyncExecuteRequest: AsyncExecuteRequest =>
-        executor.asyncExecuteTask(
-          asyncExecuteRequest.task,
-          asyncExecuteRequest.engineExecutionContext
-        )
+        Utils.tryFinally {
+          val jobId = JobUtils.getJobIdFromMap(asyncExecuteRequest.task.getProperties)
+          LoggerUtils.setJobIdMDC(jobId)
+          executor.asyncExecuteTask(
+            asyncExecuteRequest.task,
+            asyncExecuteRequest.engineExecutionContext
+          )
+        } {
+          LoggerUtils.removeJobIdMDC()
+        }
       case _ =>
         throw EngineConnException(
           ComputationErrorCode.ASYNC_EXECUTOR_ERROR_CODE,

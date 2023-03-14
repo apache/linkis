@@ -380,8 +380,8 @@ class EntranceWebSocketService
       flag ++= log ++= "\n"
       all ++= log ++= "\n"
     } else {
-      flag ++= log ++= "\n"
-      all ++= log ++= "\n"
+      flag ++= log ++= "\n\n"
+      all ++= log ++= "\n\n"
     }
   }
 

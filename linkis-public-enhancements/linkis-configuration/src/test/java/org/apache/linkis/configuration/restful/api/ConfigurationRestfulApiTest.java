@@ -38,6 +38,8 @@ import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith({SpringExtension.class})
@@ -176,6 +178,7 @@ public class ConfigurationRestfulApiTest {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url));
       }
     }
+    Objects.requireNonNull(mvcResult, "mvcResult must not be null");
     assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
     logger.info(String.valueOf(mvcResult));
   }

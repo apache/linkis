@@ -66,7 +66,6 @@ object UJESSQLTypeParser {
 
   def parserFromMetaData(dataType: Int): String = {
     dataType match {
-      case Types.CHAR => "string"
       case Types.SMALLINT => "short"
       case Types.INTEGER => "int"
       case Types.BIGINT => "long"

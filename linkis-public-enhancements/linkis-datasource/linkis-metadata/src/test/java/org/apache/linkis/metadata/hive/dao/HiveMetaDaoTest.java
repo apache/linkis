@@ -125,7 +125,7 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     queryParam.setTableName("employee");
 
     List<Map<String, Object>> columns = hiveMetaDao.getColumns(queryParam);
-    Assertions.assertTrue(columns.size() >= 0);
+    Assertions.assertTrue(!columns.isEmpty());
   }
 
   @Test
@@ -146,7 +146,7 @@ public class HiveMetaDaoTest extends BaseDaoTest {
     MetadataQueryParam queryParam = new MetadataQueryParam();
     queryParam.setSdId("1");
     List<Map<String, Object>> columns = hiveMetaDao.getColumnsByStorageDescriptionID(queryParam);
-    Assertions.assertTrue(columns.size() >= 0);
+    Assertions.assertTrue(!columns.isEmpty());
   }
 
   @Test

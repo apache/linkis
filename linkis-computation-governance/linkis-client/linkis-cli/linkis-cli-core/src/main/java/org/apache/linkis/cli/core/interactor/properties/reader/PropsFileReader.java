@@ -27,6 +27,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ public class PropsFileReader implements PropertiesReader {
           "PRP0002", ErrorLevel.ERROR, CommonErrMsg.PropsReaderErr, "Source: " + propsPath, e);
     } finally {
       try {
+        Objects.requireNonNull(in, "InputStream must not be null");
         in.close();
       } catch (Exception ignore) {
         // ignore

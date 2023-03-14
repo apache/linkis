@@ -26,6 +26,7 @@ import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.LogUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.common.utils.CloseIoUtils;
 
 import java.io.*;
 import java.util.Set;
@@ -198,11 +199,7 @@ public class ExecutionUtils {
           "Cannot read user specified script file: " + path,
           e);
     } finally  {
-      try {
-        bufReader.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      CloseIoUtils.closeAll(bufReader);
     }
   }
 }

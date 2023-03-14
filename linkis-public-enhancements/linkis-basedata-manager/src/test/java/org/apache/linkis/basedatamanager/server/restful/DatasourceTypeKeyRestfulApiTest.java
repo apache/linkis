@@ -32,6 +32,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Date;
+import java.util.Objects;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -152,6 +153,7 @@ public class DatasourceTypeKeyRestfulApiTest {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
       }
     }
+    Objects.requireNonNull(mvcResult, "mvcResult must not be null");
     assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
     logger.info(String.valueOf(mvcResult));
   }

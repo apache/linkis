@@ -136,6 +136,11 @@ public abstract class SerializableLabel<T> implements Label<T> {
   }
 
   @Override
+  public int hashCode() {
+    return Objects.hash(value, stringValue);
+  }
+
+  @Override
   public boolean equals(Object other) {
     if (other instanceof SerializableLabel) {
       String otherSerialStr = other.toString();

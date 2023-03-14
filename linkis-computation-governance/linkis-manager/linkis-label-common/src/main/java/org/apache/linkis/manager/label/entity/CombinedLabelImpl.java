@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CombinedLabelImpl implements CombinedLabel {
@@ -77,6 +78,11 @@ public class CombinedLabelImpl implements CombinedLabel {
   @Override
   public Boolean isEmpty() {
     return CollectionUtils.isEmpty(getValue());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value, feature);
   }
 
   @Override

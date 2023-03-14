@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,7 @@ public class CSTableService implements TableService {
             searchService.searchUpstreamContext(
                 contextID, nodeName, Integer.MAX_VALUE, CSTable.class);
       }
+      Objects.requireNonNull(contextID, "contextID must not be null");
       if (null != rsList)
         logger.info(
             "contextID: {} and nodeName: {} succeed to get tables size {}",

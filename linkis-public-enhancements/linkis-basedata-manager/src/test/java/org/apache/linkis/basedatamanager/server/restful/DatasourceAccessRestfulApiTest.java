@@ -33,6 +33,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.Date;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -143,6 +144,7 @@ public class DatasourceAccessRestfulApiTest {
         mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPut(url));
       }
     }
+    Objects.requireNonNull(mvcResult, "mvcResult must not be null");
     assertEquals(MessageStatus.SUCCESS(), mvcResult.getStatus());
     logger.info(String.valueOf(mvcResult));
   }

@@ -350,7 +350,7 @@ public class DataSourceInfoServiceTest {
     Long res =
         dataSourceInfoService.insertDataSourceParameter(
             keyDefinitionList, datasourceId, connectParams, username, comment);
-    assertTrue(expectedVersion == res);
+    assertTrue(expectedVersion.equals(res));
   }
 
   @Test

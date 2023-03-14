@@ -43,6 +43,7 @@ import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -103,6 +104,16 @@ public class RequestKerberosUrlUtils {
     logger.warn(
         String.format(
             "Calling KerberosHttpClient %s %s %s", this.principal, this.keyTabLocation, url));
+    Map<String, Object> initMap=new HashMap<>();
+    initMap.put("useTicketCache", "false");
+    initMap.put("useKeyTab", "true");
+    initMap.put("keyTab", keyTabLocation);
+    initMap.put("refreshKrb5Config", "true");
+    initMap.put("principal", principal);
+    initMap.put("storeKey", "true");
+    initMap.put("doNotPrompt", "true");
+    initMap.put("isInitiator", "true");
+    initMap.put("debug", "false");
     Configuration config =
         new Configuration() {
           @SuppressWarnings("serial")
@@ -112,19 +123,7 @@ public class RequestKerberosUrlUtils {
               new AppConfigurationEntry(
                   "com.sun.security.auth.module.Krb5LoginModule",
                   AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
-                  new HashMap<String, Object>() {
-                    {
-                      put("useTicketCache", "false");
-                      put("useKeyTab", "true");
-                      put("keyTab", keyTabLocation);
-                      put("refreshKrb5Config", "true");
-                      put("principal", principal);
-                      put("storeKey", "true");
-                      put("doNotPrompt", "true");
-                      put("isInitiator", "true");
-                      put("debug", "false");
-                    }
-                  })
+                      initMap)
             };
           }
         };

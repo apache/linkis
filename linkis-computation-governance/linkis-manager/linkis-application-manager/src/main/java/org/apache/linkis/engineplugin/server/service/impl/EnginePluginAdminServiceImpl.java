@@ -21,6 +21,7 @@ import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlResourceVersionsResponse;
 import org.apache.linkis.bml.protocol.Version;
+import org.apache.linkis.common.utils.CloseIoUtils;
 import org.apache.linkis.common.utils.ZipUtils;
 import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao;
 import org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource;
@@ -33,10 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 import com.github.pagehelper.PageHelper;
@@ -115,22 +113,24 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
   @Override
   public void uploadToECHome(MultipartFile mfile) {
     String engineConnsHome = defaultEngineConnBmlResourceGenerator.getEngineConnsHome();
+    InputStream in =null;
+    OutputStream out = null;
     try {
-      InputStream in = mfile.getInputStream();
+      mfile.getInputStream();
       byte[] buffer = new byte[1024];
       int len = 0;
       File file = new File(engineConnsHome);
       if (!file.exists()) {
         log.info("engineplugin's home doesn’t exist");
       }
-      OutputStream out = new FileOutputStream(engineConnsHome + "/" + mfile.getOriginalFilename());
+      out = new FileOutputStream(engineConnsHome + "/" + mfile.getOriginalFilename());
       while ((len = in.read(buffer)) != -1) {
         out.write(buffer, 0, len);
       }
-      out.close();
-      in.close();
     } catch (Exception e) {
       log.info("file {} upload fail", mfile.getOriginalFilename());
+    }finally {
+      CloseIoUtils.closeAll(out,in);
     }
 
     ZipUtils.fileToUnzip(engineConnsHome + "/" + mfile.getOriginalFilename(), engineConnsHome);
@@ -154,6 +154,8 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
         }
       }
     }
-    directory.delete();
+    if (!directory.delete()) {
+      log.error("directory deletion failed(目录删除失败)");
+    }
   }
 }

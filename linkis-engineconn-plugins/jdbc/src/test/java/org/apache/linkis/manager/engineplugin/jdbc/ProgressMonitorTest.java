@@ -70,5 +70,6 @@ public class ProgressMonitorTest {
             0,
             Optional.empty()));
     Assertions.assertTrue(callbackFlag.get());
+    connection.close();
   }
 }

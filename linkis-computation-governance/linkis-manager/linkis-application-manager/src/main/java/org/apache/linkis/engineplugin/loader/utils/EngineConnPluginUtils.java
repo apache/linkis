@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.loader.utils;
 
+import org.apache.linkis.common.utils.CloseIoUtils;
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin;
 
 import org.apache.commons.io.IOUtils;
@@ -132,8 +133,9 @@ public class EngineConnPluginUtils {
       }
       return acceptedFunction.apply(className) ? className : null;
     } else if (url.endsWith(JAR_SUF_NAME)) {
+      JarFile jarFile=null;
       try {
-        JarFile jarFile = new JarFile(new File(url));
+        jarFile = new JarFile(new File(url));
         Enumeration<JarEntry> en = jarFile.entries();
         while (en.hasMoreElements()) {
           String name = en.nextElement().getName();
@@ -151,6 +153,8 @@ public class EngineConnPluginUtils {
         // Trace
         LOG.trace("Fail to parse jar file:[" + url + "] in plugin classpath");
         return null;
+      }finally {
+        CloseIoUtils.closeAll(jarFile);
       }
     }
     return null;

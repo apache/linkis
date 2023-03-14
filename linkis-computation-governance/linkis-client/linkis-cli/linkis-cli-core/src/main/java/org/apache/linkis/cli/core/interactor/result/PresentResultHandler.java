@@ -27,6 +27,7 @@ import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class PresentResultHandler implements ResultHandler {
           model.buildModel(job.getJobData());
         }
         try {
+          Objects.requireNonNull(job, "job must not be null");
           presenter.present(model, job.getPresentWay());
         } catch (Exception e) {
           logger.error("Execution failed because exception thrown when presenting data.", e);

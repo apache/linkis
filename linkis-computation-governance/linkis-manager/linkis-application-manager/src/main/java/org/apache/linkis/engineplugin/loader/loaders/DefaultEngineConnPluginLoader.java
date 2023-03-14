@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.loader.loaders;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.utils.CloseIoUtils;
 import org.apache.linkis.engineplugin.loader.EngineConnPluginLoaderConf;
 import org.apache.linkis.engineplugin.loader.classloader.EngineConnPluginClassLoader;
 import org.apache.linkis.engineplugin.loader.loaders.resource.LocalEngineConnPluginResourceLoader;
@@ -258,12 +259,15 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
   private Map<String, Object> readFromProperties(String propertiesFile) {
     Map<String, Object> map = new HashMap<>();
     Properties properties = new Properties();
+    BufferedReader reader = null;
     try {
-      BufferedReader reader = new BufferedReader(new FileReader(propertiesFile));
+      reader = new BufferedReader(new FileReader(propertiesFile));
       properties.load(reader);
       map = new HashMap<String, Object>((Map) properties);
     } catch (IOException e) {
       // Just warn
+    }finally {
+      CloseIoUtils.closeAll(reader);
     }
     return map;
   }

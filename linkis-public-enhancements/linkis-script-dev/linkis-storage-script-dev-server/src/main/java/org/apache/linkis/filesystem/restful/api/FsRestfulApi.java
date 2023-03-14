@@ -321,7 +321,6 @@ public class FsRestfulApi {
       String fileName = p.getOriginalFilename();
       WorkspaceUtil.charCheckFileName(fileName);
       FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
-      WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
       fileSystem.createNewFile(fsPathNew);
       try (InputStream is = p.getInputStream();
           OutputStream outputStream = fileSystem.write(fsPathNew, true)) {

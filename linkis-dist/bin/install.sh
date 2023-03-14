@@ -395,6 +395,10 @@ if [ ! -d $ENGINECONN_ROOT_PATH ] ;then
     mkdir -p $ENGINECONN_ROOT_PATH
 fi
 sudo chmod -R 777 $ENGINECONN_ROOT_PATH
+sed -i "/.*ENGINECONN_ROOT_PATH=*/c\ENGINECONN_ROOT_PATH=$ENGINECONN_ROOT_PATH" $LINKIS_HOME/admin/linkis-ec-clear.sh
+
+
+
 
 if [ "$ENGINECONNMANAGER_PORT" != "" ]
 then

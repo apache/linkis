@@ -214,7 +214,7 @@ public class LocalFileSystem extends FileSystem {
       }
     } catch (Throwable e) {
       if (!file.delete()) {
-        log.error("File deletion failed(文件删除失败)");
+        LOG.error("File deletion failed(文件删除失败)");
       }
       if (e instanceof IOException) {
         throw (IOException) e;
@@ -382,7 +382,7 @@ public class LocalFileSystem extends FileSystem {
       }
     } catch (Throwable e) {
       if (!file.delete()) {
-        log.error("File deletion failed(文件删除失败)");
+        LOG.error("File deletion failed(文件删除失败)");
       }
       if (e instanceof IOException) {
         throw (IOException) e;

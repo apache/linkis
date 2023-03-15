@@ -133,7 +133,7 @@ public class EngineConnPluginUtils {
       }
       return acceptedFunction.apply(className) ? className : null;
     } else if (url.endsWith(JAR_SUF_NAME)) {
-      JarFile jarFile=null;
+      JarFile jarFile = null;
       try {
         jarFile = new JarFile(new File(url));
         Enumeration<JarEntry> en = jarFile.entries();
@@ -153,7 +153,7 @@ public class EngineConnPluginUtils {
         // Trace
         LOG.trace("Fail to parse jar file:[" + url + "] in plugin classpath");
         return null;
-      }finally {
+      } finally {
         CloseIoUtils.closeAll(jarFile);
       }
     }

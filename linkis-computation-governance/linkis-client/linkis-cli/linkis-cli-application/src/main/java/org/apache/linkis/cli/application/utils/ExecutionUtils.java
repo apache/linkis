@@ -24,9 +24,9 @@ import org.apache.linkis.cli.common.exception.error.ErrorLevel;
 import org.apache.linkis.cli.core.exception.BuilderException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.utils.LogUtils;
+import org.apache.linkis.common.utils.CloseIoUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.linkis.common.utils.CloseIoUtils;
 
 import java.io.*;
 import java.util.Set;
@@ -168,7 +168,7 @@ public class ExecutionUtils {
   }
 
   public static String readFile(String path) {
-    BufferedReader bufReader=null;
+    BufferedReader bufReader = null;
     try {
       File inputFile = new File(path);
 
@@ -198,7 +198,7 @@ public class ExecutionUtils {
           CommonErrMsg.BuilderBuildErr,
           "Cannot read user specified script file: " + path,
           e);
-    } finally  {
+    } finally {
       CloseIoUtils.closeAll(bufReader);
     }
   }

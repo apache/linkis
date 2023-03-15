@@ -84,7 +84,8 @@ public class InsPersistenceLabel extends GenericLabel {
 
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), id, labelValueSize, stringValue, modifiable, updateTime, createTime);
+    return Objects.hash(
+        super.hashCode(), id, labelValueSize, stringValue, modifiable, updateTime, createTime);
   }
 
   @Override

@@ -104,7 +104,7 @@ public class RequestKerberosUrlUtils {
     logger.warn(
         String.format(
             "Calling KerberosHttpClient %s %s %s", this.principal, this.keyTabLocation, url));
-    Map<String, Object> initMap=new HashMap<>();
+    Map<String, Object> initMap = new HashMap<>();
     initMap.put("useTicketCache", "false");
     initMap.put("useKeyTab", "true");
     initMap.put("keyTab", keyTabLocation);
@@ -123,7 +123,7 @@ public class RequestKerberosUrlUtils {
               new AppConfigurationEntry(
                   "com.sun.security.auth.module.Krb5LoginModule",
                   AppConfigurationEntry.LoginModuleControlFlag.REQUIRED,
-                      initMap)
+                  initMap)
             };
           }
         };

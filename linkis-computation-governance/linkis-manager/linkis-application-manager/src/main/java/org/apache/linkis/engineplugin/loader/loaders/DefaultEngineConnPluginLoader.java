@@ -266,7 +266,7 @@ public class DefaultEngineConnPluginLoader extends CacheablesEngineConnPluginLoa
       map = new HashMap<String, Object>((Map) properties);
     } catch (IOException e) {
       // Just warn
-    }finally {
+    } finally {
       CloseIoUtils.closeAll(reader);
     }
     return map;

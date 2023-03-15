@@ -22,13 +22,14 @@ import org.apache.linkis.cli.core.exception.PresenterException;
 import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
 import org.apache.linkis.cli.core.present.display.data.DisplayData;
 import org.apache.linkis.cli.core.present.display.data.FileDisplayData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PlainTextFileWriter implements DisplayOperator {
 

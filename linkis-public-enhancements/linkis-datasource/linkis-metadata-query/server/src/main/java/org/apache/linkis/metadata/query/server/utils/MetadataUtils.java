@@ -180,7 +180,7 @@ public class MetadataUtils {
         // Trace
         LOG.trace("Fail to parse jar file:[" + url + "] in service classpath", e);
         return classNameList;
-      }finally {
+      } finally {
         CloseIoUtils.closeAll(jarFile);
       }
     }

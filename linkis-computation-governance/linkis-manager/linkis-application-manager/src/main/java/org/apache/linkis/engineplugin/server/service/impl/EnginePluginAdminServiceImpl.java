@@ -113,7 +113,7 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
   @Override
   public void uploadToECHome(MultipartFile mfile) {
     String engineConnsHome = defaultEngineConnBmlResourceGenerator.getEngineConnsHome();
-    InputStream in =null;
+    InputStream in = null;
     OutputStream out = null;
     try {
       mfile.getInputStream();
@@ -129,8 +129,8 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
       }
     } catch (Exception e) {
       log.info("file {} upload fail", mfile.getOriginalFilename());
-    }finally {
-      CloseIoUtils.closeAll(out,in);
+    } finally {
+      CloseIoUtils.closeAll(out, in);
     }
 
     ZipUtils.fileToUnzip(engineConnsHome + "/" + mfile.getOriginalFilename(), engineConnsHome);

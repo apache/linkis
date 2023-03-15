@@ -44,8 +44,6 @@ public class ImmutablePair<K, V> {
     }
   }
 
-
-
   @Override
   public boolean equals(Object o) {
     if (getClass().isInstance(o)) {

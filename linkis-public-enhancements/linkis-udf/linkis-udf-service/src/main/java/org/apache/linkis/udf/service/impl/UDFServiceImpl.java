@@ -396,28 +396,20 @@ public class UDFServiceImpl implements UDFService {
 
   private UDFTree getOrCreateTree(String userName, String category, String treeName)
       throws UDFException {
+    Map<String, Object> initUserMap = new HashMap<>();
+    initUserMap.put("parent", -1);
+    initUserMap.put("userName", userName);
+    initUserMap.put("category", category);
     // 个人函数目录
-    List<UDFTree> selfTree =
-        udfTreeDao.getTreesByParentId(
-            new HashMap<String, Object>() {
-              {
-                put("parent", -1);
-                put("userName", userName);
-                put("category", category);
-              }
-            });
+    List<UDFTree> selfTree = udfTreeDao.getTreesByParentId(initUserMap);
     if (selfTree == null || selfTree.size() == 0) {
       throw new UDFException("该用户没有个人函数目录!");
     }
-    List<UDFTree> selfTreeChildren =
-        udfTreeDao.getTreesByParentId(
-            new HashMap<String, Object>() {
-              {
-                put("parent", selfTree.get(0).getId());
-                put("userName", userName);
-                put("category", category);
-              }
-            });
+    Map<String, Object> initMap = new HashMap<>();
+    initMap.put("parent", selfTree.get(0).getId());
+    initMap.put("userName", userName);
+    initMap.put("category", category);
+    List<UDFTree> selfTreeChildren = udfTreeDao.getTreesByParentId(initMap);
     for (UDFTree tree : selfTreeChildren) {
       if (tree.getName().equals(treeName)) {
         return tree;
@@ -601,17 +593,14 @@ public class UDFServiceImpl implements UDFService {
                   }
                 }
                 boolean finalCanExpire = canExpire;
-                l.setOperationStatus(
-                    new HashMap<String, Boolean>() {
-                      {
-                        put("canUpdate", true);
-                        put("canDelete", !finalCanExpire);
-                        put("canExpire", finalCanExpire);
-                        put("canShare", ismanager);
-                        put("canPublish", ismanager && Boolean.TRUE.equals(l.getShared()));
-                        put("canHandover", true);
-                      }
-                    });
+                Map<String, Boolean> initMap = new HashMap<>();
+                initMap.put("canUpdate", true);
+                initMap.put("canDelete", !finalCanExpire);
+                initMap.put("canExpire", finalCanExpire);
+                initMap.put("canShare", ismanager);
+                initMap.put("canPublish", ismanager && Boolean.TRUE.equals(l.getShared()));
+                initMap.put("canHandover", true);
+                l.setOperationStatus(initMap);
               });
     }
     logger.info("end to get managerPages.");
@@ -1068,17 +1057,14 @@ public class UDFServiceImpl implements UDFService {
             }
           }
           boolean finalCanExpire = canExpire;
-          udfInfo.setOperationStatus(
-              new HashMap<String, Boolean>() {
-                {
-                  put("canUpdate", true);
-                  put("canDelete", !finalCanExpire);
-                  put("canExpire", finalCanExpire);
-                  put("canShare", ismanager);
-                  put("canPublish", ismanager && Boolean.TRUE.equals(udfInfo.getShared()));
-                  put("canHandover", true);
-                }
-              });
+          Map<String, Boolean> initMap = new HashMap<>();
+          initMap.put("canUpdate", true);
+          initMap.put("canDelete", !finalCanExpire);
+          initMap.put("canExpire", finalCanExpire);
+          initMap.put("canShare", ismanager);
+          initMap.put("canPublish", ismanager && Boolean.TRUE.equals(udfInfo.getShared()));
+          initMap.put("canHandover", true);
+          udfInfo.setOperationStatus(initMap);
         });
     return retList;
   }

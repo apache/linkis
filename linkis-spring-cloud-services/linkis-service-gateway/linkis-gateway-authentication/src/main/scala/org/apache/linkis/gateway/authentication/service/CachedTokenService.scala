@@ -17,7 +17,7 @@
 
 package org.apache.linkis.gateway.authentication.service
 
-import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.gateway.authentication.bo.{Token, User}
 import org.apache.linkis.gateway.authentication.bo.impl.TokenImpl
 import org.apache.linkis.gateway.authentication.conf.TokenConfiguration
@@ -33,12 +33,13 @@ import org.apache.linkis.gateway.authentication.exception.TokenNotExistException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.text.MessageFormat
 import java.util.concurrent.{ExecutionException, TimeUnit}
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 @Service
-class CachedTokenService extends TokenService {
+class CachedTokenService extends TokenService with Logging {
 
   @Autowired
   private var tokenDao: TokenDao = _
@@ -112,15 +113,21 @@ class CachedTokenService extends TokenService {
           x.getCause match {
             case _: TokenNotExistException => null
             case _ =>
+              logger.error(
+                s"Failed to obtain cache through tokenName, tokenName:${tokenName}(通过tokenName获取缓存失败，tokenName：${tokenName})"
+              )
               throw new TokenAuthException(
-                FAILED_TO_LOAD_TOKEN.getErrorCode,
-                FAILED_TO_LOAD_TOKEN.getErrorDesc
+                FAILED_TO_LOAD_TOKEN_NAME.getErrorCode,
+                MessageFormat.format(FAILED_TO_LOAD_TOKEN_NAME.getErrorDesc, tokenName)
               )
           }
         case _ =>
+          logger.error(
+            s"Failed to load token from DB into cache,tokenName:${tokenName}(无法将 token 令牌从数据库加载到缓存中,token名称：${tokenName})!"
+          )
           throw new TokenAuthException(
             FAILED_TO_LOAD_TOKEN.getErrorCode,
-            FAILED_TO_LOAD_TOKEN.getErrorDesc
+            MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName)
           )
       }
     )

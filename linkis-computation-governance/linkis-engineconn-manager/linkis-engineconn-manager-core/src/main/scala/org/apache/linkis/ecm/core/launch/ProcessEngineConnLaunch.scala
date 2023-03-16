@@ -154,7 +154,9 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
     request.creationDesc.properties.asScala.foreach { case (k, v) =>
       if (k.contains(" ") || (v != null && v.contains(" "))) {
-        logger.info(s"Parameters that contain spaces in the parameters are(参数中包含空格的参数有：${k},Value:${v}")
+        logger.info(
+          s"Parameters that contain spaces in the parameters are(启动参数中包含空格的参数有：${k},Value:${v}"
+        )
       }
     }
     if (

@@ -20,7 +20,7 @@ package org.apache.linkis.ecm.server.operator
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.ecm.core.conf.ECMErrorCode
+import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.exception.ECMErrorException
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
@@ -29,6 +29,7 @@ import org.apache.linkis.storage.utils.StorageUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
+import java.text.MessageFormat
 import java.util
 import java.util.concurrent.{Callable, ConcurrentHashMap, ExecutorService, Future, TimeUnit}
 
@@ -71,8 +72,8 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     }
     if (!fs.exists(rootLogPath) || !rootLogPath.toFile.isDirectory) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"Log directory ${rootLogPath.getPath} is not exists."
+        LOG_IS_NOT_EXISTS.getErrorCode,
+        MessageFormat.format(LOG_IS_NOT_EXISTS.getErrorDesc, rootLogPath.getPath)
       )
     }
     val creator = getAsThrow[String]("creator")
@@ -96,8 +97,8 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
     }
     if (!fs.exists(logPath) || logPath.toFile.isDirectory) {
       throw new ECMErrorException(
-        ECMErrorCode.EC_FETCH_LOG_FAILED,
-        s"LogFile $logPath is not exists or is not a file."
+        LOGFILE_IS_NOT_EXISTS.getErrorCode,
+        MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc, logPath.getPath)
       )
     }
     logger.info(
@@ -124,10 +125,10 @@ class EngineConnYarnLogOperator extends EngineConnLogOperator {
    * @return
    */
   private def requestToFetchYarnLogs(
-                                      creator: String,
-                                      applicationId: String,
-                                      yarnLogDir: String
-                                    ): Future[String] = {
+      creator: String,
+      applicationId: String,
+      yarnLogDir: String
+  ): Future[String] = {
     EngineConnYarnLogOperator.YARN_LOG_FETCH_SCHEDULER.submit(new Callable[String] {
       override def call(): String = {
         val logPath = new FsPath(StorageUtils.FILE_SCHEMA + yarnLogDir + "/yarn_" + applicationId)

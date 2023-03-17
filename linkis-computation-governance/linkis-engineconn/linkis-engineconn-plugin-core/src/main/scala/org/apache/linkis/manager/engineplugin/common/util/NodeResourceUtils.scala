@@ -23,8 +23,8 @@ import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.commons.lang3.StringUtils
 
 import java.util
-import java.util.regex.Pattern
 import java.util.{Locale, Objects}
+import java.util.regex.Pattern
 
 import org.slf4j.LoggerFactory
 

@@ -715,3 +715,5 @@ select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `nam
 INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境SIT', '测试环境SIT', @data_source_type_id, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);
 INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境UAT', '测试环境UAT', @data_source_type_id, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);
 
+select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'kafka';
+INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境SIT', '开源测试环境SIT', @data_source_type_id, '{"uris":"thrift://localhost:9092"}',  now(), NULL,  now(), NULL);

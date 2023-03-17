@@ -35,7 +35,7 @@ import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCod
 
 public class JdbcParamUtils {
   private static final Logger LOG = LoggerFactory.getLogger(JdbcParamUtils.class);
-  private static final String JDBC_MATCH_REGEX = "jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?";
+  private static final String JDBC_MATCH_REGEX = "jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?(\\?\\S*)?";
   private static final String JDBC_H2_PROTOCOL = "jdbc:h2";
 
   private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";

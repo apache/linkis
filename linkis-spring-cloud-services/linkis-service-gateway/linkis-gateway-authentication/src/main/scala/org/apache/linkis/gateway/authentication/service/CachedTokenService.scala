@@ -60,10 +60,6 @@ class CachedTokenService extends TokenService with Logging {
 
     });
 
-//  def setTokenDao(tokenDao: TokenDao): Unit = {
-//    this.tokenDao = tokenDao
-//  }
-
   /*
     TODO begin
    */

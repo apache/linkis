@@ -541,7 +541,7 @@ INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hos
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2);
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('hive', 'hive数据库', 'hive', '大数据存储', '', 3);
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('elasticsearch','elasticsearch数据源','es无结构化存储','分布式全文索引','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mongodb', 'default', 'default', 'DEFAULT', NULL, 3);
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mongodb', 'mongodb', 'NoSQL文档存储', 'NoSQL', NULL, 3);
 
 -- jdbc
 INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);

@@ -49,6 +49,8 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
+import com.jayway.jsonpath.JsonPath
+
 class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
   private val HASTATE_ACTIVE = "active"
@@ -74,27 +76,20 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
     def getYarnResource(resource: Option[Any]) = resource.map(r => {
-      val value =
-        JsonUtils.jackson.readValue(r.asInstanceOf[YarnResource].toJson, classOf[Map[String, Any]])
-      val memory = getMapValue[Int](value, "memory")
-      val vCores = getMapValue[Int](value, "vCores")
+      val memory = JsonPath.read(r, "$.memory").asInstanceOf[Int]
+      val vCores = JsonPath.read(r, "$.vCores").asInstanceOf[Int]
       new YarnResource(memory.toLong * 1024L * 1024L, vCores, 0, queueName)
     })
 
     def maxEffectiveHandle(queueValue: Option[Any]): Option[YarnResource] = {
       val metrics = getResponseByUrl("metrics", rmWebAddress)
-      val metricsJson = JsonUtils.jackson.readValue(metrics.toString(), classOf[Map[String, Any]])
-      val clusterMetricsJson = getMapValue[String](metricsJson, "clusterMetrics")
+      val totalMB = JsonPath.read(metrics, "$.clusterMetrics.totalMB").asInstanceOf[Long]
+      val totalVirtualCores =
+        JsonPath.read(metrics, "$.clusterMetrics.totalVirtualCores").asInstanceOf[Long]
+      val totalResouceInfoResponse = (totalMB, totalVirtualCores)
 
-      val clusterMetrics =
-        JsonUtils.jackson.readValue(clusterMetricsJson, classOf[Map[String, Any]])
-      val totalMB = getMapValue[Int](clusterMetrics, "totalMB")
-      val totalVirtualCores = getMapValue[Int](clusterMetrics, "totalVirtualCores")
-
-      val totalResouceInfoResponse = (totalMB.toLong, totalVirtualCores.toLong)
       queueValue.map(r => {
-        val queueValueJson = JsonUtils.jackson.readValue(r.toString(), classOf[Map[String, Any]])
-        val absoluteCapacity = getMapValue[Any](queueValueJson, "absoluteCapacity")
+        val absoluteCapacity = JsonPath.read(r, "$.absoluteCapacity")
 
         if (absoluteCapacity.isInstanceOf[BigDecimal]) {
           absoluteCapacity.asInstanceOf[BigDecimal].toDouble
@@ -120,8 +115,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     def getQueue(queues: Any): Option[Any] = {
       if (queues.isInstanceOf[List[Any]]) {
         queues.asInstanceOf[List[Any]].foreach { q =>
-          val qJson = JsonUtils.jackson.readValue(q.toString, classOf[Map[String, Any]])
-          val yarnQueueName = getMapValue[String](qJson, "queueName")
+          val yarnQueueName = JsonPath.read(q, "$.queueName").asInstanceOf[String]
           if (yarnQueueName == realQueueName) return Some(q)
           else if (realQueueName.startsWith(yarnQueueName + ".")) {
             return getQueue(getChildQueues(q))
@@ -147,12 +141,9 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     }
 
     def getChildQueues(resp: Any): Any = {
-      val respJson = JsonUtils.jackson.readValue(resp.toString, classOf[Map[String, Any]])
-      val childQueuesValue = getMapValue[String](respJson, "childQueues")
-
-      val childQueuesValueJson =
-        JsonUtils.jackson.readValue(childQueuesValue, classOf[Map[String, Any]])
-      val queues = getMapValue[List[Any]](childQueuesValueJson, "queue")
+      val childQueuesValue = JsonPath.read(resp, "$.childQueues")
+      val queues =
+        JsonPath.read(resp, "$.childQueues.queue").asInstanceOf[List[Any]]
 
       if (queues != null && queues.nonEmpty) {
         logger.info(s"queues:$queues")
@@ -163,9 +154,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     def getQueueOfCapacity(queues: Any): Option[Any] = {
       if (queues.isInstanceOf[List[Any]]) {
         queues.asInstanceOf[List[Any]].foreach { q =>
-          val qJson = JsonUtils.jackson.readValue(q.toString, classOf[Map[String, Any]])
-          val yarnQueueName = getMapValue[String](qJson, "queueName")
-          val queuesValue = getMapValue[String](qJson, "queues")
+          val yarnQueueName = JsonPath.read(q, "$.queueName").asInstanceOf[String]
+          val queuesValue = JsonPath.read(q, "$.queues").asInstanceOf[String]
 
           if (yarnQueueName == realQueueName) return Some(q)
           else if (queuesValue.nonEmpty) {
@@ -175,8 +165,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         }
         None
       } else if (queues.isInstanceOf[Map[Any, Any]]) {
-        val qJson = JsonUtils.jackson.readValue(queues.toString, classOf[Map[String, Any]])
-        val queuesValue = getMapValue[String](qJson, "queues")
+        val queuesValue = JsonPath.read(queues, "$.queues").asInstanceOf[String]
         if (
             queues
               .asInstanceOf[Map[Any, Any]]
@@ -195,25 +184,17 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     }
 
     def getChildQueuesOfCapacity(resp: Any) = {
-      val respJson = JsonUtils.jackson.readValue(resp.toString, classOf[Map[String, Any]])
-      val queuesValue = getMapValue[String](respJson, "queues")
-      val queuesValueJson = JsonUtils.jackson.readValue(queuesValue, classOf[Map[String, Any]])
-      getMapValue[String](queuesValueJson, "queue")
+      JsonPath.read(resp, "$.queues.queue").asInstanceOf[String]
     }
 
     def getResources() = {
       val resp = getResponseByUrl("scheduler", rmWebAddress)
-      val respJson = JsonUtils.jackson.readValue(resp.toString(), classOf[Map[String, Any]])
-
-      val schedulerValue = getMapValue[String](respJson, "scheduler")
-      val schedulerJson = JsonUtils.jackson.readValue(schedulerValue, classOf[Map[String, Any]])
-
-      val schedulerInfoValue = getMapValue[String](schedulerJson, "schedulerInfo")
-      val schedulerInfoJson =
-        JsonUtils.jackson.readValue(schedulerInfoValue, classOf[Map[String, Any]])
-
-      val schedulerType = getMapValue[String](schedulerInfoJson, "type")
-      val rootQueueValue = getMapValue[String](schedulerInfoJson, "rootQueue")
+      val schedulerInfoValue =
+        JsonPath.read(resp, "$.scheduler.schedulerInfo").asInstanceOf[String]
+      val schedulerType =
+        JsonPath.read(resp, "$.scheduler.schedulerInfo.type").asInstanceOf[String]
+      val rootQueueValue =
+        JsonPath.read(resp, "$.scheduler.schedulerInfo.rootQueue").asInstanceOf[String]
 
       if ("capacityScheduler".equals(schedulerType)) {
         realQueueName = queueName
@@ -227,8 +208,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           )
         }
 
-        val queueJson = JsonUtils.jackson.readValue(queue.toString, classOf[Map[String, Any]])
-        val resourcesUsedValue = getMapValue[Option[YarnResource]](queueJson, "resourcesUsed")
+        val resourcesUsedValue =
+          JsonPath.read(queue, "$.resourcesUsed").asInstanceOf[Option[YarnResource]]
 
         (maxEffectiveHandle(queue).get, getYarnResource(resourcesUsedValue).get)
       } else if ("fairScheduler".equals(schedulerType)) {
@@ -241,9 +222,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        val queueJson = JsonUtils.jackson.readValue(queue.toString, classOf[Map[String, Any]])
-        val maxResourcesValue = getMapValue[Option[YarnResource]](queueJson, "maxResources")
-        val usedResourcesValue = getMapValue[Option[YarnResource]](queueJson, "usedResources")
+        val maxResourcesValue =
+          JsonPath.read(queue, "$.maxResources").asInstanceOf[Option[YarnResource]]
+        val usedResourcesValue =
+          JsonPath.read(queue, "$.usedResources").asInstanceOf[Option[YarnResource]]
         (getYarnResource(maxResourcesValue).get, getYarnResource(usedResourcesValue).get)
       } else {
         logger.debug(
@@ -282,33 +264,28 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
     def getYarnResource(resource: Option[Any]) = resource.map(r => {
-      val value =
-        JsonUtils.jackson.readValue(r.asInstanceOf[YarnResource].toJson, classOf[Map[String, Any]])
-      val allocatedMB = getMapValue[Int](value, "allocatedMB")
-      val allocatedVCores = getMapValue[Int](value, "allocatedVCores")
-      new YarnResource(allocatedMB.toLong * 1024L * 1024L, allocatedVCores, 0, queueName)
+      val allocatedMB = JsonPath.read(r, "$.allocatedMB").asInstanceOf[Long]
+      val allocatedVCores = JsonPath.read(r, "$.allocatedVCores").asInstanceOf[Int]
+      new YarnResource(allocatedMB * 1024L * 1024L, allocatedVCores, 0, queueName)
     })
 
     val realQueueName = "root." + queueName
 
     def getAppInfos(): Array[ExternalAppInfo] = {
       val resp = getResponseByUrl("apps", rmWebAddress)
-      val respJson = JsonUtils.jackson.readValue(resp.toString(), classOf[Map[String, Any]])
-      val apps = getMapValue[String](respJson, "apps")
+      val apps = JsonPath.read(resp, "$.apps")
+      val app = JsonPath.read(resp, "$.apps.app")
 
-      val appsJson = JsonUtils.jackson.readValue(apps, classOf[Map[String, Any]])
-      val app = getMapValue[Any](appsJson, "app")
-
-      val appJson = JsonUtils.jackson.readValue(app.toString, classOf[Map[String, Any]])
-      val queueValue = getMapValue[String](appJson, "queue")
-      val stateValue = getMapValue[String](appJson, "state")
-      val idValue = getMapValue[String](appJson, "id")
-      val userValue = getMapValue[String](appJson, "user")
-      val applicationTypeValue = getMapValue[String](appJson, "applicationType")
+      val queueValue = JsonPath.read(resp, "$.apps.app.queue").asInstanceOf[String]
+      val stateValue = JsonPath.read(resp, "$.apps.app.state").asInstanceOf[String]
+      val idValue = JsonPath.read(resp, "$.apps.app.id").asInstanceOf[String]
+      val userValue = JsonPath.read(resp, "$.apps.app.user").asInstanceOf[String]
+      val applicationTypeValue =
+        JsonPath.read(resp, "$.apps.app.applicationType").asInstanceOf[String]
 
       if (app.isInstanceOf[List[Any]]) {
         val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
-        apps.foreach { app =>
+        apps.asInstanceOf[List[Any]].foreach { app =>
           val yarnQueueName = queueValue
           val state = stateValue
           if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
@@ -392,16 +369,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             .foreach(address => {
               Utils.tryCatch {
                 val response = getResponseByUrl("info", address)
-                val responseJson =
-                  JsonUtils.jackson.readValue(response.toString(), classOf[Map[String, Any]])
-                val clusterInfo = getMapValue[String](responseJson, "clusterInfo")
-
-                val clusterInfoJson =
-                  JsonUtils.jackson.readValue(clusterInfo, classOf[Map[String, Any]])
-                val haState = getMapValue[Any](clusterInfoJson, "haState")
+                val haState = JsonPath.read(response, "$.clusterInfo.haState")
 
                 if (haState.isInstanceOf[String]) {
-                  if (HASTATE_ACTIVE.equalsIgnoreCase(haState.toString)) {
+                  if (HASTATE_ACTIVE.equalsIgnoreCase(haState)) {
                     activeAddress = address
                   } else {
                     logger.warn(s"Resourcemanager : ${address} haState : ${haState}")
@@ -442,15 +413,6 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       getAndUpdateActiveRmWebAddress(rmWebHaAddress)
     }
     true
-  }
-
-  def getMapValue[T](map: Map[String, Any], key: String, default: T = null.asInstanceOf[T]): T = {
-    val value = map.get(key).map(_.asInstanceOf[T]).getOrElse(default)
-    if (StringUtils.isEmpty(value.toString)) {
-      default
-    } else {
-      value
-    }
   }
 
 }

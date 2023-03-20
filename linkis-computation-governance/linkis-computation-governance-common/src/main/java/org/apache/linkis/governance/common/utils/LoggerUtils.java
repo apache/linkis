@@ -15,16 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.governance.common.utils;
 
-import org.apache.linkis.common.exception.LinkisRetryException
-import org.apache.linkis.manager.common.entity.node.EngineNode
-import org.apache.linkis.manager.common.protocol.engine.EngineCreateRequest
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-trait EngineCreateService {
+import java.util.Map;
 
-  @throws[LinkisRetryException]
-  def createEngine(engineCreateRequest: EngineCreateRequest, sender: Sender): EngineNode
+import org.slf4j.MDC;
 
+public class LoggerUtils {
+
+  public static void setJobIdMDC(String jobId) {
+    MDC.put(JobRequestConstants.JOB_ID(), jobId);
+  }
+
+  public static void setJobIdMDC(Map<String, Object> props) {
+    String jobId = JobUtils.getJobIdFromMap(props);
+    MDC.put(JobRequestConstants.JOB_ID(), jobId);
+  }
+
+  public static void removeJobIdMDC() {
+    MDC.remove(JobRequestConstants.JOB_ID());
+  }
 }

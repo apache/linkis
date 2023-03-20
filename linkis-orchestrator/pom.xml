@@ -21,6 +21,7 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>linkis-orchestrator</artifactId>

@@ -43,11 +43,8 @@ object EnvConfiguration {
 
   val MAX_METASPACE_SIZE = CommonVars("linkis.engineconn.metaspace.size.max", "256m")
 
-  lazy val metaspaceSize = if (SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_8)) {
-    s"-XX:MaxMetaspaceSize=${MAX_METASPACE_SIZE.getHotValue()} -XX:MetaspaceSize=128m"
-  } else {
-    s"-XX:MaxPermSize=${MAX_METASPACE_SIZE.getHotValue()} -XX:PermSize=128m"
-  }
+  lazy val metaspaceSize =
+    s"-XX:MaxMetaspaceSize=${MAX_METASPACE_SIZE.getValue} -XX:MetaspaceSize=128m"
 
   lazy val ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String](
     "wds.linkis.engineConn.javaOpts.default",

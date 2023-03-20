@@ -96,14 +96,16 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       queueValue.map(r => {
         val absoluteCapacity = JsonPath.read(r, "$.absoluteCapacity")
 
-        if (absoluteCapacity.isInstanceOf[BigDecimal]) {
-          absoluteCapacity.asInstanceOf[BigDecimal].toDouble
-        } else if (absoluteCapacity.isInstanceOf[Double]) {
-          absoluteCapacity.asInstanceOf[Double]
-        } else {
-          0d
-        }
-        val effectiveResource = absoluteCapacity.asInstanceOf[Long]
+        val effectiveResource = {
+          if (absoluteCapacity.isInstanceOf[BigDecimal]) {
+            absoluteCapacity.asInstanceOf[BigDecimal].toDouble
+          } else if (absoluteCapacity.isInstanceOf[Double]) {
+            absoluteCapacity.asInstanceOf[Double]
+          } else {
+            0d
+          }
+        }.asInstanceOf[Long]
+
         new YarnResource(
           math
             .floor(effectiveResource * totalResouceInfoResponse._1 * 1024L * 1024L / 100)
@@ -216,10 +218,12 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           )
         }
 
-        val resourcesUsedValue =
-          JsonPath.read(queue, "$.resourcesUsed").asInstanceOf[Option[YarnResource]]
+        val resourceCtx = JsonPath.parse(queue)
+        val usedMemory = resourceCtx.read("$.resourcesUsed.memory").asInstanceOf[Long]
+        val usedvCores = resourceCtx.read("$.resourcesUsed.vCores").asInstanceOf[Int]
+        val resourcesUsed = new YarnResource(usedMemory * 1024L * 1024L, usedvCores, 0, queueName)
 
-        (maxEffectiveHandle(queue).get, getYarnResource(resourcesUsedValue).get)
+        (maxEffectiveHandle(queue).get, resourcesUsed)
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(rootQueueValue)
         val queue = getQueue(childQueues)
@@ -230,12 +234,18 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        val ctx = JsonPath.parse(queue)
-        val maxResourcesValue =
-          ctx.read("$.maxResources").asInstanceOf[Option[YarnResource]]
-        val usedResourcesValue =
-          ctx.read("$.usedResources").asInstanceOf[Option[YarnResource]]
-        (getYarnResource(maxResourcesValue).get, getYarnResource(usedResourcesValue).get)
+        val resourceCtx = JsonPath.parse(queue)
+        val maxResourceMemory = resourceCtx.read("$.maxResources.memory").asInstanceOf[Long]
+        val maxResourcevCores = resourceCtx.read("$.maxResources.vCores").asInstanceOf[Int]
+        val maxResources =
+          new YarnResource(maxResourceMemory * 1024L * 1024L, maxResourcevCores, 0, queueName)
+
+        val usedResourceMemory = resourceCtx.read("$.usedResources.memory").asInstanceOf[Long]
+        val usedResourcevCores = resourceCtx.read("$.usedResources.vCores").asInstanceOf[Int]
+        val usedResourcesUsed =
+          new YarnResource(usedResourceMemory * 1024L * 1024L, usedResourcevCores, 0, queueName)
+
+        (maxResources, usedResourcesUsed)
       } else {
         logger.debug(
           s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp
@@ -287,16 +297,16 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       val apps = ctx.read("$.apps")
       val app = ctx.read("$.apps.app")
 
-      val queueValue = ctx.read("$.apps.app.queue").asInstanceOf[String]
-      val stateValue = ctx.read("$.apps.app.state").asInstanceOf[String]
-      val idValue = ctx.read("$.apps.app.id").asInstanceOf[String]
-      val userValue = ctx.read("$.apps.app.user").asInstanceOf[String]
-      val applicationTypeValue =
-        ctx.read("$.apps.app.applicationType").asInstanceOf[String]
-
       if (app.isInstanceOf[List[Any]]) {
         val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
         apps.asInstanceOf[List[Any]].foreach { app =>
+          val appCtx = JsonPath.parse(app)
+          val queueValue = appCtx.read("$.queue").asInstanceOf[String]
+          val stateValue = appCtx.read("$.state").asInstanceOf[String]
+          val idValue = appCtx.read("$.id").asInstanceOf[String]
+          val userValue = appCtx.read("$.user").asInstanceOf[String]
+          val applicationTypeValue =
+            appCtx.read("$.applicationType").asInstanceOf[String]
           val yarnQueueName = queueValue
           val state = stateValue
           if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {

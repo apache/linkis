@@ -28,7 +28,7 @@ object ResourceUtils {
   }
 
   def serializeResource(resource: Resource): String = {
-    JsonUtils.jackson.writeValueAsString(resource, classOf[Map[String, Any]])
+    JsonUtils.jackson.writeValueAsString(resource)
   }
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {

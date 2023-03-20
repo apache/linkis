@@ -22,6 +22,8 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 
+import org.apache.commons.lang3.StringUtils
+
 import java.io.{File, FileInputStream, InputStream}
 import java.text.MessageFormat
 
@@ -31,10 +33,17 @@ class DefaultEngineConnBmlResourceGenerator
 
   override def generate(engineConnType: String): Map[String, Array[EngineConnLocalizeResource]] =
     getEngineConnDistHomeList(engineConnType).map { path =>
-      val distFile = new File(path)
-      val key = if (distFile.getName.startsWith("v")) distFile.getName else NO_VERSION_MARK
+      val versionFile = new File(path)
+      logger.info("generate, versionFile:" + path)
+      val key = versionFile.getName
+      if (key.contains("-")) {
+        throw new EngineConnPluginErrorException(
+          CONTAINS_SPECIAL_CHARCATERS.getErrorCode,
+          MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc, engineConnType)
+        )
+      }
       Utils.tryCatch {
-        key -> generateDir(path)
+        key -> generateDir(versionFile.getPath)
       } { case t: Throwable =>
         logger.error(s"Generate dir : $path error, msg : " + t.getMessage, t)
         throw t
@@ -51,6 +60,7 @@ class DefaultEngineConnBmlResourceGenerator
 
   private def generateDir(path: String): Array[EngineConnLocalizeResource] = {
     val distFile = new File(path)
+    logger.info("generateDir, distFile:" + path)
     val validFiles = distFile
       .listFiles()
       .filterNot(f =>
@@ -75,7 +85,7 @@ class DefaultEngineConnBmlResourceGenerator
           )
         }
         ZipUtils.fileToZip(file.getPath, path, file.getName + ".zip")
-        // 如果是文件夹，这里的最后更新时间，采用文件夹的最后更新时间，而不是ZIP的最后更新时间.
+        // If it is a folder, the last update time here is the last update time of the folder, not the last update time of ZIP.(如果是文件夹，这里的最后更新时间，采用文件夹的最后更新时间，而不是ZIP的最后更新时间.)
         EngineConnLocalizeResourceImpl(
           newFile.getPath,
           newFile.getName,

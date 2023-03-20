@@ -84,6 +84,12 @@
           "common": "通用",
           "tenant": "租户标签",
           "inputTenant": "请输入租户标签",
+          "globalSettings": "全局设置",
+          "resultSet": {
+            "prefixText": "因为您的结果集较大，为了更好的体验，",
+            "linkText": "点击查看结果集",
+            "largeResultTips": "前端只展示5000条数据"
+          },
           "warning": {
               "api": "接口请求中，请稍候！",
               "data": "数据请求中，请稍候！",
@@ -137,7 +143,9 @@
               "queueTop": "队列上限资源",
               "engineRemain": "引擎剩余资源",
               "engineUsed": "引擎已用资源",
-              "engineTop": "引擎上限资源"
+              "engineTop": "引擎上限资源",
+            "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
+            "applicationRole": "应用方"
           },
           "logLoading": "日志请求中，请稍后",
           "title": "Linkis管理台",
@@ -176,6 +184,7 @@
                       "datasourceAccess": "数据源权限",
                       "datasourceEnv": "数据源环境",
                       "datasourceType": "数据源分类",
+                      "datasourceTypeKey": "数据源配置项",
                       "EnginePluginManagement": "引擎物料管理",
                       "basedataManagement": "基础数据管理",
                       "codeQuery": "代码检索",
@@ -183,6 +192,15 @@
                   }
               }
           },
+        "modal": {
+          "modalTitle": "提示信息",
+          "modalDelete": "确认是否删除[{envName}]项?",
+          "modalDeleteRecord": "确认是否删除该记录?",
+          "modalDeleteTask": "确认是否停止当前选择任务?",
+          "modalDeleteInstance": "确认是否停止当前选择实例?",
+          "modalDeleteSuccess": "删除成功",
+          "modalDeleteFail": "删除失败"
+        },
           "formItems": {
               "id": {
                   "placeholder": "请输入ID搜索"
@@ -311,6 +329,7 @@
         "viewlog": "查看日志",
         "datasource": {
             "pleaseInput": "请输入",
+            "pleaseUpload": "请上传",
             "datasourceSrc": "数据源",
             "connectTest": "测试连接",
             "sourceName": "数据源名称",

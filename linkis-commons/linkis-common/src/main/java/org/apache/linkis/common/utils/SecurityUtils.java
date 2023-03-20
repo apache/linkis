@@ -176,6 +176,9 @@ public abstract class SecurityUtils {
   }
 
   private static Map<String, Object> parseMysqlUrlParamsToMap(String paramsUrl) {
+    if (StringUtils.isBlank(paramsUrl)) {
+      return new LinkedHashMap<>();
+    }
     String[] params = paramsUrl.split(AND_SYMBOL);
     Map<String, Object> map = new LinkedHashMap<>(params.length);
     for (String param : params) {

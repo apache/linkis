@@ -29,6 +29,14 @@
       "management": "管理台",
       "bbs": "论坛",
       "feedback": "反馈",
+      "exceptionTips": "后台接口异常，请联系开发处理！",
+      "separator": {
+        "comma": "逗号(,)",
+        "tab": "tab键(\\t)",
+        "semicolon": "分号(;)",
+        "space": "空格()",
+        "vertical": "竖线(|)"
+      },
       "tabs": {
         "progress": "进度",
         "result": "运行结果",
@@ -313,7 +321,8 @@
             "download": "下载成功，请到本地的download文件夹查看！"
         },
         "rowToColumn": "行转列",
-        "rowToColumnTitle": "查看当前行详情"
+        "rowToColumnTitle": "查看当前行详情",
+        "selectSeparator": "请选择自定义分隔符："
       },
       "statusType": {
         "all": "全部",

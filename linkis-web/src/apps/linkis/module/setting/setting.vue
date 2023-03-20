@@ -18,6 +18,7 @@
 <template>
   <div class="setting" style="height: 100%">
     <!-- The tab component only does switch selection(tab组件只做切换选择) -->
+    <div class="tabs-title">{{$t('message.linkis.resourceManagement.applicationList')}}:</div>
     <Tabs
       class="tabs"
       v-model="currentTabName"
@@ -46,6 +47,7 @@
           :iseditListItem="iseditListItem"
           :isdeleteListItem="isdeleteListItem"
           :isOpenAdd="isOpenAdd"
+          :currentCardIndex.sync="currentCardIndex"
         >
         </cardList>
       </TabPane>
@@ -56,7 +58,7 @@
       <Button @click="handleTabsAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin">{{
         $t("message.linkis.addAppType")
       }}</Button>
-      <Button @click="handleEngineAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin">{{
+      <Button @click="handleEngineAdd" size="small" type="primary" slot="extra" v-show="isLogAdmin" :disabled="currentTabName === $t('message.linkis.globalSettings')">{{
         $t("message.linkis.addEngineType")
       }}</Button>
     </Tabs>
@@ -97,6 +99,7 @@
       :title="$t('message.linkis.editDescriptionEngineConfig')"
       v-model="isEditChildCategory"
       :mask-closable="false"
+      :ok-text="$t('message.common.ok')"
     >
       <!-- Editing of engine descriptions(引擎描述的编辑) -->
       <Form
@@ -138,6 +141,7 @@
       :title="$t('message.linkis.addParameterConfig')"
       v-model="isChildCategory"
       :mask-closable="false"
+      :ok-text="$t('message.common.ok')"
     >
       <!-- Editing of engine descriptions(引擎描述的编辑) -->
       <Form
@@ -146,9 +150,16 @@
         :model="childCategoryFormItem"
         :rules="ruleValidate"
       >
+        <!-- Engine version information(应用方) -->
+        <FormItem
+          class="addTagClass"
+          :label="`${$t('message.linkis.tableColumns.applicationRole')}：`"
+        >
+          <Input v-model="currentTabName" disabled />
+        </FormItem>
         <!-- Add the name of the engine(新增引擎的名称) -->
         <FormItem :label="`${$t('message.linkis.tableColumns.engineType')}：`">
-          <Select v-model="childCategoryFormItem.type">
+          <Select v-model="childCategoryFormItem.type" @on-change="changeEngine">
             <Option :value="item" v-for="item in engineType" :key="item.key">{{
               item
             }}</Option>
@@ -160,7 +171,13 @@
           :label="`${$t('message.linkis.tableColumns.engineVersion')}：`"
           prop="version"
         >
-          <Input v-model="childCategoryFormItem.version" />
+          <AutoComplete
+            v-model="childCategoryFormItem.version"
+            :data="versionList"
+            :filter-method="filterMethod"
+            :placeholder="$t('message.linkis.tableColumns.versioTips')"
+            style="width:100%">
+          </AutoComplete>
         </FormItem>
         <FormItem :label="`${$t('message.linkis.description')}：`" prop="desc">
           <Input
@@ -178,6 +195,7 @@
       :title="$t('message.linkis.addAppType')"
       v-model="isAddApptype"
       :mask-closable="false"
+      :ok-text="$t('message.common.ok')"
     >
       <Form :label-width="80">
         <FormItem :label="`${$t('message.linkis.name')}：`">
@@ -257,6 +275,8 @@ export default {
           },
         ],
       },
+      currentCardIndex: 0,
+      versionList: [] //Version list
     };
   },
 
@@ -285,13 +305,13 @@ export default {
   },
 
   methods: {
-    getMenuList() {
+    getMenuList(condition) {
       api.fetch("/configuration/getCategory", "get").then((rst) => {
         this.menuList = rst.Category || [];
         this.$nextTick(() => {
           if (this.currentTabName) {
-            this.getAppVariable(this.currentTabName || "");
             this.currentTabName = `${this.currentTabName}`;
+            condition ? this.showCardItem(this.currentTabName, condition) : this.getAppVariable(this.currentTabName || "");
           } else {
             this.getAppVariable(this.menuList[0].categoryName || "");
             this.currentTabName = `${this.menuList[0].categoryName}`;
@@ -317,10 +337,12 @@ export default {
         .then((rst) => {
           this.loading = false;
           //Whether the currently active tab is the same tab as the clicked engine(当前活动的tab 是否和点击的引擎同一个tab)
-          this.fullTree = rst.fullTree;
-          this.fullTree.forEach((item) => {
+          rst.fullTree.forEach((item) => {
             item.settings = orderBy(item.settings, ["level"], ["asc"]);
             if (item.settings.length) {
+              if (parameter[0] !== '全局设置' && parameter[0] !== 'GlobalSettings') {
+                item.settings = item.settings.filter(set => set.engineType)
+              }
               item.settings.forEach((set) => {
                 if (set.validateType === "OFT") {
                   set.validateRangeList = this.formatValidateRange(
@@ -337,6 +359,7 @@ export default {
               });
             }
           });
+          this.fullTree = rst.fullTree.filter(item => item.settings && item.settings.length);
         })
         .catch(() => {
           this.loading = false;
@@ -399,7 +422,7 @@ export default {
                   ) {
                     delete s.validateRangeList;
                   }
-                  if (err.message.indexOf(s.key) > -1) {
+                  if (err.message.indexOf(s.key + '-') > -1) { // - end tag
                     msg = s.description;
                     key = s.key;
                   }
@@ -435,20 +458,23 @@ export default {
     toggleAdvance() {
       this.isAdvancedShow = !this.isAdvancedShow;
     },
-    // tag switch trigger(tag切换触发)
-    clickTabChange(name) {
-      this.currentTabName = name;
+    showCardItem(name, condition) {
       // Initialize display data, filter index(初始化显示数据，筛选index)
       let index = this.menuList.findIndex((item) => item.categoryName === name);
       if (index !== -1) {
         let menuListItem = this.menuList[index];
         let type = ''
         // Determine whether there is a sub-item, and if it exists, splicing(判断是否存在子项，如果存在就进行拼接)
-        if (menuListItem.childCategory && menuListItem.childCategory.length) {
-          if (!this.subCategory[menuListItem.categoryName]) {
-            this.subCategory[menuListItem.categoryName] = menuListItem.childCategory[0]
+        if (menuListItem.childCategory && menuListItem.childCategory.length) { 
+          this.currentCardIndex = 0;
+          if (condition === 'new') {
+            this.currentCardIndex = menuListItem.childCategory.length - 1;
           }
-          type = `${menuListItem.categoryName}-${menuListItem.childCategory[0].categoryName}`
+          let currentItem = menuListItem.childCategory[this.currentCardIndex];
+          if (!this.subCategory[menuListItem.categoryName] || condition === 'new') {
+            this.subCategory[menuListItem.categoryName] = currentItem
+          }
+          type = `${menuListItem.categoryName}-${currentItem.categoryName}`
         } else {
           type =  menuListItem.categoryName
         }
@@ -460,8 +486,14 @@ export default {
         this.$Message.error("Failed");
       }
     },
+    // tag switch trigger(tag切换触发)
+    clickTabChange(name) {
+      this.currentTabName = name;
+      this.showCardItem(name);
+    },
+    // Added parameter configuration modal(新增参数配置modal)
     addChildCategory() {
-      this.isChildCategory = true;
+      this.handleEngineAdd();
     },
     // Click on sub item settings(点击子项设置)
     clickChildCategory(title, index, item) {
@@ -480,6 +512,7 @@ export default {
       this.editEngineFromItem.categoryId = item.categoryId;
       this.editEngineFromItem.categoryName =
         item.fatherCategoryName + "-" + item.categoryName;
+      this.editEngineFromItem.desc = item.description;
     },
     //Edit engine submission(编辑引擎提交)
     addEngineDesc() {
@@ -499,7 +532,7 @@ export default {
             }
           });
           // this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
-          this.$Message.success(`修改描述成功`);
+          this.$Message.success(this.$t('message.linkis.udf.success'));
         });
     },
 
@@ -516,6 +549,7 @@ export default {
             "post"
           )
         this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
+        this.$Message.success(this.$t('message.linkis.udf.success'));
       }
     },
     // Click Edit Directory to display the Delete button for the application and engine(点击编辑目录 显示应用和引擎的删除按钮)
@@ -579,9 +613,22 @@ export default {
     // Display the new application type modal(显示新增应用类型modal)
     handleTabsAdd() {
       this.isAddApptype = true;
+      this.addApptypeFormItem = {
+        name: "",
+        order: "",
+        desc: "",
+      }
     },
+    // Added parameter configuration modal(新增参数配置modal)
     handleEngineAdd() {
       this.isChildCategory = true;
+      this.childCategoryFormItem = {
+        name: "",
+        tagList: [],
+        version: "",
+        type: "",
+        desc: "",
+      }
     },
     // Add engine configuration(新增引擎配置)
     addParameterSet() {
@@ -603,7 +650,8 @@ export default {
               "post"
             )
             .then(() => {
-              this.getMenuList(); //调用getMenuList 重新渲染新增的menuList数据
+              this.$Message.success(this.$t('message.linkis.udf.success'));
+              this.getMenuList('new'); //调用getMenuList 重新渲染新增的menuList数据
             });
         } else {
           this.isChildCategory = true;
@@ -623,11 +671,88 @@ export default {
           "post"
         )
         .then(() => {
+          this.$Message.success(this.$t('message.linkis.udf.success'));
+          this.currentTabName = this.addApptypeFormItem.name;
           this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
+          this.$nextTick(() => {
+            let contentWidth = document.querySelector('.ivu-tabs-nav').clientWidth;
+            this.moveTab(contentWidth);
+          })
         });
 
     },
+    // Move tab
+    moveTab(contentWidth) {
+      let wrapperWidth = document.querySelector('.ivu-tabs-nav-scroll').clientWidth;
+      while ((contentWidth - wrapperWidth) > 0) {
+        setTimeout(() => {
+          document.querySelector('.ivu-tabs-nav-next').click();
+        }, 500)
+        contentWidth -= wrapperWidth;
+        this.moveTab(contentWidth);
+      }
+    },
+    // Select engine type
+    changeEngine(type) {
+      api
+        .fetch(
+          `/engineplugin/getTypeVersionList/${type}`,
+          {},
+          "get"
+        )
+        .then((res) => {
+          this.versionList = (res.queryList || []).map(item => {
+            if (/^v/.test(item)) {
+              return item.replace(/v/, '');
+            } else {
+              return item;
+            }
+          });
+          this.childCategoryFormItem.version = '';
+        });
+    },
+    // Engine version filtering
+    filterMethod (value, option) {
+      return option.toUpperCase().indexOf(value.toUpperCase()) !== -1;
+    }
   },
 };
 </script>
 <style src="./index.scss" lang="scss"></style>
+<style lang="scss" scoped>
+.setting {
+  position: relative;
+  .tabs-title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 64px;
+    height: 36px;
+    line-height: 36px;
+    font-size: 14px;
+  }
+  .tabs {
+    /deep/.ivu-tabs-bar {
+      &::before {
+        content: '';
+        display: block;
+        width: 64px;
+        height: 36px;
+        float: left;
+      }
+    }
+    /deep/.ivu-tabs-tab:not(:last-of-type) {
+      position: relative;
+      &::after {
+        content: '';
+        width: 1px;
+        height: 16px;
+        background-color: #dcdee2;
+        position: absolute;
+        top: 8px;
+        right: -8px;
+      }
+    }
+  }
+}
+</style>

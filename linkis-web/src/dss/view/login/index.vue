@@ -148,7 +148,7 @@ export default {
             .then((rst) => {
               this.loading = false;
               storage.set('userName',rst.userName,'session')
-              storage.set('enableWatermark',rst.enableWatermark ? true : false,'session')
+              storage.set('enableWatermark', rst.enableWatermark ? true : false, 'session')
               // save username(保存用户名)
               if (this.rememberUserNameAndPass) {
                 storage.set('saveUserNameAndPass', `${this.loginForm.user}&${this.loginForm.password}`, 'local');

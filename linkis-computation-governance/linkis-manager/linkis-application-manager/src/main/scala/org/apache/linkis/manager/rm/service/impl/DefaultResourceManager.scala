@@ -27,6 +27,7 @@ import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, Eng
 import org.apache.linkis.manager.common.entity.persistence.{
   PersistenceLabel,
   PersistenceLock,
+  PersistenceNodeMetrics,
   PersistenceResource
 }
 import org.apache.linkis.manager.common.entity.resource._
@@ -62,6 +63,8 @@ import org.apache.linkis.manager.rm.service.{
   ResourceManager
 }
 import org.apache.linkis.manager.rm.utils.RMUtils
+
+import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -704,6 +707,13 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
             } else {
               usedResource.getLockedResource
             }
+            var heartbeatMsgMetrics = ""
+            Utils.tryAndWarn {
+              val oldMetrics = nodeMetricManagerPersistence.getNodeMetrics(ecNode)
+              if (StringUtils.isNotBlank(oldMetrics.getHeartBeatMsg)) {
+                heartbeatMsgMetrics = oldMetrics.getHeartBeatMsg
+              }
+            }
             if (
                 label.getClass.isAssignableFrom(
                   labelContainer.getCombinedUserCreatorEngineTypeLabel.getClass
@@ -714,7 +724,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
                 persistenceResource.getTicketId,
                 ChangeType.ENGINE_CLEAR,
                 releasedResource,
-                status
+                status,
+                heartbeatMsgMetrics
               )
             }
           } { case exception: Exception =>
@@ -796,6 +807,9 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     serviceInstances.foreach({ serviceInstance =>
       val rmNode = new InfoRMNode
       var aggregatedResource: NodeResource = null
+      val engineConnSpringName = GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue
+      val engineConnManagerSpringName =
+        GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue
       serviceInstance.getApplicationName match {
         case GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue =>
           val engineInstanceLabel = LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(

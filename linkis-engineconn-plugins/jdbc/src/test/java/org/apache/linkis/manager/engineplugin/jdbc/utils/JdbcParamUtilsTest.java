@@ -86,6 +86,74 @@ public class JdbcParamUtilsTest {
   }
 
   @Test
+  @DisplayName("testValidateJdbcUrl")
+  public void testValidateJdbcUrl() {
+    AtomicReference<String> ar = new AtomicReference<>();
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/abc?p1=v1&p2=v2");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/?p1=v1&p2=v2");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000?p1=v1&p2=v2");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/abc?");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/abc");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // true
+    ar.set("jdbc:mysql://127.0.0.1:10000/?v1=v2");
+    Assertions.assertDoesNotThrow(
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // false
+    ar.set("jdbc:mysql://127.0.0.1:10000000/?v1=v2");
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+    // false
+    ar.set("jdbc:mysql://127.0.0.1:10000ab/?v1=v2");
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          JdbcParamUtils.validateJdbcUrl(ar.get());
+        });
+  }
+
+  @Test
   @DisplayName("testGetJdbcUsername")
   public void testGetJdbcUsername() throws JDBCParamsIllegalException {
     Map<String, String> properties = new HashMap<>();

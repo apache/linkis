@@ -17,7 +17,7 @@
 
 package org.apache.linkis.computation.client
 
-import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{RetryHandler, Utils}
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy
@@ -26,7 +26,6 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.request.JobSubmitAction
-
 import org.apache.commons.lang3.StringUtils
 
 import java.util
@@ -174,8 +173,7 @@ object LinkisJobBuilder {
   private var threadPool: ScheduledThreadPoolExecutor = Utils.defaultScheduler
   private var serverUrl: String = _
 
-  private var authTokenValue: String =
-    "LINKIS_CLI_TEST" // This is the default authToken, we usually suggest set different ones for users.
+  private var authTokenValue: String = CommonVars[String]("wds.linkis.client.test.common.tokenValue", "").getValue // This is the default authToken, we usually suggest set different ones for users.
 
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 

@@ -106,6 +106,11 @@ cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties
 
+RANDOM_BML_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_LINKIS_CLI_TEST_TOKEN="LINKIS_CLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
+sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
+
 echo "======= Step 3: Create necessary directory =========="
 
 echo "[WORKSPACE_USER_ROOT_PATH] try to create directory"
@@ -185,9 +190,8 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
 echo "======= Step 4: Create linkis table =========="
 ## sql init
 # replace token
-RANDOM_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
 
 if [ "$YARN_RESTFUL_URL" != "" ]
 then

@@ -238,9 +238,13 @@ abstract class UserPwdAbstractUserRestful extends AbstractUserRestful with Loggi
   def clearExpireCookie(gatewayContext: GatewayContext): Unit = {
     val cookies =
       gatewayContext.getRequest.getCookies.values().asScala.flatMap(cookie => cookie).toArray
-    val expireCookies = cookies.filter(cookie =>
-      cookie.getName.equals(ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue)
-    )
+    val expireCookies = cookies.filter { cookie =>
+      cookie.getName.equals(
+        ServerConfiguration.LINKIS_SERVER_SESSION_TICKETID_KEY.getValue
+      ) || cookie.getName.equals(
+        ServerConfiguration.LINKIS_SERVER_SESSION_PROXY_TICKETID_KEY.getValue
+      )
+    }
     val host = gatewayContext.getRequest.getHeaders.get("Host")
     if (host != null && host.nonEmpty) {
       val maxDomainLevel = host.head.split("\\.").length

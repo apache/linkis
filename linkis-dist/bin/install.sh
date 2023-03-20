@@ -184,6 +184,11 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
 
 echo "======= Step 4: Create linkis table =========="
 ## sql init
+# replace token
+RANDOM_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
+
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
   sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql

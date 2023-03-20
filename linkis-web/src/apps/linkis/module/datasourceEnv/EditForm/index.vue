@@ -239,13 +239,20 @@ export default {
       })
     },
     hiddenHandler (newV) {
+      let dataSourceTypeName = '';
+      for(let i = 0;i < this.typeOptions.length; i++) {
+        if (this.typeOptions[i].value === newV.datasourceTypeId) {
+          dataSourceTypeName = this.typeOptions[i].label
+        }
+      }
       // radio
-      this.rule[4].hidden = !(newV.datasourceTypeId === 4);
+      this.rule[4].hidden = !(['hive', 'kafka'].includes(dataSourceTypeName))
+
       // keytab value
       this.rule[6].hidden = !newV.keytab;
       // upload
       this.rule[5].hidden = !this.rule[6].hidden;
-      if (!newV.hasKeyTab || newV.datasourceTypeId !== 4){
+      if (!newV.hasKeyTab || !['hive', 'kafka'].includes(dataSourceTypeName)){
         this.rule[5].hidden = true;
         this.rule[6].hidden = true;
         this.rule[8].hidden = true;

@@ -70,7 +70,7 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <EditForm ref="editForm" :data="modalEditData" :typeOptions=datasourceTypeOptions></EditForm>
+      <EditForm ref="editForm" :data="modalEditData" :typeOptions="datasourceTypeOptions"></EditForm>
     </Modal>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
@@ -212,7 +212,7 @@ export default {
       }
       getAllEnv().then((res) => {
         let options = [...res.typeList].sort((a, b) => a.id - b.id)
-          .map(item => { return {value: +item.id, label: item.name, disabled: ![2, 4].includes(+item.id)}})
+          .map(item => { return {value: +item.id, label: item.name, disabled: !['hive', 'kafka'].includes(item.name)}})
         this.datasourceTypeOptions= options
         // 获取列表
         getList(params).then((data) => {
@@ -223,7 +223,7 @@ export default {
             let filter = options.filter(optionsItem=>{
               return optionsItem.value === item.datasourceTypeId
             })
-            item.name = filter[0].label
+            item.name = filter[0]?.label || '';
           })
         })
       })

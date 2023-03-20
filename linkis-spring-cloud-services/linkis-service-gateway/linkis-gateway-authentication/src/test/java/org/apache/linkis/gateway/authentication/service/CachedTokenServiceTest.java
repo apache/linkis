@@ -38,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CachedTokenServiceTest {
   private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
 
-  private static String TokenName = CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
+  private static String TokenName =
+      CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
 
   @Autowired CachedTokenService tokenService;
 

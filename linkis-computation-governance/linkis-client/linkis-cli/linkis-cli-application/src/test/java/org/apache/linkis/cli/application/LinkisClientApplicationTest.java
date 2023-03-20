@@ -18,6 +18,7 @@
 package org.apache.linkis.cli.application;
 
 import org.apache.linkis.common.conf.CommonVars;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,7 +61,8 @@ public class LinkisClientApplicationTest {
           "token",
           "--authKey",
           "Validation-Code",
-          "--authVal", bmlToken,
+          "--authVal",
+          bmlToken,
           //                "--help",
           //                "--kill", "8249",
           //                "--status", "379",

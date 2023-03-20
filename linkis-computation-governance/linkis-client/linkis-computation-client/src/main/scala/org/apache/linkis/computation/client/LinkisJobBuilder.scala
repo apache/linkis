@@ -26,6 +26,7 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 import org.apache.linkis.ujes.client.exception.{UJESClientBuilderException, UJESJobException}
 import org.apache.linkis.ujes.client.request.JobSubmitAction
+
 import org.apache.commons.lang3.StringUtils
 
 import java.util
@@ -173,7 +174,10 @@ object LinkisJobBuilder {
   private var threadPool: ScheduledThreadPoolExecutor = Utils.defaultScheduler
   private var serverUrl: String = _
 
-  private var authTokenValue: String = CommonVars[String]("wds.linkis.client.test.common.tokenValue", "").getValue // This is the default authToken, we usually suggest set different ones for users.
+  private var authTokenValue: String = CommonVars[String](
+    "wds.linkis.client.test.common.tokenValue",
+    ""
+  ).getValue // This is the default authToken, we usually suggest set different ones for users.
 
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig
 

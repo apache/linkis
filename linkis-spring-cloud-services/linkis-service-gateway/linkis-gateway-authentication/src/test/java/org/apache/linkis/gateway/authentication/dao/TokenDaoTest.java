@@ -34,7 +34,8 @@ class TokenDaoTest extends BaseDaoTest {
 
   private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
-  private static String TokenName = CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
+  private static String TokenName =
+      CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
 
   @Autowired TokenDao tokenDao;
 

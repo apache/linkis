@@ -78,14 +78,14 @@ REVISION: 1
 TEST SUITE: None
 NOTES:
 ---
-Welcome to Apache Linkis (v1.3.1)!
+Welcome to Apache Linkis (v1.3.2)!
 
 .___    .___ .______  .____/\ .___ .________
 |   |   : __|:      \ :   /  \: __||    ___/
 |   |   | : ||       ||.  ___/| : ||___    \
 |   |/\ |   ||   |   ||     \ |   ||       /
 |   /  \|   ||___|   ||      \|   ||__:___/
-|______/|___|    |___||___\  /|___|   : v1.3.1
+|______/|___|    |___||___\  /|___|   : v1.3.2
                            \/
 
 Linkis builds a layer of computation middleware between upper applications and underlying engines.

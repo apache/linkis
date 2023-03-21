@@ -434,6 +434,7 @@ protostuff-collectionschema-1.6.2.jar
 protostuff-core-1.6.2.jar
 protostuff-runtime-1.6.2.jar
 py4j-0.10.4.jar
+py4j-0.10.7.jar
 quartz-2.3.2.jar
 reactive-streams-1.0.3.jar
 reactor-core-3.3.17.RELEASE.jar

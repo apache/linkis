@@ -49,7 +49,8 @@ jobs:
       name: build default
       run:
         ./mvnw clean package
-    - name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+    - if: ${{matrix.spark != '2.4'}}
+      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
       run:
         ./mvnw clean package -Pspark-${{matrix.spark}} -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov

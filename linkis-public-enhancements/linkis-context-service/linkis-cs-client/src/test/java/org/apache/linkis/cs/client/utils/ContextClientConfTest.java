@@ -37,7 +37,7 @@ public class ContextClientConfTest {
     String hearBeatEnabled = ContextClientConf.HEART_BEAT_ENABLED().getValue();
 
     Assertions.assertEquals("Token-Code", contextClientAuthKey);
-    Assertions.assertEquals(bmlToken, contextClientAuthKey);
+    Assertions.assertEquals(bmlToken, contextClientAuthValue);
     Assertions.assertEquals("/api/rest_j/v1/contextservice", urlPrefix);
     Assertions.assertEquals("true", hearBeatEnabled);
   }

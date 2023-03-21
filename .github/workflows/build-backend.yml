@@ -68,6 +68,10 @@ jobs:
           distribution: 'temurin'
           java-version: 8
           cache: maven
+      - name: mvn install
+        run:
+          #pom.xml also introduce linkis related jar,so run mvn install in first time
+          ./mvnw install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
       - name: mvn dependency:copy-dependencies
         run:
           ./mvnw dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies

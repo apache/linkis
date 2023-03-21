@@ -111,7 +111,7 @@
       </div>
       <div slot="footer">
         <Button @click="cancel">{{$t('message.linkis.tenantTagManagement.Cancel')}}</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.OK')}}</Button>
+        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.common.ok')}}</Button>
       </div>
     </Modal>
   </div>
@@ -367,7 +367,7 @@ export default {
         if(valid) {
           this.clearSearch();
           try {
-            if(this.mode !== 'edit') {
+            if (this.mode !== 'edit') {
               this.page.pageNow = 1;
             }
             this.isRequesting = true;
@@ -375,7 +375,7 @@ export default {
               window.console.log(res);
               await this.getTableData();
               this.cancel();
-              this.$Message.success(this.$t('message.linkis.tenantTagManagement.addSuccessful'));
+              this.$Message.success(this.$t('message.linkis.udf.success'));
             });
             this.isRequesting = false;
           } catch(err) {

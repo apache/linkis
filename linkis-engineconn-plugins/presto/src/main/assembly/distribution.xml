@@ -30,7 +30,7 @@
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
             <!-- Now, select which projects to include in this module-set. -->
-            <outputDirectory>/dist/v${presto.version}/lib</outputDirectory>
+            <outputDirectory>/dist/${presto.version}/lib</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
@@ -49,7 +49,7 @@
                 <include>log4j2.xml</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${presto.version}/conf</outputDirectory>
+            <outputDirectory>dist/${presto.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class LinkisClientApplicationTest {
   private static final Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
 
-  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
+  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
 
   String[] cmdStr;
   String[] cmdStr2;

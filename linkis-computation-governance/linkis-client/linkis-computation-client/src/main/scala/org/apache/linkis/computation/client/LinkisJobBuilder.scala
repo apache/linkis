@@ -176,7 +176,7 @@ object LinkisJobBuilder {
 
   private var authTokenValue: String = CommonVars[String](
     "wds.linkis.client.test.common.tokenValue",
-    ""
+    "LINKIS_CLI_TEST"
   ).getValue // This is the default authToken, we usually suggest set different ones for users.
 
   def setDefaultClientConfig(clientConfig: DWSClientConfig): Unit = this.clientConfig = clientConfig

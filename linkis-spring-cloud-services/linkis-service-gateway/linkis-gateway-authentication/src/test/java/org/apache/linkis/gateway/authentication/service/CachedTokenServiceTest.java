@@ -39,7 +39,7 @@ public class CachedTokenServiceTest {
   private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
 
   private static String TokenName =
-      CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
+      CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
 
   @Autowired CachedTokenService tokenService;
 

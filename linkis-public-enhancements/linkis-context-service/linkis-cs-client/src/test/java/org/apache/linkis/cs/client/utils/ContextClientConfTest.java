@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 public class ContextClientConfTest {
 
-  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "fds").getValue();
+  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
 
   @Test
   @DisplayName("constTest")

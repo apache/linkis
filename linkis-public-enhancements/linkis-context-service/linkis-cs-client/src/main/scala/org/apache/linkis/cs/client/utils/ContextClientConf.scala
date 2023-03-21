@@ -25,7 +25,7 @@ object ContextClientConf {
     CommonVars[String]("wds.linkis.context.client.auth.key", "Token-Code")
 
   val CONTEXT_CLIENT_AUTH_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.context.client.auth.value", "")
+    CommonVars[String]("wds.linkis.context.client.auth.value", "BML-AUTH")
 
   val URL_PREFIX: CommonVars[String] =
     CommonVars[String](

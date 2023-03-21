@@ -33,34 +33,16 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: 8
+        cache: maven
     - name: Build backend by maven
       run:
         ./mvnw clean package
-  build-spark:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        installSpark: [ 'spark2.4-hadoop2.3', 'spark3.2-hadoop3.3','spark2.4-hadoop3.3' ]
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up JDK 8
-      uses: actions/setup-java@v2
-      with:
-       distribution: 'temurin'
-       java-version: 8
-    - if: ${{ matrix.installSpark == 'spark2.4-hadoop2.3' }}
-      name: build-spark on init
+    - name: build spark2.4 and hadoop 3.3
       run:
-        ./mvnw clean install -Pspark-2.4 -Phadoop-2.3 -Dmaven.test.skip=true
-    - if: ${{ matrix.installSpark == 'spark3.2-hadoop3.3' }}
-      name: build-spark on 3.2
+        ./mvnw clean package -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
+    - name: build spark 3.2 and hadoop 3.3
       run:
-        ./mvnw clean install -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
-    - if: ${{ matrix.installSpark == 'spark2.4-hadoop3.3' }}
-      name: build-spark on 2.4
-      run:
-        ./mvnw clean install -Pspark-2.4-hadoop-3.3 -Phadoop-3.3 -Dmaven.test.skip=true
+        ./mvnw clean package -Pspark-3.2 -Phadoop-3.3 -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:

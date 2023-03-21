@@ -192,6 +192,7 @@ echo "======= Step 4: Create linkis table =========="
 # replace token
 sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
 sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
+sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
 
 if [ "$YARN_RESTFUL_URL" != "" ]
 then

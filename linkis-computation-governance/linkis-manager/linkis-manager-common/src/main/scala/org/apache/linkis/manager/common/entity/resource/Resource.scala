@@ -436,14 +436,8 @@ class DriverAndYarnResource(
   }
 
   def isModuleOperate(r: Resource): Boolean = {
-    if (this.isModuleOperate || r.isModuleOperate) {
-      true
-    } else if (this.yarnResource.queueName.equals(r.yarnResource.queueName)) {
-      logger.debug(s"Not module operate this:$this other:$r")
-      false
-    } else {
-      true
-    }
+    // todo consider optimization
+    false
   }
 
   def isModuleOperate: Boolean = {

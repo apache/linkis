@@ -17,27 +17,19 @@
 
 package org.apache.linkis.cs.client.utils;
 
-import org.apache.linkis.common.conf.CommonVars;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class ContextClientConfTest {
 
-  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
-
   @Test
   @DisplayName("constTest")
   public void constTest() {
 
-    String contextClientAuthKey = ContextClientConf.CONTEXT_CLIENT_AUTH_KEY().getValue();
-    String contextClientAuthValue = ContextClientConf.CONTEXT_CLIENT_AUTH_VALUE().getValue();
     String urlPrefix = ContextClientConf.URL_PREFIX().getValue();
     String hearBeatEnabled = ContextClientConf.HEART_BEAT_ENABLED().getValue();
 
-    Assertions.assertEquals("Token-Code", contextClientAuthKey);
-    Assertions.assertEquals(bmlToken, contextClientAuthValue);
     Assertions.assertEquals("/api/rest_j/v1/contextservice", urlPrefix);
     Assertions.assertEquals("true", hearBeatEnabled);
   }

@@ -95,12 +95,15 @@ public class FsRestfulApi {
       LOGGER.debug("not check filesystem owner.");
       return true;
     }
+    if (requestPath.contains(WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue()))
+        || Configuration.isAdmin(userName)) {
+      return true;
+    }
     requestPath = requestPath.toLowerCase().trim() + "/";
     String hdfsUserRootPathPrefix =
         WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
     String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
-    String path;
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;

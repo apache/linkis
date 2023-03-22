@@ -33,7 +33,7 @@ public interface TenantConfigService {
 
   void createTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  Boolean userExists(String user, String creator, String tenantValue) throws ConfigurationException;
+  Boolean isExist(String user, String creator) throws ConfigurationException;
 
   TenantVo queryTenant(String user, String creator);
 }

@@ -36,6 +36,8 @@ class StorageCSVWriter(
     with Logging {
 
   private val delimiter = separator match {
+    // Compatible with possible missing escape characters
+    case "t" => '\t'
     case separ if StringUtils.isNotEmpty(separ) => separ
     case _ => '\t'
   }

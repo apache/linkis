@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
@@ -42,7 +43,8 @@ import org.apache.commons.lang3.StringUtils
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLaunchBuilder) {
+class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLaunchBuilder)
+    extends Logging {
 
   def getCommands(
       engineConnBuildRequest: EngineConnBuildRequest,
@@ -54,6 +56,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val darResource = userEngineResource.getLockedResource.asInstanceOf[DriverAndYarnResource]
     val properties = engineConnBuildRequest.engineConnCreationDesc.properties
 
+    if (logger.isDebugEnabled()) {
+      logger.debug(s"spark engine with properties:$properties")
+    }
+
     val className = getValueAndRemove(properties, "className", mainClass)
     val driverCores = getValueAndRemove(properties, LINKIS_SPARK_DRIVER_CORES)
     val driverMemory = getValueAndRemove(properties, LINKIS_SPARK_DRIVER_MEMORY)
@@ -63,12 +69,13 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
 
     val files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
     val jars = new ArrayBuffer[String]()
-    jars ++= getValueAndRemove(properties, "jars", "").split(",").filter(isNotBlankPath)
-    jars ++= getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)
+    // jars ++= getValueAndRemove(properties, "jars", "").split(",").filter(isNotBlankPath)
+    var externalJars = getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)
       .split(",")
       .filter(x => {
-        isNotBlankPath(x) && (new java.io.File(x)).isFile
+        isNotBlankPath(x)
       })
+    jars ++= externalJars
     val pyFiles = getValueAndRemove(properties, "py-files", "").split(",").filter(isNotBlankPath)
     val archives = getValueAndRemove(properties, "archives", "").split(",").filter(isNotBlankPath)
 
@@ -208,6 +215,9 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
   ): T = {
     val value = commonVars.getValue(properties)
     properties.remove(commonVars.key)
+    if (logger.isDebugEnabled()) {
+      logger.debug(s"getValueAndRemove with key:${commonVars.key},value:$value")
+    }
     value
   }
 

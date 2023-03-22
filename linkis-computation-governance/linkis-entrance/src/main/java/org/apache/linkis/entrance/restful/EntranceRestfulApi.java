@@ -110,15 +110,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     JobRequest jobReq = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobReq.getId();
     ModuleUserUtils.getOperationUser(req, "execute task,id: " + jobReqId);
-    pushLog(
-        LogUtils.generateInfo(
-            "You have submitted a new job, script code (after variable substitution) is"),
-        job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
-    pushLog(jobReq.getExecutionCode(), job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
     String execID =
         ZuulEntranceUtils.generateExecID(
             job.getId(),
@@ -162,15 +153,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
     JobRequest jobRequest = ((EntranceJob) job).getJobRequest();
     Long jobReqId = jobRequest.getId();
     ModuleUserUtils.getOperationUser(req, "submit jobReqId: " + jobReqId);
-    pushLog(
-        LogUtils.generateInfo(
-            "You have submitted a new job, script code (after variable substitution) is"),
-        job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
-    pushLog(jobRequest.getExecutionCode(), job);
-    pushLog(
-        "************************************SCRIPT CODE************************************", job);
     pushLog(
         LogUtils.generateInfo(
             "Your job is accepted,  jobID is "

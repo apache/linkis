@@ -19,6 +19,7 @@ package org.apache.linkis.storage.resultset
 
 import org.apache.linkis.common.io.{FsPath, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.TABLE_ARE_NOT_SUPPORTED
 import org.apache.linkis.storage.exception.StorageErrorException
@@ -26,7 +27,7 @@ import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord, Ta
 
 import java.io.InputStream
 
-object ResultSetReader {
+object ResultSetReader extends Logging {
 
   def getResultSetReader[K <: MetaData, V <: Record](
       resultSet: ResultSet[K, V],
@@ -83,6 +84,7 @@ object ResultSetReader {
         )
       }
       val fs = FSFactory.getFs(resPath)
+      logger.info("Try to init Fs with path:" + resPath.getPath)
       fs.init(null)
       ResultSetReader.getResultSetReader(resultSet.asInstanceOf[TableResultSet], fs.read(resPath))
     }

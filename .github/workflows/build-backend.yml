@@ -20,7 +20,7 @@ name: Build Backend
 on: [push, pull_request]
 
 env:
-  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+  MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
 
 jobs:
   build-backend:
@@ -74,10 +74,10 @@ jobs:
           ./mvnw install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
       - name: mvn dependency:copy-dependencies
         run:
-          ./mvnw dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies
+          ./mvnw dependency:copy-dependencies  -DexcludeGroupIds=org.apache.linkis -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies
       - name: generate current_dependencies.txt
         run: |
-          ls ${{ github.workspace }}/current_dependencies  |egrep -v "^linkis" |sort > ~/current_dependencies.txt
+          ls ${{ github.workspace }}/current_dependencies | sort > ~/current_dependencies.txt
           cat ~/current_dependencies.txt
       - name: check third dependencies
         run: |

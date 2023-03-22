@@ -23,6 +23,6 @@ if [[ -d $dependencies_path ]];then
   rm -r -f $dependencies_path
 fi
 cd ../../
-mvn dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=$dependencies_path
-ls $dependencies_path | egrep -v "^linkis" | sort -n > $basepath/known-dependencies.txt
+mvn dependency:copy-dependencies -DexcludeGroupIds=org.apache.linkis -DincludeScope=runtime -DoutputDirectory=$dependencies_path
+ls $dependencies_path | sort -n > $basepath/known-dependencies.txt
 rm -r -f $dependencies_path

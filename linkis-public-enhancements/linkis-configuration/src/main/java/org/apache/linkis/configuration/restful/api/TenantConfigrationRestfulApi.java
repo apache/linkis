@@ -75,7 +75,7 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
-      if (tenantConfigService.userExists(tenantVo.getUser(), tenantVo.getCreator(), null)) {
+      if (tenantConfigService.isExist(tenantVo.getUser(), tenantVo.getCreator())) {
         throw new ConfigurationException("User-creator is existed");
       }
       parameterVerification(tenantVo);
@@ -226,8 +226,8 @@ public class TenantConfigrationRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "user", required = false) String user,
       @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "tenantValue", required = false) String tenantValue) {
-    Boolean result = false;
+      @RequestParam(value = "id", required = false) String id) {
+    Boolean checkResult = false;
     try {
       // Parameter verification
       if (StringUtils.isBlank(creator)) {
@@ -236,18 +236,19 @@ public class TenantConfigrationRestfulApi {
       if (StringUtils.isBlank(user)) {
         throw new ConfigurationException("User Name can't be empty ");
       }
-      if (creator.equals("*")) {
-        throw new ConfigurationException("Application Name can't be '*' ");
-      }
       String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to check-user-creator,msg: only administrators can configure");
       }
-      result = tenantConfigService.userExists(user, creator, tenantValue);
+      checkResult = tenantConfigService.isExist(user, creator);
+      // The incoming id represents the update. The update allows user-create exist
+      if (StringUtils.isNotBlank(id)) {
+        checkResult = !checkResult;
+      }
     } catch (ConfigurationException e) {
       return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
     }
-    return Message.ok().data("exist", result);
+    return Message.ok().data("exist", checkResult);
   }
 
   private void parameterVerification(TenantVo tenantVo) throws ConfigurationException {

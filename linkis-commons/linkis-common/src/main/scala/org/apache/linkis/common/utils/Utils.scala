@@ -304,13 +304,6 @@ object Utils extends Logging {
     pb.redirectInput(ProcessBuilder.Redirect.PIPE)
     val process = pb.start
     val log = new BufferedReader(new InputStreamReader(process.getInputStream))
-    defaultScheduler.submit(new Runnable {
-      override def run(): Unit = {
-        while (process.isAlive) {
-          logger.info(log.readLine())
-        }
-      }
-    })
     val exitCode = if (maxWaitTime > 0) {
       val completed = process.waitFor(maxWaitTime, TimeUnit.MILLISECONDS)
       if (!completed) {

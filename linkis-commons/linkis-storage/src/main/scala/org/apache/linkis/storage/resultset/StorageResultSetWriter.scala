@@ -86,7 +86,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       WRITER_LOCK_CREATE.synchronized {
         if (!fileCreated) {
           if (storePath != null && outputStream == null) {
-            logger.info(s"Try to create a new file:${storePath}")
+            logger.info(s"Try to create a new file:${storePath}, with proxy user:${proxyUser}")
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
             fs.init(null)
             FileSystemUtils.createNewFile(storePath, proxyUser, true)
@@ -127,7 +127,6 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       if (isEmpty) return ""
       new String(buffer.toArray, Dolphin.CHAR_SET)
     } else {
-      logger.info(s"Store Path:${storePath}")
       storePath.getSchemaPath
     }
   }

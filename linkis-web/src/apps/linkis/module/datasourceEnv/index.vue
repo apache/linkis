@@ -70,7 +70,7 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <EditForm ref="editForm" :data="modalEditData" :typeOptions=datasourceTypeOptions></EditForm>
+      <EditForm ref="editForm" :data="modalEditData" :typeOptions="datasourceTypeOptions"></EditForm>
     </Modal>
     <div style="margin: 10px; overflow: hidden; textAlign: center">
       <div>
@@ -212,7 +212,7 @@ export default {
       }
       getAllEnv().then((res) => {
         let options = [...res.typeList].sort((a, b) => a.id - b.id)
-          .map(item => { return {value: +item.id, label: item.name, disabled: ![2, 4].includes(+item.id)}})
+          .map(item => { return {value: +item.id, label: item.name, disabled: !['hive', 'kafka'].includes(item.name)}})
         this.datasourceTypeOptions= options
         // 获取列表
         getList(params).then((data) => {
@@ -223,7 +223,7 @@ export default {
             let filter = options.filter(optionsItem=>{
               return optionsItem.value === item.datasourceTypeId
             })
-            item.name = filter[0].label
+            item.name = filter[0]?.label || '';
           })
         })
       })
@@ -283,7 +283,7 @@ export default {
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
         this.modalEditData.parameter = {}
-        console.log(key);
+        window.console.log(key);
       }
       this.modalEditData.hasKeyTab = false;
     },
@@ -314,7 +314,7 @@ export default {
         if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
           add(formData).then((data)=>{
-            //console.log(data)
+            //window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -329,7 +329,7 @@ export default {
           })
         }else {
           edit(formData).then((data)=>{
-            //console.log(data)
+            //window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
@@ -344,7 +344,7 @@ export default {
             }
           })
         }
-        console.log(formData);
+        window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
       })

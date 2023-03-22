@@ -199,6 +199,16 @@ export default [
       },
     },
     {
+      name: 'engineConfigurationTemplate',
+      path: 'engineConfigurationTemplate',
+      component: () =>
+        import('./module/engineConfigurationTemplate/index.vue'),
+      meta: {
+        title: 'engineConfigurationTemplate',
+        publicPage: true,
+      },
+    },
+    {
       name: 'rmExternalResourceProvider',
       path: 'rmExternalResourceProvider',
       component: () =>
@@ -296,6 +306,17 @@ export default [
       meta: {
         title: 'codeDetail',
         publicPage: true,
+      },
+    },
+    {
+      name: 'viewHistoryDetail',
+      path: 'viewHistoryDetail',
+      component: () =>
+        import('./module/globalHistoryManagement/viewHistory.vue'),
+      meta: {
+        title: 'viewHistoryDetail',
+        publicPage: true,
+        noLayout: true
       },
     },
     ],

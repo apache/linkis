@@ -62,7 +62,8 @@
         @on-ok="submitTagEdit"
         :title="$t('message.linkis.tagEdit')"
         v-model="isTagEdit"
-        :mask-closable="false">
+        :mask-closable="false"
+        :ok-text="$t('message.common.ok')">
         <Form :model="formItem" :label-width="80">
           <FormItem :label="`${$t('message.linkis.instanceName')}`">
             <Input disabled v-model="formItem.serviceInstance" ></Input>
@@ -251,7 +252,7 @@ export default {
         this.engineTypes = data && data.engineType ? data.engineType : []
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -274,7 +275,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -284,7 +285,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)

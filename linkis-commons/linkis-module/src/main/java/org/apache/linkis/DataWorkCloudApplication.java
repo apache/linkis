@@ -142,12 +142,16 @@ public class DataWorkCloudApplication extends SpringBootServletInitializer {
   }
 
   private static void initDWCApplication() {
-    String hostName = Utils.getComputerName();
-    boolean preferIpAddress = Configuration.PREFER_IP_ADDRESS();
-    if (preferIpAddress) {
+    String hostName;
+    if (Configuration.PREFER_IP_ADDRESS()) {
       hostName = applicationContext.getEnvironment().getProperty("spring.cloud.client.ip-address");
       logger.info(
           "using ip address replace hostname, because linkis.discovery.prefer-ip-address: true");
+    } else {
+      hostName = applicationContext.getEnvironment().getProperty("eureka.instance.hostname", "");
+      if (StringUtils.isBlank(hostName)) {
+        hostName = Utils.getComputerName();
+      }
     }
     serviceInstance = new ServiceInstance();
     serviceInstance.setApplicationName(

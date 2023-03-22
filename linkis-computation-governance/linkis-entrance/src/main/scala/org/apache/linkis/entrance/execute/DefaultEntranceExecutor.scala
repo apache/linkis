@@ -82,13 +82,19 @@ class DefaultEntranceExecutor(id: Long)
       orchestratorFuture.operate[ProgressProcessor](DefaultProgressOperation.PROGRESS_NAME)
     progressProcessor.doOnObtain(progressInfoEvent => {
       if (null != entranceJob) {
+        // Make sure to update the database, put it in front
+        try {
+          JobHistoryHelper.updateJobRequestMetrics(
+            entranceJob.getJobRequest,
+            progressInfoEvent.resourceMap,
+            progressInfoEvent.infoMap
+          )
+        } catch {
+          case e: Exception =>
+            logger.error("update job metrics error", e)
+        }
         entranceJob.getProgressListener.foreach(
           _.onProgressUpdate(entranceJob, progressInfoEvent.progress, entranceJob.getProgressInfo)
-        )
-        JobHistoryHelper.updateJobRequestMetrics(
-          entranceJob.getJobRequest,
-          progressInfoEvent.resourceMap,
-          progressInfoEvent.infoMap
         )
       }
     })
@@ -232,6 +238,7 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   override def kill(): Boolean = {
+    logger.info("Entrance start to kill job {} invoke Orchestrator ", this.getId)
     Utils.tryAndWarn {
       val msg = s"You job with id  was cancelled by user!"
       getRunningOrchestrationFuture.foreach(_.cancel(msg))
@@ -278,11 +285,11 @@ class DefaultEntranceExecutor(id: Long)
       } else {
         if (
             !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
-              TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR
+              TaskConstant.JOB_TO_ORCHESTRATOR
             )
         ) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics
-            .put(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
+            .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
         }
       }
       // 2. deal log And Response

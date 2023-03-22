@@ -26,6 +26,7 @@
 
   <artifactId>linkis-engineconn-plugin-flink</artifactId>
   <properties>
+    <flink.version>1.12.2</flink.version>
     <commons-cli.version>1.3.1</commons-cli.version>
   </properties>
 
@@ -440,6 +441,15 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/log4j2.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>net.alchim31.maven</groupId>

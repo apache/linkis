@@ -22,12 +22,16 @@ import org.apache.commons.lang3.StringUtils;
 import javax.validation.constraints.AssertTrue;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class SinkConfig extends DataCalcPluginConfig implements Serializable {
 
   protected String sourceTable;
 
   protected String sourceQuery;
+
+  protected Map<String, String> options = new HashMap<>();
 
   public String getSourceTable() {
     return sourceTable;
@@ -43,6 +47,14 @@ public abstract class SinkConfig extends DataCalcPluginConfig implements Seriali
 
   public void setSourceQuery(String sourceQuery) {
     this.sourceQuery = sourceQuery;
+  }
+
+  public Map<String, String> getOptions() {
+    return options;
+  }
+
+  public void setOptions(Map<String, String> options) {
+    this.options = options;
   }
 
   @AssertTrue(message = "[sourceTable, sourceQuery] cannot be blank at the same time.")

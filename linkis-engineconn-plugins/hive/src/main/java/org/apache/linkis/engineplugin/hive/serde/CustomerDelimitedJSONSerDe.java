@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineplugin.hive.serde;
 
+import org.apache.linkis.common.utils.ClassUtils;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.hive.serde2.ByteStream;
 import org.apache.hadoop.hive.serde2.SerDeException;
@@ -33,6 +35,7 @@ import org.apache.hadoop.io.WritableComparable;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -329,7 +332,52 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
         }
       default:
         {
-          throw new RuntimeException("Unknown primitive type: " + category);
+          if (!"INTERVAL_YEAR_MONTH".equals(category.name())
+              && !"INTERVAL_DAY_TIME".equals(category.name())) {
+            throw new RuntimeException("Unknown primitive type: " + category);
+          }
+          boolean containsIntervalYearMonth = false;
+          boolean containsIntervalDayTime = false;
+          for (PrimitiveObjectInspector.PrimitiveCategory primitiveCategory :
+              PrimitiveObjectInspector.PrimitiveCategory.values()) {
+            containsIntervalYearMonth =
+                "INTERVAL_YEAR_MONTH".equals(primitiveCategory.name())
+                    && "INTERVAL_YEAR_MONTH".equals(category.name());
+            containsIntervalDayTime =
+                "INTERVAL_DAY_TIME".equals(primitiveCategory.name())
+                    && "INTERVAL_DAY_TIME".equals(category.name());
+            try {
+              if (containsIntervalYearMonth) {
+                wc =
+                    (WritableComparable)
+                        ClassUtils.getClassInstance(
+                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalYearMonthObjectInspector")
+                            .getClass()
+                            .getMethod("getPrimitiveWritableObject", Object.class)
+                            .invoke(oi, o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
+                break;
+              }
+              if (containsIntervalDayTime) {
+                wc =
+                    (WritableComparable)
+                        ClassUtils.getClassInstance(
+                                "org.apache.hadoop.hive.serde2.objectinspector.primitive.HiveIntervalDayTimeObjectInspector")
+                            .getClass()
+                            .getMethod("getPrimitiveWritableObject", Object.class)
+                            .invoke(oi, o);
+                binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
+                break;
+              }
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+              LOG.error("Fail to invoke method:[getPrimitiveWritableObject]!", e);
+            }
+          }
+          if (containsIntervalYearMonth || containsIntervalDayTime) {
+            break;
+          } else {
+            throw new RuntimeException("Unknown primitive type: " + category);
+          }
         }
     }
     if (binaryData == null) {

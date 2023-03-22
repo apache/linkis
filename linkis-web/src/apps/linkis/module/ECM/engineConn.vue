@@ -68,7 +68,8 @@
         @on-ok="submitTagEdit"
         :title="$t('message.linkis.tagEdit')"
         v-model="isTagEdit"
-        :mask-closable="false">
+        :mask-closable="false"
+        :ok-text="$t('message.common.ok')">
         <Form :model="formItem" :label-width="80">
           <FormItem :label="`${$t('message.linkis.instanceName')}`">
             <Input disabled v-model="formItem.instance" ></Input>
@@ -281,7 +282,7 @@ export default {
                             content: 'Stop Success！！'
                           });
                         }).catch((err) => {
-                          console.err(err)
+                          window.console.err(err)
                         });
                       }
                     })
@@ -317,26 +318,32 @@ export default {
   },
   methods: {
     stopAll() {
-      if (this.selection && this.selection.length) {
-        let data = [];
-        this.selection.forEach(row => {
-          data.push({
-            engineType: row.applicationName,
-            engineInstance: row.instance,
-          });
-        })
-        api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
-          this.initExpandList();
-          this.$Message.success({
-            background: true,
-            content: 'Stop Success！！'
-          });
-        }).catch((err) => {
-          console.err(err)
-        });
-      } else {
+      if (!this.selection || !this.selection.length) {
         this.$Message.warning(this.$t('message.linkis.noselection'));
+        return;
       }
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDeleteInstance'),
+        onOk: () => {
+          let data = [];
+          this.selection.forEach(row => {
+            data.push({
+              engineType: row.applicationName,
+              engineInstance: row.instance,
+            });
+          })
+          api.fetch(`/linkisManager/rm/enginekill`, data).then(() => {
+            this.initExpandList();
+            this.$Message.success({
+              background: true,
+              content: 'Stop Success！！'
+            });
+          }).catch((err) => {
+            window.console.err(err)
+          });
+        }
+      })
     },
     selctionChange(selection) {
       this.selection = selection
@@ -375,7 +382,7 @@ export default {
         })
         this.loading = false;
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
         this.loading = false;
       }
     },
@@ -398,7 +405,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -408,13 +415,13 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        console.log(err)
+        window.console.log(err)
       }
     },
     // add tag(添加tag)
     addEnter (key, value) {
       this.formItem.labels.push({ key, value });
-      
+
     },
     // Edit tags(修改标签)
     editEnter(editInputKey, editInputValue,editedInputValue) {

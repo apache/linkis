@@ -17,15 +17,12 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.source
 
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
 
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-import org.slf4j.{Logger, LoggerFactory}
-
-class JdbcSource extends DataCalcSource[JdbcSourceConfig] {
-
-  private val log: Logger = LoggerFactory.getLogger(classOf[JdbcSource])
+class JdbcSource extends DataCalcSource[JdbcSourceConfig] with Logging {
 
   override def getData(spark: SparkSession): Dataset[Row] = {
     val reader = spark.read.format("jdbc")
@@ -33,7 +30,7 @@ class JdbcSource extends DataCalcSource[JdbcSourceConfig] {
       reader.options(config.getOptions)
     }
 
-    log.info(
+    logger.info(
       s"Load data from jdbc url: ${config.getUrl}, driver: ${config.getDriver}, username: ${config.getUser}, query: ${config.getQuery}"
     )
 

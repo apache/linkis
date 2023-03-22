@@ -47,7 +47,7 @@ object TenantLabelSetUtils extends Logging {
     .build(new CacheLoader[String, String]() {
 
       override def load(userCreatorLabel: String): String = {
-        Utils.tryAndWarn {
+        var cacheValue = Utils.tryAndWarn {
           val sender: Sender = Sender
             .getSender(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME.getValue)
           val user = userCreatorLabel.split("-")(0)
@@ -60,6 +60,11 @@ object TenantLabelSetUtils extends Logging {
               ""
           }
         }
+        if (StringUtils.isBlank(cacheValue)) {
+          logger.warn(s"TenantCache data loading failed , plaese check warn log")
+          cacheValue = ""
+        }
+        cacheValue
       }
 
     })

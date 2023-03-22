@@ -51,7 +51,7 @@
                       v-for="(item3, index3) in (item.key === '1-9' ? urmSideNavList.children : item.key === '1-8' ?datasourceNavList.children:basedataNavList.children)"
                       :key="index3" @on-click="clickToRoute">
                       <div
-                        v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-3' || item3.key === '1-9-1'">
+                        v-if="isLogAdmin ? true : item3.key === '1-8-1' || item3.key === '1-9-2' || item3.key === '1-9-1'">
                         <Cell :key="index3" :class="{ crrentItem: crrentItem === item3.key }"
                           :title="item3.name" :name="item3.key" />
                       </div>

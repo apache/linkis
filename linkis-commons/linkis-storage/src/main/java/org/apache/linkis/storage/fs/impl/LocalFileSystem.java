@@ -119,7 +119,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setOwner(FsPath dest, String user) throws IOException {
-    LOG.info("Set owner with path:" + dest.getPath()+"and user:"+user);
+    LOG.info("Set owner with path:" + dest.getPath() + "and user:" + user);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setOwner skip");
       return true;
@@ -136,7 +136,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
-    LOG.info("Set group with path:" + dest.getPath()+"and group:"+user);
+    LOG.info("Set group with path:" + dest.getPath() + "and group:" + user);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;
@@ -209,7 +209,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean copy(String origin, String dest) throws IOException {
     File file = new File(dest);
-    LOG.info("Try to copy file from:"+origin+" to dest:"+dest);
+    LOG.info("Try to copy file from:" + origin + " to dest:" + dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
     }
@@ -259,7 +259,7 @@ public class LocalFileSystem extends FileSystem {
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
-    LOG.info("Try to list path:"+path.getPath()+" with error");
+    LOG.info("Try to list path:" + path.getPath() + " with error msg");
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       String message = "";
@@ -303,6 +303,7 @@ public class LocalFileSystem extends FileSystem {
       String groupInfo;
       try {
         groupInfo = Utils.exec(new String[] {"id", user});
+        LOG.info("Get groupinfo:" + groupInfo + "  with shell command: id " + user);
       } catch (RuntimeException e) {
         group = user;
         return;
@@ -331,7 +332,7 @@ public class LocalFileSystem extends FileSystem {
     } else {
       fsPath = new FsPath(dest);
     }
-    LOG.info("Try to get FsPath with, path:" + fsPath.getPath());
+    LOG.info("Try to get FsPath with  path:" + fsPath.getPath());
     PosixFileAttributes attr = null;
     try {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);

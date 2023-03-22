@@ -538,22 +538,22 @@ INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hos
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DSM-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
 INSERT INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS_CLI_TEST','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
 
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('hive', 'hive数据库', 'hive', '大数据存储', '', 3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('elasticsearch','elasticsearch数据源','es无结构化存储','分布式全文索引','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mongodb', 'mongodb', 'NoSQL文档存储', 'NoSQL', NULL, 3);
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2, 'Kafka', 'Kafka', 'Message Queue');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('hive', 'hive数据库', 'hive', '大数据存储', '', 3, 'Hive Database', 'Hive', 'Big Data storage');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('elasticsearch', 'elasticsearch数据源', 'es无结构化存储', '分布式全文索引', '', 3, 'Elasticsearch Datasource', 'Es No Structured Storage', 'Distributed Full-Text Indexing');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('mongodb', 'mongodb', 'NoSQL文档存储', 'NoSQL', null, 3, 'mongodb', 'NoSQL Document Storage', 'NOSQL');
 
 -- jdbc
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('oracle','oracle数据库','oracle','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('dm','达梦数据库','dm','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kingbase','人大金仓数据库','kingbase','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('postgresql','postgresql数据库','postgresql','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('sqlserver','sqlserver数据库','sqlserver','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('db2','db2数据库','db2','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('greenplum','greenplum数据库','greenplum','关系型数据库','',3);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('doris','doris数据库','doris','olap','',4);
-INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('clickhouse','clickhouse数据库','clickhouse','olap','',4);
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3, 'Mysql Database', 'Mysql Database', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('oracle', 'oracle数据库', 'oracle', '关系型数据库', '', 3, 'Oracle Database', 'Oracle Relational Database', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('dm', '达梦数据库', 'dm', '关系型数据库', '', 3, 'Dameng Database', 'Dm', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('kingbase', '人大金仓数据库', 'kingbase', '关系型数据库', '', 3, 'Renmin Jincang Database', 'Kingbase', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('postgresql', 'postgresql数据库', 'postgresql', '关系型数据库', '', 3, 'Postgresql Database', 'Postgresql', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('sqlserver', 'sqlserver数据库', 'sqlserver', '关系型数据库', '', 3, 'Sqlserver Database', 'Sqlserver', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('db2', 'db2数据库', 'db2', '关系型数据库', '', 3, 'Db2 Database', 'Db2', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('greenplum', 'greenplum数据库', 'greenplum', '关系型数据库', '', 3, 'Greenplum Database', 'Greenplum', 'Relational Database');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('doris', 'doris数据库', 'doris', 'olap', '', 4, 'Doris Database', 'Doris', 'Olap');
+INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`, `description_en`, `option_en`, `classifier_en`) VALUES ('clickhouse', 'clickhouse数据库', 'clickhouse', 'olap', '', 4, 'Clickhouse Database', 'Clickhouse', 'Olap');
 
 
 select @data_source_type_id := id from `linkis_ps_dm_datasource_type` where `name` = 'mongodb';

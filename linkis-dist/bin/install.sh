@@ -108,8 +108,13 @@ common_conf=$LINKIS_HOME/conf/linkis.properties
 
 RANDOM_BML_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_LINKIS_CLI_TEST_TOKEN="LINKIS_CLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_WS_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_DSM_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
 sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
 sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
+sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $common_conf
+sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $common_conf
 
 echo "======= Step 3: Create necessary directory =========="
 
@@ -191,8 +196,10 @@ echo "======= Step 4: Create linkis table =========="
 ## sql init
 # replace token
 sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
 sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+
 
 if [ "$YARN_RESTFUL_URL" != "" ]
 then

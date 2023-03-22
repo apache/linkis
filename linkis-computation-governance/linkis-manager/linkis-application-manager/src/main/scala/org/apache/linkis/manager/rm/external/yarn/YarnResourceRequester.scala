@@ -104,7 +104,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           } else {
             0d
           }
-        }.asInstanceOf[Long]
+        }
 
         new YarnResource(
           math

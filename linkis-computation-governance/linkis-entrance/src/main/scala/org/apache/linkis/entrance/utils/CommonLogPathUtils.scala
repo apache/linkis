@@ -35,8 +35,12 @@ object CommonLogPathUtils {
     }
     val fsPath = new FsPath(realPath)
     if (!fileSystem.exists(fsPath)) {
-      FileSystemUtils.mkdirs(fileSystem, fsPath, StorageUtils.getJvmUser)
-      fileSystem.setPermission(fsPath, "770")
+      this.synchronized {
+        if (!fileSystem.exists(fsPath)) {
+          FileSystemUtils.mkdirs(fileSystem, fsPath, StorageUtils.getJvmUser)
+          fileSystem.setPermission(fsPath, "770")
+        }
+      }
     }
     Utils.tryQuietly(fileSystem.close())
   }

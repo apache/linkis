@@ -19,7 +19,6 @@ package org.apache.linkis.entrance.parser;
 
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.entrance.conf.EntranceConfiguration$;
-import org.apache.linkis.entrance.utils.CommonLogPathUtils;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.manager.label.utils.LabelUtil;
 import org.apache.linkis.storage.utils.StorageUtils;
@@ -69,7 +68,6 @@ public final class ParserUtils {
     if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
       String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
       logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
-      CommonLogPathUtils.buildCommonPath(commonLogPath);
     } else {
       logPath =
           logPathPrefix

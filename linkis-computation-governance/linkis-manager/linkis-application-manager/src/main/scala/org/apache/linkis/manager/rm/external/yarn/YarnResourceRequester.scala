@@ -78,13 +78,6 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     logger.info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
-    def getYarnResource(resource: Option[Any]) = resource.map(r => {
-      val ctx = JsonPath.parse(r)
-      val memory = ctx.read("$.memory").asInstanceOf[Long]
-      val vCores = ctx.read("$.vCores").asInstanceOf[Int]
-      new YarnResource(memory * 1024L * 1024L, vCores, 0, queueName)
-    })
-
     def maxEffectiveHandle(queueValue: Option[Any]): Option[YarnResource] = {
       val metrics = getResponseByUrl("metrics", rmWebAddress)
       val ctx = JsonPath.parse(metrics)
@@ -282,13 +275,6 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
-    def getYarnResource(resource: Option[Any]) = resource.map(r => {
-      val ctx = JsonPath.parse(r)
-      val allocatedMB = ctx.read("$.allocatedMB").asInstanceOf[Long]
-      val allocatedVCores = ctx.read("$.allocatedVCores").asInstanceOf[Int]
-      new YarnResource(allocatedMB * 1024L * 1024L, allocatedVCores, 0, queueName)
-    })
-
     val realQueueName = "root." + queueName
 
     def getAppInfos(): Array[ExternalAppInfo] = {
@@ -308,15 +294,14 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           val applicationTypeValue =
             appCtx.read("$.applicationType").asInstanceOf[String]
           val yarnQueueName = queueValue
+          val allocatedMB = appCtx.read("$.allocatedMB").asInstanceOf[Long]
+          val allocatedVCores = appCtx.read("$.allocatedVCores").asInstanceOf[Int]
+          val yarnResource =
+            new YarnResource(allocatedMB * 1024L * 1024L, allocatedVCores, 0, queueName)
+
           val state = stateValue
           if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
-            val appInfo = YarnAppInfo(
-              idValue,
-              userValue,
-              state,
-              applicationTypeValue,
-              getYarnResource(Some(app.asInstanceOf[YarnResource])).get
-            )
+            val appInfo = YarnAppInfo(idValue, userValue, state, applicationTypeValue, yarnResource)
             appInfoBuffer.append(appInfo)
           }
         }
@@ -368,10 +353,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val response = YarnResourceRequester.httpClient.execute(httpGet)
         httpResponse = response
     }
-    JsonUtils.jackson.readValue(
-      EntityUtils.toString(httpResponse.getEntity()),
-      classOf[Map[String, Any]]
-    )
+    JsonUtils.jackson.readValue(EntityUtils.toString(httpResponse.getEntity()), classOf[String])
   }
 
   def getAndUpdateActiveRmWebAddress(haAddress: String): String = {
@@ -389,7 +371,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             .split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue)
             .foreach(address => {
               Utils.tryCatch {
-                val response = getResponseByUrl("info", address)
+                val response = getResponseByUrl("info", address).asInstanceOf[Any]
                 val haState = JsonPath.read(response, "$.clusterInfo.haState")
 
                 if (haState.isInstanceOf[String]) {

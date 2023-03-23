@@ -200,8 +200,7 @@ object SecurityFilter {
   def getLoginUsername(req: HttpServletRequest): String = {
     if (Configuration.IS_TEST_MODE.getValue) {
       val testUser = ServerConfiguration.BDP_TEST_USER.getValue
-      if (StringUtils.isBlank(testUser))
-      {
+      if (StringUtils.isBlank(testUser)) {
         throw new IllegalUserTicketException("Need to set test user when enable test module")
       }
       testUser

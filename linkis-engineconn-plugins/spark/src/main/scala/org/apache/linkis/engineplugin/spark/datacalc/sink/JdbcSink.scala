@@ -17,16 +17,14 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc.sink
 
-import org.apache.linkis.common.utils.ClassUtils.getFieldVal
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.spark.SPARK_VERSION
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-import org.apache.spark.sql.execution.datasources.jdbc.JDBCOptions
+import org.apache.spark.sql.execution.datasources.jdbc.{JDBCOptions, JdbcUtils}
 
-import java.sql.{Connection, DriverManager}
+import java.sql.Connection
 
 import scala.collection.JavaConverters._
 
@@ -60,8 +58,7 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
         .repartition(1)
         .foreachPartition((_: Iterator[Row]) => {
           val jdbcOptions = new JDBCOptions(options)
-          val conn: Connection =
-            DriverManager.getConnection(config.getUrl, config.getUser, config.getPassword)
+          val conn: Connection = JdbcUtils.createConnectionFactory(jdbcOptions)()
           try {
             config.getPreQueries.asScala.foreach(query => {
               logger.info(s"Execute pre query: $query")
@@ -89,12 +86,7 @@ class JdbcSink extends DataCalcSink[JdbcSinkConfig] with Logging {
     logger.info("Execute query: {}", query)
     val statement = conn.prepareStatement(query)
     try {
-      // `queryTimeout` was added after spark2.4.0, more details please check SPARK-23856
-      if (SPARK_VERSION >= "2.4") {
-        val queryTimeout = getFieldVal(jdbcOptions, "queryTimeout").asInstanceOf[Int]
-        statement.setQueryTimeout(queryTimeout)
-      }
-
+      statement.setQueryTimeout(jdbcOptions.queryTimeout)
       val rows = statement.executeUpdate()
       logger.info("{} rows affected", rows)
     } catch {

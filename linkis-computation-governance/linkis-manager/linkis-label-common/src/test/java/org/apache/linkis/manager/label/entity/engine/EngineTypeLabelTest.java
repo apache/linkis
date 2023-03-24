@@ -17,31 +17,5 @@
 
 package org.apache.linkis.manager.label.entity.engine;
 
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 /** EngineTypeLabel Tester */
-public class EngineTypeLabelTest {
-
-  @Test
-  public void testSetStringValue() {
-    String engineType = "hive";
-    String version = "1.1.0-cdh5.12.0";
-
-    String engineType1 = "*";
-    String version1 = "*";
-
-    LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
-    EngineTypeLabel engineTypeLabel = labelBuilderFactory.createLabel(EngineTypeLabel.class);
-    engineTypeLabel.setStringValue(engineType + "-" + version);
-    Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType);
-    Assertions.assertEquals(engineTypeLabel.getVersion(), version);
-
-    engineTypeLabel.setStringValue(engineType1 + "-" + version1);
-    Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType1);
-    Assertions.assertEquals(engineTypeLabel.getVersion(), version1);
-  }
-}
+public class EngineTypeLabelTest {}

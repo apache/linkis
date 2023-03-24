@@ -38,11 +38,6 @@
       <artifactId>linkis-gateway-server-support</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-gateway-dss-support</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

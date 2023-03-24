@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.parser
+package org.apache.linkis.gateway.dss.parser
 
 import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.parser.RouteLabelParser
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 
 import org.springframework.stereotype.Component

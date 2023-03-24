@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.parser
+package org.apache.linkis.gateway.dss.parser
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.gateway.exception.TooManyServiceException
 import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration.{
   normalPath,
   API_URL_PREFIX

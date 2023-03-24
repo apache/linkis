@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.parser
+package org.apache.linkis.gateway.dss.parser
 
 import org.apache.linkis.common.conf.CommonVars
 

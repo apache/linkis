@@ -20,7 +20,7 @@ name: Build Backend
 on: [push, pull_request]
 
 env:
-  MAVEN_OPTS: -Dmaven.artifact.threads=10 -Daether.connector.connectTimeout=60000
+  MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dmaven.wagon.httpconnectionManager.ttlSeconds=30
 
 jobs:
   build-backend:

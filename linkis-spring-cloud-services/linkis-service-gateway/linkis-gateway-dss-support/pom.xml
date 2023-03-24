@@ -21,7 +21,7 @@
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
     <relativePath>../../../pom.xml</relativePath>
-   </parent>
+  </parent>
 
   <artifactId>linkis-gateway-dss-support</artifactId>
   <dependencies>

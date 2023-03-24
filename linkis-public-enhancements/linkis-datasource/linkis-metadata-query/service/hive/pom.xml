@@ -26,7 +26,6 @@
   <artifactId>linkis-metadata-query-service-hive</artifactId>
 
   <properties>
-    <hadoop.version>2.7.2</hadoop.version>
     <datanucleus-api-jdo.version>4.2.4</datanucleus-api-jdo.version>
   </properties>
 

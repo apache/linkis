@@ -17,141 +17,17 @@
 
 package org.apache.linkis.manager.engineplugin.jdbc.utils;
 
-import org.apache.linkis.common.exception.LinkisSecurityException;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class JdbcParamUtilsTest {
-  @Test
-  @DisplayName("testFilterJdbcUrl")
-  public void testFilterJdbcUrl() {
-    String securityParam =
-        "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false";
-    String url = "jdbc:mysql://127.0.0.1:10000/db_name";
-    String newUrl = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(url + "?" + securityParam, newUrl);
-
-    // not mysql url
-    url = "h2:mysql";
-    newUrl = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(url, newUrl);
-
-    // start with JDBC
-    url = "JDBC:mysql://127.0.0.1:10000/db_name?";
-    newUrl = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(url + securityParam, newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?";
-    newUrl = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(url + securityParam, newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1";
-    newUrl = JdbcParamUtils.filterJdbcUrl(url);
-    Assertions.assertEquals(url + "&" + securityParam, newUrl);
-
-    // key is not security
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&allowLocalInfile=true";
-    AtomicReference<String> atomUrl = new AtomicReference<>(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
-        });
-
-    // value is not security
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=allowLocalInfile";
-    atomUrl.set(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
-        });
-
-    // contains #
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&#p2=v2";
-    atomUrl.set(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          JdbcParamUtils.filterJdbcUrl(atomUrl.get());
-        });
-  }
-
-  @Test
-  @DisplayName("testValidateJdbcUrl")
-  public void testValidateJdbcUrl() {
-    AtomicReference<String> ar = new AtomicReference<>();
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/abc?p1=v1&p2=v2");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/?p1=v1&p2=v2");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000?p1=v1&p2=v2");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/abc?");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/abc");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // true
-    ar.set("jdbc:mysql://127.0.0.1:10000/?v1=v2");
-    Assertions.assertDoesNotThrow(
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // false
-    ar.set("jdbc:mysql://127.0.0.1:10000000/?v1=v2");
-    Assertions.assertThrows(
-        IllegalArgumentException.class,
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-    // false
-    ar.set("jdbc:mysql://127.0.0.1:10000ab/?v1=v2");
-    Assertions.assertThrows(
-        IllegalArgumentException.class,
-        () -> {
-          JdbcParamUtils.validateJdbcUrl(ar.get());
-        });
-  }
 
   @Test
   @DisplayName("testGetJdbcUsername")

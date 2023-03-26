@@ -22,19 +22,17 @@ import org.apache.linkis.common.exception.LinkisSecurityException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /** SecurityUtils Tester */
 public class SecurityUtilsTest {
 
-  @Test
-  public void test() {
-    String url = "jdbc:mysql://172";
-    String[] split = url.split("\\?");
-    System.out.println(split[0]);
+  @BeforeAll
+  public static void init() {
+    BDPConfiguration.set("linkis.mysql.strong.security.enable", "true");
   }
 
   @Test
@@ -291,9 +289,16 @@ public class SecurityUtilsTest {
         () -> {
           SecurityUtils.checkJdbcConnUrl(url3);
         });
+    // false url error
+    String url33 =
+        "jdbc:mysql://127.0.0.1:10000:/db_name?jdbc:mysql://127.0.0.1:10000?allowLocalInfile=true";
+    Assertions.assertThrows(
+        LinkisSecurityException.class,
+        () -> {
+          SecurityUtils.checkJdbcConnUrl(url33);
+        });
     // false key is not security
     String url4 = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&allowLocalInfile=true";
-    AtomicReference<String> atomUrl = new AtomicReference<>(url);
     Assertions.assertThrows(
         LinkisSecurityException.class,
         () -> {
@@ -302,7 +307,6 @@ public class SecurityUtilsTest {
 
     // false value is not security
     String url5 = "jdbc:mysql://127.0.0.1:10000/db_name?p1=allowLocalInfile";
-    atomUrl.set(url);
     Assertions.assertThrows(
         LinkisSecurityException.class,
         () -> {
@@ -311,7 +315,6 @@ public class SecurityUtilsTest {
 
     // false contains #
     String url6 = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&#p2=v2";
-    atomUrl.set(url);
     Assertions.assertThrows(
         LinkisSecurityException.class,
         () -> {
@@ -323,7 +326,6 @@ public class SecurityUtilsTest {
   public void testAppendMysqlForceParamsExtraParams() {
     Map<String, Object> extraParams = new HashMap<>();
     extraParams.put("testKey", "testValue");
-    BDPConfiguration.set("linkis.mysql.strong.security.enable", "true");
     SecurityUtils.appendMysqlForceParams(extraParams);
     Assertions.assertEquals("false", extraParams.get("allowLoadLocalInfile"));
     Assertions.assertEquals("false", extraParams.get("autoDeserialize"));
@@ -331,140 +333,6 @@ public class SecurityUtilsTest {
     Assertions.assertEquals("false", extraParams.get("allowUrlInLocalInfile"));
     Assertions.assertEquals("testValue", extraParams.get("testKey"));
     Assertions.assertEquals(null, extraParams.get("otherKey"));
-  }
-
-  @Test
-  public void testAppendMysqlForceParamsUrl() throws Exception {
-    BDPConfiguration.set("linkis.mysql.strong.security.enable", "true");
-    // allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false
-    String url = "jdbc:mysql://127.0.0.1:10000/db_name";
-    String newUrl = SecurityUtils.appendMysqlForceParams(url);
-    Assertions.assertEquals(
-        url
-            + "?allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?";
-    newUrl = SecurityUtils.appendMysqlForceParams(url);
-    Assertions.assertEquals(
-        url
-            + "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1";
-    newUrl = SecurityUtils.appendMysqlForceParams(url);
-    Assertions.assertEquals(
-        url
-            + "&"
-            + "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false",
-        newUrl);
-  }
-
-  @Test
-  public void testCheckJdbcSecurityUrl() throws Exception {
-    String url = "jdbc:mysql://127.0.0.1:10000/db_name";
-    // String newUrl = SecurityUtils.checkParams(url);
-    // Assertions.assertEquals(url, newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?";
-    // newUrl = SecurityUtils.checkParams(url);
-    // Assertions.assertEquals(url, newUrl);
-
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1";
-    // newUrl = SecurityUtils.checkParams(url);
-    // Assertions.assertEquals(url, newUrl);
-
-    // key is not security
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&allowLocalInfile=true";
-    AtomicReference<String> atomUrl = new AtomicReference<>(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(atomUrl.get());
-        });
-
-    // url encode
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?allowLocalInfil%65=true";
-    atomUrl.set(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(atomUrl.get());
-        });
-
-    // value is not security
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=allowLocalInfile";
-    atomUrl.set(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(atomUrl.get());
-        });
-
-    // contains #
-    url = "jdbc:mysql://127.0.0.1:10000/db_name?p1=v1&#p2=v2";
-    atomUrl.set(url);
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(atomUrl.get());
-        });
-  }
-
-  @Test
-  public void testCheckJdbcSecurityParamsMap() throws Exception {
-    Map<String, Object> paramsMap = new HashMap<>();
-    paramsMap.put("p1", "v1");
-    // SecurityUtils.checkParams(paramsMap);
-    // Assertions.assertEquals("v1", newMap.get("p1"));
-
-    // key not security
-    paramsMap.put("allowLocalInfil%65", "true");
-    // SecurityUtils.checkParams(paramsMap);
-    // Assertions.assertEquals("true", newMap.get("allowLocalInfilg"));
-
-    // key not security
-    paramsMap.put("allowLocalInfile", "false");
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(paramsMap);
-        });
-
-    // value not security
-    paramsMap.clear();
-    paramsMap.put("p1", "allowLocalInfile");
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          /// SecurityUtils.checkParams(paramsMap);
-        });
-
-    // value not security
-    paramsMap.clear();
-    paramsMap.put("p1", "allowLocalInfil%65");
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(paramsMap);
-        });
-
-    // contains #
-    paramsMap.clear();
-    paramsMap.put("p1#", "v1");
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(paramsMap);
-        });
-
-    paramsMap.clear();
-    paramsMap.put("p1", "v1#");
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          // SecurityUtils.checkParams(paramsMap);
-        });
   }
 
   @Test

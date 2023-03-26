@@ -74,6 +74,8 @@ public abstract class SecurityUtils {
   private static final String JDBC_MATCH_REGEX =
       "(?i)jdbc:(?i)(mysql|h2)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";
 
+  private static final String H2_PREFIX = "jdbc:h2";
+
   /**
    * check mysql connection params
    *
@@ -201,6 +203,9 @@ public abstract class SecurityUtils {
    * @param url
    */
   public static void checkUrl(String url) {
+    if (url != null && url.startsWith(H2_PREFIX)) {
+      return;
+    }
     Pattern regex = Pattern.compile(JDBC_MATCH_REGEX);
     Matcher matcher = regex.matcher(url);
     if (!matcher.matches()) {

@@ -327,7 +327,8 @@ class DefaultEngineCreateService
     if (null == engineNodeInfo) return false
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
-      val (reason, canRetry) = getStartErrorInfo(metrics.getHeartBeatMsg)
+      val msg = if (metrics != null) metrics.getHeartBeatMsg else null
+      val (reason, canRetry) = getStartErrorInfo(msg)
       if (canRetry.isDefined) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,

@@ -32,7 +32,7 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   UCL_NOT_EXISTS(20000, "UserCreatorLabel does not exist(UserCreatorLabel 不存在)"),
   CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
   CANNOT_HOME_PATH_DIST(
-      20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
+      20001, "Cannot find the home path:{0} of engineconn dist(找不到 engineconn dist 的 home 路径)"),
   DIST_IS_EMPTY(
       20001,
       "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{0})"),

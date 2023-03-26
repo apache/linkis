@@ -337,7 +337,7 @@ object VariableUtils extends Logging {
    *
    * @param code
    *   :code
-   * @param codeType
+   * @param languageType
    *   :SQL,PYTHON
    * @return
    */
@@ -349,16 +349,16 @@ object VariableUtils extends Logging {
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
-        varString = """\s*--@set\s*.+\s*"""
-        errString = """\s*--@.*"""
+        varString = """^\s*--@set\s*.+\s*"""
+        errString = """^\s*--@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
-        varString = """\s*#@set\s*.+\s*"""
-        errString = """\s*#@"""
+        varString = """^\s*#@set\s*.+\s*"""
+        errString = """^\s*#@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
-        varString = """\s*//@set\s*.+\s*"""
-        errString = """\s*//@.+"""
+        varString = """^\s*//@set\s*.+\s*"""
+        errString = """^\s*//@.+"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_JAVA =>
-        varString = """\s*!!@set\s*.+\s*"""
+        varString = """^\s*!!@set\s*.+\s*"""
       case _ =>
         return nameAndValue
     }

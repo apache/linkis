@@ -67,7 +67,7 @@ public abstract class SecurityUtils {
       CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
   private static final CommonVars<String> MYSQL_CONNECT_URL =
-      CommonVars.apply("linkis.security.mysql.url.regex", "jdbc:mysql://%s:%s/%s");
+      CommonVars.apply("linkis.security.mysql.url.template", "jdbc:mysql://%s:%s/%s");
 
   private static final String JDBC_MATCH_REGEX =
       "(?i)jdbc:(?i)(mysql)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";

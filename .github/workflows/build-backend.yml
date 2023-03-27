@@ -20,7 +20,7 @@ name: Build Backend
 on: [push, pull_request]
 
 env:
-  MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+  MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dmaven.wagon.httpconnectionManager.ttlSeconds=30
 
 jobs:
   build-backend:

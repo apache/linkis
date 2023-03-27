@@ -30,8 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import scala.annotation.meta.param;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,12 +67,12 @@ public abstract class SecurityUtils {
       CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
   private static final CommonVars<String> MYSQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:mysql://%s:%s/%s");
+      CommonVars.apply("linkis.security.mysql.url.regex", "jdbc:mysql://%s:%s/%s");
 
   private static final String JDBC_MATCH_REGEX =
-      "(?i)jdbc:(?i)(mysql|h2)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";
+      "(?i)jdbc:(?i)(mysql)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";
 
-  private static final String H2_PREFIX = "jdbc:h2";
+  private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
 
   /**
    * check mysql connection params
@@ -118,6 +116,12 @@ public abstract class SecurityUtils {
     if (StringUtils.isBlank(url)) {
       throw new LinkisSecurityException(35000, "Invalid jdbc connection url.");
     }
+
+    // temporarily only check mysql jdbc url.
+    if (!url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
+      return;
+    }
+
     String[] urlItems = url.split(REGEX_QUESTION_MARK);
     if (urlItems.length > JDBC_URL_ITEM_COUNT) {
       throw new LinkisSecurityException(35000, "Invalid jdbc connection url.");
@@ -140,6 +144,14 @@ public abstract class SecurityUtils {
    * @return
    */
   public static String getJdbcUrl(String url) {
+    // preventing NPE
+    if (StringUtils.isBlank(url)) {
+      return url;
+    }
+    // temporarily deal with only mysql jdbc url.
+    if (!url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
+      return url;
+    }
     String[] items = url.split(REGEX_QUESTION_MARK);
     String result = items[0];
     if (items.length == JDBC_URL_ITEM_COUNT) {
@@ -203,7 +215,7 @@ public abstract class SecurityUtils {
    * @param url
    */
   public static void checkUrl(String url) {
-    if (url != null && url.startsWith(H2_PREFIX)) {
+    if (url != null && !url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
       return;
     }
     Pattern regex = Pattern.compile(JDBC_MATCH_REGEX);

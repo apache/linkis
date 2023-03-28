@@ -59,8 +59,6 @@ public class KafkaMetaService extends AbstractDbMetaService<KafkaConnection> {
   public MetadataConnection<KafkaConnection> getConnection(
       String operator, Map<String, Object> params) throws Exception {
     FileUtils.forceMkdir(new File(TMP_FILE_STORE_LOCATION.getValue()));
-    Resource resource =
-        new PathMatchingResourcePatternResolver().getResource(TMP_FILE_STORE_LOCATION.getValue());
     String brokers =
         String.valueOf(params.getOrDefault(KafkaParamsMapper.PARAM_KAFKA_BROKERS.getValue(), ""));
     String principle =

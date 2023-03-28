@@ -144,15 +144,18 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt * executorNum
         val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
         val queue = sc.getConf.get("spark.yarn.queue")
+        val memoryOverhead =
+          ByteTimeUtils.byteStringAsGb(sc.getConf.get("spark.executor.memoryOverhead", "1G"))
 
         val sb = new StringBuilder
         sb.append(s"spark.executor.instances=$executorNum\n")
         sb.append(s"spark.executor.memory=${executorMem}G\n")
         sb.append(s"spark.driver.memory=${driverMem}G\n")
-        sb.append(s"spark.executor.memory=${executorMem}G\n")
         sb.append(s"spark.executor.cores=$sparkExecutorCores\n")
         sb.append(s"spark.driver.cores=$sparkDriverCores\n")
-        sb.append(s"spark.yarn.queue=$queue\n\n")
+        sb.append(s"spark.yarn.queue=$queue\n")
+        sb.append(s"spark.executor.memoryOverhead=${memoryOverhead}G\n")
+        sb.append("\n")
         engineExecutionContext.appendStdout(
           LogUtils.generateInfo(s" Your spark job exec with configs:\n${sb.toString()}")
         )

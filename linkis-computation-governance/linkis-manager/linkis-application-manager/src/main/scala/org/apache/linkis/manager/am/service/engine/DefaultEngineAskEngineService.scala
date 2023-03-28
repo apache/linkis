@@ -92,6 +92,7 @@ class DefaultEngineAskEngineService
         logger.info(
           s"Finished to ask engine for task: $taskId user ${engineAskRequest.getUser} by reuse node $reuseNode"
         )
+        LoggerUtils.removeJobIdMDC()
         return reuseNode
       }
     }

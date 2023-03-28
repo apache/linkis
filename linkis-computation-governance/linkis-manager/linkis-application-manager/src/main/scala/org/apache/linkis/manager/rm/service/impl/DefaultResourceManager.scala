@@ -710,7 +710,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
             var heartbeatMsgMetrics = ""
             Utils.tryAndWarn {
               val oldMetrics = nodeMetricManagerPersistence.getNodeMetrics(ecNode)
-              if (StringUtils.isNotBlank(oldMetrics.getHeartBeatMsg)) {
+              if (oldMetrics != null && StringUtils.isNotBlank(oldMetrics.getHeartBeatMsg)) {
                 heartbeatMsgMetrics = oldMetrics.getHeartBeatMsg
               }
             }

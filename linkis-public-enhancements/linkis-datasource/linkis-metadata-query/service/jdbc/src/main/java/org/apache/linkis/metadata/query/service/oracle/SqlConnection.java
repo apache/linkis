@@ -111,7 +111,7 @@ public class SqlConnection implements Closeable {
     ResultSetMetaData meta;
     try {
       List<String> primaryKeys =
-          getPrimaryKeys(/*getDBConnection(connectMessage, schemaname),  */ table);
+          getPrimaryKeys(table);
       Map<String, String> columnCommentMap = getColumnComment(schemaname, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
@@ -148,8 +148,7 @@ public class SqlConnection implements Closeable {
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(
-      /*Connection connection, */ String table) throws SQLException {
+  private List<String> getPrimaryKeys(String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     DatabaseMetaData dbMeta = conn.getMetaData();

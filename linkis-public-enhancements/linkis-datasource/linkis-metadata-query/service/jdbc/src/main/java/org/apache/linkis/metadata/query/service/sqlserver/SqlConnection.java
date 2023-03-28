@@ -110,11 +110,6 @@ public class SqlConnection implements Closeable {
   public List<MetaColumnInfo> getColumns(String database, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    //        String columnSql = "SELECT a.name FieldName, b.name [Type], a.isnullable,
-    // ISNULL(g.[value], '') AS FieldRemark FROM SysColumns a LEFT JOIN systypes b on a.xtype =
-    // b.xusertype INNER JOIN sysobjects d ON a.id = d.id AND d.xtype = 'U' AND d.name IN
-    // ('"+table+"') LEFT JOIN syscomments e ON a.cdefault = e.id LEFT JOIN
-    // sys.extended_properties g ON a.id = g.major_id AND a.colid = g.minor_id";
     String columnSql = "SELECT * FROM " + database + ".dbo." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -210,8 +205,6 @@ public class SqlConnection implements Closeable {
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    //        String url = String.format(SQL_CONNECT_URL.getValue(), connectMessage.host,
-    // database);
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }

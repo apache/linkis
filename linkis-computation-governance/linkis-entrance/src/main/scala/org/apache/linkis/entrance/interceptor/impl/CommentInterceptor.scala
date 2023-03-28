@@ -102,23 +102,23 @@ object ScalaCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """^\s*//.+\s*""".r.unanchored
   private val scalaCommentPattern: String = "(?ms)([\"'](?:|[^'])*['\"])|//.*?$|/\\*.*?\\*/"
 
-  private val logger: Logger = LoggerFactory.getLogger(getClass)
-
-  override def dealComment(code: String): String = {
-    try {
-      val p = Pattern.compile(scalaCommentPattern)
-      val sql = p.matcher(code).replaceAll("$1")
-      sql
-    } catch {
-      case e: Exception =>
-        logger.warn("scala comment failed")
-        code
-      case t: Throwable =>
-        logger.warn("scala comment failed")
-        code
-    }
-  }
-
+  override def dealComment(code: String): String = code
+//  private val logger: Logger = LoggerFactory.getLogger(getClass)
+//
+//  override def dealComment(code: String): String = {
+//    try {
+//      val p = Pattern.compile(scalaCommentPattern)
+//      val sql = p.matcher(code).replaceAll("$1")
+//      sql
+//    } catch {
+//      case e: Exception =>
+//        logger.warn("scala comment failed")
+//        code
+//      case t: Throwable =>
+//        logger.warn("scala comment failed")
+//        code
+//    }
+//  }
 }
 
 object CommentMain {

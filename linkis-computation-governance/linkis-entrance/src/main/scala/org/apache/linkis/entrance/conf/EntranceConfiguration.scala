@@ -245,6 +245,7 @@ object EntranceConfiguration {
 
   val ENTRANCE_UPDATE_BATCH_SIZE = CommonVars("linkis.entrance.update.batch.size", 100)
 
+  // if true, the job in ConsumeQueue can be failover
   val ENTRANCE_SHUTDOWN_FAILOVER_CONSUME_QUEUE_ENABLED =
     CommonVars("linkis.entrance.shutdown.failover.consume.queue.enable", true).getValue
 
@@ -260,6 +261,7 @@ object EntranceConfiguration {
   val ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED =
     CommonVars("linkis.entrance.failover.retain.metric.yarn.resource.enable", false)
 
+  // if true, job whose status is running will be set to Cancelled
   val ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED =
     CommonVars("linkis.entrance.failover.running.kill.enable", false)
 

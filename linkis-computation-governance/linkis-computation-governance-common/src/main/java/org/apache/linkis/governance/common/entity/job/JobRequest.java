@@ -49,6 +49,7 @@ public class JobRequest {
   /** result location */
   private String resultLocation;
 
+  /** Task status updates is ordered, if false, not checked */
   private Boolean updateOrderFlag = true;
 
   private String observeInfo;

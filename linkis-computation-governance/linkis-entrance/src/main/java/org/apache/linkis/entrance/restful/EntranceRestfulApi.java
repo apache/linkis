@@ -17,7 +17,6 @@
 
 package org.apache.linkis.entrance.restful;
 
-import org.apache.linkis.common.entity.JobInstance;
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.entrance.EntranceServer;
 import org.apache.linkis.entrance.conf.EntranceConfiguration;
@@ -29,6 +28,7 @@ import org.apache.linkis.entrance.vo.YarnResourceWithStatusVo;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.manager.common.protocol.resource.ResourceWithStatus;
 import org.apache.linkis.protocol.constants.TaskConstant;
+import org.apache.linkis.protocol.engine.JobInstance;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils;
 import org.apache.linkis.rpc.Sender;

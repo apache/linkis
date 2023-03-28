@@ -66,6 +66,9 @@ object GovernanceCommonConf {
   val ERROR_CODE_DESC_LEN =
     CommonVars("linkis.error.code.desc.len", 512, "Error code description maximum length").getValue
 
+  val MDC_ENABLED =
+    CommonVars("linkis.mdc.log.enabled", true, "MDC Switch").getValue
+
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }

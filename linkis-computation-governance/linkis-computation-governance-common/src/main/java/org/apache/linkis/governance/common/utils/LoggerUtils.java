@@ -17,6 +17,7 @@
 
 package org.apache.linkis.governance.common.utils;
 
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
 import java.util.Map;
@@ -30,8 +31,10 @@ public class LoggerUtils {
   }
 
   public static void setJobIdMDC(Map<String, Object> props) {
-    String jobId = JobUtils.getJobIdFromMap(props);
-    MDC.put(JobRequestConstants.JOB_ID(), jobId);
+    if (GovernanceCommonConf.MDC_ENABLED()) {
+      String jobId = JobUtils.getJobIdFromMap(props);
+      MDC.put(JobRequestConstants.JOB_ID(), jobId);
+    }
   }
 
   public static void removeJobIdMDC() {

@@ -73,8 +73,6 @@ public class SqlConnection implements Closeable {
     try {
       stmt = conn.createStatement();
       rs = stmt.executeQuery("list database directory");
-      // rs = stmt.executeQuery("SELECT * FROM SYSIBMADM.APPLICATIONS WITH UR");
-      // rs = stmt.executeQuery("select * from syscat.tables");
       while (rs.next()) {
         dataBaseName.add(rs.getString(1));
       }
@@ -107,15 +105,11 @@ public class SqlConnection implements Closeable {
   public List<MetaColumnInfo> getColumns(String schemaname, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    //        String columnSql = "SELECT * FROM syscat.columns WHERE TABSCHEMA = '" + schemaname
-    // + "' AND TABNAME = '" + table + "'";
     String columnSql = "SELECT * FROM " + schemaname + "." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      //            List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage,
-      // schemaname),  table);
       List<String> primaryKeys = getPrimaryKeys(conn, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
@@ -159,9 +153,6 @@ public class SqlConnection implements Closeable {
       if (null != rs) {
         rs.close();
       }
-      //            if(null != rs){
-      //                closeResource(connection, null, rs);
-      //            }
     }
   }
 

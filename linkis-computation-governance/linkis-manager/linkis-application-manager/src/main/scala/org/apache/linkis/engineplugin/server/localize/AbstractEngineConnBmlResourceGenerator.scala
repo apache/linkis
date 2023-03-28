@@ -55,7 +55,6 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome)
     val engineConnPackageHomeFile = new File(engineConnPackageHome)
 
-    // 兼容老版本
     if (!engineConnPackageHomeFile.exists()) {
       if (
           !version.startsWith(

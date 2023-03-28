@@ -319,13 +319,13 @@ abstract class EntranceServer extends Logging {
     killOldEC(jobRequest, logAppender);
 
     // deal Inited jobRequest, if status is Inited, need to deal by all Interceptors, such as set log_path
-    if (jobRequest.getStatus.equals(SchedulerEventState.Inited.toString)) {
+    if (SchedulerEventState.isInitedByStr(jobRequest.getStatus)) {
       dealInitedJobRequest(jobRequest, logAppender)
     }
 
     if (
         EntranceConfiguration.ENTRANCE_FAILOVER_RUNNING_KILL_ENABLED.getValue &&
-        jobRequest.getStatus.equals(SchedulerEventState.Running.toString)
+        SchedulerEventState.isRunningByStr(jobRequest.getStatus)
     ) {
       // deal Running jobRequest, if enabled, status changed from Running to Cancelled
       dealRunningJobRequest(jobRequest, logAppender)

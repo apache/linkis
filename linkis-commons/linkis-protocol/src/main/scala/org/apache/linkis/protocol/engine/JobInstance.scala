@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.common.entity
+package org.apache.linkis.protocol.engine
 
 case class JobInstance(
     status: String,

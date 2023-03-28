@@ -37,11 +37,15 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+
+import scala.Enumeration;
+import scala.collection.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,16 +139,10 @@ public class EntranceFailoverJobServer {
                           - EntranceConfiguration.ENTRANCE_FAILOVER_DATA_INTERVAL_TIME();
                 }
 
-                // get uncompleted status
-                List<String> statusList =
-                    Arrays.stream(SchedulerEventState.uncompleteStatusArray())
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
-
                 List<JobRequest> jobRequests =
                     JobHistoryHelper.queryWaitForFailoverTask(
                         serverInstanceMap,
-                        statusList,
+                        getUnCompleteStatus(),
                         expiredTimestamp,
                         EntranceConfiguration.ENTRANCE_FAILOVER_DATA_NUM_LIMIT());
                 if (jobRequests.isEmpty()) return;
@@ -167,5 +165,16 @@ public class EntranceFailoverJobServer {
             EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INIT_TIME(),
             EntranceConfiguration.ENTRANCE_FAILOVER_SCAN_INTERVAL(),
             TimeUnit.MILLISECONDS);
+  }
+
+  private List<String> getUnCompleteStatus() {
+    List<String> status = new ArrayList<>();
+    Enumeration.ValueSet values = SchedulerEventState.values();
+    Iterator<Enumeration.Value> iterator = values.iterator();
+    while (iterator.hasNext()) {
+      Enumeration.Value next = iterator.next();
+      if (!SchedulerEventState.isCompleted(next)) status.add(next.toString());
+    }
+    return status;
   }
 }

@@ -18,12 +18,12 @@
 package org.apache.linkis.gateway.ujes.parser
 
 import org.apache.linkis.common.ServiceInstance
-import org.apache.linkis.common.entity.JobInstance
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.parser.AbstractGatewayParser
 import org.apache.linkis.gateway.ujes.parser.EntranceExecutionGatewayParser._
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
+import org.apache.linkis.protocol.engine.JobInstance
 import org.apache.linkis.protocol.utils.ZuulEntranceUtils
 import org.apache.linkis.rpc.interceptor.ServiceInstanceUtils
 import org.apache.linkis.server.BDPJettyServerHelper

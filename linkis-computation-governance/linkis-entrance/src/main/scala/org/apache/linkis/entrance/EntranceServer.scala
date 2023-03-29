@@ -154,6 +154,18 @@ abstract class EntranceServer extends Logging {
        * this to trigger JobListener.onJobinit()
        */
       Utils.tryAndWarn(job.getJobListener.foreach(_.onJobInited(job)))
+      if (logger.isDebugEnabled()) {
+        logger.debug(
+          s"After code preprocessing, the real execution code is:${jobRequest.getExecutionCode}"
+        )
+      }
+      if (StringUtils.isBlank(jobRequest.getExecutionCode)) {
+        throw new SubmitFailedException(
+          SUBMIT_CODE_ISEMPTY.getErrorCode,
+          SUBMIT_CODE_ISEMPTY.getErrorDesc
+        )
+      }
+
       getEntranceContext.getOrCreateScheduler().submit(job)
       val msg = LogUtils.generateInfo(
         s"Job with jobId : ${jobRequest.getId} and execID : ${job.getId()} submitted "

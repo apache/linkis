@@ -106,8 +106,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys =
-          getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();

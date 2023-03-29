@@ -130,7 +130,6 @@ public class SqlConnection implements Closeable {
     return columns;
   }
 
-
   private List<String> getPrimaryKeys(String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();

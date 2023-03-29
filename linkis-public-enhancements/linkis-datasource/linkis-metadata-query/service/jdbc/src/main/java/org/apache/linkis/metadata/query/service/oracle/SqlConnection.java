@@ -110,8 +110,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys =
-          getPrimaryKeys(table);
+      List<String> primaryKeys = getPrimaryKeys(table);
       Map<String, String> columnCommentMap = getColumnComment(schemaname, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();

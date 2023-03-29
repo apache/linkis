@@ -293,6 +293,10 @@ public class ConfigurationRestfulApi {
                 if (tmpString.length == 2) {
                   String engineName = tmpString[0];
                   String engineVersion = tmpString[1];
+                  logger.info(
+                      "Config remove engine cache:engineName:{},engineVersion:{}",
+                      engineName,
+                      engineVersion);
                   configurationService.clearAMCacheConf(
                       username,
                       Configuration.REMOVE_APPLICATION_CACHE(),

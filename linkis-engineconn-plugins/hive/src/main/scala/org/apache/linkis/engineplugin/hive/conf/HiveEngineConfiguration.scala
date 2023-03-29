@@ -45,6 +45,6 @@ object HiveEngineConfiguration {
     CommonVars[Int]("linkis.hive.engineconn.concurrent.limit", 10).getValue
 
   val HIVE_ENGINE_CONCURRENT_SUPPORT =
-    CommonVars[Boolean]("linkis.hive.engineconn.concurrent.support", true).getValue
+    CommonVars[Boolean]("linkis.hive.engineconn.concurrent.support", false).getValue
 
 }

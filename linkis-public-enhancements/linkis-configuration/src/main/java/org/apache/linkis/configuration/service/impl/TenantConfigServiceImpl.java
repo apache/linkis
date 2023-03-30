@@ -145,7 +145,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
                 .forEach(
                     map -> {
                       String tenant = map.get("tenant").toString().toLowerCase();
-                      if (tenant.equals(tenantVo.getTenantValue())) {
+                      if (tenant.equals(tenantVo.getTenantValue().toLowerCase())) {
                         tenantResult.set(true);
                       }
                     });
@@ -155,20 +155,21 @@ public class TenantConfigServiceImpl implements TenantConfigService {
         throw new ConfigurationException("The ECM with the corresponding label was not found");
       // The beginning of tenantValue needs to contain creator
       String creator = tenantVo.getCreator().toLowerCase();
-      String tenantValue = tenantVo.getTenantValue().toLowerCase().split("_")[0];
-      if (!creator.equals(tenantValue))
+      String[] tenantArray = tenantVo.getTenantValue().toLowerCase().split("_");
+      if (tenantArray.length > 1 && !creator.equals(tenantArray[0])) {
         throw new ConfigurationException("tenantValue should contain creator first");
+      }
     }
   }
 
   @Override
   public Boolean isExist(String user, String creator) {
-    boolean result = false;
+    boolean result = true;
     Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, 1, 20);
     Object tenantList = resultMap.getOrDefault(JobRequestConstants.TOTAL_PAGE(), 0);
     int total = Integer.parseInt(tenantList.toString());
-    if (total == 0) result = true;
+    if (total == 0) result = false;
     return result;
   }
 

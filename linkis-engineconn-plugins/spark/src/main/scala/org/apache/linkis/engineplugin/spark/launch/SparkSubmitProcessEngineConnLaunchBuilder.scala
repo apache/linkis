@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
@@ -42,7 +43,8 @@ import org.apache.commons.lang3.StringUtils
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLaunchBuilder) {
+class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLaunchBuilder)
+    extends Logging {
 
   def getCommands(
       engineConnBuildRequest: EngineConnBuildRequest,
@@ -67,7 +69,13 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     jars ++= getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)
       .split(",")
       .filter(x => {
-        isNotBlankPath(x) && (new java.io.File(x)).isFile
+        val isPath = isNotBlankPath(x)
+        // filter by isFile cannot support this case:
+        // The cg-linkismanager startup user is inconsistent with the engineconn startup user
+
+        // val isFile = (new java.io.File(x)).isFile
+        logger.info(s"file:${x}, check isPath:${isPath}")
+        isPath
       })
     val pyFiles = getValueAndRemove(properties, "py-files", "").split(",").filter(isNotBlankPath)
     val archives = getValueAndRemove(properties, "archives", "").split(",").filter(isNotBlankPath)

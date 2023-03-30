@@ -125,6 +125,7 @@
       v-model="shareModal"
       :mask-closable="false"
       @on-ok="share"
+      :ok-text="$t('message.common.ok')"
     >
       <span>{{$t('message.linkis.udf.shareUser')}}</span>
       <Input
@@ -415,6 +416,7 @@ export default {
           this.isLoading = false
           this.loading = false
           this.search()
+          this.$Message.success(this.$t('message.linkis.udf.success'));
         })
         .catch(() => {
           this.isLoading = false
@@ -562,15 +564,21 @@ export default {
       this.showAddModal(true, args.row)
     },
     delete(args) {
-      if(!args.row) return
-      api
-        .fetch(`/udf/delete/${args.row.id}`, {}, 'post')
-        .then(() => {
-          this.search()
-        })
-        .catch(() => {
+      if (!args.row) return
+      this.$Modal.confirm({
+        title: this.$t('message.linkis.modal.modalTitle'),
+        content: this.$t('message.linkis.modal.modalDelete', {envName: args.row.udfName}),
+        onOk: ()=>{
+          api.fetch(`/udf/delete/${args.row.id}`, {}, 'post')
+            .then(() => {
+              this.search()
+              this.$Message.success(this.$t('message.linkis.udf.success'));
+            })
+            .catch(() => {
 
-        })
+            })
+        }
+      })
     },
     vlist(args) {
       this.handleRow = args.row

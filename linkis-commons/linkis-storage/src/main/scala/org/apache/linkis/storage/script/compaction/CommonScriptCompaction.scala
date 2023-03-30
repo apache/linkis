@@ -29,4 +29,6 @@ abstract class CommonScriptCompaction extends Compaction {
     }
   }
 
+  override def getAnnotationSymbol(): String = prefix.split('@')(0)
+
 }

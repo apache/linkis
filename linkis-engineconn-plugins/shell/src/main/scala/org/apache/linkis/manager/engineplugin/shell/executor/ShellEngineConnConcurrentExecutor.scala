@@ -17,9 +17,8 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
   ConcurrentComputationExecutor,
   EngineExecutionContext
 }
@@ -27,10 +26,10 @@ import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
-  LoadInstanceResource,
+  LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.shell.common.ShellEngineConnPluginConst
 import org.apache.linkis.manager.engineplugin.shell.conf.ShellEngineConnConf
 import org.apache.linkis.manager.engineplugin.shell.exception.ShellCodeErrorException
@@ -43,7 +42,6 @@ import org.apache.linkis.scheduler.executer.{
   SuccessExecuteResponse
 }
 
-import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.{BufferedReader, File, InputStreamReader}
@@ -274,25 +272,11 @@ class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
   }
 
   override def getCurrentNodeResource(): NodeResource = {
-    // todo refactor for duplicate
-    val properties = EngineConnObject.getEngineCreationContext.getOptions
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      val settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-          EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key,
-          settingClientMemory + "g"
-        )
-      }
-    }
-    val actualUsedResource = new LoadInstanceResource(
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue(properties).toLong,
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES.getValue(properties),
-      EngineConnPluginConf.JAVA_ENGINE_REQUEST_INSTANCE
-    )
     val resource = new CommonNodeResource
-    resource.setUsedResource(actualUsedResource)
+    resource.setUsedResource(
+      NodeResourceUtils
+        .applyAsLoadInstanceResource(EngineConnObject.getEngineCreationContext.getOptions)
+    )
     resource
   }
 

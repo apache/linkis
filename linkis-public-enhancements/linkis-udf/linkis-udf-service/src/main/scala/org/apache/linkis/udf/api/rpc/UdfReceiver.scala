@@ -44,7 +44,8 @@ class UdfReceiver extends Receiver {
         val udfTree = udfTreeService.getTreeById(treeId, userName, treeType, treeCategory)
         new ResponseUdfTree(udfTree)
       case RequestUdfIds(userName, udfIds, treeCategory) =>
-        val udfs = udfService.getUDFInfoByIds(udfIds.map(id => new lang.Long(id)), treeCategory)
+        val udfs =
+          udfService.getUDFInfoByIds(userName, udfIds.map(id => new lang.Long(id)), treeCategory)
         new ResponseUdfs(udfs)
       case _ =>
     }

@@ -31,6 +31,6 @@ trait MetadataOperateProtocol extends RequestProtocol {}
 case class MetadataConnect(
     dataSourceType: String,
     operator: String,
-    params: util.Map[String, Object],
+    params: util.Map[String, AnyRef],
     version: String
 ) extends MetadataOperateProtocol

@@ -20,15 +20,14 @@ package org.apache.linkis.cs.server.restful;
 import org.apache.linkis.cs.common.entity.history.ContextHistory;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
-import org.apache.linkis.cs.server.scheduler.CsScheduler;
-import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.service.ContextHistoryService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,13 +45,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary.PARAMS_CANNOT_EMPTY;
 
 @Api(tags = "cs(contextservice) history operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextHistoryRestfulApi implements CsRestfulParent {
 
-  @Autowired private CsScheduler csScheduler;
+  private static final Logger logger = LoggerFactory.getLogger(ContextIDRestfulApi.class);
+
+  @Autowired private ContextHistoryService contextHistoryService;
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -64,18 +70,24 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   @RequestMapping(path = "createHistory", method = RequestMethod.POST)
   public Message createHistory(HttpServletRequest req, @RequestBody JsonNode jsonNode)
       throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
+
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
-    if (StringUtils.isEmpty(history.getSource())) {
-      throw new CSErrorException(97000, "history source cannot be empty");
+    if (StringUtils.isBlank(history.getSource())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "history source"));
     }
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "createHistory,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.CREATE, contextID, history);
-    return generateResponse(answerJob, "");
+    contextHistoryService.createHistroy(contextID, history);
+    return generateMessage(null, "");
   }
 
   @ApiOperation(value = "removeHistory", notes = "remove context history", response = Message.class)
@@ -90,15 +102,19 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     ContextHistory history = getContextHistoryFromJsonNode(jsonNode);
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
-    if (StringUtils.isEmpty(history.getSource())) {
-      throw new CSErrorException(97000, "history source cannot be empty");
+    if (StringUtils.isBlank(history.getSource())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "history source"));
     }
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "removeHistory,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.REMOVE, contextID, history);
-    return generateResponse(answerJob, "");
+    contextHistoryService.removeHistory(contextID, history);
+    return generateMessage(null, "");
   }
 
   @ApiOperation(
@@ -109,15 +125,16 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "getHistories", method = RequestMethod.POST)
   public Message getHistories(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+      throws CSErrorException, IOException, ClassNotFoundException {
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
-    ModuleUserUtils.getOperationUser(req, "getHistories,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID);
-    Message message = generateResponse(answerJob, "contextHistory");
-    return message;
+    ModuleUserUtils.getOperationUser(req, "getHistory,contextID:" + contextID.getContextId());
+    Object history = contextHistoryService.getHistories(contextID);
+    return generateMessage(history, "contextHistory");
   }
 
   @ApiOperation(value = "GetHistory", notes = "get context history", response = Message.class)
@@ -133,16 +150,19 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     // source and contextid cannot be empty
-    if (StringUtils.isEmpty(source)) {
-      throw new CSErrorException(97000, "history source cannot be empty");
+    if (StringUtils.isBlank(source)) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "history source"));
     }
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "getHistory,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.GET, contextID, source);
-    Message message = generateResponse(answerJob, "contextHistory");
-    return message;
+    Object history = contextHistoryService.getHistory(contextID, source);
+    return generateMessage(history, "contextHistory");
   }
 
   @ApiOperation(value = "searchHistory", notes = "search history", response = Message.class)
@@ -157,22 +177,18 @@ public class ContextHistoryRestfulApi implements CsRestfulParent {
     // ContextID contextID, String[] keywords
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     String[] keywords = objectMapper.treeToValue(jsonNode.get("keywords"), String[].class);
-    if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+    if (StringUtils.isBlank(contextID.getContextId())) {
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "searchHistory,contextID:" + contextID.getContextId());
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.SEARCH, contextID, keywords);
-    Message message = generateResponse(answerJob, "contextHistory");
-    return message;
+    Object history = contextHistoryService.searchHistory(contextID, keywords);
+    return generateMessage(history, "contextHistory");
   }
 
   @Override
   public ServiceType getServiceType() {
     return ServiceType.CONTEXT_HISTORY;
-  }
-
-  @Override
-  public CsScheduler getScheduler() {
-    return this.csScheduler;
   }
 }

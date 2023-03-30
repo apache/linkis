@@ -111,7 +111,7 @@ public class DataSourceOperateRestfulApi {
     if (dataSource.getConnectParams().containsKey("envId")) {
       try {
         dataSourceInfoService.addEnvParamsToDataSource(
-            Long.parseLong((String) dataSource.getConnectParams().get("envId")), dataSource);
+            Long.parseLong(dataSource.getConnectParams().get("envId").toString()), dataSource);
       } catch (Exception e) {
         throw new ParameterValidateException(ENVID_ATYPICAL.getErrorDesc() + e);
       }

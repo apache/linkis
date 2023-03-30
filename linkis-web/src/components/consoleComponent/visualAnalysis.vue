@@ -23,6 +23,7 @@
       :title="$t('message.common.saveToWidget')"
       @on-ok="confirm"
       @on-cancel="cancel"
+      :ok-text="$t('message.common.ok')"
     >
       <Select v-model="project.id">
         <Option

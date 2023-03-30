@@ -89,9 +89,7 @@ make_linikis_image_with_mysql_jdbc(){
 }
 #creating a kind cluster
 create_kind_cluster(){
-    if [ $USING_KIND = true ]; then
-      ${ROOT_DIR}/helm/scripts/create-kind-cluster.sh
-    fi
+    ${ROOT_DIR}/helm/scripts/create-kind-cluster.sh
 }
 #mysql installation
 install_mysql(){
@@ -117,9 +115,11 @@ display_pods(){
 }
 
 install(){
-    tag
-    make_linikis_image_with_mysql_jdbc
-    create_kind_cluster
+    if [ $USING_KIND = true ]; then
+      tag
+      make_linikis_image_with_mysql_jdbc
+      create_kind_cluster
+    fi
     install_mysql
     install_ldh
     install_linkis

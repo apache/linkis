@@ -65,8 +65,10 @@ help() {
 
 #pull the container image of the linkis
 pull(){
-    debug ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
-    docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    if [ $WITH_LDH = true ]; then
+      debug ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+      docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    fi
     debug ${MIRRORS}/apache/linkis/linkis:${TAG}
     docker pull ${MIRRORS}/apache/linkis/linkis:${TAG}
     debug ${MIRRORS}/apache/linkis/linkis-web:${TAG}
@@ -76,7 +78,9 @@ pull(){
 tag(){
     docker tag  ${MIRRORS}/apache/linkis/linkis:${TAG} linkis:dev
     docker tag  ${MIRRORS}/apache/linkis/linkis-web:${TAG} linkis-web:dev
-    docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
+    if [ $WITH_LDH = true ]; then
+      docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
+    fi
 }
 #create an image to carry mysql
 make_linikis_image_with_mysql_jdbc(){

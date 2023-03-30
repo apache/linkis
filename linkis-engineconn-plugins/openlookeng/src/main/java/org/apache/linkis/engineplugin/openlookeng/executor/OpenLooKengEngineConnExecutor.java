@@ -33,9 +33,8 @@ import org.apache.linkis.engineplugin.openlookeng.exception.OpenLooKengClientExc
 import org.apache.linkis.engineplugin.openlookeng.exception.OpenLooKengStateInvalidException;
 import org.apache.linkis.governance.common.paser.SQLCodeParser;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
-import org.apache.linkis.manager.common.entity.resource.LoadResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf;
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
@@ -221,21 +220,10 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
 
   @Override
   public NodeResource getCurrentNodeResource() {
-    Map<String, String> properties = EngineConnObject.getEngineCreationContext().getOptions();
-    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key())) {
-      String settingClientMemory =
-          properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key());
-      if (!settingClientMemory.toLowerCase().endsWith("g")) {
-        properties.put(
-            EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().key(), settingClientMemory + "g");
-      }
-    }
     CommonNodeResource resource = new CommonNodeResource();
-    LoadResource usedResource =
-        new LoadResource(
-            EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY().getValue(properties).toLong(),
-            (Integer) EngineConnPluginConf.JAVA_ENGINE_REQUEST_CORES().getValue(properties));
-    resource.setUsedResource(usedResource);
+    resource.setUsedResource(
+        NodeResourceUtils.applyAsLoadInstanceResource(
+            EngineConnObject.getEngineCreationContext().getOptions()));
     return resource;
   }
 

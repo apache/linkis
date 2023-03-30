@@ -25,11 +25,11 @@ class KillHandler extends HeartbeatLossHandler with Logging {
   override def handle(jobs: List[EntranceJob]): Unit = {
     for (job <- jobs) {
       if (job != null) {
-        logger.info("Killing job: " + job.getJobInfo.getId)
+        logger.info("Killing job: " + job.getId)
         Utils.tryCatch(
           job.onFailure("Job is killed because of client-server connection lost", null)
         ) { t =>
-          logger.error("failed to kill job: " + job.getJobInfo.getId, t)
+          logger.error("failed to kill job: " + job.getId, t)
         }
       }
     }

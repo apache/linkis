@@ -84,6 +84,12 @@
       "common": "Common",
       "tenant": "Tenant",
       "inputTenant": "Please Input Tenant",
+      "globalSettings": "GlobalSettings",
+      "resultSet": {
+        "prefixText": "Because your result set is large, for a better experience, ",
+        "linkText": "View result set",
+        "largeResultTips": "The front end displays only 5000 pieces of data"
+      },
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -94,7 +100,7 @@
       },
       "resourceManagement": {
         "resourceUsage": "Resource usage",
-        "applicationList": "Application List"
+        "applicationList": "Applications"
     },
       "time": {
         "second": "Second",
@@ -138,7 +144,9 @@
         "queueTop": "Queue Max",
         "engineRemain": "Engine Remain",
         "engineUsed": "Engine Used",
-        "engineTop": "Engine Max"
+        "engineTop": "Engine Max",
+        "versioTips": "If no engine version is available, check whether the engine materials of the corresponding version are installed",
+        "applicationRole": "Application role"
       },
       "logLoading": "Requesting logs, please hold on",
       "title": "Linkis Control Panel",
@@ -175,14 +183,23 @@
             "udfManager": "UDF User Manage",
             "udfTree": "UDF Tree",
             "datasourceAccess": "Data source access permissions",
-            "codeQuery": "Code Retrieval",
-            "datasourceEnv": "Datasource Environment",
-            "datasourceType": "Datasource Type",
+            "datasourceEnv": "DataSource Environment",
+            "datasourceType": "DataSource Type",
             "datasourceTypeKey": "Datasource Config Options",
             "EnginePluginManagement": "Engine Plugin Management",
-            "basedataManagement": "Base Data Management"
+            "basedataManagement": "Basic Data Management",
+            "codeQuery": "Code Retrieval"
           }
         }
+      },
+      "modal": {
+        "modalTitle": "Prompt message ",
+        "modalDelete": "Confirm whether to delete the [{envName} option?",
+        "modalDeleteRecord": "Confirm whether to delete the record?",
+        "modalDeleteTask": "Confirm whether to stop the selected task?",
+        "modalDeleteInstance": "Determines whether to stop the current selected instance?",
+        "modalDeleteSuccess": "Deleted successfully",
+        "modalDeleteFail": "Delete failed"
       },
       "formItems": {
         "id": {
@@ -612,7 +629,7 @@
         "versionList": "Version List",
         "rollback": "Rollback",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
-        "upload": "Please click the button to upload the engine plug-in"
+        "upload": "Please click the button to upload the engine plugin"
       }
     }
   }

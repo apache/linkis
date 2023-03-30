@@ -112,7 +112,6 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     if (MapUtils.isEmpty(instanceAndLabels)) {
       new AMErrorException(AMConstant.EM_ERROR_CODE, "No corresponding EM")
     }
-    // TODO add em select rule to do this
     val emInstanceLabelOption = labels.asScala.find(_.isInstanceOf[EMInstanceLabel])
     val filterInstanceAndLabel = if (emInstanceLabelOption.isDefined) {
       val emInstanceLabel = emInstanceLabelOption.get.asInstanceOf[EMInstanceLabel]

@@ -105,10 +105,10 @@ class DataSourceAdminRestfulApiTest {
         MessageStatus.ERROR() == mvcResult.getStatus()
             && mvcResult.getMessage().contains("is not admin user"));
 
-    mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
-
     Mockito.doNothing().when(parameterValidator).validate(any(), any());
     Mockito.doNothing().when(dataSourceInfoService).saveDataSourceEnv(any());
+    mvcResult = mvcUtils.getMessage(mvcUtils.buildMvcResultPost(url, dsJsonWriter.toString()));
+
     assertTrue(
         MessageStatus.SUCCESS() == mvcResult.getStatus()
             && "10".equals(mvcResult.getData().get("insertId").toString()));

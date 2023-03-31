@@ -17,6 +17,8 @@
 
 package org.apache.linkis.cli.application;
 
+import org.apache.linkis.common.conf.CommonVars;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 public class LinkisClientApplicationTest {
   private static final Logger logger = LoggerFactory.getLogger(LinkisClientApplicationTest.class);
+
+  String bmlToken = CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
 
   String[] cmdStr;
   String[] cmdStr2;
@@ -58,7 +62,7 @@ public class LinkisClientApplicationTest {
           "--authKey",
           "Validation-Code",
           "--authVal",
-          "BML-AUTH",
+          bmlToken,
           //                "--help",
           //                "--kill", "8249",
           //                "--status", "379",

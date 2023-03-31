@@ -31,10 +31,10 @@
 
     <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
         INSERT INTO linkis_cg_ec_resource_info_record(label_value,create_user, ticket_id, service_instance, request_times, request_resource,
-                                                        used_times, used_resource, release_times, released_resource,release_time,used_time,ecm_instance,log_dir_suffix,status)
+                                                        used_times, used_resource, release_times, released_resource,release_time,used_time,ecm_instance,log_dir_suffix,status,metrics)
         VALUES (#{labelValue},#{createUser},#{ticketId},#{serviceInstance},#{requestTimes},
         #{requestResource},#{usedTimes},#{usedResource},
-        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirSuffix},#{status})
+        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirSuffix},#{status},#{metrics})
     </insert>
 
     <update id="updateECResourceInfoRecord" flushCache="true" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
@@ -51,6 +51,7 @@
             <if test="releasedResource != null">released_resource = #{releasedResource},</if>
             <if test="ecmInstance != null">ecm_instance = #{ecmInstance},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="metrics != null">metrics = #{metrics},</if>
         </trim>
         <![CDATA[
         WHERE id = #{id}

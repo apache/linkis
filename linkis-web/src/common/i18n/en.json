@@ -28,6 +28,14 @@
       "management": "Console",
       "feedback": "Feedback",
       "bbs": "BBS",
+      "exceptionTips": "Background interface exception, please contact development processing!",
+      "separator": {
+        "comma": "Comma(,)",
+        "tab": "Tab(\\t)",
+        "semicolon": "Semicolon(;)",
+        "space": "Space()",
+        "vertical": "Vertical bar(|)"
+      },
       "tabs": {
         "progress": "Progress",
         "result": "Execution Result",
@@ -307,7 +315,8 @@
           "download": "Successfully downloaded, please check from the local download directory!"
         },
         "rowToColumn": "Switch row to column",
-        "rowToColumnTitle": "View current row details"
+        "rowToColumnTitle": "View current row details",
+        "selectSeparator": "Please select a custom separator："
       },
       "tableRow": {
         "detail": "Details of the selected row",

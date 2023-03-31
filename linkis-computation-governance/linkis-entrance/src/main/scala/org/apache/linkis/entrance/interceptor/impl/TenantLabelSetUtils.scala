@@ -60,7 +60,7 @@ object TenantLabelSetUtils extends Logging {
               ""
           }
         }
-        if (StringUtils.isNotBlank(cacheValue)) {
+        if (StringUtils.isBlank(cacheValue)) {
           logger.warn(s"TenantCache data loading failed , plaese check warn log")
           cacheValue = ""
         }

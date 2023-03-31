@@ -21,6 +21,8 @@ import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
@@ -46,9 +48,6 @@ public class SqlConnection implements Closeable {
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
 
-  private static final CommonVars<Boolean> MYSQL_STRONG_SECURITY_ENABLE =
-      CommonVars.apply("linkis.mysql.strong.security.enable", false);
-
   private Connection conn;
 
   private ConnectMessage connectMessage;
@@ -61,34 +60,16 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    // Handle mysql security vulnerabilities
-    validateParams(extraParams);
-    connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, database);
+    // security check
+    SecurityUtils.checkJdbcConnParams(host, port, username, password, database, extraParams);
+    SecurityUtils.appendMysqlForceParams(extraParams);
+
+    connectMessage =
+        new ConnectMessage(host.trim(), port, username.trim(), password.trim(), extraParams);
+    conn = getDBConnection(connectMessage, database.trim());
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
-  }
-
-  /**
-   * Handle mysql security vulnerabilities
-   *
-   * @param extraParams
-   */
-  private void validateParams(Map<String, Object> extraParams) {
-    if (extraParams == null) {
-      return;
-    }
-
-    // security check
-    SecurityUtils.checkJdbcSecurity(extraParams);
-
-    // append force params
-    SecurityUtils.appendMysqlForceParams(extraParams);
-
-    // print extraParams
-    String logStr = SecurityUtils.parseParamsMapToMysqlParamUrl(extraParams);
-    LOG.info("mysql metadata url extraParams: {}", logStr);
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -221,9 +202,14 @@ public class SqlConnection implements Closeable {
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    // deal with empty database
+    if (StringUtils.isBlank(database)) {
+      url = url.substring(0, url.length() - 1);
+    }
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
+    LOG.info("jdbc connection url: {}", url);
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 

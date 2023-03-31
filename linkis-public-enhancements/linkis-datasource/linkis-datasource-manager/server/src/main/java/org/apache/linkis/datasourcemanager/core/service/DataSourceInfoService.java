@@ -183,7 +183,7 @@ public interface DataSourceInfoService {
   List<DataSourceEnv> queryDataSourceEnvPage(DataSourceEnvVo dataSourceEnvVo);
 
   /**
-   * exoire data source
+   * expire data source
    *
    * @param dataSourceId
    * @return

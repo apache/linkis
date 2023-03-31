@@ -43,7 +43,7 @@ object TokenAuthentication extends Logging {
       gatewayContext.getRequest.getCookies.containsKey(TOKEN_USER_KEY))
   }
 
-  def tokenAuth(gatewayContext: GatewayContext): Boolean = {
+  def tokenAuth(gatewayContext: GatewayContext, login: Boolean = false): Boolean = {
     if (!ENABLE_TOKEN_AUTHENTICATION.getValue) {
       val message =
         Message.noLogin(s"Gateway未启用token认证，请采用其他认证方式!") << gatewayContext.getRequest.getRequestURI
@@ -95,6 +95,16 @@ object TokenAuthentication extends Logging {
       logger.info(
         s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
       )
+      if (login) {
+        logger.info(
+          s"Token authentication succeed, uri: ${gatewayContext.getRequest.getRequestURI}, token: $token, tokenUser: $tokenUser."
+        )
+        GatewaySSOUtils.setLoginUser(gatewayContext, tokenUser)
+        val msg =
+          Message.ok("login successful(登录成功)！").data("userName", tokenUser).data("isAdmin", false)
+        SecurityFilter.filterResponse(gatewayContext, msg)
+        return false
+      }
       if (GatewayConfiguration.ENABLE_TOEKN_AUTHENTICATION_ALIVE.getValue || tokenAlive) {
         if (logger.isDebugEnabled()) {
           logger.debug(s"Token auth of user : ${tokenUser} has param : tokenAlive : true.")

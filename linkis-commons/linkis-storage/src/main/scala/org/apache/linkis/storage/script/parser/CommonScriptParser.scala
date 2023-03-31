@@ -58,4 +58,6 @@ abstract class CommonScriptParser extends Parser {
     }
   }
 
+  override def getAnnotationSymbol(): String = prefix.split('@')(0)
+
 }

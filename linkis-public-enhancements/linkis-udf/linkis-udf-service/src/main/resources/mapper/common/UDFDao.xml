@@ -165,17 +165,25 @@
     </select>
 
     <select id="getUDFInfoByIds" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
-        select pub.*, puv.path, puv.register_format, puv.use_format, puv.bml_resource_id, puv.bml_resource_version, puv.description
-        from
-            linkis_ps_udf_baseinfo pub
-            join (
-                select udf_id, max(bml_resource_version) as max_version
-                from linkis_ps_udf_version
-                where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
-                group by udf_id
-            ) puvg on pub.id=puvg.udf_id
-            join linkis_ps_udf_version puv on puvg.udf_id=puv.udf_id and puvg.max_version=puv.bml_resource_version
-        where udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+        select pub.*,
+               puv.path,
+               puv.register_format,
+               puv.use_format,
+               puv.bml_resource_id,
+               puv.bml_resource_version,
+               puv.description
+        from (select *
+              from linkis_ps_udf_baseinfo
+              where id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                 and udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+             ) pub
+                 join (select udf_id, max(bml_resource_version) as max_version
+                       from linkis_ps_udf_version
+                       where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                       group by udf_id) puvg on pub.id = puvg.udf_id
+                 join linkis_ps_udf_version puv on puvg.udf_id = puv.udf_id and puvg.max_version = puv.bml_resource_version
+                 left join (select udf_id from linkis_ps_udf_shared_info where user_name = #{username}) pusi on pub.id = pusi.udf_id
+        where pub.create_user = #{username} or pusi.udf_id is not null
     </select>
 
     <select id="getLoadedUDFs" resultMap="UDFInfoMap">

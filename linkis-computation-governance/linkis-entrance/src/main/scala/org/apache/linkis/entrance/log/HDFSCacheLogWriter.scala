@@ -123,12 +123,10 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
   }
 
   override def write(msg: String): Unit = {
-    if (StringUtils.isBlank(msg)) {
-      cache("")
-    } else {
+    if (StringUtils.isNotBlank(msg)) {
       val rows = msg.split("\n")
       rows.foreach(row => {
-        if (row == null) cache("") else cache(row)
+        if (StringUtils.isNotBlank(row)) cache(row)
       })
     }
   }

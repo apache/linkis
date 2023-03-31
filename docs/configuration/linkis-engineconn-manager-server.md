@@ -8,6 +8,7 @@
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.consumer.size|30|bus.consumer.size|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.max.free.time| 2m|bus.max.free.time|
 |linkis-engineconn-manager-server|wds.linkis.ecm.async.bus.waittoempty.time|5000L |bus.waittoempty.time|
+|linkis-engineconn-manager-server|linkis.ecm.stimate.actual.memory.enable|false |stimate actual memory enable|
 |linkis-engineconn-manager-server|wds.linkis.ecm.memory.max| 100g|ecm.memory.max |
 |linkis-engineconn-manager-server|wds.linkis.ecm.cores.max|100| ecm.cores.max |
 |linkis-engineconn-manager-server|wds.linkis.ecm.engineconn.instances.max| 50 |engineconn.instances.max|

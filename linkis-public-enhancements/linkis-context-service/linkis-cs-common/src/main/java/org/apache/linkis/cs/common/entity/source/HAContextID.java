@@ -27,4 +27,6 @@ public interface HAContextID extends ContextID {
   String getBackupInstance();
 
   void setBackupInstance(String backupInstance);
+
+  HAContextID copy();
 }

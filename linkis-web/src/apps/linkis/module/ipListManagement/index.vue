@@ -102,7 +102,7 @@
       </div>
       <div slot="footer">
         <Button @click="cancel">{{$t('message.linkis.ipListManagement.Cancel')}}</Button>
-        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.linkis.ipListManagement.OK')}}</Button>
+        <Button type="primary" :disabled="tagIsExist" @click="addTenantTag" :loading="isRequesting">{{$t('message.common.ok')}}</Button>
       </div>
     </Modal>
   </div>
@@ -360,7 +360,7 @@ export default {
               window.console.log(res);
               await this.getTableData();
               this.cancel();
-              this.$Message.success(this.$t('message.linkis.ipListManagement.addSuccessful'));
+              this.$Message.success(this.$t('message.linkis.udf.success'));
             });
             this.isRequesting = false
           } catch(err) {

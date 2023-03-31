@@ -7,7 +7,7 @@
 |linkis-entrance|wds.linkis.entrance.listenerBus.queue.capacity|5000 |queue.capacity|
 |linkis-entrance|wds.linkis.entrance.job.persist.wait.max|5m|persist.wait.max|
 |linkis-entrance|wds.linkis.entrance.multi.entrance.flag| true |entrance.flag|
-|linkis-entrance|wds.linkis.query.application.name|linkis-ps-jobhistory |application.name|
+|linkis-entrance|wds.linkis.jobhistory.application.name|linkis-ps-jobhistory |application.name|
 |linkis-entrance|wds.linkis.entrance.config.log.path|  |config.log.path |
 |linkis-entrance|wds.linkis.entrance.log.cacheMax|500| log.cacheMax |
 |linkis-entrance|wds.linkis.entrance.log.defaultCharSet| utf-8 |log.defaultCharSet|

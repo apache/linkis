@@ -224,7 +224,11 @@ object ZipUtils {
       }
       var entry = zipIn.getNextEntry
       while (entry != null) {
-        val filePath = destDir.getPath + File.separator + entry.getName
+        var entryName = entry.getName
+        if (entryName.contains(".." + File.separator)) {
+          throw new IOException("Zip entry contains illegal characters: " + entryName)
+        }
+        val filePath = destDir.getPath + File.separator + entryName
         if (!entry.isDirectory) {
           extractPath(zipIn, filePath)
         } else {
@@ -269,7 +273,11 @@ object ZipUtils {
       }
       var entry = zipIn.getNextEntry
       while (entry != null) {
-        val filePath = destDir.getPath + File.separator + entry.getName
+        var entryName = entry.getName
+        if (entryName.contains(".." + File.separator)) {
+          throw new IOException("Zip entry contains illegal characters: " + entryName)
+        }
+        val filePath = destDir.getPath + File.separator + entryName
         if (!entry.isDirectory) {
           extractFsPath(zipIn, filePath)
         } else {
@@ -317,7 +325,11 @@ object ZipUtils {
       }
       var entry = zipIn.getNextEntry
       while (entry != null) {
-        val filePath = destDir.getPath + File.separator + entry.getName
+        var entryName = entry.getName
+        if (entryName.contains(".." + File.separator)) {
+          throw new IOException("Zip entry contains illegal characters: " + entryName)
+        }
+        val filePath = destDir.getPath + File.separator + entryName
         if (!entry.isDirectory) {
           extractFile(zipIn, filePath)
         } else {

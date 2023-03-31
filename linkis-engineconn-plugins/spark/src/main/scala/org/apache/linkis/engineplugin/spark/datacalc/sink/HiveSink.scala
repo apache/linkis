@@ -195,6 +195,7 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
           }
         // case hiveTableRelation: HiveTableRelation =>
         // todo please note `HiveTableRelation` was added after spark 2.2.1
+        case _ =>
       }
       fileFormat
     } catch {

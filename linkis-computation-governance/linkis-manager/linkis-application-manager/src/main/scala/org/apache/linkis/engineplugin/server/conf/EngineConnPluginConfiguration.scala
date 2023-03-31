@@ -35,4 +35,8 @@ object EngineConnPluginConfiguration {
   val ENABLED_BML_UPLOAD_FAILED_EXIT: CommonVars[Boolean] =
     CommonVars("wds.linkis.engineconn.bml.upload.failed.enable", true)
 
+  // for third party eg appconn/datax, if all update, can set to false then to remove
+  val EC_BML_VERSION_MAY_WITH_PREFIX_V: CommonVars[Boolean] =
+    CommonVars("linkis.engineconn.bml.version.may.with.prefix", true)
+
 }

@@ -118,7 +118,7 @@ class DefaultEngineCreateService
         AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
       } else engineCreateRequest.getTimeout
 
-    // 1. 检查Label是否合法
+    // 1. Check if Label is valid
     var labelList: util.List[Label[_]] = LabelUtils.distinctLabel(
       labelBuilderFactory.getLabels(engineCreateRequest.getLabels),
       userLabelService.getUserLabels(engineCreateRequest.getUser)
@@ -145,11 +145,11 @@ class DefaultEngineCreateService
     emInstanceLabel.setAlias(ENGINE_CONN_MANAGER_SPRING_NAME.getValue)
     emLabelList.add(emInstanceLabel)
 
-    // 2. NodeLabelService getNodesByLabel  获取EMNodeList
+    // 2. Get all available ECMs by labels
     val emScoreNodeList =
       getEMService().getEMNodes(emLabelList.asScala.filter(!_.isInstanceOf[EngineTypeLabel]).asJava)
 
-    // 3. 执行Select  比如负载过高，返回没有负载低的EM，每个规则如果返回为空就抛出异常
+    // 3. Get the ECM with the lowest load by selection algorithm
     val choseNode =
       if (null == emScoreNodeList || emScoreNodeList.isEmpty) null
       else {
@@ -163,11 +163,11 @@ class DefaultEngineCreateService
       )
     }
     val emNode = choseNode.get.asInstanceOf[EMNode]
-    // 4. 请求资源
+    // 4. request resource
     val (resourceTicketId, resource) =
       requestResource(engineCreateRequest, labelFilter.choseEngineLabel(labelList), emNode, timeout)
 
-    // 5. 封装engineBuildRequest对象,并发送给EM进行执行
+    // 5. build engineConn request
     val engineBuildRequest = EngineConnBuildRequestImpl(
       resourceTicketId,
       labelFilter.choseEngineLabel(labelList),
@@ -179,8 +179,10 @@ class DefaultEngineCreateService
       )
     )
 
-    // 6. 调用EM发送引擎启动请求调用ASK
-    // AM会更新serviceInstance表  需要将ticketID进行替换,并更新 EngineConn的Label 需要修改EngineInstanceLabel 中的id为Instance信息
+    // 6. Call ECM to send engine start request
+    // AM will update the serviceInstance table
+    // It is necessary to replace the ticketID and update the Label of EngineConn
+    // It is necessary to modify the id in EngineInstanceLabel to Instance information
     val oldServiceInstance = new ServiceInstance
     oldServiceInstance.setApplicationName(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     oldServiceInstance.setInstance(resourceTicketId)
@@ -206,8 +208,8 @@ class DefaultEngineCreateService
       s"Task: $taskId finished to create  engineConn $engineNode. ticketId is $resourceTicketId"
     )
     engineNode.setTicketId(resourceTicketId)
-    // 7. 更新持久化信息：包括插入engine/metrics
 
+    // 7.Update persistent information: including inserting engine/metrics
     Utils.tryCatch(getEngineNodeManager.updateEngineNode(oldServiceInstance, engineNode)) { t =>
       logger.warn(s"Failed to update engineNode $engineNode", t)
       val stopEngineRequest =
@@ -230,7 +232,7 @@ class DefaultEngineCreateService
       )
     }
 
-    // 8. 新增 EngineConn的Label,添加engineConn的Alias
+    // 8. Add the Label of EngineConn, and add the Alias of engineConn
     val engineConnAliasLabel = labelBuilderFactory.createLabel(classOf[AliasServiceInstanceLabel])
     engineConnAliasLabel.setAlias(GovernanceCommonConf.ENGINE_CONN_SPRING_NAME.getValue)
     labelList.add(engineConnAliasLabel)
@@ -262,16 +264,21 @@ class DefaultEngineCreateService
     engineNode
   }
 
+  /**
+   * Read the management console configuration and the parameters passed in by the user to combine
+   * request resources
+   * @param engineCreateRequest
+   * @param labelList
+   * @param emNode
+   * @param timeout
+   * @return
+   */
   private def requestResource(
       engineCreateRequest: EngineCreateRequest,
       labelList: util.List[Label[_]],
       emNode: EMNode,
       timeout: Long
   ): (String, NodeResource) = {
-    // 4.  向RM申请对应EM和用户的资源, 抛出资源不足异常：RetryException
-    // 4.1 TODO 如果EM资源不足，触发EM回收空闲的engine
-    // 4.2 TODO 如果用户资源不足，触发用户空闲的engine回收
-    // 读取管理台的的配置
     if (engineCreateRequest.getProperties == null) {
       engineCreateRequest.setProperties(new util.HashMap[String, String]())
     }
@@ -313,7 +320,7 @@ class DefaultEngineCreateService
   }
 
   private def ensuresIdle(engineNode: EngineNode, resourceTicketId: String): Boolean = {
-    // TODO 逻辑需要修改，修改为engineConn主动上报
+
     val engineNodeInfo = Utils.tryAndWarnMsg(
       getEngineNodeManager.getEngineNodeInfoByDB(engineNode)
     )("Failed to from db get engine node info")
@@ -324,12 +331,12 @@ class DefaultEngineCreateService
       if (canRetry.isDefined) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,
-          s"${engineNode.getServiceInstance} ticketID:$resourceTicketId 初始化引擎失败,原因: ${reason}"
+          s"${engineNode.getServiceInstance} ticketID:$resourceTicketId Failed to initialize engine, reason: ${reason}"
         )
       }
       throw new AMErrorException(
         AMConstant.EM_ERROR_CODE,
-        s"${engineNode.getServiceInstance} ticketID:$resourceTicketId 初始化引擎失败,原因: ${reason}"
+        s"${engineNode.getServiceInstance} ticketID:$resourceTicketId Failed to initialize engine, reason: ${reason}"
       )
     }
     NodeStatus.isAvailable(engineNodeInfo.getNodeStatus)
@@ -367,7 +374,6 @@ class DefaultEngineCreateService
       logger.info(
         s"Start to wait engineConn($engineNode) to be available, but only ${ByteTimeUtils.msDurationToString(timeout)} left."
       )
-      // 获取启动的引擎信息，并等待引擎的状态变为IDLE，如果等待超时则返回给用户，并抛出异常
       Utils.waitUntil(
         () => ensuresIdle(engineNode, resourceTicketId),
         Duration(timeout, TimeUnit.MILLISECONDS)

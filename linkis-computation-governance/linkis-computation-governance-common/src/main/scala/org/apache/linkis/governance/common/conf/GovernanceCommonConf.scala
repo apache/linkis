@@ -24,6 +24,8 @@ object GovernanceCommonConf {
 
   val CONF_FILTER_RM = "wds.linkis.rm"
 
+  val WILDCARD_CONSTANT = "*"
+
   val SPARK_ENGINE_VERSION =
     CommonVars("wds.linkis.spark.engine.version", LabelCommonConfig.SPARK_ENGINE_VERSION.getValue)
 

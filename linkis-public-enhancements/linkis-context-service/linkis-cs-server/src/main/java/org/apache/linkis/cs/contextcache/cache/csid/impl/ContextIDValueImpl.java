@@ -22,10 +22,8 @@ import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
 import org.apache.linkis.cs.contextcache.cache.cskey.ContextKeyValueContext;
 import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
 import org.apache.linkis.cs.contextcache.metric.DefaultContextIDMetric;
-import org.apache.linkis.cs.contextcache.metric.SizeEstimator;
 import org.apache.linkis.cs.listener.CSKeyListener;
 import org.apache.linkis.cs.listener.event.ContextKeyEvent;
-import org.apache.linkis.cs.listener.event.impl.DefaultContextKeyEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,47 +68,10 @@ public class ContextIDValueImpl implements ContextIDValue, CSKeyListener {
   }
 
   @Override
-  public void onEvent(Event event) {
-    DefaultContextKeyEvent defaultContextKeyEvent = null;
-    if (event != null && event instanceof DefaultContextKeyEvent) {
-      defaultContextKeyEvent = (DefaultContextKeyEvent) event;
-    }
-    if (null == defaultContextKeyEvent) {
-      return;
-    }
-    if (ACCESS.equals(defaultContextKeyEvent.getOperateType())) {
-      onCSKeyAccess(defaultContextKeyEvent);
-    } else {
-      onCSKeyUpdate(defaultContextKeyEvent);
-    }
-  }
+  public void onEvent(Event event) {}
 
   @Override
-  public void onCSKeyUpdate(ContextKeyEvent contextKeyEvent) {
-
-    DefaultContextKeyEvent defaultContextKeyEvent = (DefaultContextKeyEvent) contextKeyEvent;
-    logger.debug("Start to deal csKeyEvent of csID({})", this.contextID);
-    if (ADD == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() + size);
-    } else if (DELETE == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
-    } else if (REMOVEALL == defaultContextKeyEvent.getOperateType()) {
-      Long size = SizeEstimator.estimate(getContextKeyValueContext());
-      this.contextIDMetric.setMemory(size);
-    } else {
-      long size =
-          SizeEstimator.estimate(defaultContextKeyEvent.getContextKeyValue())
-              - SizeEstimator.estimate(defaultContextKeyEvent.getOldValue());
-      this.contextIDMetric.setMemory(getContextIDMetric().getMemory() - size);
-    }
-    logger.info(
-        "Now, The Memory of ContextID({}) are {}", contextID, getContextIDMetric().getMemory());
-    if (logger.isDebugEnabled()) {
-      logger.debug("Finished to deal csKeyEvent of csID({})", this.contextID);
-    }
-  }
+  public void onCSKeyUpdate(ContextKeyEvent contextKeyEvent) {}
 
   @Override
   public void onCSKeyAccess(ContextKeyEvent contextKeyEvent) {

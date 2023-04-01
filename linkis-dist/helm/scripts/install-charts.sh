@@ -23,4 +23,4 @@ KUBE_NAMESPACE=${1:-linkis}
 HELM_RELEASE_NAME=${2:-linkis-demo}
 USING_KIND=${3:-false}
 
-sh ${WORK_DIR}/install-linkis.sh ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} ${USING_KIND} true
+sh ${WORK_DIR}/install-linkis.sh ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} true ${USING_KIND}

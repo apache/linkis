@@ -106,7 +106,7 @@ install_linkis(){
     if [ $WITH_LDH = true ];then
       ${ROOT_DIR}/helm/scripts/install-charts-with-ldh.sh $KUBE_NAMESPACE $HELM_RELEASE_NAME $USING_KIND
     else
-      ${ROOT_DIR}/helm/scripts/install-linkis.sh $KUBE_NAMESPACE $HELM_RELEASE_NAME $USING_KIND
+      ${ROOT_DIR}/helm/scripts/install-linkis.sh $KUBE_NAMESPACE $HELM_RELEASE_NAME true $USING_KIND
     fi
 }
 #display pods

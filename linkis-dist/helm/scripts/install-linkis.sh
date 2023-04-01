@@ -21,8 +21,8 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 KUBE_NAMESPACE=${1:-linkis}
 HELM_RELEASE_NAME=${2:-linkis-demo}
-USING_KIND=${3:-false}
-LOCAL_MODE=${4:-true}
+LOCAL_MODE=${3:-true}
+USING_KIND=${4:-false}
 
 if [ "X${HELM_DEBUG}" == "Xtrue" ]; then
   # template helm charts

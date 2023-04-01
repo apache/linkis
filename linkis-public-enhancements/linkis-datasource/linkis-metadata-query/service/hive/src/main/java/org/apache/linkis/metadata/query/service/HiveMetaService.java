@@ -165,7 +165,6 @@ public class HiveMetaService extends AbstractDbMetaService<HiveConnection> {
       Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
       MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
       info.setRoot(root);
-      long t = System.currentTimeMillis();
       for (Partition p : partitions) {
         try {
           List<String> values = p.getValues();

@@ -72,7 +72,6 @@ object FileImportDDLHelper extends ImportHelper with Logging {
     )
     var createTableCode = new StringBuilder
     val importInfo = mdqTableBO.getImportInfo
-    val args = importInfo.getArgs
     val _source =
       if (StringUtils.isEmpty(importInfo.getSource)) {
         throw MdqIllegalParamException(IMPORT_HIVE_SOURCE_IS_NULL.getErrorDesc)

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.gateway.authentication.service;
 
+import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.gateway.authentication.Scan;
 import org.apache.linkis.gateway.authentication.WebApplicationServer;
 import org.apache.linkis.gateway.authentication.exception.TokenAuthException;
@@ -37,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CachedTokenServiceTest {
   private static final Logger logger = LoggerFactory.getLogger(CachedTokenServiceTest.class);
 
-  private static String TokenName = "BML-AUTH";
+  private static String TokenName =
+      CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
 
   @Autowired CachedTokenService tokenService;
 

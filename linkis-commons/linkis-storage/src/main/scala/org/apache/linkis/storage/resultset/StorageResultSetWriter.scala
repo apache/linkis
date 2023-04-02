@@ -86,6 +86,7 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       WRITER_LOCK_CREATE.synchronized {
         if (!fileCreated) {
           if (storePath != null && outputStream == null) {
+            logger.info(s"Try to create a new file:${storePath}, with proxy user:${proxyUser}")
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser)
             fs.init(null)
             FileSystemUtils.createNewFile(storePath, proxyUser, true)
@@ -187,11 +188,11 @@ class StorageResultSetWriter[K <: MetaData, V <: Record](
       }
     }
     Utils.tryFinally(if (outputStream != null) flush()) {
-      closeFs
       if (outputStream != null) {
         IOUtils.closeQuietly(outputStream)
         outputStream = null
       }
+      closeFs
     }
   }
 

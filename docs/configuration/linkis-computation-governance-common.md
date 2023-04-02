@@ -4,8 +4,8 @@
 | Module Name (Service Name) | Parameter Name | Default Value | Description |
 | -------- | -------- | ----- |----- | 
 |linkis-computation-governance-common|wds.linkis.rm| | wds.linkis.rm |
-|linkis-computation-governance-common|wds.linkis.spark.engine.version|2.4.3 |spark.engine.version|
-|linkis-computation-governance-common|wds.linkis.hive.engine.version| 1.2.1 |hive.engine.version|
+|linkis-computation-governance-common|wds.linkis.spark.engine.version|3.2.1 |spark.engine.version|
+|linkis-computation-governance-common|wds.linkis.hive.engine.version| 3.1.3 |hive.engine.version|
 |linkis-computation-governance-common|wds.linkis.python.engine.version|python2 | python.engine.version  |
 |linkis-computation-governance-common|wds.linkis.python.code_parser.enabled| false |python.code_parser.enabled|
 |linkis-computation-governance-common|wds.linkis.scala.code_parser.enabled| false | scala.code_parser.enabled  |

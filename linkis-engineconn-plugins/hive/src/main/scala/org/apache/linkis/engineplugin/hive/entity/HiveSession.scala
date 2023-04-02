@@ -23,9 +23,18 @@ import org.apache.hadoop.security.UserGroupInformation
 
 import java.io.ByteArrayOutputStream
 
+abstract class AbstractHiveSession
+
 case class HiveSession(
     sessionState: SessionState,
     ugi: UserGroupInformation,
     hiveConf: HiveConf,
     baos: ByteArrayOutputStream = null
-)
+) extends AbstractHiveSession
+
+case class HiveConcurrentSession(
+    sessionState: SessionState,
+    ugi: UserGroupInformation,
+    hiveConf: HiveConf,
+    baos: ByteArrayOutputStream = null
+) extends AbstractHiveSession

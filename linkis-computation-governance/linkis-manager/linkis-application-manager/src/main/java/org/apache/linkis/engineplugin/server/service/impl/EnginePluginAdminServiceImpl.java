@@ -84,7 +84,6 @@ public class EnginePluginAdminServiceImpl implements EnginePluginAdminService {
           engineConnBmlResourceDao.getAllEngineConnBmlResource(ecType, version);
       allEngineConnBmlResource.forEach(
           engineConnBmlResource -> {
-            // 等待bug修复后修改
             // bmlClient.deleteResource(username,engineConnBmlResource.getBmlResourceId());
             engineConnBmlResourceDao.delete(engineConnBmlResource);
           });

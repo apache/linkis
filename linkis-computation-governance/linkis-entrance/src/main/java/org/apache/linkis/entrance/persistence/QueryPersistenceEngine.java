@@ -66,7 +66,7 @@ public class QueryPersistenceEngine extends AbstractPersistenceEngine {
     */
     sender =
         Sender.getSender(
-            EntranceConfiguration$.MODULE$.QUERY_PERSISTENCE_SPRING_APPLICATION_NAME().getValue());
+            EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
   }
 
   private JobRespProtocol sendToJobHistoryAndRetry(RequestProtocol jobReq, String msg)

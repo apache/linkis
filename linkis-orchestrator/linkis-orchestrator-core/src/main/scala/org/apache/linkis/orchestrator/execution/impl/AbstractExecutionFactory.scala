@@ -37,7 +37,6 @@ abstract class AbstractExecutionFactory extends ExecutionFactory {
     val execution = new ExecutionImpl(taskScheduler, taskManager, getTaskConsumer(sessionState))
     sessionState.getOrchestratorSyncListenerBus.addListener(execution)
     sessionState.getOrchestratorSyncListenerBus.addListener(taskManager)
-    sessionState.getOrchestratorAsyncListenerBus.addListener(execution)
     execution.start()
     execution
   }

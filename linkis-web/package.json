@@ -1,6 +1,6 @@
 {
     "name": "linkis",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "private": true,
     "scripts": {
         "serve": "vue-cli-service serve",
@@ -18,8 +18,7 @@
     },
     "lint-staged": {
         "src/**/*.{js,vue}": [
-            "vue-cli-service lint --no-fix",
-            "git add"
+            "vue-cli-service lint --no-fix"
         ]
     },
     "dependencies": {

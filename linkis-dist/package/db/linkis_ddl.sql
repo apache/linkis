@@ -42,6 +42,9 @@ CREATE TABLE `linkis_ps_configuration_config_key`(
   `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
   `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
   `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+  `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
+  `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
+  `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -773,6 +776,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `request_resource` VARCHAR(1020) COMMENT 'request resource',
     `used_times` INT(8) COMMENT 'resource used times',
     `used_resource` VARCHAR(1020) COMMENT 'used resource',
+    `metrics` VARCHAR(1024) DEFAULT NULL COMMENT 'ec metrics',
     `release_times` INT(8) COMMENT 'resource released times',
     `released_resource` VARCHAR(1020)  COMMENT 'released resource',
     `release_time` datetime DEFAULT NULL COMMENT 'released time',
@@ -907,6 +911,9 @@ CREATE TABLE `linkis_ps_dm_datasource_type`
     `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
     `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
     `layers`      int(3)                       NOT NULL,
+    `description_en` varchar(255) DEFAULT NULL COMMENT 'english description',
+    `option_en` varchar(32) DEFAULT NULL COMMENT 'english option',
+    `classifier_en` varchar(32) DEFAULT NULL COMMENT 'english classifier',
     PRIMARY KEY (`id`),
     UNIQUE INDEX `uniq_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

@@ -77,6 +77,8 @@ class DefaultEngineConnListService
         Utils.tryAndWarn {
           if (NodeStatus.Failed == conn.getStatus && StringUtils.isNotBlank(conn.getPid)) {
             killECByEngineConnKillService(conn)
+          } else {
+            getEngineConnKillService().killYarnAppIdOfOneEc(conn)
           }
           conn.close()
         }
@@ -184,7 +186,7 @@ class DefaultEngineConnListService
     logger.info(s"start to kill ec by engineConnKillService ${engineconn.getServiceInstance}")
     val engineStopRequest = new EngineStopRequest()
     engineStopRequest.setServiceInstance(engineconn.getServiceInstance)
-    getEngineConnKillService.dealEngineConnStop(engineStopRequest)
+    getEngineConnKillService().dealEngineConnStop(engineStopRequest)
   }
 
 }

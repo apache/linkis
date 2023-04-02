@@ -26,31 +26,35 @@ import org.apache.linkis.governance.common.entity.job.{
   QueryException,
   SubJobDetail
 }
+import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest
 import org.apache.linkis.governance.common.protocol.job._
 import org.apache.linkis.jobhistory.conversions.TaskConversions._
 import org.apache.linkis.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.jobhistory.entity.{JobHistory, QueryJobHistory}
+import org.apache.linkis.jobhistory.errorcode.JobhistoryErrorCodeSummary
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService
 import org.apache.linkis.jobhistory.transitional.TaskStatus
 import org.apache.linkis.jobhistory.util.QueryUtils
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.commons.lang3.time.DateUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.{lang, util}
 import java.sql.Timestamp
-import java.util.Date
+import java.util.{Calendar, Date}
 import java.util.concurrent.{Callable, TimeUnit}
 
 import scala.collection.JavaConverters._
 
 import com.google.common.cache.{Cache, CacheBuilder}
-import com.google.common.collect.Iterables
+import com.google.common.collect.{Iterables, Lists}
 
 @Service
 class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
@@ -426,6 +430,35 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
 
   override def changeObserveInfoById(jobHistory: JobHistory): Unit = {
     jobHistoryMapper.updateOberverById(jobHistory.getId, jobHistory.getObserveInfo)
+  }
+
+  @Receiver
+  override def clearUndoneTasksByEntranceInstance(
+      request: EntranceInstanceConfRequest,
+      sender: Sender
+  ): Unit = {
+    // Query incomplete tasks
+    logger.info("Request Entrance Instance :{}", request.instance)
+    val statusList: util.List[String] = new util.ArrayList[String]()
+    statusList.add(TaskStatus.WaitForRetry.toString)
+    statusList.add(TaskStatus.Inited.toString)
+    statusList.add(TaskStatus.Scheduled.toString)
+    statusList.add(TaskStatus.Running.toString)
+    val eDate = new Date(System.currentTimeMillis)
+    val sDate = DateUtils.addDays(eDate, -1)
+    val jobHistoryList =
+      jobHistoryMapper.search(null, null, statusList, sDate, eDate, null, null, request.instance)
+    val idlist = jobHistoryList.asScala.map(_.getId).asJava
+    logger.info("Tasks id will be canceled ids :{}", idlist)
+    // Modify task status
+    val errorMsg = JobhistoryErrorCodeSummary.UNFINISHED_TASKS.getErrorDesc
+    if (!idlist.isEmpty) {
+      if (idlist.size() >= 1000) logger.error("The number of batch modification tasks exceeds 1000")
+      Lists
+        .partition(idlist, 100)
+        .asScala
+        .foreach(idlist => jobHistoryMapper.updateJobHistoryCancelById(idlist, errorMsg))
+    }
   }
 
 }

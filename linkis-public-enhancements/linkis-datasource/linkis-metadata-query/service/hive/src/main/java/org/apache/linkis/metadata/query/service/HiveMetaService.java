@@ -56,6 +56,7 @@ public class HiveMetaService extends AbstractDbMetaService<HiveConnection> {
 
   private static final String PARTITION_PART_SEPARATOR = ",";
   private static final String PARTITION_KV_SEPARATOR = "=";
+  private static final String PARTITION_CV_SEPARATOR = "/";
 
   public HiveMetaService() {
     client = BmlClientFactory.createBmlClient();
@@ -164,7 +165,6 @@ public class HiveMetaService extends AbstractDbMetaService<HiveConnection> {
       Map<String, MetaPartitionInfo.PartitionNode> pMap = new HashMap<>(20);
       MetaPartitionInfo.PartitionNode root = new MetaPartitionInfo.PartitionNode();
       info.setRoot(root);
-      long t = System.currentTimeMillis();
       for (Partition p : partitions) {
         try {
           List<String> values = p.getValues();
@@ -238,7 +238,11 @@ public class HiveMetaService extends AbstractDbMetaService<HiveConnection> {
       try {
         // Convert to pairs of (partition_key: partition_value)
         Map<String, String> partitionParts =
-            Arrays.stream(partition.split(PARTITION_PART_SEPARATOR))
+            Arrays.stream(
+                    partition.split(
+                        partition.contains(PARTITION_CV_SEPARATOR)
+                            ? PARTITION_CV_SEPARATOR
+                            : PARTITION_PART_SEPARATOR))
                 .map(part -> part.split(PARTITION_KV_SEPARATOR))
                 .collect(Collectors.toMap(kv -> kv[0], kv -> kv.length > 1 ? kv[1] : ""));
         Table rawTable = client.getTable(database, table);

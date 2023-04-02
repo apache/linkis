@@ -24,7 +24,6 @@ import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValue;
 import org.apache.linkis.cs.contextcache.cache.csid.ContextIDValueGenerator;
 import org.apache.linkis.cs.contextcache.conf.ContextCacheConf;
 import org.apache.linkis.cs.contextcache.metric.ContextCacheMetric;
-import org.apache.linkis.cs.contextcache.metric.ContextIDMetric;
 import org.apache.linkis.cs.contextcache.metric.DefaultContextCacheMetric;
 import org.apache.linkis.cs.listener.CSIDListener;
 import org.apache.linkis.cs.listener.ListenerBus.ContextAsyncListenerBus;
@@ -165,17 +164,7 @@ public class DefaultContextCache implements ContextCache, CSIDListener {
 
   @Override
   public void onCSIDAccess(ContextIDEvent contextIDEvent) {
-    ContextID contextID = contextIDEvent.getContextID();
-    try {
-      ContextIDValue contextIDValue = getContextIDValue(contextID);
-      ContextIDMetric contextIDMetric = contextIDValue.getContextIDMetric();
-
-      contextIDMetric.setLastAccessTime(System.currentTimeMillis());
-      contextIDMetric.addCount();
-      getContextCacheMetric().addCount();
-    } catch (CSErrorException e) {
-      logger.error("Failed to deal CSIDAccess event csid is {}", contextID.getContextId());
-    }
+    getContextCacheMetric().addCount();
   }
 
   @Override

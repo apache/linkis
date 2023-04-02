@@ -131,22 +131,15 @@ public class SqlConnection implements Closeable {
     return columns;
   }
 
-  private List<String> getPrimaryKeys(
-      /*Connection connection, */ String schema, String table) throws SQLException {
+  private List<String> getPrimaryKeys(String schema, String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
-    //        try {
     DatabaseMetaData dbMeta = conn.getMetaData();
     rs = dbMeta.getPrimaryKeys(null, schema, table);
     while (rs.next()) {
       primaryKeys.add(rs.getString("COLUMN_NAME"));
     }
     return primaryKeys;
-    /*}finally{
-        if(null != rs){
-            closeResource(connection, null, rs);
-        }
-    }*/
   }
   /**
    * Get Column Comment

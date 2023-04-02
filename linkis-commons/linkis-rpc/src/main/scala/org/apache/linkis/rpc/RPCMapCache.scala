@@ -21,7 +21,6 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.errorcode.LinkisModuleErrorCodeSummary.FETCH_MAPCACHE_ERROR
 import org.apache.linkis.protocol.CacheableProtocol
-import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.server.exception.FetchMapCacheFailedException
 
 import java.text.MessageFormat

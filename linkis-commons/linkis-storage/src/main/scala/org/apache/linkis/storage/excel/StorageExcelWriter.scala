@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel._
 import org.apache.poi.xssf.streaming.{SXSSFCell, SXSSFSheet, SXSSFWorkbook}
 
 import java.io._
+import java.math.BigDecimal
 import java.util
 import java.util.Date
 
@@ -163,13 +164,19 @@ class StorageExcelWriter(
         case LongType => cell.setCellValue(elem.toString.toLong)
         case BigIntType => cell.setCellValue(elem.toString.toLong)
         case FloatType => cell.setCellValue(elem.toString.toFloat)
-        case DoubleType => cell.setCellValue(elem.toString.toDouble)
+        case DoubleType =>
+          doubleCheck(elem.toString)
+          cell.setCellValue(elem.toString.toDouble)
         case CharType => cell.setCellValue(DataType.valueToString(elem))
         case VarcharType => cell.setCellValue(DataType.valueToString(elem))
         case DateType => cell.setCellValue(getDate(elem))
         case TimestampType => cell.setCellValue(getDate(elem))
-        case DecimalType => cell.setCellValue(DataType.valueToString(elem).toDouble)
-        case BigDecimalType => cell.setCellValue(DataType.valueToString(elem).toDouble)
+        case DecimalType =>
+          doubleCheck(DataType.valueToString(elem))
+          cell.setCellValue(DataType.valueToString(elem).toDouble)
+        case BigDecimalType =>
+          doubleCheck(DataType.valueToString(elem))
+          cell.setCellValue(DataType.valueToString(elem).toDouble)
         case _ =>
           val value = DataType.valueToString(elem)
           cell.setCellValue(value)
@@ -185,6 +192,19 @@ class StorageExcelWriter(
     } else {
       throw new NumberFormatException(
         s"Value ${value} with class : ${value.getClass.getName} is not a valid type of Date."
+      );
+    }
+  }
+
+  /**
+   * Check whether the double exceeds the number of digits, which will affect the data accuracy
+   * @param elemValue
+   */
+  private def doubleCheck(elemValue: String): Unit = {
+    val value = new BigDecimal(elemValue).stripTrailingZeros
+    if ((value.precision - value.scale) > 15) {
+      throw new NumberFormatException(
+        s"Value ${elemValue} error : This data exceeds 15 significant digits."
       );
     }
   }

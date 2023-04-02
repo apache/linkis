@@ -28,6 +28,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
@@ -64,9 +65,21 @@ abstract class JavaProcessEngineConnLaunchBuilder
     val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
     commandLine += (variable(JAVA_HOME) + "/bin/java")
     commandLine += "-server"
-    val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
-    commandLine += ("-Xmx" + engineConnMemory)
-    // commandLine += ("-Xms" + engineConnMemory)
+
+    val properties = engineConnBuildRequest.engineConnCreationDesc.properties
+    var settingClientMemory = ""
+    if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
+      settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+    }
+    if (StringUtils.isNotBlank(settingClientMemory)) {
+      commandLine += ("-Xmx" + NodeResourceUtils.formatJavaOptionMemoryWithDefaultUnitG(
+        settingClientMemory
+      ))
+    } else {
+      val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
+      commandLine += ("-Xmx" + engineConnMemory)
+    }
+
     val javaOPTS = getExtractJavaOpts
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
       EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue

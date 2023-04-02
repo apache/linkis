@@ -28,10 +28,10 @@ ECM_POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-de
 kubectl cp ./ldh  -n linkis ${ECM_POD_NAME}:/opt/ ;
 
 
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "chmod +x /opt/ldh/1.3.0/spark-2.4.3-bin-hadoop2.7/bin/*"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/spark-2.4.3-bin-hadoop2.7 /opt/ldh/current/spark"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/hadoop-2.7.2 /opt/ldh/current/hadoop"
-kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/apache-hive-2.3.3-bin /opt/ldh/current/hive"
+kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "chmod +x /opt/ldh/1.3.0/spark-3.2.1-bin-hadoop3.2/bin/*"
+kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/spark-3.2.1-bin-hadoop3.2 /opt/ldh/current/spark"
+kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/hadoop-3.3.4 /opt/ldh/current/hadoop"
+kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "ln -s /opt/ldh/1.3.0/apache-hive-3.1.3-bin /opt/ldh/current/hive"
 
 
 kubectl exec -it -n linkis ${ECM_POD_NAME} -- bash -c "echo 'export SPARK_HOME=/opt/ldh/current/spark' |sudo tee --append /etc/profile"

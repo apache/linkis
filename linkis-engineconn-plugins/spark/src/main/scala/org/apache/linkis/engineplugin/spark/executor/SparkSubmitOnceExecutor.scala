@@ -74,7 +74,11 @@ class SparkSubmitOnceExecutor(
   }
 
   override protected def waitToRunning(): Unit = {
+    // Wait until the task return applicationId (等待返回applicationId)
     Utils.waitUntil(() => clusterDescriptorAdapter.initJobId(), Duration.Inf)
+    // Synchronize applicationId to EC SparkOnceExecutor to facilitate user operations,
+    // such as obtaining progress and killing jobs(将applicationId同步给EC执行器，方便用户操作，如获取进度，kill任务等)
+    setApplicationId(clusterDescriptorAdapter.getApplicationId)
     super.waitToRunning()
   }
 

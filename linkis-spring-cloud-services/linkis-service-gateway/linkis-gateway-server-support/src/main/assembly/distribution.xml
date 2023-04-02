@@ -21,7 +21,6 @@
     <id>linkis-gateway</id>
     <formats>
         <format>dir</format>
-        <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>linkis-gateway</baseDirectory>
@@ -43,10 +42,6 @@
             </excludes>
         </dependencySet>
     </dependencySets>
-
-    <fileSets>
-
-    </fileSets>
 
 </assembly>
 

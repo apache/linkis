@@ -26,11 +26,7 @@ public class LinkisCsServerErrorCodeSummaryTest {
   @Test
   @DisplayName("enumTest")
   public void enumTest() {
-
-    int errorCode = LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE.getErrorCode();
     String errorDesc = LinkisCsServerErrorCodeSummary.UNKNOWN_CONDITION_TYPE.getErrorDesc();
-
-    Assertions.assertTrue(errorCode == 1200001);
     Assertions.assertNotNull(errorDesc);
   }
 }

@@ -47,6 +47,21 @@ public class LinkisHAWorkFlowContextID extends LinkisWorkflowContextID
   }
 
   @Override
+  public HAContextID copy() {
+    LinkisHAWorkFlowContextID linkisHAWorkFlowContextID = new LinkisHAWorkFlowContextID();
+    linkisHAWorkFlowContextID.setBackupInstance(getBackupInstance());
+    linkisHAWorkFlowContextID.setInstance(getInstance());
+    linkisHAWorkFlowContextID.setEnv(getEnv());
+    linkisHAWorkFlowContextID.setFlow(getFlow());
+    linkisHAWorkFlowContextID.setProject(getProject());
+    linkisHAWorkFlowContextID.setVersion(getVersion());
+    linkisHAWorkFlowContextID.setWorkSpace(getWorkSpace());
+    linkisHAWorkFlowContextID.setUser(getUser());
+    linkisHAWorkFlowContextID.setContextId(getContextId());
+    return linkisHAWorkFlowContextID;
+  }
+
+  @Override
   public void setUser(String user) {
     this.user = user;
   }

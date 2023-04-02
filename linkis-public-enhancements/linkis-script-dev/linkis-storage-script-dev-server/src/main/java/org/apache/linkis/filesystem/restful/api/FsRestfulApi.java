@@ -95,12 +95,15 @@ public class FsRestfulApi {
       LOGGER.debug("not check filesystem owner.");
       return true;
     }
+    if (requestPath.contains(WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue()))
+        || Configuration.isAdmin(userName)) {
+      return true;
+    }
     requestPath = requestPath.toLowerCase().trim() + "/";
     String hdfsUserRootPathPrefix =
         WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
     String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
-    String path;
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
@@ -319,8 +322,8 @@ public class FsRestfulApi {
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     for (MultipartFile p : files) {
       String fileName = p.getOriginalFilename();
+      WorkspaceUtil.charCheckFileName(fileName);
       FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
-      WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
       fileSystem.createNewFile(fsPathNew);
       try (InputStream is = p.getInputStream();
           OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
@@ -442,7 +445,7 @@ public class FsRestfulApi {
       // downloaded(判断目录,目录不能下载)
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
-        throw WorkspaceExceptionManager.createException(8011, path);
+        throw WorkspaceExceptionManager.createException(80011, path);
       }
       inputStream = fileSystem.read(fsPath);
       byte[] buffer = new byte[1024];
@@ -692,6 +695,7 @@ public class FsRestfulApi {
       @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
       @RequestParam(value = "outputFileType", defaultValue = "csv") String outputFileType,
       @RequestParam(value = "csvSeperator", defaultValue = ",") String csvSeperator,
+      @RequestParam(value = "csvSeparator", defaultValue = ",") String csvSeparator,
       @RequestParam(value = "quoteRetouchEnable", required = false) boolean quoteRetouchEnable,
       @RequestParam(value = "outputFileName", defaultValue = "downloadResultset")
           String outputFileName,
@@ -704,6 +708,15 @@ public class FsRestfulApi {
     FsWriter fsWriter = null;
     PrintWriter writer = null;
     FileSource fileSource = null;
+    if (csvSeparator.equals(",") && !csvSeperator.equals(",")) {
+      csvSeparator = csvSeperator;
+    }
+    LOGGER.info(
+        "resultsetToExcel with outputFileType:{}, csvSeparator:{}, quoteRetouchEnable:{}, charset:{}",
+        outputFileType,
+        csvSeparator,
+        quoteRetouchEnable,
+        charset);
     try {
       String userName = ModuleUserUtils.getOperationUser(req, "resultsetToExcel " + path);
       FsPath fsPath = new FsPath(path);
@@ -737,7 +750,7 @@ public class FsRestfulApi {
         case "csv":
           if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
             fsWriter =
-                CSVFsWriter.getCSVFSWriter(charset, csvSeperator, quoteRetouchEnable, outputStream);
+                CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
           } else {
             fsWriter =
                 ScriptFsWriter.getScriptFsWriter(new FsPath(outputFileType), charset, outputStream);

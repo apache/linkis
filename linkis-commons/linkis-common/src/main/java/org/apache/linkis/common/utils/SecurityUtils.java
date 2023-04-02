@@ -25,10 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -46,8 +45,12 @@ public abstract class SecurityUtils {
 
   private static final String QUESTION_MARK = "?";
 
+  private static final String REGEX_QUESTION_MARK = "\\?";
+
+  private static final int JDBC_URL_ITEM_COUNT = 2;
+
   /** allowLoadLocalInfile,allowLoadLocalInfiled,# */
-  public static final CommonVars<String> MYSQL_SENSITIVE_PARAMS =
+  private static final CommonVars<String> MYSQL_SENSITIVE_PARAMS =
       CommonVars$.MODULE$.apply(
           "linkis.mysql.sensitive.params",
           "allowLoadLocalInfile,autoDeserialize,allowLocalInfile,allowUrlInLocalInfile,#");
@@ -55,16 +58,113 @@ public abstract class SecurityUtils {
   /**
    * "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false"
    */
-  public static final CommonVars<String> MYSQL_FORCE_PARAMS =
+  private static final CommonVars<String> MYSQL_FORCE_PARAMS =
       CommonVars$.MODULE$.apply(
           "linkis.mysql.force.params",
           "allowLoadLocalInfile=false&autoDeserialize=false&allowLocalInfile=false&allowUrlInLocalInfile=false");
 
-  public static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
+  private static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
       CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
+  private static final CommonVars<String> MYSQL_CONNECT_URL =
+      CommonVars.apply("linkis.security.mysql.url.template", "jdbc:mysql://%s:%s/%s");
+
+  private static final String JDBC_MATCH_REGEX =
+      "(?i)jdbc:(?i)(mysql)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";
+
+  private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
+
   /**
-   * mysql url append force params
+   * check mysql connection params
+   *
+   * @param host
+   * @param port
+   * @param username
+   * @param password
+   * @param database
+   * @param extraParams
+   */
+  public static void checkJdbcConnParams(
+      String host,
+      Integer port,
+      String username,
+      String password,
+      String database,
+      Map<String, Object> extraParams) {
+    // 1. Check blank params
+    if (StringUtils.isAnyBlank(host, username, password)) {
+      logger.info(
+          "Invalid mysql connection params: host: {}, username: {}, password: {}, database: {}",
+          host,
+          username,
+          password,
+          database);
+      throw new LinkisSecurityException(35000, "Invalid mysql connection params.");
+    }
+
+    // 2. Check url format
+    String url = String.format(MYSQL_CONNECT_URL.getValue(), host.trim(), port, database.trim());
+    checkUrl(url);
+
+    // 3. Check params. Mainly vulnerability parameters. Note the url encoding
+    checkParams(extraParams);
+  }
+
+  /** @param url */
+  public static void checkJdbcConnUrl(String url) {
+    logger.info("jdbc url: {}", url);
+    if (StringUtils.isBlank(url)) {
+      throw new LinkisSecurityException(35000, "Invalid jdbc connection url.");
+    }
+
+    // temporarily only check mysql jdbc url.
+    if (!url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
+      return;
+    }
+
+    String[] urlItems = url.split(REGEX_QUESTION_MARK);
+    if (urlItems.length > JDBC_URL_ITEM_COUNT) {
+      throw new LinkisSecurityException(35000, "Invalid jdbc connection url.");
+    }
+
+    // check url
+    checkUrl(urlItems[0]);
+
+    // check params
+    if (urlItems.length == JDBC_URL_ITEM_COUNT) {
+      Map<String, Object> params = parseMysqlUrlParamsToMap(urlItems[1]);
+      checkParams(params);
+    }
+  }
+
+  /**
+   * call after checkJdbcConnUrl
+   *
+   * @param url
+   * @return
+   */
+  public static String getJdbcUrl(String url) {
+    // preventing NPE
+    if (StringUtils.isBlank(url)) {
+      return url;
+    }
+    // temporarily deal with only mysql jdbc url.
+    if (!url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
+      return url;
+    }
+    String[] items = url.split(REGEX_QUESTION_MARK);
+    String result = items[0];
+    if (items.length == JDBC_URL_ITEM_COUNT) {
+      Map<String, Object> params = parseMysqlUrlParamsToMap(items[1]);
+      appendMysqlForceParams(params);
+      String paramUrl = parseParamsMapToMysqlParamUrl(params);
+      result += QUESTION_MARK + paramUrl;
+    }
+    return result;
+  }
+
+  /**
+   * append force params, Should be called after the checkJdbcConnParams method
    *
    * @param url
    * @return
@@ -72,6 +172,9 @@ public abstract class SecurityUtils {
   public static String appendMysqlForceParams(String url) {
     if (StringUtils.isBlank(url)) {
       return "";
+    }
+    if (!Boolean.valueOf(MYSQL_STRONG_SECURITY_ENABLE.getValue())) {
+      return url;
     }
 
     String extraParamString = MYSQL_FORCE_PARAMS.getValue();
@@ -86,36 +189,41 @@ public abstract class SecurityUtils {
     return url;
   }
 
+  /**
+   * append force params, Should be called after the checkJdbcConnParams method
+   *
+   * @param extraParams
+   */
   public static void appendMysqlForceParams(Map<String, Object> extraParams) {
-    extraParams.putAll(parseMysqlUrlParamsToMap(MYSQL_FORCE_PARAMS.getValue()));
+    if (Boolean.valueOf(MYSQL_STRONG_SECURITY_ENABLE.getValue())) {
+      extraParams.putAll(parseMysqlUrlParamsToMap(MYSQL_FORCE_PARAMS.getValue()));
+    }
   }
 
-  public static String checkJdbcSecurity(String url) {
-    logger.info("checkJdbcSecurity origin url: {}", url);
-    if (StringUtils.isBlank(url)) {
-      throw new LinkisSecurityException(35000, "Invalid mysql connection cul, url is empty");
+  public static String parseParamsMapToMysqlParamUrl(Map<String, Object> params) {
+    if (params == null || params.isEmpty()) {
+      return "";
     }
-    // deal with url encode
-    try {
-      url = URLDecoder.decode(url, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw new LinkisSecurityException(35000, "mysql connection cul decode error: " + e);
+    return params.entrySet().stream()
+        .map(e -> String.join(EQUAL_SIGN, e.getKey(), String.valueOf(e.getValue())))
+        .collect(Collectors.joining(AND_SYMBOL));
+  }
+
+  /**
+   * check url, format: jdbc:mysql://host:port/dbname
+   *
+   * @param url
+   */
+  public static void checkUrl(String url) {
+    if (url != null && !url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
+      return;
     }
-    if (url.endsWith(QUESTION_MARK) || !url.contains(QUESTION_MARK)) {
-      logger.info("checkJdbcSecurity target url: {}", url);
-      return url;
+    Pattern regex = Pattern.compile(JDBC_MATCH_REGEX);
+    Matcher matcher = regex.matcher(url);
+    if (!matcher.matches()) {
+      logger.info("Invalid mysql connection url: {}", url);
+      throw new LinkisSecurityException(35000, "Invalid mysql connection url.");
     }
-    String[] items = url.split("\\?");
-    if (items.length != 2) {
-      logger.warn("Invalid url: {}", url);
-      throw new LinkisSecurityException(35000, "Invalid mysql connection cul: " + url);
-    }
-    Map<String, Object> params = parseMysqlUrlParamsToMap(items[1]);
-    Map<String, Object> securityMap = checkJdbcSecurity(params);
-    String paramUrl = parseParamsMapToMysqlParamUrl(securityMap);
-    url = items[0] + QUESTION_MARK + paramUrl;
-    logger.info("checkJdbcSecurity target url: {}", url);
-    return url;
   }
 
   /**
@@ -123,15 +231,9 @@ public abstract class SecurityUtils {
    *
    * @param paramsMap
    */
-  public static Map<String, Object> checkJdbcSecurity(Map<String, Object> paramsMap) {
-    if (paramsMap == null) {
-      return new HashMap<>();
-    }
-
-    // mysql url strong security
-    if (Boolean.valueOf(MYSQL_STRONG_SECURITY_ENABLE.getValue())) {
-      paramsMap.clear();
-      return paramsMap;
+  private static void checkParams(Map<String, Object> paramsMap) {
+    if (paramsMap == null || paramsMap.isEmpty()) {
+      return;
     }
 
     // deal with url encode
@@ -163,19 +265,12 @@ public abstract class SecurityUtils {
             "Invalid mysql connection parameters: " + parseParamsMapToMysqlParamUrl(paramsMap));
       }
     }
-    return paramsMap;
-  }
-
-  public static String parseParamsMapToMysqlParamUrl(Map<String, Object> forceParams) {
-    if (forceParams == null) {
-      return "";
-    }
-    return forceParams.entrySet().stream()
-        .map(e -> String.join(EQUAL_SIGN, e.getKey(), String.valueOf(e.getValue())))
-        .collect(Collectors.joining(AND_SYMBOL));
   }
 
   private static Map<String, Object> parseMysqlUrlParamsToMap(String paramsUrl) {
+    if (StringUtils.isBlank(paramsUrl)) {
+      return new LinkedHashMap<>();
+    }
     String[] params = paramsUrl.split(AND_SYMBOL);
     Map<String, Object> map = new LinkedHashMap<>(params.length);
     for (String param : params) {

@@ -108,6 +108,7 @@
       v-model="modifyShow"
       :title="$t('message.linkis.edit')"
       @on-ok="modifyOk"
+      :ok-text="$t('message.common.ok')"
     >
       <Form v-model="modifyData" :label-width="100">
         <FormItem :label="`${$t('message.linkis.instanceName')}`">

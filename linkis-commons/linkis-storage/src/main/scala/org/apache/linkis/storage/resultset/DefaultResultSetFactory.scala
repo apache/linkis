@@ -108,7 +108,7 @@ class DefaultResultSetFactory extends ResultSetFactory with Logging {
     if (StringUtils.isEmpty(resultSetType)) {
       throw new StorageWarnException(
         THE_FILE_IS_EMPTY.getErrorCode,
-        s"The file (${fsPath.getPath}) is empty(文件(${fsPath.getPath}) 为空)"
+        MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc, fsPath.getPath)
       )
     }
     Utils.tryQuietly(inputStream.close())

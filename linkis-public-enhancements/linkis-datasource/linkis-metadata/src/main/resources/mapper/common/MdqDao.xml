@@ -40,16 +40,23 @@
     </sql>
 
     <update id="activateTable">
-        update linkis_ps_datasource_table set is_available = true where id = #{tableId}
+        UPDATE linkis_ps_datasource_table
+        SET is_available = true
+        WHERE id = #{tableId}
     </update>
 
     <select id="selectTableByName" resultType="org.apache.linkis.metadata.domain.mdq.po.MdqTable">
-        select * from linkis_ps_datasource_table
-        WHERE `database` = #{database} AND `name` = #{tableName} AND creator = #{user} AND is_available = true
+        SELECT *
+        FROM linkis_ps_datasource_table
+        WHERE `database` = #{database}
+        AND `name` = #{tableName}
+        AND creator = #{user}
+        AND is_available = true
     </select>
 
     <select id="listMdqFieldByTableId" resultType="org.apache.linkis.metadata.domain.mdq.po.MdqField">
-        select * from linkis_ps_datasource_field
+        SELECT *
+        FROM linkis_ps_datasource_field
         WHERE table_id = #{tableId}
     </select>
 

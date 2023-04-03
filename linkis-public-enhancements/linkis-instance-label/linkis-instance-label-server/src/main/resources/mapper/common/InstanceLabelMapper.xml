@@ -39,7 +39,7 @@
         `label_key`, `label_value`, `label_feature`,
         `label_value_size`
     </sql>
-    <select id="selectForUpdate" parameterType="Integer" resultMap="insPersistenceLabelMap">
+    <select id="selectForUpdate" parameterType="java.lang.Integer" resultMap="insPersistenceLabelMap">
         <![CDATA[SELECT ]]>
         <include refid="label_search_columns" />
         <![CDATA[ FROM `linkis_ps_instance_label` WHERE `id` = #{labelId} FOR UPDATE;]]>

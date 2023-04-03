@@ -39,13 +39,13 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_mg_gateway_auth_token
+        FROM linkis_mg_gateway_auth_token
         <if test="searchName != null and searchName!=''">
-            where token_name like concat('%',#{searchName},'%')
-            or legal_users like concat('%',#{searchName},'%')
-            or legal_hosts like concat('%',#{searchName},'%')
+            WHERE token_name LIKE concat('%',#{searchName},'%')
+            OR legal_users LIKE concat('%',#{searchName},'%')
+            OR legal_hosts LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

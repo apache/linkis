@@ -32,21 +32,31 @@
 
 
     <select id="getHistory" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_ps_cs_context_history WHERE id = #{id} AND  context_id = #{contextID.contextId}
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE id = #{id}
+        AND context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoryBySource"
             resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_ps_cs_context_history WHERE source = #{source} AND  context_id = #{contextID.contextId}
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE source = #{source}
+        AND context_id = #{contextID.contextId}
     </select>
 
     <select id="getHistoriesByContextID"
             resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
-        SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId}
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE context_id = #{contextID.contextId}
     </select>
 
     <delete id="removeHistory">
-        DELETE FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId} AND source = #{source}
+        DELETE FROM linkis_ps_cs_context_history
+        WHERE context_id = #{contextID.contextId}
+        AND source = #{source}
     </delete>
 
     <update id="updateHistory">

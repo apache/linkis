@@ -153,7 +153,7 @@
         </foreach>
     </insert>
 
-    <select id="existRelations" resultType="Integer">
+    <select id="existRelations" resultType="java.lang.Integer">
         <![CDATA[SELECT 1 FROM `linkis_ps_instance_label_relation` WHERE `label_id` =  #{labelId} LIMIT 1;]]>
     </select>
 

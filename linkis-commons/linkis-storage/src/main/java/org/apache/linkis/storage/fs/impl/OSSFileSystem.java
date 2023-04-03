@@ -135,8 +135,7 @@ public class OSSFileSystem extends FileSystem {
       fsPaths.add(
           fillStorageFile(
               new FsPath(
-                  StorageUtils.OSS_SCHEMA()
-                      + StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()
+                  StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()
                       + "/"
                       + f.getPath().toUri().getPath()),
               f));

@@ -395,7 +395,7 @@ public class FsRestfulApi {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        dirFileTreeChildren.setPath(buildPath(fsPath, children));
+        dirFileTreeChildren.setPath(children.getSchemaPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
         if (!children.isdir()) {
@@ -1021,13 +1021,5 @@ public class FsRestfulApi {
       deleteAllFiles(fileSystem, path);
     }
     fileSystem.delete(fsPath);
-  }
-
-  private String buildPath(FsPath fsPath, FsPath children) {
-    if (children.getPath().startsWith("/")) {
-      return fsPath.getFsType() + "://" + children.getPath().substring(1);
-    }
-
-    return fsPath.getFsType() + "://" + children.getPath();
   }
 }

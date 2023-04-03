@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -272,10 +273,14 @@ public class FsPath {
       return getFsType() + "://" + uri.getAuthority() + uri.getPath();
     }
 
-    if (uri.getPath().startsWith("/")) {
-      return getFsType() + "://" + uri.getPath().substring(1);
+    if (Objects.isNull(uri.getAuthority())) {
+      // eg: hdfs:///tmp/linkis use local hdfs
+      return getFsType() + "://" + uri.getPath();
+    } else {
+      // eg: hdfs://nameNode:9000/tmp/linkis use specified hdfs
+      // eg: oss://bucketName/tmp/linkis use OSS
+      return getFsType() + "://" + uri.getAuthority() + uri.getPath();
     }
-    return getFsType() + "://" + uri.getPath();
   }
 
   @Override

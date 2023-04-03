@@ -31,7 +31,7 @@
         `version_id`, `datasource_id`, `parameter`, `comment`, `create_time`, `create_user`
     </sql>
 
-    <select id="getLatestVersion" resultType="Long">
+    <select id="getLatestVersion" resultType="java.lang.Long">
         SELECT ifnull(max(version_id),0 ) FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId};
     </select>
 
@@ -50,7 +50,7 @@
         #{createUser})
     </insert>
 
-    <select id="selectOneVersion" resultType="string">
+    <select id="selectOneVersion" resultType="java.lang.String">
         SELECT `parameter`
          FROM `linkis_ps_dm_datasource_version` WHERE datasource_id = #{dataSourceId} and `version_id` = #{version, jdbcType=INTEGER};
     </select>

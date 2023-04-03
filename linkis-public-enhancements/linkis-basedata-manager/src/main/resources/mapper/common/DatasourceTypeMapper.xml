@@ -37,14 +37,14 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
         <![CDATA[ from linkis_ps_dm_datasource_type ]]>
         <if test="searchName != null and searchName!=''">
-            <![CDATA[  where `name` like concat('%',#{searchName},'%')
-            or `description` like concat('%',#{searchName},'%')
-            or `option` like concat('%',#{searchName},'%')
-            or `classifier` like concat('%',#{searchName},'%') ]]>
+            <![CDATA[  WHERE `name` LIKE concat('%',#{searchName},'%')
+            OR `description` LIKE concat('%',#{searchName},'%')
+            OR `option` LIKE concat('%',#{searchName},'%')
+            OR `classifier` LIKE concat('%',#{searchName},'%') ]]>
         </if>
     </select>
 </mapper>

@@ -30,11 +30,11 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_ps_udf_manager
+        FROM linkis_ps_udf_manager
         <if test="searchName != null and searchName!=''">
-            where user_name like concat('%',#{searchName},'%')
+            WHERE user_name LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

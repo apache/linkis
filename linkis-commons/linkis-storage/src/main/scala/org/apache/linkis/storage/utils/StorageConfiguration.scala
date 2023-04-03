@@ -47,7 +47,7 @@ object StorageConfiguration {
 
   val STORAGE_BUILD_FS_CLASSES = CommonVars(
     "wds.linkis.storage.build.fs.classes",
-    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem"
+    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem"
   )
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
@@ -82,5 +82,16 @@ object StorageConfiguration {
 
   val FS_CHECKSUM_DISBALE =
     CommonVars[java.lang.Boolean]("linkis.fs.hdfs.impl.disable.checksum", false)
+
+  val S3_ACCESS_KEY = CommonVars("wds.linkis.storage.s3.access.key", "")
+
+  val S3_SECRET_KEY =
+    CommonVars("wds.linkis.storage.s3.secret.key", "")
+
+  val S3_ENDPOINT = CommonVars("wds.linkis.storage.s3.endpoint", "")
+
+  val S3_REGION = CommonVars("wds.linkis.storage.s3.region", "")
+
+  val S3_BUCKET = CommonVars("wds.linkis.storage.s3.bucket", "")
 
 }

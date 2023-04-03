@@ -715,3 +715,6 @@ kerb-util-1.0.1.jar
 kerby-asn1-1.0.1.jar
 kerby-config-1.0.1.jar
 kerby-pkix-1.0.1.jar
+aws-java-sdk-s3:1.11.792
+aws-java-sdk-kms:1.11.792
+aws-java-sdk-core:1.11.792

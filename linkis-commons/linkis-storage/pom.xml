@@ -93,6 +93,12 @@
       <version>4.0.5</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-s3</artifactId>
+      <version>1.11.792</version>
+    </dependency>
+
   </dependencies>
 
   <build>

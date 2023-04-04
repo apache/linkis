@@ -315,6 +315,7 @@
         "resultGroupLineFilter": "对结果集的列进行筛选",
         "resultGroup": "结果集",
         "all": "是否全量",
+        "autoFormat": "自动格式化",
         "downloadMode": "下载方式：",
         "deepAnalysis": "分 析 进 阶",
         "success": {

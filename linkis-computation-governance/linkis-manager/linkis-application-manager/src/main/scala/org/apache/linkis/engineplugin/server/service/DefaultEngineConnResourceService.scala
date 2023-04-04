@@ -37,6 +37,7 @@ import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeS
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -238,17 +239,32 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   ): EngineConnResource = {
     val engineConnType = engineConnBMLResourceRequest.getEngineConnType
     val version = engineConnBMLResourceRequest.getVersion
-    val engineConnBmlResources = asScalaBufferConverter(
-      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
+    var engineConnBmlResources = asScalaBufferConverter(
+      engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, version)
     )
-    val confBmlResource = engineConnBmlResources.asScala
+    if (
+        engineConnBmlResources.asScala.size == 0 && EngineConnPluginConfiguration.EC_BML_VERSION_MAY_WITH_PREFIX_V.getValue
+    ) {
+      logger.info("Try to get engine conn bml resource with prefex v")
+      engineConnBmlResources = asScalaBufferConverter(
+        engineConnBmlResourceDao.getAllEngineConnBmlResource(engineConnType, "v" + version)
+      )
+    }
+
+    val confBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip")
       .map(parseToBmlResource)
-      .get
-    val libBmlResource = engineConnBmlResources.asScala
+    val libBmlResourceMap = engineConnBmlResources.asScala
       .find(_.getFileName == LaunchConstants.ENGINE_CONN_LIB_DIR_NAME + ".zip")
       .map(parseToBmlResource)
-      .get
+    if (confBmlResourceMap.isEmpty || libBmlResourceMap.isEmpty) {
+      throw new EngineConnPluginErrorException(
+        EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorCode,
+        EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorDesc
+      )
+    }
+    val confBmlResource = confBmlResourceMap.get
+    val libBmlResource = libBmlResourceMap.get
     val otherBmlResources = engineConnBmlResources.asScala
       .filterNot(r =>
         r.getFileName == LaunchConstants.ENGINE_CONN_CONF_DIR_NAME + ".zip" ||

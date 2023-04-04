@@ -20,9 +20,8 @@ package org.apache.linkis.gateway.ujes.parser
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.gateway.config.GatewayConfiguration
 import org.apache.linkis.gateway.http.GatewayContext
-import org.apache.linkis.gateway.parser.AbstractGatewayParser
+import org.apache.linkis.gateway.parser.{AbstractGatewayParser, RouteLabelParser}
 import org.apache.linkis.gateway.springcloud.SpringCloudGatewayConfiguration._
-import org.apache.linkis.gateway.ujes.route.label.RouteLabelParser
 import org.apache.linkis.instance.label.service.InsLabelService
 import org.apache.linkis.manager.label.entity.route.RouteLabel
 

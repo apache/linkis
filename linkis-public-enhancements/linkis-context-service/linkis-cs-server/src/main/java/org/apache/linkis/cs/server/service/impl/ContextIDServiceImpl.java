@@ -58,9 +58,9 @@ public class ContextIDServiceImpl extends ContextIDService {
 
   @Override
   public String createContextID(ContextID contextID) throws CSErrorException {
-    getPersistence().createContextID(contextID);
-    logger.info(String.format("createContextID,csId:%s", contextID.getContextId()));
-    return contextID.getContextId();
+    ContextID res = getPersistence().createContextID(contextID);
+    logger.info(String.format("createContextID,csId:%s", res.getContextId()));
+    return res.getContextId();
   }
 
   @Override

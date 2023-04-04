@@ -97,6 +97,24 @@ public class PersistenceContextID implements UserContextID, HAContextID {
     this.backupInstance = backupInstance;
   }
 
+  @Override
+  public HAContextID copy() {
+    PersistenceContextID persistenceContextID = new PersistenceContextID();
+    persistenceContextID.setContextId(contextId);
+    persistenceContextID.setAccessTime(accessTime);
+    persistenceContextID.setApplication(application);
+    persistenceContextID.setCreateTime(createTime);
+    persistenceContextID.setUpdateTime(updateTime);
+    persistenceContextID.setBackupInstance(backupInstance);
+    persistenceContextID.setExpireTime(expireTime);
+    persistenceContextID.setExpireType(expireType);
+    persistenceContextID.setInstance(instance);
+    persistenceContextID.setSource(source);
+    persistenceContextID.setUser(user);
+    persistenceContextID.setContextIDType(getContextIDType());
+    return persistenceContextID;
+  }
+
   public String getApplication() {
     return application;
   }

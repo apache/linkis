@@ -238,6 +238,7 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   override def kill(): Boolean = {
+    logger.info("Entrance start to kill job {} invoke Orchestrator ", this.getId)
     Utils.tryAndWarn {
       val msg = s"You job with id  was cancelled by user!"
       getRunningOrchestrationFuture.foreach(_.cancel(msg))
@@ -284,11 +285,11 @@ class DefaultEntranceExecutor(id: Long)
       } else {
         if (
             !entranceExecuteRequest.getJob.getJobRequest.getMetrics.containsKey(
-              TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR
+              TaskConstant.JOB_TO_ORCHESTRATOR
             )
         ) {
           entranceExecuteRequest.getJob.getJobRequest.getMetrics
-            .put(TaskConstant.ENTRANCEJOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
+            .put(TaskConstant.JOB_TO_ORCHESTRATOR, new Date(System.currentTimeMillis()))
         }
       }
       // 2. deal log And Response

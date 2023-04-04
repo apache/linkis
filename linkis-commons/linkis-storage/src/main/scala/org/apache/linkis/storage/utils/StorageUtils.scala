@@ -37,9 +37,11 @@ object StorageUtils extends Logging {
 
   val HDFS = "hdfs"
   val FILE = "file"
+  val OSS = "oss"
 
   val FILE_SCHEMA = "file://"
   val HDFS_SCHEMA = "hdfs://"
+  val OSS_SCHEMA = "oss://"
 
   private val nf = NumberFormat.getInstance()
   nf.setGroupingUsed(false)

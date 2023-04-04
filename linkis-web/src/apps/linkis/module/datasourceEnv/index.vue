@@ -223,7 +223,7 @@ export default {
             let filter = options.filter(optionsItem=>{
               return optionsItem.value === item.datasourceTypeId
             })
-            item.name = filter[0]?.label || ''; 
+            item.name = filter[0]?.label || '';
           })
         })
       })

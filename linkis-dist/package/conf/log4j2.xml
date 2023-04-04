@@ -17,9 +17,13 @@
   -->
   
 <configuration status="error" monitorInterval="30">
+    <properties>
+        <property name="LOG_PATH">${env:LINKIS_LOG_DIR:-logs}</property>
+        <property name="LOG_FILE">${sys:serviceName:-linkis}</property>
+    </properties>
     <appenders>
-        <RollingFile name="RollingFile" append="true" fileName="${env:LINKIS_LOG_DIR}/${sys:serviceName}.log"
-                     filePattern="${env:LINKIS_LOG_DIR}/$${date:yyyy-MM}/${sys:serviceName}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
+        <RollingFile name="RollingFile" append="true" fileName="${LOG_PATH}/${LOG_FILE}.log"
+                     filePattern="${LOG_PATH}/$${date:yyyy-MM}/${LOG_FILE}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="100MB"/>

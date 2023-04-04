@@ -95,12 +95,15 @@ public class FsRestfulApi {
       LOGGER.debug("not check filesystem owner.");
       return true;
     }
+    if (requestPath.contains(WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue()))
+        || Configuration.isAdmin(userName)) {
+      return true;
+    }
     requestPath = requestPath.toLowerCase().trim() + "/";
     String hdfsUserRootPathPrefix =
         WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
     String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
-    String path;
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
@@ -319,8 +322,8 @@ public class FsRestfulApi {
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     for (MultipartFile p : files) {
       String fileName = p.getOriginalFilename();
+      WorkspaceUtil.charCheckFileName(fileName);
       FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
-      WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
       fileSystem.createNewFile(fsPathNew);
       try (InputStream is = p.getInputStream();
           OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
@@ -442,7 +445,7 @@ public class FsRestfulApi {
       // downloaded(判断目录,目录不能下载)
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
-        throw WorkspaceExceptionManager.createException(8011, path);
+        throw WorkspaceExceptionManager.createException(80011, path);
       }
       inputStream = fileSystem.read(fsPath);
       byte[] buffer = new byte[1024];

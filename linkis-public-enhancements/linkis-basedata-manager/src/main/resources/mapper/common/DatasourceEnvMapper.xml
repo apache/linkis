@@ -39,13 +39,13 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_ps_dm_datasource_env
+        FROM linkis_ps_dm_datasource_env
         <if test="searchName != null and searchName!=''">
-            where env_name like concat('%',#{searchName},'%')
-            or env_desc like concat('%',#{searchName},'%')
-            or parameter like concat('%',#{searchName},'%')
+            WHERE env_name LIKE concat('%',#{searchName},'%')
+            OR env_desc LIKE concat('%',#{searchName},'%')
+            OR parameter LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

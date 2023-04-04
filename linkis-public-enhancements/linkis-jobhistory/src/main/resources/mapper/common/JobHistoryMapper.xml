@@ -219,7 +219,9 @@
     </select>
 
     <update id="updateOberverById">
-        update linkis_ps_job_history_group_history set observe_info = #{observeInfo} where id = #{taskid}
+        UPDATE linkis_ps_job_history_group_history
+        SET observe_info = #{observeInfo}
+        WHERE id = #{taskid}
     </update>
 
     <update id="updateJobHistoryCancelById" >

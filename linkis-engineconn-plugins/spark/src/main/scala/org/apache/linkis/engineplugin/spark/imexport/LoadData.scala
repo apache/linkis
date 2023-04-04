@@ -22,6 +22,7 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.imexport.util.{BackGroundServiceUtils, ImExportUtils}
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
+import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.linkis.storage.excel.XlsUtils
 
 import org.apache.commons.lang3.StringUtils
@@ -35,26 +36,22 @@ import java.util.Locale
 
 import scala.collection.JavaConverters._
 
-import org.json4s._
-import org.json4s.jackson.JsonMethods._
-
 /**
  */
 object LoadData {
-  implicit val formats = DefaultFormats
 
   def loadDataToTable(spark: SparkSession, source: String, destination: String): Unit = {
-    create_table_from_a_file(spark, parse(source), parse(destination))
+    create_table_from_a_file(spark, source, destination)
   }
 
   def loadDataToTableByFile(spark: SparkSession, destinationPath: String, source: String): Unit = {
     val destination = BackGroundServiceUtils.exchangeExecutionCode(destinationPath)
-    create_table_from_a_file(spark, parse(source), parse(destination))
+    create_table_from_a_file(spark, source, destination)
   }
 
-  def create_table_from_a_file(spark: SparkSession, src: JValue, dest: JValue): Unit = {
-    val source = src.extract[Map[String, Any]]
-    val destination = dest.extract[Map[String, Any]]
+  def create_table_from_a_file(spark: SparkSession, src: String, dest: String): Unit = {
+    val source = BDPJettyServerHelper.gson.fromJson(src, classOf[Map[String, Any]])
+    val destination = BDPJettyServerHelper.gson.fromJson(src, classOf[Map[String, Any]])
 
     var path = getMapValue[String](source, "path")
     val pathType = getMapValue[String](source, "pathType", "share")
@@ -79,7 +76,9 @@ object LoadData {
     val partition = getMapValue[String](destination, "partition", "ds")
     val partitionValue = getMapValue[String](destination, "partitionValue", "1993-01-02")
 
-    val columns = (dest \ "columns").extract[List[Map[String, Any]]]
+    val columnsJson = getMapValue[String](destination, "columns", "")
+    val columns = BDPJettyServerHelper.gson.fromJson(columnsJson, classOf[List[Map[String, Any]]])
+
     val dateFormats =
       columns.map(_.get("dateFormat").get.toString).map(f => if (f isEmpty) "yyyy-MM-dd" else f)
     var isFirst = true
@@ -202,20 +201,6 @@ object LoadData {
     IOUtils.closeStream(in)
     IOUtils.closeStream(out)
     hdfsPath
-  }
-
-  def getNodeValue[T](json: JValue, node: String, default: T = null.asInstanceOf[T])(implicit
-      m: Manifest[T]
-  ): T = {
-    json \ node match {
-      case JNothing => default
-      case value: JValue =>
-        if ("JString()".equals(value.toString)) default
-        else {
-          try value.extract[T]
-          catch { case t: Throwable => default }
-        }
-    }
   }
 
   def getMapValue[T](map: Map[String, Any], key: String, default: T = null.asInstanceOf[T]): T = {

@@ -39,21 +39,25 @@
     </resultMap>
 
     <select id="getVersion" resultMap="Version">
-        select version, resource from linkis_ps_bml_resources_version
-        where resource_id = #{resourceId} and version = #{version} and enable_flag = 1
+        SELECT version, resource
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
+        AND enable_flag = 1
     </select>
 
 
     <select id="getResourcesVersions" resultMap="ResourceVersion" parameterType="java.util.Map">
-        select r.sys, r.owner, rv.resource_id, rv.version, rv.resource from linkis_ps_bml_resources_version rv
+        SELECT r.sys, r.owner, rv.resource_id, rv.version, rv.resource
+        FROM linkis_ps_bml_resources_version rv
         INNER JOIN linkis_ps_bml_resources r ON rv.resource_id = r.resource_id
         <where>
             rv.enable_flag = 1 and r.enable_flag = 1
             <if test="system != null and system != '' ">
-                and r.sys = #{system}
+                AND r.sys = #{system}
             </if>
             <if test="user != null and user != '' ">
-                and r.owner = #{user}
+                AND r.owner = #{user}
             </if>
             <if test="resourceIds != null">
                 AND rv.resource_id IN
@@ -113,9 +117,10 @@
     </insert>
 
     <select id="getResourcePath" parameterType="java.lang.String" resultType="java.lang.String">
-        select resource
-        from linkis_ps_bml_resources_version
-        WHERE resource_id = #{resourceId} limit 1
+        SELECT resource
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        LIMIT 1
     </select>
 
     <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
@@ -125,34 +130,50 @@
     </select>
 
     <select id="getVersions" parameterType="java.lang.String" resultMap="Version">
-        select `version`,`resource` from linkis_ps_bml_resources_version where `resource_id` = #{resourceId}
+        SELECT `version`, `resource`
+        FROM linkis_ps_bml_resources_version
+        WHERE `resource_id` = #{resourceId}
     </select>
 
 
     <select id="selectVersionByPage" parameterType="java.lang.String" resultMap="Version">
-        select `version`,`resource` from linkis_ps_bml_resources_version
-        where  `resource_id` = #{resourceId}
-        order by start_time desc,version desc
+        SELECT `version`, `resource`
+        FROM linkis_ps_bml_resources_version
+        WHERE `resource_id` = #{resourceId}
+        ORDER BY start_time DESC, version DESC
     </select>
 
 
     <select id="getAllResourcesViaSystem" parameterType="java.lang.String" resultMap="ResourceVersion">
-        select * from linkis_ps_bml_resources_version
-        where `resource_id` in (select `resource_id` from linkis_ps_bml_resources where `sys`=#{system} and `owner`=#{user})
-        order by start_time desc , version desc
+        SELECT *
+        FROM linkis_ps_bml_resources_version
+        WHERE `resource_id` IN (
+        SELECT `resource_id`
+        FROM linkis_ps_bml_resources
+        WHERE `sys` = #{system}
+        AND `owner` = #{user}
+        )
+        ORDER BY start_time DESC, version DESC
     </select>
 
     <select id="selectResourcesViaSystemByPage" parameterType="java.lang.String" resultMap="ResourceVersion">
-        select * from linkis_ps_bml_resources_version
-        where `resource_id` in (select `resource_id` from linkis_ps_bml_resources where `sys`=#{system} and `owner`=#{user})
-        order by start_time desc , version desc
+        SELECT *
+        FROM linkis_ps_bml_resources_version
+        WHERE `resource_id` IN (
+        SELECT `resource_id`
+        FROM linkis_ps_bml_resources
+        WHERE `sys` = #{system}
+        AND `owner` = #{user}
+        )
+        ORDER BY start_time DESC, version DESC
     </select>
 
 
     <update id="batchDeleteResources">
-        update linkis_ps_bml_resources_version
-        set enable_flag = 0
-        where  enable_flag = 1 and resource_id in
+        UPDATE linkis_ps_bml_resources_version
+        SET enable_flag = 0
+        WHERE enable_flag = 1
+        AND resource_id IN
         <foreach collection="resourceIds" item="resourceId" open="(" separator="," close=")">
             #{resourceId}
         </foreach>
@@ -160,35 +181,63 @@
 
 
     <select id="getResourceVersion" resultMap="ResourceVersion">
-        select * from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}  and enable_flag = 1
+        SELECT *
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
+        AND enable_flag = 1
     </select>
 
-    <select id="getStartByteForResource" resultType="Long">
-        select start_byte from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}
+    <select id="getStartByteForResource" resultType="java.lang.Long">
+        SELECT start_byte
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
     </select>
 
-    <select id="getEndByte" resultType="Long">
-        select end_byte from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}
+    <select id="getEndByte" resultType="java.lang.Long">
+        SELECT end_byte
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
     </select>
 
     <select id="findResourceVersion" resultMap="ResourceVersion">
-        select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and version = #{version} and enable_flag = 1
+        SELECT *
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
+        AND enable_flag = 1
     </select>
 
     <select id="checkVersion" resultType="java.lang.Integer">
-        select exists(select * from `linkis_ps_bml_resources_version` where resource_id=#{resourceId} and version=#{version} and enable_flag = 1)
+        SELECT EXISTS (
+        SELECT *
+        FROM `linkis_ps_bml_resources_version`
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
+        AND enable_flag = 1
+        )
     </select>
 
     <select id="selectResourceVersionEnbleFlag" resultType="java.lang.Integer">
-        select enable_flag from `linkis_ps_bml_resources_version` where resource_id = #{resourceId} and version = #{version}
+        SELECT enable_flag
+        FROM `linkis_ps_bml_resources_version`
+        WHERE resource_id = #{resourceId}
+        AND version = #{version}
     </select>
 
     <update id="deleteResource" >
-        update `linkis_ps_bml_resources_version` set enable_flag = 0 where resource_id = #{resourceId}
+        UPDATE `linkis_ps_bml_resources_version`
+        SET enable_flag = 0
+        WHERE resource_id = #{resourceId}
     </update>
 
     <select id="getResourceVersionsByResourceId" resultMap="ResourceVersion">
-        select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and enable_flag = 1
+        SELECT *
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId}
+        AND enable_flag = 1
     </select>
 </mapper>
 

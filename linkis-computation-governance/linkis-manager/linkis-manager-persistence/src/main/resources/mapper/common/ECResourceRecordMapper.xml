@@ -21,20 +21,26 @@
 <mapper namespace="org.apache.linkis.manager.dao.ECResourceRecordMapper">
 
     <select id="getECResourceInfoRecord" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        SELECT * FROM linkis_cg_ec_resource_info_record WHERE ticket_id = #{ticketId}
+        SELECT *
+        FROM linkis_cg_ec_resource_info_record
+        WHERE ticket_id = #{ticketId}
     </select>
 
     <select id="getECResourceInfoRecordByInstance" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        SELECT * FROM linkis_cg_ec_resource_info_record WHERE service_instance = #{instance} ORDER BY id DESC LIMIT 1
+        SELECT *
+        FROM linkis_cg_ec_resource_info_record
+        WHERE service_instance = #{instance}
+        ORDER BY  id DESC LIMIT 1
     </select>
 
 
     <insert id="insertECResourceInfoRecord" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
-        INSERT INTO linkis_cg_ec_resource_info_record(label_value,create_user, ticket_id, service_instance, request_times, request_resource,
-                                                        used_times, used_resource, release_times, released_resource,release_time,used_time,ecm_instance,log_dir_suffix,status,metrics)
-        VALUES (#{labelValue},#{createUser},#{ticketId},#{serviceInstance},#{requestTimes},
-        #{requestResource},#{usedTimes},#{usedResource},
-        #{releaseTimes},#{releasedResource},#{releaseTime},#{usedTime},#{ecmInstance},#{logDirSuffix},#{status},#{metrics})
+        INSERT INTO linkis_cg_ec_resource_info_record (label_value, create_user, ticket_id, service_instance, request_times
+        , request_resource, used_times, used_resource, release_times, released_resource
+        , release_time, used_time, ecm_instance, log_dir_suffix, status,metrics)
+        VALUES (#{labelValue}, #{createUser}, #{ticketId}, #{serviceInstance}, #{requestTimes}
+        , #{requestResource}, #{usedTimes}, #{usedResource}, #{releaseTimes}, #{releasedResource}
+        , #{releaseTime}, #{usedTime}, #{ecmInstance}, #{logDirSuffix}, #{status},#{metrics})
     </insert>
 
     <update id="updateECResourceInfoRecord" flushCache="true" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
@@ -59,20 +65,23 @@
     </update>
 
     <delete id="deleteECResourceInfoRecordByTicketId">
-        delete from linkis_cg_ec_resource_info_record  WHERE ticket_id = #{ticketId}
+        DELETE FROM linkis_cg_ec_resource_info_record
+        WHERE ticket_id = #{ticketId}
     </delete>
 
     <delete id="deleteECResourceInfoRecord">
-        delete from linkis_cg_ec_resource_info_record  WHERE id = #{id}
+        DELETE FROM linkis_cg_ec_resource_info_record
+        WHERE id = #{id}
     </delete>
 
 
     <select id="getECResourceInfoHistory" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
-        select * from linkis_cg_ec_resource_info_record
+        SELECT *
+        FROM linkis_cg_ec_resource_info_record
         <where>
             <if test="instance != null"> service_instance = #{instance}</if>
             <if test="username != null"> and create_user = #{username}</if>
-<!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+<!--            label_value in db eg：`hadoop-spark,spark-3.2.1`-->
             <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>
             <if test="startDate != null">and create_time BETWEEN  #{startDate} AND #{endDate}</if>
         </where>
@@ -81,8 +90,8 @@
 
 
     <select id="getECResourceInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
-        select * from linkis_cg_ec_resource_info_record
-        where id in (
+        SELECT * FROM linkis_cg_ec_resource_info_record
+        WHERE id IN (
             <!-- choose the latest record of this ec -->
             select max(ecr.id) as id from linkis_cg_ec_resource_info_record ecr
             WHERE 1=1
@@ -94,7 +103,7 @@
             </if>
 
             <if test="engineTypes != null and engineTypes.size() > 0">
-                <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+                <!--            label_value in db eg：`hadoop-spark,spark-3.2.1`-->
                 and SUBSTRING_INDEX(SUBSTRING_INDEX(ecr.label_value,',',-1),"-",1) in
                 <foreach collection="engineTypes" item="i" open="(" close=")" separator=",">
                     #{i}

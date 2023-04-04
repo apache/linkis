@@ -46,15 +46,21 @@
     </insert>
 
     <delete id="unlock">
-        delete from linkis_cg_manager_lock where id = #{id}
+        DELETE FROM linkis_cg_manager_lock
+        WHERE id = #{id}
     </delete>
 
     <select id="getLockersByLockObject" resultMap="persistenceLockResultMap">
-        select * from  linkis_cg_manager_lock where lock_object = #{lock_object}
+        SELECT *
+        FROM linkis_cg_manager_lock
+        WHERE lock_object = #{lock_object}
     </select>
 
     <select id="getMinimumOrder" resultType="java.lang.Integer">
-        select min(id) from  linkis_cg_manager_lock where id <![CDATA[<=]]> #{id} and lock_object = #{lockObject}
+        SELECT min(id)
+        FROM linkis_cg_manager_lock
+        WHERE id <![CDATA[<=]]> #{id}
+        AND lock_object = #{lockObject}
     </select>
 
     <select id="getAll" resultMap="persistenceLockResultMap">
@@ -62,7 +68,9 @@
     </select>
 
     <select id="getTimeOutLocks" resultMap="persistenceLockResultMap">
-        select * from  linkis_cg_manager_lock where create_time <![CDATA[<=]]> #{endDate}
+        SELECT *
+        FROM linkis_cg_manager_lock
+        WHERE create_time <![CDATA[<=]]> #{endDate}
     </select>
 
 </mapper>

@@ -23,6 +23,7 @@ import org.apache.linkis.manager.label.entity.EngineNodeLabel;
 import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
+import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -73,5 +74,31 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
   @Override
   public Boolean isEmpty() {
     return StringUtils.isBlank(getEngineType()) || StringUtils.isBlank(getVersion());
+  }
+
+  @Override
+  protected void setStringValue(String stringValue) {
+    if (StringUtils.isNotBlank(stringValue)) {
+      HashMap<String, String> valueMap = LabelUtils.Jackson.fromJson(stringValue, HashMap.class);
+      if (valueMap == null) {
+        String version;
+        String engineType = stringValue.split("-")[0];
+
+        if (engineType.equals("*")) {
+          version = stringValue.replaceFirst("[" + engineType + "]-", "");
+        } else {
+          version = stringValue.replaceFirst(engineType + "-", "");
+        }
+
+        setEngineType(engineType);
+        setVersion(version);
+      } else {
+        setEngineType(valueMap.get("engineType"));
+        setVersion(valueMap.get("version"));
+      }
+    } else {
+      setEngineType("*");
+      setVersion("*");
+    }
   }
 }

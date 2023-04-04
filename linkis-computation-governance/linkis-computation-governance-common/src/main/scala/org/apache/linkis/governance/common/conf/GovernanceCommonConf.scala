@@ -18,6 +18,7 @@
 package org.apache.linkis.governance.common.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 
 object GovernanceCommonConf {
 
@@ -25,9 +26,11 @@ object GovernanceCommonConf {
 
   val WILDCARD_CONSTANT = "*"
 
-  val SPARK_ENGINE_VERSION = CommonVars("wds.linkis.spark.engine.version", "2.4.3")
+  val SPARK_ENGINE_VERSION =
+    CommonVars("wds.linkis.spark.engine.version", LabelCommonConfig.SPARK_ENGINE_VERSION.getValue)
 
-  val HIVE_ENGINE_VERSION = CommonVars("wds.linkis.hive.engine.version", "1.2.1")
+  val HIVE_ENGINE_VERSION =
+    CommonVars("wds.linkis.hive.engine.version", LabelCommonConfig.HIVE_ENGINE_VERSION.getValue)
 
   val PYTHON_ENGINE_VERSION = CommonVars("wds.linkis.python.engine.version", "python2")
 

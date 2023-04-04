@@ -15,29 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.Interpreter
+package org.apache.linkis.gateway.dss.parser
 
-import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineplugin.spark.common.State
-import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.common.conf.CommonVars
 
-import scala.concurrent.TimeoutException
-import scala.concurrent.duration.Duration
+object DSSGatewayConfiguration {
+  val DSS_SPRING_NAME = CommonVars("wds.linkis.dss.name", "dss-server")
 
-/**
- */
+  val DSS_URL_LABEL_PREFIX = CommonVars("wds.dss.gateway.url.prefix.name", "labels")
 
-trait Interpreter {
-  def state: State
+  val DSS_URL_ROUTE_LABEL_PREFIX = CommonVars("wds.dss.gateway.url.prefix.name", "labelsRoute")
 
-  def execute(code: String): ExecuteResponse
-
-  def close(): Unit
-
-  @throws(classOf[TimeoutException])
-  @throws(classOf[InterruptedException])
-  final def waitForStateChange(oldState: State, atMost: Duration): Unit = {
-    Utils.waitUntil({ () => state != oldState }, atMost)
-  }
+  val DSS_URL_APPCONNS = CommonVars("wds.dss.gateway.url.appconns", "visualis")
 
 }

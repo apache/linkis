@@ -22,8 +22,7 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 KUBE_NAMESPACE=${1:-linkis}
 HELM_RELEASE_NAME=${2:-linkis-demo}
 LOCAL_MODE=${3:-true}
-
-. ${WORK_DIR}/common.sh
+USING_KIND=${4:-false}
 
 if [ "X${HELM_DEBUG}" == "Xtrue" ]; then
   # template helm charts
@@ -34,7 +33,7 @@ else
     kubectl apply -n ${KUBE_NAMESPACE} -f ${RESOURCE_DIR}/ldh/configmaps
   fi
   # load image
-  if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
+  if [ "X${USING_KIND}" == "Xtrue" ]; then
     echo "# Loading Linkis image ..."
     kind load docker-image linkis:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
     kind load docker-image linkis-web:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}

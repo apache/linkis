@@ -15,6 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.datasourcemanager.core.service;
+package org.apache.linkis.gateway.dss.parser
 
-public interface DataSourceOpService {}
+import org.apache.linkis.gateway.http.GatewayContext
+import org.apache.linkis.gateway.parser.RouteLabelParser
+import org.apache.linkis.manager.label.entity.route.RouteLabel
+
+import org.springframework.stereotype.Component
+
+import java.util
+
+@Component
+class DSSRouteLabelParser extends RouteLabelParser {
+
+  override def parse(gatewayContext: GatewayContext): util.List[RouteLabel] = {
+    new util.ArrayList[RouteLabel]()
+  }
+
+}

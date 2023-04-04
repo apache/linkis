@@ -50,10 +50,10 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
         <![CDATA[ from linkis_ps_dm_datasource_type_key ]]>
-        where 1 = 1
+        WHERE 1 = 1
         <if test="searchName != null and searchName!=''">
             <![CDATA[and `name` like concat('%',#{searchName},'%') ]]>
         </if>

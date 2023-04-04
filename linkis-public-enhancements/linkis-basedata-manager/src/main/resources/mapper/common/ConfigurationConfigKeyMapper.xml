@@ -21,21 +21,11 @@
     <select id="getTemplateListByLabelId"
             resultType="org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey"
             parameterType="java.lang.String">
-        select k.id,
-               k.`key`,
-               k.description,
-               k.`name`,
-               k.default_value,
-               k.validate_type,
-               k.validate_range,
-               k.engine_conn_type,
-               k.is_hidden   hidden,
-               k.is_advanced advanced,
-               k.`level`,
-               k.treeName
-        from linkis_ps_configuration_config_key k
-                 inner join linkis_ps_configuration_key_engine_relation r
-                            on k.id = r.config_key_id
-        where r.engine_type_label_id = #{engineLabelId};
+        SELECT k.id, k.`key`, k.description, k.`name`, k.default_value
+        , k.validate_type, k.validate_range, k.engine_conn_type, k.is_hidden AS hidden, k.is_advanced AS advanced
+        , k.`level`, k.treeName
+        FROM linkis_ps_configuration_config_key k
+        INNER JOIN linkis_ps_configuration_key_engine_relation r ON k.id = r.config_key_id
+        WHERE r.engine_type_label_id = #{engineLabelId};
     </select>
 </mapper>

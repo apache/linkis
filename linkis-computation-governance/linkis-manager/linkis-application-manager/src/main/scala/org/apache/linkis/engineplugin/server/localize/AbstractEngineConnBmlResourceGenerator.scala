@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.server.localize
 
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
@@ -35,7 +36,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
   if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(
       CANNOT_HOME_PATH_EC.getErrorCode,
-      CANNOT_HOME_PATH_EC.getErrorDesc
+      MessageFormat.format(CANNOT_HOME_PATH_EC.getErrorDesc, getEngineConnsHome)
     )
   }
 
@@ -53,13 +54,37 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
     logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome)
     val engineConnPackageHomeFile = new File(engineConnPackageHome)
+
     if (!engineConnPackageHomeFile.exists()) {
-      throw new EngineConnPluginErrorException(
-        ENGINE_VERSION_NOT_FOUND.getErrorCode,
-        MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
-      )
+      if (
+          !version.startsWith(
+            "v"
+          ) && EngineConnPluginConfiguration.EC_BML_VERSION_MAY_WITH_PREFIX_V.getValue
+      ) {
+        val versionOld = "v" + version
+        val engineConnPackageHomeOld = Paths.get(engineConnDistHome, versionOld).toFile.getPath
+        logger.info(
+          "try to getEngineConnDistHome with prefix v, engineConnPackageHome path:" + engineConnPackageHomeOld
+        )
+        val engineConnPackageHomeFileOld = new File(engineConnPackageHomeOld)
+        if (!engineConnPackageHomeFileOld.exists()) {
+          throw new EngineConnPluginErrorException(
+            ENGINE_VERSION_NOT_FOUND.getErrorCode,
+            MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+          )
+        } else {
+          engineConnPackageHomeOld
+        }
+      } else {
+        throw new EngineConnPluginErrorException(
+          ENGINE_VERSION_NOT_FOUND.getErrorCode,
+          MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+        )
+      }
+    } else {
+      engineConnPackageHome
     }
-    engineConnPackageHome
+
   }
 
   private def checkEngineConnDistHome(engineConnPackageHomePath: String): Unit = {
@@ -71,7 +96,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     if (!engineConnPackageHome.exists()) {
       throw new EngineConnPluginErrorException(
         CANNOT_HOME_PATH_DIST.getErrorCode,
-        CANNOT_HOME_PATH_DIST.getErrorDesc
+        MessageFormat.format(CANNOT_HOME_PATH_DIST.getErrorDesc, engineConnPackageHome.getPath)
       )
     }
   }

@@ -52,7 +52,7 @@ public interface UDFService {
   List<UDFInfoVo> getUDFInfoByTreeId(Long treeId, String userName, String category)
       throws UDFException;
 
-  List<UDFInfoVo> getUDFInfoByIds(Long[] ids, String category) throws UDFException;
+  List<UDFInfoVo> getUDFInfoByIds(String username, Long[] ids, String category) throws UDFException;
 
   Map<String, List<String>> generateInitSql(String userName) throws UDFException;
 

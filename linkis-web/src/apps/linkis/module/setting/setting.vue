@@ -330,7 +330,7 @@ export default {
           {
             creator: parameter[0], // Specify a first-level directory(指定一级目录)
             engineType: parameter[1], // Specify the engine (secondary directory) if there is only a first-level directory, it will be automatically undefined and no parameters will be passed(指定引擎（二级目录）如果只有一级目录则自动为undefined不会传参)
-            version: parameter[2], // The corresponding engine currently only supports the corresponding version. For example, spark will pass version-2.4.3. If there is only a first-level directory, it will be automatically undefined and no parameters will be passed.(对应的引擎目前只支持对应的版本，如spark就传version-2.4.3，如果只有一级目录则自动为undefined不会传参)
+            version: parameter[2], // The corresponding engine currently only supports the corresponding version. For example, spark will pass version-3.2.1. If there is only a first-level directory, it will be automatically undefined and no parameters will be passed.(对应的引擎目前只支持对应的版本，如spark就传version-3.2.1，如果只有一级目录则自动为undefined不会传参)
           },
           "get"
         )

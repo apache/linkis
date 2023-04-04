@@ -45,7 +45,7 @@ public class HardwareMonitorService implements MonitorService {
 
     double memoryUsage = HardwareUtils.memoryUsage();
 
-    double loadAverageUsage = HardwareUtils.memoryUsage();
+    double loadAverageUsage = HardwareUtils.loadAverageUsage();
 
     Double maxMemoryUsage = MEMORY_MAX_USAGE.getValue();
     Double maxCpuUsage = CPU_MAX_USAGE.getValue();

@@ -38,6 +38,7 @@ class ComputationEngineConnExecution extends AbstractEngineConnExecution {
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
   ): Unit = {
+
     logger.info(s"Executor(${executor.getId}) is started. Now wait to be ready.")
   }
 

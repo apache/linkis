@@ -64,6 +64,6 @@ public class BuildLocalFileSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return "file";
+    return StorageUtils.FILE();
   }
 }

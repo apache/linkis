@@ -20,7 +20,6 @@ package org.apache.linkis.engineplugin.elasticsearch.executor.client
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.impl.ResponseHandlerImpl
 import org.apache.linkis.storage.domain._
-
 import java.util.Locale
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
@@ -29,6 +28,7 @@ import com.fasterxml.jackson.dataformat.cbor.CBORFactory
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
+import org.apache.linkis.storage.domain.DataType.{ArrayType, BinaryType, BooleanType, DateType, DecimalType, NullType, StringType, StructType}
 import org.elasticsearch.client.Response
 
 trait ResponseHandler extends Logging {
@@ -51,26 +51,26 @@ object ResponseHandler {
   val csvMapper = new CsvMapper()
 
   def getNodeDataType(node: JsonNode): DataType = node.getNodeType match {
-    case JsonNodeType.ARRAY => ArrayType
-    case JsonNodeType.BINARY => BinaryType
-    case JsonNodeType.BOOLEAN => BooleanType
-    case JsonNodeType.NULL => NullType
-    case JsonNodeType.NUMBER => DecimalType
-    case JsonNodeType.OBJECT => StructType
-    case JsonNodeType.POJO => StructType
-    case JsonNodeType.STRING => StringType
-    case JsonNodeType.MISSING => StringType
-    case _ => StringType
+    case JsonNodeType.ARRAY => new ArrayType
+    case JsonNodeType.BINARY => new BinaryType
+    case JsonNodeType.BOOLEAN => new BooleanType
+    case JsonNodeType.NULL => new NullType
+    case JsonNodeType.NUMBER => new DecimalType
+    case JsonNodeType.OBJECT => new StructType
+    case JsonNodeType.POJO => new StructType
+    case JsonNodeType.STRING => new StringType
+    case JsonNodeType.MISSING => new StringType
+    case _ => new StringType
   }
 
   def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase(Locale.getDefault) match {
     case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" |
         "scaled_float" =>
-      DecimalType
-    case "text" | "keyword" => StringType
-    case "date" => DateType
-    case "binary" => BinaryType
-    case _ => StringType
+      new DecimalType
+    case "text" | "keyword" => new StringType
+    case "date" => new DateType
+    case "binary" => new BinaryType
+    case _ => new StringType
   }
 
   def getNodeValue(node: JsonNode): Any = node.getNodeType match {

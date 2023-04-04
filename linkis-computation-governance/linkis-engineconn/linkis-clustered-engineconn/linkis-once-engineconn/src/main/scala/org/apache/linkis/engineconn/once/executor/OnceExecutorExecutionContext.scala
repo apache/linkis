@@ -40,13 +40,13 @@ class OnceExecutorExecutionContext(
   ): ResultSet[_ <: MetaData, _ <: Record] =
     resultSetFactory.getResultSetByType(resultSetType)
 
-  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType(0)
+  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType()(0)
 
   override protected def newResultSetWriter(
       resultSet: ResultSet[_ <: MetaData, _ <: Record],
       resultSetPath: FsPath,
       alias: String
-  ): ResultSetWriter[_ <: MetaData, _ <: Record] =
+  ):  org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] =
     ResultSetWriter.getResultSetWriter(
       resultSet,
       0,

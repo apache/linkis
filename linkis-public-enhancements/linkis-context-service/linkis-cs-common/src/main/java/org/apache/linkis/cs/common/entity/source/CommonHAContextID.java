@@ -52,6 +52,15 @@ public class CommonHAContextID implements HAContextID {
   }
 
   @Override
+  public HAContextID copy() {
+    CommonHAContextID commonHAContextID = new CommonHAContextID();
+    commonHAContextID.setContextId(contextID);
+    commonHAContextID.setInstance(mainInstance);
+    commonHAContextID.setBackupInstance(this.backupInstance);
+    return commonHAContextID;
+  }
+
+  @Override
   public String getContextId() {
     return contextID;
   }

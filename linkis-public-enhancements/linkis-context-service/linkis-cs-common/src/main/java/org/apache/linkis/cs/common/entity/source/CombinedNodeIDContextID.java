@@ -61,4 +61,20 @@ public class CombinedNodeIDContextID extends LinkisHAWorkFlowContextID {
     linkisHAWorkFlowContextID.setContextId(getContextId());
     return linkisHAWorkFlowContextID;
   }
+
+  @Override
+  public HAContextID copy() {
+    CombinedNodeIDContextID contextID = new CombinedNodeIDContextID();
+    contextID.setBackupInstance(getBackupInstance());
+    contextID.setInstance(getInstance());
+    contextID.setEnv(getEnv());
+    contextID.setFlow(getFlow());
+    contextID.setProject(getProject());
+    contextID.setVersion(getVersion());
+    contextID.setWorkSpace(getWorkSpace());
+    contextID.setUser(getUser());
+    contextID.setContextId(getContextId());
+    contextID.setNodeID(nodeID);
+    return contextID;
+  }
 }

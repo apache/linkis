@@ -52,6 +52,14 @@ object SparkConfiguration extends Logging {
 
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
+  val SPARK_PYTHON_TEST_MODE_ENABLE =
+    CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
+
+  val SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH = CommonVars[String](
+    "linkis.spark.python.mix.pyshell.path",
+    "/appcom/Install/linkis/mix_pyspark.py"
+  )
+
   val SPARK_EXTRA_JARS = CommonVars[String](
     "spark.jars",
     "",
@@ -79,7 +87,7 @@ object SparkConfiguration extends Logging {
   val LINKIS_SPARK_USEHIVECONTEXT = CommonVars[Boolean]("wds.linkis.spark.useHiveContext", true)
 
   val DEFAULT_SPARK_JAR_NAME =
-    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.1.jar")
+    CommonVars[String]("wds.linkis.ecp.spark.default.jar", "linkis-engineconn-core-1.3.2.jar")
 
   val ENGINE_JAR = CommonVars[String]("wds.linkis.enginemanager.core.jar", getMainJarName)
 

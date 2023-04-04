@@ -17,11 +17,13 @@
 
 package org.apache.linkis.engineplugin.server.localize
 
+import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration.ENGINE_CONN_HOME
 import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGenerator.NO_VERSION_MARK
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
+import org.apache.linkis.storage.io.IOClient.logger
 
 import org.apache.commons.lang3.StringUtils
 
@@ -49,16 +51,40 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     checkEngineConnDistHome(engineConnDistHome)
     if (StringUtils.isBlank(version) || NO_VERSION_MARK == version) return engineConnDistHome
-    val formattedVersion = if (version.startsWith("v")) version else "v" + version
-    val engineConnPackageHome = Paths.get(engineConnDistHome, formattedVersion).toFile.getPath
+    val engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile.getPath
+    logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome)
     val engineConnPackageHomeFile = new File(engineConnPackageHome)
+
     if (!engineConnPackageHomeFile.exists()) {
-      throw new EngineConnPluginErrorException(
-        ENGINE_VERSION_NOT_FOUND.getErrorCode,
-        MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
-      )
+      if (
+          !version.startsWith(
+            "v"
+          ) && EngineConnPluginConfiguration.EC_BML_VERSION_MAY_WITH_PREFIX_V.getValue
+      ) {
+        val versionOld = "v" + version
+        val engineConnPackageHomeOld = Paths.get(engineConnDistHome, versionOld).toFile.getPath
+        logger.info(
+          "try to getEngineConnDistHome with prefix v, engineConnPackageHome path:" + engineConnPackageHomeOld
+        )
+        val engineConnPackageHomeFileOld = new File(engineConnPackageHomeOld)
+        if (!engineConnPackageHomeFileOld.exists()) {
+          throw new EngineConnPluginErrorException(
+            ENGINE_VERSION_NOT_FOUND.getErrorCode,
+            MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+          )
+        } else {
+          engineConnPackageHomeOld
+        }
+      } else {
+        throw new EngineConnPluginErrorException(
+          ENGINE_VERSION_NOT_FOUND.getErrorCode,
+          MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc, version, engineConnType)
+        )
+      }
+    } else {
+      engineConnPackageHome
     }
-    engineConnPackageHome
+
   }
 
   private def checkEngineConnDistHome(engineConnPackageHomePath: String): Unit = {
@@ -85,15 +111,8 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
         DIST_IS_EMPTY.getErrorCode,
         MessageFormat.format(DIST_IS_EMPTY.getErrorDesc, engineConnType)
       )
-    } else if (!children.exists(_.getName.startsWith("v"))) {
-      Array(engineConnDistHome)
-    } else if (children.forall(_.getName.startsWith("v"))) {
-      children.map(_.getPath)
     } else {
-      throw new EngineConnPluginErrorException(
-        DIST_IRREGULAR_EXIST.getErrorCode,
-        MessageFormat.format(DIST_IRREGULAR_EXIST.getErrorDesc, engineConnType)
-      )
+      children.map(_.getPath)
     }
   }
 

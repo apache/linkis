@@ -130,4 +130,9 @@ public class AContextID implements UserContextID, HAContextID {
 
   @Override
   public void setContextIDType(int contextIDType) {}
+
+  @Override
+  public HAContextID copy() {
+    return null;
+  }
 }

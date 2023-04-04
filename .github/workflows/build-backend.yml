@@ -20,24 +20,72 @@ name: Build Backend
 on: [push, pull_request]
 
 env:
-  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+  MAVEN_OPTS: -Dmaven.resolver.transport=wagon -Dmaven.wagon.httpconnectionManager.ttlSeconds=30
 
 jobs:
   build-backend:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        spark: [2.4, 3.2]
+        hadoop: [3.3]
+        include:
+          - spark: 2.4
+            hadoop: 2.7
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Set up JDK 8
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
         java-version: 8
-    - name: Build backend by maven
+        cache: maven
+    - if: ${{matrix.spark == '2.4' && matrix.hadoop == '3.3'}}
+      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+      run:
+        ./mvnw clean package -Pspark-${{matrix.spark}}-hadoop-${{matrix.hadoop}} -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
+    - if: ${{matrix.hadoop == '2.7'}}
+      name: build default
       run:
         ./mvnw clean package
+    - if: ${{matrix.spark != '2.4'}}
+      name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
+      run:
+        ./mvnw clean package -Pspark-${{matrix.spark}} -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
 #    - name: Upload coverage to Codecov
 #      uses: codecov/codecov-action@v3.0.0
 #      with:
 #        token: ${{ secrets.CODECOV_TOKEN }}
+  third-party-dependencies-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+          cache: maven
+      - name: mvn install
+        run:
+          #pom.xml also introduce linkis related jar,so run mvn install in first time
+          ./mvnw install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+      - name: mvn dependency:copy-dependencies
+        run:
+          ./mvnw dependency:copy-dependencies  -DexcludeGroupIds=org.apache.linkis -DincludeScope=runtime -DoutputDirectory=${{ github.workspace }}/current_dependencies
+      - name: generate current_dependencies.txt
+        run: |
+          ls ${{ github.workspace }}/current_dependencies | sort > ~/current_dependencies.txt
+          cat ~/current_dependencies.txt
+      - name: check third dependencies
+        run: |
+          #by using commond join ,to check whether there are new third-party dependencies,compared with file(tool/dependencies/known-dependencies.txt) 
+          sort ${{ github.workspace }}/tool/dependencies/known-dependencies.txt > ~/known-dependencies.txt 
+          join -t : -o 1.1 2.1 -a2 ~/known-dependencies.txt ~/current_dependencies.txt > ~/result.txt
+          #print new third-party dependencies name if it exists 
+          awk -F ":" '{if($1=="")print $2" is not in file known-dependencies.txt!\n You can refer to this guide to repair it(你可以参考这个执行进行修复)：https://linkis.apache.org/zh-CN/docs/latest/development/development-specification/license"}' ~/result.txt
+          result=`awk -F ":" '{if($1=="")print $2}'  ~/result.txt |wc -l`
+          #if has new third-party,the Action will fail
+          if [[ $result == 0 ]];then echo "All third dependencies is known!" ;else exit 1;fi

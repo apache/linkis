@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import scala.Option;
 
+import io.protostuff.GraphIOUtil;
 import io.protostuff.LinkedBuffer;
-import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
 import io.protostuff.runtime.DefaultIdStrategy;
 import io.protostuff.runtime.Delegate;
@@ -52,7 +52,7 @@ public class ProtostuffSerializeUtil {
     byte[] data;
     LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
     try {
-      data = ProtostuffIOUtil.toByteArray(obj, schema, buffer);
+      data = GraphIOUtil.toByteArray(obj, schema, buffer);
     } finally {
       buffer.clear();
     }
@@ -62,7 +62,7 @@ public class ProtostuffSerializeUtil {
   public static <T> T deserialize(String str, Class<T> clazz) {
     Schema<T> schema = getSchema(clazz);
     T obj = schema.newMessage();
-    ProtostuffIOUtil.mergeFrom(toByteArray(str), obj, schema);
+    GraphIOUtil.mergeFrom(toByteArray(str), obj, schema);
     return obj;
   }
 

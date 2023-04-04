@@ -24,14 +24,13 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.spark.common.LineBufferedProcess
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.storage.{FSFactory, LineMetaData}
-import org.apache.linkis.storage.resultset.ResultSetReader
 import org.apache.linkis.storage.utils.StorageUtils
-
 import org.apache.commons.lang3.StringUtils
-
-import java.io.{InputStream, IOException, OutputStream}
+import java.io.{IOException, InputStream, OutputStream}
 import java.net.ServerSocket
 import java.util.HashMap
+
+import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 
 /**
  */
@@ -127,7 +126,7 @@ object EngineUtils extends Logging {
   }
 
   def getResultStrByDolphinTextContent(dolphinContent: String): String = {
-    val resultSetReader = ResultSetReader.getResultSetReader(dolphinContent)
+    val resultSetReader = ResultSetReaderFactory.getResultSetReader(dolphinContent)
     val errorMsg = resultSetReader.getMetaData match {
       case metadata: LineMetaData =>
         val sb = new StringBuilder

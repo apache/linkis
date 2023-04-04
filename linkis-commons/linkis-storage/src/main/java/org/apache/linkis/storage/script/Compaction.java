@@ -22,4 +22,6 @@ public interface Compaction {
                 new ShellScriptCompaction()
         };
     }
+
+    String getAnnotationSymbol();
 }

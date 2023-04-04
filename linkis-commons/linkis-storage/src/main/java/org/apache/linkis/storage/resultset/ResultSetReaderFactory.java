@@ -29,11 +29,14 @@ import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.resultset.table.TableResultSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class ResultSetReaderFactory {
+  private static final Logger logger = LoggerFactory.getLogger(ResultSetReaderFactory.class);
 
   public static <K extends MetaData, V extends Record> ResultSetReader getResultSetReader(
       ResultSet<K, V> resultSet, InputStream inputStream) {
@@ -57,7 +60,7 @@ public class ResultSetReaderFactory {
       try {
         FSFactory.getFs(resPath).init(null);
       } catch (IOException e) {
-        //
+        logger.warn("ResultSetReaderFactory fs init failed", e);
       }
       ResultSetReader reader = null;
       try {
@@ -65,7 +68,7 @@ public class ResultSetReaderFactory {
             ResultSetReaderFactory.getResultSetReader(
                 resultSet, FSFactory.getFs(resPath).read(resPath));
       } catch (IOException e) {
-        //
+        logger.warn("ResultSetReaderFactory fs read failed", e);
       }
       if (reader instanceof StorageResultSetReader) {
         ((StorageResultSetReader<?, ?>) reader).setFs(FSFactory.getFs(resPath));

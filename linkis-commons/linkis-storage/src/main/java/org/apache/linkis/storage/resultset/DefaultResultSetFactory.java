@@ -56,15 +56,15 @@ public class DefaultResultSetFactory implements ResultSetFactory {
   public DefaultResultSetFactory() {
     resultClasses =
         StorageUtils.loadClasses(
-            StorageConfiguration.STORAGE_RESULT_SET_CLASSES().getValue(),
-            StorageConfiguration.STORAGE_RESULT_SET_PACKAGE().getValue(),
+            StorageConfiguration.STORAGE_RESULT_SET_CLASSES.getValue(),
+            StorageConfiguration.STORAGE_RESULT_SET_PACKAGE.getValue(),
             t -> {
               try {
                 return t.newInstance().resultSetType().toLowerCase(Locale.getDefault());
               } catch (InstantiationException e) {
-                // e.printStackTrace();
+                logger.warn("DefaultResultSetFactory init failed", e);
               } catch (IllegalAccessException e) {
-                // e.printStackTrace();
+                logger.warn("DefaultResultSetFactory init failed", e);
               }
               return null;
             });

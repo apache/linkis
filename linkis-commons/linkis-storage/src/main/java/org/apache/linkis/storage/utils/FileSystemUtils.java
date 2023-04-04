@@ -64,14 +64,14 @@ public class FileSystemUtils {
       fileSystem.init(null);
       createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists);
     } catch (IOException e) {
-      //e.printStackTrace();
+      logger.warn("FileSystemUtils createNewFile failed", e);
     } catch (Exception e) {
-      //e.printStackTrace();
+      logger.warn("FileSystemUtils createNewFile failed", e);
     } finally {
       try {
         fileSystem.close();
       } catch (IOException e) {
-        //e.printStackTrace();
+        logger.warn("FileSystemUtils close failed", e);
       }
     }
   }

@@ -13,10 +13,8 @@ public class VariableParser {
     public static final String STARTUP = "startup";
     public static final String SPECIAL = "special";
 
-    //TODO
     public static Variable[] getVariables(Map<String, Object> params) {
         Map<String, Object> variableMap = (Map<String, Object>) params.getOrDefault(VARIABLE, new HashMap<>());
-//        Variable[] variables= getVariableStream(variableMap);
         Map<String, Object> configurationMap = (Map<String, Object>) params.getOrDefault(CONFIGURATION, new HashMap<>());
         return createVariableArray(variableMap, configurationMap);
     }
@@ -26,13 +24,7 @@ public class VariableParser {
                 .toArray(Variable[]::new);
     }
 
-//    private static  Variable[]  getVariableStream(Map<String, Object> variableMap) {
-//        return variableMap.entrySet().stream()
-//                .map(e -> new Variable(VARIABLE, null, e.getKey(), Objects.toString(e.getValue())))
-//                .toArray(Variable[]::new);
-//    }
-
-    private static Stream<Variable>  getVariableStream(Map<String, Object> variableMap) {
+    private static Stream<Variable> getVariableStream(Map<String, Object> variableMap) {
         return variableMap.entrySet().stream()
                 .map(e -> new Variable(VARIABLE, null, e.getKey(), Objects.toString(e.getValue())));
     }

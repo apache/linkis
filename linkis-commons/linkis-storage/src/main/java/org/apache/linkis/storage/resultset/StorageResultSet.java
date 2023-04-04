@@ -44,15 +44,15 @@ public abstract class StorageResultSet<K extends MetaData, V extends Record>
 
   @Override
   public String charset() {
-    return StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue();
+    return StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue();
   }
 
   @Override
   public FsPath getResultSetPath(FsPath parentDir, String fileName) {
     final String path =
         parentDir.getPath().endsWith("/")
-            ? parentDir.toPath() + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
-            : parentDir.toPath() + "/" + fileName + Dolphin.DOLPHIN_FILE_SUFFIX;
+            ? parentDir.getUriString() + fileName + Dolphin.DOLPHIN_FILE_SUFFIX
+            : parentDir.getUriString() + "/" + fileName + Dolphin.DOLPHIN_FILE_SUFFIX;
     logger.info("Get result set path: {}", path);
     return new FsPath(path);
   }

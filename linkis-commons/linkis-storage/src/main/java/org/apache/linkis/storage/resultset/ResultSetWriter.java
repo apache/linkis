@@ -22,12 +22,15 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
 import org.apache.linkis.common.io.resultset.ResultSetReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ResultSetWriter {
+  private static final Logger logger = LoggerFactory.getLogger(ResultSetWriter.class);
 
   public static <K extends MetaData, V extends Record>
       org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(
@@ -63,7 +66,8 @@ public class ResultSetWriter {
         count++;
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.warn("ResultSetWriter getRecordByRes failed", e);
+
     }
     return records.toArray(new Record[0]);
   }
@@ -77,7 +81,7 @@ public class ResultSetWriter {
         record = reader.getRecord();
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.warn("ResultSetWriter getLastRecordByRes failed", e);
     }
     return record;
   }

@@ -48,7 +48,6 @@ public class StorageHelper {
     try {
       Thread.sleep(10000L);
     } catch (InterruptedException e) {
-      e.printStackTrace();
     }
 
     switch (method) {
@@ -140,7 +139,7 @@ public class StorageHelper {
         }
       }
     } catch (IOException e) {
-      // e.printStackTrace();
+      logger.warn("StorageHelper getTableRes failed", e);
     }
   }
 
@@ -150,7 +149,7 @@ public class StorageHelper {
     try {
       FileSystemUtils.createNewFile(resPath, proxyUser, true);
     } catch (Exception e) {
-      // e.printStackTrace();
+      logger.warn("StorageHelper createNewFile failed", e);
     }
     logger.info("success");
   }

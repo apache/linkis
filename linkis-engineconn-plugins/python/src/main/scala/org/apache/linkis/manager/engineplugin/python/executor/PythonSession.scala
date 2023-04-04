@@ -23,30 +23,26 @@ import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
-import org.apache.linkis.manager.engineplugin.python.exception.{
-  ExecuteException,
-  PythonExecuteError
-}
+import org.apache.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
 import org.apache.linkis.manager.engineplugin.python.utils.Kind
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
-
 import java.io.{File, FileFilter, FileOutputStream, InputStream}
 import java.net.ServerSocket
 import java.nio.file.Files
 import java.util.{List => JList}
 
+import org.apache.linkis.storage.domain.DataType.{BooleanType, DoubleType, FloatType, IntType, StringType, TimestampType}
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration.Duration
-
 import py4j.GatewayServer
 
 class PythonSession extends Logging {
@@ -283,13 +279,13 @@ class PythonSession extends Logging {
   def getKind: Kind = Python()
 
   def changeDT(dt: String): DataType = dt match {
-    case "int" | "int16" | "int32" | "int64" => IntType
-    case "float" | "float16" | "float32" | "float64" => FloatType
-    case "double" => DoubleType
-    case "bool" => BooleanType
-    case "datetime64[ns]" | "datetime64[ns,tz]" | "timedelta[ns]" => TimestampType
-    case "category" | "object" => StringType
-    case _ => StringType
+    case "int" | "int16" | "int32" | "int64" => new IntType
+    case "float" | "float16" | "float32" | "float64" => new FloatType
+    case "double" => new DoubleType
+    case "bool" => new BooleanType
+    case "datetime64[ns]" | "datetime64[ns,tz]" | "timedelta[ns]" => new TimestampType
+    case "category" | "object" => new StringType
+    case _ => new StringType
   }
 
   /**
@@ -304,14 +300,14 @@ class PythonSession extends Logging {
     val length = schema.size() - 1
     var list: List[Column] = List[Column]()
     for (i <- 0 to length) {
-      val col = Column(header.get(i), changeDT(schema.get(i)), null)
+      val col = new Column(header.get(i), changeDT(schema.get(i)), null)
       list = list :+ col
     }
     val metaData = new TableMetaData(list.toArray[Column])
     writer.addMetaData(metaData)
     val size = data.size() - 1
     for (i <- 0 to size) {
-      writer.addRecord(new TableRecord(data.get(i).asScala.toArray[Any]))
+      writer.addRecord(new TableRecord(data.get(i).asScala.toArray[Any].asInstanceOf[Array[AnyRef]]))
     }
     // generate table data
     engineExecutionContext.sendResultSet(writer)

@@ -25,7 +25,7 @@ import org.apache.linkis.storage.errorcode.LinkisIoFileErrorCodeSummary.{
   PARAMETER_CALLS
 }
 import org.apache.linkis.storage.exception.StorageErrorException
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReaderFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
@@ -107,7 +107,7 @@ object IOHelp {
     val content = method.params(2).asInstanceOf[String]
     Utils.tryFinally {
       val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-      val reader = ResultSetReader.getResultSetReader(resultSet, content)
+      val reader = ResultSetReaderFactory.getResultSetReader(resultSet, content)
       while (reader.hasNext) {
         IOUtils.write(reader.getRecord.asInstanceOf[IORecord].value, outputStream)
       }

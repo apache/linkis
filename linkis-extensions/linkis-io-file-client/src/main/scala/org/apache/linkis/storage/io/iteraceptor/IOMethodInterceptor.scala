@@ -26,7 +26,7 @@ import org.apache.linkis.storage.errorcode.LinkisIoFileClientErrorCodeSummary._
 import org.apache.linkis.storage.exception.{FSNotInitException, StorageErrorException}
 import org.apache.linkis.storage.io.client.IOClient
 import org.apache.linkis.storage.io.utils.IOClientUtils
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReaderFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
@@ -89,7 +89,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     val res = Utils.tryCatch(
       ioClient.execute(
         getProxyUser,
-        MethodEntity(id, fsType, getCreatorUser, getProxyUser, getLocalIP, methodName, params),
+        new MethodEntity(id, fsType, getCreatorUser, getProxyUser, getLocalIP, methodName, params),
         bindEngineLabel
       )
     ) { t: Throwable =>
@@ -110,7 +110,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
     bindEngineLabel.setIsJobGroupEnd("false")
     val res = ioClient.executeWithRetry(
       getProxyUser,
-      MethodEntity(
+      new MethodEntity(
         id,
         fsType,
         getCreatorUser,
@@ -285,7 +285,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
       val fetchedMsg = executeMethod("read", params)
       if (StringUtils.isNotEmpty(fetchedMsg)) {
         val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-        val reader = ResultSetReader.getResultSetReader(resultSet, fetchedMsg)
+        val reader = ResultSetReaderFactory.getResultSetReader(resultSet, fetchedMsg)
         val metaData = reader.getMetaData.asInstanceOf[IOMetaData]
         while (reader.hasNext) {
           fetched = reader.getRecord.asInstanceOf[IORecord].value

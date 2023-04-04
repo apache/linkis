@@ -17,31 +17,9 @@
 
 package org.apache.linkis.storage.io;
 
-import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
-import org.apache.linkis.storage.exception.StorageErrorException;
-
 import org.springframework.cglib.proxy.MethodInterceptor;
 
 public interface IOMethodInterceptorCreator {
 
-  MethodInterceptor createIOMethodInterceptor(String fsName);
-
-  static IOMethodInterceptorCreator interceptorCreator = null;
-  /**
-   * This method is called when ioClient is initialized. ioClient初始化时会调用该方法
-   *
-   * @param interceptorCreator
-   */
-  static void register(IOMethodInterceptorCreator interceptorCreator) {
-    interceptorCreator = interceptorCreator;
-  }
-
-  static MethodInterceptor getIOMethodInterceptor(String fsName) throws StorageErrorException {
-    if (interceptorCreator == null) {
-      throw new StorageErrorException(
-          LinkisStorageErrorCodeSummary.MUST_REGISTER_TOM.getErrorCode(),
-          LinkisStorageErrorCodeSummary.MUST_REGISTER_TOM.getErrorDesc());
-    }
-    return interceptorCreator.createIOMethodInterceptor(fsName);
-  }
+    MethodInterceptor createIOMethodInterceptor(String fsName);
 }

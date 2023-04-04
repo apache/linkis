@@ -28,6 +28,8 @@ import org.apache.linkis.storage.script.ScriptFsReader;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -41,6 +43,7 @@ import java.util.function.Function;
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE;
 
 public interface FileSource extends Closeable {
+  Logger logger = LoggerFactory.getLogger(FileSource.class);
 
   FileSource shuffle(Function<Record, Record> s);
 
@@ -138,7 +141,7 @@ public interface FileSource extends Closeable {
     try {
       resultsetReader = ResultSetReaderFactory.getResultSetReader(resultset, fs.read(fsPath));
     } catch (IOException e) {
-      // e.printStackTrace();
+      logger.warn("FileSource createResultSetFileSplit failed", e);
     }
     return new FileSplit(resultsetReader, resultset.resultSetType());
   }
@@ -146,7 +149,7 @@ public interface FileSource extends Closeable {
   static FileSplit createTextFileSplit(FsPath fsPath, InputStream is) {
     ScriptFsReader scriptFsReader =
         ScriptFsReader.getScriptFsReader(
-            fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue(), is);
+            fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue(), is);
     return new FileSplit(scriptFsReader);
   }
 
@@ -155,9 +158,9 @@ public interface FileSource extends Closeable {
     try {
       scriptFsReader =
           ScriptFsReader.getScriptFsReader(
-              fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue(), fs.read(fsPath));
+              fsPath, StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue(), fs.read(fsPath));
     } catch (IOException e) {
-      // e.printStackTrace();
+      logger.warn("FileSource createTextFileSplit failed", e);
     }
     return new FileSplit(scriptFsReader);
   }

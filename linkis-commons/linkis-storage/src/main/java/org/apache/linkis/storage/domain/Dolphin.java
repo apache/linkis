@@ -3,6 +3,8 @@ package org.apache.linkis.storage.domain;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,17 +14,18 @@ import java.nio.charset.Charset;
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.FAILED_TO_READ_INTEGER;
 
 public class Dolphin {
+    private static final Logger logger = LoggerFactory.getLogger(Dolphin.class);
 
-    public static final Charset CHAR_SET = Charset.forName(StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue());
+    public static final Charset CHAR_SET = Charset.forName(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue());
     public static final String MAGIC = "dolphin";
 
     public static byte[] MAGIC_BYTES = new byte[0];
 
     static {
         try {
-            MAGIC_BYTES = MAGIC.getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue());
+            MAGIC_BYTES = MAGIC.getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue());
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.warn("Dolphin getBytes failed", e);
         }
     }
 

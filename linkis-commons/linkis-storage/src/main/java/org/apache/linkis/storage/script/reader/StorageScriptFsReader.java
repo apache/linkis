@@ -29,9 +29,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,19 +65,12 @@ public class StorageScriptFsReader extends ScriptFsReader {
   @Override
   public MetaData getMetaData() throws IOException {
     if (metadata == null) init();
-    String suffix = StorageUtils.pathToSuffix(path.getPath());
-    ParserFactory.listParsers();
-
-    List<Parser> parser =
-        Stream.of(ParserFactory.listParsers())
-            .filter(p -> p.belongTo(suffix))
-            .collect(Collectors.toList());
-
+    Parser parser = getScriptParser();
     lineText = bufferedReader.readLine();
     while (hasNext()
-        && parser.size() > 0
-        && isMetadata(lineText, parser.get(0).prefix(), parser.get(0).prefixConf())) {
-      variables.add(parser.get(0).parse(lineText));
+        && Objects.nonNull(parser)
+        && isMetadata(lineText, parser.prefix(),parser.prefixConf())) {
+      variables.add(parser.parse(lineText));
       lineText = bufferedReader.readLine();
     }
     metadata = new ScriptMetaData(variables.toArray(new Variable[0]));
@@ -149,6 +140,20 @@ public class StorageScriptFsReader extends ScriptFsReader {
         return false;
       }
       return true;
+    }
+  }
+
+  /**
+   * get the script parser according to the path(根据文件路径 获取对应的script parser )
+   * @return
+   *   Scripts Parser
+   */
+  public Parser getScriptParser() {
+    List<Parser> parsers = Arrays.stream(ParserFactory.listParsers()).filter(p -> p.belongTo(StorageUtils.pathToSuffix(path.getPath()))).collect(Collectors.toList());
+    if (parsers.size() > 0) {
+      return parsers.get(0);
+    } else {
+      return null;
     }
   }
 }

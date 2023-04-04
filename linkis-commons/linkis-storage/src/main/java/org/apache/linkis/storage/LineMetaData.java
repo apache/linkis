@@ -1,15 +1,26 @@
-package org.apache.linkis.storage
+package org.apache.linkis.storage;
 
-import org.apache.linkis.common.io.MetaData
-import org.apache.linkis.storage.resultset.ResultMetaData
+import org.apache.linkis.common.io.MetaData;
+import org.apache.linkis.storage.resultset.ResultMetaData;
 
-class LineMetaData(private var metaData: String = null) extends ResultMetaData {
+public class LineMetaData implements ResultMetaData {
 
-  def getMetaData: String = metaData
+    public String metaData = null;
 
-  def setMetaData(metaData: String): Unit = {
-    this.metaData = metaData
-  }
+    public LineMetaData(String metaData) {
+        this.metaData = metaData;
+    }
 
-  override def cloneMeta(): MetaData = new LineMetaData(metaData)
+    public String getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(String metaData) {
+        this.metaData = metaData;
+    }
+
+    public MetaData cloneMeta() {
+        return new LineMetaData(metaData);
+    }
+
 }

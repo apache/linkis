@@ -15,7 +15,7 @@ import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.
 
 public class FSFactory {
     private static final Map<String, BuildFactory> buildClasses = StorageUtils.loadClass(
-            StorageConfiguration.STORAGE_BUILD_FS_CLASSES().getValue(),
+            StorageConfiguration.STORAGE_BUILD_FS_CLASSES.getValue(),
             t -> t.fsName()
     );
 

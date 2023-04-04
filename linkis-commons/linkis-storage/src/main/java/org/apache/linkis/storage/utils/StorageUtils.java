@@ -32,6 +32,8 @@ import org.apache.linkis.storage.resultset.ResultSetReaderFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.utils.CloseableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -44,16 +46,21 @@ import java.util.stream.Stream;
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ;
 
 public class StorageUtils {
+  private static final Logger logger = LoggerFactory.getLogger(StorageUtils.class);
+
   public static final String HDFS = "hdfs";
   public static final String FILE = "file";
+  public static final String OSS = "oss";
+
   public static final String FILE_SCHEMA = "file://";
   public static final String HDFS_SCHEMA = "hdfs://";
+  public static final String OSS_SCHEMA = "oss://";
 
   private static final NumberFormat nf = NumberFormat.getInstance();
 
   static {
     nf.setGroupingUsed(false);
-    nf.setMaximumFractionDigits((int) StorageConfiguration.DOUBLE_FRACTION_LEN().getValue());
+    nf.setMaximumFractionDigits((int) StorageConfiguration.DOUBLE_FRACTION_LEN.getValue());
   }
 
   public static String doubleToString(double value) {
@@ -68,7 +75,7 @@ public class StorageUtils {
         T obj = Utils.getClassInstance(clazz.trim());
         classes.put(op.apply(obj), obj);
       } catch (Exception e) {
-        // TODO
+        logger.warn("StorageUtils loadClass failed", e);
       }
     }
     return classes;
@@ -89,7 +96,7 @@ public class StorageUtils {
             (Class<T>) Thread.currentThread().getContextClassLoader().loadClass(clazz.trim());
         classes.put(op.apply(_class), _class);
       } catch (Exception e) {
-        // TODO
+        logger.warn("StorageUtils loadClasses failed", e);
       }
     }
     return classes;
@@ -226,7 +233,8 @@ public class StorageUtils {
         readLen += count;
       }
     } catch (IOException e) {
-      // e.printStackTrace();
+      logger.warn("FileSystemUtils readBytes failed", e);
+
     }
     return readLen;
   }
@@ -248,6 +256,6 @@ public class StorageUtils {
   }
 
   public static boolean isIOProxy() {
-    return (boolean) StorageConfiguration.ENABLE_IO_PROXY().getValue();
+    return (boolean) StorageConfiguration.ENABLE_IO_PROXY.getValue();
   }
 }

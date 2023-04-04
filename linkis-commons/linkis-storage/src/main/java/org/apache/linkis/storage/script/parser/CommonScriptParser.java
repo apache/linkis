@@ -53,4 +53,9 @@ public abstract class CommonScriptParser implements Parser {
       return new Variable(sortParent, sort, key, value);
     }
   }
+
+  @Override
+  public String getAnnotationSymbol() {
+    return prefix().split("@")[0];
+  }
 }

@@ -65,6 +65,11 @@ public class StorageScriptFsWriter extends ScriptFsWriter {
     if (!compactions.isEmpty()) {
       Variable[] metaData1 = ((ScriptMetaData) metaData).getMetaData();
       Stream.of(metaData1).map(compactions.get(0)::compact).forEach(metadataLine::add);
+
+      // add annotition symbol
+      if (metadataLine.size() > 0) {
+        metadataLine.add(compactions.get(0).getAnnotationSymbol());
+      }
       if (outputStream != null) {
         IOUtils.writeLines(metadataLine, "\n", outputStream, charset);
       } else {
@@ -110,9 +115,9 @@ public class StorageScriptFsWriter extends ScriptFsWriter {
     byte[] bytes = null;
     try {
       bytes =
-          stringBuilder.toString().getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE().getValue());
+          stringBuilder.toString().getBytes(StorageConfiguration.STORAGE_RS_FILE_TYPE.getValue());
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+      log.warn("StorageScriptFsWriter getInputStream failed", e);
     }
     return new ByteArrayInputStream(bytes);
   }

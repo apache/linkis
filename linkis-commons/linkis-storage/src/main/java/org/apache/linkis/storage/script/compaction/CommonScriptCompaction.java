@@ -39,4 +39,9 @@ public abstract class CommonScriptCompaction implements Compaction {
             + variable.getValue();
     }
   }
+
+  @Override
+  public String getAnnotationSymbol() {
+    return prefix().split("@")[0];
+  }
 }

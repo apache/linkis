@@ -8,5 +8,7 @@ public interface Parser {
     boolean belongTo(String suffix);
 
     Variable parse(String line);
+
+    String getAnnotationSymbol();
 }
 

@@ -5,8 +5,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.regex.Pattern;
 
-import org.apache.linkis.common.utils.Logging;
-import org.apache.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

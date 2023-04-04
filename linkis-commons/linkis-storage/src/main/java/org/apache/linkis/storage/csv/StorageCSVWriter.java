@@ -8,19 +8,22 @@ import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.stream.Stream;
 
 public class StorageCSVWriter extends CSVFsWriter {
+    private static final Logger logger = LoggerFactory.getLogger(StorageCSVWriter.class);
 
     private final String charset;
     private final String separator;
     private final boolean quoteRetouchEnable;
     private final OutputStream outputStream;
 
-    private final char delimiter;
+    private final String delimiter;
     private final StringBuilder buffer;
 
     public StorageCSVWriter(String charset, String separator, boolean quoteRetouchEnable, OutputStream outputStream) {
@@ -29,7 +32,7 @@ public class StorageCSVWriter extends CSVFsWriter {
         this.quoteRetouchEnable = quoteRetouchEnable;
         this.outputStream = outputStream;
 
-        this.delimiter = ",".equals(separator) ? ',' : '\t';
+        this.delimiter = StringUtils.isNotEmpty(separator) ? separator : "\t";
         this.buffer = new StringBuilder(50000);
     }
 
@@ -66,6 +69,9 @@ public class StorageCSVWriter extends CSVFsWriter {
             rowBuilder.append(decoratedValue).append(delimiter);
         }
         rowBuilder.append("\n");
+        if (logger.isDebugEnabled()) {
+            logger.debug("delimiter:" + delimiter);
+        }
         return rowBuilder.toString();
     }
 

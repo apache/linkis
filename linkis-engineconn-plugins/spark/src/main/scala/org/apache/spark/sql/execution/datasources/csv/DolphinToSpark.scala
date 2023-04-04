@@ -20,13 +20,13 @@ package org.apache.spark.sql.execution.datasources.csv
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.storage.{domain => wds}
-import org.apache.linkis.storage.resultset.ResultSetReader
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
-
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.types.{DecimalType, IntegerType, ShortType, StructField, StructType, _}
-
 import java.util
+
+import org.apache.linkis.storage.domain.DataType.ShortIntType
+import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 
 /**
  */
@@ -48,7 +48,7 @@ object DolphinToSpark {
       forceReplace: Boolean
   ): Unit = {
     if (forceReplace || spark.sessionState.catalog.getTempView(tableName).isEmpty) {
-      val reader = ResultSetReader.getTableResultReader(res)
+      val reader = ResultSetReaderFactory.getTableResultReader(res)
       val metadata = reader.getMetaData.asInstanceOf[TableMetaData]
       val rowList = new util.ArrayList[Row]()
       var len = SparkConfiguration.DOLPHIN_LIMIT_LEN.getValue
@@ -67,21 +67,32 @@ object DolphinToSpark {
     )
   }
 
-  def toSparkType(dataType: wds.DataType): DataType = dataType match {
-    case wds.NullType => NullType
+  def toSparkType(dataType: org.apache.linkis.storage.domain.DataType): DataType = {
+    if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.NullType]){
+      NullType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BooleanType]){
+      BooleanType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.ShortIntType]){
+      ShortType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.IntType]){
+      IntegerType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BigIntType]){
+      LongType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.FloatType]){
+      FloatType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DoubleType]){
+      DoubleType
+    } else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DecimalType]){
+      DecimalType(bigDecimalPrecision, bigDecimalScale)
+    }else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DateType]){
+      DateType
+    }else if(dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BinaryType]){
+      BinaryType
+    }else{
+      StringType
+    }
     // case wds.StringType | wds.CharType | wds.VarcharType | wds.StructType | wds.ListType | wds.ArrayType | wds.MapType => StringType
-    case wds.BooleanType => BooleanType
-    case wds.ShortIntType => ShortType
-    case wds.IntType => IntegerType
-    case wds.LongType => LongType
-    case wds.BigIntType => LongType
-    case wds.FloatType => FloatType
-    case wds.DoubleType => DoubleType
-    case wds.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
-    case wds.DateType => DateType
     // case wds.TimestampType => TimestampType
-    case wds.BinaryType => BinaryType
-    case _ => StringType
   }
 
 }

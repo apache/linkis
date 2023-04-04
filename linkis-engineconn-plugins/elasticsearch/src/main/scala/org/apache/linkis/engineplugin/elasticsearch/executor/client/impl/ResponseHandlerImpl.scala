@@ -20,26 +20,19 @@ package org.apache.linkis.engineplugin.elasticsearch.executor.client.impl
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary._
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
-import org.apache.linkis.engineplugin.elasticsearch.executor.client.{
-  ElasticSearchJsonResponse,
-  ElasticSearchResponse,
-  ElasticSearchTableResponse,
-  ResponseHandler
-}
+import org.apache.linkis.engineplugin.elasticsearch.executor.client.{ElasticSearchJsonResponse, ElasticSearchResponse, ElasticSearchTableResponse, ResponseHandler}
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.resultset.table.TableRecord
-
 import org.apache.http.entity.ContentType
 import org.apache.http.util.EntityUtils
-
 import java.nio.charset.Charset
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
-
 import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
+import org.apache.linkis.storage.domain.DataType.{DoubleType, StringType}
 import org.elasticsearch.client.Response
 
 class ResponseHandlerImpl extends ResponseHandler {
@@ -87,10 +80,10 @@ class ResponseHandlerImpl extends ResponseHandler {
     jsonNode.at("/hits/hits") match {
       case hits: ArrayNode => {
         isTable = true
-        columns += Column("_index", StringType, "")
-        columns += Column("_type", StringType, "")
-        columns += Column("_id", StringType, "")
-        columns += Column("_score", DoubleType, "")
+        columns += new Column("_index", new StringType, "")
+        columns += new Column("_type", new StringType, "")
+        columns += new Column("_id", new StringType, "")
+        columns += new Column("_score", new DoubleType, "")
         hits.asScala.foreach {
           case obj: ObjectNode => {
             val lineValues = new Array[Any](columns.length).toBuffer
@@ -109,7 +102,7 @@ class ResponseHandlerImpl extends ResponseHandler {
                       val sourcevalue = sourceEntry.getValue
                       val index = columns.indexWhere(_.columnName.equals(sourcekey))
                       if (index < 0) {
-                        columns += Column(sourcekey, getNodeDataType(sourcevalue), "")
+                        columns += new Column(sourcekey, getNodeDataType(sourcevalue), "")
                         lineValues += getNodeValue(sourcevalue)
                       } else {
                         lineValues(index) = getNodeValue(sourcevalue)
@@ -118,14 +111,14 @@ class ResponseHandlerImpl extends ResponseHandler {
                 } else {
                   val index = columns.indexWhere(_.columnName.equals(key))
                   if (index < 0) {
-                    columns += Column(key, getNodeDataType(value), "")
+                    columns += new Column(key, getNodeDataType(value), "")
                     lineValues += getNodeValue(value)
                   } else {
                     lineValues(index) = getNodeValue(value)
                   }
                 }
               })
-            records += new TableRecord(lineValues.toArray)
+            records += new TableRecord(lineValues.toArray.asInstanceOf[Array[AnyRef]])
           }
           case _ =>
         }
@@ -144,13 +137,13 @@ class ResponseHandlerImpl extends ResponseHandler {
           .foreach(node => {
             val name = node.get("name").asText()
             val estype = node.get("type").asText().trim
-            columns += Column(name, getNodeTypeByEsType(estype), "")
+            columns += new Column(name, getNodeTypeByEsType(estype), "")
           })
         rows.asScala.foreach {
           case row: ArrayNode => {
             val lineValues = new ArrayBuffer[Any]()
             row.asScala.foreach(node => lineValues += getNodeValue(node))
-            records += new TableRecord(lineValues.toArray)
+            records += new TableRecord(lineValues.toArray.asInstanceOf[Array[AnyRef]])
           }
           case _ =>
         }

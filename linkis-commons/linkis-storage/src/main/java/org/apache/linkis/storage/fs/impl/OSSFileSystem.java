@@ -135,7 +135,8 @@ public class OSSFileSystem extends FileSystem {
       fsPaths.add(
           fillStorageFile(
               new FsPath(
-                  StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()
+                  StorageUtils.OSS_SCHEMA()
+                      + StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()
                       + "/"
                       + f.getPath().toUri().getPath()),
               f));
@@ -176,7 +177,10 @@ public class OSSFileSystem extends FileSystem {
     }
     fs = new AliyunOSSFileSystem();
     try {
-      fs.initialize(new URI(StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()), conf);
+      fs.initialize(
+          new URI(
+              StorageUtils.OSS_SCHEMA() + StorageConfiguration.OSS_ACCESS_BUCKET_NAME().getValue()),
+          conf);
     } catch (URISyntaxException e) {
       throw new IOException("init OSS FileSystem failed!");
     }

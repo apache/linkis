@@ -93,7 +93,7 @@ object StorageConfiguration {
     CommonVars[java.lang.String]("wds.linkis.fs.oss.endpoint", "")
 
   /**
-   * Aliyun bucket name eg: oss://benchmark2
+   * Aliyun bucket name eg: benchmark2
    */
   val OSS_ACCESS_BUCKET_NAME =
     CommonVars[java.lang.String]("wds.linkis.fs.oss.bucket.name", "")

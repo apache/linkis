@@ -398,7 +398,7 @@ public class FsRestfulApi {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
+        dirFileTreeChildren.setPath(children.getSchemaPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
         if (!children.isdir()) {

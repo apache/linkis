@@ -50,18 +50,21 @@ public interface TaskConstant {
   String PARAMS_CONFIGURATION_RUNTIME = "runtime";
   String PARAMS_CONFIGURATION_SPECIAL = "special";
 
-  String ENTRANCEJOB_SUBMIT_TIME = "submitTime";
-  String ENTRANCEJOB_SCHEDULE_TIME = "scheduleTime";
-  String ENTRANCEJOB_TO_ORCHESTRATOR = "timeToOrchestrator";
-  String ENTRANCEJOB_COMPLETE_TIME = "completeTime";
-  String ENTRANCEJOB_YARN_METRICS = "yarnMetrics";
-  String ENTRANCEJOB_YARNRESOURCE = "yarnResource";
-  String ENTRANCEJOB_CORE_PERCENT = "corePercent";
-  String ENTRANCEJOB_MEMORY_PERCENT = "memoryPercent";
-  String ENTRANCEJOB_CORE_RGB = "coreRGB";
-  String ENTRANCEJOB_MEMORY_RGB = "memoryRGB";
+  String JOB_SUBMIT_TIME = "submitTime";
+  String JOB_SCHEDULE_TIME = "scheduleTime";
+  String JOB_RUNNING_TIME = "runningTime";
+  String JOB_TO_ORCHESTRATOR = "jobToOrchestrator";
+  String JOB_REQUEST_EC_TIME = "requestECTime";
+  String JOB_SUBMIT_TO_EC_TIME = "jobToECTIme";
+  String JOB_COMPLETE_TIME = "completeTime";
+  String JOB_YARN_METRICS = "yarnMetrics";
+  String JOB_YARNRESOURCE = "yarnResource";
+  String JOB_CORE_PERCENT = "corePercent";
+  String JOB_MEMORY_PERCENT = "memoryPercent";
+  String JOB_CORE_RGB = "coreRGB";
+  String JOB_MEMORY_RGB = "memoryRGB";
 
-  String ENTRANCEJOB_ENGINECONN_MAP = "engineconnMap";
+  String JOB_ENGINECONN_MAP = "engineconnMap";
   String ENGINE_INSTANCE = "engineInstance";
   String TICKET_ID = "ticketId";
   String ENGINE_CONN_TASK_ID = "engineConnTaskId";

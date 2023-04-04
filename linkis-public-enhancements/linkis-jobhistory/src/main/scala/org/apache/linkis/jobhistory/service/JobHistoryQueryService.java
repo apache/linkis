@@ -18,8 +18,10 @@
 package org.apache.linkis.jobhistory.service;
 
 import org.apache.linkis.governance.common.entity.job.JobRequest;
+import org.apache.linkis.governance.common.protocol.conf.EntranceInstanceConfRequest;
 import org.apache.linkis.governance.common.protocol.job.*;
 import org.apache.linkis.jobhistory.entity.JobHistory;
+import org.apache.linkis.rpc.Sender;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,4 +49,6 @@ public interface JobHistoryQueryService {
     List<JobRequest> getQueryVOList(List<JobHistory> list);
 
     void changeObserveInfoById(JobHistory jobHistory);
+
+    void clearUndoneTasksByEntranceInstance(EntranceInstanceConfRequest request, Sender sender);
 }

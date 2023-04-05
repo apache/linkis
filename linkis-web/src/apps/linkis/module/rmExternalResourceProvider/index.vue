@@ -160,7 +160,7 @@ export default {
     init() {
       window.console.log(this.$route.query.isSkip);
     },
-    load() {
+    async load() {
       let params = {
         searchName: this.searchName,
         currentPage: this.page.pageNow,
@@ -219,12 +219,12 @@ export default {
       })
 
     },
-    onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+    async onModalOk(){
+      this.$refs.errorCodeForm.formModel.submit(async (formData)=>{
         this.modalLoading = true
         formData.config = JSON.stringify(formData.config)
         if(this.modalAddMode=='add') {
-          add(formData).then((data)=>{
+          await add(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({
@@ -239,7 +239,7 @@ export default {
             }
           })
         }else {
-          edit(formData).then((data)=>{
+          await edit(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({
@@ -257,6 +257,7 @@ export default {
         }
         this.modalLoading=false
         this.modalShow = false
+        await this.load()
       })
     },
     onModalCancel(){

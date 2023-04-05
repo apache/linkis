@@ -20,6 +20,8 @@
     <Tabs @on-click="onClickTabs" :value="tabName">
       <TabPane name="stdout" label="stdout"></TabPane>
       <TabPane name="stderr" label="stderr"></TabPane>
+      <TabPane name="gc" label="gc"></TabPane>
+      <TabPane name="yarnApp" label="yarnApp"></TabPane>
     </Tabs>
     <Button class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
     <log :logs="logs" :scriptViewState="scriptViewState"/>

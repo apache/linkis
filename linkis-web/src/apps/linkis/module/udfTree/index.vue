@@ -224,7 +224,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
         onOk: ()=>{
           let params = {
             id: row.id

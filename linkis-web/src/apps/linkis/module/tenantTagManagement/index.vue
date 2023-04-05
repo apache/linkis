@@ -223,7 +223,7 @@ export default {
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_\*]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
@@ -313,22 +313,22 @@ export default {
       if(this.isRequesting) return;
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
-          const {user, creator} = this.modalData;
+          const { user, creator, id } = this.modalData;
           if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
             this.tagIsExist = false;
             return;
           }
           try {
-            this.isRequesting = true
-            await api.fetch("/configuration/tenant-mapping/check-user-creator",
-              {
-                user,
-                creator
-              }, "get").then((res) => {
-              if (res.exist) {
+            this.isRequesting = true;
+            const checkBody = {user, creator};
+            if(this.mode === 'edit') {
+              checkBody.id = id;
+            }
+            await api.fetch("/configuration/tenant-mapping/check-user-creator", checkBody, "get").then((res) => {
+              if (!res.exist) {
                 this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
               }
-              this.tagIsExist = res.exist;
+              this.tagIsExist = !res.exist;
             })
             this.isRequesting = false
           } catch (err) {
@@ -404,7 +404,7 @@ export default {
     delete(data) {
       this.$Modal.confirm({
         title: this.$t('message.linkis.tenantTagManagement.confirmDel'),
-        content: this.$t('message.linkis.tenantTagManagement.isConfirmDel'),
+        content: this.$t('message.linkis.tenantTagManagement.isConfirmDel', {name: `id:${data.id}`}),
         onOk: async () => {
           await this.confirmDelete(data);
           await this.getTableData();

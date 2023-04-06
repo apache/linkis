@@ -31,14 +31,10 @@ import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedExcepti
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
@@ -52,10 +48,9 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
-
 import scala.collection.JavaConverters._
-
 import com.google.common.collect.{Lists, Sets}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -102,6 +97,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val providedLibDirsArray = FLINK_LIB_LOCAL_PATH.getValue(options).split(",")
     // Ship directories
     val shipDirsArray = getShipDirectories(options)
+    // other params
+    val flinkClientType = GovernanceCommonConf.FLINK_CLIENT_TYPE.getValue(options)
+    val otherParams = new util.HashMap[String, Any]()
+    otherParams.put(GovernanceCommonConf.FLINK_CLIENT_TYPE.key, flinkClientType)
     val context = new EnvironmentContext(
       defaultEnv,
       new Configuration,
@@ -112,7 +111,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkProvidedLibPath,
       providedLibDirsArray,
       shipDirsArray,
-      new util.ArrayList[URL]
+      new util.ArrayList[URL],
+      otherParams
     )
     // Step1: environment-level configurations
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")

@@ -15,25 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.acessible.executor.service
 
-import org.apache.linkis.manager.common.protocol.engine.{
-  EngineOperateRequest,
-  EngineOperateResponse
-}
+package org.apache.linkis.engineconnplugin.flink.factory
 
-trait OperateService {
-
-  def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse
-
-}
-
-object OperateService {
-
-  private var applicationIdFetched: Boolean = false
-
-  def setApplicationIdFetched(fetched: Boolean): Unit = applicationIdFetched = fetched
-
-  def isApplicationIdFetched(): Boolean = applicationIdFetched
+class FlinkApplicationClientExecutorFactory {
 
 }

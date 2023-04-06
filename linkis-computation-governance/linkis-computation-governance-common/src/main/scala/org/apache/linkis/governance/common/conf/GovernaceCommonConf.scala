@@ -18,6 +18,7 @@
 package org.apache.linkis.governance.common.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 
 object GovernanceCommonConf {
 
@@ -74,5 +75,8 @@ object GovernanceCommonConf {
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }
+
+  val FLINK_CLIENT_TYPE =
+    CommonVars("wds.linkis.flink.cient.type", ECConstants.EC_FLINK_CLIENT_TYPE_ATTACH)
 
 }

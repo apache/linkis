@@ -45,12 +45,9 @@ object LogHelper extends Logging {
   def setLogListener(logListener: LogListener): Unit = this.logListener = logListener
 
   def pushAllRemainLogs(): Unit = {
-    //    logger.info(s"start to push all remain logs")
     Thread.sleep(30)
-    // logCache.synchronized{
     if (logListener == null) {
       logger.warn("logListener is null, can not push remain logs")
-      // return
     } else {
 
       var logs: util.List[String] = null

@@ -180,7 +180,7 @@ export default {
             ),
             showSubMenu: true,
           },
-          // { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
+          { key: '1-11', name: this.$t('message.linkis.sideNavList.function.children.codeQuery'), path: '/console/codeQuery' },
         ],
       },
       datasourceNavList: {

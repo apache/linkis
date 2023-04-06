@@ -247,7 +247,7 @@ export default {
       }
       // radio
       this.rule[4].hidden = !(['hive', 'kafka'].includes(dataSourceTypeName))
-
+      
       // keytab value
       this.rule[6].hidden = !newV.keytab;
       // upload

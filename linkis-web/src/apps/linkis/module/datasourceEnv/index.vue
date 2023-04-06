@@ -320,6 +320,7 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load();
             }else{
               this.$Message.success({
                 duration: 3,
@@ -347,7 +348,6 @@ export default {
         window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
-        await this.load();
       })
     },
     onModalCancel(){

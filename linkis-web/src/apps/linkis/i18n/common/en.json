@@ -194,7 +194,7 @@
       },
       "modal": {
         "modalTitle": "Prompt message ",
-        "modalDelete": "Confirm whether to delete the [{envName} option?",
+        "modalDelete": "Confirm whether to delete the [{name} option?",
         "modalDeleteRecord": "Confirm whether to delete the record?",
         "modalDeleteTask": "Confirm whether to stop the selected task?",
         "modalDeleteInstance": "Determines whether to stop the current selected instance?",

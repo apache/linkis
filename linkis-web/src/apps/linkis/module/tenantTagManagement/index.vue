@@ -106,7 +106,7 @@
         <div style="margin-top: 60px">
           <span style="width: 60px">{{ $t('message.linkis.tenantTagManagement.yourTagMapping') }}</span>
           <Input class="input" v-model="mapping" style="width: 220px; margin-left: 10px" disabled></Input>
-          <Button type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
+          <Button v-if="mode !== 'edit'" type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
         </div>
       </div>
       <div slot="footer">
@@ -325,7 +325,7 @@ export default {
               checkBody.id = id;
             }
             await api.fetch("/configuration/tenant-mapping/check-user-creator", checkBody, "get").then((res) => {
-              if (!res.exist) {
+              if (res.exist) {
                 this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
               }
               this.tagIsExist = !res.exist;
@@ -399,6 +399,7 @@ export default {
         id, user, creator, tenantValue, bussinessUser, desc
       };
       this.showCreateModal = true;
+      this.tagIsExist = false;
       this.mode = 'edit';
     },
     delete(data) {
@@ -422,7 +423,9 @@ export default {
       }
     },
     async handleChange() {
-      this.tagIsExist = true;
+      if(this.mode !== 'edit') {
+        this.tagIsExist = true;
+      }
     },
     async changePage(val) {
       this.page.pageNow = val;

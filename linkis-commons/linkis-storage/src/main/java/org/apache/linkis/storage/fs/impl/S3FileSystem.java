@@ -102,7 +102,7 @@ public class S3FileSystem extends FileSystem {
             return ret;
         } else {
             logger.warn("File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)");
-            throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), "文件或者文件夹不存在或者文件名乱码");
+            throw new StorageWarnException(TO_BE_UNKNOW.getErrorCode(), "File or folder does not exist or file name is garbled(文件或者文件夹不存在或者文件名乱码)");
         }
     }
 

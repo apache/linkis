@@ -17,11 +17,11 @@
 
 package org.apache.linkis.orchestrator.listener.task
 
-import org.apache.linkis.orchestrator.listener.OrchestratorAsyncListener
+import org.apache.linkis.orchestrator.listener.OrchestratorSyncListener
 
 /**
  */
-trait OrchestrationKillListener extends OrchestratorAsyncListener {
+trait OrchestrationKillListener extends OrchestratorSyncListener {
 
   def onKillRootExecTaskEvent(killRootExecTaskEvent: KillRootExecTaskEvent): Unit
 

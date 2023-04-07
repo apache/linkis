@@ -19,8 +19,8 @@ package org.apache.linkis.engineplugin.spark.client.deployment;
 
 import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 
+import org.apache.spark.launcher.CustomSparkSubmitLauncher;
 import org.apache.spark.launcher.SparkAppHandle;
-import org.apache.spark.launcher.SparkLauncher;
 
 import java.io.Closeable;
 
@@ -32,7 +32,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
 
   protected final ExecutionContext executionContext;
   protected String applicationId;
-  protected SparkLauncher sparkLauncher;
+  protected CustomSparkSubmitLauncher sparkLauncher;
   protected SparkAppHandle sparkAppHandle;
   protected SparkAppHandle.State jobState;
 
@@ -49,14 +49,8 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     return jobState;
   }
 
-  /** Cancel the spark job. */
-  public void cancelJob() {
-    if (sparkAppHandle != null) {
-      logger.info("Start to cancel job {}.", sparkAppHandle.getAppId());
-      this.stopJob();
-    } else {
-      logger.warn("Cancel job: sparkAppHandle is null");
-    }
+  public boolean isDisposed() {
+    return sparkLauncher.isDisposed();
   }
 
   @Override
@@ -78,7 +72,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     if (sparkAppHandle == null) {
       return;
     }
-    if (sparkAppHandle.getState().isFinal()) {
+    if (isDisposed()) {
       logger.info("Job has finished, stop action return.");
       return;
     }

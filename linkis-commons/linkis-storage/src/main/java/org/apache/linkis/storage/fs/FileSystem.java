@@ -24,7 +24,12 @@ import org.apache.linkis.storage.domain.FsPathListWithError;
 import java.io.File;
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class FileSystem implements Fs {
+
+  private static final Logger LOG = LoggerFactory.getLogger(FileSystem.class);
 
   protected String user;
   private String defaultFilePerm = "rwxr-----"; // 740
@@ -94,6 +99,7 @@ public abstract class FileSystem implements Fs {
     } else {
       parentPath = path.substring(0, path.lastIndexOf("/"));
     }
+    LOG.info("Get Parent Path:" + parentPath);
     return new FsPath(parentPath);
   }
 

@@ -17,8 +17,10 @@
 
 package org.apache.linkis.engineconn.acessible.executor.info
 
+import org.apache.linkis.engineconn.executor.entity.Executor
+
 trait NodeHeartbeatMsgManager {
 
-  def getHeartBeatMsg(): String
+  def getHeartBeatMsg(executor: Executor): String
 
 }

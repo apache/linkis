@@ -62,7 +62,8 @@ class StorageConfigurationTest {
       storageresultsetclasses
     )
     Assertions.assertEquals(
-      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem",
+      "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
+        "org.apache.linkis.storage.factory.impl.BuildOSSSystem",
       storagebuildfsclasses
     )
     Assertions.assertTrue(issharenode)

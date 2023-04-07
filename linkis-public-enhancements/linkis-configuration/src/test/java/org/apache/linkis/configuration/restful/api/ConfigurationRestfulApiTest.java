@@ -55,9 +55,9 @@ public class ConfigurationRestfulApiTest {
   public void TestAddKeyForEngine() throws Exception {
     MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
     paramsMap.add("engineType", "spark");
-    paramsMap.add("version", "2.4.3");
+    paramsMap.add("version", "3.2.1");
     paramsMap.add("token", "e8724-e");
-    paramsMap.add("keyJson", "{'engineType':'spark','version':'2.4.3'}");
+    paramsMap.add("keyJson", "{'engineType':'spark','version':'3.2.1'}");
     String url = "/configuration/addKeyForEngine";
     sendUrl(url, paramsMap, "get", null);
   }
@@ -66,7 +66,7 @@ public class ConfigurationRestfulApiTest {
   public void TestGetFullTreesByAppName() throws Exception {
     MultiValueMap<String, String> paramsMap = new LinkedMultiValueMap<>();
     paramsMap.add("engineType", "spark");
-    paramsMap.add("version", "2.4.3");
+    paramsMap.add("version", "3.2.1");
     paramsMap.add("creator", "sam");
     String url = "/configuration/getFullTreesByAppName";
 
@@ -127,7 +127,7 @@ public class ConfigurationRestfulApiTest {
     //                "    }\n" +
     //                "  ],\n" +
     //                "  \"creator\": \"LINKISCLI\",\n" +
-    //                "  \"engineType\": \"hive-2.3.3\"\n" +
+    //                "  \"engineType\": \"hive-3.1.3\"\n" +
     //                "}";
     //        String url = "/configuration/saveFullTree";
     //

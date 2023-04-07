@@ -280,7 +280,7 @@ class PythonSession extends Logging {
     logger.info("python executor Finished to close")
   }
 
-  def kind: Kind = Python()
+  def getKind: Kind = Python()
 
   def changeDT(dt: String): DataType = dt match {
     case "int" | "int16" | "int32" | "int64" => IntType

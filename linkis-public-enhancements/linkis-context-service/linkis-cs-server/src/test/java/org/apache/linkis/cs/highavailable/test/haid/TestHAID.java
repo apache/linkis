@@ -54,4 +54,9 @@ public class TestHAID implements HAContextID {
   public void setBackupInstance(String backupInstance) {
     this.backupInstance = backupInstance;
   }
+
+  @Override
+  public HAContextID copy() {
+    return null;
+  }
 }

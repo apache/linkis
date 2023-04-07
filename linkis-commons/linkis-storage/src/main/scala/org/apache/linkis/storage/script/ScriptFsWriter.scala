@@ -81,6 +81,8 @@ trait Parser {
   def belongTo(suffix: String): Boolean
 
   def parse(line: String): Variable
+
+  def getAnnotationSymbol(): String
 }
 
 trait Compaction {
@@ -92,6 +94,8 @@ trait Compaction {
   def belongTo(suffix: String): Boolean
 
   def compact(variable: Variable): String
+
+  def getAnnotationSymbol(): String
 }
 
 class ScriptMetaData(var variables: Array[Variable]) extends MetaData {

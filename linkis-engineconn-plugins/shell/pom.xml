@@ -25,9 +25,6 @@
   </parent>
 
   <artifactId>linkis-engineplugin-shell</artifactId>
-  <properties>
-    <shell.version>1</shell.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -99,13 +96,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-      <version>${json4s.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
       <scope>provided</scope>
@@ -113,6 +103,15 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+          <exclude>**/log4j2.xml</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>net.alchim31.maven</groupId>

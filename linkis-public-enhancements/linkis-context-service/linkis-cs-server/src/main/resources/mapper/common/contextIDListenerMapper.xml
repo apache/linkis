@@ -31,15 +31,20 @@
     </insert>
 
     <delete id="remove">
-        DELETE FROM linkis_ps_cs_context_listener where context_id = #{listener.contextId} AND listener_source = #{listener.source}
+        DELETE FROM linkis_ps_cs_context_listener
+        WHERE context_id = #{listener.contextId}
+        AND listener_source = #{listener.source}
     </delete>
 
     <delete id="removeAll">
-        DELETE FROM linkis_ps_cs_context_listener where context_id = #{contextID.contextId}
+        DELETE FROM linkis_ps_cs_context_listener
+        WHERE context_id = #{contextID.contextId}
     </delete>
 
     <select id="getAll" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextIDListener">
-        SELECT * FROM linkis_ps_cs_context_listener where context_id = #{contextID.contextId}
+        SELECT *
+        FROM linkis_ps_cs_context_listener
+        WHERE context_id = #{contextID.contextId}
     </select>
 
 

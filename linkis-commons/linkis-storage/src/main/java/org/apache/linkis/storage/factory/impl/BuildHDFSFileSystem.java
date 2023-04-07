@@ -63,6 +63,6 @@ public class BuildHDFSFileSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return "hdfs";
+    return StorageUtils.HDFS();
   }
 }

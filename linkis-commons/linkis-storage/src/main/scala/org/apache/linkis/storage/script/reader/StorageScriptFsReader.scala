@@ -50,13 +50,10 @@ class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStre
   @scala.throws[IOException]
   override def getMetaData: MetaData = {
     if (metadata == null) init()
-    val parser =
-      ParserFactory.listParsers().filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
+    val parser = getScriptParser()
     lineText = bufferedReader.readLine()
-    while (
-        hasNext && parser.length > 0 && isMetadata(lineText, parser(0).prefix, parser(0).prefixConf)
-    ) {
-      variables += parser(0).parse(lineText)
+    while (hasNext && parser != null && isMetadata(lineText, parser.prefix, parser.prefixConf)) {
+      variables += parser.parse(lineText)
       lineText = bufferedReader.readLine()
     }
     metadata = new ScriptMetaData(variables.toArray)
@@ -107,6 +104,22 @@ class StorageScriptFsReader(val path: FsPath, val charset: String, val inputStre
         if (split(0).split(" ").filter(_ != "").size != 4) return false
         if (!split(0).split(" ").filter(_ != "")(0).equals(prefixConf)) return false
         true
+    }
+  }
+
+  /**
+   * get the script parser according to the path(根据文件路径 获取对应的script parser )
+   * @return
+   *   Scripts Parser
+   */
+
+  def getScriptParser(): Parser = {
+    val parsers =
+      ParserFactory.listParsers().filter(p => p.belongTo(StorageUtils.pathToSuffix(path.getPath)))
+    if (parsers.length > 0) {
+      parsers(0)
+    } else {
+      null
     }
   }
 

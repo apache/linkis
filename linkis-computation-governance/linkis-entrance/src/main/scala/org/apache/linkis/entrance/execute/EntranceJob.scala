@@ -143,7 +143,7 @@ abstract class EntranceJob extends Job {
               _.onLogUpdate(this, LogUtils.generateWarn("Job Metrics has not been initialized."))
             )
           } else {
-            if (getJobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_SCHEDULE_TIME)) {
+            if (getJobRequest.getMetrics.containsKey(TaskConstant.JOB_SCHEDULE_TIME)) {
               getLogListener.foreach(
                 _.onLogUpdate(
                   this,
@@ -152,7 +152,7 @@ abstract class EntranceJob extends Job {
               )
             } else {
               getJobRequest.getMetrics.put(
-                TaskConstant.ENTRANCEJOB_SCHEDULE_TIME,
+                TaskConstant.JOB_SCHEDULE_TIME,
                 new Date(System.currentTimeMillis)
               )
             }
@@ -177,9 +177,13 @@ abstract class EntranceJob extends Job {
               LogUtils.generateInfo("Your job is Running now. Please wait it to complete.")
             )
           )
+          getJobRequest.getMetrics.put(
+            TaskConstant.JOB_RUNNING_TIME,
+            new Date(System.currentTimeMillis)
+          )
         case _ if SchedulerEventState.isCompleted(toState) =>
           getJobRequest.getMetrics.put(
-            TaskConstant.ENTRANCEJOB_COMPLETE_TIME,
+            TaskConstant.JOB_COMPLETE_TIME,
             new Date(System.currentTimeMillis())
           )
           if (getJobInfo != null) {

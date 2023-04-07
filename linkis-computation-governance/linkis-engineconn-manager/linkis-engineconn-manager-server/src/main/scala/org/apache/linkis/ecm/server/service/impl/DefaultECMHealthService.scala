@@ -26,6 +26,7 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.report.DefaultECMHealthReport
 import org.apache.linkis.ecm.server.service.{ECMHealthService, EngineConnListService}
+import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.metrics.{NodeHealthyInfo, NodeOverLoadInfo}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadInstanceResource}
@@ -44,14 +45,9 @@ import java.util.concurrent.TimeUnit
 
 class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
 
-  private val maxResource = new LoadInstanceResource(
-    ECM_MAX_MEMORY_AVAILABLE,
-    ECM_MAX_CORES_AVAILABLE,
-    ECM_MAX_CREATE_INSTANCES
-  )
+  private val maxResource = ECMUtils.initMaxResource
 
-  private val minResource =
-    new LoadInstanceResource(ECM_PROTECTED_MEMORY, ECM_PROTECTED_CORES, ECM_PROTECTED_INSTANCES)
+  private val minResource = ECMUtils.initMinResource
 
   private var status: NodeStatus = NodeStatus.Starting
 
@@ -61,7 +57,7 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
 
   private var lastCpuLoad: Double = 0d
 
-  private var lastFreeMemory: Long = ECM_MAX_MEMORY_AVAILABLE
+  private var lastFreeMemory: Long = ECMUtils.inferDefaultMemory()
 
   private val statusLocker = new Object()
 

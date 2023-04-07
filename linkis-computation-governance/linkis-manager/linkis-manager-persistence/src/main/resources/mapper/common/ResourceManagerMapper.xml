@@ -44,58 +44,113 @@
     </insert>
 
     <update id="nodeResourceUpdate">
-        update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource},
-        used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource},
-        locked_resource=#{persistenceResource.lockedResource},
-        update_time=#{persistenceResource.updateTime} where ticketId = #{ticketId}
+        UPDATE linkis_cg_manager_linkis_resources
+        SET max_resource = #{persistenceResource.maxResource}, min_resource = #{persistenceResource.minResource}, used_resource = #{persistenceResource.usedResource}, left_resource = #{persistenceResource.leftResource}, expected_resource = #{persistenceResource.expectedResource}, locked_resource = #{persistenceResource.lockedResource}, update_time = #{persistenceResource.updateTime}
+        WHERE ticketId = #{ticketId}
     </update>
 
     <update id="nodeResourceUpdateByResourceId">
-        update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource},
-        used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource},
-        locked_resource=#{persistenceResource.lockedResource},
-        update_time=#{persistenceResource.updateTime} where id = #{resourceId}
+        UPDATE linkis_cg_manager_linkis_resources
+        SET max_resource = #{persistenceResource.maxResource}, min_resource = #{persistenceResource.minResource}, used_resource = #{persistenceResource.usedResource}, left_resource = #{persistenceResource.leftResource}, expected_resource = #{persistenceResource.expectedResource}, locked_resource = #{persistenceResource.lockedResource}, update_time = #{persistenceResource.updateTime}
+        WHERE id = #{resourceId}
     </update>
 
     <select id="getNodeResourceUpdateResourceId" resultType="java.lang.Integer">
-        select id from linkis_cg_manager_linkis_resources where ticketId is null and id in
-        ( select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance=#{instance})
+        SELECT id
+        FROM linkis_cg_manager_linkis_resources
+        WHERE ticketId IS NULL
+        AND id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_service_instance B
+        ON A.label_id = B.label_id
+        AND B.service_instance = #{instance}
+        )
     </select>
 
     <delete id="deleteResourceAndLabelId">
-        delete from linkis_cg_manager_label_resource where label_id in
-        (select label_id from linkis_cg_manager_label_service_instance where service_instance=#{instance})
+        DELETE FROM linkis_cg_manager_label_resource
+        WHERE label_id IN (
+        SELECT label_id
+        FROM linkis_cg_manager_label_service_instance
+        WHERE service_instance = #{instance}
+        )
     </delete>
 
     <delete id="deleteResourceByInstance">
-        delete from linkis_cg_manager_linkis_resources where id in
-        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance = #{instance} )
+        DELETE FROM linkis_cg_manager_linkis_resources
+        WHERE id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_service_instance B
+        ON A.label_id = B.label_id
+        AND B.service_instance = #{instance}
+        )
     </delete>
     <delete id="deleteResourceByTicketId">
-        select * from linkis_cg_manager_linkis_resources where resourceType = #{resourceType} and
-        id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance=#{instance})
+        SELECT *
+        FROM linkis_cg_manager_linkis_resources
+        WHERE resourceType = #{resourceType}
+        AND id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_service_instance B
+        ON A.label_id = B.label_id
+        AND B.service_instance = #{instance}
+        )
     </delete>
 
     <select id="getResourceByServiceInstance" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
-        select * from linkis_cg_manager_linkis_resources where id in
-        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance= #{instance})
+        SELECT *
+        FROM linkis_cg_manager_linkis_resources
+        WHERE id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_service_instance B
+        ON A.label_id = B.label_id
+        AND B.service_instance = #{instance}
+        )
     </select>
     <select id="getResourceByInstanceAndResourceType" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
-        select * from linkis_cg_manager_linkis_resources where resourceType = #{resourceType} and
-        id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance=#{instance})
+        SELECT *
+        FROM linkis_cg_manager_linkis_resources
+        WHERE resourceType = #{resourceType}
+        AND id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_service_instance B
+        ON A.label_id = B.label_id
+        AND B.service_instance = #{instance}
+        )
     </select>
 
     <select id="getNodeResourceByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
-        select * from linkis_cg_manager_linkis_resources where ticketId = #{ticketId}
+        SELECT *
+        FROM linkis_cg_manager_linkis_resources
+        WHERE ticketId = #{ticketId}
     </select>
 
     <select id="getResourceByUserName" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
-        select * from linkis_cg_manager_linkis_resources where id in
-        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_user B on A.label_id=B.label_id AND B.username=#{userName})
+        SELECT *
+        FROM linkis_cg_manager_linkis_resources
+        WHERE id IN (
+        SELECT resource_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_label_user B
+        ON A.label_id = B.label_id
+        AND B.username = #{userName}
+        )
     </select>
 
     <select id="getLabelsByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLabel">
-        select * from linkis_cg_manager_label where id in
-        (select label_id from linkis_cg_manager_label_resource A join linkis_cg_manager_linkis_resources B on A.resource_id=B.id and B.ticketId=#{ticketId})
+        SELECT *
+        FROM linkis_cg_manager_label
+        WHERE id IN (
+        SELECT label_id
+        FROM linkis_cg_manager_label_resource A
+        JOIN linkis_cg_manager_linkis_resources B
+        ON A.resource_id = B.id
+        AND B.ticketId = #{ticketId}
+        )
     </select>
 </mapper>

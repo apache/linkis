@@ -28,6 +28,7 @@ import org.apache.linkis.manager.label.builder.factory.{
   LabelBuilderFactory,
   LabelBuilderFactoryContext
 }
+import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCreatorLabel}
@@ -123,10 +124,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     jobRequest.setStatus(SchedulerEventState.Inited.toString)
     // Entry indicator: task submission time
     jobRequest.setMetrics(new util.HashMap[String, AnyRef]())
-    jobRequest.getMetrics.put(
-      TaskConstant.ENTRANCEJOB_SUBMIT_TIME,
-      new Date(System.currentTimeMillis)
-    )
+    jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobRequest.setParams(configMap)
     jobRequest
   }
@@ -134,7 +132,8 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
   private def checkEngineTypeLabel(labels: util.Map[String, Label[_]]): Unit = {
     val engineTypeLabel = labels.getOrDefault(LabelKeyConstant.ENGINE_TYPE_KEY, null)
     if (null == engineTypeLabel) {
-      val msg = s"You need to specify engineTypeLabel in labels, such as spark-2.4.3"
+      val msg = s"You need to specify engineTypeLabel in labels," +
+        s"such as spark-${LabelCommonConfig.SPARK_ENGINE_VERSION.getValue}"
       throw new EntranceIllegalParamException(
         EntranceErrorCode.LABEL_PARAMS_INVALID.getErrCode,
         EntranceErrorCode.LABEL_PARAMS_INVALID.getDesc + msg
@@ -272,7 +271,7 @@ class CommonEntranceParser(val persistenceManager: PersistenceManager)
     // Package labels
     jobReq.setLabels(labelList)
     jobReq.setMetrics(new util.HashMap[String, AnyRef]())
-    jobReq.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
+    jobReq.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, new Date(System.currentTimeMillis))
     jobReq
   }
 

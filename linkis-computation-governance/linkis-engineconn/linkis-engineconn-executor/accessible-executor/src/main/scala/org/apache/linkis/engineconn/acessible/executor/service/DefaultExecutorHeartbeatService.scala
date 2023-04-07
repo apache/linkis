@@ -133,7 +133,7 @@ class DefaultExecutorHeartbeatService
       case _ =>
     }
     if (null != nodeHeartbeatMsgManager) {
-      nodeHeartbeatMsg.setHeartBeatMsg(nodeHeartbeatMsgManager.getHeartBeatMsg())
+      nodeHeartbeatMsg.setHeartBeatMsg(nodeHeartbeatMsgManager.getHeartBeatMsg(realExecutor))
     }
     nodeHeartbeatMsg
   }

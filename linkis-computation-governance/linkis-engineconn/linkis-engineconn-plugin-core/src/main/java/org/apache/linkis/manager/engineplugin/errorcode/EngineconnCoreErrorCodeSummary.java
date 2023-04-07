@@ -21,18 +21,23 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   FAILED_CREATE_ELR(10001, "Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)"),
+  EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION(
+      10001,
+      "The engine plugin material is abnormal, please check whether the material is uploaded successfully(引擎插件物料异常，请检查物料是否上传成功)"),
   ETL_REQUESTED(10001, "EngineTypeLabel are requested(需要参数 EngineTypeLabel)"),
   CANNOT_INSTANCE_ECE(20000, "Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)"),
 
   CANNOT_DEFAULT_EF(20000, "Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)"),
   ETL_NOT_EXISTS(20000, "EngineTypeLabel does not exist(EngineTypeLabel 不存在)"),
   UCL_NOT_EXISTS(20000, "UserCreatorLabel does not exist(UserCreatorLabel 不存在)"),
-  CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
+  CANNOT_HOME_PATH_EC(
+      20001, "Cannot find the home path of engineConn at: {0}(找不到 engineConn 的 home 路径，该路径为：{0})"),
   CANNOT_HOME_PATH_DIST(
-      20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
+      20001,
+      "Could not find the home path for engineconn dist at: {0}(找不到 engineconn dist 的 home 路径，该路径为：{0})"),
   DIST_IS_EMPTY(
       20001,
-      "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{})"),
+      "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{0})"),
   ENGINE_VERSION_NOT_FOUND(
       20001,
       "Cannot find the path of engineConn with specified version: {0} and engineConnType: {1}(找不到版本为：{0} engineConnType 为:{1}的engineConn路径"),
@@ -45,7 +50,9 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   LIB_CONF_DIR_NECESSARY(
       20001,
       "The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)"),
-
+  CONTAINS_SPECIAL_CHARCATERS(
+      20002,
+      "Version name in engineConnType:{0} cannot contain special character '-'(Version name in engineConnType: {0} cannot contain special character '-')"),
   NOT_SUPPORTED_EF(20011, "Not supported ExecutorFactory(不支持 ExecutorFactory)"),
   DERTL_CANNOT_NULL(
       70101, "DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)"),

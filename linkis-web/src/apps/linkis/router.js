@@ -308,6 +308,17 @@ export default [
         publicPage: true,
       },
     },
+    {
+      name: 'viewHistoryDetail',
+      path: 'viewHistoryDetail',
+      component: () =>
+        import('./module/globalHistoryManagement/viewHistory.vue'),
+      meta: {
+        title: 'viewHistoryDetail',
+        publicPage: true,
+        noLayout: true
+      },
+    },
     ],
   },
 ]

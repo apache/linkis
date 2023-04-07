@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.launch
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConstant
 import org.apache.linkis.engineconn.common.creation.{
   DefaultEngineCreationContext,
   EngineCreationContext
@@ -35,6 +36,7 @@ import org.apache.linkis.engineconn.core.execution.{
 import org.apache.linkis.engineconn.core.hook.ShutdownHook
 import org.apache.linkis.engineconn.core.util.EngineConnUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.exception.engineconn.{
   EngineConnExecutorErrorCode,
   EngineConnExecutorErrorException
@@ -119,7 +121,7 @@ object EngineConnServer extends Logging {
     val arguments = EngineConnArgumentsParser.getEngineConnArgumentsParser.parseToObj(args)
     val engineConf = arguments.getEngineConnConfMap
     this.engineCreationContext.setUser(engineConf.getOrElse("user", Utils.getJvmUser))
-    this.engineCreationContext.setTicketId(engineConf.getOrElse("ticketId", ""))
+    this.engineCreationContext.setTicketId(engineConf.getOrElse(ECConstants.EC_TICKET_ID_KEY, ""))
     val host = CommonVars(Environment.ECM_HOST.toString, "127.0.0.1").getValue
     val port = CommonVars(Environment.ECM_PORT.toString, "80").getValue
     this.engineCreationContext.setEMInstance(

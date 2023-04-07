@@ -53,6 +53,8 @@ class ExecutionImpl(
       onStatusUpdate(executionTaskStatusEvent)
     case executionTaskCompletedEvent: ExecutionTaskCompletedEvent =>
       onExecutionTaskCompletedEvent(executionTaskCompletedEvent)
+    case killRootExecTaskEvent: KillRootExecTaskEvent =>
+      onKillRootExecTaskEvent(killRootExecTaskEvent)
     case _ =>
   }
 
@@ -74,12 +76,6 @@ class ExecutionImpl(
       .foreach { executionTask =>
         executionTask.markCompleted(executionTaskCompletedEvent.taskResponse)
       }
-  }
-
-  override def onEvent(event: OrchestratorAsyncEvent): Unit = event match {
-    case killRootExecTaskEvent: KillRootExecTaskEvent =>
-      onKillRootExecTaskEvent(killRootExecTaskEvent)
-    case _ =>
   }
 
   override def onKillRootExecTaskEvent(killRootExecTaskEvent: KillRootExecTaskEvent): Unit = {

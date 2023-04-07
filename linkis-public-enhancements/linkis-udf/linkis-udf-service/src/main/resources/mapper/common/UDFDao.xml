@@ -86,19 +86,19 @@
 
     <delete id="deleteUDF">
         DELETE FROM linkis_ps_udf_baseinfo
-        where id = #{arg0} and create_user = #{arg1}
+        WHERE id = #{arg0} and create_user = #{arg1}
     </delete>
 
     <select id="getUDFById" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where id = #{arg0}
+        FROM linkis_ps_udf_baseinfo
+        WHERE id = #{arg0}
     </select>
 
     <delete id="deleteLoadInfo">
         DELETE FROM linkis_ps_udf_user_load
-        where udf_id = #{arg0} and user_name = #{arg1}
+        where udf_id = #{arg0} AND user_name = #{arg1}
     </delete>
 
     <insert id="addLoadInfo">
@@ -106,131 +106,158 @@
     </insert>
 
     <select id="getUDFSByUserName" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where create_user = #{arg0}
+        FROM linkis_ps_udf_baseinfo
+        WHERE create_user = #{arg0}
     </select>
 
     <select id="getUDFSByUsers" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where create_user in
+        FROM linkis_ps_udf_baseinfo
+        WHERE create_user in
         <foreach collection="arg0" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
     </select>
 
     <select id="getSharedUDFByUser" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where id in
-        (select udf_id from linkis_ps_udf_shared_info where user_name=#{userName})
+        FROM linkis_ps_udf_baseinfo
+        WHERE id IN
+        (SELECT udf_id FROM linkis_ps_udf_shared_info WHERE user_name=#{userName})
     </select>
 
     <select id="getUDFSByTreeIdAndUser" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
-        select t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
-        from
-        (select
-        pu.*,1 as is_load from linkis_ps_udf_baseinfo pu
-        where tree_id = #{arg0} and create_user = #{arg1} and udf_type in
+        SELECT t1.*, puv.path, puv.register_format, puv.use_format, puv.bml_resource_id
+        , puv.bml_resource_version, puv.description
+        FROM
+        (SELECT pu.*, 1 AS is_load
+        FROM linkis_ps_udf_baseinfo pu
+        WHERE tree_id = #{arg0}
+        AND create_user = #{arg1} AND udf_type IN
         <foreach collection="arg2" open="(" separator="," close=")" item="item">
             #{item}
         </foreach> ) t1
-        join
-        (select udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
-        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
-        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)) puv on t1.id=puv.udf_id
+        JOIN
+        (SELECT udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
+        FROM linkis_ps_udf_version as puv1 WHERE bml_resource_version = (SELECT max(puv2.bml_resource_version)
+        FROM linkis_ps_udf_version as puv2 WHERE puv1.udf_id =puv2.udf_id)) puv on t1.id=puv.udf_id
     </select>
 
     <select id="getUDFInfoByTreeId" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
-        select a.*,if(b.udf_id IS NULL,0,1) as is_load
-        from
-        (select t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
-        from
-        (select * from linkis_ps_udf_baseinfo where tree_id = #{arg0} and udf_type in
+        SELECT a.*,if(b.udf_id IS NULL,0,1) as is_load
+        FROM
+        (SELECT t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
+        FROM
+        (SELECT * from linkis_ps_udf_baseinfo WHERE tree_id = #{arg0} and udf_type in
         <foreach collection="arg2" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>) t1
         join
-        (select udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
-        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
-        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)) puv on t1.id=puv.udf_id
+        (SELECT udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
+        FROM linkis_ps_udf_version as puv1 WHERE bml_resource_version = (SELECT max(puv2.bml_resource_version)
+        FROM linkis_ps_udf_version as puv2 WHERE puv1.udf_id =puv2.udf_id)) puv ON t1.id=puv.udf_id
         ) a
-        left join
-        (select udf_id from linkis_ps_udf_user_load where user_name = #{arg1}) b
-        on a.id=b.udf_id
+        LEFT JOIN
+        (SELECT udf_id FROM linkis_ps_udf_user_load WHERE user_name = #{arg1}) b
+        ON a.id=b.udf_id
     </select>
 
     <select id="getUDFInfoByIds" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
-        select pub.*, puv.path, puv.register_format, puv.use_format, puv.bml_resource_id, puv.bml_resource_version, puv.description
-        from
-            linkis_ps_udf_baseinfo pub
-            join (
-                select udf_id, max(bml_resource_version) as max_version
-                from linkis_ps_udf_version
-                where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
-                group by udf_id
-            ) puvg on pub.id=puvg.udf_id
-            join linkis_ps_udf_version puv on puvg.udf_id=puv.udf_id and puvg.max_version=puv.bml_resource_version
-        where udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+        select pub.*,
+               puv.path,
+               puv.register_format,
+               puv.use_format,
+               puv.bml_resource_id,
+               puv.bml_resource_version,
+               puv.description
+        from (select *
+              from linkis_ps_udf_baseinfo
+              where id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                 and udf_type in <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">#{item}</foreach>
+             ) pub
+                 join (select udf_id, max(bml_resource_version) as max_version
+                       from linkis_ps_udf_version
+                       where udf_id in <foreach collection="ids" open="(" separator="," close=")" item="item">#{item}</foreach>
+                       group by udf_id) puvg on pub.id = puvg.udf_id
+                 join linkis_ps_udf_version puv on puvg.udf_id = puv.udf_id and puvg.max_version = puv.bml_resource_version
+                 left join (select udf_id from linkis_ps_udf_shared_info where user_name = #{username}) pusi on pub.id = pusi.udf_id
+        where pub.create_user = #{username} or pusi.udf_id is not null
     </select>
 
     <select id="getLoadedUDFs" resultMap="UDFInfoMap">
-        select b.*,if(a.udf_id IS NULL,0,1) as is_load
-        from
-        (select udf_id from linkis_ps_udf_user_load where user_name = #{arg0}) a
-        join
-        linkis_ps_udf_baseinfo b
-        on a.udf_id=b.id;
+        SELECT b.*
+        , if(a.udf_id IS NULL, 0, 1) AS is_load
+        FROM (
+        SELECT udf_id
+        FROM linkis_ps_udf_user_load
+        WHERE user_name = #{arg0}
+        ) a
+        JOIN linkis_ps_udf_baseinfo b ON a.udf_id = b.id;
     </select>
 
     <select id="getLoadedUDFIds" resultType="java.lang.Long">
-        select udf_id from linkis_ps_udf_user_load where user_name = #{arg0}
+        SELECT udf_id
+        FROM linkis_ps_udf_user_load
+        WHERE user_name = #{arg0}
     </select>
 
     <select id="getSameSysCount" resultType="java.lang.Long">
-        select count(1) from linkis_ps_udf_baseinfo where  udf_name=#{arg0}
-        and tree_id in (select id from linkis_ps_udf_tree where user_name = 'sys')
+        SELECT count(1)
+        FROM linkis_ps_udf_baseinfo
+        WHERE udf_name = #{arg0}
+        AND tree_id IN (
+        SELECT id
+        FROM linkis_ps_udf_tree
+        WHERE user_name = 'sys'
+        )
     </select>
 
     <select id="getSameLoadCount" resultType="java.lang.Long">
-        select count(1)
-        from
-        (select udf_id from linkis_ps_udf_user_load where user_name = #{arg0}) a
-        join
-        linkis_ps_udf_baseinfo b
-        on a.udf_id=b.id
-        where b.udf_name=#{arg1}
+        SELECT count(1)
+        FROM (
+        SELECT udf_id
+        FROM linkis_ps_udf_user_load
+        WHERE user_name = #{arg0}
+        ) a
+        JOIN linkis_ps_udf_baseinfo b ON a.udf_id = b.id
+        WHERE b.udf_name = #{arg1}
     </select>
 
     <select id="getSameJarUDF" resultMap="UDFInfoMap">
-        select b.*,if(a.udf_id IS NULL,0,1) as is_load
-        from
-        (select udf_id from linkis_ps_udf_user_load where user_name = #{arg0}) a
-        join
-        linkis_ps_udf_baseinfo b
-        on a.udf_id=b.id
-        where udf_type=0
-        and b.path like CONCAT('%',#{arg1})
+        SELECT b.*
+        , if(a.udf_id IS NULL, 0, 1) AS is_load
+        FROM (
+        SELECT udf_id
+        FROM linkis_ps_udf_user_load
+        WHERE user_name = #{arg0}
+        ) a
+        JOIN linkis_ps_udf_baseinfo b ON a.udf_id = b.id
+        WHERE udf_type = 0
+        AND b.path LIKE CONCAT('%', #{arg1})
     </select>
 
     <select id="getSameNameCountByUser" resultType="java.lang.Long">
-        select
-        count(1)
-        from linkis_ps_udf_baseinfo
-        where udf_name=#{arg0}
-        and create_user in (#{arg1},'sys','bdp')
+        SELECT count(1)
+        FROM linkis_ps_udf_baseinfo
+        WHERE udf_name = #{arg0}
+        AND create_user IN (#{arg1}, 'sys', 'bdp')
     </select>
 
     <select id="selectSharedUDFInfosByTreeIdAndUserName" resultMap="UDFInfoMap">
-        SELECT bu.*,if(buuli.udf_id IS NULL,0,1) as is_load
+        SELECT bu.*
+        , if(buuli.udf_id IS NULL, 0, 1) AS is_load
         FROM linkis_ps_udf_shared_info busu
-        JOIN linkis_ps_udf_baseinfo bu on bu.id = busu.udf_id
-        LEFT JOIN linkis_ps_udf_user_load buuli on buuli.udf_id =bu.id and buuli.user_name=#{userName}
-        where busu.user_name =#{userName} and tree_id=#{TreeId} and bu.udf_type in
+        JOIN linkis_ps_udf_baseinfo bu ON bu.id = busu.udf_id
+        LEFT JOIN linkis_ps_udf_user_load buuli
+        ON buuli.udf_id = bu.id
+        AND buuli.user_name = #{userName}
+        WHERE busu.user_name = #{userName}
+        AND tree_id = #{TreeId}
+        AND bu.udf_type IN
         <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
@@ -238,152 +265,170 @@
 
     <select id="selectUDFManager" resultMap="UDFManagerMap">
         SELECT user_name
-        from linkis_ps_udf_manager
-        where user_name=#{userName}
+        FROM linkis_ps_udf_manager
+        WHERE user_name = #{userName}
     </select>
 
-    <select id="selectAllUser" resultType="String">
-        SELECT DISTINCT create_user from linkis_ps_udf_baseinfo
+    <select id="selectAllUser" resultType="java.lang.String">
+        SELECT DISTINCT create_user
+        FROM linkis_ps_udf_baseinfo
     </select>
 
-    <select id="getShareSameNameCountByUser" resultType="Long">
+    <select id="getShareSameNameCountByUser" resultType="java.lang.Long">
         SELECT COUNT(1)
-        FROM linkis_ps_udf_shared_info busu JOIN linkis_ps_udf_baseinfo bu
-        on busu.udf_id = bu.id where bu.udf_name=#{udfName}
-        and busu.user_name=#{userName}
+        FROM linkis_ps_udf_shared_info busu
+        JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
+        WHERE bu.udf_name = #{udfName}
+        AND busu.user_name = #{userName}
     </select>
 
-    <select id="getShareSameNameCountExcludeUser" resultType="Long">
+    <select id="getShareSameNameCountExcludeUser" resultType="java.lang.Long">
         SELECT COUNT(1)
-        FROM linkis_ps_udf_shared_info busu JOIN linkis_ps_udf_baseinfo bu
-        on busu.udf_id = bu.id where bu.udf_name=#{udfName} and bu.create_user!=#{excludeUser}
-        and busu.user_name=#{userName}
+        FROM linkis_ps_udf_shared_info busu
+        JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
+        WHERE bu.udf_name = #{udfName}
+        AND bu.create_user != #{excludeUser}
+        AND busu.user_name = #{userName}
     </select>
 
     <insert id="insertUDFSharedUser">
-        INSERT into linkis_ps_udf_shared_info(udf_id,user_name)
-        VALUES (#{udfId},#{shareUserName})
+        INSERT INTO linkis_ps_udf_shared_info (udf_id, user_name)
+        VALUES (#{udfId}, #{shareUserName})
     </insert>
 
     <update id="updateUDFIsShared">
         UPDATE linkis_ps_udf_baseinfo
         SET is_shared=#{isShared}
-        where id=#{id}
+        WHERE id=#{id}
     </update>
 
-    <select id="selectAllShareUDFInfoIdByUDFId" resultType="Long">
+    <select id="selectAllShareUDFInfoIdByUDFId" resultType="java.lang.Long">
         SELECT id
         FROM linkis_ps_udf_baseinfo
-        where create_user =#{userName} and udf_name=#{udfName}
-        and id in (select udf_id from linkis_ps_udf_shared_info where user_name = #{userName})
+        WHERE create_user =#{userName} AND udf_name=#{udfName}
+        AND id IN (select udf_id from linkis_ps_udf_shared_info where user_name = #{userName})
     </select>
 
     <update id="updateSharedUDFExpire">
-        UPDATE linkis_ps_udf_baseinfo set is_expire = true where id=#{udfId}
+        UPDATE linkis_ps_udf_baseinfo
+        SET is_expire = true
+        WHERE id = #{udfId}
     </update>
 
-    <select id="selectAllShareUsersByUDFId" resultType="String">
+    <select id="selectAllShareUsersByUDFId" resultType="java.lang.String">
         SELECT busu.user_name
         FROM linkis_ps_udf_shared_info busu
-        JOIN linkis_ps_udf_baseinfo bu
-        on busu.udf_id = bu.id
-        where bu.id=#{udfId}
+        JOIN linkis_ps_udf_baseinfo bu ON busu.udf_id = bu.id
+        WHERE bu.id = #{udfId}
     </select>
 
-    <select id="selectIdByUserName" resultType="Long">
+    <select id="selectIdByUserName" resultType="java.lang.Long">
         SELECT id
         FROM linkis_user
-        where username =#{userName}
+        WHERE username =#{userName}
     </select>
 
     <insert id="insertSharedUser">
-        insert into linkis_ps_udf_shared_info(udf_id,user_name)
+        INSERT INTO linkis_ps_udf_shared_info(udf_id,user_name)
         VALUES (#{udfId},#{addSharedUser})
     </insert>
 
     <delete id="deleteAllSharedUser">
-        DELETE from linkis_ps_udf_shared_info where udf_id =#{udfId}
+        DELETE FROM linkis_ps_udf_shared_info
+        WHERE udf_id = #{udfId}
     </delete>
 
     <delete id="deleteSharedUser">
-        DELETE from linkis_ps_udf_shared_info where udf_id =#{udfId} and user_name=#{removeSharedUser}
+        DELETE FROM linkis_ps_udf_shared_info
+        WHERE udf_id = #{udfId}
+        AND user_name = #{removeSharedUser}
     </delete>
 
     <select id="getSharedUserCountByUdfId" resultType="java.lang.Long">
-        select count(1) from linkis_ps_udf_shared_info where udf_id=#{udfId}
+        SELECT count(1)
+        FROM linkis_ps_udf_shared_info
+        WHERE udf_id = #{udfId}
     </select>
 
     <select id="getUserLoadCountByUdfId" resultType="java.lang.Long">
-        select count(1) from linkis_ps_udf_user_load where udf_id=#{udfId} and user_name!=#{owner}
+        SELECT count(1)
+        FROM linkis_ps_udf_user_load
+        WHERE udf_id = #{udfId}
+        AND user_name != #{owner}
     </select>
 
     <update id="updateLoadUser">
-        update linkis_ps_udf_user_load set user_name=#{newUser} where udf_id=#{udfId} and user_name=#{oldUser}
+        UPDATE linkis_ps_udf_user_load
+        SET user_name = #{newUser}
+        WHERE udf_id = #{udfId}
+        AND user_name = #{oldUser}
     </update>
 
     <select id="getUdfInfoByPages" resultType="org.apache.linkis.udf.vo.UDFAddVo">
-        select a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
-        select pu.*,put.name as directory
-        from linkis_ps_udf_baseinfo pu
-        join linkis_ps_udf_tree put
-        on pu.tree_id=put.id
+        SELECT a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version FROM(
+        SELECT pu.*,put.name as directory
+        FROM linkis_ps_udf_baseinfo pu
+        JOIN linkis_ps_udf_tree put
+        ON pu.tree_id=put.id
         <where>
             <if test="1 == 1">1 = 1</if>
-            <if test="createUser != null">and pu.create_user = #{createUser}</if>
-            <if test="udfName != null">and pu.udf_name like CONCAT('%',#{udfName},'%')</if>
-            <if test="udfTypes != null">and pu.udf_type in
+            <if test="createUser != null">AND pu.create_user = #{createUser}</if>
+            <if test="udfName != null">AND pu.udf_name like CONCAT('%',#{udfName},'%')</if>
+            <if test="udfTypes != null">AND pu.udf_type in
                 <foreach collection="udfTypes" open="(" close=")" item="item" separator=",">
                     #{item}
                 </foreach>
             </if>
         </where>
-        ) a join
-        (select udf_id,description,path,register_format,use_format,bml_resource_version
-        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
-        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)) b
-        on a.id=b.udf_id order by id desc
+        ) a JOIN
+        (SELECT udf_id,description,path,register_format,use_format,bml_resource_version
+        FROM linkis_ps_udf_version as puv1 WHERE bml_resource_version = (SELECT max(puv2.bml_resource_version)
+        FROM linkis_ps_udf_version as puv2 WHERE puv1.udf_id =puv2.udf_id)) b
+        ON a.id=b.udf_id order by id desc
     </select>
 
     <select id="getLatesetPublishedUDF" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
-        select a.*, if(b.udf_id is NULL,0,1) as is_load from
-        (select t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
-        from
-        (select pu.* from linkis_ps_udf_baseinfo pu where pu.id in (select udf_id from linkis_ps_udf_shared_info where user_name=#{userName})
-        and pu.udf_type in
+        SELECT a.*, if(b.udf_id is NULL,0,1) as is_load from
+        (SELECT t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
+        FROM
+        (SELECT pu.* FROM linkis_ps_udf_baseinfo pu where pu.id in (select udf_id FROM linkis_ps_udf_shared_info where user_name=#{userName})
+        AND pu.udf_type in
         <foreach collection="categoryCodes" open="(" separator="," close=")" item="item">
             #{item}
         </foreach> ) t1 join
-        (select udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
-        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
-        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id and puv2.is_published=1)) puv on t1.id=puv.udf_id
+        (SELECT udf_id,description,path,register_format,use_format,bml_resource_id,bml_resource_version
+        FROM linkis_ps_udf_version as puv1 WHERE bml_resource_version = (SELECT max(puv2.bml_resource_version)
+        FROM linkis_ps_udf_version as puv2 WHERE puv1.udf_id =puv2.udf_id AND puv2.is_published=1)) puv ON t1.id=puv.udf_id
         ) a
-        left join
-        (select udf_id from linkis_ps_udf_user_load where user_name = #{userName}) b
-        on a.id=b.udf_id
+        LEFT JOIN
+        (SELECT udf_id from linkis_ps_udf_user_load WHERE user_name = #{userName}) b
+        ON a.id=b.udf_id
     </select>
 
     <select id="getSharedUDFIdsByUser" resultType="java.lang.Long">
-        select udf_id from linkis_ps_udf_shared_info where user_name=#{userName}
+        SELECT udf_id
+        FROM linkis_ps_udf_shared_info
+        WHERE user_name = #{userName}
     </select>
 
     <select id="getUdfInfoByNameList" resultType="org.apache.linkis.udf.vo.UDFAddVo">
-        select a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
-        select pu.*,put.name as directory
-        from linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
+        SELECT a.*,b.description,b.path,b.register_format,b.use_format,b.bml_resource_version from(
+        SELECT pu.*,put.name as directory
+        FROM linkis_ps_udf_baseinfo pu join linkis_ps_udf_tree put  on pu.tree_id=put.id
         <where>
             <if test="1 == 1">1 = 1</if>
-            <if test="createUser != null">and pu.create_user = #{createUser}</if>
-            <if test="udfNameList != null">and pu.udf_name in
+            <if test="createUser != null">AND pu.create_user = #{createUser}</if>
+            <if test="udfNameList != null">AND pu.udf_name in
                 <foreach collection="udfNameList" open="(" close=")" item="item" separator=",">
                     #{item}
                 </foreach>
             </if>
         </where>
-        ) a join
-        (select udf_id,description,path,register_format,use_format,bml_resource_version
-        from linkis_ps_udf_version as puv1 where bml_resource_version = (select max(puv2.bml_resource_version)
-        from linkis_ps_udf_version as puv2 where puv1.udf_id =puv2.udf_id)
+        ) a JOIN
+        (SELECT udf_id,description,path,register_format,use_format,bml_resource_version
+        FROM linkis_ps_udf_version as puv1 WHERE bml_resource_version = (SELECT max(puv2.bml_resource_version)
+        FROM linkis_ps_udf_version as puv2 WHERE puv1.udf_id =puv2.udf_id)
         ) b on a.id=b.udf_id
-        order by id desc
+        ORDER BY id desc
     </select>
 </mapper>

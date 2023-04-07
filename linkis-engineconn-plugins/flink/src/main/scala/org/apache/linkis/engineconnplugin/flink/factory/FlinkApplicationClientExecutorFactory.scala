@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.apache.linkis.engineconnplugin.flink.factory
 
-class FlinkApplicationClientExecutorFactory {
-
-}
+class FlinkApplicationClientExecutorFactory {}

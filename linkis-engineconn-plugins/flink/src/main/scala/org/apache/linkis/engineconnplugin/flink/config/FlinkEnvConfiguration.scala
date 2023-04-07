@@ -99,6 +99,9 @@ object FlinkEnvConfiguration {
   val FLINK_ONCE_APP_STATUS_FETCH_INTERVAL =
     CommonVars("flink.app.fetch.status.interval", new TimeType("5s"))
 
+  val FLINK_ONCE_JAR_APP_REPORT_APPLICATIONID_INTERVAL =
+    CommonVars("flink.app.report.appid.interval", new TimeType("60s"))
+
   val FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX = CommonVars("flink.app.fetch.status.failed.num", 3)
 
   val FLINK_REPORTER_ENABLE = CommonVars("linkis.flink.reporter.enable", false)

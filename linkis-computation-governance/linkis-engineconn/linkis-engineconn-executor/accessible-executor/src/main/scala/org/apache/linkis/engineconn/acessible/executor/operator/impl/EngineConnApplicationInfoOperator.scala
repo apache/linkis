@@ -30,7 +30,6 @@ class EngineConnApplicationInfoOperator extends Operator {
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
     ExecutorManager.getInstance.getReportExecutor match {
       case yarnExecutor: YarnExecutor =>
-        OperateService.setApplicationIdFetched(true)
         Map(
           "applicationId" -> yarnExecutor.getApplicationId,
           "applicationUrl" -> yarnExecutor.getApplicationURL,

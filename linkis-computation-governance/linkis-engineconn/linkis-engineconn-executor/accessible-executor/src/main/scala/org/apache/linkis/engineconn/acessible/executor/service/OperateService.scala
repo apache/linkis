@@ -27,13 +27,3 @@ trait OperateService {
   def executeOperation(engineOperateRequest: EngineOperateRequest): EngineOperateResponse
 
 }
-
-object OperateService {
-
-  private var applicationIdFetched: Boolean = false
-
-  def setApplicationIdFetched(fetched: Boolean): Unit = applicationIdFetched = fetched
-
-  def isApplicationIdFetched(): Boolean = applicationIdFetched
-
-}

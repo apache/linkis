@@ -353,7 +353,7 @@ abstract class EntranceServer extends Logging {
 
       if (
           jobRequest.getMetrics == null
-          || !jobRequest.getMetrics.containsKey(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+          || !jobRequest.getMetrics.containsKey(TaskConstant.JOB_ENGINECONN_MAP)
       ) {
         val msg = s"job ${jobRequest.getId} not have EC info, ignore it"
         logger.info(msg)
@@ -362,7 +362,7 @@ abstract class EntranceServer extends Logging {
       }
 
       val engineMap = jobRequest.getMetrics
-        .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+        .get(TaskConstant.JOB_ENGINECONN_MAP)
         .asInstanceOf[util.Map[String, Object]]
 
       val engineInstance =
@@ -628,26 +628,26 @@ abstract class EntranceServer extends Logging {
     if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_ENGINE_CONN_ENABLED.getValue) {
       if (
           jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-            TaskConstant.ENTRANCEJOB_ENGINECONN_MAP
+            TaskConstant.JOB_ENGINECONN_MAP
           )
       ) {
         val oldEngineconnMap = jobRequest.getMetrics
-          .get(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP)
+          .get(TaskConstant.JOB_ENGINECONN_MAP)
           .asInstanceOf[util.Map[String, Object]]
-        metricMap.put(TaskConstant.ENTRANCEJOB_ENGINECONN_MAP, oldEngineconnMap)
+        metricMap.put(TaskConstant.JOB_ENGINECONN_MAP, oldEngineconnMap)
       }
     }
 
     if (EntranceConfiguration.ENTRANCE_FAILOVER_RETAIN_METRIC_YARN_RESOURCE_ENABLED.getValue) {
       if (
           jobRequest.getMetrics != null && jobRequest.getMetrics.containsKey(
-            TaskConstant.ENTRANCEJOB_YARNRESOURCE
+            TaskConstant.JOB_YARNRESOURCE
           )
       ) {
         val oldResourceMap = jobRequest.getMetrics
-          .get(TaskConstant.ENTRANCEJOB_YARNRESOURCE)
+          .get(TaskConstant.JOB_YARNRESOURCE)
           .asInstanceOf[util.Map[String, Object]]
-        metricMap.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, oldResourceMap)
+        metricMap.put(TaskConstant.JOB_YARNRESOURCE, oldResourceMap)
       }
     }
 
@@ -659,7 +659,7 @@ abstract class EntranceServer extends Logging {
     jobRequest.setErrorCode(0)
     jobRequest.setErrorDesc("")
     jobRequest.setMetrics(metricMap)
-    jobRequest.getMetrics.put(TaskConstant.ENTRANCEJOB_SUBMIT_TIME, initDate)
+    jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, initDate)
     jobRequest.setUpdateOrderFlag(false)
 
     logAppender.append(

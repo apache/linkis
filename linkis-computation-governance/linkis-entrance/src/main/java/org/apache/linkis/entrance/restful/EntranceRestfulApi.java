@@ -439,7 +439,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         message = Message.ok();
         message.setMethod("/api/entrance/" + id + "/progressWithResource");
         message
-            .data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null)
+            .data(TaskConstant.JOB_YARNRESOURCE, null)
             .data("progress", 0)
             .data("execID", "")
             .data("taskID", id)
@@ -499,18 +499,17 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       JobRequest jobRequest, Map<String, Object> metricsVo, Message message) {
     try {
       Map<String, Object> metrics = jobRequest.getMetrics();
-      if (metrics.containsKey(TaskConstant.ENTRANCEJOB_YARNRESOURCE)) {
+      if (metrics.containsKey(TaskConstant.JOB_YARNRESOURCE)) {
 
         HashMap<String, ResourceWithStatus> resourceMap =
-            (HashMap<String, ResourceWithStatus>)
-                metrics.get(TaskConstant.ENTRANCEJOB_YARNRESOURCE);
+            (HashMap<String, ResourceWithStatus>) metrics.get(TaskConstant.JOB_YARNRESOURCE);
         ArrayList<YarnResourceWithStatusVo> resoureList = new ArrayList<>(12);
         if (null != resourceMap && !resourceMap.isEmpty()) {
           resourceMap.forEach(
               (applicationId, resource) -> {
                 resoureList.add(new YarnResourceWithStatusVo(applicationId, resource));
               });
-          metricsVo.put(TaskConstant.ENTRANCEJOB_YARNRESOURCE, resoureList);
+          metricsVo.put(TaskConstant.JOB_YARNRESOURCE, resoureList);
           Optional<Integer> cores =
               resourceMap.values().stream()
                   .map(resource -> resource.queueCores())
@@ -533,17 +532,17 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
           }
           String coreRGB = RGBUtils.getRGB(corePercent);
           String memoryRGB = RGBUtils.getRGB(memoryPercent);
-          metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_PERCENT, corePercent);
-          metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_PERCENT, memoryPercent);
-          metricsVo.put(TaskConstant.ENTRANCEJOB_CORE_RGB, coreRGB);
-          metricsVo.put(TaskConstant.ENTRANCEJOB_MEMORY_RGB, memoryRGB);
+          metricsVo.put(TaskConstant.JOB_CORE_PERCENT, corePercent);
+          metricsVo.put(TaskConstant.JOB_MEMORY_PERCENT, memoryPercent);
+          metricsVo.put(TaskConstant.JOB_CORE_RGB, coreRGB);
+          metricsVo.put(TaskConstant.JOB_MEMORY_RGB, memoryRGB);
 
-          message.data(TaskConstant.ENTRANCEJOB_YARN_METRICS, metricsVo);
+          message.data(TaskConstant.JOB_YARN_METRICS, metricsVo);
         } else {
-          message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+          message.data(TaskConstant.JOB_YARNRESOURCE, null);
         }
       } else {
-        message.data(TaskConstant.ENTRANCEJOB_YARNRESOURCE, null);
+        message.data(TaskConstant.JOB_YARNRESOURCE, null);
       }
     } catch (Exception e) {
       logger.error("build yarnResource error", e);

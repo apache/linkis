@@ -28,6 +28,7 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.SystemUtils
 
 import java.io.{BufferedReader, InputStreamReader}
+import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.concurrent._
 import java.util.concurrent.atomic.AtomicInteger
@@ -361,5 +362,25 @@ object Utils extends Logging {
   }
 
   def getJvmUser: String = System.getProperty("user.name")
+
+  // Note: may fail in some JVM implementations
+  def getProcessId(): String = {
+    // therefore fallback has to be provided
+    // something like '<pid>@<hostname>', at least in SUN / Oracle JVMs
+    val jvmName = ManagementFactory.getRuntimeMXBean.getName
+    val index = jvmName.indexOf('@')
+    // part before '@' empty (index = 0) / '@' not found (index = -1)
+    if (index < 1) {
+      null
+    }
+    Utils.tryCatch {
+      val getpid = jvmName.substring(0, index)
+      logger.info(s"get java process Id:$getpid")
+      getpid
+    } { t =>
+      logger.info(s"Failed to get process Id with error", t.getMessage)
+      null
+    }
+  }
 
 }

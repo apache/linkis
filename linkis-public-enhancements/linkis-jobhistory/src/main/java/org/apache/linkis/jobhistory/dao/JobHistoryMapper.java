@@ -107,6 +107,9 @@ public interface JobHistoryMapper {
 
   void updateOberverById(@Param("taskid") Long taskid, @Param("observeInfo") String observeInfo);
 
+  void updateJobHistoryCancelById(
+      @Param("idList") List<Long> idList, @Param("errorDesc") String errorDesc);
+
   /**
    * query wait for failover job
    *

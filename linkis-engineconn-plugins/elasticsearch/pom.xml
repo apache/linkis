@@ -26,10 +26,6 @@
 
   <artifactId>linkis-engineplugin-elasticsearch</artifactId>
 
-  <properties>
-    <elasticsearch.version>7.6.2</elasticsearch.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

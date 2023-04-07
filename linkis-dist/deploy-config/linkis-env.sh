@@ -78,7 +78,7 @@ HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/appcom/config/hadoop-config"}
 HADOOP_KERBEROS_ENABLE=${HADOOP_KERBEROS_ENABLE:-"false"}
 HADOOP_KEYTAB_PATH=${HADOOP_KEYTAB_PATH:-"/appcom/keytab/"}
 ## Hadoop env version
-HADOOP_VERSION=${HADOOP_VERSION:-"2.7.2"}
+HADOOP_VERSION=${HADOOP_VERSION:-"3.3.4"}
 
 #Hive
 HIVE_HOME=/appcom/Install/hive
@@ -91,10 +91,10 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 ## Engine version conf
 #SPARK_VERSION
-#SPARK_VERSION=2.4.3
+#SPARK_VERSION=3.2.1
 
 ##HIVE_VERSION
-#HIVE_VERSION=2.3.3
+#HIVE_VERSION=3.1.3
 
 #PYTHON_VERSION=python2
 
@@ -156,7 +156,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.3.1
+LINKIS_VERSION=1.3.2
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

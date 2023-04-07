@@ -1864,7 +1864,7 @@ testng (6.14.2)
 
 wagon-http-lightweight (3.0.0)
 
-* License: Pending
+* License: Apache-2.0
 * Project: https://maven.apache.org/wagon/
 * Source:
    https://mvnrepository.com/artifact/org.apache.maven.wagon/wagon-http-lightweight/3.0.0

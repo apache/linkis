@@ -92,8 +92,6 @@ public class SqlConnection implements Closeable {
       rs =
           stmt.executeQuery(
               "SELECT tablename FROM pg_tables where schemaname = '" + schemaname + "'");
-      //            rs = stmt.executeQuery("SELECT table_name FROM
-      // information_schema.tables");
       while (rs.next()) {
         tableNames.add(rs.getString(1));
       }
@@ -111,8 +109,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta;
     try {
-      List<String> primaryKeys =
-          getPrimaryKeys(/*getDBConnection(connectMessage, schemaname),  */ table);
+      List<String> primaryKeys = getPrimaryKeys(table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -136,27 +133,19 @@ public class SqlConnection implements Closeable {
   /**
    * Get primary keys
    *
-   * @param connection connection
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(
-      /*Connection connection, */ String table) throws SQLException {
+  private List<String> getPrimaryKeys(String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
-    //        try {
     DatabaseMetaData dbMeta = conn.getMetaData();
     rs = dbMeta.getPrimaryKeys(null, null, table);
     while (rs.next()) {
       primaryKeys.add(rs.getString("column_name"));
     }
     return primaryKeys;
-    /*}finally{
-        if(null != rs){
-            closeResource(connection, null, rs);
-        }
-    }*/
   }
 
   /**

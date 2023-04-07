@@ -3,6 +3,7 @@
 | module name(模块名) | error code(错误码)  | describe(描述) |enumeration name(枚举)| Exception Class(类名)|
 | -------- | -------- | ----- |-----|-----|
 |linkis-engineconn-plugin-core |10001|Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)|FAILED_CREATE_ELR|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |10001|The engine plugin material is abnormal, please check whether the material is uploaded successfully(引擎插件物料异常，请检查物料是否上传成功)|EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |10001|EngineTypeLabel are requested(需要参数 EngineTypeLabel)|ETL_REQUESTED|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)|CANNOT_INSTANCE_ECE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)|CANNOT_DEFAULT_EF|EngineconnCoreErrorCodeSummary|
@@ -15,6 +16,7 @@
 |linkis-engineconn-plugin-core |20001|The dist of engineConnType:{0} is irregular, both the version dir and non-version dir are exist,(engineConnType:{0} 的 dist 目录不符合规范，版本目录和非版本目录都存在)|DIST_IRREGULAR_EXIST|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|System have no permission to delete old engineConn file:{0}(系统无权删除旧的engineConn文件:{0})|NO_PERMISSION_FILE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20001|The `lib` and `conf` dir is necessary in engineConnType:{0} dist(`lib` 和 `conf` 目录在 engineConnType:{0} dist目录中必需存在)|LIB_CONF_DIR_NECESSARY|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |20001|Version name in engineConnType:{0} cannot contain special character '-'(Version name in engineConnType: {0} cannot contain special character '-')|CONTAINS_SPECIAL_CHARCATERS|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20011| Not supported ExecutorFactory(不支持 ExecutorFactory)|NOT_SUPPORTED_EF|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70101| DefaultEngineRunTypeLabel cannot be null(DefaultEngineRunTypeLabel 不能为空)|DERTL_CANNOT_NULL|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |70102|Cannot get label key. labels (无法获取标签key,标签):{0}|CANNOT_GET_LABEL_KEY|EngineconnCoreErrorCodeSummary|

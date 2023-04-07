@@ -30,7 +30,7 @@
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
             <!-- Now, select which projects to include in this module-set. -->
-            <outputDirectory>/dist/v${shell.version}/lib</outputDirectory>
+            <outputDirectory>/dist/${shell.version}/lib</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>
@@ -48,7 +48,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${shell.version}/bin</outputDirectory>
+            <outputDirectory>dist/${shell.version}/bin</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 
@@ -58,7 +58,7 @@
                 <include>*</include>
             </includes>
             <fileMode>0777</fileMode>
-            <outputDirectory>dist/v${shell.version}/conf</outputDirectory>
+            <outputDirectory>dist/${shell.version}/conf</outputDirectory>
             <lineEnding>unix</lineEnding>
         </fileSet>
 

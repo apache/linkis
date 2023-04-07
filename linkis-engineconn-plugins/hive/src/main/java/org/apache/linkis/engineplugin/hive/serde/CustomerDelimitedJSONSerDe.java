@@ -320,12 +320,20 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
         }
       default:
         {
+          if (!"INTERVAL_YEAR_MONTH".equals(category.name())
+              && !"INTERVAL_DAY_TIME".equals(category.name())) {
+            throw new RuntimeException("Unknown primitive type: " + category);
+          }
           boolean containsIntervalYearMonth = false;
           boolean containsIntervalDayTime = false;
           for (PrimitiveObjectInspector.PrimitiveCategory primitiveCategory :
               PrimitiveObjectInspector.PrimitiveCategory.values()) {
-            containsIntervalYearMonth = "INTERVAL_YEAR_MONTH".equals(primitiveCategory.name());
-            containsIntervalDayTime = "INTERVAL_DAY_TIME".equals(primitiveCategory.name());
+            containsIntervalYearMonth =
+                "INTERVAL_YEAR_MONTH".equals(primitiveCategory.name())
+                    && "INTERVAL_YEAR_MONTH".equals(category.name());
+            containsIntervalDayTime =
+                "INTERVAL_DAY_TIME".equals(primitiveCategory.name())
+                    && "INTERVAL_DAY_TIME".equals(category.name());
             try {
               if (containsIntervalYearMonth) {
                 wc =

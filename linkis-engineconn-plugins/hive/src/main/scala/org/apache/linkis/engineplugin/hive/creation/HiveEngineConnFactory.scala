@@ -24,11 +24,18 @@ import org.apache.linkis.engineconn.computation.executor.creation.ComputationSin
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.hive.common.HiveUtils
 import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration
-import org.apache.linkis.engineplugin.hive.entity.HiveSession
+import org.apache.linkis.engineplugin.hive.entity.{
+  AbstractHiveSession,
+  HiveConcurrentSession,
+  HiveSession
+}
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.CREATE_HIVE_EXECUTOR_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.HIVE_EXEC_JAR_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
-import org.apache.linkis.engineplugin.hive.executor.HiveEngineConnExecutor
+import org.apache.linkis.engineplugin.hive.executor.{
+  HiveEngineConcurrentConnExecutor,
+  HiveEngineConnExecutor
+}
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
 import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
@@ -38,9 +45,11 @@ import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.hive.ql.session.SessionState
+import org.apache.hadoop.security.UserGroupInformation
 
 import java.io.{ByteArrayOutputStream, PrintStream}
 import java.security.PrivilegedExceptionAction
+import java.util
 
 import scala.collection.JavaConverters._
 
@@ -63,6 +72,14 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
           hiveSession.hiveConf,
           hiveSession.baos
         )
+      case hiveConcurrentSession: HiveConcurrentSession =>
+        new HiveEngineConcurrentConnExecutor(
+          id,
+          hiveConcurrentSession.sessionState,
+          hiveConcurrentSession.ugi,
+          hiveConcurrentSession.hiveConf,
+          hiveConcurrentSession.baos
+        )
       case _ =>
         throw HiveSessionStartFailedException(
           CREATE_HIVE_EXECUTOR_ERROR.getErrorCode,
@@ -73,8 +90,48 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
 
   override protected def createEngineConnSession(
       engineCreationContext: EngineCreationContext
-  ): HiveSession = {
-    val options = engineCreationContext.getOptions
+  ): AbstractHiveSession = {
+    // if hive engine support concurrent, return HiveConcurrentSession
+    if (HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_SUPPORT) {
+      return doCreateHiveConcurrentSession(engineCreationContext.getOptions)
+    }
+
+    // return HiveSession
+    doCreateHiveSession(engineCreationContext.getOptions)
+  }
+
+  def doCreateHiveConcurrentSession(options: util.Map[String, String]): HiveConcurrentSession = {
+    val hiveConf: HiveConf = getHiveConf(options)
+    val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)
+    val baos = new ByteArrayOutputStream()
+    val sessionState: SessionState = getSessionState(hiveConf, ugi, baos)
+    HiveConcurrentSession(sessionState, ugi, hiveConf, baos)
+  }
+
+  def doCreateHiveSession(options: util.Map[String, String]): HiveSession = {
+    val hiveConf: HiveConf = getHiveConf(options)
+    val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)
+    val baos = new ByteArrayOutputStream()
+    val sessionState: SessionState = getSessionState(hiveConf, ugi, baos)
+    HiveSession(sessionState, ugi, hiveConf, baos)
+  }
+
+  private def getSessionState(
+      hiveConf: HiveConf,
+      ugi: UserGroupInformation,
+      baos: ByteArrayOutputStream
+  ) = {
+    val sessionState: SessionState = ugi.doAs(new PrivilegedExceptionAction[SessionState] {
+      override def run(): SessionState = new SessionState(hiveConf)
+    })
+    sessionState.out = new PrintStream(baos, true, "utf-8")
+    sessionState.info = new PrintStream(System.out, true, "utf-8")
+    sessionState.err = new PrintStream(System.out, true, "utf-8")
+    SessionState.start(sessionState)
+    sessionState
+  }
+
+  private def getHiveConf(options: util.Map[String, String]) = {
     val hiveConf: HiveConf = HiveUtils.getHiveConf
     hiveConf.setVar(
       HiveConf.ConfVars.HIVEJAR,
@@ -126,17 +183,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
      */
     // enable hive.stats.collect.scancols
     hiveConf.setBoolean("hive.stats.collect.scancols", true)
-    val ugi = HDFSUtils.getUserGroupInformation(Utils.getJvmUser)
-    val sessionState: SessionState = ugi.doAs(new PrivilegedExceptionAction[SessionState] {
-      override def run(): SessionState = new SessionState(hiveConf)
-    })
-    val baos = new ByteArrayOutputStream()
-    sessionState.out = new PrintStream(baos, true, "utf-8")
-    sessionState.info = new PrintStream(System.out, true, "utf-8")
-    sessionState.err = new PrintStream(System.out, true, "utf-8")
-    SessionState.start(sessionState)
-
-    HiveSession(sessionState, ugi, hiveConf, baos)
+    hiveConf
   }
 
   override protected def getEngineConnType: EngineType = EngineType.HIVE

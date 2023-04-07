@@ -20,8 +20,8 @@ package org.apache.linkis.rpc.transform
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.protocol.message.RequestProtocol
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary
 import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary.TRANSMITTED_BEAN_IS_NULL
-import org.apache.linkis.rpc.errorcode.RPCErrorConstants
 import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, Message}
@@ -91,9 +91,8 @@ private[linkis] object RPCProduct extends Logging {
       message.data(
         EXCEPTION_MSG,
         new DWCURIException(
-          RPCErrorConstants.URL_ERROR,
-          "The service does not " +
-            "exist for the available Receiver.(服务不存在可用的Receiver.)"
+          LinkisRpcErrorCodeSummary.URL_ERROR.getErrorCode,
+          LinkisRpcErrorCodeSummary.URL_ERROR.getErrorDesc
         ).toMap
       )
     }

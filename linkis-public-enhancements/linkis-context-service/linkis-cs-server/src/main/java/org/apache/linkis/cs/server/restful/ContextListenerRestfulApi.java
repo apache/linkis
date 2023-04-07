@@ -23,10 +23,8 @@ import org.apache.linkis.cs.common.entity.listener.ContextIDListenerDomain;
 import org.apache.linkis.cs.common.entity.source.ContextID;
 import org.apache.linkis.cs.common.entity.source.ContextKey;
 import org.apache.linkis.cs.common.exception.CSErrorException;
-import org.apache.linkis.cs.server.enumeration.ServiceMethod;
 import org.apache.linkis.cs.server.enumeration.ServiceType;
-import org.apache.linkis.cs.server.scheduler.CsScheduler;
-import org.apache.linkis.cs.server.scheduler.HttpAnswerJob;
+import org.apache.linkis.cs.server.service.ContextListenerService;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
@@ -41,21 +39,21 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import static org.apache.linkis.cs.errorcode.LinkisCsServerErrorCodeSummary.PARAMS_CANNOT_EMPTY;
 
 @Api(tags = "cs(contextservice) listener operation")
 @RestController
 @RequestMapping(path = "/contextservice")
 public class ContextListenerRestfulApi implements CsRestfulParent {
 
-  @Autowired private CsScheduler csScheduler;
-
-  private ObjectMapper objectMapper = new ObjectMapper();
+  @Autowired private ContextListenerService contextListenerService;
 
   @ApiOperation(value = "onBindIDListener", notes = "on bind id listener", response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
@@ -65,13 +63,15 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(req, "onBindIDListener,contextID:" + contextID.getContextId());
     ContextIDListenerDomain listener = new CommonContextIDListenerDomain();
     listener.setSource(source);
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.BIND, contextID, listener);
-    return generateResponse(answerJob, "");
+    contextListenerService.onBind(contextID, listener);
+    return generateMessage(null, "listener");
   }
 
   @ApiOperation(
@@ -81,40 +81,36 @@ public class ContextListenerRestfulApi implements CsRestfulParent {
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "onBindKeyListener", method = RequestMethod.POST)
   public Message onBindKeyListener(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, CSErrorException, IOException, ClassNotFoundException {
+      throws CSErrorException, IOException, ClassNotFoundException {
     String source = jsonNode.get("source").textValue();
     ContextID contextID = getContextIDFromJsonNode(jsonNode);
     if (StringUtils.isEmpty(contextID.getContextId())) {
-      throw new CSErrorException(97000, "contextId cannot be empty");
+      throw new CSErrorException(
+          PARAMS_CANNOT_EMPTY.getErrorCode(),
+          MessageFormat.format(PARAMS_CANNOT_EMPTY.getErrorDesc(), "ContextID"));
     }
     ModuleUserUtils.getOperationUser(
         req, "onBindKeyListener,contextID:" + contextID.getContextId());
     ContextKey contextKey = getContextKeyFromJsonNode(jsonNode);
     CommonContextKeyListenerDomain listener = new CommonContextKeyListenerDomain();
     listener.setSource(source);
-    HttpAnswerJob answerJob =
-        submitRestJob(req, ServiceMethod.BIND, contextID, contextKey, listener);
-    return generateResponse(answerJob, "");
+    contextListenerService.onBind(contextID, contextKey, listener);
+    return generateMessage(null, "listener");
   }
 
   @ApiOperation(value = "heartbeat", notes = "heart beat", response = Message.class)
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "heartbeat", method = RequestMethod.POST)
   public Message heartbeat(HttpServletRequest req, @RequestBody JsonNode jsonNode)
-      throws InterruptedException, IOException, CSErrorException {
+      throws CSErrorException {
     ModuleUserUtils.getOperationUser(req, "heartbeat");
     String source = jsonNode.get("source").textValue();
-    HttpAnswerJob answerJob = submitRestJob(req, ServiceMethod.HEARTBEAT, source);
-    return generateResponse(answerJob, "ContextKeyValueBean");
+    Object res = contextListenerService.heartbeat(source);
+    return generateMessage(res, "ContextKeyValueBean");
   }
 
   @Override
   public ServiceType getServiceType() {
     return ServiceType.CONTEXT_LISTENER;
-  }
-
-  @Override
-  public CsScheduler getScheduler() {
-    return this.csScheduler;
   }
 }

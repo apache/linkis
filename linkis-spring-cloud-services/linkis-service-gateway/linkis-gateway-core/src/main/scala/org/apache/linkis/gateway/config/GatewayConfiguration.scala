@@ -106,4 +106,6 @@ object GatewayConfiguration {
     "List of supported routing services"
   )
 
+  val IS_DOWNLOAD = CommonVars("linkis.web.result.set.export.enable", true)
+
 }

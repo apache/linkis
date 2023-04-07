@@ -83,15 +83,15 @@ object StorageConfiguration {
   val FS_CHECKSUM_DISBALE =
     CommonVars[java.lang.Boolean]("linkis.fs.hdfs.impl.disable.checksum", false)
 
-  val S3_ACCESS_KEY = CommonVars("wds.linkis.storage.s3.access.key", "")
+  val S3_ACCESS_KEY = CommonVars("linkis.storage.s3.access.key", "")
 
   val S3_SECRET_KEY =
-    CommonVars("wds.linkis.storage.s3.secret.key", "")
+    CommonVars("linkis.storage.s3.secret.key", "")
 
-  val S3_ENDPOINT = CommonVars("wds.linkis.storage.s3.endpoint", "")
+  val S3_ENDPOINT = CommonVars("linkis.storage.s3.endpoint", "")
 
-  val S3_REGION = CommonVars("wds.linkis.storage.s3.region", "")
+  val S3_REGION = CommonVars("linkis.storage.s3.region", "")
 
-  val S3_BUCKET = CommonVars("wds.linkis.storage.s3.bucket", "")
+  val S3_BUCKET = CommonVars("linkis.storage.s3.bucket", "")
 
 }

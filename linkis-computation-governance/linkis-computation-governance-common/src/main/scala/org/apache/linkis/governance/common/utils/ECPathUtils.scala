@@ -29,7 +29,6 @@ object ECPathUtils {
       user: String,
       ticketId: String,
       engineType: String,
-      timeStamp: Long = System.currentTimeMillis()
   ): String = {
     val suffix = if (StringUtils.isBlank(engineType)) {
       Paths

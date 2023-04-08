@@ -25,23 +25,16 @@ import java.nio.file.Paths
 
 object ECPathUtils {
 
-  def getECWOrkDirPathSuffix(
-      user: String,
-      ticketId: String,
-      engineType: String,
-  ): String = {
-    val suffix = if (StringUtils.isBlank(engineType)) {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"))
-        .toFile
-        .getPath
-    } else {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType)
-        .toFile
-        .getPath
-    }
-    suffix + File.separator + ticketId
+  def getECWOrkDirPathSuffix(user: String, ticketId: String, engineType: String): String = {
+    Paths
+      .get(
+        user,
+        DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"),
+        if (StringUtils.isBlank(engineType)) "" else engineType
+      )
+      .toFile
+      .getPath + File.separator + ticketId
+
   }
 
 }

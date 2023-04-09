@@ -35,12 +35,10 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.utils.{FileSystemUtils, StorageUtils}
-
 import org.springframework.core.env.Environment
 
 import java.io.File
 import java.nio.file.Paths
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 
@@ -119,8 +117,6 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
       case _ =>
     }
   }
-
-  private val bmlResourceSuffix = ".zip"
 
   private def createDirIfNotExit(noSchemaPath: String): String = {
     val fsPath = new FsPath(schema + noSchemaPath)

@@ -29,7 +29,6 @@ public class PersistenceNodeEntity implements Node {
   private String owner;
   private String mark;
   private NodeStatus nodeStatus;
-  private String processId;
 
   private Date startTime;
 
@@ -91,13 +90,5 @@ public class PersistenceNodeEntity implements Node {
 
   public void setOwner(String owner) {
     this.owner = owner;
-  }
-
-  public String getProcessId() {
-    return processId;
-  }
-
-  public void setProcessId(String processId) {
-    this.processId = processId;
   }
 }

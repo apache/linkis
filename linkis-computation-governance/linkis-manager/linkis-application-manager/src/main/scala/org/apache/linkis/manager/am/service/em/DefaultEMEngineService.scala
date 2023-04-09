@@ -100,7 +100,6 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     )
     val engineStopRequest = new EngineStopRequest
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance)
-    engineStopRequest.setProcessId(engineNode.getProcessId)
 
     val ecInfo: ECResourceInfoRecord =
       ecResourceInfoService.getECResourceInfoRecordByInstance(

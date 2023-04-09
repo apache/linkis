@@ -26,7 +26,6 @@ public class PersistenceNode {
   private String owner;
 
   private String mark;
-  private String processId;
 
   private Date updateTime;
   private Date createTime;
@@ -103,13 +102,5 @@ public class PersistenceNode {
 
   public void setCreator(String creator) {
     this.creator = creator;
-  }
-
-  public String getProcessId() {
-    return processId;
-  }
-
-  public void setProcessId(String processId) {
-    this.processId = processId;
   }
 }

@@ -41,12 +41,6 @@ class ECMSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  def getDefaultYarnCallbackService: YarnCallbackService = {
-    new DefaultYarnCallbackService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   def getBmlResourceLocalizationService(
       context: ECMContext,
       localDirsHandleService: LocalDirsHandleService
@@ -59,28 +53,8 @@ class ECMSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  def getDefaultLogCallbackService: LogCallbackService = {
-    null
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   def getDefaultlocalDirsHandleService: LocalDirsHandleService = {
     new DefaultLocalDirsHandleService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  def getDefaultEngineConnPidCallbackService: EngineConnPidCallbackService = {
-    new DefaultEngineConnPidCallbackService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  def getDefaultEngineConnListService(context: ECMContext): EngineConnListService = {
-    implicit val service: DefaultEngineConnListService = new DefaultEngineConnListService
-    registerSyncListener(context)
-    service
   }
 
   @Bean
@@ -114,10 +88,8 @@ class ECMSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   def getDefaultEngineConnKillService(
-      engineConnListService: EngineConnListService
   ): EngineConnKillService = {
     val service = new DefaultEngineConnKillService
-    service.setEngineConnListService(engineConnListService)
     service
   }
 

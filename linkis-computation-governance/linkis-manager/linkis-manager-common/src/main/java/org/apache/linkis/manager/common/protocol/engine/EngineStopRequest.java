@@ -23,7 +23,9 @@ import org.apache.linkis.protocol.message.RequestMethod;
 public class EngineStopRequest implements EngineRequest, RequestMethod {
 
   private ServiceInstance serviceInstance;
-
+  private String processId;
+  private String logDirSuffix;
+  private String engineType;
   private String user;
 
   public EngineStopRequest() {}
@@ -39,6 +41,30 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
 
   public void setServiceInstance(ServiceInstance serviceInstance) {
     this.serviceInstance = serviceInstance;
+  }
+
+  public String getProcessId() {
+    return processId;
+  }
+
+  public void setProcessId(String processId) {
+    this.processId = processId;
+  }
+
+  public String getLogDirSuffix() {
+    return logDirSuffix;
+  }
+
+  public void setLogDirSuffix(String logDirSuffix) {
+    this.logDirSuffix = logDirSuffix;
+  }
+
+  public String getEngineType() {
+    return engineType;
+  }
+
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
   }
 
   public void setUser(String user) {
@@ -60,6 +86,14 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
     return "EngineStopRequest{"
         + "serviceInstance="
         + serviceInstance
+        + ", processId='"
+        + processId
+        + '\''
+        + ", logDirSuffix='"
+        + logDirSuffix
+        + '\''
+        + ", labelList="
+        + engineType
         + ", user='"
         + user
         + '\''

@@ -21,9 +21,11 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
+import org.apache.linkis.manager.am.service.ECResourceInfoService
 import org.apache.linkis.manager.am.service.EMEngineService
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node._
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord
 import org.apache.linkis.manager.common.protocol.em._
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.common.utils.ManagerUtils
@@ -56,6 +58,9 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
   @Autowired
   private var engineConnLaunchService: EngineConnLaunchService = _
+
+  @Autowired
+  private var ecResourceInfoService: ECResourceInfoService = _
 
   @Autowired
   private var labelFilter: LabelFilter = _
@@ -95,6 +100,18 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     )
     val engineStopRequest = new EngineStopRequest
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance)
+    engineStopRequest.setProcessId(engineNode.getProcessId)
+
+    val ecInfo: ECResourceInfoRecord =
+      ecResourceInfoService.getECResourceInfoRecordByInstance(
+        engineNode.getServiceInstance.getInstance
+      )
+    // append engineType and logDirSuffix
+    if (ecInfo != null) {
+      engineStopRequest.setEngineType(ecInfo.getLabelValue().split(",")(1).split("-")(0));
+      engineStopRequest.setLogDirSuffix(ecInfo.getLogDirSuffix)
+    }
+
     emNodeManager.stopEngine(engineStopRequest, emNode)
     // engineNodeManager.deleteEngineNode(engineNode)
     logger.info(

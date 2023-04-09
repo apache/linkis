@@ -15,25 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service.impl
+package org.apache.linkis.manager.am.service;
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.ecm.server.LinkisECMApplication
-import org.apache.linkis.ecm.server.listener.EngineConnPidCallbackEvent
-import org.apache.linkis.ecm.server.service.EngineConnPidCallbackService
-import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
-import org.apache.linkis.rpc.message.annotation.Receiver
+import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM;
 
-class DefaultEngineConnPidCallbackService extends EngineConnPidCallbackService with Logging {
+public interface EngineConnStatusCallbackService {
 
-  @Receiver
-  override def dealPid(protocol: ResponseEngineConnPid): Unit = {
-    // 1.设置pid
-    // 2.设置serviceInstance
-    // 3.状态为running
-    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-      EngineConnPidCallbackEvent(protocol)
-    )
-  }
-
+  void dealEngineConnStatusCallbackToAM(EngineConnStatusCallbackToAM engineConnStatusCallbackToAM);
 }

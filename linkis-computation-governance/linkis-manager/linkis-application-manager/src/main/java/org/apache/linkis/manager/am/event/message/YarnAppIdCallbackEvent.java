@@ -15,12 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager.am.event.message;
 
-import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
+import org.apache.linkis.protocol.callback.YarnAPPIdCallbackProtocol;
 
-trait EngineConnPidCallbackService {
+import org.springframework.context.ApplicationEvent;
 
-  def dealPid(protocol: ResponseEngineConnPid): Unit
+public class YarnAppIdCallbackEvent extends ApplicationEvent {
 
+  private YarnAPPIdCallbackProtocol protocol;
+
+  public YarnAppIdCallbackEvent(YarnAPPIdCallbackProtocol protocol) {
+    super(protocol);
+    this.protocol = protocol;
+  }
+
+  public YarnAPPIdCallbackProtocol getProtocol() {
+    return protocol;
+  }
 }

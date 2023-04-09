@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis;
 
-import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM
+/** @date 2020/7/7 16:22 */
+public class LinkisManagerApplication {
 
-trait EngineConnStatusCallbackService {
-
-  def dealEngineConnStatusCallback(engineConnStatusCallbackToAM: EngineConnStatusCallbackToAM): Unit
-
+  public static void main(String[] args) throws ReflectiveOperationException {
+    LinkisBaseServerApp.main(args);
+    // DataWorkCloudApplication.main(args);
+  }
 }

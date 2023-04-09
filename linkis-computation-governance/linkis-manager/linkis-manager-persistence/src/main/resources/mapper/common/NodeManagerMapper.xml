@@ -63,7 +63,7 @@
 
     <update id="updateNodeInstanceOverload">
         UPDATE linkis_cg_manager_service_instance
-        SET owner = #{persistenceNode.owner}, mark = #{persistenceNode.mark}, name = #{persistenceNode.name}, update_time = #{persistenceNode.updateTime}, create_time = #{persistenceNode.createTime}, updator = #{persistenceNode.updator}, creator = #{persistenceNode.creator}
+        SET owner = #{persistenceNode.owner}, mark = #{persistenceNode.mark}, name = #{persistenceNode.name}, update_time = #{persistenceNode.updateTime}, create_time = #{persistenceNode.createTime}, updator = #{persistenceNode.updator}, creator = #{persistenceNode.creator}, process_id = #{persistenceNode.processId}
         WHERE instance = #{persistenceNode.instance}
     </update>
 

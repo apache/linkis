@@ -670,6 +670,7 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
   `name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `process_id` varchar(64) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,

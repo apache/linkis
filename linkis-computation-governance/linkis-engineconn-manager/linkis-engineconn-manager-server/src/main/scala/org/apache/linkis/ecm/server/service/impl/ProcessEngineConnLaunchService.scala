@@ -27,7 +27,7 @@ import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.conf.ECMConfiguration.MANAGER_SERVICE_NAME
 import org.apache.linkis.ecm.server.exception.ECMErrorException
-import org.apache.linkis.ecm.server.listener.EngineConnStatusChangeEvent
+import org.apache.linkis.ecm.server.listener.EngineConnLaunchStatusChangeEvent
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus._
@@ -128,11 +128,11 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
       if (exitCode.exists(_ != 0)) {
         logger.info(s"engine ${tickedId} process exit ")
         LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-          EngineConnStatusChangeEvent(tickedId, ShuttingDown)
+          EngineConnLaunchStatusChangeEvent(tickedId, ShuttingDown)
         )
       } else {
         LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-          EngineConnStatusChangeEvent(tickedId, Success)
+          EngineConnLaunchStatusChangeEvent(tickedId, Success)
         )
       }
     }

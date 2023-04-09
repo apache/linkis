@@ -39,6 +39,8 @@ public class InfoRMNode implements RMNode {
 
   private Date updateTime;
 
+  private String processId;
+
   @Override
   public NodeResource getNodeResource() {
     return nodeResource;
@@ -97,5 +99,10 @@ public class InfoRMNode implements RMNode {
   @Override
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
+  }
+
+  @Override
+  public String getProcessId() {
+    return processId;
   }
 }

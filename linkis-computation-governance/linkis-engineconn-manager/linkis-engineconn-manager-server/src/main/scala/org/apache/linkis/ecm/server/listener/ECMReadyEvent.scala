@@ -17,7 +17,6 @@
 
 package org.apache.linkis.ecm.server.listener
 
-import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.listener.ECMEvent
 import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -35,6 +34,5 @@ case class YarnInfoCallbackEvent(protocol: YarnInfoCallbackProtocol) extends ECM
 
 case class EngineConnPidCallbackEvent(protocol: ResponseEngineConnPid) extends ECMEvent
 
-case class EngineConnAddEvent(conn: EngineConn) extends ECMEvent
-
-case class EngineConnStatusChangeEvent(tickedId: String, updateStatus: NodeStatus) extends ECMEvent
+case class EngineConnLaunchStatusChangeEvent(tickedId: String, updateStatus: NodeStatus)
+    extends ECMEvent

@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager.am.service;
 
-import org.apache.linkis.protocol.callback.LogCallbackProtocol
+import org.apache.linkis.protocol.callback.YarnAPPIdCallbackProtocol;
+import org.apache.linkis.protocol.callback.YarnInfoCallbackProtocol;
 
-trait LogCallbackService {
+public interface YarnCallbackService {
 
-  def dealLog(protocol: LogCallbackProtocol): Unit
+  void dealApplicationId(YarnAPPIdCallbackProtocol yarnAPPIdCallbackProtocol);
 
+  void dealApplicationURI(YarnInfoCallbackProtocol yarnInfoCallbackProtocol);
 }

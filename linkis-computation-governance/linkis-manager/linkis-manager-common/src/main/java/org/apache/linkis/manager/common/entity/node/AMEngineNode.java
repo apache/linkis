@@ -61,6 +61,8 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
   private String ticketId;
 
+  private String processId;
+
   public AMEngineNode() {}
 
   public AMEngineNode(double score, ServiceInstance serviceInstance) {
@@ -217,6 +219,11 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
   @Override
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
+  }
+
+  @Override
+  public String getProcessId() {
+    return processId;
   }
 
   @Override

@@ -15,15 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am;
+package org.apache.linkis.manager.am.event.message;
 
-import org.apache.linkis.LinkisBaseServerApp;
+import org.apache.linkis.protocol.callback.YarnInfoCallbackProtocol;
 
-/** @date 2020/7/7 16:22 */
-public class LinkisManagerApplication {
+import org.springframework.context.ApplicationEvent;
 
-  public static void main(String[] args) throws ReflectiveOperationException {
-    LinkisBaseServerApp.main(args);
-    // DataWorkCloudApplication.main(args);
+public class YarnInfoCallbackEvent extends ApplicationEvent {
+
+  private YarnInfoCallbackProtocol protocol;
+
+  public YarnInfoCallbackEvent(YarnInfoCallbackProtocol protocol) {
+    super(protocol);
+    this.protocol = protocol;
+  }
+
+  public YarnInfoCallbackProtocol getProtocol() {
+    return protocol;
   }
 }

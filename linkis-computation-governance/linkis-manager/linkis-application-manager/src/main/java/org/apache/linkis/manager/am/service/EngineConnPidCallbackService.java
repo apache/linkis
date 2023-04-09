@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager.am.service;
 
-import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
+import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid;
 
-trait EngineConnStatusCallbackService {
-
-  def dealEngineConnStatusCallback(protocol: EngineConnStatusCallback): Unit
-
+@FunctionalInterface
+public interface EngineConnPidCallbackService {
+  void dealPid(ResponseEngineConnPid protocol);
 }

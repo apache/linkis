@@ -183,7 +183,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void updateNodeInstance(Node node) throws PersistenceErrorException {
+  public void updateNodeInstance(Node node) {
 
     if (null != node) {
       PersistenceNode persistenceNode = new PersistenceNode();
@@ -191,16 +191,17 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       persistenceNode.setName(node.getServiceInstance().getApplicationName());
       persistenceNode.setOwner(node.getOwner());
       persistenceNode.setMark(node.getMark());
-      persistenceNode.setCreateTime(new Date());
+      persistenceNode.setCreateTime(node.getStartTime());
       persistenceNode.setUpdateTime(new Date());
       persistenceNode.setCreator(node.getOwner());
       persistenceNode.setUpdator(node.getOwner());
+      persistenceNode.setProcessId(node.getProcessId());
       nodeManagerMapper.updateNodeInstanceOverload(persistenceNode);
     }
   }
 
   @Override
-  public Node getNode(ServiceInstance serviceInstance) throws PersistenceErrorException {
+  public Node getNode(ServiceInstance serviceInstance) {
     String instance = serviceInstance.getInstance();
     PersistenceNode nodeInstances = nodeManagerMapper.getNodeInstance(instance);
     if (null == nodeInstances) {

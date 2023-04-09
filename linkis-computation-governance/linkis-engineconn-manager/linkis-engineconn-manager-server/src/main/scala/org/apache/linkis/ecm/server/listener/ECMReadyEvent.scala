@@ -26,13 +26,5 @@ case class ECMReadyEvent(params: Array[String]) extends ECMEvent
 
 case class ECMClosedEvent() extends ECMEvent
 
-case class EngineConnStatusChageEvent(from: NodeStatus, to: NodeStatus) extends ECMEvent
-
-case class YarnAppIdCallbackEvent(protocol: YarnAPPIdCallbackProtocol) extends ECMEvent
-
-case class YarnInfoCallbackEvent(protocol: YarnInfoCallbackProtocol) extends ECMEvent
-
-case class EngineConnPidCallbackEvent(protocol: ResponseEngineConnPid) extends ECMEvent
-
 case class EngineConnLaunchStatusChangeEvent(tickedId: String, updateStatus: NodeStatus)
     extends ECMEvent

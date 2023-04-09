@@ -50,8 +50,6 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
 
   private NodeHealthyInfo nodeHealthyInfo;
 
-  private String processId;
-
   private Date startTime;
 
   private Date updateTime;
@@ -74,11 +72,6 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   @Override
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
-  }
-
-  @Override
-  public String getProcessId() {
-    return this.processId;
   }
 
   public AMEMNode() {}

@@ -20,43 +20,43 @@ package org.apache.linkis.storage.factory.impl;
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
 import org.apache.linkis.storage.fs.impl.S3FileSystem;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import java.io.IOException;
 
-import org.apache.linkis.storage.utils.StorageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BuildS3FileSystem implements BuildFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(BuildS3FileSystem.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BuildS3FileSystem.class);
 
-    @Override
-    public Fs getFs(String user, String proxyUser) {
-        S3FileSystem fs = new S3FileSystem();
-        try {
-            fs.init(null);
-        } catch (IOException e) {
-            LOG.warn("get file system failed", e);
-        }
-        fs.setUser(user);
-        return fs;
+  @Override
+  public Fs getFs(String user, String proxyUser) {
+    S3FileSystem fs = new S3FileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
     }
+    fs.setUser(user);
+    return fs;
+  }
 
-    @Override
-    public Fs getFs(String user, String proxyUser, String label) {
-        S3FileSystem fs = new S3FileSystem();
-        try {
-            fs.init(null);
-        } catch (IOException e) {
-            LOG.warn("get file system failed", e);
-        }
-        fs.setUser(user);
-        fs.setLabel(label);
-        return fs;
+  @Override
+  public Fs getFs(String user, String proxyUser, String label) {
+    S3FileSystem fs = new S3FileSystem();
+    try {
+      fs.init(null);
+    } catch (IOException e) {
+      LOG.warn("get file system failed", e);
     }
+    fs.setUser(user);
+    fs.setLabel(label);
+    return fs;
+  }
 
-    @Override
-    public String fsName() {
-        return StorageUtils.S3();
-    }
+  @Override
+  public String fsName() {
+    return StorageUtils.S3();
+  }
 }

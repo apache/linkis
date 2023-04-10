@@ -198,7 +198,8 @@ object StorageUtils extends Logging {
    * @return
    */
   def getFsPath(path: String): FsPath = {
-    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA) || path.startsWith(S3_SCHEMA)) new FsPath(path)
+    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA) || path.startsWith(S3_SCHEMA))
+      new FsPath(path)
     else {
       new FsPath(FILE_SCHEMA + path)
     }

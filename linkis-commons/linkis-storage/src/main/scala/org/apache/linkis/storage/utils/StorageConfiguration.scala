@@ -84,7 +84,6 @@ object StorageConfiguration {
   val FS_CHECKSUM_DISBALE =
     CommonVars[java.lang.Boolean]("linkis.fs.hdfs.impl.disable.checksum", false)
 
-
   /**
    * more arguments please refer to:
    * https://hadoop.apache.org/docs/stable/hadoop-aliyun/tools/hadoop-aliyun/index.html Aliyun OSS
@@ -113,7 +112,6 @@ object StorageConfiguration {
     CommonVars[Boolean]("wds.linkis.storage.oss.prefix_check.enable", false)
 
   val OSS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.oss.prefix.remove", true)
-
 
   val S3_ACCESS_KEY = CommonVars("linkis.storage.s3.access.key", "")
 

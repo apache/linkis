@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.common.entity.resource
 
-import org.apache.linkis.common.utils.{ByteTimeUtils, JsonUtils, Logging}
+import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
 import org.apache.linkis.manager.common.entity.resource.ResourceType._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.ResourceWarnException
@@ -28,8 +28,9 @@ import java.text.MessageFormat
 
 import scala.collection.JavaConverters._
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 abstract class Resource {
-  val jacksonUtil = JsonUtils.jackson
 
   def add(r: Resource): Resource
 
@@ -128,7 +129,9 @@ object Resource extends Logging {
 
 case class UserAvailableResource(moduleName: String, resource: Resource)
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class MemoryResource(val memory: Long) extends Resource {
+  def this() = this(Long.MaxValue)
 
   private implicit def toMemoryResource(r: Resource): MemoryResource = r match {
     case t: MemoryResource => t
@@ -167,7 +170,9 @@ class MemoryResource(val memory: Long) extends Resource {
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class CPUResource(val cores: Int) extends Resource {
+  def this() = this(Integer.MAX_VALUE)
 
   private implicit def toCPUResource(r: Resource): CPUResource = r match {
     case t: CPUResource => t
@@ -207,7 +212,9 @@ class CPUResource(val cores: Int) extends Resource {
   override def toString: String = toJson
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class LoadResource(val memory: Long, val cores: Int) extends Resource {
+  def this() = this(Long.MaxValue, Integer.MAX_VALUE)
 
   private implicit def toLoadResource(r: Resource): LoadResource = r match {
     case t: LoadResource => t
@@ -252,7 +259,10 @@ class LoadResource(val memory: Long, val cores: Int) extends Resource {
   override def toString: String = toJson
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int) extends Resource {
+
+  def this() = this(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE)
 
   implicit def toLoadInstanceResource(r: Resource): LoadInstanceResource = r match {
     case t: LoadInstanceResource => t
@@ -305,6 +315,7 @@ class LoadInstanceResource(val memory: Long, val cores: Int, val instances: Int)
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class InstanceResource(val instances: Int) extends CPUResource(instances) {
   override protected def toResource(cores: Int): Resource = new InstanceResource(cores)
 
@@ -322,6 +333,7 @@ class InstanceResource(val instances: Int) extends CPUResource(instances) {
  * @param queueCores
  * @param queueInstances
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 class YarnResource(
     val queueMemory: Long,
     val queueCores: Int,
@@ -329,6 +341,7 @@ class YarnResource(
     val queueName: String = "default",
     val applicationId: String = ""
 ) extends Resource {
+  def this() = this(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE, "default")
 
   implicit def toYarnResource(r: Resource): YarnResource = r match {
     case t: YarnResource => t
@@ -406,11 +419,17 @@ class YarnResource(
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class DriverAndYarnResource(
     val loadInstanceResource: LoadInstanceResource,
     val yarnResource: YarnResource
 ) extends Resource
     with Logging {
+
+  def this() = this(
+    new LoadInstanceResource(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE),
+    new YarnResource(Long.MaxValue, Integer.MAX_VALUE, Integer.MAX_VALUE)
+  )
 
   private implicit def DriverAndYarnResource(r: Resource): DriverAndYarnResource = r match {
     case t: DriverAndYarnResource => t
@@ -559,6 +578,7 @@ class DriverAndYarnResource(
 
 }
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 class SpecialResource(val resources: java.util.Map[String, AnyVal]) extends Resource {
   def this(resources: Map[String, AnyVal]) = this(resources.asJava)
 

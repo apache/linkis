@@ -72,17 +72,13 @@ public class S3FileSystem extends FileSystem {
         bucket = StorageConfiguration.S3_BUCKET().getValue(properties);
         region = StorageConfiguration.S3_REGION().getValue(properties);
 
-        AwsClientBuilder.EndpointConfiguration endpointConfiguration =
-                new AwsClientBuilder.EndpointConfiguration(endPoint, region);
+        AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(endPoint, region);
 
         BasicAWSCredentials basicAWSCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
         AWSStaticCredentialsProvider StaticCredentials = new AWSStaticCredentialsProvider(basicAWSCredentials);
 
-        s3Client = AmazonS3ClientBuilder.standard()
-                .withEndpointConfiguration(endpointConfiguration)
-                .withPathStyleAccessEnabled(true).withCredentials(StaticCredentials)
-                .build();
+        s3Client = AmazonS3ClientBuilder.standard().withEndpointConfiguration(endpointConfiguration).withPathStyleAccessEnabled(true).withCredentials(StaticCredentials).build();
     }
 
     @Override

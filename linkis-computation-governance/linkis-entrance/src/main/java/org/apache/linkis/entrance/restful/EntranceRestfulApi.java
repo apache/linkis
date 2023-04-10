@@ -263,7 +263,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       }
     }
 
-    Option<Job> job = Option.apply(null);
+    Option<Job> job = null;
     try {
       job = entranceServer.getJob(realId);
     } catch (Exception e) {
@@ -281,7 +281,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       message.data("status", status).data("execID", execID);
       return message;
     }
-    if (job.isDefined()) {
+    if (job != null && job.isDefined()) {
       if (job.get() instanceof EntranceJob) {
         ((EntranceJob) job.get()).updateNewestAccessByClientTimestamp();
       }
@@ -638,7 +638,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       }
     }
 
-    Option<Job> job = Option.apply(null);
+    Option<Job> job = null;
     try {
       job = entranceServer.getJob(realId);
     } catch (final Throwable t) {
@@ -648,7 +648,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       message.setMethod("/api/entrance/" + id + "/log");
       return message;
     }
-    if (job.isDefined()) {
+    if (job != null && job.isDefined()) {
       logger.debug("begin to get log for {}(开始获取 {} 的日志)", job.get().getId(), job.get().getId());
       LogReader logReader =
           entranceServer.getEntranceContext().getOrCreateLogManager().getLogReader(realId);
@@ -741,7 +741,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       String id = idNode.get(i).asText();
       Long taskID = taskIDNode.get(i).asLong();
       String realId = ZuulEntranceUtils.parseExecID(id)[3];
-      Option<Job> job = Option.apply(null);
+      Option<Job> job = null;
       try {
         job = entranceServer.getJob(realId);
       } catch (Exception e) {
@@ -755,7 +755,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         continue;
       }
       Message message = null;
-      if (job.isEmpty()) {
+      if (job == null || job.isEmpty()) {
         logger.warn("can not find a job in entranceServer, will force to kill it");
         waitToForceKill.add(taskID);
         message = Message.ok("Forced Kill task (强制杀死任务)");
@@ -877,7 +877,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       }
     }
 
-    Option<Job> job = Option.apply(null);
+    Option<Job> job = null;
     try {
       job = entranceServer.getJob(realId);
     } catch (Exception e) {
@@ -894,7 +894,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       return message;
     }
 
-    if (job.isEmpty()) {
+    if (job == null || job.isEmpty()) {
       logger.warn("can not find a job in entranceServer, will force to kill it");
       // 如果在内存中找不到该任务，那么该任务可能已经完成了，或者就是重启导致的
       JobHistoryHelper.forceKill(taskID);

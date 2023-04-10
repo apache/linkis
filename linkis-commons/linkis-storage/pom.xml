@@ -107,6 +107,12 @@
       <groupId>org.jdom</groupId>
       <artifactId>jdom2</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-s3</artifactId>
+      <version>1.11.792</version>
+    </dependency>
   </dependencies>
 
   <build>

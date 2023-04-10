@@ -727,3 +727,8 @@ opentracing-api-0.33.0.jar
 opentracing-noop-0.33.0.jar
 opentracing-util-0.33.0.jar
 org.jacoco.agent-0.8.5-runtime.jar
+aws-java-sdk-s3-1.11.792.jar
+aws-java-sdk-kms-1.11.792.jar
+aws-java-sdk-core-1.11.792.jar
+jmespath-java-1.11.792.jar
+ion-java-1.0.2.jar

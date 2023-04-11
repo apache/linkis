@@ -1249,8 +1249,6 @@
               <exclude>compiler/**</exclude>
               <exclude>**/generated/**</exclude>
               <exclude>**/scritpis-test.sql</exclude>
-              <exclude>**/result-read-test.dolphin</exclude>
-              <exclude>**/storage-read-test.dolphin</exclude>
               <exclude>**/**.dolphin</exclude>
 
             </excludes>

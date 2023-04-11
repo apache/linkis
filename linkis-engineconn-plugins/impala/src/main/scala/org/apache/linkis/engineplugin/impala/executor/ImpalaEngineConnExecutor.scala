@@ -72,12 +72,13 @@ import org.springframework.util.CollectionUtils
 
 import javax.net.SocketFactory
 import javax.net.ssl._
-import javax.security.auth.callback.{Callback, NameCallback, PasswordCallback}
+import javax.security.auth.callback.{Callback, CallbackHandler, NameCallback, PasswordCallback}
 
 import java.io.FileInputStream
 import java.security.KeyStore
 import java.util
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.Consumer
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
@@ -109,6 +110,13 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         passwordCallback = new StaticPasswordCallback(password);
       }
 
+      val callbackHandler: CallbackHandler = new CallbackHandler() {
+        override def handle(callbacks: Array[Callback]): Unit = callbacks.foreach {
+          case callback: NameCallback => callback.setName(IMPALA_SASL_USERNAME.getValue)
+          case callback: PasswordCallback => callback.setPassword(passwordCallback.getPassword)
+        }
+      }
+
       new ImpalaThriftSessionFactory(
         servers,
         maxConnections,
@@ -117,11 +125,7 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         IMPALA_SASL_AUTHORIZATION_ID.getValue,
         IMPALA_SASL_PROTOCOL.getValue,
         saslProperties,
-        (callbacks: Array[Callback]) =>
-          callbacks.foreach {
-            case callback: NameCallback => callback.setName(IMPALA_SASL_USERNAME.getValue)
-            case callback: PasswordCallback => callback.setPassword(passwordCallback.getPassword)
-          }
+        callbackHandler
       )
     } else {
       new ImpalaThriftSessionFactory(servers, maxConnections, createSocketFactory)
@@ -316,7 +320,9 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     }
 
     override def message(messages: util.List[String]): Unit = {
-      messages.forEach(m => engineExecutionContext.appendStdout(m))
+      messages.forEach(new Consumer[String]() {
+        override def accept(message: String): Unit = engineExecutionContext.appendStdout(message)
+      })
     }
 
     def progressArray: Array[JobProgressInfo] = {

@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.executor
 
 import org.apache.linkis.common.utils.Utils
+import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatServiceHolder
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnApplicationClusterDescriptorAdapter
@@ -55,6 +56,12 @@ class FlinkJarOnceExecutor(
   override protected def waitToRunning(): Unit = {
     Utils.waitUntil(() => clusterDescriptor.initJobId(), Duration.Inf)
     setJobID(clusterDescriptor.getJobId.toHexString)
+    if (isDetach) {
+      waitToExit()
+    }
+  }
+
+  private def isDetach(): Boolean = {
     val extraParams = flinkEngineConnContext.getEnvironmentContext.getExtraParams()
     val clientType = extraParams
       .getOrDefault(
@@ -66,15 +73,31 @@ class FlinkJarOnceExecutor(
     logger.info(s"clientType : ${clientType}")
     clientType match {
       case ECConstants.EC_FLINK_CLIENT_TYPE_DETACH =>
-        waitToExit()
+        true
       case _ =>
+        false
+    }
+  }
+
+  override def close(): Unit = {
+    super.close()
+    if (null != daemonThread) {
+      daemonThread.cancel(true)
+    }
+  }
+
+  override protected def closeYarnApp(): Unit = {
+    if (isDetach()) {
+      logger.info("Skip to kill yarn app on close with clientType : detach.")
+    } else {
+      logger.info("Will kill yarn app on close with clientType : attach.")
+      super.close()
     }
   }
 
   private def waitToExit(): Unit = {
     // upload applicationId to manager and then exit
     val thisExecutor = this
-    ManagerService
     if (!isCompleted) {
       daemonThread = Utils.defaultScheduler.scheduleWithFixedDelay(
         new Runnable {
@@ -83,11 +106,11 @@ class FlinkJarOnceExecutor(
               Utils.waitUntil(() => StringUtils.isNotBlank(getApplicationId), Duration.apply("10s"))
               if (StringUtils.isNotBlank(getApplicationId)) {
                 Utils.tryAndWarn {
-                  import org.springframework.web.context.ContextLoader
-                  import org.springframework.web.context.WebApplicationContext
-                  import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatService
-                  val wac = ContextLoader.getCurrentWebApplicationContext
-                  val heartbeatService = wac.getBean(classOf[ExecutorHeartbeatService])
+                  val heartbeatService = ExecutorHeartbeatServiceHolder.getDefaultHeartbeatService()
+                  if (null == heartbeatService) {
+                    logger.error("HeartbeatService not inited.")
+                    return null
+                  }
                   val heartbeatMsg = heartbeatService.generateHeartBeatMsg(thisExecutor)
                   ManagerService.getManagerService.heartbeatReport(heartbeatMsg)
                   logger.info(
@@ -103,6 +126,7 @@ class FlinkJarOnceExecutor(
         FlinkEnvConfiguration.FLINK_ONCE_JAR_APP_REPORT_APPLICATIONID_INTERVAL.getValue.toLong,
         TimeUnit.MILLISECONDS
       )
+      logger.info("waitToExit submited.")
     }
   }
 

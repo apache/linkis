@@ -213,7 +213,6 @@ public class ByteTimeUtils {
       } else {
         throw new NumberFormatException("Failed to parse byte string: " + str);
       }
-      suffix = suffix.toLowerCase();
       // Check for invalid suffixes
       if (suffix != null && !byteSuffixes.containsKey(suffix)) {
         throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");

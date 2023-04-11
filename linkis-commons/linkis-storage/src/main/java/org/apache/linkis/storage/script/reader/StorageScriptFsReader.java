@@ -46,7 +46,6 @@ public class StorageScriptFsReader extends ScriptFsReader {
   private List<Variable> variables = new ArrayList<>();
   private String lineText;
 
-
   public StorageScriptFsReader(FsPath path, String charset, InputStream inputStream) {
     super(path, charset);
     this.path = path;
@@ -69,7 +68,7 @@ public class StorageScriptFsReader extends ScriptFsReader {
     lineText = bufferedReader.readLine();
     while (hasNext()
         && Objects.nonNull(parser)
-        && isMetadata(lineText, parser.prefix(),parser.prefixConf())) {
+        && isMetadata(lineText, parser.prefix(), parser.prefixConf())) {
       variables.add(parser.parse(lineText));
       lineText = bufferedReader.readLine();
     }
@@ -145,11 +144,14 @@ public class StorageScriptFsReader extends ScriptFsReader {
 
   /**
    * get the script parser according to the path(根据文件路径 获取对应的script parser )
-   * @return
-   *   Scripts Parser
+   *
+   * @return Scripts Parser
    */
   public Parser getScriptParser() {
-    List<Parser> parsers = Arrays.stream(ParserFactory.listParsers()).filter(p -> p.belongTo(StorageUtils.pathToSuffix(path.getPath()))).collect(Collectors.toList());
+    List<Parser> parsers =
+        Arrays.stream(ParserFactory.listParsers())
+            .filter(p -> p.belongTo(StorageUtils.pathToSuffix(path.getPath())))
+            .collect(Collectors.toList());
     if (parsers.size() > 0) {
       return parsers.get(0);
     } else {

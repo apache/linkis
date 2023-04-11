@@ -65,6 +65,6 @@ public class BuildOSSSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return StorageUtils.OSS();
+    return StorageUtils.OSS;
   }
 }

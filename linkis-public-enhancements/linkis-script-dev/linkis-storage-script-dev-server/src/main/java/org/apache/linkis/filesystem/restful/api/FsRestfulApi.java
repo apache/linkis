@@ -1001,7 +1001,8 @@ public class FsRestfulApi {
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }
-    try (FileSource fileSource = FileSource.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
+    try (FileSource fileSource =
+        FileSource.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
       Pair<Object, List<String[]>> collect = fileSource.collect()[0];
       StringBuilder[] log =
           Arrays.stream(new StringBuilder[4])

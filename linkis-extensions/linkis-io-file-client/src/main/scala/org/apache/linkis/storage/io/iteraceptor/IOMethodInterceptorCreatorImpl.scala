@@ -20,9 +20,11 @@ package org.apache.linkis.storage.io.iteraceptor
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.io.{IOMethodInterceptorCreator, IOMethodInterceptorFactory}
 import org.apache.linkis.storage.io.client.IOClient
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cglib.proxy.MethodInterceptor
 import org.springframework.stereotype.Component
+
 import javax.annotation.PostConstruct
 
 @Component("ioMethod")

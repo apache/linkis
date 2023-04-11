@@ -383,7 +383,11 @@ class HiveEngineConcurrentConnExecutor(
 
     val columns = results.asScala
       .map(result =>
-        new Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
+        new Column(
+          result.getName,
+          DataType.toDataType(result.getType.toLowerCase()),
+          result.getComment
+        )
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)

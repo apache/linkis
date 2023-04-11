@@ -115,7 +115,9 @@ object FlinkExecutor {
       resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
   ): Unit = {
     val columns = resultSet.getColumns.asScala
-      .map(columnInfo =>new Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
+      .map(columnInfo =>
+        new Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null)
+      )
       .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {

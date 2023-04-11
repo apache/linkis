@@ -23,15 +23,19 @@ import org.apache.linkis.storage.script.Parser;
 import org.apache.linkis.storage.script.Variable;
 import org.apache.linkis.storage.script.VariableParser;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public abstract class CommonScriptParser implements Parser {
 
   @Override
   public Variable parse(String line) {
-    String variableReg = "\\s*" + prefix() + "\\s*(.+)\\s*=\\s*(.+)\\s*";
-    if (line.matches(variableReg)) {
-      String[] split = line.split("=");
-      String key = split[0].trim();
-      String value = split[1].trim();
+    String variableReg = "\\s*" + prefix() + "\\s*(.+)\\s*" + "=" + "\\s*(.+)\\s*";
+    Pattern pattern = Pattern.compile(variableReg);
+    Matcher matcher = pattern.matcher(line);
+    if (matcher.matches()) {
+      String key = matcher.group(1).trim();
+      String value = matcher.group(2).trim();
       return new Variable(VariableParser.VARIABLE, null, key, value);
     } else {
       String[] split = line.split(" ");

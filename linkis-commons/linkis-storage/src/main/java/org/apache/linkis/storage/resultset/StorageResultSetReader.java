@@ -17,7 +17,6 @@
 
 package org.apache.linkis.storage.resultset;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
@@ -27,6 +26,8 @@ import org.apache.linkis.common.io.resultset.ResultSetReader;
 import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.utils.StorageUtils;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
 
   public void init() throws IOException {
     String resType = Dolphin.getType(inputStream);
-    if (!StringUtils.equals(resultSet.resultSetType() ,resType)) {
+    if (!StringUtils.equals(resultSet.resultSetType(), resType)) {
       throw new RuntimeException(
           "File type does not match(文件类型不匹配): "
               + ResultSetFactory.resultSetType.getOrDefault(resType, "TABLE"));

@@ -433,7 +433,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean exists(FsPath dest) throws IOException {
-    return new File(dest.getSchemaPath()).exists();
+    return new File(dest.getPath()).exists();
   }
 
   @Override

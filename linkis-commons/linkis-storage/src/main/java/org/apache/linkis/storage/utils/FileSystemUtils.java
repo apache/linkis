@@ -23,6 +23,7 @@ import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.LocalFileSystem;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -58,7 +59,8 @@ public class FileSystemUtils {
     createNewFile(filePath, StorageUtils.getJvmUser(), createParentWhenNotExists);
   }
 
-  public static void createNewFile(FsPath filePath, String user, boolean createParentWhenNotExists) {
+  public static void createNewFile(
+      FsPath filePath, String user, boolean createParentWhenNotExists) {
     FileSystem fileSystem = (FileSystem) FSFactory.getFsByProxyUser(filePath, user);
     try {
       fileSystem.init(null);
@@ -111,6 +113,12 @@ public class FileSystemUtils {
     dirsToMake.push(dest);
     while (!fileSystem.exists(parentPath)) {
       dirsToMake.push(parentPath);
+
+      if (Objects.isNull(parentPath.getParent())) {
+        // parent path of root is null
+        break;
+      }
+
       parentPath = parentPath.getParent();
     }
     if (!fileSystem.canExecute(parentPath)) {

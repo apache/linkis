@@ -24,13 +24,14 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.spark.common.LineBufferedProcess
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.storage.{FSFactory, LineMetaData}
+import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 import org.apache.linkis.storage.utils.StorageUtils
+
 import org.apache.commons.lang3.StringUtils
-import java.io.{IOException, InputStream, OutputStream}
+
+import java.io.{InputStream, IOException, OutputStream}
 import java.net.ServerSocket
 import java.util.HashMap
-
-import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 
 /**
  */

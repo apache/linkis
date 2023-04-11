@@ -111,7 +111,7 @@ public class StorageScriptFsWriter extends ScriptFsWriter {
   }
 
   @Override
-  public InputStream getInputStream(){
+  public InputStream getInputStream() {
     byte[] bytes = null;
     try {
       bytes =
@@ -121,5 +121,4 @@ public class StorageScriptFsWriter extends ScriptFsWriter {
     }
     return new ByteArrayInputStream(bytes);
   }
-
 }

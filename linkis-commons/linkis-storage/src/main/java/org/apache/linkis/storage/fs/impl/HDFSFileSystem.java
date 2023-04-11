@@ -162,8 +162,7 @@ public class HDFSFileSystem extends FileSystem {
     List<FsPath> fsPaths = new ArrayList<FsPath>();
     for (FileStatus f : stat) {
       fsPaths.add(
-          fillStorageFile(
-              new FsPath(StorageUtils.HDFS_SCHEMA + f.getPath().toUri().getPath()), f));
+          fillStorageFile(new FsPath(StorageUtils.HDFS_SCHEMA + f.getPath().toUri().getPath()), f));
     }
     if (fsPaths.isEmpty()) {
       return null;

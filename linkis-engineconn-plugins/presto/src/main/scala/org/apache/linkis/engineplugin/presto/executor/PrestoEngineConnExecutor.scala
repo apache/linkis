@@ -21,35 +21,53 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
 import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary
-import org.apache.linkis.engineplugin.presto.exception.{PrestoClientException, PrestoStateInvalidException}
+import org.apache.linkis.engineplugin.presto.exception.{
+  PrestoClientException,
+  PrestoStateInvalidException
+}
 import org.apache.linkis.engineplugin.presto.utils.PrestoSQLHook
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.{Column, DataType}
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.util.CollectionUtils
+
 import java.net.URI
 import java.util
 import java.util._
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.collection.JavaConverters._
+
 import com.facebook.presto.client._
 import com.facebook.presto.spi.security.SelectedRole
 import com.google.common.cache.{Cache, CacheBuilder}
@@ -288,7 +306,7 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         throw new RuntimeException("presto columns is null.")
       }
       val columns = results.getColumns.asScala
-        .map(column => new Column(column.getName,  DataType.toDataType(column.getType), ""))
+        .map(column => new Column(column.getName, DataType.toDataType(column.getType), ""))
         .toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))

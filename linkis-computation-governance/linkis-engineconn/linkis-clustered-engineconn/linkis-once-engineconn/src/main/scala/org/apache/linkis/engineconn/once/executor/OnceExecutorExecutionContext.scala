@@ -46,7 +46,7 @@ class OnceExecutorExecutionContext(
       resultSet: ResultSet[_ <: MetaData, _ <: Record],
       resultSetPath: FsPath,
       alias: String
-  ):  org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] =
+  ): org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] =
     ResultSetWriter.getResultSetWriter(
       resultSet,
       0,

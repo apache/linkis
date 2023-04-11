@@ -31,11 +31,11 @@ public abstract class ExcelFsWriter extends FsWriter {
   public abstract boolean isAutoFormat();
 
   public static ExcelFsWriter getExcelFsWriter(
-          String charset,
-          String sheetName,
-          String dateFormat,
-          OutputStream outputStream,
-          boolean autoFormat) {
+      String charset,
+      String sheetName,
+      String dateFormat,
+      OutputStream outputStream,
+      boolean autoFormat) {
     return new StorageExcelWriter(charset, sheetName, dateFormat, outputStream, autoFormat);
   }
 }

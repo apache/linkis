@@ -29,11 +29,12 @@ import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.resultset.table.TableResultSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResultSetReaderFactory {
   private static final Logger logger = LoggerFactory.getLogger(ResultSetReaderFactory.class);

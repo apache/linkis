@@ -20,19 +20,27 @@ package org.apache.linkis.engineplugin.elasticsearch.executor.client.impl
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary._
 import org.apache.linkis.engineplugin.elasticsearch.exception.EsConvertResponseException
-import org.apache.linkis.engineplugin.elasticsearch.executor.client.{ElasticSearchJsonResponse, ElasticSearchResponse, ElasticSearchTableResponse, ResponseHandler}
+import org.apache.linkis.engineplugin.elasticsearch.executor.client.{
+  ElasticSearchJsonResponse,
+  ElasticSearchResponse,
+  ElasticSearchTableResponse,
+  ResponseHandler
+}
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.domain.DataType.{DoubleType, StringType}
 import org.apache.linkis.storage.resultset.table.TableRecord
+
 import org.apache.http.entity.ContentType
 import org.apache.http.util.EntityUtils
+
 import java.nio.charset.Charset
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+
 import com.fasterxml.jackson.databind.node.{ArrayNode, ObjectNode}
-import org.apache.linkis.storage.domain.DataType.{DoubleType, StringType}
 import org.elasticsearch.client.Response
 
 class ResponseHandlerImpl extends ResponseHandler {

@@ -32,8 +32,6 @@ import org.apache.linkis.storage.resultset.ResultSetReaderFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.utils.CloseableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -42,6 +40,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary.CONFIGURATION_NOT_READ;
 
@@ -236,7 +237,6 @@ public class StorageUtils {
       }
     } catch (IOException e) {
       logger.warn("FileSystemUtils readBytes failed", e);
-
     }
     return readLen;
   }

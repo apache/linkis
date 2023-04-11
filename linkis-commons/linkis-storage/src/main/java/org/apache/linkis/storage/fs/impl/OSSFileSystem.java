@@ -178,8 +178,7 @@ public class OSSFileSystem extends FileSystem {
     fs = new AliyunOSSFileSystem();
     try {
       fs.initialize(
-          new URI(
-              StorageUtils.OSS_SCHEMA + StorageConfiguration.OSS_ACCESS_BUCKET_NAME.getValue()),
+          new URI(StorageUtils.OSS_SCHEMA + StorageConfiguration.OSS_ACCESS_BUCKET_NAME.getValue()),
           conf);
     } catch (URISyntaxException e) {
       throw new IOException("init OSS FileSystem failed!");

@@ -20,6 +20,17 @@ package org.apache.linkis.engineplugin.elasticsearch.executor.client
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.impl.ResponseHandlerImpl
 import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.domain.DataType.{
+  ArrayType,
+  BinaryType,
+  BooleanType,
+  DateType,
+  DecimalType,
+  NullType,
+  StringType,
+  StructType
+}
+
 import java.util.Locale
 
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
@@ -28,7 +39,6 @@ import com.fasterxml.jackson.dataformat.cbor.CBORFactory
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.smile.SmileFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
-import org.apache.linkis.storage.domain.DataType.{ArrayType, BinaryType, BooleanType, DateType, DecimalType, NullType, StringType, StructType}
 import org.elasticsearch.client.Response
 
 trait ResponseHandler extends Logging {

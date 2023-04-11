@@ -176,7 +176,7 @@ public class FsPath {
     return owner.equals(user);
   }
 
-  public FsPath getParent() throws IOException {
+  public FsPath getParent() {
     String path = uri.getPath();
     int lastSlash = path.lastIndexOf('/');
     int start = startPositionWithoutWindowsDrive(path);
@@ -269,6 +269,7 @@ public class FsPath {
   }
 
   public String getSchemaPath() {
+    // local file system
     if (WINDOWS && !"hdfs".equals(getFsType())) {
       return getFsType() + "://" + uri.getAuthority() + uri.getPath();
     }

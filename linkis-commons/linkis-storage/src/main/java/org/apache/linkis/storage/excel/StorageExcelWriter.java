@@ -38,255 +38,256 @@ import org.slf4j.LoggerFactory;
 
 public class StorageExcelWriter extends ExcelFsWriter {
 
-    private static Logger logger = LoggerFactory.getLogger(StorageExcelWriter.class);
+  private static Logger logger = LoggerFactory.getLogger(StorageExcelWriter.class);
 
-    private String charset;
-    private String sheetName;
-    private String dateFormat;
-    private OutputStream outputStream;
-    private boolean autoFormat;
-    protected SXSSFWorkbook workBook;
-    protected SXSSFSheet sheet;
-    private DataFormat format;
-    protected DataType[] types;
-    protected int rowPoint;
-    protected int columnCounter;
-    protected Map<String, CellStyle> styles;
-    private boolean isFlush;
-    private ByteArrayOutputStream os;
-    private ByteArrayInputStream is;
+  private String charset;
+  private String sheetName;
+  private String dateFormat;
+  private OutputStream outputStream;
+  private boolean autoFormat;
+  protected SXSSFWorkbook workBook;
+  protected SXSSFSheet sheet;
+  private DataFormat format;
+  protected DataType[] types;
+  protected int rowPoint;
+  protected int columnCounter;
+  protected Map<String, CellStyle> styles;
+  private boolean isFlush;
+  private ByteArrayOutputStream os;
+  private ByteArrayInputStream is;
 
-    public StorageExcelWriter(
-            String charset,
-            String sheetName,
-            String dateFormat,
-            OutputStream outputStream,
-            boolean autoFormat) {
-        this.charset = charset;
-        this.sheetName = sheetName;
-        this.dateFormat = dateFormat;
-        this.outputStream = outputStream;
-        this.autoFormat = autoFormat;
+  public StorageExcelWriter(
+      String charset,
+      String sheetName,
+      String dateFormat,
+      OutputStream outputStream,
+      boolean autoFormat) {
+    this.charset = charset;
+    this.sheetName = sheetName;
+    this.dateFormat = dateFormat;
+    this.outputStream = outputStream;
+    this.autoFormat = autoFormat;
+  }
+
+  public void init() {
+    workBook = new SXSSFWorkbook();
+    sheet = workBook.createSheet(sheetName);
+  }
+
+  public CellStyle getDefaultHeadStyle() {
+    Font headerFont = workBook.createFont();
+    headerFont.setBold(true);
+    headerFont.setFontHeightInPoints((short) 14);
+    headerFont.setColor(IndexedColors.RED.getIndex());
+    CellStyle headerCellStyle = workBook.createCellStyle();
+    headerCellStyle.setFont(headerFont);
+    return headerCellStyle;
+  }
+
+  public Workbook getWorkBook() {
+    // 自适应列宽
+    sheet.trackAllColumnsForAutoSizing();
+    for (int elem = 0; elem <= columnCounter; elem++) {
+      sheet.autoSizeColumn(elem);
     }
+    return workBook;
+  }
 
-    public void init() {
-        workBook = new SXSSFWorkbook();
-        sheet = workBook.createSheet(sheetName);
-    }
-
-    public CellStyle getDefaultHeadStyle() {
-        Font headerFont = workBook.createFont();
-        headerFont.setBold(true);
-        headerFont.setFontHeightInPoints((short) 14);
-        headerFont.setColor(IndexedColors.RED.getIndex());
-        CellStyle headerCellStyle = workBook.createCellStyle();
-        headerCellStyle.setFont(headerFont);
-        return headerCellStyle;
-    }
-
-    public Workbook getWorkBook() {
-        // 自适应列宽
-        sheet.trackAllColumnsForAutoSizing();
-        for (int elem = 0; elem <= columnCounter; elem++) {
-            sheet.autoSizeColumn(elem);
-        }
-        return workBook;
-    }
-
-    public CellStyle createCellStyle(DataType dataType) {
-        CellStyle style = workBook.createCellStyle();
-        format = workBook.createDataFormat();
-        //        if ("default".equals(dataType.toString())) {
+  public CellStyle createCellStyle(DataType dataType) {
+    CellStyle style = workBook.createCellStyle();
+    format = workBook.createDataFormat();
+    //        if ("default".equals(dataType.toString())) {
+    style.setDataFormat(format.getFormat("@"));
+    //        }
+    if (autoFormat) {
+      if (dataType instanceof DataType.StringType) {
         style.setDataFormat(format.getFormat("@"));
-        //        }
-        if (autoFormat) {
-            if (dataType instanceof DataType.StringType) {
-                style.setDataFormat(format.getFormat("@"));
-            } else if (dataType instanceof DataType.TinyIntType
-                    || dataType instanceof DataType.ShortIntType
-                    || dataType instanceof DataType.IntType) {
-                style.setDataFormat(format.getFormat("#"));
-            } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
-                style.setDataFormat(format.getFormat("#.##E+00"));
-            } else if (dataType instanceof DataType.FloatType
-                    || dataType instanceof DataType.DoubleType) {
-                style.setDataFormat(format.getFormat("#.0000000000"));
-            } else if (dataType instanceof DataType.CharType
-                    || dataType instanceof DataType.VarcharType) {
-                style.setDataFormat(format.getFormat("@"));
-            } else if (dataType instanceof DataType.DateType
-                    || dataType instanceof DataType.TimestampType) {
-                style.setDataFormat(format.getFormat("m/d/yy h:mm"));
-            } else if (dataType instanceof DataType.DecimalType
-                    || dataType instanceof DataType.BigDecimalType) {
-                style.setDataFormat(format.getFormat("#.000000000"));
-            } else {
-                style.setDataFormat(format.getFormat("@"));
-            }
-        }
-        return style;
+      } else if (dataType instanceof DataType.TinyIntType
+          || dataType instanceof DataType.ShortIntType
+          || dataType instanceof DataType.IntType) {
+        style.setDataFormat(format.getFormat("#"));
+      } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
+        style.setDataFormat(format.getFormat("#.##E+00"));
+      } else if (dataType instanceof DataType.FloatType
+          || dataType instanceof DataType.DoubleType) {
+        style.setDataFormat(format.getFormat("#.0000000000"));
+      } else if (dataType instanceof DataType.CharType
+          || dataType instanceof DataType.VarcharType) {
+        style.setDataFormat(format.getFormat("@"));
+      } else if (dataType instanceof DataType.DateType
+          || dataType instanceof DataType.TimestampType) {
+        style.setDataFormat(format.getFormat("m/d/yy h:mm"));
+      } else if (dataType instanceof DataType.DecimalType
+          || dataType instanceof DataType.BigDecimalType) {
+        style.setDataFormat(format.getFormat("#.000000000"));
+      } else {
+        style.setDataFormat(format.getFormat("@"));
+      }
     }
+    return style;
+  }
 
-    public CellStyle getCellStyle(DataType dataType) {
-        CellStyle style = styles.get(dataType.getTypeName());
-        if (style == null) {
-            CellStyle newStyle = createCellStyle(dataType);
-            styles.put(dataType.getTypeName(), newStyle);
-            return newStyle;
+  public CellStyle getCellStyle(DataType dataType) {
+    CellStyle style = styles.get(dataType.getTypeName());
+    if (style == null) {
+      CellStyle newStyle = createCellStyle(dataType);
+      styles.put(dataType.getTypeName(), newStyle);
+      return newStyle;
+    } else {
+      return style;
+    }
+  }
+
+  @Override
+  public void addMetaData(MetaData metaData) throws IOException {
+    init();
+    Row tableHead = sheet.createRow(0);
+    Column[] columns = ((TableMetaData) metaData).getColumns();
+    List<DataType> columnType = new ArrayList<>();
+    for (int i = 0; i < columns.length; i++) {
+      Cell headCell = tableHead.createCell(columnCounter);
+      headCell.setCellValue(columns[i].getColumnName());
+      headCell.setCellStyle(getDefaultHeadStyle());
+      columnType.add(columns[i].getDataType());
+      columnCounter++;
+    }
+    types = columnType.toArray(new DataType[0]);
+    rowPoint++;
+  }
+
+  @Override
+  public void addRecord(Record record) throws IOException {
+    // TODO: 是否需要替换null值
+    Row tableBody = sheet.createRow(rowPoint);
+    int colunmPoint = 0;
+    Object[] excelRecord = ((TableRecord) record).row;
+    for (Object elem : excelRecord) {
+      Cell cell = tableBody.createCell(colunmPoint);
+      DataType dataType = types[colunmPoint];
+      if (autoFormat) {
+        setCellTypeValue(dataType, elem, cell);
+      } else {
+        cell.setCellValue(DataType.valueToString(elem));
+      }
+      cell.setCellStyle(getCellStyle(dataType));
+      colunmPoint++;
+    }
+    rowPoint++;
+  }
+
+  private void setCellTypeValue(DataType dataType, Object elem, Cell cell) {
+    if (null == elem) {
+      return;
+    }
+    try {
+      if (dataType instanceof DataType.StringType) {
+        cell.setCellValue(DataType.valueToString(elem));
+      } else if (dataType instanceof DataType.TinyIntType
+          || dataType instanceof DataType.ShortIntType
+          || dataType instanceof DataType.IntType) {
+        cell.setCellValue(Integer.parseInt(elem.toString()));
+      } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
+        cell.setCellValue(Long.parseLong(elem.toString()));
+      } else if (dataType instanceof DataType.FloatType) {
+        cell.setCellValue(Float.parseFloat(elem.toString()));
+      } else if (dataType instanceof DataType.DoubleType
+          || dataType instanceof DataType.DecimalType
+          || dataType instanceof DataType.BigDecimalType) {
+        doubleCheck(DataType.valueToString(elem));
+        cell.setCellValue(Double.parseDouble(DataType.valueToString(elem)));
+      } else if (dataType instanceof DataType.CharType
+          || dataType instanceof DataType.VarcharType) {
+        cell.setCellValue(DataType.valueToString(elem));
+      } else if (dataType instanceof DataType.DateType
+          || dataType instanceof DataType.TimestampType) {
+        cell.setCellValue(getDate(elem));
+      } else {
+        cell.setCellValue(DataType.valueToString(elem));
+      }
+    } catch (Exception e) {
+      cell.setCellValue(DataType.valueToString(elem));
+    }
+  }
+
+  private Date getDate(Object value) {
+    if (value instanceof Date) {
+      return (Date) value;
+    } else {
+      throw new NumberFormatException(
+          "Value "
+              + value
+              + " with class : "
+              + value.getClass().getName()
+              + " is not a valid type of Date.");
+    }
+  }
+
+  /**
+   * Check whether the double exceeds the number of digits, which will affect the data accuracy
+   *
+   * @param elemValue
+   */
+  private void doubleCheck(String elemValue) {
+    BigDecimal value = new BigDecimal(elemValue).stripTrailingZeros();
+    if ((value.precision() - value.scale()) > 15) {
+      throw new NumberFormatException(
+          "Value " + elemValue + " error : This data exceeds 15 significant digits.");
+    }
+  }
+
+  @Override
+  public void flush() {
+    try {
+      getWorkBook().write(os);
+    } catch (IOException e) {
+      logger.warn("flush fail", e);
+    }
+    byte[] content = os.toByteArray();
+    is = new ByteArrayInputStream(content);
+    byte[] buffer = new byte[1024];
+    int bytesRead = 0;
+    while (isFlush) {
+      try {
+        bytesRead = is.read(buffer, 0, 1024);
+        if (bytesRead == -1) {
+          isFlush = false;
         } else {
-            return style;
+          outputStream.write(buffer, 0, bytesRead);
         }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
+  }
 
-    @Override
-    public void addMetaData(MetaData metaData) throws IOException {
-        init();
-        Row tableHead = sheet.createRow(0);
-        Column[] columns = ((TableMetaData) metaData).getColumns();
-        List<DataType> columnType = new ArrayList<>();
-        for (int i = 0; i < columns.length; i++) {
-            Cell headCell = tableHead.createCell(columnCounter);
-            headCell.setCellValue(columns[i].getColumnName());
-            headCell.setCellStyle(getDefaultHeadStyle());
-            columnType.add(columns[i].getDataType());
-            columnCounter++;
-        }
-        types = columnType.toArray(new DataType[0]);
-        rowPoint++;
+  @Override
+  public void close() {
+    if (isFlush) {
+      flush();
     }
+    IOUtils.closeQuietly(outputStream);
+    IOUtils.closeQuietly(is);
+    IOUtils.closeQuietly(os);
+    IOUtils.closeQuietly(workBook);
+  }
 
-    @Override
-    public void addRecord(Record record) throws IOException {
-        // TODO: 是否需要替换null值
-        Row tableBody = sheet.createRow(rowPoint);
-        int colunmPoint = 0;
-        Object[] excelRecord = ((TableRecord) record).row;
-        for (Object elem : excelRecord) {
-            Cell cell = tableBody.createCell(colunmPoint);
-            DataType dataType = types[colunmPoint];
-            if (autoFormat) {
-                setCellTypeValue(dataType, elem, cell);
-            } else {
-                cell.setCellValue(DataType.valueToString(elem));
-            }
-            cell.setCellStyle(getCellStyle(dataType));
-            colunmPoint++;
-        }
-        rowPoint++;
-    }
+  @Override
+  public String getCharset() {
+    return this.charset;
+  }
 
-    private void setCellTypeValue(DataType dataType, Object elem, Cell cell) {
-        if (null == elem) {
-            return;
-        }
-        try {
-            if (dataType instanceof DataType.StringType) {
-                cell.setCellValue(DataType.valueToString(elem));
-            } else if (dataType instanceof DataType.TinyIntType
-                    || dataType instanceof DataType.ShortIntType
-                    || dataType instanceof DataType.IntType) {
-                cell.setCellValue(Integer.parseInt(elem.toString()));
-            } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
-                cell.setCellValue(Long.parseLong(elem.toString()));
-            } else if (dataType instanceof DataType.FloatType) {
-                cell.setCellValue(Float.parseFloat(elem.toString()));
-            } else if (dataType instanceof DataType.DoubleType
-                    || dataType instanceof DataType.DecimalType
-                    || dataType instanceof DataType.BigDecimalType) {
-                doubleCheck(DataType.valueToString(elem));
-                cell.setCellValue(Double.parseDouble(DataType.valueToString(elem)));
-            } else if (dataType instanceof DataType.CharType
-                    || dataType instanceof DataType.VarcharType) {
-                cell.setCellValue(DataType.valueToString(elem));
-            } else if (dataType instanceof DataType.DateType
-                    || dataType instanceof DataType.TimestampType) {
-                cell.setCellValue(getDate(elem));
-            } else {
-                cell.setCellValue(DataType.valueToString(elem));
-            }
-        } catch (Exception e) {
-            cell.setCellValue(DataType.valueToString(elem));
-        }
-    }
+  @Override
+  public String getSheetName() {
+    return this.sheetName;
+  }
 
-    private Date getDate(Object value) {
-        if (value instanceof Date) {
-            return (Date) value;
-        } else {
-            throw new NumberFormatException(
-                    "Value "
-                            + value
-                            + " with class : "
-                            + value.getClass().getName()
-                            + " is not a valid type of Date.");
-        }
-    }
+  @Override
+  public String getDateFormat() {
+    return this.dateFormat;
+  }
 
-    /**
-     * Check whether the double exceeds the number of digits, which will affect the data accuracy
-     *
-     * @param elemValue
-     */
-    private void doubleCheck(String elemValue) {
-        BigDecimal value = new BigDecimal(elemValue).stripTrailingZeros();
-        if ((value.precision() - value.scale()) > 15) {
-            throw new NumberFormatException("Value " + elemValue + " error : This data exceeds 15 significant digits.");
-        }
-    }
-
-    @Override
-    public void flush() {
-        try {
-            getWorkBook().write(os);
-        } catch (IOException e) {
-            logger.warn("flush fail", e);
-        }
-        byte[] content = os.toByteArray();
-        is = new ByteArrayInputStream(content);
-        byte[] buffer = new byte[1024];
-        int bytesRead = 0;
-        while (isFlush) {
-            try {
-                bytesRead = is.read(buffer, 0, 1024);
-                if (bytesRead == -1) {
-                    isFlush = false;
-                } else {
-                    outputStream.write(buffer, 0, bytesRead);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public void close() {
-        if (isFlush) {
-            flush();
-        }
-        IOUtils.closeQuietly(outputStream);
-        IOUtils.closeQuietly(is);
-        IOUtils.closeQuietly(os);
-        IOUtils.closeQuietly(workBook);
-    }
-
-    @Override
-    public String getCharset() {
-        return this.charset;
-    }
-
-    @Override
-    public String getSheetName() {
-        return this.sheetName;
-    }
-
-    @Override
-    public String getDateFormat() {
-        return this.dateFormat;
-    }
-
-    @Override
-    public boolean isAutoFormat() {
-        return this.autoFormat;
-    }
+  @Override
+  public boolean isAutoFormat() {
+    return this.autoFormat;
+  }
 }

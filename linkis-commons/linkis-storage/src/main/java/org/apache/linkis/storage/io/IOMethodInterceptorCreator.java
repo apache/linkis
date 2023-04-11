@@ -21,5 +21,5 @@ import org.springframework.cglib.proxy.MethodInterceptor;
 
 public interface IOMethodInterceptorCreator {
 
-    MethodInterceptor createIOMethodInterceptor(String fsName);
+  MethodInterceptor createIOMethodInterceptor(String fsName);
 }

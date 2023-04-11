@@ -23,26 +23,38 @@ import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
-import org.apache.linkis.manager.engineplugin.python.exception.{ExecuteException, PythonExecuteError}
+import org.apache.linkis.manager.engineplugin.python.exception.{
+  ExecuteException,
+  PythonExecuteError
+}
 import org.apache.linkis.manager.engineplugin.python.utils.Kind
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain._
+import org.apache.linkis.storage.domain.DataType.{
+  BooleanType,
+  DoubleType,
+  FloatType,
+  IntType,
+  StringType,
+  TimestampType
+}
 import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
+
 import java.io.{File, FileFilter, FileOutputStream, InputStream}
 import java.net.ServerSocket
 import java.nio.file.Files
 import java.util.{List => JList}
 
-import org.apache.linkis.storage.domain.DataType.{BooleanType, DoubleType, FloatType, IntType, StringType, TimestampType}
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration.Duration
+
 import py4j.GatewayServer
 
 class PythonSession extends Logging {
@@ -307,7 +319,9 @@ class PythonSession extends Logging {
     writer.addMetaData(metaData)
     val size = data.size() - 1
     for (i <- 0 to size) {
-      writer.addRecord(new TableRecord(data.get(i).asScala.toArray[Any].asInstanceOf[Array[AnyRef]]))
+      writer.addRecord(
+        new TableRecord(data.get(i).asScala.toArray[Any].asInstanceOf[Array[AnyRef]])
+      )
     }
     // generate table data
     engineExecutionContext.sendResultSet(writer)

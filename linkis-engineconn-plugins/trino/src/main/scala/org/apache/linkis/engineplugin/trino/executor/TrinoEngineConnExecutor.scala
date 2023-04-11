@@ -20,32 +20,54 @@ package org.apache.linkis.engineplugin.trino.executor
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
-import org.apache.linkis.engineconn.computation.executor.execute.{ConcurrentComputationExecutor, EngineExecutionContext}
+import org.apache.linkis.engineconn.computation.executor.execute.{
+  ConcurrentComputationExecutor,
+  EngineExecutionContext
+}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
 import org.apache.linkis.engineplugin.trino.conf.TrinoEngineConfig
-import org.apache.linkis.engineplugin.trino.exception.{TrinoClientException, TrinoStateInvalidException}
+import org.apache.linkis.engineplugin.trino.exception.{
+  TrinoClientException,
+  TrinoStateInvalidException
+}
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor
-import org.apache.linkis.engineplugin.trino.password.{CommandPasswordCallback, StaticPasswordCallback}
+import org.apache.linkis.engineplugin.trino.password.{
+  CommandPasswordCallback,
+  StaticPasswordCallback
+}
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
 import org.apache.linkis.engineplugin.trino.utils.{TrinoCode, TrinoSQLHook}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
-import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, LoadResource, NodeResource}
+import org.apache.linkis.manager.common.entity.resource.{
+  CommonNodeResource,
+  LoadResource,
+  NodeResource
+}
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse, SuccessExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  ErrorExecuteResponse,
+  ExecuteResponse,
+  SuccessExecuteResponse
+}
 import org.apache.linkis.storage.domain.{Column, DataType}
+import org.apache.linkis.storage.domain.DataType.DateType
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.util.CollectionUtils
+
 import javax.security.auth.callback.PasswordCallback
+
 import java.net.URI
 import java.util
 import java.util._
@@ -53,10 +75,10 @@ import java.util.concurrent.{Callable, ConcurrentHashMap, TimeUnit}
 import java.util.function.Supplier
 
 import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
 import io.trino.client._
 import okhttp3.OkHttpClient
-import org.apache.linkis.storage.domain.DataType.DateType
 
 class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     extends ConcurrentComputationExecutor(outputPrintLimit) {

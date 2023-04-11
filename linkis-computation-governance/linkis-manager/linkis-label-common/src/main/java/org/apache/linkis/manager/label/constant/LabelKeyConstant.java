@@ -61,4 +61,6 @@ public class LabelKeyConstant {
   public static final String REUSE_EXCLUSION_KEY = "reuseExclusion";
 
   public static final String TENANT_KEY = "tenant";
+
+  public static final String FIXED_EC_KEY = "fixedEngineConn";
 }

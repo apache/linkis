@@ -120,9 +120,16 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       }
       IOUtils.closeQuietly(lineOutputStream)
       Utils.tryAndErrorMsg {
-        pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L))
         process.destroy()
         process = null
+        Thread.sleep(1000 * 2L)
+        // process.destroy will kills the subprocess,not need to force kill with -9,
+        // kill -9 may cause resources not to be released
+        pid.foreach(p => {
+          logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
+          Utils.exec(Array("kill", "-15", p), 3000L)
+        })
+
       }("process close failed")
     }
     logger.info(s"To delete python executor")
@@ -187,11 +194,24 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
       .foreach(pythonClasspath ++= File.pathSeparator ++= _)
 
     val cmd = CommandLine.parse(pythonExec)
-    cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
+    if (SparkConfiguration.SPARK_PYTHON_TEST_MODE_ENABLE.getValue) {
+      val path = SparkConfiguration.SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH.getValue
+      logger.info(
+        s"${SparkConfiguration.SPARK_PYTHON_TEST_MODE_ENABLE.key} => true, will use ${SparkConfiguration.SPARK_PYTHON_TEST_MODE_MIX__PYSHELL_PATH.key}:${path}"
+      )
+      cmd.addArgument(path, false)
+    } else {
+      cmd.addArgument(createFakeShell(pythonScriptPath).getAbsolutePath, false)
+    }
+
     cmd.addArgument(port.toString, false)
     cmd.addArgument(EngineUtils.sparkSubmitVersion().replaceAll("\\.", ""), false)
     cmd.addArgument(py4jToken, false)
     cmd.addArgument(pythonClasspath.toString(), false)
+
+    // add java process pid
+    // cmd.addArgument(Utils.getProcessId(), false)
+
     cmd.addArgument(pyFiles, false)
 
     val builder = new ProcessBuilder(cmd.toStrings.toSeq.toList.asJava)
@@ -220,13 +240,16 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     // add hook to shutdown python
     Utils.addShutdownHook {
       close
-      Utils.tryAndError(pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L)))
+//      Utils.tryAndError(pid.foreach(p => {
+//        logger.info(s"try to kill Pyspark process with: [kill -9 ${p}]")
+//        Utils.exec(Array("kill", "-9", p), 3000L)
+//      }))
     }
 
     Future {
       val exitCode = process.waitFor()
       pythonScriptInitialized = false
-      logger.info("Pyspark process  has stopped with exit code " + exitCode)
+      logger.info("Pyspark process has stopped with exit code " + exitCode)
       //      close
       Utils.tryFinally({
         if (promise != null && !promise.isCompleted) {
@@ -341,6 +364,9 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     if (!pythonScriptInitialized) {
       logger.info(message)
     } else {
+      if (SparkConfiguration.SPARK_PYTHON_TEST_MODE_ENABLE.getValue) {
+        logger.info(message)
+      }
       lineOutputStream.write(message.getBytes("utf-8"))
     }
   }
@@ -407,6 +433,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
   override protected def getExecutorIdPreFix: String = "SparkPythonExecutor_"
 
   def printLog(log: Any): Unit = {
+    logger.info(log.toString)
     if (engineExecutionContext != null) {
       engineExecutionContext.appendStdout("+++++++++++++++")
       engineExecutionContext.appendStdout(log.toString)

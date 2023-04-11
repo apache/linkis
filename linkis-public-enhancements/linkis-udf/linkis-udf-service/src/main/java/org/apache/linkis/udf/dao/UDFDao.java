@@ -62,7 +62,9 @@ public interface UDFDao {
       Long treeId, String userName, Collection<Integer> categoryCodes);
 
   List<UDFInfoVo> getUDFInfoByIds(
-      @Param("ids") Long[] ids, @Param("categoryCodes") Collection<Integer> categoryCodes);
+      @Param("username") String username,
+      @Param("ids") Long[] ids,
+      @Param("categoryCodes") Collection<Integer> categoryCodes);
 
   List<UDFInfo> getLoadedUDFs(String userName);
 

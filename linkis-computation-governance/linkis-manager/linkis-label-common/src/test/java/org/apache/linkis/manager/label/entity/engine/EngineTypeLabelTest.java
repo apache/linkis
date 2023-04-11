@@ -28,20 +28,38 @@ public class EngineTypeLabelTest {
 
   @Test
   public void testSetStringValue() {
-    String engineType = "hive";
-    String version = "1.1.0-cdh5.12.0";
-
-    String engineType1 = "*";
-    String version1 = "*";
-
     LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
     EngineTypeLabel engineTypeLabel = labelBuilderFactory.createLabel(EngineTypeLabel.class);
-    engineTypeLabel.setStringValue(engineType + "-" + version);
-    Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType);
-    Assertions.assertEquals(engineTypeLabel.getVersion(), version);
 
-    engineTypeLabel.setStringValue(engineType1 + "-" + version1);
-    Assertions.assertEquals(engineTypeLabel.getEngineType(), engineType1);
-    Assertions.assertEquals(engineTypeLabel.getVersion(), version1);
+    // str value
+    String hiveEngineType = "hive";
+    String hiveVersion = "1.1.0-cdh5.12.0";
+    engineTypeLabel.setStringValue(hiveEngineType + "-" + hiveVersion);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), hiveEngineType);
+    Assertions.assertEquals(engineTypeLabel.getVersion(), hiveVersion);
+
+    // any value
+    String anyEngineType = "*";
+    String anyVersion = "*";
+    engineTypeLabel.setStringValue(anyEngineType + "-" + anyVersion);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), anyEngineType);
+    Assertions.assertEquals(engineTypeLabel.getVersion(), anyVersion);
+
+    // map value
+    String mapStringValue = "{\"engineType\":\"shell\",\"version\":\"1\"}";
+    engineTypeLabel.setStringValue(mapStringValue);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "shell");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "1");
+
+    // empty value will treat as *
+    String emptyStringValue = "";
+    engineTypeLabel.setStringValue(emptyStringValue);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "*");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "*");
+
+    // null value will treat as *
+    engineTypeLabel.setStringValue(null);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "*");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "*");
   }
 }

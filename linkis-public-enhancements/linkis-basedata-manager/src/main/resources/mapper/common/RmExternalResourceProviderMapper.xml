@@ -34,14 +34,14 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_cg_rm_external_resource_provider
+        FROM linkis_cg_rm_external_resource_provider
         <if test="searchName != null and searchName!=''">
-            where resource_type like concat('%',#{searchName},'%')
-            or name like concat('%',#{searchName},'%')
-            or labels like concat('%',#{searchName},'%')
-            or config like concat('%',#{searchName},'%')
+            WHERE resource_type LIKE concat('%',#{searchName},'%')
+            OR name LIKE concat('%',#{searchName},'%')
+            OR labels LIKE concat('%',#{searchName},'%')
+            OR config LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

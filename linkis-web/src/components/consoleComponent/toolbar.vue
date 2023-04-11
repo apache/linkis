@@ -70,7 +70,7 @@
       <li v-if="analysistext.flag !== 2 && rsDownload" :style="{cursor: rsDownload ? 'pointer': 'not-allowed'}">
         <Poptip
           :transfer="true"
-          :width="200"
+          :width="500"
           v-model="popup.download"
           placement="right"
           popper-class="we-poptip">
@@ -127,6 +127,18 @@
                     span="10"
                     offset="4">
                     <Radio label="2">{{$t('message.common.toolbar.emptyString')}}</Radio>
+                  </Col>
+                </RadioGroup>
+              </Row>
+            </div>
+            <div v-if="+download.format === 1">
+              <Row>
+                {{$t('message.common.toolbar.selectSeparator')}}
+              </Row>
+              <Row>
+                <RadioGroup v-model="download.csvSeparator" style="width: 100%;">
+                  <Col v-for="item in separators" :key="item.value" :span="item.span" :offset="item.offset">
+                    <Radio :label="item.value">{{item.label}}</Radio>
                   </Col>
                 </RadioGroup>
               </Row>
@@ -199,6 +211,7 @@ import tableRow from './tableRow.vue';
 import mixin from '@/common/service/mixin';
 import api from '@/common/service/api';
 import 'material-design-icons/iconfont/material-icons.css';
+import storage from '@/common/helper/storage';
 export default {
   components: {
     resultsExport,
@@ -237,9 +250,7 @@ export default {
     }
   },
   data() {
-    const rsDownload = this.getProjectJsonResult('rsDownload', 'linkis')
     return {
-      rsDownload,
       popup: {
         download: false,
         export: false,
@@ -251,11 +262,19 @@ export default {
         format: '1',
         coding: '1',
         nullValue: '1',
+        csvSeparator: '1',
       },
       isIconLabelShow: true,
       iconSize: 14,
       allDownload: false, // whether to download all result sets(是否下载全部结果集)
-      resultsShowType: '2'
+      resultsShowType: '2',
+      separators: [
+        { key: ',', label: this.$t('message.common.separator.comma'), value: '1', span: 4, offset: 0},
+        { key: '\t', label: this.$t('message.common.separator.tab'), value: '2', span: 4, offset: 1},
+        { key: ' ', label: this.$t('message.common.separator.space'), value: '3', span: 4, offset: 1},
+        { key: '|', label: this.$t('message.common.separator.vertical'), value: '4', span: 4, offset: 1 },
+        { key: ';', label: this.$t('message.common.separator.semicolon'), value: '5', span: 4, offset: 1}
+      ]
     };
   },
   computed: {
@@ -272,6 +291,9 @@ export default {
     },
     isAll() {
       return ['hql', 'sql'].includes(this.script.runType) && this.download.format === '2';
+    },
+    rsDownload() {
+      return storage.get('resultSetExportEnable');
     }
   },
   mounted() {
@@ -284,6 +306,7 @@ export default {
           format: '1',
           coding: '1',
           nullValue: '1',
+          csvSeparator: '1',
         }
       }
       if (type === 'export') {
@@ -341,10 +364,13 @@ export default {
       if(this.getResultUrl !== 'filesystem') {
         url += `&taskId=${this.comData.taskID}`
       }
-
+      if (+this.download.format === 1) {
+        let separatorItem = this.separators.find(item => item.value === this.download.csvSeparator) || {};
+        let separator = encodeURIComponent(separatorItem.key || '');
+        url += `&csvSeparator=${separator}`
+      }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)
       await api.fetch('/user/heartbeat', 'get');
-
       const link = document.createElement('a');
       link.setAttribute('href', url);
       link.setAttribute('download', '');

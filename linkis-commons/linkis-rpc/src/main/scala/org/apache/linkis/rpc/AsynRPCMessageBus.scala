@@ -19,7 +19,7 @@ package org.apache.linkis.rpc
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.listener.{Event, EventListener, ListenerEventBus}
-import org.apache.linkis.rpc.errorcode.RPCErrorConstants
+import org.apache.linkis.rpc.errorcode.LinkisRpcErrorCodeSummary
 import org.apache.linkis.rpc.exception.{DWCRPCRetryException, RPCInitFailedException}
 
 class AsynRPCMessageBus(capacity: Int, busName: String)(
@@ -46,8 +46,8 @@ class AsynRPCMessageBus(capacity: Int, busName: String)(
     )
 
     override def onBusStopped(event: RPCMessageEvent): Unit = throw new RPCInitFailedException(
-      RPCErrorConstants.RPC_INIT_ERROR,
-      "Async RPC Consumer Thread has stopped!"
+      LinkisRpcErrorCodeSummary.RPC_INIT_ERROR.getErrorCode,
+      LinkisRpcErrorCodeSummary.RPC_INIT_ERROR.getErrorDesc
     )
 
   }

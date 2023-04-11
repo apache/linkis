@@ -43,7 +43,7 @@ object PortUtils {
       val ports = portRange.split(separator, -1)
       if (!ports(0).isEmpty) start = ports(0).toInt
       if (!ports(1).isEmpty) end = ports(1).toInt
-      val availablePort = start until end find { port =>
+      val availablePort = start to end find { port =>
         try {
           new ServerSocket(port).close()
           true

@@ -29,6 +29,8 @@ public class EngineReuseRequest implements EngineRequest {
 
   private String user;
 
+  private Map<String, String> properties;
+
   public Map<String, Object> getLabels() {
     return labels;
   }
@@ -60,6 +62,14 @@ public class EngineReuseRequest implements EngineRequest {
 
   public void setUser(String user) {
     this.user = user;
+  }
+
+  public Map<String, String> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, String> properties) {
+    this.properties = properties;
   }
 
   @Override

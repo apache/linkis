@@ -37,9 +37,13 @@ object StorageUtils extends Logging {
 
   val HDFS = "hdfs"
   val FILE = "file"
+  val OSS = "oss"
+  val S3 = "s3"
 
   val FILE_SCHEMA = "file://"
   val HDFS_SCHEMA = "hdfs://"
+  val OSS_SCHEMA = "oss://"
+  val S3_SCHEMA = "s3://"
 
   private val nf = NumberFormat.getInstance()
   nf.setGroupingUsed(false)
@@ -194,7 +198,8 @@ object StorageUtils extends Logging {
    * @return
    */
   def getFsPath(path: String): FsPath = {
-    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA)) new FsPath(path)
+    if (path.startsWith(FILE_SCHEMA) || path.startsWith(HDFS_SCHEMA) || path.startsWith(S3_SCHEMA))
+      new FsPath(path)
     else {
       new FsPath(FILE_SCHEMA + path)
     }
@@ -203,7 +208,7 @@ object StorageUtils extends Logging {
   def readBytes(inputStream: InputStream, bytes: Array[Byte], len: Int): Int = {
     var count = 0
     var readLen = 0
-    while (readLen < len) {
+    while (readLen < len && readLen >= 0) {
       count = inputStream.read(bytes, readLen, len - readLen)
       if (count == -1 && inputStream.available() < 1) return readLen
       readLen += count

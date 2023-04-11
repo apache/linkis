@@ -47,7 +47,8 @@ object StorageConfiguration {
 
   val STORAGE_BUILD_FS_CLASSES = CommonVars(
     "wds.linkis.storage.build.fs.classes",
-    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem"
+    "org.apache.linkis.storage.factory.impl.BuildHDFSFileSystem,org.apache.linkis.storage.factory.impl.BuildLocalFileSystem," +
+      "org.apache.linkis.storage.factory.impl.BuildOSSSystem,org.apache.linkis.storage.factory.impl.BuildS3FileSystem"
   )
 
   val IS_SHARE_NODE = CommonVars("wds.linkis.storage.is.share.node", true)
@@ -83,4 +84,43 @@ object StorageConfiguration {
   val FS_CHECKSUM_DISBALE =
     CommonVars[java.lang.Boolean]("linkis.fs.hdfs.impl.disable.checksum", false)
 
+  /**
+   * more arguments please refer to:
+   * https://hadoop.apache.org/docs/stable/hadoop-aliyun/tools/hadoop-aliyun/index.html Aliyun OSS
+   * endpoint to connect to. eg: https://oss-cn-hangzhou.aliyuncs.com
+   */
+  val OSS_ENDPOINT =
+    CommonVars[java.lang.String]("wds.linkis.fs.oss.endpoint", "")
+
+  /**
+   * Aliyun bucket name eg: benchmark2
+   */
+  val OSS_ACCESS_BUCKET_NAME =
+    CommonVars[java.lang.String]("wds.linkis.fs.oss.bucket.name", "")
+
+  /**
+   * Aliyun access key ID
+   */
+  val OSS_ACCESS_KEY_ID = CommonVars[java.lang.String]("wds.linkis.fs.oss.accessKeyId", "")
+
+  /**
+   * Aliyun access key secret
+   */
+  val OSS_ACCESS_KEY_SECRET = CommonVars[java.lang.String]("wds.linkis.fs.oss.accessKeySecret", "")
+
+  val OSS_PATH_PREFIX_CHECK_ON =
+    CommonVars[Boolean]("wds.linkis.storage.oss.prefix_check.enable", false)
+
+  val OSS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.oss.prefix.remove", true)
+
+  val S3_ACCESS_KEY = CommonVars("linkis.storage.s3.access.key", "")
+
+  val S3_SECRET_KEY =
+    CommonVars("linkis.storage.s3.secret.key", "")
+
+  val S3_ENDPOINT = CommonVars("linkis.storage.s3.endpoint", "")
+
+  val S3_REGION = CommonVars("linkis.storage.s3.region", "")
+
+  val S3_BUCKET = CommonVars("linkis.storage.s3.bucket", "")
 }

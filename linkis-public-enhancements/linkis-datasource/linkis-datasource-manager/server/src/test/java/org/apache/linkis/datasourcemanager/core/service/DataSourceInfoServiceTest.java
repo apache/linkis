@@ -21,13 +21,21 @@ import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv;
 import org.apache.linkis.datasourcemanager.common.domain.DataSourceParamKeyDefinition;
-import org.apache.linkis.datasourcemanager.core.dao.*;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceParamKeyDao;
+import org.apache.linkis.datasourcemanager.core.dao.DataSourceVersionDao;
 import org.apache.linkis.datasourcemanager.core.service.impl.DataSourceInfoServiceImpl;
 import org.apache.linkis.datasourcemanager.core.vo.DataSourceVo;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.github.pagehelper.PageInfo;
 import org.junit.jupiter.api.Test;
@@ -40,7 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class DataSourceInfoServiceTest {

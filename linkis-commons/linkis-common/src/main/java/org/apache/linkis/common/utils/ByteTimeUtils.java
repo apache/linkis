@@ -297,6 +297,18 @@ public class ByteTimeUtils {
   }
 
   /**
+   * Convert a passed byte string (e.g. -50b, -100k, or -250m) to gibibytes for internal use.
+   *
+   * <p>If no suffix is provided, the passed number is assumed to be in gibibytes.
+   */
+  public static long negativeByteStringAsGb(String str) {
+    if (str.startsWith("-")) {
+      return Math.negateExact(parseByteString(str.substring(1), ByteUnit.GiB));
+    }
+    return parseByteString(str, ByteUnit.GiB);
+  }
+
+  /**
    * Returns a byte array with the buffer's contents, trying to avoid copying the data if possible.
    */
   public static byte[] bufferToArray(ByteBuffer buffer) {

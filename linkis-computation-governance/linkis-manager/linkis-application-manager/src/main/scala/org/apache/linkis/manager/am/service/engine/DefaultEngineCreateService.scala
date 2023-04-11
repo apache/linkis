@@ -308,8 +308,8 @@ class DefaultEngineCreateService
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        logger.warn(s"not engough resource: $reason")
-        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
+        logger.warn(s"not enough resource: $reason")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
     }
   }
 

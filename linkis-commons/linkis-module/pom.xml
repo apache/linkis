@@ -328,24 +328,24 @@
       <version>1.4</version>
     </dependency>
 
-    <!--    <dependency>-->
-    <!--      <groupId>com.sun.jersey</groupId>-->
-    <!--      <artifactId>jersey-server</artifactId>-->
-    <!--      <exclusions>-->
-    <!--        <exclusion>-->
-    <!--          <groupId>javax.ws.rs</groupId>-->
-    <!--          <artifactId>jsr311-api</artifactId>-->
-    <!--        </exclusion>-->
-    <!--        <exclusion>-->
-    <!--          <groupId>javax.validation</groupId>-->
-    <!--          <artifactId>validation-api</artifactId>-->
-    <!--        </exclusion>-->
-    <!--      </exclusions>-->
-    <!--    </dependency>-->
-    <!--    <dependency>-->
-    <!--      <groupId>com.sun.jersey</groupId>-->
-    <!--      <artifactId>jersey-servlet</artifactId>-->
-    <!--    </dependency>-->
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-server</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.validation</groupId>
+          <artifactId>validation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-servlet</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-servlet</artifactId>

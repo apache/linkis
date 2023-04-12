@@ -143,6 +143,10 @@ public class EngineRestfulApi {
                 AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
             retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, errorRS.retry());
             retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, errorRS.exception());
+            if (errorRS.retry()) {
+              throw new LinkisRetryException(
+                  AMErrorCode.ASK_ENGINE_ERROR_RETRY.getErrorCode(), errorRS.exception());
+            }
           } else if (EngineAskAsyncResponse.class.isInstance(response)) {
             EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) response;
             retEngineNode.put(

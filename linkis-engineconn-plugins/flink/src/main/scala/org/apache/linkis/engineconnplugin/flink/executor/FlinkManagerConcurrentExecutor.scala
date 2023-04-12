@@ -51,7 +51,7 @@ class FlinkManagerConcurrentExecutor(
 
   override def getProgressInfo(taskID: String): Array[JobProgressInfo] = null
 
-  override def getId: String = super.getId
+  override def getId: String = id.toString
 
   override def close(): Unit = {
     logger.info(s"FlinkManagerExecutor : ${getId} will close.")

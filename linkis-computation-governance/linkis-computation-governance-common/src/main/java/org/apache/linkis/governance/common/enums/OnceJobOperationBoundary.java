@@ -15,14 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.governance.common.enums;
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+public enum OnceJobOperationBoundary {
+  COMMON("common"),
+  PRIVATE("private");
 
-trait EngineAskEngineService {
+  private String name;
 
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
+  OnceJobOperationBoundary(String name) {
+    this.name = name;
+  }
 
-  def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse
+  public String getName() {
+    return name;
+  }
 }

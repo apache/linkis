@@ -26,18 +26,16 @@ import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 import java.net.SocketTimeoutException
+import java.util
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
-
 import scala.concurrent._
 import scala.util.{Failure, Success}
-
 import feign.RetryableException
 
 @Service
@@ -64,6 +62,31 @@ class DefaultEngineAskEngineService
       AMConfiguration.ASK_ENGINE_ASYNC_MAX_THREAD_SIZE,
       "AskEngineService-Thread-"
     )
+
+  private val asyncCreateECMap: util.Map[String, EngineAsyncResponse] =
+    new ConcurrentHashMap[String, EngineAsyncResponse]()
+
+  override def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse = {
+    var rs: EngineAsyncResponse = null
+    if (asyncCreateECMap.containsKey(id)) {
+      asyncCreateECMap.get(id) match {
+        case succ: EngineCreateSuccess =>
+          rs = succ
+          asyncCreateECMap.remove(id)
+          logger.info(s"create engine succeed. Now remove asyncId : ${id}")
+        case fail: EngineCreateError =>
+          rs = fail
+          asyncCreateECMap.remove(id)
+          logger.info(
+            s"create engine failed because: ${fail.exception}. Now remove asyncId : ${id}"
+          )
+        case async: EngineAskAsyncResponse =>
+          rs = async
+        case _ =>
+      }
+    }
+    rs
+  }
 
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {

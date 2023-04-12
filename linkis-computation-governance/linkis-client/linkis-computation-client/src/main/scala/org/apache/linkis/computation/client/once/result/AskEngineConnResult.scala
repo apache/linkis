@@ -15,14 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.computation.client.once.result
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-trait EngineAskEngineService {
-
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
-
-  def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse
-}
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/askEngineConn")
+class AskEngineConnResult extends GetEngineConnResult

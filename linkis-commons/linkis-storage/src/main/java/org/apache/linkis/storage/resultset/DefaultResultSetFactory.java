@@ -22,7 +22,6 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSet;
-import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
@@ -113,12 +112,12 @@ public class DefaultResultSetFactory implements ResultSetFactory {
 
   @Override
   public boolean isResultSet(String content) {
-    return Utils.tryCatch(
-        () -> resultClasses.containsKey(Dolphin.getType(content)),
-        t -> {
-          logger.info("Wrong result Set: " + t.getMessage());
-          return false;
-        });
+    try {
+      return resultClasses.containsKey(Dolphin.getType(content));
+    } catch (Exception e) {
+      logger.info("Wrong result Set: " + e.getMessage());
+      return false;
+    }
   }
 
   @Override

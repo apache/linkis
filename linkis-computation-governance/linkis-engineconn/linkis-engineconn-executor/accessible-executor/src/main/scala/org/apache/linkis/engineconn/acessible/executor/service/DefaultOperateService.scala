@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconn.acessible.executor.service
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.hook.OperationHook
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
@@ -38,6 +39,16 @@ class DefaultOperateService extends OperateService with Logging {
   override def executeOperation(
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
+    Utils.tryAndWarn {
+      OperationHook
+        .getOperationHooks()
+        .foreach(hook =>
+          hook.doPreOperation(
+            engineOperateRequest.user,
+            engineOperateRequest.parameters.asScala.toMap
+          )
+        )
+    }
     val parameters = engineOperateRequest.parameters.asScala.toMap
     val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
       logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
@@ -49,6 +60,16 @@ class DefaultOperateService extends OperateService with Logging {
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
       return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    }
+    Utils.tryAndWarn {
+      OperationHook
+        .getOperationHooks()
+        .foreach(hook =>
+          hook.doPostOperation(
+            engineOperateRequest.user,
+            engineOperateRequest.parameters.asScala.toMap
+          )
+        )
     }
     EngineOperateResponse(result)
   }

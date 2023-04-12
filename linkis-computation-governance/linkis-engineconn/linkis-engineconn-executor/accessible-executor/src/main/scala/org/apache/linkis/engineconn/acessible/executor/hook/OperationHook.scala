@@ -15,6 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.factory
+package org.apache.linkis.engineconn.acessible.executor.hook
 
-class FlinkApplicationClientExecutorFactory {}
+import scala.collection.mutable.ArrayBuffer
+
+trait OperationHook {
+  def getName(): String
+
+  def doPreOperation(user: String, params: Map[String, Any]): Map[String, Any]
+
+  def doPostOperation(user: String, params: Map[String, Any]): Map[String, Any]
+
+}
+
+object OperationHook {
+  private var operationHooks: ArrayBuffer[OperationHook] = new ArrayBuffer[OperationHook]()
+
+  def registerOperationHook(operationHook: OperationHook): Unit = {
+    operationHooks.append(operationHook)
+  }
+
+  def getOperationHooks(): Array[OperationHook] = operationHooks.toArray
+}

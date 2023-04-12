@@ -406,7 +406,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     ClassUtil.getInstance(classOf[FlinkSQLExecutorFactory], new FlinkSQLExecutorFactory),
     ClassUtil
       .getInstance(classOf[FlinkApplicationExecutorFactory], new FlinkApplicationExecutorFactory),
-    ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory)
+    ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory),
+    ClassUtil.getInstance(classOf[FlinkManagerExecutorFactory], new FlinkManagerExecutorFactory)
   )
 
   override def getExecutorFactories: Array[ExecutorFactory] = executorFactoryArray

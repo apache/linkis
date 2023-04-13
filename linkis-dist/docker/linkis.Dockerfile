@@ -79,7 +79,6 @@ ADD apache-linkis-${LINKIS_VERSION}-bin /opt/tmp/
 RUN mv /opt/tmp/linkis-package/* ${LINKIS_HOME}/ \
     && mv /opt/tmp/LICENSE  ${LINKIS_HOME}/ \
     && mv /opt/tmp/NOTICE   ${LINKIS_HOME}/ \
-    && mv /opt/tmp/DISCLAIMER ${LINKIS_HOME}/ \
     && mv /opt/tmp/README.md  ${LINKIS_HOME}/ \
     && mv /opt/tmp/README_CN.md  ${LINKIS_HOME}/ \
     && rm -rf /opt/tmp

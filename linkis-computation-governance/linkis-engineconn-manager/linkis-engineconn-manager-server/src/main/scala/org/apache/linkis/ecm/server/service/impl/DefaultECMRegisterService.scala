@@ -48,7 +48,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     request
   }
 
-  private def getLabelsFromArgs(params: Array[String]): util.Map[String, AnyRef] = {
+  def getLabelsFromArgs(params: Array[String]): util.Map[String, AnyRef] = {
     import scala.collection.JavaConverters._
     val labelRegex = """label\.(.+)\.(.+)=(.+)""".r
     val labels = new util.HashMap[String, AnyRef]()
@@ -61,7 +61,7 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     labels
   }
 
-  private def getEMRegiterResourceFromConfiguration: NodeResource = {
+  def getEMRegiterResourceFromConfiguration: NodeResource = {
     val maxResource = new LoadInstanceResource(
       ECMUtils.inferDefaultMemory(),
       ECM_MAX_CORES_AVAILABLE,

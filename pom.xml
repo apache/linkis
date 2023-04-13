@@ -136,7 +136,7 @@
     <!-- json -->
     <gson.version>2.8.9</gson.version>
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
-    <json4s.version>3.7.0-M11</json4s.version>
+    <jsonpath.version>2.7.0</jsonpath.version>
 
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
@@ -396,6 +396,11 @@
 
       <!-- json -->
       <dependency>
+        <groupId>com.jayway.jsonpath</groupId>
+        <artifactId>json-path</artifactId>
+        <version>${jsonpath.version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>${gson.version}</version>
@@ -407,33 +412,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.json4s</groupId>
-        <artifactId>json4s-core_${scala.binary.version}</artifactId>
-        <version>${json4s.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.json4s</groupId>
-        <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-        <version>${json4s.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.json4s</groupId>
-        <artifactId>json4s-ast_${scala.binary.version}</artifactId>
-        <version>${json4s.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.json4s</groupId>
-        <artifactId>json4s-scalap_${scala.binary.version}</artifactId>
-        <version>${json4s.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-client</artifactId>
@@ -952,7 +930,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -1392,7 +1369,6 @@
         <spark.hadoop-hdfs.artifactId>linkis-hadoop-hdfs-client-shade</spark.hadoop-hdfs.artifactId>
         <spark.hadoop.version>${project.version}</spark.hadoop.version>
         <spark.hadoop.scope>compile</spark.hadoop.scope>
-        <json4s.version>3.5.3</json4s.version>
         <spark.version>2.4.3</spark.version>
         <scala.version>2.11.12</scala.version>
         <scala.binary.version>2.11</scala.binary.version>

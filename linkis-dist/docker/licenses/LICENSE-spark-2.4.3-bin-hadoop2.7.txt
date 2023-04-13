@@ -287,10 +287,6 @@ org.apache.orc:orc-mapreduce
 org.mortbay.jetty:jetty
 org.mortbay.jetty:jetty-util
 com.jolbox:bonecp
-org.json4s:json4s-ast_2.11
-org.json4s:json4s-core_2.11
-org.json4s:json4s-jackson_2.11
-org.json4s:json4s-scalap_2.11
 com.carrotsearch:hppc
 com.fasterxml.jackson.core:jackson-annotations
 com.fasterxml.jackson.core:jackson-core

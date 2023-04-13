@@ -364,11 +364,6 @@
           <groupId>org.apache.hadoop</groupId>
           <artifactId>hadoop-auth</artifactId>
         </exclusion>
-
-        <exclusion>
-          <groupId>org.json4s</groupId>
-          <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>com.google.protobuf</groupId>
           <artifactId>protobuf-java</artifactId>

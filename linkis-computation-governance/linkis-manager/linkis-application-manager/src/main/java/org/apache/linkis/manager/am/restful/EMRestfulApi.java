@@ -392,7 +392,10 @@ public class EMRestfulApi {
                   jsonNode.get("parameters").toString(),
                   new TypeReference<Map<String, Object>>() {});
       String logType = (String) parameters.get("logType");
-      if (!logType.equals("stdout") && !logType.equals("stderr")) {
+      if (!logType.equals("stdout")
+          && !logType.equals("stderr")
+          && !logType.equals("gc")
+          && !logType.equals("yarnApp")) {
         throw new AMErrorException(
             AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }

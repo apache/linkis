@@ -124,7 +124,7 @@
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <spark.hadoop.groupid>org.apache.hadoop</spark.hadoop.groupid>
     <spark.hadoop-common.artifactId>hadoop-common</spark.hadoop-common.artifactId>
-    <spark.hadoop-hdfs.artifactId>hadoop-hdfs-client</spark.hadoop-hdfs.artifactId>
+    <spark.hadoop-hdfs.artifactId>hadoop-hdfs</spark.hadoop-hdfs.artifactId>
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
     <zookeeper.version>3.5.9</zookeeper.version>

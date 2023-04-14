@@ -92,7 +92,10 @@ public class ImpalaThriftClient extends TimerTask implements ImpalaClient {
   }
 
   private ImpalaThriftExecution submit(
-      String sql, Map<String, String> queryOptions, ExecutionListener executionListener)
+      String sql,
+      Map<String, String> queryOptions,
+      ExecutionListener executionListener,
+      boolean sync)
       throws TException, ImpalaEngineException, InterruptedException, IOException {
     if (closed) {
       throw ImpalaEngineException.of(ImpalaErrorCodeSummary.ClosedError);
@@ -121,7 +124,7 @@ public class ImpalaThriftClient extends TimerTask implements ImpalaClient {
     }
 
     String queryId = ThriftUtil.convertUniqueId(operation.getOperationId().getGuid());
-    return new ImpalaThriftExecution(impalaSession, operation, queryId, executionListener);
+    return new ImpalaThriftExecution(impalaSession, operation, queryId, executionListener, sync);
   }
 
   private boolean progress(ImpalaThriftExecution execution) {
@@ -165,7 +168,8 @@ public class ImpalaThriftClient extends TimerTask implements ImpalaClient {
   public void execute(
       String sql, ExecutionListener executionListener, Map<String, String> queryOptions)
       throws ImpalaEngineException, InterruptedException {
-    try (ImpalaThriftExecution execution = submit(sql, queryOptions, executionListener)) {
+    try (ImpalaThriftExecution execution = submit(sql, queryOptions, executionListener, true)) {
+      executions.put(execution.getQueryId(), execution);
       while (progress(execution)) {
         Thread.sleep(heartBeatsMillis);
       }
@@ -179,7 +183,7 @@ public class ImpalaThriftClient extends TimerTask implements ImpalaClient {
       String sql, ExecutionListener executionListener, Map<String, String> queryOptions)
       throws ImpalaEngineException {
     try {
-      ImpalaThriftExecution execution = submit(sql, queryOptions, executionListener);
+      ImpalaThriftExecution execution = submit(sql, queryOptions, executionListener, false);
       String queryId = execution.getQueryId();
       executions.put(queryId, execution);
       return queryId;
@@ -251,6 +255,11 @@ public class ImpalaThriftClient extends TimerTask implements ImpalaClient {
     final ArrayList<ImpalaThriftExecution> runningExecutions = new ArrayList<>(executions.values());
     LOG.debug("Impala client heart beats, {} running executions", runningExecutions.size());
     for (ImpalaThriftExecution execution : runningExecutions) {
+      /* sync execution, skipping */
+      if (execution.isSync()) {
+        continue;
+      }
+
       if (execution.isClosed() || !progress(execution)) {
         executions.remove(execution.getQueryId());
       }

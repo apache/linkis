@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.impala.client.thrift;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSaslClientTransport;
@@ -118,10 +119,14 @@ public class ImpalaThriftSessionFactory {
     }
 
     /*
-     * get holder with minimal connections
+     * get random holder with minimal connections
      */
     SessionHolder holder =
-        sessions.values().stream().min(Comparator.comparingInt(SessionHolder::connections)).get();
+        sessions.values().stream()
+            .min(
+                Comparator.<SessionHolder>comparingInt(o -> o.connections)
+                    .thenComparingInt(o -> o.randomInt))
+            .get();
 
     /*
      * create socket
@@ -155,14 +160,17 @@ public class ImpalaThriftSessionFactory {
       tTransport.open();
     }
 
-    return new ImpalaThriftSession(holder.name, tTransport, holder::release);
+    ImpalaThriftSession impalaSession =
+        new ImpalaThriftSession(holder.name, tTransport, holder::release);
+    holder.acquire();
+    return impalaSession;
   }
 
   private class SessionHolder {
     private final String name;
     private final String host;
     private final int port;
-
+    private final int randomInt = RandomUtils.nextInt();
     private volatile int connections;
 
     SessionHolder(String name, String host, int port) {
@@ -179,8 +187,10 @@ public class ImpalaThriftSessionFactory {
       }
     }
 
-    int connections() {
-      return connections;
+    void acquire() {
+      synchronized (this) {
+        ++connections;
+      }
     }
   }
 }

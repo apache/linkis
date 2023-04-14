@@ -44,6 +44,7 @@ import org.apache.linkis.engineplugin.impala.client.thrift.{
   ImpalaThriftSessionFactory
 }
 import org.apache.linkis.engineplugin.impala.conf.ImpalaConfiguration._
+import org.apache.linkis.engineplugin.impala.conf.ImpalaEngineConfig
 import org.apache.linkis.governance.common.paser.SQLCodeParser
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -52,6 +53,7 @@ import org.apache.linkis.manager.common.entity.resource.{
 }
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{
@@ -88,61 +90,8 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
 
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
 
-  private val impalaClient: ImpalaClient = {
-    val servers = IMPALA_SERVERS.getValue.split(',')
-    val maxConnections = IMPALA_MAX_CONNECTIONS.getValue
-    val factory: ImpalaThriftSessionFactory = if (IMPALA_SASL_ENABLE.getValue) {
-      val saslProperties: util.Map[String, String] = new util.TreeMap()
-      Option(IMPALA_SASL_PROPERTIES.getValue)
-        .map(_.split(','))
-        .getOrElse(Array[String]())
-        .foreach { str =>
-          val kv = StringUtils.split(str, "=", 2)
-          saslProperties.put(kv(0), if (kv.length > 1) kv(1) else "")
-        }
-
-      val password = IMPALA_SASL_PASSWORD.getValue
-      val passwordCmd = IMPALA_SASL_PASSWORD_CMD.getValue
-      var passwordCallback: PasswordCallback = null
-      if (StringUtils.isNotBlank(passwordCmd)) {
-        passwordCallback = new CommandPasswordCallback(passwordCmd);
-      } else if (StringUtils.isNotBlank(password)) {
-        passwordCallback = new StaticPasswordCallback(password);
-      }
-
-      val callbackHandler: CallbackHandler = new CallbackHandler() {
-        override def handle(callbacks: Array[Callback]): Unit = callbacks.foreach {
-          case callback: NameCallback => callback.setName(IMPALA_SASL_USERNAME.getValue)
-          case callback: PasswordCallback => callback.setPassword(passwordCallback.getPassword)
-        }
-      }
-
-      new ImpalaThriftSessionFactory(
-        servers,
-        maxConnections,
-        createSocketFactory,
-        IMPALA_SASL_MECHANISM.getValue,
-        IMPALA_SASL_AUTHORIZATION_ID.getValue,
-        IMPALA_SASL_PROTOCOL.getValue,
-        saslProperties,
-        callbackHandler
-      )
-    } else {
-      new ImpalaThriftSessionFactory(servers, maxConnections, createSocketFactory)
-    }
-
-    val client = new ImpalaThriftClient(factory, IMPALA_HEARTBEAT_SECONDS.getValue)
-    client.setQueryTimeoutInSeconds(IMPALA_QUERY_TIMEOUT_SECONDS.getValue)
-    client.setBatchSize(IMPALA_QUERY_BATCH_SIZE.getValue)
-    Option(IMPALA_QUERY_OPTIONS.getValue)
-      .map(_.split(','))
-      .getOrElse(Array[String]())
-      .foreach { str =>
-        val kv = StringUtils.split(str, "=", 2)
-        client.setQueryOption(kv(0), if (kv.length > 1) kv(1) else "")
-      }
-    client
-  }
+  private val impalaClients: util.Map[String, ImpalaClient] =
+    new ConcurrentHashMap[String, ImpalaClient]()
 
   private val taskExecutions: util.Map[String, TaskExecution] =
     new ConcurrentHashMap[String, TaskExecution]()
@@ -165,7 +114,8 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     logger.info(s"impala client begins to run code:\n $realCode")
     val taskId = engineExecutionContext.getJobId.get
 
-    val taskExecution: TaskExecution = TaskExecution(taskId, engineExecutionContext)
+    val impalaClient = getOrCreateImpalaClient(engineExecutionContext)
+    val taskExecution: TaskExecution = TaskExecution(taskId, engineExecutionContext, impalaClient)
     Utils.tryFinally {
       taskExecutions.put(taskId, taskExecution)
       Utils.tryCatch {
@@ -202,7 +152,7 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   override def killTask(taskId: String): Unit = {
     val taskExecution = taskExecutions.get(taskId)
     if (taskExecution != null) {
-      impalaClient.cancel(taskExecution.queryId)
+      taskExecution.kill()
     }
     super.killTask(taskId)
   }
@@ -275,20 +225,28 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def killAll(): Unit = {
-    val iterator = taskExecutions.keySet().iterator()
+    val iterator = taskExecutions.values().iterator()
     while (iterator.hasNext) {
-      Utils.tryAndWarn(impalaClient.cancel(iterator.next()))
+      Utils.tryAndWarn(iterator.next().kill())
     }
     taskExecutions.clear()
   }
 
   override def close(): Unit = {
     killAll()
+    val iterator = impalaClients.values().iterator()
+    while (iterator.hasNext) {
+      Utils.tryAndWarn(iterator.next().close())
+    }
+    impalaClients.clear()
     super.close()
   }
 
-  case class TaskExecution(taskId: String, engineExecutionContext: EngineExecutionContext)
-      extends ExecutionListener {
+  case class TaskExecution(
+      taskId: String,
+      engineExecutionContext: EngineExecutionContext,
+      impalaClient: ImpalaClient
+  ) extends ExecutionListener {
     var queryId: String = ""
     var totalTasks: Int = -1
     var runningTasks: Int = -1
@@ -337,16 +295,169 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       }
     }
 
+    def kill(): Unit = {
+      if (StringUtils.isNotBlank(queryId)) {
+        impalaClient.cancel(queryId)
+      }
+    }
+
   }
 
-  private def createSocketFactory: SocketFactory = {
-    if (IMPALA_SSL_ENABLE.getValue) {
-      val keyStore: KeyStore = KeyStore.getInstance(IMPALA_SSL_KEYSTORE_TYPE.getValue)
-      val keyStorePassword: Array[Char] = Option(IMPALA_SSL_KEYSTORE_PASSWORD.getValue)
+  private def getOrCreateImpalaClient(
+      engineExecutionContext: EngineExecutionContext
+  ): ImpalaClient = {
+    val userCreatorLabel =
+      engineExecutionContext.getLabels.find(_.isInstanceOf[UserCreatorLabel]).get
+    val engineTypeLabel =
+      engineExecutionContext.getLabels.find(_.isInstanceOf[EngineTypeLabel]).get
+    var configMap: util.Map[String, String] = null
+    if (userCreatorLabel != null && engineTypeLabel != null) {
+      configMap = Utils.tryAndError(
+        ImpalaEngineConfig.getCacheMap(
+          (
+            userCreatorLabel.asInstanceOf[UserCreatorLabel],
+            engineTypeLabel.asInstanceOf[EngineTypeLabel]
+          )
+        )
+      )
+    }
+
+    val impalaServers = IMPALA_SERVERS.getValue(configMap)
+    val impalaMaxConnections = IMPALA_MAX_CONNECTIONS.getValue(configMap)
+    val impalaSaslEnable = IMPALA_SASL_ENABLE.getValue(configMap)
+    val impalaSaslProperties = IMPALA_SASL_PROPERTIES.getValue(configMap)
+    val impalaSaslUsername = IMPALA_SASL_USERNAME.getValue(configMap)
+    val impalaSaslPassword = IMPALA_SASL_PASSWORD.getValue(configMap)
+    val impalaSaslPasswordCmd = IMPALA_SASL_PASSWORD_CMD.getValue(configMap)
+    val impalaSaslMechanism = IMPALA_SASL_MECHANISM.getValue(configMap)
+    val impalaSaslAuthorization = IMPALA_SASL_AUTHORIZATION_ID.getValue(configMap)
+    val impalaSaslProtocol = IMPALA_SASL_PROTOCOL.getValue(configMap)
+    val impalaHeartbeatSeconds = IMPALA_HEARTBEAT_SECONDS.getValue(configMap)
+    val impalaQueryTimeoutSeconds = IMPALA_QUERY_TIMEOUT_SECONDS.getValue(configMap)
+    val impalaQueryBatchSize = IMPALA_QUERY_BATCH_SIZE.getValue(configMap)
+    val impalaQueryOptions = IMPALA_QUERY_OPTIONS.getValue(configMap)
+
+    val impalaSslEnable = IMPALA_SSL_ENABLE.getValue(configMap)
+    val impalaSslKeystore = IMPALA_SSL_KEYSTORE.getValue(configMap)
+    val impalaSslKeystoreType = IMPALA_SSL_KEYSTORE_TYPE.getValue(configMap)
+    val impalaSslKeystorePassword = IMPALA_SSL_KEYSTORE_PASSWORD.getValue(configMap)
+    val impalaSslTruststore = IMPALA_SSL_TRUSTSTORE.getValue(configMap)
+    val impalaSslTruststoreType = IMPALA_SSL_TRUSTSTORE_TYPE.getValue(configMap)
+    val impalaSslTruststorePassword = IMPALA_SSL_TRUSTSTORE_PASSWORD.getValue(configMap)
+
+    val impalaClientKey = Array(
+      impalaServers,
+      impalaMaxConnections,
+      impalaSaslEnable,
+      impalaSaslProperties,
+      impalaSaslUsername,
+      impalaSaslPassword,
+      impalaSaslPasswordCmd,
+      impalaSaslMechanism,
+      impalaSaslAuthorization,
+      impalaSaslProtocol,
+      impalaHeartbeatSeconds,
+      impalaQueryTimeoutSeconds,
+      impalaQueryBatchSize,
+      impalaQueryOptions,
+      impalaSslEnable,
+      impalaSslKeystore,
+      impalaSslKeystoreType,
+      impalaSslKeystorePassword,
+      impalaSslTruststore,
+      impalaSslTruststoreType,
+      impalaSslTruststorePassword
+    )
+
+    impalaClients.synchronized {
+      var client = impalaClients.get(impalaClientKey)
+      if (client == null) {
+        val socketFactory = createSocketFactory(
+          impalaSslEnable,
+          impalaSslKeystore,
+          impalaSslKeystoreType,
+          impalaSslKeystorePassword,
+          impalaSslTruststore,
+          impalaSslTruststoreType,
+          impalaSslTruststorePassword
+        )
+
+        val servers = impalaServers.split(',')
+        val maxConnections = impalaMaxConnections
+        val factory: ImpalaThriftSessionFactory = if (impalaSaslEnable) {
+          val saslProperties: util.Map[String, String] = new util.TreeMap()
+          Option(impalaSaslProperties)
+            .map(_.split(','))
+            .getOrElse(Array[String]())
+            .foreach { str =>
+              val kv = StringUtils.split(str, "=", 2)
+              saslProperties.put(kv(0), if (kv.length > 1) kv(1) else "")
+            }
+
+          val password = impalaSaslPassword
+          val passwordCmd = impalaSaslPasswordCmd
+          var passwordCallback: PasswordCallback = null
+          if (StringUtils.isNotBlank(passwordCmd)) {
+            passwordCallback = new CommandPasswordCallback(passwordCmd);
+          } else if (StringUtils.isNotBlank(password)) {
+            passwordCallback = new StaticPasswordCallback(password);
+          }
+
+          val callbackHandler: CallbackHandler = new CallbackHandler() {
+            override def handle(callbacks: Array[Callback]): Unit = callbacks.foreach {
+              case callback: NameCallback => callback.setName(impalaSaslUsername)
+              case callback: PasswordCallback => callback.setPassword(passwordCallback.getPassword)
+            }
+          }
+
+          new ImpalaThriftSessionFactory(
+            servers,
+            maxConnections,
+            socketFactory,
+            impalaSaslMechanism,
+            impalaSaslAuthorization,
+            impalaSaslProtocol,
+            saslProperties,
+            callbackHandler
+          )
+        } else {
+          new ImpalaThriftSessionFactory(servers, maxConnections, socketFactory)
+        }
+
+        val impalaClient = new ImpalaThriftClient(factory, impalaHeartbeatSeconds)
+        impalaClient.setQueryTimeoutInSeconds(impalaQueryTimeoutSeconds)
+        impalaClient.setBatchSize(impalaQueryBatchSize)
+        Option(impalaQueryOptions)
+          .map(_.split(','))
+          .getOrElse(Array[String]())
+          .foreach { str =>
+            val kv = StringUtils.split(str, "=", 2)
+            impalaClient.setQueryOption(kv(0), if (kv.length > 1) kv(1) else "")
+          }
+
+        client = impalaClient
+      }
+      client
+    }
+  }
+
+  private def createSocketFactory(
+      impalaSslEnable: Boolean,
+      impalaSslKeystore: String,
+      impalaSslKeystoreType: String,
+      impalaSslKeystorePassword: String,
+      impalaSslTruststore: String,
+      impalaSslTruststoreType: String,
+      impalaSslTruststorePassword: String
+  ): SocketFactory = {
+
+    if (impalaSslEnable) {
+      val keyStore: KeyStore = KeyStore.getInstance(impalaSslKeystoreType)
+      val keyStorePassword: Array[Char] = Option(impalaSslKeystorePassword)
         .map(_.toCharArray)
         .orNull
 
-      val in = new FileInputStream(IMPALA_SSL_KEYSTORE.getValue)
+      val in = new FileInputStream(impalaSslKeystore)
       try {
         keyStore.load(in, keyStorePassword)
       } finally {
@@ -357,11 +468,14 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val keyManagers: Array[KeyManager] = keyManagerFactory.getKeyManagers;
 
       var trustStore = keyStore
-      if (StringUtils.isNotBlank(IMPALA_SSL_TRUSTSTORE.getValue)) {
-        trustStore = KeyStore.getInstance(IMPALA_SSL_TRUSTSTORE_TYPE.getValue)
-        val in = new FileInputStream(IMPALA_SSL_TRUSTSTORE.getValue)
+      if (StringUtils.isNotBlank(impalaSslTruststore)) {
+        trustStore = KeyStore.getInstance(impalaSslTruststoreType)
+        val trustStorePassword: Array[Char] = Option(impalaSslTruststorePassword)
+          .map(_.toCharArray)
+          .orNull
+        val in = new FileInputStream(impalaSslTruststore)
         try {
-          trustStore.load(in, keyStorePassword)
+          trustStore.load(in, trustStorePassword)
         } finally {
           if (in != null) in.close()
         }

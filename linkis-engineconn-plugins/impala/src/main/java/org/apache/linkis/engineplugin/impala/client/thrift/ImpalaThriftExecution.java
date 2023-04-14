@@ -47,6 +47,7 @@ public class ImpalaThriftExecution implements AutoCloseable {
   private final TOperationHandle operation;
   private final String queryId;
   private final ExecutionListener listener;
+  private final boolean sync;
 
   private long timestamp;
   private int errors;
@@ -57,11 +58,13 @@ public class ImpalaThriftExecution implements AutoCloseable {
       ImpalaThriftSession impalaSession,
       TOperationHandle operation,
       String queryId,
-      ExecutionListener listener) {
+      ExecutionListener listener,
+      boolean sync) {
     this.impalaSession = impalaSession;
     this.operation = operation;
     this.queryId = queryId;
     this.listener = listener;
+    this.sync = sync;
 
     if (listener != null) {
       listener.created(queryId);
@@ -136,7 +139,7 @@ public class ImpalaThriftExecution implements AutoCloseable {
     return closed;
   }
 
-  public ExecStatus getExecStatus() throws TException, ImpalaEngineException {
+  public synchronized ExecStatus getExecStatus() throws TException, ImpalaEngineException {
     TGetOperationStatusReq statusReq = new TGetOperationStatusReq(operation);
     TGetOperationStatusResp statusResp = impalaSession.client().GetOperationStatus(statusReq);
     ThriftUtil.checkStatus(statusResp.getStatus());
@@ -147,7 +150,7 @@ public class ImpalaThriftExecution implements AutoCloseable {
         operationState.getValue(), operationState.name(), statusResp.getErrorMessage());
   }
 
-  public ExecSummary getExecSummary() throws TException, ImpalaEngineException {
+  public synchronized ExecSummary getExecSummary() throws TException, ImpalaEngineException {
     ExecProgress progress = ExecProgress.DEFAULT_PROGRESS;
     int nodeNum = -1;
 
@@ -175,5 +178,9 @@ public class ImpalaThriftExecution implements AutoCloseable {
     }
 
     return new ExecSummary(status, progress, nodeNum);
+  }
+
+  public boolean isSync() {
+    return sync;
   }
 }

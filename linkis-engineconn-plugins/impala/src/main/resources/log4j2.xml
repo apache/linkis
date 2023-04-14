@@ -18,26 +18,47 @@
 
 <configuration status="error" monitorInterval="30">
     <appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
-        </Console>
+        <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"
+                     filePattern="${env:LOG_DIRS:-logs}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <File name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS:-logs}/yarnApp.log">
+            <RegexFilter regex=".*application_.*" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+        </File>
+
         <Send name="Send" >
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
         </Send>
-        <File name="stderr" fileName="${env:PWD}/logs/stderr" append="true">
+
+        <Send name="SendPackage" >
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+        </Send>
+
+        <Console name="stderr" target="SYSTEM_ERR">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
-        </File>
+        </Console>
     </appenders>
+
     <loggers>
-      <root level="INFO">
-            <appender-ref ref="Console"/>
+        <root level="INFO">
+            <appender-ref ref="stderr"/>
+            <appender-ref ref="RollingFile"/>
             <appender-ref ref="Send"/>
         </root>
-        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter " level="error" additivity="true">
+        <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">
+            <appender-ref ref="SendPackage"/>
+        </logger>
+        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>
         <logger name="com.netflix.discovery" level="warn" additivity="true">
@@ -70,6 +91,11 @@
         <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-
-   </loggers>
+        <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
+            <appender-ref ref="YarnAppIdOutputFile"/>
+        </logger>
+    </loggers>
 </configuration>

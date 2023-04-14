@@ -105,7 +105,6 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     }
     dataProcessing(tenantVo);
     TenantVo tenantVoLowerCase = toLowerCase(tenantVo);
-    tenantVoLowerCase.setUpdateTime(new Date());
     logger.info("updateTenant : {}", tenantVoLowerCase);
     userTenantMapper.updateTenant(tenantVoLowerCase);
   }
@@ -119,49 +118,52 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   public void createTenant(TenantVo tenantVo) throws ConfigurationException {
     dataProcessing(tenantVo);
     TenantVo tenantVoLowerCase = toLowerCase(tenantVo);
-    tenantVoLowerCase.setUpdateTime(new Date());
     tenantVoLowerCase.setCreateTime(new Date());
-    logger.info("updateTenant : {}", tenantVoLowerCase);
+    logger.info("createTenant : {}", tenantVoLowerCase);
     userTenantMapper.createTenant(tenantVo);
   }
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
-    AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
-    // Obtain the tenant information of the ECM list
-    Map<String, Object> resultmap = null;
-    try {
-      resultmap = HttpsUtil.sendHttp(null, null);
-      logger.info("ResourceMonitor  response  {}:", resultmap);
-    } catch (IOException e) {
-      logger.warn("failed to get ecmResource data");
+    if (!tenantVo.getCreator().equals("*")) {
+      AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
+      // Obtain the tenant information of the ECM list
+      Map<String, Object> ecmListResult = null;
+      try {
+        ecmListResult = HttpsUtil.sendHttp(null, null);
+        logger.info("Request ecm list  response  {}:", ecmListResult);
+      } catch (IOException e) {
+        logger.warn("failed to get ecmResource data");
+      }
+      Map<String, List<Map<String, Object>>> data = MapUtils.getMap(ecmListResult, "data");
+      List<Map<String, Object>> emNodeVoList = data.get("EMs");
+      // Compare ECM list tenant labels for task
+      emNodeVoList.forEach(
+          ecmInfo -> {
+            List<Map<String, Object>> labels = (List<Map<String, Object>>) ecmInfo.get("labels");
+            labels.stream()
+                .filter(labelmap -> labelmap.containsKey("tenant"))
+                .forEach(
+                    map -> {
+                      String tenant = map.get("tenant").toString().toLowerCase();
+                      if (tenant.equals(tenantVo.getTenantValue().toLowerCase())) {
+                        tenantResult.set(true);
+                      }
+                    });
+          });
+      // Compare the value of ecm tenant
+      if (!tenantResult.get())
+        throw new ConfigurationException("The ECM with the corresponding label was not found");
+      // The beginning of tenantValue needs to contain creator
+      String creator = tenantVo.getCreator().toLowerCase();
+      String[] tenantArray = tenantVo.getTenantValue().toLowerCase().split("_");
+      if (tenantArray.length > 1 && !creator.equals(tenantArray[0])) {
+        throw new ConfigurationException("tenantValue should contain creator first");
+      }
     }
-    Map<String, List<Map<String, Object>>> data = MapUtils.getMap(resultmap, "data");
-    List<Map<String, Object>> emNodeVoList = data.get("EMs");
-    emNodeVoList.forEach(
-        ecmInfo -> {
-          List<Map<String, Object>> labels = (List<Map<String, Object>>) ecmInfo.get("labels");
-          labels.stream()
-              .filter(labelmap -> labelmap.containsKey("tenant"))
-              .forEach(
-                  map -> {
-                    String tenant = map.get("tenant").toString().toLowerCase();
-                    if (tenant.equals(tenantVo.getTenantValue())) {
-                      tenantResult.set(true);
-                    }
-                  });
-        });
-    // Compare the value of ecm tenant
-    if (!tenantResult.get())
-      throw new ConfigurationException("The ECM with the corresponding label was not found");
-    // The beginning of tenantValue needs to contain creator
-    String creator = tenantVo.getCreator().toLowerCase();
-    String tenantValue = tenantVo.getTenantValue().toLowerCase().split("_")[0];
-    if (!creator.equals(tenantValue))
-      throw new ConfigurationException("tenantValue should contain creator first");
   }
 
   @Override
-  public Boolean userExists(String user, String creator, String tenantValue) {
+  public Boolean isExist(String user, String creator) {
     boolean result = true;
     Map<String, Object> resultMap =
         queryTenantList(user.toLowerCase(), creator.toLowerCase(), null, 1, 20);
@@ -180,6 +182,7 @@ public class TenantConfigServiceImpl implements TenantConfigService {
     tenantVo.setTenantValue(tenantVo.getTenantValue().toLowerCase());
     tenantVo.setCreator(tenantVo.getCreator().toLowerCase());
     tenantVo.setUser(tenantVo.getUser().toLowerCase());
+    tenantVo.setUpdateTime(new Date());
     return tenantVo;
   }
 }

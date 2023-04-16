@@ -269,19 +269,19 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
   }
 
   private def existsUserFS(methodEntity: MethodEntity): Boolean = {
-    val proxyUser = methodEntity.proxyUser
+    val proxyUser = methodEntity.getProxyUser
     if (!userFSInfos.containsKey(proxyUser)) return false
     userFSInfos.get(proxyUser).synchronized {
       val userFsInfo =
-        userFSInfos.get(proxyUser).find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
+        userFSInfos.get(proxyUser).find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
       userFsInfo.foreach(_.lastAccessTime = System.currentTimeMillis())
       userFsInfo.isDefined
     }
   }
 
   protected def getUserFS(methodEntity: MethodEntity): Fs = {
-    val fsType = methodEntity.fsType
-    val proxyUser = methodEntity.proxyUser
+    val fsType = methodEntity.getFsType
+    val proxyUser = methodEntity.getProxyUser
     if (!userFSInfos.containsKey(proxyUser)) {
       throw new StorageErrorException(
         StorageErrorCode.FS_NOT_INIT.getCode,
@@ -291,7 +291,7 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     userFSInfos.get(proxyUser) synchronized {
       val userFsInfo = userFSInfos
         .get(proxyUser)
-        .find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
+        .find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
         .getOrElse(
           throw new StorageErrorException(
             StorageErrorCode.FS_NOT_INIT.getCode,
@@ -305,12 +305,14 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
 
   private def createUserFS(methodEntity: MethodEntity): Long = {
     logger.info(
-      s"Creator ${methodEntity.creatorUser}准备为用户${methodEntity.proxyUser}初始化FS：$methodEntity"
+      s"Creator ${methodEntity.getCreatorUser}准备为用户${methodEntity.getProxyUser}初始化FS：$methodEntity"
     )
-    var fsId = methodEntity.id
-    val properties = methodEntity.params(0).asInstanceOf[Map[String, String]]
-    val proxyUser = methodEntity.proxyUser
-    if (!fsProxyService.canProxyUser(methodEntity.creatorUser, proxyUser, methodEntity.fsType)) {
+    var fsId = methodEntity.getId
+    val properties = methodEntity.getParams()(0).asInstanceOf[Map[String, String]]
+    val proxyUser = methodEntity.getProxyUser
+    if (
+        !fsProxyService.canProxyUser(methodEntity.getCreatorUser, proxyUser, methodEntity.getFsType)
+    ) {
       throw new StorageErrorException(
         FS_CAN_NOT_PROXY_TO.getErrorCode,
         s"FS Can not proxy to：$proxyUser"
@@ -325,26 +327,28 @@ class IoEngineConnExecutor(val id: Int, val outputLimit: Int = 10)
     }
     val userFsInfo = userFSInfos.get(proxyUser)
     userFsInfo synchronized {
-      if (!userFsInfo.exists(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)) {
-        val fs = FSFactory.getFs(methodEntity.fsType)
+      if (!userFsInfo.exists(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)) {
+        val fs = FSFactory.getFs(methodEntity.getFsType)
         fs.init(properties.asJava)
         fsId = getFSId()
         userFsInfo += new FSInfo(fsId, fs)
       }
     }
-    logger.info(s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser}初始化结束 fsId=$fsId")
+    logger.info(
+      s"Creator ${methodEntity.getCreatorUser}为用户${methodEntity.getProxyUser}初始化结束 fsId=$fsId"
+    )
     fsId
   }
 
   private def closeUserFS(methodEntity: MethodEntity): Unit = {
     logger.info(
-      s"Creator ${methodEntity.creatorUser}为用户${methodEntity.proxyUser} close FS：$methodEntity"
+      s"Creator ${methodEntity.getCreatorUser}为用户${methodEntity.getProxyUser} close FS：$methodEntity"
     )
-    val proxyUser = methodEntity.proxyUser
+    val proxyUser = methodEntity.getProxyUser
     if (!userFSInfos.containsKey(proxyUser)) return
     val userFsInfo = userFSInfos.get(proxyUser)
     userFsInfo synchronized {
-      val fsInfo = userFsInfo.find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.id)
+      val fsInfo = userFsInfo.find(fsInfo => fsInfo != null && fsInfo.id == methodEntity.getId)
       if (fsInfo.isDefined) {
         Utils.tryFinally(fsInfo.get.fs.close()) {
           userFsInfo -= fsInfo.get

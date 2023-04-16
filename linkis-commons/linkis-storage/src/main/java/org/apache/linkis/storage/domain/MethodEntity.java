@@ -33,13 +33,13 @@ package org.apache.linkis.storage.domain;
  * <p>Method parameter(方法参数)
  */
 public class MethodEntity {
-  public long id;
-  public String fsType;
-  public String creatorUser;
-  public String proxyUser;
+  private long id;
+  private String fsType;
+  private String creatorUser;
+  private String proxyUser;
   private String clientIp;
-  public String methodName;
-  public Object[] params;
+  private String methodName;
+  private Object[] params;
 
   public MethodEntity(
       long id,

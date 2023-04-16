@@ -21,7 +21,7 @@ import org.apache.linkis.common.io.Record;
 import org.apache.linkis.storage.resultset.ResultRecord;
 
 public class LineRecord implements ResultRecord {
-  public String line;
+  private String line;
 
   public LineRecord(String line) {
     this.line = line;

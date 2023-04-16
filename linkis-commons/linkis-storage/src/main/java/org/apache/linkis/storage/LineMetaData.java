@@ -22,7 +22,7 @@ import org.apache.linkis.storage.resultset.ResultMetaData;
 
 public class LineMetaData implements ResultMetaData {
 
-  public String metaData = null;
+  private String metaData = null;
 
   public LineMetaData() {}
 

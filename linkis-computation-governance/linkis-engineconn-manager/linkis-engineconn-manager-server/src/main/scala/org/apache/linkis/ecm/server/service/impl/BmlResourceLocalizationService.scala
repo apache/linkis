@@ -120,8 +120,6 @@ class BmlResourceLocalizationService extends ResourceLocalizationService with Lo
     }
   }
 
-  private val bmlResourceSuffix = ".zip"
-
   private def createDirIfNotExit(noSchemaPath: String): String = {
     val fsPath = new FsPath(schema + noSchemaPath)
     if (!fs.exists(fsPath)) {

@@ -26,11 +26,11 @@ class LineMetaDataTest {
   public void testCloneMeta() {
     LineMetaData origin = new LineMetaData("origin");
     LineMetaData copied = (LineMetaData) origin.cloneMeta();
-    origin.metaData = origin.metaData.replace("o", "a");
+    origin.setMetaData(origin.getMetaData().replace("o", "a"));
 
-    System.out.println(origin.metaData);
-    Assertions.assertThat(origin.metaData).isEqualTo("arigin");
-    System.out.println(copied.metaData);
-    Assertions.assertThat(copied.metaData).isEqualTo("origin");
+    System.out.println(origin.getMetaData());
+    Assertions.assertThat(origin.getMetaData()).isEqualTo("arigin");
+    System.out.println(copied.getMetaData());
+    Assertions.assertThat(copied.getMetaData()).isEqualTo("origin");
   }
 }

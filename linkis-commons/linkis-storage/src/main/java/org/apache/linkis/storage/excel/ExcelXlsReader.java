@@ -31,7 +31,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ExcelXlsReader implements HSSFListener {
+  private static final Logger logger = LoggerFactory.getLogger(ExcelXlsReader.class);
+
   private int minColumns = -1;
 
   private POIFSFileSystem fs;
@@ -258,13 +263,15 @@ public class ExcelXlsReader implements HSSFListener {
       if (fs != null) {
         fs.close();
       }
-      if (inputStream != null) {
-        inputStream.close();
+      try {
+        if (inputStream != null) {
+          inputStream.close();
+        }
+      } catch (IOException e) {
+        logger.info("ExcelXlsReader inputStream closed failed", e);
       }
     } catch (Exception e) {
-
+      logger.info("ExcelXlsReader fs closed failed", e);
     }
   }
-
-  public static void main(String[] args) {}
 }

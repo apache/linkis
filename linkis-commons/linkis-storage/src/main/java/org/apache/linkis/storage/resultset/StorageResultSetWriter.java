@@ -92,17 +92,16 @@ public class StorageResultSetWriter<K extends MetaData, V extends Record>
       synchronized (WRITER_LOCK_CREATE) {
         if (!fileCreated) {
           if (storePath != null && outputStream == null) {
-            logger.info(
-                String.format(
-                    "Try to create a new file:%s, with proxy user:%s", storePath, proxyUser));
+            logger.info("Try to create a new file:{}, with proxy user:{}", storePath, proxyUser);
             fs = FSFactory.getFsByProxyUser(storePath, proxyUser);
             try {
               fs.init(null);
               FileSystemUtils.createNewFile(storePath, proxyUser, true);
               outputStream = fs.write(storePath, true);
             } catch (IOException e) {
+              logger.warn("StorageResultSetWriter createNewFile failed", e);
             }
-            logger.info(String.format("Succeed to create a new file:%s", storePath));
+            logger.info("Succeed to create a new file:{}", storePath);
             fileCreated = true;
           }
         }

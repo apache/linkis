@@ -62,28 +62,56 @@ public class MethodEntity {
     return id;
   }
 
+  public void setId(long id) {
+    this.id = id;
+  }
+
   public String getFsType() {
     return fsType;
+  }
+
+  public void setFsType(String fsType) {
+    this.fsType = fsType;
   }
 
   public String getCreatorUser() {
     return creatorUser;
   }
 
+  public void setCreatorUser(String creatorUser) {
+    this.creatorUser = creatorUser;
+  }
+
   public String getProxyUser() {
     return proxyUser;
+  }
+
+  public void setProxyUser(String proxyUser) {
+    this.proxyUser = proxyUser;
   }
 
   public String getClientIp() {
     return clientIp;
   }
 
+  public void setClientIp(String clientIp) {
+    this.clientIp = clientIp;
+  }
+
   public String getMethodName() {
     return methodName;
   }
 
+  public void setMethodName(String methodName) {
+    this.methodName = methodName;
+  }
+
   public Object[] getParams() {
     return params;
+  }
+
+  public void setParams(Object[] params) {
+    this.params = params;
   }
 
   @Override

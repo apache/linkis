@@ -58,14 +58,6 @@ class ReaderThread extends Thread with Logging {
     isReaderAlive = false
   }
 
-  def startReaderThread(): Unit = {
-    Utils.tryCatch {
-      this.start()
-    } { t =>
-      throw t
-    }
-  }
-
   override def run(): Unit = {
     Utils.tryCatch {
       var line: String = null

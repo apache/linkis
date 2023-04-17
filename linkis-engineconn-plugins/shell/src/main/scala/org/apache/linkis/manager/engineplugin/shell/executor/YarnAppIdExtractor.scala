@@ -17,10 +17,9 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
-
-import org.apache.commons.lang3.StringUtils
 
 import java.io._
 import java.util
@@ -41,35 +40,6 @@ class YarnAppIdExtractor extends Logging {
       val yarnAppID = yarnAppIDMatcher.group(2)
       appIdList.add(yarnAppID)
     }
-  }
-
-  private def doExtractYarnAppId(content: String): Array[String] = {
-
-    if (StringUtils.isBlank(content)) return new Array[String](0)
-    // spark: Starting|Submitted|Activating.{1,100}(application_\d{13}_\d+)
-    // sqoop, importtsv: Submitted application application_1609166102854_970911
-
-    val stringReader = new StringReader(content)
-
-    val reader = new BufferedReader(stringReader)
-
-    val ret = new util.ArrayList[String]
-
-    var line = reader.readLine()
-    while ({
-      line != null
-    }) { // match application_xxx_xxx
-      val mApp = pattern.matcher(line)
-      if (mApp.find) {
-        val candidate1 = mApp.group(2)
-        if (!ret.contains(candidate1)) {
-          ret.add(candidate1)
-        }
-      }
-      line = reader.readLine
-    }
-    stringReader.close()
-    ret.toArray(new Array[String](ret.size()))
   }
 
   def getExtractedYarnAppIds(): util.List[String] = {

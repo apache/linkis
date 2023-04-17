@@ -36,22 +36,7 @@ abstract class AccessibleExecutor extends SensibleExecutor {
 
   def isBusy: Boolean = NodeStatus.isLocked(getStatus)
 
-  def whenBusy[A](f: => A): Unit = whenStatus(NodeStatus.Busy, f)
-
-  def whenIdle[A](f: => A): Unit = whenStatus(NodeStatus.Idle, f)
-
   def whenStatus[A](_status: NodeStatus, f: => A): Unit = if (getStatus == _status) f
-
-  def ensureBusy[A](f: => A): A = {
-    updateLastActivityTime()
-    if (isBusy) synchronized {
-      if (isBusy) return f
-    }
-    throw new SchedulerErrorException(
-      NODE_STATE_ERROR.getErrorCode,
-      "%s is in status %s." format (toString, getStatus)
-    )
-  }
 
   def ensureIdle[A](f: => A): A = ensureIdle(f, true)
 
@@ -75,14 +60,6 @@ abstract class AccessibleExecutor extends SensibleExecutor {
     if (NodeStatus.isAvailable(getStatus)) synchronized {
       if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
     }
-    throw new SchedulerErrorException(
-      NODE_STATE_ERROR.getErrorCode,
-      "%s is in status %s." format (toString, getStatus)
-    )
-  }
-
-  def whenAvailable[A](f: => A): A = {
-    if (NodeStatus.isAvailable(getStatus)) return Utils.tryFinally(f)(callback())
     throw new SchedulerErrorException(
       NODE_STATE_ERROR.getErrorCode,
       "%s is in status %s." format (toString, getStatus)

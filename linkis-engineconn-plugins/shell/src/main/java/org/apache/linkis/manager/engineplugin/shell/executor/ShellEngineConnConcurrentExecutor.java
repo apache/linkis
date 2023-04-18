@@ -240,12 +240,15 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
     if (this.engineExecutionContext == null) {
       return jobProgressInfos.toArray(new JobProgressInfo[0]);
     }
+
+    String jobId =
+        engineExecutionContext.getJobId().isDefined()
+            ? engineExecutionContext.getJobId().get()
+            : "";
     if (progress(taskID) == 0.0f) {
-      jobProgressInfos.add(
-          new JobProgressInfo(engineExecutionContext.getJobId().getOrElse(() -> ""), 1, 1, 0, 0));
+      jobProgressInfos.add(new JobProgressInfo(jobId, 1, 1, 0, 0));
     } else {
-      jobProgressInfos.add(
-          new JobProgressInfo(engineExecutionContext.getJobId().getOrElse(() -> ""), 1, 0, 0, 1));
+      jobProgressInfos.add(new JobProgressInfo(jobId, 1, 0, 0, 1));
     }
     return jobProgressInfos.toArray(new JobProgressInfo[0]);
   }

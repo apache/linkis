@@ -229,12 +229,15 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
     if (this.engineExecutionContext == null) {
       return jobProgressInfo.toArray(new JobProgressInfo[0]);
     }
+
+    String jobId =
+        engineExecutionContext.getJobId().isDefined()
+            ? engineExecutionContext.getJobId().get()
+            : "";
     if (progress(taskID) == 0.0f) {
-      jobProgressInfo.add(
-          new JobProgressInfo(engineExecutionContext.getJobId().getOrElse(() -> ""), 1, 1, 0, 0));
+      jobProgressInfo.add(new JobProgressInfo(jobId, 1, 1, 0, 0));
     } else {
-      jobProgressInfo.add(
-          new JobProgressInfo(engineExecutionContext.getJobId().getOrElse(() -> ""), 1, 0, 0, 1));
+      jobProgressInfo.add(new JobProgressInfo(jobId, 1, 0, 0, 1));
     }
     return jobProgressInfo.toArray(new JobProgressInfo[0]);
   }

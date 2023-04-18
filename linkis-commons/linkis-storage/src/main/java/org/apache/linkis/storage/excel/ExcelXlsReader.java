@@ -263,15 +263,16 @@ public class ExcelXlsReader implements HSSFListener {
       if (fs != null) {
         fs.close();
       }
-      try {
-        if (inputStream != null) {
-          inputStream.close();
-        }
-      } catch (IOException e) {
-        logger.info("ExcelXlsReader inputStream closed failed", e);
-      }
     } catch (Exception e) {
       logger.info("ExcelXlsReader fs closed failed", e);
+    }
+
+    try {
+      if (inputStream != null) {
+        inputStream.close();
+      }
+    } catch (IOException e) {
+      logger.info("ExcelXlsReader inputStream closed failed", e);
     }
   }
 }

@@ -23,12 +23,18 @@ import org.apache.linkis.engineconn.acessible.executor.hook.OperationHook
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.factory.FlinkManagerExecutorFactory
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+import org.apache.linkis.manager.common.protocol.engine.{
+  EngineOperateRequest,
+  EngineOperateResponse
+}
 
 import org.springframework.stereotype.Service
 
 import javax.annotation.PostConstruct
 
 import java.util.concurrent.atomic.AtomicInteger
+
+import scala.collection.mutable
 
 @Service
 class EngineLoadOperationHook extends OperationHook with Logging {
@@ -44,7 +50,10 @@ class EngineLoadOperationHook extends OperationHook with Logging {
 
   override def getName(): String = getClass.getSimpleName
 
-  override def doPreOperation(user: String, params: Map[String, Any]): Map[String, Any] = {
+  override def doPreOperation(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
     if (
         taskNum.incrementAndGet() >= FlinkEnvConfiguration.FLINK_MANAGER_LOAD_TASK_MAX.getHotValue()
     ) {
@@ -64,13 +73,13 @@ class EngineLoadOperationHook extends OperationHook with Logging {
         }
       }
     }
-    params
   }
 
-  override def doPostOperation(user: String, params: Map[String, Any]): Map[String, Any] = {
-    if (
-        taskNum.decrementAndGet() < FlinkEnvConfiguration.FLINK_MANAGER_LOAD_TASK_MAX.getHotValue()
-    ) {
+  override def doPostOperation(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
+    if (taskNum.get() - 1 < FlinkEnvConfiguration.FLINK_MANAGER_LOAD_TASK_MAX.getHotValue()) {
       lock.synchronized {
         if (
             taskNum
@@ -92,7 +101,6 @@ class EngineLoadOperationHook extends OperationHook with Logging {
     if (logger.isDebugEnabled()) {
       logger.debug(s"taskNum: ${taskNum.get()}")
     }
-    params
   }
 
 }

@@ -123,5 +123,15 @@ object FlinkEnvConfiguration {
   val FLINK_PARAMS_BLANK_PLACEHOLER =
     CommonVars("linkis.flink.params.placeholder.blank", "\u0001")
 
+  val FLINK_MANAGER_MODE_CONFIG_KEY = CommonVars("linkis.flink.manager.mode.on", false)
+
   val FLINK_MANAGER_LOAD_TASK_MAX = CommonVars("linkis.flink.manager.load.task.max", 50)
+
+  val HADOOP_CONF_DIR = CommonVars("linkis.flink.hadoop.conf.dir", System.getenv("HADOOP_CONF_DIR"))
+
+  val FLINK_MANAGER_CLIENT_MAX_NUM = CommonVars("linkis.flink.client.num.max", 200)
+
+  val FLINK_MANAGER_CLIENT_EXPIRE_MILLS =
+    CommonVars("linkis.flink.client.expire.mills", 3600 * 1000)
+
 }

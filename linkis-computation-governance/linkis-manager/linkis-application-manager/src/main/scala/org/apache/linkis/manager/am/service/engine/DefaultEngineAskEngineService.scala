@@ -27,6 +27,7 @@ import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -90,6 +91,13 @@ class DefaultEngineAskEngineService
       }
     }
     rs
+  }
+
+  override def putAsyncCreateEngineResponse(id: String, response: EngineAsyncResponse): Unit = {
+    if (StringUtils.isBlank(id) || null == response) {
+      logger.error(s"Invalid id : ${id} or null response : ${response}")
+    }
+    asyncCreateECMap.put(id, response)
   }
 
   @Receiver
@@ -166,7 +174,17 @@ class DefaultEngineAskEngineService
         LoggerUtils.setJobIdMDC(taskId)
         Utils.tryFinally {
           logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
-          sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+          if (asyncCreateECMap.containsKey(engineAskAsyncId)) {
+            putAsyncCreateEngineResponse(
+              engineAskAsyncId,
+              EngineCreateSuccess(engineAskAsyncId, engineNode)
+            )
+          }
+          if (null != sender) {
+            sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+          } else {
+            logger.info("Will not send async useing null sender.")
+          }
         } {
           LoggerUtils.removeJobIdMDC()
         }
@@ -190,15 +208,28 @@ class DefaultEngineAskEngineService
         } else {
           logger.info(s"msg: ${msg} canRetry Exception: ${exception.getClass.getName}")
         }
-
-        Utils.tryFinally {
-          sender.send(
+        if (asyncCreateECMap.containsKey(engineAskAsyncId)) {
+          putAsyncCreateEngineResponse(
+            engineAskAsyncId,
             EngineCreateError(
               engineAskAsyncId,
               ExceptionUtils.getRootCauseMessage(exception),
               retryFlag
             )
           )
+        }
+        Utils.tryFinally {
+          if (null != sender) {
+            sender.send(
+              EngineCreateError(
+                engineAskAsyncId,
+                ExceptionUtils.getRootCauseMessage(exception),
+                retryFlag
+              )
+            )
+          } else {
+            logger.info("Will not send async useing null sender.")
+          }
         } {
           LoggerUtils.removeJobIdMDC()
         }

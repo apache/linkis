@@ -56,6 +56,7 @@ class FlinkJarOnceExecutor(
   override protected def waitToRunning(): Unit = {
     Utils.waitUntil(() => clusterDescriptor.initJobId(), Duration.Inf)
     setJobID(clusterDescriptor.getJobId.toHexString)
+    super.waitToRunning()
     if (isDetach) {
       waitToExit()
     }
@@ -65,13 +66,12 @@ class FlinkJarOnceExecutor(
     val extraParams = flinkEngineConnContext.getEnvironmentContext.getExtraParams()
     val clientType = extraParams
       .getOrDefault(
-        GovernanceCommonConf.FLINK_CLIENT_TYPE.key,
-        GovernanceCommonConf.FLINK_CLIENT_TYPE.getValue
+        GovernanceCommonConf.FLINK_MANAGE_MODE.key,
+        GovernanceCommonConf.FLINK_MANAGE_MODE.getValue
       )
       .toString
-    super.waitToRunning()
     logger.info(s"clientType : ${clientType}")
-    clientType match {
+    clientType.toLowerCase() match {
       case ECConstants.EC_FLINK_CLIENT_TYPE_DETACH =>
         true
       case _ =>
@@ -91,7 +91,7 @@ class FlinkJarOnceExecutor(
       logger.info("Skip to kill yarn app on close with clientType : detach.")
     } else {
       logger.info("Will kill yarn app on close with clientType : attach.")
-      super.close()
+      super.closeYarnApp()
     }
   }
 

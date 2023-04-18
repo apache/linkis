@@ -39,39 +39,49 @@ class DefaultOperateService extends OperateService with Logging {
   override def executeOperation(
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
-    Utils.tryAndWarn {
-      OperationHook
-        .getOperationHooks()
-        .foreach(hook =>
-          hook.doPreOperation(
-            engineOperateRequest.user,
-            engineOperateRequest.parameters.asScala.toMap
-          )
-        )
-    }
+    var response: EngineOperateResponse = null
+
     val parameters = engineOperateRequest.parameters.asScala.toMap
     val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
       logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      response = EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      doPostHook(engineOperateRequest, response)
+      return response
     }
     logger.info(
       s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      response = EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      doPostHook(engineOperateRequest, response)
+      return response
     }
+    response = EngineOperateResponse(result)
+    doPostHook(engineOperateRequest, response)
+    response
+  }
+
+  private def doPreHook(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
     Utils.tryAndWarn {
       OperationHook
         .getOperationHooks()
-        .foreach(hook =>
-          hook.doPostOperation(
-            engineOperateRequest.user,
-            engineOperateRequest.parameters.asScala.toMap
-          )
-        )
+        .foreach(hook => hook.doPreOperation(engineOperateRequest, engineOperateResponse))
     }
-    EngineOperateResponse(result)
+  }
+
+  private def doPostHook(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
+    Utils.tryAndWarn {
+      OperationHook
+        .getOperationHooks()
+        .foreach(hook => hook.doPostOperation(engineOperateRequest, engineOperateResponse))
+    }
   }
 
 }

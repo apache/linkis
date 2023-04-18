@@ -17,14 +17,25 @@
 
 package org.apache.linkis.engineconn.acessible.executor.hook
 
+import org.apache.linkis.manager.common.protocol.engine.{
+  EngineOperateRequest,
+  EngineOperateResponse
+}
+
 import scala.collection.mutable.ArrayBuffer
 
 trait OperationHook {
   def getName(): String
 
-  def doPreOperation(user: String, params: Map[String, Any]): Map[String, Any]
+  def doPreOperation(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit
 
-  def doPostOperation(user: String, params: Map[String, Any]): Map[String, Any]
+  def doPostOperation(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit
 
 }
 

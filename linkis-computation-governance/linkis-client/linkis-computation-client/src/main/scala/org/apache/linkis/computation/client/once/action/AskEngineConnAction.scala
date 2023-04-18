@@ -21,6 +21,8 @@ import org.apache.linkis.httpclient.dws.DWSHttpClient
 import org.apache.linkis.httpclient.request.POSTAction
 import org.apache.linkis.ujes.client.exception.UJESJobException
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 
 class AskEngineConnAction extends POSTAction with LinkisManagerAction {
@@ -43,7 +45,6 @@ object AskEngineConnAction {
     private var maxSubmitTime: Long = _
     private var createService: String = _
     private var description: String = _
-    private var ignoreTimeout: Boolean = false
 
     def setUser(user: String): Builder = {
       this.user = user
@@ -75,11 +76,6 @@ object AskEngineConnAction {
       this
     }
 
-    def setIgnoreTimeout(ignoreTimeout: Boolean): Builder = {
-      this.ignoreTimeout = ignoreTimeout
-      this
-    }
-
     def build(): AskEngineConnAction = {
       val action = new AskEngineConnAction()
       if (user == null) throw new UJESJobException("user is needed!")
@@ -88,10 +84,15 @@ object AskEngineConnAction {
       action.setUser(user)
       action.addRequestPayload("properties", properties)
       action.addRequestPayload("labels", labels)
-      action.addRequestPayload("createService", createService)
-      action.addRequestPayload("timeout", maxSubmitTime)
-      action.addRequestPayload("description", description)
-      action.addRequestPayload("ignoreTimeout", ignoreTimeout)
+      if (StringUtils.isNotBlank(createService)) {
+        action.addRequestPayload("createService", createService)
+      }
+      if (null != maxSubmitTime) {
+        action.addRequestPayload("timeOut", maxSubmitTime)
+      }
+      if (StringUtils.isNotBlank(description)) {
+        action.addRequestPayload("description", description)
+      }
       action
     }
 

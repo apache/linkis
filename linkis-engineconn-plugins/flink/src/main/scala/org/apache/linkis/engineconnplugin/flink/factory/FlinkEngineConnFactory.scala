@@ -19,6 +19,7 @@ package org.apache.linkis.engineconnplugin.flink.factory
 
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment
 import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
@@ -104,9 +105,9 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // Ship directories
     val shipDirsArray = getShipDirectories(options)
     // other params
-    val flinkClientType = GovernanceCommonConf.FLINK_CLIENT_TYPE.getValue(options)
+    val flinkClientType = GovernanceCommonConf.FLINK_MANAGE_MODE.getValue(options)
     val otherParams = new util.HashMap[String, Any]()
-    otherParams.put(GovernanceCommonConf.FLINK_CLIENT_TYPE.key, flinkClientType)
+    otherParams.put(GovernanceCommonConf.FLINK_MANAGE_MODE.key, flinkClientType.toLowerCase())
     val context = new EnvironmentContext(
       defaultEnv,
       new Configuration,
@@ -397,8 +398,14 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   ): FlinkEngineConnContext =
     new FlinkEngineConnContext(environmentContext)
 
-  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] =
-    classOf[FlinkCodeExecutorFactory]
+  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] = {
+    val options = EngineConnServer.getEngineCreationContext.getOptions
+    if (FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)) {
+      classOf[FlinkManagerExecutorFactory]
+    } else {
+      classOf[FlinkCodeExecutorFactory]
+    }
+  }
 
   override protected def getEngineConnType: EngineType = EngineType.FLINK
 

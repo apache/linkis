@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.engineconn.acessible.executor.conf.conditions
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 
-trait EngineAskEngineService {
+import org.springframework.context.annotation.{Condition, ConditionContext}
+import org.springframework.core.`type`.AnnotatedTypeMetadata
+import org.springframework.stereotype.Component
 
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
+@Component
+class AccessibleExecutorLockServiceCondition extends Condition {
 
-  def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse
+  override def matches(
+      conditionContext: ConditionContext,
+      annotatedTypeMetadata: AnnotatedTypeMetadata
+  ): Boolean = AccessibleExecutorConfiguration.ENABLE_DEFAULT_LOCKER.getValue
 
-  def putAsyncCreateEngineResponse(id: String, response: EngineAsyncResponse): Unit
 }

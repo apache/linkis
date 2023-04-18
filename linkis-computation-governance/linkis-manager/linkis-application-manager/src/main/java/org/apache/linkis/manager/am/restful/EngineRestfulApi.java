@@ -36,6 +36,7 @@ import org.apache.linkis.manager.am.vo.AMEngineNodeVo;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
+import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.protocol.engine.*;
@@ -143,10 +144,11 @@ public class EngineRestfulApi {
                 AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
             retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, errorRS.retry());
             retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, errorRS.exception());
-            if (errorRS.retry()) {
-              throw new LinkisRetryException(
-                  AMErrorCode.ASK_ENGINE_ERROR_RETRY.getErrorCode(), errorRS.exception());
-            }
+            retEngineNode.put(
+                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
+            return Message.ok(
+                    String.format("Create engineConn failed, caused by %s.", errorRS.exception()))
+                .data("engine", retEngineNode);
           } else if (EngineAskAsyncResponse.class.isInstance(response)) {
             EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) response;
             retEngineNode.put(
@@ -154,6 +156,15 @@ public class EngineRestfulApi {
             retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
             retEngineNode.put(
                 AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
+            retEngineNode.put(
+                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
+          } else {
+            retEngineNode.put(
+                AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
+            retEngineNode.put(
+                AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, "Got null response for asyId : " + asyncId);
+            retEngineNode.put(
+                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
           }
           return Message.ok("create engine end.").data("engine", retEngineNode);
         }
@@ -165,29 +176,23 @@ public class EngineRestfulApi {
         fillResultEngineNode(retEngineNode, engineNode);
       } else if (EngineAskAsyncResponse.class.isInstance(rs)) {
         EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) rs;
+        engineAskService.putAsyncCreateEngineResponse(askAsyncResponse.id(), askAsyncResponse);
         retEngineNode.put(
             AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_STARTING);
         retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
         retEngineNode.put(
             AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
+        retEngineNode.put(
+            ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
       }
-    } catch (LinkisRetryException e) {
-      logger.error(
-          "User {} create engineConn failed get retry  exception. can be Retry", userName, e);
-      retEngineNode.put(
-          AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
-      retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, true);
-      retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, e.getMessage());
-      return Message.ok(
-              String.format(
-                  "Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e)))
-          .data("engine", retEngineNode);
     } catch (Exception e) {
       logger.error(String.format("User %s create engineConn failed.", userName), e);
       retEngineNode.put(
           AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
       retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, false);
       retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, e.getMessage());
+      retEngineNode.put(
+          ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
       return Message.ok(
               String.format(
                   "Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e)))
@@ -208,8 +213,12 @@ public class EngineRestfulApi {
     }
     retEngineNode.put(ECConstants.NODE_STATUS_KEY(), engineNode.getNodeStatus().toString());
     retEngineNode.put(ECConstants.EC_TICKET_ID_KEY(), engineNode.getTicketId());
-    retEngineNode.put(
-        ECConstants.ECM_SERVICE_INSTANCE_KEY(), engineNode.getEMNode().getServiceInstance());
+    EMNode emNode = engineNode.getEMNode();
+    if (null != emNode) {
+      retEngineNode.put(
+          ECConstants.ECM_SERVICE_INSTANCE_KEY(), engineNode.getEMNode().getServiceInstance());
+    }
+    retEngineNode.put(ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
   }
 
   @ApiOperation(value = "createEngineConn", response = Message.class)
@@ -269,6 +278,7 @@ public class EngineRestfulApi {
     } catch (Exception e) {
       logger.info("Instances {} does not exist", serviceInstance.getInstance());
     }
+    String ecMetrics = null;
     if (null == engineNode) {
       ECResourceInfoRecord ecInfo = null;
       if (null != ticketIdNode) {
@@ -285,12 +295,19 @@ public class EngineRestfulApi {
       if (null == ecInfo) {
         return Message.error("Instance does not exist " + serviceInstance);
       }
+      if (null == ecMetrics) {
+        ecMetrics = ecInfo.getMetrics();
+      }
       engineNode = ECResourceInfoUtils.convertECInfoTOECNode(ecInfo);
+    } else {
+      ecMetrics = engineNode.getEcMetrics();
     }
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error("You have no permission to access EngineConn " + serviceInstance);
     }
-    return Message.ok().data("engine", engineNode);
+    Message result = Message.ok().data("engine", engineNode);
+    result.data(AMConstant.EC_METRICS_KEY, ecMetrics);
+    return result;
   }
 
   @ApiOperation(value = "kill egineconn", notes = "kill engineconn", response = Message.class)
@@ -580,6 +597,11 @@ public class EngineRestfulApi {
     ServiceInstance serviceInstance = getServiceInstance(jsonNode);
     logger.info("User {} try to execute Engine Operation {}.", userName, serviceInstance);
     EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
+    if (null == engineNode) {
+      return Message.ok()
+          .data("isError", true)
+          .data("errorMsg", "Ec : " + serviceInstance.toString() + " not found.");
+    }
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error("You have no permission to execute Engine Operation " + serviceInstance);
     }

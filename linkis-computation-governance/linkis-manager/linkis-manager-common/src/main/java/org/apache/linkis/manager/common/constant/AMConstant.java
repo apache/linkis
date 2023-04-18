@@ -53,4 +53,6 @@ public class AMConstant {
   public static final String EC_ASYNC_START_FAIL_RETRY_KEY = "canRetry";
 
   public static final String EC_ASYNC_START_FAIL_MSG_KEY = "failMsg";
+
+  public static final String EC_METRICS_KEY = "ecMetrics";
 }

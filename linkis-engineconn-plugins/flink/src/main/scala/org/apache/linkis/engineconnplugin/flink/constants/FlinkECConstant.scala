@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.engineconnplugin.flink.constants
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+object FlinkECConstant {
 
-trait EngineAskEngineService {
+  val FLINK_MANAGER_OPERATION_TYPE_KEY = "operationType"
 
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
+  val FLINK_OPERATION_BOUNDARY_KEY = "operationBoundary"
 
-  def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse
+  val EC_INSTANCE_KEY = "ecInstance"
 
-  def putAsyncCreateEngineResponse(id: String, response: EngineAsyncResponse): Unit
+  val MSG_KEY = "msg"
+
+  val SNAPHOT_KEY = "snapshot"
+
+  val SAVAPOINT_PATH_KEY = "savepointPath"
+
 }

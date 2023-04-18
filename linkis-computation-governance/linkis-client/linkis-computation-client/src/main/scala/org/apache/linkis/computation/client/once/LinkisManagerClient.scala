@@ -17,6 +17,7 @@
 
 package org.apache.linkis.computation.client.once
 
+import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.once.action.{
   AskEngineConnAction,
   CreateEngineConnAction,
@@ -86,7 +87,17 @@ class LinkisManagerClientImpl(ujesClient: UJESClient) extends LinkisManagerClien
 
   override def executeEngineConnOperation(
       engineConnOperateAction: EngineConnOperateAction
-  ): EngineConnOperateResult = execute(engineConnOperateAction)
+  ): EngineConnOperateResult = {
+    Utils.tryCatch {
+      val rs = execute[EngineConnOperateResult](engineConnOperateAction)
+      rs
+    } { case e: Exception =>
+      val rs = new EngineConnOperateResult
+      rs.setIsError(true)
+      rs.setErrorMsg(e.getMessage)
+      rs
+    }
+  }
 
   override def close(): Unit = ujesClient.close()
 

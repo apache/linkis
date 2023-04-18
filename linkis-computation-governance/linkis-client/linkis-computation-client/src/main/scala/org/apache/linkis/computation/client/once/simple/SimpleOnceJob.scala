@@ -107,6 +107,10 @@ class SubmittableSimpleOnceJob(
 
   def getECMServiceInstance: ServiceInstance = ecmServiceInstance
 
+  def getEcServiceInstance: ServiceInstance = serviceInstance
+
+  def getEcTicketId: String = ticketId
+
   override protected def doSubmit(): Unit = {
     logger.info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
     val nodeInfo = linkisManagerClient.createEngineConn(createEngineConnAction)

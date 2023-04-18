@@ -64,4 +64,6 @@ class FlinkManagerConcurrentExecutor(
     // TODO
   }
 
+  def getFlinkContext(): FlinkEngineConnContext = flinkEngineConnContext
+
 }

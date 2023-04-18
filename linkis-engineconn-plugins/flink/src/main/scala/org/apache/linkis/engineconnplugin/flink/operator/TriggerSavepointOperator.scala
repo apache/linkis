@@ -18,32 +18,41 @@
 package org.apache.linkis.engineconnplugin.flink.operator
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
-import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
+import org.apache.linkis.engineconnplugin.flink.constants.FlinkECConstant
+import org.apache.linkis.engineconnplugin.flink.operator.clientmanager.FlinkRestClientManager
+import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
+import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.manager.common.operator.Operator
 
-import java.text.MessageFormat
+import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
+
+import scala.collection.mutable
 
 class TriggerSavepointOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("doSavepoint")
 
-  override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {
-    val savepoint = getAsThrow[String]("savepointPath")
-    val mode = getAsThrow[String]("mode")
-    logger.info(s"try to $mode savepoint with path $savepoint.")
-    OnceExecutorManager.getInstance.getReportExecutor match {
-      case flinkExecutor: FlinkOnceExecutor[_] =>
-        val writtenSavepoint =
-          flinkExecutor.getClusterDescriptorAdapter.doSavepoint(savepoint, mode)
-        Map("writtenSavepoint" -> writtenSavepoint)
-      case executor =>
-        throw new JobExecutionException(
-          MessageFormat.format(NOT_SUPPORT_SAVEPOTION.getErrorDesc, executor.getClass.getSimpleName)
-        )
+  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
+    val rsMap = new mutable.HashMap[String, String]
+
+    val savepointPath = getAsThrow[String](FlinkECConstant.SAVAPOINT_PATH_KEY)
+    val appIdStr = getAsThrow[String](ECConstants.YARN_APPID_NAME_KEY)
+
+    val appId = YarnUtil.retrieveApplicationId(appIdStr)
+    val yarnClient = YarnUtil.getYarnClient()
+    val appReport = yarnClient.getApplicationReport(appId)
+    if (appReport.getFinalApplicationStatus != FinalApplicationStatus.UNDEFINED) {
+      // Flink cluster is not running anymore
+      val msg =
+        s"The application ${appIdStr} doesn't run anymore. It has previously completed with final status: ${appReport.getFinalApplicationStatus.toString}"
+      throw logAndException(msg)
     }
+
+    val restClient = FlinkRestClientManager.getFlinkRestClient(appIdStr)
+    val rs = YarnUtil.triggerSavepoint(appIdStr, savepointPath, restClient)
+    rsMap.put(FlinkECConstant.MSG_KEY, rs)
+    rsMap.toMap
   }
 
 }

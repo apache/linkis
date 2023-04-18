@@ -79,7 +79,16 @@ object DataType extends Logging {
     case IntType => if (isNumberNull(value)) null else value.toInt
     case LongType | BigIntType => if (isNumberNull(value)) null else value.toLong
     case FloatType => if (isNumberNull(value)) null else value.toFloat
-    case DoubleType => if (isNumberNull(value)) null else value.toDouble
+    case DoubleType =>
+      logger.info("--------------------- value : {}", value)
+      logger.info("--------------------- result : {}", value.equals("NaN"))
+      if (isNumberNull(value)) {
+        null
+      } else if (value.equals("NaN")) {
+        "NaN"
+      } else {
+        value.toDouble
+      }
     case DecimalType => if (isNumberNull(value)) null else new JavaBigDecimal(value)
     case DateType => if (isNumberNull(value)) null else Date.valueOf(value)
     case TimestampType =>
@@ -117,25 +126,45 @@ abstract class DataType(val typeName: String, val javaSQLType: Int) {
 }
 
 case object NullType extends DataType("void", 0)
+
 case object StringType extends DataType("string", 12)
+
 case object BooleanType extends DataType("boolean", 16)
+
 case object TinyIntType extends DataType("tinyint", -6)
+
 case object ShortIntType extends DataType("short", 5)
+
 case object IntType extends DataType("int", 4)
+
 case object LongType extends DataType("long", -5)
+
 case object BigIntType extends DataType("bigint", -5)
+
 case object FloatType extends DataType("float", 6)
+
 case object DoubleType extends DataType("double", 8)
+
 case object CharType extends DataType("char", 1)
+
 case object VarcharType extends DataType("varchar", 12)
+
 case object DateType extends DataType("date", 91)
+
 case object TimestampType extends DataType("timestamp", 93)
+
 case object BinaryType extends DataType("binary", -2)
+
 case object DecimalType extends DataType("decimal", 3)
+
 case object ArrayType extends DataType("array", 2003)
+
 case object MapType extends DataType("map", 2000)
+
 case object ListType extends DataType("list", 2001)
+
 case object StructType extends DataType("struct", 2002)
+
 case object BigDecimalType extends DataType("bigdecimal", 3)
 
 case class Column(columnName: String, dataType: DataType, comment: String) {

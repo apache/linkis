@@ -21,6 +21,8 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import org.apache.commons.lang3.StringUtils
@@ -39,6 +41,8 @@ import org.apache.hadoop.yarn.api.records.{
 import org.apache.hadoop.yarn.client.api.YarnClient
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.ConverterUtils
+
+import java.util
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
@@ -191,6 +195,29 @@ object YarnUtil extends Logging {
         throw new JobExecutionException(msg)
     }
     nodeStatus
+  }
+
+  def isDetach(params: util.Map[String, Any]): Boolean = {
+    val managerOn = params.getOrDefault(
+      FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.key,
+      FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue
+    )
+    if (null != managerOn && managerOn.toString.toBoolean) {
+      return true
+    }
+    val clientType = params
+      .getOrDefault(
+        GovernanceCommonConf.FLINK_MANAGE_MODE.key,
+        GovernanceCommonConf.FLINK_MANAGE_MODE.getValue
+      )
+      .toString
+    logger.info(s"clientType : ${clientType}")
+    clientType.toLowerCase() match {
+      case ECConstants.EC_FLINK_CLIENT_TYPE_DETACH =>
+        true
+      case _ =>
+        false
+    }
   }
 
 }

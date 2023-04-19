@@ -25,11 +25,13 @@ import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnApplicatio
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 
 import org.apache.commons.lang3.StringUtils
 
+import java.util
 import java.util.concurrent.{Future, TimeUnit}
 
 import scala.concurrent.duration.Duration
@@ -57,25 +59,8 @@ class FlinkJarOnceExecutor(
     Utils.waitUntil(() => clusterDescriptor.initJobId(), Duration.Inf)
     setJobID(clusterDescriptor.getJobId.toHexString)
     super.waitToRunning()
-    if (isDetach) {
+    if (YarnUtil.isDetach(flinkEngineConnContext.getEnvironmentContext.getExtraParams())) {
       waitToExit()
-    }
-  }
-
-  private def isDetach(): Boolean = {
-    val extraParams = flinkEngineConnContext.getEnvironmentContext.getExtraParams()
-    val clientType = extraParams
-      .getOrDefault(
-        GovernanceCommonConf.FLINK_MANAGE_MODE.key,
-        GovernanceCommonConf.FLINK_MANAGE_MODE.getValue
-      )
-      .toString
-    logger.info(s"clientType : ${clientType}")
-    clientType.toLowerCase() match {
-      case ECConstants.EC_FLINK_CLIENT_TYPE_DETACH =>
-        true
-      case _ =>
-        false
     }
   }
 
@@ -87,7 +72,7 @@ class FlinkJarOnceExecutor(
   }
 
   override protected def closeYarnApp(): Unit = {
-    if (isDetach()) {
+    if (YarnUtil.isDetach(flinkEngineConnContext.getEnvironmentContext.getExtraParams())) {
       logger.info("Skip to kill yarn app on close with clientType : detach.")
     } else {
       logger.info("Will kill yarn app on close with clientType : attach.")

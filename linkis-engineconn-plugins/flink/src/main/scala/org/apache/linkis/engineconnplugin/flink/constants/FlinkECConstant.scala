@@ -31,4 +31,7 @@ object FlinkECConstant {
 
   val SAVAPOINT_PATH_KEY = "savepointPath"
 
+  val SAVEPOINT_MODE_KEY = "mode"
+
+  val RESULT_SAVEPOINT_KEY = "writtenSavepoint"
 }

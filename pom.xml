@@ -1184,7 +1184,7 @@
               <exclude>compiler/**</exclude>
               <exclude>**/generated/**</exclude>
               <exclude>**/scritpis-test.sql</exclude>
-              <exclude>**/scritpis-test2.sql</exclude>
+
             </excludes>
           </configuration>
           <executions>

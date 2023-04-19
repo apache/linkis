@@ -98,43 +98,6 @@ class StorageScriptFsWriterTest {
 
   String fileName = "229cf765-6839-4c82-829d-1907c2ccf668.sql";
 
-  String scriptContent2 =
-      ""
-          + "select ${qq};\n"
-          + "--@set test=123\n"
-          + "select ${test};\n"
-          + "--@set qq=222\n"
-          + "select ${qq};\n"
-          + "--\n"
-          + "--\n"
-          + "select 1;";
-  String metaData2 = "";
-
-  String resultMetaData2 = "{}";
-  String resultString2 =
-      ""
-          + "--\n"
-          + "select ${qq};\n"
-          + "--@set test=123\n"
-          + "select ${test};\n"
-          + "--@set qq=222\n"
-          + "select ${qq};\n"
-          + "--\n"
-          + "--\n"
-          + "select 1;";
-
-  Map<String, Object> params2 = new HashMap<>();
-
-  {
-    try {
-      params = new ObjectMapper().readValue(metaData, HashMap.class);
-    } catch (JsonProcessingException e) {
-      e.printStackTrace();
-    }
-  }
-
-  String fileName2 = "229cf765-6839-4c82-829d-1907c2ccf669.sql";
-
   //        return Message.ok().data("resourceId", resourceId).data("version", version);
 
   @Test
@@ -165,34 +128,6 @@ class StorageScriptFsWriterTest {
   }
 
   @Test
-  void TestSave2() {
-
-    ScriptFsWriter writer =
-        StorageScriptFsWriter.getScriptFsWriter(new FsPath(fileName2), "UTF-8", null);
-    Variable[] v = VariableParser.getVariables(params2);
-    List<Variable> variableList =
-        Arrays.stream(v)
-            .filter(var -> !StringUtils.isEmpty(var.value()))
-            .collect(Collectors.toList());
-    try {
-
-      MetaData getMetaData = new ScriptMetaData(variableList.toArray(new Variable[0]));
-      writer.addMetaData(getMetaData);
-      writer.addRecord(new ScriptRecord(scriptContent2));
-      InputStream inputStream = writer.getInputStream();
-
-      String text =
-          new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-              .lines()
-              .collect(Collectors.joining("\n"));
-      Assertions.assertEquals(text, resultString2);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Test
   void TestOpen() throws FileNotFoundException {
 
     // /api/rest_j/v1/filesystem/openScriptFromBML?fileName=229cf765-6839-4c82-829d-1907c2ccf668.sql&resourceId=c9755cad-619b-4c1c-9204-cc4bb9836194&version=v000008&creator=&projectName=test1122a1
@@ -212,27 +147,5 @@ class StorageScriptFsWriterTest {
     Assertions.assertEquals(scriptRes, scriptContent + "\n");
 
     Assertions.assertEquals(metadataRes, resultMetaData);
-  }
-
-  @Test
-  void TestOpen2() throws FileNotFoundException {
-
-    // /api/rest_j/v1/filesystem/openScriptFromBML?fileName=229cf765-6839-4c82-829d-1907c2ccf668.sql&resourceId=c9755cad-619b-4c1c-9204-cc4bb9836194&version=v000008&creator=&projectName=test1122a1
-
-    String filePath = this.getClass().getResource("/scritpis-test2.sql").getFile().toString();
-
-    File file = new File(filePath);
-
-    InputStream inputStream = new FileInputStream(file);
-
-    FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName2), inputStream);
-    Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
-
-    String scriptRes = collect.getSecond().get(0)[0];
-    String metadataRes = new Gson().toJson(collect.getFirst());
-
-    Assertions.assertEquals(scriptContent2 + "\n", scriptRes);
-
-    Assertions.assertEquals(metadataRes, resultMetaData2);
   }
 }

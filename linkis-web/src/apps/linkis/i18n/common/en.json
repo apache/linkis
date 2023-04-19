@@ -194,7 +194,7 @@
       },
       "modal": {
         "modalTitle": "Prompt message ",
-        "modalDelete": "Confirm whether to delete the [{envName} option?",
+        "modalDelete": "Confirm whether to delete the [{name} option?",
         "modalDeleteRecord": "Confirm whether to delete the record?",
         "modalDeleteTask": "Confirm whether to stop the selected task?",
         "modalDeleteInstance": "Determines whether to stop the current selected instance?",
@@ -398,7 +398,7 @@
         "addSuccessful": "Successfully Addded",
         "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
-        "isConfirmDel": "Are you sure you want to delete this tag"
+        "isConfirmDel": "Are you sure you want to delete this tag({name})"
       },
       "ipListManagement": {
         "userName": "User Name",
@@ -433,7 +433,7 @@
         "addSuccessful": "Successfully Addded",
         "editSuccessful": "Successfully edited",
         "confirmDel": "Confirm Deletion",
-        "isConfirmDel": "Are you sure you want to delete this tag"
+        "isConfirmDel": "Are you sure you want to delete this tag({name})"
       },
       "codeQuery": {
         "executionCode": "Execution Code",
@@ -468,8 +468,8 @@
           "cancel": "Cancel",
           "modalTitle": "Info",
           "modalFormat": "Confirm deleting the {0} record?",
-          "modalDelete1": "Confirm that the record [{username}] should be deleted?",
-          "modalDelete": "Confirm that the record [{envName}] should be deleted?",
+          "modalDelete1": "Confirm that the record [{name}] should be deleted?",
+          "modalDelete": "Confirm that the record [{name}] should be deleted?",
           "modalDeleteSuccess": "Successfully delete",
           "modalDeleteFail": "Fail to delete",
           "modalAddSuccess": "Successfully added",

@@ -75,7 +75,7 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
-      if (!tenantConfigService.isExist(tenantVo.getUser(), tenantVo.getCreator())) {
+      if (tenantConfigService.isExist(tenantVo.getUser(), tenantVo.getCreator())) {
         throw new ConfigurationException("User-creator is existed");
       }
       parameterVerification(tenantVo);

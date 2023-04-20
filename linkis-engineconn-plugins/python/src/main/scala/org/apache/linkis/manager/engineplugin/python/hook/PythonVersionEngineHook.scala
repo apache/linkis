@@ -27,8 +27,6 @@ import org.apache.linkis.manager.engineplugin.python.executor.PythonSession
 import java.util
 
 class PythonVersionEngineHook extends EngineConnHook with Logging {
-  var _sparkpythonVersion: String = _
-  var _sparkpythonExtraPackage: String = _
   var _pythonVersion: String = _
   var _pythonExtraPackage: String = _
 

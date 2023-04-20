@@ -400,14 +400,21 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       } else {
         results = statement.finalStatusInfo()
       }
+      // v407中create table时columns返回为null
       if (results.getColumns == null) {
-        throw new RuntimeException("trino columns is null.")
+        // throw new RuntimeException("trino columns is null.")
+        logger.info(s"results columns is null for task: $taskId")
+        return
       }
+
       val columns = results.getColumns.asScala
         .map(column => Column(column.getName, column.getType, ""))
         .toArray[Column]
+      // 兼容结果集中colums为空集合的情况，如use db, drop table if exists
+      if (columns.length != 0) {
+        resultSetWriter.addMetaData(new TableMetaData(columns))
+      }
       columnCount = columns.length
-      resultSetWriter.addMetaData(new TableMetaData(columns))
       while (statement.isRunning) {
         val data = statement.currentData().getData
         if (data != null) for (row <- data.asScala) {

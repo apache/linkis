@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.trino.utils
 
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration
 import org.apache.linkis.engineplugin.trino.exception.{
+  TrinoClientException,
   TrinoGrantmaException,
   TrinoModifySchemaException
 }
@@ -39,6 +40,14 @@ object TrinoCode {
       .contains("alter schema")
   }
 
+  private def hasFetchFirst(code: String): Boolean = {
+    val trimmedCode = code
+      .replaceAll("\n", SPACE)
+      .replaceAll("\\s+", SPACE)
+      .toLowerCase()
+    trimmedCode.matches(".*fetch first (\\d+ )?row only.*")
+  }
+
   def checkCode(code: String): Unit = {
     if (
         TrinoConfiguration.TRINO_FORBID_MODIFY_SCHEMA.getValue && TrinoCode.willModifySchema(code)
@@ -47,6 +56,9 @@ object TrinoCode {
     }
     if (TrinoConfiguration.TRINO_FORBID_GRANT.getValue && TrinoCode.willGrant(code)) {
       throw TrinoGrantmaException("Grant schema or table is not allowed")
+    }
+    if (TrinoConfiguration.TRINO_FORBID_FETCHFIRST.getValue && TrinoCode.hasFetchFirst(code)) {
+      throw TrinoClientException("Fetch first row only is not allowed, please use limit n.")
     }
   }
 

@@ -57,6 +57,8 @@ object TrinoConfiguration {
 
   val TRINO_FORBID_GRANT = CommonVars[Boolean]("linkis.trino.forbid.grant", true)
 
+  val TRINO_FORBID_FETCHFIRST = CommonVars[Boolean]("linkis.trino.forbid.fetchfirst", true)
+
   val TRINO_FORBID_MODIFY_SCHEMA =
     CommonVars[Boolean]("linkis.trino.forbid.modifySchema", true)
 

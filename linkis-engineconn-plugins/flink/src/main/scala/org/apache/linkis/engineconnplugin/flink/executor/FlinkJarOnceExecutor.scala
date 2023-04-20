@@ -28,12 +28,11 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
-
 import scala.concurrent.duration.Duration
 
 class FlinkJarOnceExecutor(
@@ -73,7 +72,12 @@ class FlinkJarOnceExecutor(
 
   override protected def closeYarnApp(): Unit = {
     if (YarnUtil.isDetach(flinkEngineConnContext.getEnvironmentContext.getExtraParams())) {
-      logger.info("Skip to kill yarn app on close with clientType : detach.")
+      if (getStatus == NodeStatus.Failed) {
+        logger.info("Will kill yarn app on close with clientType : detach, because status failed.")
+        super.closeYarnApp()
+      } else {
+        logger.info("Skip to kill yarn app on close with clientType : detach.")
+      }
     } else {
       logger.info("Will kill yarn app on close with clientType : attach.")
       super.closeYarnApp()

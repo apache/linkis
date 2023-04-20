@@ -18,11 +18,12 @@
 package org.apache.linkis.manager.am.service.impl;
 
 import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid;
-import org.apache.linkis.manager.am.event.EngineConnEventPublisher;
-import org.apache.linkis.manager.am.event.message.EngineConnPidCallbackEvent;
+import org.apache.linkis.manager.am.manager.DefaultEngineNodeManager;
 import org.apache.linkis.manager.am.service.EngineConnPidCallbackService;
+import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -32,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbackService {
   private static final Logger logger =
       LoggerFactory.getLogger(DefaultEngineConnPidCallbackService.class);
+
+  @Autowired private DefaultEngineNodeManager defaultEngineNodeManager;
 
   @Receiver
   @Override
@@ -43,6 +46,16 @@ public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbac
         protocol.serviceInstance(),
         protocol.pid(),
         protocol.ticketId());
-    EngineConnEventPublisher.publishEvent(new EngineConnPidCallbackEvent(protocol));
+
+    EngineNode engineNode = defaultEngineNodeManager.getEngineNode(protocol.serviceInstance());
+    if (engineNode == null) {
+      logger.error(
+          "DefaultEngineConnPidCallbackService dealPid failed, engineNode is null, serviceInstance:{}",
+          protocol.serviceInstance());
+      return;
+    }
+
+    engineNode.setIdentifier(protocol.pid());
+    defaultEngineNodeManager.updateEngine(engineNode);
   }
 }

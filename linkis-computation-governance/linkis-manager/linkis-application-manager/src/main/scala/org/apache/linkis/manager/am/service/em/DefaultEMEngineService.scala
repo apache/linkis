@@ -19,20 +19,31 @@ package org.apache.linkis.manager.am.service.em
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService
+import org.apache.linkis.governance.common.utils.ECPathUtils
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.manager.{EMNodeManager, EngineNodeManager}
 import org.apache.linkis.manager.am.service.ECResourceInfoService
 import org.apache.linkis.manager.am.service.EMEngineService
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.node._
-import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord
+import org.apache.linkis.manager.common.entity.persistence.{
+  ECResourceInfoRecord,
+  PersistenceResource
+}
 import org.apache.linkis.manager.common.protocol.em._
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.common.utils.ManagerUtils
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.label.entity.{EngineNodeLabel, Label}
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineInstanceLabel,
+  EngineTypeLabel,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.label.service.NodeLabelService
+import org.apache.linkis.manager.rm.domain.RMLabelContainer
+import org.apache.linkis.manager.rm.service.LabelResourceService
 import org.apache.linkis.manager.service.common.label.LabelFilter
 
 import org.apache.commons.collections.MapUtils
@@ -64,6 +75,9 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
   @Autowired
   private var labelFilter: LabelFilter = _
+
+  @Autowired
+  private var labelResourceService: LabelResourceService = _
 
   override def listEngines(getEMEnginesRequest: GetEMEnginesRequest): util.List[EngineNode] = {
     val emNode = new AMEMNode()
@@ -100,17 +114,38 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     )
     val engineStopRequest = new EngineStopRequest
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance)
+    engineStopRequest.setIdentifierType(engineNode.getMark)
+    engineStopRequest.setIdentifier(engineNode.getIdentifier)
 
-    val ecInfo: ECResourceInfoRecord =
-      ecResourceInfoService.getECResourceInfoRecordByInstance(
-        engineNode.getServiceInstance.getInstance
+    val labels = nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance)
+    if (labels.isEmpty) {
+      // node labels is empty, engine already been stopped
+      logger.info(
+        s"DefaultEMEngineService stopEngine node labels is empty, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
       )
-    // append engineType and logDirSuffix
-    if (ecInfo != null) {
-      engineStopRequest.setEngineType(ecInfo.getLabelValue().split(",")(1).split("-")(0));
-      engineStopRequest.setLogDirSuffix(ecInfo.getLogDirSuffix)
+      return
     }
 
+    val rMLabelContainer: RMLabelContainer = labelResourceService.enrichLabels(labels)
+
+    val persistenceResource: PersistenceResource =
+      labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel)
+    if (persistenceResource == null) {
+      // persistenceResource is null, engine already been stopped
+      logger.info(
+        s"DefaultEMEngineService stopEngine persistenceResource is null, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
+      )
+      return
+    }
+
+    engineStopRequest.setLogDirSuffix(
+      ECPathUtils
+        .getECLogDirSuffix(
+          rMLabelContainer.getEngineTypeLabel,
+          rMLabelContainer.getUserCreatorLabel,
+          persistenceResource.getTicketId
+        )
+    )
     emNodeManager.stopEngine(engineStopRequest, emNode)
     // engineNodeManager.deleteEngineNode(engineNode)
     logger.info(

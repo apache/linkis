@@ -54,11 +54,16 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
     @Receiver
     public EngineStopResponse dealEngineConnStop(EngineStopRequest engineStopRequest) {
         logger.info("received EngineStopRequest " +  engineStopRequest);
-        EngineStopResponse response = new EngineStopResponse();
-        String processPort = engineStopRequest.getServiceInstance().getInstance().split(":")[1];
-        String pid = findProcessId(processPort);
-        logger.info("dealEngineConnStop return pid: {}", pid);
+        String pid = null;
+        if("process".equals(engineStopRequest.getIdentifierType()) && StringUtils.isNotBlank(engineStopRequest.getIdentifier())){
+            pid = engineStopRequest.getIdentifier();
+        }else {
+            String processPort = engineStopRequest.getServiceInstance().getInstance().split(":")[1];
+            pid = GovernanceUtils.findProcessIdentifier(processPort);
+        }
 
+        logger.info("dealEngineConnStop return pid: {}", pid);
+        EngineStopResponse response = new EngineStopResponse();
         if (StringUtils.isNotBlank(pid)) {
             if(!killEngineConnByPid(pid, engineStopRequest.getServiceInstance())) {
                 response.setStopStatus(false);
@@ -183,20 +188,6 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
             // todo when thread catch exception , it should not be return false
             logger.warn("Method isProcessAlive failed, " + e.getMessage());
             return false;
-        }
-    }
-
-    private String findProcessId(String processPort){
-        String findCmd = "lsof -t -i:" + processPort;
-        List<String> cmdList = new ArrayList<>();
-        cmdList.add("bash");
-        cmdList.add("-c");
-        cmdList.add(findCmd);
-        try {
-            return Utils.exec(cmdList.toArray(new String[0]), 5000L);
-        } catch (Exception e) {
-            logger.warn("Method findPid failed, " + e.getMessage());
-            return null;
         }
     }
 

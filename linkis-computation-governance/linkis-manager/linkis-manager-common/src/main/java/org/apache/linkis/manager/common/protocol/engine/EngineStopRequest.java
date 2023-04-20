@@ -26,6 +26,10 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
   private String logDirSuffix;
   private String engineType;
   private String user;
+  /** identifierType, Reserved for ec containerized startup scenarios */
+  private String identifierType;
+  /** identifier */
+  private String identifier;
 
   public EngineStopRequest() {}
 
@@ -56,6 +60,22 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
 
   public void setEngineType(String engineType) {
     this.engineType = engineType;
+  }
+
+  public String getIdentifierType() {
+    return identifierType;
+  }
+
+  public void setIdentifierType(String identifierType) {
+    this.identifierType = identifierType;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   public void setUser(String user) {

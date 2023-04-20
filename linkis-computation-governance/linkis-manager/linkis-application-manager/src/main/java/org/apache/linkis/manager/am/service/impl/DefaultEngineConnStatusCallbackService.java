@@ -68,8 +68,16 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
       EngineStopRequest engineStopRequest = new EngineStopRequest();
       engineStopRequest.setServiceInstance(protocol.serviceInstance());
       engineStopRequest.setUser("hadoop");
-      engineStopService.stopEngine(
-          engineStopRequest, Sender$.MODULE$.getSender(Sender$.MODULE$.getThisServiceInstance()));
+      try {
+        engineStopService.stopEngine(
+            engineStopRequest, Sender$.MODULE$.getSender(Sender$.MODULE$.getThisServiceInstance()));
+      } catch (Exception e) {
+        logger.warn(
+            "DefaultEngineConnStatusCallbackService stopEngine failed, serviceInstance:{}",
+            engineStopRequest.getServiceInstance(),
+            e);
+      }
+
       dealEngineConnStatusCallbackToAM(
           new EngineConnStatusCallbackToAM(
               protocol.serviceInstance(), protocol.status(), protocol.initErrorMsg(), false));

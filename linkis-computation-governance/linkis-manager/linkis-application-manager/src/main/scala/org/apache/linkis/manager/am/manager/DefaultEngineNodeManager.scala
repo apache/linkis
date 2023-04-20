@@ -110,11 +110,6 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     val heartMsg = engine.getNodeHeartbeatMsg()
     engineNode.setNodeHealthyInfo(heartMsg.getHealthyInfo)
     engineNode.setNodeOverLoadInfo(heartMsg.getOverLoadInfo)
-
-    // get node resource from DB
-    val rmNodes: util.List[RMNode] =
-      resourceManager.getResourceInfo(Array(engineNode.getServiceInstance)).resourceInfo
-    engineNode.setNodeResource(rmNodes.get(0).getNodeResource)
     engineNode.setNodeStatus(heartMsg.getStatus)
     engineNode
   }
@@ -134,7 +129,9 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
       toState: NodeStatus
   ): Unit = {}
 
-  override def updateEngine(engineNode: EngineNode): Unit = {}
+  override def updateEngine(engineNode: EngineNode): Unit = {
+    nodeManagerPersistence.updateNodeInstance(engineNode)
+  }
 
   override def switchEngine(engineNode: EngineNode): EngineNode = {
     null

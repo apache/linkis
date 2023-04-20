@@ -100,6 +100,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       getEMService().stopEngine(node, node.getEMNode)
       logger.info(s"Finished to kill engine invoke enginePointer ${node.getServiceInstance}")
     }(s"Failed to stop engine ${node.getServiceInstance}")
+
     node.setLabels(nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance))
     if (null == node.getNodeStatus) {
       node.setNodeStatus(NodeStatus.ShuttingDown)

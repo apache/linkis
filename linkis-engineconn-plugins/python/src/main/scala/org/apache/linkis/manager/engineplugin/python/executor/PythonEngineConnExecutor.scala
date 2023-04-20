@@ -18,19 +18,11 @@
 package org.apache.linkis.manager.engineplugin.python.executor
 
 import org.apache.linkis.common.utils.Utils
-import org.apache.linkis.engineconn.computation.executor.execute.{
-  ComputationExecutor,
-  EngineExecutionContext
-}
+import org.apache.linkis.engineconn.computation.executor.execute.{ComputationExecutor, EngineExecutionContext}
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.paser.PythonCodeParser
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadInstanceResource,
-  NodeResource
-}
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.label.entity.Label
@@ -39,7 +31,6 @@ import org.apache.linkis.rpc.Sender
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
 
 import java.util
-
 import scala.collection.mutable.ArrayBuffer
 
 class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrintLimit: Int)
@@ -80,17 +71,14 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
     logger.info(
       s" System getProperties python.version = > ${System.getProperties.getProperty("python.version")}"
     )
-    // System.getProperties.put("python.application.pyFiles", engineExecutionContext.getProperties.getOrDefault("python.application.pyFiles", "file:///mnt/bdap/test/test/test.zip").toString)
     pythonSession.lazyInitGateway()
     if (engineExecutionContext != this.engineExecutionContext) {
       this.engineExecutionContext = engineExecutionContext
       pythonSession.setEngineExecutionContext(engineExecutionContext)
-//      lineOutputStream.reset(engineExecutorContext)
       logger.info("Python executor reset new engineExecutorContext!")
     }
     engineExecutionContext.appendStdout(s"$getId >> ${code.trim}")
     pythonSession.execute(code)
-//    lineOutputStream.flush()
     SuccessExecuteResponse()
   }
 
@@ -165,7 +153,6 @@ class PythonEngineConnExecutor(id: Int, pythonSession: PythonSession, outputPrin
   override def close(): Unit = {
     Utils.tryAndError(pythonSession.close)
     logger.info(s"To delete python executor")
-    // Utils.tryAndError(ExecutorManager.getInstance.removeExecutor(getExecutorLabels().asScala.toArray))
     logger.info(s"Finished to kill python")
   }
 

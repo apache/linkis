@@ -21,6 +21,7 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 set -e
 
+USING_KIND=${1:-false}
 LDH_VERSION=${LDH_VERSION-${LINKIS_IMAGE_TAG}}
 echo "# LDH version: ${LINKIS_IMAGE_TAG}"
 

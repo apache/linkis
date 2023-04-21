@@ -34,8 +34,8 @@ import java.util.Map;
 
 public class OpenLooKengECPlugin implements EngineConnPlugin {
 
-  private final Object resourceLocker = new Object();
-  private final Object engineFactoryLocker = new Object();
+  private volatile Object resourceLocker = new Object();
+  private volatile Object engineFactoryLocker = new Object();
 
   private EngineResourceFactory engineResourceFactory;
   private EngineConnFactory engineFactory;

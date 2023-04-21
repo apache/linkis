@@ -19,17 +19,6 @@ package org.apache.linkis.manager.engineplugin.python.exception
 
 import org.apache.linkis.common.exception.ErrorException
 
-class PythonSessionNullException(errCode: Int, desc: String) extends ErrorException(errCode, desc)
-
-class PythonEngineException(errCode: Int, desc: String) extends ErrorException(errCode, desc)
-
-class QueryFailedException(errCode: Int = 60001, desc: String) extends ErrorException(errCode, desc)
-
-class SessionStartFailedException(errCode: Int = 60002, desc: String)
-    extends ErrorException(errCode, desc)
-
 class ExecuteException(errCode: Int = 60003, desc: String) extends ErrorException(errCode, desc)
-
-class EngineException(errCode: Int = 60004, desc: String) extends ErrorException(errCode, desc)
 
 class PythonExecuteError(errCode: Int, desc: String) extends ErrorException(errCode, desc) {}

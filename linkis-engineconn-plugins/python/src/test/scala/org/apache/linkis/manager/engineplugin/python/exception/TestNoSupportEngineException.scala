@@ -21,13 +21,6 @@ import org.junit.jupiter.api.{Assertions, Test}
 
 class TestNoSupportEngineException {
 
-  @Test
-  def testNoSupportEngineException: Unit = {
-    val errorMsg = "NoSupportEngine"
-    val exception = new NoSupportEngineException(50010, errorMsg)
-    Assertions.assertEquals(50010, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
 
   @Test
   def testPythonSessionStartFailedException: Unit = {
@@ -36,29 +29,11 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-  @Test
-  def testPythonSessionNullException: Unit = {
-    val errorMsg = "PythonSessionNull"
-    val exception = new PythonSessionNullException(50011, errorMsg)
-    Assertions.assertEquals(50011, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
 
-  @Test
-  def testPythonEngineException: Unit = {
-    val errorMsg = "PythonEngine"
-    val exception = new PythonEngineException(50012, errorMsg)
-    Assertions.assertEquals(50012, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
 
-  @Test
-  def testQueryFailedException: Unit = {
-    val errorMsg = "QueryFailed"
-    val exception = new QueryFailedException(60001, errorMsg)
-    Assertions.assertEquals(60001, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
+
+
+
 
   @Test
   def testPythonExecuteError: Unit = {
@@ -68,13 +43,6 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-  @Test
-  def testSessionStartFailedException: Unit = {
-    val errorMsg = "SessionStartFailed"
-    val exception = new SessionStartFailedException(60002, errorMsg)
-    Assertions.assertEquals(60002, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
 
   @Test
   def testExecuteException: Unit = {
@@ -84,12 +52,6 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-  @Test
-  def testEngineException: Unit = {
-    val errorMsg = "EngineException"
-    val exception = new EngineException(60004, errorMsg)
-    Assertions.assertEquals(60004, exception.getErrCode)
-    Assertions.assertEquals(errorMsg, exception.getDesc)
-  }
+
 
 }

@@ -125,7 +125,9 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
                     .getProperties()
                     .get(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY);
         argsArr = argsList.toArray(new String[argsList.size()]);
-        logger.info("Will execute shell task with user-specified arguments: '{}'", StringUtils.join(argsArr, "' '"));
+        logger.info(
+            "Will execute shell task with user-specified arguments: '{}'",
+            StringUtils.join(argsArr, "' '"));
       } else {
         argsArr = null;
       }
@@ -142,10 +144,13 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
                     .getProperties()
                     .get(ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY);
         if (isExecutePathExist(wdStr)) {
-          logger.info("Will execute shell task under user-specified working-directory: '{}'", wdStr);
+          logger.info(
+              "Will execute shell task under user-specified working-directory: '{}'", wdStr);
           workingDirectory = wdStr;
         } else {
-          logger.warn("User-specified working-directory: '{}' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact the administrator!", wdStr);
+          logger.warn(
+              "User-specified working-directory: '{}' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact the administrator!",
+              wdStr);
           workingDirectory = null;
         }
       } else {
@@ -306,7 +311,10 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
     */
     List<String> yarnAppIds = shellECTaskInfo.getYarnAppIdExtractor().getExtractedYarnAppIds();
     GovernanceUtils.killYarnJobApp(yarnAppIds);
-    logger.info("Finished kill yarn app ids in the engine of ({}). The YARN app ids are {}.", getId(), yarnAppIds);
+    logger.info(
+        "Finished kill yarn app ids in the engine of ({}). The YARN app ids are {}.",
+        getId(),
+        yarnAppIds);
     super.killTask(taskID);
   }
 

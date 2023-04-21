@@ -109,7 +109,9 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
 
         try {
           argsArr = argsList.toArray(new String[argsList.size()]);
-          logger.info("Will execute shell task with user-specified arguments: '{}'", Arrays.toString(argsArr));
+          logger.info(
+              "Will execute shell task with user-specified arguments: '{}'",
+              Arrays.toString(argsArr));
         } catch (Exception t) {
           logger.warn(
               "Cannot read user-input shell arguments. Will execute shell task without them.", t);

@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ShellEngineConnPlugin implements EngineConnPlugin {
-  private Object resourceLocker = new Object();
-  private Object engineFactoryLocker = new Object();
+  private volatile Object resourceLocker = new Object();
+  private volatile Object engineFactoryLocker = new Object();
   private EngineResourceFactory engineResourceFactory;
   private EngineConnFactory engineFactory;
   private List<Label<?>> defaultLabels = new ArrayList<>();

@@ -71,6 +71,7 @@ public class ReaderThread extends Thread {
         if (!((line = inputReader.readLine()) != null && isReaderAlive)) break;
       } catch (IOException e) {
         logger.warn("inputReader reading the input stream");
+        break;
       }
       logger.info("read logger line :{}", line);
       logArray.add(line);

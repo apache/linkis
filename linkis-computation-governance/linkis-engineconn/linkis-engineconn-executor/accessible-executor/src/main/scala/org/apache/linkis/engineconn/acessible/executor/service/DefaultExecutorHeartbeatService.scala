@@ -78,6 +78,7 @@ class DefaultExecutorHeartbeatService
       heartbeatTime,
       TimeUnit.MILLISECONDS
     )
+    ExecutorHeartbeatServiceHolder.registerHeartBeatService(this)
   }
 
   /**

@@ -34,11 +34,11 @@ import java.util.Map;
 
 public class OpenLooKengECPlugin implements EngineConnPlugin {
 
-  private final Object resourceLocker = new Object();
-  private final Object engineFactoryLocker = new Object();
+  private Object resourceLocker = new Object();
+  private Object engineFactoryLocker = new Object();
 
-  private EngineResourceFactory engineResourceFactory;
-  private EngineConnFactory engineFactory;
+  private volatile EngineResourceFactory engineResourceFactory;
+  private volatile EngineConnFactory engineFactory;
 
   private final List<Label<?>> defaultLabels = new ArrayList<>();
 

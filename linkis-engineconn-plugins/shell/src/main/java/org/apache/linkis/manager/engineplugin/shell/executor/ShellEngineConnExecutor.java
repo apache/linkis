@@ -65,7 +65,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
 
   @Override
   public void init() {
-    logger().info("Ready to change engine state!");
+    logger.info("Ready to change engine state!");
     super.init();
   }
 
@@ -73,7 +73,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
   public ExecuteResponse executeCompletely(
       EngineExecutionContext engineExecutionContext, String code, String completedLine) {
     final String newcode = completedLine + code;
-    logger().debug("newcode is " + newcode);
+    logger.debug("newcode is " + newcode);
     return executeLine(engineExecutionContext, newcode);
   }
 
@@ -108,11 +108,8 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
                     .get(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY);
 
         try {
-          logger.info(
-              "Will execute shell task with user-specified arguments: '"
-                  + Arrays.toString(argsList.toArray(new String[argsList.size()]))
-                  + "'");
           argsArr = argsList.toArray(new String[argsList.size()]);
+          logger.info("Will execute shell task with user-specified arguments: '{}'", Arrays.toString(argsArr));
         } catch (Exception t) {
           logger.warn(
               "Cannot read user-input shell arguments. Will execute shell task without them.", t);
@@ -299,7 +296,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
     */
     List<String> yarnAppIds = extractor.getExtractedYarnAppIds();
     GovernanceUtils.killYarnJobApp(yarnAppIds);
-    logger.info("Finished kill yarn app ids in the engine of (" + getId() + ").}");
+    logger.info("Finished kill yarn app ids in the engine of ({})", getId());
     super.killTask(taskID);
   }
 

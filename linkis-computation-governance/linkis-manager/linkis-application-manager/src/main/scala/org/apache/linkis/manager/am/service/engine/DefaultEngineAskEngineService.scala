@@ -21,21 +21,25 @@ import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.hook.{AskEngineHook, AskEngineHookContext}
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 
 import java.net.SocketTimeoutException
 import java.util.concurrent.atomic.AtomicInteger
+
 import scala.concurrent._
 import scala.util.{Failure, Success}
+
 import feign.RetryableException
-import org.apache.linkis.manager.am.hook.{AskEngineHook, AskEngineHookContext}
 
 @Service
 class DefaultEngineAskEngineService
@@ -76,23 +80,24 @@ class DefaultEngineAskEngineService
       /** hook中抛异常会阻断 */
       hooks.foreach(h =>
         Utils.tryCatch(h.doHook(ctx)) { t =>
-        {
-          val engineAskAsyncId = getAsyncId
-          val retryFlag = t match {
-            case _: LinkisRetryException => true
-            case _: RetryableException => true
-            case _ =>
-              ExceptionUtils.getRootCause(t) match {
-                case _: SocketTimeoutException => true
-                case _: TimeoutException => true
-                case _ =>
-                  false
-              }
+          {
+            val engineAskAsyncId = getAsyncId
+            val retryFlag = t match {
+              case _: LinkisRetryException => true
+              case _: RetryableException => true
+              case _ =>
+                ExceptionUtils.getRootCause(t) match {
+                  case _: SocketTimeoutException => true
+                  case _: TimeoutException => true
+                  case _ =>
+                    false
+                }
+            }
+            sender.send(
+              EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(t), retryFlag)
+            )
+            return
           }
-          sender.send(
-            EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(t), retryFlag)
-          )
-        }
         }
       )
     }

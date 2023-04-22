@@ -15,28 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.exception.engineconn;
+package org.apache.linkis.engineconnplugin.flink.util
 
-/**
- * ErrorCode of Engine start with 40000
- *
- * <p>
- */
-public class EngineConnExecutorErrorCode {
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 
-  public static final int INVALID_ENGINE_TYPE = 40100;
+import java.util
 
-  public static final int INVALID_METHOD = 40101;
+object ManagerUtil extends Logging {
 
-  public static final int INVALID_PARAMS = 40102;
+  val isManager: Boolean = {
+    val options = EngineConnServer.getEngineCreationContext.getOptions
+    FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)
+  }
 
-  public static final int INVALID_LOCK = 40103;
-
-  public static final int INVALID_TASK = 40104;
-
-  public static final int SEND_TO_ENTRANCE_ERROR = 40105;
-
-  public static final int INIT_EXECUTOR_FAILED = 40106;
-
-  public static final int INVALID_APPLICATION_ID = 40107;
 }

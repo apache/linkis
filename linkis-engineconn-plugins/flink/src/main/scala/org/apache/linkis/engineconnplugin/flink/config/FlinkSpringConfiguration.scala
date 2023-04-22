@@ -29,6 +29,7 @@ import org.apache.linkis.engineconn.acessible.executor.service.{
 }
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineconnplugin.flink.util.ManagerUtil
 
 import org.springframework.context.annotation.{Bean, Configuration}
 
@@ -40,8 +41,7 @@ class FlinkSpringConfiguration extends Logging {
 
   @Bean(Array("lockService"))
   def createLockManager(): LockService = {
-    val options = EngineConnServer.getEngineCreationContext.getOptions
-    val isManager = FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)
+    val isManager = ManagerUtil.isManager
     if (isManager) {
       logger.info("flink manager mode on.")
     }

@@ -17,12 +17,16 @@
 
 package org.apache.linkis.engineconnplugin.flink.operator
 
+import org.apache.linkis.common.exception.{LinkisException, LinkisRuntimeException}
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
+import org.apache.linkis.engineconn.common.exception.EngineConnException
+import org.apache.linkis.engineconnplugin.flink.util.{ManagerUtil, YarnUtil}
 import org.apache.linkis.governance.common.constant.ec.ECConstants
+import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.operator.Operator
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.yarn.api.records.{ApplicationId, FinalApplicationStatus}
 
 import scala.collection.mutable
@@ -34,6 +38,27 @@ class StatusOperator extends Operator with Logging {
   override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
 
     val appIdStr = params.getOrElse(ECConstants.YARN_APPID_NAME_KEY, "").asInstanceOf[String]
+
+    if (!ManagerUtil.isManager) {
+      val thisAppid = YarnUtil.getAppIds.headOption.get
+      if (StringUtils.isNotBlank(appIdStr) && StringUtils.isNotBlank(thisAppid)) {
+        if (!thisAppid.toString.equalsIgnoreCase(appIdStr)) {
+          throw new EngineConnException(
+            EngineConnExecutorErrorCode.INVALID_APPLICATION_ID,
+            s"The request appid : ${appIdStr} is not equal to the current appid : ${thisAppid.toString}"
+          )
+        } else {
+          logger.info(s"Handshake success for appid : ${appIdStr}.")
+          StatusOperator.addHandshake()
+        }
+      } else {
+        throw new EngineConnException(
+          EngineConnExecutorErrorCode.INVALID_APPLICATION_ID,
+          s"The request appid : ${appIdStr} or current appid : ${thisAppid.toString} cannot be null."
+        )
+      }
+
+    }
 
     val parts = appIdStr.split("_")
     val clusterTimestamp = parts(1).toLong
@@ -61,5 +86,17 @@ class StatusOperator extends Operator with Logging {
     rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
     rsMap.toMap[String, String]
   }
+
+}
+
+object StatusOperator extends Logging {
+
+  private var handshaked: Boolean = false
+
+  def addHandshake(): Unit = {
+    handshaked = true
+  }
+
+  def isHandshaked: Boolean = handshaked
 
 }

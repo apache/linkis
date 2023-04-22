@@ -25,14 +25,17 @@ import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnApplicatio
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.operator.StatusOperator
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
+
 import scala.concurrent.duration.Duration
 
 class FlinkJarOnceExecutor(
@@ -41,6 +44,8 @@ class FlinkJarOnceExecutor(
 ) extends FlinkOnceExecutor[YarnApplicationClusterDescriptorAdapter] {
 
   private var daemonThread: Future[_] = _
+
+  private var firstReportAppIdTimestampMills: Long = 0L
 
   override def doSubmit(
       onceExecutorExecutionContext: OnceExecutorExecutionContext,
@@ -103,9 +108,25 @@ class FlinkJarOnceExecutor(
                   val heartbeatMsg = heartbeatService.generateHeartBeatMsg(thisExecutor)
                   ManagerService.getManagerService.heartbeatReport(heartbeatMsg)
                   logger.info(
-                    s"Succeed to report heatbeatMsg : ${heartbeatMsg.getHeartBeatMsg}, will exit."
+                    s"Succeed to report heatbeatMsg : ${heartbeatMsg.getHeartBeatMsg}, will wait for handshake."
                   )
-                  trySucceed()
+                  if (0L >= firstReportAppIdTimestampMills) {
+                    firstReportAppIdTimestampMills = System.currentTimeMillis()
+                  }
+                  if (StatusOperator.isHandshaked) {
+                    logger.info("Will exit with handshaked.")
+                    trySucceed()
+                  } else {
+                    if (
+                        System
+                          .currentTimeMillis() - firstReportAppIdTimestampMills > FlinkEnvConfiguration.FLINK_HANDSHAKE_WAIT_TIME_MILLS.getValue.toLong
+                    ) {
+                      logger.info(
+                        s"Will exit because ec get no handshake within ${FlinkEnvConfiguration.FLINK_HANDSHAKE_WAIT_TIME_MILLS.getValue}ms."
+                      )
+                      tryFailed()
+                    }
+                  }
                 }
               }
             }

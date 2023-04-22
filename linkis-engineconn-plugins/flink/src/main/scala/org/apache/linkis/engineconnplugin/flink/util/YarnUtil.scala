@@ -19,6 +19,8 @@ package org.apache.linkis.engineconnplugin.flink.util
 
 import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.YarnExecutor
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -45,6 +47,7 @@ import org.apache.hadoop.yarn.util.ConverterUtils
 import java.util
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
+import scala.collection.mutable.ArrayBuffer
 
 object YarnUtil extends Logging {
 
@@ -218,6 +221,24 @@ object YarnUtil extends Logging {
       case _ =>
         false
     }
+  }
+
+  def getAppIds: Array[String] = {
+    val ids = new ArrayBuffer[String]
+    ExecutorManager.getInstance.getExecutors.foreach(executor => {
+      executor match {
+        case yarnExecutor: YarnExecutor =>
+          ids.append(yarnExecutor.getApplicationId)
+        case _ =>
+      }
+    })
+    if (ids.size > 1) {
+      logger.error(
+        "There are more than one yarn application running, please check it. Ids : " + ids
+          .mkString(",")
+      )
+    }
+    ids.toArray
   }
 
 }

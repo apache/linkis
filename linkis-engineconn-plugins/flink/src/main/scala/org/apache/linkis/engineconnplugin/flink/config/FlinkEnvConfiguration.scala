@@ -134,4 +134,7 @@ object FlinkEnvConfiguration {
   val FLINK_MANAGER_CLIENT_EXPIRE_MILLS =
     CommonVars("linkis.flink.client.expire.mills", 3600 * 1000)
 
+  val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
+    CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
+
 }

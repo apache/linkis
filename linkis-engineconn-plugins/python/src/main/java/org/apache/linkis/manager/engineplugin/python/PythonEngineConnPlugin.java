@@ -17,9 +17,6 @@
 
 package org.apache.linkis.manager.engineplugin.python;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.apache.linkis.manager.engineplugin.common.EngineConnPlugin;
 import org.apache.linkis.manager.engineplugin.common.creation.EngineConnFactory;
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder;
@@ -31,48 +28,53 @@ import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineType;
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator;
 
-public class PythonEngineConnPlugin2 implements EngineConnPlugin {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-    private final Object resourceLocker = new Object();
-    private final Object engineFactoryLocker = new Object();
+public class PythonEngineConnPlugin implements EngineConnPlugin {
 
-    private volatile EngineResourceFactory engineResourceFactory;
-    private volatile EngineConnFactory engineFactory;
-    private final List<Label<?>> defaultLabels = new ArrayList<>();
+  private final Object resourceLocker = new Object();
+  private final Object engineFactoryLocker = new Object();
 
-    @Override
-    public void init(Map<String, Object> params) {
-        Label<?> engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(EngineType.PYTHON().toString());
-        this.defaultLabels.add(engineTypeLabel);
+  private volatile EngineResourceFactory engineResourceFactory;
+  private volatile EngineConnFactory engineFactory;
+  private final List<Label<?>> defaultLabels = new ArrayList<>();
+
+  @Override
+  public void init(Map<String, Object> params) {
+    Label<?> engineTypeLabel =
+        EngineTypeLabelCreator.createEngineTypeLabel(EngineType.PYTHON().toString());
+    this.defaultLabels.add(engineTypeLabel);
+  }
+
+  @Override
+  public EngineResourceFactory getEngineResourceFactory() {
+    if (null == engineResourceFactory) {
+      synchronized (resourceLocker) {
+        engineResourceFactory = new GenericEngineResourceFactory();
+      }
     }
+    return engineResourceFactory;
+  }
 
-    @Override
-    public EngineResourceFactory getEngineResourceFactory() {
-        if (null == engineResourceFactory) {
-            synchronized (resourceLocker) {
-                engineResourceFactory = new GenericEngineResourceFactory();
-            }
-        }
-        return engineResourceFactory;
-    }
+  @Override
+  public EngineConnLaunchBuilder getEngineConnLaunchBuilder() {
+    return new PythonProcessEngineConnLaunchBuilder();
+  }
 
-    @Override
-    public EngineConnLaunchBuilder getEngineConnLaunchBuilder() {
-        return new PythonProcessEngineConnLaunchBuilder();
+  @Override
+  public EngineConnFactory getEngineConnFactory() {
+    if (null == engineFactory) {
+      synchronized (engineFactoryLocker) {
+        engineFactory = new PythonEngineConnFactory();
+      }
     }
+    return engineFactory;
+  }
 
-    @Override
-    public EngineConnFactory getEngineConnFactory() {
-        if (null == engineFactory) {
-            synchronized (engineFactoryLocker) {
-                engineFactory = new PythonEngineConnFactory();
-            }
-        }
-        return engineFactory;
-    }
-
-    @Override
-    public List<Label<?>> getDefaultLabels() {
-        return this.defaultLabels;
-    }
+  @Override
+  public List<Label<?>> getDefaultLabels() {
+    return this.defaultLabels;
+  }
 }

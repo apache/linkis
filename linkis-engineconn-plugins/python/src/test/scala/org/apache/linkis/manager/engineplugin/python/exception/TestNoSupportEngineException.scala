@@ -21,19 +21,12 @@ import org.junit.jupiter.api.{Assertions, Test}
 
 class TestNoSupportEngineException {
 
-
   @Test
   def testPythonSessionStartFailedException: Unit = {
     val errorMsg = "PythonSessionStartFailed"
-    val exception = PythonSessionStartFailedExeception(errorMsg)
+    val exception = new PythonSessionStartFailedExeception(errorMsg)
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
-
-
-
-
-
-
 
   @Test
   def testPythonExecuteError: Unit = {
@@ -43,7 +36,6 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
 
-
   @Test
   def testExecuteException: Unit = {
     val errorMsg = "ExecuteException"
@@ -51,7 +43,5 @@ class TestNoSupportEngineException {
     Assertions.assertEquals(60003, exception.getErrCode)
     Assertions.assertEquals(errorMsg, exception.getDesc)
   }
-
-
 
 }

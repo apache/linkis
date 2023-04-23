@@ -19,6 +19,4 @@ package org.apache.linkis.manager.engineplugin.python.launch;
 
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
 
-public class PythonProcessEngineConnLaunchBuilder2 extends JavaProcessEngineConnLaunchBuilder {
-
-}
+public class PythonProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}

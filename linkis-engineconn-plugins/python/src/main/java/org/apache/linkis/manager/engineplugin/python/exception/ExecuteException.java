@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.python.exception
+package org.apache.linkis.manager.engineplugin.python.exception;
 
-import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException;
 
-class ExecuteException(errCode: Int = 60003, desc: String) extends ErrorException(errCode, desc)
-
-class PythonExecuteError(errCode: Int, desc: String) extends ErrorException(errCode, desc) {}
+public class ExecuteException extends ErrorException {
+  public ExecuteException(int errCode, String desc) {
+    super(errCode, desc);
+  }
+}

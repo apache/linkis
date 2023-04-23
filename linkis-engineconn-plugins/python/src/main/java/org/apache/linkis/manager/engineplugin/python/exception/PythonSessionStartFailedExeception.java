@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.python.exception
+package org.apache.linkis.manager.engineplugin.python.exception;
 
-import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary.INVALID_PYTHON_SESSION
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary;
 
-case class PythonSessionStartFailedExeception(desc: String)
-    extends ErrorException(INVALID_PYTHON_SESSION.getErrorCode, desc)
+public class PythonSessionStartFailedExeception extends ErrorException {
+  public PythonSessionStartFailedExeception(String desc) {
+    super(LinkisPythonErrorCodeSummary.INVALID_PYTHON_SESSION.getErrorCode(), desc);
+  }
+}

@@ -184,7 +184,7 @@ class PythonSession extends Logging {
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>
-        val exception = new ExecuteException(desc = t.getMessage)
+        val exception = new ExecuteException(PYSPARK_PROCESSS_STOPPED.getErrorCode, t.getMessage)
         exception.initCause(t)
         throw t
     } finally {
@@ -194,7 +194,7 @@ class PythonSession extends Logging {
         val output = Utils.tryQuietly(
           ResultSetWriter.getRecordByRes(
             outStr,
-            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
+            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue.longValue()
           )
         )
         val res = if (output != null) output.toString else ""

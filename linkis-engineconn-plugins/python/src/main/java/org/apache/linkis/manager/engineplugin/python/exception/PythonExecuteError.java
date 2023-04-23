@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.python.launch
+package org.apache.linkis.manager.engineplugin.python.exception;
 
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.common.exception.ErrorException;
 
-class PythonProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}
+public class PythonExecuteError extends ErrorException {
+  public PythonExecuteError(int errCode, String desc) {
+    super(errCode, desc);
+  }
+}

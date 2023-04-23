@@ -105,7 +105,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     val engineConnDistHomeFile = new File(engineConnDistHome)
     checkEngineConnDistHome(engineConnDistHomeFile)
-    val children = engineConnDistHomeFile.listFiles()
+    val children = engineConnDistHomeFile.listFiles().filter(!_.isHidden)
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
         DIST_IS_EMPTY.getErrorCode,
@@ -117,6 +117,6 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
   }
 
   def getEngineConnTypeListFromDisk: Array[String] =
-    new File(getEngineConnsHome).listFiles().map(_.getName)
+    new File(getEngineConnsHome).listFiles().filter(!_.isHidden).map(_.getName)
 
 }

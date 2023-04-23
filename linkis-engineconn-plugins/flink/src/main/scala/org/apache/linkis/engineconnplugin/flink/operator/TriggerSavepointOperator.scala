@@ -58,16 +58,18 @@ class TriggerSavepointOperator extends Operator with Logging {
       throw logAndException(msg)
     }
 
+    logger.info(s"try to $mode savepoint with path $savepointPath.")
     if (
         YarnUtil.isDetach(
           EngineConnServer.getEngineCreationContext.getOptions.asInstanceOf[util.Map[String, Any]]
         )
     ) {
+      logger.info("The flink cluster is detached, use rest api to trigger savepoint.")
       val restClient = FlinkRestClientManager.getFlinkRestClient(appIdStr)
       val rs = YarnUtil.triggerSavepoint(appIdStr, savepointPath, restClient)
       rsMap.put(FlinkECConstant.RESULT_SAVEPOINT_KEY, rs)
     } else {
-      logger.info(s"try to $mode savepoint with path $savepointPath.")
+      logger.info("The flink cluster is not detached, use flink client to trigger savepoint.")
       OnceExecutorManager.getInstance.getReportExecutor match {
         case flinkExecutor: FlinkOnceExecutor[_] =>
           val writtenSavepoint =

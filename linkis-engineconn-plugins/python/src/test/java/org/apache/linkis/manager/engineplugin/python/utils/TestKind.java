@@ -15,16 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.python
+package org.apache.linkis.manager.engineplugin.python.utils;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class TestPythonEngineConnPlugin {
+public class TestKind {
 
   @Test
-  def testGetEngineResourceFactory: Unit = {
-    val pythonEngineConnPlugin = new PythonEngineConnPlugin
-    Assertions.assertNotNull(pythonEngineConnPlugin.getEngineConnFactory)
+  public void testNeedToRestart() {
+    Assertions.assertTrue(Kind.needToRestart("@restart cmd"));
+    Assertions.assertFalse(Kind.needToRestart("cmd"));
   }
 
+  @Test
+  public void testGetKind() {
+    Assertions.assertEquals("scala", Kind.getKind("%scala"));
+  }
+
+  @Test
+  public void testGetRealCode() {
+    String code = "%sql \n " + "show tables";
+    Assertions.assertEquals("show tables", Kind.getRealCode(code));
+    Assertions.assertEquals("cmd", Kind.getRealCode("@restart cmd"));
+  }
 }

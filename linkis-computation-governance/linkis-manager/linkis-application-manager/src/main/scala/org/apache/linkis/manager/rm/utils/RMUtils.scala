@@ -222,7 +222,7 @@ object RMUtils extends Logging {
           if (logger.isDebugEnabled()) {
             logger.debug(s"Will change ${resource.toString} from ${unitType} to GB")
           }
-          ByteTimeUtils.byteStringAsGb(resource.toString + "b").toString + "GB"
+          ByteTimeUtils.negativeByteStringAsGb(resource.toString + "b").toString + "GB"
         } { case e: Exception =>
           logger.error(s"Cannot convert ${resource} to Gb, " + e.getMessage)
           resource.toString + unitType

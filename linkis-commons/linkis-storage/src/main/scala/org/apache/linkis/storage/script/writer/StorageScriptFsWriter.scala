@@ -51,7 +51,9 @@ class StorageScriptFsWriter(
         .map(compaction.compact)
         .foreach(metadataLine.add)
       // add annotition symbol
-      metadataLine.add(compaction.getAnnotationSymbol())
+      if (metadataLine.size() > 0) {
+        metadataLine.add(compaction.getAnnotationSymbol())
+      }
       if (outputStream != null) {
         IOUtils.writeLines(metadataLine, "\n", outputStream, charset)
       } else {

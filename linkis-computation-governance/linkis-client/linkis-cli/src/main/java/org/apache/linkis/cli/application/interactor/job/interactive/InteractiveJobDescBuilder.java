@@ -26,6 +26,7 @@ import org.apache.linkis.cli.application.interactor.job.common.KeyParser;
 import org.apache.linkis.cli.application.operator.ujes.LinkisJobOper;
 import org.apache.linkis.cli.application.operator.ujes.UJESClientFactory;
 import org.apache.linkis.cli.application.utils.CliUtils;
+import org.apache.linkis.cli.application.utils.LoggerManager;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -135,7 +136,12 @@ public class InteractiveJobDescBuilder {
     }
 
     if (StringUtils.isBlank(code) && StringUtils.isNotBlank(codePath)) {
-      code = CliUtils.readFile(codePath);
+      try {
+        code = CliUtils.readFile(codePath);
+      } catch (Exception e) {
+        LoggerManager.getInformationLogger().error("Failed to read file", e);
+        throw e;
+      }
     }
 
     executionMap.put(LinkisKeys.KEY_CODE, code);

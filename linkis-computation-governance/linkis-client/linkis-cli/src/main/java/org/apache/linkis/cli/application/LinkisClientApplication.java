@@ -26,6 +26,7 @@ import org.apache.linkis.cli.application.entity.job.JobResult;
 import org.apache.linkis.cli.application.exception.CommandException;
 import org.apache.linkis.cli.application.interactor.command.CmdTemplateFactory;
 import org.apache.linkis.cli.application.interactor.command.template.UniversalCmdTemplate;
+import org.apache.linkis.cli.application.interactor.job.help.HelpJob;
 import org.apache.linkis.cli.application.interactor.job.interactive.InteractiveJob;
 import org.apache.linkis.cli.application.interactor.job.jobcmd.JobCmdJob;
 import org.apache.linkis.cli.application.interactor.job.once.LinkisOnceJob;
@@ -49,6 +50,8 @@ import org.slf4j.LoggerFactory;
 public class LinkisClientApplication {
   private static Logger logger = LoggerFactory.getLogger(LinkisClientApplication.class);
 
+  private static boolean showHelp = false;
+
   public static void main(String[] args) {
     /*
      generate template
@@ -64,7 +67,9 @@ public class LinkisClientApplication {
     } catch (CommandException e) {
       CmdTemplate template = CmdTemplateFactory.getTemplateOri(e.getCmdType());
       if (template != null) {
-        printHelp(template);
+        HelpInfoModel model = new HelpInfoModel();
+        model.buildModel(ctx.getTemplate());
+        new HelpPresenter().present(model);
       }
       LoggerManager.getInformationLogger().error("Failed to build CliCtx", e);
       System.exit(-1);
@@ -82,6 +87,8 @@ public class LinkisClientApplication {
     Job job;
     if (isVersionCmd(ctx)) {
       job = new VersionJob();
+    } else if (isHelp(ctx)) {
+      job = new HelpJob();
     } else if (isJobCmd(ctx)) {
       job = new JobCmdJob();
     } else if (isOnceCmd(ctx)) {
@@ -136,18 +143,19 @@ public class LinkisClientApplication {
     }
   }
 
-  private static void printHelp(CmdTemplate template) {
-    HelpInfoModel model = new HelpInfoModel();
-    model.buildModel(template);
-    new HelpPresenter().present(model);
-  }
-
   private static void printIndicator(JobResult jobResult) {
     if (jobResult.isSuccess()) {
       LoggerManager.getPlaintTextLogger().info(CliConstants.SUCCESS_INDICATOR);
     } else {
       LoggerManager.getPlaintTextLogger().info(CliConstants.FAILURE_INDICATOR);
     }
+  }
+
+  private static Boolean isHelp(CliCtx ctx) {
+    if (ctx.getVarAccess().hasVar(CliKeys.LINKIS_CLIENT_HELP_OPT)) {
+      return true;
+    }
+    return false;
   }
 
   private static Boolean isVersionCmd(CliCtx ctx) {

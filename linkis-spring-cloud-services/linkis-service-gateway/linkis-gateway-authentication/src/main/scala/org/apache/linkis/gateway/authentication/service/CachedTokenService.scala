@@ -28,14 +28,15 @@ import org.apache.linkis.gateway.authentication.exception.{
   TokenAuthException,
   TokenNotExistException
 }
-import org.apache.linkis.gateway.authentication.exception.TokenNotExistException
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
+import java.text.MessageFormat
 import java.util.concurrent.{ExecutionException, TimeUnit}
 
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
+import com.google.common.util.concurrent.UncheckedExecutionException
 
 @Service
 class CachedTokenService extends TokenService {
@@ -59,9 +60,9 @@ class CachedTokenService extends TokenService {
 
     });
 
-//  def setTokenDao(tokenDao: TokenDao): Unit = {
-//    this.tokenDao = tokenDao
-//  }
+  //  def setTokenDao(tokenDao: TokenDao): Unit = {
+  //    this.tokenDao = tokenDao
+  //  }
 
   /*
     TODO begin
@@ -110,17 +111,26 @@ class CachedTokenService extends TokenService {
       t match {
         case x: ExecutionException =>
           x.getCause match {
-            case _: TokenNotExistException => null
-            case _ =>
+            case e: TokenNotExistException =>
+              throw new TokenAuthException(
+                NOT_EXIST_DB.getErrorCode,
+                MessageFormat.format(NOT_EXIST_DB.getErrorDesc, tokenName, e.getMessage)
+              )
+            case e =>
               throw new TokenAuthException(
                 FAILED_TO_LOAD_TOKEN.getErrorCode,
-                FAILED_TO_LOAD_TOKEN.getErrorDesc
+                MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName, e.getMessage)
               )
           }
-        case _ =>
+        case e: UncheckedExecutionException =>
+          throw new TokenAuthException(
+            FAILED_TO_BAD_SQLGRAMMAR.getErrorCode,
+            MessageFormat.format(FAILED_TO_BAD_SQLGRAMMAR.getErrorDesc, tokenName, e.getMessage)
+          )
+        case e =>
           throw new TokenAuthException(
             FAILED_TO_LOAD_TOKEN.getErrorCode,
-            FAILED_TO_LOAD_TOKEN.getErrorDesc
+            MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName, e.getMessage)
           )
       }
     )

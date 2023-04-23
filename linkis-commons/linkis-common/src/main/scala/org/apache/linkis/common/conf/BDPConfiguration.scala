@@ -22,7 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 
-import java.io.{File, FileInputStream, InputStream, IOException}
+import java.io._
 import java.util.Properties
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -140,15 +140,20 @@ private[conf] object BDPConfiguration extends Logging {
 
   private def initConfig(config: Properties, filePath: String) {
     var inputStream: InputStream = null
-
+    var reader: InputStreamReader = null
+    var buff: BufferedReader = null
     Utils.tryFinally {
       Utils.tryCatch {
         inputStream = new FileInputStream(filePath)
-        config.load(inputStream)
+        reader = new InputStreamReader(inputStream, "UTF-8")
+        buff = new BufferedReader(reader)
+        config.load(buff)
       } { case e: IOException =>
         logger.error("Can't load " + filePath, e)
       }
     } {
+      IOUtils.closeQuietly(buff)
+      IOUtils.closeQuietly(reader)
       IOUtils.closeQuietly(inputStream)
     }
   }

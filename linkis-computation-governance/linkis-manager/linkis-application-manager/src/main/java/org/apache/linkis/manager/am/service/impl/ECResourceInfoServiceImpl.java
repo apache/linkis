@@ -28,12 +28,15 @@ import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,7 +104,10 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList) {
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -138,26 +144,41 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
             logger.info("Can not get any ec node info of ec:{}", ecNodeinfo.getInstance());
           } else {
             try {
-              Map<String, Object> item =
-                  json.readValue(
-                      json.writeValueAsString(ecNodeinfo),
-                      new TypeReference<Map<String, Object>>() {});
-
-              Integer intStatus = ecNodeinfo.getInstanceStatus();
-              item.put("instanceStatus", NodeStatus.values()[intStatus].name());
-
               String usedResourceStr = latestRecord.getUsedResource();
-              /*
-              {"instance":1,"memory":"2.0 GB","cpu":1}
-              ->
-              {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
-               */
+              Map<String, Object> usedResourceMap =
+                  ECResourceInfoUtils.getStringToMap(usedResourceStr);
+              Map yarn = MapUtils.getMap(usedResourceMap, "yarn");
+              String queueNameStr = String.valueOf(yarn.get("queueName"));
+              if ((StringUtils.isNotBlank(queueName)
+                      && StringUtils.isNotBlank(queueNameStr)
+                      && queueName.equals(queueNameStr))
+                  || StringUtils.isBlank(queueName)) {
+                Map<String, Object> item =
+                    json.readValue(
+                        json.writeValueAsString(ecNodeinfo),
+                        new TypeReference<Map<String, Object>>() {});
 
-              item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
-              item.put("ecmInstance", latestRecord.getEcmInstance());
-              String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
-              item.put("engineType", engineType);
-              resultList.add(item);
+                Integer intStatus = ecNodeinfo.getInstanceStatus();
+                item.put("instanceStatus", NodeStatus.values()[intStatus].name());
+                /*
+                {"instance":1,"memory":"2.0 GB","cpu":1}
+                ->
+                {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
+                 */
+                HashMap heartbeatMap =
+                    BDPJettyServerHelper.gson()
+                        .fromJson(ecNodeinfo.getHeartbeatMsg(), new HashMap<>().getClass());
+                Object lastUnlockTimeMills1 =
+                    Optional.ofNullable(heartbeatMap.get("lastUnlockTimestamp")).orElse(0);
+                BigDecimal lastUnlockTimeMills =
+                    new BigDecimal(String.valueOf(lastUnlockTimeMills1));
+                item.put("lastUnlockTimestamp", lastUnlockTimeMills.longValue());
+                item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
+                item.put("ecmInstance", latestRecord.getEcmInstance());
+                String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
+                item.put("engineType", engineType);
+                resultList.add(item);
+              }
             } catch (JsonProcessingException e) {
               logger.error("Fail to process the ec node info: [{}]", ecNodeinfo, e);
             }

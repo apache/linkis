@@ -67,4 +67,12 @@ public class PythonVersionEngineHook implements EngineConnHook {
   @Override
   public void afterExecutionExecute(
       EngineCreationContext engineCreationContext, EngineConn engineConn) {}
+
+  @Override
+  public void afterEngineServerStartFailed(
+      EngineCreationContext engineCreationContext, Throwable throwable) {}
+
+  @Override
+  public void afterEngineServerStartSuccess(
+      EngineCreationContext engineCreationContext, EngineConn engineConn) {}
 }

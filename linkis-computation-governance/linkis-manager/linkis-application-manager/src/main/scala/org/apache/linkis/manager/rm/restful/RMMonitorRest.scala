@@ -25,7 +25,6 @@ import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMErrorException
-import org.apache.linkis.manager.common.serializer.NodeResourceSerializer
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -54,7 +53,6 @@ import org.apache.linkis.server.{toScalaBuffer, BDPJettyServerHelper, Message}
 import org.apache.linkis.server.security.SecurityFilter
 import org.apache.linkis.server.utils.ModuleUserUtils
 
-import org.apache.commons.collections4.ListUtils
 import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -73,16 +71,13 @@ import scala.collection.mutable.ArrayBuffer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.pagehelper.page.PageMethod
 import com.google.common.collect.Lists
-import io.swagger.annotations.{Api, ApiImplicitParams, ApiModel, ApiOperation}
-import org.json4s.DefaultFormats
-import org.json4s.jackson.Serialization.write
+import io.swagger.annotations.{Api, ApiOperation}
 
 @RestController
 @Api(tags = Array("resource management"))
 @RequestMapping(path = Array("/linkisManager/rm"))
 class RMMonitorRest extends Logging {
 
-  implicit val formats = DefaultFormats + ResourceSerializer + NodeResourceSerializer
   val mapper = new ObjectMapper()
 
   private val dateFormatLocal = new ThreadLocal[SimpleDateFormat]() {
@@ -127,7 +122,7 @@ class RMMonitorRest extends Logging {
   var COMBINED_USERCREATOR_ENGINETYPE: String = _
 
   def appendMessageData(message: Message, key: String, value: AnyRef): Message =
-    message.data(key, mapper.readTree(write(value)))
+    message.data(key, mapper.readTree(gson.toJson(value)))
 
   @ApiOperation(value = "getApplicationList", notes = "get applicationList")
   @RequestMapping(path = Array("applicationlist"), method = Array(RequestMethod.POST))

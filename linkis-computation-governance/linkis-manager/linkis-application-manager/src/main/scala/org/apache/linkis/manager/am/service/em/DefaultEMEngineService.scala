@@ -104,7 +104,11 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
   }
 
-  override def stopEngine(engineNode: EngineNode, emNode: EMNode): Unit = {
+  override def stopEngine(
+      engineNode: EngineNode,
+      emNode: EMNode,
+      labels: util.List[Label[_]]
+  ): Unit = {
     if (null == emNode) {
       logger.error(s" The emNode of ${engineNode.getServiceInstance} is null")
       return
@@ -117,36 +121,46 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     engineStopRequest.setIdentifierType(engineNode.getMark)
     engineStopRequest.setIdentifier(engineNode.getIdentifier)
 
-    val labels = nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance)
-    if (labels.isEmpty) {
-      // node labels is empty, engine already been stopped
-      logger.info(
-        s"DefaultEMEngineService stopEngine node labels is empty, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
+    val ecResourceInfo: ECResourceInfoRecord =
+      ecResourceInfoService.getECResourceInfoRecordByInstance(
+        engineNode.getServiceInstance.getInstance
       )
-      return
-    }
 
-    val rMLabelContainer: RMLabelContainer = labelResourceService.enrichLabels(labels)
-
-    val persistenceResource: PersistenceResource =
-      labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel)
-    if (persistenceResource == null) {
-      // persistenceResource is null, engine already been stopped
-      logger.info(
-        s"DefaultEMEngineService stopEngine persistenceResource is null, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
-      )
-      return
-    }
-
-    engineStopRequest.setEngineType(rMLabelContainer.getEngineTypeLabel.getEngineType)
-    engineStopRequest.setLogDirSuffix(
-      ECPathUtils
-        .getECLogDirSuffix(
-          rMLabelContainer.getEngineTypeLabel,
-          rMLabelContainer.getUserCreatorLabel,
-          persistenceResource.getTicketId
+    if (ecResourceInfo != null) {
+      engineStopRequest.setEngineType(ecResourceInfo.getLabelValue.split(",")(1).split("-")(0))
+      engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix)
+    } else {
+      if (labels.isEmpty) {
+        // node labels is empty, engine already been stopped
+        logger.info(
+          s"DefaultEMEngineService stopEngine node labels is empty, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
         )
-    )
+        return
+      }
+
+      val rMLabelContainer: RMLabelContainer = labelResourceService.enrichLabels(labels)
+
+      val persistenceResource: PersistenceResource =
+        labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel)
+      if (persistenceResource == null) {
+        // persistenceResource is null, engine already been stopped
+        logger.info(
+          s"DefaultEMEngineService stopEngine persistenceResource is null, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
+        )
+        return
+      }
+
+      engineStopRequest.setEngineType(rMLabelContainer.getEngineTypeLabel.getEngineType)
+      engineStopRequest.setLogDirSuffix(
+        ECPathUtils
+          .getECLogDirSuffix(
+            rMLabelContainer.getEngineTypeLabel,
+            rMLabelContainer.getUserCreatorLabel,
+            persistenceResource.getTicketId
+          )
+      )
+    }
+
     emNodeManager.stopEngine(engineStopRequest, emNode)
     // engineNodeManager.deleteEngineNode(engineNode)
     logger.info(

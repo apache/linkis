@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis;
+package org.apache.linkis.manager;
+
+import org.apache.linkis.LinkisBaseServerApp;
 
 /** @date 2020/7/7 16:22 */
 public class LinkisManagerApplication {

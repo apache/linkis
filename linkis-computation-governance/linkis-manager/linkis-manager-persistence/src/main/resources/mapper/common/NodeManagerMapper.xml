@@ -77,7 +77,7 @@
             updator = #{persistenceNode.updator},
         </if>
         <if test="persistenceNode.creator != null">
-            creator = #{persistenceNode.creator}
+            creator = #{persistenceNode.creator},
         </if>
         <if test="persistenceNode.identifier != null">
             identifier = #{persistenceNode.identifier}

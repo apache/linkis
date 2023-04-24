@@ -194,6 +194,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       persistenceNode.setUpdateTime(new Date());
       persistenceNode.setCreator(node.getOwner());
       persistenceNode.setUpdator(node.getOwner());
+      persistenceNode.setIdentifier(node.getIdentifier());
       nodeManagerMapper.updateNodeInstanceByInstance(persistenceNode);
     }
   }

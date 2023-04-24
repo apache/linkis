@@ -97,14 +97,20 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
     return "EngineStopRequest{"
         + "serviceInstance="
         + serviceInstance
-        + '\''
         + ", logDirSuffix='"
         + logDirSuffix
         + '\''
-        + ", labelList="
+        + ", engineType='"
         + engineType
+        + '\''
         + ", user='"
         + user
+        + '\''
+        + ", identifierType='"
+        + identifierType
+        + '\''
+        + ", identifier='"
+        + identifier
         + '\''
         + '}';
   }

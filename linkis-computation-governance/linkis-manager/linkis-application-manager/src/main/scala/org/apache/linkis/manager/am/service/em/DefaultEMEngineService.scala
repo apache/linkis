@@ -138,6 +138,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
       return
     }
 
+    engineStopRequest.setEngineType(rMLabelContainer.getEngineTypeLabel.getEngineType)
     engineStopRequest.setLogDirSuffix(
       ECPathUtils
         .getECLogDirSuffix(

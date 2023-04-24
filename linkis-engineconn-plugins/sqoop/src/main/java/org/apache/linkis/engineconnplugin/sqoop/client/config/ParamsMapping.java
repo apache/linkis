@@ -29,6 +29,12 @@ public final class ParamsMapping {
   static {
     String paramPrefix = SqoopParamsConfiguration.SQOOP_PARAM_PREFIX().getValue();
     mapping = new HashMap<>();
+    // start of DPM configuration
+    mapping.put(paramPrefix + "objectid", "--objectid");
+    mapping.put(paramPrefix + "appid", "--appid");
+    mapping.put(paramPrefix + "dk", "--dk");
+    mapping.put(paramPrefix + "timestamp", "--timestamp");
+    // end of DPM configuration
     mapping.put(paramPrefix + "connect", "--connect");
     mapping.put(paramPrefix + "connection.manager", "--connection-manager");
     mapping.put(paramPrefix + "connection.param.file", "--connection-param-file");

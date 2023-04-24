@@ -55,7 +55,9 @@ class SqoopOnceCodeExecutor(
   private var params: util.Map[String, String] = _
   private var future: Future[_] = _
   private var daemonThread: Future[_] = _
-  private val paramsResolvers: Array[SqoopParamsResolver] = Array()
+
+  private val paramsResolvers: Array[SqoopParamsResolver] =
+    Array(new SqoopDataSourceParamsResolver, new ConnectParamsResolver)
 
   override def doSubmit(
       onceExecutorExecutionContext: OnceExecutorExecutionContext,

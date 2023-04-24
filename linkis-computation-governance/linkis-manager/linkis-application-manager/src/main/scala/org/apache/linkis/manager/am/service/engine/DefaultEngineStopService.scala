@@ -96,14 +96,15 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     }
 
     val labels = nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance)
+    node.setLabels(labels)
+
     // 1. request em to kill ec
     logger.info(s"Start to kill engine invoke enginePointer ${node.getServiceInstance}")
     Utils.tryAndErrorMsg {
-      getEMService().stopEngine(node, node.getEMNode, labels)
+      getEMService().stopEngine(node, node.getEMNode)
       logger.info(s"Finished to kill engine invoke enginePointer ${node.getServiceInstance}")
     }(s"Failed to stop engine ${node.getServiceInstance}")
 
-    node.setLabels(labels)
     if (null == node.getNodeStatus) {
       node.setNodeStatus(NodeStatus.ShuttingDown)
     }

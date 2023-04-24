@@ -30,7 +30,7 @@ trait EMEngineService {
 
   def createEngine(engineBuildRequest: EngineConnBuildRequest, emNode: EMNode): EngineNode
 
-  def stopEngine(engineNode: EngineNode, EMNode: EMNode, labels: util.List[Label[_]]): Unit
+  def stopEngine(engineNode: EngineNode, EMNode: EMNode): Unit
 
   def getEMNodes(scoreServiceInstances: Array[ScoreServiceInstance]): Array[EMNode]
 

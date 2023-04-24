@@ -104,11 +104,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
 
   }
 
-  override def stopEngine(
-      engineNode: EngineNode,
-      emNode: EMNode,
-      labels: util.List[Label[_]]
-  ): Unit = {
+  override def stopEngine(engineNode: EngineNode, emNode: EMNode): Unit = {
     if (null == emNode) {
       logger.error(s" The emNode of ${engineNode.getServiceInstance} is null")
       return
@@ -130,7 +126,7 @@ class DefaultEMEngineService extends EMEngineService with Logging {
       engineStopRequest.setEngineType(ecResourceInfo.getLabelValue.split(",")(1).split("-")(0))
       engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix)
     } else {
-      if (labels.isEmpty) {
+      if (engineNode.getLabels.isEmpty) {
         // node labels is empty, engine already been stopped
         logger.info(
           s"DefaultEMEngineService stopEngine node labels is empty, engine: ${engineStopRequest.getServiceInstance} have already been stopped."
@@ -138,7 +134,8 @@ class DefaultEMEngineService extends EMEngineService with Logging {
         return
       }
 
-      val rMLabelContainer: RMLabelContainer = labelResourceService.enrichLabels(labels)
+      val rMLabelContainer: RMLabelContainer =
+        labelResourceService.enrichLabels(engineNode.getLabels)
 
       val persistenceResource: PersistenceResource =
         labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel)

@@ -55,10 +55,7 @@
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Send"/>
         </root>
-        <logger name="org.apache.hadoop.hive.ql.exec.StatsTask" level="info" additivity="true">
-            <appender-ref ref="SendPackage"/>
-        </logger>
-        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter" level="error" additivity="true">
+        <logger name="org.springframework.boot.diagnostics.LoggingFailureAnalysisReporter " level="error" additivity="true">
             <appender-ref ref="stderr"/>
         </logger>
         <logger name="com.netflix.discovery" level="warn" additivity="true">
@@ -71,9 +68,6 @@
             <appender-ref ref="Send"/>
         </logger>
         <logger name="org.apache.linkis.server.security" level="warn" additivity="true">
-            <appender-ref ref="Send"/>
-        </logger>
-        <logger name="org.apache.hadoop.hive.ql.exec.mr.ExecDriver" level="fatal" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
         <logger name="org.apache.hadoop.hdfs.KeyProviderCache" level="fatal" additivity="true">
@@ -90,12 +84,6 @@
         </logger>
         <logger name="org.reflections.Reflections" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
-        </logger>
-        <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
-            <appender-ref ref="Send"/>
-        </logger>
-        <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
-            <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
     </loggers>
 </configuration>

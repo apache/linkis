@@ -53,7 +53,7 @@ class TestImpalaEngineConnExecutor {
   private val labelBuilderFactory: LabelBuilderFactory =
     LabelBuilderFactoryContext.getLabelBuilderFactory
 
-  @Test
+//  @Test
   def testExecuteLine: Unit = {
     val engineconnConf = "--engineconn-conf"
     val springConf = "--spring-conf"

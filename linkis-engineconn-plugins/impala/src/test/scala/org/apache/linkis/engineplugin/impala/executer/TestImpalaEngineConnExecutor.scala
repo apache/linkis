@@ -44,7 +44,7 @@ import java.util
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions
 
 class TestImpalaEngineConnExecutor {
 

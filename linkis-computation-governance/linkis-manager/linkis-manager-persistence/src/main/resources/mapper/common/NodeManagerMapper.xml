@@ -133,6 +133,12 @@
                 #{i}
             </foreach>
         </if>
+        <if test="instanceName != null and instanceName.size() > 0">
+            and t.instance in
+            <foreach collection="instanceName" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+        </if>
         and metrics.instance=t.instance
 
     </select>

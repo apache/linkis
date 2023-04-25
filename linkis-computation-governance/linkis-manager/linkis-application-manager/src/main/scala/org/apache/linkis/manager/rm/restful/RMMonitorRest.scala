@@ -827,11 +827,13 @@ class RMMonitorRest extends Logging {
   private def getApplications(
       creatorToApplicationList: util.HashMap[String, util.HashMap[String, Any]]
   ) = {
-    val applications = new util.ArrayList[Any]()
-    creatorToApplicationList.entrySet().forEach { creatorEntry =>
+    val applications = new util.ArrayList[util.HashMap[String, Any]]()
+    val iterator = creatorToApplicationList.entrySet().iterator();
+    while (iterator.hasNext) {
+      val entry = iterator.next()
       val application = new util.HashMap[String, Any]
-      application.put("creator", creatorEntry.getKey)
-      application.put("applicationList", creatorEntry.getValue)
+      application.put("creator", entry.getKey)
+      application.put("applicationList", entry.getValue)
       applications.add(application)
     }
     applications

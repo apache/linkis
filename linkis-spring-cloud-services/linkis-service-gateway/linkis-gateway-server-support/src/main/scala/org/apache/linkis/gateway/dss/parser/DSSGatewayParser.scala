@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.dss
+package org.apache.linkis.gateway.dss.parser
 
 import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.gateway.exception.TooManyServiceException
@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component
 import java.util
 import java.util.Locale
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 @Component
 class DSSGatewayParser extends AbstractGatewayParser {
@@ -162,7 +162,7 @@ class DSSGatewayParser extends AbstractGatewayParser {
     logger.info(
       "Get ServiceName From  Label and method is " + gatewayContext.getRequest.getMethod.toString + ",and urlLabels is " + requestUrlLabels
     )
-    val requestMethod = gatewayContext.getRequest.getMethod.toLowerCase(Locale.ROOT)
+    val requestMethod = gatewayContext.getRequest.getMethod.toLowerCase(Locale.getDefault())
     if (
         requestUrlLabels == null && (requestMethod
           .equals("post") || requestMethod.equals("put") || requestMethod.equals("delete"))
@@ -181,7 +181,7 @@ class DSSGatewayParser extends AbstractGatewayParser {
             case map: util.Map[String, Any] => labelBuilderFactory.getLabels(map.asInstanceOf)
             case _ => new util.ArrayList[Label[_]]()
           }
-          labels
+          labels.asScala
             .filter(label => label.isInstanceOf[RouteLabel])
             .foreach(label => {
               routeLabelList.add(label.asInstanceOf[RouteLabel])
@@ -189,7 +189,7 @@ class DSSGatewayParser extends AbstractGatewayParser {
 
         case _ => null
       }
-      val labelNameList = routeLabelList.map(routeLabel => routeLabel.getStringValue).toList
+      val labelNameList = routeLabelList.asScala.map(routeLabel => routeLabel.getStringValue).toList
       if (labelNameList != null && labelNameList.size > 0) {
         genServiceNameByDSSLabel(labelNameList, tmpServiceName)
       } else if (null != requestUrlLabels) {
@@ -241,7 +241,7 @@ class DSSGatewayParser extends AbstractGatewayParser {
   ): Option[String] = {
     val findIt: (String => Boolean) => Option[String] = op => {
       val services =
-        SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.filter(op).toList
+        SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala.filter(op).toList
       if (services.length == 1) Some(services.head)
       else if (services.length > 1) tooManyDeal(services)
       else None
@@ -252,7 +252,7 @@ class DSSGatewayParser extends AbstractGatewayParser {
     val findMostCorrect: (String => (String, Int)) => Option[String] = { op =>
       {
         val serviceMap =
-          SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.map(op).toMap
+          SpringCloudFeignConfigurationCache.getDiscoveryClient.getServices.asScala.map(op).toMap
         var count = 0
         var retService: Option[String] = None
         serviceMap.foreach { case (k, v) =>
@@ -266,10 +266,9 @@ class DSSGatewayParser extends AbstractGatewayParser {
         retService
       }
     }
-    val lowerServiceId = parsedServiceId.toLowerCase()
-    val serverName = tmpServerName.toLowerCase()
-    // findIt(_.toLowerCase() == lowerServiceId).orElse(findIt(_.toLowerCase().contains(lowerServiceId)))
-    findIt(_.toLowerCase() == serverName).orElse(findMostCorrect(service => {
+    val lowerServiceId = parsedServiceId.toLowerCase(Locale.getDefault())
+    val serverName = tmpServerName.toLowerCase(Locale.getDefault())
+    findIt(_.toLowerCase(Locale.getDefault()) == serverName).orElse(findMostCorrect(service => {
       (service, lowerServiceId.split("/").count(word => service.contains(word)))
     }))
   }

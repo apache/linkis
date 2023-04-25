@@ -15,21 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.dss
+package org.apache.linkis.gateway.dss.parser
 
 import org.apache.linkis.gateway.http.GatewayContext
 import org.apache.linkis.gateway.ujes.route.label.RouteLabelParser
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.route.RouteLabel
-import org.apache.linkis.protocol.constants.TaskConstant
-import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.springframework.stereotype.Component
 
 import java.util
-
-import scala.collection.JavaConversions._
 
 @Component
 class DSSRouteLabelParser extends RouteLabelParser {

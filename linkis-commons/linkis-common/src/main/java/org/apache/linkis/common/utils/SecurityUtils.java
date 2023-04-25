@@ -92,12 +92,11 @@ public abstract class SecurityUtils {
       String database,
       Map<String, Object> extraParams) {
     // 1. Check blank params
-    if (StringUtils.isAnyBlank(host, username, password)) {
-      logger.info(
-          "Invalid mysql connection params: host: {}, username: {}, password: {}, database: {}",
+    if (StringUtils.isAnyBlank(host, username)) {
+      logger.error(
+          "Invalid mysql connection params: host: {}, username: {}, database: {}",
           host,
           username,
-          password,
           database);
       throw new LinkisSecurityException(35000, "Invalid mysql connection params.");
     }

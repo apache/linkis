@@ -79,16 +79,7 @@ object DataType extends Logging {
     case IntType => if (isNumberNull(value)) null else value.toInt
     case LongType | BigIntType => if (isNumberNull(value)) null else value.toLong
     case FloatType => if (isNumberNull(value)) null else value.toFloat
-    case DoubleType =>
-      logger.info("--------------------- value : {}", value)
-      logger.info("--------------------- result : {}", value.equals("NaN"))
-      if (isNumberNull(value)) {
-        null
-      } else if (value.equals("NaN")) {
-        "NaN"
-      } else {
-        value.toDouble
-      }
+    case DoubleType => if (isNumberNull(value)) null else value.toDouble
     case DecimalType => if (isNumberNull(value)) null else new JavaBigDecimal(value)
     case DateType => if (isNumberNull(value)) null else Date.valueOf(value)
     case TimestampType =>

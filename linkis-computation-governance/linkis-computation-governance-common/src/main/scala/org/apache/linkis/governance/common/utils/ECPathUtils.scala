@@ -17,6 +17,8 @@
 
 package org.apache.linkis.governance.common.utils
 
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
@@ -43,6 +45,22 @@ object ECPathUtils {
         .getPath
     }
     suffix + File.separator + ticketId
+  }
+
+  def getECLogDirSuffix(
+      engineTypeLabel: EngineTypeLabel,
+      userCreatorLabel: UserCreatorLabel,
+      ticketId: String
+  ): String = {
+    if (null == engineTypeLabel || null == userCreatorLabel) {
+      return ""
+    }
+    val suffix = ECPathUtils.getECWOrkDirPathSuffix(
+      userCreatorLabel.getUser,
+      ticketId,
+      engineTypeLabel.getEngineType
+    )
+    suffix + File.separator + "logs"
   }
 
 }

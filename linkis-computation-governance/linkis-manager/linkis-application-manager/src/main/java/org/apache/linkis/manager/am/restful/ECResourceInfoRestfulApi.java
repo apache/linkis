@@ -267,14 +267,14 @@ public class ECResourceInfoRestfulApi {
     if (instanceNameParam != null && !instanceNameParam.isNull()) {
       try {
         instanceNameList =
-                JsonUtils.jackson()
-                        .readValue(instanceNameParam.toString(), new TypeReference<List<String>>() {});
+            JsonUtils.jackson()
+                .readValue(instanceNameParam.toString(), new TypeReference<List<String>>() {});
       } catch (JsonProcessingException e) {
         return Message.error("parameters:instanceName parsing failed(请求参数【instanceName】解析失败)");
       }
     }
     logger.info(
-        "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}], queueName:{}",
+        "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}], queueName:{}, instanceNameList:{}",
         String.join(",", creatorUserList),
         String.join(",", engineTypeList),
         String.join(",", statusStrList),
@@ -283,7 +283,7 @@ public class ECResourceInfoRestfulApi {
 
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(
-            creatorUserList, engineTypeList, statusStrList, queueName,instanceNameList);
+            creatorUserList, engineTypeList, statusStrList, queueName, instanceNameList);
 
     return Message.ok().data("ecList", list);
   }

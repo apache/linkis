@@ -45,8 +45,9 @@ public interface ECResourceInfoService {
    * @return
    */
   List<Map<String, Object>> getECResourceInfoList(
-          List<String> creatorUserList,
-          List<String> engineTypeList,
-          List<String> statusStrList,
-          String queueName, List<String> instanceNameList);
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName,
+      List<String> instanceNameList);
 }

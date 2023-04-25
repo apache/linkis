@@ -104,11 +104,11 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-          List<String> creatorUserList,
-          List<String> engineTypeList,
-          List<String> statusStrList,
-          String queueName,
-          List<String> instanceNameList) {
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName,
+      List<String> instanceNameList) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -120,7 +120,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
     // get engine conn info list filter by creator user list /instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
-        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList,instanceNameList);
+        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList, instanceNameList);
 
     // map k:v---> instanceName：PersistencerEcNodeInfo
     Map<String, PersistencerEcNodeInfo> persistencerEcNodeInfoMap =
@@ -148,8 +148,8 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               String usedResourceStr = latestRecord.getUsedResource();
               Map<String, Object> usedResourceMap =
                   ECResourceInfoUtils.getStringToMap(usedResourceStr);
-              Map yarn = MapUtils.getMap(usedResourceMap, "yarn",new HashMap<String, Object>());
-              String queueNameStr = String.valueOf(yarn.getOrDefault("queueName",""));
+              Map yarn = MapUtils.getMap(usedResourceMap, "yarn", new HashMap<String, Object>());
+              String queueNameStr = String.valueOf(yarn.getOrDefault("queueName", ""));
               if ((StringUtils.isNotBlank(queueName)
                       && StringUtils.isNotBlank(queueNameStr)
                       && queueName.equals(queueNameStr))

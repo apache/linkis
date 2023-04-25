@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.am.conf
 
-import org.apache.linkis.common.conf.{CommonVars, Configuration, TimeType}
+import org.apache.linkis.common.conf.{CommonVars, TimeType}
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
@@ -57,7 +57,7 @@ object AMConfiguration {
 
   val MULTI_USER_ENGINE_TYPES = CommonVars(
     "wds.linkis.multi.user.engine.types",
-    "jdbc,es,presto,io_file,appconn,openlookeng,trino"
+    "jdbc,es,presto,io_file,appconn,openlookeng,trino,impala"
   )
 
   val ALLOW_BATCH_KILL_ENGINE_TYPES =

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.password;
+package org.apache.linkis.engineconn.common.password;
 
 import org.apache.commons.io.IOUtils;
 
@@ -65,7 +65,7 @@ public class CommandPasswordCallback extends PasswordCallback {
     } catch (RuntimeException e) {
       throw e;
     } catch (Exception e) {
-      throw new RuntimeException("Failed to authenticate with command: " + prompt, e);
+      throw new RuntimeException("Failed to get password by command: " + prompt, e);
     } finally {
       if (process != null) {
         process.destroy();

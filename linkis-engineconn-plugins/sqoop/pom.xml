@@ -31,6 +31,24 @@
   </properties>
 
   <dependencies>
+    <!-- disruptor for Log4j2 AsyncLogger-->
+    <dependency>
+      <groupId>com.lmax</groupId>
+      <artifactId>disruptor</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+    <!--linkis datasource client-->
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-datasource-client</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-exec</artifactId>

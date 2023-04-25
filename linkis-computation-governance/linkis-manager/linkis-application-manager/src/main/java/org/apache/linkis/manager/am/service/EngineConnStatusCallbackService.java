@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager.am.service;
 
-import org.apache.linkis.protocol.callback.LogCallbackProtocol
+import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM;
 
-trait LogCallbackService {
+public interface EngineConnStatusCallbackService {
 
-  def dealLog(protocol: LogCallbackProtocol): Unit
-
+  void dealEngineConnStatusCallbackToAM(EngineConnStatusCallbackToAM engineConnStatusCallbackToAM);
 }

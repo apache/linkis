@@ -25,7 +25,11 @@ import org.apache.linkis.manager.common.entity.resource.Resource
 import org.apache.linkis.manager.dao.ECResourceRecordMapper
 import org.apache.linkis.manager.label.entity.CombinedLabel
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
-import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  EngineInstanceLabel,
+  EngineTypeLabel,
+  UserCreatorLabel
+}
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.utils.RMUtils
 
@@ -150,7 +154,11 @@ class ResourceLogService extends Logging {
     if (null == userCreatorEngineType) return
     var ecResourceInfoRecord = ecResourceRecordMapper.getECResourceInfoRecord(ticketId)
     if (ecResourceInfoRecord == null) {
-      val logDirSuffix = getECLogDirSuffix(labelContainer, ticketId)
+      val logDirSuffix = ECPathUtils.getECLogDirSuffix(
+        labelContainer.getEngineTypeLabel,
+        labelContainer.getUserCreatorLabel,
+        ticketId
+      )
       val user =
         if (null != labelContainer.getUserCreatorLabel) labelContainer.getUserCreatorLabel.getUser
         else ""
@@ -198,20 +206,6 @@ class ResourceLogService extends Logging {
       ecResourceInfoRecord.setStatus(status.toString)
     }
     ecResourceRecordMapper.updateECResourceInfoRecord(ecResourceInfoRecord)
-  }
-
-  def getECLogDirSuffix(labelContainer: RMLabelContainer, ticketId: String): String = {
-    val engineTypeLabel = labelContainer.getEngineTypeLabel
-    val userCreatorLabel = labelContainer.getUserCreatorLabel
-    if (null == engineTypeLabel || null == userCreatorLabel) {
-      return ""
-    }
-    val suffix = ECPathUtils.getECWOrkDirPathSuffix(
-      userCreatorLabel.getUser,
-      ticketId,
-      engineTypeLabel.getEngineType
-    )
-    suffix + File.separator + "logs"
   }
 
 }

@@ -17,10 +17,7 @@
 
 package org.apache.linkis.engineconn.callback.service
 
-import org.apache.linkis.common.ServiceInstance
-
-class EngineConnAfterStartCallback(emInstance: ServiceInstance)
-    extends AbstractEngineConnStartUpCallback(emInstance) {
+class EngineConnAfterStartCallback extends AbstractEngineConnStartUpCallback {
 
   override def callback(): Unit = {}
 }

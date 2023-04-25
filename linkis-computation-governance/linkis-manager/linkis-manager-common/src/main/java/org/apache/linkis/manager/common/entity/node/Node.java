@@ -44,4 +44,8 @@ public interface Node extends RequestProtocol {
   Date getStartTime();
 
   void setStartTime(Date startTime);
+
+  String getIdentifier();
+
+  void setIdentifier(String identifier);
 }

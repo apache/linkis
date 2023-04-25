@@ -1,0 +1,1407 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "linkis.fullname" . }}-init-sql
+data:
+  linkis_ddl.sql: |
+    SET FOREIGN_KEY_CHECKS=0;
+  {{- if eq .Values.linkis.datasource.initSchema "Reset" }}
+    DROP TABLE IF EXISTS `linkis_ps_configuration_config_key`;
+    DROP TABLE IF EXISTS `linkis_ps_configuration_key_engine_relation`;
+    DROP TABLE IF EXISTS `linkis_ps_configuration_config_value`;
+    DROP TABLE IF EXISTS `linkis_ps_configuration_category`;
+    DROP TABLE IF EXISTS `linkis_ps_job_history_group_history`;
+    DROP TABLE IF EXISTS `linkis_ps_job_history_detail`;
+    DROP TABLE IF EXISTS `linkis_ps_common_lock`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_shared_group`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_shared_info`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_tree`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_user_load`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;
+    DROP TABLE IF EXISTS `linkis_ps_udf_version`;
+    DROP TABLE IF EXISTS `linkis_ps_variable_key_user`;
+    DROP TABLE IF EXISTS `linkis_ps_variable_key`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_access`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_field`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_import`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_lineage`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_table`;
+    DROP TABLE IF EXISTS `linkis_ps_datasource_table_info`;
+    DROP TABLE IF EXISTS `linkis_ps_cs_context_map`;
+    DROP TABLE IF EXISTS `linkis_ps_cs_context_map_listener`;
+    DROP TABLE IF EXISTS `linkis_ps_cs_context_history`;
+    DROP TABLE IF EXISTS `linkis_ps_cs_context_id`;
+    DROP TABLE IF EXISTS `linkis_ps_cs_context_listener`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_resources`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_resources_version`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_resources_permission`;
+    DROP TABLE IF EXISTS `linkis_ps_resources_download_history`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_resources_task`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_project`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_project_user`;
+    DROP TABLE IF EXISTS `linkis_ps_bml_project_resource`;
+    DROP TABLE IF EXISTS `linkis_ps_instance_label`;
+    DROP TABLE IF EXISTS `linkis_ps_instance_label_value_relation`;
+    DROP TABLE IF EXISTS `linkis_ps_instance_label_relation`;
+    DROP TABLE IF EXISTS `linkis_ps_instance_info`;
+    DROP TABLE IF EXISTS `linkis_ps_error_code`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_service_instance`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_linkis_resources`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_lock`;
+    DROP TABLE IF EXISTS `linkis_cg_rm_external_resource_provider`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_engine_em`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_label`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_label_value_relation`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_label_resource`;
+    DROP TABLE IF EXISTS `linkis_cg_ec_resource_info_record`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_label_service_instance`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_label_user`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_metrics_history`;
+    DROP TABLE IF EXISTS `linkis_cg_manager_service_instance_metrics`;
+    DROP TABLE IF EXISTS `linkis_cg_engine_conn_plugin_bml_resources`;
+    DROP TABLE IF EXISTS `linkis_ps_dm_datasource`;
+    DROP TABLE IF EXISTS `linkis_ps_dm_datasource_env`;
+    DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type`;
+    DROP TABLE IF EXISTS `linkis_ps_dm_datasource_type_key`;
+    DROP TABLE IF EXISTS `linkis_ps_dm_datasource_version`;
+    DROP TABLE IF EXISTS `linkis_mg_gateway_auth_token`;
+  {{- end }}
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_config_key`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `key` varchar(50) DEFAULT NULL COMMENT 'Set key, e.g. spark.executor.instances',
+    `description` varchar(200) DEFAULT NULL,
+    `name` varchar(50) DEFAULT NULL,
+    `default_value` varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
+    `validate_type` varchar(50) DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
+    `validate_range` varchar(50) DEFAULT NULL COMMENT 'Validate range',
+    `engine_conn_type` varchar(50) DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
+    `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
+    `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
+    `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
+    `treeName` varchar(20) DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_engine_relation`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `config_key_id` bigint(20) NOT NULL COMMENT 'config key id',
+    `engine_type_label_id` bigint(20) NOT NULL COMMENT 'engine label id',
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX(`config_key_id`, `engine_type_label_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_config_value`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `config_key_id` bigint(20),
+    `config_value` varchar(200),
+    `config_label_id`int(20),
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX(`config_key_id`, `config_label_id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_category` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_id` int(20) NOT NULL,
+    `level` int(20) NOT NULL,
+    `description` varchar(200),
+    `tag` varchar(200),
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX(`label_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    --
+    -- New linkis job
+    --
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_job_history_group_history` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary Key, auto increment',
+    `job_req_id` varchar(64) DEFAULT NULL COMMENT 'job execId',
+    `submit_user` varchar(50) DEFAULT NULL COMMENT 'who submitted this Job',
+    `execute_user` varchar(50) DEFAULT NULL COMMENT 'who actually executed this Job',
+    `source` text DEFAULT NULL COMMENT 'job source',
+    `labels` text DEFAULT NULL COMMENT 'job labels',
+    `params` text DEFAULT NULL COMMENT 'job params',
+    `progress` varchar(32) DEFAULT NULL COMMENT 'Job execution progress',
+    `status` varchar(50) DEFAULT NULL COMMENT 'Script execution status, must be one of the following: Inited, WaitForRetry, Scheduled, Running, Succeed, Failed, Cancelled, Timeout',
+    `log_path` varchar(200) DEFAULT NULL COMMENT 'File path of the job log',
+    `error_code` int DEFAULT NULL COMMENT 'Error code. Generated when the execution of the script fails',
+    `error_desc` varchar(1000) DEFAULT NULL COMMENT 'Execution description. Generated when the execution of script fails',
+    `created_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Creation time',
+    `updated_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Update time',
+    `instances` varchar(250) DEFAULT NULL COMMENT 'Entrance instances',
+    `metrics` text DEFAULT NULL COMMENT   'Job Metrics',
+    `engine_type` varchar(32) DEFAULT NULL COMMENT 'Engine type',
+    `execution_code` text DEFAULT NULL COMMENT 'Job origin code or code path',
+    `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+    PRIMARY KEY (`id`),
+    KEY `created_time` (`created_time`),
+    KEY `submit_user` (`submit_user`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_job_history_detail` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary Key, auto increment',
+    `job_history_id` bigint(20) NOT NULL COMMENT 'ID of JobHistory',
+    `result_location` varchar(500) DEFAULT NULL COMMENT 'File path of the resultsets',
+    `execution_content` text DEFAULT NULL COMMENT 'The script code or other execution content executed by this Job',
+    `result_array_size` int(4) DEFAULT 0 COMMENT 'size of result array',
+    `job_group_info` text DEFAULT NULL COMMENT 'Job group info/path',
+    `created_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Creation time',
+    `updated_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) COMMENT 'Update time',
+    `status` varchar(32) DEFAULT NULL COMMENT 'status',
+    `priority` int(4) DEFAULT 0 COMMENT 'order of subjob',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_common_lock` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `time_out` longtext COLLATE utf8_bin,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `lock_object` (`lock_object`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    SET FOREIGN_KEY_CHECKS=0;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_udf_manager
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_manager` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `user_name` varchar(20) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_udf_shared_group
+    -- An entry would be added when a user share a function to other user group
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_shared_group` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `udf_id` bigint(20) NOT NULL,
+    `shared_group` varchar(50) NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_shared_info`
+    (
+    `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `udf_id` bigint(20) NOT NULL,
+    `user_name` varchar(50) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_udf_tree
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_tree` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `parent` bigint(20) NOT NULL,
+    `name` varchar(100) DEFAULT NULL COMMENT 'Category name of the function. It would be displayed in the front-end',
+    `user_name` varchar(50) NOT NULL,
+    `description` varchar(255) DEFAULT NULL,
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_udf_user_load
+    -- Used to store the function a user selects in the front-end
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_user_load` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `udf_id` bigint(20) NOT NULL,
+    `user_name` varchar(50) NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_baseinfo` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `create_user` varchar(50) NOT NULL,
+    `udf_name` varchar(255) NOT NULL,
+    `udf_type` int(11) DEFAULT '0',
+    `tree_id` bigint(20) NOT NULL,
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `sys` varchar(255) NOT NULL DEFAULT 'ide' COMMENT 'source system',
+    `cluster_name` varchar(255) NOT NULL,
+    `is_expire` bit(1) DEFAULT NULL,
+    `is_shared` bit(1) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    -- bdp_easy_ide.linkis_ps_udf_version definition
+    CREATE TABLE IF NOT EXISTS `linkis_ps_udf_version` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `udf_id` bigint(20) NOT NULL,
+    `path` varchar(255) NOT NULL COMMENT 'Source path for uploading files',
+    `bml_resource_id` varchar(50) NOT NULL,
+    `bml_resource_version` varchar(20) NOT NULL,
+    `is_published` bit(1) DEFAULT NULL COMMENT 'is published',
+    `register_format` varchar(255) DEFAULT NULL,
+    `use_format` varchar(255) DEFAULT NULL,
+    `description` varchar(255) NOT NULL COMMENT 'version desc',
+    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `md5` varchar(100) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    SET FOREIGN_KEY_CHECKS=0;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_variable_key_user
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_variable_key_user` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `application_id` bigint(20) DEFAULT NULL COMMENT 'Reserved word',
+    `key_id` bigint(20) DEFAULT NULL,
+    `user_name` varchar(50) DEFAULT NULL,
+    `value` varchar(200) DEFAULT NULL COMMENT 'Value of the global variable',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `application_id_2` (`application_id`,`key_id`,`user_name`),
+    KEY `key_id` (`key_id`),
+    KEY `application_id` (`application_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_variable_key
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_variable_key` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `key` varchar(50) DEFAULT NULL COMMENT 'Key of the global variable',
+    `description` varchar(200) DEFAULT NULL COMMENT 'Reserved word',
+    `name` varchar(50) DEFAULT NULL COMMENT 'Reserved word',
+    `application_id` bigint(20) DEFAULT NULL COMMENT 'Reserved word',
+    `default_value` varchar(200) DEFAULT NULL COMMENT 'Reserved word',
+    `value_type` varchar(50) DEFAULT NULL COMMENT 'Reserved word',
+    `value_regex` varchar(100) DEFAULT NULL COMMENT 'Reserved word',
+    PRIMARY KEY (`id`),
+    KEY `application_id` (`application_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_access
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_access` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `table_id` bigint(20) NOT NULL,
+    `visitor` varchar(16) COLLATE utf8_bin NOT NULL,
+    `fields` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `application_id` int(4) NOT NULL,
+    `access_time` datetime NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_field
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_field` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `table_id` bigint(20) NOT NULL,
+    `name` varchar(64) COLLATE utf8_bin NOT NULL,
+    `alias` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+    `type` varchar(64) COLLATE utf8_bin NOT NULL,
+    `comment` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `express` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `rule` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `is_partition_field` tinyint(1) NOT NULL,
+    `is_primary` tinyint(1) NOT NULL,
+    `length` int(11) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_import
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_import` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `table_id` bigint(20) NOT NULL,
+    `import_type` int(4) NOT NULL,
+    `args` varchar(255) COLLATE utf8_bin NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_lineage
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_lineage` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `table_id` bigint(20) DEFAULT NULL,
+    `source_table` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_table
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_table` (
+    `id` bigint(255) NOT NULL AUTO_INCREMENT,
+    `database` varchar(64) COLLATE utf8_bin NOT NULL,
+    `name` varchar(64) COLLATE utf8_bin NOT NULL,
+    `alias` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+    `creator` varchar(16) COLLATE utf8_bin NOT NULL,
+    `comment` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `create_time` datetime NOT NULL,
+    `product_name` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+    `project_name` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `usage` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `lifecycle` int(4) NOT NULL,
+    `use_way` int(4) NOT NULL,
+    `is_import` tinyint(1) NOT NULL,
+    `model_level` int(4) NOT NULL,
+    `is_external_use` tinyint(1) NOT NULL,
+    `is_partition_table` tinyint(1) NOT NULL,
+    `is_available` tinyint(1) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `database` (`database`,`name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_datasource_table_info
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_datasource_table_info` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `table_id` bigint(20) NOT NULL,
+    `table_last_update_time` datetime NOT NULL,
+    `row_num` bigint(20) NOT NULL,
+    `file_num` int(11) NOT NULL,
+    `table_size` varchar(32) COLLATE utf8_bin NOT NULL,
+    `partitions_num` int(11) NOT NULL,
+    `update_time` datetime NOT NULL,
+    `field_num` int(11) NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_cs_context_map
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_cs_context_map` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `key` varchar(128) DEFAULT NULL,
+    `context_scope` varchar(32) DEFAULT NULL,
+    `context_type` varchar(32) DEFAULT NULL,
+    `props` text,
+    `value` mediumtext,
+    `context_id` int(11) DEFAULT NULL,
+    `keywords` varchar(255) DEFAULT NULL,
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `key` (`key`,`context_id`,`context_type`),
+    KEY `keywords` (`keywords`(191))
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_cs_context_map_listener
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_cs_context_map_listener` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `listener_source` varchar(255) DEFAULT NULL,
+    `key_id` int(11) DEFAULT NULL,
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_cs_context_history
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_cs_context_history` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `context_id` int(11) DEFAULT NULL,
+    `source` text,
+    `context_type` varchar(32) DEFAULT NULL,
+    `history_json` text,
+    `keyword` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
+    KEY `keyword` (`keyword`(191))
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_cs_context_id
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_cs_context_id` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `user` varchar(32) DEFAULT NULL,
+    `application` varchar(32) DEFAULT NULL,
+    `source` varchar(255) DEFAULT NULL,
+    `expire_type` varchar(32) DEFAULT NULL,
+    `expire_time` datetime DEFAULT NULL,
+    `instance` varchar(128) DEFAULT NULL,
+    `backup_instance` varchar(255) DEFAULT NULL,
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
+    PRIMARY KEY (`id`),
+    KEY `instance` (`instance`(128)),
+    KEY `backup_instance` (`backup_instance`(191)),
+    KEY `instance_2` (`instance`(128),`backup_instance`(128))
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_cs_context_listener
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_cs_context_listener` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `listener_source` varchar(255) DEFAULT NULL,
+    `context_id` int(11) DEFAULT NULL,
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `access_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'last access time',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_resources` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+    `resource_id` varchar(50) NOT NULL COMMENT 'resource uuid',
+    `is_private` TINYINT(1) DEFAULT 0 COMMENT 'Whether the resource is private, 0 means private, 1 means public',
+    `resource_header` TINYINT(1) DEFAULT 0 COMMENT 'Classification, 0 means unclassified, 1 means classified',
+    `downloaded_file_name` varchar(200) DEFAULT NULL COMMENT 'File name when downloading',
+    `sys` varchar(100) NOT NULL COMMENT 'Owning system',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Created time',
+    `owner` varchar(200) NOT NULL COMMENT 'Resource owner',
+    `is_expire` TINYINT(1) DEFAULT 0 COMMENT 'Whether expired, 0 means not expired, 1 means expired',
+    `expire_type` varchar(50) DEFAULT null COMMENT 'Expiration type, date refers to the expiration on the specified date, TIME refers to the time',
+    `expire_time` varchar(50) DEFAULT null COMMENT 'Expiration time, one day by default',
+    `max_version` int(20) DEFAULT 10 COMMENT 'The default is 10, which means to keep the latest 10 versions',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Updated time',
+    `updator` varchar(50) DEFAULT NULL COMMENT 'updator',
+    `enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+       PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_resources_version` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+    `resource_id` varchar(50) NOT NULL COMMENT 'Resource uuid',
+    `file_md5` varchar(32) NOT NULL COMMENT 'Md5 summary of the file',
+    `version` varchar(20) NOT NULL COMMENT 'Resource version (v plus five digits)',
+    `size` int(10) NOT NULL COMMENT 'File size',
+    `start_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+    `end_byte` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+    `resource` varchar(2000) NOT NULL COMMENT 'Resource content (file information including path and file name)',
+    `description` varchar(2000) DEFAULT NULL COMMENT 'description',
+    `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Started time',
+    `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Stoped time',
+    `client_ip` varchar(200) NOT NULL COMMENT 'Client ip',
+    `updator` varchar(50) DEFAULT NULL COMMENT 'updator',
+    `enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
+    unique key `resource_id_version`(`resource_id`, `version`),
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_resources_permission` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+    `resource_id` varchar(50) NOT NULL COMMENT 'Resource uuid',
+    `permission` varchar(10) NOT NULL COMMENT 'permission',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created time',
+    `system` varchar(50) default "dss" COMMENT 'creator',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated time',
+    `updator` varchar(50) NOT NULL COMMENT 'updator',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_resources_download_history` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+    `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'start time',
+    `end_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'stop time',
+    `client_ip` varchar(200) NOT NULL COMMENT 'client ip',
+    `state` TINYINT(1) NOT NULL COMMENT 'Download status, 0 download successful, 1 download failed',
+    `resource_id` varchar(50) not null,
+    `version` varchar(20) not null,
+    `downloader` varchar(50) NOT NULL COMMENT 'Downloader',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+
+    -- 创建资源任务表,包括上传,更新,下载
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_resources_task` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `resource_id` varchar(50) DEFAULT NULL COMMENT 'resource uuid',
+    `version` varchar(20) DEFAULT NULL COMMENT 'Resource version number of the current operation',
+    `operation` varchar(20) NOT NULL COMMENT 'Operation type. upload = 0, update = 1',
+    `state` varchar(20) NOT NULL DEFAULT 'Schduled' COMMENT 'Current status of the task:Schduled, Running, Succeed, Failed,Cancelled',
+    `submit_user` varchar(20) NOT NULL DEFAULT '' COMMENT 'Job submission user name',
+    `system` varchar(20) DEFAULT 'dss' COMMENT 'Subsystem name: wtss',
+    `instance` varchar(128) NOT NULL COMMENT 'Material library example',
+    `client_ip` varchar(50) DEFAULT NULL COMMENT 'Request IP',
+    `extra_params` text COMMENT 'Additional key information. Such as the resource IDs and versions that are deleted in batches, and all versions under the resource are deleted',
+    `err_msg` varchar(2000) DEFAULT NULL COMMENT 'Task failure information.e.getMessage',
+    `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Starting time',
+    `end_time` datetime DEFAULT NULL COMMENT 'End Time',
+    `last_update_time` datetime NOT NULL COMMENT 'Last update time',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_project` (
+    `id` int(10) NOT NULL AUTO_INCREMENT,
+    `name` varchar(128) DEFAULT NULL,
+    `system` varchar(64) not null default "dss",
+    `source` varchar(1024) default null,
+    `description` varchar(1024) default null,
+    `creator` varchar(128) not null,
+    `enabled` tinyint default 1,
+    `create_time` datetime DEFAULT now(),
+    unique key(`name`),
+    PRIMARY KEY (`id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=COMPACT;
+
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_project_user` (
+    `id` int(10) NOT NULL AUTO_INCREMENT,
+    `project_id` int(10) NOT NULL,
+    `username` varchar(64) DEFAULT NULL,
+    `priv` int(10) not null default 7, -- rwx 421 The permission value is 7. 8 is the administrator, which can authorize other users
+    `creator` varchar(128) not null,
+    `create_time` datetime DEFAULT now(),
+    `expire_time` datetime default null,
+    unique key user_project(`username`, `project_id`),
+    PRIMARY KEY (`id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=COMPACT;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_bml_project_resource` (
+    `id` int(10) NOT NULL AUTO_INCREMENT,
+    `project_id` int(10) NOT NULL,
+    `resource_id` varchar(128) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    )ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=COMPACT;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_instance_label` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_key` varchar(32) COLLATE utf8_bin NOT NULL COMMENT 'string key',
+    `label_value` varchar(255) COLLATE utf8_bin NOT NULL COMMENT 'string value',
+    `label_feature` varchar(16) COLLATE utf8_bin NOT NULL COMMENT 'store the feature of label, but it may be redundant',
+    `label_value_size` int(20) NOT NULL COMMENT 'size of key -> value map',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_key_value` (`label_key`,`label_value`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_instance_label_value_relation` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL COMMENT 'value key',
+    `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL COMMENT 'value content',
+    `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_instance_label_relation` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_id` int(20) DEFAULT NULL COMMENT 'id reference linkis_ps_instance_label -> id',
+    `service_instance` varchar(128) NOT NULL COLLATE utf8_bin COMMENT 'structure like ${host|machine}:${port}',
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_instance_info` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'structure like ${host|machine}:${port}',
+    `name` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'equal application name in registry',
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update unix timestamp',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create unix timestamp',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `instance` (`instance`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_ps_error_code` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `error_code` varchar(50) NOT NULL,
+    `error_desc` varchar(1024) NOT NULL,
+    `error_regex` varchar(1024) DEFAULT NULL,
+    `error_type` int(3) DEFAULT 0,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_service_instance` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `creator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `instance` (`instance`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_linkis_resources` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `max_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `min_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `used_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `left_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `expected_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `locked_resource` varchar(1020) COLLATE utf8_bin DEFAULT NULL,
+    `resourceType` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `updator` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `creator` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_lock` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `lock_object` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `time_out` longtext COLLATE utf8_bin,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `lock_object` (`lock_object`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_rm_external_resource_provider` (
+    `id` int(10) NOT NULL AUTO_INCREMENT,
+    `resource_type` varchar(32) NOT NULL,
+    `name` varchar(32) NOT NULL,
+    `labels` varchar(32) DEFAULT NULL,
+    `config` text NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_engine_em` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `engine_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `em_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_label` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_key` varchar(32) COLLATE utf8_bin NOT NULL,
+    `label_value` varchar(255) COLLATE utf8_bin NOT NULL,
+    `label_feature` varchar(16) COLLATE utf8_bin NOT NULL,
+    `label_value_size` int(20) NOT NULL,
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_key_value` (`label_key`,`label_value`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_label_value_relation` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_value_key` varchar(255) COLLATE utf8_bin NOT NULL,
+    `label_value_content` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `label_id` int(20) DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_value_key_label_id` (`label_value_key`,`label_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_label_resource` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_id` int(20) DEFAULT NULL,
+    `resource_id` int(20) DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_id` (`label_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_ec_resource_info_record` (
+    `id` INT(20) NOT NULL AUTO_INCREMENT,
+    `label_value` VARCHAR(255) NOT NULL COMMENT 'ec labels stringValue',
+    `create_user` VARCHAR(128) NOT NULL COMMENT 'ec create user',
+    `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ec instance info',
+    `ecm_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'ecm instance info ',
+    `ticket_id` VARCHAR(100) NOT NULL COMMENT 'ec ticket id',
+    `log_dir_suffix` varchar(128) COLLATE utf8_bin DEFAULT NULL COMMENT 'log path',
+    `request_times` INT(8) COMMENT 'resource request times',
+    `request_resource` VARCHAR(1020) COMMENT 'request resource',
+    `used_times` INT(8) COMMENT 'resource used times',
+    `used_resource` VARCHAR(1020) COMMENT 'used resource',
+    `release_times` INT(8) COMMENT 'resource released times',
+    `released_resource` VARCHAR(1020)  COMMENT 'released resource',
+    `release_time` datetime DEFAULT NULL COMMENT 'released time',
+    `used_time` datetime DEFAULT NULL COMMENT 'used time',
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    PRIMARY KEY (`id`),
+    KEY (`ticket_id`),
+    UNIQUE KEY `label_value_ticket_id` (`ticket_id`,`label_value`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_label_service_instance` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `label_id` int(20) DEFAULT NULL,
+    `service_instance` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY label_serviceinstance(label_id,service_instance)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_label_user` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `username` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `label_id` int(20) DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_metrics_history` (
+    `id` int(20) NOT NULL AUTO_INCREMENT,
+    `instance_status` int(20) DEFAULT NULL,
+    `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `heartbeat_msg` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `healthy_status` int(20) DEFAULT NULL,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `creator` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `ticketID` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `serviceName` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `instance` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_manager_service_instance_metrics` (
+    `instance` varchar(128) COLLATE utf8_bin NOT NULL,
+    `instance_status` int(11) DEFAULT NULL,
+    `overload` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `heartbeat_msg` text COLLATE utf8_bin DEFAULT NULL,
+    `healthy_status` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`instance`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    CREATE TABLE IF NOT EXISTS `linkis_cg_engine_conn_plugin_bml_resources` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'Primary key',
+    `engine_conn_type` varchar(100) NOT NULL COMMENT 'Engine type',
+    `version` varchar(100) COMMENT 'version',
+    `file_name` varchar(255) COMMENT 'file name',
+    `file_size` bigint(20)  DEFAULT 0 NOT NULL COMMENT 'file size',
+    `last_modified` bigint(20)  COMMENT 'File update time',
+    `bml_resource_id` varchar(100) NOT NULL COMMENT 'Owning system',
+    `bml_resource_version` varchar(200) NOT NULL COMMENT 'Resource owner',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'created time',
+    `last_update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'updated time',
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_dm_datasource
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_dm_datasource`
+    (
+    `id`                   int(11)                       NOT NULL AUTO_INCREMENT,
+    `datasource_name`      varchar(255) COLLATE utf8_bin NOT NULL,
+    `datasource_desc`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `datasource_type_id`   int(11)                       NOT NULL,
+    `create_identify`      varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `create_system`        varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `parameter`            varchar(255) COLLATE utf8_bin NULL DEFAULT NULL,
+    `create_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_time`          datetime                      NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `modify_user`          varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `labels`               varchar(255) COLLATE utf8_bin      DEFAULT NULL,
+    `version_id`           int(11)                            DEFAULT NULL COMMENT 'current version id',
+    `expire`               tinyint(1)                         DEFAULT 0,
+    `published_version_id` int(11)                            DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_dm_datasource_env
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_dm_datasource_env`
+    (
+    `id`                 int(11)                       NOT NULL AUTO_INCREMENT,
+    `env_name`           varchar(32) COLLATE utf8_bin  NOT NULL,
+    `env_desc`           varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `datasource_type_id` int(11)                       NOT NULL,
+    `parameter`          varchar(255) COLLATE utf8_bin          DEFAULT NULL,
+    `create_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `modify_time`        datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `modify_user`        varchar(255) COLLATE utf8_bin NULL     DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_dm_datasource_type
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_dm_datasource_type`
+    (
+    `id`          int(11)                      NOT NULL AUTO_INCREMENT,
+    `name`        varchar(32) COLLATE utf8_bin NOT NULL,
+    `description` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `option`      varchar(32) COLLATE utf8_bin  DEFAULT NULL,
+    `classifier`  varchar(32) COLLATE utf8_bin NOT NULL,
+    `icon`        varchar(255) COLLATE utf8_bin DEFAULT NULL,
+    `layers`      int(3)                       NOT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_ps_dm_datasource_type_key
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_dm_datasource_type_key`
+    (
+    `id`                  int(11)                       NOT NULL AUTO_INCREMENT,
+    `data_source_type_id` int(11)                       NOT NULL,
+    `key`                 varchar(32) COLLATE utf8_bin  NOT NULL,
+    `name`                varchar(32) COLLATE utf8_bin  NOT NULL,
+    `name_en`             varchar(32) COLLATE utf8_bin  NOT NULL,
+    `default_value`       varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `value_type`          varchar(50) COLLATE utf8_bin  NOT NULL,
+    `scope`               varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `require`             tinyint(1)                    NULL     DEFAULT 0,
+    `description`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `description_en`      varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `value_regex`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `ref_id`              bigint(20)                    NULL     DEFAULT NULL,
+    `ref_value`           varchar(50) COLLATE utf8_bin  NULL     DEFAULT NULL,
+    `data_source`         varchar(200) COLLATE utf8_bin NULL     DEFAULT NULL,
+    `update_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_time`         datetime                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+    -- ----------------------------
+    -- Table structure for linkis_ps_dm_datasource_version
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_ps_dm_datasource_version`
+    (
+    `version_id`    int(11)                        NOT NULL AUTO_INCREMENT,
+    `datasource_id` int(11)                        NOT NULL,
+    `parameter`     varchar(2048) COLLATE utf8_bin NULL DEFAULT NULL,
+    `comment`       varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    `create_time`   datetime(0)                    NULL DEFAULT CURRENT_TIMESTAMP,
+    `create_user`   varchar(255) COLLATE utf8_bin  NULL DEFAULT NULL,
+    PRIMARY KEY (`version_id`, `datasource_id`) USING BTREE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+    -- ----------------------------
+    -- Table structure for linkis_mg_gateway_auth_token
+    -- ----------------------------
+    CREATE TABLE IF NOT EXISTS `linkis_mg_gateway_auth_token` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `token_name` varchar(128) NOT NULL,
+    `legal_users` text,
+    `legal_hosts` text,
+    `business_owner` varchar(32),
+    `create_time` DATE DEFAULT NULL,
+    `update_time` DATE DEFAULT NULL,
+    `elapse_day` BIGINT DEFAULT NULL,
+    `update_by` varchar(32),
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `token_name` (`token_name`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+  linkis_dml.sql: |
+    -- 变量：
+    SET @SPARK_LABEL="spark-{{ .Values.linkis.deps.spark.version }}";
+    SET @HIVE_LABEL="hive-{{ .Values.linkis.deps.hive.version }}";
+    SET @PYTHON_LABEL="python-{{ .Values.linkis.deps.python.version }}";
+    SET @PIPELINE_LABEL="pipeline-1";
+    SET @JDBC_LABEL="jdbc-4";
+    SET @PRESTO_LABEL="presto-0.234";
+    SET @IO_FILE_LABEL="io_file-1.0";
+    SET @OPENLOOKENG_LABEL="openlookeng-1.5.0";
+    -- 衍生变量：
+    SET @SPARK_ALL=CONCAT('*-*,',@SPARK_LABEL);
+    SET @SPARK_IDE=CONCAT('*-IDE,',@SPARK_LABEL);
+    SET @SPARK_NODE=CONCAT('*-nodeexecution,',@SPARK_LABEL);
+    SET @SPARK_VISUALIS=CONCAT('*-Visualis,',@SPARK_LABEL);
+
+    SET @HIVE_ALL=CONCAT('*-*,',@HIVE_LABEL);
+    SET @HIVE_IDE=CONCAT('*-IDE,',@HIVE_LABEL);
+    SET @HIVE_NODE=CONCAT('*-nodeexecution,',@HIVE_LABEL);
+
+    SET @PYTHON_ALL=CONCAT('*-*,',@PYTHON_LABEL);
+    SET @PYTHON_IDE=CONCAT('*-IDE,',@PYTHON_LABEL);
+    SET @PYTHON_NODE=CONCAT('*-nodeexecution,',@PYTHON_LABEL);
+
+    SET @PIPELINE_ALL=CONCAT('*-*,',@PIPELINE_LABEL);
+    SET @PIPELINE_IDE=CONCAT('*-IDE,',@PIPELINE_LABEL);
+
+    SET @JDBC_ALL=CONCAT('*-*,',@JDBC_LABEL);
+    SET @JDBC_IDE=CONCAT('*-IDE,',@JDBC_LABEL);
+
+    SET @PRESTO_ALL=CONCAT('*-*,',@PRESTO_LABEL);
+    SET @PRESTO_IDE=CONCAT('*-IDE,',@PRESTO_LABEL);
+
+    SET @IO_FILE_ALL=CONCAT('*-*,',@IO_FILE_LABEL);
+    SET @IO_FILE_IDE=CONCAT('*-IDE,',@IO_FILE_LABEL);
+
+    SET @OPENLOOKENG_ALL=CONCAT('*-*,',@OPENLOOKENG_LABEL);
+    SET @OPENLOOKENG_IDE=CONCAT('*-IDE,',@OPENLOOKENG_LABEL);
+
+    -- Global Settings
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue', 'yarn队列名', 'yarn队列名', 'default', 'None', NULL, '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.instance.max', '取值范围：1-128，单位：个', '队列实例最大个数', '30', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.cores.max', '取值范围：1-500，单位：个', '队列CPU使用上限', '150', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|500)$', '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.yarnqueue.memory.max', '取值范围：1-1000，单位：G', '队列内存使用上限', '300G', 'Regex', '^([1-9]\\d{0,2}|1000)(G|g)$', '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', '全局各个引擎内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', '全局各个引擎核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1][0-2][0-8])$', '0', '0', '1', '队列资源');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', '全局各个引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源');
+    -- spark
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'spark引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.instances', '取值范围：1-40，单位：个', 'spark执行器实例最大并发数', '1', 'NumInterval', '[1,40]', '0', '0', '2', 'spark资源设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.cores', '取值范围：1-8，单位：个', 'spark执行器核心个数',  '1', 'NumInterval', '[1,8]', '0', '0', '1','spark资源设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.executor.memory', '取值范围：1-15，单位：G', 'spark执行器内存大小', '1g', 'Regex', '^([1-9]|1[0-5])(G|g)$', '0', '0', '3', 'spark资源设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.cores', '取值范围：只能取1，单位：个', 'spark驱动器核心个数', '1', 'NumInterval', '[1,1]', '0', '1', '1', 'spark资源设置','spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.driver.memory', '取值范围：1-15，单位：G', 'spark驱动器内存大小','1g', 'Regex', '^([1-9]|1[0-5])(G|g)$', '0', '0', '1', 'spark资源设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.max.free.time', '取值范围：3m,15m,30m,1h,2h', '引擎空闲退出时间','1h', 'OFT', '[\"1h\",\"2h\",\"30m\",\"15m\",\"3m\"]', '0', '0', '1', 'spark引擎设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.pd.addresses', NULL, NULL, 'pd0:2379', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.addr', NULL, NULL, 'tidb', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.password', NULL, NULL, NULL, 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.port', NULL, NULL, '4000', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.tispark.tidb.user', NULL, NULL, 'root', 'None', NULL, '0', '0', '1', 'tidb设置', 'spark');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('spark.python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'spark引擎设置', 'spark');
+    -- hive
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'hive引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'hive引擎初始化内存大小','1g', 'Regex', '^([1-9]|10)(G|g)$', '0', '0', '1', 'hive引擎设置', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.client.java.opts', 'hive客户端进程参数', 'hive引擎启动时jvm参数','', 'None', NULL, '1', '1', '1', 'hive引擎设置', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('mapred.reduce.tasks', '范围：1-20，单位：个', 'reduce数', '10', 'NumInterval', '[1,20]', '0', '1', '1', 'hive资源设置', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('dfs.block.size', '取值范围：2-10，单位：G', 'map数据块大小', '10', 'NumInterval', '[2,10]', '0', '1', '1', 'hive资源设置', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('hive.exec.reduce.bytes.per.reducer', '取值范围：2-10，单位：G', 'reduce处理的数据量', '10', 'NumInterval', '[2,10]', '0', '1', '1', 'hive资源设置', 'hive');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.max.free.time', '取值范围：3m,15m,30m,1h,2h', '引擎空闲退出时间','1h', 'OFT', '[\"1h\",\"2h\",\"30m\",\"15m\",\"3m\"]', '0', '0', '1', 'hive引擎设置', 'hive');
+
+    -- python
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-100，单位：G', 'python驱动器内存使用上限', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', '队列资源', 'python');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-128，单位：个', 'python驱动器核心个数上限', '10', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', '队列资源', 'python');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'python引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '队列资源', 'python');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-2，单位：G', 'python引擎初始化内存大小', '1g', 'Regex', '^([1-2])(G|g)$', '0', '0', '1', 'python引擎设置', 'python');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('python.version', '取值范围：python2,python3', 'python版本','python2', 'OFT', '[\"python3\",\"python2\"]', '0', '0', '1', 'python引擎设置', 'python');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.max.free.time', '取值范围：3m,15m,30m,1h,2h', '引擎空闲退出时间','1h', 'OFT', '[\"1h\",\"2h\",\"30m\",\"15m\",\"3m\"]', '0', '0', '1', 'python引擎设置', 'python');
+
+    -- pipeline
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.mold', '取值范围：csv或excel', '结果集导出类型','csv', 'OFT', '[\"csv\",\"excel\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.field.split', '取值范围：，或\\t', 'csv分隔符',',', 'OFT', '[\",\",\"\\\\t\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.charset', '取值范围：utf-8或gbk', '结果集导出字符集','gbk', 'OFT', '[\"utf-8\",\"gbk\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.isoverwrite', '取值范围：true或false', '是否覆写','true', 'OFT', '[\"true\",\"false\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-3，单位：个', 'pipeline引擎最大并发数','3', 'NumInterval', '[1,3]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.engineconn.java.driver.memory', '取值范围：1-10，单位：G', 'pipeline引擎初始化内存大小','2g', 'Regex', '^([1-9]|10)(G|g)$', '0', '0', '1', 'pipeline资源设置', 'pipeline');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('pipeline.output.shuffle.null.type', '取值范围：NULL或者BLANK', '空值替换','NULL', 'OFT', '[\"NULL\",\"BLANK\"]', '0', '0', '1', 'pipeline引擎设置', 'pipeline');
+    -- jdbc
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.connect.url', '例如:jdbc:hive2://127.0.0.1:10000', 'jdbc连接地址', 'jdbc:hive2://127.0.0.1:10000', 'Regex', '^\\s*jdbc:\\w+://([^:]+)(:\\d+)(/[^\\?]+)?(\\?\\S*)?$', '0', '0', '1', '数据源配置', 'jdbc');
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.driver', '例如:org.apache.hive.jdbc.HiveDriver', 'jdbc连接驱动', '', 'None', '', '0', '0', '1', '用户配置', 'jdbc');
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.version', '取值范围：jdbc3,jdbc4', 'jdbc版本','jdbc4', 'OFT', '[\"jdbc3\",\"jdbc4\"]', '0', '0', '1', '用户配置', 'jdbc');
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.username', 'username', '数据库连接用户名', '', 'None', '', '0', '0', '1', '用户配置', 'jdbc');
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.password', 'password', '数据库连接密码', '', 'None', '', '0', '0', '1', '用户配置', 'jdbc');
+    insert into `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.jdbc.connect.max', '范围：1-20，单位：个', 'jdbc引擎最大连接数', '10', 'NumInterval', '[1,20]', '0', '0', '1', '数据源配置', 'jdbc');
+
+    -- io_file
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.instance', '范围：1-20，单位：个', 'io_file引擎最大并发数', '10', 'NumInterval', '[1,20]', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.memory.max', '取值范围：1-50，单位：G', 'io_file引擎最大内存', '20G', 'Regex', '^([1-9]\\d{0,1}|100)(G|g)$', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`, `engine_conn_type`) VALUES ('wds.linkis.rm.client.core.max', '取值范围：1-100，单位：个', 'io_file引擎最大核心数', '40', 'Regex', '^(?:[1-9]\\d?|[1234]\\d{2}|128)$', '0', '0', '1', 'io_file引擎资源上限', 'io_file');
+
+    -- openlookeng
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.url', '例如:http://127.0.0.1:8080', '连接地址', 'http://127.0.0.1:8080', 'Regex', '^\\s*http://([^:]+)(:\\d+)(/[^\\?]+)?(\\?\\S*)?$', 'openlookeng', 0, 0, 1, '数据源配置');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.catalog', 'catalog', 'catalog', 'system', 'None', '', 'openlookeng', 0, 0, 1, '数据源配置');
+    INSERT INTO `linkis_ps_configuration_config_key` (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`) VALUES ('linkis.openlookeng.source', 'source', 'source', 'global', 'None', '', 'openlookeng', 0, 0, 1, '数据源配置');
+
+
+    -- Configuration first level directory
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-全局设置,*-*', 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-IDE,*-*', 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-Visualis,*-*', 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-nodeexecution,*-*', 'OPTIONAL', 2, now(), now());
+
+
+    -- Engine level default configuration
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType','*-*,*-*', 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_ALL, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_ALL, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_ALL, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PIPELINE_ALL, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@JDBC_ALL, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@OPENLOOKENG_ALL, 'OPTIONAL', 2, now(), now());
+
+    -- Custom correlation engine (e.g. spark-{{ .Values.linkis.deps.spark.version }}) and configKey value
+    -- Global Settings
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type is null and label.label_value = "*-*,*-*");
+
+    -- spark-{{ .Values.linkis.deps.spark.version }} (Here choose to associate all spark type Key values with spark-{{ .Values.linkis.deps.spark.version }})
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'spark' and label.label_value = @SPARK_ALL);
+
+    -- hive-{{ .Values.linkis.deps.hive.version }}
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'hive' and label_value = @HIVE_ALL);
+
+    -- python-{{ .Values.linkis.deps.python.version }}
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'python' and label_value = @PYTHON_ALL);
+
+    -- pipeline-*
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'pipeline' and label_value = @PIPELINE_ALL);
+
+    -- jdbc-4
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'jdbc' and label_value = @JDBC_ALL);
+
+    -- io_file-1.0
+    INSERT INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (SELECT config.id AS `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'io_file' and label_value = @IO_FILE_ALL);
+
+    -- openlookeng-*
+    insert into `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
+    (select config.id as `config_key_id`, label.id AS `engine_type_label_id` FROM linkis_ps_configuration_config_key config
+    INNER JOIN linkis_cg_manager_label label ON config.engine_conn_type = 'openlookeng' and label_value = @OPENLOOKENG_ALL);
+
+    -- If you need to customize the parameters of the new engine, the following configuration does not need to write SQL initialization
+    -- Just write the SQL above, and then add applications and engines to the management console to automatically initialize the configuration
+
+
+    -- Configuration secondary directory (creator level default configuration)
+    -- IDE
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_IDE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_IDE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_IDE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PIPELINE_IDE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@JDBC_IDE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@OPENLOOKENG_IDE, 'OPTIONAL', 2, now(), now());
+
+    -- Visualis
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_VISUALIS, 'OPTIONAL', 2, now(), now());
+    -- nodeexecution
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@SPARK_NODE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@HIVE_NODE, 'OPTIONAL', 2, now(), now());
+    replace into `linkis_cg_manager_label` (`label_key`, `label_value`, `label_feature`, `label_value_size`, `update_time`, `create_time`) VALUES ('combined_userCreator_engineType',@PYTHON_NODE, 'OPTIONAL', 2, now(), now());
+
+
+    -- Associate first-level and second-level directories
+    select @label_id := id from linkis_cg_manager_label where `label_value` = '*-全局设置,*-*';
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = '*-IDE,*-*';
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = '*-Visualis,*-*';
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = '*-nodeexecution,*-*';
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 1);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @SPARK_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @HIVE_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @PYTHON_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @PIPELINE_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @JDBC_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @OPENLOOKENG_IDE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` =  @SPARK_VISUALIS;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @SPARK_NODE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @HIVE_NODE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    select @label_id := id from linkis_cg_manager_label where `label_value` = @PYTHON_NODE;
+    insert into linkis_ps_configuration_category (`label_id`, `level`) VALUES (@label_id, 2);
+
+    -- Associate label and default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,*-*');
+
+    -- spark default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @SPARK_ALL);
+
+    -- hive default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @HIVE_ALL);
+
+    -- python default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @PYTHON_ALL);
+
+    -- pipeline default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @PIPELINE_ALL);
+
+    -- jdbc default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @JDBC_ALL);
+
+    -- openlookeng default configuration
+    insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
+    (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
+    INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @OPENLOOKENG_ALL);
+
+    insert  into `linkis_cg_rm_external_resource_provider`(`id`,`resource_type`,`name`,`labels`,`config`) values
+      (1,'Yarn','default',NULL,'{\r\n\"rmWebAddress\": \"{{ .Values.linkis.deps.yarn.restfulUrl }}\",\r\n\"hadoopVersion\": \"{{ .Values.linkis.deps.hadoop.version }}\",\r\n\"authorEnable\":{{ .Values.linkis.deps.yarn.authEnable }},\r\n\"user\":\"{{ .Values.linkis.deps.yarn.authUser }}\",\r\n\"pwd\":\"{{ .Values.linkis.deps.yarn.authPassword }}\",\r\n\"kerberosEnable\":{{ .Values.linkis.deps.yarn.kerberosEnable }},\r\n\"principalName\":\"{{ .Values.linkis.deps.yarn.principal }}\",\r\n\"keytabPath\":\"{{ .Values.linkis.deps.yarn.keytab }}\",\r\n\"krb5Path\":\"{{ .Values.linkis.deps.yarn.krb5 }}\"\r\n}')
+     ON DUPLICATE KEY UPDATE resource_type='Yarn', config='{\r\n\"rmWebAddress\": \"{{ .Values.linkis.deps.yarn.restfulUrl }}\",\r\n\"hadoopVersion\": \"{{ .Values.linkis.deps.hadoop.version }}\",\r\n\"authorEnable\":{{ .Values.linkis.deps.yarn.authEnable }},\r\n\"user\":\"{{ .Values.linkis.deps.yarn.authUser }}\",\r\n\"pwd\":\"{{ .Values.linkis.deps.yarn.authPassword }}\",\r\n\"kerberosEnable\":{{ .Values.linkis.deps.yarn.kerberosEnable }},\r\n\"principalName\":\"{{ .Values.linkis.deps.yarn.principal }}\",\r\n\"keytabPath\":\"{{ .Values.linkis.deps.yarn.keytab }}\",\r\n\"krb5Path\":\"{{ .Values.linkis.deps.yarn.krb5 }}\"\r\n}';
+
+    -- errorcode
+    -- 01 linkis server
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01001','您的任务没有路由到后台ECM，请联系管理员','The em of labels',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','Linkis服务负载过高，请联系管理员扩容','Unexpected end of file from server',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01003','Linkis服务负载过高，请联系管理员扩容','failed to ask linkis Manager Can be retried SocketTimeoutException',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','引擎在启动时被Kill，请联系管理员',' [0-9]+ Killed',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01005','请求Yarn获取队列信息重试2次仍失败，请联系管理员','Failed to request external resourceClassCastException',0);
+
+
+    -- 11 linkis resource 12 user resource 13 user task resouce
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01101','ECM资源不足，请联系管理员扩容','ECM resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01102','ECM 内存资源不足，请联系管理员扩容','ECM memory resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01103','ECM CPU资源不足，请联系管理员扩容','ECM CPU resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01004','ECM 实例资源不足，请联系管理员扩容','ECM Insufficient number of instances',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01005','机器内存不足，请联系管理员扩容','Cannot allocate memory',0);
+
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12001','队列CPU资源不足，可以调整Spark执行器个数','Queue CPU resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12002','队列内存资源不足，可以调整Spark执行器个数','Insufficient queue memory',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12003','队列实例数超过限制','Insufficient number of queue instances',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12004','全局驱动器内存使用上限，可以设置更低的驱动内存','Drive memory resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12005','超出全局驱动器CPU个数上限，可以清理空闲引擎','Drive core resources are insufficient',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12006','超出引擎最大并发数上限，可以清理空闲引擎','Insufficient number of instances',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12008','获取Yarn队列信息异常,可能是您设置的yarn队列不存在','获取Yarn队列信息异常',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12009','会话创建失败，%s队列不存在，请检查队列设置是否正确','queue (\\S+) does not exist in YARN',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12010','集群队列内存资源不足，可以联系组内人员释放资源','Insufficient cluster queue memory',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12011','集群队列CPU资源不足，可以联系组内人员释放资源','Insufficient cluster queue cpu',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12012','集群队列实例数超过限制','Insufficient cluster queue instance',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12013','资源不足导致启动引擎超时，您可以进行任务重试','wait for DefaultEngineConn',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('12014','请求引擎超时，可能是因为队列资源不足导致，请重试','wait for engineConn initial timeout',0);
+
+
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13001','Java进程内存溢出，建议优化脚本内容','OutOfMemoryError',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13002','使用资源过大，请调优sql或者加大资源','Container killed by YARN for exceeding memory limits',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13003','使用资源过大，请调优sql或者加大资源','read record exception',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13004','引擎意外退出，可能是使用资源过大导致','failed because the engine quitted unexpectedly',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13005','Spark app应用退出，可能是复杂任务导致','Spark application has already stopped',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13006','Spark context退出，可能是复杂任务导致','Spark application sc has already stopped',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13007','Pyspark子进程意外退出，可能是复杂任务导致','Pyspark process  has stopped',0);
+    -- 21 cluster Authority  22 db Authority
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21001','会话创建失败，用户%s不能提交应用到队列：%s，请联系提供队列给您的人员','User (\\S+) cannot submit applications to queue (\\S+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21002','创建Python解释器失败，请联系管理员','initialize python executor failed',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('21003','创建单机Python解释器失败，请联系管理员','PythonSession process cannot be initialized',0);
+
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22001','%s无权限访问，请申请开通数据表权限，请联系您的数据管理人员','Permission denied:\\s*user=[a-zA-Z0-9_]+,\\s*access=[A-Z]+\\s*,\\s*inode="([a-zA-Z0-9/_\\.]+)"',0);
+    -- INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22002','您可能没有相关权限','Permission denied',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22003','所查库表无权限','Authorization failed:No privilege',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22004','用户%s在机器不存在，请确认是否申请了相关权限','user (\\S+) does not exist',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22005','用户在机器不存在，请确认是否申请了相关权限','engineConnExec.sh: Permission denied',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22006','用户在机器不存在，请确认是否申请了相关权限','at com.sun.security.auth.UnixPrincipal',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22007','用户在机器不存在，请确认是否申请了相关权限','LoginException: java.lang.NullPointerException: invalid null input: name',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22008','用户在机器不存在，请确认是否申请了相关权限','User not known to the underlying authentication module',0);
+
+    -- 30 Space exceeded 31 user operation
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('30001','库超过限制','is exceeded',0);
+
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('31001','用户主动kill任务','is killed by user',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('31002','您提交的EngineTypeLabel没有对应的引擎版本','EngineConnPluginNotFoundException',0);
+
+    -- 41 not exist 44 sql  43 python 44 shell 45 scala 46 importExport
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41001','数据库%s不存在，请检查引用的数据库是否有误','Database ''([a-zA-Z_0-9]+)'' not found',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41001','数据库%s不存在，请检查引用的数据库是否有误','Database does not exist: ([a-zA-Z_0-9]+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41002','表%s不存在，请检查引用的表是否有误','Table or view not found: ([`\\.a-zA-Z_0-9]+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41002','表%s不存在，请检查引用的表是否有误','Table not found ''([a-zA-Z_0-9]+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41002','表%s不存在，请检查引用的表是否有误','Table ([a-zA-Z_0-9]+) not found',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41003','字段%s不存在，请检查引用的字段是否有误','cannot resolve ''`(.+)`'' given input columns',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41003','字段%s不存在，请检查引用的字段是否有误',' Invalid table alias or column reference ''(.+)'':',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41003','字段%s不存在，请检查引用的字段是否有误','Column ''(.+)'' cannot be resolved',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41004','分区字段%s不存在，请检查引用的表%s是否为分区表或分区字段有误','([a-zA-Z_0-9]+) is not a valid partition column in table ([`\\.a-zA-Z_0-9]+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41004','分区字段%s不存在，请检查引用的表是否为分区表或分区字段有误','Partition spec \\{(\\S+)\\} contains non-partition columns',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41004','分区字段%s不存在，请检查引用的表是否为分区表或分区字段有误','table is not partitioned but partition spec exists:\\{(.+)\\}',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41004','表对应的路径不存在，请联系您的数据管理人员','Path does not exist: viewfs',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('41005','文件%s不存在','Caused by:\\s*java.io.FileNotFoundException',0);
+
+    -- 42 sql
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42001','括号不匹配，请检查代码中括号是否前后匹配','extraneous input ''\\)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42002','非聚合函数%s必须写在group by中，请检查代码的group by语法','expression ''(\\S+)'' is neither present in the group by',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42002','非聚合函数%s必须写在group by中，请检查代码的group by语法','grouping expressions sequence is empty,\\s?and ''(\\S+)'' is not an aggregate function',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42002','非聚合函数%s必须写在group by中，请检查代码的group by语法','Expression not in GROUP BY key ''(\\S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42003','未知函数%s，请检查代码中引用的函数是否有误','Undefined function: ''(\\S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42003','未知函数%s，请检查代码中引用的函数是否有误','Invalid function ''(\\S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42004','字段%s存在名字冲突，请检查子查询内是否有同名字段','Reference ''(\\S+)'' is ambiguous',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42004','字段%s存在名字冲突，请检查子查询内是否有同名字段','Ambiguous column Reference ''(\\S+)'' in subquery',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42005','字段%s必须指定表或者子查询别名，请检查该字段来源','Column ''(\\S+)'' Found in more than One Tables/Subqueries',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42006','表%s在数据库%s中已经存在，请删除相应表后重试','Table or view ''(\\S+)'' already exists in database ''(\\S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42006','表%s在数据库中已经存在，请删除相应表后重试','Table (\\S+) already exists',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42006','表%s在数据库中已经存在，请删除相应表后重试','Table already exists',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42006','表%s在数据库中已经存在，请删除相应表后重试','AnalysisException: (S+) already exists',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42007','插入目标表字段数量不匹配,请检查代码！','requires that the data to be inserted have the same number of columns as the target table',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42008','数据类型不匹配，请检查代码！','due to data type mismatch: differing types in',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42009','字段%s引用有误，请检查字段是否存在！','Invalid column reference (S+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42010','字段%s提取数据失败','Can''t extract value from (S+): need',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42011','括号或者关键字不匹配，请检查代码！','mismatched input ''(\\S+)'' expecting',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42012','group by 位置2不在select列表中，请检查代码！','GROUP BY position (S+) is not in select list',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42013','字段提取数据失败请检查字段类型','Can''t extract value from (S+): need struct type but got string',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42014','插入数据未指定目标表字段%s，请检查代码！','Cannot insert into target table because column number/types are different ''(S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42015','表别名%s错误，请检查代码！','Invalid table alias ''(\\S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42016','UDF函数未指定参数，请检查代码！','UDFArgumentException Argument expected',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42017','聚合函数%s不能写在group by 中，请检查代码！','aggregate functions are not allowed in GROUP BY',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42018','您的代码有语法错误，请您修改代码之后执行','SemanticException Error in parsing',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42019','表不存在，请检查引用的表是否有误','table not found',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42020','函数使用错误，请检查您使用的函数方式','No matching method',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42021','您的sql代码可能有语法错误，请检查sql代码','FAILED: ParseException',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42022','您的sql代码可能有语法错误，请检查sql代码','org.apache.spark.sql.catalyst.parser.ParseException',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42022','您的sql代码可能有语法错误，请检查sql代码','org.apache.hadoop.hive.ql.parse.ParseException',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42023','聚合函数不能嵌套','aggregate function in the argument of another aggregate function',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42024','聚合函数不能嵌套','aggregate function parameters overlap with the aggregation',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42025','union 的左右查询字段不一致','Union can only be performed on tables',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42025','hql报错，union 的左右查询字段不一致','both sides of union should match',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42025','union左表和右表类型不一致','on first table and type',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42026','您的建表sql不能推断出列信息','Unable to infer the schema',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42027','动态分区的严格模式需要指定列，您可用通过设置set hive.exec.dynamic.partition.mode=nostrict','requires at least one static partition',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42028','函数输入参数有误','Invalid number of arguments for function',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42029','sql语法报错，select * 与group by无法一起使用','not allowed in select list when GROUP BY  ordinal',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42030','where/having子句之外不支持引用外部查询的表达式','the outer query are not supported outside of WHERE',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42031','sql语法报错，group by 后面不能跟一个表','show up in the GROUP BY list',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42032','hql报错，窗口函数中的字段重复','check for circular dependencies',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42033','sql中出现了相同的字段','Found duplicate column',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42034','sql语法不支持','not supported in current context',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42035','hql语法报错，嵌套子查询语法问题','Unsupported SubQuery Expression',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('42036','hql报错，子查询中in 用法有误','in definition of SubQuery',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43037','表字段类型修改导致的转型失败，请联系修改人员','cannot be cast to',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43038','select 的表可能有误','Invalid call to toAttribute on unresolved object',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43039','语法问题，请检查脚本','Distinct window functions are not supported',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43040','Presto查询一定要指定数据源和库信息','Schema must be specified when session schema is not set',0);
+
+    --  43 python
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43001','代码中存在NoneType空类型变量，请检查代码','''NoneType'' object',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43002','数组越界','IndexError:List index out of range',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43003','您的代码有语法错误，请您修改代码之后执行','SyntaxError',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43004','python代码变量%s未定义','name ''(S+)'' is not defined',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43005','python udf %s 未定义','Undefined function:s+''(S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43006','python执行不能将%s和%s两种类型进行连接','cannot concatenate ''(S+)'' and ''(S+)''',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43007','pyspark执行失败，可能是语法错误或stage失败','Py4JJavaError: An error occurred',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43008','python代码缩进对齐有误','unexpected indent',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43009','python代码缩进有误','unexpected indent',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43010','python代码反斜杠后面必须换行','unexpected character after line',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43011','导出Excel表超过最大限制1048575','Invalid row number',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43012','python save as table未指定格式，默认用parquet保存，hive查询报错','parquet.io.ParquetDecodingException',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43013','索引使用错误','IndexError',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43014','sql语法有问题','raise ParseException',0);
+
+    -- 46 importExport
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('46001','找不到导入文件地址：%s','java.io.FileNotFoundException: (\\S+) \\(No such file or directory\\)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('46002','导出为excel时临时文件目录权限异常','java.io.IOException: Permission denied(.+)at org.apache.poi.xssf.streaming.SXSSFWorkbook.createAndRegisterSXSSFSheet',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('46003','导出文件时无法创建目录：%s','java.io.IOException: Mkdirs failed to create (\\S+) (.+)',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('46004','导入模块错误，系统没有%s模块，请联系运维人员安装','ImportError: No module named (S+)',0);
+
+    -- 91 wtss
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91001','找不到变量值，请确认您是否设置相关变量','not find variable substitution for',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91002','不存在的代理用户，请检查你是否申请过平台层（bdp或者bdap）用户','failed to change current working directory ownership',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91003','请检查提交用户在WTSS内是否有该代理用户的权限，代理用户中是否存在特殊字符，是否用错了代理用户，OS层面是否有该用户，系统设置里面是否设置了该用户为代理用户','没有权限执行当前任务',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91004','平台层不存在您的执行用户，请在ITSM申请平台层（bdp或者bdap）用户','使用chown命令修改',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91005','未配置代理用户，请在ITSM走WTSS用户变更单，为你的用户授权改代理用户','请联系系统管理员为您的用户添加该代理用户',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91006','您的用户初始化有问题，请联系管理员','java: No such file or directory',0);
+    INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('91007','JobServer中不存在您的脚本文件，请将你的脚本文件放入对应的JobServer路径中', 'Could not open input file for reading%does not exist',0);
+
+    -- ----------------------------
+    -- Default Tokens
+    -- ----------------------------
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('QML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('BML-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('WS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('dss-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('QUALITIS-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('VALIDATOR-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKISCLI-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('DSM-AUTH','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+    REPLACE INTO `linkis_mg_gateway_auth_token`(`token_name`,`legal_users`,`legal_hosts`,`business_owner`,`create_time`,`update_time`,`elapse_day`,`update_by`) VALUES ('LINKIS_CLI_TEST','*','*','BDP',curdate(),curdate(),-1,'LINKIS');
+
+    INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mysql', 'mysql数据库', 'mysql数据库', '关系型数据库', '', 3);
+    INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('kafka', 'kafka', 'kafka', '消息队列', '', 2);
+    INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('presto', 'presto SQL', 'presto', '大数据存储', '', 3);
+    INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('hive', 'hive数据库', 'hive', '大数据存储', '', 3);
+    INSERT INTO `linkis_ps_dm_datasource_type` (`name`, `description`, `option`, `classifier`, `icon`, `layers`) VALUES ('mongodb', 'default', 'default', 'DEFAULT', NULL, 3);
+
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'host', '主机名(Host)', 'Host', NULL, 'TEXT', NULL, 1, '主机名(Host)', 'Host', NULL, NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'port', '端口号(Port)','Port', NULL, 'TEXT', NULL, 1, '端口号(Port)','Port', NULL, NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'driverClassName', '驱动类名(Driver class name)', 'Driver class name', 'com.mysql.jdbc.Driver', 'TEXT', NULL, 1, '驱动类名(Driver class name)', 'Driver class name', NULL, NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'params', '连接参数(Connection params)', 'Connection params', NULL, 'TEXT', NULL, 0, '输入JSON格式(Input JSON format): {"param":"value"}', 'Input JSON format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'username', '用户名(Username)', 'Username', NULL, 'TEXT', NULL, 1, '用户名(Username)', 'Username', '^[0-9A-Za-z_-]+$', NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, 1, '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (1, 'databaseName', '数据库名(Database name)', 'Database name', NULL, 'TEXT', NULL, 0, '数据库名(Database name)', 'Database name', NULL, NULL, NULL, NULL,  now(), now());
+    INSERT INTO `linkis_ps_dm_datasource_type_key` (`data_source_type_id`, `key`, `name`, `name_en`, `default_value`, `value_type`, `scope`, `require`, `description`, `description_en`, `value_regex`, `ref_id`, `ref_value`, `data_source`, `update_time`, `create_time`) VALUES (4, 'envId', '集群环境(Cluster env)', 'Cluster env', NULL, 'SELECT', NULL, 1, '集群环境(Cluster env)', 'Cluster env', NULL, NULL, NULL, '/data-source-manager/env-list/all/type/4', now(), now());
+
+    INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境SIT', '测试环境SIT', 4, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);
+    INSERT INTO `linkis_ps_dm_datasource_env` (`env_name`, `env_desc`, `datasource_type_id`, `parameter`, `create_time`, `create_user`, `modify_time`, `modify_user`) VALUES ('测试环境UAT', '测试环境UAT', 4, '{"uris":"thrift://localhost:9083", "hadoopConf":{"hive.metastore.execute.setugi":"true"}}',  now(), NULL,  now(), NULL);
+

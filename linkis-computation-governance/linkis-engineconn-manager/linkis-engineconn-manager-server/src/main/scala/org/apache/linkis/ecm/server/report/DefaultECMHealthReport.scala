@@ -69,9 +69,9 @@ class DefaultECMHealthReport extends ECMHealthReport {
 
   override def getNodeMsg: String = nodeMsg
 
-  override def getUsedResource: Resource = usedResource
+//  override def getUsedResource: Resource = usedResource
 
-  override def setUsedResource(usedResource: Resource): Unit = this.usedResource = usedResource
+//  override def setUsedResource(usedResource: Resource): Unit = this.usedResource = usedResource
 
   override def getTotalResource: Resource = totalResource
 

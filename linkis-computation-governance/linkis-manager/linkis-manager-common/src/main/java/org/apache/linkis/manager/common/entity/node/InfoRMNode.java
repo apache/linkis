@@ -32,6 +32,7 @@ public class InfoRMNode implements RMNode {
   private String owner;
 
   private String mark;
+  private String identifier;
 
   private NodeStatus nodeStatus;
 
@@ -77,6 +78,16 @@ public class InfoRMNode implements RMNode {
   @Override
   public String getMark() {
     return mark;
+  }
+
+  @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   @Override

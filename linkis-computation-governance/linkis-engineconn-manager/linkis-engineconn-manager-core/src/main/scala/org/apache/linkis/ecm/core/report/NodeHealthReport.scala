@@ -34,9 +34,9 @@ trait NodeHealthReport {
 
   def getNodeMsg: String
 
-  def getUsedResource: Resource
+//  def getUsedResource: Resource
 
-  def setUsedResource(resource: Resource): Unit
+//  def setUsedResource(resource: Resource): Unit
 
   def getTotalResource: Resource
 

@@ -15,26 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.password;
+package org.apache.linkis.engineplugin.impala.client.protocol;
 
-import javax.security.auth.callback.PasswordCallback;
+public class ExecProgress {
+  public static final ExecProgress DEFAULT_PROGRESS = new ExecProgress(-1, 0, -1);
 
-public class StaticPasswordCallback extends PasswordCallback {
+  private long totalScanRanges;
+  private long completedScanRanges;
+  private int runningNodes;
 
-  private final char[] password;
+  public ExecProgress() {}
 
-  public StaticPasswordCallback(String prompt, boolean echoOn) {
-    super(prompt, echoOn);
-    this.password = prompt.toCharArray();
+  public ExecProgress(long totalScanRanges, long completedScanRanges, int runningNodes) {
+    super();
+    this.totalScanRanges = totalScanRanges;
+    this.completedScanRanges = completedScanRanges;
+    this.runningNodes = runningNodes;
   }
 
-  public StaticPasswordCallback(String prompt) {
-    super(prompt, false);
-    this.password = prompt.toCharArray();
+  public long getTotalScanRanges() {
+    return totalScanRanges;
   }
 
-  @Override
-  public char[] getPassword() {
-    return password;
+  public long getCompletedScanRanges() {
+    return completedScanRanges;
+  }
+
+  public int getRunningNodes() {
+    return runningNodes;
   }
 }

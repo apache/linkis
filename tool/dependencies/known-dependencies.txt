@@ -234,6 +234,8 @@ httpcore-4.4.14.jar
 httpcore-nio-4.4.14.jar
 httpmime-4.5.13.jar
 hystrix-core-1.5.18.jar
+impala-frontend-3.4.0.7.2.15.0-147.jar
+impala-minimal-hive-exec-3.4.0.7.2.15.0-147.jar
 ini4j-0.5.4.jar
 ion-java-1.0.2.jar
 istack-commons-runtime-3.0.12.jar

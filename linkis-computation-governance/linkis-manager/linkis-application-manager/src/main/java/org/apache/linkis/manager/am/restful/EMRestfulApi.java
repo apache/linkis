@@ -25,6 +25,7 @@ import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
+import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.em.ECMOperateService;
 import org.apache.linkis.manager.am.service.em.EMInfoService;
 import org.apache.linkis.manager.am.utils.AMUtils;
@@ -33,6 +34,7 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.protocol.OperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
@@ -91,6 +93,7 @@ public class EMRestfulApi {
 
   @Autowired private ECMOperateService ecmOperateService;
 
+  @Autowired private ECResourceInfoService ecResourceInfoService;
   private LabelBuilderFactory stdLabelBuilderFactory =
       LabelBuilderFactoryContext.getLabelBuilderFactory();
 
@@ -323,7 +326,10 @@ public class EMRestfulApi {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
     }
-    return executeECMOperation(engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(
+        engineNode.getEMNode(),
+        engineNode.getServiceInstance().getInstance(),
+        new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(
@@ -354,7 +360,7 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-    return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(ecmNode, "", new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(value = "openEngineLog", notes = "open Engine log", response = Message.class)
@@ -377,9 +383,10 @@ public class EMRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "openEngineLog");
     EMNode ecmNode;
     Map<String, Object> parameters;
+    String engineInstance;
     try {
       String emInstance = jsonNode.get("emInstance").asText();
-      String engineInstance = jsonNode.get("instance").asText();
+      engineInstance = jsonNode.get("instance").asText();
       ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
       logger.info("User {} try to open engine: {} log.", userName, serviceInstance);
       ecmNode =
@@ -416,10 +423,12 @@ public class EMRestfulApi {
       logger.error("Failed to open engine log, error:", e);
       return Message.error(e.getMessage());
     }
-    return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(
+        ecmNode, engineInstance, new ECMOperateRequest(userName, parameters));
   }
 
-  private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
+  private Message executeECMOperation(
+      EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     if (ArrayUtils.contains(adminOperations, operationName)
         && Configuration.isNotAdmin(ecmOperateRequest.user())) {
@@ -434,6 +443,18 @@ public class EMRestfulApi {
               + " admin Operation in ECM "
               + ecmNode.getServiceInstance());
     }
+
+    // fill in logDirSuffix
+    if (StringUtils.isNotBlank(engineInstance)
+        && Objects.isNull(ecmOperateRequest.parameters().get("logDirSuffix"))) {
+      ECResourceInfoRecord ecResourceInfoRecord =
+          ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
+      if (Objects.isNull(ecResourceInfoRecord)) {
+        return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
+      }
+      ecmOperateRequest.parameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
+    }
+
     ECMOperateResponse engineOperateResponse =
         ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
 

@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class PersistenceNodeMetrics implements NodeMetrics {
 
@@ -59,7 +60,9 @@ public class PersistenceNodeMetrics implements NodeMetrics {
   }
 
   public void setStatus(Integer status) {
-    this.status = status;
+    if (Objects.nonNull(status)) {
+      this.status = status;
+    }
   }
 
   @Override

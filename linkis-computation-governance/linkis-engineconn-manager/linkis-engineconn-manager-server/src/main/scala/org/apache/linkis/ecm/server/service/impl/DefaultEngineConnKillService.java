@@ -20,17 +20,13 @@ package org.apache.linkis.ecm.server.service.impl;
 import org.apache.commons.io.IOUtils;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.utils.Utils;
-import org.apache.linkis.ecm.core.engineconn.EngineConn;
 import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.service.EngineConnKillService;
-import org.apache.linkis.ecm.server.service.EngineConnListService;
 import org.apache.linkis.engineconn.common.conf.EngineConnConf;
 import org.apache.linkis.governance.common.utils.GovernanceUtils;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineSuicideRequest;
-import org.apache.linkis.manager.label.entity.Label;
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 import org.apache.linkis.rpc.Sender;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +40,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,34 +48,37 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultEngineConnKillService.class);
 
-    private EngineConnListService engineConnListService;
-
-    public void setEngineConnListService(EngineConnListService engineConnListService) {
-        this.engineConnListService = engineConnListService;
-    }
-
     private static final ThreadPoolExecutor ecYarnAppKillService = Utils.newCachedThreadPool(10, "ECM-Kill-EC-Yarn-App", true);
 
     @Override
     @Receiver
     public EngineStopResponse dealEngineConnStop(EngineStopRequest engineStopRequest) {
         logger.info("received EngineStopRequest " +  engineStopRequest);
-        EngineConn engineConn = getEngineConnByServiceInstance(engineStopRequest.getServiceInstance());
+        String pid = null;
+        if("process".equals(engineStopRequest.getIdentifierType()) && StringUtils.isNotBlank(engineStopRequest.getIdentifier())){
+            pid = engineStopRequest.getIdentifier();
+        }else {
+            String processPort = engineStopRequest.getServiceInstance().getInstance().split(":")[1];
+            pid = GovernanceUtils.findProcessIdentifier(processPort);
+        }
+
+        logger.info("dealEngineConnStop return pid: {}", pid);
         EngineStopResponse response = new EngineStopResponse();
-        if (null != engineConn) {
-            if(!killEngineConnByPid(engineConn)) {
+        if (StringUtils.isNotBlank(pid)) {
+            if(!killEngineConnByPid(pid, engineStopRequest.getServiceInstance())) {
                 response.setStopStatus(false);
-                response.setMsg("Kill engine " + engineConn.getServiceInstance().toString() + " failed.");
+                response.setMsg("Kill engine " + engineStopRequest.getServiceInstance().toString() + " failed.");
             } else {
                 response.setStopStatus(true);
-                response.setMsg("Kill engine " + engineConn.getServiceInstance().toString() + " succeed.");
+                response.setMsg("Kill engine " + engineStopRequest.getServiceInstance().toString() + " succeed.");
             }
-            killYarnAppIdOfOneEc(engineConn);
+            killYarnAppIdOfOneEc(engineStopRequest.getLogDirSuffix(), engineStopRequest.getServiceInstance(),
+                    engineStopRequest.getEngineType());
         } else {
-            logger.warn("Cannot find engineconn : " + engineStopRequest.getServiceInstance().toString() + " in this engineConnManager engineConn list, cannot kill.");
-            response.setStopStatus(true);
-            response.setMsg("EngineConn " + engineStopRequest.getServiceInstance().toString() + " was not found in this engineConnManager.");
+            logger.warn("Cannot find engineConn pid, try kill with rpc");
+            response.setStopStatus(false);
         }
+
         if (!response.getStopStatus()) {
             EngineSuicideRequest request = new EngineSuicideRequest(engineStopRequest.getServiceInstance(), engineStopRequest.getUser());
             try {
@@ -94,21 +92,21 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         return response;
     }
 
-    public void killYarnAppIdOfOneEc(EngineConn engineConn) {
-        String engineConnInstance = engineConn.getServiceInstance().toString();
-        logger.info("try to kill yarn app ids in the engine of ({}).", engineConnInstance);
-        String engineLogDir = engineConn.getEngineConnManagerEnv().engineConnLogDirs();
+    public void killYarnAppIdOfOneEc(String logDirSuffix, ServiceInstance serviceInstance, String engineType) {
+        String engineConnInstance = serviceInstance.toString();
+        String engineLogDir = ECMConfiguration.ENGINECONN_ROOT_DIR() + File.separator + logDirSuffix;
+        logger.info("try to kill yarn app ids in the engine of: [{}] engineLogDir: [{}]", engineConnInstance, engineLogDir);
+
         final String errEngineLogPath = engineLogDir.concat(File.separator).concat("yarnApp");
-        logger.info("try to parse the yarn app id from the engine err log file path: {}", errEngineLogPath);
+        logger.info("try to parse the yarn app id from the engine err log file path: [{}]", errEngineLogPath);
         File file = new File(errEngineLogPath);
-        if (file.exists())
-        {
+        if (file.exists()) {
             ecYarnAppKillService.execute(() -> {
                 BufferedReader in = null;
                 try {
                     in = new BufferedReader(new FileReader(errEngineLogPath));
                     String line;
-                    String regex = getYarnAppRegexByEngineType(engineConn);
+                    String regex = getYarnAppRegexByEngineType(engineType);
                     if (StringUtils.isBlank(regex)) {
                         return;
                     }
@@ -137,20 +135,10 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
                     IOUtils.closeQuietly(in);
                 }
             });
-    }
+        }
     }
 
-    private String getYarnAppRegexByEngineType(EngineConn engineConn) {
-        List<Label<?>> labels = engineConn.getLabels();
-        String engineType = "";
-        if (labels != null && !labels.isEmpty()) {
-            Optional<EngineTypeLabel> labelOptional = labels.stream().filter(label -> label instanceof EngineTypeLabel)
-                    .map(label -> (EngineTypeLabel) label).findFirst();
-            if (labelOptional.isPresent()) {
-                EngineTypeLabel engineTypeLabel = labelOptional.get();
-                engineType = engineTypeLabel.getEngineType();
-            }
-        }
+    private String getYarnAppRegexByEngineType(String engineType) {
         if (StringUtils.isBlank(engineType)) {
             return "";
         }
@@ -172,34 +160,17 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         return regex;
     }
 
-    private EngineConn getEngineConnByServiceInstance(ServiceInstance serviceInstance) {
-        if (null == serviceInstance) {
-            return null;
-        }
-        List<EngineConn> engineConnList = engineConnListService.getEngineConns();
-        for (EngineConn engineConn : engineConnList) {
-            if (null != engineConn && serviceInstance.equals(engineConn.getServiceInstance())) {
-                return engineConn;
-            }
-        }
-        return null;
-    }
-
-    private boolean killEngineConnByPid(EngineConn engineConn) {
-        logger.info("try to kill {} toString with pid({}).", engineConn.getServiceInstance().toString(), engineConn.getPid());
-        if (StringUtils.isNotBlank(engineConn.getPid())) {
+    private boolean killEngineConnByPid(String processId, ServiceInstance serviceInstance) {
+        logger.info("try to kill {} toString with pid({}).", serviceInstance.toString(), processId);
+        if (StringUtils.isNotBlank(processId)) {
             if (ECMConfiguration.ECM_PROCESS_SCRIPT_KILL()) {
-                GovernanceUtils.killProcess(engineConn.getPid(), engineConn.getServiceInstance().toString(), true);
+                GovernanceUtils.killProcess(processId, serviceInstance.toString(), true);
             } else {
-                killProcessByKillCmd(engineConn.getPid(), engineConn.getServiceInstance().toString());
+                killProcessByKillCmd(processId, serviceInstance.toString());
             }
-            if (isProcessAlive(engineConn.getPid())) {
-                return false;
-            } else {
-                return true;
-            }
+            return !isProcessAlive(processId);
         } else {
-            logger.warn("cannot kill {} with empty pid.", engineConn.getServiceInstance().toString());
+            logger.warn("cannot kill {} with empty pid.", serviceInstance.toString());
             return false;
         }
     }

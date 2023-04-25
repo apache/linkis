@@ -26,6 +26,8 @@ public class PersistenceNode {
   private String owner;
 
   private String mark;
+  /** identifier if mark equals "process", then identifier equals pid */
+  private String identifier;
 
   private Date updateTime;
   private Date createTime;
@@ -38,6 +40,14 @@ public class PersistenceNode {
 
   public void setMark(String mark) {
     this.mark = mark;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   public Integer getId() {

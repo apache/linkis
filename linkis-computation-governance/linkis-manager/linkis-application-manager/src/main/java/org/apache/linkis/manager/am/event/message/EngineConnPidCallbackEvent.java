@@ -15,12 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager.am.event.message;
 
-import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
+import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid;
 
-trait EngineConnStatusCallbackService {
+import org.springframework.context.ApplicationEvent;
 
-  def dealEngineConnStatusCallback(protocol: EngineConnStatusCallback): Unit
+public class EngineConnPidCallbackEvent extends ApplicationEvent {
 
+  private ResponseEngineConnPid protocol;
+
+  public EngineConnPidCallbackEvent(ResponseEngineConnPid protocol) {
+    super(protocol);
+    this.protocol = protocol;
+  }
+
+  public ResponseEngineConnPid getProtocol() {
+    return protocol;
+  }
 }

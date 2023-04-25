@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ecm.server.service
+package org.apache.linkis.manager;
 
-import org.apache.linkis.protocol.callback.{YarnAPPIdCallbackProtocol, YarnInfoCallbackProtocol}
+import org.apache.linkis.LinkisBaseServerApp;
 
-trait YarnCallbackService {
+/** @date 2020/7/7 16:22 */
+public class LinkisManagerApplication {
 
-  def dealApplicationId(protocol: YarnAPPIdCallbackProtocol): Unit
-
-  def dealApplicationURI(protocol: YarnInfoCallbackProtocol): Unit
-
+  public static void main(String[] args) throws ReflectiveOperationException {
+    LinkisBaseServerApp.main(args);
+    // DataWorkCloudApplication.main(args);
+  }
 }

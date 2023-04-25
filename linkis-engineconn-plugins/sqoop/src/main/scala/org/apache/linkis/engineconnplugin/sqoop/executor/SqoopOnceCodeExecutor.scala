@@ -36,7 +36,11 @@ import org.apache.linkis.engineconnplugin.sqoop.context.SqoopResourceConfigurati
   LINKIS_SQOOP_TASK_MAP_CPU_CORES,
   LINKIS_SQOOP_TASK_MAP_MEMORY
 }
-import org.apache.linkis.engineconnplugin.sqoop.params.SqoopParamsResolver
+import org.apache.linkis.engineconnplugin.sqoop.params.{
+  ConnectParamsResolver,
+  SqoopDataSourceParamsResolver,
+  SqoopParamsResolver
+}
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.protocol.engine.JobProgressInfo

@@ -24,39 +24,34 @@ import org.apache.linkis.engineconn.computation.executor.creation.ComputationSin
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.hive.common.HiveUtils
 import org.apache.linkis.engineplugin.hive.conf.HiveEngineConfiguration
-import org.apache.linkis.engineplugin.hive.entity.{
-  AbstractHiveSession,
-  HiveConcurrentSession,
-  HiveSession
-}
+import org.apache.linkis.engineplugin.hive.entity.{AbstractHiveSession, HiveConcurrentSession, HiveSession}
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.CREATE_HIVE_EXECUTOR_ERROR
 import org.apache.linkis.engineplugin.hive.errorcode.HiveErrorCodeSummary.HIVE_EXEC_JAR_ERROR
 import org.apache.linkis.engineplugin.hive.exception.HiveSessionStartFailedException
-import org.apache.linkis.engineplugin.hive.executor.{
-  HiveEngineConcurrentConnExecutor,
-  HiveEngineConnExecutor
-}
+import org.apache.linkis.engineplugin.hive.executor.{HiveEngineConcurrentConnExecutor, HiveEngineConnExecutor}
 import org.apache.linkis.hadoop.common.utils.HDFSUtils
 import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.hadoop.fs.Path
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.ql.Driver
 import org.apache.hadoop.hive.ql.session.SessionState
 import org.apache.hadoop.security.UserGroupInformation
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 
 import java.io.{ByteArrayOutputStream, PrintStream}
+import java.nio.file.Paths
 import java.security.PrivilegedExceptionAction
 import java.util
-
 import scala.collection.JavaConverters._
 
 class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory with Logging {
 
   private val HIVE_QUEUE_NAME: String = "mapreduce.job.queuename"
   private val BDP_QUEUE_NAME: String = "wds.linkis.rm.yarnqueue"
+  private val HIVE_TEZ_QUEUE_NAME: String = "tez.queue.name"
 
   override protected def newExecutor(
       id: Int,
@@ -133,6 +128,15 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
 
   private def getHiveConf(options: util.Map[String, String]) = {
     val hiveConf: HiveConf = HiveUtils.getHiveConf
+
+    if (HiveEngineConfiguration.HIVE_RANGER_ENABLE) {
+      hiveConf.addResource(new Path(Paths.get(EnvConfiguration.HIVE_CONF_DIR.getValue, "ranger-hive-security.xml").toAbsolutePath.toFile.getAbsolutePath))
+      hiveConf.addResource(new Path(Paths.get(EnvConfiguration.HIVE_CONF_DIR.getValue, "ranger-hive-audit.xml").toAbsolutePath.toFile.getAbsolutePath))
+      hiveConf.set("hive.security.authorization.enabled", "true")
+      hiveConf.set("hive.security.authorization.manager", "org.apache.ranger.authorization.hive.authorizer.RangerHiveAuthorizerFactory")
+      hiveConf.set("hive.conf.restricted.list", "hive.security.authorization.manager,hive.security.metastore.authorization.manager," +
+        "hive.security.metastore.authenticator.manager,hive.users.in.admin.role,hive.server2.xsrf.filter.enabled,hive.security.authorization.enabled")
+    }
     hiveConf.setVar(
       HiveConf.ConfVars.HIVEJAR,
       HiveUtils
@@ -152,7 +156,12 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       }
       .foreach { case (k, v) =>
         logger.info(s"key is $k, value is $v")
-        if (BDP_QUEUE_NAME.equals(k)) hiveConf.set(HIVE_QUEUE_NAME, v) else hiveConf.set(k, v)
+        if (BDP_QUEUE_NAME.equals(k)) {
+          hiveConf.set(HIVE_QUEUE_NAME, v)
+          if ("tez".equals(HiveEngineConfiguration.HIVE_ENGINE_TYPE)) {
+            hiveConf.set(HIVE_TEZ_QUEUE_NAME, v)
+          }
+        } else hiveConf.set(k, v)
       }
     hiveConf.setVar(
       HiveConf.ConfVars.HIVE_HADOOP_CLASSPATH,

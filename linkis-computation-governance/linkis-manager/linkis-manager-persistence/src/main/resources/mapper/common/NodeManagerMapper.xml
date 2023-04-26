@@ -118,7 +118,7 @@
 
 
     <select id="getEMNodeInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo">
-        SELECT t.*, metrics.instance_status
+        SELECT t.*, metrics.instance_status, metrics.heartbeat_msg
         FROM  linkis_cg_manager_service_instance t, linkis_cg_manager_service_instance_metrics metrics
         WHERE t.name ="linkis-cg-engineconn"
         <if test="creatorUsers != null and creatorUsers.size() > 0">
@@ -130,6 +130,12 @@
         <if test="statuss != null and statuss.size() > 0">
             and metrics.instance_status in
             <foreach collection="statuss" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+        </if>
+        <if test="instanceName != null and instanceName.size() > 0">
+            and t.instance in
+            <foreach collection="instanceName" item="i" open="(" close=")" separator=",">
                 #{i}
             </foreach>
         </if>

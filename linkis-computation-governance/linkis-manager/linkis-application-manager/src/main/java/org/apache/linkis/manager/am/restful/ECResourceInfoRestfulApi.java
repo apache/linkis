@@ -188,25 +188,49 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "creators", dataType = "Array", required = true, value = "creators"),
     @ApiImplicitParam(name = "engineTypes", dataType = "Array", value = "engine type"),
     @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
+    @ApiImplicitParam(name = "queueName", dataType = "String", value = "queueName"),
+    @ApiImplicitParam(name = "ecInstances", dataType = "String", value = "ecInstances"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
   public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
+    String username = ModuleUserUtils.getOperationUser(req, "ecList");
+    String token = ModuleUserUtils.getToken(req);
+    // check special admin token
+    if (StringUtils.isNotBlank(token)) {
+      if (!Configuration.isAdminToken(token)) {
+        logger.warn("Token:{} has no permission to query ecList.", token);
+        return Message.error("Token:" + token + " has no permission to query ecList.");
+      }
+    } else if (!Configuration.isAdmin(username)) {
+      logger.warn("User:{} has no permission to query ecList.", username);
+      return Message.error("User:" + username + " has no permission to query ecList.");
+    }
 
     JsonNode creatorsParam = jsonNode.get("creators");
     JsonNode engineTypesParam = jsonNode.get("engineTypes");
     JsonNode statussParam = jsonNode.get("statuss");
+    JsonNode queueNameParam = jsonNode.get("queueName");
+    JsonNode ecInstancesParam = jsonNode.get("ecInstances");
 
-    if (creatorsParam == null || creatorsParam.isNull() || creatorsParam.size() == 0) {
-      return Message.error("creators is null in the parameters of the request(请求参数中【creators】为空)");
-    }
+    //    if (creatorsParam == null || creatorsParam.isNull() || creatorsParam.size() == 0) {
+    //      return Message.error("creators is null in the parameters of the
+    // request(请求参数中【creators】为空)");
+    //    }
 
     List<String> creatorUserList = new ArrayList<>();
-    try {
-      creatorUserList =
-          JsonUtils.jackson()
-              .readValue(creatorsParam.toString(), new TypeReference<List<String>>() {});
-    } catch (JsonProcessingException e) {
-      return Message.error("parameters:creators parsing failed(请求参数【creators】解析失败)");
+    if (creatorsParam != null && !creatorsParam.isNull()) {
+      try {
+        creatorUserList =
+            JsonUtils.jackson()
+                .readValue(creatorsParam.toString(), new TypeReference<List<String>>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:creators parsing failed(请求参数【creators】解析失败)");
+      }
+      for (String creatorUser : creatorUserList) {
+        if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
+          return Message.error("Invalid creator: " + creatorUser);
+        }
+      }
     }
 
     List<String> engineTypeList = new ArrayList<>();
@@ -230,35 +254,37 @@ public class ECResourceInfoRestfulApi {
         return Message.error("parameters:statuss parsing failed(请求参数【statuss】解析失败)");
       }
     }
-
-    String username = ModuleUserUtils.getOperationUser(req, "ecList");
-
-    String token = ModuleUserUtils.getToken(req);
-    // check special admin token
-    if (StringUtils.isNotBlank(token)) {
-      if (!Configuration.isAdminToken(token)) {
-        logger.warn("Token:{} has no permission to query ecList.", token);
-        return Message.error("Token:" + token + " has no permission to query ecList.");
-      }
-    } else if (!Configuration.isAdmin(username)) {
-      logger.warn("User:{} has no permission to query ecList.", username);
-      return Message.error("User:" + username + " has no permission to query ecList.");
-    }
-
-    for (String creatorUser : creatorUserList) {
-      if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
-        return Message.error("Invalid creator: " + creatorUser);
+    String queueName = "";
+    if (queueNameParam != null && !queueNameParam.isNull()) {
+      try {
+        queueName =
+            JsonUtils.jackson()
+                .readValue(queueNameParam.toString(), new TypeReference<String>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:queueName parsing failed(请求参数【queueName】解析失败)");
       }
     }
-
+    List<String> ecInstancesList = new ArrayList<>();
+    if (ecInstancesParam != null && !ecInstancesParam.isNull()) {
+      try {
+        ecInstancesList =
+            JsonUtils.jackson()
+                .readValue(ecInstancesParam.toString(), new TypeReference<List<String>>() {});
+      } catch (JsonProcessingException e) {
+        return Message.error("parameters:instanceName parsing failed(请求参数【instanceName】解析失败)");
+      }
+    }
     logger.info(
-        "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}]",
+        "request parameters creatorUserList:[{}], engineTypeList:[{}], statusStrList:[{}], queueName:{}, instanceNameList:{}",
         String.join(",", creatorUserList),
         String.join(",", engineTypeList),
-        String.join(",", statusStrList));
+        String.join(",", statusStrList),
+        String.join(",", ecInstancesList),
+        queueNameParam);
 
     List<Map<String, Object>> list =
-        ecResourceInfoService.getECResourceInfoList(creatorUserList, engineTypeList, statusStrList);
+        ecResourceInfoService.getECResourceInfoList(
+            creatorUserList, engineTypeList, statusStrList, queueName, ecInstancesList);
 
     return Message.ok().data("ecList", list);
   }

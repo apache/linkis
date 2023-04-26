@@ -17,35 +17,31 @@
 
 package org.apache.linkis.common.utils;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.apache.linkis.common.exception.LinkisSecurityException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class ByteTimeUtilsTest {
 
-    @Test
-    void byteStringAsBytes() {
-    }
+  @Test
+  void byteStringAsBytes() {}
 
-    @Test
-    void byteStringAsKb() {
-    }
+  @Test
+  void byteStringAsKb() {}
 
-    @Test
-    void byteStringAsMb() {
-    }
+  @Test
+  void byteStringAsMb() {}
 
-    @Test
-    void byteStringAsGb() {
-        Long res = ByteTimeUtils.byteStringAsGb("1G");
-        Assertions.assertEquals(res,1);
+  @Test
+  void byteStringAsGb() {
+    Long res = ByteTimeUtils.byteStringAsGb("1G");
+    Assertions.assertEquals(res, 1);
 
-        Assertions.assertThrows(
-            NullPointerException.class,
-            () -> {
-                ByteTimeUtils.byteStringAsGb("512");
-            });
-
-    }
+    Assertions.assertThrows(
+        NullPointerException.class,
+        () -> {
+          ByteTimeUtils.byteStringAsGb("512");
+        });
+  }
 }

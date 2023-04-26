@@ -180,7 +180,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
         reportDelay > 0 && executorStatusChangedEvent.toStatus != lastStatus && reportDelay > sinceLastTime
     ) {
       logger.info(
-        "In order to ensure that the previous state is consumed first, sleep here {} s",
+        "In order to ensure that the previous state is consumed first, sleep here {} ms",
         reportDelay * 2
       )
 

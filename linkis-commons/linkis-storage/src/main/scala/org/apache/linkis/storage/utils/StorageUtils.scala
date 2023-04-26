@@ -46,7 +46,11 @@ object StorageUtils extends Logging {
   nf.setMaximumFractionDigits(StorageConfiguration.DOUBLE_FRACTION_LEN.getValue)
 
   def doubleToString(value: Double): String = {
-    nf.format(value)
+    if (value.isNaN) {
+      "NaN"
+    } else {
+      nf.format(value)
+    }
   }
 
   def loadClass[T](classStr: String, op: T => String): Map[String, T] = {

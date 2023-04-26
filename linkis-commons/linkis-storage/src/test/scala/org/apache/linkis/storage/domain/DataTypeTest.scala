@@ -60,4 +60,12 @@ class DataTypeTest {
 
   }
 
+  @Test
+  @DisplayName("toValueTest")
+  def toValueTest(): Unit = {
+    val dateType = DataType.toDataType("double")
+    val str = DataType.toValue(dateType, "NaN")
+    Assertions.assertNotNull(str)
+  }
+
 }

@@ -25,7 +25,7 @@ class StorageUtilsTest {
   @DisplayName("doubleToStringTest")
   def doubleToStringTest(): Unit = {
     val str = StorageUtils.doubleToString(Double.NaN)
-    Assertions.assertNotNull(str)
+    Assertions.assertEquals("NaN", str)
 
   }
 

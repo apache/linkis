@@ -78,6 +78,7 @@ class AMHeartbeatService extends HeartbeatService with Logging {
       nodeMetrics.setStatus(0)
     }
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics)
+    logger.info(s"Finished to deal nodeHeartbeatMsg $nodeHeartbeatMsg")
   }
 
 }

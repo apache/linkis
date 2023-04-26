@@ -68,7 +68,8 @@ public class ReaderThread extends Thread {
     List<String> logArray = new ArrayList<>();
     while (true) {
       try {
-        if (!((line = inputReader.readLine()) != null && isReaderAlive)) break;
+        line = inputReader.readLine();
+        if (!(line != null && isReaderAlive)) break;
       } catch (IOException e) {
         logger.warn("inputReader reading the input stream");
         break;

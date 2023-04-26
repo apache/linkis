@@ -157,14 +157,13 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
         workingDirectory = null;
       }
 
-      String generatedCode;
-      if (argsArr == null || argsArr.length == 0) {
-        generatedCode = String.valueOf(generateRunCode(code));
-      } else {
-        generatedCode = String.valueOf(generateRunCodeWithArgs(code, argsArr));
-      }
+      String[] generatedCode =
+          argsArr == null || argsArr.length == 0
+              ? generateRunCode(code)
+              : generateRunCodeWithArgs(code, argsArr);
 
-      ProcessBuilder processBuilder = new ProcessBuilder(generatedCode.split(" "));
+      ProcessBuilder processBuilder = new ProcessBuilder(generatedCode);
+
       if (StringUtils.isNotBlank(workingDirectory)) {
         processBuilder.directory(new File(workingDirectory));
       }

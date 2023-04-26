@@ -159,7 +159,7 @@ object YarnUtil extends Logging {
         val msg = s"App : ${appIdStr} got no head job, cannot do checkPoint and cancel."
         throw new JobExecutionException(msg)
       }
-      val rs = restClient.cancelWithSavepoint(firstJob.getJobId, checkPointPath).get()
+      val rs = restClient.triggerSavepoint(firstJob.getJobId, checkPointPath).get()
       rs
     }
   }

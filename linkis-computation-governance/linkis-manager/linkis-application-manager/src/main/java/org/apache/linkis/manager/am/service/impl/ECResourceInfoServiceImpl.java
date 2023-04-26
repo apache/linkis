@@ -145,27 +145,22 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
             logger.info("Can not get any ec node info of ec:{}", ecNodeinfo.getInstance());
           } else {
             try {
-              String usedResourceStr = latestRecord.getUsedResource();
-              Map<String, Object> usedResourceMap =
-                  ECResourceInfoUtils.getStringToMap(usedResourceStr);
-              Map yarn = MapUtils.getMap(usedResourceMap, "yarn", new HashMap<String, Object>());
-              String queueNameStr = String.valueOf(yarn.getOrDefault("queueName", ""));
-              if ((StringUtils.isNotBlank(queueName)
-                      && StringUtils.isNotBlank(queueNameStr)
-                      && queueName.equals(queueNameStr))
-                  || StringUtils.isBlank(queueName)) {
-                Map<String, Object> item =
-                    json.readValue(
-                        json.writeValueAsString(ecNodeinfo),
-                        new TypeReference<Map<String, Object>>() {});
+              Map<String, Object> item =
+                  json.readValue(
+                      json.writeValueAsString(ecNodeinfo),
+                      new TypeReference<Map<String, Object>>() {});
 
-                Integer intStatus = ecNodeinfo.getInstanceStatus();
-                item.put("instanceStatus", NodeStatus.values()[intStatus].name());
-                /*
-                {"instance":1,"memory":"2.0 GB","cpu":1}
-                ->
-                {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
-                 */
+              Integer intStatus = ecNodeinfo.getInstanceStatus();
+              item.put("instanceStatus", NodeStatus.values()[intStatus].name());
+
+              String usedResourceStr = latestRecord.getUsedResource();
+              /*
+              {"instance":1,"memory":"2.0 GB","cpu":1}
+              ->
+              {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
+               */
+              long lastUnlockTimestamp = 0L;
+              if (NodeStatus.values()[intStatus].name().equals(NodeStatus.Unlock.name())) {
                 HashMap heartbeatMap =
                     BDPJettyServerHelper.gson()
                         .fromJson(ecNodeinfo.getHeartbeatMsg(), new HashMap<>().getClass());
@@ -173,11 +168,22 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
                     Optional.ofNullable(heartbeatMap.get("lastUnlockTimestamp")).orElse(0);
                 BigDecimal lastUnlockTimeMills =
                     new BigDecimal(String.valueOf(lastUnlockTimeMills1));
-                item.put("lastUnlockTimestamp", lastUnlockTimeMills.longValue());
-                item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
-                item.put("ecmInstance", latestRecord.getEcmInstance());
-                String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
-                item.put("engineType", engineType);
+                lastUnlockTimestamp = lastUnlockTimeMills.longValue();
+              }
+              item.put("lastUnlockTimestamp", lastUnlockTimestamp);
+              item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
+              item.put("ecmInstance", latestRecord.getEcmInstance());
+              String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
+              item.put("engineType", engineType);
+              if (StringUtils.isNotBlank(queueName)) {
+                Map<String, Object> usedResourceMap =
+                    ECResourceInfoUtils.getStringToMap(usedResourceStr);
+                Map yarn = MapUtils.getMap(usedResourceMap, "yarn", new HashMap<String, Object>());
+                String queueNameStr = String.valueOf(yarn.getOrDefault("queueName", ""));
+                if (StringUtils.isNotBlank(queueNameStr) && queueName.equals(queueNameStr)) {
+                  resultList.add(item);
+                }
+              } else {
                 resultList.add(item);
               }
             } catch (JsonProcessingException e) {

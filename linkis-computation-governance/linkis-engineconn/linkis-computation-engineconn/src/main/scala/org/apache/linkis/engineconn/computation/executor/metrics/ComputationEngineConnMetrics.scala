@@ -92,7 +92,7 @@ object ComputationEngineConnMetrics {
 
   def getUnlockToShutdownDurationMills(): Long = unlockToShutdownDurationMills.get()
 
-  def getLastUnlockTimeMills(nodeStatus: NodeStatus): Long = {
+  def getLastUnlockTimestamp(nodeStatus: NodeStatus): Long = {
     nodeStatus match {
       case NodeStatus.Unlock => lastUnlockTimeMills
       case _ => 0

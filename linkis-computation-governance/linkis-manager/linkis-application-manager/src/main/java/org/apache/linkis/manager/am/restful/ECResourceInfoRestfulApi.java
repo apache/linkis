@@ -189,6 +189,7 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "engineTypes", dataType = "Array", value = "engine type"),
     @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
     @ApiImplicitParam(name = "queueName", dataType = "String", value = "queueName"),
+    @ApiImplicitParam(name = "ecInstances", dataType = "String", value = "ecInstances"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
   public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode) {
@@ -209,7 +210,7 @@ public class ECResourceInfoRestfulApi {
     JsonNode engineTypesParam = jsonNode.get("engineTypes");
     JsonNode statussParam = jsonNode.get("statuss");
     JsonNode queueNameParam = jsonNode.get("queueName");
-    JsonNode instanceNameParam = jsonNode.get("instanceName");
+    JsonNode ecInstancesParam = jsonNode.get("ecInstances");
 
     //    if (creatorsParam == null || creatorsParam.isNull() || creatorsParam.size() == 0) {
     //      return Message.error("creators is null in the parameters of the
@@ -263,12 +264,12 @@ public class ECResourceInfoRestfulApi {
         return Message.error("parameters:queueName parsing failed(请求参数【queueName】解析失败)");
       }
     }
-    List<String> instanceNameList = new ArrayList<>();
-    if (instanceNameParam != null && !instanceNameParam.isNull()) {
+    List<String> ecInstancesList = new ArrayList<>();
+    if (ecInstancesParam != null && !ecInstancesParam.isNull()) {
       try {
-        instanceNameList =
+        ecInstancesList =
             JsonUtils.jackson()
-                .readValue(instanceNameParam.toString(), new TypeReference<List<String>>() {});
+                .readValue(ecInstancesParam.toString(), new TypeReference<List<String>>() {});
       } catch (JsonProcessingException e) {
         return Message.error("parameters:instanceName parsing failed(请求参数【instanceName】解析失败)");
       }
@@ -278,12 +279,12 @@ public class ECResourceInfoRestfulApi {
         String.join(",", creatorUserList),
         String.join(",", engineTypeList),
         String.join(",", statusStrList),
-        String.join(",", instanceNameList),
+        String.join(",", ecInstancesList),
         queueNameParam);
 
     List<Map<String, Object>> list =
         ecResourceInfoService.getECResourceInfoList(
-            creatorUserList, engineTypeList, statusStrList, queueName, instanceNameList);
+            creatorUserList, engineTypeList, statusStrList, queueName, ecInstancesList);
 
     return Message.ok().data("ecList", list);
   }

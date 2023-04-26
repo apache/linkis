@@ -153,6 +153,8 @@ DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
 CREATE TABLE `linkis_ps_udf_manager` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -166,6 +168,8 @@ CREATE TABLE `linkis_ps_udf_shared_group` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `shared_group` varchar(50) NOT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -174,7 +178,9 @@ CREATE TABLE `linkis_ps_udf_shared_info`
 (
    `id` bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
    `udf_id` bigint(20) NOT NULL,
-   `user_name` varchar(50) NOT NULL
+   `user_name` varchar(50) NOT NULL,
+   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+   `create_time` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -203,6 +209,8 @@ CREATE TABLE `linkis_ps_udf_user_load` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -235,6 +243,7 @@ CREATE TABLE `linkis_ps_udf_version` (
   `use_format` varchar(255) DEFAULT NULL,
   `description` varchar(255) NOT NULL COMMENT 'version desc',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `md5` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

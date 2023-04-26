@@ -18,6 +18,7 @@
 package org.apache.linkis.basedatamanager.server.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -35,6 +36,12 @@ public class UdfManagerEntity implements Serializable {
 
   /** */
   private String userName;
+
+  /** */
+  private Date createTime;
+
+  /** */
+  private Date updateTime;
 
   @TableField(exist = false)
   private static final long serialVersionUID = 1L;
@@ -57,6 +64,22 @@ public class UdfManagerEntity implements Serializable {
   /** */
   public void setUserName(String userName) {
     this.userName = userName;
+  }
+
+  public Date getCreateTime() {
+    return createTime;
+  }
+
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
+
+  public Date getUpdateTime() {
+    return updateTime;
+  }
+
+  public void setUpdateTime(Date updateTime) {
+    this.updateTime = updateTime;
   }
 
   @Override

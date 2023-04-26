@@ -15,45 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.udf.entity;
+package org.apache.linkis.basedatamanager.server.dao;
 
-import java.util.Date;
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
 
-public class UDFManager {
-  private Integer id;
-  private String userName;
-  private Date createTime;
-  private Date updateTime;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public Date getCreateTime() {
-    return createTime;
-  }
-
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
-
-  public Date getUpdateTime() {
-    return updateTime;
-  }
-
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
-}
+/**
+ * @description Database operation Mapper for the linkis_PS_UDF_tree table
+ * @createDate 2022-08-13 15:13:27 @Entity
+ *     org.apache.linkis.basedatamanager.server.domain.LinkisPsUdfTree
+ */
+public interface UdfBaseInfoMapper extends BaseMapper<UdfBaseInfoEntity> {}

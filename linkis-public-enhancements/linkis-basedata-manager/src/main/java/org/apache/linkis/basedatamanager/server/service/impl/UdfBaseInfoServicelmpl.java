@@ -15,45 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.udf.entity;
+package org.apache.linkis.basedatamanager.server.service.impl;
 
-import java.util.Date;
+import org.apache.linkis.basedatamanager.server.dao.UdfBaseInfoMapper;
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
+import org.apache.linkis.basedatamanager.server.service.UdfBaseInfoService;
 
-public class UDFManager {
-  private Integer id;
-  private String userName;
-  private Date createTime;
-  private Date updateTime;
+import org.springframework.stereotype.Service;
 
-  public Integer getId() {
-    return id;
-  }
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public void setUserName(String userName) {
-    this.userName = userName;
-  }
-
-  public Date getCreateTime() {
-    return createTime;
-  }
-
-  public void setCreateTime(Date createTime) {
-    this.createTime = createTime;
-  }
-
-  public Date getUpdateTime() {
-    return updateTime;
-  }
-
-  public void setUpdateTime(Date updateTime) {
-    this.updateTime = updateTime;
-  }
-}
+@Service
+public class UdfBaseInfoServicelmpl extends ServiceImpl<UdfBaseInfoMapper, UdfBaseInfoEntity>
+    implements UdfBaseInfoService {}

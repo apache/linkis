@@ -214,3 +214,10 @@ INSERT INTO `linkis_ps_configuration_key_engine_relation` (`id`, `config_key_id`
 INSERT INTO `linkis_ps_configuration_key_engine_relation` (`id`, `config_key_id`, `engine_type_label_id`) VALUES (51, 48, 11);
 INSERT INTO `linkis_ps_configuration_key_engine_relation` (`id`, `config_key_id`, `engine_type_label_id`) VALUES (52, 49, 11);
 INSERT INTO `linkis_ps_configuration_key_engine_relation` (`id`, `config_key_id`, `engine_type_label_id`) VALUES (53, 50, 11);
+
+DELETE FROM linkis_ps_udf_baseinfo;
+INSERT INTO linkis_ps_udf_baseinfo (create_user,udf_name,udf_type,tree_id,create_time,update_time,sys,cluster_name,is_expire,is_shared) VALUES
+	 ('hadoop','pyUdfTest',1,14,'2022-09-08 11:43:20','2022-09-08 11:43:20','IDE','all',NULL,NULL),
+	 ('hadoop','jarUdf',0,14,'2022-09-08 14:53:56','2022-09-08 14:53:56','IDE','all',NULL,NULL),
+	 ('hadoop','test',3,13,'2022-09-08 14:54:30','2022-09-08 14:54:30','IDE','all',NULL,NULL),
+	 ('hadoop','scalaUdf1',4,13,'2022-09-08 14:55:57','2022-09-08 14:55:57','IDE','all',NULL,NULL);

@@ -65,7 +65,7 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
           ComputationEngineConnMetrics.getTotalLockTimeMills(status).asInstanceOf[Object]
         )
         msgMap.put(
-          ECConstants.EC_LAST_UNLOCK_TIME_MILLS,
+          ECConstants.EC_LAST_UNLOCK_TIMESTAMP,
           ComputationEngineConnMetrics.getLastUnlockTimestamp(status).asInstanceOf[Object]
         )
       case _ =>

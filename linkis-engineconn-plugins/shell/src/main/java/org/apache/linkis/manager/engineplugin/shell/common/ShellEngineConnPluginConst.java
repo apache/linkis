@@ -15,19 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell
+package org.apache.linkis.manager.engineplugin.shell.common;
 
-import org.junit.jupiter.api.{Assertions, Test}
-
-class TestShellEngineConnPlugin {
-
-  @Test
-  def testShellEngineConnExecutor: Unit = {
-    val shellEngineConnPlugin = new ShellEngineConnPlugin
-    Assertions.assertNotNull(shellEngineConnPlugin.getEngineConnFactory)
-    Assertions.assertNotNull(shellEngineConnPlugin.getEngineConnLaunchBuilder)
-    Assertions.assertNotNull(shellEngineConnPlugin.getEngineResourceFactory)
-    Assertions.assertNotNull(shellEngineConnPlugin.getDefaultLabels)
-  }
-
+public class ShellEngineConnPluginConst {
+  public static final String RUNTIME_ARGS_KEY = "extraArguments";
+  public static final String SHELL_RUNTIME_WORKING_DIRECTORY =
+      "wds.linkis.shell.runtime.working.directory";
 }

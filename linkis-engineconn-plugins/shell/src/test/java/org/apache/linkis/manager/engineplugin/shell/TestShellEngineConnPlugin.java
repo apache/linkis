@@ -15,8 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.builder
+package org.apache.linkis.manager.engineplugin.shell;
 
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class ShellProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}
+public class TestShellEngineConnPlugin {
+
+  @Test
+  public void testShellEngineConnExecutor() {
+    ShellEngineConnPlugin shellEngineConnPlugin = new ShellEngineConnPlugin();
+    Assertions.assertNotNull(shellEngineConnPlugin.getEngineConnFactory());
+    Assertions.assertNotNull(shellEngineConnPlugin.getEngineConnLaunchBuilder());
+    Assertions.assertNotNull(shellEngineConnPlugin.getEngineResourceFactory());
+    Assertions.assertNotNull(shellEngineConnPlugin.getDefaultLabels());
+  }
+}

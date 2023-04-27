@@ -15,24 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.exception
+package org.apache.linkis.manager.engineplugin.shell.conf;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.linkis.common.conf.CommonVars;
 
-class TestNoCorrectUserException {
+public class ShellEngineConnConf {
+  public static final int SHELL_ENGINECONN_CONCURRENT_LIMIT =
+      CommonVars.apply("linkis.engineconn.shell.concurrent.limit", 30).getValue();
 
-  @Test
-  def testNoCorrectUserException: Unit = {
-
-    val exception = NoCorrectUserException
-    Assertions.assertNotNull(exception)
-  }
-
-  @Test
-  def testShellCodeErrorException: Unit = {
-
-    val exception = ShellCodeErrorException
-    Assertions.assertNotNull(exception)
-  }
-
+  public static final int LOG_SERVICE_MAX_THREAD_SIZE =
+      CommonVars.apply("linkis.engineconn.shell.log.max.thread.size", 50).getValue();
 }

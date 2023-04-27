@@ -15,9 +15,18 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.common
+package org.apache.linkis.manager.engineplugin.shell.common;
 
-object ShellEngineConnPluginConst {
-  final val RUNTIME_ARGS_KEY: String = "extraArguments"
-  final val SHELL_RUNTIME_WORKING_DIRECTORY: String = "wds.linkis.shell.runtime.working.directory"
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class TestShellEngineConnPluginConst {
+
+  @Test
+  public void testShellEngineConnPluginConst() {
+    Assertions.assertEquals("extraArguments", ShellEngineConnPluginConst.RUNTIME_ARGS_KEY);
+    Assertions.assertEquals(
+        "wds.linkis.shell.runtime.working.directory",
+        ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY);
+  }
 }

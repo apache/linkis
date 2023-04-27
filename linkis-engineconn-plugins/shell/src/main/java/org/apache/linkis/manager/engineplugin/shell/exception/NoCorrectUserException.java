@@ -15,16 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.conf
+package org.apache.linkis.manager.engineplugin.shell.exception;
 
-import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.common.exception.ErrorException;
 
-object ShellEngineConnConf {
+import static org.apache.linkis.manager.engineplugin.shell.errorcode.LinkisCommonsErrorCodeSummary.*;
 
-  val SHELL_ENGINECONN_CONCURRENT_LIMIT: Int =
-    CommonVars[Int]("linkis.engineconn.shell.concurrent.limit", 30).getValue
-
-  val LOG_SERVICE_MAX_THREAD_SIZE: Int =
-    CommonVars("linkis.engineconn.shell.log.max.thread.size", 50).getValue
-
+public class NoCorrectUserException extends ErrorException {
+  public NoCorrectUserException() {
+    super(NO_ILLEGAL_USER_HOLDS.getErrorCode(), NO_ILLEGAL_USER_HOLDS.getErrorDesc());
+  }
 }

@@ -15,19 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.common
+package org.apache.linkis.manager.engineplugin.shell.exception;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.linkis.common.exception.ErrorException;
 
-class TestShellEngineConnPluginConst {
+import static org.apache.linkis.manager.engineplugin.shell.errorcode.LinkisCommonsErrorCodeSummary.*;
 
-  @Test
-  def testShellEngineConnPluginConst: Unit = {
-    Assertions.assertEquals("extraArguments", ShellEngineConnPluginConst.RUNTIME_ARGS_KEY)
-    Assertions.assertEquals(
-      "wds.linkis.shell.runtime.working.directory",
-      ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY
-    )
+public class ShellCodeErrorException extends ErrorException {
+  public ShellCodeErrorException() {
+    super(SHELL_CODE_IS_WRONG.getErrorCode(), SHELL_CODE_IS_WRONG.getErrorDesc());
   }
-
 }

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.executor
+package org.apache.linkis.manager.engineplugin.shell.builder;
 
-case class ShellECTaskInfo(taskId: String, process: Process, yarnAppIdExtractor: YarnAppIdExtractor)
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+
+public class ShellProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}

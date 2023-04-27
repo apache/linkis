@@ -221,7 +221,9 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
 
   private String[] generateRunCodeWithArgs(String code, String[] args) {
     return new String[] {
-      "sh", "-c", "echo \"dummy " + StringUtils.join(args, " ") + "\" | xargs sh -c '" + code + "'"
+      "sh",
+      "-c",
+      "echo \"dummy " + StringUtils.join(args, " ") + "\" | xargs sh -c \'" + code + "\'"
     };
   }
 

@@ -213,7 +213,9 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
 
   private String[] generateRunCodeWithArgs(String code, String[] args) {
     return new String[] {
-      "sh", "-c", "echo \"dummy " + String.join(" ", args) + "\" | xargs sh -c \'" + code + "\'"
+      "sh",
+      "-c",
+      "echo \"dummy " + StringUtils.join(args, " ") + "\" | xargs sh -c \'" + code + "\'"
     };
   }
 

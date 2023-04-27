@@ -15,13 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.engineplugin.shell.exception
+package org.apache.linkis.manager.engineplugin.shell.exception;
 
-import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.manager.engineplugin.shell.errorcode.LinkisCommonsErrorCodeSummary._
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-case class NoCorrectUserException()
-    extends ErrorException(NO_ILLEGAL_USER_HOLDS.getErrorCode, NO_ILLEGAL_USER_HOLDS.getErrorDesc)
+public class TestNoCorrectUserException {
 
-case class ShellCodeErrorException()
-    extends ErrorException(SHELL_CODE_IS_WRONG.getErrorCode, SHELL_CODE_IS_WRONG.getErrorDesc)
+  @Test
+  public void testNoCorrectUserException() {
+    Assertions.assertNotNull(new NoCorrectUserException());
+  }
+
+  @Test
+  public void testShellCodeErrorException() {
+    Assertions.assertNotNull(new ShellCodeErrorException());
+  }
+}

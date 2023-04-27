@@ -19,6 +19,7 @@ package org.apache.linkis.engineconn.acessible.executor.service
 
 import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   ExecutorCompletedEvent,
@@ -56,6 +57,12 @@ class DefaultAccessibleService extends AccessibleService with Logging {
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   private var shutDownHooked: Boolean = false
+
+  private var lastStatusChanged: Long = System.currentTimeMillis()
+
+  private var lastStatus: NodeStatus = null
+
+  private var lastThreadName: String = null
 
   @Receiver
   override def dealEngineStopRequest(
@@ -167,7 +174,39 @@ class DefaultAccessibleService extends AccessibleService with Logging {
   override def onExecutorStatusChanged(
       executorStatusChangedEvent: ExecutorStatusChangedEvent
   ): Unit = {
-    reportHeartBeatMsg(executorStatusChangedEvent.executor)
+    val sinceLastTime = System.currentTimeMillis() - lastStatusChanged
+    val reportDelay = AccessibleExecutorConfiguration.REPORTING_DELAY_MS
+    if (
+        reportDelay > 0 && executorStatusChangedEvent.toStatus != lastStatus && reportDelay > sinceLastTime
+    ) {
+      logger.info(
+        "In order to ensure that the previous state is consumed first, sleep here {} ms",
+        reportDelay * 2
+      )
+
+      Thread.sleep(reportDelay * 2)
+    }
+    val ignoreTime = AccessibleExecutorConfiguration.REPORTING_IGNORE_MS
+    val currentThreadName = Thread.currentThread().getName
+    if (
+        ignoreTime > 0 && executorStatusChangedEvent.toStatus == lastStatus && ignoreTime > sinceLastTime && currentThreadName
+          .equals(lastThreadName)
+    ) {
+      logger.info(
+        "If the status is the same and the time is short and the thread is the same, no status report is performed {}",
+        executorStatusChangedEvent
+      )
+    } else if (
+        NodeStatus.Busy == lastStatus && executorStatusChangedEvent.toStatus == NodeStatus.Idle
+    ) {
+      logger.info("The state transition from Busy to Idle is not reported")
+    } else {
+      reportHeartBeatMsg(executorStatusChangedEvent.executor)
+    }
+    logger.info("Finished to report status {}", executorStatusChangedEvent)
+    lastStatusChanged = System.currentTimeMillis()
+    lastStatus = executorStatusChangedEvent.toStatus
+    lastThreadName = currentThreadName
   }
 
   private def reportHeartBeatMsg(executor: Executor): Unit = {

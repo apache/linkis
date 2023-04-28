@@ -49,7 +49,7 @@ class MetadataGetTablesAction extends GetAction with DataSourceAction {
 object MetadataGetTablesAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetTablesAction] () {
+  class Builder private[MetadataGetTablesAction]() {
     private var dataSourceId: Long = _
     private var dataSourceName: String = _
     private var database: String = _
@@ -70,9 +70,9 @@ object MetadataGetTablesAction {
      * get value form dataSourceId is deprecated, suggest to use dataSourceName
      *
      * @param dataSourceId
-     *   datasourceId
+     * datasourceId
      * @return
-     *   builder
+     * builder
      */
     @deprecated
     def setDataSourceId(dataSourceId: Long): Builder = {
@@ -103,6 +103,10 @@ object MetadataGetTablesAction {
       metadataGetTablesAction.dataSourceName = this.dataSourceName
       metadataGetTablesAction.database = this.database
       metadataGetTablesAction.setParameter("system", system)
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        metadataGetTablesAction.setParameter("dataSourceName", dataSourceName)
+        metadataGetTablesAction.setParameter("database", database)
+      }
       metadataGetTablesAction.setUser(user)
       metadataGetTablesAction
     }

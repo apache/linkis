@@ -36,52 +36,52 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
   private static final Logger logger =
       LoggerFactory.getLogger(ShellEngineConnConcurrentExecutor.class);
 
-  private ShellEngineConnExecutor ShellEngineConnExecutor;
+  private ShellEngineConnExecutor shellEngineConnExecutor;
 
   private int maxRunningNumber;
 
   public ShellEngineConnConcurrentExecutor(int id, int maxRunningNumber) {
     super(id);
-    this.ShellEngineConnExecutor = new ShellEngineConnExecutor(id);
+    this.shellEngineConnExecutor = new ShellEngineConnExecutor(id);
     this.maxRunningNumber = maxRunningNumber;
   }
 
   @Override
   public ExecuteResponse executeLine(EngineExecutionContext engineExecutorContext, String code) {
-    return ShellEngineConnExecutor.executeLine(engineExecutorContext, code);
+    return shellEngineConnExecutor.executeLine(engineExecutorContext, code);
   }
 
   @Override
   public ExecuteResponse executeCompletely(
       EngineExecutionContext engineExecutorContext, String code, String completedLine) {
-    return ShellEngineConnExecutor.executeCompletely(engineExecutorContext, code, completedLine);
+    return shellEngineConnExecutor.executeCompletely(engineExecutorContext, code, completedLine);
   }
 
   @Override
   public float progress(String taskID) {
-    return ShellEngineConnExecutor.progress(taskID);
+    return shellEngineConnExecutor.progress(taskID);
   }
 
   @Override
   public JobProgressInfo[] getProgressInfo(String taskID) {
-    return ShellEngineConnExecutor.getProgressInfo(taskID);
+    return shellEngineConnExecutor.getProgressInfo(taskID);
   }
 
   @Override
   public boolean supportCallBackLogs() {
-    return ShellEngineConnExecutor.supportCallBackLogs();
+    return shellEngineConnExecutor.supportCallBackLogs();
   }
 
   @Override
   public String getId() {
-    return ShellEngineConnExecutor.getId();
+    return shellEngineConnExecutor.getId();
   }
 
   @Override
   public void close() {
     try {
       killAll();
-      ShellEngineConnExecutor.logAsyncService.shutdown();
+      shellEngineConnExecutor.logAsyncService.shutdown();
     } catch (Exception e) {
       logger.error("Shell ec failed to close ");
     }
@@ -91,7 +91,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
   @Override
   public void killAll() {
     Iterator<ShellECTaskInfo> iterator =
-        ShellEngineConnExecutor.shellECTaskInfoCache.values().iterator();
+        shellEngineConnExecutor.shellECTaskInfoCache.values().iterator();
     while (iterator.hasNext()) {
       ShellECTaskInfo shellECTaskInfo = iterator.next();
       killTask(shellECTaskInfo.getTaskId());
@@ -100,7 +100,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
 
   @Override
   public void killTask(String taskID) {
-    ShellECTaskInfo shellECTaskInfo = ShellEngineConnExecutor.shellECTaskInfoCache.remove(taskID);
+    ShellECTaskInfo shellECTaskInfo = shellEngineConnExecutor.shellECTaskInfoCache.remove(taskID);
     if (shellECTaskInfo == null) {
       return;
     }
@@ -108,7 +108,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
     /*
      Kill sub-processes
     */
-    int pid = ShellEngineConnExecutor.getPid(shellECTaskInfo.getProcess());
+    int pid = shellEngineConnExecutor.getPid(shellECTaskInfo.getProcess());
     GovernanceUtils.killProcess(String.valueOf(pid), "kill task " + taskID + " process", false);
 
     /*
@@ -130,21 +130,21 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
 
   @Override
   public List<Label<?>> getExecutorLabels() {
-    return ShellEngineConnExecutor.getExecutorLabels();
+    return shellEngineConnExecutor.getExecutorLabels();
   }
 
   @Override
   public void setExecutorLabels(List<Label<?>> labels) {
-    ShellEngineConnExecutor.setExecutorLabels(labels);
+    shellEngineConnExecutor.setExecutorLabels(labels);
   }
 
   @Override
   public NodeResource requestExpectedResource(NodeResource expectedResource) {
-    return ShellEngineConnExecutor.requestExpectedResource(expectedResource);
+    return shellEngineConnExecutor.requestExpectedResource(expectedResource);
   }
 
   @Override
   public NodeResource getCurrentNodeResource() {
-    return ShellEngineConnExecutor.getCurrentNodeResource();
+    return shellEngineConnExecutor.getCurrentNodeResource();
   }
 }

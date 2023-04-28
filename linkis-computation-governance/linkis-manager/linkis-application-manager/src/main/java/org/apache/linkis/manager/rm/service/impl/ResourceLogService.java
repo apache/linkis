@@ -26,8 +26,6 @@ import org.apache.linkis.manager.dao.ECResourceRecordMapper;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
-import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.rm.domain.RMLabelContainer;
 import org.apache.linkis.manager.rm.utils.RMUtils;
 
@@ -36,12 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.collection.immutable.StringOps;
 
 @Component
 public class ResourceLogService {
@@ -164,8 +160,11 @@ public class ResourceLogService {
             ECResourceInfoRecord ecResourceInfoRecord =
                 ecResourceRecordMapper.getECResourceInfoRecord(ticketId);
             if (ecResourceInfoRecord == null) {
-              String logDirSuffix =  ECPathUtils.getECLogDirSuffix(labelContainer.getEngineTypeLabel(),
-                      labelContainer.getUserCreatorLabel(), ticketId);
+              String logDirSuffix =
+                  ECPathUtils.getECLogDirSuffix(
+                      labelContainer.getEngineTypeLabel(),
+                      labelContainer.getUserCreatorLabel(),
+                      ticketId);
               String user =
                   labelContainer.getUserCreatorLabel() != null
                       ? labelContainer.getUserCreatorLabel().getUser()
@@ -220,5 +219,4 @@ public class ResourceLogService {
           logger);
     }
   }
-
 }

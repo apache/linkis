@@ -19,7 +19,6 @@ package org.apache.linkis.engineplugin.server.localize;
 
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
-import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.*;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 
@@ -36,101 +35,101 @@ import org.slf4j.LoggerFactory;
 import static org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.*;
 
 public abstract class AbstractEngineConnBmlResourceGenerator
-        implements EngineConnBmlResourceGenerator {
+    implements EngineConnBmlResourceGenerator {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(AbstractEngineConnBmlResourceGenerator.class);
+  private static final Logger logger =
+      LoggerFactory.getLogger(AbstractEngineConnBmlResourceGenerator.class);
 
-    public AbstractEngineConnBmlResourceGenerator() {
-        if (!new File(getEngineConnsHome()).exists()) {
-            throw new WarnException(
-                    CANNOT_HOME_PATH_EC.getErrorCode(),
-                    MessageFormat.format(CANNOT_HOME_PATH_EC.getErrorDesc(), getEngineConnsHome()));
-        }
+  public AbstractEngineConnBmlResourceGenerator() {
+    if (!new File(getEngineConnsHome()).exists()) {
+      throw new WarnException(
+          CANNOT_HOME_PATH_EC.getErrorCode(),
+          MessageFormat.format(CANNOT_HOME_PATH_EC.getErrorDesc(), getEngineConnsHome()));
     }
+  }
 
-    public String getEngineConnsHome() {
-        return EngineConnPluginConfiguration.ENGINE_CONN_HOME.getValue();
+  public String getEngineConnsHome() {
+    return EngineConnPluginConfiguration.ENGINE_CONN_HOME.getValue();
+  }
+
+  protected String getEngineConnDistHome(EngineTypeLabel engineConnTypeLabel) {
+    return getEngineConnDistHome(
+        engineConnTypeLabel.getEngineType(), engineConnTypeLabel.getVersion());
+  }
+
+  protected String getEngineConnDistHome(String engineConnType, String version) {
+    String engineConnDistHome =
+        Paths.get(getEngineConnsHome(), engineConnType, "dist").toFile().getPath();
+    checkEngineConnDistHome(engineConnDistHome);
+    if (StringUtils.isBlank(version)
+        || EngineConnBmlResourceGenerator.NO_VERSION_MARK.equals(version)) {
+      return engineConnDistHome;
     }
-
-    protected String getEngineConnDistHome(EngineTypeLabel engineConnTypeLabel) {
-        return getEngineConnDistHome(
-                engineConnTypeLabel.getEngineType(), engineConnTypeLabel.getVersion());
-    }
-
-    protected String getEngineConnDistHome(String engineConnType, String version) {
-        String engineConnDistHome =
-                Paths.get(getEngineConnsHome(), engineConnType, "dist").toFile().getPath();
-        checkEngineConnDistHome(engineConnDistHome);
-        if (StringUtils.isBlank(version)
-                || EngineConnBmlResourceGenerator.NO_VERSION_MARK.equals(version)) {
-            return engineConnDistHome;
-        }
-        String engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile().getPath();
-        logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome);
-        File engineConnPackageHomeFile = new File(engineConnPackageHome);
-        if (!engineConnPackageHomeFile.exists()) {
-            if (!version.startsWith("v")
-                    && (boolean) EngineConnPluginConfiguration.EC_BML_VERSION_MAY_WITH_PREFIX_V.getValue()) {
-                String versionOld = "v" + version;
-                String engineConnPackageHomeOld =
-                        Paths.get(engineConnDistHome, versionOld).toFile().getPath();
-                logger.info(
-                        "try to getEngineConnDistHome with prefix v, engineConnPackageHome path:"
-                                + engineConnPackageHomeOld);
-                File engineConnPackageHomeFileOld = new File(engineConnPackageHomeOld);
-                if (!engineConnPackageHomeFileOld.exists()) {
-                    throw new WarnException(
-                            ENGINE_VERSION_NOT_FOUND.getErrorCode(),
-                            MessageFormat.format(
-                                    ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
-                } else {
-                    return engineConnPackageHomeOld;
-                }
-            } else {
-                throw new WarnException(
-                        ENGINE_VERSION_NOT_FOUND.getErrorCode(),
-                        MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
-            }
+    String engineConnPackageHome = Paths.get(engineConnDistHome, version).toFile().getPath();
+    logger.info("getEngineConnDistHome, engineConnPackageHome path:" + engineConnPackageHome);
+    File engineConnPackageHomeFile = new File(engineConnPackageHome);
+    if (!engineConnPackageHomeFile.exists()) {
+      if (!version.startsWith("v")
+          && (boolean) EngineConnPluginConfiguration.EC_BML_VERSION_MAY_WITH_PREFIX_V.getValue()) {
+        String versionOld = "v" + version;
+        String engineConnPackageHomeOld =
+            Paths.get(engineConnDistHome, versionOld).toFile().getPath();
+        logger.info(
+            "try to getEngineConnDistHome with prefix v, engineConnPackageHome path:"
+                + engineConnPackageHomeOld);
+        File engineConnPackageHomeFileOld = new File(engineConnPackageHomeOld);
+        if (!engineConnPackageHomeFileOld.exists()) {
+          throw new WarnException(
+              ENGINE_VERSION_NOT_FOUND.getErrorCode(),
+              MessageFormat.format(
+                  ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
         } else {
-            return engineConnPackageHome;
+          return engineConnPackageHomeOld;
         }
+      } else {
+        throw new WarnException(
+            ENGINE_VERSION_NOT_FOUND.getErrorCode(),
+            MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
+      }
+    } else {
+      return engineConnPackageHome;
     }
+  }
 
-    private void checkEngineConnDistHome(String engineConnPackageHomePath) {
-        File engineConnPackageHomeFile = new File(engineConnPackageHomePath);
-        checkEngineConnDistHome(engineConnPackageHomeFile);
-    }
+  private void checkEngineConnDistHome(String engineConnPackageHomePath) {
+    File engineConnPackageHomeFile = new File(engineConnPackageHomePath);
+    checkEngineConnDistHome(engineConnPackageHomeFile);
+  }
 
-    private void checkEngineConnDistHome(File engineConnPackageHome) {
-        if (!engineConnPackageHome.exists()) {
-            throw new WarnException(
-                    CANNOT_HOME_PATH_DIST.getErrorCode(),
-                    MessageFormat.format(
-                            CANNOT_HOME_PATH_DIST.getErrorDesc(), engineConnPackageHome.getPath()));
-        }
+  private void checkEngineConnDistHome(File engineConnPackageHome) {
+    if (!engineConnPackageHome.exists()) {
+      throw new WarnException(
+          CANNOT_HOME_PATH_DIST.getErrorCode(),
+          MessageFormat.format(
+              CANNOT_HOME_PATH_DIST.getErrorDesc(), engineConnPackageHome.getPath()));
     }
+  }
 
-    protected String[] getEngineConnDistHomeList(String engineConnType) {
-        String engineConnDistHome =
-                Paths.get(getEngineConnsHome(), engineConnType, "dist").toFile().getPath();
-        File engineConnDistHomeFile = new File(engineConnDistHome);
-        checkEngineConnDistHome(engineConnDistHomeFile);
-        File[] children = engineConnDistHomeFile.listFiles();
-        if (children.length == 0) {
-            throw new WarnException(
-                    DIST_IS_EMPTY.getErrorCode(),
-                    MessageFormat.format(DIST_IS_EMPTY.getErrorDesc(), engineConnType));
-        } else {
-            return Arrays.stream(children).map(File::getPath).toArray(String[]::new);
-        }
+  protected String[] getEngineConnDistHomeList(String engineConnType) {
+    String engineConnDistHome =
+        Paths.get(getEngineConnsHome(), engineConnType, "dist").toFile().getPath();
+    File engineConnDistHomeFile = new File(engineConnDistHome);
+    checkEngineConnDistHome(engineConnDistHomeFile);
+    File[] children = engineConnDistHomeFile.listFiles();
+    if (children.length == 0) {
+      throw new WarnException(
+          DIST_IS_EMPTY.getErrorCode(),
+          MessageFormat.format(DIST_IS_EMPTY.getErrorDesc(), engineConnType));
+    } else {
+      return Arrays.stream(children).map(File::getPath).toArray(String[]::new);
     }
+  }
 
-    @Override
-    public String[] getEngineConnTypeListFromDisk() {
-        return Arrays.stream(new File(getEngineConnsHome()).listFiles())
-                .filter(file -> !file.isHidden())
-                .map(file -> file.getName())
-                .toArray(String[]::new);
-    }
+  @Override
+  public String[] getEngineConnTypeListFromDisk() {
+    return Arrays.stream(new File(getEngineConnsHome()).listFiles())
+        .filter(file -> !file.isHidden())
+        .map(file -> file.getName())
+        .toArray(String[]::new);
+  }
 }

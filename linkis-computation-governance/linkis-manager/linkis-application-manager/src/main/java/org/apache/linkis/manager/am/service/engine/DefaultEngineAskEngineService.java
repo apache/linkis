@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
+import org.apache.linkis.manager.am.service.impl.DefaultEngineConnStatusCallbackService;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.protocol.engine.*;
@@ -35,8 +36,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,19 +52,14 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
 
   private EngineCreateService engineCreateService;
   private EngineReuseService engineReuseService;
-  private EngineSwitchService engineSwitchService;
   private AtomicInteger idCreator = new AtomicInteger();
   private String idPrefix = Sender.getThisServiceInstance().getInstance();
-  private ExecutorService executor = Executors.newCachedThreadPool();
 
   @Autowired
   public DefaultEngineAskEngineService(
-      EngineCreateService engineCreateService,
-      EngineReuseService engineReuseService,
-      EngineSwitchService engineSwitchService) {
+      EngineCreateService engineCreateService, EngineReuseService engineReuseService) {
     this.engineCreateService = engineCreateService;
     this.engineReuseService = engineReuseService;
-    this.engineSwitchService = engineSwitchService;
   }
 
   @Receiver
@@ -125,7 +119,8 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
               try {
                 createNode = engineCreateService.createEngine(engineCreateRequest, sender);
               } catch (LinkisRetryException e) {
-                //
+                logger.info("engineCreateService createEngine failed", e);
+                throw new RuntimeException(e);
               }
 
               long timeout =
@@ -140,6 +135,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
                         createNode.getServiceInstance());
                 throw new WarnException(AMConstant.EM_ERROR_CODE, message);
               }
+
               logger.info(
                   String.format(
                       "Task: %s finished to ask engine for user %s by create node %s",

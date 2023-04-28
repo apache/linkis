@@ -22,8 +22,7 @@ public class ResponseEngineUnlock implements EngineLock {
     this.unlocked = unlocked;
   }
 
-  public ResponseEngineUnlock() {
-  }
+  public ResponseEngineUnlock() {}
 
   private boolean unlocked;
 

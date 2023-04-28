@@ -17,39 +17,37 @@
 
 package org.apache.linkis.governance.common.utils;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.io.File;
 import java.nio.file.Paths;
 
 public class ECPathUtils {
 
-    public static String getECWOrkDirPathSuffix(String user, String ticketId, String engineType) {
-        String engineTypeRes = "";
-        if (StringUtils.isNotBlank(engineType)) {
-            engineTypeRes = engineType;
-        }
-        File file = Paths.get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineTypeRes).toFile();
-        return file.getPath() + File.separator + ticketId;
+  public static String getECWOrkDirPathSuffix(String user, String ticketId, String engineType) {
+    String engineTypeRes = "";
+    if (StringUtils.isNotBlank(engineType)) {
+      engineTypeRes = engineType;
     }
+    File file =
+        Paths.get(
+                user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineTypeRes)
+            .toFile();
+    return file.getPath() + File.separator + ticketId;
+  }
 
-
-    public static String getECLogDirSuffix(
-            EngineTypeLabel engineTypeLabel,
-            UserCreatorLabel userCreatorLabel,
-            String ticketId
-    ){
-        if (null == engineTypeLabel || null == userCreatorLabel) {
-            return "";
-        }
-        String ecwOrkDirPathSuffix = ECPathUtils.getECWOrkDirPathSuffix(
-                userCreatorLabel.getUser(),
-                ticketId,
-                engineTypeLabel.getEngineType()
-        );
-        return ecwOrkDirPathSuffix + File.separator + "logs";
+  public static String getECLogDirSuffix(
+      EngineTypeLabel engineTypeLabel, UserCreatorLabel userCreatorLabel, String ticketId) {
+    if (null == engineTypeLabel || null == userCreatorLabel) {
+      return "";
     }
+    String ecwOrkDirPathSuffix =
+        ECPathUtils.getECWOrkDirPathSuffix(
+            userCreatorLabel.getUser(), ticketId, engineTypeLabel.getEngineType());
+    return ecwOrkDirPathSuffix + File.separator + "logs";
+  }
 }

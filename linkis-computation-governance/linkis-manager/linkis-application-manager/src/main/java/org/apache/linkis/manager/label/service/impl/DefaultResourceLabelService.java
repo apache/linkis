@@ -140,7 +140,8 @@ public class DefaultResourceLabelService implements ResourceLabelService {
       resourceLabelPersistence.removeResourceByLabel(
           LabelManagerUtils.convertPersistenceLabel(label));
     } catch (PersistenceErrorException e) {
-      // e.printStackTrace();
+      logger.warn("removeResourceByLabel failed", e);
+      throw new RuntimeException(e);
     }
   }
 

@@ -49,7 +49,8 @@ trait LockService extends ExecutorLockListener with Logging {
         // Engine can be locked
         if (!StringUtils.isBlank(lockStr)) {
           // lock success
-          response = new ResponseEngineLock(true, lockStr, s"Lock for ${requestEngineLock.getTimeout} ms")
+          response =
+            new ResponseEngineLock(true, lockStr, s"Lock for ${requestEngineLock.getTimeout} ms")
         } else {
           // lock failed
           response = new ResponseEngineLock(false, lockStr, "lock str is blank")

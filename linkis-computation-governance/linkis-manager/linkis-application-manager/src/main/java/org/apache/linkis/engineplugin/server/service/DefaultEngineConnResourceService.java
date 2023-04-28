@@ -131,7 +131,7 @@ public class DefaultEngineConnResourceService extends EngineConnResourceService 
                     } catch (Exception t) {
                       if (!iswait
                           && EngineConnPluginConfiguration.ENABLED_BML_UPLOAD_FAILED_EXIT
-                                  .getValue()) {
+                              .getValue()) {
                         logger.error("Failed to upload engine conn to bml, now exit!", t);
                         System.exit(1);
                       }

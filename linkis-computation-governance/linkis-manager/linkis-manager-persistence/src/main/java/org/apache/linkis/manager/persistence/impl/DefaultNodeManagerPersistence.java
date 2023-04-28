@@ -127,11 +127,11 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     }
   }
 
-    @Override
-    public void removeNodeInstance(Node node) {
-        String instance = node.getServiceInstance().getInstance();
-        nodeManagerMapper.removeNodeInstance(instance);
-    }
+  @Override
+  public void removeNodeInstance(Node node) {
+    String instance = node.getServiceInstance().getInstance();
+    nodeManagerMapper.removeNodeInstance(instance);
+  }
 
   @Override
   public List<Node> getNodes(String owner) {
@@ -154,7 +154,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<Node> getAllNodes(){
+  public List<Node> getAllNodes() {
     List<PersistenceNode> nodeInstances = nodeManagerMapper.getAllNodes();
     List<Node> persistenceNodeEntitys = new ArrayList<>();
     if (!nodeInstances.isEmpty()) {
@@ -221,7 +221,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void deleteEngineNode(EngineNode engineNode){
+  public void deleteEngineNode(EngineNode engineNode) {
     String engineNodeInstance = engineNode.getServiceInstance().getInstance();
     if (null != engineNode.getEMNode()) {
       String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
@@ -236,7 +236,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public EngineNode getEngineNode(ServiceInstance serviceInstance){
+  public EngineNode getEngineNode(ServiceInstance serviceInstance) {
     // The serviceinstance of a given engine finds emNode (给定引擎的 serviceinstance 查到 emNode)
     AMEngineNode amEngineNode = new AMEngineNode();
     amEngineNode.setServiceInstance(serviceInstance);
@@ -266,7 +266,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance){
+  public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) {
     // serviceinstance for a given EM(给定EM的 serviceinstance)
     PersistenceNode emNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());
     if (null == emNode) {
@@ -298,7 +298,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstanceList) {
+  public List<EngineNode> getEngineNodeByServiceInstance(
+      List<ServiceInstance> serviceInstanceList) {
     List<EngineNode> amEngineNodeList = new ArrayList<>();
     // Limit database size per query
     List<List<ServiceInstance>> partition = Lists.partition(serviceInstanceList, 100);

@@ -17,13 +17,13 @@
 
 package org.apache.linkis.manager.persistence.impl;
 
+import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.ResourceManagerMapper;
 import org.apache.linkis.manager.entity.Tunple;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.persistence.ResourceLabelPersistence;
 import org.apache.linkis.manager.util.PersistenceUtils;
@@ -145,15 +145,14 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
 
   @Override
   // @Transactional(rollbackFor = Throwable.class)
-  public void removeResourceByLabel(PersistenceLabel label) throws PersistenceErrorException {
+  public void removeResourceByLabel(PersistenceLabel label) {
     // label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
     int labelId = label.getId();
     if (labelId <= 0) {
       PersistenceLabel labelByKeyValue =
           labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
       if (labelByKeyValue == null) {
-        throw new PersistenceErrorException(
-            210001, "label not found, this label may be removed already.");
+        throw new WarnException(210001, "label not found, this label may be removed already.");
       }
       labelId = labelByKeyValue.getId();
     }

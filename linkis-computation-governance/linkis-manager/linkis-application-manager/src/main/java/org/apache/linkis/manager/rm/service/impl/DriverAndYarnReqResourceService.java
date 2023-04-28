@@ -74,7 +74,7 @@ public class DriverAndYarnReqResourceService extends RequestResourceService {
       providedYarnResource =
           externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
     } catch (RMErrorException e) {
-      // e.printStackTrace();
+      logger.warn("getResource failed", e);
       throw new RuntimeException(e);
     }
     Resource maxCapacity = providedYarnResource.getMaxResource();

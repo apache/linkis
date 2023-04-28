@@ -307,7 +307,8 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     try {
       nodeManagerPersistence.addEngineNode(engineNode);
     } catch (PersistenceErrorException e) {
-      // e.printStackTrace();
+      logger.warn("addEngineNode failed", e);
+      throw new RuntimeException(e);
     }
 
     EngineInstanceLabel engineInstanceLabel =
@@ -341,12 +342,12 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
   public RequestResourceService getRequestResourceService(ResourceType resourceType) {
     Optional<RequestResourceService> requestResourceService =
         Arrays.stream(requestResourceServices)
-            .filter(service -> service.resourceType == resourceType)
+            .filter(service -> service.resourceType() == resourceType)
             .findFirst();
 
     return requestResourceService.orElse(
         Arrays.stream(requestResourceServices)
-            .filter(service -> service.resourceType == ResourceType.Default)
+            .filter(service -> service.resourceType() == ResourceType.Default)
             .findFirst()
             .get());
   }

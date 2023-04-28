@@ -142,7 +142,9 @@ public class LoadInstanceResource extends Resource {
 
   @Override
   public String toString() {
-    return String.format("Number of instances(实例数)：%d，(RAM)内存：%s ,cpu: %s",this.getInstances(), this.getCores(), this.getMemory());
+    return String.format(
+        "Number of instances(实例数)：%d，(RAM)内存：%s ,cpu: %s",
+        this.getInstances(), this.getCores(), this.getMemory());
   }
 
   public long getMemory() {

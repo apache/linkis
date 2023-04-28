@@ -148,10 +148,13 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
         (engineNode, true)
       case engineAskAsyncResponse: EngineAskAsyncResponse =>
-
         logger.info(
           "{} received EngineAskAsyncResponse id: {} serviceInstance: {}",
-          Array(mark.getMarkId(), engineAskAsyncResponse.getId, engineAskAsyncResponse.getManagerInstance): _*
+          Array(
+            mark.getMarkId(),
+            engineAskAsyncResponse.getId,
+            engineAskAsyncResponse.getManagerInstance
+          ): _*
         )
         cacheMap.getAndRemove(
           engineAskAsyncResponse.getId,
@@ -160,10 +163,14 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           case engineCreateSucces: EngineCreateSuccess =>
             logger.info(
               "{} async id: {} success to async get EngineNode {}",
-              Array(mark.getMarkId(), engineCreateSucces.getId, engineCreateSucces.getEngineNode): _*
+              Array(
+                mark.getMarkId(),
+                engineCreateSucces.getId,
+                engineCreateSucces.getEngineNode
+              ): _*
             )
             (engineCreateSucces.getEngineNode, false)
-          case engineCreateError : EngineCreateError =>
+          case engineCreateError: EngineCreateError =>
             logger.debug(
               "{} async id: {} Failed  to async get EngineNode, {}",
               Array(mark.getMarkId(), engineCreateError.getId, engineCreateError.getException): _*

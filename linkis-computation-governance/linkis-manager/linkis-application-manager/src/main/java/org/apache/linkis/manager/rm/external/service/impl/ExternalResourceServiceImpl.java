@@ -75,7 +75,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
           .maximumSize(20)
           .expireAfterAccess(1, TimeUnit.HOURS)
           .refreshAfterWrite(
-              RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME().getValue().toLong(), TimeUnit.MINUTES)
+              RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME(), TimeUnit.MINUTES)
           .build(
               new CacheLoader<String, List<ExternalResourceProvider>>() {
 

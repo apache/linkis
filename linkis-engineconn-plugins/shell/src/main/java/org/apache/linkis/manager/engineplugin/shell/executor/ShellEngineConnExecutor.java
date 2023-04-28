@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor;
 
+import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.engineconn.computation.executor.execute.ComputationExecutor;
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext;
 import org.apache.linkis.engineconn.core.EngineConnObject;
@@ -25,6 +26,7 @@ import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils;
 import org.apache.linkis.manager.engineplugin.shell.common.ShellEngineConnPluginConst;
+import org.apache.linkis.manager.engineplugin.shell.conf.ShellEngineConnConf;
 import org.apache.linkis.manager.engineplugin.shell.exception.ShellCodeErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -33,7 +35,6 @@ import org.apache.linkis.scheduler.executer.ErrorExecuteResponse;
 import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
@@ -41,10 +42,13 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import scala.concurrent.ExecutionContextExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,16 +56,26 @@ import org.slf4j.LoggerFactory;
 public class ShellEngineConnExecutor extends ComputationExecutor {
   private static final Logger logger = LoggerFactory.getLogger(ShellEngineConnExecutor.class);
 
-  private int id;
   private EngineExecutionContext engineExecutionContext;
+
   private List<Label<?>> executorLabels = new ArrayList<>();
+
+  Map<String, ShellECTaskInfo> shellECTaskInfoCache = new ConcurrentHashMap<>();
+
+  private int id;
+
   private Process process;
+
   private YarnAppIdExtractor extractor;
 
   public ShellEngineConnExecutor(int id) {
     super(id);
     this.id = id;
   }
+
+  final ExecutionContextExecutorService logAsyncService =
+      Utils.newCachedExecutionContext(
+          ShellEngineConnConf.LOG_SERVICE_MAX_THREAD_SIZE, "ShelLogService-Thread-", true);
 
   @Override
   public void init() {
@@ -72,7 +86,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
   @Override
   public ExecuteResponse executeCompletely(
       EngineExecutionContext engineExecutionContext, String code, String completedLine) {
-    final String newcode = completedLine + code;
+    String newcode = completedLine + code;
     logger.debug("newcode is " + newcode);
     return executeLine(engineExecutionContext, newcode);
   }
@@ -84,6 +98,11 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
       logger.info("Shell executor reset new engineExecutionContext!");
     }
 
+    if (engineExecutionContext.getJobId().isEmpty()) {
+      return new ErrorExecuteResponse("taskID is null", null);
+    }
+
+    String taskId = engineExecutionContext.getJobId().get();
     BufferedReader bufferedReader = null;
     BufferedReader errorsReader = null;
 
@@ -94,60 +113,48 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
     try {
       engineExecutionContext.appendStdout(getId() + " >> " + code.trim());
 
-      String[] argsArr = null;
+      String[] argsArr;
       if (engineExecutionContext.getTotalParagraph() == 1
           && engineExecutionContext.getProperties() != null
           && engineExecutionContext
               .getProperties()
               .containsKey(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY)) {
-
         ArrayList<String> argsList =
             (ArrayList<String>)
                 engineExecutionContext
                     .getProperties()
                     .get(ShellEngineConnPluginConst.RUNTIME_ARGS_KEY);
-
-        try {
-          argsArr = argsList.toArray(new String[argsList.size()]);
-          logger.info(
-              "Will execute shell task with user-specified arguments: '{}'",
-              Arrays.toString(argsArr));
-        } catch (Exception t) {
-          logger.warn(
-              "Cannot read user-input shell arguments. Will execute shell task without them.", t);
-        }
+        argsArr = argsList.toArray(new String[argsList.size()]);
+        logger.info(
+            "Will execute shell task with user-specified arguments: '{}'",
+            StringUtils.join(argsArr, "' '"));
+      } else {
+        argsArr = null;
       }
 
-      String workingDirectory = null;
+      String workingDirectory;
       if (engineExecutionContext.getTotalParagraph() == 1
           && engineExecutionContext.getProperties() != null
           && engineExecutionContext
               .getProperties()
               .containsKey(ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY)) {
-
         String wdStr =
             (String)
                 engineExecutionContext
                     .getProperties()
                     .get(ShellEngineConnPluginConst.SHELL_RUNTIME_WORKING_DIRECTORY);
-
-        try {
-          if (isExecutePathExist(wdStr)) {
-            logger.info(
-                "Will execute shell task under user-specified working-directory: '" + wdStr + "'");
-            workingDirectory = wdStr;
-          } else {
-            logger.warn(
-                "User-specified working-directory: '"
-                    + wdStr
-                    + "' does not exist or user does not have access permission. "
-                    + "Will execute shell task under default working-directory. Please contact the administrator!");
-          }
-        } catch (Exception t) {
+        if (isExecutePathExist(wdStr)) {
+          logger.info(
+              "Will execute shell task under user-specified working-directory: '{}'", wdStr);
+          workingDirectory = wdStr;
+        } else {
           logger.warn(
-              "Cannot read user-input working-directory. Will execute shell task under default working-directory.",
-              t);
+              "User-specified working-directory: '{}' does not exist or user does not have access permission. Will execute shell task under default working-directory. Please contact the administrator!",
+              wdStr);
+          workingDirectory = null;
         }
+      } else {
+        workingDirectory = null;
       }
 
       String[] generatedCode =
@@ -156,6 +163,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
               : generateRunCodeWithArgs(code, argsArr);
 
       ProcessBuilder processBuilder = new ProcessBuilder(generatedCode);
+
       if (StringUtils.isNotBlank(workingDirectory)) {
         processBuilder.directory(new File(workingDirectory));
       }
@@ -163,17 +171,20 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
       processBuilder.redirectErrorStream(false);
       extractor = new YarnAppIdExtractor();
       process = processBuilder.start();
-
       bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       errorsReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+      // add task id and task Info cache
+      shellECTaskInfoCache.put(taskId, new ShellECTaskInfo(taskId, process, extractor));
+
       CountDownLatch counter = new CountDownLatch(2);
       inputReaderThread =
           new ReaderThread(engineExecutionContext, bufferedReader, extractor, true, counter);
       errReaderThread =
           new ReaderThread(engineExecutionContext, errorsReader, extractor, false, counter);
 
-      inputReaderThread.start();
-      errReaderThread.start();
+      logAsyncService.execute(inputReaderThread);
+      logAsyncService.execute(errReaderThread);
 
       int exitCode = process.waitFor();
       counter.await();
@@ -185,20 +196,17 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
       } else {
         return new SuccessExecuteResponse();
       }
-
     } catch (Exception e) {
       logger.error("Execute shell code failed, reason:", e);
       return new ErrorExecuteResponse("run shell failed", e);
-
     } finally {
       if (errorsReader != null) {
-        inputReaderThread.onDestroy();
-      }
-      if (inputReaderThread != null) {
         errReaderThread.onDestroy();
       }
-      IOUtils.closeQuietly(bufferedReader);
-      IOUtils.closeQuietly(errorsReader);
+      if (inputReaderThread != null) {
+        inputReaderThread.onDestroy();
+      }
+      shellECTaskInfoCache.remove(taskId);
     }
   }
 
@@ -226,9 +234,9 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
 
   @Override
   public JobProgressInfo[] getProgressInfo(String taskID) {
-    List<JobProgressInfo> jobProgressInfo = new ArrayList<>();
+    List<JobProgressInfo> jobProgressInfos = new ArrayList<>();
     if (this.engineExecutionContext == null) {
-      return jobProgressInfo.toArray(new JobProgressInfo[0]);
+      return jobProgressInfos.toArray(new JobProgressInfo[0]);
     }
 
     String jobId =
@@ -236,18 +244,18 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
             ? engineExecutionContext.getJobId().get()
             : "";
     if (progress(taskID) == 0.0f) {
-      jobProgressInfo.add(new JobProgressInfo(jobId, 1, 1, 0, 0));
+      jobProgressInfos.add(new JobProgressInfo(jobId, 1, 1, 0, 0));
     } else {
-      jobProgressInfo.add(new JobProgressInfo(jobId, 1, 0, 0, 1));
+      jobProgressInfos.add(new JobProgressInfo(jobId, 1, 0, 0, 1));
     }
-    return jobProgressInfo.toArray(new JobProgressInfo[0]);
+    return jobProgressInfos.toArray(new JobProgressInfo[0]);
   }
 
   @Override
   public float progress(String taskID) {
     if (this.engineExecutionContext != null) {
-      return this.engineExecutionContext.getCurrentParagraph()
-          / (float) this.engineExecutionContext.getTotalParagraph();
+      return ((float) this.engineExecutionContext.getCurrentParagraph())
+          / this.engineExecutionContext.getTotalParagraph();
     } else {
       return 0.0f;
     }
@@ -299,12 +307,13 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
      Kill yarn-applications
     */
     List<String> yarnAppIds = extractor.getExtractedYarnAppIds();
+
     GovernanceUtils.killYarnJobApp(yarnAppIds);
     logger.info("Finished kill yarn app ids in the engine of ({})", getId());
     super.killTask(taskID);
   }
 
-  private int getPid(Process process) {
+  int getPid(Process process) {
     try {
       Class<?> clazz = Class.forName("java.lang.UNIXProcess");
       Field field = clazz.getDeclaredField("pid");

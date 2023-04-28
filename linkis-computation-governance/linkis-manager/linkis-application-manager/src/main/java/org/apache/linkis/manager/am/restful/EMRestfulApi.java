@@ -428,7 +428,7 @@ public class EMRestfulApi {
 
   private Message executeECMOperation(
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
-    String operationName = OperateRequest.getOperationName(ecmOperateRequest.parameters());
+    String operationName = OperateRequest.getOperationName(ecmOperateRequest.getParameters());
     if (ArrayUtils.contains(adminOperations, operationName)
         && Configuration.isNotAdmin(ecmOperateRequest.getUser())) {
       logger.warn(

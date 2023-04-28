@@ -24,34 +24,34 @@ import java.util.Map;
 
 public interface Operator {
 
-    String[] getNames();
+  String[] getNames();
 
-    Map<String, Object> apply(Map<String, Object> parameters) throws GovernanceErrorException;
+  Map<String, Object> apply(Map<String, Object> parameters) throws GovernanceErrorException;
 
-    // todo
-    default <T> T getAs(Map<String, Object> parameters, String key, T defaultVal) {
-        Object value = parameters.getOrDefault(key, defaultVal);
-        if (value == null) {
-            return null;
-        } else {
-            try {
-                return (T) value;
-            } catch (Exception e) {
-                throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
-            }
-        }
+  // todo
+  default <T> T getAs(Map<String, Object> parameters, String key, T defaultVal) {
+    Object value = parameters.getOrDefault(key, defaultVal);
+    if (value == null) {
+      return null;
+    } else {
+      try {
+        return (T) value;
+      } catch (Exception e) {
+        throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
+      }
     }
+  }
 
-    default <T> T getAsThrow(Map<String, Object> parameters, String key) {
-        Object value = parameters.get(key);
-        if (value != null) {
-            try {
-                return (T) value;
-            } catch (Exception e) {
-                throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
-            }
-        } else {
-            throw new WarnException(20305, "The parameter of " + key + " does not exist.");
-        }
+  default <T> T getAsThrow(Map<String, Object> parameters, String key) {
+    Object value = parameters.get(key);
+    if (value != null) {
+      try {
+        return (T) value;
+      } catch (Exception e) {
+        throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
+      }
+    } else {
+      throw new WarnException(20305, "The parameter of " + key + " does not exist.");
     }
+  }
 }

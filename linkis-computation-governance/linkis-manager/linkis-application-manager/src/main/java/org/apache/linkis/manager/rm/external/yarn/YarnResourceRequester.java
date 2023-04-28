@@ -325,7 +325,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
           CloseableHttpClient httpClient = HttpClients.createDefault();
           response = httpClient.execute(httpGet);
         } catch (IOException e) {
-          logger.warn("execute request failed", e);
+          logger.warn("getResponseByUrl failed", e);
+          throw new RuntimeException(e);
         }
         httpResponse = response;
       }
@@ -335,7 +336,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         response = httpClient.execute(httpGet);
       } catch (IOException e) {
-        logger.warn("execute request failed", e);
+        logger.warn("getResponseByUrl failed", e);
+        throw new RuntimeException(e);
       }
       httpResponse = response;
     }
@@ -345,14 +347,15 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     try {
       entityString = EntityUtils.toString(httpResponse.getEntity());
     } catch (IOException e) {
-      logger.warn("execute request failed", e);
-
+      logger.warn("getResponseByUrl failed", e);
+      throw new RuntimeException(e);
     }
     JsonNode jsonNode = null;
     try {
       jsonNode = objectMapper.readTree(entityString);
     } catch (Exception e) {
-      logger.warn("objectMapper readTree failed", e);
+      logger.warn("getResponseByUrl failed", e);
+      throw new RuntimeException(e);
     }
 
     return jsonNode;

@@ -21,7 +21,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class EngineConnLocalizeResourceImpl implements EngineConnLocalizeResource {
+  private static final Logger logger =
+      LoggerFactory.getLogger(EngineConnLocalizeResourceImpl.class);
+
   private final String filePath;
   private final String fileName;
   private final long lastModified;
@@ -40,7 +46,7 @@ public class EngineConnLocalizeResourceImpl implements EngineConnLocalizeResourc
     try {
       return new FileInputStream(filePath);
     } catch (FileNotFoundException e) {
-      // e.printStackTrace();
+      logger.warn("getFileInputStream failed filePath:[{}]", filePath, e);
     }
     return null;
   }

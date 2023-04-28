@@ -17,16 +17,17 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
-import java.util
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.server.service.OperateService
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.em.{ECMOperateRequest, ECMOperateResponse}
 import org.apache.linkis.rpc.message.annotation.Receiver
+
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import org.springframework.stereotype.Service
 
+import java.util
 
 @Service
 class DefaultOperateService extends OperateService with Logging {
@@ -36,14 +37,22 @@ class DefaultOperateService extends OperateService with Logging {
     val parameters = ecmOperateRequest.getParameters()
     val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
       logger.error(s"Get operator failed, parameters is ${ecmOperateRequest.getParameters}.", t)
-      return new ECMOperateResponse( new util.HashMap[String,Object](), true, ExceptionUtils.getRootCauseMessage(t))
+      return new ECMOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
     }
     logger.info(
       s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${ecmOperateRequest.getParameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      return new ECMOperateResponse( new util.HashMap[String,Object](), true, ExceptionUtils.getRootCauseMessage(t))
+      return new ECMOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
     }
     new ECMOperateResponse(result)
   }

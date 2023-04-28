@@ -158,6 +158,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
     }
 
     EMNode emNode = (EMNode) choseNode.get();
+
     // 4. request resource
     Pair<String, NodeResource> resourcePair =
         requestResource(
@@ -384,7 +385,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
       try {
         jsonNode = BDPJettyServerHelper.jacksonJson().readTree(msg);
       } catch (JsonProcessingException e) {
-        // todo
+        logger.warn("getStartErrorInfo readTree failed msg: {}", msg, e);
       }
       if (jsonNode != null && jsonNode.has(AMConstant.START_REASON)) {
         String startReason = jsonNode.get(AMConstant.START_REASON).asText();

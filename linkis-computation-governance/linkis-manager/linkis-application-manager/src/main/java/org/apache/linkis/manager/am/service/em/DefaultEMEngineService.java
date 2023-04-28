@@ -17,12 +17,12 @@
 
 package org.apache.linkis.manager.am.service.em;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService;
 import org.apache.linkis.governance.common.utils.ECPathUtils;
 import org.apache.linkis.manager.am.manager.EMNodeManager;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
+import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.EMEngineService;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.*;
@@ -40,7 +40,8 @@ import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.rm.domain.RMLabelContainer;
 import org.apache.linkis.manager.rm.service.LabelResourceService;
 import org.apache.linkis.manager.service.common.label.LabelFilter;
-import org.apache.linkis.manager.am.service.EcResourceInfoService;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class DefaultEMEngineService implements EMEngineService {
 
   @Autowired private LabelFilter labelFilter;
 
-  @Autowired private EcResourceInfoService ecResourceInfoService;
+  @Autowired private ECResourceInfoService ecResourceInfoService;
 
   @Autowired private LabelResourceService labelResourceService;
 
@@ -112,50 +113,43 @@ public class DefaultEMEngineService implements EMEngineService {
     EngineStopRequest engineStopRequest = new EngineStopRequest();
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance());
 
-
     engineStopRequest.setIdentifierType(engineNode.getMark());
     engineStopRequest.setIdentifier(engineNode.getIdentifier());
 
-    ECResourceInfoRecord ecResourceInfo  =
-            ecResourceInfoService.getECResourceInfoRecordByInstance(
-                    engineNode.getServiceInstance().getInstance()
-            );
+    ECResourceInfoRecord ecResourceInfo =
+        ecResourceInfoService.getECResourceInfoRecordByInstance(
+            engineNode.getServiceInstance().getInstance());
     if (ecResourceInfo != null) {
-      engineStopRequest.setEngineType(ecResourceInfo.getLabelValue().split(",")[1].split("-")[0])
+      engineStopRequest.setEngineType(ecResourceInfo.getLabelValue().split(",")[1].split("-")[0]);
       engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix());
     } else {
       if (CollectionUtils.isEmpty(engineNode.getLabels())) {
         // node labels is empty, engine already been stopped
         logger.info(
-                "DefaultEMEngineService stopEngine node labels is empty, engine: {} have already been stopped.",
-                engineStopRequest.getServiceInstance() );
+            "DefaultEMEngineService stopEngine node labels is empty, engine: {} have already been stopped.",
+            engineStopRequest.getServiceInstance());
         return;
       }
 
-      RMLabelContainer rMLabelContainer  =
-              labelResourceService.enrichLabels(engineNode.getLabels());
+      RMLabelContainer rMLabelContainer = labelResourceService.enrichLabels(engineNode.getLabels());
 
-      PersistenceResource persistenceResource  =
-              labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel());
+      PersistenceResource persistenceResource =
+          labelResourceService.getPersistenceResource(rMLabelContainer.getEngineInstanceLabel());
       if (persistenceResource == null) {
         // persistenceResource is null, engine already been stopped
         logger.info(
-                "DefaultEMEngineService stopEngine persistenceResource is null, engine: {} have already been stopped."
-        ,engineStopRequest.getServiceInstance());
+            "DefaultEMEngineService stopEngine persistenceResource is null, engine: {} have already been stopped.",
+            engineStopRequest.getServiceInstance());
         return;
       }
 
       engineStopRequest.setEngineType(rMLabelContainer.getEngineTypeLabel().getEngineType());
       engineStopRequest.setLogDirSuffix(
-              ECPathUtils
-                      .getECLogDirSuffix(
-                              rMLabelContainer.getEngineTypeLabel(),
-                              rMLabelContainer.getUserCreatorLabel(),
-                              persistenceResource.getTicketId()
-                      )
-      );
+          ECPathUtils.getECLogDirSuffix(
+              rMLabelContainer.getEngineTypeLabel(),
+              rMLabelContainer.getUserCreatorLabel(),
+              persistenceResource.getTicketId()));
     }
-
 
     emNodeManager.stopEngine(engineStopRequest, emNode);
     // engineNodeManager.deleteEngineNode(engineNode)

@@ -49,9 +49,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class UserResourceService {
+  private static final Logger logger = LoggerFactory.getLogger(UserResourceService.class);
 
   @Autowired private LabelResourceService labelResourceService;
 
@@ -107,7 +110,7 @@ public class UserResourceService {
       try {
         combinedLabel = combinedLabelBuilder.build("", labelList);
       } catch (LabelErrorException e) {
-        // e.printStackTrace();
+        logger.warn("build label failed", e);
         throw new RuntimeException(e);
       }
       labelResourceService.setLabelResource(

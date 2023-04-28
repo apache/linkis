@@ -100,7 +100,9 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     response match {
       case registerEMResponse: RegisterEMResponse =>
         if (!registerEMResponse.getIsSuccess) {
-          logger.error(s"Failed to register info to linkis manager, reason: ${registerEMResponse.getMsg}")
+          logger.error(
+            s"Failed to register info to linkis manager, reason: ${registerEMResponse.getMsg}"
+          )
           System.exit(1)
         }
       case _ =>

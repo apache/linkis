@@ -49,7 +49,7 @@ public class DefaultEngineConnResourceFactoryService implements EngineConnResour
           EngineConnPluginsLoaderFactory.getEngineConnPluginsLoader()
               .getEngineConnPlugin(engineType);
     } catch (Exception e) {
-      // e.printStackTrace();
+      logger.warn("getResourceFactory failed engineType:{}", engineType, e);
       throw new RuntimeException(e);
     }
     return engineConnPluginInstance.plugin().getEngineResourceFactory();

@@ -262,7 +262,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     try {
       nodeManagerPersistence.addEngineNode(engineNode);
     } catch (PersistenceErrorException e) {
-      // e.printStackTrace();
+      logger.warn("addEngineNode failed", e);
+      throw new RuntimeException(e);
     }
     // init metric
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(
@@ -297,9 +298,11 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     try {
       nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode);
     } catch (PersistenceErrorException e) {
-      // e.printStackTrace();
+      logger.warn("updateEngineNode failed", e);
+      throw new RuntimeException(e);
     } catch (LinkisRetryException e) {
-      // e.printStackTrace();
+      logger.warn("updateEngineNode failed", e);
+      throw new RuntimeException(e);
     }
 
     EngineInstanceLabel engineLabel = labelBuilderFactory.createLabel(EngineInstanceLabel.class);

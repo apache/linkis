@@ -303,7 +303,8 @@ public class RMMonitorRest {
         combinedLabel =
             combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
       } catch (LabelErrorException e) {
-        // e.printStackTrace();
+        logger.warn("getAllUserResource failed", e);
+        throw new RuntimeException(e);
       }
       COMBINED_USERCREATOR_ENGINETYPE = combinedLabel.getLabelKey();
     }
@@ -410,7 +411,8 @@ public class RMMonitorRest {
         combinedLabel =
             combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
       } catch (LabelErrorException e) {
-        // e.printStackTrace();
+        logger.warn("build label failed", e);
+        throw new RuntimeException(e);
       }
       NodeResource labelResource = labelResourceService.getLabelResource(combinedLabel);
       if (labelResource == null) {
@@ -584,7 +586,8 @@ public class RMMonitorRest {
     try {
       externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
     } catch (RMErrorException e) {
-      // e.printStackTrace();
+      logger.warn("getResource failed", e);
+      throw new RuntimeException(e);
     }
     double usedMemoryPercentage = 0.0;
     double usedCPUPercentage = 0.0;
@@ -617,7 +620,8 @@ public class RMMonitorRest {
       yarnAppsInfo =
           externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier);
     } catch (RMErrorException e) {
-      // e.printStackTrace();
+      logger.warn("getQueueResource getAppInfo failed", e);
+      throw new RuntimeException(e);
     }
 
     Map<String, List<ExternalAppInfo>> user2YarnAppsInfos =

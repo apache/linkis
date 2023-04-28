@@ -61,7 +61,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void addNodeMetrics(NodeMetrics nodeMetrics){
+  public void addNodeMetrics(NodeMetrics nodeMetrics) {
     // 直接插入 NodeMetric即可
     PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
     persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
@@ -131,7 +131,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes){
+  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes) {
     if (nodes == null || nodes.isEmpty()) return Collections.emptyList();
     List<NodeMetrics> nodeMetricsList = new ArrayList<>();
     List<String> instances = new ArrayList<>();
@@ -157,7 +157,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public NodeMetrics getNodeMetrics(Node node)  {
+  public NodeMetrics getNodeMetrics(Node node) {
     PersistenceNodeMetrics persistenceNodeMetrics =
         nodeMetricManagerMapper.getNodeMetricsByInstance(node.getServiceInstance().getInstance());
     if (persistenceNodeMetrics == null) return null;
@@ -166,13 +166,13 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void deleteNodeMetrics(Node node){
+  public void deleteNodeMetrics(Node node) {
     String instance = node.getServiceInstance().getInstance();
     nodeMetricManagerMapper.deleteNodeMetricsByInstance(instance);
   }
 
   @Override
-  public List<NodeMetrics> getAllNodeMetrics(){
+  public List<NodeMetrics> getAllNodeMetrics() {
     List<PersistenceNodeMetricsEntity> allNodeMetrics = nodeMetricManagerMapper.getAllNodeMetrics();
     List<NodeMetrics> persistenceNodeMetricsList = new ArrayList<>();
     for (PersistenceNodeMetricsEntity persistenceNodeMetricsEntity : allNodeMetrics) {

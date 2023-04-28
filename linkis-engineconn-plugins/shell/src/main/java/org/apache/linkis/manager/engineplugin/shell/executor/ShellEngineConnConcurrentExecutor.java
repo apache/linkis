@@ -36,8 +36,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
   private static final Logger logger =
       LoggerFactory.getLogger(ShellEngineConnConcurrentExecutor.class);
 
-  private org.apache.linkis.manager.engineplugin.shell.executor.ShellEngineConnExecutor
-      ShellEngineConnExecutor;
+  private ShellEngineConnExecutor ShellEngineConnExecutor;
 
   private int maxRunningNumber;
 

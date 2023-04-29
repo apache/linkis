@@ -47,7 +47,7 @@ object RMUtils extends Logging {
     CommonVars("wds.linkis.manager.rm.debug.log.path", "file:///tmp/linkis/rmLog")
 
   val EXTERNAL_RESOURCE_REFRESH_TIME =
-    CommonVars("wds.linkis.manager.rm.external.resource.regresh.time", new TimeType("30m"))
+    CommonVars[Long]("wds.linkis.manager.rm.external.resource.refresh.time", 30L).getValue
 
   val COMBINED_USERCREATOR_ENGINETYPE = "combined_userCreator_engineType"
 

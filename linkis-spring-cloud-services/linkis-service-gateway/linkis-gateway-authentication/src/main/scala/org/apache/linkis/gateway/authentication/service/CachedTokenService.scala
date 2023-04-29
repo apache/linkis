@@ -112,19 +112,23 @@ class CachedTokenService extends TokenService with Logging {
               logger.error(
                 s"Failed to obtain cache through tokenName, tokenName:${tokenName}(通过tokenName获取缓存失败，tokenName：${tokenName})"
               )
-              throw new TokenAuthException(
+              val exception = new TokenAuthException(
                 FAILED_TO_LOAD_TOKEN_NAME.getErrorCode,
                 MessageFormat.format(FAILED_TO_LOAD_TOKEN_NAME.getErrorDesc, tokenName)
               )
+              exception.initCause(x.getCause)
+              throw exception
           }
         case _ =>
           logger.error(
             s"Failed to load token from DB into cache,tokenName:${tokenName}(无法将 token 令牌从数据库加载到缓存中,token名称：${tokenName})!"
           )
-          throw new TokenAuthException(
+          val exception =  new TokenAuthException(
             FAILED_TO_LOAD_TOKEN.getErrorCode,
             MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName)
           )
+          exception.initCause(t)
+          throw exception
       }
     )
   }

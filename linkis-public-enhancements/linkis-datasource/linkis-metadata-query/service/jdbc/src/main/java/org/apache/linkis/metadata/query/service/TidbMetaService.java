@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.query.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
@@ -53,8 +54,10 @@ public class TidbMetaService extends AbstractDbMetaService<SqlConnection> {
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
-        extraParams =
-            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+        String paramStr = String.valueOf(sqlParamObj);
+        if (StringUtils.isNotBlank(paramStr)) {
+          extraParams = Json.fromJson(paramStr, Map.class, String.class, Object.class);
+        }
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }

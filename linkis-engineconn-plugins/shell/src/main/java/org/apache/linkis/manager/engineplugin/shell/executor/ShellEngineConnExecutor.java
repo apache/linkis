@@ -69,7 +69,7 @@ public class ShellEngineConnExecutor extends ComputationExecutor {
   private YarnAppIdExtractor extractor;
 
   public ShellEngineConnExecutor(int id) {
-    super(id);
+    super(1000);
     this.id = id;
   }
 

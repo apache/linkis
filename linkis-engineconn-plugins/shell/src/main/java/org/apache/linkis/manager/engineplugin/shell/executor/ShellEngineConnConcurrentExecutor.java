@@ -41,7 +41,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
   private int maxRunningNumber;
 
   public ShellEngineConnConcurrentExecutor(int id, int maxRunningNumber) {
-    super(id);
+    super(1000);
     this.shellEngineConnExecutor = new ShellEngineConnExecutor(id);
     this.maxRunningNumber = maxRunningNumber;
   }

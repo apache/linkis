@@ -190,8 +190,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * The registration method is mainly used to notify all RM nodes (including the node), and the
-   * instance is offline. 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
+   * The registration method is mainly used to notify all RM nodes , and the instance is offline.
+   * 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
    */
   override def unregister(serviceInstance: ServiceInstance): Unit = {
 
@@ -199,7 +199,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
     eMInstanceLabel.setServiceName(serviceInstance.getApplicationName)
     eMInstanceLabel.setInstance(serviceInstance.getInstance)
-    val ecNodes = nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
     try {
       labelResourceService.removeResourceByLabel(eMInstanceLabel)
@@ -216,13 +215,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     } finally {
       resourceLockService.unLock(lock)
       logger.info(s"Finished to clear ecm resource:${serviceInstance}")
-    }
-    ecNodes.foreach { engineNode =>
-      Utils.tryAndWarn {
-        engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
-        engineNode.setNodeStatus(NodeStatus.Failed)
-        engineStopService.engineConnInfoClear(engineNode)
-      }
     }
     logger.info(s"Finished to clear ec for ecm ${serviceInstance}")
   }

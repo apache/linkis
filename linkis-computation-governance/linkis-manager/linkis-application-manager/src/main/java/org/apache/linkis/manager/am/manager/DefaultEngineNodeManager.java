@@ -169,7 +169,20 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     RetryHandler retryHandler = new DefaultRetryHandler();
     retryHandler.addRetryException(feign.RetryableException.class);
     retryHandler.addRetryException(UndeclaredThrowableException.class);
+
+    //wait until engine to be available
     EngineNode node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
+    long retryEndTime = System.currentTimeMillis() + 60 * 1000;
+    while (!NodeStatus.isAvailable(node.getNodeStatus())
+        && System.currentTimeMillis() < retryEndTime) {
+      node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
+      try {
+        Thread.sleep(5 * 1000);
+      } catch (InterruptedException e) {
+        // ignore
+      }
+    }
+
     if (!NodeStatus.isAvailable(node.getNodeStatus())) {
       return null;
     }
@@ -185,11 +198,6 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     } else {
       return null;
     }
-  }
-
-  @Override
-  public EngineNode useEngine(EngineNode engineNode) {
-    return useEngine(engineNode, (long) AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue());
   }
 
   /**

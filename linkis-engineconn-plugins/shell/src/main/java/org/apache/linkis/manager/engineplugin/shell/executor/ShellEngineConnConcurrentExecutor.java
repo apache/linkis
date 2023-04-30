@@ -21,6 +21,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.ConcurrentCompu
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext;
 import org.apache.linkis.governance.common.utils.GovernanceUtils;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.engineplugin.shell.conf.ShellEngineConnConf;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.scheduler.executer.ExecuteResponse;
@@ -41,7 +42,7 @@ public class ShellEngineConnConcurrentExecutor extends ConcurrentComputationExec
   private int maxRunningNumber;
 
   public ShellEngineConnConcurrentExecutor(int id, int maxRunningNumber) {
-    super(1000);
+    super(ShellEngineConnConf.SHELL_ENGINECONN_OUTPUT_PRINT_LIMIT);
     this.shellEngineConnExecutor = new ShellEngineConnExecutor(id);
     this.maxRunningNumber = maxRunningNumber;
   }

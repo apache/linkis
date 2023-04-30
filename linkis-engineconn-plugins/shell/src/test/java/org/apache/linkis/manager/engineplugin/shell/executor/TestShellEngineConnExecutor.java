@@ -53,6 +53,7 @@ public class TestShellEngineConnExecutor {
     if (!isWindows) {
       EngineExecutionContext engineExecutionContext =
           new EngineExecutionContext(shellEngineConnExecutor, Utils.getJvmUser());
+      engineExecutionContext.setJobId("1");
       ExecuteResponse response = shellEngineConnExecutor.executeLine(engineExecutionContext, "id");
       Assertions.assertNotNull(response);
       shellEngineConnExecutor.close();

@@ -25,4 +25,6 @@ public class ShellEngineConnConf {
 
   public static final int LOG_SERVICE_MAX_THREAD_SIZE =
       CommonVars.apply("linkis.engineconn.shell.log.max.thread.size", 50).getValue();
+  public static final int SHELL_ENGINECONN_OUTPUT_PRINT_LIMIT =
+      CommonVars.apply("wds.linkis.engineconn.shell.output.print.limit", 1000).getValue();
 }

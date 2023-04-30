@@ -25,8 +25,6 @@ import org.apache.linkis.rpc.exception.DWCURIException
 import org.apache.linkis.rpc.serializer.ProtostuffSerializeUtil
 import org.apache.linkis.server.{EXCEPTION_MSG, Message}
 
-import org.apache.commons.lang3.ClassUtils
-
 private[linkis] trait RPCProduct {
 
   def toMessage(t: Any): Message
@@ -40,11 +38,8 @@ private[linkis] trait RPCProduct {
 private[linkis] object RPCProduct extends Logging {
 
   private[rpc] val IS_REQUEST_PROTOCOL_CLASS = "rpc_is_request_protocol"
-  private[rpc] val IS_SCALA_CLASS = "rpc_is_scala_class"
   private[rpc] val CLASS_VALUE = "rpc_object_class"
   private[rpc] val OBJECT_VALUE = "rpc_object_value"
-
-  private var serializerClasses: List[Class[_]] = List.empty
 
   private val rpcProduct: RPCProduct = new RPCProduct {
 
@@ -87,14 +82,6 @@ private[linkis] object RPCProduct extends Logging {
   }
 
   private[rpc] def isRequestProtocol(obj: Any): Boolean = obj.isInstanceOf[RequestProtocol]
-
-  private[rpc] def isScalaClass(obj: Any): Boolean =
-    (obj.isInstanceOf[Product] && obj.isInstanceOf[Serializable]) ||
-      serializerClasses.exists(ClassUtils.isAssignable(obj.getClass, _)) ||
-      obj.getClass.getName.startsWith("scala.")
-
-  private[rpc] def getSerializableScalaClass(clazz: Class[_]): Class[_] =
-    serializerClasses.find(ClassUtils.isAssignable(clazz, _)).getOrElse(clazz)
 
   def getRPCProduct: RPCProduct = rpcProduct
 }

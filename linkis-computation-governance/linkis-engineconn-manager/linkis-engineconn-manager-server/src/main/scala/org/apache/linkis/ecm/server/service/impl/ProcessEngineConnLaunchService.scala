@@ -90,7 +90,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
           Sender
             .getSender(MANAGER_SERVICE_NAME)
             .send(
-              EngineConnStatusCallbackToAM(
+              new EngineConnStatusCallbackToAM(
                 conn.getServiceInstance,
                 NodeStatus.ShuttingDown,
                 "Failed to start EngineConn, reason: " + ExceptionUtils.getRootCauseMessage(

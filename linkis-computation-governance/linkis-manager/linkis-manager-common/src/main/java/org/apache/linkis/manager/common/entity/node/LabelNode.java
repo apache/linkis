@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface LabelNode extends Node {
 
-  List<Label> getLabels();
+  List<Label<?>> getLabels();
 
-  void setLabels(List<Label> labels);
+  void setLabels(List<Label<?>> labels);
 }

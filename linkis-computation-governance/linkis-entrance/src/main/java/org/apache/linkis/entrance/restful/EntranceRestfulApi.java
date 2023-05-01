@@ -338,7 +338,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
             metricsVo.put(TaskConstant.JOB_YARNRESOURCE, resoureList);
             Optional<Integer> cores =
                 resourceMap.values().stream()
-                    .map(resource -> resource.queueCores())
+                    .map(resource -> resource.getQueueCores())
                     .reduce((x, y) -> x + y);
             Optional<Long> memory =
                 resourceMap.values().stream()

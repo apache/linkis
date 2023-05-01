@@ -58,7 +58,7 @@ class MetadataGetColumnsAction extends GetAction with DataSourceAction {
 object MetadataGetColumnsAction {
   def builder(): Builder = new Builder
 
-  class Builder private[MetadataGetColumnsAction]() {
+  class Builder private[MetadataGetColumnsAction] () {
     private var dataSourceId: Long = _
     private var dataSourceName: String = _
     private var database: String = _
@@ -75,9 +75,9 @@ object MetadataGetColumnsAction {
      * get value form dataSourceId is deprecated, suggest to use dataSourceName
      *
      * @param dataSourceId
-     * datasourceId
+     *   datasourceId
      * @return
-     * builder
+     *   builder
      */
     @deprecated
     def setDataSourceId(dataSourceId: Long): Builder = {

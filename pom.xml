@@ -1322,54 +1322,54 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>com.diffplug.spotless</groupId>
-          <artifactId>spotless-maven-plugin</artifactId>
-          <version>${spotless-maven-plugin.version}</version>
-          <configuration>
-            <pom>
-              <sortPom>
-                <expandEmptyElements>false</expandEmptyElements>
-              </sortPom>
-            </pom>
-            <java>
-              <googleJavaFormat>
-                <version>1.7</version>
-                <style>GOOGLE</style>
-              </googleJavaFormat>
+<!--        <plugin>-->
+<!--          <groupId>com.diffplug.spotless</groupId>-->
+<!--          <artifactId>spotless-maven-plugin</artifactId>-->
+<!--          <version>${spotless-maven-plugin.version}</version>-->
+<!--          <configuration>-->
+<!--            <pom>-->
+<!--              <sortPom>-->
+<!--                <expandEmptyElements>false</expandEmptyElements>-->
+<!--              </sortPom>-->
+<!--            </pom>-->
+<!--            <java>-->
+<!--              <googleJavaFormat>-->
+<!--                <version>1.7</version>-->
+<!--                <style>GOOGLE</style>-->
+<!--              </googleJavaFormat>-->
 
-              <!-- \# refers to the static imports -->
-              <importOrder>
-                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>
-              </importOrder>
+<!--              &lt;!&ndash; \# refers to the static imports &ndash;&gt;-->
+<!--              <importOrder>-->
+<!--                <order>org.apache.linkis,org.apache,org.springframework,javax,java,scala,,\#</order>-->
+<!--              </importOrder>-->
 
-              <removeUnusedImports/>
+<!--              <removeUnusedImports/>-->
 
-              <licenseHeader>
-                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>
-                <delimiter>package</delimiter>
-              </licenseHeader>
-            </java>
-            <scala>
-              <scalafmt>
-                <file>${maven.multiModuleProjectDirectory}/.scalafmt.conf</file>
-              </scalafmt>
-              <licenseHeader>
-                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>
-                <delimiter>package</delimiter>
-              </licenseHeader>
-            </scala>
-          </configuration>
-          <executions>
-            <execution>
-              <id>spotless-apply</id>
-              <goals>
-                <goal>apply</goal>
-              </goals>
-              <phase>validate</phase>
-            </execution>
-          </executions>
-        </plugin>
+<!--              <licenseHeader>-->
+<!--                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>-->
+<!--                <delimiter>package</delimiter>-->
+<!--              </licenseHeader>-->
+<!--            </java>-->
+<!--            <scala>-->
+<!--              <scalafmt>-->
+<!--                <file>${maven.multiModuleProjectDirectory}/.scalafmt.conf</file>-->
+<!--              </scalafmt>-->
+<!--              <licenseHeader>-->
+<!--                <file>${maven.multiModuleProjectDirectory}/tool/license-header</file>-->
+<!--                <delimiter>package</delimiter>-->
+<!--              </licenseHeader>-->
+<!--            </scala>-->
+<!--          </configuration>-->
+<!--          <executions>-->
+<!--            <execution>-->
+<!--              <id>spotless-apply</id>-->
+<!--              <goals>-->
+<!--                <goal>apply</goal>-->
+<!--              </goals>-->
+<!--              <phase>validate</phase>-->
+<!--            </execution>-->
+<!--          </executions>-->
+<!--        </plugin>-->
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -1407,10 +1407,10 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>com.diffplug.spotless</groupId>
-        <artifactId>spotless-maven-plugin</artifactId>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>com.diffplug.spotless</groupId>-->
+<!--        <artifactId>spotless-maven-plugin</artifactId>-->
+<!--      </plugin>-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>

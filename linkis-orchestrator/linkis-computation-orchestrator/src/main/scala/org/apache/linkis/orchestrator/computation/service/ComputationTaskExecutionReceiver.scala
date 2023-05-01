@@ -69,14 +69,14 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   ): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager
-      .getByEngineConnAndTaskId(serviceInstance, taskProgressWithResource.execId)
+      .getByEngineConnAndTaskId(serviceInstance, taskProgressWithResource.getExecId)
       .foreach { codeExecutor =>
         val event = TaskRunningInfoEvent(
           codeExecutor.getExecTask,
-          taskProgressWithResource.progress,
-          taskProgressWithResource.progressInfo,
-          taskProgressWithResource.resourceMap,
-          taskProgressWithResource.extraInfoMap
+          taskProgressWithResource.getProgress,
+          taskProgressWithResource.getProgressInfo,
+          taskProgressWithResource.getResourceMap,
+          taskProgressWithResource.getExtraInfoMap
         )
         codeExecutor.getExecTask.getPhysicalContext.pushProgress(event)
         codeExecutor.getEngineConnExecutor.updateLastUpdateTime()

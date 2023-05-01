@@ -204,7 +204,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     case resourceExecutor: ResourceExecutor =>
       ManagerService.getManagerService
         .reportUsedResource(
-          ResourceUsedProtocol(
+          new ResourceUsedProtocol(
             Sender.getThisServiceInstance,
             resourceExecutor.getCurrentNodeResource(),
             engineCreationContext.getTicketId

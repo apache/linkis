@@ -207,11 +207,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         resourceMap.put(
           sc.applicationId,
           new ResourceWithStatus(
-            resource.yarnResource.queueMemory,
-            resource.yarnResource.queueCores,
-            resource.yarnResource.queueInstances,
+            resource.getYarnResource.getQueueMemory,
+            resource.getYarnResource.getQueueCores,
+            resource.getYarnResource.getQueueInstances,
             applicationStatus,
-            resource.yarnResource.queueName
+            resource.getYarnResource.getQueueName
           )
         )
       case _ =>

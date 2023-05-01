@@ -429,7 +429,7 @@ class TaskExecutionServiceImpl
               taskYarnResource(task.getTaskId) match {
                 case responseTaskYarnResource: ResponseTaskYarnResource =>
                   if (
-                      responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty
+                      responseTaskYarnResource.getResourceMap != null && !responseTaskYarnResource.getResourceMap.isEmpty
                   ) {
                     responseTaskYarnResource
                   } else {
@@ -459,15 +459,15 @@ class TaskExecutionServiceImpl
             // todo add other info
             var respRunningInfo: ResponseTaskRunningInfo = null
             if (null != resourceResponse) {
-              respRunningInfo = ResponseTaskRunningInfo(
+              respRunningInfo = new ResponseTaskRunningInfo(
                 progressResponse.execId,
                 progressResponse.progress,
                 progressResponse.progressInfo,
-                resourceResponse.resourceMap,
+                resourceResponse.getResourceMap,
                 extraInfoMap
               )
             } else {
-              respRunningInfo = ResponseTaskRunningInfo(
+              respRunningInfo = new ResponseTaskRunningInfo(
                 progressResponse.execId,
                 progressResponse.progress,
                 progressResponse.progressInfo,
@@ -488,7 +488,7 @@ class TaskExecutionServiceImpl
     executor match {
       case executor: ResourceFetchExecutor =>
         val resourceWithApplicationId = executor.FetchResource
-        ResponseTaskYarnResource(taskID, resourceWithApplicationId)
+        new ResponseTaskYarnResource(taskID, resourceWithApplicationId)
       case _ => null
     }
   }

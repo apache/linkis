@@ -17,19 +17,15 @@
 
 package org.apache.linkis.engineconn.acessible.executor.service
 
+import java.util
+
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.operator.OperatorFactory
-import org.apache.linkis.manager.common.protocol.engine.{
-  EngineOperateRequest,
-  EngineOperateResponse
-}
+import org.apache.linkis.manager.common.protocol.engine.{EngineOperateRequest, EngineOperateResponse}
 import org.apache.linkis.rpc.message.annotation.Receiver
-
 import org.apache.commons.lang3.exception.ExceptionUtils
-
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 @Service
 class DefaultOperateService extends OperateService with Logging {
@@ -38,19 +34,19 @@ class DefaultOperateService extends OperateService with Logging {
   override def executeOperation(
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
-    val parameters = engineOperateRequest.parameters.asScala.toMap
-    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
-      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    val parameters = engineOperateRequest.getParameters()
+    val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
+      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.getParameters}.", t)
+      return new EngineOperateResponse(new util.HashMap, true, ExceptionUtils.getRootCauseMessage(t))
     }
     logger.info(
-      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}."
+      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.getParameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      return new EngineOperateResponse(new util.HashMap, true, ExceptionUtils.getRootCauseMessage(t))
     }
-    EngineOperateResponse(result)
+    new EngineOperateResponse(result)
   }
 
 }

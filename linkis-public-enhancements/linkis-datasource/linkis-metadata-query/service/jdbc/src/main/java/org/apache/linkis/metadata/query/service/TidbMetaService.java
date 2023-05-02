@@ -17,13 +17,14 @@
 
 package org.apache.linkis.metadata.query.service;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.mysql.SqlConnection;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.stereotype.Component;
 

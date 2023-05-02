@@ -41,7 +41,7 @@ object ResourceUtils {
     } else if (resourceType.equals(ResourceType.Yarn)) {
       JsonUtils.jackson.readValue(plainResource, classOf[YarnResource])
     } else {
-      JsonUtils.jackson.readValue(plainResource, classOf[Resource])
+      JsonUtils.jackson.readValue(plainResource, classOf[LoadResource])
     }
   }
 
@@ -64,7 +64,7 @@ object ResourceUtils {
     } else if (resourceType.equals(ResourceType.Yarn)) {
       JsonUtils.jackson.writeValueAsString(resource, classOf[YarnResource])
     } else {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[Resource])
+      JsonUtils.jackson.writeValueAsString(resource, classOf[LoadResource])
     }
   }
 

@@ -352,8 +352,6 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val response = YarnResourceRequester.httpClient.execute(httpGet)
         httpResponse = response
     }
-    val response = YarnResourceRequester.httpClient.execute(httpGet)
-    httpResponse = response
     JsonUtils.jackson.readValue(
       EntityUtils.toString(httpResponse.getEntity()),
       classOf[util.Map[String, Object]]

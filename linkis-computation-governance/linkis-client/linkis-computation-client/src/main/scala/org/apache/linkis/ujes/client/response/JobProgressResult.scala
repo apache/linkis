@@ -41,7 +41,7 @@ class JobProgressResult extends UJESJobResult {
       .map(map =>
         JsonUtils.jackson
           .readValue(
-            JsonUtils.jackson.writeValueAsString(map, classOf[Map[String, Any]]),
+            JsonUtils.jackson.writeValueAsString(map.asScala.toMap),
             classOf[JobProgressInfo]
           )
       )

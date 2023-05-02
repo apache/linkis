@@ -120,6 +120,11 @@ object MetadataGetColumnsAction {
       metadataGetColumnsAction.database = this.database
       metadataGetColumnsAction.table = this.table
       metadataGetColumnsAction.setParameter("system", system)
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        metadataGetColumnsAction.setParameter("dataSourceName", dataSourceName)
+        metadataGetColumnsAction.setParameter("database", database)
+        metadataGetColumnsAction.setParameter("table", table)
+      }
       metadataGetColumnsAction.setUser(user)
       metadataGetColumnsAction
     }

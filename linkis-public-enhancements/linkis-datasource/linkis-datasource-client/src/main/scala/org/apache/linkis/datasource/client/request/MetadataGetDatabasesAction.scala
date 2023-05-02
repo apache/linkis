@@ -94,6 +94,9 @@ object MetadataGetDatabasesAction {
       metadataGetDatabasesAction.dataSourceId = this.dataSourceId
       metadataGetDatabasesAction.dataSourceName = this.dataSourceName
       metadataGetDatabasesAction.setParameter("system", system)
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        metadataGetDatabasesAction.setParameter("dataSourceName", dataSourceName)
+      }
       metadataGetDatabasesAction.setUser(user)
       metadataGetDatabasesAction
     }

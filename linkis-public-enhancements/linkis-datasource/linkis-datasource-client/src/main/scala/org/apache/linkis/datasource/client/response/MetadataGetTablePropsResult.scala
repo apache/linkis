@@ -25,7 +25,7 @@ import java.util
 import scala.beans.BeanProperty
 
 @DWSHttpMessageResult(
-  "/api/rest_j/v\\d+/(metadataQuery|metadatamanager)/(getTableProp|props)(\\S+/db/\\S+/table/\\S+)?"
+  "/api/rest_j/v\\d+/(metadataQuery|metadatamanager)/(getTableProps|props)(\\S+/db/\\S+/table/\\S+)?"
 )
 class MetadataGetTablePropsResult extends DWSResult {
   @BeanProperty var props: util.Map[String, String] = _

@@ -89,7 +89,7 @@ public class ResourceUtils {
         case Yarn:
           return mapper.readValue(plainResource, YarnResource.class);
         default:
-          return mapper.readValue(plainResource, Resource.class);
+          return mapper.readValue(plainResource, LoadResource.class);
       }
     } catch (JsonProcessingException e) {
       logger.warn("ResourceUtils deserializeResource failed", e);

@@ -22,7 +22,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/(\\S+)/connect-params")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/(\\d+)/connect-params")
 class GetConnectParamsByDataSourceIdResult extends DWSResult {
   @BeanProperty var connectParams: java.util.Map[String, Any] = _
 }

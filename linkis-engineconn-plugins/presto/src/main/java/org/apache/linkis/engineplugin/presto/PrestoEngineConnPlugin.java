@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class PrestoEngineConnPlugin2 implements EngineConnPlugin {
+public class PrestoEngineConnPlugin implements EngineConnPlugin {
   private Object resourceLocker = new Object();
   private Object engineFactoryLocker = new Object();
   private volatile EngineResourceFactory engineResourceFactory;

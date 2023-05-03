@@ -19,9 +19,9 @@ package org.apache.linkis.engineplugin.presto.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-public class PrestoStateInvalidException2 extends ErrorException {
+public class PrestoClientException extends ErrorException {
 
-  public PrestoStateInvalidException2(int errorCode, String message) {
+  public PrestoClientException(int errorCode, String message) {
     super(errorCode, message);
   }
 }

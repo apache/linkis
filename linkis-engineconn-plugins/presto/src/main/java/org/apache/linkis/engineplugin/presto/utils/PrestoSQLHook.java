@@ -15,12 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.exception
+package org.apache.linkis.engineplugin.presto.utils;
 
-import org.apache.linkis.common.exception.ErrorException
+import org.apache.commons.lang3.StringUtils;
 
-case class PrestoStateInvalidException(errorCode: Int, message: String)
-    extends ErrorException(errorCode, message: String)
+public class PrestoSQLHook {
+  public static String preExecuteHook(String code) {
+    return replaceBackQuoted(code);
+  }
 
-case class PrestoClientException(errorCode: Int, message: String)
-    extends ErrorException(errorCode, message: String)
+  private static String replaceBackQuoted(String code) {
+    if (StringUtils.isNotBlank(code)) {
+      return code.replaceAll("`", "\"");
+    } else {
+      return code;
+    }
+  }
+}

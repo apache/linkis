@@ -29,10 +29,10 @@ import java.util.Map;
 
 import scala.Tuple2;
 
-public class PrestoEngineConf2
+public class PrestoEngineConf
     extends RPCMapCache<Tuple2<UserCreatorLabel, EngineTypeLabel>, String, String> {
 
-  public PrestoEngineConf2() {
+  public PrestoEngineConf() {
     super(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());
   }
 

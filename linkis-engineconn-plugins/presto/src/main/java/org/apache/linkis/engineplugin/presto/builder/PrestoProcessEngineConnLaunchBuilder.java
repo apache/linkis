@@ -15,20 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils;
+package org.apache.linkis.engineplugin.presto.builder;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
-public class PrestoSQLHook2 {
-  public static String preExecuteHook(String code) {
-    return replaceBackQuoted(code);
-  }
+public class PrestoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
-  private static String replaceBackQuoted(String code) {
-    if (StringUtils.isNotBlank(code)) {
-      return code.replaceAll("`", "\"");
-    } else {
-      return code;
-    }
+  @Override
+  public String getEngineStartUser(UserCreatorLabel label) {
+    return StorageConfiguration.HDFS_ROOT_USER().getValue();
   }
 }

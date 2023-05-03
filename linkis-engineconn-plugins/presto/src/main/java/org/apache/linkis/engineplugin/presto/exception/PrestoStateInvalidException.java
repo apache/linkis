@@ -15,22 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils
+package org.apache.linkis.engineplugin.presto.exception;
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.exception.ErrorException;
 
-object PrestoSQLHook {
+public class PrestoStateInvalidException extends ErrorException {
 
-  def preExecuteHook(code: String): String = {
-    replaceBackQuoted(code)
+  public PrestoStateInvalidException(int errorCode, String message) {
+    super(errorCode, message);
   }
-
-  private def replaceBackQuoted(code: String): String = {
-    if (StringUtils.isNotBlank(code)) {
-      code.replaceAll("`", "\"")
-    } else {
-      code
-    }
-  }
-
 }

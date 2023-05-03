@@ -19,7 +19,7 @@ package org.apache.linkis.engineplugin.presto.conf;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-public class PrestoConfiguration2 {
+public class PrestoConfiguration {
 
   public static final CommonVars<Integer> ENGINE_CONCURRENT_LIMIT =
       CommonVars.apply("wds.linkis.engineconn.concurrent.limit", 100);

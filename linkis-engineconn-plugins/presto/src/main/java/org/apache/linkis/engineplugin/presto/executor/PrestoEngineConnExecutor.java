@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.presto.executor;
 
+import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.common.io.resultset.ResultSetWriter;
 import org.apache.linkis.common.log.LogUtils;
 import org.apache.linkis.common.utils.OverloadUtils;
@@ -27,7 +28,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.ConcurrentCompu
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext;
 import org.apache.linkis.engineconn.core.EngineConnObject;
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration;
-import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf2;
+import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf;
 import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary;
 import org.apache.linkis.engineplugin.presto.exception.PrestoClientException;
 import org.apache.linkis.engineplugin.presto.exception.PrestoStateInvalidException;
@@ -73,11 +74,17 @@ import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
+public class PrestoEngineConnExecutor extends ConcurrentComputationExecutor {
 
-  private static final Logger logger = LoggerFactory.getLogger(PrestoEngineConnExecutor2.class);
+  private static final Logger logger = LoggerFactory.getLogger(PrestoEngineConnExecutor.class);
 
-  private OkHttpClient okHttpClient = PrestoEngineConnExecutor2.OK_HTTP_CLIENT;
+  private static OkHttpClient okHttpClient =
+      new OkHttpClient.Builder()
+          .socketFactory(new SocketChannelSocketFactory())
+          .connectTimeout(
+              PrestoConfiguration.PRESTO_HTTP_CONNECT_TIME_OUT.getValue(), TimeUnit.SECONDS)
+          .readTimeout(PrestoConfiguration.PRESTO_HTTP_READ_TIME_OUT.getValue(), TimeUnit.SECONDS)
+          .build();
   private int id;
   private List<Label<?>> executorLabels = new ArrayList<>(2);
   private Map<String, StatementClient> statementClientCache = new ConcurrentHashMap<>();
@@ -88,7 +95,7 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
           .maximumSize(EngineConnConstant.MAX_TASK_NUM())
           .build();
 
-  public PrestoEngineConnExecutor2(int outputPrintLimit, int id) {
+  public PrestoEngineConnExecutor(int outputPrintLimit, int id) {
     super(outputPrintLimit);
     this.id = id;
   }
@@ -117,7 +124,7 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
       EngineTypeLabel engineTypeLabel = (EngineTypeLabel) engineTypeLabelOp.get();
 
       configMap =
-          new PrestoEngineConf2().getCacheMap(new Tuple2<>(userCreatorLabel, engineTypeLabel));
+          new PrestoEngineConf().getCacheMap(new Tuple2<>(userCreatorLabel, engineTypeLabel));
     }
 
     clientSessionCache.put(
@@ -128,7 +135,7 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
 
   @Override
   public ExecuteResponse executeLine(EngineExecutionContext engineExecutorContext, String code) {
-    boolean enableSqlHook = (boolean) PrestoConfiguration.PRESTO_SQL_HOOK_ENABLED().getValue();
+    boolean enableSqlHook = PrestoConfiguration.PRESTO_SQL_HOOK_ENABLED.getValue();
     String realCode;
     if (StringUtils.isBlank(code)) {
       realCode = "SELECT 1";
@@ -137,7 +144,7 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
     } else {
       realCode = code.trim();
     }
-    logger.info(String.format("presto client begins to run psql code:\n %s", realCode));
+    logger.info("presto client begins to run psql code:\n {}", realCode);
 
     String taskId = engineExecutorContext.getJobId().get();
     ClientSession clientSession = clientSessionCache.getIfPresent(taskId);
@@ -151,7 +158,12 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
           || (statement.isFinished() && statement.finalStatusInfo().getError() == null)) {
         queryOutput(taskId, engineExecutorContext, statement);
       }
-      ExecuteResponse errorResponse = verifyServerError(taskId, engineExecutorContext, statement);
+      ErrorExecuteResponse errorResponse = null;
+      try {
+        errorResponse = verifyServerError(taskId, engineExecutorContext, statement);
+      } catch (ErrorException e) {
+        logger.error("Presto execute failed (#{}): {}", e.getErrCode(), e.getMessage());
+      }
       if (errorResponse == null) {
         // update session
         clientSessionCache.put(taskId, updateSession(clientSession, statement));
@@ -159,8 +171,6 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
       } else {
         return errorResponse;
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     } finally {
       statementClientCache.remove(taskId);
     }
@@ -233,7 +243,7 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
 
   @Override
   public int getConcurrentLimit() {
-    return (int) PrestoConfiguration.ENGINE_CONCURRENT_LIMIT().getValue();
+    return PrestoConfiguration.ENGINE_CONCURRENT_LIMIT.getValue();
   }
 
   private ClientSession getClientSession(
@@ -248,10 +258,10 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
         .filter(entry -> entry.getValue() != null)
         .forEach(entry -> configMap.put(entry.getKey(), String.valueOf(entry.getValue())));
 
-    URI httpUri = URI.create(PrestoConfiguration.PRESTO_URL().getValue(configMap));
-    String source = PrestoConfiguration.PRESTO_SOURCE().getValue(configMap);
-    String catalog = PrestoConfiguration.PRESTO_CATALOG().getValue(configMap);
-    String schema = PrestoConfiguration.PRESTO_SCHEMA().getValue(configMap);
+    URI httpUri = URI.create(PrestoConfiguration.PRESTO_URL.getValue(configMap));
+    String source = PrestoConfiguration.PRESTO_SOURCE.getValue(configMap);
+    String catalog = PrestoConfiguration.PRESTO_CATALOG.getValue(configMap);
+    String schema = PrestoConfiguration.PRESTO_SCHEMA.getValue(configMap);
 
     Map<String, String> properties =
         configMap.entrySet().stream()
@@ -346,24 +356,22 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
       }
     } catch (Exception e) {
       IOUtils.closeQuietly(resultSetWriter);
-      //            throw e;
     }
-    logger.info("Fetched " + columnCount + " col(s) : " + rows + " row(s) in presto");
-    engineExecutorContext.appendStdout(
-        LogUtils.generateInfo(
-            "Fetched " + columnCount + " col(s) : " + rows + " row(s) in presto"));
+    String message = String.format("Fetched %d col(s) : %d row(s) in presto", columnCount, rows);
+    logger.info(message);
+    engineExecutorContext.appendStdout(LogUtils.generateInfo(message));
     engineExecutorContext.sendResultSet(resultSetWriter);
   }
 
   private ErrorExecuteResponse verifyServerError(
       String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement)
-      throws Exception {
+      throws ErrorException {
     engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId));
     if (statement.isFinished()) {
       QueryStatusInfo info = statement.finalStatusInfo();
       if (info.getError() != null) {
         QueryError error = Objects.requireNonNull(info.getError());
-        String message = "Presto execute failed (#" + info.getId() + "): " + error.getMessage();
+        logger.error("Presto execute failed (#{}): {}", info.getId(), error.getMessage());
         Throwable cause = null;
         if (error.getFailureInfo() != null) {
           cause = error.getFailureInfo().toException();
@@ -456,12 +464,4 @@ public class PrestoEngineConnExecutor2 extends ConcurrentComputationExecutor {
     killAll();
     super.close();
   }
-
-  private static OkHttpClient OK_HTTP_CLIENT =
-      new OkHttpClient.Builder()
-          .socketFactory(new SocketChannelSocketFactory())
-          .connectTimeout(
-              PrestoConfiguration.PRESTO_HTTP_CONNECT_TIME_OUT().getValue(), TimeUnit.SECONDS)
-          .readTimeout(PrestoConfiguration.PRESTO_HTTP_READ_TIME_OUT().getValue(), TimeUnit.SECONDS)
-          .build();
 }

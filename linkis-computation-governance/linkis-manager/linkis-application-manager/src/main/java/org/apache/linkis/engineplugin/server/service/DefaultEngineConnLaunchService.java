@@ -18,8 +18,8 @@
 package org.apache.linkis.engineplugin.server.service;
 
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
+import org.apache.linkis.manager.am.util.Utils;
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;

@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.operator;
 
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager;
+import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager$;
 import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter;
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
@@ -47,9 +47,10 @@ public class TriggerSavepointOperator implements Operator {
     String mode = getAsThrow(parameters, "mode");
     logger.info("try to " + mode + " savepoint with path " + savepoint + ".");
 
-    if (OnceExecutorManager.getInstance().getReportExecutor() instanceof FlinkOnceExecutor) {
+    if (OnceExecutorManager$.MODULE$.getInstance().getReportExecutor()
+        instanceof FlinkOnceExecutor) {
       FlinkOnceExecutor flinkExecutor =
-          (FlinkOnceExecutor) OnceExecutorManager.getInstance().getReportExecutor();
+          (FlinkOnceExecutor) OnceExecutorManager$.MODULE$.getInstance().getReportExecutor();
       ClusterDescriptorAdapter clusterDescriptorAdapter =
           (ClusterDescriptorAdapter) flinkExecutor.getClusterDescriptorAdapter();
       String writtenSavepoint = "";
@@ -68,7 +69,11 @@ public class TriggerSavepointOperator implements Operator {
           FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorCode(),
           MessageFormat.format(
               FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorDesc(),
-              OnceExecutorManager.getInstance().getReportExecutor().getClass().getSimpleName()));
+              OnceExecutorManager$.MODULE$
+                  .getInstance()
+                  .getReportExecutor()
+                  .getClass()
+                  .getSimpleName()));
     }
   }
 

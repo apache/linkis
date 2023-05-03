@@ -20,11 +20,11 @@ package org.apache.linkis.manager.am.manager;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.common.utils.DefaultRetryHandler;
-import org.apache.linkis.common.utils.RetryHandler;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.locker.EngineNodeLocker;
+import org.apache.linkis.manager.am.utils.DefaultRetryHandler;
+import org.apache.linkis.manager.am.utils.RetryHandler;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
@@ -166,7 +166,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
    */
   @Override
   public EngineNode useEngine(EngineNode engineNode, long timeout) {
-    RetryHandler retryHandler = new DefaultRetryHandler();
+    RetryHandler<EngineNode> retryHandler = new DefaultRetryHandler<EngineNode>();
     retryHandler.addRetryException(feign.RetryableException.class);
     retryHandler.addRetryException(UndeclaredThrowableException.class);
 

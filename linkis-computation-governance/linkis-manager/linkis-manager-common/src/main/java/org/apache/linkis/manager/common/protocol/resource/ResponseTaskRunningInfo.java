@@ -17,14 +17,14 @@
 
 package org.apache.linkis.manager.common.protocol.resource;
 
-import org.apache.linkis.protocol.RetryableProtocol;
+import org.apache.linkis.protocol.AbstractRetryableProtocol;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResponseTaskRunningInfo implements RetryableProtocol, RequestProtocol {
+public class ResponseTaskRunningInfo extends AbstractRetryableProtocol implements RequestProtocol {
   private final String execId;
   private final float progress;
   private final JobProgressInfo[] progressInfo;

@@ -20,7 +20,7 @@ package org.apache.linkis.engineconn.once.executor.operator;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineconn.once.executor.OnceExecutor;
 import org.apache.linkis.engineconn.once.executor.OperableOnceExecutor;
-import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager;
+import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager$;
 import org.apache.linkis.manager.common.operator.Operator;
 import org.apache.linkis.manager.common.operator.OperatorFactory;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
@@ -46,7 +46,7 @@ public class OperableOnceEngineConnOperator implements Operator {
   @Override
   public Map<String, Object> apply(Map<String, Object> parameters) {
     String operatorName = OperatorFactory.apply().getOperatorName(parameters);
-    OnceExecutor reportExecutor = OnceExecutorManager.getInstance().getReportExecutor();
+    OnceExecutor reportExecutor = OnceExecutorManager$.MODULE$.getInstance().getReportExecutor();
     if (reportExecutor instanceof OperableOnceExecutor) {
       OperableOnceExecutor operableOnceExecutor = (OperableOnceExecutor) reportExecutor;
       switch (operatorName) {

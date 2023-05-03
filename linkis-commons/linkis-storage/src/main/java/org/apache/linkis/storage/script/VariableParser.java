@@ -27,7 +27,7 @@ public class VariableParser {
   public static final String STARTUP = "startup";
   public static final String SPECIAL = "special";
 
-  public Variable[] getVariables(Map<String, Object> params) {
+  public static Variable[] getVariables(Map<String, Object> params) {
     List<Variable> variables = new ArrayList<>();
     Map<String, Object> variableMap =
         (Map<String, Object>) params.getOrDefault(VARIABLE, new HashMap<String, Object>());

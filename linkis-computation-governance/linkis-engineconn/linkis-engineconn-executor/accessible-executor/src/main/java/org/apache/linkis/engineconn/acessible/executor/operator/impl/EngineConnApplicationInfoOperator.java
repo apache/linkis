@@ -18,7 +18,8 @@
 package org.apache.linkis.engineconn.acessible.executor.operator.impl;
 
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.engineconn.core.executor.ExecutorManager;
+import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
+import org.apache.linkis.engineconn.core.executor.LabelExecutorManager;
 import org.apache.linkis.engineconn.executor.entity.Executor;
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor;
 import org.apache.linkis.manager.common.operator.Operator;
@@ -37,7 +38,8 @@ public class EngineConnApplicationInfoOperator implements Operator {
 
   @Override
   public Map<String, Object> apply(Map<String, Object> parameters) {
-    Executor reportExecutor = ExecutorManager.getInstance().getReportExecutor();
+    LabelExecutorManager instance = ExecutorManager$.MODULE$.getInstance();
+    Executor reportExecutor = instance.getReportExecutor();
     if (reportExecutor instanceof YarnExecutor) {
       YarnExecutor yarnExecutor = (YarnExecutor) reportExecutor;
       Map<String, Object> result = new HashMap<>();

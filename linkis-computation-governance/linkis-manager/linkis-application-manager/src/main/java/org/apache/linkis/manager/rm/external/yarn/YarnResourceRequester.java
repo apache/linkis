@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.rm.external.yarn;
 
 import org.apache.linkis.common.exception.WarnException;
-import org.apache.linkis.common.utils.Utils;
+import org.apache.linkis.manager.am.util.Utils;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.*;
 import org.apache.linkis.manager.common.exception.RMWarnException;

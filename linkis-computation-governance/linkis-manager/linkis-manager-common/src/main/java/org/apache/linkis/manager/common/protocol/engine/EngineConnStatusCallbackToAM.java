@@ -19,11 +19,12 @@ package org.apache.linkis.manager.common.protocol.engine;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
-import org.apache.linkis.protocol.RetryableProtocol;
+import org.apache.linkis.protocol.AbstractRetryableProtocol;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
 /** engineConnManager send to Manager */
-public class EngineConnStatusCallbackToAM implements RequestProtocol, RetryableProtocol {
+public class EngineConnStatusCallbackToAM extends AbstractRetryableProtocol
+    implements RequestProtocol {
 
   private final ServiceInstance serviceInstance;
   private final NodeStatus status;

@@ -34,13 +34,9 @@ class PrestoEngineConnPlugin extends EngineConnPlugin {
 
   private val resourceLocker = new Object()
 
-  private val engineLaunchBuilderLocker = new Object()
-
   private val engineFactoryLocker = new Object()
 
   private var engineResourceFactory: EngineResourceFactory = _
-
-  private var engineLaunchBuilder: EngineConnLaunchBuilder = _
 
   private var engineFactory: EngineConnFactory = _
 

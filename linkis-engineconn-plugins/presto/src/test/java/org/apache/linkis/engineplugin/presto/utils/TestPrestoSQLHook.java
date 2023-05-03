@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils
+package org.apache.linkis.engineplugin.presto.utils;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class testPrestoSQLHook {
+public class TestPrestoSQLHook {
 
   @Test
-  def testPreExecuteHook {
-    val prestoSQLHook = PrestoSQLHook
-    val code = "`1104`"
-    val codes = prestoSQLHook.preExecuteHook(code)
-    Assertions.assertEquals(codes, "\"1104\"")
+  public void testPreExecuteHook() {
+    String code = "`1104`";
+    String codes = PrestoSQLHook.preExecuteHook(code);
+    Assertions.assertEquals(codes, "\"1104\"");
   }
-
 }

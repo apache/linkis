@@ -15,20 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.builder
+package org.apache.linkis.engineplugin.presto.builder;
 
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class TestPrestoProcessEngineConnLaunchBuilder {
+public class TestPrestoProcessEngineConnLaunchBuilder {
 
   @Test
-  def testGetEngineStartUser {
-    val engineConnLaunchBuilder = new PrestoProcessEngineConnLaunchBuilder
-    val userCreatorLabel = new UserCreatorLabel
-    val value = engineConnLaunchBuilder.getEngineStartUser(userCreatorLabel)
-    Assertions.assertEquals(value, "hadoop")
+  public void testGetEngineStartUser() {
+    PrestoProcessEngineConnLaunchBuilder engineConnLaunchBuilder =
+        new PrestoProcessEngineConnLaunchBuilder();
+    UserCreatorLabel userCreatorLabel = new UserCreatorLabel();
+    String value = engineConnLaunchBuilder.getEngineStartUser(userCreatorLabel);
+    Assertions.assertEquals(value, "hadoop");
   }
-
 }

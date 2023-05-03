@@ -15,16 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto
+package org.apache.linkis.engineplugin.presto.exception;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary;
 
-class TestPrestoEngineConnPlugin {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+public class TestPrestoException {
 
   @Test
-  def testGetEngineResourceFactory: Unit = {
-    val prestoEngineConnPlugin = new PrestoEngineConnPlugin
-    Assertions.assertNotNull(prestoEngineConnPlugin.getEngineConnFactory)
+  public void testPrestoStateInvalidException() {
+    Assertions.assertNotNull(
+        new PrestoStateInvalidException(
+            PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode(),
+            PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc()));
   }
 
+  @Test
+  public void testPythonSessionStartFailedException() {
+    Assertions.assertNotNull(
+        new PrestoClientException(
+            PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode(),
+            PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc()));
+  }
 }

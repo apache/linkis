@@ -129,7 +129,7 @@ public enum DataType {
     }
   }
 
-  public Object toValue(DataType dataType, String value) {
+  public static Object toValue(DataType dataType, String value) {
     Object result = null;
     try {
       switch (dataType) {

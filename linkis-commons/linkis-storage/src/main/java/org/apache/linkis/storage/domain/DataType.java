@@ -20,12 +20,43 @@ package org.apache.linkis.storage.domain;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DataType {
+public enum DataType {
+  NullType("void", 0),
+  StringType("string", 12),
+  BooleanType("boolean", 16),
+  TinyIntType("tinyint", -6),
+  ShortIntType("short", 5),
+  IntType("int", 4),
+  LongType("long", -5),
+  BigIntType("bigint", -5),
+  FloatType("float", 6),
+  DoubleType("double", 8),
+  CharType("char", 1),
+  VarcharType("varchar", 12),
+  DateType("date", 91),
+  TimestampType("timestamp", 93),
+  BinaryType("binary", -2),
+  DecimalType("decimal", 3),
+  ArrayType("array", 2003),
+  MapType("map", 2000),
+  ListType("list", 2001),
+  StructType("struct", 2002),
+  BigDecimalType("bigdecimal", 3);
+
+  private final String typeName;
+  private final int javaSQLType;
+
+  DataType(String typeName, int javaSQLType) {
+    this.typeName = typeName;
+    this.javaSQLType = javaSQLType;
+  }
+
   private static Logger logger = LoggerFactory.getLogger(DataType.class);
 
   public static final String NULL_VALUE = "NULL";
@@ -52,152 +83,114 @@ public abstract class DataType {
 
   public static final Pattern STRUCT_REGEX = Pattern.compile("struct.*");
 
-  public String typeName;
-  private int javaSQLType;
-
-  public DataType(String typeName, int javaSQLType) {
-    this.typeName = typeName;
-    this.javaSQLType = javaSQLType;
-  }
-
-  @Override
-  public String toString() {
-    return typeName;
-  }
-
-  public String getTypeName() {
-    return typeName;
-  }
-
-  public int getJavaSQLType() {
-    return javaSQLType;
-  }
-
   public static DataType toDataType(String dataType) {
     if (dataType.equals("void") || dataType.equals("null")) {
-      return new NullType();
+      return DataType.NullType;
     } else if (dataType.equals("string")) {
-      return new StringType();
+      return DataType.StringType;
     } else if (dataType.equals("boolean")) {
-      return new BooleanType();
+      return DataType.BooleanType;
     } else if (SHORT_REGEX.matcher(dataType).matches()) {
-      return new ShortIntType();
+      return DataType.ShortIntType;
     } else if (LONG_REGEX.matcher(dataType).matches()) {
-      return new LongType();
+      return DataType.LongType;
     } else if (BIGINT_REGEX.matcher(dataType).matches()) {
-      return new BigIntType();
+      return DataType.BigIntType;
     } else if (INT_REGEX.matcher(dataType).matches()
         || dataType.equals("integer")
         || dataType.equals("smallint")) {
-      return new IntType();
+      return DataType.IntType;
     } else if (FLOAT_REGEX.matcher(dataType).matches()) {
-      return new FloatType();
+      return DataType.FloatType;
     } else if (DOUBLE_REGEX.matcher(dataType).matches()) {
-      return new DoubleType();
+      return DataType.DoubleType;
     } else if (VARCHAR_REGEX.matcher(dataType).matches()) {
-      return new VarcharType();
+      return DataType.VarcharType;
     } else if (CHAR_REGEX.matcher(dataType).matches()) {
-      return new CharType();
+      return DataType.CharType;
     } else if (dataType.equals("date")) {
-      return new DateType();
+      return DataType.DateType;
     } else if (dataType.equals("timestamp")) {
-      return new TimestampType();
+      return DataType.TimestampType;
     } else if (dataType.equals("binary")) {
-      return new BinaryType();
+      return DataType.BinaryType;
     } else if (dataType.equals("decimal") || DECIMAL_REGEX.matcher(dataType).matches()) {
-      return new DecimalType();
+      return DataType.DecimalType;
     } else if (ARRAY_REGEX.matcher(dataType).matches()) {
-      return new ArrayType();
+      return DataType.ArrayType;
     } else if (MAP_REGEX.matcher(dataType).matches()) {
-      return new MapType();
+      return DataType.MapType;
     } else if (LIST_REGEX.matcher(dataType).matches()) {
-      return new ListType();
+      return DataType.ListType;
     } else if (STRUCT_REGEX.matcher(dataType).matches()) {
-      return new StructType();
+      return DataType.StructType;
     } else {
-      return new StringType();
+      return DataType.StringType;
     }
   }
 
-  public static Object toValue(DataType dataType, String value) {
+  public Object toValue(DataType dataType, String value) {
+    Object result = null;
     try {
-      if (dataType instanceof NullType) {
-        return null;
-      } else if (dataType instanceof StringType
-          || dataType instanceof CharType
-          || dataType instanceof VarcharType
-          || dataType instanceof StructType
-          || dataType instanceof ListType
-          || dataType instanceof ArrayType
-          || dataType instanceof MapType) {
-        return value;
-      } else if (dataType instanceof BooleanType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Boolean.valueOf(value);
-        }
-      } else if (dataType instanceof ShortIntType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Short.valueOf(value);
-        }
-      } else if (dataType instanceof IntType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Integer.valueOf(value);
-        }
-      } else if (dataType instanceof LongType || dataType instanceof BigIntType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Long.valueOf(value);
-        }
-      } else if (dataType instanceof FloatType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Float.valueOf(value);
-        }
-      } else if (dataType instanceof DoubleType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Double.valueOf(value);
-        }
-      } else if (dataType instanceof DecimalType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return new BigDecimal(value);
-        }
-      } else if (dataType instanceof DateType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Date.valueOf(value);
-        }
-      } else if (dataType instanceof TimestampType) {
-        if (isNumberNull(value)) {
-          return null;
-        } else {
-          return Timestamp.valueOf(value).toString().replace(".0", "");
-        }
-      } else if (dataType instanceof BinaryType) {
-        if (isNull(value)) {
-          return null;
-        } else {
-          return value.getBytes();
-        }
-      } else {
-        return value;
+      switch (dataType) {
+        case NullType:
+          result = null;
+          break;
+        case StringType:
+        case CharType:
+        case VarcharType:
+        case StructType:
+        case ListType:
+        case ArrayType:
+        case MapType:
+          result = value;
+          break;
+        case BooleanType:
+          result = isNumberNull(value) ? null : Boolean.valueOf(value);
+          break;
+        case ShortIntType:
+          result = isNumberNull(value) ? null : Short.valueOf(value);
+          break;
+        case IntType:
+          result = isNumberNull(value) ? null : Integer.valueOf(value);
+          break;
+        case LongType:
+        case BigIntType:
+          result = isNumberNull(value) ? null : Long.valueOf(value);
+          break;
+        case FloatType:
+          result = isNumberNull(value) ? null : Float.valueOf(value);
+          break;
+        case DoubleType:
+          result = isNumberNull(value) ? null : Double.valueOf(value);
+          break;
+        case DecimalType:
+          result = isNumberNull(value) ? null : new BigDecimal(value);
+          break;
+        case DateType:
+          result = isNumberNull(value) ? null : Date.valueOf(value);
+          break;
+        case TimestampType:
+          result =
+              isNumberNull(value)
+                  ? null
+                  : Optional.of(value)
+                      .map(Timestamp::valueOf)
+                      .map(Timestamp::toString)
+                      .map(s -> s.endsWith(".0") ? s.substring(0, s.length() - 2) : s)
+                      .orElse(null);
+          break;
+        case BinaryType:
+          result = isNull(value) ? null : value.getBytes();
+          break;
+        default:
+          result = value;
       }
-    } catch (Throwable t) {
-      logger.debug("Failed to " + value + " switch to dataType:", t);
-      return value;
+    } catch (Exception e) {
+      logger.debug("Failed to " + value + " switch to dataType:", e);
+      result = value;
     }
+    return result;
   }
 
   public static boolean isNull(String value) {
@@ -218,129 +211,16 @@ public abstract class DataType {
     }
   }
 
-  public static final class NullType extends DataType {
-    public NullType() {
-      super("void", 0);
-    }
+  public String getTypeName() {
+    return typeName;
   }
 
-  public static final class StringType extends DataType {
-    public StringType() {
-      super("string", 12);
-    }
+  public int getJavaSQLType() {
+    return javaSQLType;
   }
 
-  public static final class BooleanType extends DataType {
-    public BooleanType() {
-      super("boolean", 16);
-    }
-  }
-
-  public static final class TinyIntType extends DataType {
-    public TinyIntType() {
-      super("tinyint", -6);
-    }
-  }
-
-  public static final class ShortIntType extends DataType {
-    public ShortIntType() {
-      super("short", 5);
-    }
-  }
-
-  public static final class IntType extends DataType {
-    public IntType() {
-      super("int", 4);
-    }
-  }
-
-  public static final class LongType extends DataType {
-    public LongType() {
-      super("long", -5);
-    }
-  }
-
-  public static final class BigIntType extends DataType {
-    public BigIntType() {
-      super("bigint", -5);
-    }
-  }
-
-  public static final class FloatType extends DataType {
-    public FloatType() {
-      super("float", 6);
-    }
-  }
-
-  public static final class DoubleType extends DataType {
-    public DoubleType() {
-      super("double", 8);
-    }
-  }
-
-  public static final class CharType extends DataType {
-    public CharType() {
-      super("char", 1);
-    }
-  }
-
-  public static final class VarcharType extends DataType {
-    public VarcharType() {
-      super("varchar", 12);
-    }
-  }
-
-  public static final class DateType extends DataType {
-    public DateType() {
-      super("date", 91);
-    }
-  }
-
-  public static final class TimestampType extends DataType {
-    public TimestampType() {
-      super("timestamp", 93);
-    }
-  }
-
-  public static final class BinaryType extends DataType {
-    public BinaryType() {
-      super("binary", -2);
-    }
-  }
-
-  public static final class DecimalType extends DataType {
-    public DecimalType() {
-      super("decimal", 3);
-    }
-  }
-
-  public static final class ArrayType extends DataType {
-    public ArrayType() {
-      super("array", 2003);
-    }
-  }
-
-  public static final class MapType extends DataType {
-    public MapType() {
-      super("map", 2000);
-    }
-  }
-
-  public static final class ListType extends DataType {
-    public ListType() {
-      super("list", 2001);
-    }
-  }
-
-  public static final class StructType extends DataType {
-    public StructType() {
-      super("struct", 2002);
-    }
-  }
-
-  public static final class BigDecimalType extends DataType {
-    public BigDecimalType() {
-      super("bigdecimal", 3);
-    }
+  @Override
+  public String toString() {
+    return typeName;
   }
 }

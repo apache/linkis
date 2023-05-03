@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class TextFileSource extends AbstractFileSource {
+  public static final String[] LINE_BREAKER = new String[] {"\n"};
 
   public TextFileSource(FileSplit[] fileSplits) {
     super(fileSplits);
@@ -56,7 +57,7 @@ class TextFileSource extends AbstractFileSource {
           StringBuilder str = new StringBuilder();
           snd.forEach(
               arr -> {
-                if (Arrays.equals(arr, new String[] {"\n"})) {
+                if (Arrays.equals(arr, LINE_BREAKER)) {
                   str.append("\n");
                 } else {
                   str.append(arr[0]).append("\n");

@@ -18,7 +18,6 @@
 package org.apache.linkis.storage.script;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public class VariableParser {
 
@@ -28,51 +27,45 @@ public class VariableParser {
   public static final String STARTUP = "startup";
   public static final String SPECIAL = "special";
 
-  public static Variable[] getVariables(Map<String, Object> params) {
+  public Variable[] getVariables(Map<String, Object> params) {
+    List<Variable> variables = new ArrayList<>();
     Map<String, Object> variableMap =
-        (Map<String, Object>) params.getOrDefault(VARIABLE, new HashMap<>());
+        (Map<String, Object>) params.getOrDefault(VARIABLE, new HashMap<String, Object>());
+    for (Map.Entry<String, Object> entry : variableMap.entrySet()) {
+      variables.add(new Variable(VARIABLE, null, entry.getKey(), entry.getValue().toString()));
+    }
+
     Map<String, Object> configurationMap =
-        (Map<String, Object>) params.getOrDefault(CONFIGURATION, new HashMap<>());
-    return createVariableArray(variableMap, configurationMap);
-  }
-
-  private static Variable[] createVariableArray(
-      Map<String, Object> variableMap, Map<String, Object> configurationMap) {
-    return Stream.concat(getVariableStream(variableMap), getConfigurationStream(configurationMap))
-        .toArray(Variable[]::new);
-  }
-
-  private static Stream<Variable> getVariableStream(Map<String, Object> variableMap) {
-    return variableMap.entrySet().stream()
-        .map(e -> new Variable(VARIABLE, null, e.getKey(), Objects.toString(e.getValue())));
-  }
-
-  private static Stream<Variable> getConfigurationStream(Map<String, Object> configurationMap) {
-    return configurationMap.entrySet().stream()
-        .flatMap(e -> createVariableStream(e.getKey(), e.getValue()));
-  }
-
-  private static Stream<Variable> createVariableStream(String parentSort, Object parentMap) {
-    if (!(parentMap instanceof Map)) {
-      return Stream.of(new Variable(CONFIGURATION, parentSort, "", Objects.toString(parentMap)));
+        (Map<String, Object>) params.getOrDefault(CONFIGURATION, new HashMap<String, Object>());
+    for (Map.Entry<String, Object> entry : configurationMap.entrySet()) {
+      Map<String, Object> subMap = (Map<String, Object>) entry.getValue();
+      for (Map.Entry<String, Object> subEntry : subMap.entrySet()) {
+        if (!isContextIDINFO(subEntry.getKey())) {
+          Object value = subEntry.getValue();
+          if (value instanceof Map) {
+            Map<String, Object> innerMap = (Map<String, Object>) value;
+            for (Map.Entry<String, Object> innerEntry : innerMap.entrySet()) {
+              if (!isContextIDINFO(innerEntry.getKey())) {
+                variables.add(
+                    new Variable(
+                        entry.getKey(),
+                        subEntry.getKey(),
+                        innerEntry.getKey(),
+                        innerEntry.getValue().toString()));
+              }
+            }
+          } else {
+            if (value == null) {
+              variables.add(new Variable(CONFIGURATION, entry.getKey(), subEntry.getKey(), ""));
+            } else {
+              variables.add(
+                  new Variable(CONFIGURATION, entry.getKey(), subEntry.getKey(), value.toString()));
+            }
+          }
+        }
+      }
     }
-
-    Map<String, Object> subMap = (Map<String, Object>) parentMap;
-    return subMap.entrySet().stream()
-        .filter(e -> !isContextIDINFO(e.getKey()))
-        .flatMap(e -> createVariableStream(parentSort, e.getKey(), e.getValue()));
-  }
-
-  private static Stream<Variable> createVariableStream(
-      String parentSort, String sort, Object value) {
-    if (!(value instanceof Map)) {
-      return Stream.of(new Variable(parentSort, sort, "", Objects.toString(value)));
-    }
-
-    Map<String, Object> subMap = (Map<String, Object>) value;
-    return subMap.entrySet().stream()
-        .filter(e -> !isContextIDINFO(e.getKey()))
-        .map(e -> new Variable(parentSort, sort, e.getKey(), Objects.toString(e.getValue())));
+    return variables.toArray(new Variable[variables.size()]);
   }
 
   private static boolean isContextIDINFO(String key) {

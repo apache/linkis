@@ -28,7 +28,7 @@ import java.io.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class StorageResultSetWriterTest {
+class StorageResultSetWriterFactoryTest {
 
   @Test
   void testResultSetWrite() throws IOException {
@@ -37,7 +37,7 @@ class StorageResultSetWriterTest {
         ResultSetFactory.getInstance().getResultSetByType(ResultSetFactory.TEXT_TYPE);
 
     org.apache.linkis.common.io.resultset.ResultSetWriter<? extends MetaData, ? extends Record>
-        writer = ResultSetWriter.getResultSetWriter(resultSetByType, 100L, null);
+        writer = ResultSetWriterFactory.getResultSetWriter(resultSetByType, 100L, null);
 
     String value = "value";
     LineMetaData metaData = new LineMetaData(null);

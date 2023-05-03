@@ -29,7 +29,9 @@ import org.apache.linkis.storage.LineRecord;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.ResultSetFactory;
 import org.apache.linkis.storage.resultset.ResultSetReaderFactory;
+import org.apache.linkis.storage.resultset.ResultSetWriterFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.utils.CloseableUtils;
 
@@ -130,15 +132,13 @@ public class StorageUtils {
     ResultSet resultSet =
         ResultSetFactory.getInstance().getResultSetByType(ResultSetFactory.TEXT_TYPE);
     ResultSetWriter writer =
-        org.apache.linkis.storage.resultset.ResultSetWriter.getResultSetWriter(
-            resultSet, Long.MAX_VALUE, null);
+        ResultSetWriterFactory.getResultSetWriter(resultSet, Long.MAX_VALUE, null);
     LineMetaData metaData = new LineMetaData(null);
     LineRecord record = new LineRecord(value);
     writer.addMetaData(metaData);
     writer.addRecord(record);
-    writer.close();
     String res = writer.toString();
-    writer.close();
+    IOUtils.closeQuietly(writer);
     return res;
   }
 
@@ -259,5 +259,12 @@ public class StorageUtils {
 
   public static boolean isIOProxy() {
     return (boolean) StorageConfiguration.ENABLE_IO_PROXY.getValue();
+  }
+
+  public static byte[] mergeByteArrays(byte[] arr1, byte[] arr2) {
+    byte[] mergedArray = new byte[arr1.length + arr2.length];
+    System.arraycopy(arr1, 0, mergedArray, 0, arr1.length);
+    System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
+    return mergedArray;
   }
 }

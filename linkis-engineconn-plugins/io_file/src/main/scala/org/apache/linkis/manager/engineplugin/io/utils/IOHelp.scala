@@ -28,7 +28,7 @@ import org.apache.linkis.storage.exception.StorageErrorException
 import org.apache.linkis.storage.resultset.{
   ResultSetFactory,
   ResultSetReaderFactory,
-  ResultSetWriter
+  ResultSetWriterFactory
 }
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
@@ -55,7 +55,7 @@ object IOHelp {
     )
     val inputStream = fs.read(dest)
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-    val writer = ResultSetWriter.getResultSetWriter(resultSet, Long.MaxValue, null)
+    val writer = ResultSetWriterFactory.getResultSetWriter(resultSet, Long.MaxValue, null)
     Utils.tryFinally {
       if (method.getParams.length == 1) {
         val bytes = IOUtils.toByteArray(inputStream)

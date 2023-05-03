@@ -96,32 +96,40 @@ public class StorageExcelWriter extends ExcelFsWriter {
   public CellStyle createCellStyle(DataType dataType) {
     CellStyle style = workBook.createCellStyle();
     format = workBook.createDataFormat();
-    //        if ("default".equals(dataType.toString())) {
     style.setDataFormat(format.getFormat("@"));
-    //        }
+
     if (autoFormat) {
-      if (dataType instanceof DataType.StringType) {
-        style.setDataFormat(format.getFormat("@"));
-      } else if (dataType instanceof DataType.TinyIntType
-          || dataType instanceof DataType.ShortIntType
-          || dataType instanceof DataType.IntType) {
-        style.setDataFormat(format.getFormat("#"));
-      } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
-        style.setDataFormat(format.getFormat("#.##E+00"));
-      } else if (dataType instanceof DataType.FloatType
-          || dataType instanceof DataType.DoubleType) {
-        style.setDataFormat(format.getFormat("#.0000000000"));
-      } else if (dataType instanceof DataType.CharType
-          || dataType instanceof DataType.VarcharType) {
-        style.setDataFormat(format.getFormat("@"));
-      } else if (dataType instanceof DataType.DateType
-          || dataType instanceof DataType.TimestampType) {
-        style.setDataFormat(format.getFormat("m/d/yy h:mm"));
-      } else if (dataType instanceof DataType.DecimalType
-          || dataType instanceof DataType.BigDecimalType) {
-        style.setDataFormat(format.getFormat("#.000000000"));
-      } else {
-        style.setDataFormat(format.getFormat("@"));
+      switch (dataType) {
+        case StringType:
+        case CharType:
+        case VarcharType:
+          style.setDataFormat(format.getFormat("@"));
+          break;
+        case TinyIntType:
+        case ShortIntType:
+        case IntType:
+          style.setDataFormat(format.getFormat("#"));
+          break;
+        case LongType:
+        case BigIntType:
+          style.setDataFormat(format.getFormat("#.##E+00"));
+          break;
+        case FloatType:
+          style.setDataFormat(format.getFormat("#.0000000000"));
+          break;
+        case DoubleType:
+          style.setDataFormat(format.getFormat("#.0000000000"));
+          break;
+        case DateType:
+        case TimestampType:
+          style.setDataFormat(format.getFormat("m/d/yy h:mm"));
+          break;
+        case DecimalType:
+        case BigDecimalType:
+          style.setDataFormat(format.getFormat("#.000000000"));
+          break;
+        default:
+          style.setDataFormat(format.getFormat("@"));
       }
     }
     return style;
@@ -176,33 +184,42 @@ public class StorageExcelWriter extends ExcelFsWriter {
   }
 
   private void setCellTypeValue(DataType dataType, Object elem, Cell cell) {
-    if (null == elem) {
-      return;
-    }
+    if (null == elem) return;
+
     try {
-      if (dataType instanceof DataType.StringType) {
-        cell.setCellValue(DataType.valueToString(elem));
-      } else if (dataType instanceof DataType.TinyIntType
-          || dataType instanceof DataType.ShortIntType
-          || dataType instanceof DataType.IntType) {
-        cell.setCellValue(Integer.parseInt(elem.toString()));
-      } else if (dataType instanceof DataType.LongType || dataType instanceof DataType.BigIntType) {
-        cell.setCellValue(Long.parseLong(elem.toString()));
-      } else if (dataType instanceof DataType.FloatType) {
-        cell.setCellValue(Float.parseFloat(elem.toString()));
-      } else if (dataType instanceof DataType.DoubleType
-          || dataType instanceof DataType.DecimalType
-          || dataType instanceof DataType.BigDecimalType) {
-        doubleCheck(DataType.valueToString(elem));
-        cell.setCellValue(Double.parseDouble(DataType.valueToString(elem)));
-      } else if (dataType instanceof DataType.CharType
-          || dataType instanceof DataType.VarcharType) {
-        cell.setCellValue(DataType.valueToString(elem));
-      } else if (dataType instanceof DataType.DateType
-          || dataType instanceof DataType.TimestampType) {
-        cell.setCellValue(getDate(elem));
-      } else {
-        cell.setCellValue(DataType.valueToString(elem));
+      switch (dataType) {
+        case StringType:
+        case CharType:
+        case VarcharType:
+          cell.setCellValue(DataType.valueToString(elem));
+          break;
+        case TinyIntType:
+        case ShortIntType:
+        case IntType:
+          cell.setCellValue(Integer.valueOf(elem.toString()));
+          break;
+        case LongType:
+        case BigIntType:
+          cell.setCellValue(Long.valueOf(elem.toString()));
+          break;
+        case FloatType:
+          cell.setCellValue(Float.valueOf(elem.toString()));
+          break;
+        case DoubleType:
+          doubleCheck(elem.toString());
+          cell.setCellValue(Double.valueOf(elem.toString()));
+          break;
+        case DateType:
+        case TimestampType:
+          cell.setCellValue(getDate(elem));
+          break;
+        case DecimalType:
+        case BigDecimalType:
+          doubleCheck(DataType.valueToString(elem));
+          cell.setCellValue(Double.valueOf(DataType.valueToString(elem)));
+          break;
+        default:
+          cell.setCellValue(DataType.valueToString(elem));
       }
     } catch (Exception e) {
       cell.setCellValue(DataType.valueToString(elem));

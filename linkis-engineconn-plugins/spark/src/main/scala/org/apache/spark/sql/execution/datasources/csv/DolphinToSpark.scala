@@ -20,7 +20,6 @@ package org.apache.spark.sql.execution.datasources.csv
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.storage.{domain => wds}
-import org.apache.linkis.storage.domain.DataType.ShortIntType
 import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
@@ -68,32 +67,21 @@ object DolphinToSpark {
     )
   }
 
-  def toSparkType(dataType: org.apache.linkis.storage.domain.DataType): DataType = {
-    if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.NullType]) {
-      NullType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BooleanType]) {
-      BooleanType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.ShortIntType]) {
-      ShortType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.IntType]) {
-      IntegerType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BigIntType]) {
-      LongType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.FloatType]) {
-      FloatType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DoubleType]) {
-      DoubleType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DecimalType]) {
-      DecimalType(bigDecimalPrecision, bigDecimalScale)
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.DateType]) {
-      DateType
-    } else if (dataType.isInstanceOf[org.apache.linkis.storage.domain.DataType.BinaryType]) {
-      BinaryType
-    } else {
-      StringType
-    }
+  def toSparkType(dataType: wds.DataType): DataType = dataType match {
+    case wds.DataType.NullType => NullType
     // case wds.StringType | wds.CharType | wds.VarcharType | wds.StructType | wds.ListType | wds.ArrayType | wds.MapType => StringType
+    case wds.DataType.BooleanType => BooleanType
+    case wds.DataType.ShortIntType => ShortType
+    case wds.DataType.IntType => IntegerType
+    case wds.DataType.LongType => LongType
+    case wds.DataType.BigIntType => LongType
+    case wds.DataType.FloatType => FloatType
+    case wds.DataType.DoubleType => DoubleType
+    case wds.DataType.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
+    case wds.DataType.DateType => DateType
     // case wds.TimestampType => TimestampType
+    case wds.DataType.BinaryType => BinaryType
+    case _ => StringType
   }
 
 }

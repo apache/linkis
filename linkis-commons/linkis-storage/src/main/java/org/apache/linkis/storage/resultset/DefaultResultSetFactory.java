@@ -29,6 +29,7 @@ import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -140,7 +141,6 @@ public class DefaultResultSetFactory implements ResultSetFactory {
             THE_FILE_IS_EMPTY.getErrorCode(),
             MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc(), fsPath.getPath()));
       }
-      inputStream.close();
       // Utils.tryQuietly(fs::close);
       return getResultSetByType(resultSetType);
     } catch (IOException e) {
@@ -164,8 +164,7 @@ public class DefaultResultSetFactory implements ResultSetFactory {
               THE_FILE_IS_EMPTY.getErrorCode(),
               MessageFormat.format(THE_FILE_IS_EMPTY.getErrorDesc(), fsPath.getPath()));
         }
-        inputStream.close();
-        fs.close();
+        IOUtils.closeQuietly(inputStream);
         return getResultSetByType(resultSetType);
       } catch (IOException e) {
         throw new RuntimeException(e);

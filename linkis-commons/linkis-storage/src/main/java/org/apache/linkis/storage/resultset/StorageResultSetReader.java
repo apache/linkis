@@ -27,6 +27,7 @@ import org.apache.linkis.storage.domain.Dolphin;
 import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.utils.StorageUtils;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
@@ -171,7 +172,7 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
 
   @Override
   public void close() throws IOException {
-    inputStream.close();
+    IOUtils.closeQuietly(inputStream);
     if (this.fs != null) {
       this.fs.close();
     }

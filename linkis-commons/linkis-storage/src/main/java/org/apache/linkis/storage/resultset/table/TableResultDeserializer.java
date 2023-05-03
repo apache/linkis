@@ -21,7 +21,7 @@ import org.apache.linkis.common.io.resultset.ResultDeserializer;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
 import org.apache.linkis.storage.domain.Dolphin;
-import org.apache.linkis.storage.exception.StorageErrorException;
+import org.apache.linkis.storage.exception.StorageWarnException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +46,8 @@ public class TableResultDeserializer extends ResultDeserializer<TableMetaData, T
             : colString.split(Dolphin.COL_SPLIT);
     int index = Dolphin.INT_LEN + colByteLen;
     if (colArray.length % 3 != 0) {
-      try {
-        throw new StorageErrorException(
-            PARSING_METADATA_FAILED.getErrorCode(), PARSING_METADATA_FAILED.getErrorDesc());
-      } catch (StorageErrorException e) {
-        logger.warn("TableResultDeserializer createMetaData failed", e);
-      }
+      throw new StorageWarnException(
+          PARSING_METADATA_FAILED.getErrorCode(), PARSING_METADATA_FAILED.getErrorDesc());
     }
     List<Column> columns = new ArrayList<>();
     for (int i = 0; i < colArray.length; i += 3) {

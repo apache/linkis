@@ -23,6 +23,7 @@ import org.apache.linkis.storage.script.Parser;
 import org.apache.linkis.storage.script.Variable;
 import org.apache.linkis.storage.script.VariableParser;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,23 +38,32 @@ public abstract class CommonScriptParser implements Parser {
       String key = matcher.group(1).trim();
       String value = matcher.group(2).trim();
       return new Variable(VariableParser.VARIABLE, null, key, value);
+
     } else {
-      String[] split = line.split(" ");
-      if (split.length != 4) {
+      String[] splitLine = line.split("=");
+      if (splitLine.length != 2) {
         throw new StorageWarnException(
             LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorCode(),
             LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorDesc());
       }
-      String prefixConf = prefixConf();
-      if (!split[0].trim().equals(prefixConf)) {
+      String[] subSplit =
+          Arrays.stream(splitLine[0].split(" "))
+              .filter(str -> !"".equals(str))
+              .toArray(String[]::new);
+      if (subSplit.length != 4) {
         throw new StorageWarnException(
             LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorCode(),
             LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorDesc());
       }
-      String sortParent = split[1].trim();
-      String sort = split[2].trim();
-      String key = split[3].trim();
-      String value = line.substring(line.indexOf("=") + 1).trim();
+      if (!subSplit[0].trim().equals(prefixConf())) {
+        throw new StorageWarnException(
+            LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorCode(),
+            LinkisStorageErrorCodeSummary.INVALID_CUSTOM_PARAMETER.getErrorDesc());
+      }
+      String sortParent = subSplit[1].trim();
+      String sort = subSplit[2].trim();
+      String key = subSplit[3].trim();
+      String value = splitLine[1].trim();
       return new Variable(sortParent, sort, key, value);
     }
   }

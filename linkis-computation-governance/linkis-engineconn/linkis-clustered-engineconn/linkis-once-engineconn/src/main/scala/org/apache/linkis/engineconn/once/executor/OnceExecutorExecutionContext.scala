@@ -22,7 +22,7 @@ import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetWriter}
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.executor.ExecutorExecutionContext
 import org.apache.linkis.governance.common.entity.job.OnceExecutorContent
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 
 class OnceExecutorExecutionContext(
     engineCreationContext: EngineCreationContext,
@@ -47,7 +47,7 @@ class OnceExecutorExecutionContext(
       resultSetPath: FsPath,
       alias: String
   ): org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] =
-    ResultSetWriter.getResultSetWriter(
+    ResultSetWriterFactory.getResultSetWriter(
       resultSet,
       0,
       resultSetPath,

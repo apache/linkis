@@ -30,8 +30,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ResultSetWriter {
-  private static final Logger logger = LoggerFactory.getLogger(ResultSetWriter.class);
+public class ResultSetWriterFactory {
+  private static final Logger logger = LoggerFactory.getLogger(ResultSetWriterFactory.class);
 
   public static <K extends MetaData, V extends Record>
       org.apache.linkis.common.io.resultset.ResultSetWriter<K, V> getResultSetWriter(

@@ -22,6 +22,8 @@ import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.LocalFileSystem;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Stack;
@@ -44,7 +46,7 @@ public class FileSystemUtils {
       }
       fileSystem.copyFile(origin, filePath);
     } finally {
-      fileSystem.close();
+      IOUtils.closeQuietly(fileSystem);
     }
   }
 
@@ -70,11 +72,7 @@ public class FileSystemUtils {
     } catch (Exception e) {
       logger.warn("FileSystemUtils createNewFile failed", e);
     } finally {
-      try {
-        fileSystem.close();
-      } catch (IOException e) {
-        logger.warn("FileSystemUtils close failed", e);
-      }
+      IOUtils.closeQuietly(fileSystem);
     }
   }
 

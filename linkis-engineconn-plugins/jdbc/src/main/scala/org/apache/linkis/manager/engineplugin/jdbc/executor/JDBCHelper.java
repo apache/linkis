@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.jdbc.executor;
 
 import org.apache.linkis.storage.domain.*;
@@ -104,61 +104,61 @@ public class JDBCHelper {
         Integer intObj;
         switch (type) {
             case Types.NULL:
-                retVal = new DataType.NullType().getTypeName();
+                retVal = DataType.NullType.getTypeName();
                 break;
             case Types.VARCHAR:
-                retVal = new DataType.StringType().getTypeName();
+                retVal = DataType.StringType.getTypeName();
                 break;
             case Types.BOOLEAN:
-                retVal = new DataType.BooleanType().getTypeName();
+                retVal = DataType.BooleanType.getTypeName();
                 break;
             case Types.TINYINT:
-                retVal = new DataType.TinyIntType().getTypeName();
+                retVal = DataType.TinyIntType.getTypeName();
                 break;
             case Types.SMALLINT:
-                retVal = new DataType.ShortIntType().getTypeName();
+                retVal = DataType.ShortIntType.getTypeName();
                 break;
             case Types.INTEGER:
-                retVal = new DataType.IntType().getTypeName();
+                retVal = DataType.IntType.getTypeName();
                 break;
             case Types.LONGNVARCHAR:
-                retVal = new DataType.LongType().getTypeName();
+                retVal = DataType.LongType.getTypeName();
                 break;
             case Types.LONGVARCHAR:
-                retVal = new DataType.StringType().getTypeName();
+                retVal = DataType.StringType.getTypeName();
                 break;
             case Types.FLOAT:
-                retVal = new DataType.FloatType().getTypeName();
+                retVal = DataType.FloatType.getTypeName();
                 break;
             case Types.DOUBLE:
-                retVal = new DataType.DoubleType().getTypeName();
+                retVal = DataType.DoubleType.getTypeName();
                 break;
             case Types.CHAR:
-                retVal = new DataType.CharType().getTypeName();
+                retVal = DataType.CharType.getTypeName();
                 break;
             case Types.DATE:
-                retVal = new DataType.DateType().getTypeName();
+                retVal = DataType.DateType.getTypeName();
                 break;
             case Types.TIMESTAMP:
-                retVal = new DataType.TimestampType().getTypeName();
+                retVal = DataType.TimestampType.getTypeName();
                 break;
             case Types.BINARY:
-                retVal = new DataType.BinaryType().getTypeName();
+                retVal = DataType.BinaryType.getTypeName();
                 break;
             case Types.DECIMAL:
-                retVal = new DataType.DecimalType().getTypeName();
+                retVal = DataType.DecimalType.getTypeName();
                 break;
             case Types.ARRAY:
-                retVal = new DataType.ArrayType().getTypeName();
+                retVal = DataType.ArrayType.getTypeName();
                 break;
             case Types.STRUCT:
-                retVal = new DataType.StructType().getTypeName();
+                retVal = DataType.StructType.getTypeName();
                 break;
             case Types.BIGINT:
-                retVal = new DataType.LongType().getTypeName();
+                retVal = DataType.LongType.getTypeName();
                 break;
             case Types.REAL:
-                retVal = new DataType.DoubleType().getTypeName();
+                retVal = DataType.DoubleType.getTypeName();
                 break;
             default:
                 break;

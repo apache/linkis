@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.MetaData;
 import org.apache.linkis.common.io.Record;
 import org.apache.linkis.common.io.resultset.ResultSerializer;
 import org.apache.linkis.storage.domain.Dolphin;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -41,13 +42,6 @@ public class IOResultSerializer extends ResultSerializer {
   private byte[] lineToBytes(String value) {
     byte[] bytes = value == null ? Dolphin.NULL_BYTES : Dolphin.getBytes(value);
     byte[] intBytes = Dolphin.getIntBytes(bytes.length);
-    return mergeByteArrays(intBytes, bytes);
-  }
-
-  public byte[] mergeByteArrays(byte[] arr1, byte[] arr2) {
-    byte[] mergedArray = new byte[arr1.length + arr2.length];
-    System.arraycopy(arr1, 0, mergedArray, 0, arr1.length);
-    System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
-    return mergedArray;
+    return StorageUtils.mergeByteArrays(intBytes, bytes);
   }
 }

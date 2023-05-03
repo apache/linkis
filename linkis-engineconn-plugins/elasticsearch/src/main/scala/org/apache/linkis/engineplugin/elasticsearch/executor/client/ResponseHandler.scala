@@ -61,26 +61,26 @@ object ResponseHandler {
   val csvMapper = new CsvMapper()
 
   def getNodeDataType(node: JsonNode): DataType = node.getNodeType match {
-    case JsonNodeType.ARRAY => new ArrayType
-    case JsonNodeType.BINARY => new BinaryType
-    case JsonNodeType.BOOLEAN => new BooleanType
-    case JsonNodeType.NULL => new NullType
-    case JsonNodeType.NUMBER => new DecimalType
-    case JsonNodeType.OBJECT => new StructType
-    case JsonNodeType.POJO => new StructType
-    case JsonNodeType.STRING => new StringType
-    case JsonNodeType.MISSING => new StringType
-    case _ => new StringType
+    case JsonNodeType.ARRAY => ArrayType
+    case JsonNodeType.BINARY => BinaryType
+    case JsonNodeType.BOOLEAN => BooleanType
+    case JsonNodeType.NULL => NullType
+    case JsonNodeType.NUMBER => DecimalType
+    case JsonNodeType.OBJECT => StructType
+    case JsonNodeType.POJO => StructType
+    case JsonNodeType.STRING => StringType
+    case JsonNodeType.MISSING => StringType
+    case _ => StringType
   }
 
   def getNodeTypeByEsType(estype: String): DataType = estype.toLowerCase(Locale.getDefault) match {
     case "long" | "integer" | "short" | "byte" | "double" | "float" | "half_float" |
         "scaled_float" =>
-      new DecimalType
-    case "text" | "keyword" => new StringType
-    case "date" => new DateType
-    case "binary" => new BinaryType
-    case _ => new StringType
+      DecimalType
+    case "text" | "keyword" => StringType
+    case "date" => DateType
+    case "binary" => BinaryType
+    case _ => StringType
   }
 
   def getNodeValue(node: JsonNode): Any = node.getNodeType match {

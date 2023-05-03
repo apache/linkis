@@ -38,7 +38,7 @@ import org.apache.linkis.storage.domain.DataType.{
   StringType,
   TimestampType
 }
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.exec.CommandLine
@@ -200,7 +200,7 @@ class PythonSession extends Logging {
       val outStr = outputStream.toString()
       if (StringUtils.isNotBlank(outStr)) {
         val output = Utils.tryQuietly(
-          ResultSetWriter.getRecordByRes(
+          ResultSetWriterFactory.getRecordByRes(
             outStr,
             PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
           )
@@ -291,13 +291,13 @@ class PythonSession extends Logging {
   def getKind: Kind = Python()
 
   def changeDT(dt: String): DataType = dt match {
-    case "int" | "int16" | "int32" | "int64" => new IntType
-    case "float" | "float16" | "float32" | "float64" => new FloatType
-    case "double" => new DoubleType
-    case "bool" => new BooleanType
-    case "datetime64[ns]" | "datetime64[ns,tz]" | "timedelta[ns]" => new TimestampType
-    case "category" | "object" => new StringType
-    case _ => new StringType
+    case "int" | "int16" | "int32" | "int64" => IntType
+    case "float" | "float16" | "float32" | "float64" => FloatType
+    case "double" => DoubleType
+    case "bool" => BooleanType
+    case "datetime64[ns]" | "datetime64[ns,tz]" | "timedelta[ns]" => TimestampType
+    case "category" | "object" => StringType
+    case _ => StringType
   }
 
   /**

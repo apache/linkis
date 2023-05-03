@@ -23,6 +23,7 @@ import org.apache.linkis.common.io.resultset.ResultSerializer;
 import org.apache.linkis.storage.LineMetaData;
 import org.apache.linkis.storage.LineRecord;
 import org.apache.linkis.storage.domain.Dolphin;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 public class TextResultSerializer extends ResultSerializer {
 
@@ -44,13 +45,6 @@ public class TextResultSerializer extends ResultSerializer {
 
   private byte[] lineToBytes(String value) {
     byte[] bytes = (value == null) ? Dolphin.NULL_BYTES : Dolphin.getBytes(value);
-    return mergeByteArrays(Dolphin.getIntBytes(bytes.length), bytes);
-  }
-
-  public byte[] mergeByteArrays(byte[] arr1, byte[] arr2) {
-    byte[] mergedArray = new byte[arr1.length + arr2.length];
-    System.arraycopy(arr1, 0, mergedArray, 0, arr1.length);
-    System.arraycopy(arr2, 0, mergedArray, arr1.length, arr2.length);
-    return mergedArray;
+    return StorageUtils.mergeByteArrays(Dolphin.getIntBytes(bytes.length), bytes);
   }
 }

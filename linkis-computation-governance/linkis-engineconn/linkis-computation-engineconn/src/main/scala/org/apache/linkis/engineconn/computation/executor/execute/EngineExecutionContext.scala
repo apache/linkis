@@ -40,7 +40,7 @@ import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecut
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 import org.apache.linkis.storage.resultset.table.TableResultSet
 
 import org.apache.commons.io.IOUtils
@@ -172,7 +172,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           csWriter.setProxyUser(executorUser)
           csWriter
         } else {
-          ResultSetWriter.getResultSetWriter(
+          ResultSetWriterFactory.getResultSetWriter(
             resultSet,
             ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
             resultSetPath,
@@ -180,7 +180,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           )
         }
       case _ =>
-        ResultSetWriter.getResultSetWriter(
+        ResultSetWriterFactory.getResultSetWriter(
           resultSet,
           ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
           resultSetPath,

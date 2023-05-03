@@ -29,7 +29,7 @@ import org.apache.linkis.storage.io.utils.IOClientUtils
 import org.apache.linkis.storage.resultset.{
   ResultSetFactory,
   ResultSetReaderFactory,
-  ResultSetWriter
+  ResultSetWriterFactory
 }
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
@@ -394,7 +394,7 @@ class IOMethodInterceptor(fsType: String) extends MethodInterceptor with Logging
           true
         } else false
       val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-      val writer = ResultSetWriter.getResultSetWriter(resultSet, Long.MaxValue, null)
+      val writer = ResultSetWriterFactory.getResultSetWriter(resultSet, Long.MaxValue, null)
       writer.addMetaData(new IOMetaData(0, index))
       writer.addRecord(new IORecord(cached.slice(0, index)))
       val params: Array[AnyRef] = Array(

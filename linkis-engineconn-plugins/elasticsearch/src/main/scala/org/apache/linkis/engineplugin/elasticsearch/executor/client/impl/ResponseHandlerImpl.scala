@@ -88,10 +88,10 @@ class ResponseHandlerImpl extends ResponseHandler {
     jsonNode.at("/hits/hits") match {
       case hits: ArrayNode => {
         isTable = true
-        columns += new Column("_index", new StringType, "")
-        columns += new Column("_type", new StringType, "")
-        columns += new Column("_id", new StringType, "")
-        columns += new Column("_score", new DoubleType, "")
+        columns += new Column("_index", StringType, "")
+        columns += new Column("_type", StringType, "")
+        columns += new Column("_id", StringType, "")
+        columns += new Column("_score", DoubleType, "")
         hits.asScala.foreach {
           case obj: ObjectNode => {
             val lineValues = new Array[Any](columns.length).toBuffer

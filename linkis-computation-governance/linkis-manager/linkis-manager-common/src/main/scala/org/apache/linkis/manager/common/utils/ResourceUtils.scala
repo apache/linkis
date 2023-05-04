@@ -46,26 +46,7 @@ object ResourceUtils {
   }
 
   def serializeResource(resource: Resource): String = {
-    val resourceType = getResourceTypeByResource(resource)
-    if (resourceType.equals(ResourceType.CPU)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[CPUResource])
-    } else if (resourceType.equals(ResourceType.DriverAndYarn)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[DriverAndYarnResource])
-    } else if (resourceType.equals(ResourceType.Instance)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[InstanceResource])
-    } else if (resourceType.equals(ResourceType.LoadInstance)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[LoadInstanceResource])
-    } else if (resourceType.equals(ResourceType.Load)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[LoadResource])
-    } else if (resourceType.equals(ResourceType.Memory)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[MemoryResource])
-    } else if (resourceType.equals(ResourceType.Special)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[SpecialResource])
-    } else if (resourceType.equals(ResourceType.Yarn)) {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[YarnResource])
-    } else {
-      JsonUtils.jackson.writeValueAsString(resource, classOf[LoadResource])
-    }
+    JsonUtils.jackson.writeValueAsString(resource)
   }
 
   def toPersistenceResource(nodeResource: NodeResource): PersistenceResource = {

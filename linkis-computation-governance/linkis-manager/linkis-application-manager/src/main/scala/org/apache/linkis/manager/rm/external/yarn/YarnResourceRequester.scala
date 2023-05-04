@@ -142,10 +142,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     }
 
     def getChildQueues(resp: Any): Any = {
-      val ctx = JsonPath.parse(resp)
-      val childQueuesValue = ctx.read("$.childQueues")
-      val queues =
-        ctx.read("$.childQueues.queue").asInstanceOf[util.List[Any]]
+      val childQueuesValue = JsonPath.read(resp, "$.childQueues").asInstanceOf[Any]
+      val queues = JsonPath.read(resp, "$.childQueues[*]").asInstanceOf[util.List[Any]]
 
       if (queues != null && queues.size() > 0) {
         logger.info(s"queues:$queues")
@@ -228,7 +226,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        val resourceCtx = JsonPath.parse(queue)
+        val resourceCtx = JsonPath.parse(queue.get)
         val maxResourceMemory = resourceCtx.read("$.maxResources.memory").asInstanceOf[Integer]
         val maxResourcevCores = resourceCtx.read("$.maxResources.vCores").asInstanceOf[Integer]
         val maxResources =

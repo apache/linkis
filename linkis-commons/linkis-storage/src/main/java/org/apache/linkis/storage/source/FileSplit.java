@@ -17,8 +17,6 @@
 
 package org.apache.linkis.storage.source;
 
-import org.apache.linkis.common.exception.ExceptionLevel;
-import org.apache.linkis.common.exception.LinkisRuntimeException;
 import org.apache.linkis.common.io.FsReader;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.common.io.MetaData;
@@ -28,6 +26,7 @@ import org.apache.linkis.storage.LineRecord;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
 import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
+import org.apache.linkis.storage.exception.StorageWarnException;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.script.Parser;
@@ -131,16 +130,49 @@ public class FileSplit implements Closeable {
       }
     } catch (IOException e) {
       logger.warn("FileSplit forEach failed", e);
-      throw new LinkisRuntimeException(
+      throw new StorageWarnException(
           LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
-          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage()) {
-        @Override
-        public ExceptionLevel getLevel() {
-          return ExceptionLevel.ERROR;
-        }
-      };
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage());
     }
     return m;
+  }
+
+  public void biConsumerWhileLoop(
+      Consumer<MetaData> metaDataFunction, Consumer<Record> recordConsumer) {
+    try {
+      MetaData metaData = fsReader.getMetaData();
+      metaDataFunction.accept(metaData);
+      if (pageTrigger) {
+        fsReader.skip(start);
+      }
+      count = start;
+      boolean hasRemovedFlag = false;
+      while (fsReader.hasNext() && ifContinueRead()) {
+        Record record = fsReader.getRecord();
+        boolean needRemoveFlag = false;
+        if (!hasRemovedFlag && fsReader instanceof StorageScriptFsReader) {
+          Parser parser = ((StorageScriptFsReader) fsReader).getScriptParser();
+          Variable[] meta = ((ScriptMetaData) metaData).getMetaData();
+          if (meta != null
+              && meta.length > 0
+              && parser != null
+              && parser.getAnnotationSymbol().equals(record.toString())) {
+            needRemoveFlag = true;
+            hasRemovedFlag = true;
+          }
+        }
+        if (!needRemoveFlag) {
+          recordConsumer.accept(shuffler.apply(record));
+          totalLine++;
+          count++;
+        }
+      }
+    } catch (IOException e) {
+      logger.warn("FileSplit forEach failed", e);
+      throw new StorageWarnException(
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage());
+    }
   }
 
   public Pair<Integer, Integer> getFileInfo(int needToCountRowNumber) {
@@ -157,25 +189,23 @@ public class FileSplit implements Closeable {
               : fsReader.skip(needToCountRowNumber);
     } catch (IOException e) {
       logger.warn("FileSplit getFileInfo failed", e);
-      throw new LinkisRuntimeException(
+      throw new StorageWarnException(
           LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
-          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage()) {
-        @Override
-        public ExceptionLevel getLevel() {
-          return ExceptionLevel.ERROR;
-        }
-      };
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage());
     }
     return new Pair<>(colNumber, rowNumber);
   }
 
   public <K extends MetaData, V extends Record> void write(FsWriter<K, V> fsWriter) {
-    whileLoop(
+    biConsumerWhileLoop(
         metaData -> {
           try {
             fsWriter.addMetaData(metaData);
           } catch (IOException e) {
             logger.warn("FileSplit addMetaData failed", e);
+            throw new StorageWarnException(
+                LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
+                LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage());
           }
         },
         record -> {
@@ -183,6 +213,9 @@ public class FileSplit implements Closeable {
             fsWriter.addRecord(record);
           } catch (IOException e) {
             logger.warn("FileSplit addRecord failed", e);
+            throw new StorageWarnException(
+                LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
+                LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage());
           }
         });
   }

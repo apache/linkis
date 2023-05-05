@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.am.pointer;
 
-import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.node.Node;
@@ -64,7 +64,7 @@ public class DefaultEMNodPointer extends AbstractNodePointer implements EMNodPoi
               + engineNode);
       return engineNode;
     } else {
-      throw new WarnException(
+      throw new AMErrorException(
           AMConstant.ENGINE_ERROR_CODE,
           "Failed to createEngine ask em " + getNode().getServiceInstance());
     }
@@ -104,7 +104,7 @@ public class DefaultEMNodPointer extends AbstractNodePointer implements EMNodPoi
     if (result instanceof ECMOperateResponse) {
       return (ECMOperateResponse) result;
     } else {
-      throw new WarnException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.");
+      throw new AMErrorException(AMConstant.ENGINE_ERROR_CODE, "Failed to execute ECM operation.");
     }
   }
 }

@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.am.service.engine;
 
 import org.apache.linkis.common.exception.LinkisRetryException;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
@@ -217,13 +216,13 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
       EngineNode engine,
       EngineNode[] engineScoreList) {
     if (count2reuseLimit.getLeft() > count2reuseLimit.getRight()) {
-      throw new WarnException(
+      throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,
           "Engine reuse exceeds limit: " + count2reuseLimit.getRight());
     }
     Optional<Node> choseNode = nodeSelector.choseNode(engineScoreList);
     if (!choseNode.isPresent()) {
-      throw new WarnException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused");
+      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused");
     }
     EngineNode engineNode = (EngineNode) choseNode.get();
     logger.info("prepare to reuse engineNode: " + engineNode.getServiceInstance());

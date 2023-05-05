@@ -19,9 +19,9 @@ package org.apache.linkis.ecm.server.operator;
 
 import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.conf.CommonVars;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.server.conf.ECMConfiguration;
+import org.apache.linkis.ecm.server.exception.ECMErrorException;
 import org.apache.linkis.ecm.server.service.LocalDirsHandleService;
 import org.apache.linkis.manager.common.operator.Operator;
 
@@ -77,7 +77,7 @@ public class EngineConnLogOperator implements Operator {
     int fromLine = getAs(parameters, "fromLine", 1);
     boolean enableTail = getAs(parameters, "enableTail", false);
     if (lastRows > EngineConnLogOperator.MAX_LOG_FETCH_SIZE.getValue()) {
-      throw new WarnException(
+      throw new ECMErrorException(
           CANNOT_FETCH_MORE_THAN.getErrorCode(),
           MessageFormat.format(
               CANNOT_FETCH_MORE_THAN.getErrorDesc(),
@@ -112,10 +112,7 @@ public class EngineConnLogOperator implements Operator {
       int readLine = 0, skippedLine = 0, lineNum = 0;
       boolean rowIgnore = false;
       int ignoreLine = 0;
-      Pattern linePattern =
-          null != EngineConnLogOperator.MULTILINE_PATTERN.getValue()
-              ? Pattern.compile(EngineConnLogOperator.MULTILINE_PATTERN.getValue())
-              : null;
+      Pattern linePattern = Pattern.compile(EngineConnLogOperator.MULTILINE_PATTERN.getValue());
 
       int maxMultiline = MULTILINE_MAX.getValue();
       String line = randomAndReversedReadLine(randomReader, reversedReader);
@@ -150,8 +147,6 @@ public class EngineConnLogOperator implements Operator {
         line = randomAndReversedReadLine(randomReader, reversedReader);
       }
 
-      IOUtils.closeQuietly(randomReader);
-      IOUtils.closeQuietly(reversedReader);
       if (enableTail) {
         Collections.reverse(logs);
       }
@@ -163,8 +158,9 @@ public class EngineConnLogOperator implements Operator {
       resultMap.put("rows", readLine);
       return resultMap;
     } catch (IOException e) {
-      // ing
-      throw new RuntimeException(e);
+      logger.info("EngineConnLogOperator apply failed", e);
+      throw new ECMErrorException(
+          LOG_IS_NOT_EXISTS.getErrorCode(), LOG_IS_NOT_EXISTS.getErrorDesc());
     } finally {
       IOUtils.closeQuietly(randomReader);
       IOUtils.closeQuietly(reversedReader);
@@ -196,7 +192,7 @@ public class EngineConnLogOperator implements Operator {
 
     File logPath = new File(engineConnLogDir, logType);
     if (!logPath.exists() || !logPath.isFile()) {
-      throw new WarnException(
+      throw new ECMErrorException(
           LOGFILE_IS_NOT_EXISTS.getErrorCode(),
           MessageFormat.format(LOGFILE_IS_NOT_EXISTS.getErrorDesc(), logPath.toString()));
     }

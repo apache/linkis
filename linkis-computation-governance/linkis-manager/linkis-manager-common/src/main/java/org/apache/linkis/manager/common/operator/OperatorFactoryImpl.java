@@ -17,8 +17,8 @@
 
 package org.apache.linkis.manager.common.operator;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.ClassUtils;
+import org.apache.linkis.governance.common.exception.GovernanceErrorException;
 import org.apache.linkis.manager.common.protocol.OperateRequest;
 
 import java.util.HashMap;
@@ -66,7 +66,7 @@ class OperatorFactoryImpl implements OperatorFactory {
     if (operators.containsKey(operatorName)) {
       return operators.get(operatorName);
     } else {
-      throw new WarnException(20030, "Cannot find operator named " + operatorName + ".");
+      throw new GovernanceErrorException(20030, "Cannot find operator named " + operatorName + ".");
     }
   }
 }

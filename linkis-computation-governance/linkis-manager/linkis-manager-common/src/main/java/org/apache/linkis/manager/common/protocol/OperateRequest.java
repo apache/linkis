@@ -26,7 +26,7 @@ public interface OperateRequest {
 
   Map<String, Object> getParameters();
 
-  String OPERATOR_NAME_KEY = "operator_name";
+  String OPERATOR_NAME_KEY = "__operator_name__";
 
   static String getOperationName(Map<String, Object> parameters) {
     Object obj = parameters.get(OPERATOR_NAME_KEY);

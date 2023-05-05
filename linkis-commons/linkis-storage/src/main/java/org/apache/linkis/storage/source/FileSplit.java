@@ -17,6 +17,8 @@
 
 package org.apache.linkis.storage.source;
 
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 import org.apache.linkis.common.io.FsReader;
 import org.apache.linkis.common.io.FsWriter;
 import org.apache.linkis.common.io.MetaData;
@@ -25,6 +27,7 @@ import org.apache.linkis.storage.LineMetaData;
 import org.apache.linkis.storage.LineRecord;
 import org.apache.linkis.storage.domain.Column;
 import org.apache.linkis.storage.domain.DataType;
+import org.apache.linkis.storage.errorcode.LinkisStorageErrorCodeSummary;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 import org.apache.linkis.storage.script.Parser;
@@ -128,26 +131,16 @@ public class FileSplit implements Closeable {
       }
     } catch (IOException e) {
       logger.warn("FileSplit forEach failed", e);
+      throw new LinkisRuntimeException(
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage()) {
+        @Override
+        public ExceptionLevel getLevel() {
+          return ExceptionLevel.ERROR;
+        }
+      };
     }
     return m;
-  }
-
-  public void biConsumer(Consumer<MetaData> metaDataFunction, Consumer<Record> recordConsumer) {
-    try {
-      MetaData metaData = fsReader.getMetaData();
-      metaDataFunction.accept(metaData);
-      if (pageTrigger) {
-        fsReader.skip(start);
-      }
-      count = start;
-      while (fsReader.hasNext() && ifContinueRead()) {
-        recordConsumer.accept(shuffler.apply(fsReader.getRecord()));
-        totalLine++;
-        count++;
-      }
-    } catch (IOException e) {
-      logger.warn("FileSplit biConsumer failed", e);
-    }
   }
 
   public Pair<Integer, Integer> getFileInfo(int needToCountRowNumber) {
@@ -158,19 +151,26 @@ public class FileSplit implements Closeable {
       metaData = fsReader.getMetaData();
       colNumber =
           metaData instanceof TableMetaData ? ((TableMetaData) metaData).getColumns().length : 1;
-      rowNumber = 0;
       rowNumber =
           needToCountRowNumber == -1
               ? fsReader.skip(Integer.MAX_VALUE)
               : fsReader.skip(needToCountRowNumber);
     } catch (IOException e) {
       logger.warn("FileSplit getFileInfo failed", e);
+      throw new LinkisRuntimeException(
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorCode(),
+          LinkisStorageErrorCodeSummary.UNSUPPORTED_OPEN_FILE_TYPE.getErrorMessage()) {
+        @Override
+        public ExceptionLevel getLevel() {
+          return ExceptionLevel.ERROR;
+        }
+      };
     }
     return new Pair<>(colNumber, rowNumber);
   }
 
   public <K extends MetaData, V extends Record> void write(FsWriter<K, V> fsWriter) {
-    biConsumer(
+    whileLoop(
         metaData -> {
           try {
             fsWriter.addMetaData(metaData);

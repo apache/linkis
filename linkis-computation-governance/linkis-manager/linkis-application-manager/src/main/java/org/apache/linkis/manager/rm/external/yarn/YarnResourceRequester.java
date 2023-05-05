@@ -17,10 +17,10 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.am.util.Utils;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.*;
+import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.common.exception.RMWarnException;
 import org.apache.linkis.manager.rm.external.domain.ExternalAppInfo;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
@@ -399,7 +399,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
             }
             rmAddressMap.put(haAddress, activeAddress);
           } else {
-            throw new WarnException(
+            throw new RMErrorException(
                 GET_YARN_EXCEPTION.getErrorCode(),
                 MessageFormat.format(GET_YARN_EXCEPTION.getErrorDesc(), haAddress));
           }

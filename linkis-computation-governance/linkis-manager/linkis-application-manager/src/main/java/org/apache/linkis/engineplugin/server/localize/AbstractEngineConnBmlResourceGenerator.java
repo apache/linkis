@@ -17,9 +17,8 @@
 
 package org.apache.linkis.engineplugin.server.localize;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
-import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.*;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
 
   public AbstractEngineConnBmlResourceGenerator() {
     if (!new File(getEngineConnsHome()).exists()) {
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           CANNOT_HOME_PATH_EC.getErrorCode(),
           MessageFormat.format(CANNOT_HOME_PATH_EC.getErrorDesc(), getEngineConnsHome()));
     }
@@ -79,7 +78,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
                 + engineConnPackageHomeOld);
         File engineConnPackageHomeFileOld = new File(engineConnPackageHomeOld);
         if (!engineConnPackageHomeFileOld.exists()) {
-          throw new WarnException(
+          throw new EngineConnPluginErrorException(
               ENGINE_VERSION_NOT_FOUND.getErrorCode(),
               MessageFormat.format(
                   ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
@@ -87,7 +86,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
           return engineConnPackageHomeOld;
         }
       } else {
-        throw new WarnException(
+        throw new EngineConnPluginErrorException(
             ENGINE_VERSION_NOT_FOUND.getErrorCode(),
             MessageFormat.format(ENGINE_VERSION_NOT_FOUND.getErrorDesc(), version, engineConnType));
       }
@@ -103,7 +102,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
 
   private void checkEngineConnDistHome(File engineConnPackageHome) {
     if (!engineConnPackageHome.exists()) {
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           CANNOT_HOME_PATH_DIST.getErrorCode(),
           MessageFormat.format(
               CANNOT_HOME_PATH_DIST.getErrorDesc(), engineConnPackageHome.getPath()));
@@ -117,7 +116,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
     checkEngineConnDistHome(engineConnDistHomeFile);
     File[] children = engineConnDistHomeFile.listFiles();
     if (children.length == 0) {
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           DIST_IS_EMPTY.getErrorCode(),
           MessageFormat.format(DIST_IS_EMPTY.getErrorDesc(), engineConnType));
     } else {

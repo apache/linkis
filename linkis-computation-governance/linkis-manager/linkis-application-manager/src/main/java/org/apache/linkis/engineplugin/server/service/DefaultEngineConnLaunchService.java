@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineplugin.server.service;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
 import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;
@@ -79,7 +79,7 @@ public class DefaultEngineConnLaunchService implements EngineConnLaunchService {
             .findFirst();
 
     if (!engineTypeOption.isPresent()) {
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           EngineconnCoreErrorCodeSummary.ETL_REQUESTED.getErrorCode(),
           EngineconnCoreErrorCodeSummary.ETL_REQUESTED.getErrorDesc());
     }
@@ -92,7 +92,7 @@ public class DefaultEngineConnLaunchService implements EngineConnLaunchService {
               String.format(
                   "Failed to createEngineConnLaunchRequest(%s)", engineBuildRequest.ticketId()),
               t);
-          throw new WarnException(
+          throw new EngineConnPluginErrorException(
               EngineconnCoreErrorCodeSummary.FAILED_CREATE_ELR.getErrorCode(),
               String.format(
                   "%s, %s",

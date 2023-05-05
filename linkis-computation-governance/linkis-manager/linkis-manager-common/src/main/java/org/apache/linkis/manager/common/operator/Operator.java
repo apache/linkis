@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.common.operator;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.governance.common.exception.GovernanceErrorException;
 
 import java.util.Map;
@@ -37,7 +36,7 @@ public interface Operator {
       try {
         return (T) value;
       } catch (Exception e) {
-        throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
+        throw new GovernanceErrorException(20305, "Unknown class type, cannot cast " + value + ".");
       }
     }
   }
@@ -48,10 +47,10 @@ public interface Operator {
       try {
         return (T) value;
       } catch (Exception e) {
-        throw new WarnException(20305, "Unknown class type, cannot cast " + value + ".");
+        throw new GovernanceErrorException(20305, "Unknown class type, cannot cast " + value + ".");
       }
     } else {
-      throw new WarnException(20305, "The parameter of " + key + " does not exist.");
+      throw new GovernanceErrorException(20305, "The parameter of " + key + " does not exist.");
     }
   }
 }

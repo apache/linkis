@@ -17,13 +17,13 @@
 
 package org.apache.linkis.manager.persistence.impl;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.common.entity.label.LabelKeyValue;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.ResourceManagerMapper;
 import org.apache.linkis.manager.entity.Tunple;
+import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.persistence.ResourceLabelPersistence;
 import org.apache.linkis.manager.util.PersistenceUtils;
@@ -152,7 +152,8 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
       PersistenceLabel labelByKeyValue =
           labelManagerMapper.getLabelByKeyValue(label.getLabelKey(), label.getStringValue());
       if (labelByKeyValue == null) {
-        throw new WarnException(210001, "label not found, this label may be removed already.");
+        throw new PersistenceErrorException(
+            210001, "label not found, this label may be removed already.");
       }
       labelId = labelByKeyValue.getId();
     }

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.common.protocol;
 
-import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.governance.common.exception.GovernanceErrorException;
 
 import java.util.Map;
 
@@ -33,7 +33,7 @@ public interface OperateRequest {
     if (obj instanceof String) {
       return (String) obj;
     } else {
-      throw new WarnException(20031, OPERATOR_NAME_KEY + " does not exist.");
+      throw new GovernanceErrorException(20031, OPERATOR_NAME_KEY + " does not exist.");
     }
   }
 }

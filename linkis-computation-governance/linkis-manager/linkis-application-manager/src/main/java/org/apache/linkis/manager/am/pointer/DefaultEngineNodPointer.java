@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.am.pointer;
 
-import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.protocol.RequestEngineLock;
 import org.apache.linkis.manager.common.protocol.RequestEngineUnlock;
@@ -76,7 +76,7 @@ public class DefaultEngineNodPointer extends AbstractNodePointer implements Engi
     if (result instanceof EngineOperateResponse) {
       return (EngineOperateResponse) result;
     } else {
-      throw new WarnException(-1, "Illegal response of operation.");
+      throw new AMErrorException(-1, "Illegal response of operation.");
     }
   }
 }

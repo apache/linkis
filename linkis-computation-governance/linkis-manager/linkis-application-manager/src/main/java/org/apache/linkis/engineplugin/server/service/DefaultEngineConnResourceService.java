@@ -21,7 +21,6 @@ import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlUpdateResponse;
 import org.apache.linkis.bml.protocol.BmlUploadResponse;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.engineplugin.server.conf.EngineConnPluginConfiguration;
 import org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao;
@@ -30,6 +29,7 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.engineplugin.server.localize.EngineConnLocalizeResource;
 import org.apache.linkis.manager.common.protocol.bml.BmlResource;
 import org.apache.linkis.manager.common.protocol.bml.BmlResource.BmlResourceVisibility;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.launch.process.EngineConnResource;
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants;
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary;
@@ -208,7 +208,7 @@ public class DefaultEngineConnResourceService extends EngineConnResourceService 
             .count()
         < 2) {
 
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           EngineconnCoreErrorCodeSummary.LIB_CONF_DIR_NECESSARY.getErrorCode(),
           MessageFormat.format(
               EngineconnCoreErrorCodeSummary.LIB_CONF_DIR_NECESSARY.getErrorDesc(),
@@ -305,7 +305,7 @@ public class DefaultEngineConnResourceService extends EngineConnResourceService 
             .findFirst();
 
     if (!confBmlResourceMap.isPresent() || !libBmlResourceMap.isPresent()) {
-      throw new WarnException(
+      throw new EngineConnPluginErrorException(
           EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorCode(),
           EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION.getErrorDesc());
     }

@@ -19,13 +19,13 @@ package org.apache.linkis.manager.am.service.engine;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.conf.EngineConnConfigurationService;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.selector.ECAvailableRule;
@@ -126,7 +126,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
     // 2. Check if Node is available
     for (LabelChecker labelChecker : labelCheckerList) {
       if (!labelChecker.checkEngineLabel(labelList)) {
-        throw new WarnException(
+        throw new AMErrorException(
             AMConstant.EM_ERROR_CODE, "Need to specify engineType and userCreator label");
       }
     }
@@ -148,10 +148,10 @@ public class DefaultEngineCreateService extends AbstractEngineService
     // 3. Get the ECM with the lowest load by selection algorithm
     Optional<Node> choseNode =
         emScoreNodeList == null || emScoreNodeList.length == 0
-            ? null
+            ? Optional.empty()
             : nodeSelector.choseNode(emScoreNodeList);
 
-    if (choseNode == null || !choseNode.isPresent() || emScoreNodeList.length == 0) {
+    if (!choseNode.isPresent()) {
       throw new LinkisRetryException(
           AMConstant.EM_ERROR_CODE,
           "The em of labels " + engineCreateRequest.getLabels() + " not found");
@@ -209,12 +209,10 @@ public class DefaultEngineCreateService extends AbstractEngineService
     }
 
     logger.info(
-        "Task: "
-            + taskId
-            + " finished to create engineConn "
-            + engineNode
-            + ". ticketId is "
-            + resourceTicketId);
+        "Task: {} finished to create engineConn {}. ticketId is {} ",
+        taskId,
+        engineNode,
+        resourceTicketId);
     engineNode.setTicketId(resourceTicketId);
 
     // 7.Update persistent information: including inserting engine/metrics
@@ -239,7 +237,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
         failedEcNode.setNodeStatus(NodeStatus.Failed);
         engineStopService.engineConnInfoClear(failedEcNode);
       }
-      throw new WarnException(
+      throw new LinkisRetryException(
           AMConstant.EM_ERROR_CODE, "Failed to update engineNode: " + t.getMessage());
     }
 
@@ -256,11 +254,9 @@ public class DefaultEngineCreateService extends AbstractEngineService
     if (System.currentTimeMillis() - startTime >= timeout
         && engineCreateRequest.isIgnoreTimeout()) {
       logger.info(
-          "Return a EngineConn "
-              + engineNode
-              + " for request: "
-              + engineCreateRequest
-              + " since the creator set ignoreTimeout=true and maxStartTime is reached.");
+          "Return a EngineConn {} for request: {} since the creator set ignoreTimeout=true and maxStartTime is reached.",
+          engineNode,
+          engineCreateRequest);
       return engineNode;
     }
 
@@ -268,26 +264,19 @@ public class DefaultEngineCreateService extends AbstractEngineService
     if (ECAvailableRule.getInstance().isNeedAvailable(labelList)) {
       ensureECAvailable(engineNode, resourceTicketId, leftWaitTime);
       logger.info(
-          "Task: "
-              + taskId
-              + " finished to create Engine for request: "
-              + engineCreateRequest
-              + " and get engineNode "
-              + engineNode
-              + ". time taken "
-              + (System.currentTimeMillis() - startTime)
-              + "ms");
+          "Task: {} finished to create Engine for request: {} and get engineNode {}. time taken {} ms",
+          taskId,
+          engineCreateRequest,
+          engineNode,
+          (System.currentTimeMillis() - startTime));
     } else {
       logger.info(
-          "Task: "
-              + taskId
-              + " finished to create Engine for request: "
-              + engineCreateRequest
-              + " and get engineNode "
-              + engineNode
-              + ". And did not judge the availability, time taken "
-              + (System.currentTimeMillis() - startTime)
-              + "ms");
+          "Task: {} finished to create Engine for request: {} and get engineNode {}. And did not judge the availability, time taken "
+              + "{} ms",
+          taskId,
+          engineCreateRequest,
+          engineNode,
+          (System.currentTimeMillis() - startTime));
     }
 
     return engineNode;
@@ -336,7 +325,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
     } else {
       NotEnoughResource notEnoughResource = (NotEnoughResource) resultResource;
       logger.warn("not engough resource: " + notEnoughResource.getReason());
-      throw new WarnException(
+      throw new LinkisRetryException(
           AMConstant.EM_ERROR_CODE, "not engough resource: : " + notEnoughResource.getReason());
     }
   }
@@ -360,21 +349,17 @@ public class DefaultEngineCreateService extends AbstractEngineService
       NodeMetrics metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo);
       Pair<String, Optional<Boolean>> errorInfo = getStartErrorInfo(metrics.getHeartBeatMsg());
       if (errorInfo.getRight().isPresent()) {
-        throw new WarnException(
+        throw new LinkisRetryException(
             AMConstant.ENGINE_ERROR_CODE,
-            engineNode.getServiceInstance()
-                + " ticketID:"
-                + resourceTicketId
-                + " Failed to initialize engine, reason: "
-                + errorInfo.getKey());
+            String.format(
+                "%s  ticketID:%s  Failed to initialize engine, reason: %s ",
+                engineNode.getServiceInstance(), resourceTicketId, errorInfo.getKey()));
       }
-      throw new WarnException(
+      throw new LinkisRetryException(
           AMConstant.EM_ERROR_CODE,
-          engineNode.getServiceInstance()
-              + " ticketID:"
-              + resourceTicketId
-              + " Failed to initialize engine, reason: "
-              + errorInfo.getKey());
+          String.format(
+              "%s ticketID: %s Failed to initialize engine, reason: %s",
+              engineNode.getServiceInstance(), resourceTicketId, errorInfo.getKey()));
     }
     return NodeStatus.isAvailable(engineNodeInfo.getNodeStatus());
   }
@@ -423,7 +408,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(engineNode.getServiceInstance(), ManagerUtils.getAdminUser());
       engineStopService.asyncStopEngine(stopEngineRequest);
-      throw new WarnException(
+      throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,
           String.format(
               "Waiting for engineNode:%s(%s) initialization TimeoutException, already waiting %d ms",

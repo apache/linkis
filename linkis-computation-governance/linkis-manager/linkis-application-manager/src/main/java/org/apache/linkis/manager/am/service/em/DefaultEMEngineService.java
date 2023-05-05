@@ -17,9 +17,9 @@
 
 package org.apache.linkis.manager.am.service.em;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService;
 import org.apache.linkis.governance.common.utils.ECPathUtils;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.manager.EMNodeManager;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
@@ -170,7 +170,7 @@ public class DefaultEMEngineService implements EMEngineService {
     Map<ScoreServiceInstance, List<Label<?>>> instanceAndLabels =
         nodeLabelService.getScoredNodeMapsByLabels(labelFilter.choseEMLabel(labels));
     if (MapUtils.isEmpty(instanceAndLabels)) {
-      throw new WarnException(AMConstant.EM_ERROR_CODE, "No corresponding EM");
+      throw new AMErrorException(AMConstant.EM_ERROR_CODE, "No corresponding EM");
     }
     Optional<Label<?>> emInstanceLabelOption =
         labels.stream().filter(label -> label instanceof EMInstanceLabel).findFirst();
@@ -181,7 +181,7 @@ public class DefaultEMEngineService implements EMEngineService {
       logger.info(
           "use emInstanceLabel , will be route to {}", emInstanceLabel.getServiceInstance());
       if (!instanceAndLabels.containsKey(emInstanceLabel.getServiceInstance())) {
-        throw new WarnException(
+        throw new AMErrorException(
             AMConstant.EM_ERROR_CODE,
             String.format(
                 "You specified em %s, but the corresponding EM does not exist in the Manager",

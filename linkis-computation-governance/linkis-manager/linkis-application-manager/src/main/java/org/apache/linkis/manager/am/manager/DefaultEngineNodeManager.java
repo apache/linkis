@@ -19,9 +19,9 @@ package org.apache.linkis.manager.am.manager;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.common.exception.LinkisRetryException;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.locker.EngineNodeLocker;
 import org.apache.linkis.manager.am.utils.DefaultRetryHandler;
 import org.apache.linkis.manager.am.utils.RetryHandler;
@@ -145,7 +145,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       Optional<String> lockStr =
           engineLocker.lockEngine(node, (long) AMConfiguration.ENGINE_LOCKER_MAX_TIME.getValue());
       if (!lockStr.isPresent()) {
-        throw new WarnException(
+        throw new LinkisRetryException(
             AMConstant.ENGINE_ERROR_CODE,
             String.format(
                 "Failed to request lock from engine by reuse %s", node.getServiceInstance()));
@@ -189,7 +189,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     if (!NodeStatus.isLocked(node.getNodeStatus())) {
       Optional<String> lockStr = engineLocker.lockEngine(node, timeout);
       if (!lockStr.isPresent()) {
-        throw new WarnException(
+        throw new LinkisRetryException(
             AMConstant.ENGINE_ERROR_CODE,
             String.format("Failed to request lock from engine %s", node.getServiceInstance()));
       }
@@ -303,15 +303,8 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
    */
   @Override
   public void updateEngineNode(ServiceInstance serviceInstance, EngineNode engineNode) {
-    try {
-      nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode);
-    } catch (PersistenceErrorException e) {
-      logger.warn("updateEngineNode failed", e);
-      throw new RuntimeException(e);
-    } catch (LinkisRetryException e) {
-      logger.warn("updateEngineNode failed", e);
-      throw new RuntimeException(e);
-    }
+    nodeManagerPersistence.updateEngineNode(serviceInstance, engineNode);
+    nodeMetricManagerPersistence.deleteNodeMetrics(engineNode);
 
     EngineInstanceLabel engineLabel = labelBuilderFactory.createLabel(EngineInstanceLabel.class);
     engineLabel.setInstance(engineNode.getServiceInstance().getInstance());
@@ -341,7 +334,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
   public EngineNode getEngineNodeInfo(ServiceInstance serviceInstance) {
     EngineNode engineNode = getEngineNode(serviceInstance);
     if (Objects.isNull(engineNode)) {
-      throw new WarnException(
+      throw new AMErrorException(
           AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
           AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
     }

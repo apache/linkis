@@ -17,9 +17,9 @@
 
 package org.apache.linkis.manager.am.label;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
@@ -55,7 +55,7 @@ public class MultiUserEngineReuseLabelChooser implements EngineReuseLabelChooser
       Map<String, String> userMap = BDPJettyServerHelper.gson().fromJson(userJson, Map.class);
       return userMap;
     } else {
-      throw new WarnException(
+      throw new AMErrorException(
           AMErrorCode.AM_CONF_ERROR.getErrorCode(),
           String.format(
               "Multi-user engine parameter configuration error, please check key %s",

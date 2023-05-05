@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineplugin.server.service;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
 import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceFactory;
 import org.apache.linkis.manager.engineplugin.common.resource.EngineResourceRequest;
@@ -66,7 +66,8 @@ public class DefaultEngineConnResourceFactoryService implements EngineConnResour
             .findFirst();
 
     if (!engineTypeOption.isPresent()) {
-      throw new WarnException(ETL_REQUESTED.getErrorCode(), ETL_REQUESTED.getErrorDesc());
+      throw new EngineConnPluginErrorException(
+          ETL_REQUESTED.getErrorCode(), ETL_REQUESTED.getErrorDesc());
     }
 
     final EngineTypeLabel engineTypeLabel = engineTypeOption.get();

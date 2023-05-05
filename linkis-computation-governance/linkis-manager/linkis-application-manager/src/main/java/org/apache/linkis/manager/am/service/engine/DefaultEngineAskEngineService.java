@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.am.service.engine;
 
 import org.apache.linkis.common.exception.LinkisRetryException;
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.service.impl.DefaultEngineConnStatusCallbackService;
@@ -115,13 +114,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
               engineCreateRequest.setUser(engineAskRequest.getUser());
               engineCreateRequest.setProperties(engineAskRequest.getProperties());
               engineCreateRequest.setCreateService(engineAskRequest.getCreateService());
-              EngineNode createNode = null;
-              try {
-                createNode = engineCreateService.createEngine(engineCreateRequest, sender);
-              } catch (LinkisRetryException e) {
-                logger.info("engineCreateService createEngine failed", e);
-                throw new RuntimeException(e);
-              }
+              EngineNode createNode = engineCreateService.createEngine(engineCreateRequest, sender);
 
               long timeout =
                   engineCreateRequest.getTimeout() <= 0
@@ -133,7 +126,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
                     String.format(
                         "create engine%s success, but to use engine failed",
                         createNode.getServiceInstance());
-                throw new WarnException(AMConstant.EM_ERROR_CODE, message);
+                throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, message);
               }
 
               logger.info(

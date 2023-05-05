@@ -17,13 +17,13 @@
 
 package org.apache.linkis.manager.label.service.impl;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.label.LabelManagerUtils;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary;
+import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.UserLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 
@@ -74,7 +74,7 @@ public class DefaultUserLabelService implements UserLabelService {
             .findFirst()
             .orElseThrow(
                 () ->
-                    new WarnException(
+                    new LabelErrorException(
                         LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorCode(),
                         LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorDesc()));
 
@@ -94,14 +94,7 @@ public class DefaultUserLabelService implements UserLabelService {
     }
 
     // 5.插入新的relation 需要抛出duplicateKey异常，回滚
-    try {
-      labelManagerPersistence.addLabelToUser(user, Lists.newArrayList(dbLabel.getId()));
-    } catch (Exception e) {
-      logger.warn("error adding label to user: " + e.getMessage());
-      throw new WarnException(
-          LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorCode(),
-          LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorDesc());
-    }
+    labelManagerPersistence.addLabelToUser(user, Lists.newArrayList(dbLabel.getId()));
 
     // 6.重新查询，确认更新，如果没对上，抛出异常，回滚
     userRelationLabels.add(dbLabel);
@@ -115,7 +108,7 @@ public class DefaultUserLabelService implements UserLabelService {
                 userRelationLabels.stream()
                     .map(PersistenceLabel::getId)
                     .collect(Collectors.toList()))) {
-      throw new WarnException(
+      throw new LabelErrorException(
           LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorCode(),
           LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorDesc());
     }
@@ -124,21 +117,15 @@ public class DefaultUserLabelService implements UserLabelService {
   @Override
   public void removeLabelFromUser(String user, List<Label<?>> labels) {
     // 这里前提是表中保证了同个key，只会有最新的value保存在数据库中
-    List<Integer> labelIds = new ArrayList<>();
     List<PersistenceLabel> dbLabels = labelManagerPersistence.getLabelsByUser(user);
-    labels.forEach(
-        label -> {
-          PersistenceLabel dbLabel =
-              dbLabels.stream()
-                  .filter(l -> l.getLabelKey().equals(label.getLabelKey()))
-                  .findFirst()
-                  .orElseThrow(
-                      () ->
-                          new WarnException(
-                              LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorCode(),
-                              LabelCommonErrorCodeSummary.UPDATE_LABEL_FAILED.getErrorDesc()));
-          labelIds.add(dbLabel.getId());
-        });
+
+    List<Integer> labelIds = new ArrayList<>();
+    for (Label<?> label : labels) {
+      Optional<PersistenceLabel> dbLabelOptional =
+          dbLabels.stream().filter(l -> l.getLabelKey().equals(label.getLabelKey())).findFirst();
+
+      dbLabelOptional.ifPresent(persistenceLabel -> labelIds.add(persistenceLabel.getId()));
+    }
     labelManagerPersistence.removeLabelFromUser(user, labelIds);
   }
 

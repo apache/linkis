@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineplugin.server.localize;
 
-import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.ZipUtils;
+import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -49,7 +49,7 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
       logger.info("generate, versionFile:" + path);
       String key = versionFile.getName();
       if (key.contains("-")) {
-        throw new WarnException(
+        throw new EngineConnPluginErrorException(
             CONTAINS_SPECIAL_CHARCATERS.getErrorCode(),
             MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc(), engineConnType));
       }
@@ -91,7 +91,7 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
               } else {
                 File newFile = new File(path, file.getName() + ".zip");
                 if (newFile.exists() && !newFile.delete()) {
-                  throw new WarnException(
+                  throw new EngineConnPluginErrorException(
                       NO_PERMISSION_FILE.getErrorCode(),
                       MessageFormat.format(NO_PERMISSION_FILE.getErrorDesc(), newFile));
                 }

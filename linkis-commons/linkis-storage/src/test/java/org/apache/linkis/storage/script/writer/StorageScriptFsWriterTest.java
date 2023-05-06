@@ -25,7 +25,6 @@ import org.apache.linkis.storage.script.ScriptRecord;
 import org.apache.linkis.storage.script.Variable;
 import org.apache.linkis.storage.script.VariableParser;
 import org.apache.linkis.storage.source.FileSource;
-import org.apache.linkis.storage.source.FileSource$;
 
 import org.apache.commons.math3.util.Pair;
 
@@ -38,7 +37,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -107,7 +105,7 @@ class StorageScriptFsWriterTest {
     Variable[] v = VariableParser.getVariables(params);
     List<Variable> variableList =
         Arrays.stream(v)
-            .filter(var -> !StringUtils.isEmpty(var.value()))
+            .filter(var -> !StringUtils.isEmpty(var.getValue()))
             .collect(Collectors.toList());
     try {
 
@@ -138,8 +136,8 @@ class StorageScriptFsWriterTest {
 
     InputStream inputStream = new FileInputStream(file);
 
-    FileSource fileSource = FileSource$.MODULE$.create(new FsPath(fileName), inputStream);
-    Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
+    FileSource fileSource = FileSource.create(new FsPath(fileName), inputStream);
+    Pair<Object, List<String[]>> collect = fileSource.collect()[0];
 
     String scriptRes = collect.getSecond().get(0)[0];
     String metadataRes = new Gson().toJson(collect.getFirst());

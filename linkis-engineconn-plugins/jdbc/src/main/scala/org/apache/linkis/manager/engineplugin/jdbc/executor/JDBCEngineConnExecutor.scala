@@ -266,7 +266,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         )
       }
       val columns =
-        metaArrayBuffer.map { c => Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
+        metaArrayBuffer.map { c => new Column(c._1, DataType.toDataType(c._2), "") }.toArray[Column]
       val metaData = new TableMetaData(columns)
       val resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
@@ -283,7 +283,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
             }
             data
           }.toArray
-          resultSetWriter.addRecord(new TableRecord(r))
+          resultSetWriter.addRecord(new TableRecord(r.asInstanceOf[Array[AnyRef]]))
           count += 1
         }
       }) { case e: Exception =>

@@ -66,11 +66,11 @@ public class S3FileSystem extends FileSystem {
 
   @Override
   public void init(Map<String, String> properties) throws IOException {
-    accessKey = StorageConfiguration.S3_ACCESS_KEY().getValue(properties);
-    secretKey = StorageConfiguration.S3_SECRET_KEY().getValue(properties);
-    endPoint = StorageConfiguration.S3_ENDPOINT().getValue(properties);
-    bucket = StorageConfiguration.S3_BUCKET().getValue(properties);
-    region = StorageConfiguration.S3_REGION().getValue(properties);
+    accessKey = StorageConfiguration.S3_ACCESS_KEY.getValue(properties);
+    secretKey = StorageConfiguration.S3_SECRET_KEY.getValue(properties);
+    endPoint = StorageConfiguration.S3_ENDPOINT.getValue(properties);
+    bucket = StorageConfiguration.S3_BUCKET.getValue(properties);
+    region = StorageConfiguration.S3_REGION.getValue(properties);
 
     AwsClientBuilder.EndpointConfiguration endpointConfiguration =
         new AwsClientBuilder.EndpointConfiguration(endPoint, region);
@@ -90,7 +90,7 @@ public class S3FileSystem extends FileSystem {
 
   @Override
   public String fsName() {
-    return StorageUtils.S3();
+    return StorageUtils.S3;
   }
 
   @Override
@@ -340,9 +340,9 @@ public class S3FileSystem extends FileSystem {
   public String buildPath(String path) {
     if (path == null || "".equals(path)) return "";
     if (path.startsWith("/")) {
-      return StorageUtils.S3_SCHEMA() + path;
+      return StorageUtils.S3_SCHEMA + path;
     }
-    return StorageUtils.S3_SCHEMA() + "/" + path;
+    return StorageUtils.S3_SCHEMA + "/" + path;
   }
 }
 

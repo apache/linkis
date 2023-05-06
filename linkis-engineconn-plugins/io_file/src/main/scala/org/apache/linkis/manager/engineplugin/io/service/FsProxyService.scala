@@ -20,14 +20,20 @@ package org.apache.linkis.manager.engineplugin.io.service
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
+import org.apache.commons.lang3.StringUtils
+
 class FsProxyService extends Logging {
 
-  def canProxyUser(creatorUser: String, proxyUser: String, fsType: String): Boolean =
-    creatorUser match {
-      case StorageConfiguration.STORAGE_ROOT_USER.getValue => true
-      case StorageConfiguration.LOCAL_ROOT_USER.getValue => StorageUtils.FILE == fsType
-      case StorageConfiguration.HDFS_ROOT_USER.getValue => StorageUtils.HDFS == fsType
-      case _ => true // creatorUser.equals(proxyUser)
+  def canProxyUser(creatorUser: String, proxyUser: String, fsType: String): Boolean = {
+    if (StringUtils.equals(creatorUser, StorageConfiguration.STORAGE_ROOT_USER.getValue)) {
+      true
+    } else if (StringUtils.equals(creatorUser, StorageConfiguration.LOCAL_ROOT_USER.getValue)) {
+      StringUtils.equals(StorageUtils.FILE, fsType)
+    } else if (StringUtils.equals(creatorUser, StorageConfiguration.HDFS_ROOT_USER.getValue)) {
+      StringUtils.equals(StorageUtils.HDFS, fsType)
+    } else {
+      true // creatorUser.equals(proxyUser)
     }
+  }
 
 }

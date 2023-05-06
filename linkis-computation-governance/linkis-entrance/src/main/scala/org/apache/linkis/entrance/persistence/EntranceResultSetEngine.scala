@@ -27,7 +27,7 @@ import org.apache.linkis.entrance.scheduler.cache.CacheOutputExecuteResponse
 import org.apache.linkis.governance.common.entity.job.SubJobDetail
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.scheduler.queue.Job
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 import org.apache.linkis.storage.utils.FileSystemUtils
 
 import org.apache.commons.io.IOUtils

@@ -20,7 +20,7 @@ package org.apache.spark.sql.execution.datasources.csv
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.storage.{domain => wds}
-import org.apache.linkis.storage.resultset.ResultSetReader
+import org.apache.linkis.storage.resultset.ResultSetReaderFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
@@ -48,7 +48,7 @@ object DolphinToSpark {
       forceReplace: Boolean
   ): Unit = {
     if (forceReplace || spark.sessionState.catalog.getTempView(tableName).isEmpty) {
-      val reader = ResultSetReader.getTableResultReader(res)
+      val reader = ResultSetReaderFactory.getTableResultReader(res)
       val metadata = reader.getMetaData.asInstanceOf[TableMetaData]
       val rowList = new util.ArrayList[Row]()
       var len = SparkConfiguration.DOLPHIN_LIMIT_LEN.getValue
@@ -68,19 +68,19 @@ object DolphinToSpark {
   }
 
   def toSparkType(dataType: wds.DataType): DataType = dataType match {
-    case wds.NullType => NullType
+    case wds.DataType.NullType => NullType
     // case wds.StringType | wds.CharType | wds.VarcharType | wds.StructType | wds.ListType | wds.ArrayType | wds.MapType => StringType
-    case wds.BooleanType => BooleanType
-    case wds.ShortIntType => ShortType
-    case wds.IntType => IntegerType
-    case wds.LongType => LongType
-    case wds.BigIntType => LongType
-    case wds.FloatType => FloatType
-    case wds.DoubleType => DoubleType
-    case wds.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
-    case wds.DateType => DateType
+    case wds.DataType.BooleanType => BooleanType
+    case wds.DataType.ShortIntType => ShortType
+    case wds.DataType.IntType => IntegerType
+    case wds.DataType.LongType => LongType
+    case wds.DataType.BigIntType => LongType
+    case wds.DataType.FloatType => FloatType
+    case wds.DataType.DoubleType => DoubleType
+    case wds.DataType.DecimalType => DecimalType(bigDecimalPrecision, bigDecimalScale)
+    case wds.DataType.DateType => DateType
     // case wds.TimestampType => TimestampType
-    case wds.BinaryType => BinaryType
+    case wds.DataType.BinaryType => BinaryType
     case _ => StringType
   }
 

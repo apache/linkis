@@ -113,14 +113,14 @@ object SQLSession extends Logging {
     // val columnsSet = dataFrame.schema
     val columns = columnsSet
       .map(c =>
-        Column(
+        new Column(
           c.name,
           DataType.toDataType(c.dataType.typeName.toLowerCase(Locale.getDefault())),
           c.getComment().orNull
         )
       )
       .toArray[Column]
-    columns.foreach(c => logger.info(s"c is ${c.columnName}, comment is ${c.comment}"))
+    columns.foreach(c => logger.info(s"c is ${c.getColumnName()}, comment is ${c.getComment()}"))
     if (columns == null || columns.isEmpty) return
     val metaData = new TableMetaData(columns)
     val writer =
@@ -135,7 +135,7 @@ object SQLSession extends Logging {
         val r: Array[Any] = columns.indices.map { i =>
           toHiveString((row(i), columnsSet.fields(i).dataType))
         }.toArray
-        writer.addRecord(new TableRecord(r))
+        writer.addRecord(new TableRecord(r.asInstanceOf[Array[AnyRef]]))
         index += 1
       }
     }) { t =>

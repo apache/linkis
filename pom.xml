@@ -1250,6 +1250,7 @@
               <exclude>compiler/**</exclude>
               <exclude>**/generated/**</exclude>
               <exclude>**/scritpis-test.sql</exclude>
+              <exclude>**/**.dolphin</exclude>
 
             </excludes>
           </configuration>

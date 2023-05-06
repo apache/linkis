@@ -23,7 +23,6 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.storage.io.IOClient.logger
 
 import org.apache.commons.lang3.StringUtils
 
@@ -31,7 +30,11 @@ import java.io.File
 import java.nio.file.Paths
 import java.text.MessageFormat
 
+import org.slf4j.LoggerFactory
+
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
+
+  private val logger = LoggerFactory.getLogger(classOf[AbstractEngineConnBmlResourceGenerator])
 
   if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(

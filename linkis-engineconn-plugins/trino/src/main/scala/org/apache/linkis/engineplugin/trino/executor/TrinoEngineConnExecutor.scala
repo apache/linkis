@@ -54,7 +54,8 @@ import org.apache.linkis.scheduler.executer.{
   ExecuteResponse,
   SuccessExecuteResponse
 }
-import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.domain.{Column, DataType}
+import org.apache.linkis.storage.domain.DataType.DateType
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
@@ -403,7 +404,7 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         throw new RuntimeException("trino columns is null.")
       }
       val columns = results.getColumns.asScala
-        .map(column => Column(column.getName, column.getType, ""))
+        .map(column => new Column(column.getName, DataType.toDataType(column.getType), ""))
         .toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))

@@ -5,16 +5,16 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.linkis.manager.engineplugin.jdbc.executor;
 
 import org.apache.linkis.storage.domain.*;
@@ -104,61 +104,61 @@ public class JDBCHelper {
         Integer intObj;
         switch (type) {
             case Types.NULL:
-                retVal = NullType.typeName();
+                retVal = DataType.NullType.getTypeName();
                 break;
             case Types.VARCHAR:
-                retVal = StringType.typeName();
+                retVal = DataType.StringType.getTypeName();
                 break;
             case Types.BOOLEAN:
-                retVal = BooleanType.typeName();
+                retVal = DataType.BooleanType.getTypeName();
                 break;
             case Types.TINYINT:
-                retVal = TinyIntType.typeName();
+                retVal = DataType.TinyIntType.getTypeName();
                 break;
             case Types.SMALLINT:
-                retVal = ShortIntType.typeName();
+                retVal = DataType.ShortIntType.getTypeName();
                 break;
             case Types.INTEGER:
-                retVal = IntType.typeName();
+                retVal = DataType.IntType.getTypeName();
                 break;
             case Types.LONGNVARCHAR:
-                retVal = LongType.typeName();
+                retVal = DataType.LongType.getTypeName();
                 break;
             case Types.LONGVARCHAR:
-                retVal = StringType.typeName();
+                retVal = DataType.StringType.getTypeName();
                 break;
             case Types.FLOAT:
-                retVal = FloatType.typeName();
+                retVal = DataType.FloatType.getTypeName();
                 break;
             case Types.DOUBLE:
-                retVal = DoubleType.typeName();
+                retVal = DataType.DoubleType.getTypeName();
                 break;
             case Types.CHAR:
-                retVal = CharType.typeName();
+                retVal = DataType.CharType.getTypeName();
                 break;
             case Types.DATE:
-                retVal = DateType.typeName();
+                retVal = DataType.DateType.getTypeName();
                 break;
             case Types.TIMESTAMP:
-                retVal = TimestampType.typeName();
+                retVal = DataType.TimestampType.getTypeName();
                 break;
             case Types.BINARY:
-                retVal = BinaryType.typeName();
+                retVal = DataType.BinaryType.getTypeName();
                 break;
             case Types.DECIMAL:
-                retVal = DecimalType.typeName();
+                retVal = DataType.DecimalType.getTypeName();
                 break;
             case Types.ARRAY:
-                retVal = ArrayType.typeName();
+                retVal = DataType.ArrayType.getTypeName();
                 break;
             case Types.STRUCT:
-                retVal = StructType.typeName();
+                retVal = DataType.StructType.getTypeName();
                 break;
             case Types.BIGINT:
-                retVal = LongType.typeName();
+                retVal = DataType.LongType.getTypeName();
                 break;
             case Types.REAL:
-                retVal = DoubleType.typeName();
+                retVal = DataType.DoubleType.getTypeName();
                 break;
             default:
                 break;

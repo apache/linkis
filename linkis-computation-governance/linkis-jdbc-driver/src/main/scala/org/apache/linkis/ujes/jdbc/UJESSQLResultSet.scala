@@ -42,7 +42,7 @@ import java.sql.{
   Time,
   Timestamp
 }
-import java.util.Calendar
+import java.util.{Calendar, Locale}
 
 import org.joda.time.DateTimeZone
 import org.joda.time.format.{
@@ -54,7 +54,7 @@ import org.joda.time.format.{
 
 class UJESSQLResultSet(
     resultSetList: Array[String],
-    ujesStatement: UJESSQLStatement,
+    ujesStatement: LinkisSQLStatement,
     maxRows: Int,
     fetchSize: Int
 ) extends ResultSet
@@ -75,10 +75,10 @@ class UJESSQLResultSet(
   private val pageSize: Int = 5000
   private var path: String = _
   private var metaData: util.List[util.Map[String, String]] = _
-  private val statement: UJESSQLStatement = ujesStatement
+  private val statement: LinkisSQLStatement = ujesStatement
 
-  private val connection: UJESSQLConnection =
-    ujesStatement.getConnection.asInstanceOf[UJESSQLConnection]
+  private val connection: LinkisSQLConnection =
+    ujesStatement.getConnection.asInstanceOf[LinkisSQLConnection]
 
   private var valueWasNull: Boolean = false
   private var warningChain: SQLWarning = _
@@ -95,6 +95,10 @@ class UJESSQLResultSet(
     )
     .toFormatter
     .withOffsetParsed
+
+  private val STRING_TYPE = "string"
+
+  private val NULL_VALUE = "NULL"
 
   private def getResultSetPath(resultSetList: Array[String]): String = {
     if (resultSetList.length > 0) {
@@ -229,10 +233,14 @@ class UJESSQLResultSet(
   }
 
   private def evaluate(dataType: String, value: String): Any = {
+
     if (value == null || value.equals("null") || value.equals("NULL") || value.equals("Null")) {
-      value
+      dataType.toLowerCase(Locale.getDefault) match {
+        case "string" | "char" | "varchar" | "nvarchar" => value
+        case _ => null
+      }
     } else {
-      dataType.toLowerCase match {
+      dataType.toLowerCase(Locale.getDefault) match {
         case null => throw new UJESSQLException(UJESSQLErrorCode.METADATA_EMPTY)
         case "string" => value.toString
         case "short" => value.toShort
@@ -518,11 +526,7 @@ class UJESSQLResultSet(
 
   override def getObject(columnIndex: Int): Object = {
     val any = getColumnValue(columnIndex)
-    if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
-    } else {
-      any.asInstanceOf[Object]
-    }
+    any.asInstanceOf[Object]
   }
 
   override def getObject(columnLabel: String): Object = {

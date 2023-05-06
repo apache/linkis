@@ -58,7 +58,7 @@ public class UJESSQLDriver extends UJESSQLDriverMain implements Driver {
   static String ENABLE_DISCOVERY = "enableDiscovery";
   static String ENABLE_LOADBALANCER = "enableLoadBalancer";
   static String CREATOR = "creator";
-
+  static String TABLEAU = "tableau";
   static String VARIABLE_HEADER = "var:";
   static String PARAM_SPLIT = "&";
   static String KV_SPLIT = "=";

@@ -29,7 +29,7 @@ import java.util
 
 import scala.collection.JavaConversions._
 
-class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
+class UJESSQLDatabaseMetaData(ujesSQLConnection: LinkisSQLConnection)
     extends DatabaseMetaData
     with Logging {
   override def allProceduresAreCallable(): Boolean = false
@@ -358,7 +358,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       tableNamePattern: String,
       types: Array[String]
   ): ResultSet = {
-    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+    val resultCatalog = if (StringUtils.isNotBlank(schemaPattern)) {
+      schemaPattern
+    } else if (StringUtils.isNotBlank(catalog)) {
       catalog
     } else {
       s"${getUserName}_ind"
@@ -374,11 +376,16 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
         if (table.get("isView").asInstanceOf[Boolean]) TableType.VIEW.name()
         else TableType.TABLE.name()
       val resultTable = new util.HashMap[String, String]()
+      val tableName = table.get("tableName").asInstanceOf[String]
       resultTable.put("catalog", resultCatalog)
-      resultTable.put("tableName", table.get("tableName").asInstanceOf[String])
+      resultTable.put("tableName", tableName)
       resultTable.put("tableType", tableType)
       if (null == types || types.contains(tableType)) {
-        resultTables.add(resultTable)
+        if (
+            StringUtils.isNotBlank(tableNamePattern) && tableNamePattern.equalsIgnoreCase(tableName)
+        ) {
+          resultTables.add(resultTable)
+        }
       }
     }
     val resultSet: LinkisMetaDataResultSet[util.Map[String, String]] =
@@ -471,7 +478,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       tableNamePattern: String,
       columnNamePattern: String
   ): ResultSet = {
-    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+    val resultCatalog = if (StringUtils.isNotBlank(schemaPattern)) {
+      schemaPattern
+    } else if (StringUtils.isNotBlank(catalog)) {
       catalog
     } else {
       s"${getUserName}_ind"

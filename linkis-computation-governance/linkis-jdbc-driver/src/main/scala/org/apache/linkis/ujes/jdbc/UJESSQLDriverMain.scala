@@ -41,8 +41,10 @@ class UJESSQLDriverMain extends Driver with Logging {
     props.putAll(parseURL(url))
     logger.info(s"input url:$url, properties:$properties")
     val ujesClient = UJESClientFactory.getUJESClient(props)
-    new UJESSQLConnection(ujesClient, props)
-  } else throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)
+    new LinkisSQLConnection(ujesClient, props)
+  } else {
+    null
+  }
 
   override def acceptsURL(url: String): Boolean = url.startsWith(URL_PREFIX)
 
@@ -143,6 +145,8 @@ object UJESSQLDriverMain {
   val ENABLE_DISCOVERY = UJESSQLDriver.ENABLE_DISCOVERY
   val ENABLE_LOADBALANCER = UJESSQLDriver.ENABLE_LOADBALANCER
   val CREATOR = UJESSQLDriver.CREATOR
+
+  val TABLEAU = UJESSQLDriver.TABLEAU
 
   val VARIABLE_HEADER = UJESSQLDriver.VARIABLE_HEADER
 

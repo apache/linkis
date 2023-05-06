@@ -21,7 +21,10 @@ import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
 class TableauPreExecutionHook extends JDBCDriverPreExecutionHook {
 
-  override def callPreExecutionHook(sql: String): String = {
+  override def callPreExecutionHook(sql: String, skip: Boolean): String = {
+    if (skip) {
+      return sql
+    }
     if (
         sql.contains("CREATE INDEX") || sql
           .contains("CREATE TABLE") || sql.contains("INSERT INTO") || sql.contains("DROP TABLE")

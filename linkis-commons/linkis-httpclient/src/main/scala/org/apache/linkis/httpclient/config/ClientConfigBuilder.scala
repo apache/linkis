@@ -17,6 +17,7 @@
 
 package org.apache.linkis.httpclient.config
 
+import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{DefaultRetryHandler, RetryHandler}
 import org.apache.linkis.httpclient.authentication.AuthenticationStrategy
 import org.apache.linkis.httpclient.loadbalancer.LoadBalancerStrategy
@@ -38,7 +39,12 @@ class ClientConfigBuilder protected () {
   protected var readTimeout: Long = _
   protected var maxConnection: Int = _
   protected var retryEnabled: Boolean = true
-  protected var retryHandler: RetryHandler = new DefaultRetryHandler
+
+  protected var retryHandler: RetryHandler = {
+    val retryHandler = new DefaultRetryHandler
+    retryHandler.addRetryException(classOf[LinkisRetryException])
+    retryHandler
+  }
 
   def addServerUrl(serverUrl: String): this.type = {
     this.serverUrl = serverUrl

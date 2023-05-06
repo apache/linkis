@@ -35,15 +35,27 @@ object UJESClientFactory extends Logging {
   def getUJESClient(props: Properties): UJESClient = {
     val host = props.getProperty(HOST)
     val port = props.getProperty(PORT)
+    val user = props.getProperty(USER)
     val serverUrl = if (StringUtils.isNotBlank(port)) s"http://$host:$port" else "http://" + host
-    if (ujesClients.containsKey(serverUrl)) ujesClients.get(serverUrl)
-    else
-      serverUrl.intern synchronized {
-        if (ujesClients.containsKey(serverUrl)) return ujesClients.get(serverUrl)
+    val uniqueKey = s"${serverUrl}_$user"
+    if (ujesClients.containsKey(uniqueKey)) {
+      logger.info("Clients with the same JDBC unique key({}) will get it directly", uniqueKey)
+      ujesClients.get(uniqueKey)
+    } else {
+      uniqueKey.intern synchronized {
+        if (ujesClients.containsKey(uniqueKey)) {
+          logger.info("Clients with the same JDBC unique key({}) will get it directly", uniqueKey)
+          return ujesClients.get(uniqueKey)
+        }
+        logger.info(
+          "The same Client does not exist for the JDBC unique key({}), a new Client will be created",
+          uniqueKey
+        )
         val ujesClient = createUJESClient(serverUrl, props)
-        ujesClients.put(serverUrl, ujesClient)
+        ujesClients.put(uniqueKey, ujesClient)
         ujesClient
       }
+    }
   }
 
   private def createUJESClient(serverUrl: String, props: Properties): UJESClient = {

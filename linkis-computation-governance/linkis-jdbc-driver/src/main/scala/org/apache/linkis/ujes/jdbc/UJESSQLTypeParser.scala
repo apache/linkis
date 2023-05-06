@@ -18,11 +18,13 @@
 package org.apache.linkis.ujes.jdbc
 
 import java.sql.{SQLException, Timestamp, Types}
+import java.util.Locale
 
 object UJESSQLTypeParser {
 
   def parserFromName(typeName: String): Int = {
-    typeName.toLowerCase match {
+    val typeNameLowerCase = typeName.toLowerCase(Locale.getDefault())
+    typeName.toLowerCase() match {
       case null => throw new UJESSQLException(UJESSQLErrorCode.METADATA_EMPTY)
       case "string" => Types.NVARCHAR
       case "short" => Types.SMALLINT
@@ -43,7 +45,12 @@ object UJESSQLTypeParser {
       case "bigint" => Types.BIGINT
       case "array" => Types.ARRAY
       case "map" => Types.JAVA_OBJECT
-      case _ => throw new SQLException(s"parameter type error,Type:$typeName")
+      case _ =>
+        if (typeNameLowerCase.startsWith("decimal")) {
+          Types.DECIMAL
+        } else {
+          Types.NVARCHAR
+        }
     }
   }
 

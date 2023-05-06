@@ -36,8 +36,8 @@ import java.sql.{
 import java.util
 import java.util.Calendar
 
-class UJESSQLPreparedStatement(ujesSQLConnection: UJESSQLConnection, sql: String)
-    extends UJESSQLStatement(ujesSQLConnection)
+class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: String)
+    extends LinkisSQLStatement(ujesSQLConnection)
     with PreparedStatement {
 
   private val parameters = new util.HashMap[Int, Any]

@@ -565,11 +565,10 @@ export default {
       //Find the data in the menuList of the tab you clicked to delete(找到点击删除的tab 在menuList里的数据)
       let menuItem = this.menuList.find((item) => item.categoryName === name);
       //Determine whether the current active tab is the same as the tab currently clicked to delete(判断当前的活动tab是否和当前点击删除的tab一样)
-      if (this.currentTabName === name) {
-        let ItemIndex = this.menuList.findIndex(
-          (item) => item.categoryName === this.currentTabName
-        );
-        this.menuList.splice(ItemIndex, 1);
+      const activeIndex = this.menuList.findIndex((item) => item.categoryName === this.currentTabName) + 1;
+      const curIndex = this.menuList.findIndex((item) => item.categoryName === name);
+      if (curIndex === activeIndex) {
+        this.menuList.splice(curIndex, 1);
         api
           .fetch(
             "/configuration/deleteCategory",

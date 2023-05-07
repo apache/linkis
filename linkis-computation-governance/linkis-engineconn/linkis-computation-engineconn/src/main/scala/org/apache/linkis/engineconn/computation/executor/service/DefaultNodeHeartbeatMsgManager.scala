@@ -23,6 +23,7 @@ import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngi
 import org.apache.linkis.engineconn.core.EngineConnObject
 import org.apache.linkis.engineconn.executor.entity.{Executor, SensibleExecutor}
 import org.apache.linkis.governance.common.constant.ec.ECConstants
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.springframework.stereotype.Component
@@ -62,6 +63,10 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
         msgMap.put(
           ECConstants.EC_TOTAL_LOCK_TIME_MILLS_KEY,
           ComputationEngineConnMetrics.getTotalLockTimeMills(status).asInstanceOf[Object]
+        )
+        msgMap.put(
+          ECConstants.EC_LAST_UNLOCK_TIMESTAMP,
+          ComputationEngineConnMetrics.getLastUnlockTimestamp(status).asInstanceOf[Object]
         )
       case _ =>
     }

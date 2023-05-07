@@ -286,6 +286,7 @@ export default {
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
         this.jobhistoryTask = option
+        this.script.runType = option.runType
         if (!jobhistory.task.logPath) {
           const errCode = jobhistory.task.errCode
             ? `\n${this.$t('message.linkis.errorCode')}：${

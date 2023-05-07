@@ -232,3 +232,19 @@ CREATE TABLE `linkis_cg_engine_conn_plugin_bml_resources`
     `last_update_time`     datetime     NOT NULL COMMENT 'updated time',
     PRIMARY KEY (`id`)
 );
+
+DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;
+CREATE TABLE `linkis_ps_udf_baseinfo` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `create_user` varchar(50) NOT NULL,
+  `udf_name` varchar(255) NOT NULL,
+  `udf_type` int(11) DEFAULT '0',
+  `tree_id` bigint(20) NOT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sys` varchar(255) NOT NULL DEFAULT 'ide' COMMENT 'source system',
+  `cluster_name` varchar(255) NOT NULL,
+  `is_expire` bit(1) DEFAULT NULL,
+  `is_shared` bit(1) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

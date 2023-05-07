@@ -308,8 +308,8 @@ class DefaultEngineCreateService
       case AvailableResource(ticketId) =>
         (ticketId, resource)
       case NotEnoughResource(reason) =>
-        logger.warn(s"not engough resource: $reason")
-        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not engough resource: : $reason")
+        logger.warn(s"not enough resource: $reason")
+        throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, s"not enough resource: : $reason")
     }
   }
 
@@ -327,7 +327,8 @@ class DefaultEngineCreateService
     if (null == engineNodeInfo) return false
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus)) {
       val metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo)
-      val (reason, canRetry) = getStartErrorInfo(metrics.getHeartBeatMsg)
+      val msg = if (metrics != null) metrics.getHeartBeatMsg else null
+      val (reason, canRetry) = getStartErrorInfo(msg)
       if (canRetry.isDefined) {
         throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,

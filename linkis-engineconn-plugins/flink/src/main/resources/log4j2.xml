@@ -20,7 +20,7 @@
     <appenders>
         <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS}/stdout"
                      filePattern="${env:LOG_DIRS}/$${date:yyyy-MM}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="100MB"/>
             </Policies>
@@ -31,12 +31,12 @@
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Send>
 
         <Console name="stderr" target="SYSTEM_ERR">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Console>
     </appenders>
 

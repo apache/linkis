@@ -28,12 +28,15 @@ import org.apache.linkis.manager.dao.LabelManagerMapper;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -101,7 +104,11 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<Map<String, Object>> getECResourceInfoList(
-      List<String> creatorUserList, List<String> engineTypeList, List<String> statusStrList) {
+      List<String> creatorUserList,
+      List<String> engineTypeList,
+      List<String> statusStrList,
+      String queueName,
+      List<String> instanceNameList) {
 
     List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -113,7 +120,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
     // get engine conn info list filter by creator user list /instance status list
     List<PersistencerEcNodeInfo> ecNodesInfo =
-        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList);
+        nodeManagerMapper.getEMNodeInfoList(creatorUserList, statusIntList, instanceNameList);
 
     // map k:v---> instanceName：PersistencerEcNodeInfo
     Map<String, PersistencerEcNodeInfo> persistencerEcNodeInfoMap =
@@ -152,12 +159,33 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               ->
               {"driver":{"instance":1,"memory":"2.0 GB","cpu":1} }
                */
-
+              long lastUnlockTimestamp = 0L;
+              if (NodeStatus.values()[intStatus].name().equals(NodeStatus.Unlock.name())) {
+                HashMap heartbeatMap =
+                    BDPJettyServerHelper.gson()
+                        .fromJson(ecNodeinfo.getHeartbeatMsg(), new HashMap<>().getClass());
+                Object lastUnlockTimestampObject =
+                    Optional.ofNullable(heartbeatMap.get("lastUnlockTimestamp")).orElse(0);
+                BigDecimal lastUnlockTimestampBigDecimal =
+                    new BigDecimal(String.valueOf(lastUnlockTimestampObject));
+                lastUnlockTimestamp = lastUnlockTimestampBigDecimal.longValue();
+              }
+              item.put("lastUnlockTimestamp", lastUnlockTimestamp);
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
               item.put("ecmInstance", latestRecord.getEcmInstance());
               String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
               item.put("engineType", engineType);
-              resultList.add(item);
+              if (StringUtils.isNotBlank(queueName)) {
+                Map<String, Object> usedResourceMap =
+                    ECResourceInfoUtils.getStringToMap(usedResourceStr);
+                Map yarn = MapUtils.getMap(usedResourceMap, "yarn", new HashMap<String, Object>());
+                String queueNameStr = String.valueOf(yarn.getOrDefault("queueName", ""));
+                if (StringUtils.isNotBlank(queueNameStr) && queueName.equals(queueNameStr)) {
+                  resultList.add(item);
+                }
+              } else {
+                resultList.add(item);
+              }
             } catch (JsonProcessingException e) {
               logger.error("Fail to process the ec node info: [{}]", ecNodeinfo, e);
             }

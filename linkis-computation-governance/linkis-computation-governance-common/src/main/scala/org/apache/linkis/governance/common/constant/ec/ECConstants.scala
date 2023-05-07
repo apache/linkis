@@ -35,4 +35,5 @@ object ECConstants {
 
   val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
 
+  val EC_LAST_UNLOCK_TIMESTAMP = "lastUnlockTimestamp"
 }

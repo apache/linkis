@@ -28,6 +28,7 @@ import org.apache.linkis.manager.engineplugin.common.launch.entity.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants._
+import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
 
@@ -52,7 +53,7 @@ abstract class JavaProcessEngineConnLaunchBuilder
     this.engineConnResourceGenerator = engineConnResourceGenerator
 
   protected def getGcLogDir(engineConnBuildRequest: EngineConnBuildRequest): String =
-    variable(LOG_DIRS) + "/gc.log"
+    variable(LOG_DIRS) + "/gc"
 
   protected def getLogDir(engineConnBuildRequest: EngineConnBuildRequest): String =
     s" -Dlogging.file=${EnvConfiguration.LOG4J2_XML_FILE.getValue} " +
@@ -66,17 +67,14 @@ abstract class JavaProcessEngineConnLaunchBuilder
     commandLine += "-server"
 
     val properties = engineConnBuildRequest.engineConnCreationDesc.properties
+    var settingClientMemory = ""
     if (properties.containsKey(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)) {
-      var settingClientMemory =
-        properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
-      if (
-          !settingClientMemory
-            .toLowerCase()
-            .endsWith("g") && !settingClientMemory.toLowerCase().endsWith("m")
-      ) {
-        settingClientMemory = settingClientMemory + "g"
-      }
-      commandLine += ("-Xmx" + settingClientMemory)
+      settingClientMemory = properties.get(EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.key)
+    }
+    if (StringUtils.isNotBlank(settingClientMemory)) {
+      commandLine += ("-Xmx" + NodeResourceUtils.formatJavaOptionMemoryWithDefaultUnitG(
+        settingClientMemory
+      ))
     } else {
       val engineConnMemory = EngineConnPluginConf.JAVA_ENGINE_REQUEST_MEMORY.getValue.toString
       commandLine += ("-Xmx" + engineConnMemory)

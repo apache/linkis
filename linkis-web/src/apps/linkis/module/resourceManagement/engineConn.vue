@@ -203,6 +203,7 @@ export default {
                       emInstance: params.row.ecmInstance,
                       instance: params.row.serviceInstance,
                       ticketId: params.row.ticketId,
+                      engineType: params.row.engineType,
                       logDirSuffix: params.row.logDirSuffix,
                     })
                   }

@@ -219,18 +219,6 @@ class EntranceWebSocketService
       .getOrCreateLogManager()
       .onLogUpdate(
         job,
-        "************************************SCRIPT CODE************************************"
-      )
-    entranceServer.getEntranceContext
-      .getOrCreateLogManager()
-      .onLogUpdate(
-        job,
-        "************************************SCRIPT CODE************************************"
-      )
-    entranceServer.getEntranceContext
-      .getOrCreateLogManager()
-      .onLogUpdate(
-        job,
         LogUtils.generateInfo(
           s"Your job is accepted,  jobID is ${job.getId} and taskID is $taskID. Please wait it to be scheduled"
         )

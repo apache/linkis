@@ -213,7 +213,6 @@ public class ByteTimeUtils {
       } else {
         throw new NumberFormatException("Failed to parse byte string: " + str);
       }
-      suffix = suffix.toLowerCase();
       // Check for invalid suffixes
       if (suffix != null && !byteSuffixes.containsKey(suffix)) {
         throw new NumberFormatException("Invalid suffix: \"" + suffix + "\"");
@@ -294,6 +293,18 @@ public class ByteTimeUtils {
    * <p>If no suffix is provided, the passed number is assumed to be in gibibytes.
    */
   public static long byteStringAsGb(String str) {
+    return parseByteString(str, ByteUnit.GiB);
+  }
+
+  /**
+   * Convert a passed byte string (e.g. -50b, -100k, or -250m) to gibibytes for internal use.
+   *
+   * <p>If no suffix is provided, the passed number is assumed to be in gibibytes.
+   */
+  public static long negativeByteStringAsGb(String str) {
+    if (str.startsWith("-")) {
+      return Math.negateExact(parseByteString(str.substring(1), ByteUnit.GiB));
+    }
     return parseByteString(str, ByteUnit.GiB);
   }
 

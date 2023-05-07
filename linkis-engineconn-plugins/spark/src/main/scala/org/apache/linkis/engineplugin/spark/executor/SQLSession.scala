@@ -214,7 +214,12 @@ object SQLSession extends Logging {
           .mkString("{", ",", "}")
 
       case (str: String, StringType) => str.replaceAll("\n|\t", " ")
-      case (double: Double, DoubleType) => nf.format(double)
+      case (double: Double, DoubleType) =>
+        if (double.isNaN) {
+          "NaN"
+        } else {
+          nf.format(double)
+        }
       case (decimal: java.math.BigDecimal, DecimalType()) => formatDecimal(decimal)
       case (other: Any, tpe) => other.toString
       case _ => null

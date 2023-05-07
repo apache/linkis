@@ -110,12 +110,14 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       // ec node metircs report ignore update Shutingdown node (for case: asyn stop engine)
       PersistenceNodeMetrics oldMetrics =
           nodeMetricManagerMapper.getNodeMetricsByInstance(instance);
-      if (NodeStatus.ShuttingDown.ordinal() == oldMetrics.getStatus()) {
+
+      if (oldMetrics != null && NodeStatus.ShuttingDown.ordinal() <= oldMetrics.getStatus()) {
         logger.info(
-            "ignore update ShuttingDown status node:{} to status:{}",
+            "ignore update status node:{} from:{} to status:{}",
             instance,
+            NodeStatus.values()[oldMetrics.getStatus()].name(),
             NodeStatus.values()[nodeMetrics.getStatus()].name());
-        persistenceNodeMetrics.setStatus(null);
+        persistenceNodeMetrics.setStatus(oldMetrics.getStatus());
       } else {
         persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
       }

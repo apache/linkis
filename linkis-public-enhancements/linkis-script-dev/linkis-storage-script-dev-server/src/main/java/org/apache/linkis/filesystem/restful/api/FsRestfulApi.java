@@ -20,6 +20,7 @@ package org.apache.linkis.filesystem.restful.api;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
+import org.apache.linkis.common.utils.ResultSetUtils;
 import org.apache.linkis.filesystem.conf.WorkSpaceConfiguration;
 import org.apache.linkis.filesystem.entity.DirFileTree;
 import org.apache.linkis.filesystem.entity.LogLevel;
@@ -319,8 +320,8 @@ public class FsRestfulApi {
     FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
     for (MultipartFile p : files) {
       String fileName = p.getOriginalFilename();
+      WorkspaceUtil.charCheckFileName(fileName);
       FsPath fsPathNew = new FsPath(fsPath.getPath() + "/" + fileName);
-      WorkspaceUtil.fileAndDirNameSpecialCharCheck(fsPathNew.getPath());
       fileSystem.createNewFile(fsPathNew);
       try (InputStream is = p.getInputStream();
           OutputStream outputStream = fileSystem.write(fsPathNew, true)) {
@@ -442,7 +443,7 @@ public class FsRestfulApi {
       // downloaded(判断目录,目录不能下载)
       FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
-        throw WorkspaceExceptionManager.createException(8011, path);
+        throw WorkspaceExceptionManager.createException(80011, path);
       }
       inputStream = fileSystem.read(fsPath);
       byte[] buffer = new byte[1024];
@@ -841,7 +842,12 @@ public class FsRestfulApi {
       if (fsPathListWithError == null) {
         throw WorkspaceExceptionManager.createException(80029);
       }
-      FsPath[] fsPaths = fsPathListWithError.getFsPaths().toArray(new FsPath[] {});
+
+      List<FsPath> fsPathList = fsPathListWithError.getFsPaths();
+      // sort asc by _num.dolphin of num
+      ResultSetUtils.sortByNameNum(fsPathList);
+      FsPath[] fsPaths = fsPathList.toArray(new FsPath[] {});
+
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
       Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
       if (limit > 0) {
@@ -855,7 +861,9 @@ public class FsRestfulApi {
       response.setCharacterEncoding(StandardCharsets.UTF_8.name());
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
-      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
+      if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
+        nullValue = "";
+      }
       fileSource =
           FileSource$.MODULE$.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
       if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {

@@ -29,7 +29,6 @@ import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContex
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
-import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.ResourceManagerPersistence;
@@ -106,13 +105,8 @@ public class UserResourceService {
       List<Label<?>> labelList = new ArrayList<>();
       labelList.add(userCreatorLabel);
       labelList.add(engineTypeLabel);
-      Label<?> combinedLabel = null;
-      try {
-        combinedLabel = combinedLabelBuilder.build("", labelList);
-      } catch (LabelErrorException e) {
-        logger.warn("build label failed", e);
-        throw new RuntimeException(e);
-      }
+
+      Label<?> combinedLabel = combinedLabelBuilder.build("", labelList);
       labelResourceService.setLabelResource(
           resourceLabel.get(0), labelResource, combinedLabel.getStringValue());
     }

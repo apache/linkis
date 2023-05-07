@@ -19,7 +19,6 @@ package org.apache.linkis.manager.rm.service.impl;
 
 import org.apache.linkis.manager.common.constant.RMConstant;
 import org.apache.linkis.manager.common.entity.resource.*;
-import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.common.exception.RMWarnException;
 import org.apache.linkis.manager.rm.domain.RMLabelContainer;
 import org.apache.linkis.manager.rm.exception.RMErrorCode;
@@ -69,14 +68,8 @@ public class DriverAndYarnReqResourceService extends RequestResourceService {
 
     YarnResourceIdentifier yarnIdentifier =
         new YarnResourceIdentifier(requestedYarnResource.getQueueName());
-    NodeResource providedYarnResource = null;
-    try {
-      providedYarnResource =
-          externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
-    } catch (RMErrorException e) {
-      logger.warn("getResource failed", e);
-      throw new RuntimeException(e);
-    }
+    NodeResource providedYarnResource =
+        externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
     Resource maxCapacity = providedYarnResource.getMaxResource();
     Resource usedCapacity = providedYarnResource.getUsedResource();
 

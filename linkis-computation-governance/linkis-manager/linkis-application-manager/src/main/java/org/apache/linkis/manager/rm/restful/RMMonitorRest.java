@@ -27,7 +27,6 @@ import org.apache.linkis.manager.common.entity.node.Node;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabelRel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.common.entity.resource.*;
-import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.common.exception.RMWarnException;
 import org.apache.linkis.manager.common.utils.ResourceUtils;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
@@ -38,7 +37,6 @@ import org.apache.linkis.manager.label.entity.cluster.ClusterLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
-import org.apache.linkis.manager.label.exception.LabelErrorException;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.persistence.LabelManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
@@ -298,14 +296,8 @@ public class RMMonitorRest {
     if (COMBINED_USERCREATOR_ENGINETYPE == null) {
       UserCreatorLabel userCreatorLabel = labelFactory.createLabel(UserCreatorLabel.class);
       EngineTypeLabel engineTypeLabel = labelFactory.createLabel(EngineTypeLabel.class);
-      Label<?> combinedLabel = null;
-      try {
-        combinedLabel =
-            combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
-      } catch (LabelErrorException e) {
-        logger.warn("getAllUserResource failed", e);
-        throw new RuntimeException(e);
-      }
+      Label<?> combinedLabel =
+          combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
       COMBINED_USERCREATOR_ENGINETYPE = combinedLabel.getLabelKey();
     }
 
@@ -406,14 +398,8 @@ public class RMMonitorRest {
           node.getNodeResource().getUsedResource().add(resource.getUsedResource()));
 
       // combined label
-      Label<?> combinedLabel = null;
-      try {
-        combinedLabel =
-            combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
-      } catch (LabelErrorException e) {
-        logger.warn("build label failed", e);
-        throw new RuntimeException(e);
-      }
+      Label<?> combinedLabel =
+          combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
       NodeResource labelResource = labelResourceService.getLabelResource(combinedLabel);
       if (labelResource == null) {
         resource.setLeftResource(
@@ -582,13 +568,9 @@ public class RMMonitorRest {
     clusterLabel.setClusterName((String) param.get("clustername"));
     clusterLabel.setClusterType((String) param.get("clustertype"));
     RMLabelContainer labelContainer = new RMLabelContainer(Collections.singletonList(clusterLabel));
-    NodeResource providedYarnResource = null;
-    try {
-      externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
-    } catch (RMErrorException e) {
-      logger.warn("getResource failed", e);
-      throw new RuntimeException(e);
-    }
+    NodeResource providedYarnResource =
+        externalResourceService.getResource(ResourceType.Yarn, labelContainer, yarnIdentifier);
+
     double usedMemoryPercentage = 0.0;
     double usedCPUPercentage = 0.0;
     if (providedYarnResource != null) {
@@ -615,14 +597,8 @@ public class RMMonitorRest {
     }
 
     List<Map<String, Object>> userResourceRecords = new ArrayList<>();
-    List<ExternalAppInfo> yarnAppsInfo = new ArrayList<>();
-    try {
-      yarnAppsInfo =
-          externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier);
-    } catch (RMErrorException e) {
-      logger.warn("getQueueResource getAppInfo failed", e);
-      throw new RuntimeException(e);
-    }
+    List<ExternalAppInfo> yarnAppsInfo =
+        externalResourceService.getAppInfo(ResourceType.Yarn, labelContainer, yarnIdentifier);
 
     Map<String, List<ExternalAppInfo>> user2YarnAppsInfos =
         yarnAppsInfo.stream().collect(Collectors.groupingBy(app -> ((YarnAppInfo) app).getUser()));

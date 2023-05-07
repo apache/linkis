@@ -212,7 +212,7 @@ public class DefaultEngineStopService extends AbstractEngineService implements E
       if (e instanceof RMWarnException) {
         RMWarnException exception = (RMWarnException) e;
         if (exception.getErrCode() != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getErrorCode()) {
-          throw new RuntimeException(exception);
+          throw exception;
         }
       }
     }

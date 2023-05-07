@@ -36,7 +36,6 @@ import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary;
 import org.apache.linkis.manager.common.exception.RMWarnException;
 import org.apache.linkis.manager.common.utils.ManagerUtils;
 import org.apache.linkis.manager.common.utils.ResourceUtils;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
@@ -304,12 +303,8 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     engineNode.setServiceInstance(
         ServiceInstance.apply(labelContainer.getEngineServiceName(), tickedId));
     engineNode.setNodeResource(resource);
-    try {
-      nodeManagerPersistence.addEngineNode(engineNode);
-    } catch (PersistenceErrorException e) {
-      logger.warn("addEngineNode failed", e);
-      throw new RuntimeException(e);
-    }
+
+    nodeManagerPersistence.addEngineNode(engineNode);
 
     EngineInstanceLabel engineInstanceLabel =
         LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(EngineInstanceLabel.class);
@@ -731,7 +726,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                 engineInstanceLabel,
                 null,
                 exception);
-            throw new RuntimeException(exception);
+            throw exception;
           }
         },
         () -> resourceLockService.unLock(instanceLock));
@@ -828,48 +823,53 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     @Override
     public void run() {
-      logger.info(
-          String.format(
-              "check locked resource of %s, ticketId: %s",
-              persistenceEngineLabel.getStringValue(), ticketId));
-      PersistenceResource persistResource =
-          resourceManagerPersistence.getNodeResourceByTicketId(ticketId);
-      if (persistResource == null) {
-        logger.info(String.format("ticketId %s relation resource not exists", ticketId));
-        return;
-      }
-
-      NodeResource usedResource = ResourceUtils.fromPersistenceResource(persistResource);
-      if (usedResource != null
-          && usedResource.getLockedResource() != null
-          && usedResource
-              .getLockedResource()
-              .moreThan(Resource.getZeroResource(usedResource.getLockedResource()))) {
-
-        PersistenceLabel dbEngineInstanceLabel =
-            labelManagerPersistence.getLabel(persistenceEngineLabel.getId());
-        PersistenceLabel currnentEngineInstanceLabel =
-            dbEngineInstanceLabel == null ? persistenceEngineLabel : dbEngineInstanceLabel;
-        if (currnentEngineInstanceLabel
-            .getLabelKey()
-            .equalsIgnoreCase(LabelKeyConstant.ENGINE_INSTANCE_KEY)) {
-          Label<?> realLabel =
-              ManagerUtils.persistenceLabelToRealLabel(currnentEngineInstanceLabel);
-          if (realLabel instanceof EngineInstanceLabel) {
-            labels.add((Label<?>) realLabel);
-            logger.warn(
+      LinkisUtils.tryAndWarnMsg(
+          () -> {
+            logger.info(
                 String.format(
-                    "serviceInstance %s lock resource timeout, clear resource",
-                    ((EngineInstanceLabel) realLabel).getServiceInstance()));
-            AMEngineNode ecNode = new AMEngineNode();
-            ecNode.setServiceInstance(((EngineInstanceLabel) realLabel).getServiceInstance());
-            ecNode.setNodeStatus(NodeStatus.Failed);
-            ecNode.setLabels(labels);
-            resourceReleased(ecNode);
-          }
-        }
-      }
-      logger.info(String.format("Finished to check unlock resource of %s", ticketId));
+                    "check locked resource of %s, ticketId: %s",
+                    persistenceEngineLabel.getStringValue(), ticketId));
+            PersistenceResource persistResource =
+                resourceManagerPersistence.getNodeResourceByTicketId(ticketId);
+            if (persistResource == null) {
+              logger.info(String.format("ticketId %s relation resource not exists", ticketId));
+              return;
+            }
+
+            NodeResource usedResource = ResourceUtils.fromPersistenceResource(persistResource);
+            if (usedResource != null
+                && usedResource.getLockedResource() != null
+                && usedResource
+                    .getLockedResource()
+                    .moreThan(Resource.getZeroResource(usedResource.getLockedResource()))) {
+
+              PersistenceLabel dbEngineInstanceLabel =
+                  labelManagerPersistence.getLabel(persistenceEngineLabel.getId());
+              PersistenceLabel currnentEngineInstanceLabel =
+                  dbEngineInstanceLabel == null ? persistenceEngineLabel : dbEngineInstanceLabel;
+              if (currnentEngineInstanceLabel
+                  .getLabelKey()
+                  .equalsIgnoreCase(LabelKeyConstant.ENGINE_INSTANCE_KEY)) {
+                Label<?> realLabel =
+                    ManagerUtils.persistenceLabelToRealLabel(currnentEngineInstanceLabel);
+                if (realLabel instanceof EngineInstanceLabel) {
+                  labels.add((Label<?>) realLabel);
+                  logger.warn(
+                      String.format(
+                          "serviceInstance %s lock resource timeout, clear resource",
+                          ((EngineInstanceLabel) realLabel).getServiceInstance()));
+                  AMEngineNode ecNode = new AMEngineNode();
+                  ecNode.setServiceInstance(((EngineInstanceLabel) realLabel).getServiceInstance());
+                  ecNode.setNodeStatus(NodeStatus.Failed);
+                  ecNode.setLabels(labels);
+                  resourceReleased(ecNode);
+                }
+              }
+            }
+            logger.info(String.format("Finished to check unlock resource of %s", ticketId));
+          },
+          String.format("Failed to UnlockTimeoutResourceRunnable %s", ticketId),
+          logger);
     }
   }
 }

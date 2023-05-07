@@ -20,7 +20,7 @@ package org.apache.linkis.manager.rm.service.impl;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.am.service.engine.EngineStopService;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
@@ -117,7 +117,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
         };
 
     // submit force release timeout lock job
-    Utils.defaultScheduler.scheduleAtFixedRate(
+    LinkisUtils.defaultScheduler.scheduleAtFixedRate(
         () -> {
           logger.info("Start force release timeout locks");
           resourceLockService.clearTimeoutLock(
@@ -153,7 +153,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                 resource.getResourceType()));
       }
     }
-    PersistenceLock lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser());
+    PersistenceLock lock = tryLockOneLabel(eMInstanceLabel, -1, LinkisUtils.getJvmUser());
     try {
       labelResourceService.setLabelResource(
           eMInstanceLabel, resource, eMInstanceLabel.getStringValue());
@@ -178,7 +178,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
         LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(EMInstanceLabel.class);
     eMInstanceLabel.setServiceName(serviceInstance.getApplicationName());
     eMInstanceLabel.setInstance(serviceInstance.getInstance());
-    PersistenceLock lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser());
+    PersistenceLock lock = tryLockOneLabel(eMInstanceLabel, -1, LinkisUtils.getJvmUser());
     try {
       labelResourceService.removeResourceByLabel(eMInstanceLabel);
     } catch (Exception exception) {
@@ -331,7 +331,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     // fire timeout check scheduled job
     if ((long) RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue() > 0) {
-      Utils.defaultScheduler.schedule(
+      LinkisUtils.defaultScheduler.schedule(
           new UnlockTimeoutResourceRunnable(labels, persistenceEngineLabel, tickedId),
           (long) RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue(),
           TimeUnit.MILLISECONDS);
@@ -447,7 +447,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
         PersistenceLock persistenceLock =
             tryLockOneLabel(label, -1, labelContainer.getUserCreatorLabel().getUser());
 
-        Utils.tryFinally(
+        LinkisUtils.tryFinally(
             () -> {
               labelContainer.setCurrentLabel(label);
               NodeResource labelResource = labelResourceService.getLabelResource(label);
@@ -617,7 +617,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
             RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue(),
             labelContainer.getUserCreatorLabel().getUser());
 
-    Utils.tryFinally(
+    LinkisUtils.tryFinally(
         () -> {
           PersistenceResource persistenceResource =
               labelResourceService.getPersistenceResource(labelContainer.getEngineInstanceLabel());
@@ -653,7 +653,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                         RMUtils.RM_RESOURCE_LOCK_WAIT_TIME.getValue(),
                         labelContainer.getUserCreatorLabel().getUser());
 
-                Utils.tryFinally(
+                LinkisUtils.tryFinally(
                     () -> {
                       NodeResource labelResource = labelResourceService.getLabelResource(label);
                       if (labelResource != null) {

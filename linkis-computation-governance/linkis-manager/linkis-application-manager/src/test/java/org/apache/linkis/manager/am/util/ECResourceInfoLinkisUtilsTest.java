@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /** ECResourceInfoUtilsTest */
-public class ECResourceInfoUtilsTest {
+public class ECResourceInfoLinkisUtilsTest {
 
   @Test
   public void testGetStringToMap() throws Exception {

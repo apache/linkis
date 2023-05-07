@@ -25,7 +25,6 @@ import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.rm.ResourceInfo;
@@ -57,12 +56,7 @@ public class DefaultEMNodeManager implements EMNodeManager {
 
   @Override
   public void emRegister(EMNode emNode) {
-    try {
-      nodeManagerPersistence.addNodeInstance(emNode);
-    } catch (PersistenceErrorException e) {
-      logger.warn("DefaultEMNodeManager emRegister failed", e);
-      throw new RuntimeException(e);
-    }
+    nodeManagerPersistence.addNodeInstance(emNode);
     // init metric
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(
         metricsConverter.getInitMetric(emNode.getServiceInstance()));
@@ -70,12 +64,7 @@ public class DefaultEMNodeManager implements EMNodeManager {
 
   @Override
   public void addEMNodeInstance(EMNode emNode) {
-    try {
-      nodeManagerPersistence.addNodeInstance(emNode);
-    } catch (PersistenceErrorException e) {
-      logger.warn("DefaultEMNodeManager addEMNodeInstance failed", e);
-      throw new RuntimeException(e);
-    }
+    nodeManagerPersistence.addNodeInstance(emNode);
   }
 
   @Override

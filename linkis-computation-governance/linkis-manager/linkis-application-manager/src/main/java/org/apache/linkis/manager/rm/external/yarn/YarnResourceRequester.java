@@ -89,7 +89,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
           return nodeResource;
         },
         t -> {
-          throw new RuntimeException(t);
+          throw new RMErrorException(
+              YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), t);
         });
   }
 
@@ -325,7 +326,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
           response = httpClient.execute(httpGet);
         } catch (IOException e) {
           logger.warn("getResponseByUrl failed", e);
-          throw new RuntimeException(e);
+          throw new RMErrorException(
+              YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
         }
         httpResponse = response;
       }
@@ -336,7 +338,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         response = httpClient.execute(httpGet);
       } catch (IOException e) {
         logger.warn("getResponseByUrl failed", e);
-        throw new RuntimeException(e);
+        throw new RMErrorException(
+            YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
       }
       httpResponse = response;
     }
@@ -347,14 +350,16 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       entityString = EntityUtils.toString(httpResponse.getEntity());
     } catch (IOException e) {
       logger.warn("getResponseByUrl failed", e);
-      throw new RuntimeException(e);
+      throw new RMErrorException(
+          YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
     }
     JsonNode jsonNode = null;
     try {
       jsonNode = objectMapper.readTree(entityString);
     } catch (Exception e) {
       logger.warn("getResponseByUrl failed", e);
-      throw new RuntimeException(e);
+      throw new RMErrorException(
+          YARN_QUEUE_EXCEPTION.getErrorCode(), YARN_QUEUE_EXCEPTION.getErrorDesc(), e);
     }
 
     return jsonNode;

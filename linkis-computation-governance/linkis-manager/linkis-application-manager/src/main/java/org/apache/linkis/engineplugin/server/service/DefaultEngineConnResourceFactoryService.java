@@ -18,6 +18,8 @@
 package org.apache.linkis.engineplugin.server.service;
 
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
+import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.loader.entity.EngineConnPluginInstance;
@@ -50,7 +52,9 @@ public class DefaultEngineConnResourceFactoryService implements EngineConnResour
               .getEngineConnPlugin(engineType);
     } catch (Exception e) {
       logger.warn("getResourceFactory failed engineType:{}", engineType, e);
-      throw new RuntimeException(e);
+      throw new AMErrorException(
+          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
+          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
     }
     return engineConnPluginInstance.plugin().getEngineResourceFactory();
   }

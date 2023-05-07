@@ -22,7 +22,6 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
 import org.apache.linkis.manager.common.utils.ResourceUtils;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.LabelManagerUtils;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -136,13 +135,8 @@ public class DefaultResourceLabelService implements ResourceLabelService {
 
   @Override
   public void removeResourceByLabel(Label<?> label) {
-    try {
-      resourceLabelPersistence.removeResourceByLabel(
-          LabelManagerUtils.convertPersistenceLabel(label));
-    } catch (PersistenceErrorException e) {
-      logger.warn("removeResourceByLabel failed", e);
-      throw new RuntimeException(e);
-    }
+    resourceLabelPersistence.removeResourceByLabel(
+        LabelManagerUtils.convertPersistenceLabel(label));
   }
 
   @Override

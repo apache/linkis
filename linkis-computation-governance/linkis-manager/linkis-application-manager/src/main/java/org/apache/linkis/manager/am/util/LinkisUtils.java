@@ -27,8 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import scala.util.control.ControlThrowable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,17 +46,9 @@ public class LinkisUtils {
     try {
       call = tryOp.call();
     } catch (Throwable t) {
-      if (t instanceof ControlThrowable) {
-      } else if (t instanceof FatalException) {
+      if (t instanceof FatalException) {
         logger.error("Fatal error, system exit...", t);
-        return null;
-      } else if (t instanceof VirtualMachineError) {
-        logger.error("Fatal error, system exit...", t);
-        throw (VirtualMachineError) t;
-      } else if (t.getCause() instanceof FatalException
-          || t.getCause() instanceof VirtualMachineError) {
-        logger.error("Caused by fatal error, system exit...", t);
-        throw new RuntimeException(t);
+        throw (FatalException) t;
       } else if (t instanceof Error) {
         logger.error("Throw error", t);
         throw (Error) t;
@@ -72,8 +62,6 @@ public class LinkisUtils {
   public static void tryFinally(Runnable tryOp, Runnable finallyOp) {
     try {
       tryOp.run();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
     } finally {
       finallyOp.run();
     }
@@ -85,22 +73,20 @@ public class LinkisUtils {
         t -> {
           if (t instanceof ErrorException) {
             ErrorException error = (ErrorException) t;
-            String errorMsg =
-                "error code（错误码）: "
-                    + error.getErrCode()
-                    + ", Error message（错误信息）: "
-                    + error.getDesc()
-                    + ".";
-            log.error(errorMsg, error);
+            log.warn(
+                "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
+                error.getErrCode(),
+                error.getDesc(),
+                error);
+
           } else if (t instanceof WarnException) {
             WarnException warn = (WarnException) t;
-            String warnMsg =
-                "Warning code（警告码）: "
-                    + warn.getErrCode()
-                    + ", Warning message（警告信息）: "
-                    + warn.getDesc()
-                    + ".";
-            log.warn(warnMsg, warn);
+            log.warn(
+                "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
+                warn.getErrCode(),
+                warn.getDesc(),
+                warn);
+
           } else {
             log.warn("", t);
           }
@@ -111,20 +97,13 @@ public class LinkisUtils {
   public static void tryAndErrorMsg(Runnable tryOp, String message, Logger log) {
     try {
       tryOp.run();
-    } catch (Throwable t) {
-      if (t instanceof VirtualMachineError) {
-        logger.error("Fatal error, system exit...", t);
-        throw (VirtualMachineError) t;
-      } else if (t.getCause() instanceof FatalException
-          || t.getCause() instanceof VirtualMachineError) {
-        logger.error("Caused by fatal error, system exit...", t);
-        throw new RuntimeException(t);
-      } else if (t instanceof Error) {
-        logger.error("Throw error", t);
-        throw (Error) t;
-      } else {
-        log.error(message, t);
-      }
+    } catch (WarnException t) {
+      WarnException warn = (WarnException) t;
+      log.warn(
+          "Warning code（警告码）: {}, Warning message（警告信息）: {}.", warn.getErrCode(), warn.getDesc());
+      log.warn(message, warn);
+    } catch (Exception t) {
+      log.warn(message, t);
     }
   }
 
@@ -134,16 +113,27 @@ public class LinkisUtils {
     } catch (Throwable error) {
       if (error instanceof WarnException) {
         WarnException warn = (WarnException) error;
-        String warnMsg =
-            "Warning code（警告码）: "
-                + warn.getErrCode()
-                + ", Warning message（警告信息）: "
-                + warn.getDesc()
-                + ".";
-        log.warn(warnMsg, error);
+        log.warn(
+            "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
+            warn.getErrCode(),
+            warn.getDesc(),
+            error);
       } else {
         log.warn("", error);
       }
+    }
+  }
+
+  public static void tryAndWarnMsg(Runnable tryOp, String message, Logger log) {
+    try {
+      tryOp.run();
+    } catch (WarnException t) {
+      WarnException warn = (WarnException) t;
+      log.warn(
+          "Warning code（警告码）: {}, Warning message（警告信息）: {}.", warn.getErrCode(), warn.getDesc());
+      log.warn(message, warn);
+    } catch (Exception t) {
+      log.warn(message, t);
     }
   }
 
@@ -154,20 +144,16 @@ public class LinkisUtils {
           if (t instanceof ErrorException) {
             ErrorException error = (ErrorException) t;
             log.warn(
-                "error code（错误码）: "
-                    + error.getErrCode()
-                    + ", Error message（错误信息）: "
-                    + error.getDesc()
-                    + ".");
+                "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
+                error.getErrCode(),
+                error.getDesc());
             log.warn(message, error);
           } else if (t instanceof WarnException) {
             WarnException warn = (WarnException) t;
             log.warn(
-                "Warning code（警告码）: "
-                    + warn.getErrCode()
-                    + ", Warning message（警告信息）: "
-                    + warn.getDesc()
-                    + ".");
+                "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
+                warn.getErrCode(),
+                warn.getDesc());
             log.warn(message, warn);
           } else {
             log.warn(message, t);

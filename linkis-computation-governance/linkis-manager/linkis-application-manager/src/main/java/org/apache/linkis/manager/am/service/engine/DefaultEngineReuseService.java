@@ -21,9 +21,10 @@ import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.label.EngineReuseLabelChooser;
 import org.apache.linkis.manager.am.selector.NodeSelector;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
@@ -174,7 +175,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
 
     long startTime = System.currentTimeMillis();
     try {
-      Utils.waitUntil(
+      LinkisUtils.waitUntil(
           () -> selectEngineToReuse(MutablePair.of(count, reuseLimit), engine, engineScoreList),
           Duration.ofMillis(timeout));
     } catch (TimeoutException e) {
@@ -184,7 +185,9 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
     } catch (Throwable t) {
       logger.info(
           "Failed to reuse engineConn time taken " + (System.currentTimeMillis() - startTime), t);
-      throw new RuntimeException(t);
+      throw new AMErrorException(
+          AMConstant.ENGINE_ERROR_CODE,
+          "Failed to reuse engineConn time taken " + (System.currentTimeMillis() - startTime));
     }
     logger.info(
         "Finished to reuse Engine for request: "
@@ -227,7 +230,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
     EngineNode engineNode = (EngineNode) choseNode.get();
     logger.info("prepare to reuse engineNode: " + engineNode.getServiceInstance());
     engine =
-        Utils.tryCatch(
+        LinkisUtils.tryCatch(
             () -> getEngineNodeManager().reuseEngine(engineNode),
             (Throwable t) -> {
               logger.info("Failed to reuse engine " + engineNode.getServiceInstance(), t);

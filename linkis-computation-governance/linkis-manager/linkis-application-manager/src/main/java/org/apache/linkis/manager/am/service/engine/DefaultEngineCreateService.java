@@ -30,7 +30,7 @@ import org.apache.linkis.manager.am.label.EngineReuseLabelChooser;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.selector.ECAvailableRule;
 import org.apache.linkis.manager.am.selector.NodeSelector;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
@@ -338,7 +338,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
 
   private boolean ensuresIdle(EngineNode engineNode, String resourceTicketId) {
     EngineNode engineNodeInfo =
-        Utils.tryAndWarnMsg(
+        LinkisUtils.tryAndWarnMsg(
             () -> getEngineNodeManager().getEngineNodeInfoByDB(engineNode),
             "Failed to from db get engine node info",
             logger);
@@ -355,7 +355,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
                 "%s  ticketID:%s  Failed to initialize engine, reason: %s ",
                 engineNode.getServiceInstance(), resourceTicketId, errorInfo.getKey()));
       }
-      throw new LinkisRetryException(
+      throw new AMErrorException(
           AMConstant.EM_ERROR_CODE,
           String.format(
               "%s ticketID: %s Failed to initialize engine, reason: %s",
@@ -399,7 +399,8 @@ public class DefaultEngineCreateService extends AbstractEngineService
           String.format(
               "Start to wait engineConn(%s) to be available, but only %s left.",
               engineNode, ByteTimeUtils.msDurationToString(timeout)));
-      Utils.waitUntil(() -> ensuresIdle(engineNode, resourceTicketId), Duration.ofMillis(timeout));
+      LinkisUtils.waitUntil(
+          () -> ensuresIdle(engineNode, resourceTicketId), Duration.ofMillis(timeout));
     } catch (TimeoutException e) {
       logger.info(
           String.format(

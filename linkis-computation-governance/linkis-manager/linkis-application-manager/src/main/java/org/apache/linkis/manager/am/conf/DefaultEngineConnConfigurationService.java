@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.am.conf;
 
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
@@ -57,7 +57,7 @@ class DefaultEngineConnConfigurationService implements EngineConnConfigurationSe
           engineTypeLabelOption.ifPresent(
               engineTypeLabel -> {
                 Map<String, String> engineConfig =
-                    Utils.tryAndWarn(
+                    LinkisUtils.tryAndWarn(
                         () ->
                             ConfigurationMapCache.engineMapCache.getCacheMap(
                                 new Tuple2(userCreatorLabel, engineTypeLabel)),

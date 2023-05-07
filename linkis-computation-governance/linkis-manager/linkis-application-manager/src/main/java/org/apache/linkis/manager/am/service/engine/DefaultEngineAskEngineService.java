@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.service.impl.DefaultEngineConnStatusCallbackService;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.protocol.engine.*;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,6 +55,10 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
   private EngineReuseService engineReuseService;
   private AtomicInteger idCreator = new AtomicInteger();
   private String idPrefix = Sender.getThisServiceInstance().getInstance();
+
+  private static final ThreadPoolExecutor EXECUTOR =
+      LinkisUtils.newCachedThreadPool(
+          AMConfiguration.ASK_ENGINE_ASYNC_MAX_THREAD_SIZE, "AskEngineService-Thread-", true);
 
   @Autowired
   public DefaultEngineAskEngineService(
@@ -134,7 +140,8 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
                       "Task: %s finished to ask engine for user %s by create node %s",
                       taskId, engineAskRequest.getUser(), createEngineNode));
               return createEngineNode;
-            });
+            },
+            EXECUTOR);
 
     createNodeThread.whenComplete(
         (EngineNode engineNode, Throwable exception) -> {

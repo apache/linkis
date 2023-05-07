@@ -23,7 +23,7 @@ import org.apache.linkis.manager.am.conf.ManagerMonitorConf;
 import org.apache.linkis.manager.am.service.em.EMUnregisterService;
 import org.apache.linkis.manager.am.service.engine.EngineStopService;
 import org.apache.linkis.manager.am.service.heartbeat.AMHeartbeatService;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
@@ -71,7 +71,7 @@ public class NodeHeartbeatMonitor implements ManagerMonitor {
   @Autowired private ManagerLabelService managerLabelService;
 
   private final ExecutorService fixedThreadPoll =
-      Utils.newFixedThreadPool(
+      LinkisUtils.newFixedThreadPool(
           (int) ManagerMonitorConf.MANAGER_MONITOR_ASYNC_POLL_SIZE.getValue(),
           "manager_async",
           false);
@@ -97,52 +97,60 @@ public class NodeHeartbeatMonitor implements ManagerMonitor {
    */
   @Override
   public void run() {
-    logger.info("Start to check the health of the node");
-    // 1.get nodes
-    List<Node> nodes = nodeManagerPersistence.getAllNodes();
-    List<NodeMetrics> metricList = nodeMetricManagerPersistence.getNodeMetrics(nodes);
-    if (null != metricList) {
-      for (Node node : nodes) {
-        for (NodeMetrics metrics : metricList) {
-          if (metrics
-              .getServiceInstance()
-              .toString()
-              .equals(node.getServiceInstance().toString())) {
-            node.setNodeStatus(NodeStatus.values()[metrics.getStatus()]);
-            node.setUpdateTime(metrics.getUpdateTime());
-            break;
+    LinkisUtils.tryAndWarn(
+        () -> {
+          logger.info("Start to check the health of the node");
+          // 1.get nodes
+          List<Node> nodes = nodeManagerPersistence.getAllNodes();
+          List<NodeMetrics> metricList = nodeMetricManagerPersistence.getNodeMetrics(nodes);
+          if (null != metricList) {
+            for (Node node : nodes) {
+              for (NodeMetrics metrics : metricList) {
+                if (metrics
+                    .getServiceInstance()
+                    .toString()
+                    .equals(node.getServiceInstance().toString())) {
+                  node.setNodeStatus(NodeStatus.values()[metrics.getStatus()]);
+                  node.setUpdateTime(metrics.getUpdateTime());
+                  break;
+                }
+              }
+            }
           }
-        }
-      }
-    }
-    // EngineConn remove
-    List<Node> engineNodes = new ArrayList<>();
-    for (Node node : nodes) {
-      if (node.getServiceInstance().getApplicationName().equalsIgnoreCase(ecName)) {
-        engineNodes.add(node);
-      }
-    }
-    dealECNodes(engineNodes);
+          // EngineConn remove
+          List<Node> engineNodes = new ArrayList<>();
+          for (Node node : nodes) {
+            if (node.getServiceInstance().getApplicationName().equalsIgnoreCase(ecName)) {
+              engineNodes.add(node);
+            }
+          }
+          LinkisUtils.tryAndWarn(
+              () -> {
+                dealECNodes(engineNodes);
+              },
+              logger);
 
-    List<Node> ecmNodes = new ArrayList<>();
-    for (Node node : nodes) {
-      if (node.getServiceInstance().getApplicationName().equalsIgnoreCase(ecmName)) {
-        ecmNodes.add(node);
-      }
-    }
-    dealECMNotExistsInRegistry(ecmNodes);
+          List<Node> ecmNodes = new ArrayList<>();
+          for (Node node : nodes) {
+            if (node.getServiceInstance().getApplicationName().equalsIgnoreCase(ecmName)) {
+              ecmNodes.add(node);
+            }
+          }
+          dealECMNotExistsInRegistry(ecmNodes);
 
-    /* val engineMetricList = nodeMetricManagerPersistence.getNodeMetrics(engineNodes)
-    val healthyList = filterHealthyAndWarnList(engineMetricList)
-    dealHealthyList(healthyList)
-     val unHealthyList = filterUnHealthyList(engineMetricList)
-     dealUnHealthyList(unHealthyList)
+          /* val engineMetricList = nodeMetricManagerPersistence.getNodeMetrics(engineNodes)
+          val healthyList = filterHealthyAndWarnList(engineMetricList)
+          dealHealthyList(healthyList)
+           val unHealthyList = filterUnHealthyList(engineMetricList)
+           dealUnHealthyList(unHealthyList)
 
-     val stockAvailableList = filterStockAvailableList(engineMetricList)
-     dealStockAvailableList(stockAvailableList)
-     val stockUnAvailableList = filterStockUnAvailableList(engineMetricList)
-     dealStockUnAvailableList(stockUnAvailableList) */
-    logger.info("Finished to check the health of the node");
+           val stockAvailableList = filterStockAvailableList(engineMetricList)
+           dealStockAvailableList(stockAvailableList)
+           val stockUnAvailableList = filterStockUnAvailableList(engineMetricList)
+           dealStockUnAvailableList(stockUnAvailableList) */
+          logger.info("Finished to check the health of the node");
+        },
+        logger);
   }
 
   /**
@@ -215,7 +223,7 @@ public class NodeHeartbeatMonitor implements ManagerMonitor {
           boolean updateOverdue = (System.currentTimeMillis() - updateTime) > ecmHeartBeatTime;
 
           if (!existingECMInstances.contains(ecm.getServiceInstance()) && updateOverdue) {
-            Utils.tryAndWarn(() -> updateMetrics(ecm), logger);
+            LinkisUtils.tryAndWarn(() -> updateMetrics(ecm), logger);
             boolean isUpdateOverdue =
                 ecm.getUpdateTime() == null
                     ? (System.currentTimeMillis() - ecm.getStartTime().getTime()) > ecmHeartBeatTime
@@ -254,7 +262,7 @@ public class NodeHeartbeatMonitor implements ManagerMonitor {
             if (sender == null) {
               updateMetricHealthy(nodeMetric, NodeHealthy.UnHealthy, "sender is null");
             }
-            Utils.tryCatch(
+            LinkisUtils.tryCatch(
                 () -> {
                   Object obj = sender.ask(new NodeHeartbeatRequest());
                   if (obj instanceof NodeHeartbeatMsg) {
@@ -296,7 +304,7 @@ public class NodeHeartbeatMonitor implements ManagerMonitor {
       engineStopService.stopEngine(stopEngineRequest, sender);
     } catch (Exception e) {
       logger.error("Em failed to kill engine " + instance, e);
-      Utils.tryAndWarn(() -> triggerEngineSuicide(instance), logger);
+      LinkisUtils.tryAndWarn(() -> triggerEngineSuicide(instance), logger);
     }
   }
 

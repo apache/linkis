@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.rm.service;
 
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLock;
 import org.apache.linkis.manager.persistence.LockManagerPersistence;
 
@@ -46,7 +46,7 @@ public class ResourceLockService {
       return true;
     }
     boolean isLocked =
-        Utils.tryCatch(
+        LinkisUtils.tryCatch(
             () -> {
               if (timeout > 0) {
                 return lockManagerPersistence.lock(persistenceLock, timeout);
@@ -65,7 +65,7 @@ public class ResourceLockService {
   }
 
   public void unLock(PersistenceLock persistenceLock) {
-    Utils.tryCatch(
+    LinkisUtils.tryCatch(
         () -> {
           lockManagerPersistence.unlock(persistenceLock);
           logger.info("unlocked " + persistenceLock.getLockObject());
@@ -84,7 +84,7 @@ public class ResourceLockService {
       return;
     }
     for (PersistenceLock lock : locks) {
-      Utils.tryAndWarn(
+      LinkisUtils.tryAndWarn(
           () -> {
             lockManagerPersistence.unlock(lock);
             logger.warn("timeout force unlock " + lock.getLockObject());

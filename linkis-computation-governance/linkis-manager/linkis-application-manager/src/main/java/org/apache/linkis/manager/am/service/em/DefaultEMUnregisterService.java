@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.am.service.em;
 
 import org.apache.linkis.manager.am.manager.EMNodeManager;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.protocol.em.EMInfoClearRequest;
 import org.apache.linkis.manager.common.protocol.em.EMResourceClearRequest;
@@ -60,12 +60,12 @@ public class DefaultEMUnregisterService implements EMUnregisterService {
     EMInfoClearRequest emClearRequest = new EMInfoClearRequest();
     emClearRequest.setEm(node);
     emClearRequest.setUser(stopEMRequest.getUser());
-    Utils.tryAndWarn(() -> rmMessageService.dealWithStopEMRequest(stopEMRequest), logger);
+    LinkisUtils.tryAndWarn(() -> rmMessageService.dealWithStopEMRequest(stopEMRequest), logger);
 
     // clear Label
     NodeLabelRemoveRequest instanceLabelRemoveRequest =
         new NodeLabelRemoveRequest(node.getServiceInstance(), false);
-    Utils.tryAndWarn(
+    LinkisUtils.tryAndWarn(
         () -> nodeLabelRemoveService.removeNodeLabel(instanceLabelRemoveRequest), logger);
 
     // 此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净

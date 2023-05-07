@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.rm.external.yarn;
 
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.common.entity.resource.*;
 import org.apache.linkis.manager.common.exception.RMErrorException;
@@ -77,7 +77,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
     String realQueueName = "root." + queueName;
 
-    return Utils.tryCatch(
+    return LinkisUtils.tryCatch(
         () -> {
           Pair<YarnResource, YarnResource> yarnResource =
               getResources(rmWebAddress, realQueueName, queueName);

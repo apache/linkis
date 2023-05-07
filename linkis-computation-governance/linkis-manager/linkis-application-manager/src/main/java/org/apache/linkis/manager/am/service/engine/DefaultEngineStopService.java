@@ -20,7 +20,7 @@ package org.apache.linkis.manager.am.service.engine;
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.node.AMEMNode;
@@ -70,8 +70,8 @@ public class DefaultEngineStopService extends AbstractEngineService implements E
 
   @Autowired private NodeMetricManagerMapper nodeMetricManagerMapper;
 
-  private ExecutorService executor =
-      Utils.newFixedThreadPool(
+  private ExecutorService EXECUTOR =
+      LinkisUtils.newFixedThreadPool(
           AMConfiguration.ASYNC_STOP_ENGINE_MAX_THREAD_SIZE,
           "AsyncStopEngineService-Thread-",
           true);
@@ -272,12 +272,13 @@ public class DefaultEngineStopService extends AbstractEngineService implements E
     CompletableFuture.runAsync(
         () -> {
           logger.info(String.format("Start to async stop engineFailed %s", engineStopRequest));
-          Utils.tryAndErrorMsg(
+          LinkisUtils.tryAndErrorMsg(
               () ->
                   stopEngine(engineStopRequest, Sender.getSender(Sender.getThisServiceInstance())),
               String.format("async stop engineFailed %s", engineStopRequest),
               logger);
-        });
+        },
+        EXECUTOR);
   }
 
   @Override
@@ -309,6 +310,7 @@ public class DefaultEngineStopService extends AbstractEngineService implements E
                 String.format("asyncStopEngineWithUpdateMetrics with error: %s", e.getMessage()),
                 e);
           }
-        });
+        },
+        EXECUTOR);
   }
 }

@@ -81,7 +81,6 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         () -> {
           Pair<YarnResource, YarnResource> yarnResource =
               getResources(rmWebAddress, realQueueName, queueName);
-          getResources(rmWebAddress, realQueueName, queueName);
 
           CommonNodeResource nodeResource = new CommonNodeResource();
           nodeResource.setMaxResource(yarnResource.getKey());
@@ -98,17 +97,17 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       Optional<JsonNode> queueValue, String rmWebAddress, String queueName) {
     try {
       JsonNode metrics = getResponseByUrl("metrics", rmWebAddress);
-      long totalMemory = metrics.path("clusterMetrics").path("totalMB").asLong();
-      long totalCores = metrics.path("clusterMetrics").path("totalVirtualCores").asLong();
+      JsonNode clusterMetrics = metrics.path("clusterMetrics");
+      long totalMemory = clusterMetrics.path("totalMB").asLong();
+      long totalCores = clusterMetrics.path("totalVirtualCores").asLong();
       if (queueValue.isPresent()) {
         JsonNode jsonNode = queueValue.get();
         double absoluteCapacity = jsonNode.path("absoluteCapacity").asDouble();
-        double effectiveResource = absoluteCapacity;
 
         YarnResource yarnResource =
             new YarnResource(
-                (long) Math.floor(effectiveResource * totalMemory * 1024L * 1024L / 100),
-                (int) Math.floor(effectiveResource * totalCores / 100),
+                (long) Math.floor(absoluteCapacity * totalMemory * 1024L * 1024L / 100),
+                (int) Math.floor(absoluteCapacity * totalCores / 100),
                 0,
                 queueName,
                 "");
@@ -200,10 +199,11 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   public Pair<YarnResource, YarnResource> getResources(
       String rmWebAddress, String realQueueName, String queueName) {
     JsonNode resp = getResponseByUrl("scheduler", rmWebAddress);
-    String schedulerType = resp.path("scheduler").path("schedulerInfo").path("type").asText();
+    JsonNode schedulerInfo = resp.path("scheduler").path("schedulerInfo");
+    String schedulerType = schedulerInfo.path("type").asText();
     if ("capacityScheduler".equals(schedulerType)) {
       realQueueName = queueName;
-      JsonNode childQueues = getChildQueuesOfCapacity(resp.path("scheduler").path("schedulerInfo"));
+      JsonNode childQueues = getChildQueuesOfCapacity(schedulerInfo);
       Optional<JsonNode> queue = getQueueOfCapacity(childQueues, realQueueName);
       if (!queue.isPresent()) {
         logger.debug(
@@ -217,8 +217,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
           getYarnResource(queue.map(node -> node.path("resourcesUsed")), queueName).get());
 
     } else if ("fairScheduler".equals(schedulerType)) {
-      JsonNode childQueues =
-          getChildQueues(resp.path("scheduler").path("schedulerInfo").path("rootQueue"));
+      JsonNode childQueues = getChildQueues(schedulerInfo.path("rootQueue"));
       Optional<JsonNode> queue = getQueue(childQueues, realQueueName);
       if (!queue.isPresent()) {
         logger.debug(

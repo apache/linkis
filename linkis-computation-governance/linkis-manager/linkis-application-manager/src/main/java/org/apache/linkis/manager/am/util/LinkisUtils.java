@@ -24,7 +24,6 @@ import org.apache.linkis.common.exception.WarnException;
 import java.time.Duration;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -33,8 +32,8 @@ import scala.util.control.ControlThrowable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Utils {
-  private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+public class LinkisUtils {
+  private static final Logger logger = LoggerFactory.getLogger(LinkisUtils.class);
 
   public static final ScheduledThreadPoolExecutor defaultScheduler =
       new ScheduledThreadPoolExecutor(20, threadFactory("Linkis-Default-Scheduler-Thread-", true));
@@ -42,10 +41,6 @@ public class Utils {
   {
     defaultScheduler.setMaximumPoolSize(20);
     defaultScheduler.setKeepAliveTime(5, TimeUnit.MINUTES);
-  }
-
-  public static <T> T tryQuietly(Callable<T> tryOp) {
-    return tryQuietly(tryOp, t -> {});
   }
 
   public static <T> T tryCatch(Callable<T> tryOp, Function<Throwable, T> catchOp) {
@@ -74,53 +69,6 @@ public class Utils {
     return call;
   }
 
-  public static void tryCatch(Runnable tryOp, Runnable catchOp) {
-    try {
-      tryOp.run();
-    } catch (Throwable t) {
-      if (t instanceof ControlThrowable) {
-      } else if (t instanceof FatalException) {
-        logger.error("Fatal error, system exit...", t);
-      } else if (t instanceof VirtualMachineError) {
-        logger.error("Fatal error, system exit...", t);
-        throw (VirtualMachineError) t;
-      } else if (t.getCause() instanceof FatalException
-          || t.getCause() instanceof VirtualMachineError) {
-        logger.error("Caused by fatal error, system exit...", t);
-        throw new RuntimeException(t);
-      } else if (t instanceof Error) {
-        logger.error("Throw error", t);
-        throw (Error) t;
-      } else {
-        logger.error("Throw excption", t);
-        catchOp.run();
-      }
-    }
-  }
-
-  public static <T> T tryThrow(Callable<T> tryOp, Function<Throwable, Throwable> exception) {
-    return tryCatch(
-        tryOp,
-        t -> {
-          try {
-            throw exception.apply(t);
-          } catch (Throwable throwable) {
-            //
-            throw new RuntimeException(throwable);
-          }
-        });
-  }
-
-  public static <T> T tryFinally(Callable<T> tryOp, Runnable finallyOp) {
-    try {
-      return tryOp.call();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    } finally {
-      finallyOp.run();
-    }
-  }
-
   public static void tryFinally(Runnable tryOp, Runnable finallyOp) {
     try {
       tryOp.run();
@@ -129,15 +77,6 @@ public class Utils {
     } finally {
       finallyOp.run();
     }
-  }
-
-  public static <T> T tryQuietly(Callable<T> tryOp, Consumer<Throwable> catchOp) {
-    return tryCatch(
-        tryOp,
-        t -> {
-          catchOp.accept(t);
-          return null;
-        });
   }
 
   public static <T> T tryAndWarn(Callable<T> tryOp, Logger log) {
@@ -173,10 +112,7 @@ public class Utils {
     try {
       tryOp.run();
     } catch (Throwable t) {
-      if (t instanceof ControlThrowable) {
-      } else if (t instanceof FatalException) {
-        logger.error("Fatal error, system exit...", t);
-      } else if (t instanceof VirtualMachineError) {
+      if (t instanceof VirtualMachineError) {
         logger.error("Fatal error, system exit...", t);
         throw (VirtualMachineError) t;
       } else if (t.getCause() instanceof FatalException
@@ -195,39 +131,19 @@ public class Utils {
   public static <T> void tryAndWarn(Runnable tryOp, Logger log) {
     try {
       tryOp.run();
-    } catch (Throwable t) {
-      if (t instanceof ControlThrowable) {
-      } else if (t instanceof FatalException) {
-        log.error("Fatal error, system exit...", t);
-      } else if (t instanceof VirtualMachineError) {
-        log.error("Fatal error, system exit...", t);
-        throw (VirtualMachineError) t;
-      } else if (t.getCause() instanceof FatalException
-          || t.getCause() instanceof VirtualMachineError) {
-        log.error("Caused by fatal error, system exit...", t);
-        throw new RuntimeException(t);
-      } else if (t instanceof Error) {
-        log.error("Throw error", t);
-        throw (Error) t;
+    } catch (Throwable error) {
+      if (error instanceof WarnException) {
+        WarnException warn = (WarnException) error;
+        String warnMsg =
+            "Warning code（警告码）: "
+                + warn.getErrCode()
+                + ", Warning message（警告信息）: "
+                + warn.getDesc()
+                + ".";
+        log.warn(warnMsg, error);
+      } else {
+        log.warn("", error);
       }
-    }
-  }
-
-  public static <T> T tryAndError(Supplier<T> tryOp, Logger log) {
-    try {
-      return tryOp.get();
-    } catch (WarnException warn) {
-      String warnMsg =
-          "Warning code（警告码）: "
-              + warn.getErrCode()
-              + ", Warning message（警告信息）: "
-              + warn.getDesc()
-              + ".";
-      log.warn(warnMsg, warn);
-      return null;
-    } catch (Throwable t) {
-      log.error("", t);
-      return null;
     }
   }
 
@@ -302,6 +218,20 @@ public class Utils {
       int threadNum, String threadName, boolean isDaemon) {
     ThreadFactory threadFactory = threadFactory(threadName, isDaemon);
     return Executors.newFixedThreadPool(threadNum, threadFactory);
+  }
+
+  public static ThreadPoolExecutor newCachedThreadPool(
+      Integer threadNum, String threadName, Boolean isDaemon) {
+    ThreadPoolExecutor threadPool =
+        new ThreadPoolExecutor(
+            threadNum,
+            threadNum,
+            120L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(10 * threadNum),
+            threadFactory(threadName, isDaemon));
+    threadPool.allowCoreThreadTimeOut(true);
+    return threadPool;
   }
 
   private static ThreadFactory threadFactory(String threadName, boolean isDaemon) {

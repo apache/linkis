@@ -18,7 +18,7 @@
 package org.apache.linkis.manager.rm.service.impl;
 
 import org.apache.linkis.governance.common.utils.ECPathUtils;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.entity.resource.Resource;
@@ -148,7 +148,7 @@ public class ResourceLogService {
       NodeStatus status,
       String metrics) {
     if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue()) {
-      Utils.tryAndWarn(
+      LinkisUtils.tryAndWarn(
           () -> {
             CombinedLabel userCreatorEngineType =
                 labelContainer.getCombinedUserCreatorEngineTypeLabel();

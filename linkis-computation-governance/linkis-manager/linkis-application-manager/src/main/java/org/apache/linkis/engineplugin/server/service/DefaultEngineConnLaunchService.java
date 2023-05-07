@@ -18,7 +18,7 @@
 package org.apache.linkis.engineplugin.server.service;
 
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
-import org.apache.linkis.manager.am.util.Utils;
+import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest;
@@ -85,7 +85,7 @@ public class DefaultEngineConnLaunchService implements EngineConnLaunchService {
     }
 
     final EngineTypeLabel engineTypeLabel = engineTypeOption.get();
-    return Utils.tryCatch(
+    return LinkisUtils.tryCatch(
         () -> getEngineLaunchBuilder(engineTypeLabel, engineBuildRequest).buildEngineConn(),
         (Throwable t) -> {
           logger.error(

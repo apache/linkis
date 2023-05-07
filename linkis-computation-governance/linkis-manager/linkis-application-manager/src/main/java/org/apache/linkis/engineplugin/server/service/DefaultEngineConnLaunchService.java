@@ -18,6 +18,8 @@
 package org.apache.linkis.engineplugin.server.service;
 
 import org.apache.linkis.engineplugin.server.loader.EngineConnPluginsLoaderFactory;
+import org.apache.linkis.manager.am.exception.AMErrorCode;
+import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
 import org.apache.linkis.manager.engineplugin.common.launch.EngineConnLaunchBuilder;
@@ -56,7 +58,9 @@ public class DefaultEngineConnLaunchService implements EngineConnLaunchService {
           EngineConnPluginsLoaderFactory.getEngineConnPluginsLoader()
               .getEngineConnPlugin(engineTypeLabel);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new AMErrorException(
+          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorCode(),
+          AMErrorCode.NOT_EXISTS_ENGINE_CONN.getErrorDesc());
     }
     final EngineConnLaunchBuilder builder =
         engineConnPluginInstance.plugin().getEngineConnLaunchBuilder();

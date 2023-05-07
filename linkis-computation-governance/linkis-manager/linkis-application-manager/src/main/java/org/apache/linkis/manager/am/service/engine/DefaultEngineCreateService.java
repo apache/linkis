@@ -422,7 +422,11 @@ public class DefaultEngineCreateService extends AbstractEngineService
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(engineNode.getServiceInstance(), ManagerUtils.getAdminUser());
       engineStopService.asyncStopEngine(stopEngineRequest);
-      throw new RuntimeException(t);
+      throw new AMErrorException(
+          AMConstant.ENGINE_ERROR_CODE,
+          String.format(
+              "Waiting for %s(%s) initialization failure , now stop it.",
+              engineNode, resourceTicketId));
     }
     return engineNode;
   }

@@ -33,7 +33,6 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateRequest;
 import org.apache.linkis.manager.common.protocol.engine.EngineOperateResponse;
 import org.apache.linkis.manager.common.protocol.node.NodeHeartbeatMsg;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
@@ -267,12 +266,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
    */
   @Override
   public void addEngineNode(EngineNode engineNode) {
-    try {
-      nodeManagerPersistence.addEngineNode(engineNode);
-    } catch (PersistenceErrorException e) {
-      logger.warn("addEngineNode failed", e);
-      throw new RuntimeException(e);
-    }
+    nodeManagerPersistence.addEngineNode(engineNode);
     // init metric
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(
         metricsConverter.getInitMetric(engineNode.getServiceInstance()));

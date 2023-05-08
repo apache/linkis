@@ -40,6 +40,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -183,24 +184,23 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void updateNodeInstance(Node node) throws PersistenceErrorException {
+  public void updateNodeInstance(Node node) {
 
-    if (null != node) {
+    if (Objects.nonNull(node)) {
       PersistenceNode persistenceNode = new PersistenceNode();
       persistenceNode.setInstance(node.getServiceInstance().getInstance());
       persistenceNode.setName(node.getServiceInstance().getApplicationName());
-      persistenceNode.setOwner(node.getOwner());
       persistenceNode.setMark(node.getMark());
-      persistenceNode.setCreateTime(new Date());
       persistenceNode.setUpdateTime(new Date());
       persistenceNode.setCreator(node.getOwner());
       persistenceNode.setUpdator(node.getOwner());
-      nodeManagerMapper.updateNodeInstanceOverload(persistenceNode);
+      persistenceNode.setIdentifier(node.getIdentifier());
+      nodeManagerMapper.updateNodeInstanceByInstance(persistenceNode);
     }
   }
 
   @Override
-  public Node getNode(ServiceInstance serviceInstance) throws PersistenceErrorException {
+  public Node getNode(ServiceInstance serviceInstance) {
     String instance = serviceInstance.getInstance();
     PersistenceNode nodeInstances = nodeManagerMapper.getNodeInstance(instance);
     if (null == nodeInstances) {

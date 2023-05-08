@@ -33,7 +33,7 @@ import org.apache.linkis.engineplugin.spark.imexport.CsvRelation
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
 import org.apache.linkis.governance.common.paser.PythonCodeParser
 import org.apache.linkis.scheduler.executer.{ExecuteResponse, SuccessExecuteResponse}
-import org.apache.linkis.storage.resultset.ResultSetWriter
+import org.apache.linkis.storage.resultset.ResultSetWriterFactory
 
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.io.IOUtils
@@ -316,7 +316,7 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     val outStr = lineOutputStream.toString()
     if (outStr.nonEmpty) {
       val output = Utils.tryQuietly(
-        ResultSetWriter
+        ResultSetWriterFactory
           .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
       )
       val res = if (output != null) output.map(x => x.toString).toList.mkString("\n") else ""

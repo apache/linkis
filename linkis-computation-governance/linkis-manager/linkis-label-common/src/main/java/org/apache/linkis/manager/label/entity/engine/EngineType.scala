@@ -61,6 +61,8 @@ object EngineType extends Enumeration with Logging {
 
   val SEATUNNEL = Value("seatunnel")
 
+  val IMPALA = Value("impala")
+
   def mapFsTypeToEngineType(fsType: String): String = {
     fsType match {
       case "file" =>

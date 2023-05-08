@@ -20,6 +20,10 @@ package org.apache.linkis.engineplugin.trino.executor
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
+import org.apache.linkis.engineconn.common.password.{
+  CommandPasswordCallback,
+  StaticPasswordCallback
+}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -32,10 +36,6 @@ import org.apache.linkis.engineplugin.trino.exception.{
   TrinoStateInvalidException
 }
 import org.apache.linkis.engineplugin.trino.interceptor.PasswordInterceptor
-import org.apache.linkis.engineplugin.trino.password.{
-  CommandPasswordCallback,
-  StaticPasswordCallback
-}
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
 import org.apache.linkis.engineplugin.trino.utils.{TrinoCode, TrinoSQLHook}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
@@ -44,7 +44,6 @@ import org.apache.linkis.manager.common.entity.resource.{
   LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -55,7 +54,8 @@ import org.apache.linkis.scheduler.executer.{
   ExecuteResponse,
   SuccessExecuteResponse
 }
-import org.apache.linkis.storage.domain.Column
+import org.apache.linkis.storage.domain.{Column, DataType}
+import org.apache.linkis.storage.domain.DataType.DateType
 import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
@@ -404,7 +404,7 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
         throw new RuntimeException("trino columns is null.")
       }
       val columns = results.getColumns.asScala
-        .map(column => Column(column.getName, column.getType, ""))
+        .map(column => new Column(column.getName, DataType.toDataType(column.getType), ""))
         .toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))

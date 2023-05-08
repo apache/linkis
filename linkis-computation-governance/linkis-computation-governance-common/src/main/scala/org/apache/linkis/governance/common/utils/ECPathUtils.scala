@@ -17,6 +17,8 @@
 
 package org.apache.linkis.governance.common.utils
 
+import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.time.DateFormatUtils
 
@@ -25,24 +27,32 @@ import java.nio.file.Paths
 
 object ECPathUtils {
 
-  def getECWOrkDirPathSuffix(
-      user: String,
-      ticketId: String,
-      engineType: String,
-      timeStamp: Long = System.currentTimeMillis()
+  def getECWOrkDirPathSuffix(user: String, ticketId: String, engineType: String): String = {
+    Paths
+      .get(
+        user,
+        DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"),
+        if (StringUtils.isBlank(engineType)) "" else engineType
+      )
+      .toFile
+      .getPath + File.separator + ticketId
+
+  }
+
+  def getECLogDirSuffix(
+      engineTypeLabel: EngineTypeLabel,
+      userCreatorLabel: UserCreatorLabel,
+      ticketId: String
   ): String = {
-    val suffix = if (StringUtils.isBlank(engineType)) {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"))
-        .toFile
-        .getPath
-    } else {
-      Paths
-        .get(user, DateFormatUtils.format(System.currentTimeMillis(), "yyyyMMdd"), engineType)
-        .toFile
-        .getPath
+    if (null == engineTypeLabel || null == userCreatorLabel) {
+      return ""
     }
-    suffix + File.separator + ticketId
+    val suffix = ECPathUtils.getECWOrkDirPathSuffix(
+      userCreatorLabel.getUser,
+      ticketId,
+      engineTypeLabel.getEngineType
+    )
+    suffix + File.separator + "logs"
   }
 
 }

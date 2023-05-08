@@ -17,7 +17,7 @@
 
 package org.apache.linkis.manager.rm.external.yarn
 
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -41,6 +41,8 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json
+
 import java.text.MessageFormat
 import java.util
 import java.util.Base64
@@ -49,9 +51,8 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-import org.json4s.JsonAST._
-import org.json4s.JValue
-import org.json4s.jackson.JsonMethods.parse
+import com.jayway.jsonpath.JsonPath
+import com.jayway.jsonpath.ReadContext
 
 class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
@@ -77,31 +78,26 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     logger.info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
-    def getYarnResource(jValue: Option[JValue]) = jValue.map(r =>
-      new YarnResource(
-        (r \ "memory").asInstanceOf[JInt].values.toLong * 1024L * 1024L,
-        (r \ "vCores").asInstanceOf[JInt].values.toInt,
-        0,
-        queueName
-      )
-    )
-
-    def maxEffectiveHandle(queueValue: Option[JValue]): Option[YarnResource] = {
+    def maxEffectiveHandle(queueValue: Option[Any]): Option[YarnResource] = {
       val metrics = getResponseByUrl("metrics", rmWebAddress)
-      val totalResouceInfoResponse = (
-        (metrics \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong,
-        (metrics \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong
-      )
+        .get("clusterMetrics")
+        .asInstanceOf[util.Map[String, Object]]
+      val totalMB = metrics.get("totalMB").asInstanceOf[Integer]
+      val totalVirtualCores = metrics.get("totalVirtualCores").asInstanceOf[Integer]
+      val totalResouceInfoResponse = (totalMB, totalVirtualCores)
       queueValue.map(r => {
-        val absoluteCapacity = r \ "absoluteCapacity" match {
-          case jDecimal: JDecimal =>
-            jDecimal.values.toDouble
-          case jDouble: JDouble =>
-            jDouble.values
-          case _ =>
+        val absoluteCapacity = r.asInstanceOf[util.Map[String, Object]].get("absoluteCapacity")
+
+        val effectiveResource = {
+          if (absoluteCapacity.isInstanceOf[BigDecimal]) {
+            absoluteCapacity.asInstanceOf[BigDecimal].toDouble
+          } else if (absoluteCapacity.isInstanceOf[Double]) {
+            absoluteCapacity.asInstanceOf[Double]
+          } else {
             0d
+          }
         }
-        val effectiveResource = absoluteCapacity
+
         new YarnResource(
           math
             .floor(effectiveResource * totalResouceInfoResponse._1 * 1024L * 1024L / 100)
@@ -115,77 +111,96 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     var realQueueName = "root." + queueName
 
-    def getQueue(queues: JValue): Option[JValue] = queues match {
-      case JArray(queue) =>
-        queue.foreach { q =>
-          val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
+    def getQueue(queues: Any): Option[Any] = {
+      if (queues.isInstanceOf[util.List[Any]]) {
+        queues.asInstanceOf[util.List[Any]].asScala.foreach { q =>
+          val yarnQueueName = JsonPath.read(q, "$.queueName").asInstanceOf[String]
           if (yarnQueueName == realQueueName) return Some(q)
           else if (realQueueName.startsWith(yarnQueueName + ".")) {
             return getQueue(getChildQueues(q))
           }
         }
         None
-      case JObject(queue) =>
+      } else if (queues.isInstanceOf[util.Map[Any, Any]]) {
         if (
-            queue
+            queues
+              .asInstanceOf[util.Map[Any, Any]]
+              .asScala
               .find(_._1 == "queueName")
-              .exists(_._2.asInstanceOf[JString].values == realQueueName)
+              .exists(_._2.toString == realQueueName)
         ) {
           Some(queues)
         } else {
-          val childQueues = queue.find(_._1 == "childQueues")
+          val childQueues =
+            queues.asInstanceOf[util.Map[Any, Any]].asScala.find(_._1 == "childQueues")
           if (childQueues.isEmpty) None
           else getQueue(childQueues.map(_._2).get)
         }
-      case _ => None
+      } else {
+        None
+      }
     }
 
-    def getChildQueues(resp: JValue): JValue = {
-      val queues = resp \ "childQueues" \ "queue"
+    def getChildQueues(resp: Any): Any = {
+      val ctx = JsonPath.parse(resp)
+      val childQueuesValue = ctx.read("$.childQueues")
+      val queues =
+        ctx.read("$.childQueues.queue").asInstanceOf[util.List[Any]]
 
-      if (
-          queues != null && queues != JNull && queues != JNothing && null != queues.children && queues.children.nonEmpty
-      ) {
+      if (queues != null && queues.size() > 0) {
         logger.info(s"queues:$queues")
         queues
-      } else resp \ "childQueues"
+      } else childQueuesValue
     }
 
-    def getQueueOfCapacity(queues: JValue): Option[JValue] = queues match {
-      case JArray(queue) =>
-        queue.foreach { q =>
-          val yarnQueueName = (q \ "queueName").asInstanceOf[JString].values
+    def getQueueOfCapacity(queues: Any): Option[Any] = {
+      if (queues.isInstanceOf[util.List[Any]]) {
+        queues.asInstanceOf[util.List[Any]].asScala.foreach { q =>
+          val ctx = JsonPath.parse(q)
+          val yarnQueueName = ctx.read("$.queueName").asInstanceOf[String]
+
           if (yarnQueueName == realQueueName) return Some(q)
-          else if ((q \ "queues").toOption.nonEmpty) {
+          else if (ctx.read("$.queues").asInstanceOf[String].nonEmpty) {
             val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(q))
-            if (matchQueue.nonEmpty) return matchQueue
+            if (matchQueue.nonEmpty) return Some(matchQueue)
           }
         }
         None
-      case JObject(queue) =>
+      } else if (queues.isInstanceOf[util.Map[Any, Any]]) {
+        val queuesValue = JsonPath.read(queues, "$.queues").asInstanceOf[String]
         if (
-            queue
+            queues
+              .asInstanceOf[util.Map[Any, Any]]
+              .asScala
               .find(_._1 == "queueName")
-              .exists(_._2.asInstanceOf[JString].values == realQueueName)
+              .exists(_._2.toString == realQueueName)
         ) {
           return Some(queues)
-        } else if ((queues \ "queues").toOption.nonEmpty) {
+        } else if (queuesValue.nonEmpty) {
           val matchQueue = getQueueOfCapacity(getChildQueuesOfCapacity(queues))
           if (matchQueue.nonEmpty) return matchQueue
         }
         None
-      case _ => None
+      } else {
+        None
+      }
     }
 
-    def getChildQueuesOfCapacity(resp: JValue) = resp \ "queues" \ "queue"
+    def getChildQueuesOfCapacity(resp: Any) = {
+      JsonPath.read(resp, "$.queues.queue").asInstanceOf[Any]
+    }
 
     def getResources() = {
       val resp = getResponseByUrl("scheduler", rmWebAddress)
+      val ctx = JsonPath.parse(resp)
+      val schedulerInfoValue =
+        ctx.read("$.scheduler.schedulerInfo").asInstanceOf[util.Map[String, Object]]
       val schedulerType =
-        (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
+        ctx.read("$.scheduler.schedulerInfo.type").asInstanceOf[String]
+
       if ("capacityScheduler".equals(schedulerType)) {
         realQueueName = queueName
-        val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
+        val childQueues = getChildQueuesOfCapacity(schedulerInfoValue)
         val queue = getQueueOfCapacity(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
@@ -194,9 +209,17 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+
+        val resourceCtx = JsonPath.parse(queue.get)
+        val usedMemory = resourceCtx.read("$.resourcesUsed.memory").asInstanceOf[Integer]
+        val usedvCores = resourceCtx.read("$.resourcesUsed.vCores").asInstanceOf[Integer]
+        val resourcesUsed = new YarnResource(usedMemory * 1024L * 1024L, usedvCores, 0, queueName)
+
+        (maxEffectiveHandle(queue).get, resourcesUsed)
       } else if ("fairScheduler".equals(schedulerType)) {
-        val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
+        val rootQueueValue =
+          ctx.read("$.scheduler.schedulerInfo.rootQueue").asInstanceOf[util.Map[String, Object]]
+        val childQueues = getChildQueues(rootQueueValue)
         val queue = getQueue(childQueues)
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
@@ -205,10 +228,18 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        (
-          getYarnResource(queue.map(_ \ "maxResources")).get,
-          getYarnResource(queue.map(_ \ "usedResources")).get
-        )
+        val resourceCtx = JsonPath.parse(queue)
+        val maxResourceMemory = resourceCtx.read("$.maxResources.memory").asInstanceOf[Integer]
+        val maxResourcevCores = resourceCtx.read("$.maxResources.vCores").asInstanceOf[Integer]
+        val maxResources =
+          new YarnResource(maxResourceMemory * 1024L * 1024L, maxResourcevCores, 0, queueName)
+
+        val usedResourceMemory = resourceCtx.read("$.usedResources.memory").asInstanceOf[Integer]
+        val usedResourcevCores = resourceCtx.read("$.usedResources.vCores").asInstanceOf[Integer]
+        val usedResourcesUsed =
+          new YarnResource(usedResourceMemory * 1024L * 1024L, usedResourcevCores, 0, queueName)
+
+        (maxResources, usedResourcesUsed)
       } else {
         logger.debug(
           s"only support fairScheduler or capacityScheduler, schedulerType: $schedulerType , response: " + resp
@@ -245,38 +276,37 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
-    def getYarnResource(jValue: Option[JValue]) = jValue.map(r =>
-      new YarnResource(
-        (r \ "allocatedMB").asInstanceOf[JInt].values.toLong * 1024L * 1024L,
-        (r \ "allocatedVCores").asInstanceOf[JInt].values.toInt,
-        0,
-        queueName
-      )
-    )
-
     val realQueueName = "root." + queueName
 
     def getAppInfos(): Array[ExternalAppInfo] = {
-      val resp = getResponseByUrl("apps", rmWebAddress)
-      resp \ "apps" \ "app" match {
-        case JArray(apps) =>
-          val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
-          apps.foreach { app =>
-            val yarnQueueName = (app \ "queue").asInstanceOf[JString].values
-            val state = (app \ "state").asInstanceOf[JString].values
-            if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
-              val appInfo = new YarnAppInfo(
-                (app \ "id").asInstanceOf[JString].values,
-                (app \ "user").asInstanceOf[JString].values,
-                state,
-                (app \ "applicationType").asInstanceOf[JString].values,
-                getYarnResource(Some(app)).get
-              )
-              appInfoBuffer.append(appInfo)
-            }
+      val apps = getResponseByUrl("apps", rmWebAddress).get("apps")
+      val app = apps.asInstanceOf[util.Map[String, Object]].get("app")
+
+      if (app.isInstanceOf[util.List[Any]]) {
+        val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
+        app.asInstanceOf[util.List[Any]].asScala.foreach { app =>
+          val appCtx = JsonPath.parse(app)
+          val queueValue = appCtx.read("$.queue").asInstanceOf[String]
+          val stateValue = appCtx.read("$.state").asInstanceOf[String]
+          val idValue = appCtx.read("$.id").asInstanceOf[String]
+          val userValue = appCtx.read("$.user").asInstanceOf[String]
+          val applicationTypeValue =
+            appCtx.read("$.applicationType").asInstanceOf[String]
+          val yarnQueueName = queueValue
+          val allocatedMB = appCtx.read("$.allocatedMB").asInstanceOf[Integer]
+          val allocatedVCores = appCtx.read("$.allocatedVCores").asInstanceOf[Integer]
+          val yarnResource =
+            new YarnResource(allocatedMB * 1024L * 1024L, allocatedVCores, 0, queueName)
+
+          val state = stateValue
+          if (yarnQueueName == realQueueName && (state == "RUNNING" || state == "ACCEPTED")) {
+            val appInfo = YarnAppInfo(idValue, userValue, state, applicationTypeValue, yarnResource)
+            appInfoBuffer.append(appInfo)
           }
-          appInfoBuffer.toArray
-        case _ => new ArrayBuffer[YarnAppInfo](0).toArray
+        }
+        appInfoBuffer.toArray
+      } else {
+        new ArrayBuffer[YarnAppInfo](0).toArray
       }
     }
 
@@ -294,7 +324,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
   private def getResponseByUrl(url: String, rmWebAddress: String) = {
     val httpGet = new HttpGet(rmWebAddress + "/ws/v1/cluster/" + url)
     httpGet.addHeader("Accept", "application/json")
-    val authorEnable: Any = this.provider.getConfigMap.get("authorEnable");
+    val authorEnable: Any = this.provider.getConfigMap.get("authorEnable")
     var httpResponse: HttpResponse = null
     authorEnable match {
       case flag: Boolean =>
@@ -303,7 +333,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         }
       case _ =>
     }
-    val kerberosEnable: Any = this.provider.getConfigMap.get("kerberosEnable");
+    val kerberosEnable: Any = this.provider.getConfigMap.get("kerberosEnable")
     kerberosEnable match {
       case flag: Boolean =>
         if (flag) {
@@ -313,7 +343,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
           val requestKuu = new RequestKerberosUrlUtils(principalName, keytabPath, krb5Path, false)
           val response =
             requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url, principalName)
-          httpResponse = response;
+          httpResponse = response
         } else {
           val response = YarnResourceRequester.httpClient.execute(httpGet)
           httpResponse = response
@@ -322,7 +352,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         val response = YarnResourceRequester.httpClient.execute(httpGet)
         httpResponse = response
     }
-    parse(EntityUtils.toString(httpResponse.getEntity()))
+    JsonUtils.jackson.readValue(
+      EntityUtils.toString(httpResponse.getEntity()),
+      classOf[util.Map[String, Object]]
+    )
   }
 
   def getAndUpdateActiveRmWebAddress(haAddress: String): String = {
@@ -340,15 +373,17 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             .split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue)
             .foreach(address => {
               Utils.tryCatch {
-                val response = getResponseByUrl("info", address)
-                response \ "clusterInfo" \ "haState" match {
-                  case state: JString =>
-                    if (HASTATE_ACTIVE.equalsIgnoreCase(state.s)) {
-                      activeAddress = address
-                    } else {
-                      logger.warn(s"Resourcemanager : ${address} haState : ${state.s}")
-                    }
-                  case _ =>
+                val haState = getResponseByUrl("info", address)
+                  .get("clusterInfo")
+                  .asInstanceOf[util.Map[String, Object]]
+                  .get("haState")
+
+                if (haState.isInstanceOf[String]) {
+                  if (HASTATE_ACTIVE.equalsIgnoreCase(haState.toString)) {
+                    activeAddress = address
+                  } else {
+                    logger.warn(s"Resourcemanager : ${address} haState : ${haState}")
+                  }
                 }
               } { case e: Exception =>
                 logger.error("Get Yarn resourcemanager info error, " + e.getMessage, e)

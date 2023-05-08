@@ -69,10 +69,6 @@
           <groupId>org.apache.linkis</groupId>
           <artifactId>linkis-hadoop-common</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.json4s</groupId>
-          <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
 

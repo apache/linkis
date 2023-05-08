@@ -28,6 +28,7 @@ public class PersistenceNodeEntity implements Node {
   private ServiceInstance serviceInstance;
   private String owner;
   private String mark;
+  private String identifier;
   private NodeStatus nodeStatus;
 
   private Date startTime;
@@ -86,6 +87,16 @@ public class PersistenceNodeEntity implements Node {
   @Override
   public String getMark() {
     return this.mark;
+  }
+
+  @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   public void setOwner(String owner) {

@@ -24,7 +24,7 @@ import org.apache.linkis.httpclient.dws.response.DWSResult
 
 import scala.beans.BeanProperty
 
-@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/(\\S+)")
+@DWSHttpMessageResult("/api/rest_j/v\\d+/data-source-manager/info/(\\d+)")
 class GetInfoByDataSourceIdResult extends DWSResult {
   @BeanProperty var info: java.util.Map[String, Any] = _
 

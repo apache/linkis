@@ -23,7 +23,6 @@ import org.apache.linkis.engineplugin.server.localize.EngineConnBmlResourceGener
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel
-import org.apache.linkis.storage.io.IOClient.logger
 
 import org.apache.commons.lang3.StringUtils
 
@@ -31,7 +30,11 @@ import java.io.File
 import java.nio.file.Paths
 import java.text.MessageFormat
 
+import org.slf4j.LoggerFactory
+
 abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResourceGenerator {
+
+  private val logger = LoggerFactory.getLogger(classOf[AbstractEngineConnBmlResourceGenerator])
 
   if (!new File(getEngineConnsHome).exists) {
     throw new EngineConnPluginErrorException(
@@ -105,7 +108,7 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
     val engineConnDistHome = Paths.get(getEngineConnsHome, engineConnType, "dist").toFile.getPath
     val engineConnDistHomeFile = new File(engineConnDistHome)
     checkEngineConnDistHome(engineConnDistHomeFile)
-    val children = engineConnDistHomeFile.listFiles()
+    val children = engineConnDistHomeFile.listFiles().filter(!_.isHidden)
     if (children.isEmpty) {
       throw new EngineConnPluginErrorException(
         DIST_IS_EMPTY.getErrorCode,
@@ -117,6 +120,6 @@ abstract class AbstractEngineConnBmlResourceGenerator extends EngineConnBmlResou
   }
 
   def getEngineConnTypeListFromDisk: Array[String] =
-    new File(getEngineConnsHome).listFiles().map(_.getName)
+    new File(getEngineConnsHome).listFiles().filter(!_.isHidden).map(_.getName)
 
 }

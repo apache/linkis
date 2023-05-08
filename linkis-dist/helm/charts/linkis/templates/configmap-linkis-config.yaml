@@ -227,8 +227,8 @@ data:
     wds.linkis.server.mybatis.typeAliasesPackage=
     wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao,org.apache.linkis.engineplugin.server.dao
 
-    wds.linkis.engineConn.plugin.cache.expire-in-seconds=100000
-    wds.linkis.engineConn.dist.load.enable=true
+    linkis.engineConn.plugin.cache.expire-in-seconds=100000
+    wds.linkis.engineconn.dist.load.enable=true
     #wds.linkis.engineconn.home=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
     #wds.linkis.engineconn.plugin.loader.store.path=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
 
@@ -260,8 +260,8 @@ data:
     wds.linkis.server.mybatis.mapperLocations=classpath:org/apache/linkis/engineplugin/server/dao/impl/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=
     wds.linkis.server.mybatis.BasePackage=org.apache.linkis.engineplugin.server.dao
-    wds.linkis.engineConn.plugin.cache.expire-in-seconds=100000
-    wds.linkis.engineConn.dist.load.enable=true
+    linkis.engineConn.plugin.cache.expire-in-seconds=100000
+    wds.linkis.engineconn.dist.load.enable=true
     #wds.linkis.engineconn.home=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
     #wds.linkis.engineconn.plugin.loader.store.path=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
 

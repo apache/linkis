@@ -77,7 +77,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
+  public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) {
     if (null == nodeMetrics.getServiceInstance()) {
       logger.warn(
           "The request of update node metrics was ignored, because the node metrics service instance is null");

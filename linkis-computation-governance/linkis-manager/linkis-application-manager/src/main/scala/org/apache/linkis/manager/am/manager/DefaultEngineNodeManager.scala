@@ -25,7 +25,12 @@ import org.apache.linkis.manager.am.exception.{AMErrorCode, AMErrorException}
 import org.apache.linkis.manager.am.locker.EngineNodeLocker
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode, ScoreServiceInstance}
+import org.apache.linkis.manager.common.entity.node.{
+  AMEngineNode,
+  EngineNode,
+  RMNode,
+  ScoreServiceInstance
+}
 import org.apache.linkis.manager.common.entity.persistence.PersistenceLabel
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
@@ -105,7 +110,6 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     val heartMsg = engine.getNodeHeartbeatMsg()
     engineNode.setNodeHealthyInfo(heartMsg.getHealthyInfo)
     engineNode.setNodeOverLoadInfo(heartMsg.getOverLoadInfo)
-    engineNode.setNodeResource(heartMsg.getNodeResource)
     engineNode.setNodeStatus(heartMsg.getStatus)
     engineNode
   }
@@ -125,7 +129,9 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
       toState: NodeStatus
   ): Unit = {}
 
-  override def updateEngine(engineNode: EngineNode): Unit = {}
+  override def updateEngine(engineNode: EngineNode): Unit = {
+    nodeManagerPersistence.updateNodeInstance(engineNode)
+  }
 
   override def switchEngine(engineNode: EngineNode): EngineNode = {
     null

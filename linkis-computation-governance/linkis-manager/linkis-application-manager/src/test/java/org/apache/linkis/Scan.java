@@ -17,9 +17,10 @@
 
 package org.apache.linkis;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
+import org.mybatis.spring.annotation.MapperScan;
+
 @EnableAutoConfiguration
-@MapperScan({"org.apache.linkis.engineplugin.server","org.apache.linkis.manager.rm.external"})
+@MapperScan({"org.apache.linkis.engineplugin.server", "org.apache.linkis.manager.rm.external"})
 public class Scan {}

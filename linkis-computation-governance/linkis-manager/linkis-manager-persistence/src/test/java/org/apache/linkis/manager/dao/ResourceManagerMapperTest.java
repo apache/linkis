@@ -38,7 +38,7 @@ class ResourceManagerMapperTest extends BaseDaoTest {
   @Test
   PersistenceResource registerResource() {
     PersistenceResource persistenceResource = new PersistenceResource();
-//    persistenceResource.setId(1);
+    //    persistenceResource.setId(1);
     persistenceResource.setMaxResource("testmax");
     persistenceResource.setMinResource("mintest");
     persistenceResource.setLeftResource("left");
@@ -46,7 +46,8 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setTicketId("1");
     persistenceResource.setResourceType("testtype");
     resourceManagerMapper.registerResource(persistenceResource);
-    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(persistenceResource.getId());
+    PersistenceResource persistenceResources =
+        resourceManagerMapper.getResourceById(persistenceResource.getId());
     assertThat(persistenceResources.getId())
         .usingRecursiveComparison()
         .isEqualTo(persistenceResource.getId());
@@ -65,7 +66,8 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setResourceType("testtype");
     persistenceResource.setUpdateTime(new Date());
     resourceManagerMapper.nodeResourceUpdate("1", persistenceResource);
-    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(insert.getId());
+    PersistenceResource persistenceResources =
+        resourceManagerMapper.getResourceById(insert.getId());
     assertTrue(persistenceResources.getMaxResource().equals(persistenceResource.getMaxResource()));
   }
 

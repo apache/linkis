@@ -18,22 +18,22 @@
 package org.apache.linkis.basedatamanager.server.dao;
 
 import org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DatasourceTypeKeyMapperTest extends BaseDaoTest {
 
-    @Autowired
-    DatasourceTypeKeyMapper datasourceTypeKeyMapper;
+  @Autowired DatasourceTypeKeyMapper datasourceTypeKeyMapper;
 
-    @Test
-    void getListByPage() {
-        List<DatasourceTypeEntity> list = datasourceTypeKeyMapper.getListByPage("Host", 1);
-        assertTrue(list.size() > 0);
-    }
+  @Test
+  void getListByPage() {
+    List<DatasourceTypeEntity> list = datasourceTypeKeyMapper.getListByPage("Host", 1);
+    assertTrue(list.size() > 0);
+  }
 }

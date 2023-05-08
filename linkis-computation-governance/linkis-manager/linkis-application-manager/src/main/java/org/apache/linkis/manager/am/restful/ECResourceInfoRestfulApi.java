@@ -271,7 +271,7 @@ public class ECResourceInfoRestfulApi {
             JsonUtils.jackson()
                 .readValue(ecInstancesParam.toString(), new TypeReference<List<String>>() {});
       } catch (JsonProcessingException e) {
-        return Message.error("parameters:instanceName parsing failed(请求参数【instanceName】解析失败)");
+        return Message.error("parameters:instanceName parsing failed(请求参数【ecInstances】解析失败)");
       }
     }
     logger.info(

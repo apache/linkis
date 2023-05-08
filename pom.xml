@@ -999,11 +999,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${postgresql.connector.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1081,6 +1076,12 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>${snakeyaml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.connector.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

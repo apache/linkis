@@ -113,10 +113,6 @@
       <artifactId>linkis-basedata-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-    </dependency>
   </dependencies>
 
   <build>

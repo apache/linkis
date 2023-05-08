@@ -15,12 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.exception;
+package org.apache.linkis.engineplugin.trino.utils;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.commons.lang3.StringUtils;
 
-public class TrinoModifySchemaException2 extends ErrorException {
-    public TrinoModifySchemaException2(String message) {
-        super(60014, message);
+public class TrinoSQLHook {
+  public static String preExecuteHook(String code) {
+    return replaceBackQuoted(code);
+  }
+
+  private static String replaceBackQuoted(String code) {
+    if (StringUtils.isNotBlank(code)) {
+      return code.replaceAll("`", "\"");
+    } else {
+      return code;
     }
+  }
 }

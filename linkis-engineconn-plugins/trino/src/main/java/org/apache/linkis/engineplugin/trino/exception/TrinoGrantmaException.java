@@ -15,23 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.builder;
+package org.apache.linkis.engineplugin.trino.exception;
 
-import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration;
-import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration2;
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.common.exception.ErrorException;
 
-public class TrinoProcessEngineConnLaunchBuilder2 extends JavaProcessEngineConnLaunchBuilder {
-
-    @Override
-    public String getEngineStartUser(UserCreatorLabel label) {
-        if (TrinoConfiguration2.TRINO_USER_ISOLATION_MODE.getValue()) {
-            // Using user label if user is blank
-            return label.getUser();
-        } else {
-            return TrinoConfiguration2.TRINO_DEFAULT_USER.getValue();
-        }
-    }
-
+public class TrinoGrantmaException extends ErrorException {
+  public TrinoGrantmaException(String message) {
+    super(60015, message);
+  }
 }

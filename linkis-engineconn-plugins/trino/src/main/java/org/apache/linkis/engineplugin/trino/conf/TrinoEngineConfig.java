@@ -29,26 +29,25 @@ import java.util.Map;
 
 import scala.Tuple2;
 
-public class TrinoEngineConfig2
-        extends RPCMapCache<Tuple2<UserCreatorLabel, EngineTypeLabel>, String, String> {
+public class TrinoEngineConfig
+    extends RPCMapCache<Tuple2<UserCreatorLabel, EngineTypeLabel>, String, String> {
 
-    public TrinoEngineConfig2() {
-        super(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());
+  public TrinoEngineConfig() {
+    super(Configuration.CLOUD_CONSOLE_CONFIGURATION_SPRING_APPLICATION_NAME().getValue());
+  }
+
+  @Override
+  public CacheableProtocol createRequest(Tuple2<UserCreatorLabel, EngineTypeLabel> labelTuple) {
+    return new RequestQueryEngineConfigWithGlobalConfig(labelTuple._1(), labelTuple._2(), null);
+  }
+
+  @Override
+  public Map<String, String> createMap(Object obj) {
+    if (obj instanceof ResponseQueryConfig) {
+      ResponseQueryConfig response = (ResponseQueryConfig) obj;
+      return response.getKeyAndValue();
+    } else {
+      return null;
     }
-
-    @Override
-    public CacheableProtocol createRequest(Tuple2<UserCreatorLabel, EngineTypeLabel> labelTuple) {
-        return new RequestQueryEngineConfigWithGlobalConfig(labelTuple._1(), labelTuple._2(), null);
-    }
-
-    @Override
-    public Map<String, String> createMap(Object obj) {
-        if (obj instanceof ResponseQueryConfig) {
-            ResponseQueryConfig response = (ResponseQueryConfig) obj;
-            return response.getKeyAndValue();
-        } else {
-            return null;
-        }
-    }
-
+  }
 }

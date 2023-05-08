@@ -15,22 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.utils
+package org.apache.linkis.engineplugin.trino.exception;
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.common.exception.ErrorException;
 
-object TrinoSQLHook {
-
-  def preExecuteHook(code: String): String = {
-    replaceBackQuoted(code)
+public class TrinoStateInvalidException extends ErrorException {
+  public TrinoStateInvalidException(String message) {
+    super(60011, message);
   }
-
-  private def replaceBackQuoted(code: String): String = {
-    if (StringUtils.isNotBlank(code)) {
-      code.replaceAll("`", "\"")
-    } else {
-      code
-    }
-  }
-
 }

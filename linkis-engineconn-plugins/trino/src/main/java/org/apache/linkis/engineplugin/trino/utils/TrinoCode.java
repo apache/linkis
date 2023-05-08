@@ -19,28 +19,29 @@ package org.apache.linkis.engineplugin.trino.utils;
 
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration;
-import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration2;
 import org.apache.linkis.engineplugin.trino.exception.TrinoGrantmaException;
 import org.apache.linkis.engineplugin.trino.exception.TrinoModifySchemaException;
 
-public class TrinoCode2 {
-    private static final String SPACE = " ";
+public class TrinoCode {
+  private static final String SPACE = " ";
 
-    private static boolean willGrant(String code) {
-        return code.matches("(?=.*grant)(?=.*on)(?=.*to)^.*$");
-    }
+  private static boolean willGrant(String code) {
+    return code.matches("(?=.*grant)(?=.*on)(?=.*to)^.*$");
+  }
 
-    private static boolean willModifySchema(String code) {
-        String trimmedCode = code.replaceAll("\n", SPACE).replaceAll("\\s+", SPACE).toLowerCase();
-        return trimmedCode.contains("create schema") || trimmedCode.contains("drop schema") || trimmedCode.contains("alter schema");
-    }
+  private static boolean willModifySchema(String code) {
+    String trimmedCode = code.replaceAll("\n", SPACE).replaceAll("\\s+", SPACE).toLowerCase();
+    return trimmedCode.contains("create schema")
+        || trimmedCode.contains("drop schema")
+        || trimmedCode.contains("alter schema");
+  }
 
-    public static void checkCode(String code) throws ErrorException {
-        if (TrinoConfiguration2.TRINO_FORBID_MODIFY_SCHEMA.getValue() && willModifySchema(code)) {
-            throw new TrinoModifySchemaException("CREATE, ALTER, DROP SCHEMA is not allowed");
-        }
-        if (TrinoConfiguration2.TRINO_FORBID_GRANT.getValue() && willGrant(code)) {
-            throw new TrinoGrantmaException("Grant schema or table is not allowed");
-        }
+  public static void checkCode(String code) throws ErrorException {
+    if (TrinoConfiguration.TRINO_FORBID_MODIFY_SCHEMA.getValue() && willModifySchema(code)) {
+      throw new TrinoModifySchemaException("CREATE, ALTER, DROP SCHEMA is not allowed");
     }
+    if (TrinoConfiguration.TRINO_FORBID_GRANT.getValue() && willGrant(code)) {
+      throw new TrinoGrantmaException("Grant schema or table is not allowed");
+    }
+  }
 }

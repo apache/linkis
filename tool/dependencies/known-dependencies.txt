@@ -732,3 +732,4 @@ aws-java-sdk-kms-1.11.792.jar
 aws-java-sdk-core-1.11.792.jar
 jmespath-java-1.11.792.jar
 ion-java-1.0.2.jar
+postgresql-42.2.20

@@ -119,7 +119,7 @@
     <sqoop.version>1.4.6</sqoop.version>
     <spark.version>3.2.1</spark.version>
     <hive.version>3.1.3</hive.version>
-    <hadoop.version>3.3.4</hadoop.version>
+    <hadoop.version>2.7.2</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
     <spark.hadoop.groupid>org.apache.hadoop</spark.hadoop.groupid>
@@ -192,8 +192,8 @@
     <!-- dev env -->
     <java.version>1.8</java.version>
     <maven.version>3.5.0</maven.version>
-    <scala.version>2.12.17</scala.version>
-    <scala.binary.version>2.12</scala.binary.version>
+    <scala.version>2.11.12</scala.version>
+    <scala.binary.version>2.11</scala.binary.version>
     <ant.version>1.10.12</ant.version>
 
     <!-- maven plugin versions -->
@@ -219,6 +219,7 @@
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
     <jacoco.skip>false</jacoco.skip>
+    <postgresql.connector.version>42.2.20</postgresql.connector.version>
 
   </properties>
 
@@ -1030,6 +1031,12 @@
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <version>${snakeyaml.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.connector.version}</version>
     </dependency>
   </dependencies>
 

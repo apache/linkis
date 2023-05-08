@@ -87,3 +87,31 @@ CREATE TABLE `linkis_ps_configuration_category`
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`label_id`)
 );
+
+DROP TABLE IF EXISTS `linkis_cg_user_ip_config`;
+CREATE TABLE `linkis_cg_user_ip_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50) NOT NULL,
+  `creator` varchar(50) NOT NULL,
+  `ip_list` text NOT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `desc` varchar(100) NOT NULL,
+  `bussiness_user` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_creator_uic` (`user`,`creator`)
+);
+
+DROP TABLE IF EXISTS `linkis_cg_tenant_label_config`;
+CREATE TABLE `linkis_cg_tenant_label_config` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `user` varchar(50)  NOT NULL,
+  `creator` varchar(50)  NOT NULL,
+  `tenant_value` varchar(128)  NOT NULL,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `desc` varchar(100) NOT NULL,
+  `bussiness_user` varchar(50)  NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_user_creator_tlc` (`user`,`creator`)
+);

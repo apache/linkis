@@ -60,7 +60,7 @@
     </select>
 
     <select id="getAllContextMapByKey" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND `key` LIKE "%"#{key}"%"
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = #{contextID.contextId} AND `key` LIKE CONCAT('%',#{key},'%')
     </select>
 
 

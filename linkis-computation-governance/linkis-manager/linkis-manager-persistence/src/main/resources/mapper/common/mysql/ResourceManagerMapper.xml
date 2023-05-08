@@ -87,17 +87,9 @@
         AND B.service_instance = #{instance}
         )
     </delete>
+
     <delete id="deleteResourceByTicketId">
-        SELECT *
-        FROM linkis_cg_manager_linkis_resources
-        WHERE resourceType = #{resourceType}
-        AND id IN (
-        SELECT resource_id
-        FROM linkis_cg_manager_label_resource A
-        JOIN linkis_cg_manager_label_service_instance B
-        ON A.label_id = B.label_id
-        AND B.service_instance = #{instance}
-        )
+        delete from linkis_cg_manager_linkis_resources where ticketId = #{ticketId}
     </delete>
 
     <select id="getResourceByServiceInstance" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">

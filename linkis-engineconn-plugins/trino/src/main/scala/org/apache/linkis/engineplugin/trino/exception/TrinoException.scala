@@ -24,8 +24,6 @@ case class TrinoStateInvalidException(message: String)
 
 case class TrinoClientException(message: String) extends ErrorException(60012, message: String)
 
-case class TrinoSourceGroupException(message: String) extends ErrorException(60013, message: String)
-
 case class TrinoModifySchemaException(message: String)
     extends ErrorException(60014, message: String)
 

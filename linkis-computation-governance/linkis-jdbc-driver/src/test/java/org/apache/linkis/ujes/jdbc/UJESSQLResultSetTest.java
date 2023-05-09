@@ -33,8 +33,8 @@ import org.junit.jupiter.api.Test;
 
 public class UJESSQLResultSetTest {
 
-  private static UJESSQLConnection conn;
-  private UJESSQLPreparedStatement preStatement;
+  private static LinkisSQLConnection conn;
+  private LinkisSQLPreparedStatement preStatement;
   private UJESSQLResultSet resultSet;
   private UJESSQLResultSetMetaData metaData;
 

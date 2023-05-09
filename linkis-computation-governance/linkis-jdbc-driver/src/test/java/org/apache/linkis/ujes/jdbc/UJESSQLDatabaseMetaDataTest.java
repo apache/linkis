@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UJESSQLDatabaseMetaDataTest {
-  private static UJESSQLConnection conn;
+  private static LinkisSQLConnection conn;
   private static UJESSQLDatabaseMetaData dbmd;
 
   @BeforeAll

@@ -18,8 +18,12 @@
 package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
+import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.ujes.client.UJESClient
-import org.apache.linkis.ujes.client.request.JobExecuteAction.EngineType
+import org.apache.linkis.ujes.client.request.JobSubmitAction
+import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
 
 import org.apache.commons.lang3.StringUtils
@@ -44,26 +48,41 @@ import java.sql.{
 import java.util.Properties
 import java.util.concurrent.Executor
 
-import scala.collection.{mutable, JavaConversions}
+import scala.collection.JavaConverters._
 
-class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Properties)
+class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Properties)
     extends Connection
     with Logging {
-  private[jdbc] var creator = "IDE"
+
+  private[jdbc] var creator = "JDBCDriver"
+
+  private[jdbc] var tableauFlag = false
 
   private[jdbc] val variableMap = {
     val params = props.getProperty(PARAMS)
-    val map = new mutable.HashMap[String, AnyRef]
+    val map = new util.HashMap[String, AnyRef]
     if (params != null) {
       params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
         case Array(k, v) if k.startsWith(VARIABLE_HEADER) =>
-          map += k.substring(VARIABLE_HEADER.length) -> v
+          map.put(k.substring(VARIABLE_HEADER.length), v)
         case Array(CREATOR, v) =>
           creator = v
         case _ =>
       }
     }
-    map.toMap
+    map
+  }
+
+  def isTableau(): Boolean = {
+    val params = props.getProperty(PARAMS)
+    if (params != null) {
+      params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
+        case Array(TABLEAU, v) =>
+          tableauFlag = true
+        case _ =>
+      }
+    }
+    tableauFlag
   }
 
   private[jdbc] val dbName =
@@ -80,23 +99,21 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   private[jdbc] val serverURL = props.getProperty("URL")
 
-  private val engineTypeMap: mutable.HashMap[String, EngineType] = new mutable.HashMap()
+  private val labelMap: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
 
-  private[jdbc] def getEngineType: EngineType = {
-    if (engineTypeMap.isEmpty) {
-      engineTypeMap.put(EngineType.SPARK.toString, EngineType.SPARK)
-      engineTypeMap.put(EngineType.HIVE.toString, EngineType.HIVE)
-      engineTypeMap.put(EngineType.JDBC.toString, EngineType.JDBC)
-      engineTypeMap.put(EngineType.PYTHON.toString, EngineType.PYTHON)
-      engineTypeMap.put(EngineType.SHELL.toString, EngineType.SHELL)
-      engineTypeMap.put(EngineType.PRESTO.toString, EngineType.PRESTO)
-    }
-    val engineType: EngineType = EngineType.PRESTO
+  private val startupParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
+
+  private val runtimeParams: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
+
+  private[jdbc] def getEngineType: EngineTypeLabel = {
+    val engineType: EngineTypeLabel =
+      EngineTypeLabelCreator.createEngineTypeLabel(EngineType.TRINO.toString)
     if (props.containsKey(PARAMS)) {
       val params = props.getProperty(PARAMS)
       if (params != null & params.length() > 0) {
         params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
-          case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) => return engineTypeMap(v)
+          case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) =>
+            return EngineTypeLabelCreator.createEngineTypeLabel(v)
           case _ =>
         }
       }
@@ -121,28 +138,30 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   def getProps: Properties = props
 
-  def removeStatement(statement: UJESSQLStatement): Unit = runningSQLStatements.remove(statement)
+  def removeStatement(statement: LinkisSQLStatement): Unit = runningSQLStatements.remove(statement)
 
-  override def createStatement(): Statement = createStatementAndAdd(new UJESSQLStatement(this))
+  override def createStatement(): Statement = createStatementAndAdd(new LinkisSQLStatement(this))
 
-  override def prepareStatement(sql: String): UJESSQLPreparedStatement = {
-    val statement = createStatementAndAdd(new UJESSQLPreparedStatement(this, sql))
+  override def prepareStatement(sql: String): LinkisSQLPreparedStatement = {
+    val statement = createStatementAndAdd(new LinkisSQLPreparedStatement(this, sql))
     statement.clearQuery()
     statement
   }
 
   override def createStatement(resultSetType: Int, resultSetConcurrency: Int): Statement = {
-    if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY)
+    if (resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
       throw new SQLException(
         "Statement with resultset concurrency " + resultSetConcurrency + " is not supported",
         "HYC00"
       )
-    if (resultSetType == ResultSet.TYPE_SCROLL_SENSITIVE)
+    }
+    if (resultSetType == ResultSet.TYPE_SCROLL_SENSITIVE) {
       throw new SQLException(
         "Statement with resultset type " + resultSetType + " is not supported",
         "HYC00"
       )
-    createStatementAndAdd(new UJESSQLStatement(this))
+    }
+    createStatementAndAdd(new LinkisSQLStatement(this))
   }
 
   override def prepareStatement(sql: String, autoGeneratedKeys: Int): PreparedStatement =
@@ -157,9 +176,7 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
   override def getMetaData: DatabaseMetaData = throwWhenClosed(new UJESSQLDatabaseMetaData(this))
 
   override def close(): Unit = {
-    JavaConversions
-      .asScalaBuffer(runningSQLStatements)
-      .foreach(statement => Utils.tryQuietly(statement.close()))
+    runningSQLStatements.asScala.foreach { statement => Utils.tryQuietly(statement.close()) }
     closed = true
   }
 
@@ -305,15 +322,17 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createStruct not supported")
 
   override def setSchema(schema: String): Unit = throwWhenClosed {
-    if (StringUtils.isBlank(schema))
+    if (StringUtils.isBlank(schema)) {
       throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "schema is empty!")
+    }
     createStatement().execute("use " + schema)
   }
 
   override def getSchema: String = throwWhenClosed {
     val resultSet = createStatement().executeQuery("SELECT current_database()")
-    if (!resultSet.next())
+    if (!resultSet.next()) {
       throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "Get schema failed!")
+    }
     resultSet.getString(1)
   }
 
@@ -336,5 +355,54 @@ class UJESSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Propert
 
   override def isWrapperFor(iface: Class[_]): Boolean =
     throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "isWrapperFor not supported")
+
+  def addLabels(labels: util.Map[String, AnyRef]): Unit = {
+    labelMap.putAll(labels)
+  }
+
+  def addStartUpParams(params: util.Map[String, AnyRef]): Unit = {
+    startupParams.putAll(params)
+  }
+
+  def addRuntimeParams(params: util.Map[String, AnyRef]): Unit = {
+    runtimeParams.putAll(params)
+  }
+
+  def engineToCodeType(engine: String): String = {
+    val runType = EngineType.mapStringToEngineType(engine) match {
+      case EngineType.SPARK => RunType.SQL
+      case EngineType.HIVE => RunType.HIVE
+      case EngineType.TRINO => RunType.TRINO_SQL
+      case EngineType.PRESTO => RunType.PRESTO_SQL
+      case EngineType.ELASTICSEARCH => RunType.ES_SQL
+      case EngineType.JDBC => RunType.JDBC
+      case EngineType.PYTHON => RunType.SHELL
+      case _ => RunType.SQL
+    }
+    runType.toString
+  }
+
+  private[jdbc] def toSubmit(code: String): JobExecuteResult = {
+    val engineTypeLabel = getEngineType
+    labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel.getStringValue)
+    labelMap.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, s"$user-$creator")
+    labelMap.put(LabelKeyConstant.CODE_TYPE_KEY, engineToCodeType(engineTypeLabel.getEngineType))
+
+    val jobSubmitAction = JobSubmitAction.builder
+      .addExecuteCode(code)
+      .setStartupParams(startupParams)
+      .setUser(user)
+      .addExecuteUser(user)
+      .setLabels(labelMap)
+      .setRuntimeParams(runtimeParams)
+      .setVariableMap(variableMap)
+      .build
+
+    val result = ujesClient.submit(jobSubmitAction)
+    if (result.getStatus != 0) {
+      throw new SQLException(result.getMessage)
+    }
+    result
+  }
 
 }

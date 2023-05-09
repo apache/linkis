@@ -41,8 +41,6 @@ public class JDBCUtils {
             continue;
           } else if (c == '%') {
             result.append(".*");
-          } else if (c == '_') {
-            result.append('.');
           } else {
             result.append(Character.toLowerCase(c));
           }

@@ -26,7 +26,7 @@ import scala.beans.BeanProperty
 class OpenLogResult extends DWSResult {
 
   /**
-   * log[0] - info log[1] - warn log[2] - error log[3] - all (info + warn + error)
+   * log[0] - error log[1] - warn log[2] - info log[3] - all (info + warn + error)
    */
   @BeanProperty
   var log: Array[String] = _

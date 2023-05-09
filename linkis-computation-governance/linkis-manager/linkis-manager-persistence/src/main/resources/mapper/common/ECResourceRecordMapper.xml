@@ -83,25 +83,26 @@
     <select id="getECResourceInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord" >
         select * from linkis_cg_ec_resource_info_record
         where id in (
-            <!-- choose the latest record of this ec -->
-            select max(ecr.id) as id from linkis_cg_ec_resource_info_record ecr
-            WHERE 1=1
-            <if test="instances != null and instances.size() > 0">
-                and ecr.service_instance in
-                <foreach collection="instances" item="i" open="(" close=")" separator=",">
-                    #{i}
-                </foreach>
-            </if>
-
-            <if test="engineTypes != null and engineTypes.size() > 0">
-                <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
-                and SUBSTRING_INDEX(SUBSTRING_INDEX(ecr.label_value,',',-1),"-",1) in
-                <foreach collection="engineTypes" item="i" open="(" close=")" separator=",">
-                    #{i}
-                </foreach>
-            </if>
-            GROUP BY  ecr.service_instance
-        );
+        <!-- choose the latest record of this ec -->
+        select max(ecr.id) as id from linkis_cg_ec_resource_info_record ecr
+        WHERE 1=1
+        <if test="instances != null and instances.size() > 0">
+            and ecr.service_instance in
+            <foreach collection="instances" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+        </if>
+        GROUP BY  ecr.service_instance
+        )
+        <!--  filter after group by-->
+        <if test="engineTypes != null and engineTypes.size() > 0">
+            <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
+            and SUBSTRING_INDEX(SUBSTRING_INDEX(label_value,',',-1),"-",1) in
+            <foreach collection="engineTypes" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+        </if>
+        ;
     </select>
 
 </mapper>

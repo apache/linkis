@@ -56,6 +56,8 @@ public class MetaClassLoaderManager {
 
   private final Map<String, MetaServiceInstance> metaServiceInstances = new ConcurrentHashMap<>();
 
+  private static Map<String, String> databaseRelationship = new HashMap<>();
+
   public static CommonVars<String> LIB_DIR =
       CommonVars.apply(
           "wds.linkis.server.mdm.service.lib.dir",
@@ -132,12 +134,13 @@ public class MetaClassLoaderManager {
                 if (dsType.length() > 0) {
                   String converDsType = dsType;
                   try {
-                    HashMap map =
+                    databaseRelationship =
                         Json.fromJson(
                             CacheConfiguration.QUERY_DATABASE_RELATIONSHIP.getValue(),
                             HashMap.class);
-                    if (MapUtils.isNotEmpty(map) && map.containsKey(dsType)) {
-                      String value = MapUtils.getString(map, dsType);
+                    if (MapUtils.isNotEmpty(databaseRelationship)
+                        && databaseRelationship.containsKey(dsType)) {
+                      String value = MapUtils.getString(databaseRelationship, dsType);
                       if (StringUtils.isNotBlank(value)
                           && CacheConfiguration.MYSQL_RELATIONSHIP_LIST
                               .getValue()

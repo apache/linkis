@@ -38,6 +38,6 @@ public class CacheConfiguration {
 
   public static final CommonVars<String> QUERY_DATABASE_RELATIONSHIP =
       CommonVars.apply(
-          "wds.linkis.server.mdq.query.database.relationship",
+          "linkis.server.mdq.query.database.relationship",
           "{\"tidb\":\"mysql\",\"doris\":\"mysql\",\"starrocks\":\"mysql\",\"gaussdb\":\"postgresql\"}");
 }

@@ -176,8 +176,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   override def getMetaData: DatabaseMetaData = throwWhenClosed(new UJESSQLDatabaseMetaData(this))
 
   override def close(): Unit = {
-    runningSQLStatements.asScala.foreach{ statement => Utils.tryQuietly(statement.close())
-    }
+    runningSQLStatements.asScala.foreach { statement => Utils.tryQuietly(statement.close()) }
     closed = true
   }
 

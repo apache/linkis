@@ -56,7 +56,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
 
   private[jdbc] var creator = "JDBCDriver"
 
-  private[jdbc] var tableau = false
+  private[jdbc] var tableauFlag = false
 
   private[jdbc] val variableMap = {
     val params = props.getProperty(PARAMS)
@@ -78,11 +78,11 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     if (params != null) {
       params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
         case Array(TABLEAU, v) =>
-          tableau = true
+          tableauFlag = true
         case _ =>
       }
     }
-    tableau
+    tableauFlag
   }
 
   private[jdbc] val dbName =
@@ -176,7 +176,8 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   override def getMetaData: DatabaseMetaData = throwWhenClosed(new UJESSQLDatabaseMetaData(this))
 
   override def close(): Unit = {
-    runningSQLStatements.asScala.foreach(statement => Utils.tryQuietly(statement.close()))
+    runningSQLStatements.asScala.foreach{ statement => Utils.tryQuietly(statement.close())
+    }
     closed = true
   }
 

@@ -62,6 +62,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.security.auth.callback.PasswordCallback;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.ZoneId;
 import java.util.*;
@@ -220,18 +221,17 @@ public class TrinoEngineConnExecutor extends ConcurrentComputationExecutor {
           || (statement.isFinished() && statement.finalStatusInfo().getError() == null)) {
         queryOutput(taskId, engineExecutorContext, statement);
       }
-      ErrorExecuteResponse errorResponse = null;
-      try {
-        errorResponse = verifyServerError(taskId, engineExecutorContext, statement);
-      } catch (ErrorException e) {
-        logger.error("Trino execute failed (#{}): {}", e.getErrCode(), e.getMessage());
-      }
+      ErrorExecuteResponse errorResponse =
+          verifyServerError(taskId, engineExecutorContext, statement);
       if (errorResponse == null) {
         clientSessionCache.put(taskId, updateSession(clientSession, statement));
         return new SuccessExecuteResponse();
       } else {
         return errorResponse;
       }
+    } catch (Exception e) {
+      logger.error("Execute trino code failed, reason:", e);
+      return new ErrorExecuteResponse("Execute trino code failed", e);
     } finally {
       statementClientCache.remove(taskId);
     }
@@ -415,7 +415,8 @@ public class TrinoEngineConnExecutor extends ConcurrentComputationExecutor {
   }
 
   private void queryOutput(
-      String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement) {
+      String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement)
+      throws IOException {
     int columnCount = 0;
     int rows = 0;
     ResultSetWriter resultSetWriter =
@@ -451,6 +452,7 @@ public class TrinoEngineConnExecutor extends ConcurrentComputationExecutor {
       }
     } catch (Exception e) {
       IOUtils.closeQuietly(resultSetWriter);
+      throw e;
     }
     String message = String.format("Fetched %d col(s) : %d row(s) in Trino", columnCount, rows);
     logger.info(message);

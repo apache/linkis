@@ -24,6 +24,8 @@ import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.db2.SqlConnection;
 
+import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
@@ -54,8 +56,10 @@ public class Db2MetaService extends AbstractDbMetaService<SqlConnection> {
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
-        extraParams =
-            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+        String paramStr = String.valueOf(sqlParamObj);
+        if (StringUtils.isNotBlank(paramStr)) {
+          extraParams = Json.fromJson(paramStr, Map.class, String.class, Object.class);
+        }
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }

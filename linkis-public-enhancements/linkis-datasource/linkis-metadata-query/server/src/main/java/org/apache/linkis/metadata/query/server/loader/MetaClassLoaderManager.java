@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.query.server.loader;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.datasourcemanager.common.exception.JsonErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
@@ -56,7 +57,18 @@ public class MetaClassLoaderManager {
 
   private final Map<String, MetaServiceInstance> metaServiceInstances = new ConcurrentHashMap<>();
 
-  private static Map<String, String> databaseRelationship = new HashMap<>();
+  private static Map<String, String> databaseRelationship = getDatabaseRelationship();
+
+  private static Map<String, String> getDatabaseRelationship() {
+    try {
+      return Json.fromJson(
+          CacheConfiguration.QUERY_DATABASE_RELATIONSHIP.getValue(), HashMap.class);
+    } catch (JsonErrorException e) {
+      LOG.warn(
+          "databaseRelationship parse exception,please check [linkis.server.mdq.query.database.relationship] parameter");
+      return new HashMap<>();
+    }
+  }
 
   public static CommonVars<String> LIB_DIR =
       CommonVars.apply(
@@ -134,10 +146,6 @@ public class MetaClassLoaderManager {
                 if (dsType.length() > 0) {
                   String converDsType = dsType;
                   try {
-                    databaseRelationship =
-                        Json.fromJson(
-                            CacheConfiguration.QUERY_DATABASE_RELATIONSHIP.getValue(),
-                            HashMap.class);
                     if (MapUtils.isNotEmpty(databaseRelationship)
                         && databaseRelationship.containsKey(dsType)) {
                       String value = MapUtils.getString(databaseRelationship, dsType);

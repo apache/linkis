@@ -105,8 +105,6 @@ object EsClientFactory {
           if (!ES_AUTH_CACHE.getValue) {
             httpAsyncClientBuilder.disableAuthCaching
           }
-          //        httpClientBuilder.setDefaultRequestConfig(RequestConfig.DEFAULT)
-          //        httpClientBuilder.setDefaultConnectionConfig(ConnectionConfig.DEFAULT)
           httpAsyncClientBuilder.setDefaultCredentialsProvider(credentialsProvider)
         }
       })

@@ -50,7 +50,6 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconn.executor.listener.event.EngineConnSyncEvent
-import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.exception.engineconn.{
@@ -64,7 +63,6 @@ import org.apache.linkis.manager.common.protocol.resource.{
   ResponseTaskRunningInfo,
   ResponseTaskYarnResource
 }
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.message.RequestProtocol
@@ -425,62 +423,61 @@ class TaskExecutionServiceImpl
                 .isRunning(task.getStatus)
           ) {
             val progressResponse = taskProgress(task.getTaskId)
-            val resourceResponse: ResponseTaskYarnResource =
-              taskYarnResource(task.getTaskId) match {
-                case responseTaskYarnResource: ResponseTaskYarnResource =>
-                  if (
-                      responseTaskYarnResource.getResourceMap != null && !responseTaskYarnResource.getResourceMap.isEmpty
-                  ) {
-                    responseTaskYarnResource
-                  } else {
-                    null
-                  }
-                case _ =>
-                  null
-              }
-            val extraInfoMap = new util.HashMap[String, Object]()
-            extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
-            extraInfoMap.put(
-              ECConstants.EC_TICKET_ID_KEY,
-              EngineConnObject.getEngineCreationContext.getTicketId
-            )
-            val ecParams = EngineConnObject.getEngineCreationContext.getOptions
-            if (ecParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
-              extraInfoMap.put(
-                ECConstants.YARN_QUEUE_NAME_KEY,
-                ecParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)
-              )
-            }
-            extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
-            extraInfoMap.put(
-              TaskConstant.ENGINE_CONN_SUBMIT_TIME,
-              System.currentTimeMillis.toString
-            )
+            val resourceResponse = buildResourceMap(task)
+            val extraInfoMap = buildExtraInfoMap(task)
             // todo add other info
-            var respRunningInfo: ResponseTaskRunningInfo = null
-            if (null != resourceResponse) {
-              respRunningInfo = new ResponseTaskRunningInfo(
-                progressResponse.execId,
-                progressResponse.progress,
-                progressResponse.progressInfo,
-                resourceResponse.getResourceMap,
-                extraInfoMap
-              )
-            } else {
-              respRunningInfo = new ResponseTaskRunningInfo(
-                progressResponse.execId,
-                progressResponse.progress,
-                progressResponse.progressInfo,
-                null,
-                extraInfoMap
-              )
-            }
+            val resourceMap = if (null != resourceResponse) resourceResponse.getResourceMap else null
+
+            val respRunningInfo: ResponseTaskRunningInfo = new ResponseTaskRunningInfo(
+              progressResponse.execId,
+              progressResponse.progress,
+              progressResponse.progressInfo,
+              resourceMap,
+              extraInfoMap
+            )
+
             sendToEntrance(task, respRunningInfo)
             Thread.sleep(TimeUnit.MILLISECONDS.convert(sleepInterval, TimeUnit.SECONDS))
           }
         }
       }
     })
+  }
+
+  private def buildExtraInfoMap(task: EngineConnTask): util.HashMap[String, Object] = {
+    val extraInfoMap = new util.HashMap[String, Object]()
+    extraInfoMap.put(TaskConstant.ENGINE_INSTANCE, Sender.getThisInstance)
+    extraInfoMap.put(
+      ECConstants.EC_TICKET_ID_KEY,
+      EngineConnObject.getEngineCreationContext.getTicketId
+    )
+    val ecParams = EngineConnObject.getEngineCreationContext.getOptions
+    if (ecParams.containsKey(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)) {
+      extraInfoMap.put(
+        ECConstants.YARN_QUEUE_NAME_KEY,
+        ecParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY)
+      )
+    }
+    extraInfoMap.put(TaskConstant.ENGINE_CONN_TASK_ID, task.getTaskId)
+    extraInfoMap.put(TaskConstant.ENGINE_CONN_SUBMIT_TIME, System.currentTimeMillis.toString)
+    extraInfoMap
+  }
+
+  private def buildResourceMap(task: EngineConnTask): ResponseTaskYarnResource = {
+    val resourceResponse: ResponseTaskYarnResource =
+      taskYarnResource(task.getTaskId) match {
+        case responseTaskYarnResource: ResponseTaskYarnResource =>
+          if (
+              responseTaskYarnResource.getResourceMap != null && !responseTaskYarnResource.getResourceMap.isEmpty
+          ) {
+            responseTaskYarnResource
+          } else {
+            null
+          }
+        case _ =>
+          null
+      }
+    resourceResponse
   }
 
   private def taskYarnResource(taskID: String): ResponseTaskYarnResource = {
@@ -664,14 +661,20 @@ class TaskExecutionServiceImpl
     if (EngineConnConf.ENGINE_PUSH_LOG_TO_ENTRANCE.getValue) {
       val task = getTaskByTaskId(taskProgressUpdateEvent.taskId)
       if (null != task) {
-        sendToEntrance(
-          task,
-          ResponseTaskProgress(
-            taskProgressUpdateEvent.taskId,
-            taskProgressUpdateEvent.progress,
-            taskProgressUpdateEvent.progressInfo
-          )
+        val resourceResponse = buildResourceMap(task)
+        val extraInfoMap = buildExtraInfoMap(task)
+
+        val resourceMap = if (null != resourceResponse) resourceResponse.getResourceMap else null
+
+        val respRunningInfo: ResponseTaskRunningInfo = new ResponseTaskRunningInfo(
+          taskProgressUpdateEvent.taskId,
+          taskProgressUpdateEvent.progress,
+          taskProgressUpdateEvent.progressInfo,
+          resourceMap,
+          extraInfoMap
         )
+
+        sendToEntrance(task, respRunningInfo)
       } else {
         logger.error(
           "Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON

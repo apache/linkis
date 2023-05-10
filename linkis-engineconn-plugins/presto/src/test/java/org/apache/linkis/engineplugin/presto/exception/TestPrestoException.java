@@ -15,22 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.utils
+package org.apache.linkis.engineplugin.presto.exception;
 
-import org.apache.commons.lang3.StringUtils
+import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary;
 
-object PrestoSQLHook {
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-  def preExecuteHook(code: String): String = {
-    replaceBackQuoted(code)
+public class TestPrestoException {
+
+  @Test
+  public void testPrestoStateInvalidException() {
+    Assertions.assertNotNull(
+        new PrestoStateInvalidException(
+            PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode(),
+            PrestoErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc()));
   }
 
-  private def replaceBackQuoted(code: String): String = {
-    if (StringUtils.isNotBlank(code)) {
-      code.replaceAll("`", "\"")
-    } else {
-      code
-    }
+  @Test
+  public void testPythonSessionStartFailedException() {
+    Assertions.assertNotNull(
+        new PrestoClientException(
+            PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode(),
+            PrestoErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc()));
   }
-
 }

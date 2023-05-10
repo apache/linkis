@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto
+package org.apache.linkis.engineplugin.presto.utils;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.apache.commons.lang3.StringUtils;
 
-class TestPrestoEngineConnPlugin {
-
-  @Test
-  def testGetEngineResourceFactory: Unit = {
-    val prestoEngineConnPlugin = new PrestoEngineConnPlugin
-    Assertions.assertNotNull(prestoEngineConnPlugin.getEngineConnFactory)
+public class PrestoSQLHook {
+  public static String preExecuteHook(String code) {
+    return replaceBackQuoted(code);
   }
 
+  private static String replaceBackQuoted(String code) {
+    if (StringUtils.isNotBlank(code)) {
+      return code.replaceAll("`", "\"");
+    } else {
+      return code;
+    }
+  }
 }

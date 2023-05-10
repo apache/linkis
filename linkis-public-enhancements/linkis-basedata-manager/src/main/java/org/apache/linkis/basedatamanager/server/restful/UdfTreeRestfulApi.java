@@ -17,11 +17,11 @@
 
 package org.apache.linkis.basedatamanager.server.restful;
 
-import org.apache.linkis.basedatamanager.server.conf.UdfTreeConf;
 import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
 import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
 import org.apache.linkis.basedatamanager.server.service.UdfBaseInfoService;
 import org.apache.linkis.basedatamanager.server.service.UdfTreeService;
+import org.apache.linkis.basedatamanager.server.utils.UdfTreeUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
@@ -39,7 +39,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -83,22 +82,15 @@ public class UdfTreeRestfulApi {
     ModuleUserUtils.getOperationUser(
         request, "Query all data of UDF Tree,search name:" + searchName);
     List<UdfTreeEntity> udfTreeEntityList = new ArrayList<>();
-    UdfTreeEntity entity = new UdfTreeEntity();
-    entity.setCategory(category);
-    QueryWrapper<UdfTreeEntity> querySysWrapper =
-        new QueryWrapper<>(entity)
-            .eq("category", entity.getCategory())
-            .in(
-                "user_name",
-                Arrays.asList(UdfTreeConf.UDF_FUN_SYSTEM_CATEGORY.getValue().split(",")));
-    udfTreeEntityList = udfTreeService.list(querySysWrapper);
     if (StringUtils.isNotBlank(searchName) && StringUtils.isNotBlank(category)) {
+      UdfTreeEntity entity = new UdfTreeEntity();
+      entity.setCategory(category);
       entity.setUserName(searchName);
       QueryWrapper<UdfTreeEntity> queryWrapper =
           new QueryWrapper<>(entity)
               .eq("user_name", entity.getUserName())
               .eq("category", entity.getCategory());
-      udfTreeEntityList.addAll(udfTreeService.list(queryWrapper));
+      udfTreeEntityList = new UdfTreeUtils(udfTreeService.list(queryWrapper)).buildTree();
     }
     return Message.ok("").data("list", udfTreeEntityList);
   }

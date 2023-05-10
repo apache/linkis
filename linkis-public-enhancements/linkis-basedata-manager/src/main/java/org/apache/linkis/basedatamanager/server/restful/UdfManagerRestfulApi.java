@@ -96,7 +96,7 @@ public class UdfManagerRestfulApi {
       boolean result = udfManagerService.save(udfManagerEntity);
       return Message.ok("").data("result", result);
     } else {
-      return Message.error("The username already exists,Please add again!");
+      return Message.error("The " + udfManager.getUserName() + " already exists,Please add again!");
     }
   }
 
@@ -134,11 +134,12 @@ public class UdfManagerRestfulApi {
         new QueryWrapper<>(udfManagerEntity).eq("user_name", udfManagerEntity.getUserName());
     UdfManagerEntity udfManager = udfManagerService.getOne(queryWrapper);
     if (udfManager == null) {
-      udfManager.setUpdateTime(new Date());
+      udfManagerEntity.setUpdateTime(new Date());
       boolean result = udfManagerService.updateById(udfManagerEntity);
       return Message.ok("").data("result", result);
     } else {
-      return Message.error("The username already exists,Please update again!");
+      return Message.error(
+          "The " + udfManager.getUserName() + " already exists,Please update again!");
     }
   }
 }

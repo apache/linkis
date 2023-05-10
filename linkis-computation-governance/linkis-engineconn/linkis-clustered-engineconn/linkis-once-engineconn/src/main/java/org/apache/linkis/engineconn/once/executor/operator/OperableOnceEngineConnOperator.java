@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconn.once.executor.operator;
 
-import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.engineconn.common.exception.EngineConnException;
 import org.apache.linkis.engineconn.once.executor.OnceExecutor;
 import org.apache.linkis.engineconn.once.executor.OperableOnceExecutor;
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager$;
@@ -81,11 +81,11 @@ public class OperableOnceEngineConnOperator implements Operator {
             }
           };
         default:
-          throw new WarnException(
+          throw new EngineConnException(
               20308, "This engineConn don't support " + operatorName + " operator.");
       }
     } else {
-      throw new WarnException(
+      throw new EngineConnException(
           20308, "This engineConn don't support " + operatorName + " operator.");
     }
   }

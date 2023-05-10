@@ -102,7 +102,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
   @Override
   public EngineNode getEngineNodeInfo(EngineNode engineNode) {
-    /** 修改为实时请求对应的EngineNode */
+    /** Change the EngineNode to correspond to real-time requests?（修改为实时请求对应的EngineNode) */
     EngineNodePointer engine = nodePointerBuilder.buildEngineNodePointer(engineNode);
     NodeHeartbeatMsg heartMsg = engine.getNodeHeartbeatMsg();
     engineNode.setNodeHealthyInfo(heartMsg.getHealthyInfo());

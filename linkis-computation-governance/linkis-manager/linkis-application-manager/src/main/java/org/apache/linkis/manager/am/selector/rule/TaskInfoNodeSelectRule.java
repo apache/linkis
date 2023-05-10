@@ -54,9 +54,9 @@ public class TaskInfoNodeSelectRule implements NodeSelectRule {
       try {
         if (getTasks(((AMNode) nodeA).getNodeTaskInfo())
             < getTasks(((AMNode) nodeB).getNodeTaskInfo())) {
-          return -1;
-        } else {
           return 1;
+        } else {
+          return -1;
         }
       } catch (Throwable t) {
         logger.warn("Failed to Compare resource ", t);

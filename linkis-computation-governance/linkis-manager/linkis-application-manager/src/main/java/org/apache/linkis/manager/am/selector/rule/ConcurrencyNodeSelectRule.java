@@ -28,8 +28,10 @@ public class ConcurrencyNodeSelectRule implements NodeSelectRule {
 
   @Override
   public Node[] ruleFiltering(Node[] nodes) {
-    // 并发选择规则只对Engine有效
-    // TODO 通过标签判断engine是否支持并发，如果Engine为io,状态，当支持并发engine需要进行保留
+    // 1.The concurrent selection rule only applies to the Engine.(并发选择规则只对Engine有效)
+    // 2.TODO: Determine if the engine supports concurrency by checking its tag. If the engine is of
+    // type "IO" and its status supports concurrency, it should be reserved.
+    // (2. TODO 通过标签判断engine是否支持并发，如果Engine为io,状态，当支持并发engine需要进行保留)
     return nodes;
   }
 }

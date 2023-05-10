@@ -22,12 +22,6 @@ import org.apache.linkis.common.conf.Configuration;
 
 public class EngineConnPluginLoaderConf {
 
-  public static final String ENGINE_PLUGIN_RESOURCE_ID_NAME_PREFIX =
-      "wds.linkis.engineConn.plugin.loader.resource-id.";
-
-  public static final CommonVars<String> CLASS_LOADER_CLASS_NAME =
-      CommonVars.apply("wds.linkis.engineconn.plugin.loader.classname", "");
-
   public static final CommonVars<String> ENGINE_PLUGIN_LOADER_DEFAULT_USER =
       CommonVars.apply("wds.linkis.engineconn.plugin.loader.defaultUser", "hadoop");
 

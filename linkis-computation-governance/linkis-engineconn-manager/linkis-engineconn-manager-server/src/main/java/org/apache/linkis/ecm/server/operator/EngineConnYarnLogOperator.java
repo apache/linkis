@@ -20,6 +20,7 @@ package org.apache.linkis.ecm.server.operator;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary;
+import org.apache.linkis.ecm.server.exception.ECMErrorException;
 import org.apache.linkis.ecm.server.exception.ECMWarnException;
 
 import org.apache.commons.lang3.tuple.Triple;
@@ -123,7 +124,7 @@ public class EngineConnYarnLogOperator extends EngineConnLogOperator {
       }
     }
     if (!logPath.exists() || !logPath.isFile()) {
-      throw new WarnException(
+      throw new ECMErrorException(
           EngineconnServerErrorCodeSummary.LOGFILE_IS_NOT_EXISTS.getErrorCode(),
           MessageFormat.format(
               EngineconnServerErrorCodeSummary.LOGFILE_IS_NOT_EXISTS.getErrorDesc(), logPath));

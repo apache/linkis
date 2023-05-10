@@ -15,22 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.exception
+package org.apache.linkis.engineplugin.presto.utils;
 
-import org.junit.jupiter.api.{Assertions, Test}
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class TestPrestoException {
-
-  @Test
-  def testPrestoStateInvalidException: Unit = {
-    val exception = PrestoStateInvalidException
-    Assertions.assertNotNull(exception)
-  }
+public class TestPrestoSQLHook {
 
   @Test
-  def testPythonSessionStartFailedException: Unit = {
-    val exception = PrestoClientException
-    Assertions.assertNotNull(exception)
+  public void testPreExecuteHook() {
+    String code = "`1104`";
+    String codes = PrestoSQLHook.preExecuteHook(code);
+    Assertions.assertEquals(codes, "\"1104\"");
   }
-
 }

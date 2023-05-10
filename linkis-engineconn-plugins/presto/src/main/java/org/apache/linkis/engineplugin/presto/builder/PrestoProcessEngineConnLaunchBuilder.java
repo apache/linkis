@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.presto.builder
+package org.apache.linkis.engineplugin.presto.builder;
 
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
-import org.apache.linkis.storage.utils.StorageConfiguration
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
-class PrestoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
+public class PrestoProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
-  override def getEngineStartUser(label: UserCreatorLabel): String = {
-    StorageConfiguration.HDFS_ROOT_USER.getValue
+  @Override
+  public String getEngineStartUser(UserCreatorLabel label) {
+    return StorageConfiguration.HDFS_ROOT_USER.getValue();
   }
-
 }

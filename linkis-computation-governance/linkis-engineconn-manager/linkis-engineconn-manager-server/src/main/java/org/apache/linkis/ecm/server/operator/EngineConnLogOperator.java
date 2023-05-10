@@ -17,12 +17,10 @@
 
 package org.apache.linkis.ecm.server.operator;
 
-import org.apache.linkis.DataWorkCloudApplication;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ecm.server.conf.ECMConfiguration;
 import org.apache.linkis.ecm.server.exception.ECMErrorException;
-import org.apache.linkis.ecm.server.service.LocalDirsHandleService;
 import org.apache.linkis.manager.common.operator.Operator;
 
 import org.apache.commons.io.IOUtils;
@@ -61,8 +59,6 @@ public class EngineConnLogOperator implements Operator {
           "^\\d{4}-\\d{2}-\\d{2}\\s+\\d{2}:\\d{2}:\\d{2}\\.\\d{3}");
   public static final CommonVars<Integer> MULTILINE_MAX =
       CommonVars.apply("linkis.engineconn.log.multiline.max", 500);
-
-  private LocalDirsHandleService localDirsHandleService;
 
   @Override
   public String[] getNames() {
@@ -183,12 +179,11 @@ public class EngineConnLogOperator implements Operator {
 
   protected File getLogPath(Map<String, Object> parameters) {
     String logType = getAs(parameters, "logType", EngineConnLogOperator.LOG_FILE_NAME.getValue());
-    String logDIrSuffix = getAs(parameters, "logDirSuffix", "");
 
-    String engineConnLogDir =
-        ECMConfiguration.ENGINECONN_ROOT_DIR() + File.separator + logDIrSuffix;
-    String ticketId = getAs(parameters, "ticketId", "");
-    String engineConnInstance = "";
+    Triple<String, String, String> engineConnInfo = getEngineConnInfo(parameters);
+    String engineConnLogDir = engineConnInfo.getLeft();
+    String engineConnInstance = engineConnInfo.getMiddle();
+    String ticketId = engineConnInfo.getRight();
 
     File logPath = new File(engineConnLogDir, logType);
     if (!logPath.exists() || !logPath.isFile()) {
@@ -205,14 +200,10 @@ public class EngineConnLogOperator implements Operator {
 
   protected Triple<String, String, String> getEngineConnInfo(Map<String, Object> parameters) {
     String logDIrSuffix = getAs(parameters, "logDirSuffix", "");
-
-    localDirsHandleService =
-        DataWorkCloudApplication.getApplicationContext().getBean(LocalDirsHandleService.class);
     String engineConnLogDir =
         ECMConfiguration.ENGINECONN_ROOT_DIR() + File.separator + logDIrSuffix;
     String ticketId = getAs(parameters, "ticketId", "");
     String engineConnInstance = "";
-
     return Triple.of(engineConnLogDir, engineConnInstance, ticketId);
   }
 

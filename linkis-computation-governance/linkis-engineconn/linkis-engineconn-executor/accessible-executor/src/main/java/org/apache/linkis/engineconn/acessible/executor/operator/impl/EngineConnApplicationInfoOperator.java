@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconn.acessible.executor.operator.impl;
 
-import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.engineconn.common.exception.EngineConnException;
 import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
 import org.apache.linkis.engineconn.core.executor.LabelExecutorManager;
 import org.apache.linkis.engineconn.executor.entity.Executor;
@@ -49,7 +49,7 @@ public class EngineConnApplicationInfoOperator implements Operator {
       result.put("yarnMode", yarnExecutor.getYarnMode());
       return result;
     } else {
-      throw new WarnException(
+      throw new EngineConnException(
           20301, "EngineConn is not a yarn application, cannot fetch applicaiton info.");
     }
   }

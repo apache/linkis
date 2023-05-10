@@ -42,7 +42,6 @@ public class DefaultEngineNodeLocker implements EngineNodeLocker {
 
   @Override
   public Optional<String> lockEngine(EngineNode engineNode, long timeout) {
-    // TODO 判断engine需要的锁类型进行不同的实例化
     return nodeBuilder
         .buildEngineNodePointer(engineNode)
         .lockEngine(new RequestEngineLock(timeout, EngineLockType.Timed));

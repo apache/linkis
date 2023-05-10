@@ -23,6 +23,7 @@ import org.apache.linkis.gateway.authentication.bo.impl.TokenImpl
 import org.apache.linkis.gateway.authentication.conf.TokenConfiguration
 import org.apache.linkis.gateway.authentication.dao.TokenDao
 import org.apache.linkis.gateway.authentication.entity.TokenEntity
+import org.apache.linkis.gateway.authentication.errorcode.LinkisGwAuthenticationErrorCodeSummary
 import org.apache.linkis.gateway.authentication.errorcode.LinkisGwAuthenticationErrorCodeSummary._
 import org.apache.linkis.gateway.authentication.exception.{
   TokenAuthException,
@@ -112,28 +113,29 @@ class CachedTokenService extends TokenService {
         case x: ExecutionException =>
           x.getCause match {
             case e: TokenNotExistException =>
-              throw new TokenAuthException(
-                NOT_EXIST_DB.getErrorCode,
-                MessageFormat.format(NOT_EXIST_DB.getErrorDesc, tokenName, e.getMessage)
-              )
+              throwTokenAuthException(NOT_EXIST_DB, tokenName, e)
             case e =>
-              throw new TokenAuthException(
-                FAILED_TO_LOAD_TOKEN.getErrorCode,
-                MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName, e.getMessage)
-              )
+              throwTokenAuthException(FAILED_TO_LOAD_TOKEN, tokenName, e)
           }
         case e: UncheckedExecutionException =>
-          throw new TokenAuthException(
-            FAILED_TO_BAD_SQLGRAMMAR.getErrorCode,
-            MessageFormat.format(FAILED_TO_BAD_SQLGRAMMAR.getErrorDesc, tokenName, e.getMessage)
-          )
+          throwTokenAuthException(FAILED_TO_BAD_SQLGRAMMAR, tokenName, e)
         case e =>
-          throw new TokenAuthException(
-            FAILED_TO_LOAD_TOKEN.getErrorCode,
-            MessageFormat.format(FAILED_TO_LOAD_TOKEN.getErrorDesc, tokenName, e.getMessage)
-          )
+          throwTokenAuthException(FAILED_TO_LOAD_TOKEN, tokenName, e)
       }
     )
+  }
+
+  private def throwTokenAuthException(
+      gwAuthenticationErrorCodeSummary: LinkisGwAuthenticationErrorCodeSummary,
+      tokenName: String,
+      e: Throwable
+  ) = {
+    val exception = new TokenAuthException(
+      gwAuthenticationErrorCodeSummary.getErrorCode,
+      MessageFormat.format(gwAuthenticationErrorCodeSummary.getErrorDesc, tokenName, e.getMessage)
+    )
+    exception.initCause(e)
+    throw exception
   }
 
   private def isTokenAcceptableWithUser(token: Token, userName: String): Boolean = {

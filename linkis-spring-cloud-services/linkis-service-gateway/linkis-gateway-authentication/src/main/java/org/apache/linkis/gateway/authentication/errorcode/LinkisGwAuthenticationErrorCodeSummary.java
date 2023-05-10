@@ -28,7 +28,8 @@ public enum LinkisGwAuthenticationErrorCodeSummary implements LinkisErrorCode {
   ILLEGAL_HOST(15203, "Illegal Host for Token(Token非法主机)!"),
   INVALID_TOKEN(15204, "Invalid Token(令牌无效)"),
   TOKEN_IS_NULL(15205, "token is null(token 令牌为空)!"),
-  FAILED_TO_BAD_SQLGRAMMAR(15206, "Failed to query token{0} data(Token:{0} 数据查询失败), Caused by:{1}"),
+  FAILED_TO_BAD_SQLGRAMMAR(
+      15206, "Failed to query token:{0} data(Token:{0} 数据查询失败), Caused by:{1}"),
   NOT_EXIST_DB(15207, "Token:{0} does not exist in the table(Token:{0} 表中不存在)!, Caused by:{1}");
 
   /** (errorCode)错误码 */

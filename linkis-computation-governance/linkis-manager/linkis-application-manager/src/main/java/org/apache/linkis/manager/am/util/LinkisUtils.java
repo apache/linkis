@@ -42,21 +42,29 @@ public class LinkisUtils {
   }
 
   public static <T> T tryCatch(Callable<T> tryOp, Function<Throwable, T> catchOp) {
-    T call = null;
+    T result = null;
     try {
-      call = tryOp.call();
+      result = tryOp.call();
     } catch (Throwable t) {
       if (t instanceof FatalException) {
         logger.error("Fatal error, system exit...", t);
-        throw (FatalException) t;
+        System.exit(((FatalException) t).getErrCode());
+      } else if (t instanceof VirtualMachineError) {
+        logger.error("Fatal error, system exit...", t);
+        System.exit(-1);
+      } else if (null != t.getCause()
+          && (t.getCause() instanceof FatalException
+              || t.getCause() instanceof VirtualMachineError)) {
+        logger.error("Caused by fatal error, system exit...", t);
+        System.exit(-1);
       } else if (t instanceof Error) {
         logger.error("Throw error", t);
         throw (Error) t;
       } else {
-        call = catchOp.apply(t);
+        result = catchOp.apply(t);
       }
     }
-    return call;
+    return result;
   }
 
   public static void tryFinally(Runnable tryOp, Runnable finallyOp) {
@@ -73,7 +81,7 @@ public class LinkisUtils {
         t -> {
           if (t instanceof ErrorException) {
             ErrorException error = (ErrorException) t;
-            log.warn(
+            log.error(
                 "Warning code（警告码）: {}, Warning message（警告信息）: {}.",
                 error.getErrCode(),
                 error.getDesc(),

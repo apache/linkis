@@ -55,6 +55,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   private static final Logger logger = LoggerFactory.getLogger(YarnResourceRequester.class);
 
   private final String HASTATE_ACTIVE = "active";
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   private ExternalResourceProvider provider = null;
   private final Map<String, String> rmAddressMap = new ConcurrentHashMap<>();
@@ -115,7 +116,7 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       }
       return Optional.empty();
     } catch (Exception e) {
-      // e.printStackTrace();
+      logger.warn("maxEffectiveHandle parse failed", e);
       return Optional.empty();
     }
   }
@@ -154,7 +155,11 @@ public class YarnResourceRequester implements ExternalResourceRequester {
 
   public static JsonNode getChildQueues(JsonNode resp) {
     JsonNode queues = resp.get("childQueues").get("queue");
-    if (queues != null && !queues.isNull() && queues.size() > 0) {
+    if (queues != null
+        && !queues.isNull()
+        && !queues.isMissingNode()
+        && queues.isArray()
+        && ((ArrayNode) queues).size() > 0) {
       logger.info("queues:" + queues);
       return queues;
     } else {
@@ -255,6 +260,21 @@ public class YarnResourceRequester implements ExternalResourceRequester {
     return Optional.empty();
   }
 
+  public static Optional<YarnResource> getAllocatedYarnResource(
+      Optional<JsonNode> jsonNode, String queueName) {
+    if (jsonNode.isPresent()) {
+      JsonNode r = jsonNode.get();
+      return Optional.of(
+          new YarnResource(
+              r.get("allocatedMB").asLong() * 1024L * 1024L,
+              r.get("allocatedVCores").asInt(),
+              0,
+              queueName,
+              ""));
+    }
+    return Optional.empty();
+  }
+
   @Override
   public List<ExternalAppInfo> requestAppInfo(
       ExternalResourceIdentifier identifier, ExternalResourceProvider provider) {
@@ -281,7 +301,8 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         String id = app.get("id").asText();
         String user = app.get("user").asText();
         String applicationType = app.get("applicationType").asText();
-        Optional<YarnResource> yarnResource = getYarnResource(Optional.ofNullable(app), queueName);
+        Optional<YarnResource> yarnResource =
+            getAllocatedYarnResource(Optional.ofNullable(app), queueName);
         if (yarnResource.isPresent()) {
           YarnAppInfo appInfo =
               new YarnAppInfo(id, user, state, applicationType, yarnResource.get());
@@ -343,7 +364,6 @@ public class YarnResourceRequester implements ExternalResourceRequester {
       httpResponse = response;
     }
 
-    ObjectMapper objectMapper = new ObjectMapper();
     String entityString = "";
     try {
       entityString = EntityUtils.toString(httpResponse.getEntity());

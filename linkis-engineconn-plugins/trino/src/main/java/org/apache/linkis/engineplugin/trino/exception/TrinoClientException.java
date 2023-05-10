@@ -15,18 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.trino.exception
+package org.apache.linkis.engineplugin.trino.exception;
 
-import org.apache.linkis.common.exception.ErrorException
+import org.apache.linkis.common.exception.ErrorException;
 
-case class TrinoStateInvalidException(message: String)
-    extends ErrorException(60011, message: String)
-
-case class TrinoClientException(message: String) extends ErrorException(60012, message: String)
-
-case class TrinoSourceGroupException(message: String) extends ErrorException(60013, message: String)
-
-case class TrinoModifySchemaException(message: String)
-    extends ErrorException(60014, message: String)
-
-case class TrinoGrantmaException(message: String) extends ErrorException(60015, message: String)
+public class TrinoClientException extends ErrorException {
+  public TrinoClientException(String message) {
+    super(60012, message);
+  }
+}

@@ -189,7 +189,7 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "engineTypes", dataType = "Array", value = "engine type"),
     @ApiImplicitParam(name = "statuss", dataType = "Array", value = "statuss"),
     @ApiImplicitParam(name = "queueName", dataType = "String", value = "queueName"),
-    @ApiImplicitParam(name = "ecInstances", dataType = "String", value = "ecInstances"),
+    @ApiImplicitParam(name = "ecInstances", dataType = "Array", value = "ecInstances"),
   })
   @RequestMapping(path = "/ecList", method = RequestMethod.POST)
   public Message queryEcList(HttpServletRequest req, @RequestBody JsonNode jsonNode) {

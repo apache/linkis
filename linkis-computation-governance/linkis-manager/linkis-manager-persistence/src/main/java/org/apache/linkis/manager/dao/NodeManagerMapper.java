@@ -79,5 +79,5 @@ public interface NodeManagerMapper {
   List<PersistencerEcNodeInfo> getEMNodeInfoList(
       @Param("creatorUsers") List<String> creatorUsers,
       @Param("statuss") List<Integer> statuss,
-      @Param("instanceName") List<String> instanceNameList);
+      @Param("ecInstancesList") List<String> ecInstancesList);
 }

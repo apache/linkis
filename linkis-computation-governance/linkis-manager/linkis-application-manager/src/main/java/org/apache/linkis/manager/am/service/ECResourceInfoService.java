@@ -41,7 +41,7 @@ public interface ECResourceInfoService {
    * @param engineTypeList engineconn type list
    * @param statusStrList engineconn status string list
    * @param queueName
-   * @param instanceNameList
+   * @param ecInstancesList
    * @return
    */
   List<Map<String, Object>> getECResourceInfoList(
@@ -49,5 +49,5 @@ public interface ECResourceInfoService {
       List<String> engineTypeList,
       List<String> statusStrList,
       String queueName,
-      List<String> instanceNameList);
+      List<String> ecInstancesList);
 }

@@ -133,9 +133,9 @@
                 #{i}
             </foreach>
         </if>
-        <if test="instanceName != null and instanceName.size() > 0">
+        <if test="ecInstancesList != null and ecInstancesList.size() > 0">
             and t.instance in
-            <foreach collection="instanceName" item="i" open="(" close=")" separator=",">
+            <foreach collection="ecInstancesList" item="i" open="(" close=")" separator=",">
                 #{i}
             </foreach>
         </if>

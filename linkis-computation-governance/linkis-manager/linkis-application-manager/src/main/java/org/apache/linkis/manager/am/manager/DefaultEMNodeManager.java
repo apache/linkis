@@ -25,6 +25,7 @@ import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest;
+import org.apache.linkis.manager.exception.NodeInstanceDuplicateException;
 import org.apache.linkis.manager.persistence.NodeManagerPersistence;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.rm.ResourceInfo;
@@ -64,7 +65,12 @@ public class DefaultEMNodeManager implements EMNodeManager {
 
   @Override
   public void addEMNodeInstance(EMNode emNode) {
-    nodeManagerPersistence.addNodeInstance(emNode);
+    try {
+      nodeManagerPersistence.addNodeInstance(emNode);
+    } catch (NodeInstanceDuplicateException e) {
+      logger.warn("em instance had exists, {}.", emNode);
+      nodeManagerPersistence.updateEngineNode(emNode.getServiceInstance(), emNode);
+    }
   }
 
   @Override

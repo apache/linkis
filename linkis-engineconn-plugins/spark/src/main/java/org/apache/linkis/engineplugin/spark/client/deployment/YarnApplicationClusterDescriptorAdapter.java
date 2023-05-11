@@ -74,7 +74,6 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     Arrays.stream(args.split("\\s+"))
         .filter(StringUtils::isNotBlank)
         .forEach(arg -> sparkLauncher.addAppArgs(arg));
-    // sparkLauncher.addAppArgs(args);
     sparkAppHandle =
         sparkLauncher.startApplication(
             new SparkAppHandle.Listener() {

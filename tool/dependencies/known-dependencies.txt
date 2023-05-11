@@ -115,6 +115,7 @@ eureka-core-1.10.14.jar
 evictor-1.0.0.jar
 excel-streaming-reader-4.0.5.jar
 expiringmap-0.5.6.jar
+ezmorph-1.0.6.jar
 failsafe-2.4.0.jar
 failureaccess-1.0.1.jar
 fastutil-6.5.6.jar
@@ -345,7 +346,7 @@ jpam-1.1.jar
 json-0.191.jar
 json-0.193.jar
 json-1.8.jar
-json-path-2.7.0.jar
+json-lib-2.4-jdk15.jar
 json-smart-2.3.1.jar
 jsp-api-2.1.jar
 jsqlparser-4.2.jar

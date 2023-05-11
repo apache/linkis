@@ -57,7 +57,8 @@ class DefaultManagerService extends ManagerService with Logging {
       logger.info("engineType labels is empty, Not reported")
       return
     }
-    val labelReportRequest = LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
+    val labelReportRequest =
+      new LabelReportRequest(reportLabel.asJava, Sender.getThisServiceInstance)
     getManagerSender.send(labelReportRequest)
   }
 

@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class EMNodeVo {
 
-  private List<Label> labels;
+  private List<Label<?>> labels;
 
   private String applicationName;
 
@@ -71,11 +71,11 @@ public class EMNodeVo {
 
   private Date startTime;
 
-  public List<Label> getLabels() {
+  public List<Label<?>> getLabels() {
     return labels;
   }
 
-  public void setLabels(List<Label> labels) {
+  public void setLabels(List<Label<?>> labels) {
     this.labels = labels;
   }
 

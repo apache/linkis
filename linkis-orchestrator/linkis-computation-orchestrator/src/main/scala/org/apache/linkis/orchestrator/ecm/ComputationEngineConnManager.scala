@@ -147,35 +147,43 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
       case engineNode: EngineNode =>
         logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
         (engineNode, true)
-      case EngineAskAsyncResponse(id, serviceInstance) =>
+      case engineAskAsyncResponse: EngineAskAsyncResponse =>
         logger.info(
           "{} received EngineAskAsyncResponse id: {} serviceInstance: {}",
-          Array(mark.getMarkId(), id, serviceInstance): _*
+          Array(
+            mark.getMarkId(),
+            engineAskAsyncResponse.getId,
+            engineAskAsyncResponse.getManagerInstance
+          ): _*
         )
         cacheMap.getAndRemove(
-          id,
+          engineAskAsyncResponse.getId,
           Duration(engineAskRequest.getTimeOut + 100000, TimeUnit.MILLISECONDS)
         ) match {
-          case EngineCreateSuccess(id, engineNode) =>
+          case engineCreateSucces: EngineCreateSuccess =>
             logger.info(
               "{} async id: {} success to async get EngineNode {}",
-              Array(mark.getMarkId(), id, engineNode): _*
+              Array(
+                mark.getMarkId(),
+                engineCreateSucces.getId,
+                engineCreateSucces.getEngineNode
+              ): _*
             )
-            (engineNode, false)
-          case EngineCreateError(id, exception, retry) =>
+            (engineCreateSucces.getEngineNode, false)
+          case engineCreateError: EngineCreateError =>
             logger.debug(
               "{} async id: {} Failed  to async get EngineNode, {}",
-              Array(mark.getMarkId(), id, exception): _*
+              Array(mark.getMarkId(), engineCreateError.getId, engineCreateError.getException): _*
             )
-            if (retry) {
+            if (engineCreateError.getRetry) {
               throw new LinkisRetryException(
                 ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE,
-                id + " Failed  to async get EngineNode " + exception
+                engineCreateError.getId + " Failed  to async get EngineNode " + engineCreateError.getException
               )
             } else {
               throw new ECMPluginErrorException(
                 ECMPluginConf.ECM_ENGNE_CREATION_ERROR_CODE,
-                id + " Failed  to async get EngineNode " + exception
+                engineCreateError.getId + " Failed  to async get EngineNode " + engineCreateError.getException
               )
             }
         }

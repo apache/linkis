@@ -71,7 +71,9 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
       labelResource.setMaxResource(configuredResource)
       labelResource.setMinResource(Resource.initResource(labelResource.getResourceType))
       labelResource.setLeftResource(
-        labelResource.getMaxResource - labelResource.getUsedResource - labelResource.getLockedResource
+        labelResource.getMaxResource
+          .minus(labelResource.getUsedResource)
+          .minus(labelResource.getLockedResource)
       )
       labelResourceService.setLabelResource(
         labelContainer.getCurrentLabel,
@@ -87,7 +89,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
       val labelMaxResource = labelResource.getMaxResource
-      if (labelAvailableResource < requestResource && enableRequest) {
+      if (requestResource.moreThan(labelAvailableResource) && enableRequest) {
         logger.info(
           s"Failed check: ${labelContainer.getUserCreatorLabel.getUser} want to use label [${labelContainer.getCurrentLabel}] resource[${requestResource}] > " +
             s"label available resource[${labelAvailableResource}]"
@@ -121,7 +123,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
     logger.debug(s"emInstanceLabel resource info ${labelResource}")
     if (labelResource != null) {
       val labelAvailableResource = labelResource.getLeftResource
-      if (labelAvailableResource < requestResource && enableRequest) {
+      if (requestResource.moreThan(labelAvailableResource) && enableRequest) {
         logger.info(
           s"user want to use resource[${requestResource}] > em ${emInstanceLabel.getInstance()} available resource[${labelAvailableResource}]"
         )

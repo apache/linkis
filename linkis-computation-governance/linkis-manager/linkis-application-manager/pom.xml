@@ -27,9 +27,12 @@
   <artifactId>linkis-application-manager</artifactId>
 
   <dependencies>
+
     <dependency>
-      <groupId>com.jayway.jsonpath</groupId>
-      <artifactId>json-path</artifactId>
+      <groupId>net.sf.json-lib</groupId>
+      <artifactId>json-lib</artifactId>
+      <version>${json-lib.version}</version>
+      <classifier>jdk15</classifier>
     </dependency>
 
     <dependency>

@@ -394,7 +394,7 @@ class RMMonitorRest extends Logging {
         }
 
         val totalResource = busyResource.add(idleResource)
-        if (totalResource > Resource.getZeroResource(totalResource)) {
+        if (totalResource.moreThan(Resource.getZeroResource(totalResource))) {
           val userResource = new mutable.HashMap[String, Any]()
           userResource.put("username", userAppInfo._1)
           val queueResource = providedYarnResource.getMaxResource.asInstanceOf[YarnResource]
@@ -703,13 +703,15 @@ class RMMonitorRest extends Logging {
         engineTypeResourceMap.put(engineType, nodeResource)
       }
       val resource = engineTypeResourceMap.get(engineType).get
-      resource.setUsedResource(node.getNodeResource.getUsedResource + resource.getUsedResource)
+      resource.setUsedResource(node.getNodeResource.getUsedResource.add(resource.getUsedResource))
       // combined label
       val combinedLabel =
-        combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel));
+        combinedLabelBuilder.build("", Lists.newArrayList(userCreatorLabel, engineTypeLabel))
       var labelResource = labelResourceService.getLabelResource(combinedLabel)
       if (labelResource == null) {
-        resource.setLeftResource(node.getNodeResource.getMaxResource - resource.getUsedResource)
+        resource.setLeftResource(
+          node.getNodeResource.getMaxResource.minus(resource.getUsedResource)
+        )
       } else {
         labelResource = ResourceUtils.convertTo(labelResource, ResourceType.LoadInstance)
         resource.setUsedResource(labelResource.getUsedResource)
@@ -762,7 +764,7 @@ class RMMonitorRest extends Logging {
                applicationList
                  .get("usedResource")
                  .asInstanceOf[Resource]
-             }) + node.getNodeResource.getUsedResource
+             }).add(node.getNodeResource.getUsedResource)
           )
           applicationList.put(
             "maxResource",
@@ -772,7 +774,7 @@ class RMMonitorRest extends Logging {
                applicationList
                  .get("maxResource")
                  .asInstanceOf[Resource]
-             }) + node.getNodeResource.getMaxResource
+             }).add(node.getNodeResource.getMaxResource)
           )
           applicationList.put(
             "minResource",
@@ -782,7 +784,7 @@ class RMMonitorRest extends Logging {
                applicationList
                  .get("minResource")
                  .asInstanceOf[Resource]
-             }) + node.getNodeResource.getMinResource
+             }).add(node.getNodeResource.getMinResource)
           )
           applicationList.put(
             "lockedResource",
@@ -792,7 +794,7 @@ class RMMonitorRest extends Logging {
                applicationList
                  .get("lockedResource")
                  .asInstanceOf[Resource]
-             }) + node.getNodeResource.getLockedResource
+             }).add(node.getNodeResource.getLockedResource)
           )
           val engineInstance = new mutable.HashMap[String, Any]
           engineInstance.put("creator", userCreatorLabel.getCreator)
@@ -828,7 +830,7 @@ class RMMonitorRest extends Logging {
       creatorToApplicationList: util.HashMap[String, util.HashMap[String, Any]]
   ) = {
     val applications = new util.ArrayList[util.HashMap[String, Any]]()
-    val iterator = creatorToApplicationList.entrySet().iterator();
+    val iterator = creatorToApplicationList.entrySet().iterator()
     while (iterator.hasNext) {
       val entry = iterator.next()
       val application = new util.HashMap[String, Any]

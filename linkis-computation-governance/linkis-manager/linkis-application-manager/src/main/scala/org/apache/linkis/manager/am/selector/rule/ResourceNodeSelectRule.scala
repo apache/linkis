@@ -55,7 +55,7 @@ class ResourceNodeSelectRule extends NodeSelectRule with Logging {
           ) {
             true
           } else {
-            node.getNodeResource.getLeftResource > nodeBRM.getNodeResource.getLeftResource
+            node.getNodeResource.getLeftResource.moreThan(nodeBRM.getNodeResource.getLeftResource)
           }
         } { t: Throwable =>
           logger.warn(s"Failed to Compare resource ${t.getMessage}")

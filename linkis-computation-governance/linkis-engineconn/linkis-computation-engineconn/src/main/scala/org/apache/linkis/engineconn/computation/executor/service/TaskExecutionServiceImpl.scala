@@ -426,9 +426,10 @@ class TaskExecutionServiceImpl
             val resourceResponse = buildResourceMap(task)
             val extraInfoMap = buildExtraInfoMap(task)
             // todo add other info
-            val resourceMap = if (null != resourceResponse) resourceResponse.resourceMap else null
+            val resourceMap =
+              if (null != resourceResponse) resourceResponse.getResourceMap else null
 
-            val respRunningInfo: ResponseTaskRunningInfo = ResponseTaskRunningInfo(
+            val respRunningInfo: ResponseTaskRunningInfo = new ResponseTaskRunningInfo(
               progressResponse.execId,
               progressResponse.progress,
               progressResponse.progressInfo,
@@ -468,7 +469,7 @@ class TaskExecutionServiceImpl
       taskYarnResource(task.getTaskId) match {
         case responseTaskYarnResource: ResponseTaskYarnResource =>
           if (
-              responseTaskYarnResource.resourceMap != null && !responseTaskYarnResource.resourceMap.isEmpty
+              responseTaskYarnResource.getResourceMap != null && !responseTaskYarnResource.getResourceMap.isEmpty
           ) {
             responseTaskYarnResource
           } else {
@@ -485,7 +486,7 @@ class TaskExecutionServiceImpl
     executor match {
       case executor: ResourceFetchExecutor =>
         val resourceWithApplicationId = executor.FetchResource
-        ResponseTaskYarnResource(taskID, resourceWithApplicationId)
+        new ResponseTaskYarnResource(taskID, resourceWithApplicationId)
       case _ => null
     }
   }
@@ -664,9 +665,9 @@ class TaskExecutionServiceImpl
         val resourceResponse = buildResourceMap(task)
         val extraInfoMap = buildExtraInfoMap(task)
 
-        val resourceMap = if (null != resourceResponse) resourceResponse.resourceMap else null
+        val resourceMap = if (null != resourceResponse) resourceResponse.getResourceMap else null
 
-        val respRunningInfo: ResponseTaskRunningInfo = ResponseTaskRunningInfo(
+        val respRunningInfo: ResponseTaskRunningInfo = new ResponseTaskRunningInfo(
           taskProgressUpdateEvent.taskId,
           taskProgressUpdateEvent.progress,
           taskProgressUpdateEvent.progressInfo,

@@ -74,7 +74,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
       CacheBuilder.newBuilder()
           .maximumSize(20)
           .expireAfterAccess(1, TimeUnit.HOURS)
-          .refreshAfterWrite(RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME(), TimeUnit.MINUTES)
+          .refreshAfterWrite(
+              RMUtils.EXTERNAL_RESOURCE_REFRESH_TIME.getValue().toLong(), TimeUnit.MINUTES)
           .build(
               new CacheLoader<String, List<ExternalResourceProvider>>() {
 
@@ -110,7 +111,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     NodeResource resource =
         (NodeResource)
             retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM.getValue(),
                 (i) -> externalResourceRequester.requestResourceInfo(identifier, provider),
                 (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
     return resource;
@@ -135,7 +136,7 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     List<ExternalAppInfo> appInfos =
         (List<ExternalAppInfo>)
             retry(
-                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM().getValue(),
+                (Integer) RMConfiguration.EXTERNAL_RETRY_NUM.getValue(),
                 (i) -> externalResourceRequester.requestAppInfo(identifier, provider),
                 (i) -> externalResourceRequester.reloadExternalResourceAddress(provider));
     return appInfos;
@@ -176,8 +177,8 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
     if (label == null) {
       realClusterLabel =
           LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(ClusterLabel.class);
-      realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME().getValue());
-      realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE().getValue());
+      realClusterLabel.setClusterName(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME.getValue());
+      realClusterLabel.setClusterType(RMConfiguration.DEFAULT_YARN_TYPE.getValue());
     } else {
       realClusterLabel = (ClusterLabel) label;
     }

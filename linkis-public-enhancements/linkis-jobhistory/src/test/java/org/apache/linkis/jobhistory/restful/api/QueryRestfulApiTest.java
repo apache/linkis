@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -130,8 +129,7 @@ public class QueryRestfulApiTest {
     // any matcher scene with uncertain parameters todo:mock does not take effect
     MockedStatic<TaskConversions> taskConversionsMockedStatic =
         Mockito.mockStatic(TaskConversions.class);
-    when(TaskConversions.jobHistory2TaskVO(any(JobHistory.class), anyObject()))
-        .thenReturn(queryTaskVO);
+    when(TaskConversions.jobHistory2TaskVO(any(JobHistory.class), any())).thenReturn(queryTaskVO);
     when(jobDetailMapper.insertJobDetail(new JobDetail())).thenReturn(1);
     Message res =
         JsonUtils.jackson().readValue(mvcResult.getResponse().getContentAsString(), Message.class);

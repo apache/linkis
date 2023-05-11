@@ -15,17 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executor.client
+package org.apache.linkis.engineplugin.elasticsearch.executor.client;
 
-import org.apache.linkis.storage.domain.Column
-import org.apache.linkis.storage.resultset.table.TableRecord
+public interface ElasticSearchExecutor {
 
-trait ElasticSearchResponse
+  void open() throws Exception;
 
-case class ElasticSearchTableResponse(columns: Array[Column], records: Array[TableRecord])
-    extends ElasticSearchResponse
+  ElasticSearchResponse executeLine(String code);
 
-case class ElasticSearchJsonResponse(value: String) extends ElasticSearchResponse
-
-case class ElasticSearchErrorResponse(message: String, body: String = null, cause: Throwable = null)
-    extends ElasticSearchResponse
+  void close();
+}

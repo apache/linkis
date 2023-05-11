@@ -26,7 +26,6 @@ import org.apache.linkis.engineplugin.elasticsearch.executor.client.{
   ElasticSearchTableResponse,
   ResponseHandler
 }
-import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler
 import org.apache.linkis.engineplugin.elasticsearch.executor.client.ResponseHandler._
 import org.apache.linkis.storage.domain._
 import org.apache.linkis.storage.domain.DataType.{DoubleType, StringType}
@@ -55,7 +54,7 @@ class ResponseHandlerImpl extends ResponseHandler {
     val contentBytes = EntityUtils.toByteArray(response.getEntity)
 
     if (contentBytes == null || contentBytes.isEmpty) {
-      throw EsConvertResponseException(RESPONSE_FAIL_IS_EMPTY.getErrorDesc)
+      throw new EsConvertResponseException(RESPONSE_FAIL_IS_EMPTY.getErrorDesc)
     }
 
     val jsonNode = Utils.tryCatch {

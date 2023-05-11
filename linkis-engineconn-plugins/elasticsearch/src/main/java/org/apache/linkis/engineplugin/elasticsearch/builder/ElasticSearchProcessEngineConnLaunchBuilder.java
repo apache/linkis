@@ -15,10 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.exception
+package org.apache.linkis.engineplugin.elasticsearch.builder;
 
-import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.RESPONSE_FAIL_IS_EMPTY
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
-case class EsConvertResponseException(errorMsg: String)
-    extends ErrorException(RESPONSE_FAIL_IS_EMPTY.getErrorCode, errorMsg)
+public class ElasticSearchProcessEngineConnLaunchBuilder
+    extends JavaProcessEngineConnLaunchBuilder {
+
+  @Override
+  public String getEngineStartUser(UserCreatorLabel label) {
+    return StorageConfiguration.HDFS_ROOT_USER.getValue();
+  }
+}

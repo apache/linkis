@@ -15,32 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executor.client
+package org.apache.linkis.engineplugin.elasticsearch.executor.client;
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineplugin.elasticsearch.executor.client.impl.ElasticSearchExecutorImpl
-import org.apache.linkis.scheduler.executer.ExecuteResponse
+import java.util.Map;
 
-import java.io.IOException
-import java.util
+import org.elasticsearch.client.Cancellable;
+import org.elasticsearch.client.ResponseListener;
 
-import scala.collection.JavaConverters._
+public interface EsClientOperate {
 
-trait ElasticSearchExecutor extends Logging {
+  Cancellable execute(String code, Map<String, String> options, ResponseListener responseListener);
 
-  @throws(classOf[IOException])
-  def open: Unit
-
-  def executeLine(code: String): ElasticSearchResponse
-
-  def close: Unit
-
-}
-
-object ElasticSearchExecutor {
-
-  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
-    new ElasticSearchExecutorImpl(runType, properties)
-  }
-
+  void close();
 }

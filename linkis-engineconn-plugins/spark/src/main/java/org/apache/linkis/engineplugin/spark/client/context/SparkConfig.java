@@ -290,9 +290,7 @@ public class SparkConfig {
         + ", deployMode='"
         + deployMode
         + '\''
-        +
-        //                ", mainClass='" + mainClass + '\'' +
-        ", appName='"
+        + ", appName='"
         + appName
         + '\''
         + ", jars='"

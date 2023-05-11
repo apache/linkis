@@ -120,7 +120,7 @@ public class EngineRestfulApi {
     engineCreateRequest.setUser(userName);
     long timeout = engineCreateRequest.getTimeout();
     if (timeout <= 0) {
-      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME().getValue().toLong();
+      timeout = AMConfiguration.ENGINE_CONN_START_REST_MAX_WAIT_TIME.getValue().toLong();
       engineCreateRequest.setTimeout(timeout);
     }
     logger.info(
@@ -496,7 +496,7 @@ public class EngineRestfulApi {
         engineOperateService.executeOperation(engineNode, engineOperateRequest);
     return Message.ok()
         .data("result", engineOperateResponse.getResult())
-        .data("errorMsg", engineOperateResponse.errorMsg())
+        .data("errorMsg", engineOperateResponse.getErrorMsg())
         .data("isError", engineOperateResponse.isError());
   }
 

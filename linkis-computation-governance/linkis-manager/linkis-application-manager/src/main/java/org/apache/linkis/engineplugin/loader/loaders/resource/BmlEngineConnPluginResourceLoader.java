@@ -58,13 +58,13 @@ public class BmlEngineConnPluginResourceLoader implements EngineConnPluginsResou
   private String downloadTmpDir;
 
   public BmlEngineConnPluginResourceLoader() {
-    this(EngineConnPluginLoaderConf.ENGINE_PLUGIN_LOADER_DEFAULT_USER().getValue(), null);
+    this(EngineConnPluginLoaderConf.ENGINE_PLUGIN_LOADER_DEFAULT_USER.getValue(), null);
   }
 
   public BmlEngineConnPluginResourceLoader(String clientUser, Map<String, Object> clientProps) {
     this.clientUser = clientUser;
     this.bmlClient = BmlClientFactory.createBmlClient(clientUser, clientProps);
-    this.downloadTmpDir = EngineConnPluginLoaderConf.DOWNLOAD_TEMP_DIR_PREFIX().getValue();
+    this.downloadTmpDir = EngineConnPluginLoaderConf.DOWNLOAD_TEMP_DIR_PREFIX.getValue();
   }
 
   @Override

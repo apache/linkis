@@ -426,7 +426,8 @@ class TaskExecutionServiceImpl
             val resourceResponse = buildResourceMap(task)
             val extraInfoMap = buildExtraInfoMap(task)
             // todo add other info
-            val resourceMap = if (null != resourceResponse) resourceResponse.getResourceMap else null
+            val resourceMap =
+              if (null != resourceResponse) resourceResponse.getResourceMap else null
 
             val respRunningInfo: ResponseTaskRunningInfo = new ResponseTaskRunningInfo(
               progressResponse.execId,

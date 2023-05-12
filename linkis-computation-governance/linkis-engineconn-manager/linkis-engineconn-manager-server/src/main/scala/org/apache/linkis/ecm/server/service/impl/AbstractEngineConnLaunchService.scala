@@ -149,10 +149,11 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       Sender
         .getSender(MANAGER_SERVICE_NAME)
         .send(
-          EngineConnStatusCallbackToAM(
+          new EngineConnStatusCallbackToAM(
             conn.getServiceInstance,
             NodeStatus.ShuttingDown,
-            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)
+            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t),
+            false
           )
         )
       LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(

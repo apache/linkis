@@ -183,7 +183,7 @@
     <h2.version>1.4.200</h2.version>
 
     <!-- spring -->
-    <spring.version>6.0.0</spring.version>
+    <spring.version>5.3.22</spring.version>
     <spring.boot.version>2.7.10</spring.boot.version>
 
     <!-- platform encoding override -->

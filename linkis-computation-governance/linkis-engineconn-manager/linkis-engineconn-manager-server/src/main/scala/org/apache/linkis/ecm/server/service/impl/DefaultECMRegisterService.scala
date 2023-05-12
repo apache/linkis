@@ -98,9 +98,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
     logger.info("start register ecm")
     val response = Sender.getSender(MANAGER_SERVICE_NAME).ask(request)
     response match {
-      case RegisterEMResponse(isSuccess, msg) =>
-        if (!isSuccess) {
-          logger.error(s"Failed to register info to linkis manager, reason: $msg")
+      case registerEMResponse: RegisterEMResponse =>
+        if (!registerEMResponse.getIsSuccess) {
+          logger.error(
+            s"Failed to register info to linkis manager, reason: ${registerEMResponse.getMsg}"
+          )
           System.exit(1)
         }
       case _ =>

@@ -41,7 +41,6 @@
     <license>
       <name>Apache 2.0 License</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-      <distribution>repo</distribution>
     </license>
   </licenses>
   <developers>
@@ -104,8 +103,21 @@
   </distributionManagement>
   <properties>
     <revision>1.4.0-SNAPSHOT</revision>
-    <jedis.version>2.9.2</jedis.version>
-    <elasticsearch.version>7.6.2</elasticsearch.version>
+
+    <zookeeper.version>3.5.9</zookeeper.version>
+    <curator.version>4.2.0</curator.version>
+    <hadoop.version>3.3.4</hadoop.version>
+    <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
+    <hbase.version>2.5.3</hbase.version>
+    <hive.version>3.1.3</hive.version>
+    <spark.version>3.2.1</spark.version>
+    <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
+    <spark.hadoop.groupid>org.apache.hadoop</spark.hadoop.groupid>
+    <spark.hadoop-common.artifactId>hadoop-common</spark.hadoop-common.artifactId>
+    <spark.hadoop-hdfs.artifactId>hadoop-hdfs</spark.hadoop-hdfs.artifactId>
+    <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
+    <spark.hadoop.scope>provided</spark.hadoop.scope>
+
     <flink.version>1.12.2</flink.version>
     <io_file.version>1.0</io_file.version>
     <jdbc.version>4</jdbc.version>
@@ -118,44 +130,40 @@
     <seatunnel.version>2.1.2</seatunnel.version>
     <shell.version>1</shell.version>
     <sqoop.version>1.4.6</sqoop.version>
-    <spark.version>3.2.1</spark.version>
-    <hive.version>3.1.3</hive.version>
-    <hadoop.version>3.3.4</hadoop.version>
-    <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
-    <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
-    <spark.hadoop.groupid>org.apache.hadoop</spark.hadoop.groupid>
-    <spark.hadoop-common.artifactId>hadoop-common</spark.hadoop-common.artifactId>
-    <spark.hadoop-hdfs.artifactId>hadoop-hdfs</spark.hadoop-hdfs.artifactId>
-    <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
-    <spark.hadoop.scope>provided</spark.hadoop.scope>
-    <zookeeper.version>3.5.9</zookeeper.version>
-    <!-- hadoop 2.7 use curator 2.7.1, hadoop3.3 use curator 4.2.0-->
-    <curator.version>4.2.0</curator.version>
-    <guava.version>30.0-jre</guava.version>
-    <netty.version>4.1.86.Final</netty.version>
+    <elasticsearch.version>7.6.2</elasticsearch.version>
 
-    <!-- json -->
+    <!-- marshalling -->
     <gson.version>2.8.9</gson.version>
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <jsonpath.version>2.7.0</jsonpath.version>
+    <jettison.version>1.5.3</jettison.version>
+    <xstream.core.version>1.4.20</xstream.core.version>
+    <woodstox.version>6.4.0</woodstox.version>
+    <snakeyaml.version>1.33</snakeyaml.version>
+
+    <protobuf.version>3.16.3</protobuf.version>
 
     <jersey.version>1.19.4</jersey.version>
     <jersey.servlet.version>2.23.1</jersey.servlet.version>
-    <jline.version>2.14.6</jline.version>
+    <netty.version>4.1.86.Final</netty.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <httpclient.version>4.5.13</httpclient.version>
     <httpmime.version>${httpclient.version}</httpmime.version>
+
     <knife4j.version>2.0.9</knife4j.version>
     <springfox.version>2.10.5</springfox.version>
-    <xstream.core.version>1.4.20</xstream.core.version>
+    <poi.version>5.2.3</poi.version>
     <reflections.version>0.9.12</reflections.version>
-    <mybatis-plus.boot.starter.version>3.4.1</mybatis-plus.boot.starter.version>
+
+    <!-- dbs -->
+    <jedis.version>2.9.2</jedis.version>
+    <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
-    <druid.version>1.1.22</druid.version>
-    <javassist.version>3.27.0-GA</javassist.version>
-    <commons-cli.version>1.3.1</commons-cli.version>
+    <druid.version>1.2.16</druid.version>
+
+    <!-- utils -->
+    <guava.version>30.0-jre</guava.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-text.version>1.10.0</commons-text.version>
@@ -165,26 +173,36 @@
     <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
-    <protobuf.version>3.16.3</protobuf.version>
-    <cglib.version>3.3.0</cglib.version>
+    <commons-net.version>3.9.0</commons-net.version>
+    <commons-cli.version>1.3.1</commons-cli.version>
+    <jline.version>3.9.0</jline.version>
+
+    <bouncycastle.version>1.70</bouncycastle.version>
+
+    <!-- java byte code modification -->
+    <javassist.version>3.27.0-GA</javassist.version>
     <asm-bom.version>9.3</asm-bom.version>
+    <cglib.version>3.3.0</cglib.version>
+
+    <!-- log -->
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
-    <poi.version>5.2.3</poi.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
 
     <!-- jakarta -->
     <annotation-api.version>1.3.5</annotation-api.version>
 
     <!-- test -->
     <junit5.version>5.7.2</junit5.version>
-    <mockito.version>3.9.0</mockito.version>
+    <mockito-bom.version>4.3.1</mockito-bom.version>
     <assertj.version>3.17.2</assertj.version>
     <h2.version>1.4.200</h2.version>
 
     <!-- spring -->
-    <spring.version>5.2.22.RELEASE</spring.version>
+    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
+    <spring-security.version>5.3.13.RELEASE</spring-security.version>
     <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
+    <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -218,14 +236,32 @@
     <maven-helper-plugin.version>3.2.0</maven-helper-plugin.version>
     <scala-maven-plugin.version>4.7.1</scala-maven-plugin.version>
     <spotless-maven-plugin.version>2.24.1</spotless-maven-plugin.version>
-    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jacoco.skip>false</jacoco.skip>
     <postgresql.connector.version>42.2.20</postgresql.connector.version>
+
+    <!-- for JDK-17 test-->
+    <extraJavaTestArgs>-XX:+IgnoreUnrecognizedVMOptions
+      --add-opens=java.base/java.lang=ALL-UNNAMED
+      --add-opens=java.base/java.lang.invoke=ALL-UNNAMED
+      --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
+      --add-opens=java.base/java.io=ALL-UNNAMED
+      --add-opens=java.base/java.net=ALL-UNNAMED
+      --add-opens=java.base/java.nio=ALL-UNNAMED
+      --add-opens=java.base/java.util=ALL-UNNAMED
+      --add-opens=java.base/java.util.concurrent=ALL-UNNAMED
+      --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED
+      --add-opens=java.base/sun.nio.ch=ALL-UNNAMED
+      --add-opens=java.base/sun.nio.cs=ALL-UNNAMED
+      --add-opens=java.base/sun.security.action=ALL-UNNAMED
+      --add-opens=java.base/sun.util.calendar=ALL-UNNAMED
+      -Djdk.reflect.useDirectMethodHandle=false</extraJavaTestArgs>
 
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- linkis -->
       <dependency>
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis-module</artifactId>
@@ -241,22 +277,15 @@
           </exclusion>
         </exclusions>
       </dependency>
-
       <dependency>
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis-common</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.linkis</groupId>
         <artifactId>linkis-mybatis</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.thoughtworks.xstream</groupId>
-        <artifactId>xstream</artifactId>
-        <version>${xstream.core.version}</version>
       </dependency>
 
       <!-- scala version -->
@@ -280,16 +309,7 @@
         <artifactId>scalap</artifactId>
         <version>${scala.version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>xml-apis</groupId>
-        <artifactId>xml-apis</artifactId>
-        <version>1.4.01</version>
-      </dependency>
+
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-bom</artifactId>
@@ -302,11 +322,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>${javassist.version}</version>
-      </dependency>
+
       <dependency>
         <groupId>org.apache.ant</groupId>
         <artifactId>ant</artifactId>
@@ -325,6 +341,23 @@
       </dependency>
 
       <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>${jedis.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql.connector.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
         <groupId>commons-collections</groupId>
         <artifactId>commons-collections</artifactId>
         <version>${commons-collections.version}</version>
@@ -332,7 +365,7 @@
       <dependency>
         <groupId>commons-lang</groupId>
         <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
+        <version>2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -374,13 +407,33 @@
         <artifactId>commons-exec</artifactId>
         <version>${commons-exec.version}</version>
       </dependency>
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>${commons-net.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>${commons-cli.version}</version>
+      </dependency>
 
       <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>${mysql.connector.version}</version>
-        <scope>test</scope>
+        <groupId>org.jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>${jline.version}</version>
       </dependency>
+      <dependency>
+        <groupId>jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>2.14.6</version>
+      </dependency>
+
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
@@ -415,6 +468,50 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-core-asl</artifactId>
+        <version>1.9.13</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-asl</artifactId>
+        <version>1.9.13</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>${xstream.core.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.4.01</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.woodstox</groupId>
+        <artifactId>woodstox-core</artifactId>
+        <version>${woodstox.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.jettison</groupId>
+        <artifactId>jettison</artifactId>
+        <version>${jettison.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-client</artifactId>
         <version>${jersey.version}</version>
@@ -445,21 +542,9 @@
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>${protobuf.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.sun.jersey.contribs</groupId>
         <artifactId>jersey-apache-client4</artifactId>
         <version>${jersey.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-bom</artifactId>
-        <version>${jetty.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.glassfish.jersey</groupId>
@@ -468,11 +553,15 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
       <dependency>
-        <groupId>jline</groupId>
-        <artifactId>jline</artifactId>
-        <version>${jline.version}</version>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-bom</artifactId>
+        <version>${jetty.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
+
       <dependency>
         <groupId>org.apache.curator</groupId>
         <artifactId>curator-recipes</artifactId>
@@ -487,6 +576,158 @@
         <groupId>org.apache.curator</groupId>
         <artifactId>curator-framework</artifactId>
         <version>${curator.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-common</artifactId>
+        <version>${hbase.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-hadoop2-compat</artifactId>
+        <version>${hbase.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-hadoop-compat</artifactId>
+        <version>${hbase.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-server</artifactId>
+        <version>${hbase.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-mapreduce</artifactId>
+        <version>${hbase.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-protocol</artifactId>
+        <version>${hbase.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hbase</groupId>
+        <artifactId>hbase-client</artifactId>
+        <version>${hbase.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-common</artifactId>
+        <version>${hive.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-service</artifactId>
+        <version>${hive.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>apache-curator</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hive</groupId>
+        <artifactId>hive-jdbc</artifactId>
+        <version>${hive.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-shims</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>tomcat</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>apache-log4j-extras</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>io.netty</groupId>
+            <artifactId>netty</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>jdk.tools</groupId>
+            <artifactId>jdk.tools</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-distcp</artifactId>
+        <version>${hadoop.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.hadoop</groupId>
@@ -671,11 +912,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>${commons-logging.version}</version>
-      </dependency>
+
       <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>${hadoop-hdfs-client.artifact}</artifactId>
@@ -784,6 +1021,7 @@
           </exclusion>
         </exclusions>
       </dependency>
+
       <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-yarn-api</artifactId>
@@ -826,6 +1064,11 @@
             <artifactId>jdk.tools</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-yarn-registry</artifactId>
+        <version>${hadoop.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.hadoop</groupId>
@@ -910,6 +1153,7 @@
           </exclusion>
         </exclusions>
       </dependency>
+
       <dependency>
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
@@ -951,6 +1195,23 @@
         </exclusions>
       </dependency>
 
+      <!-- crypto -->
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk15on</artifactId>
+        <version>${bouncycastle.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.ow2.asm</groupId>
         <artifactId>asm-bom</artifactId>
@@ -964,12 +1225,6 @@
         <version>${cglib.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>redis.clients</groupId>
-        <artifactId>jedis</artifactId>
-        <version>${jedis.version}</version>
-      </dependency>
-
       <!-- jakarta -->
       <dependency>
         <groupId>jakarta.annotation</groupId>
@@ -977,13 +1232,57 @@
         <version>${annotation-api.version}</version>
       </dependency>
 
+      <!-- test -->
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-bom</artifactId>
+        <version>${mockito-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj.version}</version>
+        <scope>test</scope>
+      </dependency>
+
       <!-- spring -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-framework-bom</artifactId>
-        <version>${spring.version}</version>
+        <version>${spring-framework.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-bom</artifactId>
+        <version>${spring-security.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring.boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>${spring.boot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -995,9 +1294,20 @@
       <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-dependencies</artifactId>
-        <version>Hoxton.SR12</version>
+        <version>${spring-cloud.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>${mybatis-plus.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -1017,29 +1327,10 @@
 
     <dependency>
       <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
       <artifactId>mockito-inline</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
@@ -1059,12 +1350,11 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>${h2.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jdbc</artifactId>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -1478,9 +1768,10 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>--add-opens java.base/java.util=ALL-UNNAMED
-                --add-opens java.base/java.nio=ALL-UNNAMED
-                --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+              <forkCount>3</forkCount>
+              <reuseForks>true</reuseForks>
+              <argLine>-XX:MaxMetaspaceSize=2g ${extraJavaTestArgs}
+                -Dio.netty.tryReflectionSetAccessible=true</argLine>
             </configuration>
           </plugin>
         </plugins>

@@ -82,7 +82,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val prefixMsg = Sender.getThisServiceInstance + s": log dir: ${EngineConnConf.getLogDir},"
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        EngineConnStatusCallback(
+        new EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           NodeStatus.Failed,
@@ -106,7 +106,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     val engineConnAfterStartCallback = new EngineConnAfterStartCallback
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        EngineConnStatusCallback(
+        new EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           getNodeStatusOfStartSuccess(engineCreationContext, engineConn),

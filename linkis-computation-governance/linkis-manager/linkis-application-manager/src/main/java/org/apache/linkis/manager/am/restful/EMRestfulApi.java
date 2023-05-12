@@ -35,9 +35,8 @@ import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
-import org.apache.linkis.manager.common.protocol.OperateRequest$;
+import org.apache.linkis.manager.common.protocol.OperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
-import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -99,7 +98,7 @@ public class EMRestfulApi {
 
   private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
+  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS.getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
     if (Configuration.isNotAdmin(userName)) {
@@ -149,7 +148,7 @@ public class EMRestfulApi {
         stream =
             stream.filter(
                 em -> {
-                  List<Label> labels = em.getLabels();
+                  List<Label<?>> labels = em.getLabels();
                   labels =
                       labels.stream()
                           .filter(
@@ -321,7 +320,7 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-    parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
+    parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, serviceInstance.getInstance());
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
@@ -406,8 +405,8 @@ public class EMRestfulApi {
         throw new AMErrorException(
             AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }
-      parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
-      parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
+      parameters.put(OperateRequest.OPERATOR_NAME_KEY, "engineConnLog");
+      parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, engineInstance);
       if (!parameters.containsKey("enableTail")) {
         parameters.put("enableTail", true);
       }
@@ -429,12 +428,12 @@ public class EMRestfulApi {
 
   private Message executeECMOperation(
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
-    String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
+    String operationName = OperateRequest.getOperationName(ecmOperateRequest.getParameters());
     if (ArrayUtils.contains(adminOperations, operationName)
-        && Configuration.isNotAdmin(ecmOperateRequest.user())) {
+        && Configuration.isNotAdmin(ecmOperateRequest.getUser())) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
-          ecmOperateRequest.user(),
+          ecmOperateRequest.getUser(),
           operationName,
           ecmNode.getServiceInstance());
       return Message.error(
@@ -446,13 +445,13 @@ public class EMRestfulApi {
 
     // fill in logDirSuffix
     if (StringUtils.isNotBlank(engineInstance)
-        && Objects.isNull(ecmOperateRequest.parameters().get("logDirSuffix"))) {
+        && Objects.isNull(ecmOperateRequest.getParameters().get("logDirSuffix"))) {
       ECResourceInfoRecord ecResourceInfoRecord =
           ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
       if (Objects.isNull(ecResourceInfoRecord)) {
         return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
       }
-      ecmOperateRequest.parameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
+      ecmOperateRequest.getParameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
     }
 
     ECMOperateResponse engineOperateResponse =
@@ -460,7 +459,7 @@ public class EMRestfulApi {
 
     return Message.ok()
         .data("result", engineOperateResponse.getResult())
-        .data("errorMsg", engineOperateResponse.errorMsg())
+        .data("errorMsg", engineOperateResponse.getErrorMsg())
         .data("isError", engineOperateResponse.isError());
   }
 }

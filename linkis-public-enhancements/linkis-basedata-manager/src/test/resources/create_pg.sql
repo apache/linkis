@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_access";
 CREATE TABLE linkis_ps_datasource_access (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	table_id int8 NOT NULL,
 	visitor varchar(16) NOT NULL,
 	fields varchar(255) NULL,
@@ -28,7 +28,7 @@ CREATE TABLE linkis_ps_datasource_access (
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_env";
 CREATE TABLE linkis_ps_dm_datasource_env (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	env_name varchar(32) NOT NULL,
 	"env_desc" varchar(255) NULL,
 	datasource_type_id int8 NOT NULL,
@@ -39,12 +39,12 @@ CREATE TABLE linkis_ps_dm_datasource_env (
 	modify_user varchar(255) NULL,
 	CONSTRAINT linkis_ps_dm_datasource_env_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_dtid ON linkis_ps_dm_datasource_env USING btree (env_name,datasource_type_id);
-CREATE UNIQUE INDEX uniq_env_name ON linkis_ps_dm_datasource_env USING btree (env_name);
+CREATE UNIQUE INDEX uniq_name_dtid ON linkis_ps_dm_datasource_env (env_name,datasource_type_id);
+CREATE UNIQUE INDEX uniq_env_name ON linkis_ps_dm_datasource_env (env_name);
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_type_key";
 CREATE TABLE linkis_ps_dm_datasource_type_key (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	data_source_type_id int8 NOT NULL,
 	"key" varchar(32) NOT NULL,
 	"name" varchar(32) NOT NULL,
@@ -63,11 +63,11 @@ CREATE TABLE linkis_ps_dm_datasource_type_key (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_ps_dm_datasource_type_key_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_dstid_key ON linkis_ps_dm_datasource_type_key USING btree (data_source_type_id,"key");
+CREATE UNIQUE INDEX uniq_dstid_key ON linkis_ps_dm_datasource_type_key (data_source_type_id,"key");
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_type";
 CREATE TABLE linkis_ps_dm_datasource_type (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"name" varchar(32) NOT NULL,
 	description varchar(255) NULL,
 	"option" varchar(32) NULL,
@@ -79,23 +79,23 @@ CREATE TABLE linkis_ps_dm_datasource_type (
 	classifier_en varchar(32) NULL,
 	CONSTRAINT linkis_ps_dm_datasource_type_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_ddt ON linkis_ps_dm_datasource_type USING btree (name);
+CREATE UNIQUE INDEX uniq_name_ddt ON linkis_ps_dm_datasource_type (name);
 
 DROP TABLE IF EXISTS "linkis_ps_error_code";
 CREATE TABLE linkis_ps_error_code (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	error_code varchar(50) NOT NULL,
 	error_desc varchar(1024) NOT NULL,
 	error_regex varchar(1024) NULL,
 	error_type int4 NULL DEFAULT 0,
 	CONSTRAINT linkis_ps_error_code_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX idx_error_regex ON linkis_ps_error_code USING btree (error_regex);
+CREATE UNIQUE INDEX idx_error_regex ON linkis_ps_error_code (error_regex);
 
 
 DROP TABLE IF EXISTS "linkis_mg_gateway_auth_token";
 CREATE TABLE linkis_mg_gateway_auth_token (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"token_name" varchar(128) NOT NULL,
 	legal_users text NULL,
 	legal_hosts text NULL,
@@ -106,11 +106,11 @@ CREATE TABLE linkis_mg_gateway_auth_token (
 	update_by varchar(32) NULL,
 	CONSTRAINT linkis_mg_gateway_auth_token_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_token_name ON linkis_mg_gateway_auth_token USING btree (token_name);
+CREATE UNIQUE INDEX uniq_token_name ON linkis_mg_gateway_auth_token (token_name);
 
 DROP TABLE IF EXISTS "linkis_cg_rm_external_resource_provider";
 CREATE TABLE linkis_cg_rm_external_resource_provider (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	resource_type varchar(32) NOT NULL,
 	"name" varchar(32) NOT NULL,
 	labels varchar(32) NULL,
@@ -120,14 +120,14 @@ CREATE TABLE linkis_cg_rm_external_resource_provider (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_manager";
 CREATE TABLE linkis_ps_udf_manager (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	user_name varchar(20) NULL,
 	CONSTRAINT linkis_udf_manager_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS "linkis_ps_udf_tree";
 CREATE TABLE linkis_ps_udf_tree (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	parent int8 NOT NULL,
 	"name" varchar(100) NULL,
 	user_name varchar(50) NOT NULL,
@@ -140,7 +140,7 @@ CREATE TABLE linkis_ps_udf_tree (
 
 DROP TABLE IF EXISTS "linkis_cg_manager_label";
 CREATE TABLE linkis_cg_manager_label (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_key varchar(32) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
@@ -149,11 +149,11 @@ CREATE TABLE linkis_cg_manager_label (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_manager_label_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label USING btree (label_key, label_value);
+CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label (label_key, label_value);
 
 DROP TABLE IF EXISTS "linkis_cg_manager_label_value_relation";
 CREATE TABLE linkis_cg_manager_label_value_relation (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_value_key varchar(255) NOT NULL,
 	label_value_content varchar(255) NULL,
 	label_id int4 NULL,
@@ -161,11 +161,11 @@ CREATE TABLE linkis_cg_manager_label_value_relation (
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_cg_manager_label_value_relation_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lvk_lid_mlvr ON linkis_cg_manager_label_value_relation USING btree (label_value_key, label_id);
+CREATE UNIQUE INDEX uniq_lvk_lid_mlvr ON linkis_cg_manager_label_value_relation (label_value_key, label_id);
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_config_key";
 CREATE TABLE linkis_ps_configuration_config_key (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"key" varchar(50) NULL,
 	description varchar(200) NULL,
 	"name" varchar(50) NULL,
@@ -185,7 +185,7 @@ CREATE TABLE linkis_ps_configuration_config_key (
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_config_value";
 CREATE TABLE linkis_ps_configuration_config_value (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	config_key_id int4 NULL,
 	config_value varchar(200) NULL,
 	config_label_id int8 NULL,
@@ -193,20 +193,20 @@ CREATE TABLE linkis_ps_configuration_config_value (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_configuration_config_value_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_ckid_clid ON linkis_ps_configuration_config_value USING btree (config_key_id, config_label_id);
+CREATE UNIQUE INDEX uniq_ckid_clid ON linkis_ps_configuration_config_value (config_key_id, config_label_id);
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_key_engine_relation";
 CREATE TABLE linkis_ps_configuration_key_engine_relation (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	config_key_id int4 NOT NULL,
 	engine_type_label_id int4 NOT NULL,
 	CONSTRAINT linkis_ps_configuration_key_engine_relation_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_ckid_etlid ON linkis_ps_configuration_key_engine_relation USING btree (config_key_id, engine_type_label_id);
+CREATE UNIQUE INDEX uniq_ckid_etlid ON linkis_ps_configuration_key_engine_relation (config_key_id, engine_type_label_id);
 
 DROP TABLE IF EXISTS "linkis_cg_engine_conn_plugin_bml_resources";
 CREATE TABLE linkis_cg_engine_conn_plugin_bml_resources (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	engine_conn_type varchar(100) NOT NULL,
 	"version" varchar(100) NULL,
 	file_name varchar(255) NULL,
@@ -218,6 +218,38 @@ CREATE TABLE linkis_cg_engine_conn_plugin_bml_resources (
 	last_update_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_engine_conn_plugin_bml_resources_pkey PRIMARY KEY (id)
 );
+
+CREATE SEQUENCE linkis_ps_datasource_access_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_env_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_type_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_type_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_error_code_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_mg_gateway_auth_token_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_rm_external_resource_provider_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_udf_manager_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_udf_tree_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_label_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_label_value_relation_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_config_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_config_value_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_key_engine_relation_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_engine_conn_plugin_bml_resources_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_datasource_access alter column id set default nextval('linkis_ps_datasource_access_id_seq');
+alter table linkis_ps_dm_datasource_env alter column id set default nextval('linkis_ps_dm_datasource_env_id_seq');
+alter table linkis_ps_dm_datasource_type_key alter column id set default nextval('linkis_ps_dm_datasource_type_key_id_seq');
+alter table linkis_ps_dm_datasource_type alter column id set default nextval('linkis_ps_dm_datasource_type_id_seq');
+alter table linkis_ps_error_code alter column id set default nextval('linkis_ps_error_code_id_seq');
+alter table linkis_mg_gateway_auth_token alter column id set default nextval('linkis_mg_gateway_auth_token_id_seq');
+alter table linkis_cg_rm_external_resource_provider alter column id set default nextval('linkis_cg_rm_external_resource_provider_id_seq');
+alter table linkis_ps_udf_manager alter column id set default nextval('linkis_ps_udf_manager_id_seq');
+alter table linkis_ps_udf_tree alter column id set default nextval('linkis_ps_udf_tree_id_seq');
+alter table linkis_cg_manager_label alter column id set default nextval('linkis_cg_manager_label_id_seq');
+alter table linkis_cg_manager_label_value_relation alter column id set default nextval('linkis_cg_manager_label_value_relation_id_seq');
+alter table linkis_ps_configuration_config_key alter column id set default nextval('linkis_ps_configuration_config_key_id_seq');
+alter table linkis_ps_configuration_config_value alter column id set default nextval('linkis_ps_configuration_config_value_id_seq');
+alter table linkis_ps_configuration_key_engine_relation alter column id set default nextval('linkis_ps_configuration_key_engine_relation_id_seq');
+alter table linkis_cg_engine_conn_plugin_bml_resources alter column id set default nextval('linkis_cg_engine_conn_plugin_bml_resources_id_seq');
 
 INSERT INTO "linkis_cg_manager_label" ("id", "label_key", "label_value", "label_feature", "label_value_size", "update_time", "create_time") VALUES (1, 'combined_userCreator_engineType', '*-全局设置,*-*', 'OPTIONAL', 2, '2022-11-24 20:46:21', '2022-11-24 20:46:21');
 INSERT INTO "linkis_cg_manager_label" ("id", "label_key", "label_value", "label_feature", "label_value_size", "update_time", "create_time") VALUES (2, 'combined_userCreator_engineType', '*-IDE,*-*', 'OPTIONAL', 2, '2022-11-24 20:46:21', '2022-11-24 20:46:21');

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@
 
 DROP TABLE IF EXISTS "linkis_cg_engine_conn_plugin_bml_resources";
 CREATE TABLE linkis_cg_engine_conn_plugin_bml_resources (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	engine_conn_type varchar(100) NOT NULL,
 	"version" varchar(100) NULL,
 	file_name varchar(255) NULL,
@@ -33,7 +33,7 @@ CREATE TABLE linkis_cg_engine_conn_plugin_bml_resources (
 
 DROP TABLE IF EXISTS "linkis_cg_rm_external_resource_provider";
 CREATE TABLE linkis_cg_rm_external_resource_provider (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	resource_type varchar(32) NOT NULL,
 	"name" varchar(32) NOT NULL,
 	labels varchar(32) NULL,
@@ -41,6 +41,12 @@ CREATE TABLE linkis_cg_rm_external_resource_provider (
 	CONSTRAINT linkis_external_resource_provider_pkey PRIMARY KEY (id)
 );
 
+CREATE SEQUENCE linkis_cg_engine_conn_plugin_bml_resources_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_rm_external_resource_provider_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+
+alter table linkis_cg_engine_conn_plugin_bml_resources alter column id set default nextval('linkis_cg_engine_conn_plugin_bml_resources_id_seq');
+alter table linkis_cg_rm_external_resource_provider alter column id set default nextval('linkis_cg_rm_external_resource_provider_id_seq');
 
 delete from linkis_cg_rm_external_resource_provider;
 alter sequence linkis_cg_rm_external_resource_provider_id_seq restart with 1;

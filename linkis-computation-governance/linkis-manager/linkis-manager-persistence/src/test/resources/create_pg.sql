@@ -16,25 +16,24 @@
  */
 
 
-DROP TABLE IF EXISTS "linkis_cg_manager_service_instance";
 CREATE TABLE linkis_cg_manager_service_instance (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	"instance" varchar(128) NULL,
 	"name" varchar(32) NULL,
 	"owner" varchar(32) NULL,
 	mark varchar(32) NULL,
+	identifier varchar(32) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	updator varchar(32) NULL,
 	creator varchar(32) NULL,
 	CONSTRAINT linkis_manager_service_instance_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_instance_msi ON linkis_cg_manager_service_instance USING btree (instance);
+CREATE UNIQUE INDEX uniq_instance_msi ON linkis_cg_manager_service_instance (instance);
 
 
-DROP TABLE IF EXISTS "linkis_cg_manager_linkis_resources";
 CREATE TABLE linkis_cg_manager_linkis_resources (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	max_resource varchar(1020) NULL,
 	min_resource varchar(1020) NULL,
 	used_resource varchar(1020) NULL,
@@ -51,9 +50,8 @@ CREATE TABLE linkis_cg_manager_linkis_resources (
 );
 
 
-DROP TABLE IF EXISTS "linkis_cg_manager_lock";
 CREATE TABLE linkis_cg_manager_lock (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	lock_object varchar(255) NULL,
 	time_out text NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -65,7 +63,7 @@ CREATE TABLE linkis_cg_manager_lock (
 
 DROP TABLE IF EXISTS "linkis_cg_rm_external_resource_provider";
 CREATE TABLE linkis_cg_rm_external_resource_provider (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	resource_type varchar(32) NOT NULL,
 	"name" varchar(32) NOT NULL,
 	labels varchar(32) NULL,
@@ -74,9 +72,8 @@ CREATE TABLE linkis_cg_rm_external_resource_provider (
 );
 
 
-DROP TABLE IF EXISTS "linkis_cg_manager_engine_em";
 CREATE TABLE linkis_cg_manager_engine_em (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	engine_instance varchar(128) NULL,
 	em_instance varchar(128) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -87,7 +84,7 @@ CREATE TABLE linkis_cg_manager_engine_em (
 
 DROP TABLE IF EXISTS "linkis_cg_manager_label";
 CREATE TABLE linkis_cg_manager_label (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_key varchar(32) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
@@ -96,12 +93,11 @@ CREATE TABLE linkis_cg_manager_label (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_manager_label_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label USING btree (label_key, label_value);
+CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label (label_key, label_value);
 
 
-DROP TABLE IF EXISTS "linkis_cg_manager_label_value_relation";
 CREATE TABLE linkis_cg_manager_label_value_relation (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_value_key varchar(255) NOT NULL,
 	label_value_content varchar(255) NULL,
 	label_id int4 NULL,
@@ -109,35 +105,32 @@ CREATE TABLE linkis_cg_manager_label_value_relation (
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_cg_manager_label_value_relation_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lvk_lid_mlvr ON linkis_cg_manager_label_value_relation USING btree (label_value_key, label_id);
+CREATE UNIQUE INDEX uniq_lvk_lid_mlvr ON linkis_cg_manager_label_value_relation (label_value_key, label_id);
 
 
 DROP TABLE IF EXISTS "linkis_cg_manager_label_resource";
 CREATE TABLE linkis_cg_manager_label_resource (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_id int4 NULL,
 	resource_id int4 NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_manager_label_resource_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_label_id_mlr ON linkis_cg_manager_label_resource USING btree (label_id);
+CREATE UNIQUE INDEX uniq_label_id_mlr ON linkis_cg_manager_label_resource (label_id);
 
-DROP TABLE IF EXISTS "linkis_cg_manager_label_service_instance";
 CREATE TABLE linkis_cg_manager_label_service_instance (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_id int4 NULL,
 	service_instance varchar(128) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_manager_label_service_instance_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_lid_instance ON linkis_cg_manager_label_service_instance USING btree (label_id,service_instance);
+CREATE INDEX idx_lid_instance ON linkis_cg_manager_label_service_instance (label_id,service_instance);
 
-
-DROP TABLE IF EXISTS "linkis_cg_manager_label_user";
 CREATE TABLE linkis_cg_manager_label_user (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	username varchar(255) NULL,
 	label_id int4 NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -145,24 +138,6 @@ CREATE TABLE linkis_cg_manager_label_user (
 	CONSTRAINT linkis_manager_label_user_pkey PRIMARY KEY (id)
 );
 
-
-DROP TABLE IF EXISTS "linkis_cg_manager_metrics_history";
-CREATE TABLE linkis_cg_manager_metrics_history (
-    id serial4 NOT NULL,
-	instance_status int4 NULL,
-	overload varchar(255) NULL,
-	heartbeat_msg varchar(255) NULL,
-	healthy_status int4 NULL,
-	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
-	creator varchar(255) NULL,
-	"ticketID" varchar(255) NULL,
-	"serviceName" varchar(255) NULL,
-	"instance" varchar(255) NULL,
-	CONSTRAINT linkis_cg_manager_metrics_history_pkey PRIMARY KEY (id)
-);
-
-
-DROP TABLE IF EXISTS "linkis_cg_manager_service_instance_metrics";
 CREATE TABLE linkis_cg_manager_service_instance_metrics (
 	"instance" varchar(128) NOT NULL,
 	instance_status int4 NULL,
@@ -174,9 +149,8 @@ CREATE TABLE linkis_cg_manager_service_instance_metrics (
 	CONSTRAINT linkis_manager_service_instance_metrics_pkey PRIMARY KEY (instance)
 );
 
-DROP TABLE IF EXISTS "linkis_cg_ec_resource_info_record";
 CREATE TABLE linkis_cg_ec_resource_info_record (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_value varchar(255) NOT NULL,
 	create_user varchar(128) NOT NULL,
 	service_instance varchar(128) NULL,
@@ -196,8 +170,27 @@ CREATE TABLE linkis_cg_ec_resource_info_record (
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_cg_ec_resource_info_record_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_tid_lv ON linkis_cg_ec_resource_info_record USING btree (ticket_id, label_value);
-CREATE INDEX idx_ticket_id ON linkis_cg_ec_resource_info_record USING btree (ticket_id);
+CREATE UNIQUE INDEX uniq_tid_lv ON linkis_cg_ec_resource_info_record (ticket_id, label_value);
+
+CREATE SEQUENCE linkis_cg_manager_label_resource_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_label_service_instance_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_label_user_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_label_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_service_instance_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_engine_em_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_lock_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_manager_linkis_resources_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_ec_resource_info_record_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_cg_manager_label_resource alter column id set default nextval('linkis_cg_manager_label_resource_id_seq');
+alter table linkis_cg_manager_label_service_instance alter column id set default nextval('linkis_cg_manager_label_service_instance_id_seq');
+alter table linkis_cg_manager_label_user alter column id set default nextval('linkis_cg_manager_label_user_id_seq');
+alter table linkis_cg_manager_label alter column id set default nextval('linkis_cg_manager_label_id_seq');
+alter table linkis_cg_manager_service_instance alter column id set default nextval('linkis_cg_manager_service_instance_id_seq');
+alter table linkis_cg_manager_engine_em alter column id set default nextval('linkis_cg_manager_engine_em_id_seq');
+alter table linkis_cg_manager_lock alter column id set default nextval('linkis_cg_manager_lock_id_seq');
+alter table linkis_cg_manager_linkis_resources alter column id set default nextval('linkis_cg_manager_linkis_resources_id_seq');
+alter table linkis_cg_ec_resource_info_record alter column id set default nextval('linkis_cg_ec_resource_info_record_id_seq');
 
 INSERT INTO linkis_cg_manager_label_resource (label_id, resource_id, update_time, create_time) VALUES(2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 INSERT INTO linkis_cg_manager_label_resource (label_id, resource_id, update_time, create_time) VALUES(1, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

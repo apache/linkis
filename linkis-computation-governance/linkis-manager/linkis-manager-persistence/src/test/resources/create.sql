@@ -106,6 +106,7 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
   `name` varchar(32)    DEFAULT NULL,
   `owner` varchar(32)    DEFAULT NULL,
   `mark` varchar(32)    DEFAULT NULL,
+  `identifier` varchar(32) DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `updator` varchar(32)    DEFAULT NULL,

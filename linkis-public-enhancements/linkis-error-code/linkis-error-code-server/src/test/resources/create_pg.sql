@@ -17,14 +17,19 @@
 
 DROP TABLE IF EXISTS "linkis_ps_error_code";
 CREATE TABLE linkis_ps_error_code (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	error_code varchar(50) NOT NULL,
 	error_desc varchar(1024) NOT NULL,
 	error_regex varchar(1024) NULL,
 	error_type int4 NULL DEFAULT 0,
 	CONSTRAINT linkis_ps_error_code_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX idx_error_regex ON linkis_ps_error_code USING btree (error_regex);
+CREATE UNIQUE INDEX idx_error_regex ON linkis_ps_error_code (error_regex);
+
+CREATE SEQUENCE linkis_ps_error_code_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_error_code alter column id set default nextval('linkis_ps_error_code_id_seq');
+
 
 DELETE FROM linkis_ps_error_code;
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','Linkis服务负载过高，请联系管理员扩容','Unexpected end of file from server',0);

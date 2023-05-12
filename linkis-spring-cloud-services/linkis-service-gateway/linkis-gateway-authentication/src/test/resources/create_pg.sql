@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_mg_gateway_auth_token";
 CREATE TABLE linkis_mg_gateway_auth_token (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"token_name" varchar(128) NOT NULL,
 	legal_users text NULL,
 	legal_hosts text NULL,
@@ -28,7 +28,11 @@ CREATE TABLE linkis_mg_gateway_auth_token (
 	update_by varchar(32) NULL,
 	CONSTRAINT linkis_mg_gateway_auth_token_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_token_name ON linkis_mg_gateway_auth_token USING btree (token_name);
+CREATE UNIQUE INDEX uniq_token_name ON linkis_mg_gateway_auth_token (token_name);
+
+CREATE SEQUENCE linkis_mg_gateway_auth_token_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_mg_gateway_auth_token alter column id set default nextval('linkis_mg_gateway_auth_token_id_seq');
 
 delete from linkis_mg_gateway_auth_token;
 alter sequence linkis_mg_gateway_auth_token_id_seq restart with 1;

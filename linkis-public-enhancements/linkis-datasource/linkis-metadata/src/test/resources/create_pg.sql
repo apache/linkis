@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_table";
 CREATE TABLE linkis_ps_datasource_table (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"database" varchar(64) NOT NULL,
 	"name" varchar(64) NOT NULL,
 	alias varchar(64) NULL,
@@ -36,11 +36,11 @@ CREATE TABLE linkis_ps_datasource_table (
 	is_available bool NOT NULL,
 	CONSTRAINT linkis_mdq_table_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_db_name ON linkis_ps_datasource_table USING btree (database, name);
+CREATE UNIQUE INDEX uniq_db_name ON linkis_ps_datasource_table (database, name);
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_field";
 CREATE TABLE linkis_ps_datasource_field (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	table_id int8 NOT NULL,
 	"name" varchar(64) NOT NULL,
 	alias varchar(64) NULL,
@@ -57,7 +57,7 @@ CREATE TABLE linkis_ps_datasource_field (
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_import";
 CREATE TABLE linkis_ps_datasource_import (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	table_id int8 NOT NULL,
 	import_type int4 NOT NULL,
 	args varchar(255) NOT NULL,
@@ -66,12 +66,22 @@ CREATE TABLE linkis_ps_datasource_import (
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_lineage";
 CREATE TABLE linkis_ps_datasource_lineage (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	table_id int8 NULL,
 	source_table varchar(64) NULL,
 	update_time timestamp(6) NULL,
 	CONSTRAINT linkis_mdq_lineage_pkey PRIMARY KEY (id)
 );
+
+CREATE SEQUENCE linkis_ps_datasource_table_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_datasource_field_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_datasource_import_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_datasource_lineage_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_datasource_table alter column id set default nextval('linkis_ps_datasource_table_id_seq');
+alter table linkis_ps_datasource_field alter column id set default nextval('linkis_ps_datasource_field_id_seq');
+alter table linkis_ps_datasource_import alter column id set default nextval('linkis_ps_datasource_import_id_seq');
+alter table linkis_ps_datasource_lineage alter column id set default nextval('linkis_ps_datasource_lineage_id_seq');
 
 
 INSERT INTO linkis_ps_datasource_table (database,name,alias,creator,comment,create_time,product_name,project_name,usage,lifecycle,use_way,is_import,model_level,is_external_use,is_partition_table,is_available) VALUES
@@ -84,11 +94,11 @@ INSERT INTO linkis_ps_datasource_lineage (table_id,source_table) VALUES (1,'db_t
 DROP TABLE IF EXISTS "DBS";
 CREATE TABLE "DBS" (
 	"DB_ID" int8 NOT NULL,
-	"DESC" varchar(4000) NULL DEFAULT NULL::character varying,
+	"DESC" varchar(4000) NULL DEFAULT NULL,
 	"DB_LOCATION_URI" varchar(4000) NOT NULL,
-	"NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"OWNER_NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"OWNER_TYPE" varchar(10) NULL DEFAULT NULL::character varying,
+	"NAME" varchar(128) NULL DEFAULT NULL,
+	"OWNER_NAME" varchar(128) NULL DEFAULT NULL,
+	"OWNER_TYPE" varchar(10) NULL DEFAULT NULL,
 	"CTLG_NAME" varchar(256) NULL,
 	CONSTRAINT "DBS_pkey" PRIMARY KEY ("DB_ID")
 );
@@ -96,11 +106,11 @@ CREATE TABLE "DBS" (
 DROP TABLE IF EXISTS "SDS";
 CREATE TABLE "SDS" (
 	"SD_ID" int8 NOT NULL,
-	"INPUT_FORMAT" varchar(4000) NULL DEFAULT NULL::character varying,
+	"INPUT_FORMAT" varchar(4000) NULL DEFAULT NULL,
 	"IS_COMPRESSED" bool NOT NULL,
-	"LOCATION" varchar(4000) NULL DEFAULT NULL::character varying,
+	"LOCATION" varchar(4000) NULL DEFAULT NULL,
 	"NUM_BUCKETS" int8 NOT NULL,
-	"OUTPUT_FORMAT" varchar(4000) NULL DEFAULT NULL::character varying,
+	"OUTPUT_FORMAT" varchar(4000) NULL DEFAULT NULL,
 	"SERDE_ID" int8 NULL,
 	"CD_ID" int8 NULL,
 	"IS_STOREDASSUBDIRECTORIES" bool NOT NULL,
@@ -113,12 +123,12 @@ CREATE TABLE "TBLS" (
 	"CREATE_TIME" int8 NOT NULL,
 	"DB_ID" int8 NULL,
 	"LAST_ACCESS_TIME" int8 NOT NULL,
-	"OWNER" varchar(767) NULL DEFAULT NULL::character varying,
-	"OWNER_TYPE" varchar(10) NULL DEFAULT NULL::character varying,
+	"OWNER" varchar(767) NULL DEFAULT NULL,
+	"OWNER_TYPE" varchar(10) NULL DEFAULT NULL,
 	"RETENTION" int8 NOT NULL,
 	"SD_ID" int8 NULL,
-	"TBL_NAME" varchar(256) NULL DEFAULT NULL::character varying,
-	"TBL_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
+	"TBL_NAME" varchar(256) NULL DEFAULT NULL,
+	"TBL_TYPE" varchar(128) NULL DEFAULT NULL,
 	"VIEW_EXPANDED_TEXT" text NULL,
 	"VIEW_ORIGINAL_TEXT" text NULL,
 	"IS_REWRITE_ENABLED" bool NOT NULL DEFAULT false,
@@ -137,8 +147,8 @@ DROP TABLE IF EXISTS "ROLES";
 CREATE TABLE public."ROLES" (
 	"ROLE_ID" int8 NOT NULL,
 	"CREATE_TIME" int8 NOT NULL,
-	"OWNER_NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"ROLE_NAME" varchar(128) NULL DEFAULT NULL::character varying
+	"OWNER_NAME" varchar(128) NULL DEFAULT NULL,
+	"ROLE_NAME" varchar(128) NULL DEFAULT NULL
 );
 
 
@@ -147,10 +157,10 @@ CREATE TABLE "ROLE_MAP" (
 	"ROLE_GRANT_ID" int8 NOT NULL,
 	"ADD_TIME" int8 NOT NULL,
 	"GRANT_OPTION" int2 NOT NULL,
-	"GRANTOR" varchar(128) NULL DEFAULT NULL::character varying,
-	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
+	"GRANTOR" varchar(128) NULL DEFAULT NULL,
+	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL,
 	"ROLE_ID" int8 NULL,
 	CONSTRAINT "ROLE_MAP_pkey" PRIMARY KEY ("ROLE_GRANT_ID")
 );
@@ -161,12 +171,12 @@ CREATE TABLE "DB_PRIVS" (
 	"CREATE_TIME" int8 NOT NULL,
 	"DB_ID" int8 NULL,
 	"GRANT_OPTION" int2 NOT NULL,
-	"GRANTOR" varchar(128) NULL DEFAULT NULL::character varying,
-	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
-	"DB_PRIV" varchar(128) NULL DEFAULT NULL::character varying,
-	"AUTHORIZER" varchar(128) NULL DEFAULT NULL::character varying,
+	"GRANTOR" varchar(128) NULL DEFAULT NULL,
+	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL,
+	"DB_PRIV" varchar(128) NULL DEFAULT NULL,
+	"AUTHORIZER" varchar(128) NULL DEFAULT NULL,
 	CONSTRAINT "DB_PRIVS_pkey" PRIMARY KEY ("DB_GRANT_ID")
 );
 
@@ -175,13 +185,13 @@ CREATE TABLE "TBL_PRIVS" (
 	"TBL_GRANT_ID" int8 NOT NULL,
 	"CREATE_TIME" int8 NOT NULL,
 	"GRANT_OPTION" int2 NOT NULL,
-	"GRANTOR" varchar(128) NULL DEFAULT NULL::character varying,
-	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL::character varying,
-	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL::character varying,
-	"TBL_PRIV" varchar(128) NULL DEFAULT NULL::character varying,
+	"GRANTOR" varchar(128) NULL DEFAULT NULL,
+	"GRANTOR_TYPE" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_NAME" varchar(128) NULL DEFAULT NULL,
+	"PRINCIPAL_TYPE" varchar(128) NULL DEFAULT NULL,
+	"TBL_PRIV" varchar(128) NULL DEFAULT NULL,
 	"TBL_ID" int8 NULL,
-	"AUTHORIZER" varchar(128) NULL DEFAULT NULL::character varying,
+	"AUTHORIZER" varchar(128) NULL DEFAULT NULL,
 	CONSTRAINT "TBL_PRIVS_pkey" PRIMARY KEY ("TBL_GRANT_ID")
 );
 

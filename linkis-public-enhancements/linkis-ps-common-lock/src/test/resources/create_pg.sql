@@ -24,7 +24,10 @@ CREATE TABLE linkis_ps_common_lock (
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_ps_common_lock_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lock_object ON linkis_ps_common_lock USING btree (lock_object);
+CREATE UNIQUE INDEX uniq_lock_object ON linkis_ps_common_lock (lock_object);
+
+CREATE SEQUENCE linkis_ps_common_lock_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+alter table linkis_ps_common_lock alter column id set default nextval('linkis_ps_common_lock_id_seq');
 
 DELETE FROM linkis_ps_common_lock;
 insert into linkis_ps_common_lock("lock_object","time_out","update_time","create_time") values ('hadoop-warehouse',1000000,now(),now());

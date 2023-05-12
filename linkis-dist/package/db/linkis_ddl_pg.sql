@@ -743,6 +743,7 @@ CREATE TABLE linkis_cg_manager_service_instance (
 	"name" varchar(32) NULL,
 	"owner" varchar(32) NULL,
 	mark varchar(32) NULL,
+	identifier varchar(32) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	updator varchar(32) NULL,

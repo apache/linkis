@@ -17,7 +17,7 @@
  
 DROP TABLE IF EXISTS "linkis_ps_bml_project_resource";
 CREATE TABLE linkis_ps_bml_project_resource (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	project_id int4 NOT NULL,
 	resource_id varchar(128) NULL,
 	CONSTRAINT linkis_bml_project_resource_pkey PRIMARY KEY (id)
@@ -25,9 +25,9 @@ CREATE TABLE linkis_ps_bml_project_resource (
 
 DROP TABLE IF EXISTS "linkis_ps_bml_project";
 CREATE TABLE linkis_ps_bml_project (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"name" varchar(128) NULL,
-	"system" varchar(64) NOT NULL DEFAULT 'dss'::character varying,
+	"system" varchar(64) NOT NULL DEFAULT 'dss',
 	"source" varchar(1024) NULL,
 	description varchar(1024) NULL,
 	creator varchar(128) NOT NULL,
@@ -35,11 +35,11 @@ CREATE TABLE linkis_ps_bml_project (
 	create_time timestamp(6) NULL DEFAULT now(),
 	CONSTRAINT linkis_bml_project_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_bp ON linkis_ps_bml_project USING btree (name);
+CREATE UNIQUE INDEX uniq_name_bp ON linkis_ps_bml_project (name);
 
 DROP TABLE IF EXISTS "linkis_ps_bml_project_user";
 CREATE TABLE linkis_ps_bml_project_user (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	project_id int4 NOT NULL,
 	username varchar(64) NULL,
 	priv int4 NOT NULL,
@@ -48,11 +48,11 @@ CREATE TABLE linkis_ps_bml_project_user (
 	expire_time timestamp(6) NULL,
 	CONSTRAINT linkis_bml_project_user_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_pid ON linkis_ps_bml_project_user USING btree (username, project_id);
+CREATE UNIQUE INDEX uniq_name_pid ON linkis_ps_bml_project_user (username, project_id);
 
 DROP TABLE IF EXISTS "linkis_ps_bml_resources_version";
 CREATE TABLE linkis_ps_bml_resources_version (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	resource_id varchar(50) NOT NULL,
 	file_md5 varchar(32) NOT NULL,
 	"version" varchar(20) NOT NULL,
@@ -68,17 +68,17 @@ CREATE TABLE linkis_ps_bml_resources_version (
 	enable_flag bool NOT NULL DEFAULT true,
 	CONSTRAINT linkis_resources_version_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_rid_version ON linkis_ps_bml_resources_version USING btree (resource_id, version);
+CREATE UNIQUE INDEX uniq_rid_version ON linkis_ps_bml_resources_version (resource_id, version);
 
 DROP TABLE IF EXISTS "linkis_ps_bml_resources_task";
 CREATE TABLE linkis_ps_bml_resources_task (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	resource_id varchar(50) NULL,
 	"version" varchar(20) NULL,
 	operation varchar(20) NOT NULL,
-	state varchar(20) NOT NULL DEFAULT 'Schduled'::character varying,
+	state varchar(20) NOT NULL DEFAULT 'Schduled',
 	submit_user varchar(20) NOT NULL,
-	"system" varchar(20) NULL DEFAULT 'dss'::character varying,
+	"system" varchar(20) NULL DEFAULT 'dss',
 	"instance" varchar(128) NOT NULL,
 	client_ip varchar(50) NULL,
 	extra_params text NULL,
@@ -91,7 +91,7 @@ CREATE TABLE linkis_ps_bml_resources_task (
 
 DROP TABLE IF EXISTS "linkis_ps_bml_resources";
 CREATE TABLE linkis_ps_bml_resources (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	resource_id varchar(50) NOT NULL,
 	is_private bool NULL DEFAULT false,
 	resource_header int2 NULL DEFAULT 0,
@@ -111,7 +111,7 @@ CREATE TABLE linkis_ps_bml_resources (
 
 DROP TABLE IF EXISTS "linkis_ps_resources_download_history";
 CREATE TABLE linkis_ps_resources_download_history (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	start_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	end_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	client_ip varchar(200) NOT NULL,
@@ -121,6 +121,24 @@ CREATE TABLE linkis_ps_resources_download_history (
 	downloader varchar(50) NOT NULL,
 	CONSTRAINT linkis_resources_download_history_pkey PRIMARY KEY (id)
 );
+
+
+CREATE SEQUENCE linkis_ps_bml_project_resource_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_bml_project_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_bml_project_user_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_bml_resources_version_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_bml_resources_task_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_bml_resources_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_resources_download_history_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_bml_project_resource alter column id set default nextval('linkis_ps_bml_project_resource_id_seq');
+alter table linkis_ps_bml_project alter column id set default nextval('linkis_ps_bml_project_id_seq');
+alter table linkis_ps_bml_project_user alter column id set default nextval('linkis_ps_bml_project_user_id_seq');
+alter table linkis_ps_bml_resources_version alter column id set default nextval('linkis_ps_bml_resources_version_id_seq');
+alter table linkis_ps_bml_resources_task alter column id set default nextval('linkis_ps_bml_resources_task_id_seq');
+alter table linkis_ps_bml_resources alter column id set default nextval('linkis_ps_bml_resources_id_seq');
+alter table linkis_ps_resources_download_history alter column id set default nextval('linkis_ps_resources_download_history_id_seq');
+
 
 insert  into linkis_ps_bml_project_user(project_id, username, priv, creator, create_time) values ( 1, 'creCreatorUser', 2, 'creatorTest', now());
 insert  into linkis_ps_bml_project(name, "system", source, description, creator, enabled, create_time)values('testName', 'testSy','test', 'descTest','creCreatorUser', 1, now());

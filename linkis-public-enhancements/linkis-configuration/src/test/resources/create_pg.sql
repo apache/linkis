@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_cg_manager_label";
 CREATE TABLE linkis_cg_manager_label (
-	id serial4 NOT NULL,
+	id int4 NOT NULL,
 	label_key varchar(32) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
@@ -26,11 +26,11 @@ CREATE TABLE linkis_cg_manager_label (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_manager_label_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label USING btree (label_key, label_value);
+CREATE UNIQUE INDEX uniq_lk_lv_ml ON linkis_cg_manager_label (label_key, label_value);
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_config_key";
 CREATE TABLE linkis_ps_configuration_config_key (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"key" varchar(50) NULL,
 	description varchar(200) NULL,
 	"name" varchar(50) NULL,
@@ -50,7 +50,7 @@ CREATE TABLE linkis_ps_configuration_config_key (
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_config_value";
 CREATE TABLE linkis_ps_configuration_config_value (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	config_key_id int4 NULL,
 	config_value varchar(200) NULL,
 	config_label_id int8 NULL,
@@ -58,20 +58,20 @@ CREATE TABLE linkis_ps_configuration_config_value (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_configuration_config_value_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_ckid_clid ON linkis_ps_configuration_config_value USING btree (config_key_id, config_label_id);
+CREATE UNIQUE INDEX uniq_ckid_clid ON linkis_ps_configuration_config_value (config_key_id, config_label_id);
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_key_engine_relation";
 CREATE TABLE linkis_ps_configuration_key_engine_relation (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	config_key_id int4 NOT NULL,
 	engine_type_label_id int4 NOT NULL,
 	CONSTRAINT linkis_ps_configuration_key_engine_relation_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_ckid_etlid ON linkis_ps_configuration_key_engine_relation USING btree (config_key_id, engine_type_label_id);
+CREATE UNIQUE INDEX uniq_ckid_etlid ON linkis_ps_configuration_key_engine_relation (config_key_id, engine_type_label_id);
 
 DROP TABLE IF EXISTS "linkis_ps_configuration_category";
 CREATE TABLE linkis_ps_configuration_category (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	label_id int4 NOT NULL,
 	"level" int4 NOT NULL,
 	description varchar(200) NULL,
@@ -80,11 +80,11 @@ CREATE TABLE linkis_ps_configuration_category (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_configuration_category_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_label_id_cc ON linkis_ps_configuration_category USING btree (label_id);
+CREATE UNIQUE INDEX uniq_label_id_cc ON linkis_ps_configuration_category (label_id);
 
 DROP TABLE IF EXISTS "linkis_cg_tenant_label_config";
 CREATE TABLE "linkis_cg_tenant_label_config" (
-  "id" bigserial NOT NULL,
+  id int4 NOT NULL,
   "user" varchar(50) NOT NULL,
   "creator" varchar(50) NOT NULL,
   "tenant_value" varchar(128) NOT NULL,
@@ -94,12 +94,12 @@ CREATE TABLE "linkis_cg_tenant_label_config" (
   "bussiness_user" varchar(50) NOT NULL,
   CONSTRAINT linkis_cg_tenant_label_config_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_user_creator_tlc ON linkis_cg_tenant_label_config USING btree ("user",creator);
+CREATE UNIQUE INDEX uniq_user_creator_tlc ON linkis_cg_tenant_label_config ("user",creator);
 
 
 DROP TABLE IF EXISTS "linkis_cg_user_ip_config";
 CREATE TABLE "linkis_cg_user_ip_config" (
-  "id" bigserial NOT NULL,
+  id int4 NOT NULL,
   "user" varchar(50) NOT NULL,
   "creator" varchar(50) NOT NULL,
   "ip_list" text NOT NULL,
@@ -109,7 +109,31 @@ CREATE TABLE "linkis_cg_user_ip_config" (
   "bussiness_user" varchar(50) NOT NULL,
   CONSTRAINT linkis_cg_user_ip_config_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_user_creator_uic ON linkis_cg_user_ip_config USING btree ("user",creator);
+CREATE UNIQUE INDEX uniq_user_creator_uic ON linkis_cg_user_ip_config ("user",creator);
+
+drop sequence IF EXISTS linkis_cg_manager_label_id_seq;
+drop sequence IF EXISTS linkis_ps_configuration_config_key_id_seq;
+drop sequence IF EXISTS linkis_ps_configuration_config_value_id_seq;
+drop sequence IF EXISTS linkis_ps_configuration_key_engine_relation_id_seq;
+drop sequence IF EXISTS linkis_ps_configuration_category_id_seq;
+drop sequence IF EXISTS linkis_cg_tenant_label_config_id_seq;
+drop sequence IF EXISTS linkis_cg_user_ip_config_id_seq;
+CREATE SEQUENCE linkis_cg_manager_label_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_config_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_config_value_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_key_engine_relation_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_configuration_category_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_tenant_label_config_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_cg_user_ip_config_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_cg_manager_label alter column id set default nextval('linkis_cg_manager_label_id_seq');
+alter table linkis_ps_configuration_config_key alter column id set default nextval('linkis_ps_configuration_config_key_id_seq');
+alter table linkis_ps_configuration_config_value alter column id set default nextval('linkis_ps_configuration_config_value_id_seq');
+alter table linkis_ps_configuration_key_engine_relation alter column id set default nextval('linkis_ps_configuration_key_engine_relation_id_seq');
+alter table linkis_ps_configuration_category alter column id set default nextval('linkis_ps_configuration_category_id_seq');
+alter table linkis_cg_tenant_label_config alter column id set default nextval('linkis_cg_tenant_label_config_id_seq');
+alter table linkis_cg_user_ip_config alter column id set default nextval('linkis_cg_user_ip_config_id_seq');
+
 
 DELETE FROM linkis_cg_manager_label;
 

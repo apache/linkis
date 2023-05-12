@@ -17,20 +17,20 @@
 
 DROP TABLE IF EXISTS "linkis_ps_variable_key_user";
 CREATE TABLE linkis_ps_variable_key_user (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	application_id int8 NULL,
 	key_id int8 NULL,
 	user_name varchar(50) NULL,
 	value varchar(200) NULL,
 	CONSTRAINT linkis_var_key_user_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_aid_vku ON linkis_ps_variable_key_user USING btree (application_id);
-CREATE UNIQUE INDEX uniq_aid_kid_uname ON linkis_ps_variable_key_user USING btree (application_id, key_id, user_name);
-CREATE INDEX idx_key_id ON linkis_ps_variable_key_user USING btree (key_id);
+CREATE INDEX idx_aid_vku ON linkis_ps_variable_key_user (application_id);
+CREATE UNIQUE INDEX uniq_aid_kid_uname ON linkis_ps_variable_key_user (application_id, key_id, user_name);
+CREATE INDEX idx_key_id ON linkis_ps_variable_key_user (key_id);
 
 DROP TABLE IF EXISTS "linkis_ps_variable_key";
 CREATE TABLE linkis_ps_variable_key (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"key" varchar(50) NULL,
 	description varchar(200) NULL,
 	"name" varchar(50) NULL,
@@ -40,7 +40,13 @@ CREATE TABLE linkis_ps_variable_key (
 	value_regex varchar(100) NULL,
 	CONSTRAINT linkis_var_key_pkey PRIMARY KEY (id)
 );
-CREATE INDEX idx_aid_vk ON linkis_ps_variable_key USING btree (application_id);
+CREATE INDEX idx_aid_vk ON linkis_ps_variable_key (application_id);
+
+CREATE SEQUENCE linkis_ps_variable_key_user_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_variable_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_variable_key_user alter column id set default nextval('linkis_ps_variable_key_user_id_seq');
+alter table linkis_ps_variable_key alter column id set default nextval('linkis_ps_variable_key_id_seq');
 
 
 DELETE FROM linkis_ps_variable_key;

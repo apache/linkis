@@ -17,7 +17,7 @@
  
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource";
 CREATE TABLE linkis_ps_dm_datasource (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	datasource_name varchar(255) NOT NULL,
 	"datasource_desc" varchar(255) NULL,
 	datasource_type_id int8 NOT NULL,
@@ -34,11 +34,11 @@ CREATE TABLE linkis_ps_dm_datasource (
 	published_version_id int8 NULL,
 	CONSTRAINT linkis_ps_dm_datasource_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_datasource_name ON linkis_ps_dm_datasource USING btree (datasource_name);
+CREATE UNIQUE INDEX uniq_datasource_name ON linkis_ps_dm_datasource (datasource_name);
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_type";
 CREATE TABLE linkis_ps_dm_datasource_type (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	"name" varchar(32) NOT NULL,
 	description varchar(255) NULL,
 	"option" varchar(32) NULL,
@@ -50,11 +50,11 @@ CREATE TABLE linkis_ps_dm_datasource_type (
 	classifier_en varchar(32) NULL,
 	CONSTRAINT linkis_ps_dm_datasource_type_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_ddt ON linkis_ps_dm_datasource_type USING btree (name);
+CREATE UNIQUE INDEX uniq_name_ddt ON linkis_ps_dm_datasource_type (name);
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_env";
 CREATE TABLE linkis_ps_dm_datasource_env (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	env_name varchar(32) NOT NULL,
 	"env_desc" varchar(255) NULL,
 	datasource_type_id int8 NOT NULL,
@@ -65,12 +65,12 @@ CREATE TABLE linkis_ps_dm_datasource_env (
 	modify_user varchar(255) NULL,
 	CONSTRAINT linkis_ps_dm_datasource_env_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_name_dtid ON linkis_ps_dm_datasource_env USING btree (env_name,datasource_type_id);
-CREATE UNIQUE INDEX uniq_env_name ON linkis_ps_dm_datasource_env USING btree (env_name);
+CREATE UNIQUE INDEX uniq_name_dtid ON linkis_ps_dm_datasource_env (env_name,datasource_type_id);
+CREATE UNIQUE INDEX uniq_env_name ON linkis_ps_dm_datasource_env (env_name);
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_type_key";
 CREATE TABLE linkis_ps_dm_datasource_type_key (
-	id bigserial NOT NULL,
+	id int4 NOT NULL,
 	data_source_type_id int8 NOT NULL,
 	"key" varchar(32) NOT NULL,
 	"name" varchar(32) NOT NULL,
@@ -89,11 +89,11 @@ CREATE TABLE linkis_ps_dm_datasource_type_key (
 	create_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT linkis_ps_dm_datasource_type_key_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX uniq_dstid_key ON linkis_ps_dm_datasource_type_key USING btree (data_source_type_id,"key");
+CREATE UNIQUE INDEX uniq_dstid_key ON linkis_ps_dm_datasource_type_key (data_source_type_id,"key");
 
 DROP TABLE IF EXISTS "linkis_ps_dm_datasource_version";
 CREATE TABLE linkis_ps_dm_datasource_version (
-	version_id bigserial NOT NULL,
+	version_id int4 NOT NULL,
 	datasource_id int8 NOT NULL,
 	"parameter" varchar(2048) NULL,
 	"comment" varchar(255) NULL,
@@ -101,7 +101,21 @@ CREATE TABLE linkis_ps_dm_datasource_version (
 	create_user varchar(255) NULL,
 	CONSTRAINT linkis_ps_dm_datasource_version_pkey PRIMARY KEY (version_id,datasource_id)
 );
-CREATE UNIQUE INDEX uniq_vid_did ON linkis_ps_dm_datasource_version USING btree (version_id,"datasource_id");
+CREATE UNIQUE INDEX uniq_vid_did ON linkis_ps_dm_datasource_version (version_id,"datasource_id");
+
+
+CREATE SEQUENCE linkis_ps_dm_datasource_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_type_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE llinkis_ps_dm_datasource_env_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_type_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+CREATE SEQUENCE linkis_ps_dm_datasource_version_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
+
+alter table linkis_ps_dm_datasource alter column id set default nextval('linkis_ps_dm_datasource_id_seq');
+alter table linkis_ps_dm_datasource_type alter column id set default nextval('linkis_ps_dm_datasource_type_id_seq');
+alter table linkis_ps_dm_datasource_env alter column id set default nextval('llinkis_ps_dm_datasource_env_id_seq');
+alter table linkis_ps_dm_datasource_type_key alter column id set default nextval('linkis_ps_dm_datasource_type_key_id_seq');
+alter table linkis_ps_dm_datasource_version alter column version_id set default nextval('linkis_ps_dm_datasource_version_id_seq');
+
 
 delete from linkis_ps_dm_datasource_type;
 alter sequence linkis_ps_dm_datasource_type_id_seq restart with 1;

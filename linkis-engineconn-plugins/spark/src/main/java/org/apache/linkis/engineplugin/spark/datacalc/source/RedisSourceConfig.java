@@ -27,7 +27,7 @@ public class RedisSourceConfig extends SourceConfig {
 
   @NotBlank private String port;
 
-  @NotBlank private String serializer = "parquet";
+  @NotBlank private String serializer = "table";
 
   private String keysPattern;
 

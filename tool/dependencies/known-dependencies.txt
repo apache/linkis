@@ -163,7 +163,6 @@ gson-2.8.9.jar
 guava-30.0-jre.jar
 guava-retrying-2.0.0.jar
 guice-3.0.jar
-guice-4.0.jar
 guice-4.1.0.jar
 guice-4.2.2.jar
 guice-assistedinject-3.0.jar
@@ -178,7 +177,6 @@ hadoop-client-3.3.4.jar
 hadoop-common-2.7.2.jar
 hadoop-common-3.3.4.jar
 hadoop-hdfs-2.7.2.jar
-hadoop-hdfs-3.3.4.jar
 hadoop-hdfs-client-3.3.4.jar
 hadoop-mapreduce-client-common-3.3.4.jar
 hadoop-mapreduce-client-core-2.7.2.jar
@@ -234,8 +232,6 @@ httpcore-4.4.14.jar
 httpcore-nio-4.4.14.jar
 httpmime-4.5.13.jar
 hystrix-core-1.5.18.jar
-impala-frontend-3.4.0.7.2.15.0-147.jar
-impala-minimal-hive-exec-3.4.0.7.2.15.0-147.jar
 ini4j-0.5.4.jar
 ion-java-1.0.2.jar
 istack-commons-runtime-3.0.12.jar
@@ -380,7 +376,6 @@ knife4j-spring-ui-2.0.9.jar
 kotlin-stdlib-1.3.72.jar
 kotlin-stdlib-common-1.3.72.jar
 kryo-2.24.0.jar
-leveldbjni-all-1.8.jar
 libfb303-0.9.3.jar
 libthrift-0.15.0.pom
 libthrift-0.9.3.jar
@@ -581,7 +576,8 @@ spring-jcl-5.2.22.RELEASE.jar
 spring-jdbc-5.2.22.RELEASE.jar
 spring-plugin-core-2.0.0.RELEASE.jar
 spring-plugin-metadata-2.0.0.RELEASE.jar
-spring-security-crypto-5.7.5.RELEASE.jar
+spring-security-crypto-5.3.9.RELEASE.jar
+spring-security-crypto-5.7.5.jar
 spring-security-rsa-1.0.9.RELEASE.jar
 spring-tx-5.2.22.RELEASE.jar
 spring-web-5.2.22.RELEASE.jar

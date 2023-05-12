@@ -27,7 +27,6 @@ public class SparkConfig {
   private String master = "yarn"; // ("yarn")
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
-  // private String mainClass;                            // ("")
   private String appName; // ("")
   private String jars; // ("--jars", "")
   private String packages; // ("--packages", "")
@@ -91,14 +90,6 @@ public class SparkConfig {
   public void setAppResource(String appResource) {
     this.appResource = appResource;
   }
-
-  //    public String getMainClass() {
-  //        return mainClass;
-  //    }
-  //
-  //    public void setMainClass(String mainClass) {
-  //        this.mainClass = mainClass;
-  //    }
 
   public String getAppName() {
     return appName;
@@ -299,9 +290,7 @@ public class SparkConfig {
         + ", deployMode='"
         + deployMode
         + '\''
-        +
-        //                ", mainClass='" + mainClass + '\'' +
-        ", appName='"
+        + ", appName='"
         + appName
         + '\''
         + ", jars='"

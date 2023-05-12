@@ -40,8 +40,16 @@ public class ResponseTaskRunningInfo extends AbstractRetryableProtocol implement
     this.execId = execId;
     this.progress = progress;
     this.progressInfo = progressInfo;
-    this.resourceMap = new HashMap<>(resourceMap);
-    this.extraInfoMap = new HashMap<>(extraInfoMap);
+    if (resourceMap != null) {
+      this.resourceMap = new HashMap<>(resourceMap);
+    } else {
+      this.resourceMap = new HashMap<>();
+    }
+    if (extraInfoMap != null) {
+      this.extraInfoMap = new HashMap<>(extraInfoMap);
+    } else {
+      this.extraInfoMap = new HashMap<>();
+    }
   }
 
   public String getExecId() {

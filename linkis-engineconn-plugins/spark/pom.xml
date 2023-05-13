@@ -449,6 +449,16 @@
       <version>${spark.hadoop.version}</version>
       <scope>${spark.hadoop.scope}</scope>
     </dependency>
+    <dependency>
+      <groupId>io.delta</groupId>
+      <artifactId>delta-core_${scala.binary.version}</artifactId>
+      <version>${delta.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hudi</groupId>
+      <artifactId>hudi-spark3.2-bundle_${scala.binary.version}</artifactId>
+      <version>${hudi.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -26,7 +26,7 @@ class DataLakeSink extends DataCalcSink[DataLakeSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     logger.info(s"Save data to ${config.getTableFormat} tablePath: ${config.getPath}")
-    val writer = ds.write.format("paimon").mode(config.getSaveMode)
+    val writer = ds.write.format(config.getTableFormat).mode(config.getSaveMode)
 
     if (config.getOptions != null && !config.getOptions.isEmpty) {
       writer.options(config.getOptions)

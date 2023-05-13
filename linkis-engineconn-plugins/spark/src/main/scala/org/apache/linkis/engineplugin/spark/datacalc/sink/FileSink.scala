@@ -25,6 +25,8 @@ import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.collection.JavaConverters._
 
+import com.crealytics.spark.excel.ExcelDataFrameWriter
+
 class FileSink extends DataCalcSink[FileSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
@@ -48,6 +50,7 @@ class FileSink extends DataCalcSink[FileSinkConfig] with Logging {
       case "parquet" => writer.parquet(path)
       case "text" => writer.text(path)
       case "orc" => writer.orc(path)
+      case "excel" => writer.excel().save(path)
       case _ => writer.format(config.getSerializer).save(path)
     }
   }

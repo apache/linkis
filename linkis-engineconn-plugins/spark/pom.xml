@@ -449,6 +449,11 @@
       <version>${spark.hadoop.version}</version>
       <scope>${spark.hadoop.scope}</scope>
     </dependency>
+    <dependency>
+      <groupId>com.crealytics</groupId>
+      <artifactId>spark-excel-${scala.version}-3.2.2_${scala.binary.version}</artifactId>
+      <version>3.2.2_0.18.1</version>
+    </dependency>
   </dependencies>
 
   <build>

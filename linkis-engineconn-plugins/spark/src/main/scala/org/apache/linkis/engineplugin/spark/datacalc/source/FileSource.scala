@@ -23,6 +23,8 @@ import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
 import org.apache.commons.text.StringSubstitutor
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
+import com.crealytics.spark.excel.ExcelDataFrameReader
+
 class FileSource extends DataCalcSource[FileSourceConfig] with Logging {
 
   override def getData(spark: SparkSession): Dataset[Row] = {
@@ -41,6 +43,7 @@ class FileSource extends DataCalcSource[FileSourceConfig] with Logging {
       case "parquet" => reader.parquet(path)
       case "text" => reader.text(path)
       case "orc" => reader.orc(path)
+      case "excel" => reader.excel().load(path)
       case _ => reader.format(config.getSerializer).load(path)
     }
     if (config.getColumnNames != null && config.getColumnNames.length > 0) {

@@ -131,6 +131,8 @@ public class UJESClientFactory {
       }
 
       DWSClientConfigBuilder builder = DWSClientConfigBuilder.newBuilder();
+      String authKey = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_KEY);
+      String authValue = stdVarAccess.getVar(String.class, AppKeys.LINKIS_COMMON_TOKEN_VALUE);
       DWSClientConfig config =
           ((DWSClientConfigBuilder)
                   (builder
@@ -143,8 +145,8 @@ public class UJESClientFactory {
                       .retryEnabled(false)
                       .readTimeout(context.getReadTimeoutMills())
                       .setAuthenticationStrategy(authenticationStrategy)
-                      .setAuthTokenKey("BML-AUTH")
-                      .setAuthTokenValue("BML-AUTH")))
+                      .setAuthTokenKey(authKey)
+                      .setAuthTokenValue(authValue)))
               .setDWSVersion(context.getDwsVersion())
               .build();
 

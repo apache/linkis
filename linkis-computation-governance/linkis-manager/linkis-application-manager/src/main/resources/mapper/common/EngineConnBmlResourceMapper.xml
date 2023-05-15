@@ -31,11 +31,11 @@
         WHERE engine_conn_type=#{engineConnType} and `version`=#{version}
     </select>
 
-    <select id="getTypeVersionList" resultType="String">
+    <select id="getTypeVersionList" resultType="java.lang.String">
         SELECT version FROM linkis_cg_engine_conn_plugin_bml_resources where engine_conn_type = #{type} GROUP BY version
     </select>
 
-    <select id="getTypeList" resultType="String">
+    <select id="getTypeList" resultType="java.lang.String">
         SELECT engine_conn_type FROM linkis_cg_engine_conn_plugin_bml_resources GROUP BY engine_conn_type
     </select>
 
@@ -56,14 +56,14 @@
     </select>
 
     <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        delete from linkis_cg_engine_conn_plugin_bml_resources where
-        engine_conn_type=#{engineConnBmlResource.engineConnType} and
-        `version`=#{engineConnBmlResource.version}
-        and file_name=#{engineConnBmlResource.fileName}
+        DELETE FROM linkis_cg_engine_conn_plugin_bml_resources
+        WHERE engine_conn_type = #{engineConnBmlResource.engineConnType}
+        AND `version` = #{engineConnBmlResource.version}
+        AND file_name = #{engineConnBmlResource.fileName}
     </delete>
 
     <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        update linkis_cg_engine_conn_plugin_bml_resources
+        UPDATE linkis_cg_engine_conn_plugin_bml_resources
         <trim prefix="set" suffixOverrides=",">
             <if test="engineConnBmlResource.lastModified != null">`last_modified` =
                 #{engineConnBmlResource.lastModified},
@@ -77,12 +77,12 @@
             </if>
         </trim>
         WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and `version`=#{engineConnBmlResource.version}
-        and file_name=#{engineConnBmlResource.fileName}
+        AND file_name=#{engineConnBmlResource.fileName}
     </update>
 
     <insert id="save" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        insert into linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
-        values(#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
+        INSERT INTO linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
+        VALUES (#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
         #{engineConnBmlResource.fileName},#{engineConnBmlResource.fileSize},
         #{engineConnBmlResource.lastModified},#{engineConnBmlResource.bmlResourceId},
         #{engineConnBmlResource.bmlResourceVersion},

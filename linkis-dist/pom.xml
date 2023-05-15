@@ -26,6 +26,11 @@
   <artifactId>linkis-dist</artifactId>
   <packaging>pom</packaging>
 
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.install.skip>true</maven.install.skip>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -211,10 +216,10 @@
         <linkis.home>/opt/linkis</linkis.home>
         <linkis.conf.dir>/etc/linkis-conf</linkis.conf.dir>
         <linkis.log.dir>/var/logs/linkis</linkis.log.dir>
-        <ldh.hadoop.version>2.7.2</ldh.hadoop.version>
-        <ldh.hive.version>2.3.3</ldh.hive.version>
-        <ldh.spark.version>2.4.3</ldh.spark.version>
-        <ldh.spark.hadoop.version>2.7</ldh.spark.hadoop.version>
+        <ldh.hadoop.version>3.3.4</ldh.hadoop.version>
+        <ldh.hive.version>3.1.3</ldh.hive.version>
+        <ldh.spark.version>3.2.1</ldh.spark.version>
+        <ldh.spark.hadoop.version>3.2</ldh.spark.hadoop.version>
         <ldh.flink.version>1.12.2</ldh.flink.version>
         <ldh.zookeeper.version>3.5.9</ldh.zookeeper.version>
       </properties>

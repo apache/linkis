@@ -19,8 +19,8 @@
 <mapper namespace="org.apache.linkis.basedatamanager.server.dao.CgManagerLabelMapper">
     <!-- query a engine label list -->
     <select id="getEngineList" resultType="org.apache.linkis.basedatamanager.server.domain.CgManagerLabel">
-        select a.id, a.label_key, a.label_value, a.label_feature
-        from linkis_cg_manager_label a
-        where a.label_value like '*_*,%';
+        SELECT a.id, a.label_key, a.label_value, a.label_feature
+        FROM linkis_cg_manager_label a
+        WHERE a.label_value LIKE '*_*,%';
     </select>
 </mapper>

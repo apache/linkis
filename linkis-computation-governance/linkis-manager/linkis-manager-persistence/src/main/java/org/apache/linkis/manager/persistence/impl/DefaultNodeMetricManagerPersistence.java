@@ -26,7 +26,6 @@ import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetric
 import org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetricsEntity;
 import org.apache.linkis.manager.dao.NodeManagerMapper;
 import org.apache.linkis.manager.dao.NodeMetricManagerMapper;
-import org.apache.linkis.manager.exception.PersistenceErrorException;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void addNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
+  public void addNodeMetrics(NodeMetrics nodeMetrics) {
     // 直接插入 NodeMetric即可
     PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
     persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
@@ -77,7 +76,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) throws PersistenceErrorException {
+  public void addOrupdateNodeMetrics(NodeMetrics nodeMetrics) {
     if (null == nodeMetrics.getServiceInstance()) {
       logger.warn(
           "The request of update node metrics was ignored, because the node metrics service instance is null");
@@ -132,8 +131,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes)
-      throws PersistenceErrorException {
+  public List<NodeMetrics> getNodeMetrics(List<? extends Node> nodes) {
     if (nodes == null || nodes.isEmpty()) return Collections.emptyList();
     List<NodeMetrics> nodeMetricsList = new ArrayList<>();
     List<String> instances = new ArrayList<>();
@@ -159,7 +157,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public NodeMetrics getNodeMetrics(Node node) throws PersistenceErrorException {
+  public NodeMetrics getNodeMetrics(Node node) {
     PersistenceNodeMetrics persistenceNodeMetrics =
         nodeMetricManagerMapper.getNodeMetricsByInstance(node.getServiceInstance().getInstance());
     if (persistenceNodeMetrics == null) return null;
@@ -168,13 +166,13 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
   }
 
   @Override
-  public void deleteNodeMetrics(Node node) throws PersistenceErrorException {
+  public void deleteNodeMetrics(Node node) {
     String instance = node.getServiceInstance().getInstance();
     nodeMetricManagerMapper.deleteNodeMetricsByInstance(instance);
   }
 
   @Override
-  public List<NodeMetrics> getAllNodeMetrics() throws PersistenceErrorException {
+  public List<NodeMetrics> getAllNodeMetrics() {
     List<PersistenceNodeMetricsEntity> allNodeMetrics = nodeMetricManagerMapper.getAllNodeMetrics();
     List<NodeMetrics> persistenceNodeMetricsList = new ArrayList<>();
     for (PersistenceNodeMetricsEntity persistenceNodeMetricsEntity : allNodeMetrics) {

@@ -41,8 +41,8 @@ public class ManagerUtils {
 
   public static String getAdminUser() {
 
-    if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN().getValue())) {
-      return ManagerCommonConf.DEFAULT_ADMIN().getValue();
+    if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN.getValue())) {
+      return ManagerCommonConf.DEFAULT_ADMIN.getValue();
     }
     return System.getProperty("user.name");
   }

@@ -197,7 +197,7 @@ CREATE TABLE `linkis_ps_udf_tree` (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `category` varchar(50) DEFAULT NULL COMMENT 'Used to distinguish between udf and function',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_name_uname_category` (`name`, `user_name`, `category`)
+  UNIQUE KEY `uniq_parent_name_uname_category` (`parent`,`name`,`user_name`,`category`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 

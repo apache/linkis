@@ -25,7 +25,7 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.report.DefaultECMHealthReport
-import org.apache.linkis.ecm.server.service.{ECMHealthService, EngineConnListService}
+import org.apache.linkis.ecm.server.service.ECMHealthService
 import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.manager.common.entity.enumeration.{NodeHealthy, NodeStatus}
 import org.apache.linkis.manager.common.entity.metrics.{NodeHealthyInfo, NodeOverLoadInfo}
@@ -37,8 +37,6 @@ import org.apache.linkis.manager.common.protocol.node.{
 }
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
-
-import org.springframework.beans.factory.annotation.Autowired
 
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -79,9 +77,6 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
     TimeUnit.SECONDS
   )
 
-  @Autowired
-  private var engineConnListService: EngineConnListService = _
-
   override def getLastEMHealthReport: ECMHealthReport = {
     val report = new DefaultECMHealthReport
     report.setNodeId(LinkisECMApplication.getECMServiceInstance.toString)
@@ -89,7 +84,6 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
     // todo report right metrics
     report.setTotalResource(maxResource)
     report.setProtectedResource(minResource)
-    report.setUsedResource(engineConnListService.getUsedResources)
     report.setReportTime(new Date().getTime)
     report.setRunningEngineConns(
       LinkisECMApplication.getContext.getECMMetrics.getRunningEngineConns
@@ -117,7 +111,6 @@ class DefaultECMHealthService extends ECMHealthService with ECMEventListener {
     // todo report latest engineconn metrics
     resource.setMaxResource(maxResource)
     resource.setMinResource(minResource)
-    resource.setUsedResource(report.getUsedResource)
     heartbeat.setNodeResource(resource)
     heartbeat.setHeartBeatMsg("")
     val nodeHealthyInfo = new NodeHealthyInfo

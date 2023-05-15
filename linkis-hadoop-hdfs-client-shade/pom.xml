@@ -207,7 +207,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>${maven-shade-plugin.version}</version>
         <configuration>
           <shadeSourcesContent>true</shadeSourcesContent>
           <shadedArtifactAttached>false</shadedArtifactAttached>
@@ -239,6 +239,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${maven-helper-plugin.version}</version>
         <executions>
           <execution>
             <id>compile</id>

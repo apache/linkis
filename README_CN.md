@@ -79,22 +79,19 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 
 | **引擎名** | **支持底层组件版本<br/>(默认依赖版本)** | **Linkis 1.X 版本要求** | **是否默认包含在发布包中** | **说明** |
 |:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>（默认Apache Spark 2.4.3）|\>=1.0.3|是|Spark EngineConn， 支持SQL, Scala, Pyspark 和R 代码。|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认Apache Hive 2.3.3）|\>=1.0.3|是|Hive EngineConn， 支持HiveQL 代码。|
-|Python|Python >= 2.6, <br/>（默认Python2*）|\>=1.0.3|是|Python EngineConn， 支持python 代码。|
-|Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持Bash shell 代码。|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle。|
-|Flink |Flink >= 1.12.2, <br/>(默认Apache Flink 1.12.2)|\>=1.0.2|否|Flink EngineConn， 支持FlinkSQL 代码，也支持以Flink Jar 形式启动一个新的Yarn 应用程序。|
-|Pipeline|-|\>=1.0.2|否|Pipeline EngineConn， 支持文件的导入和导出。|
-|openLooKeng|openLooKeng >= 1.5.0, <br/>(默认openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用Sql查询数据虚拟化引擎openLooKeng。|
-|Sqoop| Sqoop >= 1.4.6, <br/>(默认Apache Sqoop 1.4.6)|\>=1.1.2|否|Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎。|
-|Presto|Presto >= 0.180|\>=1.2.0|否|Presto EngineConn， 支持Presto SQL 代码。|
-|ElasticSearch|ElasticSearch >=6.0|\>=1.2.0|否|ElasticSearch EngineConn， 支持SQL 和DSL 代码。|
+|Spark|Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Spark 3.2.1）|\>=1.0.3|是|Spark EngineConn， 支持 SQL, Scala, Pyspark 和 R 代码|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 3.1.3）|\>=1.0.3|是|Hive EngineConn， 支持 HiveQL 代码|
+|Python|Python >= 2.6, <br/>（默认 Python2*）|\>=1.0.3|是|Python EngineConn， 支持 python 代码|
+|Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持 Bash shell 代码|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持 MySQL 和 HiveQL，可快速扩展支持其他有 JDBC Driver 包的引擎, 如 Oracle|
+|Flink |Flink >= 1.12.2, <br/>(默认 Apache Flink 1.12.2)|\>=1.0.3|否|Flink EngineConn， 支持 FlinkSQL 代码，也支持以 Flink Jar 形式启动一个新的 Yarn 应用程序|
+|Pipeline|-|\>=1.0.3|否|Pipeline EngineConn， 支持文件的导入和导出|
+|openLooKeng|openLooKeng >= 1.5.0, <br/>(默认 openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用 Sql 查询数据虚拟化引擎 openLooKeng|
+|Sqoop| Sqoop >= 1.4.6, <br/>(默认 Apache Sqoop 1.4.6)|\>=1.1.2|否|Sqoop EngineConn， 支持 数据迁移工具 Sqoop 引擎|
+|Presto|Presto >= 0.180, <br/>(默认 Presto 0.234)|\>=1.2.0|否|Presto EngineConn， 支持 Presto SQL 代码|
+|ElasticSearch|ElasticSearch >=6.0, <br/>((默认 ElasticSearch 7.6.2)|\>=1.2.0|否|ElasticSearch EngineConn， 支持 SQL 和 DSL 代码|
 |Trino | Trino >=371 | >=1.3.1 | 否 |   Trino EngineConn， 支持Trino SQL 代码 |
 |Seatunnel | Seatunnel >=2.1.2 | >=1.3.1 | 否 | Seatunnel EngineConn， 支持Seatunnel SQL 代码 |
-
-
-
 
 # 下载
 

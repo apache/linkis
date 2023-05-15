@@ -45,21 +45,25 @@
 
 
     <select id="getResource" resultMap="Resource" parameterType="java.lang.String">
-        select * from linkis_ps_bml_resources where resource_id = #{resourceId} and enable_flag = 1
+        SELECT *
+        FROM linkis_ps_bml_resources
+        WHERE resource_id = #{resourceId}
+        AND enable_flag = 1
     </select>
 
     <select id="getResources" resultMap="Resource" parameterType="java.util.Map">
-        select resource_id, owner, sys from linkis_ps_bml_resources
+        SELECT resource_id, owner, sys
+        FROM linkis_ps_bml_resources
         <where>
             enable_flag = 1
             <if test="resourceId != null and resourceId != '' ">
-                and resource_id = #{resourceId}
+                AND resource_id = #{resourceId}
             </if>
             <if test="owner != null and owner != '' ">
-                and owner = #{owner}
+                AND owner = #{owner}
             </if>
             <if test="sys != null and sys != '' ">
-                and sys = #{sys}
+                AND sys = #{sys}
             </if>
         </where>
     </select>
@@ -67,7 +71,7 @@
     <update id="deleteResource">
         UPDATE linkis_ps_bml_resources SET
           enable_flag = 0
-        WHERE resource_id = #{resourceId} and enable_flag = 1
+        WHERE resource_id = #{resourceId} AND enable_flag = 1
     </update>
 
     <update id="batchDeleteResources">
@@ -93,15 +97,25 @@
     </insert>
 
     <select id="checkExists" resultType="java.lang.Integer">
-        select exists(select * from `linkis_ps_bml_resources` where resource_id = #{resourceId}  and enable_flag = 1 )
+        SELECT EXISTS (
+        SELECT *
+        FROM `linkis_ps_bml_resources`
+        WHERE resource_id = #{resourceId}
+        AND enable_flag = 1
+        )
     </select>
 
     <select id="getUserByResourceId"  resultType="java.lang.String">
-        select owner from `linkis_ps_bml_resources` where resource_id = #{resourceId}
+        SELECT owner
+        FROM `linkis_ps_bml_resources`
+        WHERE resource_id = #{resourceId}
     </select>
 
     <update id="changeOwner">
-        update `linkis_ps_bml_resources` set owner = #{newOwner} where resource_id = #{resourceId} and owner=#{oldOwner}
+        UPDATE `linkis_ps_bml_resources`
+        SET owner = #{newOwner}
+        WHERE resource_id = #{resourceId}
+        AND owner = #{oldOwner}
     </update>
 </mapper>
 

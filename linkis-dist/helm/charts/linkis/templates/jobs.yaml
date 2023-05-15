@@ -22,30 +22,20 @@ metadata:
 spec:
   template:
     spec:
-      volumes:
-        - name: init-sql
-          configMap:
-            name: {{ include "linkis.fullname" . }}-init-sql
-            items:
-              - key: linkis_ddl.sql
-                path: linkis_ddl.sql
-              - key: linkis_dml.sql
-                path: linkis_dml.sql
       containers:
         - name: init-db
-          image: mysql:{{ .Values.linkis.deps.mysql.version }}
-          volumeMounts:
-            - name: init-sql
-              readOnly: true
-              mountPath: /db
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           command:
             - /bin/bash
             - -ecx
             - >-
               mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS {{ .Values.linkis.datasource.database }} DEFAULT CHARSET utf8 COLLATE utf8_general_ci";
-              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source /db/linkis_ddl.sql";
-              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source /db/linkis_dml.sql"
-
+              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source {{ .Values.linkis.locations.homeDir }}/db//linkis_ddl.sql";
+              mysql -h{{ .Values.linkis.datasource.host }} -P{{ .Values.linkis.datasource.port }} -u{{ .Values.linkis.datasource.username }} -p{{ .Values.linkis.datasource.password }} -D{{ .Values.linkis.datasource.database }}  --default-character-set=utf8 -e "source {{ .Values.linkis.locations.homeDir }}/db//linkis_dml.sql"
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       restartPolicy: Never
   backoffLimit: 0
 

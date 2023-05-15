@@ -18,6 +18,7 @@
 package org.apache.linkis.computation.client;
 
 import org.apache.linkis.computation.client.interactive.SubmittableInteractiveJob;
+import org.apache.linkis.manager.label.conf.LabelCommonConfig;
 
 /** A test class for submit a sql to hive engineConn. */
 public class InteractiveJobTest {
@@ -29,7 +30,7 @@ public class InteractiveJobTest {
     SubmittableInteractiveJob job =
         LinkisJobClient.interactive()
             .builder()
-            .setEngineType("hive-2.3.3")
+            .setEngineType("hive-" + LabelCommonConfig.HIVE_ENGINE_VERSION.getValue())
             .setRunTypeStr("sql")
             .setCreator("IDE")
             .setCode("show tables")

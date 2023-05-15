@@ -98,7 +98,8 @@ public class DefaultEntranceServer extends EntranceServer {
       if (null != allUndoneJobs) {
         for (EntranceJob job : allUndoneJobs) {
           job.onFailure(
-              "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)", null);
+              "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)",
+              null);
         }
       }
     }

@@ -25,10 +25,6 @@
   </parent>
 
   <artifactId>linkis-engineplugin-sqoop</artifactId>
-  <properties>
-    <sqoop.version>1.4.6</sqoop.version>
-    <hive.version>3.1.2</hive.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -74,6 +70,10 @@
         <exclusion>
           <groupId>javax.servlet</groupId>
           <artifactId>servlet-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.inject</groupId>
+          <artifactId>guice</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

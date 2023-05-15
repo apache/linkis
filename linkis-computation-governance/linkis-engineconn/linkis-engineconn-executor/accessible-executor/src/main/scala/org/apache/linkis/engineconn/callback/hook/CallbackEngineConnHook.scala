@@ -59,7 +59,7 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
 
-    val engineConnPidCallBack = new EngineConnPidCallback(engineCreationContext.getEMInstance)
+    val engineConnPidCallBack = new EngineConnPidCallback()
     Utils.tryAndError(engineConnPidCallBack.callback())
     logger.info("<--------------------SpringBoot App init succeed-------------------->")
   }
@@ -78,13 +78,11 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
       engineCreationContext: EngineCreationContext,
       throwable: Throwable
   ): Unit = {
-    val engineConnAfterStartCallback = new EngineConnAfterStartCallback(
-      engineCreationContext.getEMInstance
-    )
+    val engineConnAfterStartCallback = new EngineConnAfterStartCallback
     val prefixMsg = Sender.getThisServiceInstance + s": log dir: ${EngineConnConf.getLogDir},"
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        EngineConnStatusCallback(
+        new EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           NodeStatus.Failed,
@@ -105,12 +103,10 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
   ): Unit = {
-    val engineConnAfterStartCallback = new EngineConnAfterStartCallback(
-      engineCreationContext.getEMInstance
-    )
+    val engineConnAfterStartCallback = new EngineConnAfterStartCallback
     Utils.tryAndError(
       engineConnAfterStartCallback.callback(
-        EngineConnStatusCallback(
+        new EngineConnStatusCallback(
           Sender.getThisServiceInstance,
           engineCreationContext.getTicketId,
           getNodeStatusOfStartSuccess(engineCreationContext, engineConn),

@@ -25,9 +25,7 @@
   </parent>
 
   <artifactId>linkis-engineplugin-trino</artifactId>
-  <properties>
-    <trino.version>371</trino.version>
-  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

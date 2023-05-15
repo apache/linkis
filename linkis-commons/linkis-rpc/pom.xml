@@ -78,7 +78,16 @@
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-commons</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-fileupload</groupId>
+          <artifactId>commons-fileupload</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.cloud</groupId>

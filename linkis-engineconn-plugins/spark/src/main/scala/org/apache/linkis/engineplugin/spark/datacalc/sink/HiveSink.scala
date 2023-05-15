@@ -24,13 +24,10 @@ import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql._
-import org.apache.spark.sql.catalyst.catalog.HiveTableRelation
 import org.apache.spark.sql.execution.datasources.{HadoopFsRelation, LogicalRelation}
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.sources.DataSourceRegister
 import org.apache.spark.sql.types.StructField
-
-import org.slf4j.{Logger, LoggerFactory}
 
 class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
 
@@ -122,7 +119,9 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
       logFields(sourceFields, targetFields)
       throw new HiveSinkException(
         SparkErrorCodeSummary.DATA_CALC_COLUMN_NUM_NOT_MATCH.getErrorCode,
-        s"$targetTable requires that the data to be inserted have the same number of columns as the target table: target table has ${targetFields.length} column(s) but the inserted data has ${sourceFields.length} column(s)"
+        s"$targetTable requires that the data to be inserted have the same number of columns " +
+          s"as the target table: target table has ${targetFields.length} column(s) " +
+          s"but the inserted data has ${sourceFields.length} column(s)"
       )
     }
 
@@ -184,17 +183,19 @@ class HiveSink extends DataCalcSink[HiveSinkConfig] with Logging {
           logicalRelation.relation match {
             case hadoopFsRelation: HadoopFsRelation =>
               hadoopFsRelation.fileFormat match {
-                case _: org.apache.spark.sql.execution.datasources.orc.OrcFileFormat =>
-                  fileFormat = FileFormat.ORC
                 case _: org.apache.spark.sql.execution.datasources.parquet.ParquetFileFormat =>
                   fileFormat = FileFormat.PARQUET
                 case dataSourceRegister: DataSourceRegister =>
                   fileFormat = FileFormat.withName(dataSourceRegister.shortName.toUpperCase)
                 case _ =>
+                  if (hadoopFsRelation.fileFormat.getClass.getSimpleName.equals("OrcFileFormat")) {
+                    fileFormat = FileFormat.ORC
+                  }
               }
           }
-        case hiveTableRelation: HiveTableRelation =>
-        // todo
+        // case hiveTableRelation: HiveTableRelation =>
+        // todo please note `HiveTableRelation` was added after spark 2.2.1
+        case _ =>
       }
       fileFormat
     } catch {

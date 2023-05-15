@@ -28,7 +28,6 @@
   <packaging>pom</packaging>
 
   <modules>
-
     <module>linkis-service-discovery/linkis-eureka</module>
     <module>linkis-service-gateway</module>
   </modules>

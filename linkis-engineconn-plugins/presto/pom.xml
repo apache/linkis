@@ -26,10 +26,6 @@
 
   <artifactId>linkis-engineplugin-presto</artifactId>
 
-  <properties>
-    <presto.version>0.234</presto.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

@@ -102,6 +102,7 @@ class CodeLogicalUnitExecTask(parents: Array[ExecTask], children: Array[ExecTask
     if (executor.isDefined && !isCanceled) {
       val requestTask = toRequestTask
       val codeExecutor = executor.get
+
       val msg = if (codeExecutor.getEngineConnExecutor.isReuse()) {
         s"Succeed to reuse ec : ${codeExecutor.getEngineConnExecutor.getServiceInstance}"
       } else {

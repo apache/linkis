@@ -17,7 +17,6 @@
 
 package org.apache.linkis.ujes.jdbc
 
-import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.ujes.client.request.OpenLogAction
@@ -26,7 +25,7 @@ import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
 import org.apache.commons.lang3.StringUtils
 
-import java.sql.{Connection, ResultSet, SQLWarning, Statement}
+import java.sql._
 import java.util
 import java.util.concurrent.TimeUnit
 
@@ -52,12 +51,12 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
   private val logSize = 100
 
   private[jdbc] def throwWhenClosed[T](op: => T): T = ujesSQLConnection.throwWhenClosed {
-    if (isClosed) throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
+    if (isClosed) throw new LinkisSQLException(LinkisSQLErrorCode.STATEMENT_CLOSED)
     else op
   }
 
   override def executeQuery(sql: String): UJESSQLResultSet = {
-    if (!execute(sql)) throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+    if (!execute(sql)) throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     resultSet
   }
 
@@ -82,13 +81,13 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
     }
   }
 
-  override def getMaxFieldSize: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def getMaxFieldSize: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "getMaxFieldSize not supported"
   )
 
-  override def setMaxFieldSize(max: Int): Unit = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def setMaxFieldSize(max: Int): Unit = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "setMaxFieldSize not supported"
   )
 
@@ -97,8 +96,8 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
   override def setMaxRows(max: Int): Unit = this.maxRows = max
 
   override def setEscapeProcessing(enable: Boolean): Unit = if (enable) {
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "setEscapeProcessing not supported"
     )
   }
@@ -114,7 +113,10 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
   override def clearWarnings(): Unit = {}
 
   override def setCursorName(name: String): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "setCursorName not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
+      "setCursorName not supported"
+    )
 
   override def execute(sql: String): Boolean = throwWhenClosed {
     var parsedSQL = sql
@@ -124,7 +126,7 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
     logger.info(s"begin to execute sql ${parsedSQL}")
     queryEnd = false
     logPath = null
-    Utils.tryFinally {
+    try {
       jobExecuteResult = ujesSQLConnection.toSubmit(parsedSQL)
       val atMost =
         if (queryTimeout > 0) Duration(queryTimeout, TimeUnit.MILLISECONDS) else Duration.Inf
@@ -147,16 +149,16 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
           case t: TimeoutException =>
             if (queryTimeout > 0) clearQuery()
             logPath = jobInfo.getRequestPersistTask.getLogPath
-            new UJESSQLException(UJESSQLErrorCode.QUERY_TIMEOUT, "query has been timeout!")
+            new LinkisSQLException(LinkisSQLErrorCode.QUERY_TIMEOUT, "query has been timeout!")
               .initCause(t)
           case t => t
         }
       }
       logPath = jobInfo.getRequestPersistTask.getLogPath
       if (!ExecutionNodeStatus.isSucceed(ExecutionNodeStatus.valueOf(jobInfo.getJobStatus))) {
-        throw new ErrorException(
-          jobInfo.getRequestPersistTask.getErrCode,
-          jobInfo.getRequestPersistTask.getErrDesc
+        throw new LinkisSQLException(
+          jobInfo.getRequestPersistTask.getErrDesc,
+          jobInfo.getRequestPersistTask.getErrCode.toString
         )
       }
 
@@ -169,7 +171,15 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
       } else {
         false
       }
-    } {
+    } catch {
+      case sqlException: SQLException =>
+        throw sqlException
+      case throwable: Throwable =>
+        val exception =
+          new LinkisSQLException(LinkisSQLErrorCode.UNKNOWN_ERROR, throwable.getMessage)
+        exception.initCause(throwable)
+        throw exception
+    } finally {
       queryEnd = true
     }
   }
@@ -184,8 +194,8 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   override def setFetchDirection(direction: Int): Unit =
     throwWhenClosed(if (direction != ResultSet.FETCH_FORWARD) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
         "only FETCH_FORWARD is supported."
       )
     })
@@ -196,88 +206,97 @@ class LinkisSQLStatement(private[jdbc] val ujesSQLConnection: LinkisSQLConnectio
 
   override def getFetchSize: Int = fetchSize
 
-  override def getResultSetConcurrency: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def getResultSetConcurrency: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "getResultSetConcurrency not supported."
   )
 
   override def getResultSetType: Int = throwWhenClosed(ResultSet.TYPE_FORWARD_ONLY)
 
   override def addBatch(sql: String): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "addBatch not supported.")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT, "addBatch not supported.")
 
   override def clearBatch(): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "clearBatch not supported.")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
+      "clearBatch not supported."
+    )
 
   override def executeBatch(): Array[Int] =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "executeBatch not supported.")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
+      "executeBatch not supported."
+    )
 
   override def getConnection: Connection = throwWhenClosed(ujesSQLConnection)
 
   override def getMoreResults(current: Int): Boolean = false
 
-  override def getGeneratedKeys: ResultSet = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def getGeneratedKeys: ResultSet = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "getGeneratedKeys not supported."
   )
 
   override def executeUpdate(sql: String, autoGeneratedKeys: Int): Int =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "executeUpdate with autoGeneratedKeys not supported."
     )
 
   override def executeUpdate(sql: String, columnIndexes: Array[Int]): Int =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "executeUpdate with columnIndexes not supported."
     )
 
   override def executeUpdate(sql: String, columnNames: Array[String]): Int =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "executeUpdate with columnNames not supported."
     )
 
   override def execute(sql: String, autoGeneratedKeys: Int): Boolean =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "execute with autoGeneratedKeys not supported."
     )
 
   override def execute(sql: String, columnIndexes: Array[Int]): Boolean =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "execute with columnIndexes not supported."
     )
 
   override def execute(sql: String, columnNames: Array[String]): Boolean =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
       "execute with columnNames not supported."
     )
 
-  override def getResultSetHoldability: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def getResultSetHoldability: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "getResultSetHoldability not supported"
   )
 
   override def isClosed: Boolean = closed
 
   override def setPoolable(poolable: Boolean): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "setPoolable not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
+      "setPoolable not supported"
+    )
 
   override def isPoolable: Boolean = false
 
-  override def closeOnCompletion(): Unit = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_STATEMENT,
+  override def closeOnCompletion(): Unit = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_STATEMENT,
     "closeOnCompletion not supported"
   )
 
   override def isCloseOnCompletion: Boolean = false
 
   override def unwrap[T](iface: Class[T]): T =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "unwrap not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT, "unwrap not supported")
 
   override def isWrapperFor(iface: Class[_]): Boolean = false
 

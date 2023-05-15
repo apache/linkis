@@ -22,13 +22,11 @@ import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.ujes.client.request.OpenLogAction
 import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
-
 import org.apache.commons.lang3.StringUtils
 
-import java.sql._
+import java.sql.{Connection, ResultSet, SQLException, SQLWarning, Statement}
 import java.util
 import java.util.concurrent.TimeUnit
-
 import scala.concurrent.TimeoutException
 import scala.concurrent.duration.Duration
 

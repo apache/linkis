@@ -81,5 +81,6 @@ public class AMHeartbeatService implements HeartbeatService {
       nodeMetrics.setStatus(0);
     }
     nodeMetricManagerPersistence.addOrupdateNodeMetrics(nodeMetrics);
+    logger.info("Finished to deal nodeHeartbeatMsg {}", nodeHeartbeatMsg);
   }
 }

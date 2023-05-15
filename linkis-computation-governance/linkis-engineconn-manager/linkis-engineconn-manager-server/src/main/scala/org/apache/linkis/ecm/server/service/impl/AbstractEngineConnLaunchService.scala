@@ -25,7 +25,7 @@ import org.apache.linkis.ecm.server.LinkisECMApplication
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.engineConn.DefaultEngineConn
 import org.apache.linkis.ecm.server.hook.ECMHook
-import org.apache.linkis.ecm.server.listener.{EngineConnAddEvent, EngineConnStatusChangeEvent}
+import org.apache.linkis.ecm.server.listener.EngineConnLaunchStatusChangeEvent
 import org.apache.linkis.ecm.server.service.{EngineConnLaunchService, ResourceLocalizationService}
 import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -79,8 +79,6 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     conn.setEngineConnManagerEnv(launch.getEngineConnManagerEnv())
     // 2.资源本地化，并且设置ecm的env环境信息
     getResourceLocalizationServie.handleInitEngineConnResources(request, conn)
-    // 3.添加到list
-    LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(EngineConnAddEvent(conn))
     // 4.run
     Utils.tryCatch {
       beforeLaunch(request, conn, duration)
@@ -118,7 +116,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
             ): _*
           )
           LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-            EngineConnStatusChangeEvent(conn.getTickedId, Failed)
+            EngineConnLaunchStatusChangeEvent(conn.getTickedId, Failed)
           )
         case Success(_) =>
           logger.info(
@@ -151,14 +149,15 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       Sender
         .getSender(MANAGER_SERVICE_NAME)
         .send(
-          EngineConnStatusCallbackToAM(
+          new EngineConnStatusCallbackToAM(
             conn.getServiceInstance,
             NodeStatus.ShuttingDown,
-            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t)
+            " wait init failed , reason " + ExceptionUtils.getRootCauseMessage(t),
+            false
           )
         )
       LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
-        EngineConnStatusChangeEvent(conn.getTickedId, Failed)
+        EngineConnLaunchStatusChangeEvent(conn.getTickedId, Failed)
       )
       throw t
     }

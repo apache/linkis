@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.io.File
 import java.util
+import java.util.{ArrayList, List}
 
 object GovernanceUtils extends Logging {
 
@@ -69,6 +70,25 @@ object GovernanceUtils extends Logging {
       logger.error(s"Kill yarn applications successfully! msg: $output.")
     } { t =>
       logger.error(s"Kill yarn applications failed!", t)
+    }
+  }
+
+  /**
+   * find process id by port number
+   * @param processPort
+   * @return
+   */
+  def findProcessIdentifier(processPort: String) = {
+    val findCmd = "sudo lsof -t -i:" + processPort
+    val cmdList = new util.ArrayList[String]
+    cmdList.add("bash")
+    cmdList.add("-c")
+    cmdList.add(findCmd)
+    try Utils.exec(cmdList.toArray(new Array[String](0)), 5000L)
+    catch {
+      case e: Exception =>
+        logger.warn("Method findPid failed, " + e.getMessage)
+        null
     }
   }
 

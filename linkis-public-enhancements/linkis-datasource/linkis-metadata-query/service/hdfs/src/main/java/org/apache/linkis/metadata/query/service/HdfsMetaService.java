@@ -78,6 +78,7 @@ public class HdfsMetaService extends AbstractFsMetaService<HdfsConnection> {
       HdfsConnection connection, Map<String, String> queryParams) {
     List<String> filterRules = new ArrayList<>();
     AtomicReference<URI> uriReference = new AtomicReference<>();
+    LOG.info("query hdfs ConnectionInfo for uri: {}", queryParams.get("uri"));
     Optional.ofNullable(queryParams.get("uri"))
         .ifPresent(
             uri -> {

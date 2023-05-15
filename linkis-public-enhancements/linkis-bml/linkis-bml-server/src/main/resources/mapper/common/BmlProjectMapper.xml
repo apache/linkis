@@ -20,43 +20,59 @@
 
 <mapper namespace="org.apache.linkis.bml.dao.BmlProjectDao">
     <insert id="createNewProject" useGeneratedKeys = "true" keyProperty = "bmlProject.id" keyColumn = "id">
-        insert ignore into linkis_ps_bml_project(name, `system`, source, description, creator, enabled, create_time)
-        values(#{bmlProject.name}, #{bmlProject.system}, #{bmlProject.source}, #{bmlProject.description},
-        #{bmlProject.creator}, #{bmlProject.enabled}, #{bmlProject.createTime})
+        INSERT IGNORE INTO linkis_ps_bml_project (name, `system`, source, description, creator
+        , enabled, create_time)
+        VALUES (#{bmlProject.name}, #{bmlProject.system}, #{bmlProject.source}, #{bmlProject.description}, #{bmlProject.creator}
+        , #{bmlProject.enabled}, #{bmlProject.createTime})
     </insert>
     <select id="getBmlProject" resultType="org.apache.linkis.bml.entity.BmlProject">
-        select * from linkis_ps_bml_project where name = #{projectName}
+        SELECT *
+        FROM linkis_ps_bml_project
+        WHERE name = #{projectName}
     </select>
     <insert id="setProjectPriv">
-        insert ignore into  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time) values
+        INSERT IGNORE INTO  linkis_ps_bml_project_user(project_id, username, priv, creator, create_time) VALUES
         <foreach collection='usernames' item='username' open='(' separator='),(' close=')'>
             #{projectId}, #{username}, #{priv}, #{creator}, #{createTime}
         </foreach>
     </insert>
     <select id="getPrivInProject" resultType="java.lang.Integer">
-        select a.priv from linkis_ps_bml_project_user a join linkis_ps_bml_project b on
-        a.project_id = b.id and b.name = #{projectName} and a.username = #{username}
+        SELECT a.priv
+        FROM linkis_ps_bml_project_user a
+        JOIN linkis_ps_bml_project b
+        ON a.project_id = b.id
+        AND b.name = #{projectName}
+        AND a.username = #{username}
     </select>
     <insert id="addProjectResource" >
-        insert ignore into linkis_ps_bml_project_resource(project_id, resource_id)
-        values(#{projectId}, #{resourceId})
+        INSERT IGNORE INTO linkis_ps_bml_project_resource (project_id, resource_id)
+        VALUES (#{projectId}, #{resourceId})
     </insert>
     <select id="getProjectNameByResourceId" resultType="java.lang.String">
-        select a.name from linkis_ps_bml_project a join
-        linkis_ps_bml_project_resource b on b.resource_id = #{resourceId} and a.id = b.project_id
+        SELECT a.name
+        FROM linkis_ps_bml_project a
+        JOIN linkis_ps_bml_project_resource b
+        ON b.resource_id = #{resourceId}
+        AND a.id = b.project_id
     </select>
     <select id="getProjectIdByName" resultType="java.lang.Integer">
-        select id from linkis_ps_bml_project where name = #{projectName}
+        SELECT id
+        FROM linkis_ps_bml_project
+        WHERE name = #{projectName}
     </select>
     <insert id="attachResourceAndProject">
-        insert ignore into linkis_ps_bml_project_resource(project_id, resource_id)
-        values(#{projectId}, #{resourceId})
+        INSERT IGNORE INTO linkis_ps_bml_project_resource (project_id, resource_id)
+        VALUES (#{projectId}, #{resourceId})
     </insert>
     <select id="checkIfExists" resultType="java.lang.Integer">
-        select count(*) from linkis_ps_bml_project_resource where project_id = #{resourceId} and resource_id = #{resourceId}
+        SELECT count(*)
+        FROM linkis_ps_bml_project_resource
+        WHERE project_id = #{resourceId}
+        AND resource_id = #{resourceId}
     </select>
     <delete id="deleteAllPriv">
-        delete from linkis_ps_bml_project_user where project_id = #{projectId}
+        DELETE FROM linkis_ps_bml_project_user
+        WHERE project_id = #{projectId}
     </delete>
 </mapper>
 

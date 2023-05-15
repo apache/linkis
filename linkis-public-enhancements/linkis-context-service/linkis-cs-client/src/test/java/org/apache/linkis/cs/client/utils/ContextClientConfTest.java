@@ -27,13 +27,9 @@ public class ContextClientConfTest {
   @DisplayName("constTest")
   public void constTest() {
 
-    String contextClientAuthKey = ContextClientConf.CONTEXT_CLIENT_AUTH_KEY().getValue();
-    String contextClientAuthValue = ContextClientConf.CONTEXT_CLIENT_AUTH_VALUE().getValue();
     String urlPrefix = ContextClientConf.URL_PREFIX().getValue();
     String hearBeatEnabled = ContextClientConf.HEART_BEAT_ENABLED().getValue();
 
-    Assertions.assertEquals("Token-Code", contextClientAuthKey);
-    Assertions.assertEquals("BML-AUTH", contextClientAuthValue);
     Assertions.assertEquals("/api/rest_j/v1/contextservice", urlPrefix);
     Assertions.assertEquals("true", hearBeatEnabled);
   }

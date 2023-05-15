@@ -17,6 +17,7 @@
 
 package org.apache.linkis.gateway.authentication.dao;
 
+import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.gateway.authentication.entity.TokenEntity;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,9 @@ class TokenDaoTest extends BaseDaoTest {
 
   private static final Logger logger = LoggerFactory.getLogger(BaseDaoTest.class);
 
-  private static String TokenName = "BML-AUTH";
+  private static String TokenName =
+      CommonVars.apply("wds.linkis.bml.auth.token.value", "BML-AUTH").getValue();
+
   @Autowired TokenDao tokenDao;
 
   @Test

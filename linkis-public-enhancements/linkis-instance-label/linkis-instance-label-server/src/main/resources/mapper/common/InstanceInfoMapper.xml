@@ -20,7 +20,7 @@
 
 <mapper namespace="org.apache.linkis.instance.label.dao.InstanceInfoDao">
 
-    <resultMap id="instanceInfoMap" type="InstanceInfo">
+    <resultMap id="instanceInfoMap" type="org.apache.linkis.instance.label.entity.InstanceInfo">
         <result property="id" column="id"/>
         <result property="instance" column="instance"/>
         <result property="applicationName" column="name"/>
@@ -28,7 +28,7 @@
         <result property="createTime" column="create_time"/>
     </resultMap>
 
-    <insert id="insertOne" parameterType="InstanceInfo">
+    <insert id="insertOne" parameterType="org.apache.linkis.instance.label.entity.InstanceInfo">
         <![CDATA[REPLACE INTO `linkis_ps_instance_info`(`instance`, `name`)
         VALUES(#{instance}, #{applicationName})]]>
     </insert>

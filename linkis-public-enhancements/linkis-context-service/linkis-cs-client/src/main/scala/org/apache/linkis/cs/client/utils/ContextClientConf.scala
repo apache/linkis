@@ -28,7 +28,11 @@ object ContextClientConf {
     CommonVars[String]("wds.linkis.context.client.auth.value", "BML-AUTH")
 
   val URL_PREFIX: CommonVars[String] =
-    CommonVars[String]("wds.linkis.cs.url.prefix", "/api/rest_j/v1/contextservice", "cs服务的url前缀")
+    CommonVars[String](
+      "wds.linkis.cs.url.prefix",
+      "/api/rest_j/v1/contextservice",
+      "The url prefix of the cs service."
+    )
 
   val HEART_BEAT_ENABLED: CommonVars[String] =
     CommonVars[String]("wds.linkis.cs.heartbeat.enabled", "true")

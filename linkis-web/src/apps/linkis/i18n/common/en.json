@@ -629,7 +629,7 @@
         "versionList": "Version List",
         "rollback": "Rollback",
         "checkEngineConnTypeAndVersion": "Please select the engine type and version",
-        "upload": "Please click the button to upload the engine plug-in"
+        "upload": "Please click the button to upload the engine plugin"
       }
     }
   }

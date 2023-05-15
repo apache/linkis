@@ -3,7 +3,7 @@
 | module name(模块名) | error code(错误码)  | describe(描述) |enumeration name(枚举)| Exception Class(类名)|
 | -------- | -------- | ----- |-----|-----|
 |linkis-engineconn-plugin-core |10001|Failed to createEngineConnLaunchRequest(创建 EngineConnLaunchRequest失败)|FAILED_CREATE_ELR|EngineconnCoreErrorCodeSummary|
-|linkis-engineconn-plugin-core |10001|The engine plug-in material is abnormal, please check whether the material is uploaded successfully(引擎插件物料异常，请检查物料是否上传成功)|EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION|EngineconnCoreErrorCodeSummary|
+|linkis-engineconn-plugin-core |10001|The engine plugin material is abnormal, please check whether the material is uploaded successfully(引擎插件物料异常，请检查物料是否上传成功)|EN_PLUGIN_MATERIAL_SOURCE_EXCEPTION|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |10001|EngineTypeLabel are requested(需要参数 EngineTypeLabel)|ETL_REQUESTED|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot instance EngineConnExecution(无法实例化 EngineConnExecution)|CANNOT_INSTANCE_ECE|EngineconnCoreErrorCodeSummary|
 |linkis-engineconn-plugin-core |20000|Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)|CANNOT_DEFAULT_EF|EngineconnCoreErrorCodeSummary|

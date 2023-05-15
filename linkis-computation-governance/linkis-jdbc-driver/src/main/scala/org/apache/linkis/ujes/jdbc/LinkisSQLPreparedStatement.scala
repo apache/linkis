@@ -139,7 +139,7 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setTime(parameterIndex: Int, x: Time): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setTimestamp(parameterIndex: Int, x: Timestamp): Unit = {
@@ -147,15 +147,15 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setAsciiStream(parameterIndex: Int, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setUnicodeStream(parameterIndex: Int, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBinaryStream(parameterIndex: Int, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def clearParameters(): Unit = {
@@ -163,7 +163,7 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setObject(parameterIndex: Int, x: scala.Any, targetSqlType: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setObject(parameterIndex: Int, x: scala.Any): Unit = {
@@ -180,8 +180,8 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
       case x: Char => setString(parameterIndex, x.toString)
       case x: Timestamp => setTimestamp(parameterIndex, x)
       case _ =>
-        throw new UJESSQLException(
-          UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
+        throw new LinkisSQLException(
+          LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
           s"Can''t infer the SQL type to use for an instance of ${x.getClass.getName}. Use setObject() with an explicit Types value to specify the type to use"
         )
     }
@@ -208,23 +208,23 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setCharacterStream(parameterIndex: Int, reader: Reader, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setRef(parameterIndex: Int, x: Ref): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBlob(parameterIndex: Int, x: Blob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setClob(parameterIndex: Int, x: Clob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setArray(parameterIndex: Int, x: java.sql.Array): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def getMetaData: ResultSetMetaData = {
@@ -235,15 +235,15 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setDate(parameterIndex: Int, x: Date, cal: Calendar): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setTime(parameterIndex: Int, x: Time, cal: Calendar): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setTimestamp(parameterIndex: Int, x: Timestamp, cal: Calendar): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNull(parameterIndex: Int, sqlType: Int, typeName: String): Unit = {
@@ -251,7 +251,7 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setURL(parameterIndex: Int, x: URL): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def getParameterMetaData: ParameterMetaData = {
@@ -264,35 +264,35 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
   }
 
   override def setRowId(parameterIndex: Int, x: RowId): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNString(parameterIndex: Int, value: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNCharacterStream(parameterIndex: Int, value: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNClob(parameterIndex: Int, value: NClob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setClob(parameterIndex: Int, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBlob(parameterIndex: Int, inputStream: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNClob(parameterIndex: Int, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setSQLXML(parameterIndex: Int, xmlObject: SQLXML): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setObject(
@@ -301,47 +301,47 @@ class LinkisSQLPreparedStatement(ujesSQLConnection: LinkisSQLConnection, sql: St
       targetSqlType: Int,
       scaleOrLength: Int
   ): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setAsciiStream(parameterIndex: Int, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBinaryStream(parameterIndex: Int, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setCharacterStream(parameterIndex: Int, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setAsciiStream(parameterIndex: Int, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBinaryStream(parameterIndex: Int, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setCharacterStream(parameterIndex: Int, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNCharacterStream(parameterIndex: Int, value: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setClob(parameterIndex: Int, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setBlob(parameterIndex: Int, inputStream: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def setNClob(parameterIndex: Int, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT)
   }
 
   override def getResultSetType: Int = {

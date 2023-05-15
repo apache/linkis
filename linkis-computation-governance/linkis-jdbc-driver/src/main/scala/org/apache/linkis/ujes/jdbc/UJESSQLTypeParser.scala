@@ -25,7 +25,7 @@ object UJESSQLTypeParser {
   def parserFromName(typeName: String): Int = {
     val typeNameLowerCase = typeName.toLowerCase(Locale.getDefault())
     typeName.toLowerCase() match {
-      case null => throw new UJESSQLException(UJESSQLErrorCode.METADATA_EMPTY)
+      case null => throw new LinkisSQLException(LinkisSQLErrorCode.METADATA_EMPTY)
       case "string" => Types.NVARCHAR
       case "short" => Types.SMALLINT
       case "int" => Types.INTEGER
@@ -67,7 +67,7 @@ object UJESSQLTypeParser {
       case _: Char => Types.CHAR
       case _: BigDecimal => Types.DECIMAL
       case _: Timestamp => Types.TIMESTAMP
-      case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
+      case _ => throw new LinkisSQLException(LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
     }
   }
 
@@ -87,7 +87,7 @@ object UJESSQLTypeParser {
       case Types.VARCHAR => "varchar"
       case Types.NVARCHAR => "string"
       case Types.DATE => "date"
-      case _ => throw new UJESSQLException(UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
+      case _ => throw new LinkisSQLException(LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR)
     }
   }
 

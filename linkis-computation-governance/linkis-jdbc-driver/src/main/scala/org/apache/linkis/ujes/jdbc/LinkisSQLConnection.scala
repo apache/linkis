@@ -122,7 +122,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   }
 
   private[jdbc] def throwWhenClosed[T](op: => T): T =
-    if (isClosed) throw new UJESSQLException(UJESSQLErrorCode.CONNECTION_CLOSED)
+    if (isClosed) throw new LinkisSQLException(LinkisSQLErrorCode.CONNECTION_CLOSED)
     else op
 
   private def createStatementAndAdd[T <: Statement](op: => T): T = throwWhenClosed {
@@ -183,7 +183,10 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   override def isClosed: Boolean = closed
 
   override def setReadOnly(readOnly: Boolean): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setReadOnly not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "setReadOnly not supported"
+    )
 
   override def isReadOnly: Boolean = false
 
@@ -206,45 +209,63 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   override def commit(): Unit = {}
 
   override def prepareCall(sql: String): CallableStatement =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "prepareCall not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "prepareCall not supported"
+    )
 
   override def rollback(): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "rollback not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_CONNECTION, "rollback not supported")
 
   override def nativeSQL(sql: String): String =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "nativeSQL not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_CONNECTION, "nativeSQL not supported")
 
   override def prepareCall(
       sql: String,
       resultSetType: Int,
       resultSetConcurrency: Int
   ): CallableStatement =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "prepareCall not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "prepareCall not supported"
+    )
 
   override def getTypeMap: util.Map[String, Class[_]] =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "getTypeMap not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "getTypeMap not supported"
+    )
 
   override def setTypeMap(map: util.Map[String, Class[_]]): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setTypeMap not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "setTypeMap not supported"
+    )
 
-  override def setHoldability(holdability: Int): Unit = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+  override def setHoldability(holdability: Int): Unit = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
     "setHoldability not supported"
   )
 
   override def getHoldability: Int = 0
 
   override def setSavepoint(): Savepoint =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setSavepoint not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "setSavepoint not supported"
+    )
 
   override def setSavepoint(name: String): Savepoint =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setSavepoint not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "setSavepoint not supported"
+    )
 
   override def rollback(savepoint: Savepoint): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "rollback not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_CONNECTION, "rollback not supported")
 
-  override def releaseSavepoint(savepoint: Savepoint): Unit = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+  override def releaseSavepoint(savepoint: Savepoint): Unit = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
     "releaseSavepoint not supported"
   )
 
@@ -253,8 +274,8 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       resultSetConcurrency: Int,
       resultSetHoldability: Int
   ): Statement =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
       "createStatement not supported"
     )
 
@@ -264,8 +285,8 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       resultSetConcurrency: Int,
       resultSetHoldability: Int
   ): PreparedStatement =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
       "prepareStatement not supported"
     )
 
@@ -275,55 +296,88 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       resultSetConcurrency: Int,
       resultSetHoldability: Int
   ): CallableStatement =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "prepareCall not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "prepareCall not supported"
+    )
 
   override def prepareStatement(sql: String, columnIndexes: Array[Int]): PreparedStatement =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
       "prepareStatement not supported"
     )
 
   override def prepareStatement(sql: String, columnNames: Array[String]): PreparedStatement =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
       "prepareStatement not supported"
     )
 
   override def createClob(): Clob =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createClob not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createClob not supported"
+    )
 
   override def createBlob(): Blob =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createBlob not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createBlob not supported"
+    )
 
   override def createNClob(): NClob =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createNClob not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createNClob not supported"
+    )
 
   override def createSQLXML(): SQLXML =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createSQLXML not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createSQLXML not supported"
+    )
 
   override def isValid(timeout: Int): Boolean = true
 
   override def setClientInfo(name: String, value: String): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "setClientInfo not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "setClientInfo not supported"
+    )
 
   override def setClientInfo(properties: Properties): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "properties not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "properties not supported"
+    )
 
   override def getClientInfo(name: String): String =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "getClientInfo not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "getClientInfo not supported"
+    )
 
   override def getClientInfo: Properties =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "getClientInfo not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "getClientInfo not supported"
+    )
 
   override def createArrayOf(typeName: String, elements: Array[AnyRef]): sql.Array =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createArrayOf not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createArrayOf not supported"
+    )
 
   override def createStruct(typeName: String, attributes: Array[AnyRef]): Struct =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "createStruct not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "createStruct not supported"
+    )
 
   override def setSchema(schema: String): Unit = throwWhenClosed {
     if (StringUtils.isBlank(schema)) {
-      throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "schema is empty!")
+      throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT, "schema is empty!")
     }
     createStatement().execute("use " + schema)
   }
@@ -331,30 +385,33 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   override def getSchema: String = throwWhenClosed {
     val resultSet = createStatement().executeQuery("SELECT current_database()")
     if (!resultSet.next()) {
-      throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_STATEMENT, "Get schema failed!")
+      throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_STATEMENT, "Get schema failed!")
     }
     resultSet.getString(1)
   }
 
   override def abort(executor: Executor): Unit =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "abort not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_CONNECTION, "abort not supported")
 
   override def setNetworkTimeout(executor: Executor, milliseconds: Int): Unit =
-    throw new UJESSQLException(
-      UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
       "setNetworkTimeout not supported"
     )
 
-  override def getNetworkTimeout: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_CONNECTION,
+  override def getNetworkTimeout: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
     "getNetworkTimeout not supported"
   )
 
   override def unwrap[T](iface: Class[T]): T =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "unwrap not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_CONNECTION, "unwrap not supported")
 
   override def isWrapperFor(iface: Class[_]): Boolean =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_CONNECTION, "isWrapperFor not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_CONNECTION,
+      "isWrapperFor not supported"
+    )
 
   def addLabels(labels: util.Map[String, AnyRef]): Unit = {
     labelMap.putAll(labels)

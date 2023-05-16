@@ -17,13 +17,13 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.service.ECMRegisterService
 import org.apache.linkis.ecm.server.util.ECMUtils
-import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.em.{
   RegisterEMRequest,

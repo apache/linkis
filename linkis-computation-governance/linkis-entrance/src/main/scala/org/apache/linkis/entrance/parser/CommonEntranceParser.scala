@@ -17,6 +17,7 @@
 
 package org.apache.linkis.entrance.parser
 
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.errorcode.EntranceErrorCodeSummary._
@@ -26,7 +27,10 @@ import org.apache.linkis.entrance.timeout.JobTimeoutManager
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.common.conf.RMConfiguration
-import org.apache.linkis.manager.label.builder.factory.{LabelBuilderFactory, LabelBuilderFactoryContext}
+import org.apache.linkis.manager.label.builder.factory.{
+  LabelBuilderFactory,
+  LabelBuilderFactoryContext
+}
 import org.apache.linkis.manager.label.conf.LabelCommonConfig
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
@@ -35,11 +39,11 @@ import org.apache.linkis.manager.label.entity.engine.{CodeLanguageLabel, UserCre
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.queue.SchedulerEventState
+
 import org.apache.commons.lang3.StringUtils
+
 import java.util
 import java.util.Date
-
-import org.apache.linkis.common.conf.Configuration
 
 import scala.collection.JavaConverters._
 

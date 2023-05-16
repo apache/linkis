@@ -183,7 +183,7 @@ public class HDFSFileSystem extends FileSystem {
     }
 
     if (label == null && (boolean) Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
-      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
+      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
     }
     conf = HDFSUtils.getConfigurationByLabel(user, label);
 

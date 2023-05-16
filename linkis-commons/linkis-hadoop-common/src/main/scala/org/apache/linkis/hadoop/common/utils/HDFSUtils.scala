@@ -144,7 +144,11 @@ object HDFSUtils extends Logging {
         fileSystemCache.get(cacheKey)
       } else {
         val newHDFSFileSystemContainer =
-          new HDFSFileSystemContainer(createFileSystem(userName, cacheLabel, conf), userName, cacheLabel)
+          new HDFSFileSystemContainer(
+            createFileSystem(userName, cacheLabel, conf),
+            userName,
+            cacheLabel
+          )
         fileSystemCache.put(cacheKey, newHDFSFileSystemContainer)
         newHDFSFileSystemContainer
       }

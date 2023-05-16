@@ -154,7 +154,7 @@ public class OSSFileSystem extends FileSystem {
     if (label == null
         && (boolean)
             org.apache.linkis.common.conf.Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
-      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL().getValue();
+      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
     }
     conf = HDFSUtils.getConfigurationByLabel(user, label);
 

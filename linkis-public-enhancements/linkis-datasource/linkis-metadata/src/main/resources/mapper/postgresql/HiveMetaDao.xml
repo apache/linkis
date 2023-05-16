@@ -180,7 +180,7 @@
     </select>
 
     <select id="getPartitionKeys" resultType="map"  parameterType="map">
-        select
+        SELECT
         "PKEY_COMMENT",
         "PKEY_NAME",
         "PKEY_TYPE"
@@ -188,14 +188,14 @@
         "PARTITION_KEYS"
         where
         "TBL_ID" in(
-        select
+        SELECT
         "TBL_ID"
         from
         "TBLS"
         where
         "TBL_NAME" = #{tableName, jdbcType = VARCHAR}
         and "DB_ID" in (
-        select
+        SELECT
         "DB_ID"
         from
         "DBS"
@@ -204,7 +204,7 @@
     </select>
 
     <select id="getTableComment" resultType="java.lang.String">
-        select
+        SELECT
         tp."PARAM_VALUE"
         from
         "DBS" d

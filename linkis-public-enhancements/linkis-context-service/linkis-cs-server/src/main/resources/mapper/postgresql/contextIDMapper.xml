@@ -78,7 +78,7 @@
     <update id="updateContextID"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
         UPDATE linkis_ps_cs_context_id
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="user != null">"user" = #{user},</if>
             <if test="application != null">"application" = #{application},</if>
             <if test="expireType != null">"expire_type" = #{expireType},</if>
@@ -88,7 +88,7 @@
             <if test="updateTime != null">"update_time" = #{updateTime},</if>
             <if test="createTime != null">"create_time" = #{createTime},</if>
             <if test="accessTime != null">"access_time" = #{accessTime},</if>
-        </trim>
+        </set>
         WHERE id = cast(#{contextId} as int)
     </update>
 

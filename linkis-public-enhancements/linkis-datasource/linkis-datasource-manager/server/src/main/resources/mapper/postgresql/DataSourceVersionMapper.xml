@@ -57,13 +57,13 @@
     </select>
 
     <select id="getVersionsFromDatasourceId" resultMap="dataSourceVersionMap">
-        <![CDATA[SELECT ]]>
+        SELECT
         <include refid="datasource_version_insert_columns"/>
         FROM "linkis_ps_dm_datasource_version" WHERE datasource_id = #{dataSourceId};
     </select>
 
     <delete id="removeFromDataSourceId">
-        <![CDATA[DELETE FROM "linkis_ps_dm_datasource_version"]]>
+        DELETE FROM "linkis_ps_dm_datasource_version"
         <where>
             "datasource_id" = #{dataSourceId}
         </where>

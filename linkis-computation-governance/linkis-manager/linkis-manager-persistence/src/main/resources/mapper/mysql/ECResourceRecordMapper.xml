@@ -45,7 +45,7 @@
 
     <update id="updateECResourceInfoRecord" flushCache="true" parameterType="org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord">
         UPDATE linkis_cg_ec_resource_info_record
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="serviceInstance != null">service_instance = #{serviceInstance},</if>
             <if test="requestTimes != null">request_times = #{requestTimes},</if>
             <if test="usedTimes != null">used_times = #{usedTimes},</if>
@@ -58,10 +58,8 @@
             <if test="ecmInstance != null">ecm_instance = #{ecmInstance},</if>
             <if test="status != null">status = #{status},</if>
             <if test="metrics != null">metrics = #{metrics},</if>
-        </trim>
-        <![CDATA[
+        </set>
         WHERE id = #{id}
-        ]]>
     </update>
 
     <delete id="deleteECResourceInfoRecordByTicketId">

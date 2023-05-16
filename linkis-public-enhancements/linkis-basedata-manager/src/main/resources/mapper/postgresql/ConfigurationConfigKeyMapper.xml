@@ -51,7 +51,7 @@
 
     <update id="updateById" parameterType="org.apache.linkis.basedatamanager.server.domain.ConfigurationConfigKey">
         UPDATE linkis_ps_configuration_config_key
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="et.key != null">"key" = #{et.key},</if>
             <if test="et.description != null">description = #{et.description},</if>
             <if test="et.name != null">name = #{et.name},</if>
@@ -62,7 +62,7 @@
             <if test="et.hidden != null">is_hidden = cast(#{et.hidden} as bool),</if>
             <if test="et.advanced != null">is_advanced = cast(#{et.advanced} as bool),</if>
             <if test="et.treeName != null">"treeName" = #{et.treeName}</if>
-        </trim>
+        </set>
         WHERE id = #{et.id}
     </update>
 </mapper>

@@ -51,9 +51,9 @@
         FROM "linkis_ps_dm_datasource_type_key" WHERE "data_source_type_id" = #{dataSourceTypeId};
     </select>
     <select id="listByDataSourceTypeAndScope" resultMap="paramKeyMap">
-        <![CDATA[SELECT ]]>
+        SELECT
         <include refid="param_key_query"/>
-        <![CDATA[ FROM "linkis_ps_dm_datasource_type_key"
-        WHERE "data_source_type_id" = #{dataSourceTypeId} AND "scope" = #{scope};]]>
+         FROM "linkis_ps_dm_datasource_type_key"
+        WHERE "data_source_type_id" = #{dataSourceTypeId} AND "scope" = #{scope};
     </select>
 </mapper>

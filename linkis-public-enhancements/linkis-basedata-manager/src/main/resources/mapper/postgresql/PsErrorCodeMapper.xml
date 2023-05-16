@@ -34,7 +34,7 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
         from linkis_ps_error_code
         <if test="searchName != null and searchName!=''">

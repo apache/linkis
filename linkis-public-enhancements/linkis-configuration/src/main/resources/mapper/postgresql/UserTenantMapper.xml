@@ -68,7 +68,7 @@
 
     <update id="updateTenant" parameterType="org.apache.linkis.configuration.entity.TenantVo">
         UPDATE linkis_cg_tenant_label_config
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="user != null ">"user" = #{user},</if>
             <if test="creator != null">creator = #{creator},</if>
             <if test="tenantValue != null">tenant_value = #{tenantValue},</if>
@@ -76,7 +76,7 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="desc != null">"desc" = #{desc},</if>
             <if test="bussinessUser != null">bussiness_user = #{bussinessUser}</if>
-        </trim>
+        </set>
         WHERE id = cast(#{id} as int)
     </update>
 

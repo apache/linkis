@@ -144,7 +144,7 @@
     <!-- // todo check -->
     <update id="updateJobHistory" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobHistory">
         UPDATE linkis_ps_job_history_group_history
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="updatedTime != null">updated_time = #{updateTimeMills},</if>
             <if test="jobReqId != null">job_req_id = #{jobReqId},</if>
             <if test="submitUser != null">submit_user = #{submitUser},</if>
@@ -164,10 +164,10 @@
             <if test="engineType != null">engine_type = #{engineType},</if>
             <if test="executionCode != null">execution_code = #{executionCode},</if>
             <if test="observeInfo != null">observe_info = #{observeInfo},</if>
-        </trim>
-        <![CDATA[
-        WHERE id = #{id} AND updated_time <= #{updateTimeMills}
-        ]]>
+        </set>
+
+        WHERE id = #{id} AND updated_time <![CDATA[<=]]> #{updateTimeMills}
+
     </update>
 
     <select id="selectJobHistoryStatusForUpdate" flushCache="true" resultType="java.lang.String">

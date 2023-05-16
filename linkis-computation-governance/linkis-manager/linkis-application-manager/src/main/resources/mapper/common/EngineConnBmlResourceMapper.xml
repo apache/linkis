@@ -46,13 +46,13 @@
         FROM linkis_cg_engine_conn_plugin_bml_resources
         <where>
             <if test="engineConnType != null and engineConnType != ''">
-                <![CDATA[AND engine_conn_type like concat('%', #{engineConnType}, '%')]]>
+                AND engine_conn_type like concat('%', #{engineConnType}, '%')
             </if>
             <if test="engineConnVersion != null and engineConnVersion != ''">
-                <![CDATA[AND version like concat('%', #{engineConnVersion}, '%')]]>
+                AND version like concat('%', #{engineConnVersion}, '%')
             </if>
         </where>
-        <![CDATA[ ORDER BY create_time DESC ]]>
+         ORDER BY create_time DESC
     </select>
 
     <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
@@ -64,7 +64,7 @@
 
     <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         UPDATE linkis_cg_engine_conn_plugin_bml_resources
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="engineConnBmlResource.lastModified != null">last_modified =
                 #{engineConnBmlResource.lastModified},
             </if>
@@ -75,7 +75,7 @@
             <if test="engineConnBmlResource.lastUpdateTime != null">last_update_time =
                 #{engineConnBmlResource.lastUpdateTime},
             </if>
-        </trim>
+        </set>
         WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and version=#{engineConnBmlResource.version}
         AND file_name=#{engineConnBmlResource.fileName}
     </update>

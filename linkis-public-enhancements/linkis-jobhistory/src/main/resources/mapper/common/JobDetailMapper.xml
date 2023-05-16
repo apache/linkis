@@ -95,7 +95,7 @@
 
     <update id="updateJobDetail" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         UPDATE linkis_ps_job_history_detail
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="updatedTimeMills != null">updated_time = #{updatedTimeMills},</if>
             <if test="resultLocation != null">result_location = #{resultLocation},</if>
             <if test="resultArraySize != null">result_array_size = #{resultArraySize},</if>
@@ -104,10 +104,8 @@
             <if test="createdTime != null">created_time = #{createdTime},</if>
             <if test="status != null">status = #{status},</if>
             <if test="priority != null">priority = #{priority},</if>
-        </trim>
-        <![CDATA[
-        WHERE id =#{id} AND updated_time < #{updatedTimeMills}
-        ]]>
+        </set>
+        WHERE id =#{id} AND updated_time <![CDATA[<]]> #{updatedTimeMills}
     </update>
 
     <select id="selectJobDetailStatusForUpdateByJobDetailId" resultType="java.lang.String">

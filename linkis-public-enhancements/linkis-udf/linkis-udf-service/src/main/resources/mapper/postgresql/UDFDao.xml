@@ -94,7 +94,7 @@
     </delete>
 
     <select id="getUDFById" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
         from linkis_ps_udf_baseinfo
         where id = #{arg0}
@@ -110,14 +110,14 @@
     </insert>
 
     <select id="getUDFSByUserName" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
         from linkis_ps_udf_baseinfo
         where create_user = #{arg0}
     </select>
 
     <select id="getUDFSByUsers" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
         from linkis_ps_udf_baseinfo
         where create_user in
@@ -127,7 +127,7 @@
     </select>
 
     <select id="getSharedUDFByUser" resultMap="UDFResultMap">
-        select
+        SELECT
         <include refid="udf_Column_List"/>
         from linkis_ps_udf_baseinfo
         where id in
@@ -137,7 +137,7 @@
     <select id="getUDFSByTreeIdAndUser" resultType="org.apache.linkis.udf.vo.UDFInfoVo">
         select t1.*,puv.path,puv.register_format,puv.use_format,puv.bml_resource_id,puv.bml_resource_version,puv.description
         from
-        (select
+        (SELECT
         pu.*,1 as is_load from linkis_ps_udf_baseinfo pu
         where tree_id = #{arg0} and create_user = #{arg1} and udf_type in
         <foreach collection="arg2" open="(" separator="," close=")" item="item">
@@ -231,7 +231,7 @@
     </select>
 
     <select id="getSameNameCountByUser" resultType="java.lang.Long" >
-        select
+        SELECT
             count(1)
         from
         linkis_ps_udf_baseinfo

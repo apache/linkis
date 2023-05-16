@@ -126,7 +126,7 @@
     <update id="updateMap"
             parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextKeyValue">
         UPDATE linkis_ps_cs_context_map
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="contextKey.contextScope != null">`context_scope` = #{contextKey.contextScope},</if>
             <if test="contextKey.contextType != null">`context_type` = #{contextKey.contextType},</if>
             <if test="contextValue.valueStr != null">`value` = #{contextValue.valueStr},</if>
@@ -134,7 +134,7 @@
             <if test="updateTime != null">`update_time` = #{updateTime},</if>
             <if test="createTime != null">`create_time` = #{createTime},</if>
             <if test="accessTime != null">`access_time` = #{accessTime},</if>
-        </trim>
+        </set>
         WHERE context_id = #{contextId} AND `key` = #{contextKey.key}
     </update>
 

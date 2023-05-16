@@ -29,8 +29,8 @@
     </resultMap>
 
     <insert id="insertOne" parameterType="org.apache.linkis.instance.label.entity.InstanceInfo">
-        <![CDATA[INSERT INTO "linkis_ps_instance_info"("instance", "name")
-        VALUES(#{instance}, #{applicationName}) on conflict(instance) do update set name=excluded.name]]>
+        INSERT INTO "linkis_ps_instance_info"("instance", "name")
+        VALUES(#{instance}, #{applicationName}) on conflict(instance) do update set name=excluded.name
     </insert>
 
     <delete id="removeInstance" parameterType="org.apache.linkis.common.ServiceInstance">
@@ -46,8 +46,8 @@
     </update>
 
     <select id="getInstanceInfoByServiceInstance" parameterType="org.apache.linkis.common.ServiceInstance" resultMap="instanceInfoMap">
-        <![CDATA[SELECT * FROM linkis_ps_instance_info
-        WHERE name = #{applicationName} AND instance = #{instance}]]>
+        SELECT * FROM linkis_ps_instance_info
+        WHERE name = #{applicationName} AND instance = #{instance}
     </select>
 
 </mapper>

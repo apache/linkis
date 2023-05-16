@@ -52,13 +52,13 @@
     <select id="getListByPage" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
-        <![CDATA[ from linkis_ps_dm_datasource_type_key ]]>
+         from linkis_ps_dm_datasource_type_key
         WHERE 1 = 1
         <if test="searchName != null and searchName!=''">
-            <![CDATA[and `name` like concat('%',#{searchName},'%') ]]>
+            and `name` like concat('%',#{searchName},'%')
         </if>
         <if test="dataSourceTypeId != null and dataSourceTypeId!=''">
-            <![CDATA[and `data_source_type_id` = #{dataSourceTypeId} ]]>
+            and `data_source_type_id` = #{dataSourceTypeId}
         </if>
     </select>
 </mapper>

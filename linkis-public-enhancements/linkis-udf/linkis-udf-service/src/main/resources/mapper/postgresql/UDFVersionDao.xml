@@ -52,14 +52,14 @@
     </insert>
 
     <select id="selectLatestByUdfId" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
+        SELECT
         <include refid="udf_Version_List"/>
         from linkis_ps_udf_version where udf_id=#{udfId} and bml_resource_version in
         (select max(bml_resource_version) from linkis_ps_udf_version where udf_id=#{udfId})
     </select>
 
     <select id="selectByUdfIdAndVersion" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
+        SELECT
         <include refid="udf_Version_List"/>
         from linkis_ps_udf_version where udf_id=#{udfId} and bml_resource_version=#{version}
     </select>
@@ -70,13 +70,13 @@
     </update>
 
     <select id="getAllVersionByUdfId" resultType="org.apache.linkis.udf.vo.UDFVersionVo">
-        select
+        SELECT
         puv.*, is_expire, create_user
         from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on pu.id=puv.udf_id and pu.id=#{udfId} order by puv.bml_resource_version desc
     </select>
 
     <select id="getAllVersions" resultType="org.apache.linkis.udf.entity.UDFVersion">
-        select
+        SELECT
         puv.* from linkis_ps_udf_version puv where puv.udf_id=#{udfId}
     </select>
 
@@ -111,7 +111,7 @@
     </update>
 
     <select id="getUdfVersionInfoByName" resultType="org.apache.linkis.udf.vo.UDFVersionVo">
-        select
+        SELECT
         puv.*, is_expire, create_user
         from linkis_ps_udf_baseinfo pu join linkis_ps_udf_version puv on pu.id=puv.udf_id and pu.udf_name=#{udfName} and pu.create_user=#{createUser}
         order by puv.bml_resource_version desc  limit 1

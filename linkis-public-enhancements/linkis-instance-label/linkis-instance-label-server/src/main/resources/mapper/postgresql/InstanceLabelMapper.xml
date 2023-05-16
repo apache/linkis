@@ -39,42 +39,42 @@
         "label_value_size"
     </sql>
     <select id="selectForUpdate" parameterType="Integer" resultMap="insPersistenceLabelMap">
-        <![CDATA[SELECT ]]>
+        SELECT
         <include refid="label_search_columns" />
-        <![CDATA[ FROM "linkis_ps_instance_label" WHERE "id" = #{labelId} FOR UPDATE;]]>
+        FROM "linkis_ps_instance_label" WHERE "id" = #{labelId} FOR UPDATE;
     </select>
 
     <select id="searchForUpdate" resultMap="insPersistenceLabelMap">
-        <![CDATA[SELECT ]]>
+        SELECT
         <include refid="label_search_columns"/>
-        <![CDATA[ FROM "linkis_ps_instance_label" WHERE "label_key" = #{labelKey}
-        AND "label_value" = #{labelValue} FOR UPDATE;]]>
+         FROM "linkis_ps_instance_label" WHERE "label_key" = #{labelKey}
+        AND "label_value" = #{labelValue} FOR UPDATE;
     </select>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         <foreach collection="list" item="item" separator="" open="" close="">
-            <![CDATA[INSERT INTO "linkis_ps_instance_label"(]]>
+            INSERT INTO "linkis_ps_instance_label"(
             <include refid="label_insert_columns"/>
-            <![CDATA[) VALUES(#{item.labelKey}, #{item.stringValue},
-             #{item.feature}, #{item.labelValueSize}) on conflict(label_key,label_value) do update set label_feature=excluded.label_feature,label_value_size=excluded.label_value_size ;]]>
+            ) VALUES(#{item.labelKey}, #{item.stringValue},
+             #{item.feature}, #{item.labelValueSize}) on conflict(label_key,label_value) do update set label_feature=excluded.label_feature,label_value_size=excluded.label_value_size ;
         </foreach>
     </insert>
 
     <insert id="insert">
-        <![CDATA[INSERT INTO "linkis_ps_instance_label"(]]>
+        INSERT INTO "linkis_ps_instance_label"(
         <include refid="label_insert_columns"/>
-        <![CDATA[) VALUES(#{labelKey}, #{stringValue},
-             #{feature}, #{labelValueSize});]]>
+        ) VALUES(#{labelKey}, #{stringValue},
+             #{feature}, #{labelValueSize});
     </insert>
 
     <update id="updateForLock">
-        <![CDATA[UPDATE "linkis_ps_instance_label" SET "update_time" = CURRENT_TIMESTAMP WHERE "id" = #{labelId};]]>
+        UPDATE "linkis_ps_instance_label" SET "update_time" = CURRENT_TIMESTAMP WHERE "id" = #{labelId};
     </update>
 
     <select id="search" resultMap="insPersistenceLabelMap">
-        <![CDATA[SELECT * FROM "linkis_ps_instance_label" ]]>
+        SELECT * FROM "linkis_ps_instance_label"
         <where>
-            <![CDATA[("label_key", "label_value") IN ]]>
+            ("label_key", "label_value") IN
             <foreach collection="list" item="item" open="(" close=")" separator=",">
                 (#{item.labelKey}, #{item.stringValue})
             </foreach>
@@ -84,11 +84,11 @@
     <delete id="remove">
         <choose>
             <when test="id != null and id != ''">
-                <![CDATA[DELETE FROM "linkis_ps_instance_label" WHERE "id" = #{id}]]>
+                DELETE FROM "linkis_ps_instance_label" WHERE "id" = #{id}
             </when>
             <otherwise>
-                <![CDATA[DELETE FROM "linkis_ps_instance_label" WHERE "label_key" = #{labelKey}
-        AND "label_value" = #{stringValue}]]>
+                DELETE FROM "linkis_ps_instance_label" WHERE "label_key" = #{labelKey}
+        AND "label_value" = #{stringValue}
             </otherwise>
         </choose>
     </delete>
@@ -103,12 +103,12 @@
     </insert>
 
     <delete id="doRemoveKeyValues">
-        <![CDATA[DELETE FROM "linkis_ps_instance_label_value_relation" WHERE "label_id" = #{labelId}]]>
+        DELETE FROM "linkis_ps_instance_label_value_relation" WHERE "label_id" = #{labelId}
     </delete>
 
     <delete id="doRemoveKeyValuesBatch">
         <foreach collection="list" item="item" open="" close="">
-            <![CDATA[DELETE FROM "linkis_ps_instance_label_value_relation" WHERE "label_id" = #{item}]]>
+            DELETE FROM "linkis_ps_instance_label_value_relation" WHERE "label_id" = #{item}
         </foreach>
     </delete>
 </mapper>

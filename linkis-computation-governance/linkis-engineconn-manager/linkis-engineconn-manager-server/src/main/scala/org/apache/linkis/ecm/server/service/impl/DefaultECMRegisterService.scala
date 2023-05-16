@@ -23,6 +23,7 @@ import org.apache.linkis.ecm.server.conf.ECMConfiguration._
 import org.apache.linkis.ecm.server.listener.{ECMClosedEvent, ECMReadyEvent}
 import org.apache.linkis.ecm.server.service.ECMRegisterService
 import org.apache.linkis.ecm.server.util.ECMUtils
+import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.protocol.em.{
   RegisterEMRequest,
@@ -30,6 +31,7 @@ import org.apache.linkis.manager.common.protocol.em.{
   StopEMRequest
 }
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.SerializableLabel
 import org.apache.linkis.rpc.Sender
 
 import java.util
@@ -57,6 +59,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
       "alias",
       ENGINE_CONN_MANAGER_SPRING_NAME
     )
+
+    if (Configuration.IS_MULTIPLE_YARN_CLUSTER.getValue.asInstanceOf[Boolean]) {
+      labels.asScala += LabelKeyConstant.YARN_CLUSTER_KEY ->
+        (ECM_YARN_CLUSTER_TYPE + "_" + ECM_YARN_CLUSTER_NAME)
+    }
     // TODO: group  by key
     labels
   }

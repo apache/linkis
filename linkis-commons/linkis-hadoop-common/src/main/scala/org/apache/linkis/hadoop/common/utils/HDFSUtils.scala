@@ -143,9 +143,13 @@ object HDFSUtils extends Logging {
       val hdfsFileSystemContainer = if (fileSystemCache.containsKey(cacheKey)) {
         fileSystemCache.get(cacheKey)
       } else {
+        // we use cacheLabel to create HDFSFileSystemContainer, and in the rest part of HDFSUtils, we consistently
+        // use the same cacheLabel to operate HDFSFileSystemContainer, like close or remove.
+        // At the same time, we don't want to change the behavior of createFileSystem which is out of HDFSUtils,
+        // so we continue to use the original label to createFileSystem.
         val newHDFSFileSystemContainer =
           new HDFSFileSystemContainer(
-            createFileSystem(userName, cacheLabel, conf),
+            createFileSystem(userName, label, conf),
             userName,
             cacheLabel
           )

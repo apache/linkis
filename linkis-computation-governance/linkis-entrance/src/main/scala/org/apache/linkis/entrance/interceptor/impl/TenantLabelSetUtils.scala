@@ -60,7 +60,7 @@ object TenantLabelSetUtils extends Logging {
               ""
           }
         }
-        if (StringUtils.isNotBlank(cacheValue)) {
+        if (StringUtils.isBlank(cacheValue)) {
           logger.warn(s"TenantCache data loading failed , plaese check warn log")
           cacheValue = ""
         }
@@ -93,6 +93,11 @@ object TenantLabelSetUtils extends Logging {
           if (StringUtils.isBlank(tenant)) {
             tenant = userCreatorTenantCache.get(
               "*-" + LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator.toLowerCase()
+            )
+          }
+          if (StringUtils.isBlank(tenant)) {
+            tenant = userCreatorTenantCache.get(
+              LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getUser.toLowerCase() + "-*"
             )
           }
           logger.info("get cache tenant:" + tenant + ",jobRequest:" + jobRequest.getId)

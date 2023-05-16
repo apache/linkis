@@ -17,9 +17,6 @@
 
 package org.apache.linkis.engineplugin.spark.common
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
-
 /**
  */
 object SparkKind {
@@ -91,23 +88,3 @@ case class SparkDataCalc() extends Kind {
 case class SparkMLSQL() extends Kind {
   override val toString = SparkKind.SPARKMLSQL_TYPE
 }
-
-case object SparkSessionKindSerializer
-    extends CustomSerializer[Kind](implicit formats =>
-      (
-        {
-          case JString(SparkKind.SPARKSCALA_TYPE) | JString(SparkKind.SCALA_LAN) => SparkScala()
-          case JString(SparkKind.PYSPARK_TYPE) | JString(SparkKind.PYTHON_LAN) | JString(
-                SparkKind.PYTHON_END
-              ) =>
-            PySpark()
-          case JString(SparkKind.SPARKR_TYPE) | JString(SparkKind.R_LAN) => SparkR()
-          case JString(SparkKind.SPARKMIX_TYPE) | JString(SparkKind.MIX_TYPE) => SparkMix()
-          case JString(SparkKind.SQL_LAN) | JString(SparkKind.SPARKSQL_TYPE) => SparkSQL()
-          case JString(SparkKind.SPARKMLSQL_TYPE) | JString(SparkKind.ML_LAN) => SparkMLSQL()
-        },
-        { case kind: Kind =>
-          JString(kind.toString)
-        }
-      )
-    )

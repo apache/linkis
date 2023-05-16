@@ -104,9 +104,9 @@ spec:
           hostPath:
             path: {{ .Values.linkis.locations.commonDir }}
             type: DirectoryOrCreate
-      {{- if .Values.imagePullSecrets }}
+      {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{ toYaml .Values.imagePullSecrets | indent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: "eureka"

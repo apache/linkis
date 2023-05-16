@@ -61,6 +61,7 @@ public class XlsUtils {
       throws Exception {
     String hdfsPath =
         "/tmp/" + StorageUtils.getJvmUser() + "/" + System.currentTimeMillis() + ".csv";
+    LOG.info("The excel to csv with hdfsPath:" + hdfsPath);
     ExcelXlsReader xlsReader = new ExcelXlsReader();
     RowToCsvDeal rowToCsvDeal = new RowToCsvDeal();
     OutputStream out = null;

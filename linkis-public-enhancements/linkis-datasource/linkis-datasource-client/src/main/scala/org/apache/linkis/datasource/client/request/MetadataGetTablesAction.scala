@@ -103,6 +103,10 @@ object MetadataGetTablesAction {
       metadataGetTablesAction.dataSourceName = this.dataSourceName
       metadataGetTablesAction.database = this.database
       metadataGetTablesAction.setParameter("system", system)
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        metadataGetTablesAction.setParameter("dataSourceName", dataSourceName)
+        metadataGetTablesAction.setParameter("database", database)
+      }
       metadataGetTablesAction.setUser(user)
       metadataGetTablesAction
     }

@@ -34,7 +34,9 @@
     </select>
 
     <select id="getValueByKeyID" resultType="org.apache.linkis.variable.entity.VarKeyUser">
-        select * from `linkis_ps_variable_key_user` bdvku where bdvku.key_id = #{keyID}
+        SELECT *
+        FROM `linkis_ps_variable_key_user` bdvku
+        WHERE bdvku.key_id = #{keyID}
     </select>
 
     <delete id="removeKey">
@@ -54,7 +56,9 @@
     </insert>
 
     <update id="updateValue">
-        update `linkis_ps_variable_key_user` set value = #{value} where id = #{valueID}
+        UPDATE `linkis_ps_variable_key_user`
+        SET value = #{value}
+        WHERE id = #{valueID}
     </update>
 
 </mapper>

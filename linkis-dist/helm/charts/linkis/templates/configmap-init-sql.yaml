@@ -673,6 +673,7 @@ data:
     `name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+    `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
     `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -1183,12 +1184,12 @@ data:
     (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
     INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = '*-*,*-*');
 
-    -- spark2.4.3 default configuration
+    -- spark default configuration
     insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
     (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
     INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @SPARK_ALL);
 
-    -- hive1.2.1 default configuration
+    -- hive default configuration
     insert into `linkis_ps_configuration_config_value` (`config_key_id`, `config_value`, `config_label_id`)
     (select `relation`.`config_key_id` AS `config_key_id`, '' AS `config_value`, `relation`.`engine_type_label_id` AS `config_label_id` FROM linkis_ps_configuration_key_engine_relation relation
     INNER JOIN linkis_cg_manager_label label ON relation.engine_type_label_id = label.id AND label.label_value = @HIVE_ALL);

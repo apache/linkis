@@ -30,7 +30,7 @@ import java.util.List;
 
 public class AMEMNode implements EMNode, ScoreServiceInstance {
 
-  private List<Label> labels;
+  private List<Label<?>> labels;
 
   private double score;
 
@@ -43,6 +43,7 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   private String owner;
 
   private String mark;
+  private String identifier;
 
   private NodeTaskInfo nodeTaskInfo;
 
@@ -82,12 +83,12 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   }
 
   @Override
-  public List<Label> getLabels() {
+  public List<Label<?>> getLabels() {
     return this.labels;
   }
 
   @Override
-  public void setLabels(List<Label> labels) {
+  public void setLabels(List<Label<?>> labels) {
     this.labels = labels;
   }
 
@@ -137,6 +138,16 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
 
   public void setMark(String mark) {
     this.mark = mark;
+  }
+
+  @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   @Override

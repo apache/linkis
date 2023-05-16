@@ -39,7 +39,7 @@ public enum LinkisConfigurationErrorCodeSummary implements LinkisErrorCode {
   ENGINE_TYPE_IS_NULL(14100, "Engine type is null, cannot be added(引擎类型为空，无法添加)"),
   INCORRECT_FIXED_SUCH(
       14100,
-      "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)"),
+      "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-3.2.1(保存的引擎类型参数有误，请按照固定格式传送，例如spark-3.2.1)"),
   INCOMPLETE_RECONFIRM(14100, "Incomplete request parameters, please reconfirm(请求参数不完整，请重新确认)"),
   ONLY_ADMIN_CAN_MODIFY(14100, "Only admin can modify category(只有管理员才能修改目录)"),
   THE_LABEL_PARAMETER_IS_EMPTY(14100, " The label parameter is empty(标签参数为空)"),

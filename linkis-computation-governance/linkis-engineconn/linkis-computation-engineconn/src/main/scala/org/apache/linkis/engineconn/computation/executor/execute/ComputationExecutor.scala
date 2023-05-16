@@ -57,7 +57,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   private val listenerBusContext = ExecutorListenerBusContext.getExecutorListenerBusContext()
 
-  //  private val taskMap: util.Map[String, EngineConnTask] = new ConcurrentHashMap[String, EngineConnTask](8)
   private val taskCache: Cache[String, EngineConnTask] = CacheBuilder
     .newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
@@ -71,8 +70,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   private var codeParser: Option[CodeParser] = None
 
   protected val runningTasks: Count = new Count
-
-  protected val pendingTasks: Count = new Count
 
   protected val succeedTasks: Count = new Count
 
@@ -139,8 +136,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
     super.close()
   }
-
-  //  override def getName: String = ComputationExecutorConf.DEFAULT_COMPUTATION_NAME
 
   protected def ensureOp[A](f: => A): A = if (!isEngineInitialized) {
     f
@@ -209,7 +204,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
         }
-        // info(s"Finished to execute task ${engineConnTask.getTaskId}")
         incomplete ++= code
         response match {
           case e: ErrorExecuteResponse =>
@@ -272,7 +266,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
     Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
-    // lastTask = null
     response
   } {
     LoggerUtils.removeJobIdMDC()

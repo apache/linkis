@@ -25,9 +25,6 @@
   </parent>
 
   <artifactId>linkis-engineplugin-shell</artifactId>
-  <properties>
-    <shell.version>1</shell.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -95,13 +92,6 @@
     <dependency>
       <groupId>org.scala-lang</groupId>
       <artifactId>scala-reflect</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-      <version>${json4s.version}</version>
       <scope>provided</scope>
     </dependency>
 

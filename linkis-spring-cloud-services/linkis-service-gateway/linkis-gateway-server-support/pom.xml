@@ -94,19 +94,6 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
 
-    <!-- https://mavenlibs.com/maven/dependency/com.webank.wedatasphere.dss/dss-gateway-support -->
-    <dependency>
-      <groupId>com.webank.wedatasphere.dss</groupId>
-      <artifactId>dss-gateway-support</artifactId>
-      <version>1.1.1</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.linkis</groupId>
-          <artifactId>linkis-gateway-server-support</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -115,7 +102,6 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -126,7 +112,7 @@
           <appendAssemblyId>false</appendAssemblyId>
           <attach>false</attach>
           <descriptors>
-            <descriptor>/src/main/assembly/distribution.xml</descriptor>
+            <descriptor>src/main/assembly/distribution.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>

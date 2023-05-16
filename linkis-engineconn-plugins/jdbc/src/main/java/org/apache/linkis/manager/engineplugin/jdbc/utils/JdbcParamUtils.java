@@ -19,7 +19,6 @@ package org.apache.linkis.manager.engineplugin.jdbc.utils;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.conf.CommonVars$;
-import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.manager.engineplugin.jdbc.JDBCPropertiesParser;
 import org.apache.linkis.manager.engineplugin.jdbc.constant.JDBCEngineConnConstant;
 import org.apache.linkis.manager.engineplugin.jdbc.exception.JDBCParamsIllegalException;
@@ -35,12 +34,6 @@ import static org.apache.linkis.manager.engineplugin.jdbc.errorcode.JDBCErrorCod
 
 public class JdbcParamUtils {
   private static final Logger LOG = LoggerFactory.getLogger(JdbcParamUtils.class);
-  private static final String JDBC_MATCH_REGEX = "jdbc:\\w+://\\S+:[0-9]{2,6}(/\\S*)?";
-  private static final String JDBC_H2_PROTOCOL = "jdbc:h2";
-
-  private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
-
-  private static final String SENSITIVE_PARAM = "autoDeserialize=true";
   private static final String AUTO_DESERIALIZE = "autoDeserialize";
 
   private static final String APPEND_PARAMS =
@@ -49,45 +42,13 @@ public class JdbcParamUtils {
   public static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
       CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
-  private static final char AND_SYMBOL = '&';
-
   private static final String QUOTATION_MARKS = "\"";
-
-  private static final char QUESTION_MARK = '?';
 
   public static String clearJdbcUrl(String url) {
     if (url.startsWith(QUOTATION_MARKS) && url.endsWith(QUOTATION_MARKS)) {
       url = url.trim();
       return url.substring(1, url.length() - 1);
     }
-    return url;
-  }
-
-  public static void validateJdbcUrl(String url) {
-    if (!url.matches(JDBC_MATCH_REGEX) && !url.startsWith(JDBC_H2_PROTOCOL)) {
-      throw new IllegalArgumentException("JDBC url format error!" + url);
-    }
-  }
-
-  public static String filterJdbcUrl(String url) {
-
-    LOG.info("the filter source url is: {}", url);
-
-    if (StringUtils.isBlank(url)) {
-      return url;
-    }
-    // temporarily filter only mysql jdbc url. & Handles cases that start with JDBC
-    if (!url.toLowerCase().contains(JDBC_MYSQL_PROTOCOL)) {
-      return url;
-    }
-
-    // security check
-    url = SecurityUtils.checkJdbcSecurity(url);
-
-    // append force params
-    url = SecurityUtils.appendMysqlForceParams(url);
-
-    LOG.info("The filtered jdbc url is: {}", url);
     return url;
   }
 

@@ -239,10 +239,6 @@
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
     <jacoco.skip>false</jacoco.skip>
 
-    <!-- datalake -->
-    <delta.version>2.0.2</delta.version>
-    <hudi.version>0.13.0</hudi.version>
-
     <!-- for JDK-17 test-->
     <extraJavaTestArgs>-XX:+IgnoreUnrecognizedVMOptions
       --add-opens=java.base/java.lang=ALL-UNNAMED

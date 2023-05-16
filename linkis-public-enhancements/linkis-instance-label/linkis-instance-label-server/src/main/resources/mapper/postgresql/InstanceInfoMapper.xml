@@ -38,10 +38,12 @@
     </delete>
 
     <update id="updateInstance" parameterType="org.apache.linkis.instance.label.entity.InstanceInfo">
-        UPDATE linkis_ps_instance_info SET
-        <if test="#{applicationName} != null">name = #{applicationName},</if>
-        <if test="#{instance} != null">instance = #{instance},</if>
-        <if test="#{updateTime != null}">update_time = #{updateTime}</if>
+        UPDATE linkis_ps_instance_info
+        <set>
+            <if test="#{applicationName} != null">name = #{applicationName},</if>
+            <if test="#{instance} != null">instance = #{instance},</if>
+            <if test="#{updateTime != null}">update_time = #{updateTime}</if>
+        </set>
         WHERE id = #{id}
     </update>
 

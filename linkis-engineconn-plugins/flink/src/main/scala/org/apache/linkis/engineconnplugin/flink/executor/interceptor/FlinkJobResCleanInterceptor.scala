@@ -17,11 +17,15 @@
 
 package org.apache.linkis.engineconnplugin.flink.executor.interceptor
 
-import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_APPLICATION_MAIN_CLASS_JAR, FLINK_SHIP_DIRECTORIES}
-import org.apache.linkis.engineconnplugin.flink.resource.FlinkJobResourceCleaner
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
+  FLINK_APPLICATION_MAIN_CLASS_JAR,
+  FLINK_SHIP_DIRECTORIES
+}
+import org.apache.linkis.engineconnplugin.flink.resource.FlinkJobResourceCleaner
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 
@@ -29,7 +33,8 @@ import java.util
  * Flink Job resource clean interceptor
  */
 class FlinkJobResCleanInterceptor(cleaner: FlinkJobResourceCleaner)
-    extends FlinkJobSubmitInterceptor with Logging{
+    extends FlinkJobSubmitInterceptor
+    with Logging {
 
   /**
    * Before submit the job

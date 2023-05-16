@@ -29,7 +29,6 @@
   <modules>
     <module>hive</module>
     <module>spark</module>
-    <module>scala-2.12</module>
     <module>python</module>
     <module>openlookeng</module>
     <module>io_file</module>

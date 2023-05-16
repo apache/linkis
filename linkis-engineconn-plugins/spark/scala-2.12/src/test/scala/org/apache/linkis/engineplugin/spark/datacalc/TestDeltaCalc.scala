@@ -18,10 +18,9 @@
 package org.apache.linkis.engineplugin.spark.datacalc
 
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
+import org.junit.jupiter.api.{Assertions, Test}
 
-import org.junit.jupiter.api.{Assertions, Test};
-
-class TestHudiCalc {
+class TestDelta {
 
   @Test
   def testDataLakeWrite: Unit = {
@@ -33,7 +32,6 @@ class TestHudiCalc {
     Assertions.assertTrue(sources != null)
     Assertions.assertTrue(transforms != null)
     Assertions.assertTrue(sinks != null)
-
   }
 
   @Test
@@ -46,7 +44,6 @@ class TestHudiCalc {
     Assertions.assertTrue(sources != null)
     Assertions.assertTrue(transforms != null)
     Assertions.assertTrue(sinks != null)
-
   }
 
   val writeConfigJson =
@@ -83,14 +80,9 @@ class TestHudiCalc {
       |            "name": "datalake",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "tableFormat": "hudi",
-      |                "options": {
-      |                "hoodie.table.name":"huditest",
-      |                "hoodie.datasource.write.recordkey.field":"age",
-      |                "hoodie.datasource.write.precombine.field":"age"
-      |                },
+      |                "tableFormat": "delta",
       |                "path": "file:///Users/chengjie/cjtest/test",
-      |                "saveMode": "append"
+      |                "saveMode": "overwrite"
       |            }
       |        }
       |    ]
@@ -106,7 +98,7 @@ class TestHudiCalc {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "tableFormat": "hudi",
+      |                "tableFormat": "delta",
       |                "path": "file:///Users/chengjie/cjtest/test"
       |            }
       |        }

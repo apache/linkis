@@ -217,7 +217,7 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
         } else {
           new BufferedOutputStream(fs.append(filesystemPath))
         }
-        bufferedOutputStream.write("\n".getBytes())
+        bufferedOutputStream.write("\n".getBytes(encoding))
         bufferedOutputStream
       }
     } else {
@@ -233,17 +233,17 @@ class CsvRelation(@transient private val source: Map[String, Any]) extends Seria
         header ++= col.name ++ fieldDelimiter
       }
       if (hasHeader) {
-        out.write(header.substring(0, header.lastIndexOf(fieldDelimiter)).getBytes)
+        out.write(header.substring(0, header.lastIndexOf(fieldDelimiter)).getBytes(encoding))
       } else {
         if (iterator.hasNext) {
-          out.write(getLine(schema, iterator.next()).getBytes)
+          out.write(getLine(schema, iterator.next()).getBytes(encoding))
           index += 1
         }
       }
 
       while (index < Int.MaxValue && iterator.hasNext) {
         val msg = "\n" + getLine(schema, iterator.next())
-        out.write(msg.getBytes())
+        out.write(msg.getBytes(encoding))
         index += 1
       }
       // warn(s"Fetched ${df.columns.length} col(s) : ${index} row(s).")

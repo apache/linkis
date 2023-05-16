@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.am.pointer
 
+import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.manager.am.exception.AMErrorException
 import org.apache.linkis.manager.am.utils.AMUtils
@@ -38,16 +39,17 @@ class DefaultEMNodPointer(val node: Node) extends AbstractNodePointer with EMNod
 
   override def createEngine(engineConnLaunchRequest: EngineConnLaunchRequest): EngineNode = {
     logger.info(s"Start to createEngine ask em ${getNode().getServiceInstance}")
-    getSender.ask(engineConnLaunchRequest) match {
+    val ec = getSender.ask(engineConnLaunchRequest)
+    ec match {
       case engineNode: EngineNode =>
         logger.info(
           s"Succeed to createEngine ask em ${getNode().getServiceInstance}, engineNode $engineNode "
         )
         engineNode
       case _ =>
-        throw new AMErrorException(
+        throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,
-          s"Failed to createEngine ask em ${getNode().getServiceInstance}"
+          s"Failed to createEngine ask em ${getNode().getServiceInstance}, for return ${ec}"
         )
     }
   }

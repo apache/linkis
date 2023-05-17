@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executor
+package org.apache.linkis.engineplugin.elasticsearch.executor.client;
 
-object ElasticSearchExecutorOrder extends Enumeration {
+public interface ElasticSearchExecutor {
 
-  type ElasticSearchExecutorOrder = Value
-  val SQL = Value(1)
-  val JSON = Value(3)
+  void open() throws Exception;
+
+  ElasticSearchResponse executeLine(String code);
+
+  void close();
 }

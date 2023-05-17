@@ -15,8 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.exception
+package org.apache.linkis.engineplugin.elasticsearch.executor.client;
 
-import org.apache.linkis.common.exception.ErrorException
+import java.util.Map;
 
-case class EsEngineException(errorMsg: String) extends ErrorException(70114, errorMsg)
+import org.elasticsearch.client.Cancellable;
+import org.elasticsearch.client.ResponseListener;
+
+public interface EsClientOperate {
+
+  Cancellable execute(String code, Map<String, String> options, ResponseListener responseListener);
+
+  void close();
+}

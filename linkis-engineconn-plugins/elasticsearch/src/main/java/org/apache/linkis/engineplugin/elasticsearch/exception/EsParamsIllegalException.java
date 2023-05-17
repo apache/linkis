@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.exception
+package org.apache.linkis.engineplugin.elasticsearch.exception;
 
-import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.RESPONSE_FAIL_IS_EMPTY
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary;
 
-case class EsConvertResponseException(errorMsg: String)
-    extends ErrorException(RESPONSE_FAIL_IS_EMPTY.getErrorCode, errorMsg)
+public class EsParamsIllegalException extends ErrorException {
+  public EsParamsIllegalException(String errorMsg) {
+    super(EasticsearchErrorCodeSummary.CLUSTER_IS_BLANK.getErrorCode(), errorMsg);
+  }
+}

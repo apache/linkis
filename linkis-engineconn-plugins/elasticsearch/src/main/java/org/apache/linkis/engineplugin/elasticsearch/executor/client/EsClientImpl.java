@@ -40,11 +40,9 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.sniff.Sniffer;
 
 public class EsClientImpl extends EsClient {
-  private RestClient client;
 
   public EsClientImpl(String datasourceName, RestClient client, Sniffer sniffer) {
     super(datasourceName, client, sniffer);
-    this.client = client;
   }
 
   @Override

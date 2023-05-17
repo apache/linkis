@@ -105,12 +105,16 @@ public class ElasticSearchExecutorImpl implements ElasticSearchExecutor {
 
   // convert response to executeResponse
   private ElasticSearchResponse convertResponse(Response response) {
-    int statusCode = response.getStatusLine().getStatusCode();
-    if (statusCode >= 200 && statusCode < 300) {
-      return ResponseHandler$.MODULE$.handle(response);
-    } else {
-      return new ElasticSearchErrorResponse(
-          "EsEngineExecutor convert response fail. response code: " + statusCode, null, null);
+    try {
+      int statusCode = response.getStatusLine().getStatusCode();
+      if (statusCode >= 200 && statusCode < 300) {
+        return ResponseHandler$.MODULE$.handle(response);
+      } else {
+        return new ElasticSearchErrorResponse(
+            "EsEngineExecutor convert response fail. response code: " + statusCode, null, null);
+      }
+    } catch (Exception e) {
+      return new ElasticSearchErrorResponse("EsEngineExecutor convert response error.", null, e);
     }
   }
 

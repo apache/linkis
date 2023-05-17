@@ -29,7 +29,7 @@ public abstract class EsClient implements EsClientOperate {
   private static final Logger logger = LoggerFactory.getLogger(EsClient.class);
 
   private String datasourceName;
-  private RestClient client;
+  public RestClient client;
   private Sniffer sniffer;
 
   public EsClient(String datasourceName, RestClient client, Sniffer sniffer) {

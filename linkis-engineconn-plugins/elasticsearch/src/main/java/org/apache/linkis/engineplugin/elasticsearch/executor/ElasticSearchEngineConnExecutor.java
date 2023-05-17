@@ -46,6 +46,7 @@ import org.apache.linkis.storage.LineRecord;
 import org.apache.linkis.storage.resultset.ResultSetFactory;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 
 import org.springframework.util.CollectionUtils;
@@ -170,9 +171,10 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
       }
     } catch (IOException e) {
       logger.warn("es addMetaData failed", e);
+      return new ErrorExecuteResponse("es addMetaData failed", e);
     }
 
-    return null;
+    return new ErrorExecuteResponse("es executeLine failed", null);
   }
 
   private Map<String, String> buildRuntimeParams(EngineConnTask engineConnTask) {
@@ -182,15 +184,12 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
             .collect(
                 Collectors.toMap(
                     Map.Entry::getKey, entry -> Objects.toString(entry.getValue(), null)));
-    if (executorProperties == null) {
-      executorProperties = new HashMap<>();
-    }
 
     // Global engine params by console
     Map<String, String> globalConfig =
         new ElasticSearchEngineConsoleConf().getCacheMap(engineConnTask.getLables());
 
-    if (!executorProperties.isEmpty()) {
+    if (MapUtils.isNotEmpty(executorProperties)) {
       globalConfig.putAll(executorProperties);
     }
 

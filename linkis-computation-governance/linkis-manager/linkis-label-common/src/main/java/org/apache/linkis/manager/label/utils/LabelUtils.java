@@ -213,7 +213,8 @@ public class LabelUtils {
                   + Class.class
                   + ", ...: "
                   + Class.class
-                  + ")");
+                  + ")",
+              e);
           return null;
         }
       }

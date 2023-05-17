@@ -472,7 +472,7 @@ export default {
             instance: this.instance,
           }
         },
-        emInstance: e.instance,
+        emInstance: e.instance.replace(/ /g, ''),
         nodeStatus: e.nodeHealthy,
         owner: e.owner,
         engineType: e.engineType

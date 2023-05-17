@@ -90,6 +90,7 @@
         "linkText": "View result set",
         "largeResultTips": "The front end displays only 5000 pieces of data"
       },
+      "needPre": "Need to select category and input username before",
       "warning": {
         "api": "Requesting API, please hold on!",
         "data": "Requesting data, please hold on!",
@@ -188,7 +189,8 @@
             "datasourceTypeKey": "Datasource Config Options",
             "EnginePluginManagement": "Engine Plugin Management",
             "basedataManagement": "Basic Data Management",
-            "codeQuery": "Code Retrieval"
+            "codeQuery": "Code Retrieval",
+            "EngineConnList": "Engine Conn List"
           }
         }
       },
@@ -463,6 +465,7 @@
         "searchPlaceholder": "Please enter your search",
         "search": "Search",
         "action": "Action",
+        "categoryMaxLength": "The length cannot exceed 100",
         "modal":{
           "confirm": "Confirm",
           "cancel": "Cancel",

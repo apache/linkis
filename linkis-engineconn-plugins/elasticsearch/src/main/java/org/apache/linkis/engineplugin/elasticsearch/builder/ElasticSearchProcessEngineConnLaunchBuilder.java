@@ -15,32 +15,17 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executor.client
+package org.apache.linkis.engineplugin.elasticsearch.builder;
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineplugin.elasticsearch.executor.client.impl.ElasticSearchExecutorImpl
-import org.apache.linkis.scheduler.executer.ExecuteResponse
+import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
+import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
+import org.apache.linkis.storage.utils.StorageConfiguration;
 
-import java.io.IOException
-import java.util
+public class ElasticSearchProcessEngineConnLaunchBuilder
+    extends JavaProcessEngineConnLaunchBuilder {
 
-import scala.collection.JavaConverters._
-
-trait ElasticSearchExecutor extends Logging {
-
-  @throws(classOf[IOException])
-  def open: Unit
-
-  def executeLine(code: String): ElasticSearchResponse
-
-  def close: Unit
-
-}
-
-object ElasticSearchExecutor {
-
-  def apply(runType: String, properties: util.Map[String, String]): ElasticSearchExecutor = {
-    new ElasticSearchExecutorImpl(runType, properties)
+  @Override
+  public String getEngineStartUser(UserCreatorLabel label) {
+    return StorageConfiguration.HDFS_ROOT_USER.getValue();
   }
-
 }

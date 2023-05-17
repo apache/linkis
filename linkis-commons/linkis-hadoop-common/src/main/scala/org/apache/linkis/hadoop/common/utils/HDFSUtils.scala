@@ -148,11 +148,7 @@ object HDFSUtils extends Logging {
         // At the same time, we don't want to change the behavior of createFileSystem which is out of HDFSUtils,
         // so we continue to use the original label to createFileSystem.
         val newHDFSFileSystemContainer =
-          new HDFSFileSystemContainer(
-            createFileSystem(userName, label, conf),
-            userName,
-            cacheLabel
-          )
+          new HDFSFileSystemContainer(createFileSystem(userName, label, conf), userName, cacheLabel)
         fileSystemCache.put(cacheKey, newHDFSFileSystemContainer)
         newHDFSFileSystemContainer
       }

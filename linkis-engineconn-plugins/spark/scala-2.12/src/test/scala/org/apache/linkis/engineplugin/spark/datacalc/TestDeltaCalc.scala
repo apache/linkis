@@ -18,13 +18,15 @@
 package org.apache.linkis.engineplugin.spark.datacalc
 
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
+
 import org.junit.jupiter.api.{Assertions, Test}
 
 class TestDelta {
 
   @Test
   def testDataLakeWrite: Unit = {
-    val data = DataCalcGroupData.getData(writeConfigJson)
+    val csvFilePath = this.getClass.getResource("/etltest.csv").getFile
+    val data = DataCalcGroupData.getData(writeConfigJson.replace("{csvFilePath}", csvFilePath))
     Assertions.assertTrue(data != null)
 
     val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
@@ -55,7 +57,7 @@ class TestDelta {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/newfile.csv",
+      |                "path": "file://{csvFilePath}",
       |                "serializer": "csv",
       |                "options": {
       |                "header":"true",

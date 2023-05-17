@@ -24,13 +24,13 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
-    <baseDirectory>scala</baseDirectory>
+    <baseDirectory>spark</baseDirectory>
 
     <dependencySets>
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
             <!-- Now, select which projects to include in this module-set. -->
-            <outputDirectory>/dist/2.12/lib</outputDirectory>
+            <outputDirectory>/dist/scala-2.12/lib</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <useTransitiveDependencies>true</useTransitiveDependencies>
             <unpack>false</unpack>

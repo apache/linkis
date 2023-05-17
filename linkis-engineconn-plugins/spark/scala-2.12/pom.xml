@@ -24,7 +24,7 @@
     <relativePath>../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-engineplugin-scala-2.12</artifactId>
+  <artifactId>linkis-engineplugin-spark-scala-2.12</artifactId>
 
   <properties>
     <scala.binary.version>2.12</scala.binary.version>

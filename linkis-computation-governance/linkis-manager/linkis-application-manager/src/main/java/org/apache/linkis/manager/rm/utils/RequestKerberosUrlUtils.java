@@ -67,12 +67,6 @@ public class RequestKerberosUrlUtils {
     }
   }
 
-  public RequestKerberosUrlUtils(
-      String principal, String keyTabLocation, String krb5Location, boolean isDebug) {
-    this(principal, keyTabLocation, isDebug);
-    System.setProperty("java.security.krb5.conf", krb5Location);
-  }
-
   private static HttpClient buildSpengoHttpClient() {
     HttpClientBuilder builder = HttpClientBuilder.create();
     Lookup<AuthSchemeProvider> authSchemeRegistry =

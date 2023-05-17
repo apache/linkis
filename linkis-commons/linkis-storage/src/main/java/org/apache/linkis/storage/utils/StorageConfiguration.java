@@ -47,6 +47,9 @@ public class StorageConfiguration {
   public static CommonVars<String> STORAGE_RS_FILE_SUFFIX =
       new CommonVars<>("wds.linkis.storage.rs.file.suffix", ".dolphin", null, null);
 
+  public static CommonVars<String> LINKIS_STORAGE_FS_LABEL =
+      new CommonVars<>("linkis.storage.default.fs.label", "linkis-storage", null, null);
+
   public static List<String> ResultTypes =
       Lists.newArrayList("%TEXT", "%TABLE", "%HTML", "%IMG", "%ANGULAR", "%SVG");
 

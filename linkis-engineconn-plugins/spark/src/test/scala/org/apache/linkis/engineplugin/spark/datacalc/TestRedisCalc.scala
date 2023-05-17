@@ -99,7 +99,7 @@ class TestRedisCalc {
       |            "name": "redis",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/test",
+      |                "path": "file:///test",
       |                "saveMode": "overwrite",
       |                "host":"localhost",
       |                "port":"6379",
@@ -143,7 +143,7 @@ class TestRedisCalc {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/test",
+      |                "path": "file:///test",
       |                "saveMode": "overwrite",
       |                "serializer": "csv"
       |            }
@@ -184,7 +184,7 @@ class TestRedisCalc {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/test",
+      |                "path": "file:///test",
       |                "saveMode": "overwrite",
       |                "serializer": "csv"
       |            }

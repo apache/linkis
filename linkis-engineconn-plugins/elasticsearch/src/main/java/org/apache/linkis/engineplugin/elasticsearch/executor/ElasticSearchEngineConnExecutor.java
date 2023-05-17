@@ -142,6 +142,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
                     resultSetWriter.addRecord(record);
                   } catch (IOException e) {
                     logger.warn("es addRecord failed", e);
+                    throw new RuntimeException("es addRecord failed", e);
                   }
                 });
         String output = resultSetWriter.toString();
@@ -159,6 +160,7 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
                     resultSetWriter.addRecord(new LineRecord(item));
                   } catch (IOException e) {
                     logger.warn("es addRecord failed", e);
+                    throw new RuntimeException("es addRecord failed", e);
                   }
                 });
         String output = resultSetWriter.toString();

@@ -25,7 +25,8 @@ class TestRedisCalc {
 
   @Test
   def testRedisWrite: Unit = {
-    val data = DataCalcGroupData.getData(redisWriteConfigJson)
+    val csvFilePath = this.getClass.getResource("/etltest.csv").getFile
+    val data = DataCalcGroupData.getData(redisWriteConfigJson.replace("{csvFilePath}", csvFilePath))
 
     Assertions.assertTrue(data != null)
 
@@ -71,7 +72,7 @@ class TestRedisCalc {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/newfile.csv",
+      |                "path": "file://{csvFilePath}",
       |                "serializer": "csv",
       |                "options": {
       |                "header":"true",

@@ -25,7 +25,7 @@ class TestDelta {
 
   @Test
   def testDataLakeWrite: Unit = {
-    val csvFilePath = this.getClass.getResource("/etltest.csv").getFile
+    val csvFilePath = this.getClass.getResource("/etltest.dolphin").getFile
     val data = DataCalcGroupData.getData(writeConfigJson.replace("{csvFilePath}", csvFilePath))
     Assertions.assertTrue(data != null)
 

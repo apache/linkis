@@ -25,7 +25,7 @@ class TestExcelCala {
 
   @Test
   def testExcelWrite: Unit = {
-    val csvFilePath = this.getClass.getResource("/etltest.csv").getFile
+    val csvFilePath = this.getClass.getResource("/etltest.dolphin").getFile
     val data = DataCalcGroupData.getData(excelWriteConfigJson.replace("{csvFilePath}", csvFilePath))
     Assertions.assertTrue(data != null)
 

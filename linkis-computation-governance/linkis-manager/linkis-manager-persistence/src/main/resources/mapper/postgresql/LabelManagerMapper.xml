@@ -309,15 +309,6 @@
         INNER JOIN linkis_cg_manager_service_instance si ON si.instance = t.service_instance
     </select>
 
-    <!--<select id="getNodeByLabelKeyValue1" resultType="org.apache.linkis.common.ServiceInstance">
-        SELECT si.instance ,si.name as "application_name" FROM linkis_cg_manager_label l ,
-        linkis_cg_manager_label_service_instance lsi ,linkis_cg_manager_service_instance si
-        WHERE l.id = lsi.label_id AND si.instance = lsi.service_instance and
-        l.label_key = #{labelKey} and l.label_value = #{stringValue}
-    </select>-->
-
-
-
     <select id="listResourceLabelByValues" resultMap="persistenceLabelResultMap">
         SELECT l.*
         FROM linkis_cg_manager_label l ,linkis_cg_manager_label_resource lr ,linkis_cg_manager_label_value_relation lvr

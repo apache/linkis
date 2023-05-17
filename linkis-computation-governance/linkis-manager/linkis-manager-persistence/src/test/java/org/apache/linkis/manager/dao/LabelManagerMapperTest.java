@@ -241,14 +241,6 @@ class LabelManagerMapperTest extends BaseDaoTest {
     labelManagerMapper.batchDeleteResourceByLabelId(notBlankIds);
   }
 
-  //    //    没有实现
-  //    @Test
-  //    public void batchDeleteResourceByLabelIdInDirect(){
-  //        List<Integer> notBlankIds = new ArrayList<>();
-  //        notBlankIds.add(1);
-  //        labelManagerMapper.batchDeleteResourceByLabelIdInDirect(notBlankIds);
-  //    }
-
   @Test
   public void batchDeleteResourceByLabelKeyValuesMaps() {
     Map<String, Map<String, String>> labelKeyAndValuesMap = new HashMap<>();

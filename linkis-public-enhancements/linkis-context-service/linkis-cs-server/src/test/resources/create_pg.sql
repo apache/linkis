@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_cs_context_history";
 CREATE TABLE linkis_ps_cs_context_history (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	context_id int4 NULL,
 	"source" text NULL,
 	context_type varchar(32) NULL,
@@ -32,7 +32,7 @@ CREATE INDEX idx_keyword ON linkis_ps_cs_context_history (keyword);
 
 DROP TABLE IF EXISTS "linkis_ps_cs_context_listener";
 CREATE TABLE linkis_ps_cs_context_listener (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	listener_source varchar(255) NULL,
 	context_id int4 NULL,
 	update_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -43,7 +43,7 @@ CREATE TABLE linkis_ps_cs_context_listener (
 
 DROP TABLE IF EXISTS "linkis_ps_cs_context_id";
 CREATE TABLE linkis_ps_cs_context_id (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	"user" varchar(32) NULL,
 	application varchar(32) NULL,
 	"source" varchar(255) NULL,
@@ -62,7 +62,7 @@ CREATE INDEX idx_instance_bin ON linkis_ps_cs_context_id (instance, backup_insta
 
 DROP TABLE IF EXISTS "linkis_ps_cs_context_map_listener";
 CREATE TABLE linkis_ps_cs_context_map_listener (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	listener_source varchar(255) NULL,
 	key_id int4 NULL,
 	update_time timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -73,7 +73,7 @@ CREATE TABLE linkis_ps_cs_context_map_listener (
 
 DROP TABLE IF EXISTS "linkis_ps_cs_context_map";
 CREATE TABLE linkis_ps_cs_context_map (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	"key" varchar(128) NULL,
 	context_scope varchar(32) NULL,
 	context_type varchar(32) NULL,
@@ -88,15 +88,3 @@ CREATE TABLE linkis_ps_cs_context_map (
 );
 CREATE UNIQUE INDEX uniq_key_cid_ctype ON linkis_ps_cs_context_map (key, context_id, context_type);
 CREATE INDEX idx_keywords ON linkis_ps_cs_context_map (keywords);
-
-CREATE SEQUENCE linkis_ps_cs_context_history_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_cs_context_listener_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_cs_context_id_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_cs_context_map_listener_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_cs_context_map_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-
-alter table linkis_ps_cs_context_history alter column id set default nextval('linkis_ps_cs_context_history_id_seq');
-alter table linkis_ps_cs_context_listener alter column id set default nextval('linkis_ps_cs_context_listener_id_seq');
-alter table linkis_ps_cs_context_id alter column id set default nextval('linkis_ps_cs_context_id_id_seq');
-alter table linkis_ps_cs_context_map_listener alter column id set default nextval('linkis_ps_cs_context_map_listener_id_seq');
-alter table linkis_ps_cs_context_map alter column id set default nextval('linkis_ps_cs_context_map_id_seq');

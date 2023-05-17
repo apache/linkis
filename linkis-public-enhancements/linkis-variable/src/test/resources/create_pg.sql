@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_variable_key_user";
 CREATE TABLE linkis_ps_variable_key_user (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	application_id int8 NULL,
 	key_id int8 NULL,
 	user_name varchar(50) NULL,
@@ -30,7 +30,7 @@ CREATE INDEX idx_key_id ON linkis_ps_variable_key_user (key_id);
 
 DROP TABLE IF EXISTS "linkis_ps_variable_key";
 CREATE TABLE linkis_ps_variable_key (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	"key" varchar(50) NULL,
 	description varchar(200) NULL,
 	"name" varchar(50) NULL,
@@ -41,13 +41,6 @@ CREATE TABLE linkis_ps_variable_key (
 	CONSTRAINT linkis_var_key_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_aid_vk ON linkis_ps_variable_key (application_id);
-
-CREATE SEQUENCE linkis_ps_variable_key_user_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_variable_key_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-
-alter table linkis_ps_variable_key_user alter column id set default nextval('linkis_ps_variable_key_user_id_seq');
-alter table linkis_ps_variable_key alter column id set default nextval('linkis_ps_variable_key_id_seq');
-
 
 DELETE FROM linkis_ps_variable_key;
 

@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_udf_manager";
 CREATE TABLE linkis_ps_udf_manager (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	user_name varchar(20) NULL,
 	CONSTRAINT linkis_udf_manager_pkey PRIMARY KEY (id)
 );
@@ -25,7 +25,7 @@ CREATE TABLE linkis_ps_udf_manager (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_shared_group";
 CREATE TABLE linkis_ps_udf_shared_group (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	udf_id int8 NOT NULL,
 	shared_group varchar(50) NOT NULL,
 	CONSTRAINT linkis_udf_shared_group_pkey PRIMARY KEY (id)
@@ -34,7 +34,7 @@ CREATE TABLE linkis_ps_udf_shared_group (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_shared_info";
 CREATE TABLE linkis_ps_udf_shared_info (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	udf_id int8 NOT NULL,
 	user_name varchar(50) NOT NULL,
 	CONSTRAINT linkis_ps_udf_shared_info_pkey PRIMARY KEY (id)
@@ -43,7 +43,7 @@ CREATE TABLE linkis_ps_udf_shared_info (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_tree";
 CREATE TABLE linkis_ps_udf_tree (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	parent int8 NOT NULL,
 	"name" varchar(100) NULL,
 	user_name varchar(50) NOT NULL,
@@ -59,7 +59,7 @@ COMMENT ON COLUMN "linkis_ps_udf_tree"."category" IS 'Used to distinguish betwee
 
 DROP TABLE IF EXISTS "linkis_ps_udf_user_load";
 CREATE TABLE linkis_ps_udf_user_load (
-    id int4 NOT NULL,
+    id serial NOT NULL,
 	udf_id int4 NOT NULL,
 	user_name varchar(50) NOT NULL,
 	CONSTRAINT linkis_ps_udf_user_load_pkey PRIMARY KEY (id)
@@ -68,7 +68,7 @@ CREATE TABLE linkis_ps_udf_user_load (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_baseinfo";
 CREATE TABLE linkis_ps_udf_baseinfo (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	create_user varchar(50) NOT NULL,
 	udf_name varchar(255) NOT NULL,
 	udf_type int4 NULL DEFAULT 0,
@@ -85,7 +85,7 @@ CREATE TABLE linkis_ps_udf_baseinfo (
 
 DROP TABLE IF EXISTS "linkis_ps_udf_version";
 CREATE TABLE linkis_ps_udf_version (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	udf_id int8 NOT NULL,
 	"path" varchar(255) NOT NULL,
 	bml_resource_id varchar(50) NOT NULL,
@@ -98,23 +98,6 @@ CREATE TABLE linkis_ps_udf_version (
 	md5 varchar(100) NULL,
 	CONSTRAINT linkis_ps_udf_version_pkey PRIMARY KEY (id)
 );
-
-
-CREATE SEQUENCE linkis_ps_udf_manager_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_shared_group_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_shared_info_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_tree_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_user_load_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_baseinfo_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_udf_version_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-
-alter table linkis_ps_udf_manager alter column id set default nextval('linkis_ps_udf_manager_id_seq');
-alter table linkis_ps_udf_shared_group alter column id set default nextval('linkis_ps_udf_shared_group_id_seq');
-alter table linkis_ps_udf_shared_info alter column id set default nextval('linkis_ps_udf_shared_info_id_seq');
-alter table linkis_ps_udf_tree alter column id set default nextval('linkis_ps_udf_tree_id_seq');
-alter table linkis_ps_udf_user_load alter column id set default nextval('linkis_ps_udf_user_load_id_seq');
-alter table linkis_ps_udf_baseinfo alter column id set default nextval('linkis_ps_udf_baseinfo_id_seq');
-alter table linkis_ps_udf_version alter column id set default nextval('linkis_ps_udf_version_id_seq');
 
 
 DELETE FROM linkis_ps_udf_user_load;

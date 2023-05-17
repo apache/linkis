@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_table";
 CREATE TABLE linkis_ps_datasource_table (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	"database" varchar(64) NOT NULL,
 	"name" varchar(64) NOT NULL,
 	alias varchar(64) NULL,
@@ -40,7 +40,7 @@ CREATE UNIQUE INDEX uniq_db_name ON linkis_ps_datasource_table (database, name);
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_field";
 CREATE TABLE linkis_ps_datasource_field (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	table_id int8 NOT NULL,
 	"name" varchar(64) NOT NULL,
 	alias varchar(64) NULL,
@@ -57,7 +57,7 @@ CREATE TABLE linkis_ps_datasource_field (
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_import";
 CREATE TABLE linkis_ps_datasource_import (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	table_id int8 NOT NULL,
 	import_type int4 NOT NULL,
 	args varchar(255) NOT NULL,
@@ -66,22 +66,12 @@ CREATE TABLE linkis_ps_datasource_import (
 
 DROP TABLE IF EXISTS "linkis_ps_datasource_lineage";
 CREATE TABLE linkis_ps_datasource_lineage (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	table_id int8 NULL,
 	source_table varchar(64) NULL,
 	update_time timestamp(6) NULL,
 	CONSTRAINT linkis_mdq_lineage_pkey PRIMARY KEY (id)
 );
-
-CREATE SEQUENCE linkis_ps_datasource_table_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_datasource_field_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_datasource_import_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_datasource_lineage_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-
-alter table linkis_ps_datasource_table alter column id set default nextval('linkis_ps_datasource_table_id_seq');
-alter table linkis_ps_datasource_field alter column id set default nextval('linkis_ps_datasource_field_id_seq');
-alter table linkis_ps_datasource_import alter column id set default nextval('linkis_ps_datasource_import_id_seq');
-alter table linkis_ps_datasource_lineage alter column id set default nextval('linkis_ps_datasource_lineage_id_seq');
 
 
 INSERT INTO linkis_ps_datasource_table (database,name,alias,creator,comment,create_time,product_name,project_name,usage,lifecycle,use_way,is_import,model_level,is_external_use,is_partition_table,is_available) VALUES

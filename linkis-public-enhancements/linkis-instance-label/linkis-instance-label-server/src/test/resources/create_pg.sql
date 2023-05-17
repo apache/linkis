@@ -17,7 +17,7 @@
 
 DROP TABLE IF EXISTS "linkis_ps_instance_info";
 CREATE TABLE linkis_ps_instance_info (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	"instance" varchar(128) NULL,
 	"name" varchar(128) NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -29,7 +29,7 @@ CREATE UNIQUE INDEX uniq_instance_ii ON linkis_ps_instance_info USING btree (ins
 
 DROP TABLE IF EXISTS "linkis_ps_instance_label";
 CREATE TABLE linkis_ps_instance_label (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	label_key varchar(32) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
@@ -42,7 +42,7 @@ CREATE UNIQUE INDEX uniq_lk_lv_il ON linkis_ps_instance_label USING btree (label
 
 DROP TABLE IF EXISTS "linkis_ps_instance_label_relation";
 CREATE TABLE linkis_ps_instance_label_relation (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	label_id int4 NULL,
 	service_instance varchar(128) NOT NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
@@ -54,7 +54,7 @@ CREATE UNIQUE INDEX uniq_lid_instance ON linkis_ps_instance_label_relation USING
 
 DROP TABLE IF EXISTS "linkis_ps_instance_label_value_relation";
 CREATE TABLE linkis_ps_instance_label_value_relation (
-	id int4 NOT NULL,
+	id serial NOT NULL,
 	label_value_key varchar(255) NOT NULL,
 	label_value_content varchar(255) NULL,
 	label_id int4 NULL,
@@ -63,15 +63,3 @@ CREATE TABLE linkis_ps_instance_label_value_relation (
 	CONSTRAINT linkis_ps_instance_label_value_relation_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX uniq_lvk_lid_ilvr ON linkis_ps_instance_label_value_relation USING btree (label_value_key, label_id);
-
-
-CREATE SEQUENCE linkis_ps_instance_info_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_instance_label_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_instance_label_relation_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-CREATE SEQUENCE linkis_ps_instance_label_value_relation_id_seq INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE;
-
-
-alter table linkis_ps_instance_info alter column id set default nextval('linkis_ps_instance_info_id_seq');
-alter table linkis_ps_instance_label alter column id set default nextval('linkis_ps_instance_label_id_seq');
-alter table linkis_ps_instance_label_relation alter column id set default nextval('linkis_ps_instance_label_relation_id_seq');
-alter table linkis_ps_instance_label_value_relation alter column id set default nextval('linkis_ps_instance_label_value_relation_id_seq');

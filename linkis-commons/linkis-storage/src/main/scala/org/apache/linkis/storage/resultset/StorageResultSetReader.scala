@@ -21,7 +21,11 @@ import org.apache.linkis.common.io.{Fs, MetaData, Record}
 import org.apache.linkis.common.io.resultset.{ResultSet, ResultSetReader}
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.domain.Dolphin
-import org.apache.linkis.storage.exception.StorageWarnException
+import org.apache.linkis.storage.exception.{
+  StorageErrorCode,
+  StorageErrorException,
+  StorageWarnException
+}
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{ByteArrayInputStream, InputStream, IOException}
@@ -43,7 +47,6 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
   private var fs: Fs = _
 
   private val READ_CACHE = 1024
-  private val bytes = new Array[Byte](READ_CACHE)
 
   def this(resultSet: ResultSet[K, V], value: String) = {
     this(resultSet, new ByteArrayInputStream(value.getBytes(Dolphin.CHAR_SET)))
@@ -74,9 +77,19 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
       case t: Throwable => throw t
     }
 
-    val rowBuffer = ArrayBuffer[Byte]()
+    var bytes: Array[Byte] = null
+    try {
+      bytes = new Array[Byte](rowLen)
+    } catch {
+      case e: OutOfMemoryError =>
+        logger.error("Result set read oom, read size {} Byte", rowLen)
+        throw new StorageErrorException(
+          StorageErrorCode.FS_OOM.getCode,
+          StorageErrorCode.FS_OOM.getMessage,
+          e
+        )
+    }
     var len = 0
-
     // Read the entire line, except for the data of the line length(读取整行，除了行长的数据)
     while (rowLen > 0 && len >= 0) {
       if (rowLen > READ_CACHE) {
@@ -87,11 +100,10 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
 
       if (len > 0) {
         rowLen -= len
-        rowBuffer ++= bytes.slice(0, len)
       }
     }
     rowCount = rowCount + 1
-    rowBuffer.toArray
+    bytes
   }
 
   @scala.throws[IOException]

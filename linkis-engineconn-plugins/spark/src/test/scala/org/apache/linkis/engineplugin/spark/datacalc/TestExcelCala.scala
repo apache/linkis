@@ -80,7 +80,7 @@ class TestExcelCala {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/test.xlsx",
+      |                "path": "file:///test/test.xlsx",
       |                "saveMode": "overwrite",
       |                "serializer": "excel"
       |            }
@@ -98,7 +98,7 @@ class TestExcelCala {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/test.xlsx",
+      |                "path": "file:///test/test.xlsx",
       |                "serializer": "excel",
       |                "options": {
       |                "header":"true"
@@ -112,7 +112,7 @@ class TestExcelCala {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/csv",
+      |                "path": "file:///test",
       |                "saveMode": "overwrite",
       |                "options": {
       |                "header":"true"

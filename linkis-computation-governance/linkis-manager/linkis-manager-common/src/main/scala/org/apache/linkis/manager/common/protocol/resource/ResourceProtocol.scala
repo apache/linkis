@@ -45,4 +45,13 @@ case class ResponseTaskRunningInfo(
     resourceMap: util.HashMap[String, ResourceWithStatus],
     extraInfoMap: util.HashMap[String, Object]
 ) extends RetryableProtocol
-    with RequestProtocol
+    with RequestProtocol {
+
+  private val mutableResourceMap = Option(resourceMap).getOrElse(new util.HashMap)
+  private val mutableExtraInfoMap = Option(extraInfoMap).getOrElse(new util.HashMap)
+
+  def getResourceMaps: util.HashMap[String, ResourceWithStatus] = mutableResourceMap
+
+  def getExtraInfoMap: util.HashMap[String, Object] = mutableExtraInfoMap
+
+}

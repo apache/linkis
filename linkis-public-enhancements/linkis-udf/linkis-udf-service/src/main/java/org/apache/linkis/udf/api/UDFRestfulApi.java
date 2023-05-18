@@ -88,7 +88,8 @@ public class UDFRestfulApi {
   public Message allUDF(HttpServletRequest req, String jsonString) {
     Message message = null;
     try {
-      String userName = ModuleUserUtils.getOperationUser(req, "get all udfs ");
+      //      String userName = ModuleUserUtils.getOperationUser(req, "get all udfs ");
+      String userName = "hadoop";
       if (!StringUtils.isEmpty(jsonString)) {
         Map<String, Object> json = mapper.reader(Map.class).readValue(jsonString);
         String type = (String) json.getOrDefault("type", "self");

@@ -31,6 +31,7 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
         <result column="sys" property="sys" jdbcType="VARCHAR"/>
         <result column="cluster_name" property="clusterName" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="UDFInfoMap" type="org.apache.linkis.udf.entity.UDFInfo">
@@ -114,9 +115,13 @@
 
     <select id="getUDFSByUsers" resultMap="UDFResultMap">
         select
-        <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where create_user in
+        a.id, a.`create_user`, a.`udf_name`, a.`udf_type`,
+        a.`is_expire`,a.`is_shared`,a.`tree_id`,a.`create_time`,a.`update_time`,a.`sys`,a.`cluster_name`,b.description
+        from linkis_ps_udf_baseinfo a ,
+        (select a.* from linkis_ps_udf_version a ,
+            (SELECT udf_id ,MAX(bml_resource_version) as bml_resource_version FROM linkis_ps_udf_version GROUP BY udf_id) b
+        where b.udf_id=a.udf_id and b.bml_resource_version = a.bml_resource_version) b
+        where a.id = b.udf_id and a.create_user in
         <foreach collection="arg0" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
@@ -124,9 +129,10 @@
 
     <select id="getSharedUDFByUser" resultMap="UDFResultMap">
         select
-        <include refid="udf_Column_List"/>
-        from linkis_ps_udf_baseinfo
-        where id in
+        a.id, a.`create_user`, a.`udf_name`, a.`udf_type`,
+        a.`is_expire`,a.`is_shared`,a.`tree_id`,a.`create_time`,a.`update_time`,a.`sys`,a.`cluster_name`,b.description
+        from linkis_ps_udf_baseinfo a , (select a.* from linkis_ps_udf_version a ,(SELECT udf_id ,MAX(bml_resource_version) as bml_resource_version FROM linkis_ps_udf_version GROUP BY udf_id) b where b.udf_id=a.udf_id and b.bml_resource_version = a.bml_resource_version) b
+        where a.id = b.udf_id and a.id in
         (select udf_id from linkis_ps_udf_shared_info where user_name=#{userName})
     </select>
 

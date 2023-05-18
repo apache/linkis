@@ -33,6 +33,7 @@ public class UDFInfo {
   private String clusterName;
 
   private Boolean isLoad;
+  private String description;
 
   public UDFInfo() {};
 
@@ -61,6 +62,7 @@ public class UDFInfo {
     this.createTime = createTime;
     this.updateTime = updateTime;
     this.isLoad = isLoad;
+    this.description = description;
   }
 
   public Long getId() {
@@ -157,5 +159,13 @@ public class UDFInfo {
 
   public void setClusterName(String clusterName) {
     this.clusterName = clusterName;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 }

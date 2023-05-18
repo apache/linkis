@@ -86,6 +86,11 @@ abstract class CombinedEngineCodeParser extends CodeParser {
 
 }
 
+/**
+ * Scala is no longer using Parser but instead using EmptyParser. If there is a comment at the end,
+ * it will cause the task to become stuck
+ */
+@deprecated
 class ScalaCodeParser extends SingleCodeParser with Logging {
 
   override val codeType: CodeType = CodeType.Scala

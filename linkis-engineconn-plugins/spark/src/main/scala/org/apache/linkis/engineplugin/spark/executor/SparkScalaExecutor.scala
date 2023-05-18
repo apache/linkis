@@ -31,7 +31,7 @@ import org.apache.linkis.engineplugin.spark.exception.{
   SparkSessionNullException
 }
 import org.apache.linkis.engineplugin.spark.utils.EngineUtils
-import org.apache.linkis.governance.common.paser.ScalaCodeParser
+import org.apache.linkis.governance.common.paser.{EmptyCodeParser, ScalaCodeParser}
 import org.apache.linkis.scheduler.executer.{
   ErrorExecuteResponse,
   ExecuteResponse,
@@ -105,7 +105,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
 
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
-    setCodeParser(new ScalaCodeParser)
+    setCodeParser(new EmptyCodeParser)
 
     if (sparkILoop == null) {
       synchronized {

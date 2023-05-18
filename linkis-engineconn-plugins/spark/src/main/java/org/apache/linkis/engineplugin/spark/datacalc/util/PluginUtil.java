@@ -45,6 +45,7 @@ public class PluginUtil {
     classMap.put("jdbc", JdbcSource.class);
     classMap.put("file", FileSource.class);
     classMap.put("redis", RedisSource.class);
+    classMap.put("mongo", MongoSource.class);
     return classMap;
   }
 
@@ -61,6 +62,7 @@ public class PluginUtil {
     classMap.put("hive", HiveSink.class);
     classMap.put("file", FileSink.class);
     classMap.put("redis", RedisSink.class);
+    classMap.put("mongo", MongoSink.class);
     return classMap;
   }
 

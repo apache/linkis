@@ -197,6 +197,7 @@ public class VariableOperationUtils {
         } else if (temp.isObject()) {
           replaceJson(dateTime, temp);
         } else {
+          arrayNode.remove(i);
           arrayNode.insert(i, replace(dateTime, temp.toString()));
         }
       }

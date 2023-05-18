@@ -17,35 +17,41 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc
 
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
 
 import org.junit.jupiter.api.{Assertions, Test}
 
 class TestDelta {
 
+  val filePath = this.getClass.getResource("/").getFile
+
   @Test
   def testDataLakeWrite: Unit = {
-    val csvFilePath = this.getClass.getResource("/etltest.dolphin").getFile
-    val data = DataCalcGroupData.getData(writeConfigJson.replace("{csvFilePath}", csvFilePath))
-    Assertions.assertTrue(data != null)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val data = DataCalcGroupData.getData(writeConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   @Test
   def testDataLakeReader: Unit = {
-    val data = DataCalcGroupData.getData(readerConfigJson)
-    Assertions.assertTrue(data != null)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val data = DataCalcGroupData.getData(readerConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   val writeConfigJson =
@@ -57,7 +63,7 @@ class TestDelta {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file://{csvFilePath}",
+      |                "path": "file://{filePath}/etltest.dolphin",
       |                "serializer": "csv",
       |                "options": {
       |                "header":"true",
@@ -83,7 +89,7 @@ class TestDelta {
       |            "config": {
       |                "sourceTable": "T1654611700631",
       |                "tableFormat": "delta",
-      |                "path": "file:///Users/chengjie/cjtest/test",
+      |                "path": "file://{filePath}/delta",
       |                "saveMode": "overwrite"
       |            }
       |        }
@@ -101,7 +107,7 @@ class TestDelta {
       |            "config": {
       |                "resultTable": "T1654611700631",
       |                "tableFormat": "delta",
-      |                "path": "file:///Users/chengjie/cjtest/test"
+      |                "path": "file://{filePath}/delta",
       |            }
       |        }
       |    ],
@@ -121,6 +127,7 @@ class TestDelta {
       |            "config": {
       |                "sourceTable": "T1654611700631",
       |                "path": "file:///Users/chengjie/cjtest/csv",
+      |                "path": "file://{filePath}/csv",
       |                "saveMode": "overwrite",
       |                "options": {
       |                "header":"true"

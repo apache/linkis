@@ -29,7 +29,6 @@ import org.apache.linkis.storage.exception.{
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{ByteArrayInputStream, InputStream, IOException}
-import java.text.MessageFormat
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -94,7 +93,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
     if (len != rowLen) {
       throw new StorageErrorException(
         StorageErrorCode.INCONSISTENT_DATA.getCode,
-        MessageFormat.format(StorageErrorCode.INCONSISTENT_DATA.getMessage, len, rowLen)
+        String.format(StorageErrorCode.INCONSISTENT_DATA.getMessage, len, rowLen)
       )
     }
     rowCount = rowCount + 1

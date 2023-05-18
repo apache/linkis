@@ -267,7 +267,7 @@ jdbi3-core-3.4.0.jar
 jdbi3-sqlobject-3.4.0.jar
 jdo-api-3.0.1.jar
 jdom2-2.0.6.jar
-jedis-2.9.2.jar
+jedis-3.9.0.jar
 jersey-apache-client4-1.19.4.jar
 jersey-client-1.19.4.jar
 jersey-client-2.23.1.jar
@@ -495,6 +495,7 @@ snakeyaml-1.33.jar
 snappy-java-1.1.4.jar
 snappy-java-1.1.7.7.jar
 snappy-java-1.1.8.2.jar
+spark-redis_2.12-2.6.0.jar
 spring-aop-5.2.23.RELEASE.jar
 spring-beans-5.2.23.RELEASE.jar
 spring-boot-2.3.12.RELEASE.jar

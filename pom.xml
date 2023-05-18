@@ -171,7 +171,7 @@
     <slf4j.version>1.7.30</slf4j.version>
     <log4j2.version>2.17.2</log4j2.version>
     <poi.version>5.2.3</poi.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>2.0</snakeyaml.version>
 
     <!-- jakarta -->
     <annotation-api.version>1.3.5</annotation-api.version>
@@ -183,8 +183,8 @@
     <h2.version>1.4.200</h2.version>
 
     <!-- spring -->
-    <spring.version>5.2.22.RELEASE</spring.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring.version>5.3.22</spring.version>
+    <spring.boot.version>2.7.10</spring.boot.version>
 
     <!-- platform encoding override -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

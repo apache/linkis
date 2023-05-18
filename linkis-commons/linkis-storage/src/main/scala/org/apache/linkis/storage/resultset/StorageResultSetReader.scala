@@ -29,6 +29,7 @@ import org.apache.linkis.storage.exception.{
 import org.apache.linkis.storage.utils.StorageUtils
 
 import java.io.{ByteArrayInputStream, InputStream, IOException}
+import java.text.MessageFormat
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -89,18 +90,12 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
           e
         )
     }
-    var len = 0
-    // Read the entire line, except for the data of the line length(读取整行，除了行长的数据)
-    while (rowLen > 0 && len >= 0) {
-      if (rowLen > READ_CACHE) {
-        len = StorageUtils.readBytes(inputStream, bytes, READ_CACHE)
-      } else {
-        len = StorageUtils.readBytes(inputStream, bytes, rowLen)
-      }
-
-      if (len > 0) {
-        rowLen -= len
-      }
+    val len = StorageUtils.readBytes(inputStream, bytes, rowLen)
+    if (len != rowLen) {
+      throw new StorageErrorException(
+        StorageErrorCode.INCONSISTENT_DATA.getCode,
+        MessageFormat.format(StorageErrorCode.INCONSISTENT_DATA.getMessage, len, rowLen)
+      )
     }
     rowCount = rowCount + 1
     bytes

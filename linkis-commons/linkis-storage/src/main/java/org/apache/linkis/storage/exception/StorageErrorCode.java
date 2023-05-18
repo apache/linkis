@@ -21,7 +21,7 @@ public enum StorageErrorCode {
 
   /** */
   FS_NOT_INIT(53001, "please init first(请先初始化)"),
-
+  INCONSISTENT_DATA(53001, "Inconsistent row data read,read {0},need rowLen {1}"),
   FS_OOM(53002, "OOM occurred while reading the file");
 
   StorageErrorCode(int errorCode, String message) {

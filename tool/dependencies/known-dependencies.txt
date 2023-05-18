@@ -558,7 +558,6 @@ spring-jcl-5.2.23.RELEASE.jar
 spring-jdbc-5.2.23.RELEASE.jar
 spring-plugin-core-2.0.0.RELEASE.jar
 spring-plugin-metadata-2.0.0.RELEASE.jar
-spring-security-crypto-5.3.13.RELEASE.jar
 spring-security-crypto-5.7.5.jar
 spring-security-rsa-1.0.9.RELEASE.jar
 spring-tx-5.2.23.RELEASE.jar

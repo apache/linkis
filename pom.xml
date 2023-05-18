@@ -139,7 +139,7 @@
     <jettison.version>1.5.3</jettison.version>
     <xstream.core.version>1.4.20</xstream.core.version>
     <woodstox.version>6.4.0</woodstox.version>
-    <snakeyaml.version>1.33</snakeyaml.version>
+    <snakeyaml.version>2.0</snakeyaml.version>
 
     <protobuf.version>3.16.3</protobuf.version>
 
@@ -200,7 +200,7 @@
     <!-- spring -->
     <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
     <spring-security.version>5.3.13.RELEASE</spring-security.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring.boot.version>2.7.10</spring.boot.version>
     <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
     <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
 

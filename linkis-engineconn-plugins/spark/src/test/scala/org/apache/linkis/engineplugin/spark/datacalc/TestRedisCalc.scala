@@ -24,11 +24,12 @@ import org.junit.jupiter.api.{Assertions, Test};
 
 class TestRedisCalc {
 
+  val filePath = this.getClass.getResource("/").getFile
+
   @Test
   def testRedisWrite: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val filePath = this.getClass.getResource("/").getFile
       val data = DataCalcGroupData.getData(redisWriteConfigJson.replace("{filePath}", filePath))
       Assertions.assertTrue(data != null)
 
@@ -43,7 +44,6 @@ class TestRedisCalc {
   def testRedisReaderTable: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val filePath = this.getClass.getResource("/").getFile
       val data = DataCalcGroupData.getData(redisTableConfigJson.replace("{filePath}", filePath))
       Assertions.assertTrue(data != null)
 
@@ -58,7 +58,6 @@ class TestRedisCalc {
   def testRedisReaderKeysPattern: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val filePath = this.getClass.getResource("/").getFile
       val data =
         DataCalcGroupData.getData(redisKeysPatternConfigJson.replace("{filePath}", filePath))
       Assertions.assertTrue(data != null)

@@ -24,11 +24,12 @@ import org.junit.jupiter.api.{Assertions, Test};
 
 class TestExcelCala {
 
+  val filePath = this.getClass.getResource("/").getFile
+
   @Test
   def testExcelWrite: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val filePath = this.getClass.getResource("/").getFile
       val data = DataCalcGroupData.getData(excelWriteConfigJson.replace("{filePath}", filePath))
       Assertions.assertTrue(data != null)
 
@@ -43,7 +44,6 @@ class TestExcelCala {
   def testExcelReader: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val filePath = this.getClass.getResource("/").getFile
       val data = DataCalcGroupData.getData(excelReaderConfigJson.replace("{filePath}", filePath))
       Assertions.assertTrue(data != null)
 

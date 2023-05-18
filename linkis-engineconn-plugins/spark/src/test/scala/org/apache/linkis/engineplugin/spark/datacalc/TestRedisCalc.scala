@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc
 
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
 
 import org.junit.jupiter.api.{Assertions, Test};
@@ -25,44 +26,48 @@ class TestRedisCalc {
 
   @Test
   def testRedisWrite: Unit = {
-//    val csvFilePath = this.getClass.getResource("/etltest.dolphin").getFile
-//    val data = DataCalcGroupData.getData(redisWriteConfigJson.replace("{csvFilePath}", csvFilePath))
-    // Temporarily hide read etltest.dolphin, another excel pr provides etltest.dolphin
-    val data = DataCalcGroupData.getData(redisWriteConfigJson)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val filePath = this.getClass.getResource("/").getFile
+      val data = DataCalcGroupData.getData(redisWriteConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    Assertions.assertTrue(data != null)
-
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
-
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   @Test
   def testRedisReaderTable: Unit = {
-    val data = DataCalcGroupData.getData(redisTableConfigJson)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val filePath = this.getClass.getResource("/").getFile
+      val data = DataCalcGroupData.getData(redisTableConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    Assertions.assertTrue(data != null)
-
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
-
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   @Test
   def testRedisReaderKeysPattern: Unit = {
-    val data = DataCalcGroupData.getData(redisKeysPatternConfigJson)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val filePath = this.getClass.getResource("/").getFile
+      val data =
+        DataCalcGroupData.getData(redisKeysPatternConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    Assertions.assertTrue(data != null)
-
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
-
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   val redisWriteConfigJson =
@@ -74,7 +79,7 @@ class TestRedisCalc {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file://{csvFilePath}",
+      |                "path": "file://{filePath}/etltest.dolphin",
       |                "serializer": "csv",
       |                "options": {
       |                "header":"true",
@@ -99,7 +104,6 @@ class TestRedisCalc {
       |            "name": "redis",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///test",
       |                "saveMode": "overwrite",
       |                "host":"localhost",
       |                "port":"6379",
@@ -144,6 +148,7 @@ class TestRedisCalc {
       |            "config": {
       |                "sourceTable": "T1654611700631",
       |                "path": "file:///test",
+      |                "path": "file://{filePath}/csv",
       |                "saveMode": "overwrite",
       |                "serializer": "csv"
       |            }
@@ -184,7 +189,7 @@ class TestRedisCalc {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///test",
+      |                "path": "file://{filePath}/csv",
       |                "saveMode": "overwrite",
       |                "serializer": "csv"
       |            }

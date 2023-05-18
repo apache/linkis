@@ -126,7 +126,6 @@ class TestDelta {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///Users/chengjie/cjtest/csv",
       |                "path": "file://{filePath}/csv",
       |                "saveMode": "overwrite",
       |                "options": {

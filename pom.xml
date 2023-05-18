@@ -156,7 +156,7 @@
     <reflections.version>0.9.12</reflections.version>
 
     <!-- dbs -->
-    <jedis.version>2.9.2</jedis.version>
+    <jedis.version>3.9.0</jedis.version>
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <druid.version>1.2.16</druid.version>

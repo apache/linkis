@@ -18,13 +18,14 @@
 package org.apache.linkis.manager.label.entity.cluster;
 
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+import org.apache.linkis.manager.label.entity.EMNodeLabel;
 import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
 
 import java.util.HashMap;
 
-public class ClusterLabel extends GenericLabel {
+public class ClusterLabel extends GenericLabel implements EMNodeLabel {
 
   public ClusterLabel() {
     setLabelKey(LabelKeyConstant.YARN_CLUSTER_KEY);
@@ -63,5 +64,19 @@ public class ClusterLabel extends GenericLabel {
       return getValue().get("clusterType");
     }
     return null;
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    if (other instanceof ClusterLabel) {
+      if (null != getClusterName() && null != getClusterType()) {
+        return getClusterName().equals(((ClusterLabel) other).getClusterName())
+            && getClusterType().equals(((ClusterLabel) other).getClusterType());
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }

@@ -20,37 +20,34 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
 
-import org.apache.commons.text.StringSubstitutor
+import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.collection.JavaConverters._
 
-class FileSink extends DataCalcSink[FileSinkConfig] with Logging {
+class RedisSink extends DataCalcSink[RedisSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
-    val writer = ds.write.mode(config.getSaveMode)
-
-    if (config.getPartitionBy != null && !config.getPartitionBy.isEmpty) {
-      val partitionKeys = config.getPartitionBy.asScala
-      writer.partitionBy(partitionKeys: _*)
-    }
+    var options = Map(
+      "host" -> config.getHost,
+      "port" -> config.getPort,
+      "dbNum" -> config.getDbNum,
+      "auth" -> config.getAuth,
+      "table" -> config.getTargetTable
+    )
 
     if (config.getOptions != null && !config.getOptions.isEmpty) {
-      writer.options(config.getOptions)
+      options = config.getOptions.asScala.toMap ++ options
     }
-    val substitutor = new StringSubstitutor(config.getVariables)
-    val path = substitutor.replace(config.getPath)
-    logger.info(s"Save data to file, path: $path")
 
-    config.getSerializer match {
-      case "csv" => writer.csv(path)
-      case "json" => writer.json(path)
-      case "parquet" => writer.parquet(path)
-      case "text" => writer.text(path)
-      case "orc" => writer.orc(path)
-      case "excel" => writer.format("excel").save(path)
-      case _ => writer.format(config.getSerializer).save(path)
+    val writer = ds.write.format("org.apache.spark.sql.redis")
+    if (StringUtils.isNotBlank(config.getSaveMode)) {
+      writer.mode(config.getSaveMode)
     }
+    logger.info(
+      s"Save data to reids host: ${config.getHost}, port: ${config.getPort}, dbNum: ${config.getDbNum}, table: ${config.getTargetTable}"
+    )
+    writer.options(options).save()
   }
 
 }

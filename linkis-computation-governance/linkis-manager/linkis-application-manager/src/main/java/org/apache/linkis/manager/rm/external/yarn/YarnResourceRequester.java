@@ -334,8 +334,13 @@ public class YarnResourceRequester implements ExternalResourceRequester {
         String principalName = (String) this.provider.getConfigMap().get("principalName");
         String keytabPath = (String) this.provider.getConfigMap().get("keytabPath");
         String krb5Path = (String) this.provider.getConfigMap().get("krb5Path");
+        if (StringUtils.isNotBlank(krb5Path)) {
+          logger.warn(
+              "krb5Path: {} has been specified, but not allow to be set to avoid conflict",
+              krb5Path);
+        }
         RequestKerberosUrlUtils requestKuu =
-            new RequestKerberosUrlUtils(principalName, keytabPath, krb5Path, false);
+            new RequestKerberosUrlUtils(principalName, keytabPath, false);
         HttpResponse response =
             requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url, principalName);
         httpResponse = response;

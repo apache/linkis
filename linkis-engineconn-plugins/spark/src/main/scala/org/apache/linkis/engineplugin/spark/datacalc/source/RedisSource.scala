@@ -20,34 +20,31 @@ package org.apache.linkis.engineplugin.spark.datacalc.source
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
 
-import org.apache.commons.text.StringSubstitutor
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-class FileSource extends DataCalcSource[FileSourceConfig] with Logging {
+class RedisSource extends DataCalcSource[RedisSourceConfig] with Logging {
 
   override def getData(spark: SparkSession): Dataset[Row] = {
-    val reader = spark.read
-
+    val reader = spark.read.format("org.apache.spark.sql.redis")
     if (config.getOptions != null && !config.getOptions.isEmpty) {
       reader.options(config.getOptions)
     }
-    val substitutor = new StringSubstitutor(config.getVariables)
-    val path = substitutor.replace(config.getPath)
-    logger.info(s"Load data from file <$path>")
 
-    var df = config.getSerializer match {
-      case "csv" => reader.csv(path)
-      case "json" => reader.json(path)
-      case "parquet" => reader.parquet(path)
-      case "text" => reader.text(path)
-      case "orc" => reader.orc(path)
-      case "excel" => reader.format("excel").load(path)
-      case _ => reader.format(config.getSerializer).load(path)
+    logger.info(
+      s"Load data from reids host: ${config.getHost}, port: ${config.getPort}, dbNum: ${config.getDbNum}"
+    )
+
+    config.getSerializer match {
+      case "table" => reader.option("table", config.getSourceTable)
+      case "keysPattern" =>
+        reader.option("keys.pattern", config.getKeysPattern).option("infer.schema", "true")
     }
-    if (config.getColumnNames != null && config.getColumnNames.length > 0) {
-      df = df.toDF(config.getColumnNames: _*)
-    }
-    df
+    reader
+      .option("host", config.getHost)
+      .option("port", config.getPort)
+      .option("dbNum", config.getDbNum)
+      .option("auth", config.getAuth)
+      .load()
   }
 
 }

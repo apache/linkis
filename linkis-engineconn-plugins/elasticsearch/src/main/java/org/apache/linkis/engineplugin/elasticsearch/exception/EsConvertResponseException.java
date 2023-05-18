@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.executor
+package org.apache.linkis.engineplugin.elasticsearch.exception;
 
-object ElasticSearchExecutorOrder extends Enumeration {
+import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary;
 
-  type ElasticSearchExecutorOrder = Value
-  val SQL = Value(1)
-  val JSON = Value(3)
+public class EsConvertResponseException extends ErrorException {
+  public EsConvertResponseException(String errorMsg) {
+    super(EasticsearchErrorCodeSummary.RESPONSE_FAIL_IS_EMPTY.getErrorCode(), errorMsg);
+  }
 }

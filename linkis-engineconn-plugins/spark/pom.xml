@@ -449,6 +449,17 @@
       <version>${spark.hadoop.version}</version>
       <scope>${spark.hadoop.scope}</scope>
     </dependency>
+    <dependency>
+      <groupId>com.redislabs</groupId>
+      <artifactId>spark-redis_${scala.binary.version}</artifactId>
+      <version>2.6.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>redis.clients</groupId>
+          <artifactId>jedis</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>

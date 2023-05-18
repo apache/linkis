@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.elasticsearch.exception
+package org.apache.linkis.engineplugin.elasticsearch.executor.client;
 
-import org.apache.linkis.common.exception.ErrorException
-import org.apache.linkis.engineplugin.elasticsearch.errorcode.EasticsearchErrorCodeSummary.CLUSTER_IS_BLANK
+public interface ElasticSearchExecutor {
 
-case class EsParamsIllegalException(errorMsg: String)
-    extends ErrorException(CLUSTER_IS_BLANK.getErrorCode, errorMsg)
+  void open() throws Exception;
+
+  ElasticSearchResponse executeLine(String code);
+
+  void close();
+}

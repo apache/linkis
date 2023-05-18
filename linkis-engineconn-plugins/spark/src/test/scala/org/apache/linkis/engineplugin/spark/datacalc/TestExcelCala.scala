@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineplugin.spark.datacalc
 
+import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
 
 import org.junit.jupiter.api.{Assertions, Test};
@@ -25,25 +26,32 @@ class TestExcelCala {
 
   @Test
   def testExcelWrite: Unit = {
-    val csvFilePath = this.getClass.getResource("/etltest.dolphin").getFile
-    val data = DataCalcGroupData.getData(excelWriteConfigJson.replace("{csvFilePath}", csvFilePath))
-    Assertions.assertTrue(data != null)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val filePath = this.getClass.getResource("/").getFile
+      val data = DataCalcGroupData.getData(excelWriteConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   @Test
   def testExcelReader: Unit = {
-    val data = DataCalcGroupData.getData(excelReaderConfigJson)
-    Assertions.assertTrue(data != null)
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val filePath = this.getClass.getResource("/").getFile
+      val data = DataCalcGroupData.getData(excelReaderConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
 
-    val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-    Assertions.assertTrue(sources != null)
-    Assertions.assertTrue(transforms != null)
-    Assertions.assertTrue(sinks != null)
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
   }
 
   val excelWriteConfigJson =
@@ -55,7 +63,7 @@ class TestExcelCala {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file://{csvFilePath}",
+      |                "path": "file://{filePath}/etltest.dolphin",
       |                "serializer": "csv",
       |                "options": {
       |                "header":"true",
@@ -80,7 +88,7 @@ class TestExcelCala {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///test/test.xlsx",
+      |                "path": "file://{filePath}/excel",
       |                "saveMode": "overwrite",
       |                "serializer": "excel"
       |            }
@@ -98,7 +106,7 @@ class TestExcelCala {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file:///test/test.xlsx",
+      |                "path": "file://{filePath}/excel",
       |                "serializer": "excel",
       |                "options": {
       |                "header":"true"
@@ -112,7 +120,7 @@ class TestExcelCala {
       |            "name": "file",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file:///test",
+      |                "path": "file://{filePath}/csv",
       |                "saveMode": "overwrite",
       |                "options": {
       |                "header":"true"

@@ -208,6 +208,10 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (System.getenv("SPARK_HOME") != null) conf.setSparkHome(System.getenv("SPARK_HOME"))
     conf.set("spark.scheduler.mode", "FAIR")
 
+    if (SparkConfiguration.LINKIS_SPARK_ETL_SUPPORT_HUDI.getValue) {
+      conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    }
+
     val builder = SparkSession.builder.config(conf)
     builder.enableHiveSupport().getOrCreate()
   }

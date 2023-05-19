@@ -61,7 +61,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
   }
 
   override def launchEngineConn(request: EngineConnLaunchRequest, duration: Long): EngineNode = {
-    // 1.创建engineConn和runner,launch 并设置基础属性
+    // 1.Create engineConn and runner, launch and set basic properties
     val taskId = JobUtils.getJobIdFromStringMap(request.creationDesc.properties)
     LoggerUtils.setJobIdMDC(taskId)
     logger.info("TaskId: {} try to launch a new EngineConn with {}.", taskId: Any, request: Any)
@@ -78,9 +78,9 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     conn.setStatus(NodeStatus.Starting)
     conn.setEngineConnInfo(new EngineConnInfo)
     conn.setEngineConnManagerEnv(launch.getEngineConnManagerEnv())
-    // 2.资源本地化，并且设置ecm的env环境信息
+    // 2.Resource localization, and set the env environment information of ecm
     getResourceLocalizationServie.handleInitEngineConnResources(request, conn)
-    // 4.run
+    // 3.run
     Utils.tryCatch {
       beforeLaunch(request, conn, duration)
       runner.run()

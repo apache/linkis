@@ -20,23 +20,23 @@
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Console>
 
         <Send name="Send" >
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Send>
 
         <Send name="SendPackage" >
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M  [JobId-%X{jobId}]- %msg%xEx%n"/>
         </Send>
 
         <Console name="stderr" target="SYSTEM_ERR">
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Console>
     </appenders>
 

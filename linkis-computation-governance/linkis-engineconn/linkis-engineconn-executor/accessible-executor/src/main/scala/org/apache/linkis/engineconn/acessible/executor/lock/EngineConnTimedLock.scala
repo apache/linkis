@@ -28,6 +28,7 @@ import org.apache.linkis.engineconn.acessible.executor.listener.event.{
   ExecutorUnLockEvent
 }
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
+import org.apache.linkis.engineconn.executor.entity.SensibleExecutor
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
@@ -169,9 +170,18 @@ class EngineConnTimedLock(private var timeout: Long)
   }
 
   private def unlockCallback(lockStr: String): Unit = {
-    /* if (null != lockedBy) {
-      lockedBy.transition(NodeStatus.Unlock)
-    } */
+    val nodeStatus = ExecutorManager.getInstance.getReportExecutor match {
+      case sensibleExecutor: SensibleExecutor =>
+        sensibleExecutor.getStatus
+      case _ => NodeStatus.Idle
+    }
+    if (NodeStatus.isCompleted(nodeStatus)) {
+      logger.info(
+        "The node({}) is already in the completed state, and the unlocking is invalid",
+        nodeStatus.toString
+      )
+      return
+    }
     val executors = ExecutorManager.getInstance.getExecutors.filter(executor =>
       null != executor && !executor.isClosed
     )

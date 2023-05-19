@@ -19,6 +19,7 @@ package org.apache.linkis.manager.am.service.engine;
 
 import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.governance.common.utils.JobUtils;
+import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
@@ -68,6 +69,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
   @Receiver
   public Object askEngine(EngineAskRequest engineAskRequest, Sender sender) {
     String taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties());
+    LoggerUtils.setJobIdMDC(taskId);
     logger.info(
         String.format(
             "received task: %s, engineAskRequest %s", taskId, engineAskRequest.toString()));
@@ -107,42 +109,49 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
     CompletableFuture<EngineNode> createNodeThread =
         CompletableFuture.supplyAsync(
             () -> {
-              logger.info(
-                  String.format(
-                      "Task: %s start to async(%s) createEngine, %s",
-                      taskId, engineAskAsyncId, engineAskRequest.getCreateService()));
-              engineAskRequest.getLabels().remove("engineInstance");
-              EngineCreateRequest engineCreateRequest = new EngineCreateRequest();
-              engineCreateRequest.setLabels(engineAskRequest.getLabels());
-              engineCreateRequest.setTimeout(engineAskRequest.getTimeOut());
-              engineCreateRequest.setUser(engineAskRequest.getUser());
-              engineCreateRequest.setProperties(engineAskRequest.getProperties());
-              engineCreateRequest.setCreateService(engineAskRequest.getCreateService());
-              EngineNode createNode = engineCreateService.createEngine(engineCreateRequest, sender);
-
-              long timeout =
-                  engineCreateRequest.getTimeout() <= 0
-                      ? AMConfiguration.ENGINE_START_MAX_TIME.getValue().toLong()
-                      : engineCreateRequest.getTimeout();
-              EngineNode createEngineNode = getEngineNodeManager().useEngine(createNode, timeout);
-              if (createEngineNode == null) {
-                String message =
+              try {
+                LoggerUtils.setJobIdMDC(taskId);
+                logger.info(
                     String.format(
-                        "create engine%s success, but to use engine failed",
-                        createNode.getServiceInstance());
-                throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, message);
-              }
+                        "Task: %s start to async(%s) createEngine, %s",
+                        taskId, engineAskAsyncId, engineAskRequest.getCreateService()));
+                engineAskRequest.getLabels().remove("engineInstance");
+                EngineCreateRequest engineCreateRequest = new EngineCreateRequest();
+                engineCreateRequest.setLabels(engineAskRequest.getLabels());
+                engineCreateRequest.setTimeout(engineAskRequest.getTimeOut());
+                engineCreateRequest.setUser(engineAskRequest.getUser());
+                engineCreateRequest.setProperties(engineAskRequest.getProperties());
+                engineCreateRequest.setCreateService(engineAskRequest.getCreateService());
+                EngineNode createNode =
+                    engineCreateService.createEngine(engineCreateRequest, sender);
 
-              logger.info(
-                  String.format(
-                      "Task: %s finished to ask engine for user %s by create node %s",
-                      taskId, engineAskRequest.getUser(), createEngineNode));
-              return createEngineNode;
+                long timeout =
+                    engineCreateRequest.getTimeout() <= 0
+                        ? AMConfiguration.ENGINE_START_MAX_TIME.getValue().toLong()
+                        : engineCreateRequest.getTimeout();
+                EngineNode createEngineNode = getEngineNodeManager().useEngine(createNode, timeout);
+                if (createEngineNode == null) {
+                  String message =
+                      String.format(
+                          "create engine%s success, but to use engine failed",
+                          createNode.getServiceInstance());
+                  throw new LinkisRetryException(AMConstant.EM_ERROR_CODE, message);
+                }
+
+                logger.info(
+                    String.format(
+                        "Task: %s finished to ask engine for user %s by create node %s",
+                        taskId, engineAskRequest.getUser(), createEngineNode));
+                return createEngineNode;
+              } finally {
+                LoggerUtils.removeJobIdMDC();
+              }
             },
             EXECUTOR);
 
     createNodeThread.whenComplete(
         (EngineNode engineNode, Throwable exception) -> {
+          LoggerUtils.setJobIdMDC(taskId);
           if (exception != null) {
             boolean retryFlag;
             if (exception instanceof LinkisRetryException) {
@@ -179,9 +188,11 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
                 String.format(
                     "Task: %s Success to async(%s) createEngine %s",
                     taskId, engineAskAsyncId, engineNode));
-            sender.send(new EngineCreateSuccess(engineAskAsyncId, (EngineNode) engineNode));
+            sender.send(new EngineCreateSuccess(engineAskAsyncId, engineNode));
           }
+          LoggerUtils.removeJobIdMDC();
         });
+    LoggerUtils.removeJobIdMDC();
     return new EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance());
   }
 

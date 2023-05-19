@@ -93,7 +93,7 @@ class StorageResultSetReader[K <: MetaData, V <: Record](
     if (len != rowLen) {
       throw new StorageErrorException(
         StorageErrorCode.INCONSISTENT_DATA.getCode,
-        String.format(StorageErrorCode.INCONSISTENT_DATA.getMessage, len, rowLen)
+        String.format(StorageErrorCode.INCONSISTENT_DATA.getMessage, len.toString, rowLen.toString)
       )
     }
     rowCount = rowCount + 1

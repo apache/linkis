@@ -198,7 +198,7 @@
     <h2.version>1.4.200</h2.version>
 
     <!-- spring -->
-    <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
+    <spring-framework.version>5.3.22</spring-framework.version>
     <spring-security.version>5.7.5</spring-security.version>
     <spring.boot.version>2.7.10</spring.boot.version>
     <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>

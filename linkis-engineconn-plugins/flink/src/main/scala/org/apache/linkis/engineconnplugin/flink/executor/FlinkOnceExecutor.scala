@@ -32,6 +32,7 @@ import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
 }
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.ExecutorInitException
+import org.apache.linkis.engineconnplugin.flink.executor.interceptor.FlinkJobSubmitInterceptor
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import org.apache.flink.api.common.JobStatus
@@ -47,6 +48,8 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
   protected var clusterDescriptor: T = _
   private var daemonThread: Future[_] = _
 
+  private var interceptor: FlinkJobSubmitInterceptor = _
+
   protected def submit(onceExecutorExecutionContext: OnceExecutorExecutionContext): Unit = {
     ClusterDescriptorAdapterFactory.create(flinkEngineConnContext.getExecutionContext) match {
       case adapter: T => clusterDescriptor = adapter
@@ -58,7 +61,14 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
       case (k, v) if v != null => k -> v.toString
       case (k, _) => k -> null
     }.toMap
-    doSubmit(onceExecutorExecutionContext, options)
+    Option(interceptor).foreach(op => op.beforeSubmit(onceExecutorExecutionContext))
+    Utils.tryCatch {
+      doSubmit(onceExecutorExecutionContext, options)
+      Option(interceptor).foreach(op => op.afterSubmitSuccess(onceExecutorExecutionContext))
+    } { t: Throwable =>
+      Option(interceptor).foreach(op => op.afterSubmitFail(onceExecutorExecutionContext, t))
+      throw t
+    }
     if (isCompleted) return
     if (null == clusterDescriptor.getClusterID) {
       throw new ExecutorInitException(YARN_IS_NULL.getErrorDesc)
@@ -81,6 +91,10 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
   val id: Long
 
   def getClusterDescriptorAdapter: T = clusterDescriptor
+
+  def setSubmitInterceptor(interceptor: FlinkJobSubmitInterceptor): Unit = {
+    this.interceptor = interceptor
+  }
 
   override def getId: String = "FlinkOnceApp_" + id
 

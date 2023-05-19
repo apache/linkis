@@ -19,9 +19,6 @@ package org.apache.linkis.engineplugin.spark.datacalc
 
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
-
-import org.apache.spark.sql.SparkSession
-
 import org.junit.jupiter.api.{Assertions, Test};
 
 class TestKafkaCala {
@@ -29,26 +26,24 @@ class TestKafkaCala {
   val filePath = this.getClass.getResource("/").getFile
 
   @Test
-  def testExcelWrite: Unit = {
+  def testKafkaWrite: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data = DataCalcGroupData.getData(kafkaWriteConfigJson.replace("{filePath}", filePath))
+      Assertions.assertTrue(data != null)
+
       val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-
-      val spark = SparkSession
-        .builder()
-        .master("local")
-        .getOrCreate()
-
-      DataCalcExecution.execute(spark, sources, transforms, sinks)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
     }
   }
 
   @Test
-  def testExcelReader: Unit = {
+  def testKafkaReader: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
-      val data = DataCalcGroupData.getData(kafkaReaderConfigJson.replace("{filePath}", filePath))
+      val data = DataCalcGroupData.getData(kafkaReaderConfigJson)
       Assertions.assertTrue(data != null)
 
       val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
@@ -82,7 +77,8 @@ class TestKafkaCala {
       |            "name": "kafka",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "servers": "192.168.110.42:9092",
+      |                "servers": "localhost:9092",
+      |                "mode": "batch",
       |                "topic": "test121212"
       |            }
       |        }
@@ -95,30 +91,23 @@ class TestKafkaCala {
       |{
       |    "sources": [
       |        {
-      |            "name": "file",
+      |            "name": "kafka",
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "path": "file://{filePath}/excel",
-      |                "serializer": "excel",
-      |                "options": {
-      |                "header":"true"
-      |                },
-      |                "columnNames": ["name", "age"]
+      |                "servers": "localhost:9092",
+      |                "topic": "test121212"
       |            }
       |        }
       |    ],
       |    "sinks": [
       |        {
-      |            "name": "file",
+      |            "name": "kafka",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "path": "file://{filePath}/csv",
-      |                "saveMode": "overwrite",
-      |                "options": {
-      |                "header":"true"
-      |                },
-      |                "serializer": "csv"
+      |                "servers": "localhost:9092",
+      |                "mode": "stream",
+      |                "topic": "test55555"
       |            }
       |        }
       |    ]

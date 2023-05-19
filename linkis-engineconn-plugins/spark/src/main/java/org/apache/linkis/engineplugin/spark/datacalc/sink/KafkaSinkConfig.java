@@ -20,6 +20,7 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SinkConfig;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 public class KafkaSinkConfig extends SinkConfig {
 
@@ -27,7 +28,21 @@ public class KafkaSinkConfig extends SinkConfig {
 
   @NotBlank private String topic;
 
-  private String mode = "batch";
+  private String checkpointLocation = "./ck";
+
+  @NotBlank
+  @Pattern(
+      regexp = "^(batch|stream)$",
+      message = "Unknown mode: {saveMode}. Accepted modes are 'batch', 'stream'.")
+  private String mode = "stream";
+
+  public String getCheckpointLocation() {
+    return checkpointLocation;
+  }
+
+  public void setCheckpointLocation(String checkpointLocation) {
+    this.checkpointLocation = checkpointLocation;
+  }
 
   public String getMode() {
     return mode;

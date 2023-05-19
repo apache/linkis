@@ -32,11 +32,19 @@ class KafkaSink extends DataCalcSink[KafkaSinkConfig] with Logging {
     if (config.getOptions != null && !config.getOptions.isEmpty) {
       options = config.getOptions.asScala.toMap ++ options
     }
-
-    val writer = ds.writeStream.format("kafka")
-
     logger.info(s"Load data to kafka servers: ${config.getServers}, topic: ${config.getTopic}")
-    writer.options(options).start()
+
+    config.getMode match {
+      case "batch" =>
+        ds.selectExpr("to_json(struct(*)) AS value").write.format("kafka").options(options).save()
+      case "stream" =>
+        options = Map("checkpointLocation" -> config.getCheckpointLocation) ++ options
+        ds.writeStream.format("kafka").options(options).start().awaitTermination()
+      case _ =>
+    }
+//    val writer = ds.writeStream.format("kafka")
+
+//    writer.options(options).start()
   }
 
 }

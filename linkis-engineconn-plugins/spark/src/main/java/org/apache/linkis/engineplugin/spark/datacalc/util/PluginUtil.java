@@ -63,6 +63,7 @@ public class PluginUtil {
     classMap.put("hive", HiveSink.class);
     classMap.put("file", FileSink.class);
     classMap.put("redis", RedisSink.class);
+    classMap.put("datalake", DataLakeSink.class);
     classMap.put("rocketmq", RocketmqSink.class);
     return classMap;
   }

@@ -360,6 +360,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
     if (StringUtils.isBlank(cacheKey)) {
       getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
     } else {
+      logger.info("From cache to get un Done task {}", cacheKey)
       unDoneTaskCache.get(
         cacheKey,
         new Callable[Integer] {
@@ -379,6 +380,7 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       engineType: String,
       startJobId: lang.Long
   ): Integer = {
+    logger.info("Get count undone Tasks {}, {}, {}", username, creator, engineType)
     val statusList: util.List[String] = new util.ArrayList[String]()
     statusList.add(TaskStatus.Running.toString)
     statusList.add(TaskStatus.Inited.toString)

@@ -501,12 +501,10 @@ class TaskExecutionServiceImpl
         if (ExecutionNodeStatus.isCompleted(task.getStatus)) {
           response = ResponseTaskProgress(taskID, 1.0f, null)
         } else {
+          val progress = executor.progress(taskID)
+          logger.info("The latest progress {} of the task id {} is:", progress, taskID)
           response = Utils.tryQuietly(
-            ResponseTaskProgress(
-              taskID,
-              executor.progress(taskID),
-              executor.getProgressInfo(taskID)
-            )
+            ResponseTaskProgress(taskID, progress, executor.getProgressInfo(taskID))
           )
         }
       } else {

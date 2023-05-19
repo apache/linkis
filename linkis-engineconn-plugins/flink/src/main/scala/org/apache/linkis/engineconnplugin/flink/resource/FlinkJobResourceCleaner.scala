@@ -15,28 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.jdbc
+package org.apache.linkis.engineconnplugin.flink.resource
 
-import org.apache.linkis.common.exception.ErrorException
-
-class UJESSQLException(errorCode: UJESSQLErrorCode)
-    extends ErrorException(errorCode.getCode, errorCode.getMsg) {
-
-  def this(errorCode: UJESSQLErrorCode, msg: String) {
-    this(errorCode)
-    setErrCode(errorCode.getCode)
-    setDesc(msg)
-  }
+trait FlinkJobResourceCleaner {
 
   /**
-   * add to deal with errorinfo derived from jobInfo
-   * @param errorCode
-   * @param msg
+   * Clean up resource array
+   *
+   * @param resArray
+   *   resource array
    */
-  def this(errorCode: Int, msg: String) {
-    this(UJESSQLErrorCode.ERRORINFO_FROM_JOBINFO)
-    setDesc(msg)
-    setErrCode(errorCode)
-  }
+  def cleanup(resArray: Array[String]): Unit
 
+  /**
+   * If accept the resource
+   *
+   * @param resource
+   *   resource
+   * @return
+   */
+  def accept(resource: String): Boolean
 }

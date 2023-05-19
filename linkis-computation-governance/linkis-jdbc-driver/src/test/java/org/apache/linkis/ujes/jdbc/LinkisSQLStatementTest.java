@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * if you want to test this module,you must rewrite default parameters and SQL we used for local test
  * */
 
-public class UJESSQLStatementTest {
-  private static UJESSQLConnection conn;
-  private static UJESSQLStatement statement;
+public class LinkisSQLStatementTest {
+  private static LinkisSQLConnection conn;
+  private static LinkisSQLStatement statement;
   private static int maxRows;
   private static int queryTimeout;
   private static String sql;
@@ -48,7 +48,7 @@ public class UJESSQLStatementTest {
   public static void createConnection() {
     try {
       conn = CreateConnection.getConnection();
-      statement = (UJESSQLStatement) conn.createStatement();
+      statement = (LinkisSQLStatement) conn.createStatement();
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     } catch (SQLException e) {

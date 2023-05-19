@@ -32,12 +32,12 @@ class MongoSource extends DataCalcSource[MongoSourceConfig] with Logging {
     }
 
     logger.info(
-      s"Load data from mongo uri: ${config.getUri}, database: ${config.getSourceDatabase}, collection: ${config.getSourceCollection}"
+      s"Load data from mongo uri: ${config.getUri}, database: ${config.getDatabase}, collection: ${config.getCollection}"
     )
 
     reader
-      .option("spark.mongodb.input.database", config.getSourceDatabase)
-      .option("spark.mongodb.input.collection", config.getSourceCollection)
+      .option("spark.mongodb.input.database", config.getDatabase)
+      .option("spark.mongodb.input.collection", config.getCollection)
       .option("spark.mongodb.input.uri", config.getUri)
       .load()
   }

@@ -78,9 +78,9 @@ class TestMongoCala {
       |            "name": "mongo",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "uri": "mongodb://192.168.100.41:27017/cjtest",
-      |                "sinkDatabase": "cjtest",
-      |                "sinkCollection": "cjtest",
+      |                "uri": "mongodb://localhost:27017/test",
+      |                "database": "test",
+      |                "collection": "test",
       |                "saveMode": "overwrite"
       |            }
       |        }
@@ -97,9 +97,9 @@ class TestMongoCala {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "uri": "mongodb://192.168.100.41:27017/cjtest",
-      |                "sourceDatabase": "cjtest",
-      |                "sourceCollection": "cjtest"
+      |                "uri": "mongodb://localhost:27017/test",
+      |                "database": "test",
+      |                "collection": "test"
       |            }
       |        }
       |    ],

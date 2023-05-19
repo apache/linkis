@@ -25,9 +25,9 @@ public class MongoSourceConfig extends SourceConfig {
 
   @NotBlank private String uri;
 
-  @NotBlank private String sourceDatabase;
+  @NotBlank private String database;
 
-  @NotBlank private String sourceCollection;
+  @NotBlank private String collection;
 
   public String getUri() {
     return uri;
@@ -37,19 +37,19 @@ public class MongoSourceConfig extends SourceConfig {
     this.uri = uri;
   }
 
-  public String getSourceDatabase() {
-    return sourceDatabase;
+  public String getDatabase() {
+    return database;
   }
 
-  public void setSourceDatabase(String sourceDatabase) {
-    this.sourceDatabase = sourceDatabase;
+  public void setDatabase(String database) {
+    this.database = database;
   }
 
-  public String getSourceCollection() {
-    return sourceCollection;
+  public String getCollection() {
+    return collection;
   }
 
-  public void setSourceCollection(String sourceCollection) {
-    this.sourceCollection = sourceCollection;
+  public void setCollection(String collection) {
+    this.collection = collection;
   }
 }

@@ -26,9 +26,9 @@ public class MongoSinkConfig extends SinkConfig {
 
   @NotBlank private String uri;
 
-  @NotBlank private String sinkDatabase;
+  @NotBlank private String database;
 
-  @NotBlank private String sinkCollection;
+  @NotBlank private String collection;
 
   @NotBlank
   @Pattern(
@@ -53,19 +53,19 @@ public class MongoSinkConfig extends SinkConfig {
     this.uri = uri;
   }
 
-  public String getSinkDatabase() {
-    return sinkDatabase;
+  public String getDatabase() {
+    return database;
   }
 
-  public void setSinkDatabase(String sinkDatabase) {
-    this.sinkDatabase = sinkDatabase;
+  public void setDatabase(String database) {
+    this.database = database;
   }
 
-  public String getSinkCollection() {
-    return sinkCollection;
+  public String getCollection() {
+    return collection;
   }
 
-  public void setSinkCollection(String sinkCollection) {
-    this.sinkCollection = sinkCollection;
+  public void setCollection(String collection) {
+    this.collection = collection;
   }
 }

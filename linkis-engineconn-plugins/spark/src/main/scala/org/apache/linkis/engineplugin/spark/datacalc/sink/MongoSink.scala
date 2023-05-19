@@ -29,8 +29,8 @@ class MongoSink extends DataCalcSink[MongoSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     var options = Map(
-      "spark.mongodb.output.database" -> config.getSinkDatabase,
-      "spark.mongodb.output.collection" -> config.getSinkCollection,
+      "spark.mongodb.output.database" -> config.getDatabase,
+      "spark.mongodb.output.collection" -> config.getCollection,
       "spark.mongodb.output.uri" -> config.getUri
     )
 
@@ -44,7 +44,7 @@ class MongoSink extends DataCalcSink[MongoSinkConfig] with Logging {
     }
 
     logger.info(
-      s"Load data to mongo uri: ${config.getUri}, database: ${config.getSinkDatabase}, collection: ${config.getSinkCollection}"
+      s"Load data to mongo uri: ${config.getUri}, database: ${config.getDatabase}, collection: ${config.getCollection}"
     )
     writer.options(options).save()
   }

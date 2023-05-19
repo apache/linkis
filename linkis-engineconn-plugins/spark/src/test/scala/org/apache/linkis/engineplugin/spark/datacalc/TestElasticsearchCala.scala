@@ -20,8 +20,6 @@ package org.apache.linkis.engineplugin.spark.datacalc
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
 
-import org.apache.spark.sql.SparkSession
-
 import org.junit.jupiter.api.{Assertions, Test};
 
 class TestElasticsearchCala {

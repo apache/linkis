@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.am.pointer;
 
+import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
@@ -64,9 +65,9 @@ public class DefaultEMNodPointer extends AbstractNodePointer implements EMNodPoi
               + engineNode);
       return engineNode;
     } else {
-      throw new AMErrorException(
+      throw new LinkisRetryException(
           AMConstant.ENGINE_ERROR_CODE,
-          "Failed to createEngine ask em " + getNode().getServiceInstance());
+          "Failed to createEngine ask em " + getNode().getServiceInstance() + "result: " + result);
     }
   }
 

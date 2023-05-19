@@ -113,7 +113,17 @@ object GatewaySSOUtils extends Logging {
 
   def removeLoginUser(gatewayContext: GatewayContext): Unit = {
     SSOUtils.removeLoginUser(gatewayContext.getRequest.getCookies.asScala.flatMap(_._2).toArray)
-    SSOUtils.removeLoginUserByAddCookie(c => gatewayContext.getResponse.addCookie(c))
+    SSOUtils.removeLoginUserByAddCookie(c => {
+      if (cookieDomainSetupSwitch) {
+        val host = gatewayContext.getRequest.getHeaders.get("Host")
+        if (host != null && host.nonEmpty) {
+          c.setDomain(
+            getCookieDomain(host.head, GatewayConfiguration.GATEWAY_DOMAIN_LEVEL.getValue)
+          )
+        }
+      }
+      gatewayContext.getResponse.addCookie(c)
+    })
   }
 
   def updateLastAccessTime(gatewayContext: GatewayContext): Unit =

@@ -21,7 +21,6 @@ import org.apache.linkis.common.exception.LinkisRetryException;
 import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
-import org.apache.linkis.manager.am.service.impl.DefaultEngineConnStatusCallbackService;
 import org.apache.linkis.manager.am.util.LinkisUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
@@ -49,8 +48,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultEngineAskEngineService extends AbstractEngineService
     implements EngineAskEngineService {
 
-  private static final Logger logger =
-      LoggerFactory.getLogger(DefaultEngineConnStatusCallbackService.class);
+  private static final Logger logger = LoggerFactory.getLogger(DefaultEngineAskEngineService.class);
 
   private EngineCreateService engineCreateService;
   private EngineReuseService engineReuseService;
@@ -179,7 +177,8 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
             } else {
               logger.info(
                   String.format(
-                      "msg: %s canRetry Exception: %s", msg, exception.getClass().getName()));
+                      "msg: %s canRetry Exception: %s", msg, exception.getClass().getName()),
+                  exception);
             }
             sender.send(
                 new EngineCreateError(

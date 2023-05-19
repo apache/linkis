@@ -44,6 +44,8 @@ public class PluginUtil {
     classMap.put("managed_jdbc", ManagedJdbcSource.class);
     classMap.put("jdbc", JdbcSource.class);
     classMap.put("file", FileSource.class);
+    classMap.put("redis", RedisSource.class);
+    classMap.put("datalake", DataLakeSource.class);
     return classMap;
   }
 
@@ -59,6 +61,8 @@ public class PluginUtil {
     classMap.put("jdbc", JdbcSink.class);
     classMap.put("hive", HiveSink.class);
     classMap.put("file", FileSink.class);
+    classMap.put("redis", RedisSink.class);
+    classMap.put("datalake", DataLakeSink.class);
     return classMap;
   }
 

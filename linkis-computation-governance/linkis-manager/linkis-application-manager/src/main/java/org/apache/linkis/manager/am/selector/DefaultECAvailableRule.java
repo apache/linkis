@@ -33,11 +33,11 @@ class DefaultECAvailableRule implements ECAvailableRule {
     Optional<Label<?>> labelOptional =
         labels.stream().filter(label -> label instanceof EngineConnModeLabel).findFirst();
     if (!labelOptional.isPresent()) {
-      return false;
+      return true;
     }
 
     EngineConnModeLabel engineConnModeLabel = (EngineConnModeLabel) labelOptional.get();
-    return StringUtils.equals(
+    return !StringUtils.equals(
         engineConnModeLabel.getEngineConnMode(), EngineConnMode.Once().toString());
   }
 }

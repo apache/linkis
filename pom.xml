@@ -156,7 +156,7 @@
     <reflections.version>0.9.12</reflections.version>
 
     <!-- dbs -->
-    <jedis.version>2.9.2</jedis.version>
+    <jedis.version>3.9.0</jedis.version>
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <druid.version>1.2.16</druid.version>
@@ -173,6 +173,7 @@
     <commons-compress.version>1.21</commons-compress.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <commons-exec.version>1.3</commons-exec.version>
+    <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-net.version>3.9.0</commons-net.version>
     <commons-cli.version>1.3.1</commons-cli.version>
     <jline.version>3.9.0</jline.version>
@@ -405,6 +406,11 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-exec</artifactId>
         <version>${commons-exec.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${commons-fileupload.version}</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
@@ -1289,6 +1295,25 @@
         <version>${spring.boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        <version>${spring-netflix.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-apache-client4</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>io.github.x-stream</groupId>
+            <artifactId>mxparser</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>

@@ -19,7 +19,6 @@ package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.metastore.IMetaStoreClient;
@@ -47,15 +46,6 @@ public class HiveConnection implements Closeable {
 
   private static final CommonVars<String> DEFAULT_SERVICE_USER =
       CommonVars.apply("wds.linkis.server.mdm.service.user", "hadoop");
-
-  private static final CommonVars<String> KERBEROS_KRB5_CONF_PATH =
-      CommonVars.apply("wds.linkis.server.mdm.service.kerberos.krb5.path", "");
-
-  static {
-    if (StringUtils.isNotBlank(KERBEROS_KRB5_CONF_PATH.getValue())) {
-      System.setProperty("java.security.krb5.conf", KERBEROS_KRB5_CONF_PATH.getValue());
-    }
-  }
 
   public HiveConnection(
       String uris, String principle, String keytabFilePath, Map<String, String> hadoopConf)

@@ -75,6 +75,8 @@ object GovernanceCommonConf {
   val ERROR_CODE_DESC_LEN =
     CommonVars("linkis.error.code.desc.len", 512, "Error code description maximum length").getValue
 
+  val FAKE_PROGRESS: Float = CommonVars[Float]("linkis.job.fake.progress", 0.99f).getValue
+
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }

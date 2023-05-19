@@ -35,6 +35,7 @@ import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -251,7 +252,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
   }
 
-  def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
+  def execute(engineConnTask: EngineConnTask): ExecuteResponse = Utils.tryFinally {
+    val jobId = JobUtils.getJobIdFromMap(engineConnTask.getProperties)
+    LoggerUtils.setJobIdMDC(jobId)
     logger.info(s"start to execute task ${engineConnTask.getTaskId}")
     updateLastActivityTime()
     beforeExecute(engineConnTask)
@@ -264,6 +267,8 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
     response
+  } {
+    LoggerUtils.removeJobIdMDC()
   }
 
   def setCodeParser(codeParser: CodeParser): Unit = this.codeParser = Some(codeParser)

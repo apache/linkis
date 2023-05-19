@@ -17,19 +17,15 @@
 
 package org.apache.linkis.orchestrator.strategy.async
 
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.conf.OrchestratorConfiguration
 import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.exception.OrchestratorErrorCodeSummary
-import org.apache.linkis.orchestrator.execution.{ArrayResultSetTaskResponse, _}
+import org.apache.linkis.orchestrator.execution._
 import org.apache.linkis.orchestrator.execution.impl.{
   DefaultFailedTaskResponse,
   DefaultResultSetTaskResponse
-}
-import org.apache.linkis.orchestrator.listener.{
-  OrchestratorListenerBusContext,
-  OrchestratorSyncListenerBus
 }
 import org.apache.linkis.orchestrator.listener.execution.ExecTaskRunnerCompletedEvent
 import org.apache.linkis.orchestrator.plans.physical.ExecTask
@@ -38,6 +34,7 @@ import org.apache.linkis.orchestrator.strategy.{
   ResultSetExecTask,
   StatusInfoExecTask
 }
+import org.apache.linkis.orchestrator.utils.OrchestratorLoggerUtils
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -66,25 +63,26 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
 
   override def isSucceed: Boolean = ExecutionNodeStatus.isScheduled(status)
 
-  override def run(): Unit = try {
-    logger.info(s"ExecTaskRunner Submit execTask(${task.getIDInfo}) to running")
-    val response = task.execute()
-    this.taskResponse = response
-    response match {
-      case async: AsyncTaskResponse =>
-        transientStatus(ExecutionNodeStatus.Running)
-      case succeed: SucceedTaskResponse =>
-        logger.info(s"Succeed to execute ExecTask(${task.getIDInfo})")
-        transientStatus(ExecutionNodeStatus.Succeed)
-      case failedTaskResponse: FailedTaskResponse =>
-        logger.info(s"Failed to execute ExecTask(${task.getIDInfo})")
-        transientStatus(ExecutionNodeStatus.Failed)
-      case retry: RetryTaskResponse =>
-        logger.warn(s"ExecTask(${task.getIDInfo}) need to retry")
-        transientStatus(ExecutionNodeStatus.WaitForRetry)
-    }
-  } catch {
-    case e: Throwable =>
+  override def run(): Unit = {
+    Utils.tryCatch {
+      OrchestratorLoggerUtils.setJobIdMDC(task)
+      logger.info(s"ExecTaskRunner Submit execTask(${task.getIDInfo}) to running")
+      val response = task.execute()
+      this.taskResponse = response
+      response match {
+        case async: AsyncTaskResponse =>
+          transientStatus(ExecutionNodeStatus.Running)
+        case succeed: SucceedTaskResponse =>
+          logger.info(s"Succeed to execute ExecTask(${task.getIDInfo})")
+          transientStatus(ExecutionNodeStatus.Succeed)
+        case failedTaskResponse: FailedTaskResponse =>
+          logger.info(s"Failed to execute ExecTask(${task.getIDInfo})")
+          transientStatus(ExecutionNodeStatus.Failed)
+        case retry: RetryTaskResponse =>
+          logger.warn(s"ExecTask(${task.getIDInfo}) need to retry")
+          transientStatus(ExecutionNodeStatus.WaitForRetry)
+      }
+    } { case e: Throwable =>
       logger.error(s"Failed to execute task ${task.getIDInfo}", e)
       this.taskResponse = new DefaultFailedTaskResponse(
         e.getMessage,
@@ -92,6 +90,8 @@ class AsyncExecTaskRunnerImpl(override val task: ExecTask)
         e
       )
       transientStatus(ExecutionNodeStatus.Failed)
+    }
+    OrchestratorLoggerUtils.removeJobIdMDC()
   }
 
   override def transientStatus(status: ExecutionNodeStatus): Unit = {

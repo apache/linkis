@@ -42,9 +42,6 @@ class KafkaSink extends DataCalcSink[KafkaSinkConfig] with Logging {
         ds.writeStream.format("kafka").options(options).start().awaitTermination()
       case _ =>
     }
-//    val writer = ds.writeStream.format("kafka")
-
-//    writer.options(options).start()
   }
 
 }

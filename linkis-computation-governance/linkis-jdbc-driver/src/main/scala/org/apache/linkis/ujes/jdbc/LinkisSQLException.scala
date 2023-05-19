@@ -15,28 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.jdbc.hook.impl
+package org.apache.linkis.ujes.jdbc
 
-import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain
-import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
+import java.sql.SQLException
 
-import java.util.Locale
+class LinkisSQLException(msg: String, code: String, vendorCode: Int)
+    extends SQLException(msg, code, vendorCode) {
 
-class NoLimitExecutionHook extends JDBCDriverPreExecutionHook {
+  def this(errorCode: LinkisSQLErrorCode, msg: String) {
+    this(msg, errorCode.getCode.toString, 0)
+  }
 
-  override def callPreExecutionHook(sql: String, skip: Boolean): String = {
-    if (UJESSQLDriverMain.LIMIT_ENABLED.equalsIgnoreCase("false")) {
-      var noLimitSql = "--set ide.engine.no.limit.allow=true\n" + sql
-      val lowerCaseLimitSql = noLimitSql.toLowerCase()
-      if (lowerCaseLimitSql.contains("limit ") && lowerCaseLimitSql.contains("tableausql")) {
-        val lastIndexOfLimit = lowerCaseLimitSql.lastIndexOf("limit ")
-        noLimitSql = noLimitSql.substring(0, lastIndexOfLimit)
-      }
-      noLimitSql
-    } else {
-      sql
-    }
+  def this(errorCode: LinkisSQLErrorCode) {
+    this(errorCode.getMsg, errorCode.getCode.toString, 0)
+  }
 
+  def this(msg: String, code: String) {
+    this(msg, code, 0)
   }
 
 }

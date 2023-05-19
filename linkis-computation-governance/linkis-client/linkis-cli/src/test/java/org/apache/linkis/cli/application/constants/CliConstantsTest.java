@@ -48,8 +48,8 @@ public class CliConstantsTest {
     Assertions.assertEquals("------------ END OF META DATA ------------", resultsetMetaEndLogo);
     Assertions.assertEquals("------------------------", resultsetSeparatorLogo);
     Assertions.assertTrue(5000 == resultsetPageSize.intValue());
-    Assertions.assertEquals("LINKISCLI", jobCreatorDefault);
-    Assertions.assertEquals("LINKISCLIASYNC", jobCreatorAsyncDefault);
+    Assertions.assertEquals("BdpClient", jobCreatorDefault);
+    Assertions.assertEquals("BdpClient", jobCreatorAsyncDefault);
     Assertions.assertEquals("dummy", dummyCid);
     Assertions.assertEquals("LinkisCli", linkisCli);
     Assertions.assertEquals("ujes", ujesMode);

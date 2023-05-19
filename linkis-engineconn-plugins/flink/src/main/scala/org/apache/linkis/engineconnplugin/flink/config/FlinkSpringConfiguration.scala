@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.acessible.executor.conf
+package org.apache.linkis.engineconnplugin.flink.config
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.acessible.executor.conf.conditions.AccessibleExecutorLockServiceCondition
-import org.apache.linkis.engineconn.acessible.executor.info.{
-  DefaultNodeOverLoadInfoManager,
-  NodeOverLoadInfoManager
+import org.apache.linkis.engineconn.acessible.executor.conf.{
+  AccessibleExecutorConfiguration,
+  AccessibleExecutorSpringConfiguration
 }
 import org.apache.linkis.engineconn.acessible.executor.service.{
   EngineConnConcurrentLockService,
@@ -29,33 +28,29 @@ import org.apache.linkis.engineconn.acessible.executor.service.{
   LockService
 }
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineconnplugin.flink.util.ManagerUtil
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.context.annotation.{Bean, Conditional, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
-class AccessibleExecutorSpringConfiguration extends Logging {
+class FlinkSpringConfiguration extends Logging {
 
   private val asyncListenerBusContext =
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   @Bean(Array("lockService"))
-  @Conditional(Array(classOf[AccessibleExecutorLockServiceCondition]))
   def createLockManager(): LockService = {
-
+    val isManager = ManagerUtil.isManager
+    if (isManager) {
+      logger.info("flink manager mode on.")
+    }
     val lockService =
-      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
+      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM || isManager) {
         new EngineConnConcurrentLockService
       } else new EngineConnTimedLockService
     asyncListenerBusContext.addListener(lockService)
     lockService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean(Array(classOf[NodeOverLoadInfoManager]))
-  def createNodeOverLoadInfoManager(): NodeOverLoadInfoManager = {
-
-    new DefaultNodeOverLoadInfoManager
   }
 
 }

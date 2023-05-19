@@ -55,6 +55,9 @@ object AccessibleExecutorConfiguration {
 
   val ENABLE_MAINTAIN_CREATORS = CommonVars("wds.linkis.engineconn.maintain.cretors", "IDE")
 
+  val ENABLE_DEFAULT_LOCKER =
+    CommonVars("wds.linkis.engineconn.accessible.default.locker.enable", true)
+
   val REPORTING_DELAY_MS = CommonVars(
     "linkis.engineconn.heartbeat.report.delay",
     20,

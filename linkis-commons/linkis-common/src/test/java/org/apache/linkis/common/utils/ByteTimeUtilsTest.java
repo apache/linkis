@@ -15,28 +15,33 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.jdbc
+package org.apache.linkis.common.utils;
 
-import org.apache.linkis.common.exception.ErrorException
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-class UJESSQLException(errorCode: UJESSQLErrorCode)
-    extends ErrorException(errorCode.getCode, errorCode.getMsg) {
+import static org.junit.jupiter.api.Assertions.*;
 
-  def this(errorCode: UJESSQLErrorCode, msg: String) {
-    this(errorCode)
-    setErrCode(errorCode.getCode)
-    setDesc(msg)
+class ByteTimeUtilsTest {
+
+  @Test
+  void byteStringAsBytes() {}
+
+  @Test
+  void byteStringAsKb() {}
+
+  @Test
+  void byteStringAsMb() {}
+
+  @Test
+  void byteStringAsGb() {
+    Long res = ByteTimeUtils.byteStringAsGb("1G");
+    Assertions.assertEquals(res, 1);
+
+    Assertions.assertThrows(
+        NullPointerException.class,
+        () -> {
+          ByteTimeUtils.byteStringAsGb("512");
+        });
   }
-
-  /**
-   * add to deal with errorinfo derived from jobInfo
-   * @param errorCode
-   * @param msg
-   */
-  def this(errorCode: Int, msg: String) {
-    this(UJESSQLErrorCode.ERRORINFO_FROM_JOBINFO)
-    setDesc(msg)
-    setErrCode(errorCode)
-  }
-
 }

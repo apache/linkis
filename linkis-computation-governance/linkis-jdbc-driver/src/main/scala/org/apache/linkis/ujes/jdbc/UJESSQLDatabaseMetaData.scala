@@ -29,7 +29,7 @@ import java.util
 
 import scala.collection.JavaConversions._
 
-class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
+class UJESSQLDatabaseMetaData(ujesSQLConnection: LinkisSQLConnection)
     extends DatabaseMetaData
     with Logging {
   override def allProceduresAreCallable(): Boolean = false
@@ -41,7 +41,8 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
   override def getUserName: String =
     if (ujesSQLConnection.getProps.containsKey("user"))
       ujesSQLConnection.getProps.getProperty("user")
-    else throw new UJESSQLException(UJESSQLErrorCode.PARAMS_NOT_FOUND, "Missing user information")
+    else
+      throw new LinkisSQLException(LinkisSQLErrorCode.PARAMS_NOT_FOUND, "Missing user information")
 
   override def isReadOnly: Boolean = false
 
@@ -88,7 +89,10 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
   override def getIdentifierQuoteString: String = " "
 
   override def getSQLKeywords: String =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSQLKeywords not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "getSQLKeywords not supported"
+    )
 
   override def getNumericFunctions: String = ""
 
@@ -162,8 +166,8 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def getCatalogTerm: String = "instance"
 
-  override def isCatalogAtStart: Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def isCatalogAtStart: Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "isCatalogAtStart not supported"
   )
 
@@ -219,103 +223,106 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def supportsOpenStatementsAcrossRollback(): Boolean = false
 
-  override def getMaxBinaryLiteralLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxBinaryLiteralLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxBinaryLiteralLength not supported"
   )
 
-  override def getMaxCharLiteralLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxCharLiteralLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxCharLiteralLength not supported"
   )
 
   override def getMaxColumnNameLength: Int = 128
 
-  override def getMaxColumnsInGroupBy: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxColumnsInGroupBy: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxColumnsInGroupBy not supported"
   )
 
-  override def getMaxColumnsInIndex: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxColumnsInIndex: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxColumnsInIndex not supported"
   )
 
-  override def getMaxColumnsInOrderBy: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxColumnsInOrderBy: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxColumnsInOrderBy not supported"
   )
 
-  override def getMaxColumnsInSelect: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxColumnsInSelect: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxColumnsInSelect not supported"
   )
 
-  override def getMaxColumnsInTable: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxColumnsInTable: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxColumnsInTable not supported"
   )
 
-  override def getMaxConnections: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxConnections: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxConnections not supported"
   )
 
-  override def getMaxCursorNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxCursorNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxCursorNameLength not supported"
   )
 
-  override def getMaxIndexLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxIndexLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxIndexLength not supported"
   )
 
-  override def getMaxSchemaNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxSchemaNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxSchemaNameLength not supported"
   )
 
-  override def getMaxProcedureNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxProcedureNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxProcedureNameLength not supported"
   )
 
-  override def getMaxCatalogNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxCatalogNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxCatalogNameLength not supported"
   )
 
   override def getMaxRowSize: Int =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getMaxRowSize not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "getMaxRowSize not supported"
+    )
 
-  override def doesMaxRowSizeIncludeBlobs(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def doesMaxRowSizeIncludeBlobs(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "doesMaxRowSizeIncludeBlobs not supported"
   )
 
-  override def getMaxStatementLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxStatementLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxStatementLength not supported"
   )
 
-  override def getMaxStatements: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxStatements: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxStatements not supported"
   )
 
-  override def getMaxTableNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxTableNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxTableNameLength not supported"
   )
 
-  override def getMaxTablesInSelect: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxTablesInSelect: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxTablesInSelect not supported"
   )
 
-  override def getMaxUserNameLength: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getMaxUserNameLength: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getMaxUserNameLength not supported"
   )
 
@@ -329,13 +336,13 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def supportsDataManipulationTransactionsOnly(): Boolean = false
 
-  override def dataDefinitionCausesTransactionCommit(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def dataDefinitionCausesTransactionCommit(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "dataDefinitionCausesTransactionCommit not supported"
   )
 
-  override def dataDefinitionIgnoredInTransactions(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def dataDefinitionIgnoredInTransactions(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "dataDefinitionIgnoredInTransactions not supported"
   )
 
@@ -358,7 +365,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       tableNamePattern: String,
       types: Array[String]
   ): ResultSet = {
-    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+    val resultCatalog = if (StringUtils.isNotBlank(schemaPattern)) {
+      schemaPattern
+    } else if (StringUtils.isNotBlank(catalog)) {
       catalog
     } else {
       s"${getUserName}_ind"
@@ -374,11 +383,16 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
         if (table.get("isView").asInstanceOf[Boolean]) TableType.VIEW.name()
         else TableType.TABLE.name()
       val resultTable = new util.HashMap[String, String]()
+      val tableName = table.get("tableName").asInstanceOf[String]
       resultTable.put("catalog", resultCatalog)
-      resultTable.put("tableName", table.get("tableName").asInstanceOf[String])
+      resultTable.put("tableName", tableName)
       resultTable.put("tableType", tableType)
       if (null == types || types.contains(tableType)) {
-        resultTables.add(resultTable)
+        if (
+            StringUtils.isNotBlank(tableNamePattern) && tableNamePattern.equalsIgnoreCase(tableName)
+        ) {
+          resultTables.add(resultTable)
+        }
       }
     }
     val resultSet: LinkisMetaDataResultSet[util.Map[String, String]] =
@@ -471,7 +485,9 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       tableNamePattern: String,
       columnNamePattern: String
   ): ResultSet = {
-    val resultCatalog = if (StringUtils.isNotBlank(catalog)) {
+    val resultCatalog = if (StringUtils.isNotBlank(schemaPattern)) {
+      schemaPattern
+    } else if (StringUtils.isNotBlank(catalog)) {
       catalog
     } else {
       s"${getUserName}_ind"
@@ -670,48 +686,48 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def supportsResultSetConcurrency(`type`: Int, concurrency: Int): Boolean = false
 
-  override def ownUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def ownUpdatesAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "ownUpdatesAreVisible not supported"
   )
 
-  override def ownDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def ownDeletesAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "ownDeletesAreVisible not supported"
   )
 
-  override def ownInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def ownInsertsAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "ownInsertsAreVisible not supported"
   )
 
-  override def othersUpdatesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def othersUpdatesAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "othersUpdatesAreVisible not supported"
   )
 
-  override def othersDeletesAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def othersDeletesAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "othersDeletesAreVisible not supported"
   )
 
-  override def othersInsertsAreVisible(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def othersInsertsAreVisible(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "othersInsertsAreVisible not supported"
   )
 
-  override def updatesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def updatesAreDetected(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "updatesAreDetected not supported"
   )
 
-  override def deletesAreDetected(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def deletesAreDetected(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "deletesAreDetected not supported"
   )
 
-  override def insertsAreDetected(`type`: Int): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def insertsAreDetected(`type`: Int): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "insertsAreDetected not supported"
   )
 
@@ -739,14 +755,20 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       schemaPattern: String,
       typeNamePattern: String
   ): ResultSet =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSuperTypes not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "getSuperTypes not supported"
+    )
 
   override def getSuperTables(
       catalog: String,
       schemaPattern: String,
       tableNamePattern: String
   ): ResultSet =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getSuperTables not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "getSuperTables not supported"
+    )
 
   override def getAttributes(
       catalog: String,
@@ -754,12 +776,15 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       typeNamePattern: String,
       attributeNamePattern: String
   ): ResultSet =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "getAttributes not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "getAttributes not supported"
+    )
 
   override def supportsResultSetHoldability(holdability: Int): Boolean = false
 
-  override def getResultSetHoldability: Int = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getResultSetHoldability: Int = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getResultSetHoldability not supported"
   )
 
@@ -773,15 +798,15 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def getSQLStateType: Int = 2
 
-  override def locatorsUpdateCopy(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def locatorsUpdateCopy(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "locatorsUpdateCopy not supported"
   )
 
   override def supportsStatementPooling(): Boolean = false
 
-  override def getRowIdLifetime: RowIdLifetime = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getRowIdLifetime: RowIdLifetime = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getRowIdLifetime not supported"
   )
 
@@ -794,13 +819,13 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
 
   override def supportsStoredFunctionsUsingCallSyntax(): Boolean = false
 
-  override def autoCommitFailureClosesAllResultSets(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def autoCommitFailureClosesAllResultSets(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "autoCommitFailureClosesAllResultSets not supported"
   )
 
-  override def getClientInfoProperties: ResultSet = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def getClientInfoProperties: ResultSet = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "getClientInfoProperties not supported"
   )
 
@@ -824,15 +849,18 @@ class UJESSQLDatabaseMetaData(ujesSQLConnection: UJESSQLConnection)
       columnNamePattern: String
   ): ResultSet = null
 
-  override def generatedKeyAlwaysReturned(): Boolean = throw new UJESSQLException(
-    UJESSQLErrorCode.NOSUPPORT_METADATA,
+  override def generatedKeyAlwaysReturned(): Boolean = throw new LinkisSQLException(
+    LinkisSQLErrorCode.NOSUPPORT_METADATA,
     "generatedKeyAlwaysReturned not supported"
   )
 
   override def unwrap[T](iface: Class[T]): T =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "unwrap not supported")
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_METADATA, "unwrap not supported")
 
   override def isWrapperFor(iface: Class[_]): Boolean =
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_METADATA, "isWrapperFor not supported")
+    throw new LinkisSQLException(
+      LinkisSQLErrorCode.NOSUPPORT_METADATA,
+      "isWrapperFor not supported"
+    )
 
 }

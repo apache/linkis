@@ -465,6 +465,21 @@
       <artifactId>mongo-spark-connector_${scala.binary.version}</artifactId>
       <version>3.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.elasticsearch</groupId>
+      <artifactId>elasticsearch-spark-30_${scala.binary.version}</artifactId>
+      <version>7.17.7</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-sql_2.12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-catalyst_2.12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>

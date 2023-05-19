@@ -46,6 +46,7 @@ public class PluginUtil {
     classMap.put("file", FileSource.class);
     classMap.put("redis", RedisSource.class);
     classMap.put("mongo", MongoSource.class);
+    classMap.put("elasticsearch", ElasticsearchSource.class);
     return classMap;
   }
 
@@ -63,6 +64,7 @@ public class PluginUtil {
     classMap.put("file", FileSink.class);
     classMap.put("redis", RedisSink.class);
     classMap.put("mongo", MongoSink.class);
+    classMap.put("elasticsearch", ElasticsearchSink.class);
     return classMap;
   }
 

@@ -3,6 +3,7 @@
 
 | Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
+|spark|linkis.spark.etl.support.hudi|false|spark.etl.support.hudi|
 |spark|linkis.bgservice.store.prefix|hdfs:///tmp/bdp-ide/|bgservice.store.prefix|
 |spark|linkis.bgservice.store.suffix|  |bgservice.store.suffix|
 |spark|wds.linkis.dolphin.decimal.precision|32 |dolphin.decimal.precision|

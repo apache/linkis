@@ -45,6 +45,8 @@ public class PluginUtil {
     classMap.put("jdbc", JdbcSource.class);
     classMap.put("file", FileSource.class);
     classMap.put("redis", RedisSource.class);
+    classMap.put("datalake", DataLakeSource.class);
+    classMap.put("rocketmq", RocketmqSource.class);
     classMap.put("kafka", KafkaSource.class);
     return classMap;
   }
@@ -62,6 +64,8 @@ public class PluginUtil {
     classMap.put("hive", HiveSink.class);
     classMap.put("file", FileSink.class);
     classMap.put("redis", RedisSink.class);
+    classMap.put("datalake", DataLakeSink.class);
+    classMap.put("rocketmq", RocketmqSink.class);
     classMap.put("kafka", KafkaSink.class);
     return classMap;
   }

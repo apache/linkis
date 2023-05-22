@@ -29,7 +29,7 @@ import org.apache.linkis.ecm.server.listener.EngineConnLaunchStatusChangeEvent
 import org.apache.linkis.ecm.server.service.{EngineConnLaunchService, ResourceLocalizationService}
 import org.apache.linkis.ecm.server.util.ECMUtils
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
-import org.apache.linkis.governance.common.utils.JobUtils
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus.Failed
 import org.apache.linkis.manager.common.entity.node.{AMEngineNode, EngineNode}
@@ -61,8 +61,9 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
   }
 
   override def launchEngineConn(request: EngineConnLaunchRequest, duration: Long): EngineNode = {
-    // 1.创建engineConn和runner,launch 并设置基础属性
+    // 1.Create engineConn and runner, launch and set basic properties
     val taskId = JobUtils.getJobIdFromStringMap(request.creationDesc.properties)
+    LoggerUtils.setJobIdMDC(taskId)
     logger.info("TaskId: {} try to launch a new EngineConn with {}.", taskId: Any, request: Any)
     val conn = createEngineConn
     val runner = createEngineConnLaunchRunner
@@ -77,9 +78,9 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     conn.setStatus(NodeStatus.Starting)
     conn.setEngineConnInfo(new EngineConnInfo)
     conn.setEngineConnManagerEnv(launch.getEngineConnManagerEnv())
-    // 2.资源本地化，并且设置ecm的env环境信息
+    // 2.Resource localization, and set the env environment information of ecm
     getResourceLocalizationServie.handleInitEngineConnResources(request, conn)
-    // 4.run
+    // 3.run
     Utils.tryCatch {
       beforeLaunch(request, conn, duration)
       runner.run()
@@ -95,15 +96,19 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       afterLaunch(request, conn, duration)
 
       val future = Future {
+        LoggerUtils.setJobIdMDC(taskId)
         logger.info(
           "TaskId: {} with request {} wait engineConn {} start",
           Array(taskId, request, conn.getServiceInstance): _*
         )
-        waitEngineConnStart(request, conn, duration)
+        Utils.tryFinally(waitEngineConnStart(request, conn, duration)) {
+          LoggerUtils.removeJobIdMDC()
+        }
       }
 
       future onComplete {
         case Failure(t) =>
+          LoggerUtils.setJobIdMDC(taskId)
           logger.error(
             "TaskId: {} init {} failed. {} with request {}",
             Array(
@@ -118,7 +123,9 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
           LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
             EngineConnLaunchStatusChangeEvent(conn.getTickedId, Failed)
           )
+          LoggerUtils.removeJobIdMDC()
         case Success(_) =>
+          LoggerUtils.setJobIdMDC(taskId)
           logger.info(
             "TaskId: {} init {} succeed. {} with request {}",
             Array(
@@ -130,6 +137,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
               request
             ): _*
           )
+          LoggerUtils.removeJobIdMDC()
       }
     } { t =>
       logger.error(
@@ -159,8 +167,10 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       LinkisECMApplication.getContext.getECMSyncListenerBus.postToAll(
         EngineConnLaunchStatusChangeEvent(conn.getTickedId, Failed)
       )
+      LoggerUtils.removeJobIdMDC()
       throw t
     }
+    LoggerUtils.removeJobIdMDC()
     val engineNode = new AMEngineNode()
     engineNode.setLabels(conn.getLabels)
 

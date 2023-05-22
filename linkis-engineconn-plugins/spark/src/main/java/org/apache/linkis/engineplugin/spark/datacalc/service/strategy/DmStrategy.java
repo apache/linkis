@@ -15,28 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.jdbc
+package org.apache.linkis.engineplugin.spark.datacalc.service.strategy;
 
-import org.apache.linkis.common.exception.ErrorException
+public class DmStrategy extends NormalStrategy {
 
-class UJESSQLException(errorCode: UJESSQLErrorCode)
-    extends ErrorException(errorCode.getCode, errorCode.getMsg) {
-
-  def this(errorCode: UJESSQLErrorCode, msg: String) {
-    this(errorCode)
-    setErrCode(errorCode.getCode)
-    setDesc(msg)
+  @Override
+  public String defaultDriver() {
+    return "dm.jdbc.driver.DmDriver";
   }
 
-  /**
-   * add to deal with errorinfo derived from jobInfo
-   * @param errorCode
-   * @param msg
-   */
-  def this(errorCode: Int, msg: String) {
-    this(UJESSQLErrorCode.ERRORINFO_FROM_JOBINFO)
-    setDesc(msg)
-    setErrCode(errorCode)
+  @Override
+  public String defaultPort() {
+    return "5236";
   }
 
+  @Override
+  public String getDatabaseType() {
+    return "dm";
+  }
 }

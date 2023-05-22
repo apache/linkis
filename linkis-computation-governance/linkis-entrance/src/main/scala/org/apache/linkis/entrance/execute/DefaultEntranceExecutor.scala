@@ -25,6 +25,7 @@ import org.apache.linkis.entrance.orchestrator.EntranceOrchestrationFactory
 import org.apache.linkis.entrance.utils.JobHistoryHelper
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task.ResponseTaskStatus
+import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.CodeLanguageLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -106,6 +107,7 @@ class DefaultEntranceExecutor(id: Long)
       entranceExecuteRequest: EntranceExecuteRequest,
       orchestration: Orchestration
   ): Unit = {
+    LoggerUtils.setJobIdMDC(getId.toString)
     orchestrationResponse match {
       case succeedResponse: SucceedTaskResponse =>
         succeedResponse match {
@@ -184,6 +186,7 @@ class DefaultEntranceExecutor(id: Long)
           _.onLogUpdate(entranceExecuteRequest.getJob, LogUtils.generateERROR(msg))
         )
     }
+    LoggerUtils.removeJobIdMDC()
   }
 
   def requestToComputationJobReq(entranceExecuteRequest: EntranceExecuteRequest): JobReq = {
@@ -238,11 +241,13 @@ class DefaultEntranceExecutor(id: Long)
   }
 
   override def kill(): Boolean = {
+    LoggerUtils.setJobIdMDC(getId.toString)
     logger.info("Entrance start to kill job {} invoke Orchestrator ", this.getId)
     Utils.tryAndWarn {
       val msg = s"You job with id  was cancelled by user!"
       getRunningOrchestrationFuture.foreach(_.cancel(msg))
     }
+    LoggerUtils.removeJobIdMDC()
     true
   }
 

@@ -224,7 +224,7 @@ abstract class EntranceServer extends Logging {
       entranceWebSocketService
     } else None
 
-  def getAllUndoneTask(filterWords: String): Array[EntranceJob] = {
+  def getAllUndoneTask(filterWords: String, ecType: String = null): Array[EntranceJob] = {
     val consumers = getEntranceContext
       .getOrCreateScheduler()
       .getSchedulerContext
@@ -232,7 +232,14 @@ abstract class EntranceServer extends Logging {
       .listConsumers()
       .toSet
     val filterConsumer = if (StringUtils.isNotBlank(filterWords)) {
-      consumers.filter(_.getGroup.getGroupName.contains(filterWords))
+      if (StringUtils.isNotBlank(ecType)) {
+        consumers.filter(consumer =>
+          consumer.getGroup.getGroupName.contains(filterWords) && consumer.getGroup.getGroupName
+            .contains(ecType)
+        )
+      } else {
+        consumers.filter(_.getGroup.getGroupName.contains(filterWords))
+      }
     } else {
       consumers
     }

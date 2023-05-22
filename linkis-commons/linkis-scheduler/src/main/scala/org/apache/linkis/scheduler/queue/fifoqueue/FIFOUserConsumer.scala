@@ -73,6 +73,8 @@ class FIFOUserConsumer(
   override def getRunningEvents: Array[SchedulerEvent] =
     getEvents(e => e.isRunning || e.isWaitForRetry)
 
+  protected def getSchedulerContext: SchedulerContext = schedulerContext
+
   private def getEvents(op: SchedulerEvent => Boolean): Array[SchedulerEvent] = {
     val result = ArrayBuffer[SchedulerEvent]()
     runningJobs.filter(_ != null).filter(x => op(x)).foreach(result += _)
@@ -82,9 +84,9 @@ class FIFOUserConsumer(
   override def run(): Unit = {
     Thread.currentThread().setName(s"${toString}Thread")
     logger.info(s"$toString thread started!")
-    while (!terminate) {
-      Utils.tryAndError(loop())
-      Utils.tryAndError(Thread.sleep(10))
+    while (!terminate) Utils.tryAndError {
+      loop()
+      Thread.sleep(10)
     }
     logger.info(s"$toString thread stopped!")
   }
@@ -92,14 +94,18 @@ class FIFOUserConsumer(
   protected def askExecutorGap(): Unit = {}
 
   /**
-   * Task scheduling interception is used to judge the rules of task operation, and to judge other task rules based on Group. For example, Entrance makes Creator-level task judgment.
-   * Note: Only when the interception condition is met can it return, otherwise the rule will be invalid
+   * Task scheduling interception is used to judge the rules of task operation, and to judge other
+   * task rules based on Group. For example, Entrance makes Creator-level task judgment.
    */
-  protected def runScheduleIntercept(): Unit = {
-
+  protected def runScheduleIntercept(): Boolean = {
+    true
   }
 
   protected def loop(): Unit = {
+    if (!runScheduleIntercept()) {
+      Utils.tryQuietly(Thread.sleep(1000))
+      return
+    }
     var isRetryJob = false
     def getWaitForRetryEvent: Option[SchedulerEvent] = {
       val waitForRetryJobs = runningJobs.filter(job => job != null && job.isJobCanRetry)
@@ -127,7 +133,12 @@ class FIFOUserConsumer(
           if (
               takeEvent.exists(e =>
                 Utils.tryCatch(e.turnToScheduled()) { t =>
-                  takeEvent.get.asInstanceOf[Job].onFailure("Failed to change the job status to Scheduled(Job状态翻转为Scheduled失败)", t)
+                  takeEvent.get
+                    .asInstanceOf[Job]
+                    .onFailure(
+                      "Failed to change the job status to Scheduled(Job状态翻转为Scheduled失败)",
+                      t
+                    )
                   false
                 }
               )

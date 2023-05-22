@@ -20,19 +20,15 @@ package org.apache.linkis.entrance.orchestrator.plugin
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.entrance.conf.EntranceConfiguration
+import org.apache.linkis.entrance.utils.EntranceUtils
 import org.apache.linkis.governance.common.protocol.conf.{
   RequestQueryEngineConfigWithGlobalConfig,
   ResponseQueryConfig
 }
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
-import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
 import org.apache.linkis.orchestrator.plugin.UserParallelOrchestratorPlugin
 import org.apache.linkis.rpc.Sender
-import org.apache.linkis.server.BDPJettyServerHelper
-
-import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.TimeUnit
@@ -42,10 +38,6 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlugin with Logging {
-
-  private val SPLIT = ","
-
-  private val labelFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
 
   private def getDefaultMaxRuningNum: Int = {
     EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()
@@ -62,7 +54,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     .build(new CacheLoader[String, Integer]() {
 
       override def load(key: String): Integer = {
-        val (userCreatorLabel, engineTypeLabel) = fromKeyGetLabels(key)
+        val (userCreatorLabel, engineTypeLabel) = EntranceUtils.fromKeyGetLabels(key)
         val keyAndValue = Utils.tryAndWarnMsg {
           sender
             .ask(RequestQueryEngineConfigWithGlobalConfig(userCreatorLabel, engineTypeLabel))
@@ -75,10 +67,8 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
             null == keyAndValue || !keyAndValue
               .containsKey(EntranceConfiguration.WDS_LINKIS_INSTANCE.key)
         ) {
-          logger.error(
-            s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," +
-              s"will use default value ${EntranceConfiguration.WDS_LINKIS_INSTANCE.getHotValue()}。All config map: ${BDPJettyServerHelper.gson
-                .toJson(keyAndValue)}"
+          logger.warn(
+            s"cannot found user configuration key:${EntranceConfiguration.WDS_LINKIS_INSTANCE.key}," + s"will use default value "
           )
         }
         val maxRunningJobs = EntranceConfiguration.WDS_LINKIS_INSTANCE.getValue(keyAndValue, true)
@@ -102,27 +92,7 @@ class EntranceUserParallelOrchestratorPlugin extends UserParallelOrchestratorPlu
     if (null == userCreatorLabel || null == engineTypeLabel) {
       return getDefaultMaxRuningNum
     }
-    configCache.get(getKey(userCreatorLabel, engineTypeLabel))
-  }
-
-  private def getKey(
-      userCreatorLabel: UserCreatorLabel,
-      engineTypeLabel: EngineTypeLabel
-  ): String = {
-    userCreatorLabel.getStringValue + SPLIT + engineTypeLabel.getStringValue
-  }
-
-  private def fromKeyGetLabels(key: String): (UserCreatorLabel, EngineTypeLabel) = {
-    if (StringUtils.isBlank(key)) (null, null)
-    else {
-      val labelStringValues = key.split(SPLIT)
-      if (labelStringValues.length < 2) return (null, null)
-      val userCreatorLabel = labelFactory
-        .createLabel[UserCreatorLabel](LabelKeyConstant.USER_CREATOR_TYPE_KEY, labelStringValues(0))
-      val engineTypeLabel = labelFactory
-        .createLabel[EngineTypeLabel](LabelKeyConstant.ENGINE_TYPE_KEY, labelStringValues(1))
-      (userCreatorLabel, engineTypeLabel)
-    }
+    configCache.get(EntranceUtils.getUserCreatorEcTypeKey(userCreatorLabel, engineTypeLabel))
   }
 
   override def isReady: Boolean = true

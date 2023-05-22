@@ -30,6 +30,7 @@
     <scala.binary.version>2.12</scala.binary.version>
     <delta.version>2.0.2</delta.version>
     <hudi.version>0.13.0</hudi.version>
+    <solr.version>8.11.0</solr.version>
   </properties>
 
   <dependencies>
@@ -115,6 +116,61 @@
       <groupId>org.apache.hudi</groupId>
       <artifactId>hudi-spark3.2-bundle_${scala.binary.version}</artifactId>
       <version>${hudi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.lucidworks.spark</groupId>
+      <artifactId>spark-solr</artifactId>
+      <version>4.0.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-solrj</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.solr</groupId>
+          <artifactId>solr-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-solrj</artifactId>
+      <version>${solr.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>${solr.version}</version>
+      <type>jar</type>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.janino</groupId>
+          <artifactId>commons-compiler</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.janino</groupId>
+          <artifactId>janino</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-auth</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs-client</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 

@@ -47,6 +47,7 @@ public class PluginUtil {
     classMap.put("redis", RedisSource.class);
     classMap.put("datalake", DataLakeSource.class);
     classMap.put("rocketmq", RocketmqSource.class);
+    classMap.put("solr", SolrSource.class);
     return classMap;
   }
 
@@ -65,6 +66,7 @@ public class PluginUtil {
     classMap.put("redis", RedisSink.class);
     classMap.put("datalake", DataLakeSink.class);
     classMap.put("rocketmq", RocketmqSink.class);
+    classMap.put("solr", SolrSink.class);
     return classMap;
   }
 

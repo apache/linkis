@@ -77,6 +77,9 @@ object GovernanceCommonConf {
 
   val FAKE_PROGRESS: Float = CommonVars[Float]("linkis.job.fake.progress", 0.99f).getValue
 
+  val MDC_ENABLED =
+    CommonVars("linkis.mdc.log.enabled", true, "MDC Switch").getValue
+
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }

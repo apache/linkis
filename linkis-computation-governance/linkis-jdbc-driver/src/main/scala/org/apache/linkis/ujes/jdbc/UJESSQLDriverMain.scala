@@ -78,14 +78,17 @@ class UJESSQLDriverMain extends Driver with Logging {
               false
             case Array(key, _) =>
               if (StringUtils.isBlank(key)) {
-                throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
+                throw new LinkisSQLException(
+                  LinkisSQLErrorCode.BAD_URL,
+                  "bad url for params: " + url
+                )
               } else true
             case _ =>
-              throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
+              throw new LinkisSQLException(LinkisSQLErrorCode.BAD_URL, "bad url for params: " + url)
           }
           props.setProperty(PARAMS, kvs.map(_.mkString(KV_SPLIT)).mkString(PARAM_SPLIT))
         }
-      case _ => throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)
+      case _ => throw new LinkisSQLException(LinkisSQLErrorCode.BAD_URL, "bad url: " + url)
     }
     props
   }

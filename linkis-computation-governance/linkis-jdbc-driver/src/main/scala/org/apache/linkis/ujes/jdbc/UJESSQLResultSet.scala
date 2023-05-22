@@ -241,7 +241,7 @@ class UJESSQLResultSet(
       }
     } else {
       dataType.toLowerCase(Locale.getDefault) match {
-        case null => throw new UJESSQLException(UJESSQLErrorCode.METADATA_EMPTY)
+        case null => throw new LinkisSQLException(LinkisSQLErrorCode.METADATA_EMPTY)
         case "string" => value.toString
         case "short" => value.toShort
         case "int" => value.toInt
@@ -260,8 +260,8 @@ class UJESSQLResultSet(
         case "array" => value.toArray
         case "map" => value
         case _ =>
-          throw new UJESSQLException(
-            UJESSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
+          throw new LinkisSQLException(
+            LinkisSQLErrorCode.PREPARESTATEMENT_TYPEERROR,
             s"Can't infer the SQL type to use for an instance of ${dataType}. Use getObject() with an explicit Types value to specify the type to use"
           )
       }
@@ -270,15 +270,15 @@ class UJESSQLResultSet(
 
   private def getColumnValue(columnIndex: Int): Any = {
     if (currentRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "No row found.")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "No row found.")
     } else if (currentRow.size() <= 0) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.RESULTSET_ROWERROR,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.RESULTSET_ROWERROR,
         "RowSet does not contain any columns!"
       )
     } else if (columnIndex > currentRow.size()) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.RESULTSET_ROWERROR,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.RESULTSET_ROWERROR,
         s" Invalid columnIndex: ${columnIndex}"
       )
     } else {
@@ -293,7 +293,7 @@ class UJESSQLResultSet(
   override def getString(columnIndex: Int): String = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case c: Character => Character.toString(c)
@@ -305,7 +305,7 @@ class UJESSQLResultSet(
   override def getBoolean(columnIndex: Int): Boolean = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case s: String =>
@@ -321,7 +321,7 @@ class UJESSQLResultSet(
   override def getByte(columnIndex: Int): Byte = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Byte]
     }
@@ -330,7 +330,7 @@ class UJESSQLResultSet(
   override def getShort(columnIndex: Int): Short = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Short]
     }
@@ -339,7 +339,7 @@ class UJESSQLResultSet(
   override def getInt(columnIndex: Int): Int = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case i: Integer => i.asInstanceOf[Int]
@@ -352,7 +352,7 @@ class UJESSQLResultSet(
   override def getLong(columnIndex: Int): Long = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case i: Integer => i.longValue()
@@ -365,7 +365,7 @@ class UJESSQLResultSet(
   override def getFloat(columnIndex: Int): Float = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Float]
     }
@@ -374,7 +374,7 @@ class UJESSQLResultSet(
   override def getDouble(columnIndex: Int): Double = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case _: String => 0.0d
@@ -387,7 +387,7 @@ class UJESSQLResultSet(
     val mc = new MathContext(scale)
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any match {
         case double: Double => new java.math.BigDecimal(double).round(mc)
@@ -401,7 +401,7 @@ class UJESSQLResultSet(
   override def getBytes(columnIndex: Int): Array[Byte] = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Array[Byte]]
     }
@@ -412,35 +412,35 @@ class UJESSQLResultSet(
     val any = getColumnValue(columnIndex)
     logger.info(s"the value of Date is $any")
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Date]
     }
   }
 
   override def getTime(columnIndex: Int): Time = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getTimestamp(columnIndex: Int): Timestamp = {
     val any = getColumnValue(columnIndex)
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else {
       any.asInstanceOf[Timestamp]
     }
   }
 
   override def getAsciiStream(columnIndex: Int): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getUnicodeStream(columnIndex: Int): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getBinaryStream(columnIndex: Int): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getString(columnLabel: String): String = {
@@ -488,7 +488,7 @@ class UJESSQLResultSet(
   }
 
   override def getTime(columnLabel: String): Time = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getTimestamp(columnLabel: String): Timestamp = {
@@ -496,15 +496,15 @@ class UJESSQLResultSet(
   }
 
   override def getAsciiStream(columnLabel: String): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getUnicodeStream(columnLabel: String): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getBinaryStream(columnLabel: String): InputStream = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getWarnings: SQLWarning = {
@@ -516,7 +516,7 @@ class UJESSQLResultSet(
   }
 
   override def getCursorName: String = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getMetaData: UJESSQLResultSetMetaData = {
@@ -546,19 +546,19 @@ class UJESSQLResultSet(
       }
     }
     if (columnIndex == -1) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.RESULTSET_ROWERROR,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.RESULTSET_ROWERROR,
         s"can not find column: ${columnLabel}"
       )
     } else columnIndex
   }
 
   override def getCharacterStream(columnIndex: Int): Reader = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getCharacterStream(columnLabel: String): Reader = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getBigDecimal(columnIndex: Int): java.math.BigDecimal = {
@@ -571,31 +571,31 @@ class UJESSQLResultSet(
 
   override def isBeforeFirst: Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else currentRowCursor == -1
   }
 
   override def isAfterLast: Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else currentRowCursor > resultSetRow.size() - 1
   }
 
   override def isFirst: Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else currentRowCursor == 0
   }
 
   override def isLast: Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else currentRowCursor == resultSetRow.size() - 1
   }
 
   override def beforeFirst(): Unit = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else {
       currentRowCursor = -1
       updateCurrentRow(currentRowCursor)
@@ -604,7 +604,7 @@ class UJESSQLResultSet(
 
   override def afterLast(): Unit = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else {
       currentRowCursor = resultSetRow.size()
       updateCurrentRow(currentRowCursor)
@@ -631,7 +631,7 @@ class UJESSQLResultSet(
 
   override def getRow: Int = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else {
       currentRowCursor + 1
     }
@@ -639,10 +639,10 @@ class UJESSQLResultSet(
 
   override def absolute(row: Int): Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else if (row > resultSetRow.size()) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.RESULTSET_ROWERROR,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.RESULTSET_ROWERROR,
         "The specified number of rows is greater than the maximum number of rows"
       )
     } else {
@@ -658,10 +658,10 @@ class UJESSQLResultSet(
 
   override def relative(rows: Int): Boolean = {
     if (resultSetRow == null) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_NULL)
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_NULL)
     } else if (rows > resultSetRow.size()) {
-      throw new UJESSQLException(
-        UJESSQLErrorCode.RESULTSET_ROWERROR,
+      throw new LinkisSQLException(
+        LinkisSQLErrorCode.RESULTSET_ROWERROR,
         "The specified number of rows is greater than the maximum number of rows"
       )
     } else {
@@ -683,11 +683,11 @@ class UJESSQLResultSet(
   }
 
   override def setFetchDirection(direction: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getFetchDirection: Int = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def setFetchSize(rows: Int): Unit = {
@@ -707,248 +707,248 @@ class UJESSQLResultSet(
   }
 
   override def rowUpdated(): Boolean = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def rowInserted(): Boolean = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def rowDeleted(): Boolean = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNull(columnIndex: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBoolean(columnIndex: Int, x: Boolean): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateByte(columnIndex: Int, x: Byte): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateShort(columnIndex: Int, x: Short): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateInt(columnIndex: Int, x: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateLong(columnIndex: Int, x: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateFloat(columnIndex: Int, x: Float): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateDouble(columnIndex: Int, x: Double): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBigDecimal(columnIndex: Int, x: java.math.BigDecimal): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateString(columnIndex: Int, x: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBytes(columnIndex: Int, x: Array[Byte]): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateDate(columnIndex: Int, x: Date): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateTime(columnIndex: Int, x: Time): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateTimestamp(columnIndex: Int, x: Timestamp): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnIndex: Int, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnIndex: Int, x: Reader, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateObject(columnIndex: Int, x: scala.Any, scaleOrLength: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateObject(columnIndex: Int, x: scala.Any): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNull(columnLabel: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBoolean(columnLabel: String, x: Boolean): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateByte(columnLabel: String, x: Byte): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateShort(columnLabel: String, x: Short): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateInt(columnLabel: String, x: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateLong(columnLabel: String, x: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateFloat(columnLabel: String, x: Float): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateDouble(columnLabel: String, x: Double): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBigDecimal(columnLabel: String, x: java.math.BigDecimal): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateString(columnLabel: String, x: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBytes(columnLabel: String, x: Array[Byte]): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateDate(columnLabel: String, x: Date): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateTime(columnLabel: String, x: Time): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateTimestamp(columnLabel: String, x: Timestamp): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnLabel: String, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnLabel: String, x: InputStream, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnLabel: String, reader: Reader, length: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateObject(columnLabel: String, x: scala.Any, scaleOrLength: Int): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateObject(columnLabel: String, x: scala.Any): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def insertRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def deleteRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def refreshRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def cancelRowUpdates(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def moveToInsertRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def moveToCurrentRow(): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getStatement: Statement = {
     if (statement != null && !hasClosed) {
       statement.asInstanceOf[Statement]
-    } else throw new UJESSQLException(UJESSQLErrorCode.STATEMENT_CLOSED)
+    } else throw new LinkisSQLException(LinkisSQLErrorCode.STATEMENT_CLOSED)
   }
 
   override def getObject(columnIndex: Int, map: util.Map[String, Class[_]]): AnyRef = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getRef(columnIndex: Int): Ref = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getBlob(columnIndex: Int): Blob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getClob(columnIndex: Int): Clob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getArray(columnIndex: Int): sql.Array = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getObject(columnLabel: String, map: util.Map[String, Class[_]]): AnyRef = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getRef(columnLabel: String): Ref = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getBlob(columnLabel: String): Blob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getClob(columnLabel: String): Clob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getArray(columnLabel: String): sql.Array = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   private def getDate(columnIndex: Int, localTimeZone: DateTimeZone): Date = {
     val value = getColumnValue(columnIndex)
     logger.info(s"the value of value is $value and the value of localTimeZone is $localTimeZone")
     if (wasNull()) {
-      throw new UJESSQLException(UJESSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
+      throw new LinkisSQLException(LinkisSQLErrorCode.RESULTSET_ROWERROR, "Type is null")
     } else new Date(DATE_FORMATTER.withZone(localTimeZone).parseMillis(String.valueOf(value)));
   }
 
@@ -962,11 +962,11 @@ class UJESSQLResultSet(
   }
 
   override def getTime(columnIndex: Int, cal: Calendar): Time = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getTime(columnLabel: String, cal: Calendar): Time = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   private def getTimestamp(columnIndex: Int, localTimeZone: DateTimeZone): Timestamp = {
@@ -990,63 +990,63 @@ class UJESSQLResultSet(
   }
 
   override def getURL(columnIndex: Int): URL = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getURL(columnLabel: String): URL = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateRef(columnIndex: Int, x: Ref): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateRef(columnLabel: String, x: Ref): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnIndex: Int, x: Blob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnLabel: String, x: Blob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnIndex: Int, x: Clob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnLabel: String, x: Clob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateArray(columnIndex: Int, x: sql.Array): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateArray(columnLabel: String, x: sql.Array): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getRowId(columnIndex: Int): RowId = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getRowId(columnLabel: String): RowId = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateRowId(columnIndex: Int, x: RowId): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateRowId(columnLabel: String, x: RowId): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getHoldability: Int = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def isClosed: Boolean = {
@@ -1054,187 +1054,187 @@ class UJESSQLResultSet(
   }
 
   override def updateNString(columnIndex: Int, nString: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNString(columnLabel: String, nString: String): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnIndex: Int, nClob: NClob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnLabel: String, nClob: NClob): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNClob(columnIndex: Int): NClob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNClob(columnLabel: String): NClob = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getSQLXML(columnIndex: Int): SQLXML = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getSQLXML(columnLabel: String): SQLXML = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateSQLXML(columnIndex: Int, xmlObject: SQLXML): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateSQLXML(columnLabel: String, xmlObject: SQLXML): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNString(columnIndex: Int): String = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNString(columnLabel: String): String = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNCharacterStream(columnIndex: Int): Reader = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getNCharacterStream(columnLabel: String): Reader = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNCharacterStream(columnIndex: Int, x: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNCharacterStream(columnLabel: String, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnIndex: Int, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnIndex: Int, x: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnLabel: String, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnLabel: String, x: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnLabel: String, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnIndex: Int, inputStream: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnLabel: String, inputStream: InputStream, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnIndex: Int, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnLabel: String, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnIndex: Int, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnLabel: String, reader: Reader, length: Long): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNCharacterStream(columnIndex: Int, x: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNCharacterStream(columnLabel: String, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnIndex: Int, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnIndex: Int, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnIndex: Int, x: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateAsciiStream(columnLabel: String, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBinaryStream(columnLabel: String, x: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateCharacterStream(columnLabel: String, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnIndex: Int, inputStream: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateBlob(columnLabel: String, inputStream: InputStream): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnIndex: Int, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateClob(columnLabel: String, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnIndex: Int, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def updateNClob(columnLabel: String, reader: Reader): Unit = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getObject[T](columnIndex: Int, `type`: Class[T]): T = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def getObject[T](columnLabel: String, `type`: Class[T]): T = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def unwrap[T](iface: Class[T]): T = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
   override def isWrapperFor(iface: Class[_]): Boolean = {
-    throw new UJESSQLException(UJESSQLErrorCode.NOSUPPORT_RESULTSET)
+    throw new LinkisSQLException(LinkisSQLErrorCode.NOSUPPORT_RESULTSET)
   }
 
 }

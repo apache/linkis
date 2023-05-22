@@ -17,26 +17,21 @@
 
 package org.apache.linkis.ujes.jdbc
 
-import org.apache.linkis.common.exception.ErrorException
+import java.sql.SQLException
 
-class UJESSQLException(errorCode: UJESSQLErrorCode)
-    extends ErrorException(errorCode.getCode, errorCode.getMsg) {
+class LinkisSQLException(msg: String, code: String, vendorCode: Int)
+    extends SQLException(msg, code, vendorCode) {
 
-  def this(errorCode: UJESSQLErrorCode, msg: String) {
-    this(errorCode)
-    setErrCode(errorCode.getCode)
-    setDesc(msg)
+  def this(errorCode: LinkisSQLErrorCode, msg: String) {
+    this(msg, errorCode.getCode.toString, 0)
   }
 
-  /**
-   * add to deal with errorinfo derived from jobInfo
-   * @param errorCode
-   * @param msg
-   */
-  def this(errorCode: Int, msg: String) {
-    this(UJESSQLErrorCode.ERRORINFO_FROM_JOBINFO)
-    setDesc(msg)
-    setErrCode(errorCode)
+  def this(errorCode: LinkisSQLErrorCode) {
+    this(errorCode.getMsg, errorCode.getCode.toString, 0)
+  }
+
+  def this(msg: String, code: String) {
+    this(msg, code, 0)
   }
 
 }

@@ -46,6 +46,7 @@ public class PluginUtil {
     classMap.put("file", FileSource.class);
     classMap.put("redis", RedisSource.class);
     classMap.put("datalake", DataLakeSource.class);
+    classMap.put("rocketmq", RocketmqSource.class);
     return classMap;
   }
 
@@ -63,6 +64,7 @@ public class PluginUtil {
     classMap.put("file", FileSink.class);
     classMap.put("redis", RedisSink.class);
     classMap.put("datalake", DataLakeSink.class);
+    classMap.put("rocketmq", RocketmqSink.class);
     return classMap;
   }
 

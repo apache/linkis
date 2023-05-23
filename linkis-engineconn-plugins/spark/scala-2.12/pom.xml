@@ -422,6 +422,50 @@
           <artifactId>commons-io</artifactId>
           <groupId>commons-io</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>commons-lang3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-text</artifactId>
+          <groupId>org.apache.commons</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-client</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-framework</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>curator-recipes</artifactId>
+          <groupId>org.apache.curator</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>json-path</artifactId>
+          <groupId>com.jayway.jsonpath</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kerb-core</artifactId>
+          <groupId>org.apache.kerby</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kerb-util</artifactId>
+          <groupId>org.apache.kerby</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kerby-asn1</artifactId>
+          <groupId>org.apache.kerby</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kerby-pkix</artifactId>
+          <groupId>org.apache.kerby</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -504,6 +548,10 @@
         <exclusion>
           <groupId>org.eclipse.jetty.http2</groupId>
           <artifactId>http2-http-client-transport</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-math3</artifactId>
+          <groupId>org.apache.commons</groupId>
         </exclusion>
       </exclusions>
     </dependency>

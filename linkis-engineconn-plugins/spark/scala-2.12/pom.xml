@@ -518,6 +518,54 @@
           <artifactId>opentracing-util</artifactId>
           <groupId>io.opentracing</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>objenesis</artifactId>
+          <groupId>org.objenesis</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>minlog</artifactId>
+          <groupId>com.esotericsoftware</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-buffer</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-codec</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-common</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-handler</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-resolver</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-transport</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-transport-classes-epoll</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-transport-native-epoll</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>netty-transport-native-unix-common</artifactId>
+          <groupId>io.netty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>kryo-shaded</artifactId>
+          <groupId>com.esotericsoftware</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

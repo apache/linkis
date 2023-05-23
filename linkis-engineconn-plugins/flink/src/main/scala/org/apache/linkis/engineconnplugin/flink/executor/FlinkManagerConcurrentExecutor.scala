@@ -26,6 +26,8 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
+import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary
+import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse}
 
@@ -41,6 +43,14 @@ class FlinkManagerConcurrentExecutor(
       onceExecutorExecutionContext: OnceExecutorExecutionContext
   ): Unit = {
     logger.info("Succeed to init FlinkManagerExecutor.")
+  }
+
+  override def execute(
+      onceExecutorExecutionContext: OnceExecutorExecutionContext
+  ): ExecuteResponse = {
+    val msg = "Should not execte with FlinkManagerExecutor."
+    logger.error(msg)
+    throw new JobExecutionException(FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB.getErrorCode, msg)
   }
 
   override def getId: String = id.toString

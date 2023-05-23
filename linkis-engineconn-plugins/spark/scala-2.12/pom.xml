@@ -566,6 +566,58 @@
           <artifactId>kryo-shaded</artifactId>
           <groupId>com.esotericsoftware</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>org.ow2.asm</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>caffeine</artifactId>
+          <groupId>com.github.ben-manes.caffeine</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>disruptor</artifactId>
+          <groupId>com.lmax</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>eigenbase-properties</artifactId>
+          <groupId>net.hydromatic</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hppc</artifactId>
+          <groupId>com.carrotsearch</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>htrace-core4</artifactId>
+          <groupId>org.apache.htrace</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jackson-dataformat-smile</artifactId>
+          <groupId>com.fasterxml.jackson.dataformat</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>java-semver</artifactId>
+          <groupId>com.github.zafarkhaja</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>javax.servlet-api</artifactId>
+          <groupId>javax.servlet</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jcl-over-slf4j</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>joda-convert</artifactId>
+          <groupId>org.joda</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jose4j</artifactId>
+          <groupId>org.bitbucket.b_c</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

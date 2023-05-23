@@ -362,6 +362,27 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     return new ArrayList<>();
   }
 
+  @Override
+  public String getSparkDdlSqlByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
+      throws ErrorException {
+    DsInfoResponse dsInfoResponse =
+        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+    if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
+      return invokeMetaMethod(
+          dsInfoResponse.getDsType(),
+          "getSparkDdlSql",
+          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+          String.class);
+    }
+    return "";
+  }
+
   /**
    * Request to get data source information (type and connection parameters)
    *

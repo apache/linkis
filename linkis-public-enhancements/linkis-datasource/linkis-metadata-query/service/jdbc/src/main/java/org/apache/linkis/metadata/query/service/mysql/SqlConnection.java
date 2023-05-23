@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.query.service.mysql;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -131,6 +132,19 @@ public class SqlConnection implements Closeable {
       closeResource(null, ps, rs);
     }
     return columns;
+  }
+
+  public String getSparkDdlSql(String database, String table) {
+    String url =
+        String.format(
+            SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    return String.format(
+        SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
+        table,
+        url,
+        table,
+        connectMessage.username,
+        connectMessage.password);
   }
 
   /**

@@ -68,6 +68,13 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
   }
 
   @Override
+  public String getSparkDdlSql(
+      String operator, Map<String, Object> params, String database, String table) {
+    return this.getConnAndRun(
+        operator, params, conn -> this.querySparkDdlSql(conn, database, table));
+  }
+
+  @Override
   public Map<String, String> getPartitionProps(
       String operator,
       Map<String, Object> params,
@@ -147,6 +154,18 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @return
    */
   public Map<String, String> queryTableProps(C connection, String database, String table) {
+    throw new WarnException(-1, "This method is no supported");
+  }
+
+  /**
+   * Get spark ddl sql
+   *
+   * @param connection metadata connection
+   * @param database database
+   * @param table table
+   * @return
+   */
+  public String querySparkDdlSql(C connection, String database, String table) {
     throw new WarnException(-1, "This method is no supported");
   }
 }

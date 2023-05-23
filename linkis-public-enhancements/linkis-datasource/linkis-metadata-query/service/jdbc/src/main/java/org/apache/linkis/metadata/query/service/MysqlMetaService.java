@@ -94,4 +94,13 @@ public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
       throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
     }
   }
+
+  @Override
+  public String querySparkDdlSql(SqlConnection connection, String database, String table) {
+    try {
+      return connection.getSparkDdlSql(database, table);
+    } catch (Exception e) {
+      throw new RuntimeException("Fail to get spark ddl sql (获取sparkDdlSql失败)", e);
+    }
+  }
 }

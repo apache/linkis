@@ -84,4 +84,14 @@ public interface MetadataDbService extends BaseMetadataService {
    */
   List<MetaColumnInfo> getColumns(
       String operator, Map<String, Object> params, String database, String table);
+
+  /**
+   * Get spark ddl sql
+   *
+   * @param params
+   * @param database
+   * @param table
+   * @return
+   */
+  String getSparkDdlSql(String operator, Map<String, Object> params, String database, String table);
 }

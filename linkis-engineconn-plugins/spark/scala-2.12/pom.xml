@@ -391,8 +391,16 @@
           <artifactId>metrics-jvm</artifactId>
         </exclusion>
         <exclusion>
-          <artifactId>woodstox-core-asl</artifactId>
           <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-cli</artifactId>
+          <groupId>commons-cli</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>asm-commons</artifactId>
+          <groupId>org.ow2.asm</groupId>
         </exclusion>
       </exclusions>
     </dependency>

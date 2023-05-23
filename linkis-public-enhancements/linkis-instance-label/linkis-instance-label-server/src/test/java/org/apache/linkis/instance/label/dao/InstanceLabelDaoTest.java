@@ -61,6 +61,11 @@ public class InstanceLabelDaoTest extends BaseDaoTest {
     assertTrue(insPersistenceLabel != null);
   }
 
+  /**
+   * When using the h2 library for testing,if the function(on conflict) is not supported,an error
+   * will be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
+   * conflict）会报错，pg实体库不会报错
+   */
   @Test
   public void testInsertBatch() {
     List<InsPersistenceLabel> labels = new ArrayList<>();

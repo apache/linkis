@@ -30,15 +30,18 @@
         <result column="category" property="category" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <sql id="udf_Tree_List_Insert">
+        parent, name, user_name, description, create_time,update_time, category
+    </sql>
     <sql id="udf_Tree_List">
-        id, `parent`, `name`, `user_name`, `description`, `create_time`,`update_time`, `category`
+        parent, name, user_name, description, create_time,update_time, category
     </sql>
 
     <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFTree">
         INSERT INTO linkis_ps_udf_tree (
-        <include refid="udf_Tree_List"/>
+        <include refid="udf_Tree_List_Insert"/>
         ) VALUES (
-        #{id,jdbcType=BIGINT},#{parent,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
+        #{parent,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
         #{userName,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{category,jdbcType=VARCHAR}
         )
@@ -47,7 +50,7 @@
     <update id="updateTree" parameterType="org.apache.linkis.udf.entity.UDFTree">
         UPDATE linkis_ps_udf_tree
         SET parent = #{parent,jdbcType=BIGINT},
-        `name` = #{name,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
         user_name = #{userName,jdbcType=VARCHAR},
         description=#{description,jdbcType=VARCHAR},
         update_time=#{updateTime,jdbcType=TIMESTAMP}

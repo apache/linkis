@@ -28,3 +28,7 @@ CREATE TABLE `linkis_ps_error_code` (
   `error_type` int(3) DEFAULT '0',
   PRIMARY KEY (`id`)
 );
+
+DELETE FROM linkis_ps_error_code;
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01002','Linkis服务负载过高，请联系管理员扩容','Unexpected end of file from server',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('01001','您的任务没有路由到后台ECM，请联系管理员','The em of labels',0);

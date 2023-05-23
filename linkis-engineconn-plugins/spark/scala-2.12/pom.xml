@@ -466,6 +466,58 @@
           <groupId>org.apache.kerby</groupId>
           <artifactId>kerby-pkix</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>t-digest</artifactId>
+          <groupId>com.tdunning</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>stax2-api</artifactId>
+          <groupId>org.codehaus.woodstox</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>spatial4j</artifactId>
+          <groupId>org.locationtech.spatial4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>s2-geometry-library-java</artifactId>
+          <groupId>io.sgr</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>rrd4j</artifactId>
+          <groupId>org.rrd4j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>re2j</artifactId>
+          <groupId>com.google.re2j</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>protobuf-java</artifactId>
+          <groupId>com.google.protobuf</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>org.restlet.ext.servlet</artifactId>
+          <groupId>org.restlet.jee</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>org.restlet</artifactId>
+          <groupId>org.restlet.jee</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>opentracing-api</artifactId>
+          <groupId>io.opentracing</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>opentracing-noop</artifactId>
+          <groupId>io.opentracing</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>opentracing-util</artifactId>
+          <groupId>io.opentracing</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -552,6 +604,18 @@
         <exclusion>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-math3</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>woodstox-core</artifactId>
+          <groupId>com.fasterxml.woodstox</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>stax2-api</artifactId>
+          <groupId>org.codehaus.woodstox</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
         </exclusion>
       </exclusions>
     </dependency>

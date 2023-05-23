@@ -21,6 +21,7 @@ import org.apache.linkis.engineconn.acessible.executor.service.OperateService
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
+import org.apache.linkis.governance.common.constant.ec.ECConstants._
 import org.apache.linkis.manager.common.operator.Operator
 
 class EngineConnApplicationInfoOperator extends Operator {
@@ -31,10 +32,10 @@ class EngineConnApplicationInfoOperator extends Operator {
     ExecutorManager.getInstance.getReportExecutor match {
       case yarnExecutor: YarnExecutor =>
         Map(
-          "applicationId" -> yarnExecutor.getApplicationId,
-          "applicationUrl" -> yarnExecutor.getApplicationURL,
-          "queue" -> yarnExecutor.getQueue,
-          "yarnMode" -> yarnExecutor.getYarnMode
+          YARN_APPID_NAME_KEY -> yarnExecutor.getApplicationId,
+          YARN_APP_URL_KEY -> yarnExecutor.getApplicationURL,
+          QUEUE -> yarnExecutor.getQueue,
+          YARN_MODE_KEY -> yarnExecutor.getYarnMode
         )
       case _ =>
         throw EngineConnException(

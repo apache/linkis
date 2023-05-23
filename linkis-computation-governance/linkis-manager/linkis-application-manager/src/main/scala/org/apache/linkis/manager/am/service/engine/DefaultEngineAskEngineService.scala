@@ -138,7 +138,6 @@ class DefaultEngineAskEngineService
       )
     }
 
-
     if (hooks != null && hooks.size > 0) {
       val ctx = new AskEngineHookContext(engineAskRequest, sender)
 

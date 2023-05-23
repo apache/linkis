@@ -63,4 +63,6 @@ object CommonVars {
   def properties: Properties = BDPConfiguration.properties
 
   def hotProperties: Properties = BDPConfiguration.hotProperties
+
+  def setConfig(key: String, value: String): Unit = BDPConfiguration.set(key, value)
 }

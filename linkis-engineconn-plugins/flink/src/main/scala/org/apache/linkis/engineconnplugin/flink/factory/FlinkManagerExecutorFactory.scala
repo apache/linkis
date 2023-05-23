@@ -33,14 +33,14 @@ import org.apache.linkis.engineconnplugin.flink.factory.FlinkManagerExecutorFact
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType._
 
-class FlinkManagerExecutorFactory extends ComputationExecutorFactory {
+class FlinkManagerExecutorFactory extends OnceExecutorFactory {
 
   override protected def newExecutor(
       id: Int,
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn,
       labels: Array[Label[_]]
-  ): ComputationExecutor = engineConn.getEngineConnSession match {
+  ): OnceExecutor = engineConn.getEngineConnSession match {
     case flinkEngineConnContext: FlinkEngineConnContext =>
       val executor = new FlinkManagerConcurrentExecutor(
         id,

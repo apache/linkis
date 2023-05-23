@@ -132,6 +132,7 @@ public class EngineRestfulApi {
       if (null != engineAskRequest.getProperties()) {
         Map<String, String> props = engineAskRequest.getProperties();
         if (props.containsKey(AMConstant.EC_ASYNC_START_ID_KEY)) {
+          // todo check sync
           String asyncId = props.get(AMConstant.EC_ASYNC_START_ID_KEY);
           EngineAsyncResponse response =
               engineAskService.getAndRemoveAsyncCreateEngineResponse(asyncId);

@@ -183,7 +183,8 @@ object YarnUtil extends Logging {
       case yarnState if (YarnApplicationState.values().map(_.toString).contains(yarnState)) =>
         YarnApplicationState.valueOf(yarnState) match {
           case YarnApplicationState.FINISHED =>
-            NodeStatus.Success
+            val msg: String = "Invalid yarn app state : FINISHED"
+            throw new JobExecutionException(msg)
           case YarnApplicationState.KILLED | YarnApplicationState.FAILED =>
             NodeStatus.Failed
           case _ =>
@@ -210,13 +211,13 @@ object YarnUtil extends Logging {
     }
     val clientType = params
       .getOrDefault(
-        GovernanceCommonConf.FLINK_MANAGE_MODE.key,
-        GovernanceCommonConf.FLINK_MANAGE_MODE.getValue
+        GovernanceCommonConf.EC_APP_MANAGE_MODE.key,
+        GovernanceCommonConf.EC_APP_MANAGE_MODE.getValue
       )
       .toString
     logger.info(s"clientType : ${clientType}")
     clientType.toLowerCase() match {
-      case ECConstants.EC_FLINK_CLIENT_TYPE_DETACH =>
+      case ECConstants.EC_CLIENT_TYPE_DETACH =>
         true
       case _ =>
         false

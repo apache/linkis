@@ -18,8 +18,8 @@
 package org.apache.linkis.governance.common.enums;
 
 public enum OnceJobOperationBoundary {
-  COMMON("common"),
-  PRIVATE("private");
+  ECM("ecm"),
+  EC("ec");
 
   private String name;
 

@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment
@@ -30,7 +32,7 @@ import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, Fli
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
-import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
+import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
@@ -40,6 +42,7 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.protocol.utils.TaskUtils
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
@@ -105,9 +108,19 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // Ship directories
     val shipDirsArray = getShipDirectories(options)
     // other params
-    val flinkClientType = GovernanceCommonConf.FLINK_MANAGE_MODE.getValue(options)
+    val flinkClientType = GovernanceCommonConf.EC_APP_MANAGE_MODE.getValue(options)
     val otherParams = new util.HashMap[String, Any]()
-    otherParams.put(GovernanceCommonConf.FLINK_MANAGE_MODE.key, flinkClientType.toLowerCase())
+    val isManager = ManagerUtil.isManager
+    if (isManager) {
+      logger.info(
+        s"flink manager mode on. Will set ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key} to true."
+      )
+      CommonVars.setConfig(
+        AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key,
+        true.toString
+      )
+    }
+    otherParams.put(GovernanceCommonConf.EC_APP_MANAGE_MODE.key, flinkClientType.toLowerCase())
     val context = new EnvironmentContext(
       defaultEnv,
       new Configuration,

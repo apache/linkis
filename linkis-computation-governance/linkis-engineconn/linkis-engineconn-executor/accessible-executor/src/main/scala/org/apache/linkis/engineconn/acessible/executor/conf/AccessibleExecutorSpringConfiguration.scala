@@ -18,7 +18,6 @@
 package org.apache.linkis.engineconn.acessible.executor.conf
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.acessible.executor.conf.conditions.AccessibleExecutorLockServiceCondition
 import org.apache.linkis.engineconn.acessible.executor.info.{
   DefaultNodeOverLoadInfoManager,
   NodeOverLoadInfoManager
@@ -31,7 +30,7 @@ import org.apache.linkis.engineconn.acessible.executor.service.{
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.context.annotation.{Bean, Conditional, Configuration}
+import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
 class AccessibleExecutorSpringConfiguration extends Logging {
@@ -40,11 +39,11 @@ class AccessibleExecutorSpringConfiguration extends Logging {
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   @Bean(Array("lockService"))
-  @Conditional(Array(classOf[AccessibleExecutorLockServiceCondition]))
+  @ConditionalOnMissingBean
   def createLockManager(): LockService = {
 
     val lockService =
-      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
+      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()) {
         new EngineConnConcurrentLockService
       } else new EngineConnTimedLockService
     asyncListenerBusContext.addListener(lockService)

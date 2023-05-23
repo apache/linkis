@@ -61,27 +61,23 @@ class KillOperator extends Operator with Logging {
           throw logAndException(msg)
         }
       }
-    if (snapShot) {
-      if (isStopped) {
-        val msg = s"App ${appIdStr} has stopped, cannot do savePoint"
-        logAndException(msg)
+    if (!isStopped) {
+      if (snapShot) {
+        val checkPointPath =
+          params.getOrElse(FlinkECConstant.SAVAPOINT_PATH_KEY, null).asInstanceOf[String]
+        val rs = YarnUtil.triggerSavepoint(appIdStr, checkPointPath, restClient)
+        rsMap.put(FlinkECConstant.MSG_KEY, rs)
       }
-      val checkPointPath =
-        params.getOrElse(FlinkECConstant.SAVAPOINT_PATH_KEY, null).asInstanceOf[String]
-      val rs = YarnUtil.triggerSavepoint(appIdStr, checkPointPath, restClient)
-      rsMap.put(FlinkECConstant.MSG_KEY, rs)
-    } else {
-      if (!isStopped) {
-        val jobs = restClient.listJobs().get()
-        if (null == jobs || jobs.isEmpty) {
-          val msg = s"App : ${appIdStr} have no jobs, but is not ended."
-          throw logAndException(msg)
-        }
-        val msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
-        jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
-        rsMap += (FlinkECConstant.MSG_KEY -> msg)
+      val jobs = restClient.listJobs().get()
+      if (null == jobs || jobs.isEmpty) {
+        val msg = s"App : ${appIdStr} have no jobs, but is not ended."
+        throw logAndException(msg)
       }
+      val msg = s"Try to kill ${jobs.size()} jobs of app : ${appIdStr}"
+      jobs.asScala.foreach(job => restClient.cancel(job.getJobId))
+      rsMap += (FlinkECConstant.MSG_KEY -> msg)
     }
+
     rsMap.toMap[String, String]
   }
 

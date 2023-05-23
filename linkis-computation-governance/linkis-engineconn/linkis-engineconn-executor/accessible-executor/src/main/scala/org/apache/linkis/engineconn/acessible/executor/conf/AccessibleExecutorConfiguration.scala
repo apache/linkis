@@ -42,8 +42,8 @@ object AccessibleExecutorConfiguration {
   val ENGINECONN_LOCK_CHECK_INTERVAL =
     CommonVars("wds.linkis.engineconn.lock.free.interval", new TimeType("3m"))
 
-  val ENGINECONN_SUPPORT_PARALLELISM: Boolean =
-    CommonVars("wds.linkis.engineconn.support.parallelism", false).getValue
+  val ENGINECONN_SUPPORT_PARALLELISM =
+    CommonVars("wds.linkis.engineconn.support.parallelism", false)
 
   val ENGINECONN_HEARTBEAT_TIME =
     CommonVars("wds.linkis.engineconn.heartbeat.time", new TimeType("2m"))

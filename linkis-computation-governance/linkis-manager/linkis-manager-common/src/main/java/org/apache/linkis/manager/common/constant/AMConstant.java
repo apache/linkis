@@ -44,6 +44,11 @@ public class AMConstant {
    */
   public static final String EC_ASYNC_START_RESULT_KEY = "ecAsyncStartResult";
 
+  /*
+  default false
+   */
+  public static final String EC_SYNC_START_KEY = "ecSyncStart";
+
   public static final String EC_ASYNC_START_RESULT_SUCCESS = "success";
 
   public static final String EC_ASYNC_START_RESULT_FAIL = "failed";

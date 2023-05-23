@@ -23,33 +23,25 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
 }
+import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse}
 
 class FlinkManagerConcurrentExecutor(
-    val id: Int,
+    val id: Long,
     maxRunningNumber: Int,
-    override protected val flinkEngineConnContext: FlinkEngineConnContext
-) extends ConcurrentComputationExecutor
+    val flinkEngineConnContext: FlinkEngineConnContext
+) extends FlinkOnceExecutor[ClusterDescriptorAdapter]
     with FlinkExecutor
     with Logging {
 
-  override def executeLine(
-      engineExecutorContext: EngineExecutionContext,
-      code: String
-  ): ExecuteResponse =
-    ErrorExecuteResponse("FlinkManagerExecutor does not support executeLine", null)
-
-  override def executeCompletely(
-      engineExecutorContext: EngineExecutionContext,
-      code: String,
-      completedLine: String
-  ): ExecuteResponse = executeLine(engineExecutorContext, code)
-
-  override def progress(taskID: String): Float = 0.0f
-
-  override def getProgressInfo(taskID: String): Array[JobProgressInfo] = null
+  override protected def submit(
+      onceExecutorExecutionContext: OnceExecutorExecutionContext
+  ): Unit = {
+    logger.info("Succeed to init FlinkManagerExecutor.")
+  }
 
   override def getId: String = id.toString
 
@@ -58,12 +50,13 @@ class FlinkManagerConcurrentExecutor(
     super.close()
   }
 
-  override def getConcurrentLimit: Int = maxRunningNumber
-
-  override def killAll(): Unit = {
-    // TODO
-  }
+  def getMaxRunningNumber: Int = maxRunningNumber
 
   def getFlinkContext(): FlinkEngineConnContext = flinkEngineConnContext
+
+  override def doSubmit(
+      onceExecutorExecutionContext: OnceExecutorExecutionContext,
+      options: Map[String, String]
+  ): Unit = submit(onceExecutorExecutionContext)
 
 }

@@ -76,7 +76,8 @@ object GovernanceCommonConf {
     CommonVars(envKey, "").getValue
   }
 
-  val FLINK_MANAGE_MODE =
-    CommonVars("wds.linkis.flink.app.manage.mode", ECConstants.EC_FLINK_CLIENT_TYPE_ATTACH)
+  // value ECConstants.EC_CLIENT_TYPE_ATTACH
+  val EC_APP_MANAGE_MODE =
+    CommonVars("linkis.ec.app.manage.mode", "attach")
 
 }

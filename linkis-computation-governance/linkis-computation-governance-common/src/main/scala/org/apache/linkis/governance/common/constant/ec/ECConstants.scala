@@ -35,9 +35,11 @@ object ECConstants {
 
   val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
 
-  val EC_FLINK_CLIENT_TYPE_ATTACH = "attach"
+  val QUEUE = "queue"
 
-  val EC_FLINK_CLIENT_TYPE_DETACH = "detach"
+  val EC_CLIENT_TYPE_ATTACH = "attach"
+
+  val EC_CLIENT_TYPE_DETACH = "detach"
 
   val YARN_APPID_NAME_KEY = "applicationId"
 

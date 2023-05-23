@@ -307,10 +307,6 @@
           <artifactId>log4j-web</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.solr</groupId>
-          <artifactId>solr-core</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>org.apache.calcite.avatica</groupId>
           <artifactId>avatica-core</artifactId>
         </exclusion>
@@ -321,6 +317,82 @@
         <exclusion>
           <groupId>org.apache.calcite</groupId>
           <artifactId>calcite-linq4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-hpack</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-http-client-transport</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-alpn-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-alpn-java-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-alpn-java-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-alpn-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-deploy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-jmx</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-servlets</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-jetty9</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-graphite</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-jmx</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-jvm</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>woodstox-core-asl</artifactId>
+          <groupId>org.codehaus.woodstox</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -388,6 +460,22 @@
         <exclusion>
           <groupId>io.netty</groupId>
           <artifactId>netty-transport-native-unix-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-hpack</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty.http2</groupId>
+          <artifactId>http2-http-client-transport</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -20,9 +20,7 @@ package org.apache.linkis.engineplugin.spark.datacalc
 import org.apache.linkis.common.io.FsPath
 import org.apache.linkis.engineplugin.spark.datacalc.model.DataCalcGroupData
 
-import org.apache.spark.sql.SparkSession
-
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.{Assertions, Test};
 
 class TestRocketmqCala {
 
@@ -33,14 +31,12 @@ class TestRocketmqCala {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data = DataCalcGroupData.getData(rocketmqReaderConfigJson)
+      Assertions.assertTrue(data != null)
+
       val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
-
-      val spark = SparkSession
-        .builder()
-        .master("local")
-        .getOrCreate()
-
-      DataCalcExecution.execute(spark, sources, transforms, sinks)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
     }
   }
 

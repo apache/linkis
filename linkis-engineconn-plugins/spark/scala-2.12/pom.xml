@@ -619,16 +619,92 @@
           <artifactId>jose4j</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient</artifactId>
-          <groupId>org.apache.httpcomponents</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpcore</artifactId>
-          <groupId>org.apache.httpcomponents</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>httpmime</artifactId>
-          <groupId>org.apache.httpcomponents</groupId>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-kuromoji</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-nori</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-analyzers-phonetic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-backward-codecs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-classification</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-codecs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-expressions</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-grouping</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-highlighter</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-join</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-memory</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-misc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-queries</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-queryparser</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-sandbox</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-spatial-extras</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-spatial3d</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.lucene</groupId>
+          <artifactId>lucene-suggest</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -730,12 +806,8 @@
           <artifactId>slf4j-api</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpcore</artifactId>
-          <groupId>org.apache.httpcomponents</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>httpmime</artifactId>
-          <groupId>org.apache.httpcomponents</groupId>
         </exclusion>
       </exclusions>
     </dependency>

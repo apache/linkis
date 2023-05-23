@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.manager.dao.ResourceManagerMapper">
+
+    <sql id="resource">
+        "max_resource","min_resource","used_resource","left_resource","expected_resource","locked_resource","resourceType","ticketId","update_time","create_time","updator","creator"
+    </sql>
+
+    <delete id="deleteResourceById">
+        DELETE FROM linkis_cg_manager_linkis_resources WHERE id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteResourceRelByResourceId">
+        DELETE FROM linkis_cg_manager_label_resource WHERE resource_id IN
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getResourceById" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        SELECT * FROM linkis_cg_manager_linkis_resources WHERE id = #{id}
+    </select>
+
+    <insert id="registerResource" parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource" useGeneratedKeys="true"  keyProperty = "id" keyColumn = "id">
+        INSERT INTO  linkis_cg_manager_linkis_resources (<include refid="resource"/>) VALUES
+        (#{maxResource},#{minResource},#{usedResource},#{leftResource},#{expectedResource},#{lockedResource},#{resourceType},#{ticketId},now(),now(),#{updator},#{creator})
+    </insert>
+
+    <update id="nodeResourceUpdate">
+        update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource},
+        used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource},
+        locked_resource=#{persistenceResource.lockedResource},
+        update_time=#{persistenceResource.updateTime} where "ticketId" = #{ticketId}
+    </update>
+
+    <update id="nodeResourceUpdateByResourceId">
+        update linkis_cg_manager_linkis_resources set max_resource = #{persistenceResource.maxResource},min_resource = #{persistenceResource.minResource},
+        used_resource=#{persistenceResource.usedResource},left_resource=#{persistenceResource.leftResource},expected_resource=#{persistenceResource.expectedResource},
+        locked_resource=#{persistenceResource.lockedResource},
+        update_time=#{persistenceResource.updateTime} where id = #{resourceId}
+    </update>
+
+    <select id="getNodeResourceUpdateResourceId" resultType="java.lang.Integer">
+        select id from linkis_cg_manager_linkis_resources where "ticketId" is null and id in
+        ( select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance=#{instance})
+    </select>
+
+    <delete id="deleteResourceAndLabelId">
+        delete from linkis_cg_manager_label_resource where label_id in
+        (select label_id from linkis_cg_manager_label_service_instance where service_instance=#{instance})
+    </delete>
+
+    <delete id="deleteResourceByInstance">
+        delete from linkis_cg_manager_linkis_resources where id in
+        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id=B.label_id and B.service_instance = #{instance} )
+    </delete>
+    <delete id="deleteResourceByTicketId">
+        delete from linkis_cg_manager_linkis_resources where "ticketId" = #{ticketId}
+    </delete>
+
+    <select id="getResourceByServiceInstance" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        select * from linkis_cg_manager_linkis_resources where id in
+        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance= #{instance})
+    </select>
+    <select id="getResourceByInstanceAndResourceType" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        select * from linkis_cg_manager_linkis_resources where "resourceType" = #{resourceType} and
+        id in (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_service_instance B on A.label_id = B.label_id and B.service_instance=#{instance})
+    </select>
+
+    <select id="getNodeResourceByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        select * from linkis_cg_manager_linkis_resources where "ticketId" = #{ticketId}
+    </select>
+
+    <select id="getResourceByUserName" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceResource">
+        select * from linkis_cg_manager_linkis_resources where id in
+        (select resource_id from linkis_cg_manager_label_resource A join linkis_cg_manager_label_user B on A.label_id=B.label_id AND B.username=#{userName})
+    </select>
+
+    <select id="getLabelsByTicketId" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceLabel">
+        select * from linkis_cg_manager_label where id in
+        (select label_id from linkis_cg_manager_label_resource A join linkis_cg_manager_linkis_resources B on A.resource_id=B.id and B."ticketId"=#{ticketId})
+    </select>
+</mapper>

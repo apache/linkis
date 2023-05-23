@@ -171,7 +171,7 @@
     <select id="getEMNodeInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo">
         SELECT t.*, metrics.instance_status
         FROM  linkis_cg_manager_service_instance t, linkis_cg_manager_service_instance_metrics metrics
-        WHERE t.name ="linkis-cg-engineconn"
+        WHERE t.name ='linkis-cg-engineconn'
         <if test="creatorUsers != null and creatorUsers.size() > 0">
             and creator in
             <foreach collection="creatorUsers" item="i" open="(" close=")" separator=",">

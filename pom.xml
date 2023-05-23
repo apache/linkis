@@ -159,6 +159,7 @@
     <jedis.version>3.9.0</jedis.version>
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
+    <postgresql.connector.version>42.2.20</postgresql.connector.version>
     <druid.version>1.2.16</druid.version>
 
     <!-- utils -->
@@ -1386,7 +1387,12 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.connector.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

@@ -593,3 +593,4 @@ zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar
 zstd-jni-1.4.5-6.jar
+postgresql-42.2.20

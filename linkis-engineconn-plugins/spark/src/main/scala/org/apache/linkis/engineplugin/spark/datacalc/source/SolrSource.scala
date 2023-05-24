@@ -15,16 +15,30 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.core.util
+package org.apache.linkis.engineplugin.spark.datacalc.source
 
-import com.google.gson.{Gson, GsonBuilder, ToNumberPolicy}
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSource
 
-object EngineConnUtils {
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-  val GSON = new GsonBuilder()
-    .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-    .serializeNulls
-    .setObjectToNumberStrategy(ToNumberPolicy.LAZILY_PARSED_NUMBER)
-    .create
+class SolrSource extends DataCalcSource[SolrSourceConfig] with Logging {
+
+  override def getData(spark: SparkSession): Dataset[Row] = {
+    val reader = spark.read.format("solr")
+    if (config.getOptions != null && !config.getOptions.isEmpty) {
+      reader.options(config.getOptions)
+    }
+
+    logger.info(
+      s"Save data from solr zkhost: ${config.getZkhost}, collection: ${config.getCollection}"
+    )
+
+    reader
+      .option("zkhost", config.getZkhost)
+      .option("collection", config.getCollection)
+      .option("query", "*:*")
+      .load()
+  }
 
 }

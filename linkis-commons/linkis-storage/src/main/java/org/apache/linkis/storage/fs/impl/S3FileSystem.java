@@ -172,7 +172,7 @@ public class S3FileSystem extends FileSystem {
           List<FsPath> rtn = new ArrayList();
           String message = "";
           for (S3ObjectSummary summary : s3ObjectSummaries) {
-            if (isDir(summary, path.getPath()) || isInitFile(summary)) break;
+            if (isDir(summary, path.getPath()) || isInitFile(summary)) continue;
             FsPath newPath = new FsPath(buildPath(summary.getKey()));
             rtn.add(fillStorageFile(newPath, summary));
           }

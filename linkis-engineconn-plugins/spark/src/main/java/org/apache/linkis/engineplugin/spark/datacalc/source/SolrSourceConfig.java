@@ -15,16 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.core.util
+package org.apache.linkis.engineplugin.spark.datacalc.source;
 
-import com.google.gson.{Gson, GsonBuilder, ToNumberPolicy}
+import org.apache.linkis.engineplugin.spark.datacalc.model.SourceConfig;
 
-object EngineConnUtils {
+import javax.validation.constraints.NotBlank;
 
-  val GSON = new GsonBuilder()
-    .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-    .serializeNulls
-    .setObjectToNumberStrategy(ToNumberPolicy.LAZILY_PARSED_NUMBER)
-    .create
+public class SolrSourceConfig extends SourceConfig {
 
+  @NotBlank private String zkhost;
+
+  @NotBlank private String collection;
+
+  public String getZkhost() {
+    return zkhost;
+  }
+
+  public void setZkhost(String zkhost) {
+    this.zkhost = zkhost;
+  }
+
+  public String getCollection() {
+    return collection;
+  }
+
+  public void setCollection(String collection) {
+    this.collection = collection;
+  }
 }

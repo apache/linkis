@@ -41,7 +41,7 @@ jobs:
     - if: ${{matrix.spark == '2.4' && matrix.hadoop == '2.7'}}
       name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
       run:
-        ./mvnw clean package -Pspark-${{matrix.spark}} -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
+        ./mvnw clean package -Pspark-${{matrix.spark}} -Dmaven.test.skip=true
     - if: ${{matrix.spark == '3.2' && matrix.hadoop == '3.3'}}
       name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
       run:
@@ -49,7 +49,7 @@ jobs:
     - if:  ${{matrix.spark == '3.2' && matrix.hadoop == '2.7'}}
       name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}
       run:
-        ./mvnw clean package -Phadoop-${{matrix.hadoop}} -Dmaven.test.skip=true
+        ./mvnw clean package -Dmaven.test.skip=true
 
     - if: ${{matrix.spark == '2.4' && matrix.hadoop == '3.3'}}
       name: build spark ${{matrix.spark}} and hadoop ${{matrix.hadoop}}

@@ -194,7 +194,7 @@
           },
         "modal": {
           "modalTitle": "提示信息",
-          "modalDelete": "确认是否删除[{envName}]项?",
+          "modalDelete": "确认是否删除[{name}]项?",
           "modalDeleteRecord": "确认是否删除该记录?",
           "modalDeleteTask": "确认是否停止当前选择任务?",
           "modalDeleteInstance": "确认是否停止当前选择实例?",
@@ -396,7 +396,7 @@
               "userIsExisted": "用户标签已存在",
               "addSuccessful": "添加成功",
               "confirmDel": "确认删除",
-              "isConfirmDel": "确定要删除这条数据吗"
+              "isConfirmDel": "确定要删除这条数据吗({name})"
           },
           "ipListManagement": {
               "userName": "用户名",
@@ -430,7 +430,7 @@
               "userIsExisted": "用户标签已存在",
               "addSuccessful": "添加成功",
               "confirmDel": "确认删除",
-              "isConfirmDel": "确定要删除这条数据吗"
+              "isConfirmDel": "确定要删除这条数据吗({name})"
           },
           "basedataManagement": {
             "add": "新增",
@@ -446,8 +446,8 @@
               "cancel": "取消",
               "modalTitle": "提示信息",
               "modalFormat": "确定删除 {0} 这条记录?",
-              "modalDelete1": "确认是否删除[{username}]该记录?",
-              "modalDelete": "确认是否删除[{envName}]该记录?",
+              "modalDelete1": "确认是否删除[{name}]该记录?",
+              "modalDelete": "确认是否删除[{name}]该记录?",
               "modalDeleteSuccess": "删除成功",
               "modalDeleteFail": "删除失败",
               "modalAddSuccess": "添加成功",

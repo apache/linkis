@@ -91,7 +91,7 @@
 import mixin from '@/common/service/mixin';
 import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
-import {formatDate} from "iview/src/components/date-picker/util";
+// import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
   components: {ErrorCodeForm},
@@ -151,7 +151,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm:ss')
+              new Date(params.row.createTime).toLocaleString()
             )
           }
         },
@@ -163,7 +163,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.updateTime),'yyyy-MM-dd hh:mm:ss')
+              new Date(params.row.updateTime).toLocaleString()
             )
           }
         },
@@ -224,7 +224,7 @@ export default {
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -248,16 +248,17 @@ export default {
 
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.errorCodeForm.formModel.submit(async (formData)=>{
         this.modalLoading = true
         if(this.modalAddMode=='add') {
-          add(formData).then((data)=>{
+          await add(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load();
             }else{
               this.$Message.success({
                 duration: 3,
@@ -266,7 +267,7 @@ export default {
             }
           })
         }else {
-          edit(formData).then((data)=>{
+          await edit(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({

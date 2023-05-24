@@ -150,6 +150,9 @@
               <Row>
                 <Checkbox v-model="allDownload">{{$t('message.common.toolbar.all')}}</Checkbox>
               </Row>
+              <Row>
+                <Checkbox v-model="autoFormat">{{$t('message.common.toolbar.autoFormat')}}</Checkbox>
+              </Row>
             </div>
             <Row class="confirm">
               <Col span="10">
@@ -267,6 +270,7 @@ export default {
       isIconLabelShow: true,
       iconSize: 14,
       allDownload: false, // whether to download all result sets(是否下载全部结果集)
+      autoFormat: false, // whether to format result sets
       resultsShowType: '2',
       separators: [
         { key: ',', label: this.$t('message.common.separator.comma'), value: '1', span: 4, offset: 0},
@@ -368,6 +372,9 @@ export default {
         let separatorItem = this.separators.find(item => item.value === this.download.csvSeparator) || {};
         let separator = encodeURIComponent(separatorItem.key || '');
         url += `&csvSeparator=${separator}`
+      }
+      if(this.isAll) {
+        url += `&autoFormat=${this.autoFormat}`
       }
       // Before downloading, use the heartbeat interface to confirm whether to log in(下载之前条用心跳接口确认是否登录)
       await api.fetch('/user/heartbeat', 'get');

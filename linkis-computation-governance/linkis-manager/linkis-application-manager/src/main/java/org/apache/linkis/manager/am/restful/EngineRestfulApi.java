@@ -171,6 +171,14 @@ public class EngineRestfulApi {
         }
       }
 
+      boolean enSyncStart = false;
+      if (null != engineAskRequest.getProperties()) {
+        Map<String, String> props = engineAskRequest.getProperties();
+        if (props.containsKey(AMConstant.EC_SYNC_START_KEY)) {
+          enSyncStart = Boolean.parseBoolean(props.get(AMConstant.EC_SYNC_START_KEY));
+        }
+      }
+
       Object rs = engineAskService.askEngine(engineAskRequest, sender);
       if (EngineNode.class.isInstance(rs)) {
         engineNode = (EngineNode) rs;
@@ -178,13 +186,61 @@ public class EngineRestfulApi {
       } else if (EngineAskAsyncResponse.class.isInstance(rs)) {
         EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) rs;
         engineAskService.putAsyncCreateEngineResponse(askAsyncResponse.id(), askAsyncResponse);
-        retEngineNode.put(
-            AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_STARTING);
-        retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
-        retEngineNode.put(
-            AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
-        retEngineNode.put(
-            ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
+        if (enSyncStart) {
+          logger.info("Will wait for engineConn {} start.", askAsyncResponse.id());
+          EngineAsyncResponse asyncResponse =
+              engineAskService.getAndRemoveAsyncCreateEngineResponse(askAsyncResponse.id());
+          boolean createEnd = false;
+          int num = 0;
+          while (!createEnd) {
+            if (null != asyncResponse) {
+              if (EngineCreateSuccess.class.isInstance(asyncResponse)) {
+                EngineCreateSuccess successRS = (EngineCreateSuccess) asyncResponse;
+                fillResultEngineNode(retEngineNode, successRS.engineNode());
+                logger.info("Create ec with asyncId : {} succeed.", askAsyncResponse.id());
+                createEnd = true;
+              } else if (EngineCreateError.class.isInstance(asyncResponse)) {
+                EngineCreateError errorRS = (EngineCreateError) asyncResponse;
+                retEngineNode.put(
+                    AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
+                retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, errorRS.retry());
+                retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, errorRS.exception());
+                retEngineNode.put(
+                    ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
+                logger.info(
+                    "Create ec with asyncId : {} failed, because : {}.",
+                    errorRS.id(),
+                    errorRS.exception());
+                return Message.ok(
+                        String.format(
+                            "Create engineConn failed, caused by %s.", errorRS.exception()))
+                    .data("engine", retEngineNode);
+              } else {
+                if (num % 10 == 0) {
+                  logger.info(
+                      "Create ec with asyncId : {} got async response, will retry.",
+                      askAsyncResponse.id());
+                }
+              }
+            } else {
+              createEnd = true;
+              fillNullNode(retEngineNode, askAsyncResponse);
+              logger.error("Create ec got null response, please check it.");
+            }
+            asyncResponse =
+                engineAskService.getAndRemoveAsyncCreateEngineResponse(askAsyncResponse.id());
+            num = num + 1;
+            Thread.sleep(1000);
+          }
+        } else {
+          retEngineNode.put(
+              AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_STARTING);
+          retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
+          retEngineNode.put(
+              AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
+          retEngineNode.put(
+              ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
+        }
       }
     } catch (Exception e) {
       logger.error(String.format("User %s create engineConn failed.", userName), e);
@@ -203,6 +259,15 @@ public class EngineRestfulApi {
         "Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
     // to transform to a map
     return Message.ok("create engineConn ended.").data("engine", retEngineNode);
+  }
+
+  private void fillNullNode(
+      Map<String, Object> retEngineNode, EngineAskAsyncResponse askAsyncResponse) {
+    retEngineNode.put(AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
+    retEngineNode.put(
+        AMConstant.EC_ASYNC_START_FAIL_MSG_KEY,
+        "Got null response for asyId : " + askAsyncResponse.id());
+    retEngineNode.put(ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
   }
 
   private void fillResultEngineNode(Map<String, Object> retEngineNode, EngineNode engineNode) {

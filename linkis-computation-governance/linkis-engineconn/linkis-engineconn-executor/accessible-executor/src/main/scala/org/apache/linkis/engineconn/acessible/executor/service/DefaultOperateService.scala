@@ -57,6 +57,7 @@ class DefaultOperateService extends OperateService with Logging {
       doPostHook(engineOperateRequest, response)
       return response
     }
+    logger.info(s"End to execute operator ${operator.getClass.getSimpleName}.")
     response = EngineOperateResponse(result)
     doPostHook(engineOperateRequest, response)
     response

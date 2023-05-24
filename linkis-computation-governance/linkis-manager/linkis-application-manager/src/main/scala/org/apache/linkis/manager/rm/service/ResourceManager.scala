@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.service
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.entity.resource.NodeResource
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.rm.{ResourceInfo, ResultResource}
@@ -82,9 +83,9 @@ abstract class ResourceManager {
   /**
    * Method called when the resource usage is released 当资源使用完成释放后，调用的方法
    *
-   * @param labels
+   * @param ecNode
    */
-  def resourceReleased(labels: util.List[Label[_]]): Unit
+  def resourceReleased(ecNode: EngineNode): Unit
 
   /**
    * If the IP and port are empty, return the resource status of all modules of a module   * Return

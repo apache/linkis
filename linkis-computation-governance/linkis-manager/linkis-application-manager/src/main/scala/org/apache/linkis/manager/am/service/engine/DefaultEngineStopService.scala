@@ -20,6 +20,7 @@ package org.apache.linkis.manager.am.service.engine
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.exception.RMErrorException
 import org.apache.linkis.manager.common.protocol.engine.{
@@ -78,6 +79,9 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
       logger.info(s"Finished to kill engine invoke enginePointer ${node.getServiceInstance}")
     }(s"Failed to stop engine ${node.getServiceInstance}")
     node.setLabels(nodeLabelService.getNodeLabels(engineStopRequest.getServiceInstance))
+    if (null == node.getNodeStatus) {
+      node.setNodeStatus(NodeStatus.ShuttingDown)
+    }
     engineConnInfoClear(node)
     logger.info(
       s" user ${engineStopRequest.getUser} finished to stop engine ${engineStopRequest.getServiceInstance}"
@@ -136,6 +140,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
         s"Send stop  engine request ${engineConnReleaseRequest.getServiceInstance.toString}"
       )
       engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
+      engineNode.setNodeStatus(engineConnReleaseRequest.getNodeStatus)
       engineConnInfoClear(engineNode)
     } else {
       logger.warn(

@@ -101,7 +101,7 @@ public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
     try {
       return connection.getSparkSql(database, table);
     } catch (Exception e) {
-      throw new RuntimeException("Fail to get spark ddl sql (获取sparkDdlSql失败)", e);
+      throw new RuntimeException("Fail to get spark ddl sql (获取sparkSql失败)", e);
     }
   }
 }

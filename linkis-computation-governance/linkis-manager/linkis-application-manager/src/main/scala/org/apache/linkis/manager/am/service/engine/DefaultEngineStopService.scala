@@ -96,7 +96,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     logger.info(s"Start to clear ec info $ecNode")
     // 1. to clear engine resource
     Utils.tryCatch {
-      resourceManager.resourceReleased(ecNode.getLabels)
+      resourceManager.resourceReleased(ecNode)
     } {
       case exception: RMErrorException =>
         if (exception.getErrCode != RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode) {

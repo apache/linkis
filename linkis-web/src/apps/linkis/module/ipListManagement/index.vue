@@ -389,7 +389,7 @@ export default {
     delete(data) {
       this.$Modal.confirm({
         title: this.$t('message.linkis.ipListManagement.confirmDel'),
-        content: this.$t('message.linkis.ipListManagement.isConfirmDel'),
+        content: this.$t('message.linkis.ipListManagement.isConfirmDel', {name: `id:${data.id}`}),
         onOk: async () => {
           await this.confirmDelete(data);
           await this.getTableData();

@@ -19,9 +19,11 @@ package org.apache.linkis.metadata.query.service.mysql;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.SecurityUtils;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
@@ -134,17 +136,38 @@ public class SqlConnection implements Closeable {
     return columns;
   }
 
-  public String getSparkDdlSql(String database, String table) {
+  public GenerateSqlInfo getSparkSql(String database, String table) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    return String.format(
-        SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
-        table,
-        url,
-        table,
-        connectMessage.username,
-        connectMessage.password);
+    String ddl =
+        String.format(
+            SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
+            table,
+            url,
+            table,
+            connectMessage.username,
+            connectMessage.password);
+    generateSqlInfo.setDdl(ddl);
+
+    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
+    generateSqlInfo.setDml(dml);
+
+    String columnStr = "*";
+    try {
+      List<MetaColumnInfo> columns = getColumns(database, table);
+      if (CollectionUtils.isNotEmpty(columns)) {
+        columnStr =
+            columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      }
+    } catch (Exception e) {
+      LOG.warn("Fail to get Sql columns(获取字段列表失败)");
+    }
+    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, table);
+    generateSqlInfo.setDql(dql);
+    return generateSqlInfo;
   }
 
   /**

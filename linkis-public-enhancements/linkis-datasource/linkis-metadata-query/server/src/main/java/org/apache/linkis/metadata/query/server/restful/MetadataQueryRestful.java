@@ -19,6 +19,7 @@ package org.apache.linkis.metadata.query.server.restful;
 
 import org.apache.linkis.common.exception.ErrorException;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
@@ -417,8 +418,8 @@ public class MetadataQueryRestful {
     @ApiImplicitParam(name = "database", required = true, dataType = "String"),
     @ApiImplicitParam(name = "table", required = true, dataType = "String")
   })
-  @RequestMapping(value = "/getSparkDdlSql", method = RequestMethod.GET)
-  public Message getSparkDdlSql(
+  @RequestMapping(value = "/getSparkSql", method = RequestMethod.GET)
+  public Message getSparkSql(
       @RequestParam("dataSourceName") String dataSourceName,
       @RequestParam(value = "envId", required = false) String envId,
       @RequestParam("database") String database,
@@ -446,13 +447,13 @@ public class MetadataQueryRestful {
           ModuleUserUtils.getOperationUser(
               request, "getSparkDdlSql, dataSourceName:" + dataSourceName);
 
-      String sparkDdlSql =
-          metadataQueryService.getSparkDdlSqlByDsNameAndEnvId(
+      GenerateSqlInfo sparkSql =
+          metadataQueryService.getSparkSqlByDsNameAndEnvId(
               dataSourceName, database, table, system, userName, envId);
-      return Message.ok().data("sparkDdlSql", sparkDdlSql);
+      return Message.ok().data("sparkSql", sparkSql);
     } catch (Exception e) {
       return errorToResponseMessage(
-          "Fail to spark ddl sql[获取getSparkDdlSql信息失败], name:["
+          "Fail to spark sql[获取getSparkSql信息失败], name:["
               + dataSourceName
               + "]"
               + ", system:["

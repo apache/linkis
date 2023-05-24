@@ -24,6 +24,7 @@ import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
@@ -363,7 +364,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   @Override
-  public String getSparkDdlSqlByDsNameAndEnvId(
+  public GenerateSqlInfo getSparkSqlByDsNameAndEnvId(
       String dataSourceName,
       String database,
       String table,
@@ -376,11 +377,11 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
           dsInfoResponse.getDsType(),
-          "getSparkDdlSql",
+          "getSparkSql",
           new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          String.class);
+          GenerateSqlInfo.class);
     }
-    return "";
+    return new GenerateSqlInfo();
   }
 
   /**

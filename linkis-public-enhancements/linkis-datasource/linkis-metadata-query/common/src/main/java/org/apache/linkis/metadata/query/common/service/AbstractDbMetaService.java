@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.common.service;
 
 import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -68,10 +69,9 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
   }
 
   @Override
-  public String getSparkDdlSql(
+  public GenerateSqlInfo getSparkSql(
       String operator, Map<String, Object> params, String database, String table) {
-    return this.getConnAndRun(
-        operator, params, conn -> this.querySparkDdlSql(conn, database, table));
+    return this.getConnAndRun(operator, params, conn -> this.querySparkSql(conn, database, table));
   }
 
   @Override
@@ -165,7 +165,7 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @param table table
    * @return
    */
-  public String querySparkDdlSql(C connection, String database, String table) {
+  public GenerateSqlInfo querySparkSql(C connection, String database, String table) {
     throw new WarnException(-1, "This method is no supported");
   }
 }

@@ -15,21 +15,43 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.common.service;
+package org.apache.linkis.metadata.query.common.domain;
 
-public class SparkDdlSQlTemplate {
+import java.io.Serializable;
 
-  public static final String JDBC_DDL_SQL_TEMPLATE =
-      "CREATE TEMPORARY VIEW %s "
-          + "USING org.apache.spark.sql.jdbc "
-          + "OPTIONS ("
-          + "  url '%s',"
-          + "  dbtable '%s',"
-          + "  user '%s',"
-          + "  password '%s'"
-          + ")";
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-  public static final String DML_SQL_TEMPLATE = "INSERT INTO %s SELECT * FROM resultTable";
+/** The meta information of field */
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GenerateSqlInfo implements Serializable {
 
-  public static final String DQL_SQL_TEMPLATE = "SELECT %s FROM %s";
+  private String ddl;
+  private String dml;
+  private String dql;
+
+  public String getDdl() {
+    return ddl;
+  }
+
+  public void setDdl(String ddl) {
+    this.ddl = ddl;
+  }
+
+  public String getDml() {
+    return dml;
+  }
+
+  public void setDml(String dml) {
+    this.dml = dml;
+  }
+
+  public String getDql() {
+    return dql;
+  }
+
+  public void setDql(String dql) {
+    this.dql = dql;
+  }
 }

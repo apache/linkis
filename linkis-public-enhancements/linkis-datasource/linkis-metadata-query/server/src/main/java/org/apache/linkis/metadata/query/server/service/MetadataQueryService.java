@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.server.service;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -253,7 +254,7 @@ public interface MetadataQueryService {
    * @return
    * @throws ErrorException
    */
-  String getSparkDdlSqlByDsNameAndEnvId(
+  GenerateSqlInfo getSparkSqlByDsNameAndEnvId(
       String dataSourceName,
       String database,
       String table,

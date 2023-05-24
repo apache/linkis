@@ -37,8 +37,8 @@
     </resultMap>
 
     <sql id="resource_task_columns">
-      `resource_id`,`version`,`operation`,`state`, `submit_user`,`system`,`instance`,
-      `client_ip`,`err_msg`,`start_time`,`end_time`,`last_update_time`, `extra_params`
+      resource_id,version,operation,state, submit_user,system,instance,
+      client_ip,err_msg,start_time,end_time,last_update_time, extra_params
     </sql>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"

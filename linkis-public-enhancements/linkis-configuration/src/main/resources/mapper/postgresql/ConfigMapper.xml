@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="org.apache.linkis.configuration.dao.ConfigMapper">
+    <resultMap id="ConfigKeyValueMap" type="org.apache.linkis.configuration.entity.ConfigKeyValue">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="key" property="key" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="creator_id" property="creatorId" jdbcType="VARCHAR"/>
+        <result column="engine_conn_type" property="engineType" jdbcType="VARCHAR"/>
+        <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="validate_type" property="validateType" jdbcType="VARCHAR"/>
+        <result column="validate_range" property="validateRange" jdbcType="VARCHAR"/>
+        <result column="is_hidden" property="isHidden" jdbcType="TINYINT"/>
+        <result column="is_advanced" property="isAdvanced" jdbcType="TINYINT"/>
+        <result column="level" property="level" jdbcType="TINYINT"/>
+        <result column="username" property="userName" jdbcType="VARCHAR"/>
+        <result column="treename" property="treeName" jdbcType="VARCHAR"/>
+        <result column="value_id" property="valueId" jdbcType="BIGINT"/>
+        <result column="config_value" property="configValue" jdbcType="VARCHAR"/>
+        <result column="config_label_id" property="configLabelId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ConfigKeyMap" type="org.apache.linkis.configuration.entity.ConfigKey">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="key" property="key" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="engine_conn_type" property="engineType" jdbcType="VARCHAR"/>
+        <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="validate_type" property="validateType" jdbcType="VARCHAR"/>
+        <result column="validate_range" property="validateRange" jdbcType="VARCHAR"/>
+        <result column="is_hidden" property="isHidden" jdbcType="TINYINT"/>
+        <result column="is_advanced" property="isAdvanced" jdbcType="TINYINT"/>
+        <result column="level" property="level" jdbcType="TINYINT"/>
+        <result column="username" property="userName" jdbcType="VARCHAR"/>
+        <result column="treename" property="treeName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="ConfigValueMap" type="org.apache.linkis.configuration.entity.ConfigValue">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="config_key_id" property="configKeyId" jdbcType="BIGINT"/>
+        <result column="config_value" property="configValue" jdbcType="VARCHAR"/>
+        <result column="config_label_id" property="configLabelId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="CategoryMap" type="org.apache.linkis.configuration.entity.CategoryLabel">
+        <id column="category_id" property="categoryId" jdbcType="BIGINT"/>
+        <result column="level" property="level" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="tag" property="tag" jdbcType="VARCHAR"/>
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="label_key" property="labelKey" jdbcType="VARCHAR"/>
+        <result column="label_value" property="stringValue" jdbcType="VARCHAR"/>
+        <result column="label_feature" property="feature" jdbcType="VARCHAR"/>
+        <result column="label_value_size" property="labelValueSize" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Config_Key_Column">
+        "id", "key", "description", "name", "engine_conn_type", "default_value", "validate_type", "validate_range", "is_hidden", "is_advanced", "level", "treeName"
+    </sql>
+
+    <sql id="Config_Value_Column">
+        id as value_id,config_key_id,config_value,config_label_id
+    </sql>
+
+
+    <sql id="Config_Key_Value_Column">
+        k.id, k.key, k.description, k.name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k."treeName",
+        v.id as value_id, v.config_key_id,config_value, v.config_label_id
+    </sql>
+
+    <sql id="Config_En_Key_Value_Column">
+        k.id, k.key,COALESCE(k.en_description, k.description) as description,
+        COALESCE(k.en_name, k.name) as name, k.engine_conn_type, k.default_value,
+        k.validate_type, k.validate_range, k.is_hidden,
+        k.is_advanced, k.level,COALESCE(k.en_treeName, k.treeName) as "treeName",
+        v.id as value_id, v.config_key_id,config_value, v.config_label_id
+    </sql>
+
+    <sql id="Config_Creator_Column">
+        id, name, chinese_name, description
+    </sql>
+
+    <select id="selectKeyByKeyID" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertKey" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
+        <selectKey keyProperty="id" resultType="java.lang.Long" order="AFTER">
+            SELECT currval('linkis_ps_configuration_config_key_id_seq')
+        </selectKey>
+        INSERT INTO linkis_ps_configuration_config_key (
+        key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, "treeName")
+        VALUES (
+        #{key}, #{description}, #{name}, #{engineType}, #{defaultValue}, #{validateType}, #{validateRange}, #{isHidden}, #{isAdvanced}, #{level}, #{treeName})
+    </insert>
+
+    <select id="getConfigKeyByLabelIds" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_Key_Value_Column"/>
+        FROM linkis_ps_configuration_config_key AS k
+        LEFT OUTER JOIN linkis_ps_configuration_config_value AS v
+        ON k.id = v.config_key_id
+        WHERE v.config_label_id in
+        <foreach item="id" collection="ids" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getConfigKeyValueByLabelId" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_Key_Value_Column"/>
+        FROM linkis_ps_configuration_config_key AS k
+        LEFT OUTER JOIN linkis_ps_configuration_config_value AS v
+        ON k.id = v.config_key_id
+        WHERE v.config_label_id = #{labelId}
+    </select>
+
+    <select id="getConfigEnKeyValueByLabelId" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_En_Key_Value_Column"/>
+        FROM linkis_ps_configuration_config_key AS k
+        LEFT OUTER JOIN linkis_ps_configuration_config_value AS v
+        ON k.id = v.config_key_id
+        WHERE v.config_label_id = #{labelId}
+    </select>
+
+    <select id="getConfigById" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectKeyByKeyName" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE "key" = #{keyName}
+    </select>
+
+    <select id="listKeyByStringValue" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE id IN (SELECT b.config_key_id FROM linkis_cg_manager_label a JOIN linkis_ps_configuration_key_engine_relation b
+        ON a.label_value = #{stringValue} AND a.id = b.engine_type_label_id)
+    </select>
+
+    <insert id="insertValueList" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
+        INSERT INTO linkis_ps_configuration_config_value(
+        config_key_id, config_value, config_label_id, create_time, update_time)
+        VALUES
+        <foreach collection="configValues" item="configValue" separator=",">
+            (#{configValue.configKeyId}, #{configValue.configValue},
+            #{configValue.configLabelId}, now(), now())
+        </foreach>
+    </insert>
+
+    <update id="updateUserValue">
+        UPDATE linkis_ps_configuration_config_value SET config_value = #{value}, update_time = now()
+        WHERE id= #{id}
+    </update>
+
+    <update id="updateUserValueList" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
+        UPDATE linkis_ps_configuration_config_value SET update_time = now(), config_value =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            WHEN #{item.id} then #{item.configValue}
+        </foreach>
+        WHERE id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
+
+    <!--ConfigValue-->
+    <insert id="insertValue" parameterType="org.apache.linkis.configuration.entity.ConfigValue">
+        INSERT INTO linkis_ps_configuration_config_value(
+        config_key_id, config_value, config_label_id, create_time, update_time)
+        VALUES (
+        #{configKeyId},#{configValue}, #{configLabelId}, now(), now())
+        on conflict(config_key_id, config_label_id)
+        do update set
+        config_value=EXCLUDED.config_value,
+        update_time=EXCLUDED.update_time,
+        create_time=EXCLUDED.create_time
+    </insert>
+
+    <select id="getConfigValueById" resultMap="ConfigValueMap">
+        SELECT * FROM linkis_ps_configuration_config_value
+        WHERE id = #{id}
+    </select>
+
+    <select id="getConfigValueByKeyAndLabel" resultMap="ConfigValueMap">
+        SELECT * FROM linkis_ps_configuration_config_value
+        WHERE  config_key_id=#{configKeyId}
+        AND config_label_id = #{configLabelId}
+    </select>
+
+    <delete id="deleteConfigKeyValue" >
+        DELETE FROM linkis_ps_configuration_config_value
+        WHERE  config_key_id=#{configKeyId}
+        AND config_label_id = #{configLabelId}
+    </delete>
+
+    <!--Category-->
+    <select id="getCategory" resultMap="CategoryMap">
+        SELECT c.id AS category_id, c.level, c.description, c.tag, c.update_time, c.create_time,
+        l.id, l.label_key, l.label_value, l.label_feature, l.label_value_size
+        FROM linkis_ps_configuration_category AS c
+        INNER JOIN linkis_cg_manager_label as l on c.label_id = l.id
+    </select>
+
+    <select id="getCategoryById" resultMap="CategoryMap">
+        SELECT c.id AS category_id, c.level, c.description, c.tag, c.update_time, c.create_time,
+        l.id, l.label_key, l.label_value, l.label_feature, l.label_value_size
+        FROM linkis_ps_configuration_category AS c
+        LEFT OUTER JOIN linkis_cg_manager_label as l on c.label_id = l.id
+        where c.id = #{id}
+    </select>
+
+    <insert id="insertCategory" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.CategoryLabel">
+        INSERT INTO linkis_ps_configuration_category (
+        label_id, level, description, tag, update_time, create_time)
+        VALUES(
+        #{id}, #{level}, #{description}, #{tag}, now(), now())
+    </insert>
+
+    <delete id="deleteCategory" >
+        DELETE FROM linkis_ps_configuration_category
+        WHERE id IN
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateCategory" parameterType="org.apache.linkis.configuration.entity.CategoryLabel">
+        UPDATE linkis_ps_configuration_category
+        <set>
+            <if test="description != null"> description = #{description} </if>
+        </set>
+        WHERE id = #{categoryId}
+    </update>
+
+</mapper>

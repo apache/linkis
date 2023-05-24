@@ -50,7 +50,7 @@ class FlinkManagerConcurrentExecutor(
   ): ExecuteResponse = {
     val msg = "Should not execte with FlinkManagerExecutor."
     logger.error(msg)
-    throw new JobExecutionException(FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB.getErrorCode, msg)
+    throw new JobExecutionException(msg)
   }
 
   override def getId: String = id.toString

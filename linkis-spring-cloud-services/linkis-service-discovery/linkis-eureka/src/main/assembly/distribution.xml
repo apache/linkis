@@ -50,10 +50,8 @@
                 <exclude>commons-configuration:commons-configuration:jar</exclude>
                 <exclude>commons-jxpath:commons-jxpath:jar</exclude>
                 <exclude>commons-lang:commons-lang:jar</exclude>
-                <exclude>commons-logging:commons-logging:jar</exclude>
                 <exclude>org.apache.commons:commons-math:jar</exclude>
                 <exclude>com.google.errorprone:error_prone_annotations:jar</exclude>
-                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:jar</exclude>
                 <exclude>com.netflix.eureka:eureka-core:jar</exclude>
                 <exclude>com.stoyanr:evictor:jar</exclude>
                 <exclude>com.google.guava:failureaccess:jar</exclude>
@@ -72,26 +70,16 @@
                 <exclude>com.fasterxml.jackson.module:jackson-module-parameter-names:jar</exclude>
                 <exclude>jakarta.annotation:jakarta.annotation-api:jar</exclude>
                 <exclude>javax.inject:javax.inject:jar</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
-                <exclude>com.sun.jersey:jersey-client:jar</exclude>
-                <exclude>com.sun.jersey:jersey-core:jar</exclude>
-                <exclude>com.sun.jersey:jersey-server:jar</exclude>
-                <exclude>com.sun.jersey:jersey-servlet:jar</exclude>
                 <exclude>org.codehaus.jettison:jettison:jar</exclude>
                 <exclude>joda-time:joda-time:jar</exclude>
                 <exclude>com.google.code.findbugs:jsr305:jar</exclude>
                 <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
                 <exclude>com.google.guava:listenablefuture:jar</exclude>
-                <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
-                <exclude>org.apache.logging.log4j:log4j-core:jar</exclude>
-                <exclude>org.apache.logging.log4j:log4j-jul:jar</exclude>
-                <exclude>org.apache.logging.log4j:log4j-slf4j-impl:jar</exclude>
                 <exclude>io.micrometer:micrometer-core:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-commons-util:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-eventbus:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-infix:jar</exclude>
                 <exclude>com.netflix.netflix-commons:netflix-statistics:jar</exclude>
-                <exclude>org.glassfish.hk2:osgi-resource-locator:jar</exclude>
                 <exclude>org.reactivestreams:reactive-streams:jar</exclude>
                 <exclude>io.projectreactor:reactor-core:jar</exclude>
                 <exclude>io.projectreactor.addons:reactor-extra:jar</exclude>
@@ -119,7 +107,6 @@
                 <exclude>org.springframework.boot:spring-boot-starter-aop:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-cache:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-json:jar</exclude>
-                <exclude>org.springframework.boot:spring-boot-starter-log4j2:jar</exclude>
                 <exclude>org.springframework.boot:spring-boot-starter-web:jar</exclude>
                 <exclude>org.springframework.cloud:spring-cloud-commons:jar</exclude>
                 <exclude>org.springframework.cloud:spring-cloud-context:jar</exclude>
@@ -140,7 +127,6 @@
                 <exclude>org.springframework.security:spring-security-rsa:jar</exclude>
                 <exclude>org.springframework:spring-web:jar</exclude>
                 <exclude>org.springframework:spring-webmvc:jar</exclude>
-                <exclude>javax.xml.stream:stax-api:jar</exclude>
                 <exclude>org.codehaus.woodstox:stax2-api:jar</exclude>
                 <exclude>org.antlr:stringtemplate:jar</exclude>
                 <exclude>com.fasterxml.woodstox:woodstox-core:jar</exclude>

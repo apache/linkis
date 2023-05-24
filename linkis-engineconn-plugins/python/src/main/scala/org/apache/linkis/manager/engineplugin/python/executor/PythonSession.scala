@@ -30,7 +30,15 @@ import org.apache.linkis.manager.engineplugin.python.exception.{
 import org.apache.linkis.manager.engineplugin.python.utils.Kind
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
 import org.apache.linkis.storage.domain._
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.domain.DataType.{
+  BooleanType,
+  DoubleType,
+  FloatType,
+  IntType,
+  StringType,
+  TimestampType
+}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.commons.exec.CommandLine
@@ -184,7 +192,7 @@ class PythonSession extends Logging {
       Await.result(promise.future, Duration.Inf)
     } catch {
       case t: Throwable =>
-        val exception = new ExecuteException(desc = t.getMessage)
+        val exception = new ExecuteException(PYSPARK_PROCESSS_STOPPED.getErrorCode, t.getMessage)
         exception.initCause(t)
         throw t
     } finally {
@@ -192,9 +200,9 @@ class PythonSession extends Logging {
       val outStr = outputStream.toString()
       if (StringUtils.isNotBlank(outStr)) {
         val output = Utils.tryQuietly(
-          ResultSetWriter.getRecordByRes(
+          ResultSetWriterFactory.getRecordByRes(
             outStr,
-            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
+            PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue.longValue()
           )
         )
         val res = if (output != null) output.toString else ""
@@ -304,14 +312,16 @@ class PythonSession extends Logging {
     val length = schema.size() - 1
     var list: List[Column] = List[Column]()
     for (i <- 0 to length) {
-      val col = Column(header.get(i), changeDT(schema.get(i)), null)
+      val col = new Column(header.get(i), changeDT(schema.get(i)), null)
       list = list :+ col
     }
     val metaData = new TableMetaData(list.toArray[Column])
     writer.addMetaData(metaData)
     val size = data.size() - 1
     for (i <- 0 to size) {
-      writer.addRecord(new TableRecord(data.get(i).asScala.toArray[Any]))
+      writer.addRecord(
+        new TableRecord(data.get(i).asScala.toArray[Any].asInstanceOf[Array[AnyRef]])
+      )
     }
     // generate table data
     engineExecutionContext.sendResultSet(writer)

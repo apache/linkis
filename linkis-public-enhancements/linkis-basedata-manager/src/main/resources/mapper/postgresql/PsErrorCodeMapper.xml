@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.PsErrorCodeMapper">
+
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.ErrorCodeEntity">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="errorCode" column="error_code" jdbcType="VARCHAR"/>
+            <result property="errorDesc" column="error_desc" jdbcType="VARCHAR"/>
+            <result property="errorRegex" column="error_regex" jdbcType="VARCHAR"/>
+            <result property="errorType" column="error_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,error_code,error_desc,
+        error_regex,error_type
+    </sql>
+
+    <select id="getListByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        from linkis_ps_error_code
+        <if test="searchName != null and searchName!=''">
+            where error_code like concat('%',#{searchName},'%')
+            or error_desc like concat('%',#{searchName},'%')
+            or error_regex like concat('%',#{searchName},'%')
+            or error_type::text like concat('%',#{searchName},'%')
+        </if>
+    </select>
+</mapper>

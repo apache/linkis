@@ -75,6 +75,8 @@ public class AppKeys {
       JOB_LABEL + "." + LinkisKeys.KEY_CODETYPE; // corresponds to server api.
   public static final String JOB_LABEL_EXECUTEONCE =
       JOB_LABEL + "." + LinkisKeys.KEY_EXECUTEONCE; // corresponds to server api.
+  public static final String JOB_LABEL_CLUSTER =
+      JOB_LABEL + "." + LinkisKeys.KEY_CLUSTER; // corresponds to server api.
 
   /*
   Job command

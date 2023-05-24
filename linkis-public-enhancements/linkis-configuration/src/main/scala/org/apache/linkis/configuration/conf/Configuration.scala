@@ -43,4 +43,7 @@ object Configuration {
   val USE_CREATOR_DEFAULE_VALUE =
     CommonVars.apply("wds.linkis.configuration.use.creator.default.value", true).getValue
 
+  val REMOVE_APPLICATION_CACHE =
+    CommonVars.apply("linkis.configuration.remove.application.cache", "IDE").getValue
+
 }

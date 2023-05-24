@@ -19,9 +19,11 @@ package org.apache.linkis.entrance.execute
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.entrance.exception.{EntranceErrorCode, EntranceErrorException}
 import org.apache.linkis.entrance.job.EntranceExecuteRequest
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus._
 import org.apache.linkis.governance.common.protocol.task.{RequestTask, ResponseTaskStatus}
+import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.orchestrator.computation.operation.log.LogProcessor
 import org.apache.linkis.orchestrator.computation.operation.progress.ProgressProcessor
 import org.apache.linkis.orchestrator.computation.operation.resource.ResourceReportProcessor
@@ -29,6 +31,7 @@ import org.apache.linkis.orchestrator.core.OrchestrationFuture
 import org.apache.linkis.protocol.UserWithCreator
 import org.apache.linkis.scheduler.executer._
 import org.apache.linkis.scheduler.executer.ExecutorState.ExecutorState
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
@@ -69,9 +72,14 @@ abstract class EntranceExecutor(val id: Long) extends Executor with Logging {
   }
 
   override def execute(executeRequest: ExecuteRequest): ExecuteResponse = {
-    var request: RequestTask = null
-    interceptors.foreach(in => request = in.apply(request, executeRequest))
-    callExecute(executeRequest)
+    LoggerUtils.setJobIdMDC(getId.toString)
+    Utils.tryFinally {
+      var request: RequestTask = null
+      interceptors.foreach(in => request = in.apply(request, executeRequest))
+      callExecute(executeRequest)
+    } {
+      LoggerUtils.removeJobIdMDC()
+    }
   }
 
   protected def callback(): Unit = {}

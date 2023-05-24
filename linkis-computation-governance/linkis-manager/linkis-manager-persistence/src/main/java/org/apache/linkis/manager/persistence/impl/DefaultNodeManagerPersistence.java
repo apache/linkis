@@ -40,6 +40,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
@@ -127,22 +128,13 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void removeNodeInstance(Node node) throws PersistenceErrorException {
+  public void removeNodeInstance(Node node) {
     String instance = node.getServiceInstance().getInstance();
-    try {
-      nodeManagerMapper.removeNodeInstance(instance);
-    } catch (Exception e) {
-      NodeInstanceNotFoundException nodeInstanceNotFoundException =
-          new NodeInstanceNotFoundException(
-              NODE_INSTANCE_DOES_NOT_EXIST.getErrorCode(),
-              NODE_INSTANCE_DOES_NOT_EXIST.getErrorDesc());
-      nodeInstanceNotFoundException.initCause(e);
-      throw nodeInstanceNotFoundException;
-    }
+    nodeManagerMapper.removeNodeInstance(instance);
   }
 
   @Override
-  public List<Node> getNodes(String owner) throws PersistenceErrorException {
+  public List<Node> getNodes(String owner) {
     List<PersistenceNode> nodeInstances = nodeManagerMapper.getNodeInstancesByOwner(owner);
     List<Node> persistenceNodeEntitys = new ArrayList<>();
     if (!nodeInstances.isEmpty()) {
@@ -162,7 +154,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<Node> getAllNodes() throws PersistenceErrorException {
+  public List<Node> getAllNodes() {
     List<PersistenceNode> nodeInstances = nodeManagerMapper.getAllNodes();
     List<Node> persistenceNodeEntitys = new ArrayList<>();
     if (!nodeInstances.isEmpty()) {
@@ -183,24 +175,23 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void updateNodeInstance(Node node) throws PersistenceErrorException {
+  public void updateNodeInstance(Node node) {
 
-    if (null != node) {
+    if (Objects.nonNull(node)) {
       PersistenceNode persistenceNode = new PersistenceNode();
       persistenceNode.setInstance(node.getServiceInstance().getInstance());
       persistenceNode.setName(node.getServiceInstance().getApplicationName());
-      persistenceNode.setOwner(node.getOwner());
       persistenceNode.setMark(node.getMark());
-      persistenceNode.setCreateTime(new Date());
       persistenceNode.setUpdateTime(new Date());
       persistenceNode.setCreator(node.getOwner());
       persistenceNode.setUpdator(node.getOwner());
-      nodeManagerMapper.updateNodeInstanceOverload(persistenceNode);
+      persistenceNode.setIdentifier(node.getIdentifier());
+      nodeManagerMapper.updateNodeInstanceByInstance(persistenceNode);
     }
   }
 
   @Override
-  public Node getNode(ServiceInstance serviceInstance) throws PersistenceErrorException {
+  public Node getNode(ServiceInstance serviceInstance) {
     String instance = serviceInstance.getInstance();
     PersistenceNode nodeInstances = nodeManagerMapper.getNodeInstance(instance);
     if (null == nodeInstances) {
@@ -230,7 +221,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public void deleteEngineNode(EngineNode engineNode) throws PersistenceErrorException {
+  public void deleteEngineNode(EngineNode engineNode) {
     String engineNodeInstance = engineNode.getServiceInstance().getInstance();
     if (null != engineNode.getEMNode()) {
       String emNodeInstance = engineNode.getEMNode().getServiceInstance().getInstance();
@@ -245,8 +236,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public EngineNode getEngineNode(ServiceInstance serviceInstance)
-      throws PersistenceErrorException {
+  public EngineNode getEngineNode(ServiceInstance serviceInstance) {
     // The serviceinstance of a given engine finds emNode (给定引擎的 serviceinstance 查到 emNode)
     AMEngineNode amEngineNode = new AMEngineNode();
     amEngineNode.setServiceInstance(serviceInstance);
@@ -276,8 +266,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
-      throws PersistenceErrorException {
+  public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) {
     // serviceinstance for a given EM(给定EM的 serviceinstance)
     PersistenceNode emNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());
     if (null == emNode) {
@@ -309,8 +298,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstanceList)
-      throws PersistenceErrorException {
+  public List<EngineNode> getEngineNodeByServiceInstance(
+      List<ServiceInstance> serviceInstanceList) {
     List<EngineNode> amEngineNodeList = new ArrayList<>();
     // Limit database size per query
     List<List<ServiceInstance>> partition = Lists.partition(serviceInstanceList, 100);

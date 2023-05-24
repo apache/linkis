@@ -22,13 +22,13 @@
 
 
     <sql id="bml_resources">
-        `engine_conn_type`,`version`,`file_name`,`file_size`,`last_modified`,`bml_resource_id`,`bml_resource_version`,`create_time`,`last_update_time`
+        engine_conn_type,version,file_name,file_size,last_modified,bml_resource_id,bml_resource_version,create_time,last_update_time
     </sql>
 
     <select id="getAllEngineConnBmlResource"
             resultType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         SELECT * FROM linkis_cg_engine_conn_plugin_bml_resources
-        WHERE engine_conn_type=#{engineConnType} and `version`=#{version}
+        WHERE engine_conn_type=#{engineConnType} and version=#{version}
     </select>
 
     <select id="getTypeVersionList" resultType="java.lang.String">
@@ -46,37 +46,37 @@
         FROM linkis_cg_engine_conn_plugin_bml_resources
         <where>
             <if test="engineConnType != null and engineConnType != ''">
-                <![CDATA[AND `engine_conn_type` like concat('%', #{engineConnType}, '%')]]>
+                AND engine_conn_type like concat('%', #{engineConnType}, '%')
             </if>
             <if test="engineConnVersion != null and engineConnVersion != ''">
-                <![CDATA[AND `version` like concat('%', #{engineConnVersion}, '%')]]>
+                AND version like concat('%', #{engineConnVersion}, '%')
             </if>
         </where>
-        <![CDATA[ ORDER BY create_time DESC ]]>
+         ORDER BY create_time DESC
     </select>
 
     <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         DELETE FROM linkis_cg_engine_conn_plugin_bml_resources
         WHERE engine_conn_type = #{engineConnBmlResource.engineConnType}
-        AND `version` = #{engineConnBmlResource.version}
+        AND version = #{engineConnBmlResource.version}
         AND file_name = #{engineConnBmlResource.fileName}
     </delete>
 
     <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         UPDATE linkis_cg_engine_conn_plugin_bml_resources
-        <trim prefix="set" suffixOverrides=",">
-            <if test="engineConnBmlResource.lastModified != null">`last_modified` =
+        <set>
+            <if test="engineConnBmlResource.lastModified != null">last_modified =
                 #{engineConnBmlResource.lastModified},
             </if>
-            <if test="engineConnBmlResource.fileSize != null">`file_size` = #{engineConnBmlResource.fileSize},</if>
-            <if test="engineConnBmlResource.bmlResourceVersion != null">`bml_resource_version` =
+            <if test="engineConnBmlResource.fileSize != null">file_size = #{engineConnBmlResource.fileSize},</if>
+            <if test="engineConnBmlResource.bmlResourceVersion != null">bml_resource_version =
                 #{engineConnBmlResource.bmlResourceVersion},
             </if>
-            <if test="engineConnBmlResource.lastUpdateTime != null">`last_update_time` =
+            <if test="engineConnBmlResource.lastUpdateTime != null">last_update_time =
                 #{engineConnBmlResource.lastUpdateTime},
             </if>
-        </trim>
-        WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and `version`=#{engineConnBmlResource.version}
+        </set>
+        WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and version=#{engineConnBmlResource.version}
         AND file_name=#{engineConnBmlResource.fileName}
     </update>
 

@@ -61,9 +61,27 @@
         FROM linkis_cg_manager_service_instance
     </select>
 
-    <update id="updateNodeInstanceOverload">
+    <update id="updateNodeInstanceByInstance">
         UPDATE linkis_cg_manager_service_instance
-        SET owner = #{persistenceNode.owner}, mark = #{persistenceNode.mark}, name = #{persistenceNode.name}, update_time = #{persistenceNode.updateTime}, create_time = #{persistenceNode.createTime}, updator = #{persistenceNode.updator}, creator = #{persistenceNode.creator}
+        SET
+        <if test="persistenceNode.mark != null">
+            mark = #{persistenceNode.mark},
+        </if>
+        <if test="persistenceNode.name != null">
+            name = #{persistenceNode.name},
+        </if>
+        <if test="persistenceNode.updateTime != null">
+            update_time = #{persistenceNode.updateTime},
+        </if>
+        <if test="persistenceNode.updator != null">
+            updator = #{persistenceNode.updator},
+        </if>
+        <if test="persistenceNode.creator != null">
+            creator = #{persistenceNode.creator},
+        </if>
+        <if test="persistenceNode.identifier != null">
+            identifier = #{persistenceNode.identifier}
+        </if>
         WHERE instance = #{persistenceNode.instance}
     </update>
 
@@ -153,7 +171,7 @@
     <select id="getEMNodeInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo">
         SELECT t.*, metrics.instance_status
         FROM  linkis_cg_manager_service_instance t, linkis_cg_manager_service_instance_metrics metrics
-        WHERE t.name ="linkis-cg-engineconn"
+        WHERE t.name ='linkis-cg-engineconn'
         <if test="creatorUsers != null and creatorUsers.size() > 0">
             and creator in
             <foreach collection="creatorUsers" item="i" open="(" close=")" separator=",">

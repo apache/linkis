@@ -29,7 +29,7 @@ public class SparkDdlSQlTemplate {
           + "  password '%s'"
           + ")";
 
-  public static final String DML_SQL_TEMPLATE = "INSERT INTO %s SELECT * FROM resultTable";
+  public static final String DML_SQL_TEMPLATE = "INSERT INTO %s SELECT * FROM ${resultTable}";
 
   public static final String DQL_SQL_TEMPLATE = "SELECT %s FROM %s";
 }

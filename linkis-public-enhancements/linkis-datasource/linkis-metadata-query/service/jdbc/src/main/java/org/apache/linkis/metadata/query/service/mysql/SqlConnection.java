@@ -19,15 +19,11 @@ package org.apache.linkis.metadata.query.service.mysql;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.SecurityUtils;
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
+import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +31,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlConnection implements Closeable {
+public class SqlConnection extends AbstractSqlConnection {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
@@ -51,10 +47,6 @@ public class SqlConnection implements Closeable {
   private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
       CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
 
-  private Connection conn;
-
-  private ConnectMessage connectMessage;
-
   public SqlConnection(
       String host,
       Integer port,
@@ -63,16 +55,12 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
+    super(host, port, username, password, database, extraParams);
     // security check
     SecurityUtils.checkJdbcConnParams(host, port, username, password, database, extraParams);
     SecurityUtils.appendMysqlForceParams(extraParams);
-
-    connectMessage =
-        new ConnectMessage(host.trim(), port, username.trim(), password.trim(), extraParams);
-    conn = getDBConnection(connectMessage, database.trim());
-    // Try to create statement
-    Statement statement = conn.createStatement();
-    statement.close();
+    connectMessage.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
+    connectMessage.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -136,99 +124,13 @@ public class SqlConnection implements Closeable {
     return columns;
   }
 
-  public GenerateSqlInfo getSparkSql(String database, String table) {
-    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
-
-    String url =
-        String.format(
-            SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    String ddl =
-        String.format(
-            SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
-            table,
-            url,
-            table,
-            connectMessage.username,
-            connectMessage.password);
-    generateSqlInfo.setDdl(ddl);
-
-    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
-    generateSqlInfo.setDml(dml);
-
-    String columnStr = "*";
-    try {
-      List<MetaColumnInfo> columns = getColumns(database, table);
-      if (CollectionUtils.isNotEmpty(columns)) {
-        columnStr =
-            columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
-      }
-    } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)");
-    }
-    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, table);
-    generateSqlInfo.setDql(dql);
-    return generateSqlInfo;
-  }
-
-  /**
-   * Get primary keys
-   *
-   * @param table table name
-   * @return
-   * @throws SQLException
-   */
-  private List<String> getPrimaryKeys(String table) throws SQLException {
-    ResultSet rs = null;
-    List<String> primaryKeys = new ArrayList<>();
-    try {
-      DatabaseMetaData dbMeta = conn.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
-      while (rs.next()) {
-        primaryKeys.add(rs.getString("column_name"));
-      }
-      return primaryKeys;
-    } finally {
-      if (null != rs) {
-        rs.close();
-      }
-    }
-  }
-
-  /**
-   * close database resource
-   *
-   * @param connection connection
-   * @param statement statement
-   * @param resultSet result set
-   */
-  private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
-    try {
-      if (null != resultSet && !resultSet.isClosed()) {
-        resultSet.close();
-      }
-      if (null != statement && !statement.isClosed()) {
-        statement.close();
-      }
-      if (null != connection && !connection.isClosed()) {
-        connection.close();
-      }
-    } catch (SQLException e) {
-      LOG.warn("Fail to release resource [" + e.getMessage() + "]", e);
-    }
-  }
-
-  @Override
-  public void close() throws IOException {
-    closeResource(conn, null, null);
-  }
-
   /**
    * @param connectMessage
    * @param database
    * @return
    * @throws ClassNotFoundException
    */
-  private Connection getDBConnection(ConnectMessage connectMessage, String database)
+  public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
     String extraParamString =
         connectMessage.extraParams.entrySet().stream()
@@ -249,31 +151,8 @@ public class SqlConnection implements Closeable {
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 
-  /** Connect message */
-  private static class ConnectMessage {
-    private String host;
-
-    private Integer port;
-
-    private String username;
-
-    private String password;
-
-    private Map<String, Object> extraParams;
-
-    public ConnectMessage(
-        String host,
-        Integer port,
-        String username,
-        String password,
-        Map<String, Object> extraParams) {
-      this.host = host;
-      this.port = port;
-      this.username = username;
-      this.password = password;
-      this.extraParams = extraParams;
-      this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
-      this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
-    }
+  @Override
+  public String getSqlConnectUrl() {
+    return SQL_CONNECT_URL.getValue();
   }
 }

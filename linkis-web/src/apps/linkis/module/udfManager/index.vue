@@ -188,13 +188,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
         }
       })

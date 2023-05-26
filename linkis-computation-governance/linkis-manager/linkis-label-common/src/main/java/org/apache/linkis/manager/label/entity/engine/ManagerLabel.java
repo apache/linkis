@@ -33,7 +33,7 @@ public class ManagerLabel extends GenericLabel implements EngineNodeLabel {
 
   @Override
   public Feature getFeature() {
-    return Feature.CORE;
+    return Feature.SUITABLE;
   }
 
   public String getManager() {

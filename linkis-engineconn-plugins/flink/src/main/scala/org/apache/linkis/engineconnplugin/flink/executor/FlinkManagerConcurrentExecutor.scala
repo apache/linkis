@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.executor
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
   ConcurrentComputationExecutor,
@@ -29,7 +30,11 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.protocol.engine.JobProgressInfo
-import org.apache.linkis.scheduler.executer.{ErrorExecuteResponse, ExecuteResponse}
+import org.apache.linkis.scheduler.executer.{
+  AsynReturnExecuteResponse,
+  ErrorExecuteResponse,
+  ExecuteResponse
+}
 
 class FlinkManagerConcurrentExecutor(
     val id: Long,
@@ -48,9 +53,13 @@ class FlinkManagerConcurrentExecutor(
   override def execute(
       onceExecutorExecutionContext: OnceExecutorExecutionContext
   ): ExecuteResponse = {
-    val msg = "Should not execte with FlinkManagerExecutor."
-    logger.error(msg)
-    throw new JobExecutionException(msg)
+    val msg = "Succeed to init FlinkManagerExecutor."
+    logger.info(msg)
+    new AsynReturnExecuteResponse {
+      override def notify(rs: ExecuteResponse => Unit): Unit = {
+        logger.info(s"FlinkManagerExecutor will skip listener : ${rs}")
+      }
+    }
   }
 
   override def getId: String = id.toString
@@ -68,5 +77,13 @@ class FlinkManagerConcurrentExecutor(
       onceExecutorExecutionContext: OnceExecutorExecutionContext,
       options: Map[String, String]
   ): Unit = submit(onceExecutorExecutionContext)
+
+  override protected def initOnceExecutorExecutionContext(
+      onceExecutorExecutionContext: OnceExecutorExecutionContext
+  ): Unit = {}
+
+  override protected def createOnceExecutorExecutionContext(
+      engineCreationContext: EngineCreationContext
+  ): OnceExecutorExecutionContext = new OnceExecutorExecutionContext(null, null)
 
 }

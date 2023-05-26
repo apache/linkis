@@ -239,6 +239,8 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
+      // console.log(this.$refs.editForm);
+      this.$refs.editForm.formModel.reload()
       row.hasKeyTab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
       // format parameter for modal
@@ -267,6 +269,8 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
@@ -274,7 +278,6 @@ export default {
               })
             }
           })
-          this.load()
         }
       })
 
@@ -282,9 +285,9 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
-        this.modalEditData.parameter = {}
-        window.console.log(key);
       }
+      this.modalEditData.parameter = {}
+      this.modalEditData.hadoopConf = JSON.stringify({})
       this.modalEditData.hasKeyTab = false;
     },
     async onModalOk(){
@@ -345,7 +348,7 @@ export default {
             }
           })
         }
-        window.console.log(formData);
+        // window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
       })

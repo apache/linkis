@@ -90,6 +90,7 @@
             "linkText": "点击查看结果集",
             "largeResultTips": "前端只展示5000条数据"
           },
+          "needPre": "需要先选择分类和输入用户名",
           "warning": {
               "api": "接口请求中，请稍候！",
               "data": "数据请求中，请稍候！",
@@ -188,7 +189,8 @@
                       "EnginePluginManagement": "引擎物料管理",
                       "basedataManagement": "基础数据管理",
                       "codeQuery": "代码检索",
-                      "engineConfigurationTemplate": "引擎配置模板"
+                      "engineConfigurationTemplate": "引擎配置模板",
+                      "EngineConnList": "引擎列表"
                   }
               }
           },
@@ -441,6 +443,7 @@
             "searchPlaceholder": "请输入搜索内容",
             "search": "搜索",
             "action": "操作",
+            "categoryMaxLength": "分类名长度不能超过100",
             "modal":{
               "confirm": "确定",
               "cancel": "取消",

@@ -83,7 +83,8 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <ErrorCodeForm 
+        v-if="modalShow" ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
     </Modal>
   </div>
 </template>
@@ -210,22 +211,30 @@ export default {
       this.page.pageNow = value
       this.load()
     },
-    onAdd(){
-      this.$refs.errorCodeForm.formModel.resetFields()
-      this.modalAddMode = 'add'
+    async onAdd(){
+      
+      this.modalEditData = {}
       this.modalShow = true
+      await this.$nextTick()
+      this.$refs.errorCodeForm.formModel.resetFields()
+      this.$refs.errorCodeForm.formModel.setValue({})
+      this.modalAddMode = 'add'
     },
-    onTableEdit(row){
+    async onTableEdit(row){
+      
+      this.modalEditData = row
+      this.modalShow = true
+      await this.$nextTick()
+      this.$refs.errorCodeForm.formModel.resetFields()
       this.$refs.errorCodeForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
-      this.modalShow = true
     },
     onTableDelete(row){
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
         content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
-        onOk: ()=>{
+        onOk: async ()=>{
           let params = {
             id: row.id
           }
@@ -235,6 +244,7 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
@@ -242,7 +252,6 @@ export default {
               })
             }
           })
-          this.load()
         }
       })
 

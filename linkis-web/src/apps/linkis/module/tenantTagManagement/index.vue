@@ -328,7 +328,7 @@ export default {
               if (res.exist) {
                 this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
               }
-              this.tagIsExist = !res.exist;
+              this.tagIsExist = res.exist;
             })
             this.isRequesting = false
           } catch (err) {

@@ -50,6 +50,7 @@ public class PluginUtil {
     classMap.put("mongo", MongoSource.class);
     classMap.put("elasticsearch", ElasticsearchSource.class);
     classMap.put("solr", SolrSource.class);
+    classMap.put("kafka", KafkaSource.class);
     return classMap;
   }
 
@@ -71,6 +72,7 @@ public class PluginUtil {
     classMap.put("mongo", MongoSink.class);
     classMap.put("elasticsearch", ElasticsearchSink.class);
     classMap.put("solr", SolrSink.class);
+    classMap.put("kafka", KafkaSink.class);
     return classMap;
   }
 

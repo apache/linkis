@@ -94,15 +94,16 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
               )
               return
           }
+          val nodeStatus = accessibleExecutor.getStatus
           if (NodeStatus.isCompleted(accessibleExecutor.getStatus)) {
             logger.error(
               s"${accessibleExecutor.getId} has completed with status ${accessibleExecutor.getStatus}, now stop it."
             )
-            requestManagerReleaseExecutor("Completed release")
+            requestManagerReleaseExecutor("Completed release", nodeStatus)
             ShutdownHook.getShutdownHook.notifyStop()
           } else if (accessibleExecutor.getStatus == NodeStatus.ShuttingDown) {
             logger.warn(s"${accessibleExecutor.getId} is ShuttingDown...")
-            requestManagerReleaseExecutor(" ShuttingDown release")
+            requestManagerReleaseExecutor(" ShuttingDown release", nodeStatus)
             ShutdownHook.getShutdownHook.notifyStop()
           } else if (
               maxFreeTime > 0 && (NodeStatus.Unlock.equals(
@@ -118,7 +119,7 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
                 s"${accessibleExecutor.getId} has not been used for $maxFreeTimeStr, now try to shutdown it."
               )
               accessibleExecutor.tryShutdown()
-              requestManagerReleaseExecutor(" idle release")
+              requestManagerReleaseExecutor(" idle release", nodeStatus)
               ShutdownHook.getShutdownHook.notifyStop()
             }
 
@@ -131,14 +132,14 @@ class AccessibleEngineConnExecution extends EngineConnExecution with Logging {
     )
   }
 
-  def requestManagerReleaseExecutor(msg: String): Unit = {
+  def requestManagerReleaseExecutor(msg: String, nodeStatus: NodeStatus): Unit = {
     val engineReleaseRequest = new EngineConnReleaseRequest(
       Sender.getThisServiceInstance,
       Utils.getJvmUser,
       msg,
       EngineConnObject.getEngineCreationContext.getTicketId
     )
-    Utils.tryAndWarn(Thread.sleep(100))
+    engineReleaseRequest.setNodeStatus(nodeStatus)
     logger.info("To send release request to linkis manager")
     ManagerService.getManagerService.requestReleaseEngineConn(engineReleaseRequest)
   }

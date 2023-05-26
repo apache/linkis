@@ -32,6 +32,7 @@ trait AccessibleService extends ExecutorStatusListener {
 
   def dealEngineStopRequest(engineSuicideRequest: EngineSuicideRequest, sender: Sender): Unit
 
+  @deprecated
   def requestManagerReleaseExecutor(msg: String): Unit
 
   def dealRequestNodeStatus(requestNodeStatus: RequestNodeStatus): ResponseNodeStatus

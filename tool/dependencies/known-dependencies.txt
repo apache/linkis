@@ -32,6 +32,7 @@ avatica-1.8.0.jar
 avatica-metrics-1.8.0.jar
 avro-1.7.4.jar
 avro-1.7.7.jar
+avro-1.11.0.jar
 bcpkix-jdk15on-1.64.jar
 bcprov-jdk15on-1.64.jar
 bonecp-0.8.0.RELEASE.jar
@@ -522,7 +523,7 @@ spring-jcl-5.2.22.RELEASE.jar
 spring-jdbc-5.2.22.RELEASE.jar
 spring-plugin-core-2.0.0.RELEASE.jar
 spring-plugin-metadata-2.0.0.RELEASE.jar
-spring-security-crypto-5.3.9.RELEASE.jar
+spring-security-crypto-5.7.5.RELEASE.jar
 spring-security-rsa-1.0.9.RELEASE.jar
 spring-tx-5.2.22.RELEASE.jar
 spring-web-5.2.22.RELEASE.jar

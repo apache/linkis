@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.common.protocol.engine;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 
 public class EngineConnReleaseRequest implements EngineRequest {
 
@@ -26,6 +27,8 @@ public class EngineConnReleaseRequest implements EngineRequest {
   private String user;
 
   private String msg;
+
+  private NodeStatus nodeStatus;
 
   public String getTicketId() {
     return ticketId;
@@ -70,5 +73,13 @@ public class EngineConnReleaseRequest implements EngineRequest {
 
   public void setMsg(String msg) {
     this.msg = msg;
+  }
+
+  public NodeStatus getNodeStatus() {
+    return nodeStatus;
+  }
+
+  public void setNodeStatus(NodeStatus nodeStatus) {
+    this.nodeStatus = nodeStatus;
   }
 }

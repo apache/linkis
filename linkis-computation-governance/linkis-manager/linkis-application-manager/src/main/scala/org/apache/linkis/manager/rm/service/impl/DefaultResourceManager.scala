@@ -23,7 +23,7 @@ import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.service.engine.EngineStopService
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, InfoRMNode}
+import org.apache.linkis.manager.common.entity.node.{AMEMNode, AMEngineNode, EngineNode, InfoRMNode}
 import org.apache.linkis.manager.common.entity.persistence.{
   PersistenceLabel,
   PersistenceLock,
@@ -211,6 +211,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     ecNodes.foreach { engineNode =>
       Utils.tryAndWarn {
         engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
+        engineNode.setNodeStatus(NodeStatus.Failed)
         engineStopService.engineConnInfoClear(engineNode)
       }
     }
@@ -368,9 +369,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    * 当资源被实例化后，返回实际占用的资源总量
    *
    * @param labels
-   *   In general, resourceReleased will release the resources occupied by the user, but if the
-   *   process that uses the resource does not have time to call the resourceReleased method to die,
-   *   you need to unregister to release the resource.
    * @param usedResource
    */
   override def resourceUsed(labels: util.List[Label[_]], usedResource: NodeResource): Unit = {
@@ -610,10 +608,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   /**
    * Method called when the resource usage is released 当资源使用完成释放后，调用的方法
    *
-   * @param labels
+   * @param ecNode
    */
-  override def resourceReleased(labels: util.List[Label[_]]): Unit = {
-    val labelContainer = labelResourceService.enrichLabels(labels)
+  override def resourceReleased(ecNode: EngineNode): Unit = {
+    val labelContainer = labelResourceService.enrichLabels(ecNode.getLabels)
     if (null == labelContainer.getEngineInstanceLabel) {
       throw new RMErrorException(
         RMErrorCode.LABEL_RESOURCE_NOT_FOUND.getCode,
@@ -638,7 +636,12 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       logger.info(
         s"resourceRelease ready:${labelContainer.getEngineInstanceLabel.getServiceInstance},current node resource${usedResource}"
       )
-      val status = getNodeStatus(labelContainer.getEngineInstanceLabel)
+
+      val status = if (null == ecNode.getNodeStatus) {
+        getNodeStatus(labelContainer.getEngineInstanceLabel)
+      } else {
+        ecNode.getNodeStatus
+      }
 
       labelContainer.getResourceLabels.asScala
         .filter(!_.isInstanceOf[EngineInstanceLabel])
@@ -844,7 +847,11 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
               logger.warn(
                 s"serviceInstance ${engineInstanceLabel.getServiceInstance} lock resource timeout, clear resource"
               )
-              resourceReleased(labels)
+              val ecNode = new AMEngineNode()
+              ecNode.setServiceInstance(engineInstanceLabel.getServiceInstance)
+              ecNode.setNodeStatus(NodeStatus.Failed)
+              ecNode.setLabels(labels)
+              resourceReleased(ecNode)
             case _ =>
           }
         }

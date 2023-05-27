@@ -513,6 +513,7 @@ INSERT INTO "linkis_ps_dm_datasource_type" ("name", "description", "option", "cl
 INSERT INTO "linkis_ps_dm_datasource_type" ("name", "description", "option", "classifier", "icon", "layers", "description_en", "option_en", "classifier_en") VALUES ('tidb', 'tidb数据库', 'tidb', '关系型数据库', '', 3, 'TiDB Database', 'TiDB', 'Relational Database');
 INSERT INTO "linkis_ps_dm_datasource_type" ("name", "description", "option", "classifier", "icon", "layers", "description_en", "option_en", "classifier_en") VALUES ('starrocks', 'starrocks数据库', 'starrocks', 'olap', '', 4, 'StarRocks Database', 'StarRocks', 'Olap');
 INSERT INTO "linkis_ps_dm_datasource_type" ("name", "description", "option", "classifier", "icon", "layers", "description_en", "option_en", "classifier_en") VALUES ('gaussdb', 'gaussdb数据库', 'gaussdb', '关系型数据库', '', 3, 'GaussDB Database', 'GaussDB', 'Relational Database');
+INSERT INTO "linkis_ps_dm_datasource_type" ("name", "description", "option", "classifier", "icon", "layers", "description_en", "option_en", "classifier_en") VALUES ('oceanbase', 'oceanbase数据库', 'oceanbase', 'olap', '', 4, 'oceanbase Database', 'oceanbase', 'Olap');
 
 
 delete from linkis_ps_dm_datasource_type_key;
@@ -702,3 +703,13 @@ VALUES ((select id from "linkis_ps_dm_datasource_type" where "name" = 'gaussdb')
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'gaussdb'), 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, '1', '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
        ((select id from "linkis_ps_dm_datasource_type" where "name" = 'gaussdb'), 'instance', '实例名(instance)', 'Instance', NULL, 'TEXT', NULL, '1', '实例名(instance)', 'Instance', NULL, NULL, NULL, NULL,  now(), now());
 
+INSERT INTO "linkis_ps_dm_datasource_type_key"
+("data_source_type_id", "key", "name", "name_en", "default_value", "value_type", "scope", "require", "description", "description_en", "value_regex", "ref_id", "ref_value", "data_source", "update_time", "create_time")
+VALUES ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'address', '地址', 'Address', NULL, 'TEXT', NULL, '0', '地址(host1:port1,host2:port2...)', 'Address(host1:port1,host2:port2...)', NULL, NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'host', '主机名(Host)', 'Host', NULL, 'TEXT', NULL, '1', '主机名(Host)', 'Host', NULL, NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'port', '端口号(Port)', 'Port', NULL, 'TEXT', NULL, '1', '端口号(Port)', 'Port', NULL, NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'driverClassName', '驱动类名(Driver class name)', 'Driver class name', 'com.mysql.jdbc.Driver', 'TEXT', NULL, '1', '驱动类名(Driver class name)', 'Driver class name', NULL, NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'params', '连接参数(Connection params)', 'Connection params', NULL, 'TEXT', NULL, '0', '输入JSON格式(Input JSON format): {"param":"value"}', 'Input JSON format: {"param":"value"}', NULL, NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'username', '用户名(Username)', 'Username', NULL, 'TEXT', NULL, '1', '用户名(Username)', 'Username', '^[0-9A-Za-z_-]+$', NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'password', '密码(Password)', 'Password', NULL, 'PASSWORD', NULL, '1', '密码(Password)', 'Password', '', NULL, NULL, NULL,  now(), now()),
+       ((select id from "linkis_ps_dm_datasource_type" where "name" = 'oceanbase'), 'instance', '实例名(instance)', 'Instance', NULL, 'TEXT', NULL, '1', '实例名(instance)', 'Instance', NULL, NULL, NULL, NULL,  now(), now());

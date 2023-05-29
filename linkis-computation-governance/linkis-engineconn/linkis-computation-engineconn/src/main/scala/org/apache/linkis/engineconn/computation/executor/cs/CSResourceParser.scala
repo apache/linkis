@@ -19,6 +19,7 @@ package org.apache.linkis.engineconn.computation.executor.cs
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.cs.client.service.CSResourceService
+import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.governance.common.utils.GovernanceConstant
 
 import org.apache.commons.lang3.StringUtils
@@ -63,7 +64,7 @@ class CSResourceParser extends Logging {
       val bmlResourceOption =
         bmlResourceList.asScala.find(_.getDownloadedFileName.equals(resourceName))
       if (bmlResourceOption.isDefined) {
-        val replacementName = prefixName + resourceName
+        val replacementName = EngineConnConf.getWorkHome + "/tmp/" + prefixName + resourceName
         val bmlResource = bmlResourceOption.get
         val map = new util.HashMap[String, Object]()
         map.put(GovernanceConstant.TASK_RESOURCE_ID_STR, bmlResource.getResourceId)

@@ -27,6 +27,7 @@ import org.apache.linkis.computation.client.once.result.CreateEngineConnResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import java.util.Locale
+
 import scala.concurrent.duration.Duration
 
 trait SimpleOnceJob extends OnceJob {

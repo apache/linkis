@@ -18,6 +18,8 @@
 package org.apache.linkis.engineconnplugin.flink.executor
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
+import org.apache.linkis.engineconn.acessible.executor.service.EngineConnConcurrentLockService
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ComputationExecutor,
@@ -26,9 +28,12 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 }
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter
+import org.apache.linkis.engineconnplugin.flink.config.FlinkLockerServiceHolder
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
+import org.apache.linkis.engineconnplugin.flink.util.ManagerUtil
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{
   AsynReturnExecuteResponse,
@@ -53,12 +58,24 @@ class FlinkManagerConcurrentExecutor(
   override def execute(
       onceExecutorExecutionContext: OnceExecutorExecutionContext
   ): ExecuteResponse = {
-    val msg = "Succeed to init FlinkManagerExecutor."
-    logger.info(msg)
-    new AsynReturnExecuteResponse {
-      override def notify(rs: ExecuteResponse => Unit): Unit = {
-        logger.info(s"FlinkManagerExecutor will skip listener : ${rs}")
+    val isManager = ManagerUtil.isManager
+    val lockService = FlinkLockerServiceHolder.getDefaultLockService()
+    if (
+        isManager && null != lockService && lockService
+          .isInstanceOf[EngineConnConcurrentLockService]
+    ) {
+      val msg = "Succeed to init FlinkManagerExecutor."
+      logger.info(msg)
+      new AsynReturnExecuteResponse {
+        override def notify(rs: ExecuteResponse => Unit): Unit = {
+          logger.info(s"FlinkManagerExecutor will skip listener : ${rs}")
+        }
       }
+    } else {
+      ErrorExecuteResponse(
+        "FlinkManagerExecutor got default lockService is not instance of EngineConnConcurrentLockService, will shutdown.",
+        null
+      )
     }
   }
 
@@ -85,5 +102,11 @@ class FlinkManagerConcurrentExecutor(
   override protected def createOnceExecutorExecutionContext(
       engineCreationContext: EngineCreationContext
   ): OnceExecutorExecutionContext = new OnceExecutorExecutionContext(null, null)
+
+  override def tryReady(): Boolean = {
+    // set default status to Unlock
+    transition(NodeStatus.Unlock)
+    true
+  }
 
 }

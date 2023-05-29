@@ -119,6 +119,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key,
         true.toString
       )
+      Thread.sleep(100)
+      logger.info(
+        s"support parallelism : ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()}"
+      )
     }
     otherParams.put(GovernanceCommonConf.EC_APP_MANAGE_MODE.key, flinkClientType.toLowerCase())
     val context = new EnvironmentContext(

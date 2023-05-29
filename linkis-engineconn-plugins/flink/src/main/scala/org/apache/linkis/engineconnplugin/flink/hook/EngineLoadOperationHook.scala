@@ -20,6 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.hook
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.acessible.executor.hook.OperationHook
+import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.factory.FlinkManagerExecutorFactory
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -54,6 +55,11 @@ class EngineLoadOperationHook extends OperationHook with Logging {
       engineOperateRequest: EngineOperateRequest,
       engineOperateResponse: EngineOperateResponse
   ): Unit = {
+    FlinkManagerExecutorFactory.getDefaultExecutor() match {
+      case accessibleExecutor: AccessibleExecutor =>
+        accessibleExecutor.updateLastActivityTime()
+      case _ =>
+    }
     if (
         taskNum.incrementAndGet() >= FlinkEnvConfiguration.FLINK_MANAGER_LOAD_TASK_MAX.getHotValue()
     ) {

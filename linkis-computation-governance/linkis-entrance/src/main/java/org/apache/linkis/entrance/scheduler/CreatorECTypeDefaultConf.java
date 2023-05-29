@@ -49,7 +49,9 @@ public class CreatorECTypeDefaultConf {
   private static LoadingCache<String, Integer> confCache =
       CacheBuilder.newBuilder()
           .maximumSize(1000)
-          .expireAfterWrite(1, TimeUnit.HOURS)
+          .expireAfterWrite(
+              (long) EntranceConfiguration.ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE().getValue(),
+              TimeUnit.MINUTES)
           .build(
               new CacheLoader<String, Integer>() {
                 @Override

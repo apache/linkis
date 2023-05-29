@@ -230,4 +230,7 @@ object EntranceConfiguration {
       "Creator task concurrency limit parameters"
     )
 
+  val ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE =
+    CommonVars("linkis.entrance.creator.job.concurrency.limit.conf.cache.time", 30L)
+
 }

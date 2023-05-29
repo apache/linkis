@@ -143,7 +143,6 @@ public class SqlConnection extends AbstractSqlConnection {
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 
-  @Override
   public String getSqlConnectUrl() {
     return SQL_CONNECT_URL.getValue();
   }

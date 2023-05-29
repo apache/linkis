@@ -17,11 +17,7 @@
 
 package org.apache.linkis.metadata.query.service;
 
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,7 +25,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,42 +107,6 @@ public abstract class AbstractSqlConnection implements Closeable {
       }
     }
   }
-
-  public GenerateSqlInfo getSparkSql(String database, String table) {
-    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
-    String sparkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
-
-    String url =
-        String.format(getSqlConnectUrl(), connectMessage.host, connectMessage.port, database);
-    String ddl =
-        String.format(
-            SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
-            sparkTableName,
-            url,
-            table,
-            connectMessage.username,
-            connectMessage.password);
-    generateSqlInfo.setDdl(ddl);
-
-    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, sparkTableName);
-    generateSqlInfo.setDml(dml);
-
-    String columnStr = "*";
-    try {
-      List<MetaColumnInfo> columns = getColumns(database, table);
-      if (CollectionUtils.isNotEmpty(columns)) {
-        columnStr =
-            columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
-      }
-    } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)");
-    }
-    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, sparkTableName);
-    generateSqlInfo.setDql(dql);
-    return generateSqlInfo;
-  }
-
-  public abstract String getSqlConnectUrl();
 
   /**
    * close database resource

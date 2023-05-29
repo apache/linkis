@@ -17,7 +17,6 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -87,13 +86,10 @@ public interface MetadataDbService extends BaseMetadataService {
       String operator, Map<String, Object> params, String database, String table);
 
   /**
-   * Get spark ddl sql
+   * Get sql connect url
    *
-   * @param params
-   * @param database
-   * @param table
+   * @param params connect params
    * @return
    */
-  GenerateSqlInfo getSparkSql(
-      String operator, Map<String, Object> params, String database, String table);
+  public String getSqlConnectUrl(String operator, Map<String, Object> params);
 }

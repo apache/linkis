@@ -18,7 +18,6 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
-import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
@@ -97,11 +96,7 @@ public class MysqlMetaService extends AbstractDbMetaService<SqlConnection> {
   }
 
   @Override
-  public GenerateSqlInfo querySparkSql(SqlConnection connection, String database, String table) {
-    try {
-      return connection.getSparkSql(database, table);
-    } catch (Exception e) {
-      throw new RuntimeException("Fail to get spark ddl sql (获取sparkSql失败)", e);
-    }
+  public String querySqlConnectUrl(SqlConnection connection) {
+    return connection.getSqlConnectUrl();
   }
 }

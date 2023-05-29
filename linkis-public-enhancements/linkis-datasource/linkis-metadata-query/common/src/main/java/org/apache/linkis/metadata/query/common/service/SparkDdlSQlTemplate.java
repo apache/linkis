@@ -20,7 +20,7 @@ package org.apache.linkis.metadata.query.common.service;
 public class SparkDdlSQlTemplate {
 
   public static final String JDBC_DDL_SQL_TEMPLATE =
-      "CREATE TEMPORARY VIEW %s "
+      "CREATE TEMPORARY TABLE %s "
           + "USING org.apache.spark.sql.jdbc "
           + "OPTIONS ("
           + "  url '%s',"

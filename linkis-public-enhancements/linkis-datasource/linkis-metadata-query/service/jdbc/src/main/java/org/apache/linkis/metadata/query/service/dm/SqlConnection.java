@@ -182,7 +182,6 @@ public class SqlConnection extends AbstractSqlConnection {
     }
   }
 
-  @Override
   public String getSqlConnectUrl() {
     return SQL_CONNECT_URL.getValue();
   }

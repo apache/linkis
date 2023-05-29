@@ -94,6 +94,10 @@ trait SimpleOnceJob extends OnceJob {
     case operator => operator
   }
 
+  def getEcServiceInstance: ServiceInstance = serviceInstance
+
+  def getEcTicketId: String = ticketId
+
 }
 
 class SubmittableSimpleOnceJob(
@@ -106,10 +110,6 @@ class SubmittableSimpleOnceJob(
   private var ecmServiceInstance: ServiceInstance = _
 
   def getECMServiceInstance: ServiceInstance = ecmServiceInstance
-
-  def getEcServiceInstance: ServiceInstance = serviceInstance
-
-  def getEcTicketId: String = ticketId
 
   override protected def doSubmit(): Unit = {
     logger.info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")

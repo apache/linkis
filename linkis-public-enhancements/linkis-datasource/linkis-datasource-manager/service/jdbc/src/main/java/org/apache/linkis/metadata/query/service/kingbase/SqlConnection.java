@@ -20,7 +20,6 @@ package org.apache.linkis.metadata.query.service.kingbase;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
 import org.apache.commons.collections.MapUtils;
 
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.linkis.metadata.query.service.postgres.AbstractSqlConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,7 +18,6 @@
 package org.apache.linkis.metadata.query.service.greenplum;
 
 import org.apache.linkis.common.conf.CommonVars;
-import org.apache.linkis.common.utils.AESUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
 import org.apache.logging.log4j.util.Strings;

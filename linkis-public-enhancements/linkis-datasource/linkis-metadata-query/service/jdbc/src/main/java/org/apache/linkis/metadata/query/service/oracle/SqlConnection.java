@@ -15,33 +15,36 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service.db2;
+package org.apache.linkis.metadata.query.service.oracle;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SqlConnection implements Closeable {
-
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
   private static final CommonVars<String> SQL_DRIVER_CLASS =
-      CommonVars.apply("wds.linkis.server.mdm.service.db2.driver", "com.ibm.db2.jcc.DB2Driver");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.oracle.driver", "oracle.jdbc.driver.OracleDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.db2.url", "jdbc:db2://%s:%s/%s");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.oracle.sid.url", "jdbc:oracle:thin:@%s:%s:%s");
+
+  private static final CommonVars<String> SQL_CONNECT_SERVICE_URL =
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.oracle.service.url", "jdbc:oracle:thin:@//%s:%s/%s");
 
   private Connection conn;
 
@@ -53,30 +56,27 @@ public class SqlConnection implements Closeable {
       String username,
       String password,
       String database,
+      String serviceName,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    if (Strings.isBlank(database)) {
-      database = "SAMPLE";
-    }
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, database);
+    conn = getDBConnection(connectMessage, database, serviceName);
     // Try to create statement
     Statement statement = conn.createStatement();
     statement.close();
   }
 
   public List<String> getAllDatabases() throws SQLException {
-    // db2 "select schemaname from syscat.schemata"
     List<String> dataBaseName = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs = stmt.executeQuery("list database directory");
-      // rs = stmt.executeQuery("SELECT * FROM SYSIBMADM.APPLICATIONS WITH UR");
-      // rs = stmt.executeQuery("select * from syscat.tables");
+      rs =
+          stmt.executeQuery(
+              "select username from sys.dba_users WHERE default_tablespace not in ('SYSTEM','SYSAUX') and ACCOUNT_STATUS = 'OPEN'\n");
       while (rs.next()) {
-        dataBaseName.add(rs.getString(1));
+        dataBaseName.add(rs.getString("username"));
       }
     } finally {
       closeResource(null, stmt, rs);
@@ -84,7 +84,7 @@ public class SqlConnection implements Closeable {
     return dataBaseName;
   }
 
-  public List<String> getAllTables(String tabschema) throws SQLException {
+  public List<String> getAllTables(String schemaname) throws SQLException {
     List<String> tableNames = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
@@ -92,11 +92,9 @@ public class SqlConnection implements Closeable {
       stmt = conn.createStatement();
       rs =
           stmt.executeQuery(
-              "select tabname as table_name from syscat.tables where tabschema = '"
-                  + tabschema
-                  + "' and type = 'T'  order by tabschema, tabname");
+              "SELECT table_name FROM sys.dba_tables WHERE owner = '" + schemaname + "'");
       while (rs.next()) {
-        tableNames.add(rs.getString(1));
+        tableNames.add(rs.getString("TABLE_NAME"));
       }
       return tableNames;
     } finally {
@@ -107,16 +105,13 @@ public class SqlConnection implements Closeable {
   public List<MetaColumnInfo> getColumns(String schemaname, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    //        String columnSql = "SELECT * FROM syscat.columns WHERE TABSCHEMA = '" + schemaname
-    // + "' AND TABNAME = '" + table + "'";
     String columnSql = "SELECT * FROM " + schemaname + "." + table + " WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
-    ResultSetMetaData meta = null;
+    ResultSetMetaData meta;
     try {
-      //            List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage,
-      // schemaname),  table);
-      List<String> primaryKeys = getPrimaryKeys(conn, table);
+      List<String> primaryKeys = getPrimaryKeys(table);
+      Map<String, String> columnCommentMap = getColumnComment(schemaname, table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -124,11 +119,19 @@ public class SqlConnection implements Closeable {
       for (int i = 1; i < columnCount + 1; i++) {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
+        info.setLength(meta.getColumnDisplaySize(i));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
           info.setPrimaryKey(true);
         }
+        String colComment = columnCommentMap.get(meta.getColumnName(i));
+        if (StringUtils.isNotBlank(colComment)) {
+          info.setColComment(colComment);
+        } else {
+          info.setColComment(StringUtils.EMPTY);
+        }
+
         columns.add(info);
       }
     } finally {
@@ -138,31 +141,39 @@ public class SqlConnection implements Closeable {
   }
 
   /**
-   * Get primary keys
+   * Get primary keys // * @param connection connection
    *
-   * @param connection connection
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+  private List<String> getPrimaryKeys(String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
-    try {
-      DatabaseMetaData dbMeta = connection.getMetaData();
-      rs = dbMeta.getPrimaryKeys(null, null, table);
-      while (rs.next()) {
-        primaryKeys.add(rs.getString("column_name"));
-      }
-      return primaryKeys;
-    } finally {
-      if (null != rs) {
-        rs.close();
-      }
-      //            if(null != rs){
-      //                closeResource(connection, null, rs);
-      //            }
+    DatabaseMetaData dbMeta = conn.getMetaData();
+    rs = dbMeta.getPrimaryKeys(null, null, table);
+    while (rs.next()) {
+      primaryKeys.add(rs.getString("column_name"));
     }
+    return primaryKeys;
+  }
+  /**
+   * Get Column Comment
+   *
+   * @param table table name
+   * @return
+   * @throws SQLException
+   */
+  private Map<String, String> getColumnComment(String schema, String table) throws SQLException {
+    ResultSet rs = null;
+    Map<String, String> columnComment = new HashMap();
+
+    DatabaseMetaData dbMeta = conn.getMetaData();
+    rs = dbMeta.getColumns(null, schema, table, "%");
+    while (rs.next()) {
+      columnComment.put(rs.getString("COlUMN_NAME"), rs.getString("REMARKS"));
+    }
+    return columnComment;
   }
 
   /**
@@ -199,21 +210,36 @@ public class SqlConnection implements Closeable {
    * @return
    * @throws ClassNotFoundException
    */
-  private Connection getDBConnection(ConnectMessage connectMessage, String database)
+  private Connection getDBConnection(
+      ConnectMessage connectMessage, String database, String serviceName)
       throws ClassNotFoundException, SQLException {
     String extraParamString =
         connectMessage.extraParams.entrySet().stream()
             .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
             .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
-    String url =
-        String.format(
-            SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    String url = "";
+    if (StringUtils.isNotBlank(database)) {
+      url =
+          String.format(
+              SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
+    } else if (StringUtils.isNotBlank(serviceName)) {
+      url =
+          String.format(
+              SQL_CONNECT_SERVICE_URL.getValue(),
+              connectMessage.host,
+              connectMessage.port,
+              database);
+    }
+
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
-    return DriverManager.getConnection(
-        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
+    Properties prop = new Properties();
+    prop.put("user", connectMessage.username);
+    prop.put("password", connectMessage.password);
+    prop.put("remarksReporting", "true");
+    return DriverManager.getConnection(url, prop);
   }
 
   /** Connect message */

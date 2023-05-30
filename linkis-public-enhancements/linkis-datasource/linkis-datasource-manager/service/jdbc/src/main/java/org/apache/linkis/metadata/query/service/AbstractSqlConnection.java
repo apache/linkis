@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service.postgres;
+package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.common.utils.AESUtils;
@@ -34,8 +34,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlConnection implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
+public class AbstractSqlConnection implements Closeable {
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractSqlConnection.class);
 
   private static final CommonVars<String> SQL_DRIVER_CLASS =
       CommonVars.apply("wds.linkis.server.mdm.service.postgre.driver", "org.postgresql.Driver");
@@ -47,7 +47,7 @@ public class SqlConnection implements Closeable {
 
   private ConnectMessage connectMessage;
 
-  public SqlConnection(
+  public AbstractSqlConnection(
       String host,
       Integer port,
       String username,

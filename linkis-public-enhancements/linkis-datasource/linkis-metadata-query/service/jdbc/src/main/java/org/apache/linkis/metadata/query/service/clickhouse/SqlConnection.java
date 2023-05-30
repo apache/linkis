@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.service.db2;
+package org.apache.linkis.metadata.query.service.clickhouse;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-
-import org.apache.logging.log4j.util.Strings;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -38,10 +36,17 @@ public class SqlConnection implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
   private static final CommonVars<String> SQL_DRIVER_CLASS =
-      CommonVars.apply("wds.linkis.server.mdm.service.db2.driver", "com.ibm.db2.jcc.DB2Driver");
+      CommonVars.apply(
+          "wds.linkis.server.mdm.service.sql.driver", "ru.yandex.clickhouse.ClickHouseDriver");
 
   private static final CommonVars<String> SQL_CONNECT_URL =
-      CommonVars.apply("wds.linkis.server.mdm.service.db2.url", "jdbc:db2://%s:%s/%s");
+      CommonVars.apply("wds.linkis.server.mdm.service.sql.url", "jdbc:clickhouse://%s:%s/%s");
+
+  private static final CommonVars<Integer> SQL_CONNECT_TIMEOUT =
+      CommonVars.apply("wds.linkis.server.mdm.service.sql.connect.timeout", 3000);
+
+  private static final CommonVars<Integer> SQL_SOCKET_TIMEOUT =
+      CommonVars.apply("wds.linkis.server.mdm.service.sql.socket.timeout", 6000);
 
   private Connection conn;
 
@@ -55,9 +60,6 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    if (Strings.isBlank(database)) {
-      database = "SAMPLE";
-    }
     connectMessage = new ConnectMessage(host, port, username, password, extraParams);
     conn = getDBConnection(connectMessage, database);
     // Try to create statement
@@ -66,15 +68,12 @@ public class SqlConnection implements Closeable {
   }
 
   public List<String> getAllDatabases() throws SQLException {
-    // db2 "select schemaname from syscat.schemata"
     List<String> dataBaseName = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs = stmt.executeQuery("list database directory");
-      // rs = stmt.executeQuery("SELECT * FROM SYSIBMADM.APPLICATIONS WITH UR");
-      // rs = stmt.executeQuery("select * from syscat.tables");
+      rs = stmt.executeQuery("SHOW DATABASES");
       while (rs.next()) {
         dataBaseName.add(rs.getString(1));
       }
@@ -84,17 +83,13 @@ public class SqlConnection implements Closeable {
     return dataBaseName;
   }
 
-  public List<String> getAllTables(String tabschema) throws SQLException {
+  public List<String> getAllTables(String database) throws SQLException {
     List<String> tableNames = new ArrayList<>();
     Statement stmt = null;
     ResultSet rs = null;
     try {
       stmt = conn.createStatement();
-      rs =
-          stmt.executeQuery(
-              "select tabname as table_name from syscat.tables where tabschema = '"
-                  + tabschema
-                  + "' and type = 'T'  order by tabschema, tabname");
+      rs = stmt.executeQuery("SHOW TABLES FROM `" + database + "`");
       while (rs.next()) {
         tableNames.add(rs.getString(1));
       }
@@ -104,19 +99,15 @@ public class SqlConnection implements Closeable {
     }
   }
 
-  public List<MetaColumnInfo> getColumns(String schemaname, String table)
+  public List<MetaColumnInfo> getColumns(String database, String table)
       throws SQLException, ClassNotFoundException {
     List<MetaColumnInfo> columns = new ArrayList<>();
-    //        String columnSql = "SELECT * FROM syscat.columns WHERE TABSCHEMA = '" + schemaname
-    // + "' AND TABNAME = '" + table + "'";
-    String columnSql = "SELECT * FROM " + schemaname + "." + table + " WHERE 1 = 2";
+    String columnSql = "SELECT * FROM `" + database + "`.`" + table + "` WHERE 1 = 2";
     PreparedStatement ps = null;
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
-      //            List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage,
-      // schemaname),  table);
-      List<String> primaryKeys = getPrimaryKeys(conn, table);
+      List<String> primaryKeys = getPrimaryKeys(table);
       ps = conn.prepareStatement(columnSql);
       rs = ps.executeQuery();
       meta = rs.getMetaData();
@@ -140,16 +131,15 @@ public class SqlConnection implements Closeable {
   /**
    * Get primary keys
    *
-   * @param connection connection
    * @param table table name
    * @return
    * @throws SQLException
    */
-  private List<String> getPrimaryKeys(Connection connection, String table) throws SQLException {
+  private List<String> getPrimaryKeys(String table) throws SQLException {
     ResultSet rs = null;
     List<String> primaryKeys = new ArrayList<>();
     try {
-      DatabaseMetaData dbMeta = connection.getMetaData();
+      DatabaseMetaData dbMeta = conn.getMetaData();
       rs = dbMeta.getPrimaryKeys(null, null, table);
       while (rs.next()) {
         primaryKeys.add(rs.getString("column_name"));
@@ -159,9 +149,6 @@ public class SqlConnection implements Closeable {
       if (null != rs) {
         rs.close();
       }
-      //            if(null != rs){
-      //                closeResource(connection, null, rs);
-      //            }
     }
   }
 
@@ -212,8 +199,7 @@ public class SqlConnection implements Closeable {
     if (!connectMessage.extraParams.isEmpty()) {
       url += "?" + extraParamString;
     }
-    return DriverManager.getConnection(
-        url, connectMessage.username, AESUtils.isDecryptByConf(connectMessage.password));
+    return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);
   }
 
   /** Connect message */
@@ -239,6 +225,8 @@ public class SqlConnection implements Closeable {
       this.username = username;
       this.password = password;
       this.extraParams = extraParams;
+      this.extraParams.put("connectTimeout", SQL_CONNECT_TIMEOUT.getValue());
+      this.extraParams.put("socketTimeout", SQL_SOCKET_TIMEOUT.getValue());
     }
   }
 }

@@ -19,11 +19,11 @@ package org.apache.linkis.metadata.query.service.dm;
 
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SqlConnection implements Closeable {
+public class SqlConnection extends AbstractSqlConnection {
 
   private static final Logger LOG = LoggerFactory.getLogger(SqlConnection.class);
 
@@ -41,10 +41,6 @@ public class SqlConnection implements Closeable {
   private static final CommonVars<String> SQL_CONNECT_URL =
       CommonVars.apply("wds.linkis.server.mdm.service.dameng.url", "jdbc:dm://%s:%s/%s");
 
-  private Connection conn;
-
-  private ConnectMessage connectMessage;
-
   public SqlConnection(
       String host,
       Integer port,
@@ -53,11 +49,7 @@ public class SqlConnection implements Closeable {
       String database,
       Map<String, Object> extraParams)
       throws ClassNotFoundException, SQLException {
-    connectMessage = new ConnectMessage(host, port, username, password, extraParams);
-    conn = getDBConnection(connectMessage, database);
-    // Try to create statement
-    Statement statement = conn.createStatement();
-    statement.close();
+    super(host, port, username, password, database, extraParams);
   }
 
   public List<String> getAllDatabases() throws SQLException {
@@ -161,55 +153,25 @@ public class SqlConnection implements Closeable {
   }
 
   /**
-   * close database resource
-   *
-   * @param connection connection
-   * @param statement statement
-   * @param resultSet result set
-   */
-  private void closeResource(Connection connection, Statement statement, ResultSet resultSet) {
-    try {
-      if (null != resultSet && !resultSet.isClosed()) {
-        resultSet.close();
-      }
-      if (null != statement && !statement.isClosed()) {
-        statement.close();
-      }
-      if (null != connection && !connection.isClosed()) {
-        connection.close();
-      }
-    } catch (SQLException e) {
-      LOG.warn("Fail to release resource [" + e.getMessage() + "]", e);
-    }
-  }
-
-  @Override
-  public void close() throws IOException {
-    closeResource(conn, null, null);
-  }
-
-  /**
    * @param connectMessage
    * @param database
    * @return
    * @throws ClassNotFoundException
    */
-  private Connection getDBConnection(ConnectMessage connectMessage, String database)
+  public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
+    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
+      String extraParamString =
+          connectMessage.extraParams.entrySet().stream()
+              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+              .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
     try {
-      //            return DriverManager.getConnection(url, connectMessage.username,
-      // connectMessage.password);
       Properties prop = new Properties();
       prop.put("user", connectMessage.username);
       prop.put("password", connectMessage.password);
@@ -221,29 +183,7 @@ public class SqlConnection implements Closeable {
     }
   }
 
-  /** Connect message */
-  private static class ConnectMessage {
-    private String host;
-
-    private Integer port;
-
-    private String username;
-
-    private String password;
-
-    private Map<String, Object> extraParams;
-
-    public ConnectMessage(
-        String host,
-        Integer port,
-        String username,
-        String password,
-        Map<String, Object> extraParams) {
-      this.host = host;
-      this.port = port;
-      this.username = username;
-      this.password = password;
-      this.extraParams = extraParams;
-    }
+  public String getSqlConnectUrl() {
+    return SQL_CONNECT_URL.getValue();
   }
 }

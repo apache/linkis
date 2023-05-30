@@ -84,4 +84,12 @@ public interface MetadataDbService extends BaseMetadataService {
    */
   List<MetaColumnInfo> getColumns(
       String operator, Map<String, Object> params, String database, String table);
+
+  /**
+   * Get sql connect url
+   *
+   * @param params connect params
+   * @return
+   */
+  public String getSqlConnectUrl(String operator, Map<String, Object> params);
 }

@@ -39,8 +39,8 @@ jobs:
 
       - name: Verify linkis init pg sql
         run: |
-          PGPASSWORD=postgres psql -U postgres -tc "CREATE DATABASE linkis_test;"
-          PGPASSWORD=postgres psql -U postgres -d linkis_test -tc "CREATE SCHEMA IF NOT EXISTS linkis_test;"
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_ddl_pg.sql
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_dml_pg.sql
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -U postgres -d linkis_test -tc "\dt"
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p 5432 -U postgres -tc "CREATE DATABASE linkis_test;"
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -tc "CREATE SCHEMA IF NOT EXISTS linkis_test;"
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_ddl_pg.sql
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_dml_pg.sql
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -tc "\dt"

@@ -17,6 +17,7 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -92,4 +93,15 @@ public interface MetadataDbService extends BaseMetadataService {
    * @return
    */
   public String getSqlConnectUrl(String operator, Map<String, Object> params);
+
+  /**
+   * Get jdbc ddl sql
+   *
+   * @param params
+   * @param database
+   * @param table
+   * @return
+   */
+  GenerateSqlInfo getJdbcSql(
+      String operator, Map<String, Object> params, String database, String table);
 }

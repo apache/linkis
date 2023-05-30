@@ -23,6 +23,7 @@ import org.apache.linkis.datasourcemanager.common.auth.AuthContext;
 import org.apache.linkis.datasourcemanager.common.domain.DataSource;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoQueryRequest;
 import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
+import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
@@ -38,6 +39,7 @@ import org.apache.linkis.rpc.Sender;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 
 import org.springframework.stereotype.Service;
 
@@ -379,30 +381,124 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     DsInfoResponse dsInfoResponse =
         queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
 
-    if (StringUtils.isNotBlank(dsInfoResponse.getDsType())
-        && CacheConfiguration.MYSQL_RELATIONSHIP_LIST
-            .getValue()
-            .contains(dsInfoResponse.getDsType())) {
-      List<MetaColumnInfo> columns =
-          invokeMetaMethod(
-              dsInfoResponse.getDsType(),
-              "getColumns",
-              new Object[] {
-                dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table
-              },
-              List.class);
+    if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
+      List<MetaColumnInfo> columns = new ArrayList<>();
+      try {
+        columns =
+            invokeMetaMethod(
+                dsInfoResponse.getDsType(),
+                "getColumns",
+                new Object[] {
+                  dsInfoResponse.getCreator(),
+                  dsInfoResponse.getParams(),
+                  database,
+                  dsInfoResponse.getDsType().equalsIgnoreCase("elasticsearch") ? "_doc" : table
+                },
+                List.class);
+      } catch (Exception e) {
+        logger.warn("Fail to get Sql columns(获取字段列表失败)");
+      }
+      if (CacheConfiguration.MYSQL_RELATIONSHIP_LIST
+          .getValue()
+          .contains(dsInfoResponse.getDsType())) {
+        String sqlConnectUrl =
+            invokeMetaMethod(
+                dsInfoResponse.getDsType(),
+                "getSqlConnectUrl",
+                new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+                String.class);
 
-      String sqlConnectUrl =
-          invokeMetaMethod(
-              dsInfoResponse.getDsType(),
-              "getSqlConnectUrl",
-              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
-              String.class);
-
-      return getSparkSqlByJdbc(database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
+        return getSparkSqlByJdbc(
+            database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("kafka")) {
+        return getSparkSqlByKafka(table, dsInfoResponse.getParams());
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("mongodb")) {
+        return getSparkSqlByMongo(database, table, dsInfoResponse.getParams(), columns);
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("elasticsearch")) {
+        return getSparkSqlByElasticsearch(table, dsInfoResponse.getParams(), columns);
+      }
     }
 
     return new GenerateSqlInfo();
+  }
+
+  public GenerateSqlInfo getSparkSqlByElasticsearch(
+      String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+
+    String[] endPoints = new String[] {};
+    Object urls = params.getOrDefault("elasticUrls", "[\"localhost:9200\"]");
+    try {
+      if (!(urls instanceof List)) {
+        List<String> urlList = Json.fromJson(String.valueOf(urls), List.class, String.class);
+        assert urlList != null;
+        endPoints = urlList.toArray(endPoints);
+      } else {
+        endPoints = ((List<String>) urls).toArray(endPoints);
+      }
+    } catch (Exception e) {
+      logger.warn("Fail to get ElasticSearch urls", e);
+    }
+
+    HttpHost httpHost = HttpHost.create(endPoints[0]);
+    String ddl =
+        String.format(
+            SparkDdlSQlTemplate.ES_DDL_SQL_TEMPLATE,
+            table,
+            httpHost.getHostName(),
+            httpHost.getPort(),
+            table);
+    generateSqlInfo.setDdl(ddl);
+
+    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+
+    String columnStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+    }
+
+    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
+    return generateSqlInfo;
+  }
+
+  public GenerateSqlInfo getSparkSqlByMongo(
+      String database, String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String url =
+        String.format(
+            "mongodb://%s:%s/%s",
+            params.getOrDefault("host", ""), params.getOrDefault("port", ""), database);
+
+    String ddl =
+        String.format(SparkDdlSQlTemplate.MONGO_DDL_SQL_TEMPLATE, table, url, database, table);
+    generateSqlInfo.setDdl(ddl);
+
+    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+
+    String columnStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr =
+          columns.stream()
+              .filter(column -> !column.getName().equals("_id"))
+              .map(MetaColumnInfo::getName)
+              .collect(Collectors.joining(","));
+    }
+
+    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
+    return generateSqlInfo;
+  }
+
+  public GenerateSqlInfo getSparkSqlByKafka(String table, Map<String, Object> params) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String kafkaServers = String.valueOf(params.getOrDefault("uris", "localhost:9092"));
+    String ddl =
+        String.format(SparkDdlSQlTemplate.KAFKA_DDL_SQL_TEMPLATE, table, kafkaServers, table);
+    generateSqlInfo.setDdl(ddl);
+
+    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+
+    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql("CAST(value AS STRING)", table));
+    return generateSqlInfo;
   }
 
   public GenerateSqlInfo getSparkSqlByJdbc(
@@ -430,16 +526,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             params.getOrDefault("password", ""));
     generateSqlInfo.setDdl(ddl);
 
-    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, sparkTableName);
-    generateSqlInfo.setDml(dml);
+    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
 
     String columnStr = "*";
     if (CollectionUtils.isNotEmpty(columns)) {
       columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
     }
 
-    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, sparkTableName);
-    generateSqlInfo.setDql(dql);
+    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
     return generateSqlInfo;
   }
 

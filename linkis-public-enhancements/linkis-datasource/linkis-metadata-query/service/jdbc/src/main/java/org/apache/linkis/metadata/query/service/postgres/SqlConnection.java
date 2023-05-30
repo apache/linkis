@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.query.service.postgres;
 import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.logging.log4j.util.Strings;
 
 import java.sql.*;
@@ -93,15 +94,16 @@ public class SqlConnection extends AbstractSqlConnection {
    */
   public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
+
+    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
+      String extraParamString =
+          connectMessage.extraParams.entrySet().stream()
+              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+              .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
     return DriverManager.getConnection(url, connectMessage.username, connectMessage.password);

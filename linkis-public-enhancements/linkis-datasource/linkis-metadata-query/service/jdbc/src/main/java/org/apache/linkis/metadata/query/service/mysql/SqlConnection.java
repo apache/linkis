@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.SecurityUtils;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
@@ -132,10 +133,6 @@ public class SqlConnection extends AbstractSqlConnection {
    */
   public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
@@ -144,7 +141,11 @@ public class SqlConnection extends AbstractSqlConnection {
     if (StringUtils.isBlank(database)) {
       url = url.substring(0, url.length() - 1);
     }
-    if (!connectMessage.extraParams.isEmpty()) {
+    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
+      String extraParamString =
+          connectMessage.extraParams.entrySet().stream()
+              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+              .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
     LOG.info("jdbc connection url: {}", url);

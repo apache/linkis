@@ -21,6 +21,8 @@ import org.apache.linkis.common.conf.CommonVars;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.service.AbstractSqlConnection;
 
+import org.apache.commons.collections.MapUtils;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,15 +130,15 @@ public class SqlConnection extends AbstractSqlConnection {
    */
   public Connection getDBConnection(ConnectMessage connectMessage, String database)
       throws ClassNotFoundException, SQLException {
-    String extraParamString =
-        connectMessage.extraParams.entrySet().stream()
-            .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
-            .collect(Collectors.joining("&"));
     Class.forName(SQL_DRIVER_CLASS.getValue());
     String url =
         String.format(
             SQL_CONNECT_URL.getValue(), connectMessage.host, connectMessage.port, database);
-    if (!connectMessage.extraParams.isEmpty()) {
+    if (MapUtils.isNotEmpty(connectMessage.extraParams)) {
+      String extraParamString =
+          connectMessage.extraParams.entrySet().stream()
+              .map(e -> String.join("=", e.getKey(), String.valueOf(e.getValue())))
+              .collect(Collectors.joining("&"));
       url += "?" + extraParamString;
     }
     try {

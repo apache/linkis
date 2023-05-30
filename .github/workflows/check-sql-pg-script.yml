@@ -31,7 +31,7 @@ jobs:
           POSTGRES_DB: linkis_test
           POSTGRES_PORT: 5432
         ports:
-          - 5432/tcp
+          - 35432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Checkout source
@@ -39,8 +39,8 @@ jobs:
 
       - name: Verify linkis init pg sql
         run: |
-          PGPASSWORD=postgres psql -h 127.0.0.1 -p 5432 -U postgres -tc "CREATE DATABASE linkis_test;"
-          PGPASSWORD=postgres psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -tc "CREATE SCHEMA IF NOT EXISTS linkis_test;"
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_ddl_pg.sql
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_dml_pg.sql
-          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 5432 -U postgres -d linkis_test -tc "\dt"
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p 35432 -U postgres -tc "CREATE DATABASE linkis_test;"
+          PGPASSWORD=postgres psql -h 127.0.0.1 -p 35432 -U postgres -d linkis_test -tc "CREATE SCHEMA IF NOT EXISTS linkis_test;"
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 35432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_ddl_pg.sql
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 35432 -U postgres -d linkis_test -f ./linkis-dist/package/db/linkis_dml_pg.sql
+          PGPASSWORD=postgres PGOPTIONS="--search_path=linkis_test" psql -h 127.0.0.1 -p 35432 -U postgres -d linkis_test -tc "\dt"

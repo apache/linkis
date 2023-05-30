@@ -39,6 +39,11 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
   }
 
   @Override
+  public String getSqlConnectUrl(String operator, Map<String, Object> params) {
+    return this.getConnAndRun(operator, params, this::querySqlConnectUrl);
+  }
+
+  @Override
   public List<String> getTables(String operator, Map<String, Object> params, String database) {
     return this.getConnAndRun(operator, params, conn -> this.queryTables(conn, database));
   }
@@ -85,6 +90,16 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @return
    */
   public List<String> queryDatabases(C connection) {
+    throw new WarnException(-1, "This method is no supported");
+  }
+
+  /**
+   * Get sql connect url
+   *
+   * @param connection metadata connection
+   * @return
+   */
+  public String querySqlConnectUrl(C connection) {
     throw new WarnException(-1, "This method is no supported");
   }
 

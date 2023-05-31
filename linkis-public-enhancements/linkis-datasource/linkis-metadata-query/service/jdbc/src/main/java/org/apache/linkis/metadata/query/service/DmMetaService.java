@@ -20,6 +20,7 @@ package org.apache.linkis.metadata.query.service;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
@@ -105,7 +106,7 @@ public class DmMetaService extends AbstractDbMetaService<SqlConnection> {
     try {
       return connection.queryJdbcSql(database, table);
     } catch (Exception e) {
-      throw new RuntimeException("Fail to get jdbc sql (获取jdbcSql失败)", e);
+      throw new MetaRuntimeException("Fail to get jdbc sql (获取jdbcSql失败)", e);
     }
   }
 }

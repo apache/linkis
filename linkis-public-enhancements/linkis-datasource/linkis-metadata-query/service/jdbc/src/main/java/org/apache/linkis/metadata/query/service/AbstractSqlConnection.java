@@ -132,7 +132,7 @@ public abstract class AbstractSqlConnection implements Closeable {
             columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
       }
     } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)");
+      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
     }
     String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, table);
     generateSqlInfo.setDql(dql);
@@ -167,7 +167,7 @@ public abstract class AbstractSqlConnection implements Closeable {
         ddl.deleteCharAt(ddl.length() - 1);
       }
     } catch (Exception e) {
-      LOG.warn("Fail to get Sql columns(获取字段列表失败)");
+      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
     }
 
     ddl.append("\n)");

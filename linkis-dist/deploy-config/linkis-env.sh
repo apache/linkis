@@ -28,6 +28,10 @@ deployUser=hadoop
 ##If you don't set it, a random password string will be generated during installation
 deployPwd=
 
+### database type
+### choose mysql or postgresql, default mysql
+dbType=mysql
+
 
 ##Linkis_SERVER_VERSION
 LINKIS_SERVER_VERSION=v1

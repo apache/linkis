@@ -26,6 +26,7 @@ import org.apache.linkis.datasourcemanager.common.protocol.DsInfoResponse;
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
 import org.apache.linkis.metadata.query.common.MdmConfiguration;
 import org.apache.linkis.metadata.query.common.cache.CacheConfiguration;
+import org.apache.linkis.metadata.query.common.domain.DataSourceTypeEnum;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
@@ -392,7 +393,11 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
                   dsInfoResponse.getCreator(),
                   dsInfoResponse.getParams(),
                   database,
-                  dsInfoResponse.getDsType().equalsIgnoreCase("elasticsearch") ? "_doc" : table
+                  dsInfoResponse
+                          .getDsType()
+                          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())
+                      ? "_doc"
+                      : table
                 },
                 List.class);
       } catch (Exception e) {
@@ -410,11 +415,15 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
 
         return getSparkSqlByJdbc(
             database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
-      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("kafka")) {
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase(DataSourceTypeEnum.KAFKA.getValue())) {
         return getSparkSqlByKafka(table, dsInfoResponse.getParams());
-      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("mongodb")) {
+      } else if (dsInfoResponse
+          .getDsType()
+          .equalsIgnoreCase(DataSourceTypeEnum.MONGODB.getValue())) {
         return getSparkSqlByMongo(database, table, dsInfoResponse.getParams(), columns);
-      } else if (dsInfoResponse.getDsType().equalsIgnoreCase("elasticsearch")) {
+      } else if (dsInfoResponse
+          .getDsType()
+          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
         return getSparkSqlByElasticsearch(table, dsInfoResponse.getParams(), columns);
       }
     }

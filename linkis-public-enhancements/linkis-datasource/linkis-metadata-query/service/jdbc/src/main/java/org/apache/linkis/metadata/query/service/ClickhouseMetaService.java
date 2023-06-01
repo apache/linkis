@@ -18,7 +18,9 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.clickhouse.SqlConnection;
@@ -99,5 +101,14 @@ public class ClickhouseMetaService extends AbstractDbMetaService<SqlConnection> 
   @Override
   public String querySqlConnectUrl(SqlConnection connection) {
     return connection.getSqlConnectUrl();
+  }
+
+  @Override
+  public GenerateSqlInfo queryJdbcSql(SqlConnection connection, String database, String table) {
+    try {
+      return connection.queryJdbcSql(database, table);
+    } catch (Exception e) {
+      throw new MetaRuntimeException("Fail to get jdbc sql (获取jdbcSql失败)", e);
+    }
   }
 }

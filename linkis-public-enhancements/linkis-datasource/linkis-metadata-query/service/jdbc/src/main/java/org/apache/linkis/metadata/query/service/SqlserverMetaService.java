@@ -89,4 +89,9 @@ public class SqlserverMetaService extends AbstractDbMetaService<SqlConnection> {
       throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
     }
   }
+
+  @Override
+  public String querySqlConnectUrl(SqlConnection connection) {
+    return connection.getSqlConnectUrl();
+  }
 }

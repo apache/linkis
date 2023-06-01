@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.common.service;
 
 import org.apache.linkis.common.exception.WarnException;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -41,6 +42,12 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
   @Override
   public String getSqlConnectUrl(String operator, Map<String, Object> params) {
     return this.getConnAndRun(operator, params, this::querySqlConnectUrl);
+  }
+
+  @Override
+  public GenerateSqlInfo getJdbcSql(
+      String operator, Map<String, Object> params, String database, String table) {
+    return this.getConnAndRun(operator, params, conn -> this.queryJdbcSql(conn, database, table));
   }
 
   @Override
@@ -100,6 +107,18 @@ public abstract class AbstractDbMetaService<C extends Closeable> extends Abstrac
    * @return
    */
   public String querySqlConnectUrl(C connection) {
+    throw new WarnException(-1, "This method is no supported");
+  }
+
+  /**
+   * Get jdbc sql
+   *
+   * @param connection metadata connection
+   * @param database database
+   * @param table table
+   * @return
+   */
+  public GenerateSqlInfo queryJdbcSql(C connection, String database, String table) {
     throw new WarnException(-1, "This method is no supported");
   }
 

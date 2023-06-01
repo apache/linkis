@@ -19,6 +19,15 @@ package org.apache.linkis.metadata.query.common.service;
 
 public class SparkDdlSQlTemplate {
 
+  public static final String ES_DDL_SQL_TEMPLATE =
+      "CREATE TEMPORARY TABLE %s "
+          + "USING org.elasticsearch.spark.sql  "
+          + "OPTIONS ("
+          + "  'es.nodes' '%s',"
+          + "  'es.port' '%s',"
+          + "  'es.resource' '%s/_doc'"
+          + ")";
+
   public static final String JDBC_DDL_SQL_TEMPLATE =
       "CREATE TEMPORARY TABLE %s "
           + "USING org.apache.spark.sql.jdbc "
@@ -29,7 +38,31 @@ public class SparkDdlSQlTemplate {
           + "  password '%s'"
           + ")";
 
+  public static final String KAFKA_DDL_SQL_TEMPLATE =
+      "CREATE TEMPORARY TABLE %s "
+          + "USING kafka "
+          + "OPTIONS ("
+          + "  'kafka.bootstrap.servers' '%s',"
+          + "  'subscribe' '%s'"
+          + ")";
+
+  public static final String MONGO_DDL_SQL_TEMPLATE =
+      "CREATE TEMPORARY TABLE %s "
+          + "USING mongo "
+          + "OPTIONS ("
+          + "  'spark.mongodb.input.uri' '%s',"
+          + "  'spark.mongodb.input.database' '%s',"
+          + "  'spark.mongodb.input.collection' '%s'"
+          + ")";
   public static final String DML_SQL_TEMPLATE = "INSERT INTO %s SELECT * FROM ${resultTable}";
 
   public static final String DQL_SQL_TEMPLATE = "SELECT %s FROM %s";
+
+  public static String generateDqlSql(String columns, String table) {
+    return String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columns, table);
+  }
+
+  public static String generateDmlSql(String table) {
+    return String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
+  }
 }

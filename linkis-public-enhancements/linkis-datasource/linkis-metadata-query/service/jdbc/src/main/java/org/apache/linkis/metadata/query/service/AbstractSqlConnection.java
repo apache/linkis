@@ -17,7 +17,12 @@
 
 package org.apache.linkis.metadata.query.service;
 
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,6 +30,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +77,8 @@ public abstract class AbstractSqlConnection implements Closeable {
       for (int i = 1; i < columnCount + 1; i++) {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
+        info.setLength(meta.getColumnDisplaySize(i));
+        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
@@ -106,6 +114,65 @@ public abstract class AbstractSqlConnection implements Closeable {
         rs.close();
       }
     }
+  }
+
+  public GenerateSqlInfo queryJdbcSql(String database, String table) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String ddl = generateJdbcDdlSql(database, table);
+    generateSqlInfo.setDdl(ddl);
+
+    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
+    generateSqlInfo.setDml(dml);
+
+    String columnStr = "*";
+    try {
+      List<MetaColumnInfo> columns = getColumns(database, table);
+      if (CollectionUtils.isNotEmpty(columns)) {
+        columnStr =
+            columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      }
+    } catch (Exception e) {
+      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
+    }
+    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, table);
+    generateSqlInfo.setDql(dql);
+    return generateSqlInfo;
+  }
+
+  public String generateJdbcDdlSql(String database, String table) {
+    StringBuilder ddl = new StringBuilder();
+    ddl.append("CREATE TABLE ").append(String.format("%s.%s", database, table)).append(" (");
+
+    try {
+      List<MetaColumnInfo> columns = getColumns(database, table);
+      if (CollectionUtils.isNotEmpty(columns)) {
+        for (MetaColumnInfo column : columns) {
+          ddl.append("\n\t").append(column.getName()).append(" ").append(column.getType());
+          if (column.getLength() > 0) {
+            ddl.append("(").append(column.getLength()).append(")");
+          }
+          if (!column.isNullable()) {
+            ddl.append(" NOT NULL");
+          }
+          ddl.append(",");
+        }
+        String primaryKeys =
+            columns.stream()
+                .filter(MetaColumnInfo::isPrimaryKey)
+                .map(MetaColumnInfo::getName)
+                .collect(Collectors.joining(", "));
+        if (StringUtils.isNotBlank(primaryKeys)) {
+          ddl.append(String.format("\n\tPRIMARY KEY (%s),", primaryKeys));
+        }
+        ddl.deleteCharAt(ddl.length() - 1);
+      }
+    } catch (Exception e) {
+      LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
+    }
+
+    ddl.append("\n)");
+
+    return ddl.toString();
   }
 
   /**

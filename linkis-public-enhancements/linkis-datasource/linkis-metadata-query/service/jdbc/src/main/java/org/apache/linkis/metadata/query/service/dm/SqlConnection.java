@@ -104,6 +104,7 @@ public class SqlConnection extends AbstractSqlConnection {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
         info.setLength(meta.getColumnDisplaySize(i));
+        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {
@@ -185,5 +186,28 @@ public class SqlConnection extends AbstractSqlConnection {
 
   public String getSqlConnectUrl() {
     return SQL_CONNECT_URL.getValue();
+  }
+
+  @Override
+  public String generateJdbcDdlSql(String database, String table) {
+    String columnSql =
+        String.format(
+            "SELECT DBMS_METADATA.GET_DDL('TABLE', '%s', '%s') AS DDL  FROM DUAL ",
+            table, database);
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    String ddl = "";
+    try {
+      ps = conn.prepareStatement(columnSql);
+      rs = ps.executeQuery();
+      if (rs.next()) {
+        ddl = rs.getString("DDL");
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      closeResource(null, ps, rs);
+    }
+    return ddl;
   }
 }

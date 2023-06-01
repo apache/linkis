@@ -262,4 +262,23 @@ public interface MetadataQueryService {
       String userName,
       String envId)
       throws ErrorException;
+
+  /**
+   * @param dataSourceName
+   * @param database
+   * @param table
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  GenerateSqlInfo getJdbcSqlByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
+      throws ErrorException;
 }

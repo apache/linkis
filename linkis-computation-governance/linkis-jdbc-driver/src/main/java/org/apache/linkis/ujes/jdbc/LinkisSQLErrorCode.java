@@ -17,7 +17,7 @@
 
 package org.apache.linkis.ujes.jdbc;
 
-public enum UJESSQLErrorCode {
+public enum LinkisSQLErrorCode {
   BAD_URL(80000, "bad url"),
   NOSUPPORT_DRIVER(80001, "this method not supported in driver"),
   NOSUPPORT_CONNECTION(80002, "this method not supported in connection"),
@@ -38,11 +38,12 @@ public enum UJESSQLErrorCode {
   RESULTSET_NULL(
       80017, "resultset is null,try to run next() firstly to init ResultSet and MetaData"),
   PREPARESTATEMENT_TYPEERROR(80018, "parameter type error"),
-  METADATA_EMPTY(80019, "data is empty");
+  METADATA_EMPTY(80019, "data is empty"),
+  UNKNOWN_ERROR(80020, "unknown error");
   private String msg;
   private int code;
 
-  UJESSQLErrorCode(int code, String msg) {
+  LinkisSQLErrorCode(int code, String msg) {
     this.code = code;
     this.msg = msg;
   }
@@ -53,5 +54,9 @@ public enum UJESSQLErrorCode {
 
   public int getCode() {
     return code;
+  }
+
+  public void setMsg(String msg) {
+    this.msg = msg;
   }
 }

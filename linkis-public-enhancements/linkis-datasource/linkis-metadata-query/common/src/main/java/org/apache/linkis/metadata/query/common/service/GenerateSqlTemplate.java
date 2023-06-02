@@ -17,7 +17,7 @@
 
 package org.apache.linkis.metadata.query.common.service;
 
-public class SparkDdlSQlTemplate {
+public class GenerateSqlTemplate {
 
   public static final String ES_DDL_SQL_TEMPLATE =
       "CREATE TEMPORARY TABLE %s "
@@ -59,10 +59,10 @@ public class SparkDdlSQlTemplate {
   public static final String DQL_SQL_TEMPLATE = "SELECT %s FROM %s";
 
   public static String generateDqlSql(String columns, String table) {
-    return String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columns, table);
+    return String.format(GenerateSqlTemplate.DQL_SQL_TEMPLATE, columns, table);
   }
 
   public static String generateDmlSql(String table) {
-    return String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
+    return String.format(GenerateSqlTemplate.DML_SQL_TEMPLATE, table);
   }
 }

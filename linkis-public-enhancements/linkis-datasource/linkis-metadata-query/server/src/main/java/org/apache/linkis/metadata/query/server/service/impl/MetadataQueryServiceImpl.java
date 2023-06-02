@@ -32,8 +32,8 @@ import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
+import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
-import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
 import org.apache.linkis.metadata.query.server.loader.MetaClassLoaderManager;
 import org.apache.linkis.metadata.query.server.service.MetadataQueryService;
 import org.apache.linkis.rpc.Sender;
@@ -452,21 +452,21 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     HttpHost httpHost = HttpHost.create(endPoints[0]);
     String ddl =
         String.format(
-            SparkDdlSQlTemplate.ES_DDL_SQL_TEMPLATE,
+            GenerateSqlTemplate.ES_DDL_SQL_TEMPLATE,
             table,
             httpHost.getHostName(),
             httpHost.getPort(),
             table);
     generateSqlInfo.setDdl(ddl);
 
-    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
 
     String columnStr = "*";
     if (CollectionUtils.isNotEmpty(columns)) {
       columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
     }
 
-    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
+    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
     return generateSqlInfo;
   }
 
@@ -479,10 +479,10 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             params.getOrDefault("host", ""), params.getOrDefault("port", ""), database);
 
     String ddl =
-        String.format(SparkDdlSQlTemplate.MONGO_DDL_SQL_TEMPLATE, table, url, database, table);
+        String.format(GenerateSqlTemplate.MONGO_DDL_SQL_TEMPLATE, table, url, database, table);
     generateSqlInfo.setDdl(ddl);
 
-    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
 
     String columnStr = "*";
     if (CollectionUtils.isNotEmpty(columns)) {
@@ -493,7 +493,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
               .collect(Collectors.joining(","));
     }
 
-    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
+    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
     return generateSqlInfo;
   }
 
@@ -501,12 +501,12 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String kafkaServers = String.valueOf(params.getOrDefault("uris", "localhost:9092"));
     String ddl =
-        String.format(SparkDdlSQlTemplate.KAFKA_DDL_SQL_TEMPLATE, table, kafkaServers, table);
+        String.format(GenerateSqlTemplate.KAFKA_DDL_SQL_TEMPLATE, table, kafkaServers, table);
     generateSqlInfo.setDdl(ddl);
 
-    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
 
-    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql("CAST(value AS STRING)", table));
+    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql("CAST(value AS STRING)", table));
     return generateSqlInfo;
   }
 
@@ -527,7 +527,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             database);
     String ddl =
         String.format(
-            SparkDdlSQlTemplate.JDBC_DDL_SQL_TEMPLATE,
+            GenerateSqlTemplate.JDBC_DDL_SQL_TEMPLATE,
             sparkTableName,
             url,
             table,
@@ -535,14 +535,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
             params.getOrDefault("password", ""));
     generateSqlInfo.setDdl(ddl);
 
-    generateSqlInfo.setDml(SparkDdlSQlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
 
     String columnStr = "*";
     if (CollectionUtils.isNotEmpty(columns)) {
       columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
     }
 
-    generateSqlInfo.setDql(SparkDdlSQlTemplate.generateDqlSql(columnStr, table));
+    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
     return generateSqlInfo;
   }
 

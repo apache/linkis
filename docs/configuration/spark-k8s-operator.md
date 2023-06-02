@@ -14,21 +14,19 @@ helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-
 helm install my-release spark-operator/spark-operator --namespace spark-operator --create-namespace  
 ```
 
-### 3. 如果遇到报错: Message: Forbidden!Configured service account doesn't have access. Service account may have been revoked. pods "spark-pi-driver" is forbidden: error looking up service account spark/spark: serviceaccount "spark" not found.
+### 3. spark-on-k8s-operator测试任务提交
+
+```text
+kubectl apply -f examples/spark-pi.yaml
+```
+
+### 4. 如果遇到报错: Message: Forbidden!Configured service account doesn't have access. Service account may have been revoked. pods "spark-pi-driver" is forbidden: error looking up service account spark/spark: serviceaccount "spark" not found.
 
 ```text
 kubectl create serviceaccount spark
 
 kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 ```
-
-### 4. spark-on-k8s-operator测试任务提交
-
-```text
-kubectl apply -f examples/spark-pi.yaml
-```
-
-
 
 ### 5. spark-on-k8s-operator卸载(一般不需要,安装出现问题再卸载)
 

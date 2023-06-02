@@ -19,7 +19,7 @@ package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
-import org.apache.linkis.metadata.query.common.service.SparkDdlSQlTemplate;
+import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -121,8 +121,7 @@ public abstract class AbstractSqlConnection implements Closeable {
     String ddl = generateJdbcDdlSql(database, table);
     generateSqlInfo.setDdl(ddl);
 
-    String dml = String.format(SparkDdlSQlTemplate.DML_SQL_TEMPLATE, table);
-    generateSqlInfo.setDml(dml);
+    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
 
     String columnStr = "*";
     try {
@@ -134,8 +133,8 @@ public abstract class AbstractSqlConnection implements Closeable {
     } catch (Exception e) {
       LOG.warn("Fail to get Sql columns(获取字段列表失败)", e);
     }
-    String dql = String.format(SparkDdlSQlTemplate.DQL_SQL_TEMPLATE, columnStr, table);
-    generateSqlInfo.setDql(dql);
+    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
+
     return generateSqlInfo;
   }
 

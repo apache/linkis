@@ -1563,6 +1563,7 @@
               <exclude>CONTRIBUTING.md</exclude>
               <exclude>CONTRIBUTING_CN.md</exclude>
               <exclude>README.md</exclude>
+              <exclude>.gitmodules</exclude>
               <exclude>**/META-INF/**</exclude>
               <exclude>.github/**</exclude>
               <exclude>compiler/**</exclude>

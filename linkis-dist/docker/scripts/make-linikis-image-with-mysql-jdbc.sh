@@ -20,19 +20,19 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 . ${WORK_DIR}/utils.sh
 
 IMAGE_NAME=${IMAGE_NAME:-linkis:with-jdbc}
-LINKIS_IMAGE=${LINKIS_IMAGE:-ghcr.io/apache/linkis/linkis:latest}
+LINKIS_IMAGE=${LINKIS_IMAGE:-linkis:dev}
 LINKIS_HOME=${LINKIS_HOME:-/opt/linkis}
 MYSQL_JDBC_VERSION=${MYSQL_JDBC_VERSION:-8.0.28}
 MYSQL_JDBC_FILENAME=mysql-connector-java-${MYSQL_JDBC_VERSION}.jar
+MYSQL_JDBC_URL="https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_JDBC_VERSION}/${MYSQL_JDBC_FILENAME}"
 
-BUILD_DIR=${WORK_DIR}/../../tmp
+BUILD_DIR=`mktemp -d -t linkis-build-XXXXX`
 
 echo "#          build dir: ${BUILD_DIR}"
 echo "#         base image: ${LINKIS_IMAGE}"
 echo "# mysql jdbc version: ${MYSQL_JDBC_VERSION}"
 
-
-# /home/runner/work/linkis/linkis/linkis-dist/docker/scripts/
+download ${MYSQL_JDBC_URL} ${MYSQL_JDBC_FILENAME} ${BUILD_DIR}
 
 echo "try to exec: docker build -f ${WORK_DIR}/../linkis-with-mysql-jdbc.Dockerfile \
   -t ${IMAGE_NAME} \

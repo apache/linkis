@@ -287,15 +287,8 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
       persistenceLocks.forEach(resourceLockService::unLock);
     }
 
-    String tickedId = UUID.randomUUID().toString();
-    resourceLogService.recordUserResourceAction(
-        labelContainer,
-        tickedId,
-        ChangeType.ENGINE_REQUEST,
-        resource.getLockedResource(),
-        NodeStatus.Starting,
-        "");
-
+    // Add EC Node
+    String tickedId = RMUtils.getECTicketID();
     AMEMNode emNode = new AMEMNode();
     emNode.setServiceInstance(labelContainer.getEMInstanceLabel().getServiceInstance());
     AMEngineNode engineNode = new AMEngineNode();
@@ -306,6 +299,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     nodeManagerPersistence.addEngineNode(engineNode);
 
+    // Add labels
     EngineInstanceLabel engineInstanceLabel =
         LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(EngineInstanceLabel.class);
     engineInstanceLabel.setServiceName(labelContainer.getEngineServiceName());
@@ -313,11 +307,20 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     nodeLabelService.addLabelToNode(engineNode.getServiceInstance(), engineInstanceLabel);
 
+    // add ec resource
     labelResourceService.setEngineConnLabelResource(
         engineInstanceLabel,
         resource,
         labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
-
+    // record engine locked resource
+    labelContainer.getLabels().add(engineInstanceLabel);
+    resourceLogService.recordUserResourceAction(
+        labelContainer,
+        tickedId,
+        ChangeType.ENGINE_REQUEST,
+        resource.getLockedResource(),
+        NodeStatus.Starting,
+        "");
     PersistenceLabel persistenceLabel =
         labelFactory.convertLabel(engineInstanceLabel, PersistenceLabel.class);
     PersistenceLabel persistenceEngineLabel =
@@ -325,10 +328,10 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
             persistenceLabel.getLabelKey(), persistenceLabel.getStringValue());
 
     // fire timeout check scheduled job
-    if ((long) RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue() > 0) {
+    if (RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue() > 0) {
       LinkisUtils.defaultScheduler.schedule(
           new UnlockTimeoutResourceRunnable(labels, persistenceEngineLabel, tickedId),
-          (long) RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue(),
+          RMConfiguration.RM_WAIT_EVENT_TIME_OUT.getValue(),
           TimeUnit.MILLISECONDS);
     }
     return new AvailableResource(tickedId);
@@ -763,9 +766,13 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     return status;
   }
 
+  private String engineConnSpringName = GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue();
+  private String engineConnManagerSpringName =
+      GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue();
+
   /**
-   * If the IP and port are empty, return the resource status of all modules of a module   * Return
-   * the use of this instance resource if there is an IP and port
+   * If the IP and port are empty, return the resource status of all modules of a module Return the
+   * use of this instance resource if there is an IP and port
    *
    * @param serviceInstances
    * @return
@@ -776,21 +783,14 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     for (ServiceInstance serviceInstance : serviceInstances) {
       InfoRMNode rmNode = new InfoRMNode();
       NodeResource aggregatedResource;
-      String engineConnSpringName = GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue();
-      String engineConnManagerSpringName =
-          GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue();
-      if (GovernanceCommonConf.ENGINE_CONN_SPRING_NAME()
-          .getValue()
-          .equals(serviceInstance.getApplicationName())) {
+      if (engineConnSpringName.equals(serviceInstance.getApplicationName())) {
         EngineInstanceLabel engineInstanceLabel =
             LabelBuilderFactoryContext.getLabelBuilderFactory()
                 .createLabel(EngineInstanceLabel.class);
         engineInstanceLabel.setServiceName(serviceInstance.getApplicationName());
         engineInstanceLabel.setInstance(serviceInstance.getInstance());
         aggregatedResource = labelResourceService.getLabelResource(engineInstanceLabel);
-      } else if (GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME()
-          .getValue()
-          .equals(serviceInstance.getApplicationName())) {
+      } else if (engineConnManagerSpringName.equals(serviceInstance.getApplicationName())) {
         EMInstanceLabel emInstanceLabel =
             LabelBuilderFactoryContext.getLabelBuilderFactory().createLabel(EMInstanceLabel.class);
         emInstanceLabel.setServiceName(serviceInstance.getApplicationName());
@@ -853,7 +853,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                 Label<?> realLabel =
                     ManagerUtils.persistenceLabelToRealLabel(currnentEngineInstanceLabel);
                 if (realLabel instanceof EngineInstanceLabel) {
-                  labels.add((Label<?>) realLabel);
+                  labels.add(realLabel);
                   logger.warn(
                       String.format(
                           "serviceInstance %s lock resource timeout, clear resource",

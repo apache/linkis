@@ -41,7 +41,7 @@
     <module>trino</module>
     <module>elasticsearch</module>
     <module>seatunnel</module>
-    <!--<module>impala</module>-->
+    <module>impala</module>
   </modules>
 
 </project>

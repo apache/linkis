@@ -128,18 +128,19 @@ jobs:
           docker tag linkis-web:${{ env.LINKIS_VERSION }} linkis-web:dev
           docker tag linkis-ldh:${{ env.LINKIS_VERSION }} linkis-ldh:dev
 
-          #先直接下载镜像 后续调整为主动构建
+          # for debug Download the image directly first, then adjust it to active build
           #ROOT_DIR=./linkis-dist/
           #MIRRORS="ghcr.io"
           #TAG="dev"
           #docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
           #docker pull ${MIRRORS}/apache/linkis/linkis:${TAG}
           #docker pull ${MIRRORS}/apache/linkis/linkis-web:${TAG}
-          #重新打tag
           #docker tag  ${MIRRORS}/apache/linkis/linkis:${TAG} linkis:dev
           #docker tag  ${MIRRORS}/apache/linkis/linkis-web:${TAG} linkis-web:dev
           #docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
-          #查看镜像
+
+
+          #show image list
           docker image ls
           bash ./linkis-dist/helm/scripts/install-mysql.sh  false\
               && bash ./linkis-dist/helm/scripts/install-ldh.sh true \
@@ -152,23 +153,24 @@ jobs:
             n=$((n+1))
             sleep 20
           done
-          # 查看日志
-          POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-linkismanager -o jsonpath='{.items[0].metadata.name}'`
+
+          #show linkis pod logs
+          #POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-linkismanager -o jsonpath='{.items[0].metadata.name}'`
           #kubectl logs -n linkis  ${POD_NAME} -f --tail=10000
-          POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].metadata.name}'`
+          #POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-cg-engineconnmanager -o jsonpath='{.items[0].metadata.name}'`
           #kubectl logs -n linkis  ${POD_NAME} -f --tail=10000
         shell: bash
 
       - name: Linkis-Cli Test
         run: |
-          # 开启proxy 端口映射
+          # Enable port-forward
           bash ./linkis-dist/helm/scripts/remote-proxy.sh start
-          # 查看proxy 端口映射
+          # Show port-forward list
           bash ./linkis-dist/helm/scripts/remote-proxy.sh list
-          # 查看web是否可用
+          # Check if the web service is available
           curl http://127.0.0.1:8088/indexhtml
 
-          # 执行shell测试
+          # Execute test by linkis-cli
           POD_NAME=`kubectl get pods -n linkis -l app.kubernetes.io/instance=linkis-demo-mg-gateway -o jsonpath='{.items[0].metadata.name}'`
           kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           sh /opt/linkis/bin/linkis-cli -engineType shell-1 -codeType shell -code \"pwd\" ";
@@ -176,6 +178,7 @@ jobs:
           kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           sh /opt/linkis/bin/linkis-cli -engineType python-python2 -codeType python -code   'print(\"hello\")' "
 
+          #todo
           #kubectl exec -it -n linkis  ${POD_NAME} -- bash -c " \
           #sh /opt/linkis/bin/linkis-cli -engineType hive-3.1.3 -codeType hql -code   'show databases' "
 

@@ -33,15 +33,39 @@
 
     <insert id="addNodeInstance" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
             parameterType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
-        INSERT INTO linkis_cg_manager_service_instance (instance, name, owner, mark, update_time
+        INSERT INTO linkis_cg_manager_service_instance (instance, name, owner, mark, ticketId, update_time
         , create_time, updator, creator)
-        VALUES (#{instance}, #{name}, #{owner}, #{mark}, #{updateTime}
+        VALUES (#{instance}, #{name}, #{owner}, #{mark}, #{ticketId}, #{updateTime}
         , #{createTime}, #{updator}, #{creator})
     </insert>
 
     <update id="updateNodeInstance">
         UPDATE linkis_cg_manager_service_instance
-        SET instance = #{persistenceNode.instance}, owner = #{persistenceNode.owner}, mark = #{persistenceNode.mark}, name = #{persistenceNode.name}, update_time = #{persistenceNode.updateTime}, updator = #{persistenceNode.updator}, creator = #{persistenceNode.creator}
+        SET
+        <if test="persistenceNode.instance != null">
+            instance = #{persistenceNode.instance},
+        </if>
+        <if test="persistenceNode.owner != null">
+            owner = #{persistenceNode.owner},
+        </if>
+        <if test="persistenceNode.mark != null">
+            mark = #{persistenceNode.mark},
+        </if>
+        <if test="persistenceNode.name != null">
+            name = #{persistenceNode.name},
+        </if>
+        <if test="persistenceNode.updateTime != null">
+            update_time = #{persistenceNode.updateTime},
+        </if>
+        <if test="persistenceNode.updator != null">
+            updator = #{persistenceNode.updator},
+        </if>
+        <if test="persistenceNode.creator != null">
+            creator = #{persistenceNode.creator},
+        </if>
+        <if test="persistenceNode.identifier != null">
+            identifier = #{persistenceNode.identifier}
+        </if>
         WHERE instance = #{instance}
     </update>
 
@@ -91,12 +115,6 @@
         WHERE instance = #{instance}
     </select>
 
-    <select id="getIdByInstance" resultType="java.lang.Integer">
-        SELECT id
-        FROM linkis_cg_manager_service_instance
-        WHERE instance = #{instance}
-    </select>
-
     <select id="getNodeInstanceIds" resultType="java.lang.Integer">
         SELECT id FROM linkis_cg_manager_service_instance WHERE instance IN (
             <foreach collection='instances' separator=',' item='instance'>
@@ -137,7 +155,7 @@
     </select>
 
     <select id="getNodesByInstances" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
-        select * from linkis_cg_manager_service_instance where instance in(
+        SELECT * FROM linkis_cg_manager_service_instance WHERE instance IN(
             <foreach collection='instances' separator=',' item='instance'>
                #{instance}
             </foreach>)
@@ -161,7 +179,7 @@
     </select>
 
     <select id="getNodeInstancesByOwnerList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
-        select * from linkis_cg_manager_service_instance where owner in(
+        SELECT * FROM linkis_cg_manager_service_instance WHERE owner IN(
         <foreach collection='owner' separator=',' item='owner'>
             #{owner}
         </foreach>)
@@ -171,20 +189,26 @@
     <select id="getEMNodeInfoList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistencerEcNodeInfo">
         SELECT t.*, metrics.instance_status
         FROM  linkis_cg_manager_service_instance t, linkis_cg_manager_service_instance_metrics metrics
-        WHERE t.name ='linkis-cg-engineconn'
+        WHERE t.name ="linkis-cg-engineconn"
         <if test="creatorUsers != null and creatorUsers.size() > 0">
-            and creator in
+            AND creator IN
             <foreach collection="creatorUsers" item="i" open="(" close=")" separator=",">
                 #{i}
             </foreach>
         </if>
         <if test="statuss != null and statuss.size() > 0">
-            and metrics.instance_status in
+            AND metrics.instance_status IN
             <foreach collection="statuss" item="i" open="(" close=")" separator=",">
                 #{i}
             </foreach>
         </if>
-        and metrics.instance=t.instance
+        <if test="ecInstancesList != null and ecInstancesList.size() > 0">
+            AND t.instance IN
+            <foreach collection="ecInstancesList" item="i" open="(" close=")" separator=",">
+                #{i}
+            </foreach>
+        </if>
+        AND metrics.instance=t.instance
 
     </select>
 

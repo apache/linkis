@@ -40,6 +40,8 @@ public class InfoRMNode implements RMNode {
 
   private Date updateTime;
 
+  private String ticketId;
+
   @Override
   public NodeResource getNodeResource() {
     return nodeResource;
@@ -108,5 +110,15 @@ public class InfoRMNode implements RMNode {
   @Override
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
+  }
+
+  @Override
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  @Override
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 }

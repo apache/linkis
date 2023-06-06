@@ -17,7 +17,6 @@
 
 package org.apache.linkis.ecm.server.service.impl
 
-import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.ecm.core.listener.{ECMEvent, ECMEventListener}
 import org.apache.linkis.ecm.server.listener.EngineConnStopEvent
@@ -28,7 +27,7 @@ class ECMListenerService extends ECMEventListener with Logging {
 
   private var engineConnKillService: EngineConnKillService = _
 
-  override def onEvent(event: ECMEvent): Unit = {
+  override def onEvent(event: ECMEvent): Unit = event match {
     case EngineConnStopEvent(engineConn, engineStopRequest) =>
       if (NodeStatus.Failed == engineConn.getStatus) {
         logger.info("deal stopEvent to kill ec {}", engineStopRequest)

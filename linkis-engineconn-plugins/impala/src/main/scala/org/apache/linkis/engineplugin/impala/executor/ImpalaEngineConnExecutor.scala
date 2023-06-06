@@ -197,20 +197,16 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     val resultSetWriter = engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE)
     Utils.tryCatch {
       val columns = resultSet.getColumns.asScala
-        .map(column => Column(column.getName, null, null))
+        .map(column => new Column(column.getName, null, null))
         .toArray[Column]
       columnCount = columns.length
       resultSetWriter.addMetaData(new TableMetaData(columns))
 
       var row: Row = resultSet.next()
       while (row != null) {
-        val anys: ArrayBuffer[Any] = ArrayBuffer[Any]()
-        row.getValues.foreach(v => anys += v)
-        resultSetWriter.addRecord(new TableRecord(anys.toArray))
-        // scalastyle:off println
-        println(new TableRecord(anys.toArray).tableRecordToString().mkString(" "))
+        val record = new TableRecord(row.getValues)
+        resultSetWriter.addRecord(record)
         rows += 1
-
         row = resultSet.next()
       }
     } { case e: Exception =>

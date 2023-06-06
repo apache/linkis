@@ -20,6 +20,8 @@ package org.apache.linkis.manager.common.entity.persistence;
 import org.apache.linkis.manager.common.entity.resource.Resource;
 import org.apache.linkis.manager.common.utils.ResourceUtils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 
 public class ECResourceInfoRecord {
@@ -85,6 +87,14 @@ public class ECResourceInfoRecord {
 
   public String getLabelValue() {
     return labelValue;
+  }
+
+  public String getEngineType() {
+    if (StringUtils.isNotBlank(labelValue)) {
+      return labelValue.split(",")[1].split("-")[0];
+    } else {
+      return "";
+    }
   }
 
   public void setLabelValue(String labelValue) {

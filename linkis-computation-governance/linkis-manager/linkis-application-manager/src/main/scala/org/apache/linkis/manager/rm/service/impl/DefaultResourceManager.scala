@@ -52,6 +52,7 @@ import org.apache.linkis.manager.rm.{
   ResourceInfo,
   ResultResource
 }
+import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.entity.{LabelResourceMapping, ResourceOperationType}
 import org.apache.linkis.manager.rm.entity.ResourceOperationType.{LOCK, USED}
 import org.apache.linkis.manager.rm.exception.{RMErrorCode, RMLockFailedRetryException}
@@ -312,22 +313,19 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     } {
       persistenceLocks.foreach(resourceLockService.unLock)
     }
-    // record engine locked resource
-    val tickedId = UUID.randomUUID().toString
-    resourceLogService.recordUserResourceAction(
-      labelContainer,
-      tickedId,
-      ChangeType.ENGINE_REQUEST,
-      resource.getLockedResource
-    )
+
+    // add ec node
+    val tickedId = RMUtils.getECTicketID
     val emNode = new AMEMNode
     emNode.setServiceInstance(labelContainer.getEMInstanceLabel.getServiceInstance)
     val engineNode = new AMEngineNode
     engineNode.setEMNode(emNode)
     engineNode.setServiceInstance(ServiceInstance(labelContainer.getEngineServiceName, tickedId))
     engineNode.setNodeResource(resource)
+    engineNode.setTicketId(tickedId)
     nodeManagerPersistence.addEngineNode(engineNode)
 
+    // add labels
     val engineInstanceLabel =
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
     engineInstanceLabel.setServiceName(labelContainer.getEngineServiceName)
@@ -335,10 +333,19 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
     nodeLabelService.addLabelToNode(engineNode.getServiceInstance, engineInstanceLabel)
 
+    // add ec resource
     labelResourceService.setEngineConnLabelResource(
       engineInstanceLabel,
       resource,
       labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+    )
+    // record engine locked resource
+    labelContainer.getLabels.add(engineInstanceLabel)
+    resourceLogService.recordUserResourceAction(
+      labelContainer,
+      tickedId,
+      ChangeType.ENGINE_REQUEST,
+      resource.getLockedResource
     )
 
     val persistenceLabel = labelFactory.convertLabel(engineInstanceLabel, classOf[PersistenceLabel])

@@ -15,19 +15,5 @@
  * limitations under the License.
  */
 
-ALTER TABLE `linkis_ps_udf_manager`  ADD COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time';
-ALTER TABLE `linkis_ps_udf_manager`  ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update_time';
-
-ALTER TABLE `linkis_ps_udf_shared_group`  ADD COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time';
-ALTER TABLE `linkis_ps_udf_shared_group`  ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update_time';
-
-ALTER TABLE `linkis_ps_udf_shared_info`  ADD COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time';
-ALTER TABLE `linkis_ps_udf_shared_info`  ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update_time';
-
-ALTER TABLE `linkis_ps_udf_user_load`  ADD COLUMN `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time';
-ALTER TABLE `linkis_ps_udf_user_load`  ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update_time';
-
-
-ALTER TABLE `linkis_ps_udf_version`  ADD COLUMN `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'update_time';
-
-ALTER TABLE `linkis_ps_udf_tree` ADD CONSTRAINT  `uniq_parent_name_uname_category` UNIQUE (`parent`,`name`, `user_name`, `category`);
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL;
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL;

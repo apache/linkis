@@ -45,8 +45,6 @@ public interface NodeManagerMapper {
 
   Integer getNodeInstanceId(@Param("instance") String instance);
 
-  Integer getIdByInstance(@Param("instance") String instance);
-
   List<Integer> getNodeInstanceIds(@Param("instances") List<String> instances);
 
   PersistenceNode getNodeInstance(@Param("instance") String instance);

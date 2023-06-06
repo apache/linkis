@@ -29,6 +29,7 @@ import org.apache.linkis.manager.rm.restful.vo.UserResourceVo
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
+import java.util.UUID
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
@@ -243,5 +244,7 @@ object RMUtils extends Logging {
       else dealMemory(resourceType, unitType, maxResource.toString)
     s" user ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}."
   }
+
+  def getECTicketID: String = UUID.randomUUID().toString
 
 }

@@ -78,6 +78,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     persistenceNode.setName(node.getServiceInstance().getApplicationName());
     persistenceNode.setOwner(node.getOwner());
     persistenceNode.setMark(node.getMark());
+    persistenceNode.setTicketId(node.getTicketId());
     persistenceNode.setCreateTime(new Date());
     persistenceNode.setUpdateTime(new Date());
     persistenceNode.setCreator(node.getOwner());
@@ -156,6 +157,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         persistenceNodeEntity.setMark(persistenceNode.getMark());
         persistenceNodeEntity.setOwner(persistenceNode.getOwner());
         persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
+        persistenceNodeEntity.setIdentifier(persistenceNode.getIdentifier());
+        persistenceNodeEntity.setTicketId(persistenceNode.getTicketId());
         persistenceNodeEntitys.add(persistenceNodeEntity);
       }
     }
@@ -174,6 +177,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         serviceInstance.setInstance(persistenceNode.getInstance());
         persistenceNodeEntity.setServiceInstance(serviceInstance);
         persistenceNodeEntity.setMark(persistenceNode.getMark());
+        persistenceNodeEntity.setIdentifier(persistenceNode.getIdentifier());
+        persistenceNodeEntity.setTicketId(persistenceNode.getTicketId());
         persistenceNodeEntity.setOwner(persistenceNode.getOwner());
         persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
         persistenceNodeEntity.setUpdateTime(persistenceNode.getUpdateTime());
@@ -210,6 +215,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     persistenceNodeEntity.setServiceInstance(serviceInstance);
     persistenceNodeEntity.setOwner(nodeInstances.getOwner());
     persistenceNodeEntity.setMark(nodeInstances.getMark());
+    persistenceNodeEntity.setIdentifier(nodeInstances.getIdentifier());
+    persistenceNodeEntity.setTicketId(nodeInstances.getTicketId());
     persistenceNodeEntity.setStartTime(nodeInstances.getCreateTime());
     return persistenceNodeEntity;
   }
@@ -218,7 +225,7 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   public void addEngineNode(EngineNode engineNode) throws PersistenceErrorException {
     // insert engine(插入engine)
     addNodeInstance(engineNode);
-    // insert relationship,(插入关联关系，)todo 异常后续统一处理
+    // insert relationship,(插入关联关系，)
     String engineNodeInstance = engineNode.getServiceInstance().getInstance();
     if (null == engineNode.getEMNode()) {
       throw new PersistenceErrorException(
@@ -256,6 +263,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
     }
     amEngineNode.setOwner(engineNode.getOwner());
     amEngineNode.setMark(engineNode.getMark());
+    amEngineNode.setIdentifier(engineNode.getIdentifier());
+    amEngineNode.setTicketId(engineNode.getTicketId());
     amEngineNode.setStartTime(engineNode.getCreateTime());
     PersistenceNode emNode =
         nodeManagerMapper.getEMNodeInstanceByEngineNode(serviceInstance.getInstance());
@@ -300,6 +309,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
       amEngineNode.setServiceInstance(engineServiceInstance);
       amEngineNode.setOwner(engineNode.getOwner());
       amEngineNode.setMark(engineNode.getMark());
+      amEngineNode.setIdentifier(engineNode.getIdentifier());
+      amEngineNode.setTicketId(engineNode.getTicketId());
       amEngineNode.setStartTime(engineNode.getCreateTime());
       amEngineNode.setEMNode(amEmNode);
 
@@ -340,6 +351,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
                     amEngineNode.setServiceInstance(serviceInstance);
                     amEngineNode.setOwner(engineNode.getOwner());
                     amEngineNode.setMark(engineNode.getMark());
+                    amEngineNode.setIdentifier(engineNode.getIdentifier());
+                    amEngineNode.setTicketId(engineNode.getTicketId());
                     amEngineNode.setStartTime(engineNode.getCreateTime());
                     amEngineNodeList.add(amEngineNode);
                   });
@@ -361,6 +374,8 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
         serviceInstance.setInstance(persistenceNode.getInstance());
         persistenceNodeEntity.setServiceInstance(serviceInstance);
         persistenceNodeEntity.setMark(persistenceNode.getMark());
+        persistenceNodeEntity.setIdentifier(persistenceNode.getIdentifier());
+        persistenceNodeEntity.setTicketId(persistenceNode.getTicketId());
         persistenceNodeEntity.setOwner(persistenceNode.getOwner());
         persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
         persistenceNodeEntitys.add(persistenceNodeEntity);

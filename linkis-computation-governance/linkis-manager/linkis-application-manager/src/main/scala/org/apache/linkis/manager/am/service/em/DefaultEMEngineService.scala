@@ -47,6 +47,7 @@ import org.apache.linkis.manager.rm.service.LabelResourceService
 import org.apache.linkis.manager.service.common.label.LabelFilter
 
 import org.apache.commons.collections.MapUtils
+import org.apache.commons.lang3.StringUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -116,14 +117,17 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     engineStopRequest.setServiceInstance(engineNode.getServiceInstance)
     engineStopRequest.setIdentifierType(engineNode.getMark)
     engineStopRequest.setIdentifier(engineNode.getIdentifier)
-
     val ecResourceInfo: ECResourceInfoRecord =
-      ecResourceInfoService.getECResourceInfoRecordByInstance(
-        engineNode.getServiceInstance.getInstance
-      )
+      if (StringUtils.isNotBlank(engineNode.getTicketId)) {
+        ecResourceInfoService.getECResourceInfoRecord(engineNode.getTicketId)
+      } else {
+        ecResourceInfoService.getECResourceInfoRecordByInstance(
+          engineNode.getServiceInstance.getInstance
+        )
+      }
 
     if (ecResourceInfo != null) {
-      engineStopRequest.setEngineType(ecResourceInfo.getLabelValue.split(",")(1).split("-")(0))
+      engineStopRequest.setEngineType(ecResourceInfo.getEngineType())
       engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix)
     } else {
       if (engineNode.getLabels.isEmpty) {
@@ -159,7 +163,6 @@ class DefaultEMEngineService extends EMEngineService with Logging {
     }
 
     emNodeManager.stopEngine(engineStopRequest, emNode)
-    // engineNodeManager.deleteEngineNode(engineNode)
     logger.info(
       s"EM ${emNode.getServiceInstance} finished to stop Engine ${engineNode.getServiceInstance}"
     )

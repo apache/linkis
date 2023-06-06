@@ -31,5 +31,4 @@ object GovernanceConstant {
 
   val REQUEST_ENGINE_STATUS_BATCH_LIMIT = 500
 
-  def RESULTSET_INDEX: String = "resultsetIndex"
 }

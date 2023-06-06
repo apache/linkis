@@ -17,14 +17,13 @@
 
 package org.apache.linkis.ecm.server.listener
 
+import org.apache.linkis.ecm.core.engineconn.EngineConn
 import org.apache.linkis.ecm.core.listener.ECMEvent
-import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid
-import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.protocol.callback.{YarnAPPIdCallbackProtocol, YarnInfoCallbackProtocol}
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 
 case class ECMReadyEvent(params: Array[String]) extends ECMEvent
 
 case class ECMClosedEvent() extends ECMEvent
 
-case class EngineConnLaunchStatusChangeEvent(tickedId: String, updateStatus: NodeStatus)
+case class EngineConnStopEvent(engineConn: EngineConn, engineStopRequest: EngineStopRequest)
     extends ECMEvent

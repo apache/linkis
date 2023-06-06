@@ -39,8 +39,6 @@ import scala.util.matching.Regex
 
 class EngineConnLogOperator extends Operator with Logging {
 
-  private var localDirsHandleService: LocalDirsHandleService = _
-
   override def getNames: Array[String] = Array(EngineConnLogOperator.OPERATOR_NAME)
 
   override def apply(implicit parameters: Map[String, Any]): Map[String, Any] = {

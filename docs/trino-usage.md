@@ -56,7 +56,7 @@ linkis_ps_configuration_key_engine_relation:配置项和引擎的关联关系
 -- set variable
 SET @ENGINE_LABEL="trino-371";
 SET @ENGINE_IDE=CONCAT('*-IDE,',@ENGINE_LABEL);
-SET @ENGINE_ALL=CONCAT('*-*,',@TRINO_LABEL);
+SET @ENGINE_ALL=CONCAT('*-*,',@ENGINE_LABEL);
 SET @ENGINE_NAME="trino";
 
 -- add trino engine to IDE

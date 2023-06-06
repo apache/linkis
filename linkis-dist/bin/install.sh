@@ -195,40 +195,44 @@ echo "[RESULT_SET_ROOT_PATH] try to create directory"
 echo "======= Step 4: Create linkis table =========="
 ## sql init
 # replace token
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
-sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
-sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
-sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/linkis_dml.sql
+dml_file_name=linkis_dml.sql
+if [[ 'postgresql' = "$dbType" ]];then
+  dml_file_name=linkis_dml_pg.sql
+fi
+sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
 
 
 if [ "$YARN_RESTFUL_URL" != "" ]
 then
-  sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_RESTFUL_URL#$YARN_RESTFUL_URL#g" $LINKIS_HOME/db/${dml_file_name}
 fi
 
 if [ "$HADOOP_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#@HADOOP_VERSION#$HADOOP_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@HADOOP_VERSION#$HADOOP_VERSION#g" $LINKIS_HOME/db/${dml_file_name}
 fi
 
 if [ "$YARN_AUTH_ENABLE" != "" ]
 then
-  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#$YARN_AUTH_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@YARN_AUTH_USER#$YARN_AUTH_USER#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@YARN_AUTH_PWD#$YARN_AUTH_PWD#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#$YARN_AUTH_ENABLE#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#@YARN_AUTH_USER#$YARN_AUTH_USER#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#@YARN_AUTH_PWD#$YARN_AUTH_PWD#g" $LINKIS_HOME/db/${dml_file_name}
 else
-  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_AUTH_ENABLE#false#g" $LINKIS_HOME/db/${dml_file_name}
 fi
 
 
 if [ "$YARN_KERBEROS_ENABLE" != "" ]
 then
-  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#$YARN_KERBEROS_ENABLE#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@YARN_PRINCIPAL_NAME#$YARN_PRINCIPAL_NAME#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@YARN_KEYTAB_PATH#$YARN_KEYTAB_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
-  sed -i ${txt}  "s#@YARN_KRB5_PATH#$YARN_KRB5_PATH#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#$YARN_KERBEROS_ENABLE#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#@YARN_PRINCIPAL_NAME#$YARN_PRINCIPAL_NAME#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#@YARN_KEYTAB_PATH#$YARN_KEYTAB_PATH#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#@YARN_KRB5_PATH#$YARN_KRB5_PATH#g" $LINKIS_HOME/db/${dml_file_name}
 else
-  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#@YARN_KERBEROS_ENABLE#false#g" $LINKIS_HOME/db/${dml_file_name}
 fi
 
 SERVER_IP=$local_host
@@ -236,69 +240,123 @@ SERVER_IP=$local_host
 ##Label set start
 if [ "$SPARK_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#spark-3.2.1#spark-$SPARK_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#spark-3.2.1#spark-$SPARK_VERSION#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#\#wds.linkis.spark.engine.version.*#wds.linkis.spark.engine.version=$SPARK_VERSION#g" $common_conf
 fi
 
 if [ "$HIVE_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#hive-3.1.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#hive-3.1.3#hive-$HIVE_VERSION#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#\#wds.linkis.hive.engine.version.*#wds.linkis.hive.engine.version=$HIVE_VERSION#g" $common_conf
 fi
 
 if [ "$PYTHON_VERSION" != "" ]
 then
-  sed -i ${txt}  "s#python-python2#python-$PYTHON_VERSION#g" $LINKIS_HOME/db/linkis_dml.sql
+  sed -i ${txt}  "s#python-python2#python-$PYTHON_VERSION#g" $LINKIS_HOME/db/${dml_file_name}
   sed -i ${txt}  "s#\#wds.linkis.python.engine.version.*#wds.linkis.python.engine.version=$PYTHON_VERSION#g" $common_conf
 fi
 
-echo "Linkis mysql DB will use this config: $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB"
-echo "Do you want to clear Linkis table information in the database?"
-echo " 1: Do not execute table-building statements"
-echo -e "${RED} 2: Dangerous! Clear all data and rebuild the tables${NC}"
-echo -e " other: exit\n"
+if [[ 'postgresql' = "$dbType" ]];then
+  echo "Linkis postgresql DB will use this config: $PG_HOST:$PG_PORT/$PG_DB"
+  echo "Do you want to clear Linkis table information in the database?"
+  echo " 1: Do not execute table-building statements"
+  echo -e "${RED} 2: Dangerous! Clear all data and rebuild the tables${NC}"
+  echo -e " other: exit\n"
 
-MYSQL_INSTALL_MODE=1
+  PG_INSTALL_MODE=1
 
-read -p "[Please input your choice]:"  idx
-if [[ '2' = "$idx" ]];then
-  MYSQL_INSTALL_MODE=2
-  echo "You chose Rebuild the table"
-elif [[ '1' = "$idx" ]];then
-  MYSQL_INSTALL_MODE=1
-  echo "You chose not execute table-building statements"
+  read -p "[Please input your choice]:"  idx
+  if [[ '2' = "$idx" ]];then
+    PG_INSTALL_MODE=2
+    echo "You chose Rebuild the table"
+  elif [[ '1' = "$idx" ]];then
+    PG_INSTALL_MODE=1
+    echo "You chose not execute table-building statements"
+  else
+    echo "no choice,exit!"
+    exit 1
+  fi
+
+  ##Label set end
+
+  #Deal special symbol '#'
+  PG_PASSWORD=$(echo ${PG_PASSWORD//'#'/'\#'})
+
+  #init db
+  if [[ '2' = "$PG_INSTALL_MODE" ]];then
+    create_db_cmd=`PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -tc "SELECT 'CREATE DATABASE $PG_DB;' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '$PG_DB');"`
+    PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -tc "${create_db_cmd}"
+    PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -d $PG_DB -tc "CREATE SCHEMA IF NOT EXISTS $PG_SCHEMA;"
+    ddl_result=`PGPASSWORD=$PG_PASSWORD PGOPTIONS="--search_path=$PG_SCHEMA" psql -h $PG_HOST -p $PG_PORT -U $PG_USER -d $PG_DB -f ${LINKIS_HOME}/db/linkis_ddl_pg.sql 2>&1`
+    # Check ddl-sql execution result
+    if [[ $? -ne 0 || $ddl_result =~ "ERROR" ]];then
+        echoErrMsgAndExit "$ddl_result"
+    else
+        echoSuccessMsg "source linkis_ddl_pg.sql"
+    fi
+
+    dml_result=`PGPASSWORD=$PG_PASSWORD PGOPTIONS="--search_path=$PG_SCHEMA" psql -h $PG_HOST -p $PG_PORT -U $PG_USER -d $PG_DB -f ${LINKIS_HOME}/db/linkis_dml_pg.sql 2>&1`
+    # Check dml-sql execution result
+    if [[ $? -ne 0 || $dml_result =~ "ERROR" ]];then
+        echoErrMsgAndExit "$dml_result"
+    else
+        echoSuccessMsg "source linkis_dml_pg.sql"
+    fi
+
+    echo "Rebuild the table"
+  fi
 else
-  echo "no choice,exit!"
-  exit 1
-fi
+  echo "Linkis mysql DB will use this config: $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB"
+  echo "Do you want to clear Linkis table information in the database?"
+  echo " 1: Do not execute table-building statements"
+  echo -e "${RED} 2: Dangerous! Clear all data and rebuild the tables${NC}"
+  echo -e " other: exit\n"
 
-##Label set end
+  MYSQL_INSTALL_MODE=1
+
+  read -p "[Please input your choice]:"  idx
+  if [[ '2' = "$idx" ]];then
+    MYSQL_INSTALL_MODE=2
+    echo "You chose Rebuild the table"
+  elif [[ '1' = "$idx" ]];then
+    MYSQL_INSTALL_MODE=1
+    echo "You chose not execute table-building statements"
+  else
+    echo "no choice,exit!"
+    exit 1
+  fi
+
+  ##Label set end
+
+  #Deal special symbol '#'
+  MYSQL_PASSWORD=$(echo ${MYSQL_PASSWORD//'#'/'\#'})
+
+  #init db
+  if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
+    mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
+    ddl_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql" 2>&1`
+    # Check ddl-sql execution result
+    if [[ $? -ne 0 || $ddl_result =~ "ERROR" ]];then
+        echoErrMsgAndExit "$ddl_result"
+    else
+        echoSuccessMsg "source linkis_ddl.sql"
+    fi
+
+    dml_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/${dml_file_name}" 2>&1`
+    # Check dml-sql execution result
+    if [[ $? -ne 0 || $dml_result =~ "ERROR" ]];then
+        echoErrMsgAndExit "$dml_result"
+    else
+        echoSuccessMsg "source ${dml_file_name}"
+    fi
+
+    echo "Rebuild the table"
+  fi
+fi
 
 #Deal special symbol '#'
 HIVE_META_PASSWORD=$(echo ${HIVE_META_PASSWORD//'#'/'\#'})
-MYSQL_PASSWORD=$(echo ${MYSQL_PASSWORD//'#'/'\#'})
 
-#init db
-if [[ '2' = "$MYSQL_INSTALL_MODE" ]];then
-  mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD --default-character-set=utf8 -e "CREATE DATABASE IF NOT EXISTS $MYSQL_DB DEFAULT CHARSET utf8 COLLATE utf8_general_ci;"
-  ddl_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_ddl.sql" 2>&1`
-  # Check ddl-sql execution result
-  if [[ $? -ne 0 || $ddl_result =~ "ERROR" ]];then
-      echoErrMsgAndExit "$ddl_result"
-  else
-      echoSuccessMsg "source linkis_ddl.sql"
-  fi
-
-  dml_result=`mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD -D$MYSQL_DB  --default-character-set=utf8 -e "source ${LINKIS_HOME}/db/linkis_dml.sql" 2>&1`
-  # Check dml-sql execution result
-  if [[ $? -ne 0 || $dml_result =~ "ERROR" ]];then
-      echoErrMsgAndExit "$dml_result"
-  else
-      echoSuccessMsg "source linkis_dml.sql"
-  fi
-
-  echo "Rebuild the table"
-fi
 ###########################################################################
 
 
@@ -348,9 +406,19 @@ echo "update conf $common_conf"
 sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_SERVER_VERSION#g" $common_conf
 sed -i ${txt}  "s#wds.linkis.gateway.url.*#wds.linkis.gateway.url=http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT#g" $common_conf
 sed -i ${txt}  "s#linkis.discovery.server-address.*#linkis.discovery.server-address=http://$EUREKA_INSTALL_IP:$EUREKA_PORT#g" $common_conf
-sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
-sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf
-sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g" $common_conf
+if [[ 'postgresql' = "$dbType" ]];then
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DB}?currentSchema=${PG_SCHEMA}#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$PG_USER#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$PG_PASSWORD#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.driver-class-name.*#wds.linkis.server.mybatis.datasource.driver-class-name=org.postgresql.Driver#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.mapperLocations.*#wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/postgresql/*.xml#g" $common_conf
+else
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$MYSQL_PASSWORD#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.driver-class-name.*#wds.linkis.server.mybatis.datasource.driver-class-name=com.mysql.jdbc.Driver#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.mapperLocations.*#wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/mysql/*.xml#g" $common_conf
+fi
 # hadoop config
 sed -i ${txt}  "s#\#hadoop.config.dir.*#hadoop.config.dir=$HADOOP_CONF_DIR#g" $common_conf
 #hive config

@@ -110,6 +110,8 @@ public class SqlConnection extends AbstractSqlConnection {
       for (int i = 1; i < columnCount + 1; i++) {
         MetaColumnInfo info = new MetaColumnInfo();
         info.setIndex(i);
+        info.setLength(meta.getColumnDisplaySize(i));
+        info.setNullable((meta.isNullable(i) == ResultSetMetaData.columnNullable));
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
         if (primaryKeys.contains(meta.getColumnName(i))) {

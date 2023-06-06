@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.metadata.query.common.service;
+package org.apache.linkis.metadata.query.common.domain;
 
-public class SparkDdlSQlTemplate {
+public enum DataSourceTypeEnum {
+  KAFKA("kafka"),
+  MONGODB("mongodb"),
+  ELASTICSEARCH("elasticsearch");
 
-  public static final String JDBC_DDL_SQL_TEMPLATE =
-      "CREATE TEMPORARY TABLE %s "
-          + "USING org.apache.spark.sql.jdbc "
-          + "OPTIONS ("
-          + "  url '%s',"
-          + "  dbtable '%s',"
-          + "  user '%s',"
-          + "  password '%s'"
-          + ")";
+  private String value;
 
-  public static final String DML_SQL_TEMPLATE = "INSERT INTO %s SELECT * FROM ${resultTable}";
+  DataSourceTypeEnum(String value) {
+    this.value = value;
+  }
 
-  public static final String DQL_SQL_TEMPLATE = "SELECT %s FROM %s";
+  public String getValue() {
+    return this.value;
+  }
 }

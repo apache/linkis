@@ -11,7 +11,7 @@ https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/qu
 ```text
 helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
 
-helm install my-release spark-operator/spark-operator --namespace spark-operator --create-namespace  
+helm install my-release spark-operator/spark-operator --namespace spark-operator --create-namespace  --set webhook.enable=true  
 ```
 
 ### 3. spark-on-k8s-operator测试任务提交

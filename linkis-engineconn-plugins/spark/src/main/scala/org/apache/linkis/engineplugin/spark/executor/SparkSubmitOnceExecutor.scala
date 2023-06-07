@@ -17,33 +17,24 @@
 
 package org.apache.linkis.engineplugin.spark.executor
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{ByteTimeUtils, Utils}
-import org.apache.linkis.engineconn.once.executor.{
-  OnceExecutorExecutionContext,
-  OperableOnceExecutor
-}
-import org.apache.linkis.engineplugin.spark.client.deployment.YarnApplicationClusterDescriptorAdapter
-import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
-  SPARK_APP_CONF,
-  SPARK_APPLICATION_ARGS,
-  SPARK_APPLICATION_MAIN_CLASS
-}
+import org.apache.linkis.engineconn.once.executor.{OnceExecutorExecutionContext, OperableOnceExecutor}
+import org.apache.linkis.engineplugin.spark.client.deployment.ClusterDescriptorAdapter
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{SPARK_APPLICATION_ARGS, SPARK_APPLICATION_MAIN_CLASS, SPARK_APP_CONF}
 import org.apache.linkis.engineplugin.spark.context.SparkEngineConnContext
 import org.apache.linkis.engineplugin.spark.utils.SparkJobProgressUtil
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.utils.ResourceUtils
 import org.apache.linkis.protocol.engine.JobProgressInfo
 
-import org.apache.commons.lang3.StringUtils
-
 import java.util
-
 import scala.concurrent.duration.Duration
 
 class SparkSubmitOnceExecutor(
     override val id: Long,
     override protected val sparkEngineConnContext: SparkEngineConnContext
-) extends SparkOnceExecutor[YarnApplicationClusterDescriptorAdapter]
+) extends SparkOnceExecutor[ClusterDescriptorAdapter]
     with OperableOnceExecutor {
 
   private var oldProgress: Float = 0f

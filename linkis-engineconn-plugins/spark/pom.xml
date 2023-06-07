@@ -392,6 +392,25 @@
         </exclusion>
       </exclusions>
     </dependency>
+
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-client</artifactId>
+      <version>5.4.1</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>kubernetes-model-common</artifactId>
+          <groupId>io.fabric8</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-model-common</artifactId>
+      <version>5.4.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>

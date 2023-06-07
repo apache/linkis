@@ -35,9 +35,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 覆盖默认的异常处理
+ * Overwrite default exception handling
  *
- * @author yinjihuan
+ * @author ahaoyao
  */
 @Configuration
 @EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})

@@ -249,6 +249,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
           succeedTasks.increase()
           transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           s
+        case incompleteExecuteResponse: IncompleteExecuteResponse =>
+          ErrorExecuteResponse(
+            s"The task cannot be an incomplete response ${incompleteExecuteResponse.message}",
+            null
+          )
         case _ => response
       }
       response

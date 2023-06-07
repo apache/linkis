@@ -223,4 +223,14 @@ object EntranceConfiguration {
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", true)
 
+  val ENTRANCE_CREATOR_JOB_LIMIT: CommonVars[Int] =
+    CommonVars[Int](
+      "linkis.entrance.creator.job.concurrency.limit",
+      10000,
+      "Creator task concurrency limit parameters"
+    )
+
+  val ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE =
+    CommonVars("linkis.entrance.creator.job.concurrency.limit.conf.cache.time", 30L)
+
 }

@@ -94,7 +94,7 @@ public class DefaultEntranceServer extends EntranceServer {
       logger.warn("event has been handled");
     } else {
       logger.warn("Entrance exit to stop all job");
-      EntranceJob[] allUndoneJobs = getAllUndoneTask(null);
+      EntranceJob[] allUndoneJobs = getAllUndoneTask(null, null);
       if (null != allUndoneJobs) {
         for (EntranceJob job : allUndoneJobs) {
           job.onFailure(

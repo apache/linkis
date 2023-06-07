@@ -154,7 +154,7 @@ linkis image by yourself, the image created by this tool will be tagged as `link
 
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.1 
-$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
 

@@ -15,10 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.entrance.scheduler.cache
+package org.apache.linkis.entrance.scheduler;
 
-import org.apache.linkis.scheduler.executer.OutputExecuteResponse
+import org.apache.linkis.scheduler.queue.Group;
+import org.apache.linkis.scheduler.queue.fifoqueue.FIFOUserConsumer;
+import org.apache.linkis.scheduler.queue.parallelqueue.ParallelConsumerManager;
 
-case class CacheOutputExecuteResponse(alias: String, output: String) extends OutputExecuteResponse {
-  override def getOutput: String = output
+public class EntranceParallelConsumerManager extends ParallelConsumerManager {
+
+  public EntranceParallelConsumerManager(int maxParallelismUsers, String schedulerName) {
+    super(maxParallelismUsers, schedulerName);
+  }
+
+  @Override
+  public FIFOUserConsumer createConsumer(String groupName) {
+    Group group = getSchedulerContext().getOrCreateGroupFactory().getGroup(groupName);
+    return new EntranceFIFOUserConsumer(getSchedulerContext(), getOrCreateExecutorService(), group);
+  }
 }

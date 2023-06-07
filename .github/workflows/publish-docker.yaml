@@ -16,10 +16,13 @@
 #
 
 name: Publish Docker
-on: 
+on:
   push:
     branches:
       - dev-1.4.0
+env:
+  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+
 jobs:
   publish-docker:
     runs-on: ubuntu-latest
@@ -72,7 +75,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Push Docker Image
-      env: 
+      env:
         DOCKER_VERSION: ${{ github.ref_name }}-${{ github.sha }}
       run: |
         docker images

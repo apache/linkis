@@ -93,11 +93,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
         if (exitCode != 0) {
           val canRetry = if (errorMsg.isEmpty) true else false
           logger.warn(
-            "Failed to start ec {}, status shutting down exit code {}, canRetry {}, logPath {}",
-            engineConn.getServiceInstance: Any,
-            exitCode: Any,
-            canRetry: Any,
-            logPath: Any
+            s"Failed to start ec ${engineConn.getServiceInstance}, status shutting down exit code ${exitCode}, canRetry ${canRetry}, logPath ${logPath}"
           )
           Sender
             .getSender(MANAGER_SERVICE_NAME)

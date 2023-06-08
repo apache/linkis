@@ -30,7 +30,9 @@ public enum AMErrorCode implements LinkisErrorCode {
 
   AM_CONF_ERROR(210004, "AM configuration error(AM配置错误)"),
 
-  ASK_ENGINE_ERROR_RETRY(210005, "Ask engine error, retry(请求引擎失败，重试)");
+  ASK_ENGINE_ERROR_RETRY(210005, "Ask engine error, retry(请求引擎失败，重试)"),
+
+  EC_OPERATE_ERROR(210006, "Failed to execute operation(引擎操作失败)");
 
   private final int errorCode;
 

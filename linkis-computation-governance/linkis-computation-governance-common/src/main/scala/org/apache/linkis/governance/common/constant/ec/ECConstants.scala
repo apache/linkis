@@ -45,6 +45,8 @@ object ECConstants {
 
   val YARN_APP_URL_KEY = "applicationUrl"
 
+  val YARN_APP_NAME_KEY = "appicationName"
+
   val YARN_MODE_KEY = "yarnMode"
 
   val EC_SERVICE_INSTANCE_KEY = "serviceInstance"
@@ -56,4 +58,16 @@ object ECConstants {
   val NODE_STATUS_KEY = "nodeStatus"
 
   val EC_LAST_UNLOCK_TIMESTAMP = "lastUnlockTimestamp"
+
+  val YARN_APP_TYPE_LIST_KEY = "yarnAppTypeList"
+
+  val YARN_APP_STATE_LIST_KEY = "yarnAppStateList"
+
+  val YARN_APP_TYPE_SPARK = "spark"
+
+  val YARN_APP_TYPE_FLINK = "flink"
+
+  val EC_OPERATE_LIST = "list"
+
+  val YARN_APP_RESULT_LIST_KEY = "yarnAppResultList"
 }

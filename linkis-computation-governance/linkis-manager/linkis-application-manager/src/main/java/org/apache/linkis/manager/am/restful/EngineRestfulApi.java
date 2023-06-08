@@ -27,6 +27,9 @@ import org.apache.linkis.governance.common.constant.ec.ECConstants;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
+import org.apache.linkis.manager.am.hook.DefaultDetachEngineHeartbeatHook;
+import org.apache.linkis.manager.am.hook.DetachEngineHeartbeatHook;
+import org.apache.linkis.manager.am.hook.ECHeartbeatHookHolder$;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.engine.*;
@@ -324,6 +327,16 @@ public class EngineRestfulApi {
     }
     logger.info(
         "Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
+    // add hook for detach client type
+    boolean isDetach =
+        Boolean.parseBoolean(
+            GovernanceCommonConf.EC_APP_MANAGE_MODE()
+                .getValue(engineCreateRequest.getProperties()));
+    if (isDetach) {
+      List<DetachEngineHeartbeatHook> hooks = new ArrayList<>(1);
+      hooks.add(DefaultDetachEngineHeartbeatHook.newInstance(engineOperateService, engineNode));
+      ECHeartbeatHookHolder$.MODULE$.putEcHook(engineNode.getServiceInstance(), hooks);
+    }
     // to transform to a map
     Map<String, Object> retEngineNode = new HashMap<>();
     fillResultEngineNode(retEngineNode, engineNode);

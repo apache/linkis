@@ -93,6 +93,7 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
         if (StringUtils.isNotBlank(yarnExecutor.getYarnMode)) {
           msgMap.put(ECConstants.YARN_MODE_KEY, yarnExecutor.getYarnMode)
         }
+      case _ =>
     }
     Utils.tryCatch(BDPJettyServerHelper.gson.toJson(msgMap)) { case e: Exception =>
       val msgs = msgMap.asScala

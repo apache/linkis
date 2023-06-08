@@ -74,7 +74,7 @@ class DefaultAccessibleService extends AccessibleService with Logging {
         DataWorkCloudApplication.getServiceInstance.equals(engineSuicideRequest.getServiceInstance)
     ) {
       stopEngine()
-      logger.info(s"engine will suiside now.")
+      logger.info(s"engine was asked to suiside by ${engineSuicideRequest.getUser} now.")
       ShutdownHook.getShutdownHook.notifyStop()
     } else {
       if (null != engineSuicideRequest.getServiceInstance) {

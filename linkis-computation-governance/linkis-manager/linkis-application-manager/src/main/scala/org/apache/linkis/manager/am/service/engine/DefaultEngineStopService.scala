@@ -21,6 +21,7 @@ import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.{JsonUtils, Logging, Utils}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.am.conf.AMConfiguration
+import org.apache.linkis.manager.am.hook.ECHeartbeatHookHolder
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.entity.node.{AMEMNode, EngineNode}
 import org.apache.linkis.manager.common.entity.resource.{
@@ -207,6 +208,8 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
     // 3. to clear engine node info
     getEngineNodeManager.deleteEngineNode(ecNode)
     logger.info(s"Finished to clear ec info $ecNode")
+    // 4. to clear hooks
+    ECHeartbeatHookHolder.removeEcHooks(ecNode.getServiceInstance)
   }
 
   @Receiver

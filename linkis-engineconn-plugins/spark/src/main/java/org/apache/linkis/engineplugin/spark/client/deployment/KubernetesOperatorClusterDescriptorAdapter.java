@@ -65,7 +65,8 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     SparkPodSpec executor = SparkPodSpec.Builder().cores(sparkConfig.getExecutorCores()).instances(sparkConfig.getNumExecutors()).memory(sparkConfig.getExecutorMemory()).build();
     SparkApplicationSpec sparkApplicationSpec = SparkApplicationSpec.Builder()
             .type("Scala")
-            .mode(sparkConfig.getDeployMode())
+            //todo An error occurs when the client mode is used. The cause has not been found
+            .mode("cluster")
             .image(sparkConfig.getK8sImage())
             .imagePullPolicy("Always")
             .mainClass(mainClass)

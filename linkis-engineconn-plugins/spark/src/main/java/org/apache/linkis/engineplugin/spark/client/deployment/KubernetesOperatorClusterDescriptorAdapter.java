@@ -17,16 +17,27 @@
 
 package org.apache.linkis.engineplugin.spark.client.deployment;
 
+import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
+import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionList;
+import io.fabric8.kubernetes.client.CustomResource;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
+import org.apache.linkis.engineplugin.spark.client.deployment.crds.*;
 import org.apache.spark.launcher.CustomSparkSubmitLauncher;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
@@ -34,71 +45,63 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     super(executionContext);
   }
 
-  public void deployCluster(String mainClass, String args, Map<String, String> confMap)
-      throws IOException {
+  public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
     SparkConfig sparkConfig = executionContext.getSparkConfig();
 
-    sparkLauncher = new CustomSparkSubmitLauncher();
-    // region set args
-    sparkLauncher
-        .setJavaHome(sparkConfig.getJavaHome())
-        .setSparkHome(sparkConfig.getSparkHome())
-        .setMaster(sparkConfig.getMaster())
-        .setDeployMode(sparkConfig.getDeployMode())
-        .setAppName(sparkConfig.getAppName())
-        .setVerbose(true);
-    sparkLauncher.setConf("spark.app.name", sparkConfig.getAppName());
-    if (confMap != null) confMap.forEach((k, v) -> sparkLauncher.setConf(k, v));
-    addSparkArg(sparkLauncher, "--jars", sparkConfig.getJars());
-    addSparkArg(sparkLauncher, "--packages", sparkConfig.getPackages());
-    addSparkArg(sparkLauncher, "--exclude-packages", sparkConfig.getExcludePackages());
-    addSparkArg(sparkLauncher, "--repositories", sparkConfig.getRepositories());
-    addSparkArg(sparkLauncher, "--files", sparkConfig.getFiles());
-    addSparkArg(sparkLauncher, "--archives", sparkConfig.getArchives());
-    addSparkArg(sparkLauncher, "--driver-memory", sparkConfig.getDriverMemory());
-    addSparkArg(sparkLauncher, "--driver-java-options", sparkConfig.getDriverJavaOptions());
-    addSparkArg(sparkLauncher, "--driver-library-path", sparkConfig.getDriverLibraryPath());
-    addSparkArg(sparkLauncher, "--driver-class-path", sparkConfig.getDriverClassPath());
-    addSparkArg(sparkLauncher, "--executor-memory", sparkConfig.getExecutorMemory());
-    addSparkArg(sparkLauncher, "--proxy-user", sparkConfig.getProxyUser());
-    addSparkArg(sparkLauncher, "--driver-cores", sparkConfig.getDriverCores().toString());
-    addSparkArg(sparkLauncher, "--total-executor-cores", sparkConfig.getTotalExecutorCores());
-    addSparkArg(sparkLauncher, "--executor-cores", sparkConfig.getExecutorCores().toString());
-    addSparkArg(sparkLauncher, "--num-executors", sparkConfig.getNumExecutors().toString());
-    addSparkArg(sparkLauncher, "--principal", sparkConfig.getPrincipal());
-    addSparkArg(sparkLauncher, "--keytab", sparkConfig.getKeytab());
-    addSparkArg(sparkLauncher, "--queue", sparkConfig.getQueue());
-    sparkLauncher.setAppResource(sparkConfig.getAppResource());
-    sparkLauncher.setMainClass(mainClass);
-    Arrays.stream(args.split("\\s+"))
-        .filter(StringUtils::isNotBlank)
-        .forEach(arg -> sparkLauncher.addAppArgs(arg));
-    sparkAppHandle =
-        sparkLauncher.startApplication(
-            new SparkAppHandle.Listener() {
-              @Override
-              public void stateChanged(SparkAppHandle sparkAppHandle) {
-                jobState = sparkAppHandle.getState();
-                // print log when state change
-                if (sparkAppHandle.getAppId() != null) {
-                  logger.info(
-                      "{} stateChanged: {}", sparkAppHandle.getAppId(), jobState.toString());
-                } else {
-                  logger.info("stateChanged: {}", jobState.toString());
-                }
-              }
+    KubernetesClient client = KubernetesHelper.getKubernetesClient();
 
-              @Override
-              public void infoChanged(SparkAppHandle sparkAppHandle) {}
-            });
-    sparkLauncher.setSparkAppHandle(sparkAppHandle);
-  }
+    CustomResourceDefinitionList crds = client.apiextensions().v1().customResourceDefinitions().list();
 
-  private void addSparkArg(SparkLauncher sparkLauncher, String key, String value) {
-    if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
-      sparkLauncher.addSparkArg(key, value);
+    final String sparkApplicationCRDName = CustomResource.getCRDName(SparkApplication.class);
+    List<CustomResourceDefinition> sparkCRDList = crds.getItems().stream().filter(crd -> crd.getMetadata().getName().equals(sparkApplicationCRDName)).collect(Collectors.toList());
+    if (CollectionUtils.isEmpty(sparkCRDList)) {
+      throw new RuntimeException("spark operator crd 不存在");
     }
+
+    NonNamespaceOperation<SparkApplication, SparkApplicationList, Resource<SparkApplication>> sparkApplicationClient = KubernetesHelper.getSparkApplicationClient(client);
+    SparkApplication sparkApplication = KubernetesHelper.getSparkApplication(sparkConfig.getAppName(), sparkConfig.getK8sNamespace());
+
+    SparkPodSpec driver = SparkPodSpec.Builder().cores(sparkConfig.getDriverCores()).memory(sparkConfig.getDriverMemory()).serviceAccount("spark").build();
+    SparkPodSpec executor = SparkPodSpec.Builder().cores(sparkConfig.getExecutorCores()).instances(sparkConfig.getNumExecutors()).memory(sparkConfig.getExecutorMemory()).build();
+    SparkApplicationSpec sparkApplicationSpec = SparkApplicationSpec.Builder()
+            .type("Scala")
+            .mode(sparkConfig.getDeployMode())
+            .image(sparkConfig.getK8sImage())
+            .imagePullPolicy("Always")
+            .mainClass(mainClass)
+            .mainApplicationFile(sparkConfig.getAppResource())
+            .sparkVersion("3.2.1")
+            .restartPolicy(new RestartPolicy("Never"))
+            .driver(driver)
+            .executor(executor)
+            .build();
+
+
+    sparkApplication.setSpec(sparkApplicationSpec);
+    SparkApplication created = sparkApplicationClient.createOrReplace(sparkApplication);
+
+
+    try {
+      Thread.sleep(3000);
+    } catch (InterruptedException e) {
+
+    }
+
+    SparkApplicationList list = KubernetesHelper.getSparkApplicationClient(client).list();
+
+    List<SparkApplication> sparkApplicationList = list.getItems().stream().filter(crd -> crd.getMetadata().getName().equals(sparkConfig.getAppName())).collect(Collectors.toList());
+
+    if (CollectionUtils.isNotEmpty(sparkApplicationList)){
+      SparkApplicationStatus status = sparkApplicationList.get(0).getStatus();
+      if (Objects.nonNull(status)){
+        System.out.println(status.getApplicationState().getState());
+        logger.info("spark operator status: {}",status.getApplicationState().getState());
+      }
+    }
+
+    client.close();
   }
+
 
   public boolean initJobId() {
     this.applicationId = sparkAppHandle.getAppId();

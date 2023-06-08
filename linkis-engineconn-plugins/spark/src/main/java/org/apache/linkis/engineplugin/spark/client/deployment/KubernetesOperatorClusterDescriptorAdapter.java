@@ -41,21 +41,26 @@ import java.util.stream.Collectors;
 
 public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
+  protected String taskName;
+  protected String namespace;
+
+
   public KubernetesOperatorClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);
   }
 
   public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
     SparkConfig sparkConfig = executionContext.getSparkConfig();
+    this.taskName = sparkConfig.getAppName();
+    this.namespace = sparkConfig.getK8sNamespace();
 
     KubernetesClient client = KubernetesHelper.getKubernetesClient();
-
     CustomResourceDefinitionList crds = client.apiextensions().v1().customResourceDefinitions().list();
 
-    final String sparkApplicationCRDName = CustomResource.getCRDName(SparkApplication.class);
+    String sparkApplicationCRDName = CustomResource.getCRDName(SparkApplication.class);
     List<CustomResourceDefinition> sparkCRDList = crds.getItems().stream().filter(crd -> crd.getMetadata().getName().equals(sparkApplicationCRDName)).collect(Collectors.toList());
     if (CollectionUtils.isEmpty(sparkCRDList)) {
-      throw new RuntimeException("spark operator crd 不存在");
+      throw new RuntimeException("The Spark operator crd does not exist");
     }
 
     NonNamespaceOperation<SparkApplication, SparkApplicationList, Resource<SparkApplication>> sparkApplicationClient = KubernetesHelper.getSparkApplicationClient(client);
@@ -64,15 +69,15 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     SparkPodSpec driver = SparkPodSpec.Builder().cores(sparkConfig.getDriverCores()).memory(sparkConfig.getDriverMemory()).serviceAccount("spark").build();
     SparkPodSpec executor = SparkPodSpec.Builder().cores(sparkConfig.getExecutorCores()).instances(sparkConfig.getNumExecutors()).memory(sparkConfig.getExecutorMemory()).build();
     SparkApplicationSpec sparkApplicationSpec = SparkApplicationSpec.Builder()
-            .type("Scala")
+            .type(sparkConfig.getK8sLanguageType())
             //todo An error occurs when the client mode is used. The cause has not been found
             .mode("cluster")
             .image(sparkConfig.getK8sImage())
-            .imagePullPolicy("Always")
+            .imagePullPolicy(sparkConfig.getK8sImagePullPolicy())
             .mainClass(mainClass)
             .mainApplicationFile(sparkConfig.getAppResource())
-            .sparkVersion("3.2.1")
-            .restartPolicy(new RestartPolicy("Never"))
+            .sparkVersion(sparkConfig.getK8sSparkVersion())
+            .restartPolicy(new RestartPolicy(sparkConfig.getK8sRestartPolicy()))
             .driver(driver)
             .executor(executor)
             .build();
@@ -95,8 +100,7 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     if (CollectionUtils.isNotEmpty(sparkApplicationList)){
       SparkApplicationStatus status = sparkApplicationList.get(0).getStatus();
       if (Objects.nonNull(status)){
-        System.out.println(status.getApplicationState().getState());
-        logger.info("spark operator status: {}",status.getApplicationState().getState());
+        logger.info("Spark k8s task: {},status: {}",sparkConfig.getAppName(),status.getApplicationState().getState());
       }
     }
 
@@ -106,6 +110,18 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
 
   public boolean initJobId() {
     this.applicationId = sparkAppHandle.getAppId();
+
+    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+    List<SparkApplication> sparkApplicationList = KubernetesHelper.getSparkApplicationClient(client).list().getItems();
+
+    if (CollectionUtils.isNotEmpty(sparkApplicationList)){
+      for (SparkApplication sparkApplication : sparkApplicationList) {
+        if (sparkApplication.getMetadata().getNamespace().equals(this.namespace) && sparkApplication.getMetadata().getName().equals(this.taskName)){
+          this.applicationId = sparkApplication.getStatus().getSparkApplicationId();
+          this.jobState = SparkAppHandle.State.valueOf(sparkApplication.getStatus().getApplicationState().getState());
+        }
+      }
+    }
     // When the job is not finished, the appId is monitored; otherwise, the status is
     // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
     return null != getApplicationId() || (jobState != null && jobState.isFinal());

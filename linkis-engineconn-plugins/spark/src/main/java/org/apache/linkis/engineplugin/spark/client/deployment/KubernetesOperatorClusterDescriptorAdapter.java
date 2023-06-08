@@ -126,8 +126,6 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   }
 
   public boolean initJobId() {
-    this.applicationId = sparkAppHandle.getAppId();
-
     KubernetesClient client = KubernetesHelper.getKubernetesClient();
     List<SparkApplication> sparkApplicationList =
         KubernetesHelper.getSparkApplicationClient(client).list().getItems();

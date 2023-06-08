@@ -399,15 +399,23 @@
       <version>5.4.1</version>
       <exclusions>
         <exclusion>
-          <artifactId>kubernetes-model-common</artifactId>
           <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-model-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-model-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
-
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-model-common</artifactId>
+      <version>5.4.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-model-core</artifactId>
       <version>5.4.1</version>
     </dependency>
 

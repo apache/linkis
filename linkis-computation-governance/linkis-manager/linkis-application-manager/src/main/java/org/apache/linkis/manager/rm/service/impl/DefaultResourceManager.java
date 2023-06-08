@@ -140,20 +140,38 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     eMInstanceLabel.setInstance(serviceInstance.getInstance());
 
     NodeResource emResource = labelResourceService.getLabelResource(eMInstanceLabel);
+    boolean registerResourceFlag = false;
     if (emResource != null) {
-      logger.warn(serviceInstance + " has been registered, now update resource.");
-      if (!emResource.getResourceType().equals(resource.getResourceType())) {
-        throw new RMWarnException(
-            RMErrorCode.LABEL_DUPLICATED.getErrorCode(),
-            MessageFormat.format(
-                RMErrorCode.LABEL_DUPLICATED.getErrorDesc(),
-                serviceInstance,
-                emResource.getResourceType(),
-                resource.getResourceType()));
+      logger.warn("ECM {} has been registered, resource is {}.", serviceInstance, emResource);
+      Resource leftResource = emResource.getLeftResource();
+      if (leftResource != null && Resource.getZeroResource(leftResource).moreThan(leftResource)) {
+        logger.warn(
+            "ECM {} has been registered, but left Resource <0 need to register resource.",
+            serviceInstance);
+        registerResourceFlag = true;
       }
+      Resource usedResource = emResource.getLockedResource().add(emResource.getUsedResource());
+      if (usedResource.moreThan(emResource.getMaxResource())) {
+        logger.warn(
+            "ECM {}  has been registered, but usedResource > MaxResource  need to register resource.",
+            serviceInstance);
+        registerResourceFlag = true;
+      }
+      if (!(resource.getMaxResource().equalsTo(emResource.getMaxResource()))) {
+        logger.warn(
+            "ECM {} has been registered, but Inconsistent newly registered resources  need to register resource.",
+            serviceInstance);
+        registerResourceFlag = true;
+      }
+    }
+
+    if (!registerResourceFlag) {
+      logger.warn("ECM {} has been registered, skip register resource.", serviceInstance);
+      return;
     }
     PersistenceLock lock = tryLockOneLabel(eMInstanceLabel, -1, LinkisUtils.getJvmUser());
     try {
+      labelResourceService.removeResourceByLabel(eMInstanceLabel);
       labelResourceService.setLabelResource(
           eMInstanceLabel, resource, eMInstanceLabel.getStringValue());
     } catch (Exception exception) {

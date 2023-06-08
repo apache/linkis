@@ -223,7 +223,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         "ps -ef | grep "
             + pid
             + " | grep EngineConnServer | awk '{print \"exists_\"$2}' | grep "
-            + pid;
+            + pid
+            + "|| true";
     List<String> cmdList = new ArrayList<>();
     cmdList.add("bash");
     cmdList.add("-c");

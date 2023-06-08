@@ -18,16 +18,17 @@
 package org.apache.linkis.engineconnplugin.flink.operator
 
 import org.apache.linkis.common.exception.{LinkisException, LinkisRuntimeException}
-import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.common.exception.EngineConnException
 import org.apache.linkis.engineconnplugin.flink.util.{ManagerUtil, YarnUtil}
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.operator.Operator
-
 import org.apache.commons.lang3.StringUtils
-import org.apache.hadoop.yarn.api.records.{ApplicationId, FinalApplicationStatus}
+import org.apache.hadoop.yarn.api.records.{ApplicationId, ApplicationReport, FinalApplicationStatus}
+import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException
+import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
 
 import scala.collection.mutable
 
@@ -66,10 +67,21 @@ class StatusOperator extends Operator with Logging {
 
     // Create an ApplicationId object using newInstance method
     val appId = ApplicationId.newInstance(clusterTimestamp, sequenceNumber)
+    val rsMap = new mutable.HashMap[String, String]
 
     val yarnClient = YarnUtil.getYarnClient()
-
-    val appReport = yarnClient.getApplicationReport(appId)
+    var appReport: ApplicationReport = null
+    Utils.tryCatch {
+      appReport = yarnClient.getApplicationReport(appId)
+      if (null == appReport) {
+        throw logAndException(s"Got null appReport for appid : ${appIdStr}")
+      }
+    } { case notExist: ApplicationNotFoundException =>
+      logger.error(s"Application : ${appIdStr} not exists, will set the status to failed.")
+      rsMap += (ECConstants.NODE_STATUS_KEY -> NodeStatus.Failed.toString)
+      rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
+      return rsMap.toMap[String, String]
+    }
 
     // Get the application status (YarnApplicationState)
     val appStatus = if (appReport.getFinalApplicationStatus != FinalApplicationStatus.UNDEFINED) {
@@ -81,7 +93,6 @@ class StatusOperator extends Operator with Logging {
     val nodeStatus: NodeStatus = YarnUtil.convertYarnStateToNodeStatus(appIdStr, appStatus.toString)
 
     logger.info(s"try to get appid: ${appIdStr}, status ${nodeStatus.toString}.")
-    val rsMap = new mutable.HashMap[String, String]
     rsMap += (ECConstants.NODE_STATUS_KEY -> nodeStatus.toString)
     rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
     rsMap.toMap[String, String]

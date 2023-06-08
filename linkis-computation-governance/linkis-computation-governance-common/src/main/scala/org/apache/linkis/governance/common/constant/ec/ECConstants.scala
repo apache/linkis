@@ -63,11 +63,15 @@ object ECConstants {
 
   val YARN_APP_STATE_LIST_KEY = "yarnAppStateList"
 
+  val YARN_APP_TYPE_KEY = "yarnAppType"
+
   val YARN_APP_TYPE_SPARK = "spark"
 
   val YARN_APP_TYPE_FLINK = "flink"
 
   val EC_OPERATE_LIST = "list"
+
+  val EC_OPERATE_STATUS = "status"
 
   val YARN_APP_RESULT_LIST_KEY = "yarnAppResultList"
 }

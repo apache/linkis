@@ -336,6 +336,9 @@ public class EngineRestfulApi {
       List<DetachEngineHeartbeatHook> hooks = new ArrayList<>(1);
       hooks.add(DefaultDetachEngineHeartbeatHook.newInstance(engineOperateService, engineNode));
       ECHeartbeatHookHolder$.MODULE$.putEcHook(engineNode.getServiceInstance(), hooks);
+      logger.info(
+          "Add hook of DefaultDetachEngineHeartbeatHook for detach ec : {}",
+          engineNode.getServiceInstance().toString());
     }
     // to transform to a map
     Map<String, Object> retEngineNode = new HashMap<>();

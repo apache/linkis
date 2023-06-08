@@ -22,6 +22,7 @@ import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
 import org.apache.linkis.engineplugin.spark.client.deployment.crds.*;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.launcher.SparkAppHandle;
 
 import java.util.List;
@@ -136,7 +137,7 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             && sparkApplication.getMetadata().getName().equals(this.taskName)) {
           this.applicationId = sparkApplication.getStatus().getSparkApplicationId();
           this.jobState =
-              SparkAppHandle.State.valueOf(
+              kubernetesStateConvertSparkState(
                   sparkApplication.getStatus().getApplicationState().getState());
         }
       }
@@ -144,5 +145,23 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     // When the job is not finished, the appId is monitored; otherwise, the status is
     // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
     return null != getApplicationId() || (jobState != null && jobState.isFinal());
+  }
+
+  public SparkAppHandle.State kubernetesStateConvertSparkState(String kubernetesState) {
+    if (StringUtils.isBlank(kubernetesState)) {
+      return SparkAppHandle.State.UNKNOWN;
+    }
+    switch (kubernetesState) {
+      case "PENDING":
+        return SparkAppHandle.State.CONNECTED;
+      case "RUNNING":
+        return SparkAppHandle.State.RUNNING;
+      case "COMPLETED":
+        return SparkAppHandle.State.FINISHED;
+      case "FAILED":
+        return SparkAppHandle.State.FAILED;
+      default:
+        return SparkAppHandle.State.UNKNOWN;
+    }
   }
 }

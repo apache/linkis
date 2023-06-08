@@ -63,9 +63,7 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
 
   public  void deployCluster(String mainClass, String args, Map<String, String> confMap) throws IOException{}
 
-  public boolean initJobId() {
-    return false;
-  }
+  public abstract boolean initJobId() ;
 
   @Override
   public void close() {

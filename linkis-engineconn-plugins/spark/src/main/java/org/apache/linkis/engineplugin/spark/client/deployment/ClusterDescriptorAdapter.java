@@ -60,10 +60,10 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     return "ClusterDescriptorAdapter{" + "applicationId=" + sparkAppHandle.getAppId() + '}';
   }
 
+  public void deployCluster(String mainClass, String args, Map<String, String> confMap)
+      throws IOException {}
 
-  public  void deployCluster(String mainClass, String args, Map<String, String> confMap) throws IOException{}
-
-  public abstract boolean initJobId() ;
+  public abstract boolean initJobId();
 
   @Override
   public void close() {

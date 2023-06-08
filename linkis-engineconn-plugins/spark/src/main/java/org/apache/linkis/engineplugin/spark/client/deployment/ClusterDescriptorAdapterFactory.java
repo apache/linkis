@@ -17,8 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.client.deployment;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class ClusterDescriptorAdapterFactory {
 

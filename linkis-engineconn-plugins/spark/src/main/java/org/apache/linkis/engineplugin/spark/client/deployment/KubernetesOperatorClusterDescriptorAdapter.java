@@ -17,33 +17,29 @@
 
 package org.apache.linkis.engineplugin.spark.client.deployment;
 
+import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
+import org.apache.linkis.engineplugin.spark.client.deployment.crds.*;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.spark.launcher.SparkAppHandle;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinition;
 import io.fabric8.kubernetes.api.model.apiextensions.v1.CustomResourceDefinitionList;
 import io.fabric8.kubernetes.client.CustomResource;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
-import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
-import org.apache.linkis.engineplugin.spark.client.deployment.crds.*;
-import org.apache.spark.launcher.CustomSparkSubmitLauncher;
-import org.apache.spark.launcher.SparkAppHandle;
-import org.apache.spark.launcher.SparkLauncher;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
   protected String taskName;
   protected String namespace;
-
 
   public KubernetesOperatorClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);
@@ -55,22 +51,40 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     this.namespace = sparkConfig.getK8sNamespace();
 
     KubernetesClient client = KubernetesHelper.getKubernetesClient();
-    CustomResourceDefinitionList crds = client.apiextensions().v1().customResourceDefinitions().list();
+    CustomResourceDefinitionList crds =
+        client.apiextensions().v1().customResourceDefinitions().list();
 
     String sparkApplicationCRDName = CustomResource.getCRDName(SparkApplication.class);
-    List<CustomResourceDefinition> sparkCRDList = crds.getItems().stream().filter(crd -> crd.getMetadata().getName().equals(sparkApplicationCRDName)).collect(Collectors.toList());
+    List<CustomResourceDefinition> sparkCRDList =
+        crds.getItems().stream()
+            .filter(crd -> crd.getMetadata().getName().equals(sparkApplicationCRDName))
+            .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(sparkCRDList)) {
       throw new RuntimeException("The Spark operator crd does not exist");
     }
 
-    NonNamespaceOperation<SparkApplication, SparkApplicationList, Resource<SparkApplication>> sparkApplicationClient = KubernetesHelper.getSparkApplicationClient(client);
-    SparkApplication sparkApplication = KubernetesHelper.getSparkApplication(sparkConfig.getAppName(), sparkConfig.getK8sNamespace());
+    NonNamespaceOperation<SparkApplication, SparkApplicationList, Resource<SparkApplication>>
+        sparkApplicationClient = KubernetesHelper.getSparkApplicationClient(client);
+    SparkApplication sparkApplication =
+        KubernetesHelper.getSparkApplication(
+            sparkConfig.getAppName(), sparkConfig.getK8sNamespace());
 
-    SparkPodSpec driver = SparkPodSpec.Builder().cores(sparkConfig.getDriverCores()).memory(sparkConfig.getDriverMemory()).serviceAccount("spark").build();
-    SparkPodSpec executor = SparkPodSpec.Builder().cores(sparkConfig.getExecutorCores()).instances(sparkConfig.getNumExecutors()).memory(sparkConfig.getExecutorMemory()).build();
-    SparkApplicationSpec sparkApplicationSpec = SparkApplicationSpec.Builder()
+    SparkPodSpec driver =
+        SparkPodSpec.Builder()
+            .cores(sparkConfig.getDriverCores())
+            .memory(sparkConfig.getDriverMemory())
+            .serviceAccount("spark")
+            .build();
+    SparkPodSpec executor =
+        SparkPodSpec.Builder()
+            .cores(sparkConfig.getExecutorCores())
+            .instances(sparkConfig.getNumExecutors())
+            .memory(sparkConfig.getExecutorMemory())
+            .build();
+    SparkApplicationSpec sparkApplicationSpec =
+        SparkApplicationSpec.Builder()
             .type(sparkConfig.getK8sLanguageType())
-            //todo An error occurs when the client mode is used. The cause has not been found
+            // todo An error occurs when the client mode is used. The cause has not been found
             .mode("cluster")
             .image(sparkConfig.getK8sImage())
             .imagePullPolicy(sparkConfig.getK8sImagePullPolicy())
@@ -82,10 +96,8 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             .executor(executor)
             .build();
 
-
     sparkApplication.setSpec(sparkApplicationSpec);
     SparkApplication created = sparkApplicationClient.createOrReplace(sparkApplication);
-
 
     try {
       Thread.sleep(3000);
@@ -95,30 +107,39 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
 
     SparkApplicationList list = KubernetesHelper.getSparkApplicationClient(client).list();
 
-    List<SparkApplication> sparkApplicationList = list.getItems().stream().filter(crd -> crd.getMetadata().getName().equals(sparkConfig.getAppName())).collect(Collectors.toList());
+    List<SparkApplication> sparkApplicationList =
+        list.getItems().stream()
+            .filter(crd -> crd.getMetadata().getName().equals(sparkConfig.getAppName()))
+            .collect(Collectors.toList());
 
-    if (CollectionUtils.isNotEmpty(sparkApplicationList)){
+    if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
       SparkApplicationStatus status = sparkApplicationList.get(0).getStatus();
-      if (Objects.nonNull(status)){
-        logger.info("Spark k8s task: {},status: {}",sparkConfig.getAppName(),status.getApplicationState().getState());
+      if (Objects.nonNull(status)) {
+        logger.info(
+            "Spark k8s task: {},status: {}",
+            sparkConfig.getAppName(),
+            status.getApplicationState().getState());
       }
     }
 
     client.close();
   }
 
-
   public boolean initJobId() {
     this.applicationId = sparkAppHandle.getAppId();
 
     KubernetesClient client = KubernetesHelper.getKubernetesClient();
-    List<SparkApplication> sparkApplicationList = KubernetesHelper.getSparkApplicationClient(client).list().getItems();
+    List<SparkApplication> sparkApplicationList =
+        KubernetesHelper.getSparkApplicationClient(client).list().getItems();
 
-    if (CollectionUtils.isNotEmpty(sparkApplicationList)){
+    if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
       for (SparkApplication sparkApplication : sparkApplicationList) {
-        if (sparkApplication.getMetadata().getNamespace().equals(this.namespace) && sparkApplication.getMetadata().getName().equals(this.taskName)){
+        if (sparkApplication.getMetadata().getNamespace().equals(this.namespace)
+            && sparkApplication.getMetadata().getName().equals(this.taskName)) {
           this.applicationId = sparkApplication.getStatus().getSparkApplicationId();
-          this.jobState = SparkAppHandle.State.valueOf(sparkApplication.getStatus().getApplicationState().getState());
+          this.jobState =
+              SparkAppHandle.State.valueOf(
+                  sparkApplication.getStatus().getApplicationState().getState());
         }
       }
     }

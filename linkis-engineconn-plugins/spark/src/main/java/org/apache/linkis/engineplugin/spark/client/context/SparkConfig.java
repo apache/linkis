@@ -69,7 +69,6 @@ public class SparkConfig {
   private String keytab; // ("--keytab", "")
   private String queue; // ("--queue", "")
 
-
   public String getK8sImagePullPolicy() {
     return k8sImagePullPolicy;
   }
@@ -384,18 +383,18 @@ public class SparkConfig {
         + ", k8sImage='"
         + k8sImage
         + '\''
-            + ", k8sImagePullPolicy='"
-            + k8sImagePullPolicy
-            + '\''
-            + ", k8sLanguageType='"
-            + k8sLanguageType
-            + '\''
-            + ", k8sRestartPolicy='"
-            + k8sRestartPolicy
-            + '\''
-            + ", k8sSparkVersion='"
-            + k8sSparkVersion
-            + '\''
+        + ", k8sImagePullPolicy='"
+        + k8sImagePullPolicy
+        + '\''
+        + ", k8sLanguageType='"
+        + k8sLanguageType
+        + '\''
+        + ", k8sRestartPolicy='"
+        + k8sRestartPolicy
+        + '\''
+        + ", k8sSparkVersion='"
+        + k8sSparkVersion
+        + '\''
         + ", k8sNamespace='"
         + k8sNamespace
         + '\''

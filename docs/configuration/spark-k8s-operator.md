@@ -1,12 +1,12 @@
 
-### 1. spark-on-k8s-operator官方文档
+### 1. spark-on-k8s-operator document
 
 ```text
 https://github.com/GoogleCloudPlatform/spark-on-k8s-operator/blob/master/docs/quick-start-guide.md
 ```
 
 
-### 2. spark-on-k8s-operator部署
+### 2. spark-on-k8s-operator install
 
 ```text
 helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
@@ -14,13 +14,13 @@ helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-
 helm install my-release spark-operator/spark-operator --namespace spark-operator --create-namespace  --set webhook.enable=true  
 ```
 
-### 3. spark-on-k8s-operator测试任务提交
+### 3. spark-on-k8s-operator test task submit
 
 ```text
 kubectl apply -f examples/spark-pi.yaml
 ```
 
-### 4. 如果遇到报错: Message: Forbidden!Configured service account doesn't have access. Service account may have been revoked. pods "spark-pi-driver" is forbidden: error looking up service account spark/spark: serviceaccount "spark" not found.
+### 4. If an error is reported: Message: Forbidden!Configured service account doesn't have access. Service account may have been revoked. pods "spark-pi-driver" is forbidden: error looking up service account spark/spark: serviceaccount "spark" not found.
 
 ```text
 kubectl create serviceaccount spark
@@ -28,7 +28,7 @@ kubectl create serviceaccount spark
 kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 ```
 
-### 5. spark-on-k8s-operator卸载(一般不需要,安装出现问题再卸载)
+### 5. spark-on-k8s-operator Uninstall (usually not required, uninstall after installation problems)
 
 ```text
 helm uninstall my-release  --namespace spark-operator
@@ -40,7 +40,7 @@ kubectl delete clusterrole my-release-spark-operator --namespace spark-operator
 kubectl delete clusterrolebindings my-release-spark-operator --namespace spark-operator
 ```
 
-### 6. 通过 Restful API 提交任务
+### 6. Submitting tasks with Restful API
 ```text
 POST /api/rest_j/v1/entrance/submit
 ```
@@ -78,4 +78,18 @@ POST /api/rest_j/v1/entrance/submit
   }
 }
 ```
+
+### 7. Reference document
+```text
+https://github.com/GoogleCloudPlatform/spark-on-k8s-operator
+
+https://github.com/fabric8io/kubernetes-client/
+
+https://github.com/apple/batch-processing-gateway
+
+https://www.lightbend.com/blog/how-to-manage-monitor-spark-on-kubernetes-introduction-spark-submit-kubernetes-operator
+
+https://www.lightbend.com/blog/how-to-manage-monitor-spark-on-kubernetes-deep-dive-kubernetes-operator-for-spark
+```
+
 

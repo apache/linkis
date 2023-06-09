@@ -183,4 +183,19 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   public boolean isDisposed() {
     return this.jobState.isFinal();
   }
+
+  @Override
+  public String toString() {
+    return "ClusterDescriptorAdapter{" + "applicationId=" + getApplicationId() + '}';
+  }
+
+  @Override
+  public void close() {
+    logger.info("Start to close job {}.", getApplicationId());
+    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+    SparkApplication SparkApplication =
+        KubernetesHelper.getSparkApplication(this.taskName, this.namespace);
+    KubernetesHelper.getSparkApplicationClient(client).delete(SparkApplication);
+    client.close();
+  }
 }

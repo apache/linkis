@@ -127,27 +127,42 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   }
 
   public boolean initJobId() {
-    KubernetesClient client = KubernetesHelper.getKubernetesClient();
-    List<SparkApplication> sparkApplicationList =
-        KubernetesHelper.getSparkApplicationClient(client).list().getItems();
+    SparkApplicationStatus sparkApplicationStatus = getKubernetesOperatorState();
 
-    if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
-      for (SparkApplication sparkApplication : sparkApplicationList) {
-        if (sparkApplication.getMetadata().getNamespace().equals(this.namespace)
-            && sparkApplication.getMetadata().getName().equals(this.taskName)) {
-          this.applicationId = sparkApplication.getStatus().getSparkApplicationId();
-          this.jobState =
-              kubernetesStateConvertSparkState(
-                  sparkApplication.getStatus().getApplicationState().getState());
-        }
-      }
+    if (Objects.nonNull(sparkApplicationStatus)) {
+      this.applicationId = sparkApplicationStatus.getSparkApplicationId();
+      this.jobState =
+          kubernetesOperatorStateConvertSparkState(
+              sparkApplicationStatus.getApplicationState().getState());
     }
+
     // When the job is not finished, the appId is monitored; otherwise, the status is
     // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
     return null != getApplicationId() || (jobState != null && jobState.isFinal());
   }
 
-  public SparkAppHandle.State kubernetesStateConvertSparkState(String kubernetesState) {
+  private SparkApplicationStatus getKubernetesOperatorState() {
+    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+
+    try {
+      List<SparkApplication> sparkApplicationList =
+          KubernetesHelper.getSparkApplicationClient(client).list().getItems();
+      if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
+        for (SparkApplication sparkApplication : sparkApplicationList) {
+          if (sparkApplication.getMetadata().getNamespace().equals(this.namespace)
+              && sparkApplication.getMetadata().getName().equals(this.taskName)) {
+            return sparkApplication.getStatus();
+          }
+        }
+      }
+
+    } finally {
+      client.close();
+    }
+    return null;
+  }
+
+  public SparkAppHandle.State kubernetesOperatorStateConvertSparkState(String kubernetesState) {
     if (StringUtils.isBlank(kubernetesState)) {
       return SparkAppHandle.State.UNKNOWN;
     }
@@ -163,5 +178,9 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
       default:
         return SparkAppHandle.State.UNKNOWN;
     }
+  }
+
+  public boolean isDisposed() {
+    return this.jobState.isFinal();
   }
 }

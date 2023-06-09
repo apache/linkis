@@ -396,7 +396,7 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-client</artifactId>
-      <version>5.4.1</version>
+      <version>${kubernetes-client.version}</version>
       <exclusions>
         <exclusion>
           <groupId>io.fabric8</groupId>
@@ -411,7 +411,7 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-model-common</artifactId>
-      <version>5.4.1</version>
+      <version>${kubernetes-client.version}</version>
     </dependency>
     <dependency>
       <groupId>io.fabric8</groupId>

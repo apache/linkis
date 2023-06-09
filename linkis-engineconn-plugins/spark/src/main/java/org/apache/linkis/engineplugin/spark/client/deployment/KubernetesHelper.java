@@ -30,12 +30,13 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 
 public class KubernetesHelper {
 
-  public static KubernetesClient getKubernetesClient() {
+  public static KubernetesClient getKubernetesClient(
+      String k8sMasterUrl, String k8sUsername, String k8sPassword) {
     Config config =
         new ConfigBuilder()
-            .withMasterUrl("http://192.168.217.140:30880")
-            .withUsername("admin")
-            .withPassword("1QAZ2wsx")
+            .withMasterUrl(k8sMasterUrl)
+            .withUsername(k8sUsername)
+            .withPassword(k8sPassword)
             .build();
     return new DefaultKubernetesClient(config);
   }

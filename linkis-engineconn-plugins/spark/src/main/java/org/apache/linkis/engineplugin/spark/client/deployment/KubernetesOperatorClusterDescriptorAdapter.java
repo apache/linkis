@@ -39,19 +39,20 @@ import io.fabric8.kubernetes.client.dsl.Resource;
 
 public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
-  protected String taskName;
-  protected String namespace;
+  protected SparkConfig sparkConfig;
 
   public KubernetesOperatorClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);
   }
 
   public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
-    SparkConfig sparkConfig = executionContext.getSparkConfig();
-    this.taskName = sparkConfig.getAppName();
-    this.namespace = sparkConfig.getK8sNamespace();
+    this.sparkConfig = executionContext.getSparkConfig();
 
-    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+    KubernetesClient client =
+        KubernetesHelper.getKubernetesClient(
+            this.sparkConfig.getK8sMasterUrl(),
+            this.sparkConfig.getK8sUsername(),
+            this.sparkConfig.getK8sPassword());
     CustomResourceDefinitionList crds =
         client.apiextensions().v1().customResourceDefinitions().list();
 
@@ -142,15 +143,22 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   }
 
   private SparkApplicationStatus getKubernetesOperatorState() {
-    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+    KubernetesClient client =
+        KubernetesHelper.getKubernetesClient(
+            this.sparkConfig.getK8sMasterUrl(),
+            this.sparkConfig.getK8sUsername(),
+            this.sparkConfig.getK8sPassword());
 
     try {
       List<SparkApplication> sparkApplicationList =
           KubernetesHelper.getSparkApplicationClient(client).list().getItems();
       if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
         for (SparkApplication sparkApplication : sparkApplicationList) {
-          if (sparkApplication.getMetadata().getNamespace().equals(this.namespace)
-              && sparkApplication.getMetadata().getName().equals(this.taskName)) {
+          if (sparkApplication
+                  .getMetadata()
+                  .getNamespace()
+                  .equals(this.sparkConfig.getK8sNamespace())
+              && sparkApplication.getMetadata().getName().equals(this.sparkConfig.getAppName())) {
             return sparkApplication.getStatus();
           }
         }
@@ -192,9 +200,14 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   @Override
   public void close() {
     logger.info("Start to close job {}.", getApplicationId());
-    KubernetesClient client = KubernetesHelper.getKubernetesClient();
+    KubernetesClient client =
+        KubernetesHelper.getKubernetesClient(
+            this.sparkConfig.getK8sMasterUrl(),
+            this.sparkConfig.getK8sUsername(),
+            this.sparkConfig.getK8sPassword());
     SparkApplication SparkApplication =
-        KubernetesHelper.getSparkApplication(this.taskName, this.namespace);
+        KubernetesHelper.getSparkApplication(
+            this.sparkConfig.getAppName(), this.sparkConfig.getK8sNamespace());
     KubernetesHelper.getSparkApplicationClient(client).delete(SparkApplication);
     client.close();
   }

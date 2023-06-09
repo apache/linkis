@@ -28,7 +28,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
 
-/** @Author ChengJie @Date 2023/6/7 */
 public class KubernetesHelper {
 
   public static KubernetesClient getKubernetesClient() {

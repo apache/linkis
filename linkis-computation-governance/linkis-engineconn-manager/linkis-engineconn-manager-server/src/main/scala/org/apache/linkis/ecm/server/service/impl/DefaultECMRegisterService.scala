@@ -37,7 +37,9 @@ import java.util.Collections
 
 class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener with Logging {
 
-  private implicit def readyEvent2RegisterECMRequest(event: ECMReadyEvent): RegisterEMRequest = {
+  private var unRegisterFlag = false
+
+  private def readyEvent2RegisterECMRequest(event: ECMReadyEvent): RegisterEMRequest = {
     val request = new RegisterEMRequest
     val instance = Sender.getThisServiceInstance
     request.setUser(Utils.getJvmUser)
@@ -50,14 +52,11 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
 
   private def getLabelsFromArgs(params: Array[String]): util.Map[String, AnyRef] = {
     import scala.collection.JavaConverters._
-    val labelRegex = """label\.(.+)\.(.+)=(.+)""".r
     val labels = new util.HashMap[String, AnyRef]()
-    // TODO: magic
     labels.asScala += LabelKeyConstant.SERVER_ALIAS_KEY -> Collections.singletonMap(
       "alias",
       ENGINE_CONN_MANAGER_SPRING_NAME
     )
-    // TODO: group  by key
     labels
   }
 
@@ -81,12 +80,12 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
   }
 
   override def onEvent(event: ECMEvent): Unit = event match {
-    case event: ECMReadyEvent => registerECM(event)
-    case event: ECMClosedEvent => unRegisterECM(event)
+    case event: ECMReadyEvent => registerECM(readyEvent2RegisterECMRequest(event))
+    case event: ECMClosedEvent => unRegisterECM(closeEvent2StopECMRequest(event))
     case _ =>
   }
 
-  private implicit def closeEvent2StopECMRequest(event: ECMClosedEvent): StopEMRequest = {
+  private def closeEvent2StopECMRequest(event: ECMClosedEvent): StopEMRequest = {
     val request = new StopEMRequest
     val instance = Sender.getThisServiceInstance
     request.setUser(Utils.getJvmUser)
@@ -114,7 +113,10 @@ class DefaultECMRegisterService extends ECMRegisterService with ECMEventListener
 
   override def unRegisterECM(request: StopEMRequest): Unit = {
     logger.info("start unRegister ecm")
-    Sender.getSender(MANAGER_SERVICE_NAME).send(request)
+    if (!unRegisterFlag) {
+      Sender.getSender(MANAGER_SERVICE_NAME).send(request)
+    }
+    unRegisterFlag = true
   }
 
 }

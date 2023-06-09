@@ -58,11 +58,6 @@ class DefaultEMUnregisterService extends EMUnregisterService with Logging {
     val emClearRequest = new EMInfoClearRequest
     emClearRequest.setEm(node)
     emClearRequest.setUser(stopEMRequest.getUser)
-    Utils.tryAndWarn(rmMessageService.dealWithStopEMRequest(stopEMRequest))
-    // clear Label
-    val instanceLabelRemoveRequest = new NodeLabelRemoveRequest(node.getServiceInstance, false)
-    Utils.tryAndWarn(nodeLabelRemoveService.removeNodeLabel(instanceLabelRemoveRequest))
-    // 此处需要先清理ECM再等待，避免ECM重启过快，导致ECM资源没清理干净
     clearEMInstanceInfo(emClearRequest)
     logger.info(s" user ${stopEMRequest.getUser} finished to stop em ${stopEMRequest.getEm}")
   }

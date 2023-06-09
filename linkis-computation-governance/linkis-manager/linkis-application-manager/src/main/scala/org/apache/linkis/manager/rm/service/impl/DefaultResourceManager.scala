@@ -153,22 +153,40 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     eMInstanceLabel.setInstance(serviceInstance.getInstance)
 
     val emResource = labelResourceService.getLabelResource(eMInstanceLabel)
+    var registerResourceFlag = true
     if (emResource != null) {
-      logger.warn(s"${serviceInstance} has been registered, now update resource.")
-      if (!emResource.getResourceType.equals(resource.getResourceType)) {
-        throw new RMErrorException(
-          RMErrorCode.LABEL_DUPLICATED.getErrorCode,
-          MessageFormat.format(
-            RMErrorCode.LABEL_DUPLICATED.getErrorDesc,
-            serviceInstance,
-            emResource.getResourceType,
-            resource.getResourceType
-          )
+      registerResourceFlag = false
+      logger.warn(s"${serviceInstance} has been registered, resource is ${emResource}.")
+      val leftResource = emResource.getLeftResource
+      if (leftResource != null && Resource.getZeroResource(leftResource) > leftResource) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but left Resource <0 need to register resource."
         )
+        registerResourceFlag = true
       }
+      val usedResource = emResource.getLockedResource + emResource.getUsedResource
+      if (usedResource > emResource.getMaxResource) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but usedResource > MaxResource  need to register resource."
+        )
+        registerResourceFlag = true
+      }
+
+      if (!(resource.getMaxResource == emResource.getMaxResource)) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but Inconsistent newly registered resources  need to register resource."
+        )
+        registerResourceFlag = true
+      }
+    }
+
+    if (!registerResourceFlag) {
+      logger.warn(s"${serviceInstance} has been registered, skip register resource.")
+      return
     }
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
     try {
+      labelResourceService.removeResourceByLabel(eMInstanceLabel)
       labelResourceService.setLabelResource(
         eMInstanceLabel,
         resource,

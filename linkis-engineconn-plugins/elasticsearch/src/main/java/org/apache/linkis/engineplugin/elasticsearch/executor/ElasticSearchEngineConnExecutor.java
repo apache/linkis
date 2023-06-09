@@ -74,7 +74,8 @@ public class ElasticSearchEngineConnExecutor extends ConcurrentComputationExecut
   private Cache<String, ElasticSearchExecutor> elasticSearchExecutorCache =
       CacheBuilder.newBuilder()
           .expireAfterAccess(
-              (Long) EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue(), TimeUnit.MILLISECONDS)
+              Long.valueOf(EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue().toString()),
+              TimeUnit.MILLISECONDS)
           .removalListener(
               new RemovalListener<String, ElasticSearchExecutor>() {
                 @Override

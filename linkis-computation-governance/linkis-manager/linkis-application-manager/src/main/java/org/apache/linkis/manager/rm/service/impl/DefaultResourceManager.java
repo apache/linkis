@@ -140,8 +140,9 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     eMInstanceLabel.setInstance(serviceInstance.getInstance());
 
     NodeResource emResource = labelResourceService.getLabelResource(eMInstanceLabel);
-    boolean registerResourceFlag = false;
+    boolean registerResourceFlag = true;
     if (emResource != null) {
+      registerResourceFlag = false;
       logger.warn("ECM {} has been registered, resource is {}.", serviceInstance, emResource);
       Resource leftResource = emResource.getLeftResource();
       if (leftResource != null && Resource.getZeroResource(leftResource).moreThan(leftResource)) {

@@ -14,9 +14,15 @@
 # limitations under the License.
 #
 port=$1
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
+if [ "$LINKIS_HOME" = "" ]
+then
+  LINKIS_HOME=$workDir
+fi
 pid=`ps -ef | grep server.port=$port | grep  EngineConnServer | awk '{print $2}'`
 echo "`date '+%Y-%m-%d %H:%M:%S'` Get port $port pid is $pid"
 if [ "$pid" != "" ]
 then
-  sh kill-process-by-pid.sh $pid
+  sh $LINKIS_HOME/sbin/kill-process-by-pid.sh $pid
 fi

@@ -48,11 +48,6 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
       File versionFile = new File(path);
       logger.info("generate, versionFile:" + path);
       String key = versionFile.getName();
-      if (key.contains("-")) {
-        throw new EngineConnPluginErrorException(
-            CONTAINS_SPECIAL_CHARCATERS.getErrorCode(),
-            MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc(), engineConnType));
-      }
 
       try {
         EngineConnLocalizeResource[] engineConnLocalizeResources =

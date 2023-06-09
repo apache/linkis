@@ -83,8 +83,8 @@ tag(){
     fi
 }
 #create an image to carry mysql
-make_linikis_image_with_mysql_jdbc(){
-    ${ROOT_DIR}/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+make_linkis_image_with_mysql_jdbc(){
+    ${ROOT_DIR}/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
     docker tag linkis:with-jdbc linkis:dev
 }
 #creating a kind cluster
@@ -117,7 +117,7 @@ display_pods(){
 install(){
     if [ $USING_KIND = true ]; then
       tag
-      make_linikis_image_with_mysql_jdbc
+      make_linkis_image_with_mysql_jdbc
       create_kind_cluster
     fi
     install_mysql

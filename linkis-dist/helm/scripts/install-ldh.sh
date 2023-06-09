@@ -26,7 +26,7 @@ LDH_VERSION=${LDH_VERSION-${LINKIS_IMAGE_TAG}}
 echo "# LDH version: ${LINKIS_IMAGE_TAG}"
 
 # load image
-if [ "X${USING_KIND}" == "Xtrue" ]; then
+if [[ "X${USING_KIND}" == "Xtrue" ]]; then
   echo "# Loading LDH image ..."
   kind load docker-image linkis-ldh:${LINKIS_IMAGE_TAG} --name ${KIND_CLUSTER_NAME}
 fi
@@ -36,7 +36,7 @@ echo "# Deploying LDH ..."
 set +e
 x=`kubectl get ns ldh 2> /dev/null`
 set -e
-if [ "X${x}" == "X" ]; then
+if [[ "X${x}" == "X" ]]; then
   kubectl create ns ldh
 fi
 kubectl apply -n ldh -f ${RESOURCE_DIR}/ldh/configmaps

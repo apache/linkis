@@ -143,7 +143,7 @@ npm run build
 
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.1 
-$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
 请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/deploy-quick/) 来部署 Linkis

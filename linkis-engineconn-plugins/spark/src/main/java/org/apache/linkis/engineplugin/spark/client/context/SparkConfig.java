@@ -398,6 +398,7 @@ public class SparkConfig {
         + ", k8sNamespace='"
         + k8sNamespace
         + '\''
+        + ", deployMode='"
         + deployMode
         + '\''
         + ", appName='"

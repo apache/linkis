@@ -26,6 +26,9 @@
 
   <artifactId>linkis-engineplugin-impala</artifactId>
 
+  <properties>
+    <package.impala.version>3.4.0</package.impala.version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

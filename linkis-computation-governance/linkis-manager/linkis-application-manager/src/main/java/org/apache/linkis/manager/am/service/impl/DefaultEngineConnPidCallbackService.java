@@ -39,7 +39,7 @@ public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbac
   @Receiver
   @Override
   public void dealPid(ResponseEngineConnPid protocol) {
-    // 设置pid
+    // set pid
     logger.info(
         "DefaultEngineConnPidCallbackService dealPid serviceInstance: [{}] pid: [{}]"
             + " ticketId: [{}]",

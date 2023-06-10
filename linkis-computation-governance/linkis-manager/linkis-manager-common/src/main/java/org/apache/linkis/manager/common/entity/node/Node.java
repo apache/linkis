@@ -48,4 +48,8 @@ public interface Node extends RequestProtocol {
   String getIdentifier();
 
   void setIdentifier(String identifier);
+
+  String getTicketId();
+
+  void setTicketId(String ticketId);
 }

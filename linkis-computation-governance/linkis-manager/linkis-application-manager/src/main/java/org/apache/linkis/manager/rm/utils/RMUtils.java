@@ -29,6 +29,7 @@ import org.apache.linkis.manager.rm.conf.ResourceStatus;
 import org.apache.linkis.manager.rm.restful.vo.UserResourceVo;
 
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -279,5 +280,9 @@ public class RMUtils {
       dealMemory = requestResource.toString() + unitType;
     }
     return dealMemory;
+  }
+
+  public static String getECTicketID() {
+    return UUID.randomUUID().toString();
   }
 }

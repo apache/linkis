@@ -155,7 +155,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
               item.put("ecmInstance", latestRecord.getEcmInstance());
-              String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
+              String engineType = latestRecord.getEngineType();
               item.put("engineType", engineType);
               resultList.add(item);
             } catch (JsonProcessingException e) {

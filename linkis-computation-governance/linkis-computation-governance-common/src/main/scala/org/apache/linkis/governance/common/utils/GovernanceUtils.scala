@@ -73,13 +73,42 @@ object GovernanceUtils extends Logging {
     }
   }
 
+  def killECProcessByPort(port: String, desc: String, isSudo: Boolean): Unit = {
+    val subProcessKillScriptPath =
+      Configuration.getLinkisHome() + "/sbin/kill-ec-process-by-port.sh"
+    if (
+        StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
+          .exists()
+    ) {
+      logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
+    } else if (StringUtils.isNotBlank(port)) {
+      val cmd = if (isSudo) {
+        Array("sudo", "sh", subProcessKillScriptPath, port)
+      } else {
+        Array("sh", subProcessKillScriptPath, port)
+      }
+      logger.info(
+        s"Starting to kill process and sub-processes. desc: $desc  Kill Command: " + cmd
+          .mkString(" ")
+      )
+
+      Utils.tryCatch {
+        val output = Utils.exec(cmd, 600 * 1000L)
+        logger.info(s"Kill Success! desc: $desc. msg:\n ${output}")
+      } { t =>
+        logger.error(s"Kill error! desc: $desc.", t)
+      }
+    }
+  }
+
   /**
    * find process id by port number
    * @param processPort
    * @return
    */
-  def findProcessIdentifier(processPort: String) = {
-    val findCmd = "sudo lsof -t -i:" + processPort
+  def findProcessIdentifier(processPort: String): String = {
+    val findCmd =
+      "sudo netstat -tunlp | grep :" + processPort + " | awk '{print $7}' | awk -F/ '{print $1}'"
     val cmdList = new util.ArrayList[String]
     cmdList.add("bash")
     cmdList.add("-c")

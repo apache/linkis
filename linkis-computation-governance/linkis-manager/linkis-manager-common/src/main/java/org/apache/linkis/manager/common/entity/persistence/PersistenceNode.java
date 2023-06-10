@@ -29,6 +29,8 @@ public class PersistenceNode {
   /** identifier if mark equals "process", then identifier equals pid */
   private String identifier;
 
+  private String ticketId;
+
   private Date updateTime;
   private Date createTime;
   private String updator;
@@ -48,6 +50,14 @@ public class PersistenceNode {
 
   public void setIdentifier(String identifier) {
     this.identifier = identifier;
+  }
+
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 
   public Integer getId() {

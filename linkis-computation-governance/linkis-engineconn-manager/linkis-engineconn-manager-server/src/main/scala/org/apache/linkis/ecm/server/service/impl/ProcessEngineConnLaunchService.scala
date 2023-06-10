@@ -50,8 +50,7 @@ abstract class ProcessEngineConnLaunchService extends AbstractEngineConnLaunchSe
 
   override def startEngineConnMonitorStart(
       request: EngineConnLaunchRequest,
-      conn: EngineConn,
-      duration: Long
+      conn: EngineConn
   ): Unit = {
     conn.getEngineConnLaunchRunner.getEngineConnLaunch match {
       case launch: ProcessEngineConnLaunch =>

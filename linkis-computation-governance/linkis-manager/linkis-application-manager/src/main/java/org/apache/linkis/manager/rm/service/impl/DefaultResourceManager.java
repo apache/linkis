@@ -160,7 +160,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
       }
       if (!(resource.getMaxResource().equalsTo(emResource.getMaxResource()))) {
         logger.warn(
-            "ECM {} has been registered, but Inconsistent newly registered resources  need to register resource.",
+            "ECM {} has been registered, but inconsistent newly registered resources  need to register resource.",
             serviceInstance);
         registerResourceFlag = true;
       }

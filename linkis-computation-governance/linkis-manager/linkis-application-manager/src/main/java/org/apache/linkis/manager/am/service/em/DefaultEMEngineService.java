@@ -122,8 +122,6 @@ public class DefaultEMEngineService implements EMEngineService {
           ecResourceInfoService.getECResourceInfoRecordByInstance(
               engineNode.getServiceInstance().getInstance());
     }
-    ecResourceInfoService.getECResourceInfoRecordByInstance(
-        engineNode.getServiceInstance().getInstance());
     if (ecResourceInfo != null) {
       engineStopRequest.setEngineType(ecResourceInfo.getEngineType());
       engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix());

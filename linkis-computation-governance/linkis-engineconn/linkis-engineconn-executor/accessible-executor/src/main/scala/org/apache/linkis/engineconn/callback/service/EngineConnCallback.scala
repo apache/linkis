@@ -36,7 +36,7 @@ abstract class AbstractEngineConnStartUpCallback() extends EngineConnCallback wi
     protocol match {
       case protocol: EngineConnStatusCallback =>
         if (protocol.getStatus().equals(NodeStatus.Failed)) {
-          logger.error(s"EngineConn Start Failed protocol will send to lm: ${protocol}")
+          logger.error(s"EngineConn Start Failed protocol will send to LM: ${protocol}")
         } else {
           logger.info(s"protocol will send to lm: ${protocol}")
         }

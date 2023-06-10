@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.persistence.impl;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.NodeMetrics;
 import org.apache.linkis.manager.common.entity.node.Node;
@@ -83,7 +84,6 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       return;
     }
     String instance = nodeMetrics.getServiceInstance().getInstance();
-    // todo 异常信息后面统一处理
     PersistenceNode node = nodeManagerMapper.getNodeInstance(instance);
     if (node == null) {
       logger.warn(
@@ -93,7 +93,6 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       return;
     }
     int isInstanceIdExist = nodeMetricManagerMapper.checkInstanceExist(instance);
-    // 是否存在
     PersistenceNodeMetrics persistenceNodeMetrics = new PersistenceNodeMetrics();
     if (isInstanceIdExist == 0) {
       persistenceNodeMetrics.setInstance(nodeMetrics.getServiceInstance().getInstance());
@@ -103,13 +102,19 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
       persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
       persistenceNodeMetrics.setCreateTime(new Date());
       persistenceNodeMetrics.setUpdateTime(new Date());
-      // todo 异常信息后面统一处理
       nodeMetricManagerMapper.addNodeMetrics(persistenceNodeMetrics);
     } else if (isInstanceIdExist == 1) {
       // ec node metircs report ignore update Shutingdown node (for case: asyn stop engine)
       PersistenceNodeMetrics oldMetrics =
           nodeMetricManagerMapper.getNodeMetricsByInstance(instance);
-      if (NodeStatus.ShuttingDown.ordinal() == oldMetrics.getStatus()) {
+      boolean isECM =
+          nodeMetrics
+              .getServiceInstance()
+              .getApplicationName()
+              .equalsIgnoreCase(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue());
+      if (!isECM
+          && oldMetrics != null
+          && NodeStatus.ShuttingDown.ordinal() <= oldMetrics.getStatus()) {
         logger.info(
             "ignore update ShuttingDown status node:{} to status:{}",
             instance,

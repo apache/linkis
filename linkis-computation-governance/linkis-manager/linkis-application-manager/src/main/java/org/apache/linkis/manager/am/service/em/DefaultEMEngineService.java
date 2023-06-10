@@ -21,7 +21,6 @@ import org.apache.linkis.engineplugin.server.service.EngineConnLaunchService;
 import org.apache.linkis.governance.common.utils.ECPathUtils;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.manager.EMNodeManager;
-import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.EMEngineService;
 import org.apache.linkis.manager.common.constant.AMConstant;
@@ -43,6 +42,7 @@ import org.apache.linkis.manager.service.common.label.LabelFilter;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,8 +58,6 @@ public class DefaultEMEngineService implements EMEngineService {
   private static final Logger logger = LoggerFactory.getLogger(DefaultEMEngineService.class);
 
   @Autowired private EMNodeManager emNodeManager;
-
-  @Autowired private EngineNodeManager engineNodeManager;
 
   @Autowired private NodeLabelService nodeLabelService;
 
@@ -116,11 +114,16 @@ public class DefaultEMEngineService implements EMEngineService {
     engineStopRequest.setIdentifierType(engineNode.getMark());
     engineStopRequest.setIdentifier(engineNode.getIdentifier());
 
-    ECResourceInfoRecord ecResourceInfo =
-        ecResourceInfoService.getECResourceInfoRecordByInstance(
-            engineNode.getServiceInstance().getInstance());
+    ECResourceInfoRecord ecResourceInfo = null;
+    if (StringUtils.isNotBlank(engineNode.getTicketId())) {
+      ecResourceInfo = ecResourceInfoService.getECResourceInfoRecord(engineNode.getTicketId());
+    } else {
+      ecResourceInfo =
+          ecResourceInfoService.getECResourceInfoRecordByInstance(
+              engineNode.getServiceInstance().getInstance());
+    }
     if (ecResourceInfo != null) {
-      engineStopRequest.setEngineType(ecResourceInfo.getLabelValue().split(",")[1].split("-")[0]);
+      engineStopRequest.setEngineType(ecResourceInfo.getEngineType());
       engineStopRequest.setLogDirSuffix(ecResourceInfo.getLogDirSuffix());
     } else {
       if (CollectionUtils.isEmpty(engineNode.getLabels())) {

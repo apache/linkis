@@ -26,8 +26,4 @@ public interface EngineNode extends AMNode, RMNode, LabelNode {
   String getLock();
 
   void setLock(String lock);
-
-  String getTicketId();
-
-  void setTicketId(String ticketId);
 }

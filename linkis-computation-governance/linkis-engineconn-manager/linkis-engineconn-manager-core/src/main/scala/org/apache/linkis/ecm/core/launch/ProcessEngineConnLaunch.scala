@@ -255,14 +255,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     }
   }
 
+  /**
+   * process exit code if process is null retur errorcode 10
+   * @return
+   */
   def processWaitFor: Int = {
     if (process != null) {
       process.waitFor
     } else {
-      throw new ECMCoreException(
-        CAN_NOT_GET_TERMINATED.getErrorCode,
-        CAN_NOT_GET_TERMINATED.getErrorDesc
-      )
+      10
     }
   }
 

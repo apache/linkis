@@ -102,7 +102,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
         Array(taskId, request, conn.getServiceInstance): _*
       )
       // start ec monitor thread
-      startEngineConnMonitorStart(request, conn, duration)
+      startEngineConnMonitorStart(request, conn)
     } { t =>
       logger.error(
         "TaskId: {} init {} failed, {}, with request {} now stop and delete it. message: {}",
@@ -153,11 +153,7 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     engineNode
   }
 
-  def startEngineConnMonitorStart(
-      request: EngineConnLaunchRequest,
-      conn: EngineConn,
-      duration: Long
-  ): Unit
+  def startEngineConnMonitorStart(request: EngineConnLaunchRequest, conn: EngineConn): Unit
 
   def createEngineConn: EngineConn = new DefaultEngineConn
 

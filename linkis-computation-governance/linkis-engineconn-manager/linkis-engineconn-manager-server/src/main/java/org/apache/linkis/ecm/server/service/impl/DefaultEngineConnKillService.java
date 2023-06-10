@@ -87,7 +87,6 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         response.setMsg(
             "Kill engine " + engineStopRequest.getServiceInstance().toString() + " succeed.");
       }
-      response.setStopStatus(false);
     }
 
     // Requires default kill yarn appid
@@ -210,7 +209,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
   private boolean killEngineConnByPort(String port, ServiceInstance serviceInstance) {
     logger.info("try to kill {} toString with port({}).", serviceInstance.toString(), port);
     if (StringUtils.isNotBlank(port)) {
-      GovernanceUtils.killProcessByPort(port, serviceInstance.toString(), true);
+      GovernanceUtils.killECProcessByPort(port, serviceInstance.toString(), true);
       return !isProcessAliveByPort(port);
     } else {
       logger.warn("cannot kill {} with empty port.", serviceInstance);
@@ -223,7 +222,8 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
         "ps -ef | grep "
             + pid
             + " | grep EngineConnServer | awk '{print \"exists_\"$2}' | grep "
-            + pid + "|| true";
+            + pid
+            + "|| true";
     List<String> cmdList = new ArrayList<>();
     cmdList.add("bash");
     cmdList.add("-c");

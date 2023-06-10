@@ -89,6 +89,12 @@ public class ECResourceInfoRecord {
     return labelValue;
   }
 
+  /**
+   * label value is userCreator and engineTypeLabel,engineType is the second eg
+   * "hadoop-IDE,spark-2.4.3"
+   *
+   * @return
+   */
   public String getEngineType() {
     if (StringUtils.isNotBlank(labelValue)) {
       return labelValue.split(",")[1].split("-")[0];

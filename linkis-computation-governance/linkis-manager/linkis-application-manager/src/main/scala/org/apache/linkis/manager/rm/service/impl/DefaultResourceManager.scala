@@ -174,7 +174,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
       if (!(resource.getMaxResource == emResource.getMaxResource)) {
         logger.warn(
-          s"${serviceInstance} has been registered, but Inconsistent newly registered resources  need to register resource."
+          s"${serviceInstance} has been registered, but inconsistent newly registered resources  need to register resource."
         )
         registerResourceFlag = true
       }

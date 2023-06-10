@@ -108,13 +108,13 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
           nodeMetricManagerMapper.getNodeMetricsByInstance(instance);
 
       boolean isECM =
-              nodeMetrics
-                      .getServiceInstance()
-                      .getApplicationName()
-                      .equalsIgnoreCase(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue());
+          nodeMetrics
+              .getServiceInstance()
+              .getApplicationName()
+              .equalsIgnoreCase(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME().getValue());
       if (!isECM
-              && oldMetrics != null
-              && NodeStatus.ShuttingDown.ordinal() <= oldMetrics.getStatus()) {
+          && oldMetrics != null
+          && NodeStatus.ShuttingDown.ordinal() <= oldMetrics.getStatus()) {
         logger.info(
             "ignore update status node:{} from:{} to status:{}",
             instance,

@@ -73,8 +73,9 @@ object GovernanceUtils extends Logging {
     }
   }
 
-  def killProcessByPort(port: String, desc: String, isSudo: Boolean): Unit = {
-    val subProcessKillScriptPath = Configuration.getLinkisHome() + "/sbin/kill-process-by-port.sh"
+  def killECProcessByPort(port: String, desc: String, isSudo: Boolean): Unit = {
+    val subProcessKillScriptPath =
+      Configuration.getLinkisHome() + "/sbin/kill-ec-process-by-port.sh"
     if (
         StringUtils.isBlank(subProcessKillScriptPath) || !new File(subProcessKillScriptPath)
           .exists()
@@ -82,9 +83,9 @@ object GovernanceUtils extends Logging {
       logger.error(s"Failed to locate kill-script, $subProcessKillScriptPath not exist")
     } else if (StringUtils.isNotBlank(port)) {
       val cmd = if (isSudo) {
-        Array("sudo", "sh", subProcessKillScriptPath, String.valueOf(port))
+        Array("sudo", "sh", subProcessKillScriptPath, port)
       } else {
-        Array("sh", subProcessKillScriptPath, String.valueOf(port))
+        Array("sh", subProcessKillScriptPath, port)
       }
       logger.info(
         s"Starting to kill process and sub-processes. desc: $desc  Kill Command: " + cmd

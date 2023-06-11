@@ -579,7 +579,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                   "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)",
                   t);
           message.setMethod("/api/entrance/" + id + "/kill");
-          message.setStatus(1);
         }
       }
       messages.add(message);

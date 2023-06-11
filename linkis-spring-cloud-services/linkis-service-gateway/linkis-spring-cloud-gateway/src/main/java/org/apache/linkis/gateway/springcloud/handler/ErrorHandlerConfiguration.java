@@ -36,8 +36,6 @@ import java.util.List;
 
 /**
  * Overwrite default exception handling
- *
- * @author ahaoyao
  */
 @Configuration
 @EnableConfigurationProperties({ServerProperties.class, ResourceProperties.class})

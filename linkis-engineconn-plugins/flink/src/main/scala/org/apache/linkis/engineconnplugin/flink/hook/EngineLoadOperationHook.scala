@@ -55,7 +55,7 @@ class EngineLoadOperationHook extends OperationHook with Logging {
       engineOperateRequest: EngineOperateRequest,
       engineOperateResponse: EngineOperateResponse
   ): Unit = {
-    FlinkManagerExecutorFactory.getDefaultExecutor() match {
+    ExecutorManager.getInstance.getReportExecutor match {
       case accessibleExecutor: AccessibleExecutor =>
         accessibleExecutor.updateLastActivityTime()
       case _ =>

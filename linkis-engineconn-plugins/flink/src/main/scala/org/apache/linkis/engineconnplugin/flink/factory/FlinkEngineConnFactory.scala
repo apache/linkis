@@ -112,14 +112,14 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val otherParams = new util.HashMap[String, Any]()
     val isManager = ManagerUtil.isManager
     if (isManager) {
-      logger.info(
-        s"flink manager mode on. Will set ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key} to true."
-      )
-      CommonVars.setConfig(
-        AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key,
-        true.toString
-      )
-      Thread.sleep(100)
+//      logger.info(
+//        s"flink manager mode on. Will set ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key} to true."
+//      )
+//      CommonVars.setConfig(
+//        AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key,
+//        true.toString
+//      )
+//      Thread.sleep(100)
       logger.info(
         s"support parallelism : ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()}"
       )

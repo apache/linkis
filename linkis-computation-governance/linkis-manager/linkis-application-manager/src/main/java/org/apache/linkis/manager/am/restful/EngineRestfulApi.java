@@ -329,9 +329,10 @@ public class EngineRestfulApi {
         "Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
     // add hook for detach client type
     boolean isDetach =
-        Boolean.parseBoolean(
-            GovernanceCommonConf.EC_APP_MANAGE_MODE()
-                .getValue(engineCreateRequest.getProperties()));
+        ECConstants.EC_CLIENT_TYPE_DETACH()
+            .equalsIgnoreCase(
+                GovernanceCommonConf.EC_APP_MANAGE_MODE()
+                    .getValue(engineCreateRequest.getProperties()));
     if (isDetach) {
       List<DetachEngineHeartbeatHook> hooks = new ArrayList<>(1);
       hooks.add(DefaultDetachEngineHeartbeatHook.newInstance(engineOperateService, engineNode));

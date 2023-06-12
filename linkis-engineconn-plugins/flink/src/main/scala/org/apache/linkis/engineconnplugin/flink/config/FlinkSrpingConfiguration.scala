@@ -26,6 +26,7 @@ import org.apache.linkis.engineconn.acessible.executor.service.{
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineconnplugin.flink.util.ManagerUtil
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
@@ -35,6 +36,7 @@ class FlinkSrpingConfiguration extends Logging {
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   @Bean(Array("lockService"))
+  @ConditionalOnMissingBean
   def createLockManager(): LockService = {
 
     val lockService =

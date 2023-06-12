@@ -107,7 +107,7 @@ class DefaultDetachEngineHeartbeatHook(
   private def handShake(appId: String): Unit = {
     val params = new util.HashMap[String, AnyRef]()
     // check
-    params.put(OperateRequest.OPERATOR_NAME_KEY, ECConstants.EC_OPERATE_LIST)
+    params.put(OperateRequest.OPERATOR_NAME_KEY, ECConstants.EC_OPERATE_STATUS)
     params.put(ECConstants.YARN_APPID_NAME_KEY, appId)
     val engineOperateReq = new EngineOperateRequest(user, params)
     val resp = engineOperateService.executeOperation(engineNode, engineOperateReq)
@@ -119,6 +119,8 @@ class DefaultDetachEngineHeartbeatHook(
         AMErrorCode.EC_OPERATE_ERROR.getErrorCode,
         AMErrorCode.EC_OPERATE_ERROR.getErrorDesc + s" ${resp.errorMsg}"
       )
+    } else {
+      logger.info(s"Succeed to handshake with ec : ${engineNode.getServiceInstance.toString}")
     }
   }
 

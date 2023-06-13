@@ -212,7 +212,8 @@ CREATE TABLE `linkis_ps_udf_user_load` (
   `user_name` varchar(50) NOT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_uid_uname` (`udf_id`, `user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;

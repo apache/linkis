@@ -72,7 +72,6 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
               protocol.getInitErrorMsg(),
               false));
     }
-    logger.info("Finished to deal EngineConnStatusCallback: {}", protocol);
   }
 
   @Receiver

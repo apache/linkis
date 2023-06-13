@@ -168,11 +168,10 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     RetryHandler<EngineNode> retryHandler = new DefaultRetryHandler<EngineNode>();
     retryHandler.addRetryException(feign.RetryableException.class);
     retryHandler.addRetryException(UndeclaredThrowableException.class);
-
     // wait until engine to be available
     EngineNode node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
     long retryEndTime = System.currentTimeMillis() + 60 * 1000;
-    while (!NodeStatus.isAvailable(node.getNodeStatus())
+    while ((node == null || !NodeStatus.isAvailable(node.getNodeStatus()))
         && System.currentTimeMillis() < retryEndTime) {
       node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
       try {
@@ -182,7 +181,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       }
     }
 
-    if (!NodeStatus.isAvailable(node.getNodeStatus())) {
+    if (node == null || !NodeStatus.isAvailable(node.getNodeStatus())) {
       return null;
     }
     if (!NodeStatus.isLocked(node.getNodeStatus())) {

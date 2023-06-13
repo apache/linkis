@@ -70,7 +70,6 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
           new EngineConnStatusCallbackToAM(
               protocol.serviceInstance(), protocol.status(), protocol.initErrorMsg(), false));
     }
-    logger.info("Finished to deal EngineConnStatusCallback: {}", protocol);
   }
 
   @Receiver

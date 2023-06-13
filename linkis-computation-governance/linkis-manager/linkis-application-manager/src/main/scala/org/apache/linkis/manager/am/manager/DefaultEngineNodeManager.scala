@@ -139,7 +139,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
 
   override def reuseEngine(engineNode: EngineNode): EngineNode = {
     val node = getEngineNodeInfo(engineNode)
-    if (!NodeStatus.isAvailable(node.getNodeStatus)) {
+    if (node == null || !NodeStatus.isAvailable(node.getNodeStatus)) {
       return null
     }
     if (!NodeStatus.isLocked(node.getNodeStatus)) {
@@ -170,7 +170,7 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
     retryHandler.addRetryException(classOf[UndeclaredThrowableException])
     val node = retryHandler.retry[EngineNode](getEngineNodeInfo(engineNode), "getEngineNodeInfo")
     // val node = getEngineNodeInfo(engineNode)
-    if (!NodeStatus.isAvailable(node.getNodeStatus)) {
+    if (node == null || !NodeStatus.isAvailable(node.getNodeStatus)) {
       return null
     }
     if (!NodeStatus.isLocked(node.getNodeStatus)) {

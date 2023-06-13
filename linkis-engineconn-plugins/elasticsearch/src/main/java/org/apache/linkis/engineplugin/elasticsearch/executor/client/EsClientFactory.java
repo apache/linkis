@@ -192,6 +192,9 @@ public class EsClientFactory {
           .map(
               value -> {
                 String[] arr = value.replace("http://", "").split(":");
+                if (arr.length < 2) {
+                  return new HttpHost("127.0.0.1", 9200);
+                }
                 return new HttpHost(arr[0].trim(), Integer.parseInt(arr[1].trim()));
               })
           .toArray(HttpHost[]::new);

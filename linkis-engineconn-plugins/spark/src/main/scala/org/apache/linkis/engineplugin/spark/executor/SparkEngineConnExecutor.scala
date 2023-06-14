@@ -139,9 +139,9 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       Utils.tryCatch({
         val executorNum: Int = sc.getConf.get("spark.executor.instances").toInt
         val executorMem: Long =
-          ByteTimeUtils.byteStringAsGb(sc.getConf.get("spark.executor.memory")) * executorNum
+          ByteTimeUtils.byteStringAsGb(sc.getConf.get("spark.executor.memory"))
         val driverMem: Long = ByteTimeUtils.byteStringAsGb(sc.getConf.get("spark.driver.memory"))
-        val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt * executorNum
+        val sparkExecutorCores = sc.getConf.get("spark.executor.cores", "2").toInt
         val sparkDriverCores = sc.getConf.get("spark.driver.cores", "1").toInt
         val queue = sc.getConf.get("spark.yarn.queue")
         // with unit if set configuration with unit

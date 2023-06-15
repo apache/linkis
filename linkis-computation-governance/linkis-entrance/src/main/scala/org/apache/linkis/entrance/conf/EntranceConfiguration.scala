@@ -233,4 +233,10 @@ object EntranceConfiguration {
   val ENTRANCE_CREATOR_JOB_LIMIT_CONF_CACHE =
     CommonVars("linkis.entrance.creator.job.concurrency.limit.conf.cache.time", 30L)
 
+  val ENTRANCE_TASK_TIMEOUT =
+    CommonVars("wds.linkis.entrance.task.timeout", new TimeType("48h"))
+
+  val ENTRANCE_TASK_TIMEOUT_SCAN =
+    CommonVars("wds.linkis.entrance.task.timeout.scan", new TimeType("12h"))
+
 }

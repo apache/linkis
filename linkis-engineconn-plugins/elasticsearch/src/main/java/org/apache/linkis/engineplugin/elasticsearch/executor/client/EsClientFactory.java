@@ -147,7 +147,7 @@ public class EsClientFactory {
   private static EsClient defaultClient;
 
   static {
-    String cluster = ElasticSearchConfiguration.ES_CLUSTER.key();
+    String cluster = ElasticSearchConfiguration.ES_CLUSTER.getValue();
     if (StringUtils.isBlank(cluster)) {
       defaultClient = null;
     } else {

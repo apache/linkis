@@ -188,12 +188,12 @@ code
 }
 ```
 
-You need  jars to put under spark/jars directory
+You need  jars to put under spark/jars directory,bson-4.0.6.jar conflicts with the mongo-Java-driver-3.12.8.jar referenced by the mongo datasource，So change bson-4.0.6.jar to bson-3.12.8.jar
 ```text
-bson-4.0.6.jar
+bson-3.12.8.jar
 mongo-spark-connector_2.12-3.0.1.jar
-mongodb-driver-core-4.0.6.jar
-mongodb-driver-sync-4.0.6.jar
+mongodb-driver-core-3.12.8.jar
+mongodb-driver-sync-3.12.8.jar
 ```
 
 

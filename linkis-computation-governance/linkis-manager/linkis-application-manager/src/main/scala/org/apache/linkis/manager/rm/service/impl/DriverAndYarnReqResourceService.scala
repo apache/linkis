@@ -86,7 +86,8 @@ class DriverAndYarnReqResourceService(
                 RMConstant.CPU_UNIT,
                 yarn.queueCores,
                 yarnAvailable.queueCores,
-                maxYarn.queueCores
+                maxYarn.queueCores,
+                yarn.queueName
               )
           )
         } else if (yarn.queueMemory > yarnAvailable.queueMemory) {
@@ -98,7 +99,8 @@ class DriverAndYarnReqResourceService(
                 RMConstant.MEMORY_UNIT_BYTE,
                 yarn.queueMemory,
                 yarnAvailable.queueMemory,
-                maxYarn.queueMemory
+                maxYarn.queueMemory,
+                yarn.queueName
               )
           )
         } else {
@@ -110,7 +112,8 @@ class DriverAndYarnReqResourceService(
                 RMConstant.INSTANCE_UNIT,
                 yarn.queueInstances,
                 yarnAvailable.queueInstances,
-                maxYarn.queueInstances
+                maxYarn.queueInstances,
+                yarn.queueName
               )
           )
         }

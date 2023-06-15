@@ -28,6 +28,8 @@ import org.apache.linkis.manager.rm.conf.ResourceStatus
 import org.apache.linkis.manager.rm.restful.vo.UserResourceVo
 import org.apache.linkis.server.BDPJettyServerHelper
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
 
 import scala.collection.JavaConverters.asScalaBufferConverter
@@ -213,7 +215,8 @@ object RMUtils extends Logging {
       unitType: String,
       requestResource: Any,
       availableResource: Any,
-      maxResource: Any
+      maxResource: Any,
+      queueName: String = ""
   ): String = {
 
     def dealMemory(resourceType: String, unitType: String, resource: Any): String = {
@@ -241,7 +244,11 @@ object RMUtils extends Logging {
     val maxMsg =
       if (null == maxResource) "null" + unitType
       else dealMemory(resourceType, unitType, maxResource.toString)
-    s" user ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}."
+    if (StringUtils.isEmpty(queueName)) {
+      s" use ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}."
+    } else {
+      s" use ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}, queueName : ${queueName}."
+    }
   }
 
 }

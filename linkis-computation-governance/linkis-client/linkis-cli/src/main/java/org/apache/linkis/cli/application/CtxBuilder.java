@@ -76,9 +76,6 @@ public class CtxBuilder {
     Params params = result.getParams();
     logger.debug("==========params============\n" + CliUtils.GSON.toJson(params));
 
-    /*
-     VarAccess for sys_prop, sys_env
-    */
 
     Map<String, ClientProperties> propertiesMap = new HashMap<>();
 

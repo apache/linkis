@@ -115,13 +115,26 @@
 
     <select id="getUDFSByUsers" resultMap="UDFResultMap">
         SELECT
-        info.id, info.`create_user`, info.`udf_name`, info.`udf_type`,
-        info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,info.`sys`,info.`cluster_name`,udf_version.description
-        FROM linkis_ps_udf_baseinfo info ,
-        (SELECT udf_version.* FROM linkis_ps_udf_version udf_version ,
-        (SELECT udf_id ,MAX(bml_resource_version) AS bml_resource_version FROM linkis_ps_udf_version GROUP BY udf_id) version_tmp
-        WHERE version_tmp.udf_id=udf_version.udf_id AND version_tmp.bml_resource_version = udf_version.bml_resource_version) udf_version
-        WHERE info.id = udf_version.udf_id AND info.create_user in
+            info.id,info.`create_user`,info.`udf_name`,info.`udf_type`,info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,
+            info.`sys`,info.`cluster_name`,udf_version.description
+        FROM
+            linkis_ps_udf_baseinfo info ,
+            (SELECT
+                udf_version.*
+            FROM
+                linkis_ps_udf_version udf_version , (
+                SELECT
+                  udf_id , MAX(bml_resource_version) AS bml_resource_version
+                FROM
+                   linkis_ps_udf_version
+                GROUP BY
+                udf_id) version_tmp
+            WHERE
+                version_tmp.udf_id = udf_version.udf_id
+            AND version_tmp.bml_resource_version = udf_version.bml_resource_version) udf_version
+        WHERE
+            info.id = udf_version.udf_id
+            AND info.create_user in
         <foreach collection="arg0" open="(" separator="," close=")" item="item">
             #{item}
         </foreach>
@@ -129,14 +142,29 @@
 
     <select id="getSharedUDFByUser" resultMap="UDFResultMap">
         SELECT
-        info.id, info.`create_user`, info.`udf_name`, info.`udf_type`,
-        info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,info.`sys`,info.`cluster_name`,version_tmp.description
-        FROM linkis_ps_udf_baseinfo info ,
-        (SELECT version_info.* FROM linkis_ps_udf_version version_info ,
-        (SELECT udf_id ,MAX(bml_resource_version) AS bml_resource_version FROM linkis_ps_udf_version GROUP BY udf_id) version_max
-        WHERE version_max.udf_id=version_info.udf_id and version_max.bml_resource_version = version_info.bml_resource_version) version_tmp
-        WHERE info.id = version_tmp.udf_id and info.id in
-        (SELECT udf_id FROM linkis_ps_udf_shared_info WHERE user_name=#{userName})
+            info.id,info.`create_user`,info.`udf_name`,info.`udf_type`,info.`is_expire`,info.`is_shared`,info.`tree_id`,info.`create_time`,info.`update_time`,
+            info.`sys`,info.`cluster_name`,	version_tmp.description
+        FROM
+        linkis_ps_udf_baseinfo info ,
+        (
+            SELECT
+                version_info.*
+            FROM
+                linkis_ps_udf_version version_info , (
+                SELECT
+                     udf_id , MAX(bml_resource_version) AS bml_resource_version
+                FROM
+                     linkis_ps_udf_version
+                GROUP BY
+                     udf_id
+                ) version_max
+            WHERE
+                version_max.udf_id = version_info.udf_id
+            AND version_max.bml_resource_version = version_info.bml_resource_version
+        )  version_tmp
+        WHERE
+            info.id = version_tmp.udf_id
+        AND info.id in (SELECT	udf_id FROM	linkis_ps_udf_shared_info WHERE user_name =	#{userName})
     </select>
 
     <select id="getUDFSByTreeIdAndUser" resultType="org.apache.linkis.udf.vo.UDFInfoVo">

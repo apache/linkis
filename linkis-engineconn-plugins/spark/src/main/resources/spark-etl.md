@@ -10,7 +10,11 @@ The spark connector jar can be obtained using the following command
 ```text
 git clone https://github.com/apache/linkis.git
 
-cd linkis/linkis-engineconn-plugins/spark/scala-2.12
+cd linkis
+
+git checkout  remotes/origin/dev-1.4.0
+
+cd linkis-engineconn-plugins/spark/scala-2.12
 
 mvn clean install  -Dmaven.test.skip=true
 ```

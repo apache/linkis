@@ -248,9 +248,9 @@ You need  jars to put under spark/jars directory
 hudi-spark3.2-bundle_2.12-0.13.0.jar
 ```
 
-需要修改的配置
+The configuration needs to be modified
 ```text
-将`spark.serializer`设置为`org.apache.spark.serializer.KryoSerializer`
+Will `spark.serializer` set to  `org.apache.spark.serializer.KryoSerializer`
 ```
 
 

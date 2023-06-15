@@ -8,14 +8,16 @@ You need to place the corresponding spark connector jars in the spark/jars direc
 The spark connector jar can be obtained using the following command
 
 ```text
-cd /linkis/linkis-engineconn-plugins/spark/scala-2.12
+git clone https://github.com/apache/linkis.git
+
+cd linkis/linkis-engineconn-plugins/spark/scala-2.12
 
 mvn clean install  -Dmaven.test.skip=true
 ```
 
 The compiled spark connector jar is in the following directory
 ```text
-/linkis/linkis-engineconn-plugins/spark/scala-2.12/target/out/spark/dist/3.2.1/lib
+linkis/linkis-engineconn-plugins/spark/scala-2.12/target/out/spark/dist/3.2.1/lib
 ```
 
 

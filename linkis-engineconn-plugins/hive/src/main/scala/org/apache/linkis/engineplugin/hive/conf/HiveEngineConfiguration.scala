@@ -47,4 +47,6 @@ object HiveEngineConfiguration {
   val HIVE_ENGINE_CONCURRENT_SUPPORT =
     CommonVars[Boolean]("linkis.hive.engineconn.concurrent.support", false).getValue
 
+  val HIVE_RANGER_ENABLE = CommonVars[Boolean]("linkis.hive.ranger.enabled", false).getValue
+
 }

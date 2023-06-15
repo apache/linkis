@@ -20,6 +20,7 @@ package org.apache.linkis.engineconn.computation.executor.async
 import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.scheduler.executer.{
   CompletedExecuteResponse,
   ErrorExecuteResponse,
@@ -27,6 +28,7 @@ import org.apache.linkis.scheduler.executer.{
   SuccessExecuteResponse
 }
 import org.apache.linkis.scheduler.queue.{Job, JobInfo}
+import org.apache.linkis.scheduler.queue.SchedulerEventState.SchedulerEventState
 
 class AsyncEngineConnJob(task: EngineConnTask, engineExecutionContext: EngineExecutionContext)
     extends Job {
@@ -46,6 +48,14 @@ class AsyncEngineConnJob(task: EngineConnTask, engineExecutionContext: EngineExe
   def getEngineConnTask: EngineConnTask = task
 
   override def close(): Unit = {}
+
+  override def transition(state: SchedulerEventState): Unit = Utils.tryFinally {
+    val jobId = JobUtils.getJobIdFromMap(task.getProperties)
+    LoggerUtils.setJobIdMDC(jobId)
+    super.transition(state)
+  } {
+    LoggerUtils.removeJobIdMDC()
+  }
 
   override def transitionCompleted(executeCompleted: CompletedExecuteResponse): Unit = {
     var executeCompletedNew: CompletedExecuteResponse = executeCompleted

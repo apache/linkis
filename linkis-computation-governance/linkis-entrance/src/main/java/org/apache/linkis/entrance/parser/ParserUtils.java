@@ -66,7 +66,7 @@ public final class ParserUtils {
     String creator = LabelUtil.getUserCreator(jobRequest.getLabels())._2;
     String umUser = jobRequest.getExecuteUser();
     FsPath lopPrefixPath = new FsPath(logPathPrefix);
-    if (StorageUtils.HDFS().equals(lopPrefixPath.getFsType())) {
+    if (StorageUtils.HDFS.equals(lopPrefixPath.getFsType())) {
       String commonLogPath = logPathPrefix + "/" + "log" + "/" + dateString + "/" + creator;
       logPath = commonLogPath + "/" + umUser + "/" + jobRequest.getId() + ".log";
       CommonLogPathUtils.buildCommonPath(commonLogPath);

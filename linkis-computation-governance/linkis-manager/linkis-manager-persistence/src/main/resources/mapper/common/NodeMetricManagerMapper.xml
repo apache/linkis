@@ -65,13 +65,13 @@
 
     <update id="updateNodeMetrics">
         UPDATE linkis_cg_manager_service_instance_metrics
-        <trim prefix='set' suffixOverrides=','>
+        <set>
         <if test='nodeMetrics.status != null'>instance_status = #{nodeMetrics.status},</if>
         <if test='nodeMetrics.overLoad != null'> overload = #{nodeMetrics.overLoad},</if>
         <if test='nodeMetrics.heartBeatMsg != null'>  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
         <if test='nodeMetrics.healthy != null'>  healthy_status=#{nodeMetrics.healthy}, </if>
         <if test='nodeMetrics.updateTime != null'>  update_time=#{nodeMetrics.updateTime},</if>
-        </trim> WHERE instance = #{instance}
+        </set> WHERE instance = #{instance}
     </update>
 
     <delete id="deleteNodeMetrics">
@@ -92,7 +92,7 @@
         SELECT A.name, B.*
         FROM linkis_cg_manager_service_instance A
         JOIN linkis_cg_manager_service_instance_metrics B
-        WHERE A.instance = B.instance
+        ON A.instance = B.instance
     </select>
 
 

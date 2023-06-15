@@ -113,7 +113,7 @@ public class LocalFileSystem extends FileSystem {
     if (group != null) {
       setGroup(dest, group);
     }
-    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP().getValue());
+    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP.getValue());
     return true;
   }
 
@@ -289,15 +289,15 @@ public class LocalFileSystem extends FileSystem {
 
     if (MapUtils.isNotEmpty(properties)) {
       this.properties = properties;
-      if (properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
-        user = StorageConfiguration.PROXY_USER().getValue(properties);
+      if (properties.containsKey(StorageConfiguration.PROXY_USER.key())) {
+        user = StorageConfiguration.PROXY_USER.getValue(properties);
       }
-      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
     } else {
       this.properties = new HashMap<String, String>();
     }
     if (FsPath.WINDOWS) {
-      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
     }
     if (StringUtils.isEmpty(group)) {
       String groupInfo;
@@ -320,7 +320,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public String rootUserName() {
-    return StorageConfiguration.LOCAL_ROOT_USER().getValue();
+    return StorageConfiguration.LOCAL_ROOT_USER.getValue();
   }
 
   @Override

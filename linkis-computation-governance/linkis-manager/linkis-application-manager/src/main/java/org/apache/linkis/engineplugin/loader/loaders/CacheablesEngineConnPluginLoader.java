@@ -59,8 +59,7 @@ public abstract class CacheablesEngineConnPluginLoader implements EngineConnPlug
           @Override
           public long interval() {
             return Long.parseLong(
-                EngineConnPluginLoaderConf.ENGINE_PLUGIN_LOADER_CACHE_REFRESH_INTERVAL()
-                    .getValue());
+                EngineConnPluginLoaderConf.ENGINE_PLUGIN_LOADER_CACHE_REFRESH_INTERVAL.getValue());
           }
 
           @Override

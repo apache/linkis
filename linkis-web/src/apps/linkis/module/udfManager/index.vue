@@ -188,13 +188,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
         }
       })
@@ -211,13 +211,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{
@@ -234,7 +234,6 @@ export default {
                 content: this.$t('message.linkis.basedataManagement.modal.modalEditFail')
               })
             }
-            this.load()
           })
         }
         this.modalLoading=false

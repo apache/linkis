@@ -135,7 +135,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start ps-publicservice
+              EUREKA_PREFER_IP=true RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start ps-publicservice
           ports:
             - name: "http"
               containerPort: {{ .Values.psPublicService.port }}

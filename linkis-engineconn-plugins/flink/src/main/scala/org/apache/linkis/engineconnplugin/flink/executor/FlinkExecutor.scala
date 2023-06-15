@@ -115,7 +115,9 @@ object FlinkExecutor {
       resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]
   ): Unit = {
     val columns = resultSet.getColumns.asScala
-      .map(columnInfo => Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null))
+      .map(columnInfo =>
+        new Column(columnInfo.getName, DataType.toDataType(columnInfo.getType), null)
+      )
       .toArray
     resultSetWriter.addMetaData(new TableMetaData(columns))
     resultSet.getData match {
@@ -123,7 +125,7 @@ object FlinkExecutor {
         data.asScala.foreach { row =>
           val record =
             (0 until row.getArity).map(row.getField).map(FlinkValueFormatUtil.formatValue).toArray
-          resultSetWriter.addRecord(new TableRecord(record))
+          resultSetWriter.addRecord(new TableRecord(record.asInstanceOf[Array[AnyRef]]))
         }
       case _ =>
     }

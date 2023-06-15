@@ -32,6 +32,15 @@ public class MetaColumnInfo implements Serializable {
   private String type;
   private int length;
   private String colComment;
+  private boolean isNullable;
+
+  public boolean isNullable() {
+    return isNullable;
+  }
+
+  public void setNullable(boolean nullable) {
+    isNullable = nullable;
+  }
 
   public String getColComment() {
     return colComment;

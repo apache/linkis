@@ -43,10 +43,16 @@ object GovernanceCommonConf {
   val ENGINE_CONN_MANAGER_SPRING_NAME =
     CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-engineconnmanager")
 
+  val ENGINE_APPLICATION_MANAGER_SPRING_NAME =
+    CommonVars("wds.linkis.application.manager.name", "linkis-cg-linkismanager")
+
   val ENGINE_CONN_PORT_RANGE = CommonVars("wds.linkis.engineconn.port.range", "-")
 
   val MANAGER_SERVICE_NAME =
-    CommonVars("wds.linkis.engineconn.manager.name", "linkis-cg-linkismanager")
+    CommonVars(
+      "wds.linkis.engineconn.manager.name",
+      GovernanceCommonConf.ENGINE_APPLICATION_MANAGER_SPRING_NAME.getValue
+    )
 
   val ENTRANCE_SERVICE_NAME = CommonVars("wds.linkis.entrance.name", "linkis-cg-entrance")
 
@@ -68,6 +74,11 @@ object GovernanceCommonConf {
 
   val ERROR_CODE_DESC_LEN =
     CommonVars("linkis.error.code.desc.len", 512, "Error code description maximum length").getValue
+
+  val FAKE_PROGRESS: Float = CommonVars[Float]("linkis.job.fake.progress", 0.99f).getValue
+
+  val MDC_ENABLED =
+    CommonVars("linkis.mdc.log.enabled", true, "MDC Switch").getValue
 
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue

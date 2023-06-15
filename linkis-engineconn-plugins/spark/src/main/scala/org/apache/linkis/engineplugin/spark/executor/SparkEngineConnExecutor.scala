@@ -33,6 +33,7 @@ import org.apache.linkis.engineplugin.spark.extension.{
   SparkPreExecutionHook
 }
 import org.apache.linkis.engineplugin.spark.utils.JobProgressUtil
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.exception.LinkisJobRetryException
 import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -169,7 +170,8 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
       val newProgress =
         (engineExecutionContext.getCurrentParagraph * 1f - 1f) / engineExecutionContext.getTotalParagraph + JobProgressUtil
           .progress(sc, jobGroup) / engineExecutionContext.getTotalParagraph
-      val normalizedProgress = if (newProgress >= 1) newProgress - 0.1f else newProgress
+      val normalizedProgress =
+        if (newProgress >= 1) GovernanceCommonConf.FAKE_PROGRESS else newProgress
       val oldProgress = ProgressUtils.getOldProgress(this.engineExecutionContext)
       if (normalizedProgress < oldProgress) oldProgress
       else {
@@ -207,11 +209,11 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
         resourceMap.put(
           sc.applicationId,
           new ResourceWithStatus(
-            resource.yarnResource.queueMemory,
-            resource.yarnResource.queueCores,
-            resource.yarnResource.queueInstances,
+            resource.getYarnResource.getQueueMemory,
+            resource.getYarnResource.getQueueCores,
+            resource.getYarnResource.getQueueInstances,
             applicationStatus,
-            resource.yarnResource.queueName
+            resource.getYarnResource.getQueueName
           )
         )
       case _ =>

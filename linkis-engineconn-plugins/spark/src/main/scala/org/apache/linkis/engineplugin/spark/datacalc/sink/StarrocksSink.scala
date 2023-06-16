@@ -28,6 +28,7 @@ class StarrocksSink extends DataCalcSink[StarrocksSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     var options = Map(
+      "spark.starrocks.conf" -> "write",
       "spark.starrocks.write.fe.urls.http" -> config.getUrl,
       "spark.starrocks.write.fe.urls.jdbc" -> config.getJdbcUrl,
       "spark.starrocks.write.username" -> config.getUser,

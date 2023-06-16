@@ -20,7 +20,6 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink;
 import org.apache.linkis.engineplugin.spark.datacalc.model.SinkConfig;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 public class StarrocksSinkConfig extends SinkConfig {
 
@@ -30,7 +29,7 @@ public class StarrocksSinkConfig extends SinkConfig {
 
   @NotBlank private String user;
 
-  @NotBlank private String password;
+  private String password;
 
   @NotBlank private String targetDatabase;
 

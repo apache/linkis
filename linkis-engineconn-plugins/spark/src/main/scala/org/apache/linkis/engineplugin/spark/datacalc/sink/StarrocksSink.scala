@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
+
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.collection.JavaConverters._
@@ -40,6 +41,7 @@ class StarrocksSink extends DataCalcSink[StarrocksSinkConfig] with Logging {
       options = config.getOptions.asScala.toMap ++ options
     }
 
+    // todo The starrocks connector currently only supports the 'append' mode, using the starrocks 'Primary Key table' to do 'upsert'
     val writer = ds.write.format("starrocks_writer").mode("append")
 
     logger.info(

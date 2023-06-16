@@ -119,7 +119,7 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       val execUser: String = properties.get(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER)
       val proxyUser: String = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY)
       var dataSourceIdentifier = s"$jdbcUrl-$execUser-$proxyUser"
-      if (dataSourceName != null) {
+      if (StringUtils.isNotBlank(dataSourceName)) {
         dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
       }
       connection = connectionManager.getConnection(dataSourceIdentifier, properties)

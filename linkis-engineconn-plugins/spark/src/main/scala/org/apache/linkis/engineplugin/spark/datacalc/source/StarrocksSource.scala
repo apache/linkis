@@ -32,7 +32,7 @@ class StarrocksSource extends DataCalcSource[StarrocksSourceConfig] with Logging
     }
 
     logger.info(
-      s"Load data from starrocks httpUrl: ${config.getHttpUrl}, sourceDatabase: ${config.getSourceDatabase}, sourceTable: ${config.getSourceTable}"
+      s"Load data from starrocks url: ${config.getUrl}, sourceDatabase: ${config.getSourceDatabase}, sourceTable: ${config.getSourceTable}"
     )
 
     reader
@@ -40,7 +40,7 @@ class StarrocksSource extends DataCalcSource[StarrocksSourceConfig] with Logging
         "starrocks.table.identifier",
         String.format("%s.%s", config.getSourceDatabase, config.getSourceTable)
       )
-      .option("starrocks.fenodes", config.getHttpUrl)
+      .option("starrocks.fenodes", config.getUrl)
       .option("user", config.getUser)
       .option("password", config.getPassword)
       .load()

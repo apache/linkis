@@ -24,7 +24,7 @@ import javax.validation.constraints.Pattern;
 
 public class StarrocksSinkConfig extends SinkConfig {
 
-  @NotBlank private String httpUrl;
+  @NotBlank private String url;
 
   @NotBlank private String jdbcUrl;
 
@@ -36,19 +36,12 @@ public class StarrocksSinkConfig extends SinkConfig {
 
   @NotBlank private String targetTable;
 
-  @NotBlank
-  @Pattern(
-      regexp = "^(overwrite|append|ignore|error|errorifexists)$",
-      message =
-          "Unknown save mode: {saveMode}. Accepted save modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'.")
-  private String saveMode = "overwrite";
-
-  public String getHttpUrl() {
-    return httpUrl;
+  public String getUrl() {
+    return url;
   }
 
-  public void setHttpUrl(String httpUrl) {
-    this.httpUrl = httpUrl;
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public String getJdbcUrl() {
@@ -89,13 +82,5 @@ public class StarrocksSinkConfig extends SinkConfig {
 
   public void setTargetTable(String targetTable) {
     this.targetTable = targetTable;
-  }
-
-  public String getSaveMode() {
-    return saveMode;
-  }
-
-  public void setSaveMode(String saveMode) {
-    this.saveMode = saveMode;
   }
 }

@@ -19,8 +19,6 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.collection.JavaConverters._
@@ -29,7 +27,7 @@ class StarrocksSink extends DataCalcSink[StarrocksSinkConfig] with Logging {
 
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     var options = Map(
-      "spark.starrocks.write.fe.urls.http" -> config.getHttpUrl,
+      "spark.starrocks.write.fe.urls.http" -> config.getUrl,
       "spark.starrocks.write.fe.urls.jdbc" -> config.getJdbcUrl,
       "spark.starrocks.write.username" -> config.getUser,
       "spark.starrocks.write.password" -> config.getPassword,
@@ -42,13 +40,10 @@ class StarrocksSink extends DataCalcSink[StarrocksSinkConfig] with Logging {
       options = config.getOptions.asScala.toMap ++ options
     }
 
-    val writer = ds.write.format("starrocks_writer")
-    if (StringUtils.isNotBlank(config.getSaveMode)) {
-      writer.mode(config.getSaveMode)
-    }
+    val writer = ds.write.format("starrocks_writer").mode("append")
 
     logger.info(
-      s"Save data from starrocks httpUrl: ${config.getHttpUrl}, targetDatabase: ${config.getTargetDatabase}, targetTable: ${config.getTargetTable}"
+      s"Save data from starrocks url: ${config.getUrl}, targetDatabase: ${config.getTargetDatabase}, targetTable: ${config.getTargetTable}"
     )
     writer.options(options).save()
   }

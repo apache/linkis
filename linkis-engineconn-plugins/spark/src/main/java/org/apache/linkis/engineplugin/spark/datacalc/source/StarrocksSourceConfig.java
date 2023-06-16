@@ -23,20 +23,20 @@ import javax.validation.constraints.NotBlank;
 
 public class StarrocksSourceConfig extends SourceConfig {
 
-  @NotBlank private String httpUrl;
+  @NotBlank private String url;
   @NotBlank private String user;
-  @NotBlank private String password;
+  private String password;
 
   @NotBlank private String sourceDatabase;
 
   @NotBlank private String sourceTable;
 
-  public String getHttpUrl() {
-    return httpUrl;
+  public String getUrl() {
+    return url;
   }
 
-  public void setHttpUrl(String httpUrl) {
-    this.httpUrl = httpUrl;
+  public void setUrl(String url) {
+    this.url = url;
   }
 
   public String getSourceDatabase() {

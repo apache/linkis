@@ -315,10 +315,10 @@ elasticsearch-spark-30_2.12-7.17.7.jar
 
 spark-excel
 ```text
-https://repo1.maven.org/maven2/com/crealytics/spark-excel-2.12.17-3.2.2_2.12/3.2.2_0.18.1/spark-excel-2.12.17-3.2.2_2.12-3.2.2_0.18.1.jar
+https://github.com/ChengJie1053/linkis-spark-etl-jar/tree/main/spark-excel
 ```
 
 spark-rocketmq
 ```text
-https://github.com/https://github.com/ChengJie1053/spark3-rocketmq-connector-jarChengJie1053/spark3-rocketmq-connector-jar
+https://github.com/ChengJie1053/linkis-spark-etl-jar/tree/main/spark-rocketmq
 ```

@@ -113,11 +113,14 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
   @Override
   public EngineNode getEngineNodeInfoByDB(EngineNode engineNode) {
-    // 1. 从持久化器中获取EngineNode信息，需要获取Task信息和Status信息，方便后面使用
-    engineNode = nodeManagerPersistence.getEngineNode(engineNode.getServiceInstance());
+    EngineNode dbEngineNode = nodeManagerPersistence.getEngineNode(engineNode.getServiceInstance());
+    if (null == dbEngineNode) {
+      throw new LinkisRetryException(
+          AMConstant.ENGINE_ERROR_CODE, engineNode + " not exists in db");
+    }
     metricsConverter.fillMetricsToNode(
-        engineNode, nodeMetricManagerPersistence.getNodeMetrics(engineNode));
-    return engineNode;
+        dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
+    return dbEngineNode;
   }
 
   @Override

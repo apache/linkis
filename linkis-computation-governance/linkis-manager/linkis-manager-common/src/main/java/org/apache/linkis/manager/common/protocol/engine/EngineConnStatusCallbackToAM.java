@@ -46,8 +46,6 @@ public class EngineConnStatusCallbackToAM extends AbstractRetryableProtocol
         + serviceInstance
         + ", status="
         + status
-        + ", initErrorMsg='"
-        + initErrorMsg
         + ", canRetry="
         + canRetry
         + ")";

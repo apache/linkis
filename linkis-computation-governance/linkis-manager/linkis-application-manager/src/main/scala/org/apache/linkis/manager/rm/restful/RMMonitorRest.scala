@@ -352,6 +352,9 @@ class RMMonitorRest extends Logging {
           "usedPercentage",
           Map("memory" -> usedMemoryPercentage, "cores" -> usedCPUPercentage)
         )
+        queueInfo.put("maxApps", providedYarnResource.getMaxApps)
+        queueInfo.put("numActiveApps", providedYarnResource.getNumActiveApps)
+        queueInfo.put("numPendingApps", providedYarnResource.getNumPendingApps)
         appendMessageData(message, "queueInfo", queueInfo)
       case _ => Message.error("Failed to get queue resource")
     }

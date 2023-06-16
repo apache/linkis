@@ -322,3 +322,9 @@ spark-rocketmq
 ```text
 https://github.com/ChengJie1053/linkis-spark-etl-jar/tree/main/spark-rocketmq
 ```
+
+spark-starrocks
+The starrocks connector currently only supports the 'append' mode, using the starrocks 'Primary Key table' to do 'upsert'
+```text
+https://github.com/ChengJie1053/linkis-spark-etl-jar/tree/main/spark-starrocks
+```

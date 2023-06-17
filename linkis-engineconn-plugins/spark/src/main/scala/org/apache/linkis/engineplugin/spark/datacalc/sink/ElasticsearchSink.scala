@@ -30,6 +30,7 @@ class ElasticsearchSink extends DataCalcSink[ElasticsearchSinkConfig] with Loggi
   def output(spark: SparkSession, ds: Dataset[Row]): Unit = {
     var options = Map(
       "es.index.auto.create" -> "true",
+      "es.nodes.wan.only" -> "true",
       "es.nodes" -> config.getNode,
       "es.port" -> config.getPort,
       "es.net.http.auth.user" -> config.getUser,

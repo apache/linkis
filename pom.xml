@@ -162,6 +162,7 @@
     <mysql.connector.scope>test</mysql.connector.scope>
     <postgresql.connector.version>42.2.20</postgresql.connector.version>
     <druid.version>1.2.16</druid.version>
+    <mongodb.driver.version>3.12.8</mongodb.driver.version>
 
     <!-- utils -->
     <guava.version>30.0-jre</guava.version>

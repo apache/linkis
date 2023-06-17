@@ -81,12 +81,12 @@ class TestStarrocksCala {
       |            "type": "sink",
       |            "config": {
       |                "sourceTable": "T1654611700631",
-      |                "url": "192.168.201.105:8030",
-      |                "jdbcUrl": "jdbc:mysql://192.168.201.105:9030",
+      |                "url": "localhost:8030",
+      |                "jdbcUrl": "jdbc:mysql://localhost:9030",
       |                "user": "root",
       |                "password": "",
-      |                "targetDatabase": "wzw",
-      |                "targetTable": "cjtest"
+      |                "targetDatabase": "test",
+      |                "targetTable": "test"
       |            }
       |        }
       |    ]
@@ -102,11 +102,11 @@ class TestStarrocksCala {
       |            "type": "source",
       |            "config": {
       |                "resultTable": "T1654611700631",
-      |                "url": "192.168.217.232:8030",
+      |                "url": "localhost:8030",
       |                "user": "root",
       |                "password": "",
-      |                "sourceDatabase": "wzw",
-      |                "sourceTable": "cjtest"
+      |                "sourceDatabase": "test",
+      |                "sourceTable": "test"
       |            }
       |        }
       |    ],

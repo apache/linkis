@@ -41,6 +41,7 @@ import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.storage.source.FileSource$;
+import org.apache.linkis.storage.utils.FileSystemUtils;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
@@ -524,13 +525,20 @@ public class FsRestfulApi {
       Pair<Object, Object>[] fileInfo = fileSource.getFileInfo(pageSize);
       IOUtils.closeQuietly(fileSource);
       if (null != fileInfo && fileInfo.length > 0) {
+        int rowNumber = (int) fileInfo[0].getSecond();
         message.data("path", path);
         message.data("colNumber", fileInfo[0].getFirst());
         message.data("rowNumber", fileInfo[0].getSecond());
+        if (rowNumber >= pageSize) {
+          message.data("totalLine", FileSystemUtils.getTotalLine(fsPath, fileSystem));
+        } else {
+          message.data("totalLine", rowNumber);
+        }
       } else {
         message.data("path", path);
         message.data("colNumber", 0);
         message.data("rowNumber", 0);
+        message.data("totalLine", 0);
       }
       return message;
     } finally {

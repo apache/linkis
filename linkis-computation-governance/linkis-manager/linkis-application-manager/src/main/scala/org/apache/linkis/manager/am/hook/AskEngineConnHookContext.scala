@@ -20,7 +20,7 @@ package org.apache.linkis.manager.am.hook
 import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
 import org.apache.linkis.rpc.Sender
 
-class AskEngineHookContext(request: EngineAskRequest, sender: Sender) {
+class AskEngineConnHookContext(request: EngineAskRequest, sender: Sender) {
   def getRequest(): EngineAskRequest = request
   def getSender(): Sender = sender
 }

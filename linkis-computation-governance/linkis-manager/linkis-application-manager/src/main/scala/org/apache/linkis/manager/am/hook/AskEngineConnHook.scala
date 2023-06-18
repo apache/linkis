@@ -17,9 +17,9 @@
 
 package org.apache.linkis.manager.am.hook
 
-trait AskEngineHook {
+trait AskEngineConnHook {
 
   @throws(classOf[Exception])
-  def doHook(ctx: AskEngineHookContext): Unit
+  def doHook(ctx: AskEngineConnHookContext): Unit
 
 }

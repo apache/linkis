@@ -21,7 +21,7 @@ import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
-import org.apache.linkis.manager.am.hook.{AskEngineHook, AskEngineHookContext}
+import org.apache.linkis.manager.am.hook.{AskEngineConnHook, AskEngineConnHookContext}
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
@@ -58,8 +58,8 @@ class DefaultEngineAskEngineService
 
   @Autowired(required = false)
   @Qualifier
-  /* hook的实现类必须加上@Qualifier注解才能生效 */
-  var hooks: Array[AskEngineHook] = _
+  /* The implementation class of hook must be annotated with @Qualifier to take effect(hook的实现类必须加上@Qualifier注解才能生效) */
+  var hooksArray: Array[AskEngineConnHook] = _
 
   private val idCreator = new AtomicInteger()
 
@@ -74,11 +74,11 @@ class DefaultEngineAskEngineService
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {
 
-    if (hooks != null && hooks.size > 0) {
-      val ctx = new AskEngineHookContext(engineAskRequest, sender)
+    if (hooksArray != null && hooksArray.size > 0) {
+      val ctx = new AskEngineConnHookContext(engineAskRequest, sender)
 
-      /** hook中抛异常会阻断 */
-      hooks.foreach(h =>
+      /** Throwing exceptions in hook will block(hook中抛异常会阻断) */
+      hooksArray.foreach(h =>
         Utils.tryCatch(h.doHook(ctx)) { t =>
           {
             val engineAskAsyncId = getAsyncId
@@ -139,7 +139,7 @@ class DefaultEngineAskEngineService
       logger.info(
         s"Task: $taskId start to async($engineAskAsyncId) createEngine, ${engineAskRequest.getCreateService}"
       )
-      // 如果原来的labels含engineInstance ，先去掉
+      // If the original labels contain engineInstance, remove it first (如果原来的labels含engineInstance ，先去掉)
       engineAskRequest.getLabels.remove("engineInstance")
       val engineCreateRequest = new EngineCreateRequest
       engineCreateRequest.setLabels(engineAskRequest.getLabels)
@@ -153,7 +153,7 @@ class DefaultEngineAskEngineService
           if (engineCreateRequest.getTimeout <= 0) {
             AMConfiguration.ENGINE_START_MAX_TIME.getValue.toLong
           } else engineCreateRequest.getTimeout
-        // useEngine 需要加上超时
+        // UseEngine requires a timeout (useEngine 需要加上超时)
         val createEngineNode = getEngineNodeManager.useEngine(createNode, timeout)
         if (null == createEngineNode) {
           throw new LinkisRetryException(

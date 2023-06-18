@@ -326,7 +326,10 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
         }
       if (null == necessaryLabels || necessaryLabels.isEmpty) {
         outNodeDegree.asScala.foreach { case (node, iLabels) =>
-          matchInstanceAndLabels.put(new LabelScoreServiceInstance(node), iLabels.asInstanceOf)
+          matchInstanceAndLabels.put(
+            new LabelScoreServiceInstance(node),
+            iLabels.asInstanceOf[util.List[Label[_]]]
+          )
         }
       } else {
         outNodeDegree.asScala.foreach { case (node, iLabels) =>
@@ -340,7 +343,10 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
                 coreLabelKeys.asJava
               ) && coreLabelKeys.size == necessaryLabelKeys.size
           ) {
-            matchInstanceAndLabels.put(new LabelScoreServiceInstance(node), iLabels.asInstanceOf)
+            matchInstanceAndLabels.put(
+              new LabelScoreServiceInstance(node),
+              iLabels.asInstanceOf[util.List[Label[_]]]
+            )
           }
         }
       }

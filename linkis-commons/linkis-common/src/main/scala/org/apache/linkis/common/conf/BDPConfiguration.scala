@@ -103,10 +103,9 @@ private[conf] object BDPConfiguration extends Logging {
     // load  version conf
     val versionConf = sysProps.getOrElse("linkis.version.conf", DEFAULT_VERSION_FILE_NAME)
 
-
     // version conf file path(env LINKIS_VERSION_CONF_FILE_PATH > classpath)
     var versionConfPath = sysProps.getOrElse("LINKIS_VERSION_CONF_FILE_PATH", "")
-    if(StringUtils.isBlank(versionConfPath)) {
+    if (StringUtils.isBlank(versionConfPath)) {
       logger.info(
         s"LINKIS_VERSION_CONF_FILE_PATH is empty, try to use version.properties file path from classpath"
       )
@@ -115,7 +114,6 @@ private[conf] object BDPConfiguration extends Logging {
         versionConfPath = versionConfFileURL.getPath
       }
     }
-
 
     if (new File(versionConfPath).exists) {
       logger.info(

@@ -108,6 +108,12 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
       gatewayContext.getGatewayRoute.setRequestURI(path)
     }
     gatewayParsers.foreach(_.parse(gatewayContext))
+
+    /**
+     * Gateway forwarding logic: PublicService Service exists and is effective And then judge
+     * metadataquery Service, Continue to judge linkismanager Service, Final judgment
+     * linkispsdatasource Service
+     */
     if (gatewayContext.getGatewayRoute.getServiceInstance == null) path match {
       case CLIENT_HEARTBEAT_REGEX(version) =>
         if (sendResponseWhenNotMatchVersion(gatewayContext, version)) return
@@ -126,6 +132,9 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
             RPCConfiguration.METADATAQUERY_SERVICE_APPLICATION_NAME.getValue
           } else if (RPCConfiguration.LINKIS_MANAGER_SERVICE_LIST.contains(serviceId)) {
             RPCConfiguration.LINKIS_MANAGER_SERVICE_NAME.getValue
+            // After the complete merge is completed, it needs to be removed
+          } else if (RPCConfiguration.LINKIS_DATASOURCE_SERVICE_LIST.contains(serviceId)) {
+            RPCConfiguration.LINKIS_DATASOURCE_SERVICE_NAME.getValue
           } else {
             serviceId
           }

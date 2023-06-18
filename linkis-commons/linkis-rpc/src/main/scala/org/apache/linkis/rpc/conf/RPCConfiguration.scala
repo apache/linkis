@@ -80,6 +80,16 @@ object RPCConfiguration {
     CommonVars("wds.linkis.gateway.conf.linkismanager.list", "linkisManager,engineplugin").getValue
       .split(",")
 
+  val LINKIS_DATASOURCE_SERVICE_NAME: CommonVars[String] =
+    CommonVars("linkis.gateway.conf.linkisdatasource.name", "linkis-ps-datasource")
+
+  val LINKIS_DATASOURCE_SERVICE_LIST: Array[String] =
+    CommonVars(
+      "linkis.gateway.conf.linkisdatasource.list",
+      "data-source-manager,metadataquery,datasource"
+    ).getValue
+      .split(",")
+
   val BDP_RPC_INSTANCE_ALIAS_SERVICE_REFRESH_INTERVAL: CommonVars[TimeType] =
     CommonVars("wds.linkis.rpc.instancealias.refresh.interval", new TimeType("3s"))
 

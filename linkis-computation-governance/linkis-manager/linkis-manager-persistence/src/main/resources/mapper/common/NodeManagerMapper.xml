@@ -110,10 +110,15 @@
     </select>
 
     <select id="getNodeInstancesByOwnerList" resultType="org.apache.linkis.manager.common.entity.persistence.PersistenceNode">
-        select * from linkis_cg_manager_service_instance where owner in(
-        <foreach collection='owner' separator=',' item='owner'>
-            #{owner}
-        </foreach>)
+        select * from linkis_cg_manager_service_instance
+        <where>
+            <if test="owner != null and owner.size() > 0">
+                owner in
+                <foreach collection="owner" item="owner" open="(" close=")" separator=",">
+                    #{owner}
+                </foreach>
+            </if>
+        </where>
     </select>
 
 

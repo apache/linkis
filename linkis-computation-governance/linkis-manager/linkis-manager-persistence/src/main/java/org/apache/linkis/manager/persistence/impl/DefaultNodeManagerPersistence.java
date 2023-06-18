@@ -351,19 +351,22 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
 
   @Override
   public List<Node> getNodesByOwnerList(List<String> ownerlist) {
-    List<PersistenceNode> nodeInstances = nodeManagerMapper.getNodeInstancesByOwnerList(ownerlist);
     List<Node> persistenceNodeEntitys = new ArrayList<>();
-    if (!nodeInstances.isEmpty()) {
-      for (PersistenceNode persistenceNode : nodeInstances) {
-        PersistenceNodeEntity persistenceNodeEntity = new PersistenceNodeEntity();
-        ServiceInstance serviceInstance = new ServiceInstance();
-        serviceInstance.setApplicationName(persistenceNode.getName());
-        serviceInstance.setInstance(persistenceNode.getInstance());
-        persistenceNodeEntity.setServiceInstance(serviceInstance);
-        persistenceNodeEntity.setMark(persistenceNode.getMark());
-        persistenceNodeEntity.setOwner(persistenceNode.getOwner());
-        persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
-        persistenceNodeEntitys.add(persistenceNodeEntity);
+    if (CollectionUtils.isNotEmpty(ownerlist)) {
+      List<PersistenceNode> nodeInstances =
+          nodeManagerMapper.getNodeInstancesByOwnerList(ownerlist);
+      if (CollectionUtils.isNotEmpty(nodeInstances)) {
+        for (PersistenceNode persistenceNode : nodeInstances) {
+          PersistenceNodeEntity persistenceNodeEntity = new PersistenceNodeEntity();
+          ServiceInstance serviceInstance = new ServiceInstance();
+          serviceInstance.setApplicationName(persistenceNode.getName());
+          serviceInstance.setInstance(persistenceNode.getInstance());
+          persistenceNodeEntity.setServiceInstance(serviceInstance);
+          persistenceNodeEntity.setMark(persistenceNode.getMark());
+          persistenceNodeEntity.setOwner(persistenceNode.getOwner());
+          persistenceNodeEntity.setStartTime(persistenceNode.getCreateTime());
+          persistenceNodeEntitys.add(persistenceNodeEntity);
+        }
       }
     }
     return persistenceNodeEntitys;

@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.rm.restful
 
 import org.apache.linkis.common.conf.Configuration
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
@@ -500,6 +501,7 @@ class RMMonitorRest extends Logging {
       request: HttpServletRequest,
       @RequestBody param: util.Map[String, AnyRef]
   ): Message = {
+    ModuleUserUtils.getOperationUser(request, "getQueueResource")
     val message = Message.ok("")
     val yarnIdentifier = new YarnResourceIdentifier(param.get("queuename").asInstanceOf[String])
     val clusterLabel = labelFactory.createLabel(classOf[ClusterLabel])

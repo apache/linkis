@@ -82,8 +82,7 @@ public class DefaultNodeLabelScorer implements NodeLabelScorer {
                   ftCounts.compute(label.getFeature(), countFunction);
                   return Pair.of(String.valueOf(label.getId()), label);
                 })
-            .distinct()
-            .collect(Collectors.toMap(Pair::getKey, Pair::getRight, (a, b) -> a));
+            .collect(Collectors.toMap(Pair::getKey, Pair::getRight);
 
     for (Map.Entry<ServiceInstance, List<PersistenceLabel>> entry : outNodeDegree.entrySet()) {
       ServiceInstance node = entry.getKey();
@@ -191,7 +190,9 @@ public class DefaultNodeLabelScorer implements NodeLabelScorer {
                   labelScoreServiceInstance.setScore(scoreCalculate);
                   return Pair.of(labelScoreServiceInstance, outNodeDegree.get(node));
                 })
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .collect(
+                Collectors.toMap(
+                    Pair::getKey, Pair::getValue, (existingValue, newValue) -> newValue));
 
     rawOutput
         .keySet()

@@ -118,7 +118,11 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
     // map k:v---> instanceName：PersistencerEcNodeInfo
     Map<String, PersistencerEcNodeInfo> persistencerEcNodeInfoMap =
         ecNodesInfo.stream()
-            .collect(Collectors.toMap(PersistencerEcNodeInfo::getInstance, item -> item));
+            .collect(
+                Collectors.toMap(
+                    PersistencerEcNodeInfo::getInstance,
+                    item -> item,
+                    (existingValue, newValue) -> newValue));
 
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());

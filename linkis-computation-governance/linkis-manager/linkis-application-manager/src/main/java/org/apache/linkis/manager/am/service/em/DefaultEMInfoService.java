@@ -88,7 +88,9 @@ public class DefaultEMInfoService implements EMInfoService {
 
     Map<ServiceInstance, RMNode> resourceInfoMap =
         resourceInfo.getResourceInfo().stream()
-            .collect(Collectors.toMap(r -> r.getServiceInstance(), r -> r));
+            .collect(
+                Collectors.toMap(
+                    r -> r.getServiceInstance(), r -> r, (existingValue, newValue) -> newValue));
 
     return instances.stream()
         .map(emNodeManager::getEM)

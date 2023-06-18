@@ -353,6 +353,9 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
 
   @Override
   public List<Node> getNodesByOwnerList(List<String> ownerlist) {
+    if (CollectionUtils.isEmpty(ownerlist)) {
+      return Lists.newArrayList();
+    }
     List<PersistenceNode> nodeInstances = nodeManagerMapper.getNodeInstancesByOwnerList(ownerlist);
     List<Node> persistenceNodeEntitys = new ArrayList<>();
     if (!nodeInstances.isEmpty()) {

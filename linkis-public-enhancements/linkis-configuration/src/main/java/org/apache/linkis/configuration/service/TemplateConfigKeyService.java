@@ -21,11 +21,27 @@ import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TemplateConfigKeyService {
 
+  Boolean updateKeyMapping(
+      String templateUid,
+      String templateName,
+      String engineType,
+      String operator,
+      List<TemplateConfigKeyVo> itemList,
+      Boolean isFullMode)
+      throws ConfigurationException;
 
-    Boolean updateKeyMapping(String templateUid, String templateName, String engineType,
-                             String operator, Boolean isFullMod, List<TemplateConfigKeyVo> itemList)
-            throws ConfigurationException;
+  List<Object> queryKeyInfoList(List<String> uuidList) throws ConfigurationException;
+
+  Map<String, Object> apply(
+      String templateUid,
+      String application,
+      String engineType,
+      String engineVersion,
+      String operator,
+      List<String> userList)
+      throws ConfigurationException;
 }

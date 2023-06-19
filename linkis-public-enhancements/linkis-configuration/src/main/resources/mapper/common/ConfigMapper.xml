@@ -182,7 +182,15 @@
         </foreach>
     </select>
 
-
+    <select id="selectKeyByKeyIdList" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE `engine_conn_type` = #{engineType}
+        AND `id` in
+        <foreach collection="KeyIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 
 
     <select id="listKeyByStringValue" resultMap="ConfigKeyMap">
@@ -227,6 +235,13 @@
             id, config_key_id, config_value, config_label_id, create_time, update_time)
         VALUES (
                    #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
+    </insert>
+
+    <insert id="batchInsertValue"  parameterType="org.apache.linkis.configuration.entity.ConfigValue">
+        REPLACE INTO linkis_ps_configuration_config_value(
+        id, config_key_id, config_value, config_label_id, create_time, update_time)
+        VALUES (
+        #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
     </insert>
 
     <select id="getConfigValueById" resultMap="ConfigValueMap">

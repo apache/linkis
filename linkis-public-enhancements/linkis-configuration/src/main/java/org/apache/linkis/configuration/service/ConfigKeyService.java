@@ -33,9 +33,7 @@ public interface ConfigKeyService {
   List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
       throws ConfigurationException;
 
-
-  List<ConfigKey> getConfigKeyList(String engineType)
-          throws ConfigurationException;
+  List<ConfigKey> getConfigKeyList(String engineType) throws ConfigurationException;
 
   List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
       throws ConfigurationException;

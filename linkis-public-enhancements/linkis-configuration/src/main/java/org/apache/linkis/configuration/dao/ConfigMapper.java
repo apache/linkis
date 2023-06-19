@@ -28,12 +28,13 @@ import java.util.List;
 
 public interface ConfigMapper {
 
-
   List<ConfigKeyValue> getConfigKeyByLabelIds(@Param("ids") List<Integer> ids);
 
   List<ConfigKeyValue> getConfigKeyValueByLabelId(@Param("labelId") Integer labelId);
 
   void insertValue(ConfigValue configValue);
+
+  void batchInsertValue(@Param("configValueList") List<ConfigValue> configValueList);
 
   ConfigValue getConfigValueById(@Param("id") Long id);
 
@@ -53,12 +54,12 @@ public interface ConfigMapper {
 
   List<ConfigKey> selectKeyByEngineType(@Param("engineType") String engineType);
 
-  List<ConfigKey> selectKeyByEngineTypeAndKeyList(@Param("engineType") String engineType,
-                                                  @Param("KeyList") List<String> keyList);
+  List<ConfigKey> selectKeyByEngineTypeAndKeyList(
+      @Param("engineType") String engineType, @Param("KeyList") List<String> keyList);
 
+  List<ConfigKey> selectKeyByKeyIdList(@Param("KeyIdList") List<Long> keyList);
 
   List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
-
 
   List<CategoryLabel> getCategory();
 

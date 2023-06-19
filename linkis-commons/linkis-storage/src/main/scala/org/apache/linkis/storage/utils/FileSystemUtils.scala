@@ -22,10 +22,9 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.fs.impl.LocalFileSystem
-import org.apache.linkis.storage.source.{FileSource, FileSource$}
+import org.apache.linkis.storage.source.FileSource
 
 import org.apache.commons.io.IOUtils
-import org.apache.commons.math3.util.Pair
 
 import java.io.IOException
 import java.util

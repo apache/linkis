@@ -13,33 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# description:  manager start cmd
-#
-# Modified for Linkis 1.0.0
-
-source $LINKIS_CONF_DIR/linkis-env.sh
-export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-linkismanager"
-
-export SERVER_HEAP_SIZE="1G"
-
-export SERVER_CLASS=org.apache.linkis.manager.LinkisManagerApplication
-
-if test -z "$MANAGER_HEAP_SIZE"
-  then
-  if test -z "$SERVER_HEAP_SIZE"
-  then
-    export SERVER_HEAP_SIZE="512M"
-  fi
-else
-  export SERVER_HEAP_SIZE=$MANAGER_HEAP_SIZE
+port=$1
+shellDir=`dirname $0`
+workDir=`cd ${shellDir}/..;pwd`
+if [ "$LINKIS_HOME" = "" ]
+then
+  LINKIS_HOME=$workDir
 fi
-
-#export DEBUG_PORT=
-
-export COMMON_START_BIN=$LINKIS_HOME/sbin/ext/linkis-common-start
-if [[ ! -f "${COMMON_START_BIN}" ]]; then
-    echo "The $COMMON_START_BIN  does not exist!"
-    exit 1
-else
-    sh $COMMON_START_BIN
+pid=`ps -ef | grep server.port=$port | grep  EngineConnServer | awk '{print $2}'`
+echo "`date '+%Y-%m-%d %H:%M:%S'` Get port $port pid is $pid"
+if [ "$pid" != "" ]
+then
+  sh $LINKIS_HOME/sbin/kill-process-by-pid.sh $pid
 fi

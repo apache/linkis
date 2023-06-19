@@ -209,6 +209,20 @@ class FIFOUserConsumer(
 
   override def shutdown(): Unit = {
     future.cancel(true)
+    val waitEvents = queue.getWaitingEvents
+    if (waitEvents.nonEmpty) {
+      waitEvents.foreach {
+        case job: Job =>
+          job.onFailure("Your job will be marked as canceled because the consumer be killed", null)
+        case _ =>
+      }
+    }
+
+    this.runningJobs.foreach { job =>
+      if (job != null && !job.isCompleted) {
+        job.onFailure("Your job will be marked as canceled because the consumer be killed", null)
+      }
+    }
     super.shutdown()
   }
 

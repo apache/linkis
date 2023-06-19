@@ -177,7 +177,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
               item.put("lastUnlockTimestamp", lastUnlockTimestamp);
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
               item.put("ecmInstance", latestRecord.getEcmInstance());
-              String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
+              String engineType = latestRecord.getEngineType();
               item.put("engineType", engineType);
               if (StringUtils.isNotBlank(queueName)) {
                 Map<String, Object> usedResourceMap =

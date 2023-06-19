@@ -26,7 +26,7 @@ import org.apache.linkis.manager.label.LabelManagerUtils
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.conf.LabelManagerConf
 import org.apache.linkis.manager.label.entity.{Feature, Label}
-import org.apache.linkis.manager.label.score.NodeLabelScorer
+import org.apache.linkis.manager.label.score.{LabelScoreServiceInstance, NodeLabelScorer}
 import org.apache.linkis.manager.label.service.NodeLabelService
 import org.apache.linkis.manager.label.utils.LabelUtils
 import org.apache.linkis.manager.persistence.LabelManagerPersistence
@@ -312,6 +312,8 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
       instanceLabels.keys
     }
 
+    val matchInstanceAndLabels = new util.HashMap[ScoreServiceInstance, util.List[Label[_]]]()
+
     // Get the out-degree relations ( Node -> Label )
     val outNodeDegree =
       labelManagerPersistence.getLabelRelationsByServiceInstance(instances.toList.asJava)
@@ -322,12 +324,15 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
         else {
           necessaryLabels.asScala.map(_.getLabelKey).toSet
         }
-      // Rebuild in-degree relations
-      inNodeDegree.clear()
-      val removeNodes = new ArrayBuffer[ServiceInstance]()
-      outNodeDegree.asScala.foreach { case (node, iLabels) =>
-        // The core tag must be exactly the same
-        if (null != necessaryLabels) {
+      if (null == necessaryLabels || necessaryLabels.isEmpty) {
+        outNodeDegree.asScala.foreach { case (node, iLabels) =>
+          matchInstanceAndLabels.put(
+            new LabelScoreServiceInstance(node),
+            iLabels.asInstanceOf[util.List[Label[_]]]
+          )
+        }
+      } else {
+        outNodeDegree.asScala.foreach { case (node, iLabels) =>
           val coreLabelKeys = iLabels.asScala
             .map(ManagerUtils.persistenceLabelToRealLabel)
             .filter(_.getFeature == Feature.CORE)
@@ -338,33 +343,21 @@ class DefaultNodeLabelService extends NodeLabelService with Logging {
                 coreLabelKeys.asJava
               ) && coreLabelKeys.size == necessaryLabelKeys.size
           ) {
-            iLabels.asScala.foreach(label => {
-              if (!inNodeDegree.asScala.contains(label)) {
-                val inNodes = new util.ArrayList[ServiceInstance]()
-                inNodeDegree.put(label, inNodes)
-              }
-              val inNodes = inNodeDegree.get(label)
-              inNodes.add(node)
-            })
-          } else {
-            removeNodes += node
+            matchInstanceAndLabels.put(
+              new LabelScoreServiceInstance(node),
+              iLabels.asInstanceOf[util.List[Label[_]]]
+            )
           }
         }
       }
-
-      // Remove nodes with mismatched labels
-      if (removeNodes.nonEmpty && removeNodes.size == outNodeDegree.size()) {
-        logger.info(
-          s"The entered labels${necessaryLabels} do not match the labels of the node itself"
-        )
-      }
-
-      removeNodes.foreach(outNodeDegree.remove(_))
-      return nodeLabelScorer
-        .calculate(inNodeDegree, outNodeDegree, labels)
-        .asInstanceOf[util.Map[ScoreServiceInstance, util.List[Label[_]]]]
     }
-    new util.HashMap[ScoreServiceInstance, util.List[Label[_]]]()
+    // Remove nodes with mismatched labels
+    if (matchInstanceAndLabels.isEmpty) {
+      logger.info(
+        s"The entered labels${necessaryLabels} do not match the labels of the node itself"
+      )
+    }
+    matchInstanceAndLabels
   }
 
   private def tryToAddLabel(persistenceLabel: PersistenceLabel): Int = {

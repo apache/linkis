@@ -48,6 +48,7 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
   private String owner;
 
   private String mark;
+  private String identifier;
 
   private NodeTaskInfo nodeTaskInfo;
 
@@ -127,6 +128,16 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
   public void setMark(String mark) {
     this.mark = mark;
+  }
+
+  @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   @Override

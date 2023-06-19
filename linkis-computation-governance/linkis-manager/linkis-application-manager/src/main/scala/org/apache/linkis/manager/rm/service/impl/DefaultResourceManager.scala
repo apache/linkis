@@ -52,6 +52,7 @@ import org.apache.linkis.manager.rm.{
   ResourceInfo,
   ResultResource
 }
+import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.entity.{LabelResourceMapping, ResourceOperationType}
 import org.apache.linkis.manager.rm.entity.ResourceOperationType.{LOCK, USED}
 import org.apache.linkis.manager.rm.exception.{RMErrorCode, RMLockFailedRetryException}
@@ -152,22 +153,40 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     eMInstanceLabel.setInstance(serviceInstance.getInstance)
 
     val emResource = labelResourceService.getLabelResource(eMInstanceLabel)
+    var registerResourceFlag = true
     if (emResource != null) {
-      logger.warn(s"${serviceInstance} has been registered, now update resource.")
-      if (!emResource.getResourceType.equals(resource.getResourceType)) {
-        throw new RMErrorException(
-          RMErrorCode.LABEL_DUPLICATED.getErrorCode,
-          MessageFormat.format(
-            RMErrorCode.LABEL_DUPLICATED.getErrorDesc,
-            serviceInstance,
-            emResource.getResourceType,
-            resource.getResourceType
-          )
+      registerResourceFlag = false
+      logger.warn(s"${serviceInstance} has been registered, resource is ${emResource}.")
+      val leftResource = emResource.getLeftResource
+      if (leftResource != null && Resource.getZeroResource(leftResource) > leftResource) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but left Resource <0 need to register resource."
         )
+        registerResourceFlag = true
       }
+      val usedResource = emResource.getLockedResource + emResource.getUsedResource
+      if (usedResource > emResource.getMaxResource) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but usedResource > MaxResource  need to register resource."
+        )
+        registerResourceFlag = true
+      }
+
+      if (!(resource.getMaxResource == emResource.getMaxResource)) {
+        logger.warn(
+          s"${serviceInstance} has been registered, but inconsistent newly registered resources  need to register resource."
+        )
+        registerResourceFlag = true
+      }
+    }
+
+    if (!registerResourceFlag) {
+      logger.warn(s"${serviceInstance} has been registered, skip register resource.")
+      return
     }
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
     try {
+      labelResourceService.removeResourceByLabel(eMInstanceLabel)
       labelResourceService.setLabelResource(
         eMInstanceLabel,
         resource,
@@ -190,8 +209,8 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   }
 
   /**
-   * The registration method is mainly used to notify all RM nodes (including the node), and the
-   * instance is offline. 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
+   * The registration method is mainly used to notify all RM nodes , and the instance is offline.
+   * 该注册方法，主要是用于通知所有的RM节点（包括本节点），下线该实例
    */
   override def unregister(serviceInstance: ServiceInstance): Unit = {
 
@@ -199,7 +218,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EMInstanceLabel])
     eMInstanceLabel.setServiceName(serviceInstance.getApplicationName)
     eMInstanceLabel.setInstance(serviceInstance.getInstance)
-    val ecNodes = nodeManagerPersistence.getEngineNodeByEM(serviceInstance).asScala
     val lock = tryLockOneLabel(eMInstanceLabel, -1, Utils.getJvmUser)
     try {
       labelResourceService.removeResourceByLabel(eMInstanceLabel)
@@ -216,13 +234,6 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     } finally {
       resourceLockService.unLock(lock)
       logger.info(s"Finished to clear ecm resource:${serviceInstance}")
-    }
-    ecNodes.foreach { engineNode =>
-      Utils.tryAndWarn {
-        engineNode.setLabels(nodeLabelService.getNodeLabels(engineNode.getServiceInstance))
-        engineNode.setNodeStatus(NodeStatus.Failed)
-        engineStopService.engineConnInfoClear(engineNode)
-      }
     }
     logger.info(s"Finished to clear ec for ecm ${serviceInstance}")
   }
@@ -320,22 +331,19 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
     } {
       persistenceLocks.foreach(resourceLockService.unLock)
     }
-    // record engine locked resource
-    val tickedId = UUID.randomUUID().toString
-    resourceLogService.recordUserResourceAction(
-      labelContainer,
-      tickedId,
-      ChangeType.ENGINE_REQUEST,
-      resource.getLockedResource
-    )
+
+    // add ec node
+    val tickedId = RMUtils.getECTicketID
     val emNode = new AMEMNode
     emNode.setServiceInstance(labelContainer.getEMInstanceLabel.getServiceInstance)
     val engineNode = new AMEngineNode
     engineNode.setEMNode(emNode)
     engineNode.setServiceInstance(ServiceInstance(labelContainer.getEngineServiceName, tickedId))
     engineNode.setNodeResource(resource)
+    engineNode.setTicketId(tickedId)
     nodeManagerPersistence.addEngineNode(engineNode)
 
+    // add labels
     val engineInstanceLabel =
       LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(classOf[EngineInstanceLabel])
     engineInstanceLabel.setServiceName(labelContainer.getEngineServiceName)
@@ -343,10 +351,19 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
 
     nodeLabelService.addLabelToNode(engineNode.getServiceInstance, engineInstanceLabel)
 
+    // add ec resource
     labelResourceService.setEngineConnLabelResource(
       engineInstanceLabel,
       resource,
       labelContainer.getCombinedUserCreatorEngineTypeLabel.getStringValue
+    )
+    // record engine locked resource
+    labelContainer.getLabels.add(engineInstanceLabel)
+    resourceLogService.recordUserResourceAction(
+      labelContainer,
+      tickedId,
+      ChangeType.ENGINE_REQUEST,
+      resource.getLockedResource
     )
 
     val persistenceLabel = labelFactory.convertLabel(engineInstanceLabel, classOf[PersistenceLabel])

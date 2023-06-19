@@ -31,6 +31,7 @@ import org.apache.linkis.server.BDPJettyServerHelper
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+import java.util.UUID
 
 import scala.collection.JavaConverters.asScalaBufferConverter
 
@@ -250,5 +251,7 @@ object RMUtils extends Logging {
       s" use ${resourceType}, requestResource : ${reqMsg} > availableResource : ${availMsg},  maxResource : ${maxMsg}, queueName : ${queueName}."
     }
   }
+
+  def getECTicketID: String = UUID.randomUUID().toString
 
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.linkis.manager.am.vo.ResourceVo
 import org.apache.linkis.manager.common.entity.node.EngineNode
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineConnReleaseRequest,
@@ -25,10 +24,6 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineSuicideRequest
 }
 import org.apache.linkis.rpc.Sender
-
-import java.util
-
-import scala.collection.mutable
 
 trait EngineStopService {
 

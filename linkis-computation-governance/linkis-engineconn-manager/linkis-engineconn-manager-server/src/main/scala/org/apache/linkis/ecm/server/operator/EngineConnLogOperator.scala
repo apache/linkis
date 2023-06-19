@@ -17,15 +17,13 @@
 
 package org.apache.linkis.ecm.server.operator
 
-import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary._
 import org.apache.linkis.ecm.server.conf.ECMConfiguration
 import org.apache.linkis.ecm.server.exception.ECMErrorException
-import org.apache.linkis.ecm.server.service.{EngineConnListService, LocalDirsHandleService}
+import org.apache.linkis.ecm.server.service.LocalDirsHandleService
 import org.apache.linkis.manager.common.operator.Operator
-import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest
 
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.input.ReversedLinesFileReader
@@ -37,13 +35,9 @@ import java.text.MessageFormat
 import java.util
 import java.util.Collections
 
-import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.matching.Regex
 
 class EngineConnLogOperator extends Operator with Logging {
-
-  private var engineConnListService: EngineConnListService = _
-  private var localDirsHandleService: LocalDirsHandleService = _
 
   override def getNames: Array[String] = Array(EngineConnLogOperator.OPERATOR_NAME)
 
@@ -162,56 +156,10 @@ class EngineConnLogOperator extends Operator with Logging {
   protected def getEngineConnInfo(implicit
       parameters: Map[String, Any]
   ): (String, String, String) = {
-    if (engineConnListService == null) {
-      engineConnListService =
-        DataWorkCloudApplication.getApplicationContext.getBean(classOf[EngineConnListService])
-      localDirsHandleService =
-        DataWorkCloudApplication.getApplicationContext.getBean(classOf[LocalDirsHandleService])
-    }
     val logDIrSuffix = getAs("logDirSuffix", "")
-    val (engineConnLogDir, engineConnInstance, ticketId) =
-      if (StringUtils.isNotBlank(logDIrSuffix)) {
-        val ecLogPath = ECMConfiguration.ENGINECONN_ROOT_DIR + File.separator + logDIrSuffix
-        val ticketId = getAs("ticketId", "")
-        (ecLogPath, "", ticketId)
-      } else {
-        val engineConnInstance = getAs(
-          ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY,
-          getAs[String]("engineConnInstance", null)
-        )
-        Option(engineConnInstance)
-          .flatMap { instance =>
-            engineConnListService.getEngineConns.asScala.find(
-              _.getServiceInstance.getInstance == instance
-            )
-          }
-          .map(engineConn =>
-            (
-              engineConn.getEngineConnManagerEnv.engineConnLogDirs,
-              engineConnInstance,
-              engineConn.getTickedId
-            )
-          )
-          .getOrElse {
-            val ticketId = getAs("ticketId", "")
-            if (StringUtils.isBlank(ticketId)) {
-              throw new ECMErrorException(
-                BOTH_NOT_EXISTS.getErrorCode,
-                s"the parameters of ${ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY}, engineConnInstance and ticketId are both not exists."
-              )
-            }
-            val logDir = engineConnListService
-              .getEngineConn(ticketId)
-              .map(_.getEngineConnManagerEnv.engineConnLogDirs)
-              .getOrElse {
-                val creator = getAsThrow[String]("creator")
-                val engineConnType = getAsThrow[String]("engineConnType")
-                localDirsHandleService.getEngineConnLogDir(creator, ticketId, engineConnType)
-              }
-            (logDir, engineConnInstance, ticketId)
-          }
-      }
-    (ticketId, engineConnInstance, engineConnLogDir)
+    val ecLogPath = ECMConfiguration.ENGINECONN_ROOT_DIR + File.separator + logDIrSuffix
+    val ticketId = getAs("ticketId", "")
+    (ticketId, "", ecLogPath)
   }
 
   private def includeLine(

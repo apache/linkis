@@ -26,7 +26,7 @@
 
   <artifactId>linkis-engineplugin-seatunnel</artifactId>
   <properties>
-    <seatunnel.version>2.1.2</seatunnel.version>
+    <seatunnel.version>2.3.1</seatunnel.version>
   </properties>
 
   <dependencies>
@@ -82,7 +82,23 @@
 
     <dependency>
       <groupId>org.apache.seatunnel</groupId>
-      <artifactId>seatunnel-core-spark</artifactId>
+      <artifactId>seatunnel-engine-core</artifactId>
+      <version>${seatunnel.version}</version>
+      <!--      <exclusions>-->
+      <!--        <exclusion>-->
+      <!--          <groupId>*</groupId>-->
+      <!--          <artifactId>*</artifactId>-->
+      <!--        </exclusion>-->
+      <!--      </exclusions>-->
+    </dependency>
+    <dependency>
+      <groupId>com.hazelcast</groupId>
+      <artifactId>hazelcast</artifactId>
+      <version>5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.seatunnel</groupId>
+      <artifactId>seatunnel-starter</artifactId>
       <version>${seatunnel.version}</version>
       <exclusions>
         <exclusion>
@@ -93,7 +109,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.seatunnel</groupId>
-      <artifactId>seatunnel-core-flink-sql</artifactId>
+      <artifactId>seatunnel-spark-2-starter</artifactId>
       <version>${seatunnel.version}</version>
       <exclusions>
         <exclusion>
@@ -104,7 +120,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.seatunnel</groupId>
-      <artifactId>seatunnel-core-flink</artifactId>
+      <artifactId>seatunnel-flink-13-starter</artifactId>
       <version>${seatunnel.version}</version>
       <exclusions>
         <exclusion>
@@ -113,8 +129,8 @@
         </exclusion>
       </exclusions>
     </dependency>
-
   </dependencies>
+
 
   <build>
     <plugins>

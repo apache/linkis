@@ -22,14 +22,12 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
-import org.apache.linkis.engineconnplugin.seatunnel.executor.SeatunnelFlinkSQLOnceCodeExecutor
+import org.apache.linkis.engineconnplugin.seatunnel.executor.SeatunnelZetaOnceCodeExecutor
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 
-class SeatunnelFlinkSQLExecutorFactory extends OnceExecutorFactory {
-
-  override protected def getRunType: RunType = RunType.SEATUNNEL_FLINK_SQL
+class SeatunnelZetaExecutorFactory extends OnceExecutorFactory {
 
   override protected def newExecutor(
       id: Int,
@@ -39,8 +37,9 @@ class SeatunnelFlinkSQLExecutorFactory extends OnceExecutorFactory {
   ): OnceExecutor = {
     engineConn.getEngineConnSession match {
       case context: SeatunnelEngineConnContext =>
-        new SeatunnelFlinkSQLOnceCodeExecutor(id, context)
+        new SeatunnelZetaOnceCodeExecutor(id, context)
     }
   }
 
+  override protected def getRunType: RunType = RunType.SEATUNNEL_ZETA
 }

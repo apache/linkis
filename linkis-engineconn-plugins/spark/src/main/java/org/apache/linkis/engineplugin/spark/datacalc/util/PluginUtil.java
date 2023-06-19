@@ -51,6 +51,7 @@ public class PluginUtil {
     classMap.put("elasticsearch", ElasticsearchSource.class);
     classMap.put("solr", SolrSource.class);
     classMap.put("kafka", KafkaSource.class);
+    classMap.put("starrocks", StarrocksSource.class);
     return classMap;
   }
 
@@ -73,6 +74,7 @@ public class PluginUtil {
     classMap.put("elasticsearch", ElasticsearchSink.class);
     classMap.put("solr", SolrSink.class);
     classMap.put("kafka", KafkaSink.class);
+    classMap.put("starrocks", StarrocksSink.class);
     return classMap;
   }
 

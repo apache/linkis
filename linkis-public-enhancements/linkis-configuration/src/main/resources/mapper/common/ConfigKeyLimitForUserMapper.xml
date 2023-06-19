@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.linkis.configuration.dao.ConfigKeyLimitForUserMapper">
+  <resultMap id="BaseResultMap" type="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="combined_label_value" jdbcType="VARCHAR" property="combinedLabelValue" />
+    <result column="key_id" jdbcType="BIGINT" property="keyId" />
+    <result column="latest_update_template_uuid" jdbcType="VARCHAR" property="latestUpdateTemplateUuid" />
+    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, combined_label_value, key_id, latest_update_template_uuid, is_valid, 
+    create_by, create_time, update_by, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from config_key_limit_for_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <sql id="selectWhereByPage">
+    id = #{id,jdbcType=BIGINT}
+  </sql>
+  <select id="selectCountByPage" resultType="java.lang.Integer">
+    select count(1) from config_key_limit_for_user
+    <where>
+      <include refid="selectWhereByPage" />
+    </where>
+  </select>
+  <select id="selectListByPage" resultMap="BaseResultMap">
+    <bind name="startRowIndex" value="(pageNo-1)*pageSize" />
+    select 
+    <include refid="Base_Column_List" />
+    from config_key_limit_for_user
+    <where>
+      <include refid="selectWhereByPage" />
+    </where>
+    order by id
+    limit #{startRowIndex}, #{pageSize}
+  </select>
+  <insert id="batchInsertList" parameterType="java.util.List">
+    insert into config_key_limit_for_user (id, user_name, combined_label_value, 
+      key_id, latest_update_template_uuid, 
+      is_valid, create_by, create_time, update_by, 
+      update_time)
+     values 
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+      #{item.id,jdbcType=BIGINT}, #{item.userName,jdbcType=VARCHAR}, #{item.combinedLabelValue,jdbcType=VARCHAR}, 
+        #{item.keyId,jdbcType=BIGINT}, #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR}, 
+        #{item.isValid,jdbcType=VARCHAR}, #{item.createBy,jdbcType=VARCHAR}, now(), #{item.updateBy,jdbcType=VARCHAR}, 
+        now())
+    </foreach>
+  </insert>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from config_key_limit_for_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    insert into config_key_limit_for_user (id, user_name, combined_label_value, 
+      key_id, latest_update_template_uuid, is_valid, 
+      create_by, create_time, update_by, update_time)
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{combinedLabelValue,jdbcType=VARCHAR}, 
+      #{keyId,jdbcType=BIGINT}, #{latestUpdateTemplateUuid,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR}, 
+      #{createBy,jdbcType=VARCHAR}, now(), #{updateBy,jdbcType=VARCHAR}, now())
+  </insert>
+  <insert id="insertSelective" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    insert into config_key_limit_for_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="combinedLabelValue != null">
+        combined_label_value,
+      </if>
+      <if test="keyId != null">
+        key_id,
+      </if>
+      <if test="latestUpdateTemplateUuid != null">
+        latest_update_template_uuid,
+      </if>
+      <if test="isValid != null">
+        is_valid,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      create_time,
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      update_time,
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="combinedLabelValue != null">
+        #{combinedLabelValue,jdbcType=VARCHAR},
+      </if>
+      <if test="keyId != null">
+        #{keyId,jdbcType=BIGINT},
+      </if>
+      <if test="latestUpdateTemplateUuid != null">
+        #{latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      now(),
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    update config_key_limit_for_user
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="combinedLabelValue != null">
+        combined_label_value = #{combinedLabelValue,jdbcType=VARCHAR},
+      </if>
+      <if test="keyId != null">
+        key_id = #{keyId,jdbcType=BIGINT},
+      </if>
+      <if test="latestUpdateTemplateUuid != null">
+        latest_update_template_uuid = #{latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid != null">
+        is_valid = #{isValid,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      update_time = now(),
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    update config_key_limit_for_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      combined_label_value = #{combinedLabelValue,jdbcType=VARCHAR},
+      key_id = #{keyId,jdbcType=BIGINT},
+      latest_update_template_uuid = #{latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- === 下方为用户自定义模块,下次生成会保留 === -->
+</mapper>

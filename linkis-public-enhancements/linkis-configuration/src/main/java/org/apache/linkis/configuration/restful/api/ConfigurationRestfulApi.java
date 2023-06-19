@@ -155,6 +155,15 @@ public class ConfigurationRestfulApi {
     return Message.ok().data("Category", categoryLabelList);
   }
 
+  @ApiOperation(value = "getItemList", notes = "get configuration list by engineType", response = Message.class)
+  @RequestMapping(path = "/getItemList", method = RequestMethod.GET)
+  public Message getItemList(HttpServletRequest req, @RequestParam(value = "engineType") String engineType) throws ConfigurationException {
+    String userName = ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    List<ConfigKey> result= configKeyService.getConfigKeyList(engineType);
+    return Message.ok().data("list", result);
+  }
+
+
   @ApiOperation(
       value = "createFirstCategory",
       notes = "create first category",

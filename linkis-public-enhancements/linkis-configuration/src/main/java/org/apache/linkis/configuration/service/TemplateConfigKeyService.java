@@ -17,26 +17,15 @@
 
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigKey;
-import org.apache.linkis.configuration.entity.ConfigKeyValue;
-import org.apache.linkis.configuration.entity.ConfigValue;
+import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
 
-public interface ConfigKeyService {
-
-  ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
-      throws ConfigurationException;
-
-  List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
-      throws ConfigurationException;
+public interface TemplateConfigKeyService {
 
 
-  List<ConfigKey> getConfigKeyList(String engineType)
-          throws ConfigurationException;
-
-  List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
-      throws ConfigurationException;
+    Boolean updateKeyMapping(String templateUid, String templateName, String engineType,
+                             String operator, Boolean isFullMod, List<TemplateConfigKeyVo> itemList)
+            throws ConfigurationException;
 }

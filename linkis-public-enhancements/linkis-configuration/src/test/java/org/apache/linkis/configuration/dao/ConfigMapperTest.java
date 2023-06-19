@@ -155,12 +155,6 @@ public class ConfigMapperTest extends BaseDaoTest {
   }
 
   @Test
-  void testInsertCreator() {
-    // mapper方法没有对应的实现类
-    //        configMapper.insertCreator("tom");
-  }
-
-  @Test
   void testGetCategory() {
     List<CategoryLabel> categoryLabelList = configMapper.getCategory();
     assertEquals(3, categoryLabelList.size());

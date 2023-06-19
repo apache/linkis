@@ -164,6 +164,11 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
   }
 
   @Override
+  public List<ConfigKey> getConfigKeyList(String engineType) throws ConfigurationException {
+    return configMapper.selectKeyByEngineType(engineType);
+  }
+
+  @Override
   public List<ConfigValue> deleteConfigValue(String key, List<Label<?>> labelList)
       throws ConfigurationException {
     CombinedLabel combinedLabel = getCombinedLabel(labelList);

@@ -53,7 +53,7 @@ abstract class JavaProcessEngineConnLaunchBuilder
     this.engineConnResourceGenerator = engineConnResourceGenerator
 
   protected def getGcLogDir(engineConnBuildRequest: EngineConnBuildRequest): String =
-    variable(LOG_DIRS) + "/gc.log"
+    variable(LOG_DIRS) + "/gc"
 
   protected def getLogDir(engineConnBuildRequest: EngineConnBuildRequest): String =
     s" -Dlogging.file=${EnvConfiguration.LOG4J2_XML_FILE.getValue} " +

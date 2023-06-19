@@ -41,8 +41,10 @@
         last_update_time
     </sql>
 
-    <select id="getEngineTypeList" resultType="String">
-        SELECT concat(engine_conn_type,'-', substring(version,2)) FROM linkis_cg_engine_conn_plugin_bml_resources GROUP BY engine_conn_type,version
+    <select id="getEngineTypeList" resultType="java.lang.String">
+        SELECT concat(engine_conn_type, '-', substring(version, 2))
+        FROM linkis_cg_engine_conn_plugin_bml_resources
+        GROUP BY engine_conn_type, version
     </select>
 
 </mapper>

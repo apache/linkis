@@ -18,6 +18,7 @@
 package org.apache.linkis.metadata.query.server.service;
 
 import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
 
@@ -235,6 +236,44 @@ public interface MetadataQueryService {
    * @throws ErrorException
    */
   List<MetaColumnInfo> getColumnsByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
+      throws ErrorException;
+
+  /**
+   * @param dataSourceName
+   * @param database
+   * @param table
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  GenerateSqlInfo getSparkSqlByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId)
+      throws ErrorException;
+
+  /**
+   * @param dataSourceName
+   * @param database
+   * @param table
+   * @param system
+   * @param userName
+   * @param envId
+   * @return
+   * @throws ErrorException
+   */
+  GenerateSqlInfo getJdbcSqlByDsNameAndEnvId(
       String dataSourceName,
       String database,
       String table,

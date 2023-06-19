@@ -95,6 +95,11 @@ object TenantLabelSetUtils extends Logging {
               "*-" + LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getCreator.toLowerCase()
             )
           }
+          if (StringUtils.isBlank(tenant)) {
+            tenant = userCreatorTenantCache.get(
+              LabelUtil.getUserCreatorLabel(jobRequest.getLabels).getUser.toLowerCase() + "-*"
+            )
+          }
           logger.info("get cache tenant:" + tenant + ",jobRequest:" + jobRequest.getId)
           // Add cached data if it is not empty
           if (StringUtils.isNotBlank(tenant)) {

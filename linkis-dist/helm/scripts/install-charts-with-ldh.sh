@@ -21,7 +21,8 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 KUBE_NAMESPACE=${1:-linkis}
 HELM_RELEASE_NAME=${2:-linkis-demo}
-
-sh ${WORK_DIR}/install-linkis.sh ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} false
+USING_KIND=${3:-false}
+# use bash fix "[[ : not found"
+bash ${WORK_DIR}/install-linkis.sh ${KUBE_NAMESPACE} ${HELM_RELEASE_NAME} false ${USING_KIND}
 
 kubectl apply -n ${KUBE_NAMESPACE} -f ${RESOURCE_DIR}/ldh/configmaps

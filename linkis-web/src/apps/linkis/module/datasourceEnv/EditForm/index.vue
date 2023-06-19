@@ -118,7 +118,7 @@ export default {
           ],
           on: {
             'on-change': () => {
-              this.rule[8].hidden = !this.rule[8].hidden;
+              this.rule[8].hidden = !this.rule[4].value;
             }
           }
         },
@@ -199,7 +199,7 @@ export default {
           title: "principle",
           field: 'principle',
           value: '',
-          hidden: true,
+          hidden: false,
           props: {
             placeholder: 'hadoop@APACHE.COM',
           },
@@ -208,7 +208,7 @@ export default {
           type: 'v-jsoneditor',
           title: this.$t('message.linkis.basedataManagement.datasourceEnv.parameter'),
           field: 'hadoopConf',
-          value: {},
+          value: JSON.stringify({}),
           props: {
             type: 'form-create',
             height: "280px",
@@ -247,16 +247,13 @@ export default {
       }
       // radio
       this.rule[4].hidden = !(['hive', 'kafka'].includes(dataSourceTypeName))
-
+      
       // keytab value
       this.rule[6].hidden = !newV.keytab;
       // upload
-      this.rule[5].hidden = !this.rule[6].hidden;
-      if (!newV.hasKeyTab || !['hive', 'kafka'].includes(dataSourceTypeName)){
-        this.rule[5].hidden = true;
-        this.rule[6].hidden = true;
-        this.rule[8].hidden = true;
-      }
+      this.rule[5].hidden = !this.rule[6].hidden || !['hive', 'kafka'].includes(dataSourceTypeName) || !this.rule[4].value;
+      this.rule[8].hidden = (!newV.hasKeyTab || !['hive', 'kafka'].includes(dataSourceTypeName));
+      
     },
     keyTabValidator(rule, val, cb) {
       if (!this.formData.keytab) {

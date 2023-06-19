@@ -67,7 +67,7 @@ class CSTableResultSetWriter(
       val csColumns = getMetaData.asInstanceOf[TableMetaData].columns.map { column =>
         val csColumn = new CSColumn
         csColumn.setName(column.columnName)
-        csColumn.setType(column.dataType.typeName)
+        csColumn.setType(column.dataType.getTypeName)
         csColumn.setComment(column.comment)
         csColumn
       }

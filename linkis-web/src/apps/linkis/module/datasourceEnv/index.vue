@@ -204,7 +204,7 @@ export default {
     init() {
       this.load();
     },
-    load() {
+    async load() {
       let params = {
         searchName: this.searchName,
         currentPage: this.page.pageNow,
@@ -223,7 +223,7 @@ export default {
             let filter = options.filter(optionsItem=>{
               return optionsItem.value === item.datasourceTypeId
             })
-            item.name = filter[0]?.label || '';
+            item.name = filter[0]?.label || ''; 
           })
         })
       })
@@ -239,6 +239,8 @@ export default {
       this.modalShow = true
     },
     onTableEdit(row){
+      // console.log(this.$refs.editForm);
+      this.$refs.editForm.formModel.reload()
       row.hasKeyTab = JSON.parse(row.parameter).keytab ? true : false;
       this.modalEditData = {...row}
       // format parameter for modal
@@ -267,6 +269,8 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
@@ -274,7 +278,6 @@ export default {
               })
             }
           })
-          this.load()
         }
       })
 
@@ -282,13 +285,13 @@ export default {
     clearForm(){
       for(let key in this.modalEditData) {
         this.modalEditData[key] = ''
-        this.modalEditData.parameter = {}
-        window.console.log(key);
       }
+      this.modalEditData.parameter = {}
+      this.modalEditData.hadoopConf = JSON.stringify({})
       this.modalEditData.hasKeyTab = false;
     },
-    onModalOk(){
-      this.$refs.editForm.formModel.submit((formData)=>{
+    async onModalOk(){
+      this.$refs.editForm.formModel.submit(async (formData)=>{
         if (!('parameter' in formData)) {
           formData['parameter'] = {}
         }
@@ -313,13 +316,14 @@ export default {
         if('keytab' in formData) delete formData['keytab'];
         if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
-          add(formData).then((data)=>{
+          await add(formData).then((data)=>{
             //window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load();
             }else{
               this.$Message.success({
                 duration: 3,
@@ -328,7 +332,7 @@ export default {
             }
           })
         }else {
-          edit(formData).then((data)=>{
+          await edit(formData).then((data)=>{
             //window.console.log(data)
             if(data.result) {
               this.$Message.success({
@@ -344,7 +348,7 @@ export default {
             }
           })
         }
-        window.console.log(formData);
+        // window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
       })

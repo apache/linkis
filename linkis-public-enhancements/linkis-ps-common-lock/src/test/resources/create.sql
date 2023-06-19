@@ -30,3 +30,8 @@ CREATE TABLE `linkis_ps_common_lock` (
   UNIQUE KEY `lock_object` (`lock_object`)
 ) ;
 
+DELETE FROM linkis_ps_common_lock;
+
+insert into linkis_ps_common_lock(`id`,`lock_object`,`time_out`,`update_time`,`create_time`) values (1,'hadoop-warehouse',1000000,now(),now());
+
+

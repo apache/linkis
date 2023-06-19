@@ -42,5 +42,13 @@
     <module>elasticsearch</module>
     <module>seatunnel</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>compile-impala</id>
+      <modules>
+        <module>impala</module>
+      </modules>
+    </profile>
+  </profiles>
 
 </project>

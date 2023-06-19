@@ -50,6 +50,7 @@
             line-height: 24px;
             display: flex;
             align-items: center;
+            position: relative;
             @media only screen and (max-width: 1480px){
                 .we-variable-content-label-group {
                     display: flex !important;

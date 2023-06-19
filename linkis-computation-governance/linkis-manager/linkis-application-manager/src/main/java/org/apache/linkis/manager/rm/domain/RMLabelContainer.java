@@ -18,7 +18,6 @@
 package org.apache.linkis.manager.rm.domain;
 
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
-import org.apache.linkis.manager.common.exception.RMErrorException;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.manager.label.entity.Label;
@@ -102,7 +101,7 @@ public class RMLabelContainer {
     return null;
   }
 
-  public EMInstanceLabel getEMInstanceLabel() throws RMErrorException {
+  public EMInstanceLabel getEMInstanceLabel() {
     if (EMInstanceLabel == null) {
       for (Label label : labels) {
         if (label instanceof EMInstanceLabel) {
@@ -116,7 +115,7 @@ public class RMLabelContainer {
     return null;
   }
 
-  public EngineTypeLabel getEngineTypeLabel() throws RMErrorException {
+  public EngineTypeLabel getEngineTypeLabel() {
     if (engineTypeLabel == null) {
       for (Label label : labels) {
         if (label instanceof EngineTypeLabel) {
@@ -130,7 +129,7 @@ public class RMLabelContainer {
     return null;
   }
 
-  public UserCreatorLabel getUserCreatorLabel() throws RMErrorException {
+  public UserCreatorLabel getUserCreatorLabel() {
     if (userCreatorLabel == null) {
       for (Label label : labels) {
         if (label instanceof UserCreatorLabel) {
@@ -143,7 +142,7 @@ public class RMLabelContainer {
     return null;
   }
 
-  public EngineInstanceLabel getEngineInstanceLabel() throws RMErrorException {
+  public EngineInstanceLabel getEngineInstanceLabel() {
     if (engineInstanceLabel == null) {
       for (Label label : labels) {
         if (label instanceof EngineInstanceLabel) {
@@ -173,7 +172,7 @@ public class RMLabelContainer {
     return lockedLabels;
   }
 
-  public String getEngineServiceName() throws RMErrorException {
+  public String getEngineServiceName() {
     return GovernanceCommonConf.ENGINE_CONN_SPRING_NAME().getValue();
   }
 

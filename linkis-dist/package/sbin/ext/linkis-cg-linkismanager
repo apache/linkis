@@ -22,7 +22,7 @@ export SERVER_SUFFIX="linkis-computation-governance/linkis-cg-linkismanager"
 
 export SERVER_HEAP_SIZE="1G"
 
-export SERVER_CLASS=org.apache.linkis.manager.am.LinkisManagerApplication
+export SERVER_CLASS=org.apache.linkis.manager.LinkisManagerApplication
 
 if test -z "$MANAGER_HEAP_SIZE"
   then

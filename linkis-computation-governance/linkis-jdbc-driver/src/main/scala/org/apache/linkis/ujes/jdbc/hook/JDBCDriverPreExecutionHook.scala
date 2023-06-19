@@ -24,7 +24,7 @@ import scala.collection.mutable.ArrayBuffer
 
 trait JDBCDriverPreExecutionHook {
 
-  def callPreExecutionHook(sql: String): String
+  def callPreExecutionHook(sql: String, skip: Boolean): String
 
 }
 
@@ -51,5 +51,5 @@ object JDBCDriverPreExecutionHook extends Logging {
     hooks.toArray
   }
 
-  def getPreExecutionHooks = preExecutionHooks
+  def getPreExecutionHooks: Array[JDBCDriverPreExecutionHook] = preExecutionHooks
 }

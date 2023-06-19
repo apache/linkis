@@ -17,5 +17,49 @@
 
 package org.apache.linkis.manager.label.entity.engine;
 
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 /** EngineTypeLabel Tester */
-public class EngineTypeLabelTest {}
+public class EngineTypeLabelTest {
+
+  @Test
+  public void testSetStringValue() {
+    LabelBuilderFactory labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory();
+    EngineTypeLabel engineTypeLabel = labelBuilderFactory.createLabel(EngineTypeLabel.class);
+
+    // str value
+    String hiveEngineType = "hive";
+    String hiveVersion = "1.1.0-cdh5.12.0";
+    engineTypeLabel.setStringValue(hiveEngineType + "-" + hiveVersion);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), hiveEngineType);
+    Assertions.assertEquals(engineTypeLabel.getVersion(), hiveVersion);
+
+    // any value
+    String anyEngineType = "*";
+    String anyVersion = "*";
+    engineTypeLabel.setStringValue(anyEngineType + "-" + anyVersion);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), anyEngineType);
+    Assertions.assertEquals(engineTypeLabel.getVersion(), anyVersion);
+
+    // map value
+    String mapStringValue = "{\"engineType\":\"shell\",\"version\":\"1\"}";
+    engineTypeLabel.setStringValue(mapStringValue);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "shell");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "1");
+
+    // empty value will treat as *
+    String emptyStringValue = "";
+    engineTypeLabel.setStringValue(emptyStringValue);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "*");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "*");
+
+    // null value will treat as *
+    engineTypeLabel.setStringValue(null);
+    Assertions.assertEquals(engineTypeLabel.getEngineType(), "*");
+    Assertions.assertEquals(engineTypeLabel.getVersion(), "*");
+  }
+}

@@ -25,6 +25,7 @@ import org.apache.linkis.manager.am.converter.DefaultMetricsConverter;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
+import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.em.ECMOperateService;
 import org.apache.linkis.manager.am.service.em.EMInfoService;
 import org.apache.linkis.manager.am.utils.AMUtils;
@@ -33,9 +34,9 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeHealthy;
 import org.apache.linkis.manager.common.entity.metrics.NodeHealthyInfo;
 import org.apache.linkis.manager.common.entity.node.EMNode;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
-import org.apache.linkis.manager.common.protocol.OperateRequest$;
+import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
+import org.apache.linkis.manager.common.protocol.OperateRequest;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest;
-import org.apache.linkis.manager.common.protocol.em.ECMOperateRequest$;
 import org.apache.linkis.manager.common.protocol.em.ECMOperateResponse;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -91,12 +92,13 @@ public class EMRestfulApi {
 
   @Autowired private ECMOperateService ecmOperateService;
 
+  @Autowired private ECResourceInfoService ecResourceInfoService;
   private LabelBuilderFactory stdLabelBuilderFactory =
       LabelBuilderFactoryContext.getLabelBuilderFactory();
 
   private Logger logger = LoggerFactory.getLogger(EMRestfulApi.class);
 
-  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS().getValue().split(",");
+  private String[] adminOperations = AMConfiguration.ECM_ADMIN_OPERATIONS.getValue().split(",");
 
   private void checkAdmin(String userName) throws AMErrorException {
     if (Configuration.isNotAdmin(userName)) {
@@ -146,7 +148,7 @@ public class EMRestfulApi {
         stream =
             stream.filter(
                 em -> {
-                  List<Label> labels = em.getLabels();
+                  List<Label<?>> labels = em.getLabels();
                   labels =
                       labels.stream()
                           .filter(
@@ -318,12 +320,15 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-    parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY(), serviceInstance.getInstance());
+    parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, serviceInstance.getInstance());
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error(
           "You have no permission to execute ECM Operation by this EngineConn " + serviceInstance);
     }
-    return executeECMOperation(engineNode.getEMNode(), new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(
+        engineNode.getEMNode(),
+        engineNode.getServiceInstance().getInstance(),
+        new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(
@@ -354,7 +359,7 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-    return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(ecmNode, "", new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(value = "openEngineLog", notes = "open Engine log", response = Message.class)
@@ -377,9 +382,10 @@ public class EMRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "openEngineLog");
     EMNode ecmNode;
     Map<String, Object> parameters;
+    String engineInstance;
     try {
       String emInstance = jsonNode.get("emInstance").asText();
-      String engineInstance = jsonNode.get("instance").asText();
+      engineInstance = jsonNode.get("instance").asText();
       ServiceInstance serviceInstance = EngineRestfulApi.getServiceInstance(jsonNode);
       logger.info("User {} try to open engine: {} log.", userName, serviceInstance);
       ecmNode =
@@ -392,12 +398,15 @@ public class EMRestfulApi {
                   jsonNode.get("parameters").toString(),
                   new TypeReference<Map<String, Object>>() {});
       String logType = (String) parameters.get("logType");
-      if (!logType.equals("stdout") && !logType.equals("stderr")) {
+      if (!logType.equals("stdout")
+          && !logType.equals("stderr")
+          && !logType.equals("gc")
+          && !logType.equals("yarnApp")) {
         throw new AMErrorException(
             AMErrorCode.PARAM_ERROR.getErrorCode(), AMErrorCode.PARAM_ERROR.getErrorDesc());
       }
-      parameters.put(OperateRequest$.MODULE$.OPERATOR_NAME_KEY(), "engineConnLog");
-      parameters.put(ECMOperateRequest$.MODULE$.ENGINE_CONN_INSTANCE_KEY(), engineInstance);
+      parameters.put(OperateRequest.OPERATOR_NAME_KEY, "engineConnLog");
+      parameters.put(ECMOperateRequest.ENGINE_CONN_INSTANCE_KEY, engineInstance);
       if (!parameters.containsKey("enableTail")) {
         parameters.put("enableTail", true);
       }
@@ -413,16 +422,18 @@ public class EMRestfulApi {
       logger.error("Failed to open engine log, error:", e);
       return Message.error(e.getMessage());
     }
-    return executeECMOperation(ecmNode, new ECMOperateRequest(userName, parameters));
+    return executeECMOperation(
+        ecmNode, engineInstance, new ECMOperateRequest(userName, parameters));
   }
 
-  private Message executeECMOperation(EMNode ecmNode, ECMOperateRequest ecmOperateRequest) {
-    String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
+  private Message executeECMOperation(
+      EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
+    String operationName = OperateRequest.getOperationName(ecmOperateRequest.getParameters());
     if (ArrayUtils.contains(adminOperations, operationName)
-        && Configuration.isNotAdmin(ecmOperateRequest.user())) {
+        && Configuration.isNotAdmin(ecmOperateRequest.getUser())) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
-          ecmOperateRequest.user(),
+          ecmOperateRequest.getUser(),
           operationName,
           ecmNode.getServiceInstance());
       return Message.error(
@@ -431,12 +442,24 @@ public class EMRestfulApi {
               + " admin Operation in ECM "
               + ecmNode.getServiceInstance());
     }
+
+    // fill in logDirSuffix
+    if (StringUtils.isNotBlank(engineInstance)
+        && Objects.isNull(ecmOperateRequest.getParameters().get("logDirSuffix"))) {
+      ECResourceInfoRecord ecResourceInfoRecord =
+          ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
+      if (Objects.isNull(ecResourceInfoRecord)) {
+        return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
+      }
+      ecmOperateRequest.getParameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
+    }
+
     ECMOperateResponse engineOperateResponse =
         ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
 
     return Message.ok()
         .data("result", engineOperateResponse.getResult())
-        .data("errorMsg", engineOperateResponse.errorMsg())
+        .data("errorMsg", engineOperateResponse.getErrorMsg())
         .data("isError", engineOperateResponse.isError());
   }
 }

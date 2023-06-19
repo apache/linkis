@@ -118,7 +118,11 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
     // map k:v---> instanceName：PersistencerEcNodeInfo
     Map<String, PersistencerEcNodeInfo> persistencerEcNodeInfoMap =
         ecNodesInfo.stream()
-            .collect(Collectors.toMap(PersistencerEcNodeInfo::getInstance, item -> item));
+            .collect(
+                Collectors.toMap(
+                    PersistencerEcNodeInfo::getInstance,
+                    item -> item,
+                    (existingValue, newValue) -> newValue));
 
     List<String> instanceList =
         ecNodesInfo.stream().map(e -> e.getInstance()).collect(Collectors.toList());
@@ -155,7 +159,7 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
               item.put("useResource", ECResourceInfoUtils.getStringToMap(usedResourceStr));
               item.put("ecmInstance", latestRecord.getEcmInstance());
-              String engineType = latestRecord.getLabelValue().split(",")[1].split("-")[0];
+              String engineType = latestRecord.getEngineType();
               item.put("engineType", engineType);
               resultList.add(item);
             } catch (JsonProcessingException e) {

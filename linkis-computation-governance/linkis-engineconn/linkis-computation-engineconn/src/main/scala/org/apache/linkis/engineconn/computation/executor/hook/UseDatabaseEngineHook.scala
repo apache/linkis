@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils
 
 abstract class UseDatabaseEngineHook extends EngineConnHook with Logging {
 
-  private val USE_DEFAULT_DB_ENABLE = CommonVars("wds.linkis.bdp.use.default.db.enable", true)
+  private val USE_DEFAULT_DB_ENABLE = CommonVars("linkis.bdp.use.default.db.enable", false)
 
   override def beforeCreateEngineConn(engineCreationContext: EngineCreationContext): Unit = {}
 

@@ -190,7 +190,9 @@ public class DefaultNodeLabelScorer implements NodeLabelScorer {
                   labelScoreServiceInstance.setScore(scoreCalculate);
                   return Pair.of(labelScoreServiceInstance, outNodeDegree.get(node));
                 })
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+            .collect(
+                Collectors.toMap(
+                    Pair::getKey, Pair::getValue, (existingValue, newValue) -> newValue));
 
     rawOutput
         .keySet()

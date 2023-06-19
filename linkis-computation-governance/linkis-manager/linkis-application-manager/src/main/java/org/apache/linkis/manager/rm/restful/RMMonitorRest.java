@@ -736,7 +736,11 @@ public class RMMonitorRest {
     List<NodeMetrics> nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(nodes);
     Map<String, NodeMetrics> metrics =
         nodeMetrics.stream()
-            .collect(Collectors.toMap(m -> m.getServiceInstance().toString(), m -> m));
+            .collect(
+                Collectors.toMap(
+                    m -> m.getServiceInstance().toString(),
+                    m -> m,
+                    (existingValue, newValue) -> newValue));
 
     Map<String, Resource> configurationMap = new HashMap<>();
 
@@ -825,7 +829,11 @@ public class RMMonitorRest {
 
     Map<String, NodeMetrics> metrics =
         nodeMetricManagerPersistence.getNodeMetrics(engineNodesList).stream()
-            .collect(Collectors.toMap(m -> m.getServiceInstance().toString(), Function.identity()));
+            .collect(
+                Collectors.toMap(
+                    m -> m.getServiceInstance().toString(),
+                    Function.identity(),
+                    (existingValue, newValue) -> newValue));
 
     Map<String, List<Label<?>>> labelsMap =
         nodeLabelService.getNodeLabelsByInstanceList(

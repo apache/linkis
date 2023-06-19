@@ -208,7 +208,11 @@ public class DefaultNodeLabelService implements NodeLabelService {
     List<PersistenceLabel> labelList = labelManagerPersistence.getLabelByServiceInstance(instance);
     Map<String, PersistenceLabel> dbLabels =
         labelList.stream()
-            .collect(Collectors.toMap(PersistenceLabel::getLabelKey, Function.identity()));
+            .collect(
+                Collectors.toMap(
+                    PersistenceLabel::getLabelKey,
+                    Function.identity(),
+                    (existingValue, newValue) -> newValue));
 
     List<Integer> labelIds =
         labels.stream()

@@ -115,7 +115,15 @@ class JDBCEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     var resultSet: ResultSet = null
     logger.info(s"The data source properties is $properties")
     Utils.tryCatch({
-      val dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
+      /* url + user as the cache key */
+      val jdbcUrl: String = properties.get(JDBCEngineConnConstant.JDBC_URL)
+      val execUser: String = properties.get(JDBCEngineConnConstant.JDBC_SCRIPTS_EXEC_USER)
+      val proxyUser: String = properties.get(JDBCEngineConnConstant.JDBC_PROXY_USER_PROPERTY)
+      var dataSourceIdentifier = s"$jdbcUrl-$execUser-$proxyUser"
+      /* If datasource is used, use datasource name as the cache key */
+      if (StringUtils.isNotBlank(dataSourceName)) {
+        dataSourceIdentifier = s"$dataSourceName-$dataSourceMaxVersionId"
+      }
       connection = connectionManager.getConnection(dataSourceIdentifier, properties)
       logger.info("The jdbc connection has created successfully!")
     }) { e: Throwable =>

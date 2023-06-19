@@ -19,11 +19,11 @@ package org.apache.linkis.engineconnplugin.seatunnel.util
 
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.{Log, LogFactory}
 
 import java.io.{BufferedReader, File, InputStreamReader, PrintWriter}
+import java.lang.ProcessBuilder.Redirect
 
 object SeatunnelUtils {
   val LOGGER: Log = LogFactory.getLog(SeatunnelUtils.getClass)
@@ -48,14 +48,12 @@ object SeatunnelUtils {
     var bufferedReader: BufferedReader = null
     try {
       val processBuilder: ProcessBuilder = new ProcessBuilder(generateRunCode(code): _*)
+      val file = new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/logs/yarnApp.log")
+      processBuilder.redirectErrorStream(true)
+      processBuilder.redirectOutput(Redirect.appendTo(file))
+      LOGGER.info("process ready start.")
       process = processBuilder.start()
-      bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream))
-      var line: String = null
-      while ({
-        line = bufferedReader.readLine(); line != null
-      }) {
-        LOGGER.info(line)
-      }
+      LOGGER.info(s"process start: $code")
       val exitcode = process.waitFor()
       exitcode
     } finally {

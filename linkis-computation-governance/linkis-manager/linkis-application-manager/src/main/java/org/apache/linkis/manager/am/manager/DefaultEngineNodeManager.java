@@ -89,7 +89,11 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     List<NodeMetrics> nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(nodes);
     Map<String, NodeMetrics> metricses =
         nodeMetrics.stream()
-            .collect(Collectors.toMap(m -> m.getServiceInstance().toString(), m -> m));
+            .collect(
+                Collectors.toMap(
+                    m -> m.getServiceInstance().toString(),
+                    m -> m,
+                    (existingValue, newValue) -> newValue));
 
     nodes.forEach(
         node -> {

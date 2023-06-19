@@ -79,7 +79,10 @@ public class DefaultEngineInfoService extends AbstractEngineService implements E
     Map<String, RMNode> resourceInfoMap =
         rmNodes.stream()
             .collect(
-                Collectors.toMap(entry -> entry.getServiceInstance().toString(), entry -> entry));
+                Collectors.toMap(
+                    entry -> entry.getServiceInstance().toString(),
+                    entry -> entry,
+                    (existingValue, newValue) -> newValue));
     nodes.forEach(
         node -> {
           RMNode rmNode = resourceInfoMap.get(node.getServiceInstance().toString());

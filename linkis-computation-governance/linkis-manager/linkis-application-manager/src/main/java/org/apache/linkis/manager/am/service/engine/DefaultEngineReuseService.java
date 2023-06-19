@@ -45,6 +45,8 @@ import org.apache.linkis.manager.label.utils.LabelUtils;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -162,7 +164,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
         instances.keySet().toArray(new ScoreServiceInstance[0]);
     EngineNode[] engineScoreList = getEngineNodeManager().getEngineNodes(scoreServiceInstances);
 
-    EngineNode engine = null;
+    List<EngineNode> engines = Lists.newArrayList();
     int count = 1;
     long timeout =
         engineReuseRequest.getTimeOut() <= 0
@@ -176,7 +178,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
     long startTime = System.currentTimeMillis();
     try {
       LinkisUtils.waitUntil(
-          () -> selectEngineToReuse(MutablePair.of(count, reuseLimit), engine, engineScoreList),
+          () -> selectEngineToReuse(MutablePair.of(count, reuseLimit), engines, engineScoreList),
           Duration.ofMillis(timeout));
     } catch (TimeoutException e) {
       throw new LinkisRetryException(
@@ -189,6 +191,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
           AMConstant.ENGINE_ERROR_CODE,
           "Failed to reuse engineConn time taken " + (System.currentTimeMillis() - startTime));
     }
+    EngineNode engine = engines.get(0);
     logger.info(
         "Finished to reuse Engine for request: "
             + engineReuseRequest
@@ -201,7 +204,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
             .stream()
                 .filter(kv -> kv.getKey().getServiceInstance().equals(engine.getServiceInstance()))
                 .collect(Collectors.toList());
-    if (engineServiceLabelList != null && !engineServiceLabelList.isEmpty()) {
+    if (!engineServiceLabelList.isEmpty()) {
       engine.setLabels(engineServiceLabelList.get(0).getValue());
     } else {
       logger.info(
@@ -216,7 +219,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
 
   public boolean selectEngineToReuse(
       MutablePair<Integer, Integer> count2reuseLimit,
-      EngineNode engine,
+      List<EngineNode> engines,
       EngineNode[] engineScoreList) {
     if (count2reuseLimit.getLeft() > count2reuseLimit.getRight()) {
       throw new LinkisRetryException(
@@ -229,7 +232,8 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
     }
     EngineNode engineNode = (EngineNode) choseNode.get();
     logger.info("prepare to reuse engineNode: " + engineNode.getServiceInstance());
-    engine =
+
+    EngineNode reuseEngine =
         LinkisUtils.tryCatch(
             () -> getEngineNodeManager().reuseEngine(engineNode),
             (Throwable t) -> {
@@ -244,7 +248,11 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
               }
               return null;
             });
-    if (engine == null) {
+    if (Objects.nonNull(reuseEngine)) {
+      engines.add(reuseEngine);
+    }
+
+    if (CollectionUtils.isEmpty(engines)) {
       Integer count = count2reuseLimit.getKey() + 1;
       count2reuseLimit.setLeft(count);
       engineScoreList =
@@ -252,6 +260,6 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
               .filter(node -> !node.equals(choseNode.get()))
               .toArray(EngineNode[]::new);
     }
-    return engine != null;
+    return CollectionUtils.isNotEmpty(engines);
   }
 }

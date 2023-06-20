@@ -90,7 +90,7 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 |Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 3.1.3)|\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
 |Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes |Python EngineConn, supports python code|
 |Shell|Bash >= 2.0|\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No |JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No |JDBC EngineConn, already supports ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL and SQLServer, can be extended quickly Support other DB, such as SQLite|
 |Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.2|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application|
 |Pipeline|-|\>=1.0.2|No|Pipeline EngineConn, supports file import and export|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(default openLookEng 1.5.0)|\>=1.1.1|No|openLooKeng EngineConn, supports querying data virtualization engine with Sql openLooKeng|

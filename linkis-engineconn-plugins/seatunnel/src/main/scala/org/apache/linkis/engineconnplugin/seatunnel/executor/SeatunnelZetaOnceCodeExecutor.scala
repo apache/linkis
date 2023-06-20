@@ -25,31 +25,17 @@ import org.apache.linkis.engineconn.once.executor.{
   OnceExecutorExecutionContext,
   OperableOnceExecutor
 }
-import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelFlinkSQLClient
-import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_FLINKSQL_CODE_ERROR
+import org.apache.linkis.engineconnplugin.seatunnel.client.LinkSeatunnelZetaClient
+import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_SEATUNNEL_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
-import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelFlinkEnvConfiguration.{
-  GET_LINKIS_FLINK_CHECK,
-  GET_LINKIS_FLINK_CONFIG,
-  GET_LINKIS_FLINK_RUNMODE,
-  GET_LINKIS_FLINK_VARIABLE,
-  LINKIS_FLINK_CHECK,
-  LINKIS_FLINK_CONFIG,
-  LINKIS_FLINK_RUNMODE,
-  LINKIS_FLINK_VARIABLE
-}
+import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelZetaEnvConfiguration._
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
 import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils.{
   generateExecFile,
   localArray
 }
-import org.apache.linkis.manager.common.entity.resource.{
-  CommonNodeResource,
-  LoadInstanceResource,
-  NodeResource
-}
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
+import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -62,7 +48,7 @@ import java.util.concurrent.{Future, TimeUnit}
 
 import scala.collection.JavaConverters._
 
-class SeatunnelFlinkSQLOnceCodeExecutor(
+class SeatunnelZetaOnceCodeExecutor(
     override val id: Long,
     override protected val seatunnelEngineConnContext: SeatunnelEngineConnContext
 ) extends SeatunnelOnceExecutor
@@ -87,7 +73,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
           setResponse(
             ErrorExecuteResponse(
               "Run code failed!",
-              new JobExecutionException(EXEC_FLINKSQL_CODE_ERROR.getErrorDesc)
+              new JobExecutionException(EXEC_SEATUNNEL_CODE_ERROR.getErrorDesc)
             )
           )
           tryFailed()
@@ -103,28 +89,27 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
   }
 
   protected def runCode(code: String): Int = {
-    logger.info("Execute SeatunnelFlink Process")
+    logger.info("Execute SeaTunnelZeta Process")
 
     var args: Array[String] = Array.empty
-    val flinkRunMode = LINKIS_FLINK_RUNMODE.getValue
-    if (params != null && params.containsKey(flinkRunMode)) {
-      val config = LINKIS_FLINK_CONFIG.getValue
-      val variable = LINKIS_FLINK_VARIABLE.getValue
-      val check = LINKIS_FLINK_CHECK.getValue
-
+    if (params != null) {
+      val config = LINKIS_SEATUNNEL_CONFIG.getValue
+      val variable = LINKIS_SEATUNNEL_VARIABLE.getValue
+      val masterKey = LINKIS_SEATUNNEL_MASTER.getValue
+      val clusterName = LINKIS_SEATUNNEL_CLUSTER_NAME.getValue
       args = Array(
-        GET_LINKIS_FLINK_RUNMODE,
-        params.getOrDefault(flinkRunMode, "run"),
-        GET_LINKIS_FLINK_CHECK,
-        params.getOrDefault(check, "false"),
-        GET_LINKIS_FLINK_CONFIG,
+        GET_LINKIS_SEATUNNEL_MASTER,
+        params.getOrDefault(masterKey, "cluster"),
+        GET_LINKIS_SEATUNNEL_CLUSTER_NAME,
+        params.getOrDefault(clusterName, "linkis_seatunnel_cluster"),
+        GET_LINKIS_SEATUNNEL_CONFIG,
         generateExecFile(code)
       )
 
       if (params.containsKey(variable)) {
         val variableMap = GSON.fromJson(params.get(variable), classOf[util.HashMap[String, String]])
         variableMap.asScala.foreach(f => {
-          args ++ Array(GET_LINKIS_FLINK_VARIABLE, s"${f._1}=${f._2}")
+          args ++ Array(GET_LINKIS_SEATUNNEL_VARIABLE, s"${f._1}=${f._2}")
         })
       }
 
@@ -136,8 +121,8 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
       new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/seatunnel").toPath,
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
-    logger.info(s"Execute SeatunnelFlinkSQL Process end args:${args.mkString(" ")}")
-    LinkisSeatunnelFlinkSQLClient.main(args)
+    logger.info(s"Execute SeatunnelZeta Process end args:${args.mkString(" ")}")
+    LinkSeatunnelZetaClient.main(args)
   }
 
   override protected def waitToRunning(): Unit = {
@@ -146,7 +131,7 @@ class SeatunnelFlinkSQLOnceCodeExecutor(
         new Runnable {
           override def run(): Unit = {
             if (!(future.isDone || future.isCancelled)) {
-              logger.info("The SeatunnelFlinkSQL Process In Running")
+              logger.info("The Seatunnel Zeta Process In Running")
             }
           }
         },

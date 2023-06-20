@@ -17,64 +17,90 @@
 
 package org.apache.seatunnel.common.config;
 
+import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
 public class Common {
+  public static final Log logger = LogFactory.getLog(Common.class.getName());
 
   private Common() {
     throw new IllegalStateException("Utility class");
   }
 
-  private static final List<String> ALLOWED_MODES =
-      Arrays.stream(DeployMode.values()).map(DeployMode::getName).collect(Collectors.toList());
+  public static final int COLLECTION_SIZE = 16;
 
-  private static Optional<String> MODE = Optional.empty();
+  private static final int APP_LIB_DIR_DEPTH = 2;
 
-  public static boolean isModeAllowed(String mode) {
-    return ALLOWED_MODES.contains(mode.toLowerCase());
+  private static final int PLUGIN_LIB_DIR_DEPTH = 3;
+
+  private static DeployMode MODE;
+
+  private static String SEATUNNEL_HOME;
+
+  private static boolean STARTER = false;
+
+  public static void setDeployMode(DeployMode mode) {
+    MODE = mode;
   }
 
-  /** Set mode. return false in case of failure */
-  public static Boolean setDeployMode(String m) {
-    if (isModeAllowed(m)) {
-      MODE = Optional.of(m);
-      return true;
-    } else {
-      return false;
-    }
+  public static void setStarter(boolean inStarter) {
+    STARTER = inStarter;
   }
 
-  public static Optional<String> getDeployMode() {
+  public static DeployMode getDeployMode() {
     return MODE;
   }
 
-  /**
-   * Root dir varies between different spark master and deploy mode, it also varies between relative
-   * and absolute path. When running seatunnel in --master local, you can put plugins related files
-   * in $project_dir/plugins, then these files will be automatically copied to
-   * $project_dir/seatunnel-core/target and token in effect if you start seatunnel in IDE tools such
-   * as IDEA. When running seatunnel in --master yarn or --master mesos, you can put plugins related
-   * files in plugins dir.
-   */
+  public static Path appStarterDir() {
+    return appRootDir().resolve("starter");
+  }
+
+  private static String getSeaTunnelHome() {
+
+    if (StringUtils.isNotEmpty(SEATUNNEL_HOME)) {
+      return SEATUNNEL_HOME;
+    }
+    String seatunnelHome = System.getProperty("SEATUNNEL_HOME");
+    if (StringUtils.isBlank(seatunnelHome)) {
+      seatunnelHome = System.getenv("SEATUNNEL_HOME");
+    }
+    if (StringUtils.isBlank(seatunnelHome)) {
+      seatunnelHome = appRootDir().toString();
+    }
+    SEATUNNEL_HOME = seatunnelHome;
+    return SEATUNNEL_HOME;
+  }
+
   public static Path appRootDir() {
-    if (MODE.equals(Optional.of(DeployMode.CLIENT.getName()))) {
+    logger.info("Mode:" + MODE + ",Starter:" + STARTER);
+    if (DeployMode.CLIENT == MODE || DeployMode.RUN == MODE || STARTER) {
       try {
         String path = System.getProperty("SEATUNNEL_HOME") + "/seatunnel";
         path = new File(path).getPath();
+        logger.info("appRootDir:" + path);
         return Paths.get(path);
       } catch (Exception e) {
         throw new RuntimeException(e);
       }
-    } else if (MODE.equals(Optional.of(DeployMode.CLUSTER.getName()))) {
+    } else if (DeployMode.CLUSTER == MODE || DeployMode.RUN_APPLICATION == MODE) {
       return Paths.get("");
     } else {
-      throw new IllegalStateException("MODE not support : " + MODE.orElse("null"));
+      throw new IllegalStateException("deploy mode not support : " + MODE);
     }
   }
 
@@ -97,7 +123,6 @@ public class Common {
     return Paths.get(appRootDir().toString(), "connectors", engine.toLowerCase());
   }
 
-  /** Plugin Connector Dir */
   public static Path connectorDir() {
     return Paths.get(appRootDir().toString(), "connectors");
   }
@@ -106,18 +131,47 @@ public class Common {
     return appRootDir().resolve("plugins.tar.gz");
   }
 
-  /** Get specific plugin dir */
-  public static Path pluginDir(String pluginName) {
-    return Paths.get(pluginRootDir().toString(), pluginName);
+  public static List<Path> getPluginsJarDependencies() {
+    Path pluginRootDir = Common.pluginRootDir();
+    if (!Files.exists(pluginRootDir) || !Files.isDirectory(pluginRootDir)) {
+      return Collections.emptyList();
+    }
+    try (Stream<Path> stream = Files.walk(pluginRootDir, PLUGIN_LIB_DIR_DEPTH, FOLLOW_LINKS)) {
+      return stream
+          .filter(it -> pluginRootDir.relativize(it).getNameCount() == PLUGIN_LIB_DIR_DEPTH)
+          .filter(it -> it.getParent().endsWith("lib"))
+          .filter(it -> it.getFileName().toString().endsWith(".jar"))
+          .collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new JobExecutionException(e.getMessage(), e);
+    }
   }
 
-  /** Get files dir of specific plugin */
-  public static Path pluginFilesDir(String pluginName) {
-    return Paths.get(pluginDir(pluginName).toString(), "files");
+  public static Path libDir() {
+    return appRootDir().resolve("lib");
   }
 
-  /** Get lib dir of specific plugin */
-  public static Path pluginLibDir(String pluginName) {
-    return Paths.get(pluginDir(pluginName).toString(), "lib");
+  public static List<Path> getLibJars() {
+    Path libRootDir = Common.libDir();
+    if (!Files.exists(libRootDir) || !Files.isDirectory(libRootDir)) {
+      return Collections.emptyList();
+    }
+    try (Stream<Path> stream = Files.walk(libRootDir, APP_LIB_DIR_DEPTH, FOLLOW_LINKS)) {
+      return stream
+          .filter(it -> !it.toFile().isDirectory())
+          .filter(it -> it.getFileName().toString().endsWith(".jar"))
+          .collect(Collectors.toList());
+    } catch (IOException e) {
+      throw new JobExecutionException(e.getMessage(), e);
+    }
+  }
+
+  public static Set<Path> getThirdPartyJars(String paths) {
+    logger.info("getThirdPartyJars path:" + paths);
+    return Arrays.stream(paths.split(";"))
+        .filter(s -> !"".equals(s))
+        .filter(it -> it.endsWith(".jar"))
+        .map(path -> Paths.get(URI.create(path)))
+        .collect(Collectors.toSet());
   }
 }

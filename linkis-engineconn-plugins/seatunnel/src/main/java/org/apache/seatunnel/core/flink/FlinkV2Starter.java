@@ -24,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.seatunnel.common.config.Common;
 import org.apache.seatunnel.core.starter.Starter;
 import org.apache.seatunnel.core.starter.enums.EngineType;
-import org.apache.seatunnel.core.starter.enums.MasterType;
 import org.apache.seatunnel.core.starter.flink.SeaTunnelFlink;
 import org.apache.seatunnel.core.starter.flink.args.FlinkCommandArgs;
 import org.apache.seatunnel.core.starter.utils.CommandLineUtils;
@@ -88,22 +87,12 @@ public class FlinkV2Starter implements Starter {
       command.add("--target");
       command.add(flinkCommandArgs.getMasterType().getMaster());
     }
-
-//    if(flinkCommandArgs.getMasterType().equals(MasterType.YARN_PER_JOB)) {
-//      //提交完成关闭本地连接
-//      command.add("--detached");
-//    }
-//    command.addAll(flinkCommandArgs.getOriginalParameters());
     logger.info("FlinkV2Starter OriginalParameters:" + flinkCommandArgs.getOriginalParameters());
     command.add("-c");
     command.add(APP_NAME);
     command.add(appJar);
     command.add("--config");
     command.add(flinkCommandArgs.getConfigFile());
-//    if (flinkCommandArgs.isCheckConfig()) {
-//      command.add("--check");
-//    }
-    // set job name
     command.add("--name");
     command.add(flinkCommandArgs.getJobName());
     // set System properties

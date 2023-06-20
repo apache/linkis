@@ -19,7 +19,6 @@ package org.apache.seatunnel.core.base.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.seatunnel.apis.base.env.RuntimeEnv;
 import org.apache.seatunnel.common.config.ConfigRuntimeException;
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
 import org.apache.seatunnel.shade.com.typesafe.config.ConfigFactory;
@@ -28,22 +27,19 @@ import org.apache.seatunnel.shade.com.typesafe.config.ConfigResolveOptions;
 
 import java.nio.file.Path;
 
-/**
- * Used to build the {@link Config} from file.
- *
- * @param <ENVIRONMENT> environment type.
- */
-public class ConfigBuilder<ENVIRONMENT extends RuntimeEnv> {
+public class ConfigBuilder {
 
   public static final Log LOGGER = LogFactory.getLog(ConfigBuilder.class.getName());
+
   private static final String PLUGIN_NAME_KEY = "plugin_name";
+
   private final Path configFile;
-  private final EngineType engine;
+
   private final Config config;
 
-  public ConfigBuilder(Path configFile, EngineType engine) {
+
+  public ConfigBuilder(Path configFile) {
     this.configFile = configFile;
-    this.engine = engine;
     this.config = load();
   }
 
@@ -58,11 +54,11 @@ public class ConfigBuilder<ENVIRONMENT extends RuntimeEnv> {
     // variables substitution / variables resolution order:
     // config file --> system environment --> java properties
     Config config =
-        ConfigFactory.parseFile(configFile.toFile())
-            .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
-            .resolveWith(
-                ConfigFactory.systemProperties(),
-                ConfigResolveOptions.defaults().setAllowUnresolved(true));
+            ConfigFactory.parseFile(configFile.toFile())
+                    .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+                    .resolveWith(
+                            ConfigFactory.systemProperties(),
+                            ConfigResolveOptions.defaults().setAllowUnresolved(true));
 
     ConfigRenderOptions options = ConfigRenderOptions.concise().setFormatted(true);
     LOGGER.info("parsed config file:" + config.root().render(options));
@@ -73,14 +69,4 @@ public class ConfigBuilder<ENVIRONMENT extends RuntimeEnv> {
     return config;
   }
 
-  /** check if config is valid. */
-  public void checkConfig() {
-    // check environment
-    ENVIRONMENT environment = new EnvironmentFactory<ENVIRONMENT>(config, engine).getEnvironment();
-    // check plugins
-    PluginFactory<ENVIRONMENT> pluginFactory = new PluginFactory<>(config, engine);
-    pluginFactory.createPlugins(PluginType.SOURCE);
-    pluginFactory.createPlugins(PluginType.TRANSFORM);
-    pluginFactory.createPlugins(PluginType.SINK);
-  }
 }

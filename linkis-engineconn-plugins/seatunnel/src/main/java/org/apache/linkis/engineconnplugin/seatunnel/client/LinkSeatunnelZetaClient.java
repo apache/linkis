@@ -10,10 +10,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 
-/**
- * @Author shixiutao
- * @create 2023/5/31 17:25
- */
 public class LinkSeatunnelZetaClient {
     private static Logger logger = LoggerFactory.getLogger(LinkSeatunnelZetaClient.class);
     private static Class<?> seatunnelEngineClass;

@@ -22,26 +22,34 @@ import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.seatunnel.apis.base.env.RuntimeEnv;
+import org.apache.seatunnel.api.env.EnvCommonOptions;
 import org.apache.seatunnel.common.Constants;
 import org.apache.seatunnel.common.config.Common;
 import org.apache.seatunnel.common.config.DeployMode;
-import org.apache.seatunnel.core.base.Starter;
-import org.apache.seatunnel.core.base.config.ConfigBuilder;
-import org.apache.seatunnel.core.base.config.ConfigParser;
-import org.apache.seatunnel.core.base.config.EngineType;
-import org.apache.seatunnel.core.base.config.PluginFactory;
-import org.apache.seatunnel.core.base.utils.CompressionUtils;
-import org.apache.seatunnel.core.spark.args.SparkCommandArgs;
+import org.apache.seatunnel.core.starter.Starter;
+import org.apache.seatunnel.core.starter.enums.EngineType;
+import org.apache.seatunnel.core.starter.enums.PluginType;
+import org.apache.seatunnel.core.starter.spark.SeaTunnelSpark;
+import org.apache.seatunnel.core.starter.spark.args.SparkCommandArgs;
+import org.apache.seatunnel.core.starter.utils.CommandLineUtils;
+import org.apache.seatunnel.core.starter.utils.CompressionUtils;
+import org.apache.seatunnel.core.starter.utils.ConfigBuilder;
+import org.apache.seatunnel.plugin.discovery.PluginIdentifier;
+import org.apache.seatunnel.plugin.discovery.seatunnel.SeaTunnelSinkPluginDiscovery;
+import org.apache.seatunnel.plugin.discovery.seatunnel.SeaTunnelSourcePluginDiscovery;
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
+import org.apache.seatunnel.shade.com.typesafe.config.ConfigFactory;
+import org.apache.seatunnel.shade.com.typesafe.config.ConfigResolveOptions;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,8 +58,8 @@ import com.beust.jcommander.UnixStyleUsageFormatter;
 
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
-public class SparkStarter implements Starter {
-  public static final Log logger = LogFactory.getLog(SparkStarter.class.getName());
+public class SparkV2Starter implements Starter {
+  public static final Log logger = LogFactory.getLog(SparkV2Starter.class.getName());
 
   private static final int USAGE_EXIT_CODE = 234;
 
@@ -75,7 +83,7 @@ public class SparkStarter implements Starter {
   /** spark configuration properties */
   protected Map<String, String> sparkConf;
 
-  private SparkStarter(String[] args, SparkCommandArgs commandArgs) {
+  private SparkV2Starter(String[] args, SparkCommandArgs commandArgs) {
     this.args = args;
     this.commandArgs = commandArgs;
   }
@@ -85,14 +93,14 @@ public class SparkStarter implements Starter {
     int exitCode = 0;
     logger.info("starter start");
     try {
-      SparkStarter starter = getInstance(args);
+      SparkV2Starter starter = getInstance(args);
       List<String> command = starter.buildCommands();
       String commandVal = String.join(" ", command);
-      logger.info("commandVal:" + commandVal);
+      logger.info("sparkV2starter commandVal:" + commandVal);
       exitCode = SeatunnelUtils.executeLine(commandVal);
     } catch (Exception e) {
       exitCode = 1;
-      logger.error("\n\n该任务最可能的错误原因是:\n" + e);
+      logger.error("\n\nsparkV2Starter error:\n" + e);
     }
     return exitCode;
   }
@@ -101,8 +109,10 @@ public class SparkStarter implements Starter {
    * method to get SparkStarter instance, will return {@link ClusterModeSparkStarter} or {@link
    * ClientModeSparkStarter} depending on deploy mode.
    */
-  static SparkStarter getInstance(String[] args) {
-    SparkCommandArgs commandArgs = parseCommandArgs(args);
+  static SparkV2Starter getInstance(String[] args) {
+    SparkCommandArgs commandArgs =
+        CommandLineUtils.parse(
+            args, new SparkCommandArgs(), EngineType.SPARK2.getStarterShellName(), true);
     DeployMode deployMode = commandArgs.getDeployMode();
     switch (deployMode) {
       case CLUSTER:
@@ -135,11 +145,15 @@ public class SparkStarter implements Starter {
   public List<String> buildCommands() throws IOException {
     setSparkConf();
     logger.info("setSparkConf start");
-    logger.info(commandArgs.getDeployMode().getName());
-    Common.setDeployMode(commandArgs.getDeployMode().getName());
-    this.jars.addAll(getPluginsJarDependencies());
-    this.jars.addAll(listJars(Common.appLibDir()));
+    logger.info(commandArgs.getDeployMode().toString());
+    Common.setDeployMode(commandArgs.getDeployMode());
+    Common.setStarter(true);
+    this.jars.addAll(Common.getPluginsJarDependencies());
+    this.jars.addAll(Common.getLibJars());
     this.jars.addAll(getConnectorJarDependencies());
+    this.jars.addAll(
+        new ArrayList<>(
+            Common.getThirdPartyJars(sparkConf.getOrDefault(EnvCommonOptions.JARS.key(), ""))));
     this.appName = this.sparkConf.getOrDefault("spark.app.name", Constants.LOGO);
     logger.info("buildFinal end");
     return buildFinal();
@@ -167,7 +181,19 @@ public class SparkStarter implements Starter {
 
   /** Get spark configurations from SeaTunnel job config file. */
   static Map<String, String> getSparkConf(String configFile) throws FileNotFoundException {
-    return ConfigParser.getConfigEnvValues(configFile);
+    File file = new File(configFile);
+    if (!file.exists()) {
+      throw new FileNotFoundException("config file '" + file + "' does not exists!");
+    }
+    Config appConfig =
+        ConfigFactory.parseFile(file)
+            .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+            .resolveWith(
+                ConfigFactory.systemProperties(),
+                ConfigResolveOptions.defaults().setAllowUnresolved(true));
+
+    return appConfig.getConfig("env").entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().unwrapped().toString()));
   }
 
   /** return plugin's dependent jars, which located in 'plugins/${pluginName}/lib/*'. */
@@ -185,18 +211,45 @@ public class SparkStarter implements Starter {
     }
   }
 
-  /** return connector's jars, which located in 'connectors/spark/*'. */
+  /** return connector's jars, which located in 'connectors/spark/*'. 2.3.0改为链接seatunnel中 */
   private List<Path> getConnectorJarDependencies() {
-    Path pluginRootDir = Common.connectorJarDir("SPARK");
+    Path pluginRootDir = Common.connectorJarDir("seatunnel");
     if (!Files.exists(pluginRootDir) || !Files.isDirectory(pluginRootDir)) {
       return Collections.emptyList();
     }
-    // Config config = ConfigFactory.parseFile(Paths.get(commandArgs.getConfigFile()).toFile());
-    Config config =
-        new ConfigBuilder<>(Paths.get(commandArgs.getConfigFile()), EngineType.SPARK).getConfig();
-    PluginFactory<RuntimeEnv> pluginFactory = new PluginFactory<>(config, EngineType.SPARK);
-    return pluginFactory.getPluginJarPaths().stream()
-        .map(url -> new File(url.getPath()).toPath())
+    Config config = ConfigBuilder.of(commandArgs.getConfigFile());
+    Set<URL> pluginJars = new HashSet<>();
+    SeaTunnelSourcePluginDiscovery seaTunnelSourcePluginDiscovery =
+        new SeaTunnelSourcePluginDiscovery();
+    SeaTunnelSinkPluginDiscovery seaTunnelSinkPluginDiscovery = new SeaTunnelSinkPluginDiscovery();
+    pluginJars.addAll(
+        seaTunnelSourcePluginDiscovery.getPluginJarPaths(
+            getPluginIdentifiers(config, PluginType.SOURCE)));
+    pluginJars.addAll(
+        seaTunnelSinkPluginDiscovery.getPluginJarPaths(
+            getPluginIdentifiers(config, PluginType.SINK)));
+    List<Path> connectPaths =
+        pluginJars.stream()
+            .map(url -> new File(url.getPath()).toPath())
+            .collect(Collectors.toList());
+    logger.info("getConnector jar paths:" + connectPaths.toString());
+    return connectPaths;
+  }
+
+  private List<PluginIdentifier> getPluginIdentifiers(Config config, PluginType... pluginTypes) {
+    return Arrays.stream(pluginTypes)
+        .flatMap(
+            (Function<PluginType, Stream<PluginIdentifier>>)
+                pluginType -> {
+                  List<? extends Config> configList = config.getConfigList(pluginType.getType());
+                  return configList.stream()
+                      .map(
+                          pluginConfig ->
+                              PluginIdentifier.of(
+                                  "seatunnel",
+                                  pluginType.getType(),
+                                  pluginConfig.getString("plugin_name")));
+                })
         .collect(Collectors.toList());
   }
 
@@ -213,16 +266,20 @@ public class SparkStarter implements Starter {
   /** build final spark-submit commands */
   protected List<String> buildFinal() {
     List<String> commands = new ArrayList<>();
-    commands.add("${SPARK_HOME}/bin/spark-submit");
-    appendOption(commands, "--class", SeatunnelSpark.class.getName());
+    commands.add(System.getenv("SPARK_HOME") + "/bin/spark-submit");
+    appendOption(commands, "--class", SeaTunnelSpark.class.getName());
     appendOption(commands, "--name", this.appName);
     appendOption(commands, "--master", this.commandArgs.getMaster());
-    appendOption(commands, "--deploy-mode", this.commandArgs.getDeployMode().getName());
+    appendOption(commands, "--deploy-mode", this.commandArgs.getDeployMode().getDeployMode());
     appendJars(commands, this.jars);
     appendFiles(commands, this.files);
     appendSparkConf(commands, this.sparkConf);
     appendAppJar(commands);
     appendArgs(commands, args);
+    if (this.commandArgs.isCheckConfig()) {
+      commands.add("--check");
+    }
+    logger.info("build command:" + commands);
     return commands;
   }
 
@@ -266,11 +323,15 @@ public class SparkStarter implements Starter {
 
   /** append appJar to StringBuilder */
   protected void appendAppJar(List<String> commands) {
-    commands.add(Common.appLibDir().resolve("seatunnel-core-spark.jar").toString());
+    //    commands.add(Common.appLibDir().resolve("seatunnel-spark-starter.jar").toString());
+    String appJarPath =
+        Common.appStarterDir().resolve(EngineType.SPARK2.getStarterJarName()).toString();
+    logger.info("spark appJarPath:" + appJarPath);
+    commands.add(appJarPath);
   }
 
   /** a Starter for building spark-submit commands with client mode options */
-  private static class ClientModeSparkStarter extends SparkStarter {
+  private static class ClientModeSparkStarter extends SparkV2Starter {
 
     /** client mode specified spark options */
     private enum ClientModeSparkConfigs {
@@ -329,7 +390,7 @@ public class SparkStarter implements Starter {
   }
 
   /** a Starter for building spark-submit commands with cluster mode options */
-  private static class ClusterModeSparkStarter extends SparkStarter {
+  private static class ClusterModeSparkStarter extends SparkV2Starter {
 
     private ClusterModeSparkStarter(String[] args, SparkCommandArgs commandArgs) {
       super(args, commandArgs);
@@ -337,11 +398,10 @@ public class SparkStarter implements Starter {
 
     @Override
     public List<String> buildCommands() throws IOException {
-      Common.setDeployMode(commandArgs.getDeployMode().getName());
+      Common.setDeployMode(commandArgs.getDeployMode());
+      Common.setStarter(true);
       Path pluginTarball = Common.pluginTarball();
-      if (Files.notExists(pluginTarball)) {
-        CompressionUtils.tarGzip(Common.pluginRootDir(), pluginTarball);
-      }
+      CompressionUtils.tarGzip(Common.pluginRootDir(), pluginTarball);
       this.files.add(pluginTarball);
       this.files.add(Paths.get(commandArgs.getConfigFile()));
       return super.buildCommands();

@@ -24,16 +24,23 @@ object SeatunnelFlinkEnvConfiguration {
   val LINKIS_FLINK_RUNMODE: CommonVars[String] =
     CommonVars[String]("linkis.flink.run.mode", "run-mode")
 
+  val LINKIS_FLINK_DEPLOY_MODE: CommonVars[String] =
+    CommonVars[String]("linkis.flink.delpoy.mode", "deploy-mode")
+
   val LINKIS_FLINK_CONFIG: CommonVars[String] =
     CommonVars[String]("linkis.flink.config", "config")
 
   val LINKIS_FLINK_VARIABLE: CommonVars[String] =
     CommonVars[String]("linkis.flink.variable", "variable")
 
+  val LINKIS_FLINK_MASTER: CommonVars[String] =
+    CommonVars[String]("linkis.flink.master", "master")
+
   val LINKIS_FLINK_CHECK: CommonVars[String] = CommonVars[String]("linkis.flink.check", "check")
 
-  val GET_LINKIS_FLINK_RUNMODE = "--" + LINKIS_FLINK_RUNMODE.getValue
+  val GET_LINKIS_FLINK_DEPLOY_MODE = "--" + LINKIS_FLINK_DEPLOY_MODE.getValue
   val GET_LINKIS_FLINK_CONFIG = "--" + LINKIS_FLINK_CONFIG.getValue
   val GET_LINKIS_FLINK_VARIABLE = "--" + LINKIS_FLINK_VARIABLE.getValue
   val GET_LINKIS_FLINK_CHECK = "--" + LINKIS_FLINK_CHECK.getValue
+  val GET_LINKIS_FLINK_MASTER = "--" + LINKIS_FLINK_MASTER.getValue
 }

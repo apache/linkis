@@ -39,8 +39,12 @@ public class LinkisDataSourceContext {
     // https://docs.pingcap.com/tidb/dev/dev-guide-connect-to-tidb
     dsStrategyMap.put("tidb", new TiDBStrategy());
     dsStrategyMap.put("doris", new DorisStrategy());
+    dsStrategyMap.put("starrocks", new DorisStrategy());
+    dsStrategyMap.put("dm", new DmStrategy());
+    dsStrategyMap.put("kingbase", new KingbaseStrategy());
     // https://jdbc.postgresql.org/documentation/use/
     dsStrategyMap.put("postgresql", new PostgreSqlStrategy());
+    dsStrategyMap.put("gaussdb", new PostgreSqlStrategy());
     // https://github.com/ClickHouse/clickhouse-jdbc/tree/master/clickhouse-jdbc
     dsStrategyMap.put("clickhouse", new ClickHouseStrategy());
     // https://docs.oracle.com/en/database/oracle/oracle-database/21/jajdb/oracle/jdbc/OracleDriver.html

@@ -18,7 +18,7 @@
 package org.apache.linkis.storage.io.iteraceptor
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.storage.io.IOMethodInterceptorCreator
+import org.apache.linkis.storage.io.{IOMethodInterceptorCreator, IOMethodInterceptorFactory}
 import org.apache.linkis.storage.io.client.IOClient
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,7 +36,7 @@ class IOMethodInterceptorCreatorImpl extends IOMethodInterceptorCreator with Log
   @PostConstruct
   def init(): Unit = {
     logger.info("IOMethodInterceptorCreatorImpl finished init")
-    IOMethodInterceptorCreator.register(this)
+    IOMethodInterceptorFactory.register(this)
   }
 
   override def createIOMethodInterceptor(fsName: String): MethodInterceptor = {

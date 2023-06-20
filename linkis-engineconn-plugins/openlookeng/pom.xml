@@ -27,10 +27,6 @@
 
   <artifactId>linkis-engineplugin-openlookeng</artifactId>
 
-  <properties>
-    <openlookeng.version>1.5.0</openlookeng.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>

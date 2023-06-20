@@ -61,7 +61,7 @@ object LinkisMainHelper {
       }
       resArr = resArr :+ s"--prometheus.endpoint=$prometheusEndpoint"
     }
-    return resArr
+    resArr
   }
 
 }

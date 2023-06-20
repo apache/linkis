@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.instance.label.dao.InsLabelRelationDao">
+    <resultMap id="instanceInfoMap" type="InstanceInfo">
+        <result property="id" column="id"/>
+        <result property="instance" column="instance"/>
+        <result property="applicationName" column="name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+    <resultMap id="instanceInfoCascadeMap" type="InstanceInfo">
+        <result property="id" column="id"/>
+        <result property="instance" column="instance"/>
+        <result property="applicationName" column="name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+        <collection property="labels" column="instance" select="selectLabelsByIns" ofType="InsPersistenceLabel"/>
+    </resultMap>
+
+    <resultMap id="insPersistenceLabelMap" type="InsPersistenceLabel">
+        <result property="id" column="id"/>
+        <result property="labelKey" column="label_key"/>
+        <result property="stringValue" column="label_value"/>
+        <result property="feature" column="label_feature"/>
+        <result property="labelValueSize" column="label_value_size"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="label_search_columns">
+        l.`id`, l.`label_key`, l.`label_value`, l.`label_feature`,
+        l.`label_value_size`, l.`update_time`, l.`create_time`
+    </sql>
+
+    <sql id="search_ins_columns">
+        s.`id`, s.`instance`, s.`name`, s.`update_time`, s.`create_time`
+    </sql>
+    <select id="selectLabelsByIns" resultType="InsPersistenceLabel">
+
+            SELECT l.`id`, l.`label_key` AS `labelKey`, l.`label_value` AS `stringValue`,
+            l.`label_feature` AS `feature`, l.`label_value_size` AS `labelValueSize`,
+            l.`update_time` AS `updateTime`, l.`create_time` AS `createTime`
+            FROM `linkis_ps_instance_label` l INNER JOIN `linkis_ps_instance_label_relation` r
+            ON l.`id` = r.`label_id` AND r.`service_instance` = #{instance}
+
+    </select>
+
+    <select id="searchInsDirectByValues" resultMap="instanceInfoMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
+        <foreach collection="valueMapList" item="mapValue" open="(" close=")" separator=" UNION ">
+            SELECT v.`label_id` FROM `linkis_ps_instance_label_value_relation` v WHERE (v.`label_value_key`, v.`label_value_content`) IN
+            <foreach collection="mapValue" index="key" item="value" open="(" close=")" separator=",">
+                (#{key}, #{value})
+            </foreach>
+            GROUP BY v.`label_id`
+            <if test="relation == 'ALL'">
+                <!-- cost time -->
+                HAVING COUNT(1) = (SELECT `label_value_size` FROM `linkis_ps_instance_label` WHERE `id` = v.`label_id`) AND COUNT(1) = ${mapValue.size}
+            </if>
+            <if test="relation == 'AND'">
+                HAVING COUNT(1) = ${mapValue.size}
+            </if>
+            <if test="relation == 'OR'">
+                HAVING COUNT(1) > 0
+            </if>
+        </foreach>
+    </select>
+
+    <select id="searchInsDirectByLabels" resultMap="instanceInfoMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
+            (SELECT `id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
+
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            (#{item.labelKey}, #{item.stringValue})
+        </foreach>
+        );
+    </select>
+
+    <select id="searchUnRelateInstances" resultMap="instanceInfoMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s
+        <where>
+            <if test="applicationName != null and applicationName != ''">
+                AND s.`name` = #{applicationName}
+            </if>
+            AND NOT EXISTS(SELECT 1 FROM `linkis_ps_instance_label_relation`
+             WHERE `service_instance` =  s.`instance` LIMIT 1);
+        </where>
+    </select>
+
+    <select id="searchLabelRelatedInstances" resultMap="instanceInfoMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s
+        <where>
+            <if test="applicationName != null and applicationName != ''">
+                AND s.`name` = #{applicationName}
+            </if>
+            AND EXISTS(SELECT 1 FROM `linkis_ps_instance_label_relation`
+               WHERE `service_instance` =  s.`instance` LIMIT 1);
+        </where>
+    </select>
+
+    <select id="searchLabelsByInstance" resultMap="insPersistenceLabelMap">
+        SELECT
+        <include refid="label_search_columns"/>
+         FROM `linkis_ps_instance_label` l
+        INNER JOIN `linkis_ps_instance_label_relation` r
+        ON l.`id` = r.`label_id` AND r.`service_instance` = #{instance};
+    </select>
+
+    <delete id="dropRelationsByInstanceAndLabelIds">
+        DELETE FROM `linkis_ps_instance_label_relation`
+        WHERE `service_instance` = #{instance} AND `label_id` IN
+        <foreach collection="labelIds" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="dropRelationsByInstance">
+        DELETE FROM `linkis_ps_instance_label_relation` WHERE `service_instance` = #{instance};
+    </delete>
+
+    <insert id="insertRelations">
+        REPLACE INTO `linkis_ps_instance_label_relation`
+        (`service_instance`, `label_id`)
+        VALUES
+        <foreach collection="labelIds" item="item" open="" close="" separator=",">
+            (#{instance}, #{item})
+        </foreach>
+    </insert>
+
+    <select id="existRelations" resultType="java.lang.Integer">
+        SELECT 1 FROM `linkis_ps_instance_label_relation` WHERE `label_id` =  #{labelId} LIMIT 1;
+    </select>
+
+    <select id="searchInsCascadeByValues" resultMap="instanceInfoCascadeMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
+        <foreach collection="valueMapList" item="mapValue" open="(" close=")" separator=" UNION ">
+            SELECT v.`label_id` FROM `linkis_ps_instance_label_value_relation` v WHERE (v.`label_value_key`, v.`label_value_content`) IN
+            <foreach collection="mapValue" index="key" item="value" open="(" close=")" separator=",">
+                (#{key}, #{value})
+            </foreach>
+            GROUP BY v.`label_id`
+            <if test="relation == 'ALL'">
+                <!-- cost time -->
+                HAVING COUNT(1) = (SELECT `label_value_size` FROM `linkis_ps_instance_label` WHERE `id` = v.`label_id`) AND COUNT(1) = ${mapValue.size}
+            </if>
+            <if test="relation == 'AND'">
+                HAVING COUNT(1) = ${mapValue.size}
+            </if>
+            <if test="relation == 'OR'">
+                HAVING COUNT(1) > 0
+            </if>
+        </foreach>
+    </select>
+
+    <select id="searchInsCascadeByLabels" resultMap="instanceInfoCascadeMap">
+        SELECT
+        <include refid="search_ins_columns"/>
+         FROM `linkis_ps_instance_info` s INNER JOIN `linkis_ps_instance_label_relation` l ON s.`instance` = l.`service_instance` AND l.`label_id` IN
+            (SELECT `id` FROM `linkis_ps_instance_label` WHERE (`label_key`, `label_value`) IN
+
+        <foreach collection="list" item="item" open="(" close=")" separator=",">
+            (#{item.labelKey}, #{item.stringValue})
+        </foreach>
+        );
+    </select>
+
+    <select id="listAllInstanceWithLabel" resultMap="instanceInfoCascadeMap">
+       SELECT * FROM `linkis_ps_instance_info`
+    </select>
+
+    <select id="getInstancesByNames" resultMap="instanceInfoCascadeMap">
+        SELECT * FROM `linkis_ps_instance_info` WHERE `name`= #{appName}
+    </select>
+
+</mapper>

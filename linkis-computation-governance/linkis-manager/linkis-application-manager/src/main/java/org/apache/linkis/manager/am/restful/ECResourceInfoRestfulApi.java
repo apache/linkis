@@ -166,7 +166,7 @@ public class ECResourceInfoRestfulApi {
           info -> {
             ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();
             BeanUtils.copyProperties(info, ecrHistroryListVo);
-            ecrHistroryListVo.setEngineType(info.getLabelValue().split(",")[1].split("-")[0]);
+            ecrHistroryListVo.setEngineType(info.getEngineType());
             ecrHistroryListVo.setUsedResource(
                 ECResourceInfoUtils.getStringToMap(info.getUsedResource(), info));
             ecrHistroryListVo.setReleasedResource(

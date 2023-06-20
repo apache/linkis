@@ -17,8 +17,7 @@
 
 package org.apache.linkis.orchestrator.computation.service
 
-import org.apache.linkis.common.log.LogUtils
-import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.protocol.task._
 import org.apache.linkis.manager.common.protocol.resource.ResponseTaskRunningInfo
@@ -28,6 +27,7 @@ import org.apache.linkis.orchestrator.computation.monitor.EngineConnMonitor
 import org.apache.linkis.orchestrator.core.ResultSet
 import org.apache.linkis.orchestrator.ecm.service.TaskExecutionReceiver
 import org.apache.linkis.orchestrator.listener.task._
+import org.apache.linkis.orchestrator.utils.OrchestratorLoggerUtils
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 import org.apache.linkis.rpc.utils.RPCUtils
@@ -69,14 +69,14 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
   ): Unit = {
     val serviceInstance = RPCUtils.getServiceInstanceFromSender(sender)
     codeExecTaskExecutorManager
-      .getByEngineConnAndTaskId(serviceInstance, taskProgressWithResource.execId)
+      .getByEngineConnAndTaskId(serviceInstance, taskProgressWithResource.getExecId)
       .foreach { codeExecutor =>
         val event = TaskRunningInfoEvent(
           codeExecutor.getExecTask,
-          taskProgressWithResource.progress,
-          taskProgressWithResource.progressInfo,
-          taskProgressWithResource.resourceMap,
-          taskProgressWithResource.extraInfoMap
+          taskProgressWithResource.getProgress,
+          taskProgressWithResource.getProgressInfo,
+          taskProgressWithResource.getResourceMap,
+          taskProgressWithResource.getExtraInfoMap
         )
         codeExecutor.getExecTask.getPhysicalContext.pushProgress(event)
         codeExecutor.getEngineConnExecutor.updateLastUpdateTime()
@@ -91,6 +91,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
       codeExecTaskExecutorManager
         .getByEngineConnAndTaskId(serviceInstance, taskStatus.execId)
         .foreach { codeExecutor =>
+          OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
           val event = TaskStatusEvent(codeExecutor.getExecTask, taskStatus.status)
           logger.info(
             s"From engineConn receive status info:$taskStatus, now post to listenerBus event: $event"
@@ -111,6 +112,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
         )
       }
     }
+    OrchestratorLoggerUtils.removeJobIdMDC()
   }
 
   @Receiver
@@ -123,6 +125,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     codeExecTaskExecutorManager
       .getByEngineConnAndTaskId(serviceInstance, taskResultSize.execId)
       .foreach { codeExecutor =>
+        OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
         val event = TaskResultSetSizeEvent(codeExecutor.getExecTask, taskResultSize.resultSize)
         logger.info(
           s"From engineConn receive resultSet size info$taskResultSize, now post to listenerBus event: $event"
@@ -134,6 +137,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     if (!isExist) {
       logger.warn(s"from $serviceInstance received $taskResultSize cannot find execTask to deal")
     }
+    OrchestratorLoggerUtils.removeJobIdMDC()
   }
 
   @Receiver
@@ -143,6 +147,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     codeExecTaskExecutorManager
       .getByEngineConnAndTaskId(serviceInstance, taskResultSet.execId)
       .foreach { codeExecutor =>
+        OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
         val event = TaskResultSetEvent(
           codeExecutor.getExecTask,
           ResultSet(taskResultSet.output, taskResultSet.alias)
@@ -157,6 +162,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     if (!isExist) {
       logger.warn(s"from $serviceInstance received $taskResultSet cannot find execTask to deal")
     }
+    OrchestratorLoggerUtils.removeJobIdMDC()
   }
 
   @Receiver
@@ -166,6 +172,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     codeExecTaskExecutorManager
       .getByEngineConnAndTaskId(serviceInstance, responseTaskError.execId)
       .foreach { codeExecutor =>
+        OrchestratorLoggerUtils.setJobIdMDC(codeExecutor.getExecTask)
         val event = TaskErrorResponseEvent(codeExecutor.getExecTask, responseTaskError.errorMsg)
         logger.info(
           s"From engineConn receive responseTaskError  info${responseTaskError.execId}, now post to listenerBus event: ${event.execTask.getIDInfo()}"
@@ -177,7 +184,7 @@ class ComputationTaskExecutionReceiver extends TaskExecutionReceiver with Loggin
     if (!isExist) {
       logger.warn(s"from $serviceInstance received $responseTaskError cannot find execTask to deal")
     }
-
+    OrchestratorLoggerUtils.removeJobIdMDC()
   }
 
 }

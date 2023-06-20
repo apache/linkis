@@ -30,9 +30,11 @@ public enum EngineconnCoreErrorCodeSummary implements LinkisErrorCode {
   CANNOT_DEFAULT_EF(20000, "Cannot find default ExecutorFactory(找不到默认的 ExecutorFactory)"),
   ETL_NOT_EXISTS(20000, "EngineTypeLabel does not exist(EngineTypeLabel 不存在)"),
   UCL_NOT_EXISTS(20000, "UserCreatorLabel does not exist(UserCreatorLabel 不存在)"),
-  CANNOT_HOME_PATH_EC(20001, "Cannot find the home path of engineConn(找不到 engineConn 的 home 路径)"),
+  CANNOT_HOME_PATH_EC(
+      20001, "Cannot find the home path of engineConn at: {0}(找不到 engineConn 的 home 路径，该路径为：{0})"),
   CANNOT_HOME_PATH_DIST(
-      20001, "Cannot find the home path of engineconn dist(找不到 engineconn dist 的 home 路径)"),
+      20001,
+      "Could not find the home path for engineconn dist at: {0}(找不到 engineconn dist 的 home 路径，该路径为：{0})"),
   DIST_IS_EMPTY(
       20001,
       "The dist of EngineConn is empty,engineConnType is:{0}(EngineConn 的 dist 为空,engineConnType为：{0})"),

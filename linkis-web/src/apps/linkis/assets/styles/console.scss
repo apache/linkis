@@ -15,7 +15,9 @@
  * limitations under the License.
  */
  
-@import '@/common/style/variables.scss';
+ @charset "UTF-8";
+ @import '@/common/style/variables.scss';
+
 .console-page{
     position: $relative;
     width: $percent-all;
@@ -45,6 +47,9 @@
             }
         }
         .content-body-side-right {
+            .ivu-page-item-jump-next:after, .ivu-page-item-jump-prev:after {
+                content: "\2022\2022\2022";
+            }
             flex: 1;
             background: $body-background;
             border-radius: $border-radius-small;

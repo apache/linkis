@@ -20,8 +20,4 @@ package org.apache.linkis.engineconn.common.conf
 object EngineConnConstant {
 
   val MAX_TASK_NUM = 10000
-
-  val SPRING_CONF_MAP_NAME = "SpringConfMap"
-
-  val MAX_EXECUTOR_ID_NAME = "MaxExecutorId"
 }

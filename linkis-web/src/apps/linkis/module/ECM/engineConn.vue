@@ -226,7 +226,8 @@ export default {
                     this.$refs.logPanel.getLogs(0, {
                       emInstance: params.row.emInstance,
                       instance: params.row.instance,
-                      applicationName: params.row.applicationName
+                      applicationName: params.row.applicationName,
+                      engineType: params.row.engineType,
                     })
                   }
                 }
@@ -471,7 +472,7 @@ export default {
             instance: this.instance,
           }
         },
-        emInstance: e.instance,
+        emInstance: e.instance.replace(/ /g, ''),
         nodeStatus: e.nodeHealthy,
         owner: e.owner,
         engineType: e.engineType

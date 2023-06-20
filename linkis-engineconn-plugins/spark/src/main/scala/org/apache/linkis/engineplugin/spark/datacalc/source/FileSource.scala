@@ -41,6 +41,7 @@ class FileSource extends DataCalcSource[FileSourceConfig] with Logging {
       case "parquet" => reader.parquet(path)
       case "text" => reader.text(path)
       case "orc" => reader.orc(path)
+      case "excel" => reader.format("excel").load(path)
       case _ => reader.format(config.getSerializer).load(path)
     }
     if (config.getColumnNames != null && config.getColumnNames.length > 0) {

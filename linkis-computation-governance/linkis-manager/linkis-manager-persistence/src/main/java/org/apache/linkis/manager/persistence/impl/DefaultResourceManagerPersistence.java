@@ -99,8 +99,7 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
   }
 
   @Override
-  public List<PersistenceResource> getResourceByLabels(List<? extends Label> labels)
-      throws PersistenceErrorException {
+  public List<PersistenceResource> getResourceByLabels(List<? extends Label> labels) {
     if (CollectionUtils.isNotEmpty(labels)) {
       return labelManagerMapper.getResourcesByLabels(labels);
     } else {
@@ -109,7 +108,7 @@ public class DefaultResourceManagerPersistence implements ResourceManagerPersist
   }
 
   @Override
-  public List<PersistenceResource> getResourceByUser(String user) throws PersistenceErrorException {
+  public List<PersistenceResource> getResourceByUser(String user) {
     List<PersistenceResource> persistenceResourceList =
         resourceManagerMapper.getResourceByUserName(user);
     return persistenceResourceList;

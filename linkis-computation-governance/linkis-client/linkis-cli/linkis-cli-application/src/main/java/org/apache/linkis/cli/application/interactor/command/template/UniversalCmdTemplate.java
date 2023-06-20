@@ -135,6 +135,15 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
           true,
           false);
 
+  protected StdOption<String> clusterOP =
+      option(
+          AppKeys.JOB_LABEL,
+          AppKeys.JOB_LABEL_CLUSTER,
+          new String[] {"-yarnCluster"},
+          "specify linkis yarn cluster for this job",
+          true,
+          "");
+
   protected StdOption<String> engineTypeOP =
       option(
           AppKeys.JOB_LABEL,

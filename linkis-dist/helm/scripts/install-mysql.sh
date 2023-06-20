@@ -19,12 +19,13 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 
 . ${WORK_DIR}/common.sh
 
+USING_KIND=${1:-false}
 MYSQL_VERSION=${MYSQL_VERSION:-5.7}
 
 set -e
 
 # load image
-if [ "X${KIND_LOAD_IMAGE}" == "Xtrue" ]; then
+if [[ "X${USING_KIND}" == "Xtrue" ]]; then
   echo "# Loading MySQL image ..."
   kind load docker-image mysql:${MYSQL_VERSION} --name ${KIND_CLUSTER_NAME}
 fi

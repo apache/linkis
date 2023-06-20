@@ -21,7 +21,7 @@
 |linkis-computation-engineconn|linkis.ec.task.execution.async.thread.size| 50|thread.size|
 |linkis-computation-engineconn|linkis.ec.task.submit.wait.time.ms|22|wait.time.ms|
 |linkis-computation-engineconn|wds.linkis.bdp.hive.init.sql.enable| false |sql.enable|
-|linkis-computation-engineconn|wds.linkis.bdp.use.default.db.enable| true|db.enable|
+|linkis-computation-engineconn|linkis.bdp.use.default.db.enable| true|db.enable|
 
 
 

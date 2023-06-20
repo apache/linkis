@@ -40,7 +40,7 @@ import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecut
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer.{AliasOutputExecuteResponse, OutputExecuteResponse}
 import org.apache.linkis.storage.{LineMetaData, LineRecord}
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetWriterFactory}
 import org.apache.linkis.storage.resultset.table.TableResultSet
 
 import org.apache.commons.io.IOUtils
@@ -55,7 +55,8 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
 
   private val resultSetFactory = ResultSetFactory.getInstance
 
-  private var defaultResultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record] = _
+  private var defaultResultSetWriter
+      : org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] = _
 
   private var resultSize = 0
 
@@ -87,7 +88,12 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
    * Note: the writer will be closed at the end of the method
    * @param resultSetWriter
    */
-  def sendResultSet(resultSetWriter: ResultSetWriter[_ <: MetaData, _ <: Record]): Unit = {
+  def sendResultSet(
+      resultSetWriter: org.apache.linkis.common.io.resultset.ResultSetWriter[
+        _ <: MetaData,
+        _ <: Record
+      ]
+  ): Unit = {
     logger.info("Start to send res to entrance")
     val fileName = new File(resultSetWriter.toFSPath.getPath).getName
     val index = if (fileName.indexOf(".") < 0) fileName.length else fileName.indexOf(".")
@@ -142,13 +148,13 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   ): ResultSet[_ <: MetaData, _ <: Record] =
     resultSetFactory.getResultSetByType(resultSetType)
 
-  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType(0)
+  override protected def getDefaultResultSetByType: String = resultSetFactory.getResultSetType()(0)
 
   def newResultSetWriter(
       resultSet: ResultSet[_ <: MetaData, _ <: Record],
       resultSetPath: FsPath,
       alias: String
-  ): ResultSetWriter[_ <: MetaData, _ <: Record] = {
+  ): org.apache.linkis.common.io.resultset.ResultSetWriter[_ <: MetaData, _ <: Record] = {
     // update by 20200402
     resultSet match {
       case result: TableResultSet =>
@@ -166,7 +172,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           csWriter.setProxyUser(executorUser)
           csWriter
         } else {
-          ResultSetWriter.getResultSetWriter(
+          ResultSetWriterFactory.getResultSetWriter(
             resultSet,
             ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
             resultSetPath,
@@ -174,7 +180,7 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
           )
         }
       case _ =>
-        ResultSetWriter.getResultSetWriter(
+        ResultSetWriterFactory.getResultSetWriter(
           resultSet,
           ComputationExecutorConf.ENGINE_RESULT_SET_MAX_CACHE.getValue.toLong,
           resultSetPath,
@@ -188,7 +194,6 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     logger.info(log)
   } else {
     val listenerBus = getEngineSyncListenerBus
-    // jobId.foreach(jId => listenerBus.post(TaskLogUpdateEvent(jId, log)))
     getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, log)))
   }
 

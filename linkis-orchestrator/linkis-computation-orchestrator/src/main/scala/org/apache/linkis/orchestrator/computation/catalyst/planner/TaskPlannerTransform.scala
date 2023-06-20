@@ -34,6 +34,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 class TaskPlannerTransform extends PlannerTransform with Logging {
 
+  @Deprecated
   def rebuildTreeNode(tmpTask: Task): Task = {
     tmpTask.getChildren.foreach(child => {
       val newParents = child.getParents.clone() :+ tmpTask
@@ -42,6 +43,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
     tmpTask
   }
 
+  @Deprecated
   def buildCodeLogicTaskTree(
       codeLogicalUnit: CodeLogicalUnit = null,
       stage: Stage,
@@ -54,6 +56,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
     (rebuildTreeNode(codeLogicalUnitTaskTmp), newStartJobTask)
   }
 
+  @Deprecated
   def buildStageTaskTree(taskDesc: StageTaskDesc, startJobTask: Task = null): (Task, Task) = {
     taskDesc match {
       case endStageTask: EndStageTaskDesc =>
@@ -102,6 +105,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
     }
   }
 
+  @Deprecated
   def buildAllStageTaskTree(
       stages: Array[Stage],
       startJobTask: Task = null
@@ -117,6 +121,7 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
     (stageTasks.toArray, reusedStartJobTask)
   }
 
+  @Deprecated
   def buildJobTaskTree(taskDesc: TaskDesc): Task = {
     taskDesc match {
       case startTask: StartJobTaskDesc =>
@@ -136,16 +141,27 @@ class TaskPlannerTransform extends PlannerTransform with Logging {
   override def apply(in: Job, context: ASTContext): Task = {
     in match {
       case job: CodeJob =>
-        // TODO rebuild needed:  Notice( Stages maybe have dependency relation.)
-        // TODO This class should be split into two kind of transforms.
-        // TODO First, two PlannerTransforms are needed: one to transform Job to JobTaskEnd, one to transform Job to StageTaskEnd.
-        // TODO Second, AnalyzeTransforms are needed: one for adding a computationTask by stage for no computation strategy,
-        //  one to transform Job to JobTaskStart, one to transform Job to StageTaskStart.
-        buildJobTaskTree(EndJobTaskDesc(job))
+        val taskDesc = EndJobTaskDesc(job)
+        val jobTaskTmp =
+          new JobTask(Array(), Array(buildCodeLogicTaskTree(job.getCodeLogicalUnit, job)))
+        jobTaskTmp.setTaskDesc(taskDesc)
+        rebuildNewTreeNode(jobTaskTmp)
       case _ =>
         logger.error(s"unknown job type:${in.getClass} ")
         null
     }
+  }
+
+  def rebuildNewTreeNode(tmpTask: Task): Task = {
+    tmpTask.getChildren.foreach(_.withNewParents(Array(tmpTask)))
+    tmpTask
+  }
+
+  def buildCodeLogicTaskTree(codeLogicalUnit: CodeLogicalUnit, job: Job): Task = {
+    val codeLogicalUnitTaskTmp = new CodeLogicalUnitTask(Array(), Array())
+    codeLogicalUnitTaskTmp.setTaskDesc(CodeLogicalUnitTaskDesc(job))
+    if (codeLogicalUnit != null) codeLogicalUnitTaskTmp.setCodeLogicalUnit(codeLogicalUnit)
+    codeLogicalUnitTaskTmp
   }
 
   override def getName: String = {

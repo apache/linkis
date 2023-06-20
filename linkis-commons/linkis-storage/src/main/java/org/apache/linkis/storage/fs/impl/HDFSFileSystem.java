@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.fs.impl;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.hadoop.common.conf.HadoopConf;
 import org.apache.linkis.hadoop.common.utils.HDFSUtils;
@@ -30,7 +31,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
@@ -53,7 +53,7 @@ public class HDFSFileSystem extends FileSystem {
   public static final String HDFS_PREFIX_WITHOUT_AUTH = "hdfs:///";
   public static final String HDFS_PREFIX_WITH_AUTH = "hdfs://";
   private org.apache.hadoop.fs.FileSystem fs = null;
-  private Configuration conf = null;
+  private org.apache.hadoop.conf.Configuration conf = null;
 
   private String label = null;
 
@@ -162,8 +162,7 @@ public class HDFSFileSystem extends FileSystem {
     List<FsPath> fsPaths = new ArrayList<FsPath>();
     for (FileStatus f : stat) {
       fsPaths.add(
-          fillStorageFile(
-              new FsPath(StorageUtils.HDFS_SCHEMA() + f.getPath().toUri().getPath()), f));
+          fillStorageFile(new FsPath(StorageUtils.HDFS_SCHEMA + f.getPath().toUri().getPath()), f));
     }
     if (fsPaths.isEmpty()) {
       return null;
@@ -175,14 +174,17 @@ public class HDFSFileSystem extends FileSystem {
   @Override
   public void init(Map<String, String> properties) throws IOException {
     if (MapUtils.isNotEmpty(properties)
-        && properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
-      user = StorageConfiguration.PROXY_USER().getValue(properties);
+        && properties.containsKey(StorageConfiguration.PROXY_USER.key())) {
+      user = StorageConfiguration.PROXY_USER.getValue(properties);
     }
 
     if (user == null) {
       throw new IOException("User cannot be empty(用户不能为空)");
     }
 
+    if (label == null && (boolean) Configuration.IS_MULTIPLE_YARN_CLUSTER().getValue()) {
+      label = StorageConfiguration.LINKIS_STORAGE_FS_LABEL.getValue();
+    }
     conf = HDFSUtils.getConfigurationByLabel(user, label);
 
     if (MapUtils.isNotEmpty(properties)) {
@@ -193,14 +195,14 @@ public class HDFSFileSystem extends FileSystem {
         }
       }
     }
-    if (StorageConfiguration.FS_CACHE_DISABLE().getValue()) {
+    if (StorageConfiguration.FS_CACHE_DISABLE.getValue()) {
       conf.set("fs.hdfs.impl.disable.cache", "true");
     }
-    fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+    fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
     if (fs == null) {
       throw new IOException("init HDFS FileSystem failed!");
     }
-    if (StorageConfiguration.FS_CHECKSUM_DISBALE().getValue()) {
+    if (StorageConfiguration.FS_CHECKSUM_DISBALE.getValue()) {
       fs.setVerifyChecksum(false);
       fs.setWriteChecksum(false);
     }
@@ -213,7 +215,7 @@ public class HDFSFileSystem extends FileSystem {
 
   @Override
   public String rootUserName() {
-    return StorageConfiguration.HDFS_ROOT_USER().getValue();
+    return StorageConfiguration.HDFS_ROOT_USER.getValue();
   }
 
   @Override
@@ -306,9 +308,9 @@ public class HDFSFileSystem extends FileSystem {
     } catch (IOException e) {
       String message = e.getMessage();
       String rootCauseMessage = ExceptionUtils.getRootCauseMessage(e);
-      if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))
+      if ((message != null && message.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS))
           || (rootCauseMessage != null
-              && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS()))) {
+              && rootCauseMessage.matches(LinkisStorageConf.HDFS_FILE_SYSTEM_REST_ERRS))) {
         logger.info("Failed to execute exists, retry", e);
         resetRootHdfs();
         return fs.exists(new Path(checkHDFSPath(dest.getPath())));
@@ -323,12 +325,12 @@ public class HDFSFileSystem extends FileSystem {
       synchronized (this) {
         if (fs != null) {
           if (HadoopConf.HDFS_ENABLE_CACHE()) {
-            HDFSUtils.closeHDFSFIleSystem(fs, user, true);
+            HDFSUtils.closeHDFSFIleSystem(fs, user, label, true);
           } else {
-            HDFSUtils.closeHDFSFIleSystem(fs, user);
+            HDFSUtils.closeHDFSFIleSystem(fs, user, label);
           }
           logger.warn(user + "FS reset close.");
-          fs = HDFSUtils.getHDFSUserFileSystem(user, conf);
+          fs = HDFSUtils.getHDFSUserFileSystem(user, label, conf);
         }
       }
     }
@@ -355,7 +357,7 @@ public class HDFSFileSystem extends FileSystem {
   @Override
   public void close() throws IOException {
     if (null != fs) {
-      HDFSUtils.closeHDFSFIleSystem(fs, user);
+      HDFSUtils.closeHDFSFIleSystem(fs, user, label);
     } else {
       logger.warn("FS was null, cannot close.");
     }
@@ -389,12 +391,12 @@ public class HDFSFileSystem extends FileSystem {
 
     FileStatus f = fs.getFileStatus(new Path(path));
     FsPermission permission = f.getPermission();
-    UserGroupInformation ugi = HDFSUtils.getUserGroupInformation(user);
+    UserGroupInformation ugi = HDFSUtils.getUserGroupInformation(user, label);
     String[] groupNames;
     try {
       groupNames = ugi.getGroupNames();
     } catch (NullPointerException e) {
-      if ((Boolean) org.apache.linkis.common.conf.Configuration.IS_TEST_MODE().getValue()) {
+      if ((Boolean) Configuration.IS_TEST_MODE().getValue()) {
         groupNames = new String[] {"hadoop"};
       } else {
         throw e;
@@ -426,9 +428,9 @@ public class HDFSFileSystem extends FileSystem {
 
   private String checkHDFSPath(String path) {
     try {
-      boolean checkHdfsPath = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON().getValue();
+      boolean checkHdfsPath = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_CHECK_ON.getValue();
       if (checkHdfsPath) {
-        boolean rmHdfsPrefix = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE().getValue();
+        boolean rmHdfsPrefix = (boolean) StorageConfiguration.HDFS_PATH_PREFIX_REMOVE.getValue();
         if (rmHdfsPrefix) {
           if (StringUtils.isBlank(path)) {
             return path;

@@ -203,6 +203,7 @@ export default {
                       emInstance: params.row.ecmInstance,
                       instance: params.row.serviceInstance,
                       ticketId: params.row.ticketId,
+                      engineType: params.row.engineType,
                       logDirSuffix: params.row.logDirSuffix,
                     })
                   }
@@ -329,7 +330,7 @@ export default {
     // search(搜索)
     search(e) {
       let url = '/linkisManager/ecinfo/ecrHistoryList?';
-      if (e.instance) url += `instance=${e.instance}&`
+      if (e.instance) url += `instance=${e.instance?.replace(/ /g, '') || ''}&`
       if (e.owner) url += `creator=${e.owner}&`
       if (e.shortcut[0]) url += `startDate=${moment(new Date(e.shortcut[0])).format('YYYY-MM-DD HH:mm:ss')}&`
       if (e.shortcut[1]) {

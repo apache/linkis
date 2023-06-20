@@ -111,7 +111,7 @@ linkis:
     python:
       version: 2.7
     hadoop:
-      version: 2.7.2
+      version: 3.3.4
       configMapName: hadoop-conf
     yarn:
       restfulUrl: http://ldh.ldh.svc.cluster.local:8088
@@ -123,10 +123,10 @@ linkis:
       keytab: /etc/hadoop-conf/yarn.keytab
       krb5: /etc/krb5.keytab
     spark:
-      version: 2.4.3
+      version: 3.2.1
       configMapName: spark-conf
     hive:
-      version: 2.3.3
+      version: 3.1.3
       configMapName: hive-conf
       meta:
         url: "jdbc:mysql://mysql.mysql.svc.cluster.local:3306/hive_metadata?&amp;createDatabaseIfNotExist=true&amp;characterEncoding=UTF-8&amp;useSSL=false"       # jdbc:mysql://localhost:3306/metastore?useUnicode=true

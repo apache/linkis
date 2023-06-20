@@ -21,7 +21,7 @@ import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.HDFSFileSystem;
-import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
+import org.apache.linkis.storage.io.IOMethodInterceptorFactory;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.springframework.cglib.proxy.Enhancer;
@@ -46,7 +46,7 @@ public class BuildHDFSFileSystem implements BuildFactory {
       // TODO Agent user(代理的用户)
       Enhancer enhancer = new Enhancer();
       enhancer.setSuperclass(HDFSFileSystem.class.getSuperclass());
-      enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
+      enhancer.setCallback(IOMethodInterceptorFactory.getIOMethodInterceptor(fsName()));
       fs = (FileSystem) enhancer.create();
     }
     fs.setUser(proxyUser);
@@ -63,6 +63,6 @@ public class BuildHDFSFileSystem implements BuildFactory {
 
   @Override
   public String fsName() {
-    return "hdfs";
+    return StorageUtils.HDFS;
   }
 }

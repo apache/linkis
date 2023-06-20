@@ -15,7 +15,7 @@
 |linkis-configuration |14100|CategoryName cannot be included '-'(类别名称不能包含 '-')|CANNOT_BE_INCLUDED|LinkisConfigurationErrorCodeSummary|
 |linkis-configuration |14100|Creator is null, cannot be added(创建者为空，无法添加)|CREATOR_IS_NULL_CANNOT_BE_ADDED|LinkisConfigurationErrorCodeSummary|
 |linkis-configuration |14100|Engine type is null, cannot be added(引擎类型为空，无法添加)|ENGINE_TYPE_IS_NULL|LinkisConfigurationErrorCodeSummary|
-|linkis-configuration |14100|The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)|INCORRECT_FIXED_SUCH|LinkisConfigurationErrorCodeSummary|
+|linkis-configuration |14100|The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-3.2.1(保存的引擎类型参数有误，请按照固定格式传送，例如spark-3.2.1)|INCORRECT_FIXED_SUCH|LinkisConfigurationErrorCodeSummary|
 |linkis-configuration |14100|Incomplete request parameters, please reconfirm(请求参数不完整，请重新确认)|INCOMPLETE_RECONFIRM|LinkisConfigurationErrorCodeSummary|
 |linkis-configuration |14100|Only admin can modify category(只有管理员才能修改目录)|ONLY_ADMIN_CAN_MODIFY|LinkisConfigurationErrorCodeSummary|
 |linkis-configuration |14100|The label parameter is empty(标签参数为空)|THE_LABEL_PARAMETER_IS_EMPTY|LinkisConfigurationErrorCodeSummary|

@@ -90,7 +90,7 @@ abstract class EntranceExecutorManager(groupFactory: GroupFactory)
         job.getJobRequest match {
           case jobReq: JobRequest =>
             val entranceEntranceExecutor =
-              new DefaultEntranceExecutor(idGenerator.incrementAndGet())
+              new DefaultEntranceExecutor(jobReq.getId)
             // getEngineConn Executor
             job.getLogListener.foreach(
               _.onLogUpdate(

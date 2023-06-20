@@ -204,7 +204,7 @@
     <!-- spring -->
     <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
     <spring-security.version>5.7.5</spring-security.version>
-    <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+    <spring.boot.version>2.5.12</spring.boot.version>
     <spring-netflix.version>2.2.9.RELEASE</spring-netflix.version>
     <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
 

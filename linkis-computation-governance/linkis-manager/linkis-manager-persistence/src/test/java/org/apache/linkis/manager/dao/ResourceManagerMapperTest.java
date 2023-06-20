@@ -36,9 +36,9 @@ class ResourceManagerMapperTest extends BaseDaoTest {
   @Autowired ResourceManagerMapper resourceManagerMapper;
 
   @Test
-  void registerResource() {
+  PersistenceResource registerResource() {
     PersistenceResource persistenceResource = new PersistenceResource();
-    persistenceResource.setId(1);
+    //    persistenceResource.setId(1);
     persistenceResource.setMaxResource("testmax");
     persistenceResource.setMinResource("mintest");
     persistenceResource.setLeftResource("left");
@@ -46,17 +46,19 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setTicketId("1");
     persistenceResource.setResourceType("testtype");
     resourceManagerMapper.registerResource(persistenceResource);
-    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(1);
+    PersistenceResource persistenceResources =
+        resourceManagerMapper.getResourceById(persistenceResource.getId());
     assertThat(persistenceResources.getId())
         .usingRecursiveComparison()
         .isEqualTo(persistenceResource.getId());
+    return persistenceResource;
   }
 
   @Test
   void nodeResourceUpdate() {
-    registerResource();
+    PersistenceResource insert = registerResource();
     PersistenceResource persistenceResource = new PersistenceResource();
-    persistenceResource.setId(1);
+    persistenceResource.setId(insert.getId());
     persistenceResource.setMaxResource("testmaxss");
     persistenceResource.setMinResource("mintestss");
     persistenceResource.setLeftResource("left");
@@ -64,33 +66,26 @@ class ResourceManagerMapperTest extends BaseDaoTest {
     persistenceResource.setResourceType("testtype");
     persistenceResource.setUpdateTime(new Date());
     resourceManagerMapper.nodeResourceUpdate("1", persistenceResource);
-    PersistenceResource persistenceResources = resourceManagerMapper.getResourceById(1);
-    assertTrue(persistenceResources.getMaxResource() == persistenceResource.getMaxResource());
+    PersistenceResource persistenceResources =
+        resourceManagerMapper.getResourceById(insert.getId());
+    assertTrue(persistenceResources.getMaxResource().equals(persistenceResource.getMaxResource()));
   }
 
   @Test
   void nodeResourceUpdateByResourceId() {
-    registerResource();
+    PersistenceResource insert = registerResource();
     PersistenceResource persistenceResource = new PersistenceResource();
-    persistenceResource.setId(1);
+    persistenceResource.setId(insert.getId());
     persistenceResource.setMaxResource("testmaxss");
     persistenceResource.setMinResource("mintestss");
     persistenceResource.setLeftResource("left");
     persistenceResource.setUsedResource("user");
-    resourceManagerMapper.nodeResourceUpdateByResourceId(1, persistenceResource);
+    resourceManagerMapper.nodeResourceUpdateByResourceId(insert.getId(), persistenceResource);
     assertTrue(persistenceResource.getMaxResource() == persistenceResource.getMaxResource());
   }
 
   @Test
   void getNodeResourceUpdateResourceId() {
-    PersistenceResource persistenceResource = new PersistenceResource();
-    persistenceResource.setId(1);
-    persistenceResource.setMaxResource("testmax");
-    persistenceResource.setMinResource("mintest");
-    persistenceResource.setLeftResource("left");
-    persistenceResource.setUsedResource("user");
-    persistenceResource.setResourceType("testtype");
-    resourceManagerMapper.registerResource(persistenceResource);
     Integer i = resourceManagerMapper.getNodeResourceUpdateResourceId("instance1");
     assertTrue(i >= 1);
   }
@@ -137,7 +132,6 @@ class ResourceManagerMapperTest extends BaseDaoTest {
 
   @Test
   void getNodeResourceByTicketId() {
-    registerResource();
     PersistenceResource persistenceResource = resourceManagerMapper.getNodeResourceByTicketId("1");
     assertTrue(persistenceResource != null);
   }
@@ -160,25 +154,26 @@ class ResourceManagerMapperTest extends BaseDaoTest {
 
   @Test
   void deleteResourceById() {
-    registerResource();
+    PersistenceResource insert = registerResource();
     List<Integer> list = new ArrayList<>();
-    list.add(1);
+    list.add(insert.getId());
     resourceManagerMapper.deleteResourceById(list);
-    PersistenceResource persistenceResource = resourceManagerMapper.getResourceById(1);
+    PersistenceResource persistenceResource = resourceManagerMapper.getResourceById(insert.getId());
     assertTrue(persistenceResource == null);
   }
 
   @Test
   void deleteResourceRelByResourceId() {
+    PersistenceResource insert = registerResource();
     List<Integer> list = new ArrayList<>();
-    list.add(1);
+    list.add(insert.getId());
     resourceManagerMapper.deleteResourceRelByResourceId(list);
   }
 
   @Test
   void getResourceById() {
-    registerResource();
-    PersistenceResource persistenceResource = resourceManagerMapper.getResourceById(1);
+    PersistenceResource insert = registerResource();
+    PersistenceResource persistenceResource = resourceManagerMapper.getResourceById(insert.getId());
     assertTrue(persistenceResource != null);
   }
 }

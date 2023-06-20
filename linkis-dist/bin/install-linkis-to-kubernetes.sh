@@ -22,7 +22,9 @@ TAG="latest"
 COMMAND="pull-install"
 DEBUG=false
 WITH_LDH=false
-
+USING_KIND=false
+KUBE_NAMESPACE="linkis"
+HELM_RELEASE_NAME="linkis-demo"
 
 debug(){
     if [ $DEBUG = true ]; then
@@ -37,18 +39,21 @@ info(){
 
 #help info
 help() {
-    echo "Command        Describe"
-    echo "pull-install   pull and install linkis images"
-    echo "install        pull linkis images"
-    echo "pull           pull linkis images"
-    echo "reset          delete the test-helm cluster of kind"
-    echo "help           print help info"
+    echo "Command            Describe"
+    echo "pull-install       pull and install linkis images"
+    echo "install            install linkis images"
+    echo "pull               pull linkis images"
+    echo "reset              delete the test-helm cluster of kind"
+    echo "help               print help info"
     echo ""
-    echo "Params         Describe"
-    echo "-m             url (default:ghcr.io , eg: ghcr.dockerproxy.com)"
-    echo "-d             print debug info"
-    echo "-l             install linkis with ldh"
-    echo "-t             tag name "
+    echo "Params             Describe"
+    echo "-d                 print debug info (default: false)"
+    echo "-m                 mirror url (default:ghcr.io , eg: ghcr.dockerproxy.com)"
+    echo "-t                 tag name (default:latest)"
+    echo "-l                 install linkis with ldh (default:false)"
+    echo "-r                 install linkis with ldh (default:false)"
+    echo "-n                 kubernetes namespace (default:linkis)"
+    echo "--helm-release     helm release name (default:linkis-demo)"
     echo ""
     echo "example:"
     echo "./install-linkis-to-kubernetes.sh pull                                  pull image with ghcr.io"
@@ -60,8 +65,10 @@ help() {
 
 #pull the container image of the linkis
 pull(){
-    debug ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
-    docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    if [ $WITH_LDH = true ]; then
+      debug ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+      docker pull ${MIRRORS}/apache/linkis/linkis-ldh:${TAG}
+    fi
     debug ${MIRRORS}/apache/linkis/linkis:${TAG}
     docker pull ${MIRRORS}/apache/linkis/linkis:${TAG}
     debug ${MIRRORS}/apache/linkis/linkis-web:${TAG}
@@ -71,11 +78,13 @@ pull(){
 tag(){
     docker tag  ${MIRRORS}/apache/linkis/linkis:${TAG} linkis:dev
     docker tag  ${MIRRORS}/apache/linkis/linkis-web:${TAG} linkis-web:dev
-    docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
+    if [ $WITH_LDH = true ]; then
+      docker tag  ${MIRRORS}/apache/linkis/linkis-ldh:${TAG} linkis-ldh:dev
+    fi
 }
 #create an image to carry mysql
-make_linikis_image_with_mysql_jdbc(){
-    ${ROOT_DIR}/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+make_linkis_image_with_mysql_jdbc(){
+    ${ROOT_DIR}/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
     docker tag linkis:with-jdbc linkis:dev
 }
 #creating a kind cluster
@@ -88,14 +97,16 @@ install_mysql(){
 }
 #ldh installation
 install_ldh(){
-    ${ROOT_DIR}/helm/scripts/install-ldh.sh
+    if [ $WITH_LDH = true ]; then
+      ${ROOT_DIR}/helm/scripts/install-ldh.sh $USING_KIND
+    fi
 }
 #linkis installation
 install_linkis(){
     if [ $WITH_LDH = true ];then
-      ${ROOT_DIR}/helm/scripts/install-charts-with-ldh.sh
+      ${ROOT_DIR}/helm/scripts/install-charts-with-ldh.sh $KUBE_NAMESPACE $HELM_RELEASE_NAME $USING_KIND
     else
-      ${ROOT_DIR}/helm/scripts/install-linkis.sh
+      ${ROOT_DIR}/helm/scripts/install-linkis.sh $KUBE_NAMESPACE $HELM_RELEASE_NAME true $USING_KIND
     fi
 }
 #display pods
@@ -104,9 +115,11 @@ display_pods(){
 }
 
 install(){
-    tag
-    make_linikis_image_with_mysql_jdbc
-    create_kind_cluster
+    if [ $USING_KIND = true ]; then
+      tag
+      make_linkis_image_with_mysql_jdbc
+      create_kind_cluster
+    fi
     install_mysql
     install_ldh
     install_linkis
@@ -116,7 +129,6 @@ install(){
 reset(){
     kind delete clusters test-helm
 }
-
 
 check_docker(){
     docker -v >> /dev/null 2>&1
@@ -156,15 +168,9 @@ debug $WORK_DIR
 #entrance to the program
 main(){
 
-    #environmental testing
-    check_docker
-    check_kind
-    check_kubectl
-    check_helm
-
     #argument parsing
     long_opts="debug,mirrors:"
-    getopt_cmd=$(getopt -o dm:lt: -n $(basename $0) -- "$@") || \
+    getopt_cmd=$(getopt -o dm:lt:kn: -l helm-release: -n $(basename $0) -- "$@") || \
                 { echo -e "\nERROR: Getopt failed. Extra args\n"; exit 1;}
 
     eval set -- "$getopt_cmd"
@@ -172,12 +178,23 @@ main(){
         case "$1" in
             -d) DEBUG=true;;
             -m) MIRRORS=$2;;
-            -l) WITH_LDH=true;;
             -t) TAG=$2;;
+            -l) WITH_LDH=true;;
+            -k) USING_KIND=true;;
+            -n) KUBE_NAMESPACE=$2;;
+            --helm-release) HELM_RELEASE_NAME=$2;;
             --) shift; break;;
         esac
         shift
     done
+
+    #environmental testing
+    check_docker
+    check_kubectl
+    check_helm
+    if [ $USING_KIND = true ];then
+        check_kind
+    fi
 
     debug "params num:"$#
 

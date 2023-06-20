@@ -35,8 +35,8 @@ import org.junit.jupiter.api.Test;
  * */
 
 public class UJESSQLPreparedStatementTest {
-  private static UJESSQLConnection conn;
-  private UJESSQLPreparedStatement preStatement;
+  private static LinkisSQLConnection conn;
+  private LinkisSQLPreparedStatement preStatement;
 
   @BeforeAll
   public static void getConnection() {

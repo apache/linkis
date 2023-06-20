@@ -201,9 +201,9 @@ $> kind delete cluster --name test-helm
 
 We introduced a new image, called LDH (Linkis's hadoop all-in-one image), which provides a pseudo-distributed hadoop cluster for testing quickly. This image contains the following hadoop components, the default mode for engines in LDH is on-yarn.
 
-* Hadoop 2.7.2 , including HDFS and YARN
-* Hive 2.3.3
-* Spark 2.4.3
+* Hadoop 3.3.4 , including HDFS and YARN
+* Hive 3.1.3
+* Spark 3.2.1
 * Flink 1.12.2
 * ZooKeeper 3.5.9
 
@@ -245,24 +245,24 @@ drwxrwxrwx   - root supergroup          0 2022-07-31 02:48 /user
 
 [root@ldh-96bdc757c-dnkbs /]# beeline -u jdbc:hive2://ldh.ldh.svc.cluster.local:10000/ -n hadoop
 Connecting to jdbc:hive2://ldh.ldh.svc.cluster.local:10000/
-Connected to: Apache Hive (version 2.3.3)
-Driver: Hive JDBC (version 2.3.3)
+Connected to: Apache Hive (version 3.1.3)
+Driver: Hive JDBC (version 3.1.3)
 Transaction isolation: TRANSACTION_REPEATABLE_READ
-Beeline version 2.3.3 by Apache Hive
+Beeline version 3.1.3 by Apache Hive
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create database demo;
 No rows affected (1.306 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> use demo;
 No rows affected (0.046 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create table t1 (id int, data string);
 No rows affected (0.709 seconds)
-0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> insert into t1 values(1, 'linikis demo');
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> insert into t1 values(1, 'linkis demo');
 WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
 No rows affected (5.491 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> select * from t1;
 +--------+---------------+
 | t1.id  |    t1.data    |
 +--------+---------------+
-| 1      | linikis demo  |
+| 1      | linkis demo  |
 +--------+---------------+
 1 row selected (0.39 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> !q
@@ -271,7 +271,7 @@ No rows affected (5.491 seconds)
 22/07/31 02:53:18 INFO hive.metastore: Trying to connect to metastore with URI thrift://ldh.ldh.svc.cluster.local:9083
 22/07/31 02:53:18 INFO hive.metastore: Connected to metastore.
 ...
-22/07/31 02:53:19 INFO spark.SparkContext: Running Spark version 2.4.3
+22/07/31 02:53:19 INFO spark.SparkContext: Running Spark version 3.2.1
 22/07/31 02:53:19 INFO spark.SparkContext: Submitted application: SparkSQL::10.244.0.6
 ...
 22/07/31 02:53:27 INFO yarn.Client: Submitting application application_1659235712576_0001 to ResourceManager
@@ -288,7 +288,7 @@ Time taken: 0.074 seconds
 22/07/31 02:58:02 INFO thriftserver.SparkSQLCLIDriver: Time taken: 0.074 seconds
 spark-sql> select * from t1;
 ...
-1       linikis demo
+1       linkis demo
 2       linkis demo spark sql
 Time taken: 3.352 seconds, Fetched 2 row(s)
 spark-sql> quit;

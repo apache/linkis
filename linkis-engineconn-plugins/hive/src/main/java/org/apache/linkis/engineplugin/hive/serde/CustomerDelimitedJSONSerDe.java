@@ -312,18 +312,6 @@ public class CustomerDelimitedJSONSerDe extends LazySimpleSerDe {
           binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
           break;
         }
-      case INTERVAL_YEAR_MONTH:
-        {
-          wc = ((HiveIntervalYearMonthObjectInspector) oi).getPrimitiveWritableObject(o);
-          binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
-          break;
-        }
-      case INTERVAL_DAY_TIME:
-        {
-          wc = ((HiveIntervalDayTimeObjectInspector) oi).getPrimitiveWritableObject(o);
-          binaryData = Base64.encodeBase64(String.valueOf(wc).getBytes());
-          break;
-        }
       case DECIMAL:
         {
           HiveDecimalObjectInspector decimalOI = (HiveDecimalObjectInspector) oi;

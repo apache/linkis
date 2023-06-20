@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextIDMapper">
+
+    <sql id="context_id">
+        `id`,`user`,`application`,`source`,`expire_type`,`expire_time`,`instance`,`backup_instance`,`create_time`,`update_time`
+    </sql>
+
+    <insert id="createContextID" useGeneratedKeys="true" keyProperty="contextId"
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
+        INSERT INTO linkis_ps_cs_context_id(<include refid="context_id"/>)
+        VALUES (#{contextId},#{user},#{application},#{source},#{expireType},#{expireTime},#{instance},#{backupInstance},#{createTime},#{updateTime})
+    </insert>
+
+    <delete id="deleteContextID">
+        DELETE FROM linkis_ps_cs_context_id where id = #{contextId}
+    </delete>
+
+    <resultMap id="PersistenceContextID"
+               type="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
+        <id column="id" property="contextId"/>
+    </resultMap>
+
+    <select id="getContextID" resultMap="PersistenceContextID">
+        SELECT * FROM linkis_ps_cs_context_id where id = #{contextId}
+    </select>
+
+    <select id="getAllContextID" parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID" resultMap="PersistenceContextID" >
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="contextId != null"> AND `id` = #{contextId}</if>
+            <if test="user != null"> AND `user` = #{user}</if>
+            <if test="instance != null"> AND `instance` = #{instance}</if>
+            <if test="backupInstance != null"> AND `backup_instance` = #{backupInstance}</if>
+            <if test="application != null"> AND `application` = #{application}</if>
+            <if test="expireType != null"> AND `expire_type` = #{expireType}</if>
+            <if test="expireTime != null"> AND `expire_time` = #{expireTime}</if>
+            <if test="source != null"> AND `source` = #{source}</if>
+        </where>
+    </select>
+
+
+    <select id="getAllContextIDByTime" resultMap="PersistenceContextID" >
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="createTimeStart != null">  AND `create_time` >= #{createTimeStart}</if>
+            <if test="createTimeEnd != null">  AND `create_time` <![CDATA[<=]]>  #{createTimeEnd}</if>
+            <if test="updateTimeStart != null">  AND `update_time` >= #{updateTimeStart}</if>
+            <if test="updateTimeEnd != null">  AND `update_time` <![CDATA[<=]]> #{updateTimeEnd}</if>
+            <if test="accessTimeStart != null">  AND `access_time` >= #{accessTimeStart}</if>
+            <if test="accessTimeEnd != null">  AND `access_time` <![CDATA[<=]]> #{accessTimeEnd}</if>
+        </where>
+    </select>
+
+    <update id="updateContextID"
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID">
+        UPDATE linkis_ps_cs_context_id
+        <set>
+            <if test="user != null">`user` = #{user},</if>
+            <if test="application != null">`application` = #{application},</if>
+            <if test="expireType != null">`expire_type` = #{expireType},</if>
+            <if test="expireTime != null">`expire_time` = #{expireTime},</if>
+            <if test="instance != null">`instance` = #{instance},</if>
+            <if test="backupInstance != null">`backup_instance` = #{backupInstance},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime},</if>
+            <if test="createTime != null">`create_time` = #{createTime},</if>
+            <if test="accessTime != null">`access_time` = #{accessTime},</if>
+        </set>
+        WHERE id = #{contextId}
+    </update>
+
+    <select id="searchContextID" parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextID"
+            resultMap="PersistenceContextID">
+        SELECT * FROM linkis_ps_cs_context_id
+        <where>
+            <if test="contextId != null"> AND `id` = #{contextId}</if>
+            <if test="user != null"> AND `user` = #{user}</if>
+            <if test="instance != null"> AND `instance` = #{instance}</if>
+            <if test="backupInstance != null"> AND `backup_instance` = #{backupInstance}</if>
+            <if test="application != null"> AND `application` = #{application}</if>
+            <if test="expireType != null"> AND `expire_type` = #{expireType}</if>
+            <if test="expireTime != null"> AND `expire_time` = #{expireTime}</if>
+            <if test="source != null"> AND `source` = #{source}</if>
+        </where>
+    </select>
+
+</mapper>

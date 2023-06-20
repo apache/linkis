@@ -106,7 +106,7 @@
         <div style="margin-top: 60px">
           <span style="width: 60px">{{ $t('message.linkis.tenantTagManagement.yourTagMapping') }}</span>
           <Input class="input" v-model="mapping" style="width: 220px; margin-left: 10px" disabled></Input>
-          <Button type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
+          <Button v-if="mode !== 'edit'" type="primary" @click="checkUserTag" style="margin-left: 10px" :loading="isRequesting">{{$t('message.linkis.tenantTagManagement.check')}}</Button>
         </div>
       </div>
       <div slot="footer">
@@ -223,7 +223,7 @@ export default {
         ],
         creator: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
-          {pattern: /^[0-9a-zA-Z_]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError1'), type: 'string'}
+          {pattern: /^[0-9a-zA-Z_\*]+$/, message: this.$t('message.linkis.tenantTagManagement.contentError'), type: 'string'}
         ],
         tenantValue: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'},
@@ -313,18 +313,18 @@ export default {
       if(this.isRequesting) return;
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
-          const {user, creator} = this.modalData;
+          const { user, creator, id } = this.modalData;
           if(this.mode === 'edit' && user === this.editData.user && creator === this.editData.creator) {
             this.tagIsExist = false;
             return;
           }
           try {
-            this.isRequesting = true
-            await api.fetch("/configuration/tenant-mapping/check-user-creator",
-              {
-                user,
-                creator
-              }, "get").then((res) => {
+            this.isRequesting = true;
+            const checkBody = {user, creator};
+            if(this.mode === 'edit') {
+              checkBody.id = id;
+            }
+            await api.fetch("/configuration/tenant-mapping/check-user-creator", checkBody, "get").then((res) => {
               if (res.exist) {
                 this.$Message.error(this.$t('message.linkis.tenantTagManagement.userIsExisted'))
               }
@@ -399,12 +399,13 @@ export default {
         id, user, creator, tenantValue, bussinessUser, desc
       };
       this.showCreateModal = true;
+      this.tagIsExist = false;
       this.mode = 'edit';
     },
     delete(data) {
       this.$Modal.confirm({
         title: this.$t('message.linkis.tenantTagManagement.confirmDel'),
-        content: this.$t('message.linkis.tenantTagManagement.isConfirmDel'),
+        content: this.$t('message.linkis.tenantTagManagement.isConfirmDel', {name: `id:${data.id}`}),
         onOk: async () => {
           await this.confirmDelete(data);
           await this.getTableData();
@@ -422,7 +423,9 @@ export default {
       }
     },
     async handleChange() {
-      this.tagIsExist = true;
+      if(this.mode !== 'edit') {
+        this.tagIsExist = true;
+      }
     },
     async changePage(val) {
       this.page.pageNow = val;

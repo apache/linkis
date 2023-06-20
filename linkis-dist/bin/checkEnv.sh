@@ -37,12 +37,12 @@ function checkPythonAndJava(){
 
 function checkHdfs(){
     hadoopVersion="`hdfs version`"
-    defaultHadoopVersion="2.7"
+    defaultHadoopVersion="3.3"
     checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
 }
 
 function checkHive(){
-    checkversion "$(whereis hive)" "2.3" hive
+    checkversion "$(whereis hive)" "3.1" hive
 }
 
 function checkversion(){

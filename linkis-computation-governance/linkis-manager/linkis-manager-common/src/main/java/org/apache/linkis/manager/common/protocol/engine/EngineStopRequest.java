@@ -23,8 +23,13 @@ import org.apache.linkis.protocol.message.RequestMethod;
 public class EngineStopRequest implements EngineRequest, RequestMethod {
 
   private ServiceInstance serviceInstance;
-
+  private String logDirSuffix;
+  private String engineType;
   private String user;
+  /** identifierType, Reserved for ec containerized startup scenarios */
+  private String identifierType;
+  /** identifier */
+  private String identifier;
 
   public EngineStopRequest() {}
 
@@ -39,6 +44,38 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
 
   public void setServiceInstance(ServiceInstance serviceInstance) {
     this.serviceInstance = serviceInstance;
+  }
+
+  public String getLogDirSuffix() {
+    return logDirSuffix;
+  }
+
+  public void setLogDirSuffix(String logDirSuffix) {
+    this.logDirSuffix = logDirSuffix;
+  }
+
+  public String getEngineType() {
+    return engineType;
+  }
+
+  public void setEngineType(String engineType) {
+    this.engineType = engineType;
+  }
+
+  public String getIdentifierType() {
+    return identifierType;
+  }
+
+  public void setIdentifierType(String identifierType) {
+    this.identifierType = identifierType;
+  }
+
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
   }
 
   public void setUser(String user) {
@@ -60,8 +97,20 @@ public class EngineStopRequest implements EngineRequest, RequestMethod {
     return "EngineStopRequest{"
         + "serviceInstance="
         + serviceInstance
+        + ", logDirSuffix='"
+        + logDirSuffix
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
         + ", user='"
         + user
+        + '\''
+        + ", identifierType='"
+        + identifierType
+        + '\''
+        + ", identifier='"
+        + identifier
         + '\''
         + '}';
   }

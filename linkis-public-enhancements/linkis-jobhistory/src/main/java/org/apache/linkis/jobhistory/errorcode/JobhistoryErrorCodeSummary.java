@@ -22,7 +22,7 @@ import org.apache.linkis.common.errorcode.LinkisErrorCode;
 public enum JobhistoryErrorCodeSummary implements LinkisErrorCode {
   UNFINISHED_TASKS(
       20020,
-      "entrance service restart, automatically cancel tasks that have not been completed for a long time (24h)");
+      "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)");
 
   /** (errorCode)错误码 */
   private final int errorCode;

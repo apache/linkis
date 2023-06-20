@@ -168,19 +168,6 @@ public class SecurityUtilsTest {
           SecurityUtils.checkJdbcConnParams(host, port, null, password, database, extraParams);
         });
 
-    // error password
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          SecurityUtils.checkJdbcConnParams(host, port, username, "  ", database, extraParams);
-        });
-
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          SecurityUtils.checkJdbcConnParams(host, port, username, null, database, extraParams);
-        });
-
     // check database, The database name can be empty
     Assertions.assertDoesNotThrow(
         () -> {

@@ -46,7 +46,7 @@ Linkis1.X是通过标签来进行的，所以需要在我们数据库中插入�
 
 ```
 linkis_ps_configuration_config_key:  插入引擎的配置参数的key和默认values
-linkis_cg_manager_label：插入引擎label如：hive-2.3.3
+linkis_cg_manager_label：插入引擎label如：hive-3.1.3
 linkis_ps_configuration_category： 插入引擎的目录关联关系
 linkis_ps_configuration_config_value： 插入引擎需要展示的配置
 linkis_ps_configuration_key_engine_relation:配置项和引擎的关联关系
@@ -56,7 +56,7 @@ linkis_ps_configuration_key_engine_relation:配置项和引擎的关联关系
 -- set variable
 SET @ENGINE_LABEL="trino-371";
 SET @ENGINE_IDE=CONCAT('*-IDE,',@ENGINE_LABEL);
-SET @ENGINE_ALL=CONCAT('*-*,',@TRINO_LABEL);
+SET @ENGINE_ALL=CONCAT('*-*,',@ENGINE_LABEL);
 SET @ENGINE_NAME="trino";
 
 -- add trino engine to IDE

@@ -23,11 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -169,15 +168,15 @@ public class FsPath {
     return new File(uri);
   }
 
-  public Path toPath() {
-    return FileSystems.getDefault().getPath(uri.toString());
+  public String getUriString() {
+    return uri.toString();
   }
 
   public boolean isOwner(String user) {
     return owner.equals(user);
   }
 
-  public FsPath getParent() throws IOException {
+  public FsPath getParent() {
     String path = uri.getPath();
     int lastSlash = path.lastIndexOf('/');
     int start = startPositionWithoutWindowsDrive(path);
@@ -270,10 +269,19 @@ public class FsPath {
   }
 
   public String getSchemaPath() {
+    // local file system
     if (WINDOWS && !"hdfs".equals(getFsType())) {
       return getFsType() + "://" + uri.getAuthority() + uri.getPath();
     }
-    return getFsType() + "://" + uri.getPath();
+
+    if (Objects.isNull(uri.getAuthority())) {
+      // eg: hdfs:///tmp/linkis use local hdfs
+      return getFsType() + "://" + uri.getPath();
+    } else {
+      // eg: hdfs://nameNode:9000/tmp/linkis use specified hdfs
+      // eg: oss://bucketName/tmp/linkis use OSS
+      return getFsType() + "://" + uri.getAuthority() + uri.getPath();
+    }
   }
 
   @Override

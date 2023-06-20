@@ -42,8 +42,8 @@ class GovernanceCommonConfTest {
     val errorcodedesclen = GovernanceCommonConf.ERROR_CODE_DESC_LEN
 
     Assertions.assertEquals("wds.linkis.rm", conffilterrm)
-    Assertions.assertEquals("2.4.3", sparkengineversion)
-    Assertions.assertEquals("1.2.1", hiveengineversion)
+    Assertions.assertEquals("3.2.1", sparkengineversion)
+    Assertions.assertEquals("3.1.3", hiveengineversion)
     Assertions.assertEquals("python2", pythonengineversion)
     Assertions.assertFalse(pythoncodeparserswitch)
     Assertions.assertFalse(scalacodeparserswitch)

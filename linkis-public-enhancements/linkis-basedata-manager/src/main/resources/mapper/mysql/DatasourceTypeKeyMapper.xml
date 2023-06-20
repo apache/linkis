@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeKeyMapper">
+
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeKeyEntity">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="dataSourceTypeId" column="data_source_type_id" jdbcType="INTEGER"/>
+        <result property="key" column="key" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="nameEn" column="name_en" jdbcType="VARCHAR"/>
+        <result property="defaultValue" column="default_value" jdbcType="VARCHAR"/>
+        <result property="valueType" column="value_type" jdbcType="VARCHAR"/>
+        <result property="scope" column="scope" jdbcType="VARCHAR"/>
+        <result property="require" column="require" jdbcType="TINYINT"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="descriptionEn" column="description_en" jdbcType="VARCHAR"/>
+        <result property="valueRegex" column="value_regex" jdbcType="VARCHAR"/>
+        <result property="refId" column="ref_id" jdbcType="BIGINT"/>
+        <result property="refValue" column="ref_value" jdbcType="VARCHAR"/>
+        <result property="dataSource" column="data_source" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,data_source_type_id,`key`,
+        `name`,name_en,default_value,
+        value_type,`scope`,`require`,
+        description,description_en,value_regex,
+        ref_id,ref_value,data_source,
+        update_time,create_time
+    </sql>
+
+    <select id="getListByPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+         from linkis_ps_dm_datasource_type_key
+        WHERE 1 = 1
+        <if test="searchName != null and searchName!=''">
+            and `name` like concat('%',#{searchName},'%')
+        </if>
+        <if test="dataSourceTypeId != null and dataSourceTypeId!=''">
+            and `data_source_type_id` = #{dataSourceTypeId}
+        </if>
+    </select>
+</mapper>

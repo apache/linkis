@@ -22,8 +22,12 @@
       size="large"
       fix/>
     <div class="resource-title" :class="{'admin-title': !isAdminModel}">
-      <!-- <span class="title-text" >{{$t('message.linkis.resourceManagement.resourceUsage')}}</span>
-      <Icon class="title-icon" @click="refreshResource" type="md-refresh"></Icon> -->
+      <div style="display: inline-block;">
+        <div style="display: flex;align-items: center; height: 37px;margin-right: 10px">
+          <span class="title-text" >{{$t('message.linkis.resourceManagement.resourceUsage')}}</span>
+          <Icon class="title-icon" @click="refreshResource" type="md-refresh"></Icon>
+        </div>
+      </div>
       <Form v-if="isLogAdmin" class="global-history-searchbar" :style="{float: isAdminModel ? 'none' : 'right'}" :model="searchBar" inline>
         <FormItem v-show="isAdminModel" prop="userName" :label="$t('message.linkis.userName')">
           <Input

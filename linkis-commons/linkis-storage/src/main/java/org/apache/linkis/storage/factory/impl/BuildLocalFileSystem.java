@@ -21,7 +21,7 @@ import org.apache.linkis.common.io.Fs;
 import org.apache.linkis.storage.factory.BuildFactory;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.fs.impl.LocalFileSystem;
-import org.apache.linkis.storage.io.IOMethodInterceptorCreator$;
+import org.apache.linkis.storage.io.IOMethodInterceptorFactory;
 import org.apache.linkis.storage.utils.StorageConfiguration;
 import org.apache.linkis.storage.utils.StorageUtils;
 
@@ -34,7 +34,7 @@ public class BuildLocalFileSystem implements BuildFactory {
     FileSystem fs = null;
     if (StorageUtils.isIOProxy()) {
       if (user.equals(proxyUser)) {
-        if ((Boolean) StorageConfiguration.IS_SHARE_NODE().getValue()) {
+        if ((Boolean) StorageConfiguration.IS_SHARE_NODE.getValue()) {
           fs = new LocalFileSystem();
         } else {
           fs = getProxyFs();
@@ -58,12 +58,12 @@ public class BuildLocalFileSystem implements BuildFactory {
   private FileSystem getProxyFs() {
     Enhancer enhancer = new Enhancer();
     enhancer.setSuperclass(LocalFileSystem.class.getSuperclass());
-    enhancer.setCallback(IOMethodInterceptorCreator$.MODULE$.getIOMethodInterceptor(fsName()));
+    enhancer.setCallback(IOMethodInterceptorFactory.getIOMethodInterceptor(fsName()));
     return (FileSystem) enhancer.create();
   }
 
   @Override
   public String fsName() {
-    return "file";
+    return StorageUtils.FILE;
   }
 }

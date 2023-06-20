@@ -80,9 +80,13 @@ data:
     eureka:
       instance:
         prefer-ip-address: true
+        instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+        lease-renewal-interval-in-seconds: 4
+        lease-expiration-duration-in-seconds: 12
       client:
         serviceUrl:
           defaultZone: {{- include "linkis.registration.url" . | quote | indent 1 }}
+        registry-fetch-interval-seconds: 8
     management:
       endpoints:
         web:
@@ -118,8 +122,8 @@ data:
       port: {{ .Values.mgEureka.port }}
     eureka:
       instance:
-        hostname: localhost
         preferIpAddress: true
+        hostname: ${spring.cloud.client.ip-address}
       client:
         register-with-eureka: false
         fetch-registry: false
@@ -131,6 +135,35 @@ data:
         enable-self-preservation: false
         eviction-interval-timer-in-ms: 5000
         response-cache-update-interval-ms: 3000
+
+  application-engineconn.yml: |
+    spring:
+      application:
+        name: linkis-cg-engineconn
+      servlet:
+        multipart:
+          max-file-size: 500MB
+          max-request-size: 500MB
+          file-size-threshold: 50MB
+    eureka:
+      instance:
+        prefer-ip-address: true
+        instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+        lease-renewal-interval-in-seconds: 4
+        lease-expiration-duration-in-seconds: 12
+      client:
+        serviceUrl:
+           defaultZone: {{- include "linkis.registration.url" . | quote | indent 1 }}
+        registry-fetch-interval-seconds: 8
+        initial-instance-info-replication-interval-seconds: 10
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: refresh,info,health,metrics
+
+    logging:
+      config: classpath:log4j2.xml
 
   linkis-cli.properties: |
     #wds.linkis.client.common.creator=LINKISCLI
@@ -148,7 +181,11 @@ data:
     wds.linkis.server.version=v1
     ##spring conf
     wds.linkis.gateway.url={{- include "linkis.gateway.url" . }}
-    wds.linkis.eureka.defaultZone={{- include "linkis.registration.url" . }}
+
+    wds.linkis.multiple.yarn.cluster=false
+    linkis.discovery.prefer-ip-address=true
+    linkis.discovery.server-address={{- include "linkis.registration.url" . }}
+
     ##mybatis
     wds.linkis.server.mybatis.datasource.url={{- include "linkis.datasource.url" . }}
     wds.linkis.server.mybatis.datasource.username={{ .Values.linkis.datasource.username }}
@@ -227,8 +264,8 @@ data:
     wds.linkis.server.mybatis.typeAliasesPackage=
     wds.linkis.server.mybatis.BasePackage=org.apache.linkis.manager.dao,org.apache.linkis.manager.rm.external.dao,org.apache.linkis.engineplugin.server.dao
 
-    wds.linkis.engineConn.plugin.cache.expire-in-seconds=100000
-    wds.linkis.engineConn.dist.load.enable=true
+    linkis.engineConn.plugin.cache.expire-in-seconds=100000
+    wds.linkis.engineconn.dist.load.enable=true
     #wds.linkis.engineconn.home=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
     #wds.linkis.engineconn.plugin.loader.store.path=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
 
@@ -260,8 +297,8 @@ data:
     wds.linkis.server.mybatis.mapperLocations=classpath:org/apache/linkis/engineplugin/server/dao/impl/*.xml
     wds.linkis.server.mybatis.typeAliasesPackage=
     wds.linkis.server.mybatis.BasePackage=org.apache.linkis.engineplugin.server.dao
-    wds.linkis.engineConn.plugin.cache.expire-in-seconds=100000
-    wds.linkis.engineConn.dist.load.enable=true
+    linkis.engineConn.plugin.cache.expire-in-seconds=100000
+    wds.linkis.engineconn.dist.load.enable=true
     #wds.linkis.engineconn.home=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
     #wds.linkis.engineconn.plugin.loader.store.path=/appcom/Install/LinkisInstall/lib/linkis-engineconn-plugins
 

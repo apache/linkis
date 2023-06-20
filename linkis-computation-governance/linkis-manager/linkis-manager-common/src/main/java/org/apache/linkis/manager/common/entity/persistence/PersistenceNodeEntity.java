@@ -28,11 +28,14 @@ public class PersistenceNodeEntity implements Node {
   private ServiceInstance serviceInstance;
   private String owner;
   private String mark;
+  private String identifier;
   private NodeStatus nodeStatus;
 
   private Date startTime;
 
   private Date updateTime;
+
+  private String ticketId;
 
   @Override
   public Date getUpdateTime() {
@@ -86,6 +89,26 @@ public class PersistenceNodeEntity implements Node {
   @Override
   public String getMark() {
     return this.mark;
+  }
+
+  @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
+  @Override
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  @Override
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 
   public void setOwner(String owner) {

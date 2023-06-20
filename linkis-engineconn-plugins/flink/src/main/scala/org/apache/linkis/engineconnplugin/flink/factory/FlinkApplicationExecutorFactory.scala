@@ -23,11 +23,19 @@ import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkJarOnceExecutor
+import org.apache.linkis.engineconnplugin.flink.executor.interceptor.FlinkJobResCleanInterceptor
+import org.apache.linkis.engineconnplugin.flink.resource.FlinkJobLocalResourceCleaner
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
 
 class FlinkApplicationExecutorFactory extends OnceExecutorFactory {
+
+  /**
+   * Interceptor
+   * @return
+   */
+  private def submitInterceptor = new FlinkJobResCleanInterceptor(new FlinkJobLocalResourceCleaner)
 
   override protected def newExecutor(
       id: Int,
@@ -36,7 +44,9 @@ class FlinkApplicationExecutorFactory extends OnceExecutorFactory {
       labels: Array[Label[_]]
   ): OnceExecutor = engineConn.getEngineConnSession match {
     case context: FlinkEngineConnContext =>
-      new FlinkJarOnceExecutor(id, context)
+      val executor = new FlinkJarOnceExecutor(id, context)
+      executor.setSubmitInterceptor(submitInterceptor)
+      executor
   }
 
   override protected def getRunType: RunType = RunType.JAR

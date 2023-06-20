@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextHistoryMapper">
+
+    <sql id="context_history">
+        `id`,`context_id`,`source`,`context_type`,`history_json`,`keyword`,`create_time`,`update_time`,`access_time`
+    </sql>
+
+    <insert id="createHistory" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        INSERT INTO linkis_ps_cs_context_history(<include refid="context_history"/>)
+        VALUES (#{id},#{contextId},#{source},#{contextType},#{historyJson},#{keyword},#{createTime},#{updateTime},#{accessTime})
+    </insert>
+
+
+    <select id="getHistory" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE id = #{id}
+        AND context_id = #{contextID.contextId}
+    </select>
+
+    <select id="getHistoryBySource"
+            resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE source = #{source}
+        AND context_id = #{contextID.contextId}
+    </select>
+
+    <select id="getHistoriesByContextID"
+            resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        SELECT *
+        FROM linkis_ps_cs_context_history
+        WHERE context_id = #{contextID.contextId}
+    </select>
+
+    <delete id="removeHistory">
+        DELETE FROM linkis_ps_cs_context_history
+        WHERE context_id = #{contextID.contextId}
+        AND source = #{source}
+    </delete>
+
+    <update id="updateHistory">
+        UPDATE linkis_ps_cs_context_history
+        <set>
+            <if test="pHistory.source != null">`source` = #{pHistory.source},</if>
+            <if test="pHistory.contextType != null">`context_type` = #{pHistory.contextType},</if>
+            <if test="pHistory.keyword != null">`keyword` = #{pHistory.keyword},</if>
+            <if test="pHistory.updateTime != null">`update_time` = #{pHistory.updateTime},</if>
+            <if test="pHistory.createTime != null">`create_time` = #{pHistory.createTime},</if>
+            <if test="pHistory.accessTime != null">`access_time` = #{pHistory.accessTime},</if>
+        </set>
+        WHERE id = #{pHistory.id}
+    </update>
+
+    <select id="searchByKeywords" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        SELECT * FROM linkis_ps_cs_context_history WHERE context_id = #{contextID.contextId} AND keyword IN
+        <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="searchByKeywordsAndType" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextHistory">
+        SELECT * FROM linkis_ps_cs_context_history WHERE context_type = #{contextType} AND keyword IN
+        <foreach collection="keywords" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

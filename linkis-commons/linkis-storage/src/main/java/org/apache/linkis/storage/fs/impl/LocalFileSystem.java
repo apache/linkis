@@ -75,12 +75,14 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public long getTotalSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("Get total space with path:" + path);
     return new File(path).getTotalSpace();
   }
 
   @Override
   public long getFreeSpace(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("Get free space with path:" + path);
     return new File(path).getFreeSpace();
   }
 
@@ -111,12 +113,13 @@ public class LocalFileSystem extends FileSystem {
     if (group != null) {
       setGroup(dest, group);
     }
-    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP().getValue());
+    setGroup(dest, StorageConfiguration.STORAGE_USER_GROUP.getValue());
     return true;
   }
 
   @Override
   public boolean setOwner(FsPath dest, String user) throws IOException {
+    LOG.info("Set owner with path:" + dest.getPath() + "and user:" + user);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setOwner skip");
       return true;
@@ -133,6 +136,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setGroup(FsPath dest, String group) throws IOException {
+    LOG.info("Set group with path:" + dest.getPath() + "and group:" + user);
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setGroup skip");
       return true;
@@ -155,6 +159,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean mkdirs(FsPath dest) throws IOException {
     String path = dest.getPath();
+    LOG.info("Try to mkdirs with path:" + path);
     File file = new File(path);
     // Create parent directories one by one and set their permissions to rwxrwxrwx.
     Stack<File> dirsToMake = new Stack<File>();
@@ -182,6 +187,7 @@ public class LocalFileSystem extends FileSystem {
   }
 
   public boolean canMkdir(FsPath destParentDir) throws IOException {
+    LOG.info("Try to check if the directory can be created with path:" + destParentDir.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.debug("io not proxy, not check owner, just check if have write permission ");
       return this.canWrite(destParentDir);
@@ -203,6 +209,7 @@ public class LocalFileSystem extends FileSystem {
   @Override
   public boolean copy(String origin, String dest) throws IOException {
     File file = new File(dest);
+    LOG.info("Try to copy file from:" + origin + " to dest:" + dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
     }
@@ -225,6 +232,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean setPermission(FsPath dest, String permission) throws IOException {
+    LOG.info("Try to set permission dest with path:" + dest.getPath());
     if (!StorageUtils.isIOProxy()) {
       LOG.info("io not proxy, setPermission as parent.");
       try {
@@ -251,6 +259,7 @@ public class LocalFileSystem extends FileSystem {
   public FsPathListWithError listPathWithError(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
+    LOG.info("Try to list path:" + path.getPath() + " with error msg");
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       String message = "";
@@ -280,20 +289,21 @@ public class LocalFileSystem extends FileSystem {
 
     if (MapUtils.isNotEmpty(properties)) {
       this.properties = properties;
-      if (properties.containsKey(StorageConfiguration.PROXY_USER().key())) {
-        user = StorageConfiguration.PROXY_USER().getValue(properties);
+      if (properties.containsKey(StorageConfiguration.PROXY_USER.key())) {
+        user = StorageConfiguration.PROXY_USER.getValue(properties);
       }
-      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
     } else {
       this.properties = new HashMap<String, String>();
     }
     if (FsPath.WINDOWS) {
-      group = StorageConfiguration.STORAGE_USER_GROUP().getValue(properties);
+      group = StorageConfiguration.STORAGE_USER_GROUP.getValue(properties);
     }
     if (StringUtils.isEmpty(group)) {
       String groupInfo;
       try {
         groupInfo = Utils.exec(new String[] {"id", user});
+        LOG.info("Get groupinfo:" + groupInfo + "  with shell command: id " + user);
       } catch (RuntimeException e) {
         group = user;
         return;
@@ -310,7 +320,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public String rootUserName() {
-    return StorageConfiguration.LOCAL_ROOT_USER().getValue();
+    return StorageConfiguration.LOCAL_ROOT_USER.getValue();
   }
 
   @Override
@@ -322,7 +332,7 @@ public class LocalFileSystem extends FileSystem {
     } else {
       fsPath = new FsPath(dest);
     }
-
+    LOG.info("Try to get FsPath with  path:" + fsPath.getPath());
     PosixFileAttributes attr = null;
     try {
       attr = Files.readAttributes(Paths.get(fsPath.getPath()), PosixFileAttributes.class);
@@ -365,7 +375,7 @@ public class LocalFileSystem extends FileSystem {
 
   @Override
   public boolean create(String dest) throws IOException {
-
+    LOG.info("try to create file with path:" + dest);
     File file = new File(dest);
     if (!isOwner(file.getParent())) {
       throw new IOException("you have on permission to create file " + dest);
@@ -391,6 +401,7 @@ public class LocalFileSystem extends FileSystem {
   public List<FsPath> list(FsPath path) throws IOException {
     File file = new File(path.getPath());
     File[] files = file.listFiles();
+    LOG.info("Try to get file list with path:" + path.getPath());
     if (files != null) {
       List<FsPath> rtn = new ArrayList();
       for (File f : files) {

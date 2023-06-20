@@ -22,11 +22,6 @@ import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionE
 
 object FlinkEnvConfiguration {
 
-  val SPARK_LIB_PATH = CommonVars(
-    "spark.lib.path",
-    CommonVars("SPARK_HOME", "/appcom/Install/spark").getValue + "/jars"
-  )
-
   val FLINK_HOME_ENV = "FLINK_HOME"
   val FLINK_CONF_DIR_ENV = "FLINK_CONF_DIR"
   val FLINK_VERSION = CommonVars("flink.version", "1.12.2")

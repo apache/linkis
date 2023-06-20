@@ -30,15 +30,18 @@
         <result column="category" property="category" jdbcType="VARCHAR"/>
     </resultMap>
 
+    <sql id="udf_Tree_List_Insert">
+        parent, name, user_name, description, create_time,update_time, category
+    </sql>
     <sql id="udf_Tree_List">
-        id, `parent`, `name`, `user_name`, `description`, `create_time`,`update_time`, `category`
+        id, parent, name, user_name, description, create_time,update_time, category
     </sql>
 
     <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFTree">
         INSERT INTO linkis_ps_udf_tree (
-        <include refid="udf_Tree_List"/>
+        <include refid="udf_Tree_List_Insert"/>
         ) VALUES (
-        #{id,jdbcType=BIGINT},#{parent,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
+        #{parent,jdbcType=BIGINT},#{name,jdbcType=VARCHAR},
         #{userName,jdbcType=VARCHAR},#{description,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{category,jdbcType=VARCHAR}
         )
@@ -47,7 +50,7 @@
     <update id="updateTree" parameterType="org.apache.linkis.udf.entity.UDFTree">
         UPDATE linkis_ps_udf_tree
         SET parent = #{parent,jdbcType=BIGINT},
-        `name` = #{name,jdbcType=VARCHAR},
+        name = #{name,jdbcType=VARCHAR},
         user_name = #{userName,jdbcType=VARCHAR},
         description=#{description,jdbcType=VARCHAR},
         update_time=#{updateTime,jdbcType=TIMESTAMP}
@@ -56,28 +59,28 @@
 
     <delete id="deleteTree">
         DELETE FROM linkis_ps_udf_tree
-        where id = #{arg0} and user_name=#{arg1}
+        WHERE id = #{arg0} and user_name=#{arg1}
     </delete>
 
     <select id="getTreeByIdAndCategory" resultMap="UDFTreeResultMap">
-        select
+        SELECT
         <include refid="udf_Tree_List"/>
-        from linkis_ps_udf_tree
-        where id = #{arg0} and category = #{arg1}
+        FROM linkis_ps_udf_tree
+        WHERE id = #{arg0} AND category = #{arg1}
     </select>
 
     <select id="getTreeByIdAndCategoryAndUserName" resultMap="UDFTreeResultMap">
-        select
+        SELECT
         <include refid="udf_Tree_List"/>
-        from linkis_ps_udf_tree
-        where id = #{arg0} and category = #{arg1} and user_name=#{arg2}
+        FROM linkis_ps_udf_tree
+        WHERE id = #{arg0} AND category = #{arg1} AND user_name=#{arg2}
     </select>
 
     <select id="getTreesByParentId" resultMap="UDFTreeResultMap" parameterType="java.util.Map">
-        select
+        SELECT
         <include refid="udf_Tree_List"/>
-        from linkis_ps_udf_tree
-        where 1=1
+        FROM linkis_ps_udf_tree
+        WHERE 1=1
         <if test="parent != null">
             And parent = #{parent,jdbcType=BIGINT}
         </if>
@@ -90,20 +93,29 @@
     </select>
 
     <select id="getTreeByNameAndUser" resultMap="UDFTreeResultMap">
-        select
+        SELECT
         <include refid="udf_Tree_List"/>
-        from linkis_ps_udf_tree
-        where name=#{treeName} and user_name=#{userName} and category=#{category} and parent in
-        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+        FROM linkis_ps_udf_tree
+        WHERE name=#{treeName} And user_name=#{userName} And category=#{category} And parent in
+        (SELECT id FROM linkis_ps_udf_tree WHERE parent = -1 And category=#{category} And user_name=#{userName})
     </select>
 
     <select id="getUserDirectory" resultType="java.lang.String">
-        select name from linkis_ps_udf_tree where user_name=#{userName} and category=#{category} and parent in
-        (select id from linkis_ps_udf_tree where parent = -1 and category=#{category} and user_name=#{userName})
+        SELECT name
+        FROM linkis_ps_udf_tree
+        WHERE user_name = #{userName}
+        AND category = #{category}
+        AND parent IN (
+        SELECT id
+        FROM linkis_ps_udf_tree
+        WHERE parent = -1
+        AND category = #{category}
+        AND user_name = #{userName}
+        )
     </select>
 
     <select id="getTreeById" resultType="org.apache.linkis.udf.entity.UDFTree">
-        select <include refid="udf_Tree_List"/>
-        from linkis_ps_udf_tree where id=#{id}
+        SELECT <include refid="udf_Tree_List"/>
+        FROM linkis_ps_udf_tree WHERE id=#{id}
     </select>
 </mapper>

@@ -27,8 +27,10 @@
 
     <insert id="insertDownloadModel" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
             parameterType="org.apache.linkis.bml.entity.DownloadModel">
-        insert into `linkis_ps_resources_download_history` ( `start_time`,`end_time`,`client_ip`,`state`,`resource_id`,`version`,`downloader`)
-        values(#{downloadModel.startTime}, #{downloadModel.endTime}, #{downloadModel.clientIp}, #{downloadModel.state}, #{downloadModel.resourceId}, #{downloadModel.version}, #{downloadModel.downloader})
+        INSERT INTO linkis_ps_resources_download_history (start_time, end_time, client_ip, state, resource_id
+        , version, downloader)
+        VALUES (#{downloadModel.startTime}, #{downloadModel.endTime}, #{downloadModel.clientIp}, #{downloadModel.state}, #{downloadModel.resourceId}
+        , #{downloadModel.version}, #{downloadModel.downloader})
     </insert>
 
 </mapper>

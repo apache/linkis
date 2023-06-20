@@ -34,6 +34,7 @@ public class LinkisKeys {
   public static final String KEY_EXECID = "execId";
   public static final String KEY_UMUSER = "umUser";
   public static final String KEY_EXECUTEONCE = "executeOnce";
+  public static final String KEY_CLUSTER = "yarnCluster";
   public static final String KEY_TENANT = "tenant";
   public static final String META_DATA_COLUMN_NAME = "columnName";
   public static final String KEY_SHELL_WORKING_DIRECTORY =

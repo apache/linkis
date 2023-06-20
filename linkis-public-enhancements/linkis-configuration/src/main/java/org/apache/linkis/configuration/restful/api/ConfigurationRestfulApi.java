@@ -275,9 +275,39 @@ public class ConfigurationRestfulApi {
       version = tmpString[1];
     }
     configurationService.updateUserValue(createList, updateList);
-    configurationService.clearAMCacheConf(username, creator, engine, version);
-    Message message = Message.ok();
-    return message;
+    // TODO: Add a refresh cache interface later
+    if (StringUtils.isNotBlank(creator) && creator.equals("*")) {
+      List<CategoryLabelVo> allCategory = categoryService.getAllCategory(null);
+      List<CategoryLabelVo> categoryLabelVos =
+          allCategory.stream()
+              .filter(s -> s.getCategoryName().equals(Configuration.REMOVE_APPLICATION_CACHE()))
+              .map(CategoryLabelVo::getChildCategory)
+              .findFirst()
+              .get();
+      categoryLabelVos.stream()
+          .map(CategoryLabelVo::getCategoryName)
+          .filter(StringUtils::isNotBlank)
+          .forEach(
+              info -> {
+                String[] tmpString = info.split("-");
+                if (tmpString.length == 2) {
+                  String engineName = tmpString[0];
+                  String engineVersion = tmpString[1];
+                  logger.info(
+                      "Config remove engine cache:engineName:{},engineVersion:{}",
+                      engineName,
+                      engineVersion);
+                  configurationService.clearAMCacheConf(
+                      username,
+                      Configuration.REMOVE_APPLICATION_CACHE(),
+                      engineName,
+                      engineVersion);
+                }
+              });
+    } else {
+      configurationService.clearAMCacheConf(username, creator, engine, version);
+    }
+    return Message.ok();
   }
 
   @ApiOperation(

@@ -32,12 +32,15 @@ public class InfoRMNode implements RMNode {
   private String owner;
 
   private String mark;
+  private String identifier;
 
   private NodeStatus nodeStatus;
 
   private Date startTime;
 
   private Date updateTime;
+
+  private String ticketId;
 
   @Override
   public NodeResource getNodeResource() {
@@ -80,6 +83,16 @@ public class InfoRMNode implements RMNode {
   }
 
   @Override
+  public String getIdentifier() {
+    return identifier;
+  }
+
+  @Override
+  public void setIdentifier(String identifier) {
+    this.identifier = identifier;
+  }
+
+  @Override
   public Date getUpdateTime() {
     return updateTime;
   }
@@ -97,5 +110,15 @@ public class InfoRMNode implements RMNode {
   @Override
   public void setStartTime(Date startTime) {
     this.startTime = startTime;
+  }
+
+  @Override
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  @Override
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 }

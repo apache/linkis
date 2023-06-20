@@ -25,18 +25,20 @@ import org.apache.linkis.engineconn.once.executor.{
   OnceExecutorExecutionContext,
   OperableOnceExecutor
 }
-import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelFlinkClient
+import org.apache.linkis.engineconnplugin.seatunnel.client.LinkisSeatunnelFlinkV2Client
 import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_FLINK_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelFlinkEnvConfiguration.{
   GET_LINKIS_FLINK_CHECK,
   GET_LINKIS_FLINK_CONFIG,
-  GET_LINKIS_FLINK_RUNMODE,
+  GET_LINKIS_FLINK_DEPLOY_MODE,
+  GET_LINKIS_FLINK_MASTER,
   GET_LINKIS_FLINK_VARIABLE,
   LINKIS_FLINK_CHECK,
   LINKIS_FLINK_CONFIG,
-  LINKIS_FLINK_RUNMODE,
+  LINKIS_FLINK_DEPLOY_MODE,
+  LINKIS_FLINK_MASTER,
   LINKIS_FLINK_VARIABLE
 }
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
@@ -79,6 +81,7 @@ class SeatunnelFlinkOnceCodeExecutor(
     val code: String = options(TaskConstant.CODE)
     params = onceExecutorExecutionContext.getOnceExecutorContent.getJobContent
       .asInstanceOf[util.Map[String, String]]
+    logger.info("flink doSubmit args:" + params)
     future = Utils.defaultScheduler.submit(new Runnable {
       override def run(): Unit = {
         logger.info("Try to execute codes." + code)
@@ -106,21 +109,24 @@ class SeatunnelFlinkOnceCodeExecutor(
     logger.info("Execute SeatunnelFlink Process")
 
     var args: Array[String] = Array.empty
-    val flinkRunMode = LINKIS_FLINK_RUNMODE.getValue
+    val flinkRunMode = LINKIS_FLINK_DEPLOY_MODE.getValue
     if (params != null && params.containsKey(flinkRunMode)) {
       val config = LINKIS_FLINK_CONFIG.getValue
       val variable = LINKIS_FLINK_VARIABLE.getValue
       val check = LINKIS_FLINK_CHECK.getValue
+      val master = LINKIS_FLINK_MASTER.getValue
 
       args = Array(
-        GET_LINKIS_FLINK_RUNMODE,
+        GET_LINKIS_FLINK_DEPLOY_MODE,
         params.getOrDefault(flinkRunMode, "run"),
         GET_LINKIS_FLINK_CHECK,
         params.getOrDefault(check, "false"),
+        GET_LINKIS_FLINK_MASTER,
+        params.getOrDefault(master, "local"),
         GET_LINKIS_FLINK_CONFIG,
         generateExecFile(code)
       )
-
+      logger.info("runCode args:" + args.mkString("Array(", ", ", ")"))
       if (params.containsKey(variable)) {
         val variableMap = GSON.fromJson(params.get(variable), classOf[util.HashMap[String, String]])
         variableMap.asScala.foreach(f => {
@@ -130,6 +136,7 @@ class SeatunnelFlinkOnceCodeExecutor(
 
     } else {
       args = localArray(code)
+      logger.info("runCode no args:" + args.mkString("Array(", ", ", ")"))
     }
     System.setProperty("SEATUNNEL_HOME", System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue))
     Files.createSymbolicLink(
@@ -137,7 +144,7 @@ class SeatunnelFlinkOnceCodeExecutor(
       new File(SeatunnelEnvConfiguration.SEATUNNEL_HOME.getValue).toPath
     )
     logger.info(s"Execute SeatunnelFlink Process end args:${args.mkString(" ")}")
-    LinkisSeatunnelFlinkClient.main(args)
+    LinkisSeatunnelFlinkV2Client.main(args)
   }
 
   override protected def waitToRunning(): Unit = {

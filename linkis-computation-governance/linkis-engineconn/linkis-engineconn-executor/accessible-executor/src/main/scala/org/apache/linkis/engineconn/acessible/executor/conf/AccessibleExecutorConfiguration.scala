@@ -55,4 +55,16 @@ object AccessibleExecutorConfiguration {
 
   val ENABLE_MAINTAIN_CREATORS = CommonVars("wds.linkis.engineconn.maintain.cretors", "IDE")
 
+  val REPORTING_DELAY_MS = CommonVars(
+    "linkis.engineconn.heartbeat.report.delay",
+    20,
+    "Heartbeat status reporting delay, default 20ms, Negative numbers do not take effect"
+  ).getValue
+
+  val REPORTING_IGNORE_MS = CommonVars(
+    "linkis.engineconn.heartbeat.report.ignore",
+    3,
+    "Heartbeat status report repeated ignore, default 3ms,Negative numbers do not take effect"
+  ).getValue
+
 }

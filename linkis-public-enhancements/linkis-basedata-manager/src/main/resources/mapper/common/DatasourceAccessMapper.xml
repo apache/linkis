@@ -38,12 +38,12 @@
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
-        select
+        SELECT
         <include refid="Base_Column_List"></include>
-        from linkis_ps_datasource_access
+        FROM linkis_ps_datasource_access
         <if test="searchName != null and searchName!=''">
-            where visitor like concat('%',#{searchName},'%')
-            or fields like concat('%',#{searchName},'%')
+            WHERE visitor LIKE concat('%',#{searchName},'%')
+            OR fields LIKE concat('%',#{searchName},'%')
         </if>
     </select>
 </mapper>

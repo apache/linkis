@@ -75,7 +75,7 @@ public class TenantConfigrationRestfulApi {
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to create-tenant,msg: only administrators can configure");
       }
-      if (tenantConfigService.userExists(tenantVo.getUser(), tenantVo.getCreator(), null)) {
+      if (tenantConfigService.isExist(tenantVo.getUser(), tenantVo.getCreator())) {
         throw new ConfigurationException("User-creator is existed");
       }
       parameterVerification(tenantVo);
@@ -225,8 +225,7 @@ public class TenantConfigrationRestfulApi {
   public Message checkUserCreator(
       HttpServletRequest req,
       @RequestParam(value = "user", required = false) String user,
-      @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "tenantValue", required = false) String tenantValue) {
+      @RequestParam(value = "creator", required = false) String creator) {
     Boolean result = false;
     try {
       // Parameter verification
@@ -236,14 +235,11 @@ public class TenantConfigrationRestfulApi {
       if (StringUtils.isBlank(user)) {
         throw new ConfigurationException("User Name can't be empty ");
       }
-      if (creator.equals("*")) {
-        throw new ConfigurationException("Application Name can't be '*' ");
-      }
       String userName = ModuleUserUtils.getOperationUser(req, "checkUserCreator");
       if (!Configuration.isAdmin(userName)) {
         return Message.error("Failed to check-user-creator,msg: only administrators can configure");
       }
-      result = tenantConfigService.userExists(user, creator, tenantValue);
+      result = tenantConfigService.isExist(user, creator);
     } catch (ConfigurationException e) {
       return Message.error("Failed to check-user-creator,msg:" + e.getMessage());
     }
@@ -266,6 +262,9 @@ public class TenantConfigrationRestfulApi {
     }
     if (StringUtils.isBlank(tenantVo.getTenantValue())) {
       throw new ConfigurationException("Tenant tag can't be empty ");
+    }
+    if (tenantVo.getCreator().equals("*") && tenantVo.getUser().equals("*")) {
+      throw new ConfigurationException("User && Creator cannot be both *");
     }
   }
 }

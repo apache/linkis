@@ -44,10 +44,11 @@ object RunType extends Enumeration {
   val TRINO_SQL = Value("tsql")
 
 
-  val SEATUNNEL_FLINK_SQL = Value("sfsql")
+  val SEATUNNEL_ZETA = Value("szeta")
   val SEATUNNEL_FLINK = Value("sflink")
   val SEATUNNEL_SPARK = Value("sspark")
 
   val DATA_CALC = Value("data_calc") // spark datacalc (ETL)
 
+  val IMPALA_SQL = Value("isql")
 }

@@ -41,8 +41,10 @@ class UJESSQLDriverMain extends Driver with Logging {
     props.putAll(parseURL(url))
     logger.info(s"input url:$url, properties:$properties")
     val ujesClient = UJESClientFactory.getUJESClient(props)
-    new UJESSQLConnection(ujesClient, props)
-  } else throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)
+    new LinkisSQLConnection(ujesClient, props)
+  } else {
+    null
+  }
 
   override def acceptsURL(url: String): Boolean = url.startsWith(URL_PREFIX)
 
@@ -76,14 +78,17 @@ class UJESSQLDriverMain extends Driver with Logging {
               false
             case Array(key, _) =>
               if (StringUtils.isBlank(key)) {
-                throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
+                throw new LinkisSQLException(
+                  LinkisSQLErrorCode.BAD_URL,
+                  "bad url for params: " + url
+                )
               } else true
             case _ =>
-              throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url for params: " + url)
+              throw new LinkisSQLException(LinkisSQLErrorCode.BAD_URL, "bad url for params: " + url)
           }
           props.setProperty(PARAMS, kvs.map(_.mkString(KV_SPLIT)).mkString(PARAM_SPLIT))
         }
-      case _ => throw new UJESSQLException(UJESSQLErrorCode.BAD_URL, "bad url: " + url)
+      case _ => throw new LinkisSQLException(LinkisSQLErrorCode.BAD_URL, "bad url: " + url)
     }
     props
   }
@@ -143,6 +148,8 @@ object UJESSQLDriverMain {
   val ENABLE_DISCOVERY = UJESSQLDriver.ENABLE_DISCOVERY
   val ENABLE_LOADBALANCER = UJESSQLDriver.ENABLE_LOADBALANCER
   val CREATOR = UJESSQLDriver.CREATOR
+
+  val TABLEAU = UJESSQLDriver.TABLEAU
 
   val VARIABLE_HEADER = UJESSQLDriver.VARIABLE_HEADER
 

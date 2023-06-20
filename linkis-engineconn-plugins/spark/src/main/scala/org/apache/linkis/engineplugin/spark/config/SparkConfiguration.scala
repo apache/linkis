@@ -145,6 +145,8 @@ object SparkConfiguration extends Logging {
 
   val SPARK_ONCE_YARN_RESTFUL_URL = CommonVars[String]("linkis.spark.once.yarn.restful.url", "")
 
+  val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

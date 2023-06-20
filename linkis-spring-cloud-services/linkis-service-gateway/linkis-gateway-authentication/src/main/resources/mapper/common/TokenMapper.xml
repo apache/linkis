@@ -36,8 +36,8 @@
 
     <sql id="tableName">linkis_mg_gateway_auth_token</sql>
 
-    <select id="selectTokenByName" parameterType="String" resultMap="tokenEntityMap">
-        select * from
+    <select id="selectTokenByName" parameterType="java.lang.String" resultMap="tokenEntityMap">
+        SELECT * FROM
         <include refid="tableName"/>
         <where>
             token_name = #{tokenName}
@@ -45,7 +45,7 @@
     </select>
 
     <select id="getAllTokens" resultMap="tokenEntityMap">
-        select * from
+        SELECT * FROM
         <include refid="tableName"/>
     </select>
 

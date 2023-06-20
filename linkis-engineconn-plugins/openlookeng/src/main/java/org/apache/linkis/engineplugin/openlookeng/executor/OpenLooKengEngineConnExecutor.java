@@ -45,7 +45,7 @@ import org.apache.linkis.scheduler.executer.ErrorExecuteResponse;
 import org.apache.linkis.scheduler.executer.ExecuteResponse;
 import org.apache.linkis.scheduler.executer.SuccessExecuteResponse;
 import org.apache.linkis.storage.domain.DataType;
-import org.apache.linkis.storage.resultset.ResultSetFactory$;
+import org.apache.linkis.storage.resultset.ResultSetFactory;
 import org.apache.linkis.storage.resultset.table.TableMetaData;
 import org.apache.linkis.storage.resultset.table.TableRecord;
 
@@ -305,7 +305,7 @@ public class OpenLooKengEngineConnExecutor extends ConcurrentComputationExecutor
     int columnCount = 0;
     int rows = 0;
     ResultSetWriter<? extends MetaData, ? extends Record> resultSetWriter =
-        engineExecutorContext.createResultSetWriter(ResultSetFactory$.MODULE$.TABLE_TYPE());
+        engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE);
     try {
       QueryStatusInfo results = null;
       if (statement.isRunning()) {

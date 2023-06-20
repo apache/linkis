@@ -340,7 +340,7 @@ public class TaskServiceImpl implements TaskService {
     FileSystem hadoopFs =
         (FileSystem)
             FSFactory.getFsByProxyUser(
-                firstDestPath, StorageConfiguration.HDFS_ROOT_USER().getValue());
+                firstDestPath, StorageConfiguration.HDFS_ROOT_USER.getValue());
     FileSystem anotherUserFs = (FileSystem) FSFactory.getFsByProxyUser(firstDestPath, anotherUser);
     try {
       hadoopFs.init(null);

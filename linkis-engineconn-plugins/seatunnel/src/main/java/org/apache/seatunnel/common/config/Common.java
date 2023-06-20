@@ -20,6 +20,7 @@ package org.apache.seatunnel.common.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -141,7 +142,7 @@ public class Common {
           .filter(it -> it.getFileName().toString().endsWith(".jar"))
           .collect(Collectors.toList());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new JobExecutionException(e.getMessage(), e);
     }
   }
 
@@ -160,7 +161,7 @@ public class Common {
           .filter(it -> it.getFileName().toString().endsWith(".jar"))
           .collect(Collectors.toList());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new JobExecutionException(e.getMessage(), e);
     }
   }
 

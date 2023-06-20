@@ -19,7 +19,7 @@ package org.apache.linkis.engineconnplugin.seatunnel.client;
 
 import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 
-import org.apache.seatunnel.core.flink.SeatunnelFlink;
+import org.apache.seatunnel.core.starter.flink.SeaTunnelFlink;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,8 +29,8 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkisSeatunnelFlinkClient {
-  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelFlinkClient.class);
+public class LinkisSeatunnelFlinkV2Client {
+  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelFlinkV2Client.class);
   private static Class<?> seatunnelEngineClass;
   private static JarLoader jarLoader;
 
@@ -39,16 +39,21 @@ public class LinkisSeatunnelFlinkClient {
       jarLoader =
           new JarLoader(
               new String[] {
-                LinkisSeatunnelFlinkClient.class
+                LinkisSeatunnelFlinkV2Client.class
                     .getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .getPath()
               });
       jarLoader.loadClass("org.apache.seatunnel.common.config.Common", false);
-      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.flink.FlinkStarter");
+      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.flink.FlinkV2Starter");
       jarLoader.addJarURL(
-          SeatunnelFlink.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+          SeaTunnelFlink.class
+              .getProtectionDomain()
+              .getCodeSource()
+              .getLocation()
+              .toURI()
+              .getPath());
       Thread.currentThread().setContextClassLoader(jarLoader);
       Method method = seatunnelEngineClass.getDeclaredMethod("main", String[].class);
       return (Integer) method.invoke(null, (Object) args);

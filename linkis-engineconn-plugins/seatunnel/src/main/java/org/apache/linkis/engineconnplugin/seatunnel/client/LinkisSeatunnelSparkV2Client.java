@@ -19,7 +19,7 @@ package org.apache.linkis.engineconnplugin.seatunnel.client;
 
 import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 
-import org.apache.seatunnel.core.spark.SeatunnelSpark;
+import org.apache.seatunnel.core.starter.spark.SeaTunnelSpark;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,8 +29,8 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkisSeatunnelSparkClient {
-  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelSparkClient.class);
+public class LinkisSeatunnelSparkV2Client {
+  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelSparkV2Client.class);
   private static Class<?> seatunnelEngineClass;
   private static JarLoader jarLoader;
 
@@ -39,7 +39,7 @@ public class LinkisSeatunnelSparkClient {
       jarLoader =
           new JarLoader(
               new String[] {
-                LinkisSeatunnelSparkClient.class
+                LinkisSeatunnelSparkV2Client.class
                     .getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
@@ -47,10 +47,10 @@ public class LinkisSeatunnelSparkClient {
               });
       jarLoader.loadClass("org.apache.seatunnel.common.config.Common", false);
       jarLoader.loadClass("org.apache.seatunnel.core.base.config.ConfigBuilder", false);
-      jarLoader.loadClass("org.apache.seatunnel.core.base.config.PluginFactory", false);
-      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.spark.SparkStarter");
+      //      jarLoader.loadClass("org.apache.seatunnel.core.base.config.PluginFactory", false);
+      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.spark.SparkV2Starter");
       jarLoader.addJarURL(
-          SeatunnelSpark.class
+          SeaTunnelSpark.class
               .getProtectionDomain()
               .getCodeSource()
               .getLocation()

@@ -19,7 +19,7 @@ package org.apache.linkis.engineconnplugin.seatunnel.client;
 
 import org.apache.linkis.engineconn.computation.executor.utlis.JarLoader;
 
-import org.apache.seatunnel.core.sql.SeatunnelSql;
+import org.apache.seatunnel.core.starter.seatunnel.SeaTunnelClient;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,8 +29,8 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LinkisSeatunnelFlinkSQLClient {
-  private static Logger logger = LoggerFactory.getLogger(LinkisSeatunnelFlinkSQLClient.class);
+public class LinkSeatunnelZetaClient {
+  private static Logger logger = LoggerFactory.getLogger(LinkSeatunnelZetaClient.class);
   private static Class<?> seatunnelEngineClass;
   private static JarLoader jarLoader;
 
@@ -39,16 +39,23 @@ public class LinkisSeatunnelFlinkSQLClient {
       jarLoader =
           new JarLoader(
               new String[] {
-                LinkisSeatunnelFlinkSQLClient.class
+                LinkSeatunnelZetaClient.class
                     .getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .getPath()
               });
       jarLoader.loadClass("org.apache.seatunnel.common.config.Common", false);
-      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.sql.FlinkSqlStarter");
+      jarLoader.loadClass("org.apache.seatunnel.core.base.config.ConfigBuilder", false);
+      //      jarLoader.loadClass("org.apache.seatunnel.core.base.config.PluginFactory", false);
+      seatunnelEngineClass = jarLoader.loadClass("org.apache.seatunnel.core.zeta.ZetaStarter");
       jarLoader.addJarURL(
-          SeatunnelSql.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+          SeaTunnelClient.class
+              .getProtectionDomain()
+              .getCodeSource()
+              .getLocation()
+              .toURI()
+              .getPath());
       Thread.currentThread().setContextClassLoader(jarLoader);
       Method method = seatunnelEngineClass.getDeclaredMethod("main", String[].class);
       return (Integer) method.invoke(null, (Object) args);

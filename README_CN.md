@@ -83,7 +83,7 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认Apache Hive 2.3.3）|\>=1.0.3|是|Hive EngineConn， 支持HiveQL 代码。|
 |Python|Python >= 2.6, <br/>（默认Python2*）|\>=1.0.3|是|Python EngineConn， 支持python 代码。|
 |Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持Bash shell 代码。|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持MySQL 和HiveQL，可快速扩展支持其他有JDBC Driver 包的引擎, 如Oracle。|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL 和 SQLServer，可快速扩展支持其他数据库组件, 如SQLite|
 |Flink |Flink >= 1.12.2, <br/>(默认Apache Flink 1.12.2)|\>=1.0.2|否|Flink EngineConn， 支持FlinkSQL 代码，也支持以Flink Jar 形式启动一个新的Yarn 应用程序。|
 |Pipeline|-|\>=1.0.2|否|Pipeline EngineConn， 支持文件的导入和导出。|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(默认openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用Sql查询数据虚拟化引擎openLooKeng。|

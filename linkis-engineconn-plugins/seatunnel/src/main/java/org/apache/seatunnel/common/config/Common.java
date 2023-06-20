@@ -22,7 +22,6 @@ import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutio
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException;
 
 import java.io.File;
 import java.io.IOException;

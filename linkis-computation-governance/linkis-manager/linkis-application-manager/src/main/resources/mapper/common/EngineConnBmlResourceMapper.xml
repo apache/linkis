@@ -22,20 +22,20 @@
 
 
     <sql id="bml_resources">
-        `engine_conn_type`,`version`,`file_name`,`file_size`,`last_modified`,`bml_resource_id`,`bml_resource_version`,`create_time`,`last_update_time`
+        engine_conn_type,version,file_name,file_size,last_modified,bml_resource_id,bml_resource_version,create_time,last_update_time
     </sql>
 
     <select id="getAllEngineConnBmlResource"
             resultType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
         SELECT * FROM linkis_cg_engine_conn_plugin_bml_resources
-        WHERE engine_conn_type=#{engineConnType} and `version`=#{version}
+        WHERE engine_conn_type=#{engineConnType} and version=#{version}
     </select>
 
-    <select id="getTypeVersionList" resultType="String">
+    <select id="getTypeVersionList" resultType="java.lang.String">
         SELECT version FROM linkis_cg_engine_conn_plugin_bml_resources where engine_conn_type = #{type} GROUP BY version
     </select>
 
-    <select id="getTypeList" resultType="String">
+    <select id="getTypeList" resultType="java.lang.String">
         SELECT engine_conn_type FROM linkis_cg_engine_conn_plugin_bml_resources GROUP BY engine_conn_type
     </select>
 
@@ -46,43 +46,43 @@
         FROM linkis_cg_engine_conn_plugin_bml_resources
         <where>
             <if test="engineConnType != null and engineConnType != ''">
-                <![CDATA[AND `engine_conn_type` like concat('%', #{engineConnType}, '%')]]>
+                AND engine_conn_type like concat('%', #{engineConnType}, '%')
             </if>
             <if test="engineConnVersion != null and engineConnVersion != ''">
-                <![CDATA[AND `version` like concat('%', #{engineConnVersion}, '%')]]>
+                AND version like concat('%', #{engineConnVersion}, '%')
             </if>
         </where>
-        <![CDATA[ ORDER BY create_time DESC ]]>
+         ORDER BY create_time DESC
     </select>
 
     <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        delete from linkis_cg_engine_conn_plugin_bml_resources where
-        engine_conn_type=#{engineConnBmlResource.engineConnType} and
-        `version`=#{engineConnBmlResource.version}
-        and file_name=#{engineConnBmlResource.fileName}
+        DELETE FROM linkis_cg_engine_conn_plugin_bml_resources
+        WHERE engine_conn_type = #{engineConnBmlResource.engineConnType}
+        AND version = #{engineConnBmlResource.version}
+        AND file_name = #{engineConnBmlResource.fileName}
     </delete>
 
     <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        update linkis_cg_engine_conn_plugin_bml_resources
-        <trim prefix="set" suffixOverrides=",">
-            <if test="engineConnBmlResource.lastModified != null">`last_modified` =
+        UPDATE linkis_cg_engine_conn_plugin_bml_resources
+        <set>
+            <if test="engineConnBmlResource.lastModified != null">last_modified =
                 #{engineConnBmlResource.lastModified},
             </if>
-            <if test="engineConnBmlResource.fileSize != null">`file_size` = #{engineConnBmlResource.fileSize},</if>
-            <if test="engineConnBmlResource.bmlResourceVersion != null">`bml_resource_version` =
+            <if test="engineConnBmlResource.fileSize != null">file_size = #{engineConnBmlResource.fileSize},</if>
+            <if test="engineConnBmlResource.bmlResourceVersion != null">bml_resource_version =
                 #{engineConnBmlResource.bmlResourceVersion},
             </if>
-            <if test="engineConnBmlResource.lastUpdateTime != null">`last_update_time` =
+            <if test="engineConnBmlResource.lastUpdateTime != null">last_update_time =
                 #{engineConnBmlResource.lastUpdateTime},
             </if>
-        </trim>
-        WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and `version`=#{engineConnBmlResource.version}
-        and file_name=#{engineConnBmlResource.fileName}
+        </set>
+        WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and version=#{engineConnBmlResource.version}
+        AND file_name=#{engineConnBmlResource.fileName}
     </update>
 
     <insert id="save" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
-        insert into linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
-        values(#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
+        INSERT INTO linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
+        VALUES (#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
         #{engineConnBmlResource.fileName},#{engineConnBmlResource.fileSize},
         #{engineConnBmlResource.lastModified},#{engineConnBmlResource.bmlResourceId},
         #{engineConnBmlResource.bmlResourceVersion},

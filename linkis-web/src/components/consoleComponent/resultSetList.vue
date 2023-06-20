@@ -45,7 +45,7 @@
           v-for="(item, index) in list"
           :class="{current: current-0 === index}"
           :data-index="index"
-          :key="item.path">{{$t('message.common.resultList')}}{{ index+1 }}</li>
+          :key="item.path">{{$t('message.common.resultList')}}{{ +item.name.split('.')[0].substring(1) + 1 }}</li>
       </virtual-list>
     </div>
   </div>
@@ -73,7 +73,9 @@ export default {
   },
   data() {
     return {
-      resultList: this.list,
+      resultList: this.list.sort((a, b) => {
+        return +(a.name.split('.')[0].substring(1)) - +(b.name.split('.')[0].substring(1))
+      }),
       show: false,
     };
   },

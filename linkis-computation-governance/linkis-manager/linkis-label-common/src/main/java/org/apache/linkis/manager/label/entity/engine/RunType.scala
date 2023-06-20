@@ -50,4 +50,5 @@ object RunType extends Enumeration {
 
   val DATA_CALC = Value("data_calc") // spark datacalc (ETL)
 
+  val IMPALA_SQL = Value("isql")
 }

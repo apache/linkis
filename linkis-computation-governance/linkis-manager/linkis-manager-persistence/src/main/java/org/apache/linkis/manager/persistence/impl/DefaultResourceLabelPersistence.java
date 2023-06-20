@@ -145,7 +145,7 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
 
   @Override
   // @Transactional(rollbackFor = Throwable.class)
-  public void removeResourceByLabel(PersistenceLabel label) throws PersistenceErrorException {
+  public void removeResourceByLabel(PersistenceLabel label) {
     // label id 不为空，则直接通过label_id 查询，否则通过 value_key and value_content 查询
     int labelId = label.getId();
     if (labelId <= 0) {
@@ -180,7 +180,9 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
       Map<String, Map<String, String>> keyValueMaps =
           blankIds.stream()
               .map(PersistenceUtils::entryToTunple)
-              .collect(Collectors.toMap(Tunple::getKey, Tunple::getValue));
+              .collect(
+                  Collectors.toMap(
+                      Tunple::getKey, Tunple::getValue, (existingValue, newValue) -> newValue));
       // labelManagerMapper.batchDeleteResourceByLabelKeyValuesMaps(keyValueMaps);
     }
   }

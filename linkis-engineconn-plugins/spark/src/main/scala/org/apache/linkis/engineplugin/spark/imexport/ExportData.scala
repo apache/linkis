@@ -20,22 +20,19 @@ package org.apache.linkis.engineplugin.spark.imexport
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.imexport.util.BackGroundServiceUtils
+import org.apache.linkis.server.BDPJettyServerHelper
 
 import org.apache.spark.sql.SparkSession
-
-import org.json4s.{DefaultFormats, _}
-import org.json4s.jackson.JsonMethods._
 
 /**
  */
 object ExportData extends Logging {
-  implicit val formats = DefaultFormats
 
   def exportData(spark: SparkSession, dataInfo: String, destination: String): Unit = {
     exportDataFromFile(
       spark,
-      parse(dataInfo).extract[Map[String, Any]],
-      parse(destination).extract[Map[String, Any]]
+      BDPJettyServerHelper.gson.fromJson(dataInfo, classOf[Map[String, Any]]),
+      BDPJettyServerHelper.gson.fromJson(destination, classOf[Map[String, Any]])
     )
   }
 
@@ -43,8 +40,8 @@ object ExportData extends Logging {
     val dataInfo = BackGroundServiceUtils.exchangeExecutionCode(dataInfoPath)
     exportDataFromFile(
       spark,
-      parse(dataInfo).extract[Map[String, Any]],
-      parse(destination).extract[Map[String, Any]]
+      BDPJettyServerHelper.gson.fromJson(dataInfo, classOf[Map[String, Any]]),
+      BDPJettyServerHelper.gson.fromJson(destination, classOf[Map[String, Any]])
     )
   }
 

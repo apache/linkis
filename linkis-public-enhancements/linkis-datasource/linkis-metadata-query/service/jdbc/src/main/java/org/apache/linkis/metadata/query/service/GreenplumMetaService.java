@@ -18,12 +18,15 @@
 package org.apache.linkis.metadata.query.service;
 
 import org.apache.linkis.datasourcemanager.common.util.json.Json;
+import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
+import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.AbstractDbMetaService;
 import org.apache.linkis.metadata.query.common.service.MetadataConnection;
 import org.apache.linkis.metadata.query.service.conf.SqlParamsMapper;
 import org.apache.linkis.metadata.query.service.greenplum.SqlConnection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 
 import java.sql.SQLException;
@@ -58,8 +61,10 @@ public class GreenplumMetaService extends AbstractDbMetaService<SqlConnection> {
     Object sqlParamObj = params.get(SqlParamsMapper.PARAM_SQL_EXTRA_PARAMS.getValue());
     if (null != sqlParamObj) {
       if (!(sqlParamObj instanceof Map)) {
-        extraParams =
-            Json.fromJson(String.valueOf(sqlParamObj), Map.class, String.class, Object.class);
+        String paramStr = String.valueOf(sqlParamObj);
+        if (StringUtils.isNotBlank(paramStr)) {
+          extraParams = Json.fromJson(paramStr, Map.class, String.class, Object.class);
+        }
       } else {
         extraParams = (Map<String, Object>) sqlParamObj;
       }
@@ -96,6 +101,20 @@ public class GreenplumMetaService extends AbstractDbMetaService<SqlConnection> {
       return connection.getColumns(schema, table);
     } catch (SQLException | ClassNotFoundException e) {
       throw new RuntimeException("Fail to get Sql columns(获取字段列表失败)", e);
+    }
+  }
+
+  @Override
+  public String querySqlConnectUrl(SqlConnection connection) {
+    return connection.getSqlConnectUrl();
+  }
+
+  @Override
+  public GenerateSqlInfo queryJdbcSql(SqlConnection connection, String database, String table) {
+    try {
+      return connection.queryJdbcSql(database, table);
+    } catch (Exception e) {
+      throw new MetaRuntimeException("Fail to get jdbc sql (获取jdbcSql失败)", e);
     }
   }
 }

@@ -21,7 +21,6 @@
 <mapper namespace="org.apache.linkis.manager.dao.NodeMetricManagerMapper">
 
 
-    <!-- 获取 -->
     <resultMap id="PersistenceNodeMetrics"
           type="org.apache.linkis.manager.common.entity.persistence.PersistenceNodeMetrics">
          <id column="instance" property="instance"/>
@@ -35,17 +34,23 @@
 
 
     <insert id="addNodeMetrics" >
-        insert into  linkis_cg_manager_service_instance_metrics (instance, instance_status, overload, heartbeat_msg,healthy_status,update_time,create_time)
-        values(#{nodeMetrics.instance},#{nodeMetrics.status},#{nodeMetrics.overLoad},#{nodeMetrics.heartBeatMsg},#{nodeMetrics.healthy},now(),now())
+        INSERT INTO linkis_cg_manager_service_instance_metrics (instance, instance_status, overload, heartbeat_msg, healthy_status
+        , update_time, create_time)
+        VALUES (#{nodeMetrics.instance}, #{nodeMetrics.status}, #{nodeMetrics.overLoad}, #{nodeMetrics.heartBeatMsg}, #{nodeMetrics.healthy}
+        , now(), now())
     </insert>
 
     <select id="checkInstanceExist" resultType="java.lang.Integer">
-        select count(id) from  linkis_cg_manager_service_instance_metrics met inner join linkis_cg_manager_service_instance ins
-        on met.instance = #{instance} and ins.instance = #{instance} and met.instance = ins.instance
+        SELECT count(id)
+        FROM linkis_cg_manager_service_instance_metrics met
+        INNER JOIN linkis_cg_manager_service_instance ins
+        ON met.instance = #{instance}
+        AND ins.instance = #{instance}
+        AND met.instance = ins.instance
     </select>
 
     <select id="getNodeMetricsByInstances" resultMap="PersistenceNodeMetrics">
-        select * from linkis_cg_manager_service_instance_metrics where instance in(
+        SELECT * FROM linkis_cg_manager_service_instance_metrics WHERE instance IN (
         <foreach collection='instances' separator=',' item='instance'>
         #{instance}
         </foreach>
@@ -53,39 +58,49 @@
     </select>
 
     <select id="getNodeMetricsByInstance" resultMap="PersistenceNodeMetrics">
-        select * from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+        SELECT *
+        FROM linkis_cg_manager_service_instance_metrics
+        WHERE instance = #{instance}
     </select>
 
     <update id="updateNodeMetrics">
-         update linkis_cg_manager_service_instance_metrics
-        <trim prefix='set' suffixOverrides=','>
+        UPDATE linkis_cg_manager_service_instance_metrics
+        <set>
         <if test='nodeMetrics.status != null'>instance_status = #{nodeMetrics.status},</if>
         <if test='nodeMetrics.overLoad != null'> overload = #{nodeMetrics.overLoad},</if>
         <if test='nodeMetrics.heartBeatMsg != null'>  heartbeat_msg = #{nodeMetrics.heartBeatMsg},</if>
         <if test='nodeMetrics.healthy != null'>  healthy_status=#{nodeMetrics.healthy}, </if>
         <if test='nodeMetrics.updateTime != null'>  update_time=#{nodeMetrics.updateTime},</if>
-        </trim> where instance = #{instance}
+        </set> WHERE instance = #{instance}
     </update>
 
     <delete id="deleteNodeMetrics">
-        delete from linkis_cg_manager_service_instance_metrics where instance in
-        (select instance from linkis_cg_manager_service_instance where instance=#{instance})
+        DELETE FROM linkis_cg_manager_service_instance_metrics
+        WHERE instance IN (
+        SELECT instance
+        FROM linkis_cg_manager_service_instance
+        WHERE instance = #{instance}
+        )
     </delete>
 
     <delete id="deleteNodeMetricsByInstance">
-        delete from linkis_cg_manager_service_instance_metrics where instance = #{instance}
+        DELETE FROM linkis_cg_manager_service_instance_metrics
+        WHERE instance = #{instance}
     </delete>
 
     <select id="getAllNodeMetrics" resultMap="PersistenceNodeMetrics">
-        select A.name,B.* from linkis_cg_manager_service_instance A join linkis_cg_manager_service_instance_metrics B where A.instance =  B.instance
+        SELECT A.name, B.*
+        FROM linkis_cg_manager_service_instance A
+        JOIN linkis_cg_manager_service_instance_metrics B
+        ON A.instance = B.instance
     </select>
 
 
     <update id="updateNodeStatus">
-      update linkis_cg_manager_service_instance_metrics
-      set instance_status = #{instanceStatus},
-      update_time= now()
-      where instance = #{instance} and instance_status=#{oldStatus}
+        UPDATE linkis_cg_manager_service_instance_metrics
+        SET instance_status = #{instanceStatus}, update_time = now()
+        WHERE instance = #{instance}
+        AND instance_status = #{oldStatus}
     </update>
 
 

@@ -25,6 +25,7 @@
   </parent>
 
   <artifactId>linkis-engineplugin-seatunnel</artifactId>
+
   <properties>
     <seatunnel.version>2.3.1</seatunnel.version>
   </properties>

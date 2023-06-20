@@ -28,6 +28,10 @@ deployUser=hadoop
 ##If you don't set it, a random password string will be generated during installation
 deployPwd=
 
+### database type
+### choose mysql or postgresql, default mysql
+dbType=mysql
+
 
 ##Linkis_SERVER_VERSION
 LINKIS_SERVER_VERSION=v1
@@ -78,7 +82,7 @@ HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/appcom/config/hadoop-config"}
 HADOOP_KERBEROS_ENABLE=${HADOOP_KERBEROS_ENABLE:-"false"}
 HADOOP_KEYTAB_PATH=${HADOOP_KEYTAB_PATH:-"/appcom/keytab/"}
 ## Hadoop env version
-HADOOP_VERSION=${HADOOP_VERSION:-"2.7.2"}
+HADOOP_VERSION=${HADOOP_VERSION:-"3.3.4"}
 
 #Hive
 HIVE_HOME=/appcom/Install/hive
@@ -91,10 +95,10 @@ SPARK_CONF_DIR=/appcom/config/spark-config
 
 ## Engine version conf
 #SPARK_VERSION
-#SPARK_VERSION=2.4.3
+#SPARK_VERSION=3.2.1
 
 ##HIVE_VERSION
-#HIVE_VERSION=2.3.3
+#HIVE_VERSION=3.1.3
 
 #PYTHON_VERSION=python2
 

@@ -86,9 +86,9 @@ Since the first release of Linkis in 2019, it has accumulated more than **700** 
 
 | **Engine name** | **Support underlying component version<br/>(default dependency version)** | **Linkis Version Requirements** | **Included in Release Package By Default** | **Description** |
 |:---- |:---- |:---- |:---- |:---- |
-|Spark|Apache 2.0.0~2.4.7, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 2.4.3)|\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
-|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 2.3.3)|\>=1.0.3|Yes|Hive EngineConn, supports HiveQL code|
-|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes|Python EngineConn, supports python code|
+|Spark|Apache >= 2.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Spark 3.2.1)|\>=1.0.3|Yes|Spark EngineConn, supports SQL , Scala, Pyspark and R code|
+|Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>(default Apache Hive 3.1.3)|\>=1.0.3|Yes |Hive EngineConn, supports HiveQL code|
+|Python|Python >= 2.6, <br/>(default Python2*)|\>=1.0.3|Yes |Python EngineConn, supports python code|
 |Shell|Bash >= 2.0|\>=1.0.3|Yes|Shell EngineConn, supports Bash shell code|
 |JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(default Hive-jdbc 2.3.4)|\>=1.0.3|No |JDBC EngineConn, already supports MySQL and HiveQL, can be extended quickly Support other engines with JDBC Driver package, such as Oracle|
 |Flink |Flink >= 1.12.2, <br/>(default Apache Flink 1.12.2)|\>=1.0.2|No |Flink EngineConn, supports FlinkSQL code, also supports starting a new Yarn in the form of Flink Jar Application|
@@ -154,7 +154,7 @@ linkis image by yourself, the image created by this tool will be tagged as `link
 
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.1 
-$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
 

@@ -39,7 +39,6 @@ import org.apache.linkis.storage.excel.StorageMultiExcelWriter;
 import org.apache.linkis.storage.fs.FileSystem;
 import org.apache.linkis.storage.script.*;
 import org.apache.linkis.storage.source.FileSource;
-import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
@@ -133,9 +132,9 @@ public class FsRestfulApi {
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
     String path;
     String returnType;
-    if (StorageUtils.HDFS().equalsIgnoreCase(pathType)) {
+    if (StorageUtils.HDFS.equalsIgnoreCase(pathType)) {
       path = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
-      returnType = StorageUtils.HDFS().toUpperCase();
+      returnType = StorageUtils.HDFS.toUpperCase();
     } else {
       path = localUserRootPath + userName;
       returnType = LOCAL_RETURN_TYPE;
@@ -398,7 +397,7 @@ public class FsRestfulApi {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
+        dirFileTreeChildren.setPath(children.getSchemaPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
         if (!children.isdir()) {
@@ -522,8 +521,8 @@ public class FsRestfulApi {
     FileSource fileSource = null;
     try {
       Message message = Message.ok();
-      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
-      Pair<Object, Object>[] fileInfo = fileSource.getFileInfo(pageSize);
+      fileSource = FileSource.create(fsPath, fileSystem);
+      Pair<Integer, Integer>[] fileInfo = fileSource.getFileInfo(pageSize);
       IOUtils.closeQuietly(fileSource);
       if (null != fileInfo && fileInfo.length > 0) {
         message.data("path", path);
@@ -580,14 +579,14 @@ public class FsRestfulApi {
     }
     FileSource fileSource = null;
     try {
-      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
-      if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
+      fileSource = FileSource.create(fsPath, fileSystem);
+      if (FileSource.isResultSet(fsPath.getPath())) {
         fileSource = fileSource.page(page, pageSize);
       }
-      Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];
+      Pair<Object, List<String[]>> result = fileSource.collect()[0];
       IOUtils.closeQuietly(fileSource);
       message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
-      message.data("type", fileSource.getFileSplits()[0].type());
+      message.data("type", fileSource.getFileSplits()[0].getType());
       message.data("totalLine", fileSource.getTotalLine());
       return message.data("page", page).data("totalPage", 0);
     } finally {
@@ -745,10 +744,10 @@ public class FsRestfulApi {
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem).addParams("nullValue", nullValue);
+      fileSource = FileSource.create(fsPath, fileSystem).addParams("nullValue", nullValue);
       switch (outputFileType) {
         case "csv":
-          if (FileSource$.MODULE$.isTableResultSet(fileSource)) {
+          if (FileSource.isTableResultSet(fileSource)) {
             fsWriter =
                 CSVFsWriter.getCSVFSWriter(charset, csvSeparator, quoteRetouchEnable, outputStream);
           } else {
@@ -761,7 +760,7 @@ public class FsRestfulApi {
           }
           break;
         case "xlsx":
-          if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
+          if (!FileSource.isTableResultSet(fileSource)) {
             throw WorkspaceExceptionManager.createException(80024);
           }
           fsWriter =
@@ -859,9 +858,8 @@ public class FsRestfulApi {
       outputStream = response.getOutputStream();
       // 前台传""会自动转为null
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) nullValue = "";
-      fileSource =
-          FileSource$.MODULE$.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
-      if (!FileSource$.MODULE$.isTableResultSet(fileSource)) {
+      fileSource = FileSource.create(fsPaths, fileSystem).addParams("nullValue", nullValue);
+      if (!FileSource.isTableResultSet(fileSource)) {
         throw WorkspaceExceptionManager.createException(80024);
       }
       fsWriter = new StorageMultiExcelWriter(outputStream, autoFormat);
@@ -1004,13 +1002,13 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80018);
     }
     try (FileSource fileSource =
-        FileSource$.MODULE$.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
-      Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
+        FileSource.create(fsPath, fileSystem).addParams("ifMerge", "false")) {
+      Pair<Object, List<String[]>> collect = fileSource.collect()[0];
       StringBuilder[] log =
           Arrays.stream(new StringBuilder[4])
               .map(f -> new StringBuilder())
               .toArray(StringBuilder[]::new);
-      ArrayList<String[]> snd = collect.getSecond();
+      List<String[]> snd = collect.getSecond();
       LogLevel start = new LogLevel(LogLevel.Type.ALL);
       snd.stream()
           .map(f -> f[0])

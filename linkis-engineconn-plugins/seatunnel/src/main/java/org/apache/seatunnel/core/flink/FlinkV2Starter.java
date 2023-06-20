@@ -33,11 +33,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @Author shixiutao
- *
- * @create 2023/3/15 9:50
- */
 public class FlinkV2Starter implements Starter {
   public static final Log logger = LogFactory.getLog(FlinkV2Starter.class.getName());
   private static final String APP_NAME = SeaTunnelFlink.class.getName();

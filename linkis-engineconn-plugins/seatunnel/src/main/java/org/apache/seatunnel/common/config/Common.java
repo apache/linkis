@@ -136,10 +136,10 @@ public class Common {
     }
     try (Stream<Path> stream = Files.walk(pluginRootDir, PLUGIN_LIB_DIR_DEPTH, FOLLOW_LINKS)) {
       return stream
-              .filter(it -> pluginRootDir.relativize(it).getNameCount() == PLUGIN_LIB_DIR_DEPTH)
-              .filter(it -> it.getParent().endsWith("lib"))
-              .filter(it -> it.getFileName().toString().endsWith(".jar"))
-              .collect(Collectors.toList());
+          .filter(it -> pluginRootDir.relativize(it).getNameCount() == PLUGIN_LIB_DIR_DEPTH)
+          .filter(it -> it.getParent().endsWith("lib"))
+          .filter(it -> it.getFileName().toString().endsWith(".jar"))
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -156,9 +156,9 @@ public class Common {
     }
     try (Stream<Path> stream = Files.walk(libRootDir, APP_LIB_DIR_DEPTH, FOLLOW_LINKS)) {
       return stream
-              .filter(it -> !it.toFile().isDirectory())
-              .filter(it -> it.getFileName().toString().endsWith(".jar"))
-              .collect(Collectors.toList());
+          .filter(it -> !it.toFile().isDirectory())
+          .filter(it -> it.getFileName().toString().endsWith(".jar"))
+          .collect(Collectors.toList());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -167,9 +167,9 @@ public class Common {
   public static Set<Path> getThirdPartyJars(String paths) {
     logger.info("getThirdPartyJars path:" + paths);
     return Arrays.stream(paths.split(";"))
-            .filter(s -> !"".equals(s))
-            .filter(it -> it.endsWith(".jar"))
-            .map(path -> Paths.get(URI.create(path)))
-            .collect(Collectors.toSet());
+        .filter(s -> !"".equals(s))
+        .filter(it -> it.endsWith(".jar"))
+        .map(path -> Paths.get(URI.create(path)))
+        .collect(Collectors.toSet());
   }
 }

@@ -37,7 +37,6 @@ public class ConfigBuilder {
 
   private final Config config;
 
-
   public ConfigBuilder(Path configFile) {
     this.configFile = configFile;
     this.config = load();
@@ -54,11 +53,11 @@ public class ConfigBuilder {
     // variables substitution / variables resolution order:
     // config file --> system environment --> java properties
     Config config =
-            ConfigFactory.parseFile(configFile.toFile())
-                    .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
-                    .resolveWith(
-                            ConfigFactory.systemProperties(),
-                            ConfigResolveOptions.defaults().setAllowUnresolved(true));
+        ConfigFactory.parseFile(configFile.toFile())
+            .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true))
+            .resolveWith(
+                ConfigFactory.systemProperties(),
+                ConfigResolveOptions.defaults().setAllowUnresolved(true));
 
     ConfigRenderOptions options = ConfigRenderOptions.concise().setFormatted(true);
     LOGGER.info("parsed config file:" + config.root().render(options));
@@ -68,5 +67,4 @@ public class ConfigBuilder {
   public Config getConfig() {
     return config;
   }
-
 }

@@ -19,6 +19,7 @@ package org.apache.linkis.engineconnplugin.seatunnel.util
 
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelSparkEnvConfiguration
+
 import org.apache.commons.io.IOUtils
 import org.apache.commons.logging.{Log, LogFactory}
 
@@ -48,7 +49,9 @@ object SeatunnelUtils {
     var bufferedReader: BufferedReader = null
     try {
       val processBuilder: ProcessBuilder = new ProcessBuilder(generateRunCode(code): _*)
-      val file = new File(System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/logs/yarnApp.log")
+      val file = new File(
+        System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue) + "/logs/yarnApp.log"
+      )
       processBuilder.redirectErrorStream(true)
       processBuilder.redirectOutput(Redirect.appendTo(file))
       LOGGER.info("process ready start.")

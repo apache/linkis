@@ -29,11 +29,11 @@ import org.apache.seatunnel.common.config.DeployMode;
 import org.apache.seatunnel.core.starter.Starter;
 import org.apache.seatunnel.core.starter.enums.EngineType;
 import org.apache.seatunnel.core.starter.enums.PluginType;
-import org.apache.seatunnel.core.starter.utils.ConfigBuilder;
 import org.apache.seatunnel.core.starter.spark.SeaTunnelSpark;
 import org.apache.seatunnel.core.starter.spark.args.SparkCommandArgs;
 import org.apache.seatunnel.core.starter.utils.CommandLineUtils;
 import org.apache.seatunnel.core.starter.utils.CompressionUtils;
+import org.apache.seatunnel.core.starter.utils.ConfigBuilder;
 import org.apache.seatunnel.plugin.discovery.PluginIdentifier;
 import org.apache.seatunnel.plugin.discovery.seatunnel.SeaTunnelSinkPluginDiscovery;
 import org.apache.seatunnel.plugin.discovery.seatunnel.SeaTunnelSourcePluginDiscovery;
@@ -111,7 +111,8 @@ public class SparkV2Starter implements Starter {
    */
   static SparkV2Starter getInstance(String[] args) {
     SparkCommandArgs commandArgs =
-        CommandLineUtils.parse(args, new SparkCommandArgs(), EngineType.SPARK2.getStarterShellName(), true);
+        CommandLineUtils.parse(
+            args, new SparkCommandArgs(), EngineType.SPARK2.getStarterShellName(), true);
     DeployMode deployMode = commandArgs.getDeployMode();
     switch (deployMode) {
       case CLUSTER:
@@ -323,7 +324,8 @@ public class SparkV2Starter implements Starter {
   /** append appJar to StringBuilder */
   protected void appendAppJar(List<String> commands) {
     //    commands.add(Common.appLibDir().resolve("seatunnel-spark-starter.jar").toString());
-    String appJarPath = Common.appStarterDir().resolve(EngineType.SPARK2.getStarterJarName()).toString();
+    String appJarPath =
+        Common.appStarterDir().resolve(EngineType.SPARK2.getStarterJarName()).toString();
     logger.info("spark appJarPath:" + appJarPath);
     commands.add(appJarPath);
   }

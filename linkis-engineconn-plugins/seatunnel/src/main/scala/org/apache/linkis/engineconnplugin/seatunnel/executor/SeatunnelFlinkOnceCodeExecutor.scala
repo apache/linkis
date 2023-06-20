@@ -33,13 +33,13 @@ import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelFlinkEnvConf
   GET_LINKIS_FLINK_CHECK,
   GET_LINKIS_FLINK_CONFIG,
   GET_LINKIS_FLINK_DEPLOY_MODE,
-  GET_LINKIS_FLINK_VARIABLE,
   GET_LINKIS_FLINK_MASTER,
+  GET_LINKIS_FLINK_VARIABLE,
   LINKIS_FLINK_CHECK,
   LINKIS_FLINK_CONFIG,
   LINKIS_FLINK_DEPLOY_MODE,
-  LINKIS_FLINK_VARIABLE,
-  LINKIS_FLINK_MASTER
+  LINKIS_FLINK_MASTER,
+  LINKIS_FLINK_VARIABLE
 }
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
 import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils.{

@@ -21,14 +21,20 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.common.conf.EngineConnConf.ENGINE_CONN_LOCAL_PATH_PWD_KEY
 import org.apache.linkis.engineconn.computation.executor.utlis.ComputationEngineUtils.GSON
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineconn.once.executor.{OnceExecutorExecutionContext, OperableOnceExecutor}
+import org.apache.linkis.engineconn.once.executor.{
+  OnceExecutorExecutionContext,
+  OperableOnceExecutor
+}
 import org.apache.linkis.engineconnplugin.seatunnel.client.LinkSeatunnelZetaClient
 import org.apache.linkis.engineconnplugin.seatunnel.client.errorcode.SeatunnelErrorCodeSummary.EXEC_SEATUNNEL_CODE_ERROR
 import org.apache.linkis.engineconnplugin.seatunnel.client.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelEnvConfiguration
 import org.apache.linkis.engineconnplugin.seatunnel.config.SeatunnelZetaEnvConfiguration._
 import org.apache.linkis.engineconnplugin.seatunnel.context.SeatunnelEngineConnContext
-import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils.{generateExecFile, localArray}
+import org.apache.linkis.engineconnplugin.seatunnel.util.SeatunnelUtils.{
+  generateExecFile,
+  localArray
+}
 import org.apache.linkis.manager.common.entity.resource.{CommonNodeResource, NodeResource}
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.protocol.constants.TaskConstant
@@ -39,6 +45,7 @@ import java.io.File
 import java.nio.file.Files
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
+
 import scala.collection.JavaConverters._
 
 class SeatunnelZetaOnceCodeExecutor(

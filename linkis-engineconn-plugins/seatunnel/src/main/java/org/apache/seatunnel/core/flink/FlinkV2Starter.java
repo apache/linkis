@@ -51,8 +51,7 @@ public class FlinkV2Starter implements Starter {
   private final String appJar;
 
   FlinkV2Starter(String[] args) {
-    this.flinkCommandArgs =
-        CommandLineUtils.parse(args, new FlinkCommandArgs(), SHELL_NAME, true);
+    this.flinkCommandArgs = CommandLineUtils.parse(args, new FlinkCommandArgs(), SHELL_NAME, true);
     logger.info("this.flinkCommandArgs = " + this.flinkCommandArgs);
     // set the deployment mode, used to get the job jar path.
     Common.setDeployMode(flinkCommandArgs.getDeployMode());

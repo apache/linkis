@@ -152,6 +152,7 @@ public class ConfigurationRestfulApi {
   public Message getCategory(HttpServletRequest req) {
     List<CategoryLabelVo> categoryLabelList =
         categoryService.getAllCategory(req.getHeader("Content-Language"));
+
     return Message.ok().data("Category", categoryLabelList);
   }
 
@@ -166,8 +167,9 @@ public class ConfigurationRestfulApi {
     String userName =
         ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
-    return Message.ok().data("list", result);
+    return Message.ok().data("itemList", result);
   }
+
 
   @ApiOperation(
       value = "createFirstCategory",

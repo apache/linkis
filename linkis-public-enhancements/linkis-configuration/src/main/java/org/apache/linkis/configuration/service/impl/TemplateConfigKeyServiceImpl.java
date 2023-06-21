@@ -181,12 +181,13 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         for (String uuid : templateConfigKeyListGroupByUuid.keySet()) {
             Map item = new HashMap();
             List<Object> keys = new ArrayList<>();
-            item.put("uuid", uuid);
+            item.put("templateUid", uuid);
 
             List<TemplateConfigKey> group = templateConfigKeyListGroupByUuid.get(uuid);
             for (TemplateConfigKey templateConfigKey : group) {
                 // Map temp = BDPJettyServerHelper.jacksonJson().convertValue(templateConfigKey, Map.class);
                 Map temp = new HashMap();
+
                 temp.put("configValue", templateConfigKey.getConfigValue());
                 temp.put("maxValue", templateConfigKey.getMaxValue());
                 temp.put("createBy", templateConfigKey.getCreateBy());
@@ -194,11 +195,19 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
                 temp.put("updateBy", templateConfigKey.getUpdateBy());
                 temp.put("updateTime", templateConfigKey.getUpdateTime());
                 temp.put("keyId", templateConfigKey.getKeyId());
+
                 ConfigKey info = configKeyMap.get(templateConfigKey.getKeyId());
                 temp.put("key", info.getKey());
+                temp.put("name", info.getName());
+                temp.put("description", info.getDescription());
+                temp.put("engineType", info.getEngineType());
+                temp.put("validateType", info.getValidateType());
+                temp.put("validateRange", info.getValidateRange());
+                temp.put("boundaryType",info.getBoundaryType());
+
                 keys.add(temp);
             }
-            item.put("keyList", keys);
+            item.put("itemList", keys);
             result.add(item);
         }
         return result;

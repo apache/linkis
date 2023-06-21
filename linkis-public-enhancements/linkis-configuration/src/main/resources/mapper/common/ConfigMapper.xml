@@ -167,7 +167,8 @@
     </select>
 
     <select id="selectKeyByEngineType" resultMap="ConfigKeyMap">
-        SELECT <include refid="Config_Key_Column"/>
+        SELECT   `key`, `description`, `name`, `engine_conn_type`,
+                `default_value`, `validate_type`, `validate_range`,boundary_type
         FROM linkis_ps_configuration_config_key
         WHERE `engine_conn_type` = #{engineType}
     </select>

@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.server.localize;
 
 import org.apache.linkis.common.utils.ZipUtils;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -46,6 +47,10 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
 
       File versionFile = new File(path);
       logger.info("generate, versionFile:" + path);
+      if (!versionFile.isDirectory()) {
+        logger.warn("File is not dir {},skip to upload", path);
+        continue;
+      }
       String key = versionFile.getName();
 
       try {
@@ -69,6 +74,12 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
 
   private EngineConnLocalizeResource[] generateDir(String path) {
     File distFile = new File(path);
+    if (!distFile.isDirectory()) {
+      logger.warn("File is not dir {},skip to upload", path);
+      throw new EngineConnPluginErrorException(
+          EngineconnCoreErrorCodeSummary.DIST_IRREGULAR_EXIST.getErrorCode(),
+          path + " is not dir, to delete this file then retry");
+    }
     logger.info("generateDir, distFile:" + path);
     File[] validFiles =
         distFile.listFiles(

@@ -19,11 +19,9 @@ name: Integration Test
 
 on:
   push:
-    branches:
-      - dev-1.4.0
+    branches: [master,dev-*]
   pull_request:
-    branches:
-      - dev-1.4.0
+    branches: [master,dev-*]
 
 #concurrency:
 #  group: test-${{ github.head_ref || github.run_id }}

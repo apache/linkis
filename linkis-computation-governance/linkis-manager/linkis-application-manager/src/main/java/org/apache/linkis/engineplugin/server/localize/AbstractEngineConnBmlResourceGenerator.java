@@ -127,7 +127,7 @@ public abstract class AbstractEngineConnBmlResourceGenerator
   @Override
   public String[] getEngineConnTypeListFromDisk() {
     return Arrays.stream(new File(getEngineConnsHome()).listFiles())
-        .filter(file -> !file.isHidden())
+        .filter(file -> !file.isHidden() && file.isDirectory())
         .map(file -> file.getName())
         .toArray(String[]::new);
   }

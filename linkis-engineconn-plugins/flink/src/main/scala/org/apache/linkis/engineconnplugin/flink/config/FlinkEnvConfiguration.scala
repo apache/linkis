@@ -91,6 +91,44 @@ object FlinkEnvConfiguration {
   val FLINK_CLIENT_REQUEST_TIMEOUT =
     CommonVars("flink.client.request.timeout", new TimeType("30s"))
 
+  val FLINK_EXECUTION_TARGET =
+    CommonVars("flink.execution.target", FlinkExecutionTargetType.YARN_PER_JOB)
+
+  val FLINK_KUBERNETES_CONFIG_FILE =
+    CommonVars(
+      "flink.kubernetes.config.file",
+      "",
+      "The kubernetes config file will be used to create the client. The default is located at ~/.kube/config"
+    )
+
+  val FLINK_KUBERNETES_NAMESPACE =
+    CommonVars(
+      "flink.kubernetes.namespace",
+      "default",
+      "The namespace that will be used for running the jobmanager and taskmanager pods."
+    )
+
+  val FLINK_KUBERNETES_CONTAINER_IMAGE =
+    CommonVars(
+      "flink.kubernetes.container.image",
+      "flink:1.12.2",
+      "Image to use for Flink containers."
+    )
+
+  val FLINK_KUBERNETES_CLUSTER_ID =
+    CommonVars(
+      "flink.kubernetes.cluster-id",
+      "",
+      "The cluster-id, which should be no more than 45 characters, is used for identifying a unique Flink cluster."
+    )
+
+  val FLINK_KUBERNETES_SERVICE_ACCOUNT =
+    CommonVars(
+      "flink.kubernetes.service-account",
+      "",
+      "Service account that is used by taskmanager within kubernetes cluster."
+    )
+
   val FLINK_ONCE_APP_STATUS_FETCH_INTERVAL =
     CommonVars("flink.app.fetch.status.interval", new TimeType("5s"))
 

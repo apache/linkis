@@ -49,7 +49,7 @@ class EnvironmentContext(
 
   private var flinkConfig: Configuration = _
 
-  private var deploymentTarget: YarnDeploymentTarget = YarnDeploymentTarget.PER_JOB
+  private var deploymentTarget: String = YarnDeploymentTarget.PER_JOB.getName
 
   def this(
       defaultEnv: Environment,
@@ -88,10 +88,9 @@ class EnvironmentContext(
     this.flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, distJarPath)
   }
 
-  def setDeploymentTarget(deploymentTarget: YarnDeploymentTarget): Unit = this.deploymentTarget =
-    deploymentTarget
+  def setDeploymentTarget(deploymentTarget: String): Unit = this.deploymentTarget = deploymentTarget
 
-  def getDeploymentTarget: YarnDeploymentTarget = deploymentTarget
+  def getDeploymentTarget: String = deploymentTarget
 
   def getProvidedLibDirs: util.List[String] = providedLibDirs
 

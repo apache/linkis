@@ -37,6 +37,9 @@ public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   PLANNER_MUST_THESE(16020, "Planner must be one of:{}(Planner 必须是以下之一)."),
   EXECUTION_MUST_THESE(16020, "Execution type must be one of:{}(Execution 类型必须是以下之一)."),
   NOT_SUPPORTED_YARNTARGET(16020, "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)"),
+
+  KUBERNETES_CONFIG_FILE_EMPTY(
+      16020, "The kubernetes config file is empty:{}(kubernetes config file为空)."),
   UNKNOWN_CHECKPOINT_MODE(16020, "Unknown checkpoint mode:{0}(未知的 checkpoint 模式)."),
   HUDIJARS_NOT_EXISTS(16020, "hudi jars does not exist(hudi jars 不存在)."),
   PATH_NOT_EXIST(16020, "The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)"),

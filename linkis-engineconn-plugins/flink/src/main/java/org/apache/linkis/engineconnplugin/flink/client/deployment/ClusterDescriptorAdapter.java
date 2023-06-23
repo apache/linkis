@@ -55,7 +55,12 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   // jobId is not null only after job is submitted
   private JobID jobId;
   protected ApplicationId clusterID;
+
+  protected String kubernetesClusterID;
   protected ClusterClient<ApplicationId> clusterClient;
+
+  protected ClusterClient<String> kubernetesClusterClient;
+
   private YarnClusterDescriptor clusterDescriptor;
 
   public void setJobId(JobID jobId) {
@@ -68,6 +73,10 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
 
   public ApplicationId getClusterID() {
     return clusterID;
+  }
+
+  public String getKubernetesClusterID() {
+    return kubernetesClusterID;
   }
 
   public String getWebInterfaceUrl() {

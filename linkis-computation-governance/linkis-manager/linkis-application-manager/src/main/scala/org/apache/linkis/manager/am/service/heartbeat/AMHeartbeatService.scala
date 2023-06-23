@@ -19,7 +19,6 @@ package org.apache.linkis.manager.am.service.heartbeat
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.manager.am.conf.ManagerMonitorConf
-import org.apache.linkis.manager.am.hook.ECHeartbeatHookHolder
 import org.apache.linkis.manager.am.service.HeartbeatService
 import org.apache.linkis.manager.common.conf.RMConfiguration
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics
@@ -70,17 +69,6 @@ class AMHeartbeatService extends HeartbeatService with Logging {
   override def heartbeatEventDeal(nodeHeartbeatMsg: NodeHeartbeatMsg): Unit = {
     val nodeMetrics = new AMNodeMetrics
     logger.info(s"Am deal nodeHeartbeatMsg $nodeHeartbeatMsg")
-    Utils.tryAndWarn {
-      val instance = nodeHeartbeatMsg.getServiceInstance
-      if (ECHeartbeatHookHolder.hasHook(instance)) {
-        ECHeartbeatHookHolder
-          .getHooks(instance)
-          .foreach { hook =>
-            logger.info(s"Start to do hook : ${hook.getName()} on instance : ${instance}")
-            hook.onHeartbeatAndRemoveHook(nodeHeartbeatMsg)
-          }
-      }
-    }
     nodeMetrics.setHealthy(metricsConverter.convertHealthyInfo(nodeHeartbeatMsg.getHealthyInfo))
     nodeMetrics.setHeartBeatMsg(nodeHeartbeatMsg.getHeartBeatMsg)
     nodeMetrics.setOverLoad(metricsConverter.convertOverLoadInfo(nodeHeartbeatMsg.getOverLoadInfo))

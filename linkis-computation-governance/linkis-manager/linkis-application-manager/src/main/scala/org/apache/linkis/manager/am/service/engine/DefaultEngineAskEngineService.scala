@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.hook.{AskEngineHook, AskEngineHookContext}
+import org.apache.linkis.manager.am.service.engine.EngineAskEngineService.getAsyncId
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
@@ -64,47 +65,11 @@ class DefaultEngineAskEngineService
   /* hook的实现类必须加上@Qualifier注解才能生效 */
   var hooks: Array[AskEngineHook] = _
 
-  private val idCreator = new AtomicInteger()
-
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
-
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
       AMConfiguration.ASK_ENGINE_ASYNC_MAX_THREAD_SIZE,
       "AskEngineService-Thread-"
     )
-
-  private val asyncCreateECMap: util.Map[String, EngineAsyncResponse] =
-    new ConcurrentHashMap[String, EngineAsyncResponse]()
-
-  override def getAndRemoveAsyncCreateEngineResponse(id: String): EngineAsyncResponse = {
-    var rs: EngineAsyncResponse = null
-    if (asyncCreateECMap.containsKey(id)) {
-      asyncCreateECMap.get(id) match {
-        case succ: EngineCreateSuccess =>
-          rs = succ
-          asyncCreateECMap.remove(id)
-          logger.info(s"create engine succeed. Now remove asyncId : ${id}")
-        case fail: EngineCreateError =>
-          rs = fail
-          asyncCreateECMap.remove(id)
-          logger.info(
-            s"create engine failed because: ${fail.exception}. Now remove asyncId : ${id}"
-          )
-        case async: EngineAskAsyncResponse =>
-          rs = async
-        case _ =>
-      }
-    }
-    rs
-  }
-
-  override def putAsyncCreateEngineResponse(id: String, response: EngineAsyncResponse): Unit = {
-    if (StringUtils.isBlank(id) || null == response) {
-      logger.error(s"Invalid id : ${id} or null response : ${response}")
-    }
-    asyncCreateECMap.put(id, response)
-  }
 
   @Receiver
   override def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any = {
@@ -133,34 +98,6 @@ class DefaultEngineAskEngineService
               ExceptionUtils.getRootCauseMessage(t),
               retryFlag
             )
-          }
-        }
-      )
-    }
-
-    if (hooks != null && hooks.size > 0) {
-      val ctx = new AskEngineHookContext(engineAskRequest, sender)
-
-      /** hook中抛异常会阻断 */
-      hooks.foreach(h =>
-        Utils.tryCatch(h.doHook(ctx)) { t =>
-          {
-            val engineAskAsyncId = getAsyncId
-            val retryFlag = t match {
-              case _: LinkisRetryException => true
-              case _: RetryableException => true
-              case _ =>
-                ExceptionUtils.getRootCause(t) match {
-                  case _: SocketTimeoutException => true
-                  case _: TimeoutException => true
-                  case _ =>
-                    false
-                }
-            }
-            sender.send(
-              EngineCreateError(engineAskAsyncId, ExceptionUtils.getRootCauseMessage(t), retryFlag)
-            )
-            return
           }
         }
       )
@@ -238,12 +175,6 @@ class DefaultEngineAskEngineService
         LoggerUtils.setJobIdMDC(taskId)
         Utils.tryFinally {
           logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
-          if (asyncCreateECMap.containsKey(engineAskAsyncId)) {
-            putAsyncCreateEngineResponse(
-              engineAskAsyncId,
-              EngineCreateSuccess(engineAskAsyncId, engineNode)
-            )
-          }
           if (null != sender) {
             sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
           } else {
@@ -272,16 +203,6 @@ class DefaultEngineAskEngineService
         } else {
           logger.info(s"msg: ${msg} canRetry Exception: ${exception.getClass.getName}")
         }
-        if (asyncCreateECMap.containsKey(engineAskAsyncId)) {
-          putAsyncCreateEngineResponse(
-            engineAskAsyncId,
-            EngineCreateError(
-              engineAskAsyncId,
-              ExceptionUtils.getRootCauseMessage(exception),
-              retryFlag
-            )
-          )
-        }
         Utils.tryFinally {
           if (null != sender) {
             sender.send(
@@ -300,10 +221,6 @@ class DefaultEngineAskEngineService
     }
     LoggerUtils.removeJobIdMDC()
     EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
-  }
-
-  private def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
   }
 
 }

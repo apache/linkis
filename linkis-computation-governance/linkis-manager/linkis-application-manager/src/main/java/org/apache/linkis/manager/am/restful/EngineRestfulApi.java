@@ -24,12 +24,11 @@ import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.constant.ec.ECConstants;
+import org.apache.linkis.governance.common.utils.JobUtils;
+import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.exception.AMErrorCode;
 import org.apache.linkis.manager.am.exception.AMErrorException;
-import org.apache.linkis.manager.am.hook.DefaultDetachEngineHeartbeatHook;
-import org.apache.linkis.manager.am.hook.DetachEngineHeartbeatHook;
-import org.apache.linkis.manager.am.hook.ECHeartbeatHookHolder$;
 import org.apache.linkis.manager.am.manager.EngineNodeManager;
 import org.apache.linkis.manager.am.service.ECResourceInfoService;
 import org.apache.linkis.manager.am.service.engine.*;
@@ -45,6 +44,7 @@ import org.apache.linkis.manager.common.entity.persistence.ECResourceInfoRecord;
 import org.apache.linkis.manager.common.protocol.engine.*;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.UserModifiable;
 import org.apache.linkis.manager.label.exception.LabelErrorException;
@@ -65,6 +65,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -102,6 +103,8 @@ public class EngineRestfulApi {
 
   @Autowired private ECResourceInfoService ecResourceInfoService;
 
+  @Autowired private EngineReuseService engineReuseService;
+
   private final ObjectMapper objectMapper = new ObjectMapper();
 
   private LabelBuilderFactory stdLabelBuilderFactory =
@@ -124,140 +127,130 @@ public class EngineRestfulApi {
     }
     Map<String, Object> retEngineNode = new HashMap<>();
     logger.info(
-        "User {} try to ask an engineConn with maxStartTime {}. EngineCreateRequest is {}.",
+        "User {} try to ask an engineConn with maxStartTime {}. EngineAskRequest is {}.",
         userName,
         ByteTimeUtils.msDurationToString(timeout),
         engineAskRequest);
     Sender sender = Sender.getSender(Sender.getThisServiceInstance());
-    EngineNode engineNode;
-    try {
-      engineNode = null;
-      if (null != engineAskRequest.getProperties()) {
-        Map<String, String> props = engineAskRequest.getProperties();
-        if (props.containsKey(AMConstant.EC_ASYNC_START_ID_KEY)) {
-          // todo check sync
-          String asyncId = props.get(AMConstant.EC_ASYNC_START_ID_KEY);
-          EngineAsyncResponse response =
-              engineAskService.getAndRemoveAsyncCreateEngineResponse(asyncId);
-          if (EngineCreateSuccess.class.isInstance(response)) {
-            engineNode = ((EngineCreateSuccess) response).engineNode();
-            fillResultEngineNode(retEngineNode, engineNode);
-          } else if (EngineCreateError.class.isInstance(response)) {
-            EngineCreateError errorRS = (EngineCreateError) response;
-            retEngineNode.put(
-                AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
-            retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, errorRS.retry());
-            retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, errorRS.exception());
-            retEngineNode.put(
-                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-            return Message.ok(
-                    String.format("Create engineConn failed, caused by %s.", errorRS.exception()))
-                .data("engine", retEngineNode);
-          } else if (EngineAskAsyncResponse.class.isInstance(response)) {
-            EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) response;
-            retEngineNode.put(
-                AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_STARTING);
-            retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
-            retEngineNode.put(
-                AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
-            retEngineNode.put(
-                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-          } else {
-            retEngineNode.put(
-                AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
-            retEngineNode.put(
-                AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, "Got null response for asyId : " + asyncId);
-            retEngineNode.put(
-                ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-          }
-          return Message.ok("create engine end.").data("engine", retEngineNode);
-        }
-      }
+    EngineNode engineNode = null;
 
-      boolean enSyncStart = false;
-      if (null != engineAskRequest.getProperties()) {
-        Map<String, String> props = engineAskRequest.getProperties();
-        if (props.containsKey(AMConstant.EC_SYNC_START_KEY)) {
-          enSyncStart = Boolean.parseBoolean(props.get(AMConstant.EC_SYNC_START_KEY));
+    // try to reuse ec first
+    String taskId = JobUtils.getJobIdFromStringMap(engineAskRequest.getProperties());
+    LoggerUtils.setJobIdMDC(taskId);
+    logger.info("received task : {}, engineAskRequest : {}", taskId, engineAskRequest);
+    if (!engineAskRequest.getLabels().containsKey(LabelKeyConstant.EXECUTE_ONCE_KEY)) {
+      EngineReuseRequest engineReuseRequest = new EngineReuseRequest();
+      engineReuseRequest.setLabels(engineAskRequest.getLabels());
+      engineReuseRequest.setTimeOut(engineAskRequest.getTimeOut());
+      engineReuseRequest.setUser(engineAskRequest.getUser());
+      engineReuseRequest.setProperties(engineAskRequest.getProperties());
+      boolean end = false;
+      EngineNode reuseNode = null;
+      while (!end) {
+        try {
+          reuseNode = engineReuseService.reuseEngine(engineReuseRequest, sender);
+          end = true;
+        } catch (LinkisRetryException e) {
+          logger.error(
+              "task: {}, user: {} reuse engine failed", taskId, engineReuseRequest.getUser(), e);
+          Thread.sleep(1000);
+          end = false;
+        } catch (Exception e1) {
+          logger.info(
+              "task: {} user: {} reuse engine failed", taskId, engineReuseRequest.getUser(), e1);
+          end = true;
         }
       }
-
-      Object rs = engineAskService.askEngine(engineAskRequest, sender);
-      if (EngineNode.class.isInstance(rs)) {
-        engineNode = (EngineNode) rs;
-        fillResultEngineNode(retEngineNode, engineNode);
-      } else if (EngineAskAsyncResponse.class.isInstance(rs)) {
-        EngineAskAsyncResponse askAsyncResponse = (EngineAskAsyncResponse) rs;
-        engineAskService.putAsyncCreateEngineResponse(askAsyncResponse.id(), askAsyncResponse);
-        if (enSyncStart) {
-          logger.info("Will wait for engineConn {} start.", askAsyncResponse.id());
-          EngineAsyncResponse asyncResponse =
-              engineAskService.getAndRemoveAsyncCreateEngineResponse(askAsyncResponse.id());
-          boolean createEnd = false;
-          int num = 0;
-          while (!createEnd) {
-            if (null != asyncResponse) {
-              if (EngineCreateSuccess.class.isInstance(asyncResponse)) {
-                EngineCreateSuccess successRS = (EngineCreateSuccess) asyncResponse;
-                fillResultEngineNode(retEngineNode, successRS.engineNode());
-                logger.info("Create ec with asyncId : {} succeed.", askAsyncResponse.id());
-                createEnd = true;
-              } else if (EngineCreateError.class.isInstance(asyncResponse)) {
-                EngineCreateError errorRS = (EngineCreateError) asyncResponse;
-                retEngineNode.put(
-                    AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
-                retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, errorRS.retry());
-                retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, errorRS.exception());
-                retEngineNode.put(
-                    ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-                logger.info(
-                    "Create ec with asyncId : {} failed, because : {}.",
-                    errorRS.id(),
-                    errorRS.exception());
-                return Message.ok(
-                        String.format(
-                            "Create engineConn failed, caused by %s.", errorRS.exception()))
-                    .data("engine", retEngineNode);
-              } else {
-                if (num % 10 == 0) {
-                  logger.info(
-                      "Create ec with asyncId : {} got async response, will retry.",
-                      askAsyncResponse.id());
-                }
-              }
-            } else {
-              createEnd = true;
-              fillNullNode(retEngineNode, askAsyncResponse);
-              logger.error("Create ec got null response, please check it.");
-            }
-            asyncResponse =
-                engineAskService.getAndRemoveAsyncCreateEngineResponse(askAsyncResponse.id());
-            num = num + 1;
-            Thread.sleep(1000);
-          }
-        } else {
-          retEngineNode.put(
-              AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_STARTING);
-          retEngineNode.put(AMConstant.EC_ASYNC_START_ID_KEY, askAsyncResponse.id());
-          retEngineNode.put(
-              AMConstant.EC_ASYNC_START_MANAGER_INSTANCE_KEY, askAsyncResponse.managerInstance());
-          retEngineNode.put(
-              ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-        }
+      if (null != reuseNode) {
+        logger.info(
+            "Finished to ask engine for task: {}, user: {} by reuse node {}",
+            taskId,
+            engineReuseRequest.getUser(),
+            reuseNode);
+        LoggerUtils.removeJobIdMDC();
+        engineNode = reuseNode;
       }
-    } catch (Exception e) {
-      logger.error(String.format("User %s create engineConn failed.", userName), e);
-      retEngineNode.put(
-          AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
-      retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_RETRY_KEY, false);
-      retEngineNode.put(AMConstant.EC_ASYNC_START_FAIL_MSG_KEY, e.getMessage());
-      retEngineNode.put(
-          ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
-      return Message.ok(
-              String.format(
-                  "Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e)))
-          .data("engine", retEngineNode);
     }
+
+    if (null != engineNode) {
+      fillResultEngineNode(retEngineNode, engineNode);
+      return Message.ok("reuse engineConn ended.").data("engine", retEngineNode);
+    }
+
+    String engineAskAsyncId = EngineAskEngineService$.MODULE$.getAsyncId();
+    Callable<Object> createECTask =
+        new Callable() {
+          @Override
+          public Object call() {
+            LoggerUtils.setJobIdMDC(taskId);
+            logger.info(
+                "Task: {}, start to async({}) createEngine: {}",
+                taskId,
+                engineAskAsyncId,
+                engineAskRequest.getCreateService());
+            // 如果原来的labels含engineInstance ，先去掉
+            engineAskRequest.getLabels().remove("engineInstance");
+            EngineCreateRequest engineCreateRequest = new EngineCreateRequest();
+            engineCreateRequest.setLabels(engineAskRequest.getLabels());
+            engineCreateRequest.setTimeout(engineAskRequest.getTimeOut());
+            engineCreateRequest.setUser(engineAskRequest.getUser());
+            engineCreateRequest.setProperties(engineAskRequest.getProperties());
+            engineCreateRequest.setCreateService(engineAskRequest.getCreateService());
+            try {
+              EngineNode createNode = engineCreateService.createEngine(engineCreateRequest, sender);
+              long timeout = 0L;
+              if (engineCreateRequest.getTimeout() <= 0) {
+                timeout = AMConfiguration.ENGINE_START_MAX_TIME().getValue().toLong();
+              } else {
+                timeout = engineCreateRequest.getTimeout();
+              }
+              // useEngine 需要加上超时
+              EngineNode createEngineNode = engineNodeManager.useEngine(createNode, timeout);
+              if (null == createEngineNode) {
+                throw new LinkisRetryException(
+                    AMConstant.EM_ERROR_CODE,
+                    "create engine${createNode.getServiceInstance} success, but to use engine failed");
+              }
+              logger.info(
+                  "Task: $taskId finished to ask engine for user ${engineAskRequest.getUser} by create node $createEngineNode");
+              return createEngineNode;
+            } catch (Exception e) {
+              logger.error(
+                  "Task: {} failed to ask engine for user {} by create node", taskId, userName, e);
+              return new LinkisRetryException(AMConstant.EM_ERROR_CODE, e.getMessage());
+            } finally {
+              LoggerUtils.removeJobIdMDC();
+            }
+          }
+        };
+
+    try {
+      Object rs = createECTask.call();
+      if (rs instanceof LinkisRetryException) {
+        throw (LinkisRetryException) rs;
+      } else {
+        engineNode = (EngineNode) rs;
+      }
+    } catch (LinkisRetryException retryException) {
+      logger.error(
+          "User {} create engineConn failed get retry  exception. can be Retry",
+          userName,
+          retryException);
+      return Message.error(
+              String.format(
+                  "Create engineConn failed, caused by %s.",
+                  ExceptionUtils.getRootCauseMessage(retryException)))
+          .data("canRetry", true);
+    } catch (Exception e) {
+      LoggerUtils.removeJobIdMDC();
+      logger.error("User {} create engineConn failed get retry  exception", userName, e);
+      return Message.error(
+          String.format(
+              "Create engineConn failed, caused by %s.", ExceptionUtils.getRootCauseMessage(e)));
+    }
+
+    LoggerUtils.removeJobIdMDC();
+    fillResultEngineNode(retEngineNode, engineNode);
     logger.info(
         "Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
     // to transform to a map
@@ -327,20 +320,6 @@ public class EngineRestfulApi {
     }
     logger.info(
         "Finished to create a engineConn for user {}. NodeInfo is {}.", userName, engineNode);
-    // add hook for detach client type
-    boolean isDetach =
-        ECConstants.EC_CLIENT_TYPE_DETACH()
-            .equalsIgnoreCase(
-                GovernanceCommonConf.EC_APP_MANAGE_MODE()
-                    .getValue(engineCreateRequest.getProperties()));
-    if (isDetach) {
-      List<DetachEngineHeartbeatHook> hooks = new ArrayList<>(1);
-      hooks.add(DefaultDetachEngineHeartbeatHook.newInstance(engineOperateService, engineNode));
-      ECHeartbeatHookHolder$.MODULE$.putEcHook(engineNode.getServiceInstance(), hooks);
-      logger.info(
-          "Add hook of DefaultDetachEngineHeartbeatHook for detach ec : {}",
-          engineNode.getServiceInstance().toString());
-    }
     // to transform to a map
     Map<String, Object> retEngineNode = new HashMap<>();
     fillResultEngineNode(retEngineNode, engineNode);

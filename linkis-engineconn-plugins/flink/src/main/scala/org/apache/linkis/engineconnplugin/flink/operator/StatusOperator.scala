@@ -41,27 +41,6 @@ class StatusOperator extends Operator with Logging {
 
     val appIdStr = params.getOrElse(ECConstants.YARN_APPID_NAME_KEY, "").asInstanceOf[String]
 
-    if (!ManagerUtil.isManager) {
-      val thisAppid = YarnUtil.getAppIds.headOption.get
-      if (StringUtils.isNotBlank(appIdStr) && StringUtils.isNotBlank(thisAppid)) {
-        if (!thisAppid.toString.equalsIgnoreCase(appIdStr)) {
-          throw new EngineConnException(
-            EngineConnExecutorErrorCode.INVALID_APPLICATION_ID,
-            s"The request appid : ${appIdStr} is not equal to the current appid : ${thisAppid.toString}"
-          )
-        } else {
-          logger.info(s"Handshake success for appid : ${appIdStr}.")
-          StatusOperator.addHandshake()
-        }
-      } else {
-        throw new EngineConnException(
-          EngineConnExecutorErrorCode.INVALID_APPLICATION_ID,
-          s"The request appid : ${appIdStr} or current appid : ${thisAppid.toString} cannot be null."
-        )
-      }
-
-    }
-
     val parts = appIdStr.split("_")
     val clusterTimestamp = parts(1).toLong
     val sequenceNumber = parts(2).toInt

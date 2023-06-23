@@ -108,24 +108,16 @@ class FlinkJarOnceExecutor(
                   val heartbeatMsg = heartbeatService.generateHeartBeatMsg(thisExecutor)
                   ManagerService.getManagerService.heartbeatReport(heartbeatMsg)
                   logger.info(
-                    s"Succeed to report heatbeatMsg : ${heartbeatMsg.getHeartBeatMsg}, will wait for handshake."
+                    s"Succeed to report heatbeatMsg : ${heartbeatMsg.getHeartBeatMsg}, will add handshake."
                   )
                   if (0L >= firstReportAppIdTimestampMills) {
                     firstReportAppIdTimestampMills = System.currentTimeMillis()
                   }
-                  if (StatusOperator.isHandshaked) {
+                  if (!StatusOperator.isHandshaked) {
+                    StatusOperator.addHandshake()
+                  } else {
                     logger.info("Will exit with handshaked.")
                     trySucceed()
-                  } else {
-                    if (
-                        System
-                          .currentTimeMillis() - firstReportAppIdTimestampMills > FlinkEnvConfiguration.FLINK_HANDSHAKE_WAIT_TIME_MILLS.getValue.toLong
-                    ) {
-                      logger.info(
-                        s"Will exit because ec get no handshake within ${FlinkEnvConfiguration.FLINK_HANDSHAKE_WAIT_TIME_MILLS.getValue}ms."
-                      )
-                      tryFailed()
-                    }
                   }
                 }
               }

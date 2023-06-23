@@ -136,7 +136,7 @@
     <gson.version>2.8.9</gson.version>
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <jsonpath.version>2.7.0</jsonpath.version>
-    <jettison.version>1.5.3</jettison.version>
+    <jettison.version>1.5.4</jettison.version>
     <xstream.core.version>1.4.20</xstream.core.version>
     <woodstox.version>6.4.0</woodstox.version>
     <snakeyaml.version>1.33</snakeyaml.version>
@@ -160,12 +160,12 @@
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
     <mysql.connector.scope>test</mysql.connector.scope>
-    <postgresql.connector.version>42.2.20</postgresql.connector.version>
+    <postgresql.connector.version>42.3.8</postgresql.connector.version>
     <druid.version>1.2.16</druid.version>
     <mongodb.driver.version>3.12.8</mongodb.driver.version>
 
     <!-- utils -->
-    <guava.version>30.0-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>

@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.hive.creation
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.computation.executor.creation.ComputationSingleExecutorEngineConnFactory
@@ -96,7 +97,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       engineCreationContext: EngineCreationContext
   ): AbstractHiveSession = {
     // if hive engine support concurrent, return HiveConcurrentSession
-    if (HiveEngineConfiguration.HIVE_ENGINE_CONCURRENT_SUPPORT) {
+    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
       return doCreateHiveConcurrentSession(engineCreationContext.getOptions)
     }
 

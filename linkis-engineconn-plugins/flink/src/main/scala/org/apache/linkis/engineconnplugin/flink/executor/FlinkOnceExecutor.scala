@@ -63,7 +63,14 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
       case (k, v) if v != null => k -> v.toString
       case (k, _) => k -> null
     }.toMap
-    doSubmit(onceExecutorExecutionContext, options)
+    Option(interceptor).foreach(op => op.beforeSubmit(onceExecutorExecutionContext))
+    Utils.tryCatch {
+      doSubmit(onceExecutorExecutionContext, options)
+      Option(interceptor).foreach(op => op.afterSubmitSuccess(onceExecutorExecutionContext))
+    } { t: Throwable =>
+      Option(interceptor).foreach(op => op.afterSubmitFail(onceExecutorExecutionContext, t))
+      throw t
+    }
     if (isCompleted) return
 
     val flinkDeploymentTarget =

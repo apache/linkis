@@ -640,12 +640,10 @@ class HiveDriverProxy(driver: Any) extends Logging {
   }
 
   def getResults(res: util.List[_]): Boolean = {
-    Utils.tryAndWarn {
-      driver.getClass
-        .getMethod("getResults", classOf[util.List[_]])
-        .invoke(driver, res.asInstanceOf[AnyRef])
-        .asInstanceOf[Boolean]
-    }
+    driver.getClass
+      .getMethod("getResults", classOf[util.List[_]])
+      .invoke(driver, res.asInstanceOf[AnyRef])
+      .asInstanceOf[Boolean]
   }
 
   def close(): Unit = {

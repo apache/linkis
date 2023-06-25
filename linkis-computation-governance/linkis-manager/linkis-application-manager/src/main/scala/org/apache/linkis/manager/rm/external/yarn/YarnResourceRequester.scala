@@ -187,6 +187,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         realQueueName = queueName
         val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
         val queue = getQueueOfCapacity(childQueues)
+        val queueInfo = queue.get.asInstanceOf[JObject]
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(
@@ -194,10 +195,17 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
           )
         }
-        (maxEffectiveHandle(queue).get, getYarnResource(queue.map(_ \ "resourcesUsed")).get)
+        (
+          maxEffectiveHandle(queue).get,
+          getYarnResource(queue.map(_ \ "resourcesUsed")).get,
+          (queueInfo \ "maxApps").asInstanceOf[JInt].values.toInt,
+          (queueInfo \ "numPendingApps").asInstanceOf[JInt].values.toInt,
+          (queueInfo \ "numActiveApps").asInstanceOf[JInt].values.toInt
+        )
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)
+        val queueInfo = queue.get.asInstanceOf[JObject]
         if (queue.isEmpty) {
           logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
           throw new RMWarnException(
@@ -207,7 +215,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         }
         (
           getYarnResource(queue.map(_ \ "maxResources")).get,
-          getYarnResource(queue.map(_ \ "usedResources")).get
+          getYarnResource(queue.map(_ \ "usedResources")).get,
+          (queueInfo \ "maxApps").asInstanceOf[JInt].values.toInt,
+          (queueInfo \ "numPendingApps").asInstanceOf[JInt].values.toInt,
+          (queueInfo \ "numActiveApps").asInstanceOf[JInt].values.toInt
         )
       } else {
         logger.debug(
@@ -225,6 +236,9 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       val nodeResource = new CommonNodeResource
       nodeResource.setMaxResource(yarnResource._1)
       nodeResource.setUsedResource(yarnResource._2)
+      nodeResource.setMaxApps(yarnResource._3)
+      nodeResource.setNumPendingApps(yarnResource._4)
+      nodeResource.setNumActiveApps(yarnResource._5)
       nodeResource
     }(t => {
       throw new RMErrorException(

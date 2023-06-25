@@ -40,6 +40,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.{File, InputStream, OutputStream}
+import java.util
 
 import scala.collection.JavaConverters._
 
@@ -151,15 +152,17 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   def getPid(): Option[String] = None
 
   protected def getCommandArgs: Array[String] = {
-    if (
-        request.creationDesc.properties.asScala.exists { case (k, v) =>
-          k.contains(" ") || (v != null && v.contains(" "))
-        }
-    ) {
+    val recordMap = new util.HashMap[String, String]()
+    request.creationDesc.properties.asScala.foreach { case (k, v) =>
+      if (k.contains(" ") || (v != null && v.contains(" "))) recordMap.put(k, v)
+    }
+    if (recordMap.size() > 0) {
+      val keyAndValue = new StringBuilder
+      recordMap.keySet().forEach(k => keyAndValue.append(s"$k->${recordMap.get(k)};"))
       throw new ErrorException(
         30000,
-        "Startup parameters contain spaces!(启动参数中包含空格！)"
-      ) // TODO exception
+        s"Startup parameters contain spaces! The key and value values of all its parameters are(启动参数中包含空格！其所有参数的key和value值分别为)：${keyAndValue.toString()}"
+      )
     }
     val arguments = EngineConnArgumentsBuilder.newBuilder()
     engineConnPort = PortUtils

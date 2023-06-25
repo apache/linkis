@@ -27,4 +27,16 @@ object FlinkExecutionTargetType {
   val KUBERNETES_SESSION: String = "kubernetes-session"
   val KUBERNETES_OPERATOR: String = "kubernetes-operator"
 
+  def isYarnExecutionTargetType(targetType: String): Boolean = {
+    targetType.equalsIgnoreCase(YARN_PER_JOB) || targetType.equalsIgnoreCase(
+      YARN_SESSION
+    ) || targetType.equalsIgnoreCase(YARN_APPLICATION)
+  }
+
+  def isKubernetesExecutionTargetType(targetType: String): Boolean = {
+    targetType.equalsIgnoreCase(KUBERNETES_APPLICATION) || targetType.equalsIgnoreCase(
+      KUBERNETES_SESSION
+    ) || targetType.equalsIgnoreCase(KUBERNETES_OPERATOR)
+  }
+
 }

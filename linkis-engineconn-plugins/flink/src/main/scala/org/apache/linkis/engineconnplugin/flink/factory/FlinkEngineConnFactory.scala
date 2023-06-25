@@ -95,6 +95,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       engineCreationContext: EngineCreationContext
   ): EnvironmentContext = {
     val options = engineCreationContext.getOptions
+    val flinkExecutionTarget = FLINK_EXECUTION_TARGET.getValue(options)
+
     val defaultEnv =
       Environment.parse(this.getClass.getClassLoader.getResource("flink-sql-defaults.yaml"))
     val hadoopConfDir = EnvConfiguration.HADOOP_CONF_DIR.getValue(options)
@@ -116,7 +118,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkProvidedLibPath,
       providedLibDirsArray,
       shipDirsArray,
-      new util.ArrayList[URL]
+      new util.ArrayList[URL],
+      flinkExecutionTarget
     )
     // Step1: environment-level configurations
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
@@ -141,19 +144,24 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (flinkProvidedLibPathList != null && flinkProvidedLibPathList.size() > 0) {
       providedLibDirList.addAll(flinkProvidedLibPathList)
     }
-    flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
-    // construct jar-dependencies
-    flinkConfig.set(YarnConfigOptions.SHIP_FILES, context.getShipDirs)
+    if (
+        !FlinkExecutionTargetType
+          .isKubernetesExecutionTargetType(flinkExecutionTarget)
+    ) {
+      flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
+      // construct jar-dependencies
+      flinkConfig.set(YarnConfigOptions.SHIP_FILES, context.getShipDirs)
+      // yarn application name
+      flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
+      // yarn queue
+      flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
+    }
     // set user classpaths
     val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
     if (StringUtils.isNotBlank(classpaths)) {
       logger.info(s"Add $classpaths to flink application classpath.")
       flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
     }
-    // yarn application name
-    flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
-    // yarn queue
-    flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
     // Configure resource/concurrency
     flinkConfig.setInteger(CoreOptions.DEFAULT_PARALLELISM, parallelism)
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
@@ -198,12 +206,11 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       SavepointRestoreSettings.toConfiguration(savepointRestoreSettings, flinkConfig)
     }
 
-    val flinkExecutionTarget = FLINK_EXECUTION_TARGET.getValue(options)
-
     // Configure user-entrance jar. Can be HDFS file, but only support 1 jar
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
     if (
-        StringUtils.isNotBlank(flinkMainClassJar) && !flinkExecutionTarget.startsWith("kubernetes")
+        StringUtils.isNotBlank(flinkMainClassJar) && FlinkExecutionTargetType
+          .isYarnExecutionTargetType(flinkExecutionTarget)
     ) {
       val flinkMainClassJarPath =
         if (new File(flinkMainClassJar).exists()) flinkMainClassJar
@@ -224,9 +231,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
 
     // set kubernetes config
     if (
-        StringUtils.isNotBlank(flinkExecutionTarget) && (flinkExecutionTarget.equalsIgnoreCase(
-          FlinkExecutionTargetType.KUBERNETES_APPLICATION
-        ) || flinkExecutionTarget.equalsIgnoreCase(FlinkExecutionTargetType.KUBERNETES_SESSION))
+        StringUtils.isNotBlank(flinkExecutionTarget) && FlinkExecutionTargetType
+          .isKubernetesExecutionTargetType(flinkExecutionTarget)
     ) {
       flinkConfig.set(DeploymentOptions.TARGET, flinkExecutionTarget)
       context.setDeploymentTarget(flinkExecutionTarget)
@@ -251,12 +257,9 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         flinkConfig.set(KubernetesConfigOptions.CLUSTER_ID, kubernetesClusterId)
       }
 
-      flinkConfig.set(KubernetesConfigOptions.FLINK_CONF_DIR, flinkConfDir)
       val serviceAccount = FLINK_KUBERNETES_SERVICE_ACCOUNT.getValue(options)
-      if (StringUtils.isNotBlank(serviceAccount)) {
-        flinkConfig.set(KubernetesConfigOptions.JOB_MANAGER_SERVICE_ACCOUNT, serviceAccount)
-        flinkConfig.set(KubernetesConfigOptions.TASK_MANAGER_SERVICE_ACCOUNT, serviceAccount)
-      }
+      flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, serviceAccount)
+
       val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
       if (StringUtils.isNotBlank(flinkMainClassJar)) {
         flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJar))

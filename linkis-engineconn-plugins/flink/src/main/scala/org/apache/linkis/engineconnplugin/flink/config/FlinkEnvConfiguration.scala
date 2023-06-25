@@ -111,7 +111,7 @@ object FlinkEnvConfiguration {
   val FLINK_KUBERNETES_CONTAINER_IMAGE =
     CommonVars(
       "flink.kubernetes.container.image",
-      "flink:1.12.2",
+      "apache/flink:1.12.2-scala_2.12-java8",
       "Image to use for Flink containers."
     )
 
@@ -125,7 +125,7 @@ object FlinkEnvConfiguration {
   val FLINK_KUBERNETES_SERVICE_ACCOUNT =
     CommonVars(
       "flink.kubernetes.service-account",
-      "",
+      "default",
       "Service account that is used by taskmanager within kubernetes cluster."
     )
 

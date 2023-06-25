@@ -21,7 +21,12 @@ import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSetWriter
 import org.apache.linkis.common.utils.OverloadUtils
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
-import org.apache.linkis.engineconn.executor.entity.{LabelExecutor, ResourceExecutor, YarnExecutor}
+import org.apache.linkis.engineconn.executor.entity.{
+  KubernetesExecutor,
+  LabelExecutor,
+  ResourceExecutor,
+  YarnExecutor
+}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
@@ -37,18 +42,25 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
 import org.apache.flink.configuration.{CoreOptions, JobManagerOptions, TaskManagerOptions}
+import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions
 import org.apache.flink.types.Row
 import org.apache.flink.yarn.configuration.YarnConfigOptions
 
 import java.util
 
-trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecutor {
+trait FlinkExecutor
+    extends YarnExecutor
+    with KubernetesExecutor
+    with LabelExecutor
+    with ResourceExecutor {
 
   private var jobID: String = _
   private var applicationId: String = _
+  private var kubernetesClusterID: String = _
   private var applicationURL: String = _
   private var yarnMode: String = "Client"
   private var queue: String = _
+  private var namespace: String = _
 
   private var executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]]
 
@@ -61,6 +73,11 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
   override def getApplicationId: String = applicationId
   def setApplicationId(applicationId: String): Unit = this.applicationId = applicationId
 
+  override def getKubernetesClusterID: String = kubernetesClusterID
+
+  def setKubernetesClusterID(kubernetesClusterID: String): Unit = this.kubernetesClusterID =
+    kubernetesClusterID
+
   override def getApplicationURL: String = applicationURL
   def setApplicationURL(applicationURL: String): Unit = this.applicationURL = applicationURL
 
@@ -69,6 +86,10 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
 
   override def getQueue: String = queue
   def setQueue(queue: String): Unit = this.queue = queue
+
+  override def getNamespace: String = namespace
+
+  def setNamespace(namespace: String): Unit = this.namespace = namespace
 
   override def getExecutorLabels(): util.List[Label[_]] = executorLabels
 
@@ -81,6 +102,10 @@ trait FlinkExecutor extends YarnExecutor with LabelExecutor with ResourceExecuto
 
   queue = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.get(
     YarnConfigOptions.APPLICATION_QUEUE
+  )
+
+  namespace = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.get(
+    KubernetesConfigOptions.NAMESPACE
   )
 
   override def getCurrentNodeResource(): NodeResource = {

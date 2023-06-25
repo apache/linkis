@@ -59,7 +59,7 @@ public class KubernetesApplicationClusterDescriptorAdapter
   }
 
   public boolean initJobId() throws Exception {
-    clusterClient
+    kubernetesClusterClient
         .listJobs()
         .thenAccept(
             list ->

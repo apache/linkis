@@ -102,6 +102,9 @@ public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   NOT_SUPPORT_FLINK(
       20001,
       "Not support ClusterDescriptorAdapter for flink application.(不支持 flink 应用的 ClusterDescriptorAdapter.)"),
+  KUBERNETES_IS_NULL(
+      20001,
+      "The application start failed, since kubernetes kubernetesClusterID is null.(应用程序启动失败，因为 kubernetes kubernetesClusterID  为 null.)"),
   YARN_IS_NULL(
       20001,
       "The application start failed, since yarn applicationId is null.(应用程序启动失败，因为 yarn applicationId 为 null.)"),

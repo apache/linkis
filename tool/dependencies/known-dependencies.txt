@@ -36,6 +36,7 @@ avro-1.8.2.jar
 aws-java-sdk-core-1.11.792.jar
 aws-java-sdk-kms-1.11.792.jar
 aws-java-sdk-s3-1.11.792.jar
+aws-java-sdk-s3-1.12.261.jar
 bcpkix-jdk15on-1.70.jar
 bcprov-jdk15on-1.70.jar
 bcutil-jdk15on-1.70.jar
@@ -52,6 +53,7 @@ cglib-nodep-3.2.5.jar
 checker-qual-3.4.0.jar
 checker-qual-3.5.0.jar
 checker-qual-3.8.0.jar
+checker-qual-3.33.0.jar
 chill-java-0.7.6.jar
 chill_2.12-0.7.6.jar
 classgraph-4.1.7.jar
@@ -102,6 +104,7 @@ elasticsearch-rest-client-7.6.2.jar
 elasticsearch-rest-client-sniffer-7.6.2.jar
 error_prone_annotations-2.3.4.jar
 error_prone_annotations-2.4.0.jar
+error_prone_annotations-2.18.0.jar
 esri-geometry-api-2.0.0.jar
 eureka-client-1.10.14.jar
 eureka-core-1.10.14.jar
@@ -153,7 +156,7 @@ force-shading-1.12.2.jar
 freemarker-2.3.31.jar
 grizzled-slf4j_2.12-1.3.2.jar
 gson-2.8.9.jar
-guava-30.0-jre.jar
+guava-32.0.0-jre.jar
 guava-retrying-2.0.0.jar
 guice-3.0.jar
 guice-4.0.jar
@@ -180,7 +183,7 @@ hadoop-yarn-api-3.3.4.jar
 hadoop-yarn-client-3.3.4.jar
 hadoop-yarn-common-3.3.4.jar
 hadoop-yarn-registry-3.3.4.jar
-hazelcast-5.1.jar
+hazelcast-5.3.0.jar
 hibernate-validator-5.1.2.Final.jar
 hibernate-validator-6.1.7.Final.jar
 hive-classification-3.1.3.jar
@@ -216,6 +219,7 @@ ion-java-1.0.2.jar
 istack-commons-runtime-3.0.12.jar
 ivy-2.4.0.jar
 j2objc-annotations-1.3.jar
+j2objc-annotations-2.8.jar
 jackson-annotations-2.13.4.jar
 jackson-core-2.13.4.jar
 jackson-core-asl-1.9.13.jar
@@ -278,7 +282,7 @@ jersey-media-jaxb-2.23.1.jar
 jersey-server-1.19.4.jar
 jersey-server-2.23.1.jar
 jersey-servlet-1.19.4.jar
-jettison-1.5.3.jar
+jettison-1.5.4.jar
 jetty-annotations-9.4.48.v20220622.jar
 jetty-client-9.4.48.v20220622.jar
 jetty-continuation-9.4.48.v20220622.jar
@@ -606,4 +610,3 @@ zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar
 zstd-jni-1.4.5-6.jar
-postgresql-42.2.20

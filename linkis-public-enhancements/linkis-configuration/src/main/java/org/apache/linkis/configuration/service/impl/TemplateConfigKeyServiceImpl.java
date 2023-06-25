@@ -36,10 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,11 +82,12 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         // 待更新的key id 列表
         List<Long> keyIdList = configKeyList.stream().map(e -> e.getId()).collect(Collectors.toList());
         if (configKeyList.size() != itemList.size()) {
+            List<String> dbKeyList = configKeyList.stream().map(e -> e.getKey()).collect(Collectors.toList());
             String msg =
                     MessageFormat.format(
                             "The num of config item data from the DB is inconsistent(DB中获取到的配置数据条数不一致) :"
-                                    + "engineType:{0}, input keyList size:{1}, db keyList size:{2}",
-                            engineType, keyList.size(), configKeyList.size());
+                                    + "engineType:{0}, input keyList:{1}, db keyList:{2}.",
+                            engineType, Arrays.toString(keyList.toArray()),  Arrays.toString(dbKeyList.toArray()));
             throw new ConfigurationException(msg);
         }
         // 组装更新
@@ -114,7 +112,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
                 String msg =
                         MessageFormat.format(
                                 "Parameter configValue verification failed(参数configValue校验失败):"
-                                        + "key:{0}, ValidateType:{1}, ValidateRange:{},ConfigValue:{}",
+                                        + "key:{0}, ValidateType:{1}, ValidateRange:{2},ConfigValue:{3}",
                                 key, validateType, validateRange, configValue);
                 throw new ConfigurationException(msg);
             }
@@ -122,7 +120,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
                 String msg =
                         MessageFormat.format(
                                 "Parameter maxValue verification failed(参数maxValue校验失败):"
-                                        + "key:{0}, ValidateType:{1}, ValidateRange:{},ConfigValue:{}",
+                                        + "key:{0}, ValidateType:{1}, ValidateRange:{2},ConfigValue:{3}",
                                 key, validateType, validateRange, maxValue);
                 throw new ConfigurationException(msg);
             }

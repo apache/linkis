@@ -197,6 +197,7 @@ public class ConfigMapperTest extends BaseDaoTest {
   void testInsertKey() {
     ConfigKey configKey = new ConfigKey();
     configKey.setKey("wds.linkis.rm.instance.max.max");
+    configKey.setBoundaryType(3);
     configMapper.insertKey(configKey);
     ConfigKey result = configMapper.selectKeyByKeyID(8L);
     //        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());

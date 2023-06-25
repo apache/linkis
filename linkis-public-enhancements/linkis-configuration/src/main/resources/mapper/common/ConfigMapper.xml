@@ -111,9 +111,13 @@
 
     <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
-        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName)
+        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName, boundary_type)
         VALUES (
-        #{id}, #{key}, #{description}, #{name}, #{engineType}, #{defaultValue}, #{validateType}, #{validateRange}, #{isHidden}, #{isAdvanced}, #{level}, #{treeName})
+        #{id}, #{key}, #{description},
+        #{name}, #{engineType}, #{defaultValue},
+        #{validateType}, #{validateRange}, #{isHidden},
+        #{isAdvanced}, #{level}, #{treeName},
+        #{boundaryType})
     </insert>
 
     <select id="getConfigKeyByLabelIds" resultMap="ConfigKeyValueMap">

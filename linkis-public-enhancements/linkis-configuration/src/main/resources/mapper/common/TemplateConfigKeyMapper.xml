@@ -40,14 +40,14 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from template_config_key
+    from linkis_ps_configuration_template_config_key
     where id = #{id,jdbcType=BIGINT}
   </select>
   <sql id="selectWhereByPage">
     id = #{id,jdbcType=BIGINT}
   </sql>
   <select id="selectCountByPage" resultType="java.lang.Integer">
-    select count(1) from template_config_key
+    select count(1) from linkis_ps_configuration_template_config_key
     <where>
       <include refid="selectWhereByPage" />
     </where>
@@ -56,7 +56,7 @@
     <bind name="startRowIndex" value="(pageNo-1)*pageSize" />
     select 
     <include refid="Base_Column_List" />
-    from template_config_key
+    from linkis_ps_configuration_template_config_key
     <where>
       <include refid="selectWhereByPage" />
     </where>
@@ -64,7 +64,7 @@
     limit #{startRowIndex}, #{pageSize}
   </select>
   <insert id="batchInsertList" parameterType="java.util.List">
-    insert into template_config_key (id, template_name, template_uuid, 
+    insert into linkis_ps_configuration_template_config_key (id, template_name, template_uuid,
       key_id, config_value, max_value, 
       min_value, validate_range, is_valid, 
       create_by, create_time, update_by, update_time
@@ -80,11 +80,11 @@
     </foreach>
   </insert>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from template_config_key
+    delete from linkis_ps_configuration_template_config_key
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.apache.linkis.configuration.entity.TemplateConfigKey">
-    insert into template_config_key (id, template_name, template_uuid, 
+    insert into linkis_ps_configuration_template_config_key (id, template_name, template_uuid,
       key_id, config_value, max_value, 
       min_value, validate_range, is_valid, 
       create_by, create_time, update_by, update_time)
@@ -94,7 +94,7 @@
       #{createBy,jdbcType=VARCHAR}, now(), #{updateBy,jdbcType=VARCHAR}, now())
   </insert>
   <insert id="insertSelective" parameterType="org.apache.linkis.configuration.entity.TemplateConfigKey">
-    insert into template_config_key
+    insert into linkis_ps_configuration_template_config_key
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -171,7 +171,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.apache.linkis.configuration.entity.TemplateConfigKey">
-    update template_config_key
+    update linkis_ps_configuration_template_config_key
     <set>
       <if test="templateName != null">
         template_name = #{templateName,jdbcType=VARCHAR},
@@ -208,7 +208,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.apache.linkis.configuration.entity.TemplateConfigKey">
-    update template_config_key
+    update linkis_ps_configuration_template_config_key
     set template_name = #{templateName,jdbcType=VARCHAR},
       template_uuid = #{templateUuid,jdbcType=VARCHAR},
       key_id = #{keyId,jdbcType=BIGINT},
@@ -228,14 +228,14 @@
   <select id="selectListByTemplateUuid" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from template_config_key
+    from linkis_ps_configuration_template_config_key
     where template_uuid = #{templateUuid,jdbcType=VARCHAR}
     order by id
   </select>
 
   <delete id="deleteByTemplateUuidAndKeyIdList" parameterType="java.util.List">
     delete
-    from template_config_key
+    from linkis_ps_configuration_template_config_key
     where template_uuid = #{templateUuid,jdbcType=VARCHAR}
     and key_id in
     <foreach collection="KeyIdList" index="index" item="item" separator="," open="(" close=")">
@@ -244,7 +244,7 @@
   </delete>
 
   <insert id="batchInsertOrUpdateList" parameterType="java.util.List">
-    insert into template_config_key (template_name, template_uuid,
+    insert into linkis_ps_configuration_template_config_key (template_name, template_uuid,
     key_id, config_value, max_value,
     create_by, create_time, update_by, update_time
     )
@@ -261,14 +261,14 @@
         <otherwise>
           now(),
         </otherwise>
-      </choose>,
+      </choose>
       #{item.updateBy,jdbcType=VARCHAR},
       <choose>
         <when test="item.updateTime != null">
-          #{item.updateTime},
+          #{item.updateTime}
         </when>
         <otherwise>
-          now(),
+          now()
         </otherwise>
       </choose>
       )
@@ -284,7 +284,7 @@
   <select id="selectListByTemplateUuidList" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from template_config_key
+    from linkis_ps_configuration_template_config_key
     where template_uuid  in
     <foreach collection="templateUuidList" index="index" item="item" separator="," open="(" close=")">
       #{item}

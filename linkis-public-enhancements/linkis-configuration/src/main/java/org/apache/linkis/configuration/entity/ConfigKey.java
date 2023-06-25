@@ -157,20 +157,41 @@ public class ConfigKey {
 
   @Override
   public String toString() {
-    return "ConfigKey{" +
-            "id=" + id +
-            ", key='" + key + '\'' +
-            ", description='" + description + '\'' +
-            ", name='" + name + '\'' +
-            ", engineType='" + engineType + '\'' +
-            ", defaultValue='" + defaultValue + '\'' +
-            ", validateType='" + validateType + '\'' +
-            ", validateRange='" + validateRange + '\'' +
-            ", isAdvanced=" + isAdvanced +
-            ", isHidden=" + isHidden +
-            ", level=" + level +
-            ", treeName='" + treeName + '\'' +
-            ", boundaryType=" + boundaryType +
-            '}';
+    return "ConfigKey{"
+        + "id="
+        + id
+        + ", key='"
+        + key
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
+        + ", defaultValue='"
+        + defaultValue
+        + '\''
+        + ", validateType='"
+        + validateType
+        + '\''
+        + ", validateRange='"
+        + validateRange
+        + '\''
+        + ", isAdvanced="
+        + isAdvanced
+        + ", isHidden="
+        + isHidden
+        + ", level="
+        + level
+        + ", treeName='"
+        + treeName
+        + '\''
+        + ", boundaryType="
+        + boundaryType
+        + '}';
   }
 }

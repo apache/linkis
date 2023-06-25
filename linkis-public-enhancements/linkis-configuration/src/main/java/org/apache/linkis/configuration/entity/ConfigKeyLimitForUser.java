@@ -20,7 +20,7 @@ package org.apache.linkis.configuration.entity;
 import java.util.Date;
 
 /**
- * config_key_limit_for_user表的entity类 @Description
+ * linkis_ps_configuration_key_limit_for_user表的entity类 @Description
  *
  * @version 1.0
  * @author webank

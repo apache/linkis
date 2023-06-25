@@ -24,7 +24,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * template_config_key表的dao接口类 @Description
+ * linkis_ps_configuration_template_config_key表的dao接口类 @Description
  *
  * @version 1.0
  */
@@ -85,7 +85,7 @@ public interface TemplateConfigKeyMapper {
    * @param pageSize
    */
   List<TemplateConfigKey> selectListByPage(
-      @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
+          @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
 
   /**
    * 动态字段,根据主键来更新符合条件的数据库记录
@@ -105,10 +105,10 @@ public interface TemplateConfigKeyMapper {
   List<TemplateConfigKey> selectListByTemplateUuid(@Param("templateUuid") String templateUuid);
 
   int deleteByTemplateUuidAndKeyIdList(
-      @Param("templateUuid") String templateUuid, @Param("KeyIdList") List<Long> KeyIdList);
+          @Param("templateUuid") String templateUuid, @Param("KeyIdList") List<Long> KeyIdList);
 
   int batchInsertOrUpdateList(List<TemplateConfigKey> list);
 
   List<TemplateConfigKey> selectListByTemplateUuidList(
-      @Param("templateUuidList") List<String> templateUuidList);
+          @Param("templateUuidList") List<String> templateUuidList);
 }

@@ -36,14 +36,14 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from config_key_limit_for_user
+    from linkis_ps_configuration_key_limit_for_user
     where id = #{id,jdbcType=BIGINT}
   </select>
   <sql id="selectWhereByPage">
     id = #{id,jdbcType=BIGINT}
   </sql>
   <select id="selectCountByPage" resultType="java.lang.Integer">
-    select count(1) from config_key_limit_for_user
+    select count(1) from linkis_ps_configuration_key_limit_for_user
     <where>
       <include refid="selectWhereByPage" />
     </where>
@@ -52,7 +52,7 @@
     <bind name="startRowIndex" value="(pageNo-1)*pageSize" />
     select 
     <include refid="Base_Column_List" />
-    from config_key_limit_for_user
+    from linkis_ps_configuration_key_limit_for_user
     <where>
       <include refid="selectWhereByPage" />
     </where>
@@ -60,7 +60,7 @@
     limit #{startRowIndex}, #{pageSize}
   </select>
   <insert id="batchInsertList" parameterType="java.util.List">
-    insert into config_key_limit_for_user (id, user_name, combined_label_value, 
+    insert into linkis_ps_configuration_key_limit_for_user (id, user_name, combined_label_value,
       key_id, latest_update_template_uuid, 
       is_valid, create_by, create_time, update_by, 
       update_time)
@@ -74,11 +74,11 @@
     </foreach>
   </insert>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from config_key_limit_for_user
+    delete from linkis_ps_configuration_key_limit_for_user
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
-    insert into config_key_limit_for_user (id, user_name, combined_label_value, 
+    insert into linkis_ps_configuration_key_limit_for_user (id, user_name, combined_label_value,
       key_id, latest_update_template_uuid, is_valid, 
       create_by, create_time, update_by, update_time)
     values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{combinedLabelValue,jdbcType=VARCHAR}, 
@@ -86,7 +86,7 @@
       #{createBy,jdbcType=VARCHAR}, now(), #{updateBy,jdbcType=VARCHAR}, now())
   </insert>
   <insert id="insertSelective" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
-    insert into config_key_limit_for_user
+    insert into linkis_ps_configuration_key_limit_for_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -145,7 +145,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
-    update config_key_limit_for_user
+    update linkis_ps_configuration_key_limit_for_user
     <set>
       <if test="userName != null">
         user_name = #{userName,jdbcType=VARCHAR},
@@ -173,7 +173,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
-    update config_key_limit_for_user
+    update linkis_ps_configuration_key_limit_for_user
     set user_name = #{userName,jdbcType=VARCHAR},
       combined_label_value = #{combinedLabelValue,jdbcType=VARCHAR},
       key_id = #{keyId,jdbcType=BIGINT},
@@ -188,7 +188,7 @@
   <!-- === 下方为用户自定义模块,下次生成会保留 === -->
 
   <insert id="batchInsertOrUpdateList" parameterType="java.util.List">
-    insert into config_key_limit_for_user (user_name, combined_label_value,
+    insert into linkis_ps_configuration_key_limit_for_user (user_name, combined_label_value,
     key_id, latest_update_template_uuid,
     create_by, create_time, update_by,
     update_time)
@@ -205,14 +205,14 @@
         <otherwise>
           now(),
         </otherwise>
-      </choose>,
+      </choose>
       #{item.updateBy,jdbcType=VARCHAR},
       <choose>
         <when test="item.updateTime != null">
-          #{item.updateTime},
+          #{item.updateTime}
         </when>
         <otherwise>
-          now(),
+          now()
         </otherwise>
       </choose>
       )

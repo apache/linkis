@@ -93,7 +93,6 @@ class ConfigurationService extends Logging {
     }
   }
 
-
   def checkAndCreateUserLabel(
       settings: util.List[ConfigKeyValue],
       username: String,

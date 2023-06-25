@@ -20,7 +20,7 @@ package org.apache.linkis.configuration.entity;
 import java.util.Date;
 
 /**
- * template_config_key表的entity类 @Description
+ * linkis_ps_configuration_template_config_key表的entity类 @Description
  *
  * @version 1.0
  * @author webank

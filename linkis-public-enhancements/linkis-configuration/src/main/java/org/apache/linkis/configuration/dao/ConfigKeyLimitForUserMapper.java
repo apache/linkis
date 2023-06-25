@@ -24,7 +24,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * config_key_limit_for_user表的dao接口类 @Description
+ * linkis_ps_configuration_key_limit_for_user表的dao接口类 @Description
  *
  * @version 1.0
  */
@@ -86,7 +86,7 @@ public interface ConfigKeyLimitForUserMapper {
    * @param pageSize
    */
   List<ConfigKeyLimitForUser> selectListByPage(
-      @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
+          @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
 
   /**
    * 动态字段,根据主键来更新符合条件的数据库记录

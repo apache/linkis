@@ -93,12 +93,6 @@ class ConfigurationService extends Logging {
     }
   }
 
-  def insertCreator(creator: String): Unit = {
-    val creatorID: Long = configMapper.selectAppIDByAppName(creator)
-    if (creatorID > 0) configMapper.insertCreator(creator)
-    else logger.warn(s"creator${creator} exists")
-  }
-
   def checkAndCreateUserLabel(
       settings: util.List[ConfigKeyValue],
       username: String,

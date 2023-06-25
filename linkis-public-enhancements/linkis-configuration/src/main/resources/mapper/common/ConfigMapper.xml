@@ -24,7 +24,6 @@
         <result column="key" property="key" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="creator_id" property="creatorId" jdbcType="VARCHAR"/>
         <result column="engine_conn_type" property="engineType" jdbcType="VARCHAR"/>
         <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
         <result column="validate_type" property="validateType" jdbcType="VARCHAR"/>
@@ -32,8 +31,7 @@
         <result column="is_hidden" property="isHidden" jdbcType="TINYINT"/>
         <result column="is_advanced" property="isAdvanced" jdbcType="TINYINT"/>
         <result column="level" property="level" jdbcType="TINYINT"/>
-        <result column="username" property="userName" jdbcType="VARCHAR"/>
-        <result column="treename" property="treeName" jdbcType="VARCHAR"/>
+        <result column="treeName" property="treeName" jdbcType="VARCHAR"/>
         <result column="value_id" property="valueId" jdbcType="BIGINT"/>
         <result column="config_value" property="configValue" jdbcType="VARCHAR"/>
         <result column="config_label_id" property="configLabelId" jdbcType="INTEGER"/>
@@ -51,8 +49,8 @@
         <result column="is_hidden" property="isHidden" jdbcType="TINYINT"/>
         <result column="is_advanced" property="isAdvanced" jdbcType="TINYINT"/>
         <result column="level" property="level" jdbcType="TINYINT"/>
-        <result column="username" property="userName" jdbcType="VARCHAR"/>
-        <result column="treename" property="treeName" jdbcType="VARCHAR"/>
+        <result column="treeName" property="treeName" jdbcType="VARCHAR"/>
+        <result column="boundary_type" property="boundaryType" jdbcType="TINYINT"/>
     </resultMap>
 
     <resultMap id="ConfigValueMap" type="org.apache.linkis.configuration.entity.ConfigValue">
@@ -113,9 +111,13 @@
 
     <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
-        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName)
+        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName, boundary_type)
         VALUES (
-        #{id}, #{key}, #{description}, #{name}, #{engineType}, #{defaultValue}, #{validateType}, #{validateRange}, #{isHidden}, #{isAdvanced}, #{level}, #{treeName})
+        #{id}, #{key}, #{description},
+        #{name}, #{engineType}, #{defaultValue},
+        #{validateType}, #{validateRange}, #{isHidden},
+        #{isAdvanced}, #{level}, #{treeName},
+        #{boundaryType})
     </insert>
 
     <select id="getConfigKeyByLabelIds" resultMap="ConfigKeyValueMap">
@@ -137,6 +139,17 @@
         WHERE v.config_label_id = #{labelId}
     </select>
 
+
+    <select id="getConfigKeyValueByEngineType" resultMap="ConfigKeyValueMap">
+        SELECT <include refid="Config_Key_Value_Column"/>
+        FROM linkis_ps_configuration_config_key AS k
+        LEFT OUTER JOIN linkis_ps_configuration_config_value AS v
+        ON k.id = v.config_key_id
+        WHERE v.config_label_id = #{labelId}
+    </select>
+
+
+
     <select id="getConfigEnKeyValueByLabelId" resultMap="ConfigKeyValueMap">
         SELECT <include refid="Config_En_Key_Value_Column"/>
         FROM linkis_ps_configuration_config_key AS k
@@ -156,6 +169,33 @@
         FROM linkis_ps_configuration_config_key
         WHERE `key` = #{keyName}
     </select>
+
+    <select id="selectKeyByEngineType" resultMap="ConfigKeyMap">
+        SELECT   `key`, `description`, `name`, `engine_conn_type`,
+                `default_value`, `validate_type`, `validate_range`,boundary_type
+        FROM linkis_ps_configuration_config_key
+        WHERE `engine_conn_type` = #{engineType}
+    </select>
+
+    <select id="selectKeyByEngineTypeAndKeyList" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE `engine_conn_type` = #{engineType}
+        AND `key` in
+        <foreach collection="keyList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectKeyByKeyIdList" resultMap="ConfigKeyMap">
+        SELECT <include refid="Config_Key_Column"/>
+        FROM linkis_ps_configuration_config_key
+        WHERE `id` in
+        <foreach collection="keyIdList" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
+
 
     <select id="listKeyByStringValue" resultMap="ConfigKeyMap">
         SELECT <include refid="Config_Key_Column"/>
@@ -199,6 +239,35 @@
             id, config_key_id, config_value, config_label_id, create_time, update_time)
         VALUES (
                    #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
+    </insert>
+
+    <insert id="batchInsertOrUpdateValueList">
+        INSERT INTO linkis_ps_configuration_config_value(config_key_id, config_value, config_label_id, create_time, update_time)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.configKeyId},#{item.configValue}, #{item.configLabelId},
+            <choose>
+                <when test="item.createTime != null">
+                    #{item.createTime},
+                </when>
+                <otherwise>
+                    now(),
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item.updateTime != null">
+                    #{item.updateTime}
+                </when>
+                <otherwise>
+                    now()
+                </otherwise>
+            </choose>
+            )
+        </foreach>
+        on duplicate key update
+        config_value =values(config_value),
+        update_time= now()
     </insert>
 
     <select id="getConfigValueById" resultMap="ConfigValueMap">

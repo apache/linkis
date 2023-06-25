@@ -17,24 +17,31 @@
 
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigKey;
-import org.apache.linkis.configuration.entity.ConfigKeyValue;
-import org.apache.linkis.configuration.entity.ConfigValue;
+import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
-import org.apache.linkis.manager.label.entity.Label;
 
 import java.util.List;
+import java.util.Map;
 
-public interface ConfigKeyService {
+public interface TemplateConfigKeyService {
 
-  ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
+  Boolean updateKeyMapping(
+          String templateUid,
+          String templateName,
+          String engineType,
+          String operator,
+          List<TemplateConfigKeyVo> itemList,
+          Boolean isFullMode)
       throws ConfigurationException;
 
-  List<ConfigValue> getConfigValue(String configKey, List<Label<?>> labelList)
-      throws ConfigurationException;
+  List<Object> queryKeyInfoList(List<String> uuidList) throws ConfigurationException;
 
-  List<ConfigKey> getConfigKeyList(String engineType) throws ConfigurationException;
-
-  List<ConfigValue> deleteConfigValue(String configKey, List<Label<?>> labelList)
+  Map<String, Object> apply(
+          String templateUid,
+          String application,
+          String engineType,
+          String engineVersion,
+          String operator,
+          List<String> userList)
       throws ConfigurationException;
 }

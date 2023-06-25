@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -152,8 +153,37 @@ public class ConfigurationRestfulApi {
   public Message getCategory(HttpServletRequest req) {
     List<CategoryLabelVo> categoryLabelList =
         categoryService.getAllCategory(req.getHeader("Content-Language"));
+
     return Message.ok().data("Category", categoryLabelList);
   }
+  @ApiOperation(
+      value = "getItemList",
+      notes = "get configuration list by engineType",
+      response = Message.class)
+  @RequestMapping(path = "/getItemList", method = RequestMethod.GET)
+  public Message getItemList(
+      HttpServletRequest req, @RequestParam(value = "engineType") String engineType)
+      throws ConfigurationException {
+    String userName =
+        ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
+    List<Map> filterResult=new ArrayList<>();
+    for (ConfigKey configKey : result) {
+      Map temp =new HashMap();
+      temp.put("",configKey.getBoundaryType());
+      temp.put("key", configKey.getKey());
+      temp.put("name", configKey.getName());
+      temp.put("description", configKey.getDescription());
+      temp.put("engineType", configKey.getEngineType());
+      temp.put("validateType", configKey.getValidateType());
+      temp.put("validateRange", configKey.getValidateRange());
+      temp.put("boundaryType",configKey.getBoundaryType());
+      filterResult.add(temp);
+    }
+
+    return Message.ok().data("itemList", filterResult);
+  }
+
 
   @ApiOperation(
       value = "createFirstCategory",

@@ -43,6 +43,14 @@ public class ConfigKey {
 
   private String treeName;
 
+  /*
+  0  none
+  1 with mix
+  2 with max
+  3 min and max both
+   */
+  private Integer boundaryType;
+
   public String getEngineType() {
     return engineType;
   }
@@ -137,5 +145,53 @@ public class ConfigKey {
 
   public void setLevel(Integer level) {
     this.level = level;
+  }
+
+  public Integer getBoundaryType() {
+    return boundaryType;
+  }
+
+  public void setBoundaryType(Integer boundaryType) {
+    this.boundaryType = boundaryType;
+  }
+
+  @Override
+  public String toString() {
+    return "ConfigKey{"
+        + "id="
+        + id
+        + ", key='"
+        + key
+        + '\''
+        + ", description='"
+        + description
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
+        + ", defaultValue='"
+        + defaultValue
+        + '\''
+        + ", validateType='"
+        + validateType
+        + '\''
+        + ", validateRange='"
+        + validateRange
+        + '\''
+        + ", isAdvanced="
+        + isAdvanced
+        + ", isHidden="
+        + isHidden
+        + ", level="
+        + level
+        + ", treeName='"
+        + treeName
+        + '\''
+        + ", boundaryType="
+        + boundaryType
+        + '}';
   }
 }

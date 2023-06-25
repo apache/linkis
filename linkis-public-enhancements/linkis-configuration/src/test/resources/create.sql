@@ -48,6 +48,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`
     `is_advanced`      tinyint(1)   DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
     `level`            tinyint(1)   DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
     `treeName`         varchar(20)  DEFAULT NULL COMMENT 'Reserved field, representing the subdirectory of engineType',
+    `boundary_type`     int(2) NOT NULL  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both',
     PRIMARY KEY (`id`)
 );
 
@@ -86,4 +87,41 @@ CREATE TABLE `linkis_ps_configuration_category`
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE INDEX (`label_id`)
+);
+
+
+DROP TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
+CREATE TABLE `linkis_ps_configuration_template_config_key` (
+        `id` int(20) NOT NULL AUTO_INCREMENT,
+        `template_name` varchar(200) NOT NULL COMMENT '配置模板名称 冗余存储',
+        `template_uuid` varchar(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
+        `key_id` int(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+        `config_value` varchar(200) NOT NULL COMMENT '配置值',
+        `max_value` varchar(50) NOT NULL COMMENT '上限值',
+        `min_value` varchar(50) NULL DEFAULT NULL COMMENT '下限值（预留）',
+        `validate_range` varchar(50) NULL DEFAULT NULL COMMENT '校验正则(预留) ',
+        `is_valid` varchar(2) DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
+        `create_by` varchar(50) NOT NULL COMMENT '创建人',
+        `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+        `update_by` varchar(50) NULL DEFAULT NULL COMMENT '更新人',
+        `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+        PRIMARY KEY (`id`),
+        UNIQUE INDEX `uniq_tid_kid` (`template_uuid`, `key_id`)
+);
+
+
+DROP TABLE IF EXISTS `linkis_ps_configuration_key_limit_for_user`;
+CREATE TABLE `linkis_ps_configuration_key_limit_for_user` (
+        `id` int(20) NOT NULL AUTO_INCREMENT,
+        `user_name` varchar(50) NOT NULL COMMENT '用户名',
+        `combined_label_value` varchar(200) NOT NULL COMMENT '组合标签 combined_userCreator_engineType  如 hadoop-IDE,spark-2.4.3',
+        `key_id` int(20) NOT NULL COMMENT 'id of linkis_ps_configuration_config_key',
+        `latest_update_template_uuid` varchar(36) NOT NULL COMMENT 'uuid  第三方侧记录的模板id',
+        `is_valid` varchar(2)  DEFAULT 'Y' COMMENT '是否有效 预留 Y/N',
+        `create_by` varchar(50) NOT NULL COMMENT '创建人',
+        `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+        `update_by` varchar(50) NULL DEFAULT NULL COMMENT '更新人',
+        `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'update time',
+        PRIMARY KEY (`id`),
+        UNIQUE INDEX `uniq_com_label_kid` (`combined_label_value`, `key_id`)
 );

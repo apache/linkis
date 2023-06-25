@@ -105,7 +105,7 @@ public interface TemplateConfigKeyMapper {
   List<TemplateConfigKey> selectListByTemplateUuid(@Param("templateUuid") String templateUuid);
 
   int deleteByTemplateUuidAndKeyIdList(
-          @Param("templateUuid") String templateUuid, @Param("KeyIdList") List<Long> KeyIdList);
+          @Param("templateUuid") String templateUuid, @Param("keyIdList") List<Long> KeyIdList);
 
   int batchInsertOrUpdateList(List<TemplateConfigKey> list);
 

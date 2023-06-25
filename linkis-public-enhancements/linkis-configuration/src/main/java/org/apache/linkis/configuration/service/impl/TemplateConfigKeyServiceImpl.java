@@ -318,10 +318,10 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           configKeyLimitForUser.setUpdateBy(operator);
           configKeyLimitForUsers.add(configKeyLimitForUser);
         }
-        configMapper.batchInsertValue(configValues);
+        configMapper.batchInsertOrUpdateValueList(configValues);
 
         // batch update user ConfigKeyLimitForUserMapper
-        configKeyLimitForUserMapper.batchInsertList(configKeyLimitForUsers);
+        configKeyLimitForUserMapper.batchInsertOrUpdateList(configKeyLimitForUsers);
 
         successList.add(res);
       } catch (Exception e) {

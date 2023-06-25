@@ -17,10 +17,7 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.configuration.entity.CategoryLabel;
-import org.apache.linkis.configuration.entity.ConfigKey;
-import org.apache.linkis.configuration.entity.ConfigKeyValue;
-import org.apache.linkis.configuration.entity.ConfigValue;
+import org.apache.linkis.configuration.entity.*;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -34,7 +31,7 @@ public interface ConfigMapper {
 
   void insertValue(ConfigValue configValue);
 
-  void batchInsertValue(@Param("configValueList") List<ConfigValue> configValueList);
+  int batchInsertOrUpdateValueList(List<ConfigValue> list);
 
   ConfigValue getConfigValueById(@Param("id") Long id);
 
@@ -55,9 +52,9 @@ public interface ConfigMapper {
   List<ConfigKey> selectKeyByEngineType(@Param("engineType") String engineType);
 
   List<ConfigKey> selectKeyByEngineTypeAndKeyList(
-      @Param("engineType") String engineType, @Param("KeyList") List<String> keyList);
+      @Param("engineType") String engineType, @Param("keyList") List<String> keyList);
 
-  List<ConfigKey> selectKeyByKeyIdList(@Param("KeyIdList") List<Long> keyList);
+  List<ConfigKey> selectKeyByKeyIdList(@Param("keyIdList") List<Long> keyList);
 
   List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 

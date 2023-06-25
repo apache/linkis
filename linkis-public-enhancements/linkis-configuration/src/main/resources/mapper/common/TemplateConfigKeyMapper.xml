@@ -238,7 +238,7 @@
     from linkis_ps_configuration_template_config_key
     where template_uuid = #{templateUuid,jdbcType=VARCHAR}
     and key_id in
-    <foreach collection="KeyIdList" index="index" item="item" separator="," open="(" close=")">
+    <foreach collection="keyIdList" index="index" item="item" separator="," open="(" close=")">
       #{item}
     </foreach>
   </delete>

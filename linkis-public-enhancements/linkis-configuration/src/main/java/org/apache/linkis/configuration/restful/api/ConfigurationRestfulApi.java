@@ -156,7 +156,6 @@ public class ConfigurationRestfulApi {
 
     return Message.ok().data("Category", categoryLabelList);
   }
-
   @ApiOperation(
       value = "getItemList",
       notes = "get configuration list by engineType",

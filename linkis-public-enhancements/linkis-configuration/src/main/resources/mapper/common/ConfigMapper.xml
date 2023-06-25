@@ -182,7 +182,7 @@
         FROM linkis_ps_configuration_config_key
         WHERE `engine_conn_type` = #{engineType}
         AND `key` in
-        <foreach collection="KeyList" item="item" separator="," open="(" close=")">
+        <foreach collection="keyList" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
     </select>
@@ -190,9 +190,8 @@
     <select id="selectKeyByKeyIdList" resultMap="ConfigKeyMap">
         SELECT <include refid="Config_Key_Column"/>
         FROM linkis_ps_configuration_config_key
-        WHERE `engine_conn_type` = #{engineType}
-        AND `id` in
-        <foreach collection="KeyIdList" item="item" separator="," open="(" close=")">
+        WHERE `id` in
+        <foreach collection="keyIdList" item="item" separator="," open="(" close=")">
             #{item}
         </foreach>
     </select>
@@ -242,11 +241,33 @@
                    #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
     </insert>
 
-    <insert id="batchInsertValue"  parameterType="org.apache.linkis.configuration.entity.ConfigValue">
-        REPLACE INTO linkis_ps_configuration_config_value(
-        id, config_key_id, config_value, config_label_id, create_time, update_time)
-        VALUES (
-        #{id},#{configKeyId},#{configValue}, #{configLabelId}, now(), now())
+    <insert id="batchInsertOrUpdateValueList">
+        INSERT INTO linkis_ps_configuration_config_value(config_key_id, config_value, config_label_id, create_time, update_time)
+        VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.configKeyId},#{item.configValue}, #{item.configLabelId},
+            <choose>
+                <when test="item.createTime != null">
+                    #{item.createTime},
+                </when>
+                <otherwise>
+                    now(),
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="item.updateTime != null">
+                    #{item.updateTime}
+                </when>
+                <otherwise>
+                    now()
+                </otherwise>
+            </choose>
+            )
+        </foreach>
+        on duplicate key update
+        config_value =values(config_value),
+        update_time= now()
     </insert>
 
     <select id="getConfigValueById" resultMap="ConfigValueMap">

@@ -194,7 +194,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       completed.set(true)
 
       if (exitCode != 0) {
-        ErrorExecuteResponse("run shell failed", ShellCodeErrorException())
+        ErrorExecuteResponse(s"run shell failed with error:\n ${errReaderThread.getOutString()}", ShellCodeErrorException())
       } else SuccessExecuteResponse()
     } catch {
       case e: Exception =>

@@ -28,7 +28,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -48,6 +51,9 @@ public class VariableOperationUtils {
   private static final String CYCLE_SECOND = "s";
   private static final String[] CYCLES =
       new String[] {CYCLE_YEAR, CYCLE_MONTH, CYCLE_DAY, CYCLE_HOUR, CYCLE_MINUTE, CYCLE_SECOND};
+
+  private static final ObjectMapper mapper =
+      JsonMapper.builder().enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS).build();
 
   /**
    * yyyy-MM-dd HH:mm:ss
@@ -80,21 +86,8 @@ public class VariableOperationUtils {
    */
   public static String replaces(ZonedDateTime dateTime, String str)
       throws VariableOperationFailedException {
-    return replaces(dateTime, str, true);
-  }
-
-  /**
-   * json support variable operation
-   *
-   * @param dateTime
-   * @param str
-   * @param format
-   * @return
-   */
-  public static String replaces(ZonedDateTime dateTime, String str, boolean format)
-      throws VariableOperationFailedException {
     try {
-      JsonNode rootNode = JsonUtils.jackson().readTree(str);
+      JsonNode rootNode = mapper.readTree(str);
       if (rootNode.isArray() || rootNode.isObject()) {
         replaceJson(dateTime, rootNode);
         return rootNode.toString();
@@ -197,7 +190,7 @@ public class VariableOperationUtils {
         } else if (temp.isObject()) {
           replaceJson(dateTime, temp);
         } else {
-          arrayNode.insert(i, replace(dateTime, temp.toString()));
+          arrayNode.set(i, replace(dateTime, temp.toString()));
         }
       }
     } else if (object.isObject()) {

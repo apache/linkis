@@ -76,7 +76,6 @@ public class CtxBuilder {
     Params params = result.getParams();
     logger.debug("==========params============\n" + CliUtils.GSON.toJson(params));
 
-
     Map<String, ClientProperties> propertiesMap = new HashMap<>();
 
     LoggerManager.getInformationLogger()

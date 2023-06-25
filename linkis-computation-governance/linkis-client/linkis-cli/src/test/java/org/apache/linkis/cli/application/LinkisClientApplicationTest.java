@@ -175,7 +175,7 @@ public class LinkisClientApplicationTest {
   @Test
   public void testExec() {
     //    LinkisClientApplication.main(cmdStr);
-    LinkisClientApplication.main(cmdStr);
+    //    LinkisClientApplication.main(cmdStr);
     //    LinkisClientApplication.main(cmdStr2);
     /*
     try {

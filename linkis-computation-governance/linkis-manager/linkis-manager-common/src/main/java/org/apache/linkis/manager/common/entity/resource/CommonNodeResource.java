@@ -41,11 +41,11 @@ public class CommonNodeResource implements NodeResource {
 
   private Date updateTime;
 
-  private int maxApps;
+  private Integer maxApps;
 
-  private int numPendingApps;
+  private Integer numPendingApps;
 
-  private int numActiveApps;
+  private Integer numActiveApps;
 
   public static NodeResource initNodeResource(ResourceType resourceType) {
     CommonNodeResource commonNodeResource = new CommonNodeResource();
@@ -164,27 +164,27 @@ public class CommonNodeResource implements NodeResource {
     this.leftResource = leftResource;
   }
 
-  public int getMaxApps() {
+  public Integer getMaxApps() {
     return maxApps;
   }
 
-  public void setMaxApps(int maxApps) {
+  public void setMaxApps(Integer maxApps) {
     this.maxApps = maxApps;
   }
 
-  public int getNumPendingApps() {
+  public Integer getNumPendingApps() {
     return numPendingApps;
   }
 
-  public void setNumPendingApps(int numPendingApps) {
+  public void setNumPendingApps(Integer numPendingApps) {
     this.numPendingApps = numPendingApps;
   }
 
-  public int getNumActiveApps() {
+  public Integer getNumActiveApps() {
     return numActiveApps;
   }
 
-  public void setNumActiveApps(int numActiveApps) {
+  public void setNumActiveApps(Integer numActiveApps) {
     this.numActiveApps = numActiveApps;
   }
 

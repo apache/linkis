@@ -64,9 +64,15 @@ public interface NodeResource extends Serializable, RequestProtocol {
 
   Resource getLeftResource();
 
-  int getMaxApps();
+  void setMaxApps(Integer maxApps);
 
-  int getNumPendingApps();
+  Integer getMaxApps();
 
-  int getNumActiveApps();
+  void setNumPendingApps(Integer numPendingApps);
+
+  Integer getNumPendingApps();
+
+  void setNumActiveApps(Integer numActiveApps);
+
+  Integer getNumActiveApps();
 }

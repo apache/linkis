@@ -86,6 +86,8 @@ public class InteractiveJob implements Job {
     // JobInfo
     LinkisOperResultAdapter jobInfoResult =
         oper.queryJobInfo(submitResult.getUser(), submitResult.getJobID());
+    oper.queryJobStatus(
+            jobInfoResult.getUser(), jobInfoResult.getJobID(), jobInfoResult.getStrongerExecId());
     infoBuilder.setLength(0);
     infoBuilder
         .append("JobId:")

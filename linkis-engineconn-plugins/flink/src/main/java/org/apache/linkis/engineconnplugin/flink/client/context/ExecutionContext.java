@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.context;
 
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisKubernetesClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
@@ -27,6 +28,7 @@ import org.apache.flink.client.ClientUtils;
 import org.apache.flink.client.program.StreamContextEnvironment;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.execution.DefaultExecutorServiceLoader;
+import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
@@ -82,6 +84,8 @@ public class ExecutionContext {
   private final Configuration flinkConfig;
   private LinkisYarnClusterClientFactory clusterClientFactory;
 
+  private LinkisKubernetesClusterClientFactory kubernetesClusterClientFactory;
+
   private TableEnvironmentInternal tableEnv;
   private ExecutionEnvironment execEnv;
   private StreamExecutionEnvironment streamExecEnv;
@@ -96,7 +100,12 @@ public class ExecutionContext {
       List<URL> dependencies,
       Configuration flinkConfig) {
     this(
-        environment, sessionState, dependencies, flinkConfig, new LinkisYarnClusterClientFactory());
+        environment,
+        sessionState,
+        dependencies,
+        flinkConfig,
+        new LinkisYarnClusterClientFactory(),
+        new LinkisKubernetesClusterClientFactory());
   }
 
   private ExecutionContext(
@@ -105,6 +114,22 @@ public class ExecutionContext {
       List<URL> dependencies,
       Configuration flinkConfig,
       LinkisYarnClusterClientFactory clusterClientFactory) {
+    this(
+        environment,
+        sessionState,
+        dependencies,
+        flinkConfig,
+        clusterClientFactory,
+        new LinkisKubernetesClusterClientFactory());
+  }
+
+  private ExecutionContext(
+      Environment environment,
+      @Nullable SessionState sessionState,
+      List<URL> dependencies,
+      Configuration flinkConfig,
+      LinkisYarnClusterClientFactory clusterClientFactory,
+      LinkisKubernetesClusterClientFactory linkisKubernetesClusterClientFactory) {
     this.environment = environment;
     this.flinkConfig = flinkConfig;
     this.sessionState = sessionState;
@@ -118,6 +143,7 @@ public class ExecutionContext {
     LOG.debug("Deployment descriptor: {}", environment.getDeployment());
     LOG.info("flinkConfig config: {}", flinkConfig);
     this.clusterClientFactory = clusterClientFactory;
+    this.kubernetesClusterClientFactory = linkisKubernetesClusterClientFactory;
   }
 
   public StreamExecutionEnvironment getStreamExecutionEnvironment() throws SqlExecutionException {
@@ -149,6 +175,10 @@ public class ExecutionContext {
 
   public YarnClusterDescriptor createClusterDescriptor() {
     return clusterClientFactory.createClusterDescriptor(this.flinkConfig);
+  }
+
+  public KubernetesClusterDescriptor createKubernetesClusterDescriptor() {
+    return kubernetesClusterClientFactory.createClusterDescriptor(this.flinkConfig);
   }
 
   public Map<String, Catalog> getCatalogs() {

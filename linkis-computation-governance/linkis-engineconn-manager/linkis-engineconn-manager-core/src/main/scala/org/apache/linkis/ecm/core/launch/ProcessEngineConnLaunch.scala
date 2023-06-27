@@ -102,7 +102,12 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
       case JAVA_HOME => putIfExists(JAVA_HOME)
       case RANDOM_PORT =>
-        environment.put(RANDOM_PORT.toString, PortUtils.findAvailPort().toString)
+        environment.put(
+          RANDOM_PORT.toString,
+          PortUtils
+            .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_DEBUG_PORT_RANGE.getValue)
+            .toString
+        )
       case PREFER_IP_ADDRESS =>
         environment.put(PREFER_IP_ADDRESS.toString, Configuration.PREFER_IP_ADDRESS.toString)
       case ENGINECONN_ENVKEYS =>

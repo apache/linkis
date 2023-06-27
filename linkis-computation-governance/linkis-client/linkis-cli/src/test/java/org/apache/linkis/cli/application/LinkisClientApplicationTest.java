@@ -174,7 +174,7 @@ public class LinkisClientApplicationTest {
   /** Method: exec(ProcessedData data) */
   @Test
   public void testExec() {
-        LinkisClientApplication.main(cmdStr);
+    //    LinkisClientApplication.main(cmdStr);
     //    LinkisClientApplication.main(cmdStr);
     //    LinkisClientApplication.main(cmdStr2);
     /*

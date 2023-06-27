@@ -149,7 +149,6 @@ public class EngineRestfulApi {
       int count = 0;
       int MAX_RETRY = 2;
       while (!end) {
-        count += 1;
         try {
           reuseNode = engineReuseService.reuseEngine(engineReuseRequest, sender);
           end = true;
@@ -158,12 +157,13 @@ public class EngineRestfulApi {
               "task: {}, user: {} reuse engine failed", taskId, engineReuseRequest.getUser(), e);
           Thread.sleep(1000);
           end = false;
+          count += 1;
+          if (count > MAX_RETRY) {
+            end = true;
+          }
         } catch (Exception e1) {
           logger.info(
               "task: {} user: {} reuse engine failed", taskId, engineReuseRequest.getUser(), e1);
-          end = true;
-        }
-        if (count > MAX_RETRY) {
           end = true;
         }
       }

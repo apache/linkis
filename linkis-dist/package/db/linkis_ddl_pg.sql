@@ -744,6 +744,7 @@ CREATE TABLE linkis_cg_manager_service_instance (
 	"owner" varchar(32) NULL,
 	mark varchar(32) NULL,
 	identifier varchar(32) NULL,
+	ticketId varchar(255) NULL DEFAULT NULL,
 	update_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	create_time timestamp(6) NULL DEFAULT CURRENT_TIMESTAMP,
 	updator varchar(32) NULL,

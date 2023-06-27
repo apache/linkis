@@ -152,6 +152,7 @@ flink-table-common-1.12.2.jar
 flink-table-planner-blink_2.12-1.12.2.jar
 flink-table-runtime-blink_2.12-1.12.2.jar
 flink-yarn_2.12-1.12.2.jar
+flink-kubernetes_2.12-1.12.2.jar
 force-shading-1.12.2.jar
 freemarker-2.3.31.jar
 grizzled-slf4j_2.12-1.3.2.jar

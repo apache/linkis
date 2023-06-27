@@ -24,16 +24,15 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.client.deployment.application.ApplicationConfiguration;
 import org.apache.flink.client.program.ClusterClientProvider;
-import org.apache.flink.yarn.YarnClusterDescriptor;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class YarnApplicationClusterDescriptorAdapter
+public class KubernetesApplicationClusterDescriptorAdapter
     extends AbstractApplicationClusterDescriptorAdapter {
 
-  YarnApplicationClusterDescriptorAdapter(ExecutionContext executionContext) {
+  KubernetesApplicationClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);
   }
 
@@ -45,22 +44,22 @@ public class YarnApplicationClusterDescriptorAdapter
         this.executionContext
             .getClusterClientFactory()
             .getClusterSpecification(this.executionContext.getFlinkConfig());
-    YarnClusterDescriptor clusterDescriptor = this.executionContext.createClusterDescriptor();
+    KubernetesClusterDescriptor clusterDescriptor =
+        this.executionContext.createKubernetesClusterDescriptor();
     try {
-      ClusterClientProvider<ApplicationId> clusterClientProvider =
+      ClusterClientProvider<String> clusterClientProvider =
           clusterDescriptor.deployApplicationCluster(
               clusterSpecification, applicationConfiguration);
-      clusterClient = clusterClientProvider.getClusterClient();
-      super.clusterID = clusterClient.getClusterId();
-      super.webInterfaceUrl = clusterClient.getWebInterfaceURL();
+      kubernetesClusterClient = clusterClientProvider.getClusterClient();
+      super.kubernetesClusterID = kubernetesClusterClient.getClusterId();
+      super.webInterfaceUrl = kubernetesClusterClient.getWebInterfaceURL();
     } catch (Exception e) {
       throw new JobExecutionException(ExceptionUtils.getRootCauseMessage(e), e);
     }
-    bindApplicationId();
   }
 
   public boolean initJobId() throws Exception {
-    clusterClient
+    kubernetesClusterClient
         .listJobs()
         .thenAccept(
             list ->

@@ -29,7 +29,7 @@ linkis/linkis-engineconn-plugins/spark/scala-2.12/target/out/spark/dist/3.2.1/li
 
  Submitting tasks via Linkis-cli
 ```text
-sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"jdbc\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"url\":\"jdbc:postgresql://172.16.16.16:5432/spark_etl_test\",\"driver\":\"org.postgresql.Driver\",\"user\":\"postgres\",\"password\":\"linkis_test\",\"query\":\"select * from public.spark_etl_pg_test_source\"}},{\"name\":\"jdbc\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"url\":\"jdbc:postgresql://172.16.16.16:5432/spark_etl_test\",\"driver\":\"org.postgresql.Driver\",\"user\":\"postgres\",\"password\":\"linkis_test\",\"targetTable\":\"public.spark_etl_pg_test_sink\"}}]}"  -submitUser hadoop -proxyUser hadoop
+sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"jdbc\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"url\":\"jdbc:postgresql://localhost:5432/spark_etl_test\",\"driver\":\"org.postgresql.Driver\",\"user\":\"postgres\",\"password\":\"linkis_test\",\"query\":\"select * from public.spark_etl_pg_test_source\"}},{\"name\":\"jdbc\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"url\":\"jdbc:postgresql://localhost:5432/spark_etl_test\",\"driver\":\"org.postgresql.Driver\",\"user\":\"postgres\",\"password\":\"linkis_test\",\"targetTable\":\"public.spark_etl_pg_test_sink\"}}]}"  -submitUser hadoop -proxyUser hadoop
 ```
 
 code
@@ -159,7 +159,7 @@ delta-storage-2.0.2.jar
 
  Submitting tasks via Linkis-cli
 ```text
-sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test_csv\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"mongo\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"uri\":\"mongodb://mongo:Wds%40mongo@wds07:27017/?authSource=admin\",\"database\":\"linkis\",\"collection\":\"test\",\"saveMode\":\"overwrite\"}}]}"  -submitUser hadoop -proxyUser hadoop
+sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test_csv\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"mongo\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"uri\":\"mongodb://mongo:Wds%40mongo@localhost:27017/?authSource=admin\",\"database\":\"linkis\",\"collection\":\"test\",\"saveMode\":\"overwrite\"}}]}"  -submitUser hadoop -proxyUser hadoop
 ```
 
 code
@@ -267,7 +267,7 @@ Will `spark.serializer` set to  `org.apache.spark.serializer.KryoSerializer`
 
  Submitting tasks via Linkis-cli
 ```text
-sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\",\"delimiter\":\";\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"elasticsearch\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"node\":\"wds07\",\"port\":\"9200\",\"index\":\"estest\",\"options\":{\"es.nodes.wan.only\":\"true\"},\"saveMode\":\"append\"}}]}"  -submitUser hadoop -proxyUser hadoop
+sh ./bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\",\"delimiter\":\";\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"elasticsearch\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"node\":\"localhost\",\"port\":\"9200\",\"index\":\"estest\",\"options\":{\"es.nodes.wan.only\":\"true\"},\"saveMode\":\"append\"}}]}"  -submitUser hadoop -proxyUser hadoop
 ```
 
 code
@@ -311,7 +311,102 @@ You need  jars to put under spark/jars directory
 elasticsearch-spark-30_2.12-7.17.7.jar
 ```
 
-### 7. Some spark connector Jars need to be downloaded separately
+### 7. csv write kafka
+
+Submitting tasks via Linkis-cli
+```text
+sh /appcom/Install/linkis/bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\",\"delimiter\":\";\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"kafka\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"servers\":\"localhost:9092\",\"mode\":\"batch\",\"topic\":\"spark_etl_test\"}}]}"  -submitUser hadoop -proxyUser hadoop
+```
+
+code
+```json
+{
+  "plugins":[
+    {
+      "name": "file",
+      "type": "source",
+      "config": {
+        "resultTable": "test",
+        "path": "hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin",
+        "serializer": "csv",
+        "options": {
+          "header":"true",
+          "delimiter":";"
+        },
+        "columnNames": ["name", "age"]
+      }
+    },
+    {
+      "name": "kafka",
+      "type":"sink",
+      "config": {
+        "sourceTable": "test",
+        "servers": "localhost:9092",
+        "mode": "batch",
+        "topic": "spark_etl_test"
+      }
+    }
+  ]
+}
+```
+
+You need  jars to put under spark/jars directory
+```text
+kafka-clients-2.8.0.jar
+spark-token-provider-kafka-0-10_2.12-3.2.1.jar
+spark-sql-kafka-0-10_2.12-3.2.1.jar
+```
+
+### 8. csv write redis
+
+Submitting tasks via Linkis-cli
+```text
+sh /appcom/Install/linkis/bin/linkis-cli -engineType spark-3.2.1  -codeType data_calc -code "{\"plugins\":[{\"name\":\"file\",\"type\":\"source\",\"config\":{\"resultTable\":\"test\",\"path\":\"hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin\",\"serializer\":\"csv\",\"options\":{\"header\":\"true\",\"delimiter\":\";\"},\"columnNames\":[\"name\",\"age\"]}},{\"name\":\"redis\",\"type\":\"sink\",\"config\":{\"sourceTable\":\"test\",\"host\":\"localhost\",\"port\":\"6679\",\"auth\":\"password\",\"targetTable\":\"spark_etl_test\",\"saveMode\":\"append\"}}]}"  -submitUser hadoop -proxyUser hadoop
+```
+
+code
+```json
+{
+  "plugins":[
+    {
+      "name": "file",
+      "type": "source",
+      "config": {
+        "resultTable": "test",
+        "path": "hdfs://linkishdfs/tmp/linkis/spark_etl_test/etltest.dolphin",
+        "serializer": "csv",
+        "options": {
+          "header":"true",
+          "delimiter":";"
+        },
+        "columnNames": ["name", "age"]
+      }
+    },
+    {
+      "name": "redis",
+      "type":"sink",
+      "config": {
+        "sourceTable": "test",
+        "host": "localhost",
+        "port": "6379",
+        "auth":"password",
+        "targetTable":"spark_etl_test",
+        "saveMode": "append"
+      }
+    }
+  ]
+}
+```
+
+You need  jars to put under spark/jars directory
+```text
+jedis-3.2.0.jar
+commons-pool2-2.8.1.jar
+spark-redis_2.12-2.6.0.jar
+```
+
+
+### 9. Some spark connector Jars need to be downloaded separately
 
 spark-excel
 ```text

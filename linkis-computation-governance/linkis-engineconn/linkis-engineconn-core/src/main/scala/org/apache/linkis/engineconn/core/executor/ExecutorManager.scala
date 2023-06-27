@@ -171,7 +171,10 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
         MessageFormat.format(CANNOT_GET_LABEL_KEY.getErrorDesc, GSON.toJson(labels))
       )
     }
-
+    if (!executors.isEmpty && factories.size <= 1) {
+      logger.info("For a single Executor EC, if an Executor exists, it will be returned directly")
+      return getReportExecutor.asInstanceOf[LabelExecutor]
+    }
     if (!executors.containsKey(labelKey)) executors synchronized {
       if (!executors.containsKey(labelKey)) {
         val executor = tryCreateExecutor(engineCreationContext, labels)

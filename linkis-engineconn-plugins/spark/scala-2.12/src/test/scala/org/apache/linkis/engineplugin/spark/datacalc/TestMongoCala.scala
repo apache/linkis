@@ -27,7 +27,7 @@ class TestMongoCala {
   val filePath = this.getClass.getResource("/").getFile
 
   @Test
-  def testExcelWrite: Unit = {
+  def testMongoWrite: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data = DataCalcGroupData.getData(mongoWriteConfigJson.replace("{filePath}", filePath))
@@ -41,7 +41,7 @@ class TestMongoCala {
   }
 
   @Test
-  def testExcelReader: Unit = {
+  def testMongoReader: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data = DataCalcGroupData.getData(mongoReaderConfigJson.replace("{filePath}", filePath))

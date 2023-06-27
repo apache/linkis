@@ -27,7 +27,7 @@ class TestElasticsearchCala {
   val filePath = this.getClass.getResource("/").getFile
 
   @Test
-  def testExcelWrite: Unit = {
+  def testElasticsearchWrite: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data =
@@ -42,7 +42,26 @@ class TestElasticsearchCala {
   }
 
   @Test
-  def testExcelReader: Unit = {
+  def testElasticsearchWriteByUpsert: Unit = {
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      val data =
+        DataCalcGroupData.getData(
+          elasticsearchWriteConfigJsonByUpsert.replace("{filePath}", filePath)
+        )
+      Assertions.assertTrue(data != null)
+
+      Assertions.assertTrue(data != null)
+
+      val (sources, transforms, sinks) = DataCalcExecution.getPlugins(data)
+      Assertions.assertTrue(sources != null)
+      Assertions.assertTrue(transforms != null)
+      Assertions.assertTrue(sinks != null)
+    }
+  }
+
+  @Test
+  def testElasticsearchReader: Unit = {
     // skip os: windows
     if (!FsPath.WINDOWS) {
       val data =
@@ -84,6 +103,41 @@ class TestElasticsearchCala {
       |                "port": "9200",
       |                "index": "estest",
       |                "saveMode": "overwrite"
+      |            }
+      |        }
+      |    ]
+      |}
+      |""".stripMargin
+
+  val elasticsearchWriteConfigJsonByUpsert =
+    """
+      |{
+      |    "sources": [
+      |        {
+      |            "name": "file",
+      |            "type": "source",
+      |            "config": {
+      |                "resultTable": "T1654611700631",
+      |                "path": "file://{filePath}/etltest.dolphin",
+      |                "serializer": "csv",
+      |                "options": {
+      |                "header":"true",
+      |                "delimiter":";"
+      |                },
+      |                "columnNames": ["name", "age"]
+      |            }
+      |        }
+      |    ],
+      |    "sinks": [
+      |        {
+      |            "name": "elasticsearch",
+      |            "config": {
+      |                "sourceTable": "T1654611700631",
+      |                "node": "localhost",
+      |                "port": "9200",
+      |                "index": "estest",
+      |                "primaryKey": "age",
+      |                "saveMode": "upsert"
       |            }
       |        }
       |    ]

@@ -66,10 +66,17 @@ echo "======= Step 2: Check env =========="
 sh ${workDir}/bin/checkEnv.sh
 isSuccess "check env"
 
-until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
-     echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
-     exit 1
-done
+if [[ 'postgresql' = "$dbType" ]];then
+  until PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -tc ";" ; do
+         echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+         exit 1
+    done
+else
+  until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
+       echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+       exit 1
+  done
+fi
 
 
 ########################  init LINKIS related env  ################################
@@ -429,11 +436,12 @@ sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_
 sed -i ${txt}  "s#wds.linkis.gateway.url.*#wds.linkis.gateway.url=http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT#g" $common_conf
 sed -i ${txt}  "s#linkis.discovery.server-address.*#linkis.discovery.server-address=http://$EUREKA_INSTALL_IP:$EUREKA_PORT#g" $common_conf
 if [[ 'postgresql' = "$dbType" ]];then
-  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DB}?currentSchema=${PG_SCHEMA}#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DB}?currentSchema=${PG_SCHEMA}\&stringtype=unspecified#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$PG_USER#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$PG_PASSWORD#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.driver-class-name.*#wds.linkis.server.mybatis.datasource.driver-class-name=org.postgresql.Driver#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.mapperLocations.*#wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/postgresql/*.xml#g" $common_conf
+  sed -i ${txt}  "s#\#linkis.server.mybatis.pagehelper.dialect.*#linkis.server.mybatis.pagehelper.dialect=postgresql#g" $common_conf
 else
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf

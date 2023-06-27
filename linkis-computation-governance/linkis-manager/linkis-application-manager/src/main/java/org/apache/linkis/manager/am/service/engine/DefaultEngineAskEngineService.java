@@ -35,9 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.SocketTimeoutException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import feign.RetryableException;
@@ -152,6 +150,11 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
     createNodeThread.whenComplete(
         (EngineNode engineNode, Throwable exception) -> {
           LoggerUtils.setJobIdMDC(taskId);
+          if (exception instanceof CompletionException || exception instanceof ExecutionException) {
+            if (exception.getCause() != null) {
+              exception = exception.getCause();
+            }
+          }
           if (exception != null) {
             boolean retryFlag;
             if (exception instanceof LinkisRetryException) {
@@ -177,8 +180,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
             } else {
               logger.info(
                   String.format(
-                      "msg: %s canRetry Exception: %s", msg, exception.getClass().getName()),
-                  exception);
+                      "msg: %s canRetry Exception: %s", msg, exception.getClass().getName()));
             }
             sender.send(
                 new EngineCreateError(

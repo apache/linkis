@@ -30,12 +30,14 @@ import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
   FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX,
   FLINK_ONCE_APP_STATUS_FETCH_INTERVAL
 }
+import org.apache.linkis.engineconnplugin.flink.config.FlinkExecutionTargetType
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.ExecutorInitException
 import org.apache.linkis.engineconnplugin.flink.executor.interceptor.FlinkJobSubmitInterceptor
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import org.apache.flink.api.common.JobStatus
+import org.apache.flink.configuration.DeploymentOptions
 
 import java.util.concurrent.{Future, TimeUnit}
 
@@ -70,14 +72,30 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
       throw t
     }
     if (isCompleted) return
-    if (null == clusterDescriptor.getClusterID) {
-      throw new ExecutorInitException(YARN_IS_NULL.getErrorDesc)
+
+    val flinkDeploymentTarget =
+      flinkEngineConnContext.getExecutionContext.getFlinkConfig.get(DeploymentOptions.TARGET)
+
+    if (FlinkExecutionTargetType.isYarnExecutionTargetType(flinkDeploymentTarget)) {
+      if (null == clusterDescriptor.getClusterID) {
+        throw new ExecutorInitException(YARN_IS_NULL.getErrorDesc)
+      }
+      setApplicationId(clusterDescriptor.getClusterID.toString)
+      setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
+      logger.info(
+        s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
+      )
+    } else if (FlinkExecutionTargetType.isKubernetesExecutionTargetType(flinkDeploymentTarget)) {
+      if (null == clusterDescriptor.getKubernetesClusterID) {
+        throw new ExecutorInitException(KUBERNETES_IS_NULL.getErrorDesc)
+      }
+      setKubernetesClusterID(clusterDescriptor.getKubernetesClusterID)
+      setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
+      logger.info(
+        s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
+      )
     }
-    setApplicationId(clusterDescriptor.getClusterID.toString)
-    setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
-    logger.info(
-      s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
-    )
+
     if (clusterDescriptor.getJobId != null) setJobID(clusterDescriptor.getJobId.toHexString)
   }
 

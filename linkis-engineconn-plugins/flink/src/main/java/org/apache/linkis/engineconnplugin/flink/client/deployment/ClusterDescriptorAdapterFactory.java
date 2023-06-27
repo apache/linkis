@@ -20,20 +20,24 @@ package org.apache.linkis.engineconnplugin.flink.client.deployment;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 
 import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
 
 /** Cluster Descriptor Adapter Factory(集群交互适配器工厂) */
 public class ClusterDescriptorAdapterFactory {
 
   public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String yarnDeploymentTarget = executionContext.getFlinkConfig().get(DeploymentOptions.TARGET);
+    String flinkDeploymentTarget = executionContext.getFlinkConfig().get(DeploymentOptions.TARGET);
     ClusterDescriptorAdapter clusterDescriptorAdapter = null;
-    if (YarnDeploymentTarget.PER_JOB.getName().equals(yarnDeploymentTarget)) {
+    if (YarnDeploymentTarget.PER_JOB.getName().equals(flinkDeploymentTarget)) {
       clusterDescriptorAdapter = new YarnPerJobClusterDescriptorAdapter(executionContext);
-    } else if (YarnDeploymentTarget.APPLICATION.getName().equals(yarnDeploymentTarget)) {
+    } else if (YarnDeploymentTarget.APPLICATION.getName().equals(flinkDeploymentTarget)) {
       clusterDescriptorAdapter = new YarnApplicationClusterDescriptorAdapter(executionContext);
-    } else if (YarnDeploymentTarget.SESSION.getName().equals(yarnDeploymentTarget)) {
+    } else if (YarnDeploymentTarget.SESSION.getName().equals(flinkDeploymentTarget)) {
       clusterDescriptorAdapter = new YarnSessionClusterDescriptorAdapter(executionContext);
+    } else if (KubernetesDeploymentTarget.APPLICATION.getName().equals(flinkDeploymentTarget)) {
+      clusterDescriptorAdapter =
+          new KubernetesApplicationClusterDescriptorAdapter(executionContext);
     }
     return clusterDescriptorAdapter;
   }

@@ -19,6 +19,8 @@ package org.apache.linkis.engineplugin.spark.datacalc.sink
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.datacalc.api.DataCalcSink
+import org.apache.linkis.engineplugin.spark.datacalc.exception.ElasticsearchSinkException
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
@@ -39,6 +41,18 @@ class ElasticsearchSink extends DataCalcSink[ElasticsearchSinkConfig] with Loggi
 
     if (config.getOptions != null && !config.getOptions.isEmpty) {
       options = config.getOptions.asScala.toMap ++ options
+    }
+
+    if (config.getSaveMode.equalsIgnoreCase("upsert")) {
+      if (StringUtils.isBlank(config.getPrimaryKey)) {
+        throw new ElasticsearchSinkException(
+          SparkErrorCodeSummary.DATA_CALC_VARIABLE_NOT_EXIST.getErrorCode,
+          "saveMode is upsert, please set elasticsearch mapping [primaryKey] in variables"
+        )
+      }
+      options =
+        options ++ Map("es.write.operation" -> "upsert", "es.mapping.id" -> config.getPrimaryKey)
+      config.setSaveMode("append")
     }
 
     val writer = ds.write.format("org.elasticsearch.spark.sql")

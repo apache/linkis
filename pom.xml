@@ -199,7 +199,7 @@
     <junit5.version>5.7.2</junit5.version>
     <mockito-bom.version>4.3.1</mockito-bom.version>
     <assertj.version>3.17.2</assertj.version>
-    <h2.version>1.4.200</h2.version>
+    <h2.version>2.1.214</h2.version>
 
     <!-- spring -->
     <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
@@ -1377,6 +1377,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

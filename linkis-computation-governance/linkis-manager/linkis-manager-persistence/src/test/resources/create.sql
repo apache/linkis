@@ -150,7 +150,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `request_resource` VARCHAR(1020) COMMENT 'request resource',
     `used_times` INT(8) COMMENT 'resource used times',
     `used_resource` VARCHAR(1020) COMMENT 'used resource',
-    `metrics` VARCHAR(1024) DEFAULT NULL COMMENT 'ec metrics',
+    `metrics` TEXT DEFAULT NULL COMMENT 'ec metrics',
     `release_times` INT(8) COMMENT 'resource released times',
     `released_resource` VARCHAR(1020)  COMMENT 'released resource',
     `release_time` datetime DEFAULT NULL COMMENT 'released time',

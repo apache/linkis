@@ -860,7 +860,7 @@ CREATE TABLE linkis_cg_ec_resource_info_record (
 	request_resource varchar(1020) NULL,
 	used_times int4 NULL,
 	used_resource varchar(1020) NULL,
-	metrics VARCHAR(1024) NULL,
+	metrics TEXT NULL,
 	release_times int4 NULL,
 	released_resource varchar(1020) NULL,
 	release_time timestamp(6) NULL,

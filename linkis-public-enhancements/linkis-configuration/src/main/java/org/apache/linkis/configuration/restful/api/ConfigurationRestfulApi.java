@@ -156,6 +156,7 @@ public class ConfigurationRestfulApi {
 
     return Message.ok().data("Category", categoryLabelList);
   }
+
   @ApiOperation(
       value = "getItemList",
       notes = "get configuration list by engineType",
@@ -167,23 +168,22 @@ public class ConfigurationRestfulApi {
     String userName =
         ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
-    List<Map> filterResult=new ArrayList<>();
+    List<Map> filterResult = new ArrayList<>();
     for (ConfigKey configKey : result) {
-      Map temp =new HashMap();
-      temp.put("",configKey.getBoundaryType());
+      Map temp = new HashMap();
+      temp.put("", configKey.getBoundaryType());
       temp.put("key", configKey.getKey());
       temp.put("name", configKey.getName());
       temp.put("description", configKey.getDescription());
       temp.put("engineType", configKey.getEngineType());
       temp.put("validateType", configKey.getValidateType());
       temp.put("validateRange", configKey.getValidateRange());
-      temp.put("boundaryType",configKey.getBoundaryType());
+      temp.put("boundaryType", configKey.getBoundaryType());
       filterResult.add(temp);
     }
 
     return Message.ok().data("itemList", filterResult);
   }
-
 
   @ApiOperation(
       value = "createFirstCategory",

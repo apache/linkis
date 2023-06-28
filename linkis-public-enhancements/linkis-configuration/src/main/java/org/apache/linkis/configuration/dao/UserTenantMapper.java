@@ -26,9 +26,9 @@ import java.util.List;
 public interface UserTenantMapper {
 
   List<TenantVo> queryTenantList(
-          @Param("user") String user,
-          @Param("creator") String creator,
-          @Param("tenant_value") String tenant);
+      @Param("user") String user,
+      @Param("creator") String creator,
+      @Param("tenant_value") String tenant);
 
   void deleteTenant(@Param("id") Integer id);
 

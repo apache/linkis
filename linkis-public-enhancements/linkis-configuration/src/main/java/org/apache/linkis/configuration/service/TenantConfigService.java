@@ -25,7 +25,7 @@ import java.util.Map;
 public interface TenantConfigService {
 
   Map<String, Object> queryTenantList(
-          String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
+      String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
 
   void deleteTenant(Integer id) throws ConfigurationException;
 

@@ -949,7 +949,7 @@
       <scope>test</scope>
     </dependency>
 
-<!--    batch to create test data-->
+    <!--    batch to create test data-->
     <dependency>
       <groupId>org.instancio</groupId>
       <artifactId>instancio-junit</artifactId>

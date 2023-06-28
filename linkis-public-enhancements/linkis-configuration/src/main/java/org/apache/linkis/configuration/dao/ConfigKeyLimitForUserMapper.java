@@ -86,7 +86,7 @@ public interface ConfigKeyLimitForUserMapper {
    * @param pageSize
    */
   List<ConfigKeyLimitForUser> selectListByPage(
-          @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
+      @Param("id") Long id, @Param("pageNo") int pageNo, @Param("pageSize") int pageSize);
 
   /**
    * 动态字段,根据主键来更新符合条件的数据库记录

@@ -47,7 +47,7 @@ CREATE TABLE linkis_ps_cs_context_listener (
 DROP TABLE IF EXISTS linkis_ps_cs_context_id CASCADE;
 CREATE TABLE linkis_ps_cs_context_id (
   id int(11)  AUTO_INCREMENT,
-  user varchar(32) DEFAULT NULL,
+  `user` varchar(32) DEFAULT NULL,
   application varchar(32) DEFAULT NULL,
   source varchar(255) DEFAULT NULL,
   expire_type varchar(32) DEFAULT NULL,

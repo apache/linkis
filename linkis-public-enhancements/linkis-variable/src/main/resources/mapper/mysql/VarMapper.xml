@@ -57,7 +57,7 @@
 
     <update id="updateValue">
         UPDATE `linkis_ps_variable_key_user`
-        SET value = #{value}
+        SET `value` = #{value}
         WHERE id = #{valueID}
     </update>
 

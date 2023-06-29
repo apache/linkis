@@ -38,8 +38,7 @@ import org.apache.curator.utils.CloseableUtils;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.text.NumberFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -60,6 +59,10 @@ public class StorageUtils {
   public static final String HDFS_SCHEMA = "hdfs://";
   public static final String OSS_SCHEMA = "oss://";
   public static final String S3_SCHEMA = "s3://";
+
+  /** If you add a new file system, add it to here */
+  public static final List<String> SCHEMA_CHECK_LIST =
+      new ArrayList<>(Arrays.asList(HDFS_SCHEMA, OSS_SCHEMA, S3_SCHEMA));
 
   private static final NumberFormat nf = NumberFormat.getInstance();
 

@@ -85,9 +85,21 @@ class PathValidator extends Logging {
   }
 
   def checkPath(path: String, username: String): Unit = {
-    if (path.contains(StorageUtils.HDFS_SCHEMA)) {
-      return
+
+    var schemaFlag = false;
+    StorageUtils.SCHEMA_CHECK_LIST.forEach(schema => {
+      if (path.contains(schema)) schemaFlag = true
+    })
+
+    if (!(schemaFlag)) {
+      throw new WorkSpaceException(80025, "the path should contain schema")
     }
+
+    // only check the local path
+    StorageUtils.SCHEMA_CHECK_LIST.forEach(schema => {
+      if (path.contains(schema)) return
+    })
+
     // 校验path的逻辑
     val userLocalRootPath: String = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue) +
       username

@@ -120,7 +120,7 @@ if [ "$LINKIS_LOG_DIR" = "" ]; then
 fi
 if [ $? -ne 0 ]; then
       ALL_SERVER_NAME=linkis-$SERVER_NAME
-      LOG_PATH=LINKIS_LOG_DIR/$ALL_SERVER_NAME.log
+      LOG_PATH=$LINKIS_LOG_DIR/$ALL_SERVER_NAME.log
       echo "ERROR: your $ALL_SERVER_NAME microservice does not start successful !!! ERROR logs as follows :"
       echo "Please check detail log, log path :$LOG_PATH"
       echo '<---------------------------------------------------->'

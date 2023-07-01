@@ -53,6 +53,7 @@ source ${workDir}/bin/common.sh
 ##load config
 echo "======= Step 1: Load deploy-config/* =========="
 export LINKIS_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-env.sh"}
+export LINKIS_DISTRIBUTION_CONFIG_PATH=${LINKIS_CONFIG_PATH:-"${workDir}/deploy-config/linkis-distribution-env.sh"}
 export LINKIS_DB_CONFIG_PATH=${LINKIS_DB_CONFIG_PATH:-"${workDir}/deploy-config/db.sh"}
 
 source ${LINKIS_CONFIG_PATH}
@@ -112,6 +113,7 @@ else
 fi
 
 cp ${LINKIS_CONFIG_PATH} $LINKIS_HOME/conf
+cp ${LINKIS_DISTRIBUTION_CONFIG_PATH} $LINKIS_HOME/conf
 cp ${LINKIS_DB_CONFIG_PATH} $LINKIS_HOME/conf
 
 common_conf=$LINKIS_HOME/conf/linkis.properties

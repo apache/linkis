@@ -85,9 +85,14 @@ class PathValidator extends Logging {
   }
 
   def checkPath(path: String, username: String): Unit = {
-    if (path.contains(StorageUtils.HDFS_SCHEMA)) {
+    // unchecked hdfs,oss,s3
+    if (
+        (path.contains(StorageUtils.HDFS_SCHEMA)) || (path
+          .contains(StorageUtils.OSS_SCHEMA)) || (path.contains(StorageUtils.S3_SCHEMA))
+    ) {
       return
     }
+
     // 校验path的逻辑
     val userLocalRootPath: String = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue) +
       username

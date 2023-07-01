@@ -68,7 +68,7 @@ isSuccess "check env"
 
 if [[ 'postgresql' = "$dbType" ]];then
   until PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -tc ";" ; do
-         echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+         echo "try to connect to linkis postgresql $PG_HOST:$PG_PORT/$PG_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
          exit 1
     done
 else

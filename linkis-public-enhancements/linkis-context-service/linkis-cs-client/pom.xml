@@ -48,7 +48,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cs-listener</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -28,12 +28,12 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>linkis-pes-common</module>
     <module>linkis-bml</module>
     <module>linkis-context-service</module>
     <module>linkis-datasource/linkis-metadata</module>
     <module>linkis-datasource</module>
     <module>linkis-udf/linkis-udf-client</module>
-    <module>linkis-udf/linkis-udf-common</module>
     <module>linkis-udf/linkis-udf-service</module>
     <module>linkis-jobhistory</module>
     <module>linkis-configuration</module>

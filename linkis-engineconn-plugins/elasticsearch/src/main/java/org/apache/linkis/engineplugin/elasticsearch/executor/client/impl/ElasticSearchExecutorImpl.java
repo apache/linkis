@@ -22,7 +22,7 @@ import org.apache.linkis.engineplugin.elasticsearch.executor.client.*;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.storage.utils.StorageUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 import java.util.Map;

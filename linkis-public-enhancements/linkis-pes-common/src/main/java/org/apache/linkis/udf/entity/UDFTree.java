@@ -38,7 +38,7 @@ public class UDFTree {
   private List<UDFInfoVo> udfInfos;
   private List<UDFTree> childrens;
 
-  public UDFTree() {};
+  public UDFTree() {}
 
   public UDFTree(
       Long id,

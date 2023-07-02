@@ -19,7 +19,7 @@ package org.apache.linkis.datasourcemanager.common.protocol;
 
 import org.apache.linkis.protocol.message.RequestProtocol;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class DsInfoQueryRequest implements RequestProtocol {
   private String id;

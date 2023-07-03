@@ -20,32 +20,11 @@ package org.apache.linkis.engineconnplugin.flink.client.deployment;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 
-import org.apache.flink.api.common.JobID;
-import org.apache.flink.client.program.ClusterClient;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
+public abstract class AbstractSessionClusterDescriptorAdapter extends ClusterDescriptorAdapter {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class YarnPerJobClusterDescriptorAdapter extends ClusterDescriptorAdapter {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(YarnPerJobClusterDescriptorAdapter.class);
-
-  YarnPerJobClusterDescriptorAdapter(ExecutionContext executionContext) {
+  AbstractSessionClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);
   }
 
-  @Override
-  public boolean isGloballyTerminalState() throws JobExecutionException {
-    return super.isGloballyTerminalStateByYarn();
-  }
-
-  public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient)
-      throws JobExecutionException {
-    this.clusterClient = clusterClient;
-    this.setJobId(jobId);
-    this.clusterID = clusterClient.getClusterId();
-    webInterfaceUrl = clusterClient.getWebInterfaceURL();
-    bindApplicationId();
-  }
+  public abstract void deployCluster() throws JobExecutionException;
 }

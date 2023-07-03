@@ -228,4 +228,40 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
    * @return True, if this job status is globally terminal, false otherwise.
    */
   public abstract boolean isGloballyTerminalState() throws JobExecutionException;
+
+  public boolean isGloballyTerminalStateByYarn() throws JobExecutionException {
+    boolean isGloballyTerminalState;
+    try {
+      JobStatus jobStatus = getJobStatus();
+      isGloballyTerminalState = jobStatus.isGloballyTerminalState();
+    } catch (JobExecutionException e) {
+      if (isYarnApplicationStopped(e)) {
+        isGloballyTerminalState = true;
+      } else {
+        throw e;
+      }
+    }
+
+    return isGloballyTerminalState;
+  }
+
+  /**
+   * The yarn application is not running when its final status is not UNDEFINED.
+   *
+   * <p>In this case, it will throw <code>
+   * RuntimeException("The Yarn application " + applicationId + " doesn't run anymore.")</code> from
+   * retrieve method in YarnClusterDescriptor.java
+   */
+  private boolean isYarnApplicationStopped(Throwable e) {
+    do {
+      String exceptionMessage = e.getMessage();
+      if (StringUtils.equals(
+          exceptionMessage, "The Yarn application " + clusterID + " doesn't run anymore.")) {
+        LOG.info("{} is stopped.", clusterID);
+        return true;
+      }
+      e = e.getCause();
+    } while (e != null);
+    return false;
+  }
 }

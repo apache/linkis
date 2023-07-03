@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
-import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnSessionClusterDescriptorAdapter;
+import org.apache.linkis.engineconnplugin.flink.client.deployment.AbstractSessionClusterDescriptorAdapter;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
@@ -38,5 +38,5 @@ public interface JobOperation extends Operation, FlinkListenerGroup {
 
   void cancelJob() throws JobExecutionException;
 
-  void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor);
+  void setClusterDescriptorAdapter(AbstractSessionClusterDescriptorAdapter clusterDescriptor);
 }

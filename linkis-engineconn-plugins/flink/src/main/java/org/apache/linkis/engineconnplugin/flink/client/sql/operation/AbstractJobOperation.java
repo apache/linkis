@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
-import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnSessionClusterDescriptorAdapter;
+import org.apache.linkis.engineconnplugin.flink.client.deployment.AbstractSessionClusterDescriptorAdapter;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
@@ -47,7 +47,7 @@ public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implem
 
   protected final FlinkEngineConnContext context;
   // clusterDescriptorAdapter is not null only after job is submitted
-  private YarnSessionClusterDescriptorAdapter clusterDescriptorAdapter;
+  private AbstractSessionClusterDescriptorAdapter clusterDescriptorAdapter;
   private volatile JobID jobId;
   protected boolean noMoreResult;
 
@@ -62,7 +62,8 @@ public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implem
   }
 
   @Override
-  public void setClusterDescriptorAdapter(YarnSessionClusterDescriptorAdapter clusterDescriptor) {
+  public void setClusterDescriptorAdapter(
+      AbstractSessionClusterDescriptorAdapter clusterDescriptor) {
     this.clusterDescriptorAdapter = clusterDescriptor;
   }
 

@@ -39,7 +39,7 @@ class ReaderThread extends Thread with Logging {
   private val logListCount = CommonVars[Int]("wds.linkis.engineconn.log.list.count", 50)
   private var counter: CountDownLatch = _
 
-  private var outEvictingQueue: EvictingQueue[String] = EvictingQueue.create(10)
+  private var outEvictingQueue: EvictingQueue[String] = EvictingQueue.create(5)
 
   private var isReaderAlive = true
 

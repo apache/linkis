@@ -87,12 +87,12 @@ public class ECResourceInfoRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
   })
-  @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
+  @RequestMapping(path = "/delete/{ticketid}", method = RequestMethod.DELETE)
   public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
       throws AMErrorException {
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
-    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo ticketid:" + ticketid);
+    String userName = ModuleUserUtils.getOperationUser(req, "deleteECInfo ticketid: + ticketid" );
     if (null != ecResourceInfoRecord
         && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
             || Configuration.isAdmin(userName))) {

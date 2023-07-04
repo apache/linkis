@@ -105,7 +105,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
 
     System.setProperty("scala.repl.name.line", ("$line" + this.hashCode).replace('-', '0'))
 
-    setCodeParser(new EmptyCodeParser)
+    setCodeParser(new ScalaCodeParser)
 
     if (sparkILoop == null) {
       synchronized {

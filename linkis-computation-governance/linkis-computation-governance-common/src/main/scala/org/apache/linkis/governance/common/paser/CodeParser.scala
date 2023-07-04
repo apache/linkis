@@ -114,6 +114,9 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
       case _ =>
     }
     if (statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
+    // Make sure the last line is not a comment
+    codeBuffer.append("\n")
+    codeBuffer.append("val linkisVar=123")
     codeBuffer.toArray
   }
 

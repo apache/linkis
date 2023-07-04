@@ -121,6 +121,7 @@ public class ConfigurationTemplateRestfulApi {
     }
 
     JsonNode itemParms = jsonNode.get("itemList");
+
     List<TemplateConfigKeyVo> confKeyList = new ArrayList<>();
     if (itemParms != null && !itemParms.isNull()) {
       try {
@@ -128,7 +129,8 @@ public class ConfigurationTemplateRestfulApi {
             JsonUtils.jackson()
                 .readValue(itemParms.toString(), new TypeReference<List<TemplateConfigKeyVo>>() {});
       } catch (JsonProcessingException e) {
-        return Message.error("parameters:itemList parsing failed(请求参数【itemList】解析失败)");
+        return Message.error(
+            "parameters:itemList parsing failed(请求参数【itemList】解析失败), error with:" + e.getMessage());
       }
     } else {
       return Message.error("parameters:itemList can not be empty(请求参数【itemList】不能为空)");
@@ -177,7 +179,8 @@ public class ConfigurationTemplateRestfulApi {
                 .readValue(templateUidListParms.toString(), new TypeReference<List<String>>() {});
       } catch (JsonProcessingException e) {
         return Message.error(
-            "parameters:templateUidList parsing failed(请求参数【templateUidList】解析失败)");
+            "parameters:templateUidList parsing failed(请求参数【templateUidList】解析失败), error with:"
+                + e.getMessage());
       }
     } else {
       return Message.error(
@@ -248,7 +251,8 @@ public class ConfigurationTemplateRestfulApi {
             JsonUtils.jackson()
                 .readValue(userParms.toString(), new TypeReference<List<String>>() {});
       } catch (JsonProcessingException e) {
-        return Message.error("parameters:userList parsing failed(请求参数【userList】解析失败)");
+        return Message.error(
+            "parameters:userList parsing failed(请求参数【userList】解析失败), error with:" + e.getMessage());
       }
     } else {
       return Message.error("parameters:userList can not be empty(请求参数【userList】不能为空)");

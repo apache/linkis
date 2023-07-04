@@ -78,7 +78,7 @@
 
 
     <sql id="Config_Key_Column">
-        `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`
+        `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`,`boundary_type`
     </sql>
 
     <sql id="Config_Value_Column">
@@ -170,11 +170,27 @@
         WHERE `key` = #{keyName}
     </select>
 
+
+
     <select id="selectKeyByEngineType" resultMap="ConfigKeyMap">
+
         SELECT   `key`, `description`, `name`, `engine_conn_type`,
                 `default_value`, `validate_type`, `validate_range`,boundary_type
         FROM linkis_ps_configuration_config_key
-        WHERE `engine_conn_type` = #{engineType}
+<!--        filter some unused and duplicate key-->
+        WHERE  `engine_conn_type` = #{engineType}
+            AND id  IN
+            (
+            SELECT temp.config_key_id FROM
+                ( SELECT * from linkis_ps_configuration_key_engine_relation) AS temp
+                    WHERE  temp.config_key_id IN
+                    (
+                        SELECT B.id FROM
+                        (SELECT * from linkis_ps_configuration_config_key ) AS B
+                        WHERE B. `engine_conn_type` = #{engineType}
+                )
+            );
+
     </select>
 
     <select id="selectKeyByEngineTypeAndKeyList" resultMap="ConfigKeyMap">
@@ -188,7 +204,8 @@
     </select>
 
     <select id="selectKeyByKeyIdList" resultMap="ConfigKeyMap">
-        SELECT <include refid="Config_Key_Column"/>
+        SELECT    `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`,`boundary_type`
+
         FROM linkis_ps_configuration_config_key
         WHERE `id` in
         <foreach collection="keyIdList" item="item" separator="," open="(" close=")">

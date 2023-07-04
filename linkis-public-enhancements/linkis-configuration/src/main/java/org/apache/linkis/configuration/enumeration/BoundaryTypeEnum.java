@@ -15,18 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.enumeration;
 
-import org.apache.linkis.configuration.entity.ConfigKeyLimitForUser;
+public enum BoundaryTypeEnum {
+  /*
+  0  none
+  1 with mix
+  2 with max
+  3 min and max both
+   */
+  NONE(0),
+  WITH_MIX(1),
+  WITH_MAX(2),
+  WITH_BOTH(3);
 
-import java.util.List;
+  private Integer id;
 
-/** for table linkis_ps_configuration_key_limit_for_user @Description */
-public interface ConfigKeyLimitForUserMapper {
+  BoundaryTypeEnum(Integer id) {
+    this.id = id;
+  }
 
-  int batchInsertList(List<ConfigKeyLimitForUser> list);
-
-  int updateByPrimaryKey(ConfigKeyLimitForUser configKeyLimitForUser);
-
-  int batchInsertOrUpdateList(List<ConfigKeyLimitForUser> list);
+  public Integer getId() {
+    return this.id;
+  }
 }

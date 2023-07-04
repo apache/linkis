@@ -19,23 +19,23 @@ package org.apache.linkis.configuration.entity;
 
 public class TemplateConfigKeyVo {
 
-  /** 表字段 : id 字段类型 : bigint(19) */
-  private Long id;
+  /** id : bigint(19) */
+  private Long keyId;
 
   private String key;
 
-  /** 配置值 表字段 : config_value 字段类型 : varchar(200) */
+  /** config_value varchar(200) */
   private String configValue;
 
-  /** 上限值 表字段 : max_value 字段类型 : varchar(50) */
+  /** max_value varchar(50) */
   private String maxValue;
 
-  public Long getId() {
-    return id;
+  public Long getKeyId() {
+    return keyId;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setKeyId(Long keyId) {
+    this.keyId = keyId;
   }
 
   public String getConfigValue() {

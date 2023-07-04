@@ -145,6 +145,7 @@ public class ConfigurationRestfulApi {
     ArrayList<ConfigTree> configTrees =
         configurationService.getFullTreeByLabelList(
             labelList, true, req.getHeader("Content-Language"));
+
     return Message.ok().data("fullTree", configTrees);
   }
 
@@ -171,7 +172,6 @@ public class ConfigurationRestfulApi {
     List<Map> filterResult = new ArrayList<>();
     for (ConfigKey configKey : result) {
       Map temp = new HashMap();
-      temp.put("", configKey.getBoundaryType());
       temp.put("key", configKey.getKey());
       temp.put("name", configKey.getName());
       temp.put("description", configKey.getDescription());
@@ -473,7 +473,7 @@ public class ConfigurationRestfulApi {
     ConfigKeyValue configKeyValue = new ConfigKeyValue();
     configKeyValue.setKey(configKey);
     configKeyValue.setConfigValue(value);
-    configurationService.paramCheck(configKeyValue);
+
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);
     return Message.ok().data("configValue", configValue);

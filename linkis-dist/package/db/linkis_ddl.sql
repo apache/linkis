@@ -518,6 +518,7 @@ CREATE TABLE if not exists `linkis_ps_bml_resources_version` (
 	`updator` varchar(50) DEFAULT NULL COMMENT 'updator',
 	`enable_flag` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Status, 1: normal, 0: frozen',
 	unique key `uniq_rid_version`(`resource_id`, `version`),
+	unique key `uniq_rid_eflag`(`resource_id`, `enable_flag`),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

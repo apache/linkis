@@ -185,6 +185,9 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
       case "hive":
         regex = EngineConnConf.HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
         break;
+      case "seatunnel":
+        regex = EngineConnConf.SEATUNNEL_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
+        break;
       default:
         regex = "";
     }

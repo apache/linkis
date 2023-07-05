@@ -79,6 +79,9 @@ object EngineConnConf {
   val HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX =
     CommonVars("wds.linkis.hive.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
 
+  val SEATUNNEL_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX =
+    CommonVars("wds.linkis.seatunnel.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
+
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 
   def getLogDir: String = {

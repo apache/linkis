@@ -38,6 +38,11 @@
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
         </Console>
+
+        <File name="YarnAppIdOutputFile" append="true" fileName="${env:LOG_DIRS:-logs}/yarnApp.log">
+            <RegexFilter regex=".*application_.*" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+        </File>
     </appenders>
     <loggers>
         <root level="INFO">
@@ -86,6 +91,12 @@
 
         <logger name="org.apache.hadoop.ipc.Client" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
+        </logger>
+        <logger name="com.netflix.util.concurrent.ShutdownEnabledTimer" level="warn" additivity="true">
+            <appender-ref ref="RollingFile"/>
+        </logger>
+        <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
+            <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
 
     </loggers>

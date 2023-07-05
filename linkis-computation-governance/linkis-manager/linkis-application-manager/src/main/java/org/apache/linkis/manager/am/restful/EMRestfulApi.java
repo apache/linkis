@@ -430,11 +430,11 @@ public class EMRestfulApi {
   private Message executeECMOperation(
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
-    if (ArrayUtils.contains(adminOperations, operationName)
-        && Configuration.isNotAdmin(ecmOperateRequest.user())) {
+    String userName = ecmOperateRequest.user();
+    if (ArrayUtils.contains(adminOperations, operationName) && Configuration.isNotAdmin(userName)) {
       logger.warn(
           "User {} has no permission to execute {} admin Operation in ECM {}.",
-          ecmOperateRequest.user(),
+          userName,
           operationName,
           ecmNode.getServiceInstance());
       return Message.error(
@@ -455,6 +455,21 @@ public class EMRestfulApi {
       ecmOperateRequest.parameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
     }
 
+    // eg logDirSuffix -> root/20230705/io_file/6d48068a-0e1e-44b5-8eb2-835034db5b30/logs
+    String logDirSuffix = ecmOperateRequest.parameters().get("logDirSuffix").toString();
+    String dirsuffix = logDirSuffix.split("/")[0];
+    if (!dirsuffix.equals(userName) && Configuration.isNotAdmin(userName)) {
+      logger.warn(
+          "User {} has no permission to get log with path: {} in ECM:{}.",
+          userName,
+          logDirSuffix,
+          ecmNode.getServiceInstance());
+      return Message.error(
+          "You have no permission to get log with path:"
+              + logDirSuffix
+              + " in ECM:"
+              + ecmNode.getServiceInstance());
+    }
     ECMOperateResponse engineOperateResponse =
         ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
 

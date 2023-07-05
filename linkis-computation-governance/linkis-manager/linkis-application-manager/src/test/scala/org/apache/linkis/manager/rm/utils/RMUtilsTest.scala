@@ -35,7 +35,7 @@ class RMUtilsTest {
       maxResource
     )
     assert(
-      " user Memory, requestResource : 600GB > availableResource : -2GB,  maxResource : 19050GB."
+      " use Memory, requestResource : 600GB > availableResource : -2GB,  maxResource : 19050GB."
         .equals(result)
     )
   }

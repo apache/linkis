@@ -47,7 +47,11 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
     Map<String, Object> map = new HashMap<>();
     map.put("method", request.path());
     map.put("status", errorStatus.value());
-    map.put("message", errorStatus.getReasonPhrase());
+    String msg = errorStatus.getReasonPhrase();
+    if (errorStatus.value() >= HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+      msg = msg + ", with request path:" + request.path();
+    }
+    map.put("message", msg);
     map.put("data", Lists.newArrayList());
 
     return map;

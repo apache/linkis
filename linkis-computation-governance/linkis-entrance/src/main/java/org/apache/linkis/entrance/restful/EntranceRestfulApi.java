@@ -213,7 +213,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       message = Message.ok();
       message.setMethod("/api/entrance/" + id + "/status");
       message.data("status", job.get().getState().toString()).data("execID", id);
-      if(job.get().getErrorResponse()!=null){
+      if (job.get().getErrorResponse() != null) {
         message.setMessage(job.get().getErrorResponse().message());
       }
     } else {
@@ -663,7 +663,8 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         logger.error("kill job {} failed ", job.get().getId(), t);
         message =
             Message.error(
-                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败) with error:"+t.getMessage(),
+                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败) with error:"
+                    + t.getMessage(),
                 t);
         message.setMethod("/api/entrance/" + id + "/kill");
         message.setStatus(1);

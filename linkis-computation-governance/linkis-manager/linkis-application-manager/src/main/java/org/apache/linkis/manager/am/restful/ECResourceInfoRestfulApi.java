@@ -87,7 +87,7 @@ public class ECResourceInfoRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
   })
-  @RequestMapping(path = "/delete/{ticketid}",method = RequestMethod.DELETE)
+  @RequestMapping(path = "/delete/{ticketid}", method = RequestMethod.DELETE)
   public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
       throws AMErrorException {
     ECResourceInfoRecord ecResourceInfoRecord =

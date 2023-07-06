@@ -18,5 +18,5 @@
 
 
 ALTER TABLE `linkis_ps_udf_user_load` ADD CONSTRAINT  `uniq_uid_uname` UNIQUE (`udf_id`, `user_name`);
-ALTER TABLE `linkis_ps_bml_resources_version` ADD CONSTRAINT  `uniq_rid_eflag` UNIQUE (`resource_id`, `enable_flag`);
+ALTER TABLE `linkis_ps_bml_resources` ADD CONSTRAINT  `uniq_rid_eflag` UNIQUE (`resource_id`, `enable_flag`);
 

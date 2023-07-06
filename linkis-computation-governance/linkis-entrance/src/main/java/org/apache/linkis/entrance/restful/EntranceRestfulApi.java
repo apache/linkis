@@ -228,7 +228,11 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
       if (job.get() instanceof EntranceJob) {
         ((EntranceJob) job.get()).updateNewestAccessByClientTimestamp();
       }
-      message = Message.ok();
+      if ("Failed".equals(job.get().getState().toString())) {
+        message = Message.error(job.get().getErrorResponse().message());
+      } else {
+        message = Message.ok();
+      }
       message.setMethod("/api/entrance/" + id + "/status");
       message.data("status", job.get().getState().toString()).data("execID", id);
     } else {

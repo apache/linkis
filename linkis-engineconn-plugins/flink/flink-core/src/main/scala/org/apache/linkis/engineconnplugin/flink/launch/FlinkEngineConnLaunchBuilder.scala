@@ -24,12 +24,12 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{variable, USER}
-import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{USER,PWD, variable}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, JavaProcessEngineConnLaunchBuilder}
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{CLASS_PATH_SEPARATOR, addPathToClassPath}
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 
 import java.util
-
 import scala.collection.JavaConverters._
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
@@ -80,6 +80,18 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
       case _ =>
     }
     bmlResources
+  }
+  override def getEnvironment(implicit
+                              engineConnBuildRequest: EngineConnBuildRequest
+                             ): util.Map[String, String] = {
+    val environment = new util.HashMap[String, String]
+    addPathToClassPath(environment, variable(PWD))
+    val linkisEnvironment = super.getEnvironment
+    val linkisClassPath = linkisEnvironment.get(Environment.CLASSPATH.toString)
+    val v = environment.get(Environment.CLASSPATH.toString) + CLASS_PATH_SEPARATOR + linkisClassPath
+    environment.put(Environment.CLASSPATH.toString, v)
+    logger.info(environment.asScala.map(e => s"${e._1}->${e._2}").mkString(","))
+    environment
   }
 
   private def contentToBmlResource(userName: String, content: String): BmlResource = {

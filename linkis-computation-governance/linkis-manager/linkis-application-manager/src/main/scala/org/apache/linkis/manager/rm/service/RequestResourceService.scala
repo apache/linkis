@@ -131,7 +131,7 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           labelAvailableResource,
           labelResource.getMaxResource
         )
-        throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
+        throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2 + s"ECM Instance:${emInstanceLabel.getInstance()}")
       }
       logger.debug(s"Passed check: resource[${requestResource}] want to use em ${emInstanceLabel
         .getInstance()}  available resource[${labelAvailableResource}]")

@@ -29,7 +29,43 @@ import java.util
 class DSSRouteLabelParser extends RouteLabelParser {
 
   override def parse(gatewayContext: GatewayContext): util.List[RouteLabel] = {
-    new util.ArrayList[RouteLabel]()
+    val routeLabelList = new util.ArrayList[RouteLabel]()
+    var requestLabels = gatewayContext.getRequest.getQueryParams
+      .getOrDefault(DSSGatewayConfiguration.DSS_URL_LABEL_PREFIX.getValue, null)
+    if (requestLabels == null) {
+      requestLabels = gatewayContext.getRequest.getQueryParams
+        .getOrDefault(DSSGatewayConfiguration.DSS_URL_ROUTE_LABEL_PREFIX.getValue, null)
+    }
+    if (null != requestLabels && requestLabels.size > 0) {
+      val labelNameList = requestLabels(0).replace(" ", "").split(",").toList
+      if (labelNameList.size > 0) labelNameList.foreach(labelName => {
+        val routeLabel = new RouteLabel
+        routeLabel.setRoutePath(labelName)
+        //          routeLabelList.add(routeLabel)
+      })
+    }
+    if (routeLabelList.isEmpty) {
+      val requestBody = Option(gatewayContext.getRequest.getRequestBody)
+      requestBody match {
+        // todo form-data resolve
+        case Some(body) =>
+          if (body.contains("form-data")) {} else {
+            //          val labelBuilderFactory = LabelBuilderFactoryContext.getLabelBuilderFactory
+            //          val json = BDPJettyServerHelper.gson.fromJson(body, classOf[java.util.Map[String, Object]])
+            //          val labels: util.List[Label[_]] = json.get(TaskConstant.LABELS) match {
+            //            case map: util.Map[String, Object] => labelBuilderFactory.getLabels(map)
+            //            case map: util.Map[String, Any] => labelBuilderFactory.getLabels(map.asInstanceOf)
+            //            case _ => new util.ArrayList[Label[_]]()
+            //          }
+            //          labels.filter(label => label.isInstanceOf[RouteLabel]).foreach(label => {
+            //            routeLabelList.add(label.asInstanceOf[RouteLabel])
+            //          })
+          }
+        case _ => null
+      }
+    }
+
+    routeLabelList
   }
 
 }

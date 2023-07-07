@@ -179,6 +179,15 @@ public class ConfigurationRestfulApi {
       temp.put("validateType", configKey.getValidateType());
       temp.put("validateRange", configKey.getValidateRange());
       temp.put("boundaryType", configKey.getBoundaryType());
+      temp.put("defaultValue", configKey.getDefaultValue());
+      temp.put("description", configKey.getDescription());
+      // for front-end to judge whether input is required
+      if (StringUtils.isNotEmpty(configKey.getDefaultValue())) {
+        temp.put("require", "true");
+      } else {
+        temp.put("require", "false");
+      }
+
       filterResult.add(temp);
     }
 

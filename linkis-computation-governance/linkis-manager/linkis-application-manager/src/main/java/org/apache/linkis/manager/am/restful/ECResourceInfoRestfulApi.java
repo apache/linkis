@@ -148,7 +148,7 @@ public class ECResourceInfoRestfulApi {
       calendar.set(Calendar.SECOND, 0);
       startDate = calendar.getTime();
     }
-    if (Configuration.isAdmin(username)) {
+    if (Configuration.isJobHistoryAdmin(username)) {
       username = null;
       if (StringUtils.isNotBlank(creatorUser)) {
         username = creatorUser;

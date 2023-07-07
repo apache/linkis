@@ -105,9 +105,10 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       String configValue = item.getConfigValue();
       String maxValue = item.getMaxValue();
 
-      if (!validatorManager
-          .getOrCreateValidator(validateType)
-          .validate(configValue, validateRange)) {
+      if (StringUtils.isNotEmpty(configValue)
+          && !validatorManager
+              .getOrCreateValidator(validateType)
+              .validate(configValue, validateRange)) {
         String msg =
             MessageFormat.format(
                 "Parameter configValue verification failed(参数configValue校验失败):"
@@ -256,6 +257,16 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
               "The template configuration is empty. Please check the template associated configuration information in the database table"
                   + "(模板关联的配置为空,请检查数据库表中关于模板id：{0} 关联配置项是否完整)",
               templateUid);
+      throw new ConfigurationException(msg);
+    }
+    // check input engineType is same as template key engineType
+    ConfigKey configKey = configMapper.selectKeyByKeyID(templateConfigKeyList.get(0).getKeyId());
+    if (!engineType.equals(configKey.getEngineType())) {
+      String msg =
+          MessageFormat.format(
+              "The engineType:{0} associated with the template:{1} does not match the input engineType:{2}, please check whether the parameters are correct"
+                  + "(模板关联的引擎类型：{0} 和下发的引擎类型：{2} 不匹配,请检查参数是否正确)",
+              configKey.getEngineType(), templateUid, engineType);
       throw new ConfigurationException(msg);
     }
     for (String user : userList) {

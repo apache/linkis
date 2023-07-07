@@ -458,7 +458,7 @@ public class EMRestfulApi {
     // eg logDirSuffix -> root/20230705/io_file/6d48068a-0e1e-44b5-8eb2-835034db5b30/logs
     String logDirSuffix = ecmOperateRequest.parameters().get("logDirSuffix").toString();
     String dirsuffix = logDirSuffix.split("/")[0];
-    if (!dirsuffix.equals(userName) && Configuration.isNotAdmin(userName)) {
+    if (!dirsuffix.equals(userName) && Configuration.isNotJobHistoryAdmin(userName)) {
       logger.warn(
           "User {} has no permission to get log with path: {} in ECM:{}.",
           userName,

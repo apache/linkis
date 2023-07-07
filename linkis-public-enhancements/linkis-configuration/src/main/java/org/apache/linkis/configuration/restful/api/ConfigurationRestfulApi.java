@@ -454,12 +454,14 @@ public class ConfigurationRestfulApi {
   @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
   public Message saveKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
+    Message message = Message.ok();
     String username = ModuleUserUtils.getOperationUser(req, "saveKey");
     String engineType = (String) json.getOrDefault("engineType", "*");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
     String configKey = (String) json.get("configKey");
     String value = (String) json.get("configValue");
+    boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -474,9 +476,18 @@ public class ConfigurationRestfulApi {
     configKeyValue.setKey(configKey);
     configKeyValue.setConfigValue(value);
 
+    try {
+      configurationService.paramCheck(configKeyValue);
+    } catch (Exception e) {
+      if (force) {
+        message.data("msg", e.getMessage());
+      } else {
+        return Message.error(e.getMessage());
+      }
+    }
     ConfigValue configValue = configKeyService.saveConfigValue(configKeyValue, labelList);
     configurationService.clearAMCacheConf(username, creator, engineType, version);
-    return Message.ok().data("configValue", configValue);
+    return message.data("configValue", configValue);
   }
 
   @ApiOperation(value = "deleteKeyValue", notes = "delete key value", response = Message.class)

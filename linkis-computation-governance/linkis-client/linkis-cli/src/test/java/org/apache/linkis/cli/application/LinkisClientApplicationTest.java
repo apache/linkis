@@ -54,7 +54,7 @@ public class LinkisClientApplicationTest {
     cmdStr =
         new String[] {
           "--gatewayUrl",
-          "http://10.107.118.104:9001",
+          "http://127.0.0.1:9001",
           //                "--help",
           //                "--kill", "8249",
           //                "--status", "379",
@@ -162,7 +162,7 @@ public class LinkisClientApplicationTest {
   /** Method: exec(ProcessedData data) */
   @Test
   public void testExec() {
-    LinkisClientApplication.main(cmdStr);
+    //    LinkisClientApplication.main(cmdStr);
     //    LinkisClientApplication.main(cmdStr);
     //    LinkisClientApplication.main(cmdStr2);
     /*

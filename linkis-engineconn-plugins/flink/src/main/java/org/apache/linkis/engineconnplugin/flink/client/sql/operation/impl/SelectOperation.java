@@ -29,6 +29,7 @@ import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
+import org.apache.flink.api.common.ExecutionMode;
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.table.api.Table;
@@ -161,6 +162,7 @@ public class SelectOperation extends AbstractJobOperation {
               resultSchema,
               executionContext.getExecutionConfig());
     } else {
+      executionContext.getExecutionConfig().setExecutionMode(ExecutionMode.BATCH);
       result = ResultUtil.createBatchResult(resultSchema, executionContext.getExecutionConfig());
     }
     result.setFlinkListeners(getFlinkListeners());

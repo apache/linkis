@@ -41,22 +41,22 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-runtime_${scala.binary.version}</artifactId>
+      <artifactId>flink-runtime</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+      <artifactId>flink-streaming-java</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-clients_${scala.binary.version}</artifactId>
+      <artifactId>flink-clients</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-sql-client_${scala.binary.version}</artifactId>
+      <artifactId>flink-sql-client</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>
@@ -76,30 +76,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
+      <artifactId>flink-table-api-java-bridge</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-table-planner_${scala.binary.version}</artifactId>
       <version>${flink.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.flink</groupId>
-      <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
-      <version>${flink.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.flink</groupId>
-      <artifactId>flink-table-runtime-blink_${scala.binary.version}</artifactId>
-      <version>${flink.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.calcite.avatica</groupId>
-          <artifactId>avatica-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
@@ -116,11 +99,11 @@
     <dependency>
       <groupId>org.apache.flink</groupId>
       <artifactId>flink-shaded-jackson</artifactId>
-      <version>2.10.1-9.0</version>
+      <version>2.12.4-15.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-yarn_${scala.binary.version}</artifactId>
+      <artifactId>flink-yarn</artifactId>
       <version>${flink.version}</version>
       <exclusions>
         <exclusion>
@@ -176,7 +159,7 @@
 
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-kubernetes_${scala.binary.version}</artifactId>
+      <artifactId>flink-kubernetes</artifactId>
       <version>${flink.version}</version>
     </dependency>
 
@@ -187,7 +170,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.flink</groupId>
-      <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
+      <artifactId>flink-connector-kafka</artifactId>
       <version>${flink.version}</version>
     </dependency>
     <dependency>

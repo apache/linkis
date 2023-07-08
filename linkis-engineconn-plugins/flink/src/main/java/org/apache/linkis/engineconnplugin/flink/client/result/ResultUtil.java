@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.result;
 
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.config.entries.DeploymentEntry;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.api.common.ExecutionConfig;
@@ -27,7 +28,6 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.JobManagerOptions;
 import org.apache.flink.runtime.net.ConnectionUtils;
 import org.apache.flink.table.api.TableSchema;
-import org.apache.flink.table.client.config.entries.DeploymentEntry;
 import org.apache.flink.table.runtime.types.TypeInfoDataTypeConverter;
 
 import java.net.InetAddress;

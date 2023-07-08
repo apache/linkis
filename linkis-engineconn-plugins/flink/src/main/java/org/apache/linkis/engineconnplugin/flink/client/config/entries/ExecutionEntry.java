@@ -17,6 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.config.entries;
 
+import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
 
@@ -24,7 +25,6 @@ import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.client.config.ConfigUtil;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
 import java.util.Arrays;
@@ -39,6 +39,9 @@ import org.slf4j.LoggerFactory;
 import static org.apache.linkis.engineconnplugin.flink.client.config.Environment.EXECUTION_ENTRY;
 
 public class ExecutionEntry extends ConfigEntry {
+
+  public static final ExecutionEntry DEFAULT_INSTANCE =
+      new ExecutionEntry(new DescriptorProperties(true));
 
   private static final Logger LOG = LoggerFactory.getLogger(ExecutionEntry.class);
 
@@ -77,6 +80,8 @@ public class ExecutionEntry extends ConfigEntry {
   private static final String EXECUTION_MAX_STATE_RETENTION = "max-idle-state-retention";
 
   private static final String EXECUTION_PARALLELISM = "parallelism";
+
+  private static final String EXECUTION_MAX_TABLE_RESULT_ROWS = "max-table-result-rows";
 
   private static final String EXECUTION_MAX_PARALLELISM = "max-parallelism";
 
@@ -161,15 +166,6 @@ public class ExecutionEntry extends ConfigEntry {
       builder.inStreamingMode();
     } else if (inBatchMode()) {
       builder.inBatchMode();
-    }
-
-    final String planner =
-        properties.getOptionalString(EXECUTION_PLANNER).orElse(EXECUTION_PLANNER_VALUE_OLD);
-
-    if (planner.equals(EXECUTION_PLANNER_VALUE_OLD)) {
-      builder.useOldPlanner();
-    } else if (planner.equals(EXECUTION_PLANNER_VALUE_BLINK)) {
-      builder.useBlinkPlanner();
     }
 
     return builder.build();
@@ -275,6 +271,12 @@ public class ExecutionEntry extends ConfigEntry {
     return properties
         .getOptionalInt(EXECUTION_MAX_PARALLELISM)
         .orElseGet(() -> useDefaultValue(EXECUTION_MAX_PARALLELISM, 128));
+  }
+
+  public int getMaxTableResultRows() {
+    return properties
+        .getOptionalInt(EXECUTION_MAX_TABLE_RESULT_ROWS)
+        .orElseGet(() -> useDefaultValue(EXECUTION_MAX_TABLE_RESULT_ROWS, 1_000_000));
   }
 
   public RestartStrategies.RestartStrategyConfiguration getRestartStrategy() {

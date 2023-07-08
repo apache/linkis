@@ -27,6 +27,7 @@ import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.deployment.ClusterRetrieveException;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnConfigOptions;
@@ -113,13 +114,19 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     Supplier<CompletableFuture<String>> function;
     switch (mode) {
       case "trigger":
-        function = () -> clusterClient.triggerSavepoint(jobId, savepoint);
+        function =
+            () -> clusterClient.triggerSavepoint(jobId, savepoint, SavepointFormatType.CANONICAL);
         break;
       case "cancel":
-        function = () -> clusterClient.cancelWithSavepoint(jobId, savepoint);
+        function =
+            () ->
+                clusterClient.cancelWithSavepoint(jobId, savepoint, SavepointFormatType.CANONICAL);
         break;
       case "stop":
-        function = () -> clusterClient.stopWithSavepoint(jobId, false, savepoint);
+        function =
+            () ->
+                clusterClient.stopWithSavepoint(
+                    jobId, false, savepoint, SavepointFormatType.CANONICAL);
         break;
       default:
         throw new JobExecutionException(NOT_SAVEPOINT_MODE.getErrorDesc() + mode);

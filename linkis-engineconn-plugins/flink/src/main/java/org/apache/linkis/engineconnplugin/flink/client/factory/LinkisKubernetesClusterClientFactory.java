@@ -21,8 +21,8 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.kubernetes.KubernetesClusterClientFactory;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
-import org.apache.flink.kubernetes.kubeclient.DefaultKubeClientFactory;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
+import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
 import org.apache.flink.kubernetes.utils.Constants;
 import org.apache.flink.util.AbstractID;
 
@@ -57,7 +57,8 @@ public class LinkisKubernetesClusterClientFactory extends KubernetesClusterClien
       this.clusterId = generateClusterId();
       configuration.setString(KubernetesConfigOptions.CLUSTER_ID, clusterId);
     }
-    this.flinkKubeClient = DefaultKubeClientFactory.getInstance().fromConfiguration(configuration);
+    this.flinkKubeClient =
+        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
     return new KubernetesClusterDescriptor(configuration, flinkKubeClient);
   }
 
@@ -66,14 +67,12 @@ public class LinkisKubernetesClusterClientFactory extends KubernetesClusterClien
     try {
       flinkKubeClient.stopAndCleanupCluster(clusterId);
     } catch (Exception e) {
-      flinkKubeClient.handleException(e);
       LOG.error("Could not kill Kubernetes cluster " + clusterId);
     }
 
     try {
       flinkKubeClient.close();
     } catch (Exception e) {
-      flinkKubeClient.handleException(e);
       LOG.error("failed to close client, exception {}", e.toString());
     }
   }

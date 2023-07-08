@@ -43,6 +43,7 @@ import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.configuration._
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
@@ -349,15 +350,6 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       // Otherwise, an error is generated: stable identifier required, but PER_JOB.getName found.
       case FlinkExecutionTargetType.YARN_PER_JOB | FlinkExecutionTargetType.YARN_SESSION |
           FlinkExecutionTargetType.KUBERNETES_SESSION =>
-        val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
-        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase(Locale.getDefault))) {
-          throw new FlinkInitFailedException(
-            MessageFormat.format(
-              PLANNER_MUST_THESE.getErrorDesc,
-              String.join(", ", ExecutionEntry.AVAILABLE_PLANNERS)
-            )
-          )
-        }
         val executionType = FlinkEnvConfiguration.FLINK_SQL_EXECUTION_TYPE.getValue(options)
         if (
             !ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(
@@ -372,10 +364,18 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
           )
         }
         val properties = new util.HashMap[String, String]
-        properties.put(
-          Environment.EXECUTION_ENTRY + "." + ExecutionEntry.EXECUTION_PLANNER,
-          planner
+
+        environmentContext.getFlinkConfig.set(
+          ExecutionOptions.RUNTIME_MODE,
+          RuntimeExecutionMode.STREAMING
         )
+        if (executionType.equalsIgnoreCase(ExecutionEntry.EXECUTION_TYPE_VALUE_BATCH)) {
+          environmentContext.getFlinkConfig.set(
+            ExecutionOptions.RUNTIME_MODE,
+            RuntimeExecutionMode.BATCH
+          )
+        }
+
         properties.put(
           Environment.EXECUTION_ENTRY + "." + ExecutionEntry.EXECUTION_TYPE,
           executionType

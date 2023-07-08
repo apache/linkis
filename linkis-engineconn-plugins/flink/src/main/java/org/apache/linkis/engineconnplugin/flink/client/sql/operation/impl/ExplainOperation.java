@@ -48,8 +48,7 @@ public class ExplainOperation implements NonJobOperation {
     final TableEnvironment tableEnv = context.getTableEnvironment();
     // translate
     try {
-      final Table table = createTable(context, tableEnv, statement);
-      String explanation = context.wrapClassLoader(() -> tableEnv.explain(table));
+      String explanation = context.wrapClassLoader(() -> tableEnv.explainSql(statement));
       return ResultSet.builder()
           .resultKind(ResultKind.SUCCESS_WITH_CONTENT)
           .columns(

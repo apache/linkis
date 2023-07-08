@@ -27,7 +27,6 @@ import org.apache.flink.api.common.accumulators.SerializedListAccumulator;
 import org.apache.flink.api.java.typeutils.RowTypeInfo;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.table.api.TableSchema;
-import org.apache.flink.table.client.gateway.local.CollectBatchTableSink;
 import org.apache.flink.table.sinks.TableSink;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.AbstractID;

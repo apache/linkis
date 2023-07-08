@@ -17,18 +17,10 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.config;
 
+import org.apache.linkis.engineconnplugin.flink.client.config.entries.*;
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonMappingException;
-import org.apache.flink.table.client.config.ConfigUtil;
-import org.apache.flink.table.client.config.entries.CatalogEntry;
-import org.apache.flink.table.client.config.entries.ConfigurationEntry;
-import org.apache.flink.table.client.config.entries.DeploymentEntry;
-import org.apache.flink.table.client.config.entries.ExecutionEntry;
-import org.apache.flink.table.client.config.entries.FunctionEntry;
-import org.apache.flink.table.client.config.entries.ModuleEntry;
-import org.apache.flink.table.client.config.entries.TableEntry;
-import org.apache.flink.table.client.config.entries.ViewEntry;
 
 import java.io.IOException;
 import java.net.URL;

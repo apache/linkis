@@ -31,7 +31,6 @@ import org.apache.flink.api.java.typeutils.RowTypeInfo;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.streaming.experimental.SocketStreamIterator;
 import org.apache.flink.table.api.TableSchema;
-import org.apache.flink.table.client.gateway.local.CollectStreamTableSink;
 import org.apache.flink.table.sinks.TableSink;
 import org.apache.flink.types.Row;
 import org.apache.hadoop.yarn.api.records.ApplicationId;

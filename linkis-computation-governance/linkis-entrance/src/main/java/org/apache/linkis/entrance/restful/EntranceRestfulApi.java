@@ -682,7 +682,6 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
                     + "message: "
                     + t.getMessage());
         message.setMethod("/api/entrance/" + id + "/kill");
-        message.setStatus(1);
       }
     }
     return message;

@@ -73,7 +73,7 @@ public class ECResourceInfoRestfulApi {
       throws AMErrorException {
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
-    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:" + ticketid）;
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:" + ticketid);
     if (null != ecResourceInfoRecord
         && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
             || Configuration.isAdmin(userName))) {

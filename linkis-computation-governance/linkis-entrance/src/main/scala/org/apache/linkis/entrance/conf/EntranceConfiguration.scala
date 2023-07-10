@@ -225,4 +225,5 @@ object EntranceConfiguration {
 
   val ENTRANCE_SCALA_APPEND_CODE_ENABLED =
     CommonVars("linkis.entrance.scala.append.code.enable", true)
+
 }

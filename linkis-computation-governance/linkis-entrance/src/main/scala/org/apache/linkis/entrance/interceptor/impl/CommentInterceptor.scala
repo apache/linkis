@@ -25,7 +25,9 @@ import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.lang
 import java.util.regex.Pattern
+
 import scala.util.matching.Regex
+
 import org.slf4j.{Logger, LoggerFactory}
 
 class CommentInterceptor extends EntranceInterceptor {
@@ -109,6 +111,7 @@ object ScalaCommentHelper extends CommentHelper {
       code
     }
   }
+
 }
 
 object CommentMain {

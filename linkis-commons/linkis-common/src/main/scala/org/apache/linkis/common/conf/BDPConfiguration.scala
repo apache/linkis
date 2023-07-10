@@ -36,8 +36,6 @@ private[conf] object BDPConfiguration extends Logging {
 
   val DEFAULT_SERVER_CONF_FILE_NAME = "linkis-server.properties"
 
-  val DEFAULT_VERSION_FILE_NAME = "version.properties"
-
   val DEFAULT_CONFIG_HOT_LOAD_DELAY_MILLS = 3 * 60 * 1000L
 
   private val extractConfig = new Properties
@@ -100,31 +98,7 @@ private[conf] object BDPConfiguration extends Logging {
         }
       }
     }
-    // load  version conf
-    val versionConf = sysProps.getOrElse("linkis.version.conf", DEFAULT_VERSION_FILE_NAME)
-    // version conf file path(env LINKIS_VERSION_CONF_FILE_PATH > classpath)
-    var versionConfPath = System.getenv("LINKIS_VERSION_CONF_FILE_PATH") + "/" + versionConf
-    if (StringUtils.isBlank(versionConfPath)) {
-      logger.info(
-        s"LINKIS_VERSION_CONF_FILE_PATH is empty, try to use version.properties file path from classpath"
-      )
-      val versionConfFileURL = getClass.getClassLoader.getResource(versionConf)
-      if (versionConfFileURL != null) {
-        versionConfPath = versionConfFileURL.getPath
-      }
-    }
 
-    if (new File(versionConfPath).exists) {
-      logger.info(
-        s"*********************** Notice: The Linkis version file is $versionConf ! ******************"
-      )
-      initConfig(config, versionConfPath)
-      configList.append(versionConfPath)
-    } else {
-      logger.warn(
-        s"**************** Notice: The Linkis version file $versionConf does not exist! *******************"
-      )
-    }
     // init hot-load config task
     val hotLoadTask = new Runnable {
       override def run(): Unit = {

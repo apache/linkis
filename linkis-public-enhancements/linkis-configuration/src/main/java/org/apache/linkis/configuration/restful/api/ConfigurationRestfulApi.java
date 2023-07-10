@@ -488,7 +488,7 @@ public class ConfigurationRestfulApi {
     try {
       configurationService.paramCheck(configKeyValue);
     } catch (Exception e) {
-      if (force) {
+      if (force && e instanceof ConfigurationException) {
         message.data("msg", e.getMessage());
       } else {
         return Message.error(e.getMessage());

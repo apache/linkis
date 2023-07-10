@@ -18,15 +18,14 @@
 package org.apache.linkis.entrance.interceptor.impl
 
 import org.apache.linkis.common.utils.CodeAndRunTypeUtils
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.entrance.interceptor.EntranceInterceptor
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.manager.label.utils.LabelUtil
 
 import java.lang
 import java.util.regex.Pattern
-
 import scala.util.matching.Regex
-
 import org.slf4j.{Logger, LoggerFactory}
 
 class CommentInterceptor extends EntranceInterceptor {
@@ -102,7 +101,14 @@ object ScalaCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """^\s*//.+\s*""".r.unanchored
   private val scalaCommentPattern: String = "(?ms)([\"'](?:|[^'])*['\"])|//.*?$|/\\*.*?\\*/"
 
-  override def dealComment(code: String): String = code
+  override def dealComment(code: String): String = {
+    // Append code `val a=1` to prevent bugs that do not exit tasks for a long time
+    if (EntranceConfiguration.ENTRANCE_SCALA_APPEND_CODE_ENABLED.getValue) {
+      code + "\nval a=1"
+    } else {
+      code
+    }
+  }
 }
 
 object CommentMain {

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.bml.dao.TaskDao">
+
+    <resultMap id="ResourceTask" type="org.apache.linkis.bml.entity.ResourceTask">
+        <id property="id" column="id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="version" column="version"/>
+        <result property="operation" column="operation"/>
+        <result property="state" column="state"/>
+        <result property="submitUser" column="submit_user"/>
+        <result property="system" column="system"/>
+        <result property="instance" column="instance"/>
+        <result property="clientIp" column="client_ip"/>
+        <result property="errMsg" column="err_msg"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="lastUpdateTime" column="last_update_time"/>
+    </resultMap>
+
+    <sql id="resource_task_columns">
+      resource_id,version,operation,state, submit_user,`system`,instance,
+      client_ip,err_msg,start_time,end_time,last_update_time, extra_params
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="org.apache.linkis.bml.entity.ResourceTask">
+        INSERT INTO linkis_ps_bml_resources_task(<include refid="resource_task_columns"/>)
+        VALUES (#{resourceId}, #{version}, #{operation}, #{state}, #{submitUser}, #{system}, #{instance},
+        #{clientIp}, #{errMsg}, #{startTime}, #{endTime}, #{lastUpdateTime}, #{extraParams})
+    </insert>
+
+    <update id="updateState">
+        UPDATE linkis_ps_bml_resources_task SET
+          state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}
+        WHERE id = #{taskId}
+    </update>
+
+    <update id="updateState2Failed">
+        UPDATE linkis_ps_bml_resources_task SET
+          state = #{state} , end_time = #{updateTime}, last_update_time = #{updateTime}, err_msg = #{errMsg}
+        WHERE id = #{taskId}
+    </update>
+
+    <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT max(version)
+        FROM linkis_ps_bml_resources_task
+        WHERE resource_id = #{resourceId}
+    </select>
+</mapper>
+

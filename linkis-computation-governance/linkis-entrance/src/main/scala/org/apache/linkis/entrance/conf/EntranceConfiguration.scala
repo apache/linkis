@@ -223,7 +223,4 @@ object EntranceConfiguration {
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", true)
 
-  val ENTRANCE_SCALA_APPEND_CODE_ENABLED =
-    CommonVars("linkis.entrance.scala.append.code.enable", true)
-
 }

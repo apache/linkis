@@ -103,14 +103,7 @@ object ScalaCommentHelper extends CommentHelper {
   override val commentPattern: Regex = """^\s*//.+\s*""".r.unanchored
   private val scalaCommentPattern: String = "(?ms)([\"'](?:|[^'])*['\"])|//.*?$|/\\*.*?\\*/"
 
-  override def dealComment(code: String): String = {
-    // Append code `val a=1` to prevent bugs that do not exit tasks for a long time
-    if (EntranceConfiguration.ENTRANCE_SCALA_APPEND_CODE_ENABLED.getValue) {
-      code + "\nval linkisVar=1"
-    } else {
-      code
-    }
-  }
+  override def dealComment(code: String): String = code
 
 }
 

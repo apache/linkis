@@ -17,7 +17,7 @@
 
 package org.apache.linkis.configuration.entity;
 
-public class TemplateConfigKeyVo {
+public class ConfigKeyLimitVo {
 
   /** id : bigint(19) */
   private Long keyId;

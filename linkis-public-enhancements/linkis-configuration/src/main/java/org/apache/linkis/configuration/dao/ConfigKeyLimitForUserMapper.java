@@ -18,6 +18,9 @@
 package org.apache.linkis.configuration.dao;
 
 import org.apache.linkis.configuration.entity.ConfigKeyLimitForUser;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
+
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -29,4 +32,9 @@ public interface ConfigKeyLimitForUserMapper {
   int updateByPrimaryKey(ConfigKeyLimitForUser configKeyLimitForUser);
 
   int batchInsertOrUpdateList(List<ConfigKeyLimitForUser> list);
+
+  List<ConfigKeyLimitVo> selectByLabelAndKeyIds(
+          @Param("label") String label, @Param("keyIdList") List<Long> keyIdList);
+
+  ConfigKeyLimitVo selectByLabelAndKeyId(@Param("label") String label, @Param("keyId") Long keyId);
 }

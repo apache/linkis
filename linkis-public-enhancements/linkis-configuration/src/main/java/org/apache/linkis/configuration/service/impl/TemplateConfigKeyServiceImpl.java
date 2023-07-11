@@ -75,7 +75,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       String templateName,
       String engineType,
       String operator,
-      List<TemplateConfigKeyVo> itemList,
+      List<ConfigKeyLimitVo> itemList,
       Boolean isFullMode)
       throws ConfigurationException {
 
@@ -101,7 +101,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
     // map k:v---> key：ConfigKey
     Map<String, ConfigKey> configKeyMap =
         configKeyList.stream().collect(Collectors.toMap(ConfigKey::getKey, item -> item));
-    for (TemplateConfigKeyVo item : itemList) {
+    for (ConfigKeyLimitVo item : itemList) {
 
       String key = item.getKey();
       ConfigKey temp = configKeyMap.get(item.getKey());
@@ -134,7 +134,31 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
                   key, validateType, validateRange, maxValue);
           throw new ConfigurationException(msg);
         }
+
+        try {
+          Integer maxVal = Integer.valueOf(maxValue.replaceAll("[^0-9]", ""));
+          Integer configVal = Integer.valueOf(configValue.replaceAll("[^0-9]", ""));
+          if (configVal > maxVal) {
+            String msg =
+                MessageFormat.format(
+                    "Parameter key:{0},config value:{1} verification failed, "
+                        + "exceeds the specified max value: {2}:(参数校验失败，超过指定的最大值):",
+                    key, configVal, maxVal);
+            throw new ConfigurationException(msg);
+          }
+        } catch (Exception exception) {
+          if (exception instanceof ConfigurationException) {
+            throw exception;
+          } else {
+            logger.warn(
+                "Failed to check special limit setting for key:"
+                    + key
+                    + ",config value:"
+                    + configValue);
+          }
+        }
       }
+      ;
 
       Long keyId = temp.getId();
 
@@ -309,10 +333,12 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         for (TemplateConfigKey templateConfigKey : templateConfigKeyList) {
           Long keyId = templateConfigKey.getKeyId();
           String uuid = templateConfigKey.getTemplateUuid();
+          String confVal = templateConfigKey.getConfigValue();
+          String maxVal = templateConfigKey.getMaxValue();
 
           ConfigValue configValue = new ConfigValue();
           configValue.setConfigKeyId(keyId);
-          configValue.setConfigValue(templateConfigKey.getConfigValue());
+          configValue.setConfigValue(confVal);
           configValue.setConfigLabelId(configLabel.getId());
           configValues.add(configValue);
 
@@ -320,6 +346,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           configKeyLimitForUser.setUserName(user);
           configKeyLimitForUser.setCombinedLabelValue(configLabel.getStringValue());
           configKeyLimitForUser.setKeyId(keyId);
+          configKeyLimitForUser.setConfigValue(confVal);
+          configKeyLimitForUser.setMaxValue(maxVal);
           configKeyLimitForUser.setLatestUpdateTemplateUuid(uuid);
           configKeyLimitForUser.setCreateBy(operator);
           configKeyLimitForUser.setUpdateBy(operator);

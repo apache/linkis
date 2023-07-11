@@ -18,7 +18,6 @@
 package org.apache.linkis.configuration.dao;
 
 import org.apache.linkis.configuration.entity.TemplateConfigKey;
-import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -32,16 +31,10 @@ public interface TemplateConfigKeyMapper {
   List<TemplateConfigKey> selectListByTemplateUuid(@Param("templateUuid") String templateUuid);
 
   int deleteByTemplateUuidAndKeyIdList(
-      @Param("templateUuid") String templateUuid, @Param("keyIdList") List<Long> KeyIdList);
+          @Param("templateUuid") String templateUuid, @Param("keyIdList") List<Long> KeyIdList);
 
   int batchInsertOrUpdateList(List<TemplateConfigKey> list);
 
   List<TemplateConfigKey> selectListByTemplateUuidList(
-      @Param("templateUuidList") List<String> templateUuidList);
-
-  List<TemplateConfigKeyVo> selectByLabelAndKeyIds(
-      @Param("label") String label, @Param("keyIdList") List<Long> keyIdList);
-
-  TemplateConfigKeyVo selectByLabelAndKeyId(
-      @Param("label") String label, @Param("keyId") Long keyId);
+          @Param("templateUuidList") List<String> templateUuidList);
 }

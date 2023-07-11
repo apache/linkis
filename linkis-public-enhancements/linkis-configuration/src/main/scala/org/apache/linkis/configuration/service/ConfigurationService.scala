@@ -19,12 +19,7 @@ package org.apache.linkis.configuration.service
 
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.configuration.conf.Configuration
-import org.apache.linkis.configuration.dao.{
-  ConfigKeyLimitForUserMapper,
-  ConfigMapper,
-  LabelMapper,
-  TemplateConfigKeyMapper
-}
+import org.apache.linkis.configuration.dao.{ConfigKeyLimitForUserMapper, ConfigMapper, LabelMapper}
 import org.apache.linkis.configuration.entity._
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.configuration.util.{LabelEntityParser, LabelParameterParser}
@@ -63,7 +58,7 @@ class ConfigurationService extends Logging {
 
   @Autowired private var validatorManager: ValidatorManager = _
 
-  @Autowired private var templateConfigKeyMapper: TemplateConfigKeyMapper = _
+  @Autowired private var configKeyLimitForUserMapper: ConfigKeyLimitForUserMapper = _
 
   private val combinedLabelBuilder: CombinedLabelBuilder = new CombinedLabelBuilder
 
@@ -186,7 +181,7 @@ class ConfigurationService extends Logging {
       .buildFromStringValue(configLabel.getLabelKey, configLabel.getStringValue)
       .asInstanceOf[CombinedLabel]
     val templateConfigKeyVo =
-      templateConfigKeyMapper.selectByLabelAndKeyId(combinedLabel.getStringValue, setting.getId)
+      configKeyLimitForUserMapper.selectByLabelAndKeyId(combinedLabel.getStringValue, setting.getId)
     if (templateConfigKeyVo != null && StringUtils.isNotBlank(templateConfigKeyVo.getMaxValue)) {
       Utils.tryCatch {
         val maxValue = Integer.valueOf(templateConfigKeyVo.getMaxValue.replaceAll("[^0-9]", ""))
@@ -424,14 +419,17 @@ class ConfigurationService extends Logging {
         .toList
         .asJava
       val limitList =
-        templateConfigKeyMapper.selectByLabelAndKeyIds(combinedLabel.getStringValue, keyIdList)
+        configKeyLimitForUserMapper.selectByLabelAndKeyIds(combinedLabel.getStringValue, keyIdList)
       defaultEngineConfigs.asScala.foreach(entity => {
         val keyId = entity.getId
         val res = limitList.asScala.filter(v => v.getKeyId == keyId).toList.asJava
         if (res.size() > 0) {
           val specialMap = new util.HashMap[String, String]()
-          specialMap.put("maxValue", res.get(0).getMaxValue)
-          entity.setSpecialLimit(specialMap)
+          val maxValue = res.get(0).getMaxValue
+          if (StringUtils.isNotBlank(maxValue)) {
+            specialMap.put("maxValue", maxValue)
+            entity.setSpecialLimit(specialMap)
+          }
         }
       })
     } else {

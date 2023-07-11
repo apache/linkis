@@ -122,37 +122,5 @@
     order by id
   </select>
 
-  <select id="selectByLabelAndKeyIds" resultType="org.apache.linkis.configuration.entity.TemplateConfigKeyVo">
-    select
-      key_user.key_id,
-      conf.max_value,
-      conf.config_value,
-      conf.min_value
-    from linkis_ps_configuration_key_limit_for_user  key_user
-    left join  linkis_ps_configuration_template_config_key  conf
-    on conf.template_uuid=key_user.latest_update_template_uuid
-    and conf.key_id =key_user.key_id
-    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
-        and key_user.key_id  in
-        <foreach collection="keyIdList" index="index" item="item" separator="," open="(" close=")">
-          #{item}
-        </foreach>
-
-  </select>
-
-  <select id="selectByLabelAndKeyId" resultType="org.apache.linkis.configuration.entity.TemplateConfigKeyVo">
-    select
-    key_user.key_id,
-    conf.max_value,
-    conf.config_value,
-    conf.min_value
-    from linkis_ps_configuration_key_limit_for_user  key_user
-    left join  linkis_ps_configuration_template_config_key  conf
-    on conf.template_uuid=key_user.latest_update_template_uuid
-    and conf.key_id =key_user.key_id
-    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
-    and key_user.key_id =#{keyId}
-
-  </select>
 
 </mapper>

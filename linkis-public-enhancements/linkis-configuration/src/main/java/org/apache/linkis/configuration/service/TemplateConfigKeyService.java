@@ -17,7 +17,7 @@
 
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 
 import java.util.List;
@@ -26,22 +26,22 @@ import java.util.Map;
 public interface TemplateConfigKeyService {
 
   Boolean updateKeyMapping(
-      String templateUid,
-      String templateName,
-      String engineType,
-      String operator,
-      List<TemplateConfigKeyVo> itemList,
-      Boolean isFullMode)
+          String templateUid,
+          String templateName,
+          String engineType,
+          String operator,
+          List<ConfigKeyLimitVo> itemList,
+          Boolean isFullMode)
       throws ConfigurationException;
 
   List<Object> queryKeyInfoList(List<String> uuidList) throws ConfigurationException;
 
   Map<String, Object> apply(
-      String templateUid,
-      String application,
-      String engineType,
-      String engineVersion,
-      String operator,
-      List<String> userList)
+          String templateUid,
+          String application,
+          String engineType,
+          String engineVersion,
+          String operator,
+          List<String> userList)
       throws ConfigurationException;
 }

@@ -452,24 +452,24 @@ public class EMRestfulApi {
       if (Objects.isNull(ecResourceInfoRecord)) {
         return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
       }
-      ecmOperateRequest.parameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
+      // eg logDirSuffix -> root/20230705/io_file/6d48068a-0e1e-44b5-8eb2-835034db5b30/logs
+      String logDirSuffix = ecResourceInfoRecord.getLogDirSuffix();
+      if (!userName.equals(ecResourceInfoRecord.getCreateUser())
+          && Configuration.isNotJobHistoryAdmin(userName)) {
+        logger.warn(
+            "User {} has no permission to get log with path: {} in ECM:{}.",
+            userName,
+            logDirSuffix,
+            ecmNode.getServiceInstance());
+        return Message.error(
+            "You have no permission to get log with path:"
+                + logDirSuffix
+                + " in ECM:"
+                + ecmNode.getServiceInstance());
+      }
+      ecmOperateRequest.parameters().put("logDirSuffix", logDirSuffix);
     }
 
-    // eg logDirSuffix -> root/20230705/io_file/6d48068a-0e1e-44b5-8eb2-835034db5b30/logs
-    String logDirSuffix = ecmOperateRequest.parameters().get("logDirSuffix").toString();
-    String dirsuffix = logDirSuffix.split("/")[0];
-    if (!dirsuffix.equals(userName) && Configuration.isNotJobHistoryAdmin(userName)) {
-      logger.warn(
-          "User {} has no permission to get log with path: {} in ECM:{}.",
-          userName,
-          logDirSuffix,
-          ecmNode.getServiceInstance());
-      return Message.error(
-          "You have no permission to get log with path:"
-              + logDirSuffix
-              + " in ECM:"
-              + ecmNode.getServiceInstance());
-    }
     ECMOperateResponse engineOperateResponse =
         ecmOperateService.executeOperation(ecmNode, ecmOperateRequest);
 

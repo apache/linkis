@@ -98,13 +98,11 @@
     <select id="searchWithIdOrderAsc" useCache="true" resultMap="jobHistoryMap" >
         /*slave*/ SELECT * FROM linkis_ps_job_history_group_history
         <where>
-            <if test="id != null">id >= #{id}</if>
-            <if test="umUser != null">and submit_user = #{umUser}</if>
-            <if test="engineType != null">and engine_type = #{engineType}</if>
             <if test="startDate != null">and created_time >= #{startDate} AND created_time <![CDATA[<=]]> #{endDate}</if>
+            <if test="startId != null">id >= #{startId}</if>
             <if test="status != null">and <foreach collection="status" item="element" close=")" separator="," open="status in (">#{element}</foreach></if>
         </where>
-        ORDER BY linkis_ps_job_history_group_history.id
+        ORDER BY linkis_ps_job_history_group_history.created_time
     </select>
 
     <select id="searchWithUserCreator" useCache="true" resultMap="jobHistoryMap" >

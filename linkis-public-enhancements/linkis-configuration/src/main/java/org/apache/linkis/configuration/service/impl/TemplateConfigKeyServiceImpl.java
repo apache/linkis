@@ -34,7 +34,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -62,6 +65,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
   @Autowired private ValidatorManager validatorManager;
 
   @Autowired private ConfigKeyLimitForUserMapper configKeyLimitForUserMapper;
+
+  @Autowired private PlatformTransactionManager platformTransactionManager;
 
   @Override
   @Transactional
@@ -224,6 +229,13 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           temp.put("validateType", info.getValidateType());
           temp.put("validateRange", info.getValidateRange());
           temp.put("boundaryType", info.getBoundaryType());
+          temp.put("defaultValue", info.getDefaultValue());
+          // for front-end to judge whether input is required
+          if (StringUtils.isNotEmpty(info.getDefaultValue())) {
+            temp.put("require", "true");
+          } else {
+            temp.put("require", "false");
+          }
         }
 
         keys.add(temp);
@@ -318,11 +330,21 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           res.put("msg", "can not get any right key form the db");
           errorList.add(res);
         } else {
-          configMapper.batchInsertOrUpdateValueList(configValues);
 
-          // batch update user ConfigKeyLimitForUserMapper
-          configKeyLimitForUserMapper.batchInsertOrUpdateList(configKeyLimitForUsers);
+          DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+          TransactionStatus status =
+              platformTransactionManager.getTransaction(transactionDefinition);
+          try {
+            configMapper.batchInsertOrUpdateValueList(configValues);
+            // batch update user ConfigKeyLimitForUserMapper
+            configKeyLimitForUserMapper.batchInsertOrUpdateList(configKeyLimitForUsers);
 
+            platformTransactionManager.commit(status); // commit transaction if everything's fine
+          } catch (Exception ex) {
+            platformTransactionManager.rollback(
+                status); // rollback transaction if any error occurred
+            throw ex;
+          }
           successList.add(res);
         }
 

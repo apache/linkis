@@ -253,6 +253,7 @@ object DSSGatewayParser {
   val DSS_URL_DEFAULT_REGEX = (DSS_HEADER + "([^/]+).+").r
 
   val APPCONN_HEADER = normalPath(API_URL_PREFIX) + "rest_[a-zA-Z][a-zA-Z_0-9]*/(v\\d+)/([^/]+)/"
+  val APPCONN_URL_DEFAULT_REGEX = (APPCONN_HEADER + "([^/]+).+").r
   val DSS_URL_FLOW_QUERY_PREFIX =
     (DSS_HEADER + "flow/entrance/" + "([^/]+)/" + "(status|execution)").r
 

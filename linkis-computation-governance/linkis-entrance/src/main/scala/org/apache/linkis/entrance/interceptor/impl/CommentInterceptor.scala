@@ -106,7 +106,7 @@ object ScalaCommentHelper extends CommentHelper {
   override def dealComment(code: String): String = {
     // Append code `val a=1` to prevent bugs that do not exit tasks for a long time
     if (EntranceConfiguration.ENTRANCE_SCALA_APPEND_CODE_ENABLED.getValue) {
-      code + "\nval a=1"
+      code + "\nval linkisVar=1"
     } else {
       code
     }

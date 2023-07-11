@@ -36,6 +36,7 @@
       "log": "Task Log",
       "detail": "Task Detail",
       "result": "Task Result",
+      "engineLog": "Engine Log",
       "startUp": "Start-up",
       "tagEdit": "Edit",
       "tipForKill": "The unlock engines of ECM [{instance}}] will be killed",
@@ -71,6 +72,8 @@
       "noselection": "Please select first",
       "searchName": "Please enter username to search",
       "generalView": "Switch to the Common View",
+      "showAdvancedSearch": "Advanced Search",
+      "hideAdvancedSearch": "Hide Advanced Search",
       "manageView": "Switch to the Admin View",
       "back": "Back",
       "prev": "Previous Step",
@@ -130,8 +133,8 @@
         "minimumAvailableResources": "Minimum Available Resources",
         "startTime": "Start Time",
         "costTime": "Time Elapsed",
-        "executeApplicationName": "Execution Engine",
-        "requestApplicationName": "Created From",
+        "executeApplicationName": "Engine",
+        "requestApplicationName": "App",
         "user": "User",
         "createdTime": "Created at",
         "updateTime": "Update Time",
@@ -212,12 +215,12 @@
           "placeholder": "Please choose the start date"
         },
         "instance": {
-          "label": "Instance",
+          "label": "Entrance Instance",
           "placeholder": "Please search by entering the instance"
       },
         "creator": {
-          "label": "Creator",
-          "placeholder": "Please search by entering the creator"
+          "label": "App",
+          "placeholder": "Please search by entering the application name"
         },
         "engine": {
           "label": "Engine"
@@ -300,7 +303,8 @@
         "hide": "Hide",
         "show": "Show",
         "advancedSetting": "Advanced Settings",
-        "dataDev": "Data Development"
+        "dataDev": "Data Development",
+        "maxLimit": "(The maximum limit specified is {limit})"
       },
       "globalValiable": "Global Variables",
       "rules": {
@@ -440,6 +444,7 @@
       "codeQuery": {
         "executionCode": "Execution Code",
         "dateRange": "Date Range",
+        "engineType": "Engine Type",
         "placeholder": {
             "executionCode": "Please input execution code",
             "dateRange": "Please select date range",

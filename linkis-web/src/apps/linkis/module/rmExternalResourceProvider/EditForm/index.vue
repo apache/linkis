@@ -102,15 +102,6 @@ export default {
           props: {
             placeholder: "",
           },
-          validate: [
-            {
-              required: true,
-              message: `${this.$t(
-                'message.linkis.datasource.pleaseInput'
-              )} `+this.$t('message.linkis.basedataManagement.rmExternalResourceProvider.labels'),
-              trigger: 'blur',
-            },
-          ],
         },
         {
           type: 'v-jsoneditor',

@@ -36,7 +36,7 @@
       <template v-for="(item, index) in variable.settings">
         <div
           :key="index"
-          :title="item.description"
+          :title="`${item.description}${item.specialLimit ? $t('message.linkis.setting.maxLimit', { limit: item.specialLimit.maxValue }) : ''}`"
           class="we-variable-content-item"
           v-if="getItemIsShow(item)">
           <span class="we-variable-content-label-group">

@@ -36,6 +36,7 @@
           "log": "任务日志",
           "detail": "任务详情",
           "result": "任务结果",
+          "engineLog": "引擎日志",
           "startUp": "启动",
           "tagEdit": "编辑",
           "tipForKill": "将要停止此ECM实例 【{instance}】上的空闲引擎",
@@ -71,6 +72,8 @@
           "noselection": "请先选择",
           "searchName": "请输入用户名搜索",
           "generalView": "切换普通视图",
+          "showAdvancedSearch": "高级筛选",
+          "hideAdvancedSearch": "隐藏高级筛选",
           "manageView": "切换管理员视图",
           "back": "返回",
           "prev": "上一步",
@@ -129,8 +132,8 @@
               "maximumAvailableResources": "最大可用资源",
               "minimumAvailableResources": "最小可用资源",
               "startTime": "启动时间",
-              "executeApplicationName": "执行引擎",
-              "requestApplicationName": "创建者",
+              "executeApplicationName": "引擎",
+              "requestApplicationName": "应用",
               "user": "用户",
               "createdTime": "创建时间",
               "updateTime": "更新时间",
@@ -212,7 +215,7 @@
                   "placeholder": "请选择起始日期"
               },
               "instance": {
-                  "label": "实例",
+                  "label": "Entrance 实例",
                   "placeholder": "请输入实例"
               },
               "creator": {
@@ -300,7 +303,8 @@
               "hide": "隐藏",
               "show": "显示",
               "advancedSetting": "高级设置",
-              "dataDev": "数据开发"
+              "dataDev": "数据开发",
+              "maxLimit": "(被指定最大限制为{limit})"
           },
           "globalValiable": "全局变量",
           "rules": {
@@ -608,6 +612,7 @@
         "codeQuery": {
           "executionCode": "执行代码",
           "dateRange": "时间范围",
+          "engineType": "引擎类型",
           "placeholder": {
               "executionCode": "请输入执行代码",
               "dateRange": "时间范围",

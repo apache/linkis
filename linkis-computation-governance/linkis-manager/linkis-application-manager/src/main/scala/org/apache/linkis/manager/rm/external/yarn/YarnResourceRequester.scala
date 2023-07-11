@@ -187,14 +187,16 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
         realQueueName = queueName
         val childQueues = getChildQueuesOfCapacity(resp \ "scheduler" \ "schedulerInfo")
         val queue = getQueueOfCapacity(childQueues)
-        val queueInfo = queue.get.asInstanceOf[JObject]
-        if (queue.isEmpty) {
-          logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(
-            YARN_NOT_EXISTS_QUEUE.getErrorCode,
-            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
-          )
+        val queueOption = Option(queue) match {
+          case Some(queue) => queue
+          case None =>
+            logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
+            throw new RMWarnException(
+              YARN_NOT_EXISTS_QUEUE.getErrorCode,
+              MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
+            )
         }
+        val queueInfo = queueOption.get.asInstanceOf[JObject]
         (
           maxEffectiveHandle(queue).get,
           getYarnResource(queue.map(_ \ "resourcesUsed")).get,
@@ -205,14 +207,16 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       } else if ("fairScheduler".equals(schedulerType)) {
         val childQueues = getChildQueues(resp \ "scheduler" \ "schedulerInfo" \ "rootQueue")
         val queue = getQueue(childQueues)
-        val queueInfo = queue.get.asInstanceOf[JObject]
-        if (queue.isEmpty) {
-          logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
-          throw new RMWarnException(
-            YARN_NOT_EXISTS_QUEUE.getErrorCode,
-            MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
-          )
+        val queueOption = Option(queue) match {
+          case Some(queue) => queue
+          case None =>
+            logger.debug(s"cannot find any information about queue $queueName, response: " + resp)
+            throw new RMWarnException(
+              YARN_NOT_EXISTS_QUEUE.getErrorCode,
+              MessageFormat.format(YARN_NOT_EXISTS_QUEUE.getErrorDesc, queueName)
+            )
         }
+        val queueInfo = queueOption.get.asInstanceOf[JObject]
         (
           getYarnResource(queue.map(_ \ "maxResources")).get,
           getYarnResource(queue.map(_ \ "usedResources")).get,

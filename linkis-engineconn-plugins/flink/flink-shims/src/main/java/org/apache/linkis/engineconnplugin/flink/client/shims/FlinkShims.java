@@ -19,10 +19,6 @@ package org.apache.linkis.engineconnplugin.flink.client.shims;
 
 import java.lang.reflect.Constructor;
 
-/**
- * This is abstract class for anything that is api incompatible between different flink versions. It
- * will load the correct version of FlinkShims based on the version of flink.
- */
 public abstract class FlinkShims {
 
   private static FlinkShims flinkShims;
@@ -49,37 +45,12 @@ public abstract class FlinkShims {
     return (FlinkShims) c.newInstance(flinkVersion);
   }
 
-  /**
-   * @param flinkVersion
-   * @param properties
-   * @return
-   */
   public static FlinkShims getInstance(String flinkVersion) throws Exception {
     if (flinkShims == null) {
       flinkShims = loadShims(flinkVersion);
     }
     return flinkShims;
   }
-
-  //  public abstract Object createScalaBlinkStreamTableEnvironment(
-  //      Object environmentSettingsObj,
-  //      Object senvObj,
-  //      Object tableConfigObj,
-  //      Object moduleManagerObj,
-  //      Object functionCatalogObj,
-  //      Object catalogManagerObj,
-  //      List<URL> jars,
-  //      ClassLoader classLoader);
-  //
-  //  public abstract Object createJavaBlinkStreamTableEnvironment(
-  //      Object environmentSettingsObj,
-  //      Object senvObj,
-  //      Object tableConfigObj,
-  //      Object moduleManagerObj,
-  //      Object functionCatalogObj,
-  //      Object catalogManagerObj,
-  //      List<URL> jars,
-  //      ClassLoader classLoader);
 
   public Object createTableEnvironment(
       Object flinkConfig, Object streamExecEnv, Object sessionState, ClassLoader classLoader) {

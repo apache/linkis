@@ -47,39 +47,11 @@ public class Flink1162Shims extends FlinkShims {
     super(flinkVersion);
   }
 
-  //    @Override
-  //    public Object createScalaBlinkStreamTableEnvironment(
-  //            Object environmentSettingsObj,
-  //            Object senvObj,
-  //            Object tableConfigObj,
-  //            Object moduleManagerObj,
-  //            Object functionCatalogObj,
-  //            Object catalogManagerObj,
-  //            List<URL> jars,
-  //            ClassLoader classLoader) {
-  //        return null;
-  //    }
-  //
-  //    @Override
-  //    public Object createJavaBlinkStreamTableEnvironment(
-  //            Object environmentSettingsObj,
-  //            Object senvObj,
-  //            Object tableConfigObj,
-  //            Object moduleManagerObj,
-  //            Object functionCatalogObj,
-  //            Object catalogManagerObj,
-  //            List<URL> jars,
-  //            ClassLoader classLoader) {
-  //        return null;
-  //    }
-
-  //    private StreamTableEnvironment createTableEnvironment(Configuration flinkConfig,
-  // StreamExecutionEnvironment streamExecEnv, SessionState sessionState, ClassLoader classLoader) {
   public Object createTableEnvironment(
       Object flinkConfig, Object streamExecEnv, Object sessionState, ClassLoader classLoader) {
     Configuration flinkConfigConfiguration = (Configuration) flinkConfig;
     SessionState sessionStateByFlink = (SessionState) sessionState;
-    if (sessionState == null) {
+    if (sessionStateByFlink == null) {
       MutableURLClassLoader mutableURLClassLoader =
           FlinkUserCodeClassLoaders.create(new URL[0], classLoader, flinkConfigConfiguration);
       final ClientResourceManager resourceManager =
@@ -103,15 +75,17 @@ public class Flink1162Shims extends FlinkShims {
       final FunctionCatalog functionCatalog =
           new FunctionCatalog(
               flinkConfigConfiguration, resourceManager, catalogManager, moduleManager);
-      sessionState =
+      sessionStateByFlink =
           new SessionState(catalogManager, moduleManager, resourceManager, functionCatalog);
     }
 
     EnvironmentSettings settings =
         EnvironmentSettings.newInstance().withConfiguration(flinkConfigConfiguration).build();
 
-    streamExecEnv =
-        new StreamExecutionEnvironment(new Configuration(flinkConfigConfiguration), classLoader);
+    if (streamExecEnv == null) {
+      streamExecEnv =
+          new StreamExecutionEnvironment(new Configuration(flinkConfigConfiguration), classLoader);
+    }
 
     final Executor executor =
         lookupExecutor((StreamExecutionEnvironment) streamExecEnv, classLoader);

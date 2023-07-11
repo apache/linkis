@@ -99,9 +99,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val flinkExecutionTarget = FLINK_EXECUTION_TARGET.getValue(options)
 
     val defaultEnv =
-      Environment.parse(
-        this.getClass.getClassLoader.getResource("src/main/resources/flink-sql-defaults.yaml")
-      )
+      Environment.parse(this.getClass.getClassLoader.getResource("flink-sql-defaults.yaml"))
     val hadoopConfDir = EnvConfiguration.HADOOP_CONF_DIR.getValue(options)
     val flinkHome = FLINK_HOME.getValue(options)
     val flinkConfDir = FLINK_CONF_DIR.getValue(options)

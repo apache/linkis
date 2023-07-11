@@ -22,6 +22,7 @@ import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisKubernetesC
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.client.shims.FlinkShims;
 import org.apache.linkis.engineconnplugin.flink.client.shims.SessionState;
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.api.common.ExecutionConfig;
@@ -131,40 +132,20 @@ public class ExecutionContext {
     this.environment = environment;
     this.flinkConfig = flinkConfig;
 
-    //    if (sessionState == null) {
-    //      MutableURLClassLoader mutableURLClassLoader =
-    //          FlinkUserCodeClassLoaders.create(new URL[0], classLoader, flinkConfig);
-    //      final ClientResourceManager resourceManager =
-    //          new ClientResourceManager(flinkConfig, mutableURLClassLoader);
-    //
-    //      final ModuleManager moduleManager = new ModuleManager();
-    //
-    //      final EnvironmentSettings settings =
-    //          EnvironmentSettings.newInstance().withConfiguration(flinkConfig).build();
-    //
-    //      final CatalogManager catalogManager =
-    //          CatalogManager.newBuilder()
-    //              .classLoader(classLoader)
-    //              .config(flinkConfig)
-    //              .defaultCatalog(
-    //                  settings.getBuiltInCatalogName(),
-    //                  new GenericInMemoryCatalog(
-    //                      settings.getBuiltInCatalogName(), settings.getBuiltInDatabaseName()))
-    //              .build();
-    //
-    //      final FunctionCatalog functionCatalog =
-    //          new FunctionCatalog(flinkConfig, resourceManager, catalogManager, moduleManager);
-    //      this.sessionState =
-    //          new SessionState(catalogManager, moduleManager, resourceManager, functionCatalog);
-    //    } else {
-    //      this.sessionState = sessionState;
-    //    }
+    if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_12_2_VERSION())) {
 
-    //    this.tableEnv = createTableEnvironment();
-    this.tableEnv =
-        (TableEnvironment)
-            flinkShims.createTableEnvironment(
-                flinkConfig, streamExecEnv, sessionState, classLoader);
+    } else if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_16_2_VERSION())) {
+      this.streamExecEnv =
+          new StreamExecutionEnvironment(new Configuration(flinkConfig), classLoader);
+      this.tableEnv =
+          (TableEnvironment)
+              flinkShims.createTableEnvironment(
+                  flinkConfig, streamExecEnv, sessionState, classLoader);
+    } else {
+      throw new RuntimeException(
+          "Unsupported flink versions, Currently  only 1.12.2 and 1.16.2 are supported");
+    }
+
     // create class loader
     if (dependencies == null) {
       dependencies = Collections.emptyList();
@@ -178,77 +159,6 @@ public class ExecutionContext {
   public TableEnvironment getTableEnvironment() {
     return tableEnv;
   }
-
-  // ------------------------------------------------------------------------------------------------------------------
-  // Helper to create Table Environment
-  // ------------------------------------------------------------------------------------------------------------------
-
-  //  private StreamTableEnvironment createTableEnvironment() {
-  //    EnvironmentSettings settings =
-  //        EnvironmentSettings.newInstance().withConfiguration(flinkConfig).build();
-  //
-  //    streamExecEnv = new StreamExecutionEnvironment(new Configuration(flinkConfig), classLoader);
-  //
-  //    final Executor executor = lookupExecutor(streamExecEnv, classLoader);
-  //
-  //    return createStreamTableEnvironment(
-  //        streamExecEnv,
-  //        settings,
-  //        executor,
-  //        sessionState.catalogManager,
-  //        sessionState.moduleManager,
-  //        sessionState.resourceManager,
-  //        sessionState.functionCatalog,
-  //        classLoader);
-  //  }
-  //
-  //  private static StreamTableEnvironment createStreamTableEnvironment(
-  //      StreamExecutionEnvironment env,
-  //      EnvironmentSettings settings,
-  //      Executor executor,
-  //      CatalogManager catalogManager,
-  //      ModuleManager moduleManager,
-  //      ResourceManager resourceManager,
-  //      FunctionCatalog functionCatalog,
-  //      ClassLoader userClassLoader) {
-  //
-  //    TableConfig tableConfig = TableConfig.getDefault();
-  //    tableConfig.setRootConfiguration(executor.getConfiguration());
-  //    tableConfig.addConfiguration(settings.getConfiguration());
-  //
-  //    final Planner planner =
-  //        PlannerFactoryUtil.createPlanner(
-  //            executor, tableConfig, userClassLoader, moduleManager, catalogManager,
-  // functionCatalog);
-  //
-  //    return new StreamTableEnvironmentImpl(
-  //        catalogManager,
-  //        moduleManager,
-  //        resourceManager,
-  //        functionCatalog,
-  //        tableConfig,
-  //        env,
-  //        planner,
-  //        executor,
-  //        settings.isStreamingMode());
-  //  }
-  //
-  //  private static Executor lookupExecutor(
-  //      StreamExecutionEnvironment executionEnvironment, ClassLoader userClassLoader) {
-  //    try {
-  //      final ExecutorFactory executorFactory =
-  //          FactoryUtil.discoverFactory(
-  //              userClassLoader, ExecutorFactory.class, ExecutorFactory.DEFAULT_IDENTIFIER);
-  //      final Method createMethod =
-  //          executorFactory.getClass().getMethod("create", StreamExecutionEnvironment.class);
-  //
-  //      return (Executor) createMethod.invoke(executorFactory, executionEnvironment);
-  //    } catch (Exception e) {
-  //      throw new TableException(
-  //          "Could not instantiate the executor. Make sure a planner module is on the classpath",
-  // e);
-  //    }
-  //  }
 
   public StreamExecutionEnvironment getStreamExecutionEnvironment() throws SqlExecutionException {
     if (streamExecEnv == null) {

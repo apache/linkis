@@ -363,7 +363,7 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       impalaSslTruststore,
       impalaSslTruststoreType,
       impalaSslTruststorePassword
-    )
+    ).mkString("/")
 
     impalaClients.synchronized {
       var client = impalaClients.get(impalaClientKey)
@@ -427,8 +427,10 @@ class ImpalaEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
           .map(_.split(','))
           .getOrElse(Array[String]())
           .foreach { str =>
-            val kv = StringUtils.split(str, "=", 2)
-            impalaClient.setQueryOption(kv(0), if (kv.length > 1) kv(1) else "")
+            if (StringUtils.contains(str, "=")) {
+              val kv = StringUtils.split(str, "=", 2)
+              impalaClient.setQueryOption(kv(0), if (kv.length > 1) kv(1) else "")
+            }
           }
 
         client = impalaClient

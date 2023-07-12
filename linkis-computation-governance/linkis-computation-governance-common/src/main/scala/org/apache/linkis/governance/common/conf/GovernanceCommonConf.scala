@@ -86,4 +86,7 @@ object GovernanceCommonConf {
     CommonVars(envKey, "").getValue
   }
 
+  val SCALA_PARSE_APPEND_CODE_ENABLED =
+    CommonVars("linkis.scala.parse.append.code.enable", true).getValue
+
 }

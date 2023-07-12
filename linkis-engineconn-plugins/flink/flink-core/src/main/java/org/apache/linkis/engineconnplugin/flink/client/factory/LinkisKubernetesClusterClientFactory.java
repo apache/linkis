@@ -89,9 +89,6 @@ public class LinkisKubernetesClusterClientFactory extends KubernetesClusterClien
         throw new RuntimeException(e);
       }
     }
-    //    this.flinkKubeClient =
-    //        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
-    //            DefaultKubeClientFactory.getInstance().fromConfiguration(configuration);
     return new KubernetesClusterDescriptor(configuration, flinkKubeClient);
   }
 

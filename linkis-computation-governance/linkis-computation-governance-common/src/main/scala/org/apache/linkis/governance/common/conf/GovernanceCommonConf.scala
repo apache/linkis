@@ -46,7 +46,9 @@ object GovernanceCommonConf {
   val ENGINE_APPLICATION_MANAGER_SPRING_NAME =
     CommonVars("wds.linkis.application.manager.name", "linkis-cg-linkismanager")
 
-  val ENGINE_CONN_PORT_RANGE = CommonVars("wds.linkis.engineconn.port.range", "-")
+  val ENGINE_CONN_PORT_RANGE = CommonVars("linkis.engineconn.port.range", "-")
+
+  val ENGINE_CONN_DEBUG_PORT_RANGE = CommonVars("linkis.engineconn.debug.port.range", "-")
 
   val MANAGER_SERVICE_NAME =
     CommonVars(

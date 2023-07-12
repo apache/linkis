@@ -30,7 +30,8 @@ import org.apache.hadoop.yarn.api.records.ApplicationId;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAdapter {
+public class YarnApplicationClusterDescriptorAdapter
+    extends AbstractApplicationClusterDescriptorAdapter {
 
   YarnApplicationClusterDescriptorAdapter(ExecutionContext executionContext) {
     super(executionContext);

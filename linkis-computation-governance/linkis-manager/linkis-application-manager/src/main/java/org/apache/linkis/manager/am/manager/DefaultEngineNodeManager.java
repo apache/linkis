@@ -89,7 +89,11 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     List<NodeMetrics> nodeMetrics = nodeMetricManagerPersistence.getNodeMetrics(nodes);
     Map<String, NodeMetrics> metricses =
         nodeMetrics.stream()
-            .collect(Collectors.toMap(m -> m.getServiceInstance().toString(), m -> m));
+            .collect(
+                Collectors.toMap(
+                    m -> m.getServiceInstance().toString(),
+                    m -> m,
+                    (existingValue, newValue) -> newValue));
 
     nodes.forEach(
         node -> {
@@ -113,11 +117,14 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
 
   @Override
   public EngineNode getEngineNodeInfoByDB(EngineNode engineNode) {
-    // 1. 从持久化器中获取EngineNode信息，需要获取Task信息和Status信息，方便后面使用
-    engineNode = nodeManagerPersistence.getEngineNode(engineNode.getServiceInstance());
+    EngineNode dbEngineNode = nodeManagerPersistence.getEngineNode(engineNode.getServiceInstance());
+    if (null == dbEngineNode) {
+      throw new LinkisRetryException(
+          AMConstant.ENGINE_ERROR_CODE, engineNode + " not exists in db");
+    }
     metricsConverter.fillMetricsToNode(
-        engineNode, nodeMetricManagerPersistence.getNodeMetrics(engineNode));
-    return engineNode;
+        dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
+    return dbEngineNode;
   }
 
   @Override
@@ -168,11 +175,10 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
     RetryHandler<EngineNode> retryHandler = new DefaultRetryHandler<EngineNode>();
     retryHandler.addRetryException(feign.RetryableException.class);
     retryHandler.addRetryException(UndeclaredThrowableException.class);
-
     // wait until engine to be available
     EngineNode node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
     long retryEndTime = System.currentTimeMillis() + 60 * 1000;
-    while (!NodeStatus.isAvailable(node.getNodeStatus())
+    while ((node == null || !NodeStatus.isAvailable(node.getNodeStatus()))
         && System.currentTimeMillis() < retryEndTime) {
       node = retryHandler.retry(() -> getEngineNodeInfo(engineNode), "getEngineNodeInfo");
       try {
@@ -182,7 +188,7 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
       }
     }
 
-    if (!NodeStatus.isAvailable(node.getNodeStatus())) {
+    if (node == null || !NodeStatus.isAvailable(node.getNodeStatus())) {
       return null;
     }
     if (!NodeStatus.isLocked(node.getNodeStatus())) {

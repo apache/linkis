@@ -45,6 +45,8 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   private String mark;
   private String identifier;
 
+  private String ticketId;
+
   private NodeTaskInfo nodeTaskInfo;
 
   private NodeOverLoadInfo nodeOverLoadInfo;
@@ -188,6 +190,16 @@ public class AMEMNode implements EMNode, ScoreServiceInstance {
   @Override
   public void setNodeHealthyInfo(NodeHealthyInfo nodeHealthyInfo) {
     this.nodeHealthyInfo = nodeHealthyInfo;
+  }
+
+  @Override
+  public String getTicketId() {
+    return ticketId;
+  }
+
+  @Override
+  public void setTicketId(String ticketId) {
+    this.ticketId = ticketId;
   }
 
   @Override

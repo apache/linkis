@@ -227,7 +227,12 @@ public class StorageUtils {
     int readLen = 0;
     try {
       int count = 0;
-      while (readLen < len) {
+      // 当使用s3存储结果文件时时，com.amazonaws.services.s3.model.S3InputStream无法正确读取.dolphin文件。需要在循环条件添加:
+      // readLen >= 0
+      // To resolve the issue when using S3 to store result files and
+      // com.amazonaws.services.s3.model.S3InputStream to read .dolphin files, you need to add the
+      // condition readLen >= 0 in the loop.
+      while (readLen < len && readLen >= 0) {
         count = inputStream.read(bytes, readLen, len - readLen);
 
         if (count == -1 && inputStream.available() < 1) {

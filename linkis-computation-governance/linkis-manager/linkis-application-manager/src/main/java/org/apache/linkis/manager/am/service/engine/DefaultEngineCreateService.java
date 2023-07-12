@@ -337,11 +337,7 @@ public class DefaultEngineCreateService extends AbstractEngineService
   }
 
   private boolean ensuresIdle(EngineNode engineNode, String resourceTicketId) {
-    EngineNode engineNodeInfo =
-        LinkisUtils.tryAndWarnMsg(
-            () -> getEngineNodeManager().getEngineNodeInfoByDB(engineNode),
-            "Failed to from db get engine node info",
-            logger);
+    EngineNode engineNodeInfo = getEngineNodeManager().getEngineNodeInfoByDB(engineNode);
     if (null == engineNodeInfo) {
       return false;
     }
@@ -422,11 +418,13 @@ public class DefaultEngineCreateService extends AbstractEngineService
       EngineStopRequest stopEngineRequest =
           new EngineStopRequest(engineNode.getServiceInstance(), ManagerUtils.getAdminUser());
       engineStopService.asyncStopEngine(stopEngineRequest);
+      if (t instanceof LinkisRetryException) {
+        throw (LinkisRetryException) t;
+      }
       throw new AMErrorException(
           AMConstant.ENGINE_ERROR_CODE,
-          String.format(
-              "Waiting for %s(%s) initialization failure , now stop it.",
-              engineNode, resourceTicketId));
+          String.format("Waiting for %s(%s) initialization failure", engineNode, resourceTicketId),
+          t);
     }
     return engineNode;
   }

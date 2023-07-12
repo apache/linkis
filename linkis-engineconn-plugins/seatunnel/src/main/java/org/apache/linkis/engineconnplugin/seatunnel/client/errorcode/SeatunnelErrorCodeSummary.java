@@ -26,7 +26,7 @@ public enum SeatunnelErrorCodeSummary implements LinkisErrorCode {
       17023, "Not support method for requestExpectedResource.(不支持 requestExpectedResource 的方法)"),
   EXEC_SPARK_CODE_ERROR(17023, "Exec Seatunnel-Spark Code Error(执行 Seatunnel-Spark 代码错误)"),
   EXEC_FLINK_CODE_ERROR(17023, "Exec Seatunnel-Flink Code Error(执行 Seatunnel-Flink 代码错误)"),
-  EXEC_FLINKSQL_CODE_ERROR(17023, "Exec Seatunnel-FlinkSQL Code Error(执行 Seatunnel-FlinkSQL 代码错误)");
+  EXEC_SEATUNNEL_CODE_ERROR(17023, "Exec Seatunnel-Zeta Code Error(执行 Seatunnel-Zeta 代码错误)");
 
   /** (errorCode)错误码 */
   private final int errorCode;

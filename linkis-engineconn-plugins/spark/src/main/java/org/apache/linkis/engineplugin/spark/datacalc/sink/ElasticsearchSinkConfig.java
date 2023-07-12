@@ -36,12 +36,22 @@ public class ElasticsearchSinkConfig extends SinkConfig {
 
   private String password = "";
 
+  private String primaryKey = "";
+
   @NotBlank
   @Pattern(
-      regexp = "^(overwrite|append|ignore|error|errorifexists)$",
+      regexp = "^(overwrite|append|upsert|ignore|error|errorifexists)$",
       message =
-          "Unknown save mode: {saveMode}. Accepted save modes are 'overwrite', 'append', 'ignore', 'error', 'errorifexists'.")
+          "Unknown save mode: {saveMode}. Accepted save modes are 'overwrite', 'append','upsert', 'ignore', 'error', 'errorifexists'.")
   private String saveMode = "overwrite";
+
+  public String getPrimaryKey() {
+    return primaryKey;
+  }
+
+  public void setPrimaryKey(String primaryKey) {
+    this.primaryKey = primaryKey;
+  }
 
   public String getUser() {
     return user;

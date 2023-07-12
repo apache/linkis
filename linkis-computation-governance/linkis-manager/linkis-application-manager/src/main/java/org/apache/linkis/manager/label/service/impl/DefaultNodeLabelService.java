@@ -28,6 +28,7 @@ import org.apache.linkis.manager.label.conf.LabelManagerConf;
 import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.InheritableLabel;
 import org.apache.linkis.manager.label.entity.Label;
+import org.apache.linkis.manager.label.score.LabelScoreServiceInstance;
 import org.apache.linkis.manager.label.score.NodeLabelScorer;
 import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.manager.label.utils.LabelUtils;
@@ -207,7 +208,11 @@ public class DefaultNodeLabelService implements NodeLabelService {
     List<PersistenceLabel> labelList = labelManagerPersistence.getLabelByServiceInstance(instance);
     Map<String, PersistenceLabel> dbLabels =
         labelList.stream()
-            .collect(Collectors.toMap(PersistenceLabel::getLabelKey, Function.identity()));
+            .collect(
+                Collectors.toMap(
+                    PersistenceLabel::getLabelKey,
+                    Function.identity(),
+                    (existingValue, newValue) -> newValue));
 
     List<Integer> labelIds =
         labels.stream()
@@ -359,6 +364,8 @@ public class DefaultNodeLabelService implements NodeLabelService {
       instances = instanceLabels.keySet();
     }
 
+    Map<ScoreServiceInstance, List<Label<?>>> matchInstancesAndLabels = new HashMap<>();
+
     // Get the out-degree relations ( Node -> Label )
     Map<ServiceInstance, List<PersistenceLabel>> outNodeDegree =
         labelManagerPersistence.getLabelRelationsByServiceInstance(new ArrayList<>(instances));
@@ -366,55 +373,40 @@ public class DefaultNodeLabelService implements NodeLabelService {
     if (!outNodeDegree.isEmpty()) {
       Set<String> necessaryLabelKeys =
           necessaryLabels.stream().map(PersistenceLabel::getLabelKey).collect(Collectors.toSet());
-
-      // Rebuild in-degree relations
-      inNodeDegree.clear();
-      List<ServiceInstance> removeNodes = new ArrayList<>();
-      outNodeDegree.forEach(
-          (node, iLabels) -> {
-            // The core tag must be exactly the same
-            if (!necessaryLabels.isEmpty()) {
-              Set<String> coreLabelKeys =
-                  iLabels.stream()
-                      .map(ManagerUtils::persistenceLabelToRealLabel)
-                      .filter(l -> l.getFeature() == Feature.CORE)
-                      .map(Label::getLabelKey)
-                      .collect(Collectors.toSet());
-              if (necessaryLabelKeys.containsAll(coreLabelKeys)
-                  && coreLabelKeys.size() == necessaryLabelKeys.size()) {
-                iLabels.forEach(
-                    label -> {
-                      inNodeDegree.computeIfAbsent(label, (k) -> new ArrayList<>()).add(node);
-                    });
-              } else {
-                removeNodes.add(node);
+      if (null == necessaryLabels || necessaryLabels.isEmpty()) {
+        outNodeDegree.forEach(
+            (node, iLabels) -> {
+              matchInstancesAndLabels.put(
+                  new LabelScoreServiceInstance(node),
+                  iLabels.stream().map(label -> (Label<?>) label).collect(Collectors.toList()));
+            });
+      } else {
+        outNodeDegree.forEach(
+            (node, iLabels) -> {
+              // The core tag must be exactly the same
+              if (!necessaryLabels.isEmpty()) {
+                Set<String> coreLabelKeys =
+                    iLabels.stream()
+                        .map(ManagerUtils::persistenceLabelToRealLabel)
+                        .filter(l -> l.getFeature() == Feature.CORE)
+                        .map(Label::getLabelKey)
+                        .collect(Collectors.toSet());
+                if (necessaryLabelKeys.containsAll(coreLabelKeys)
+                    && coreLabelKeys.size() == necessaryLabelKeys.size()) {
+                  matchInstancesAndLabels.put(
+                      new LabelScoreServiceInstance(node),
+                      iLabels.stream().map(label -> (Label<?>) label).collect(Collectors.toList()));
+                }
               }
-            }
-          });
-
-      // Remove nodes with mismatched labels
-      if (!removeNodes.isEmpty() && removeNodes.size() == outNodeDegree.size()) {
-        logger.info(
-            "The entered labels {} do not match the labels of the node itself", necessaryLabels);
+            });
       }
-
-      removeNodes.forEach(outNodeDegree::remove);
-      Map<ScoreServiceInstance, List<PersistenceLabel>> calculate =
-          nodeLabelScorer.calculate(inNodeDegree, outNodeDegree, labels);
-
-      Map<ScoreServiceInstance, List<Label<?>>> resultMap =
-          calculate.entrySet().stream()
-              .collect(
-                  Collectors.toMap(
-                      Map.Entry::getKey,
-                      e ->
-                          e.getValue().stream()
-                              .map(label -> (Label<?>) label)
-                              .collect(Collectors.toList())));
-
-      return resultMap;
     }
-    return new HashMap<>();
+    // Remove nodes with mismatched labels
+    if (matchInstancesAndLabels.isEmpty()) {
+      logger.info(
+          "The entered labels {} do not match the labels of the node itself", necessaryLabels);
+    }
+    return matchInstancesAndLabels;
   }
 
   private int tryToAddLabel(PersistenceLabel persistenceLabel) {

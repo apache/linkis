@@ -136,7 +136,7 @@
     <gson.version>2.8.9</gson.version>
     <jackson-bom.version>2.13.4.20221013</jackson-bom.version>
     <jsonpath.version>2.7.0</jsonpath.version>
-    <jettison.version>1.5.3</jettison.version>
+    <jettison.version>1.5.4</jettison.version>
     <xstream.core.version>1.4.20</xstream.core.version>
     <woodstox.version>6.4.0</woodstox.version>
     <snakeyaml.version>1.33</snakeyaml.version>
@@ -159,11 +159,13 @@
     <jedis.version>3.9.0</jedis.version>
     <mybatis-plus.version>3.4.3.4</mybatis-plus.version>
     <mysql.connector.version>8.0.28</mysql.connector.version>
-    <postgresql.connector.version>42.2.20</postgresql.connector.version>
+    <mysql.connector.scope>test</mysql.connector.scope>
+    <postgresql.connector.version>42.3.8</postgresql.connector.version>
     <druid.version>1.2.16</druid.version>
+    <mongodb.driver.version>3.12.8</mongodb.driver.version>
 
     <!-- utils -->
-    <guava.version>30.0-jre</guava.version>
+    <guava.version>32.0.0-jre</guava.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>
@@ -197,7 +199,7 @@
     <junit5.version>5.7.2</junit5.version>
     <mockito-bom.version>4.3.1</mockito-bom.version>
     <assertj.version>3.17.2</assertj.version>
-    <h2.version>1.4.200</h2.version>
+    <h2.version>2.2.220</h2.version>
 
     <!-- spring -->
     <spring-framework.version>5.2.23.RELEASE</spring-framework.version>
@@ -350,7 +352,7 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql.connector.version}</version>
-        <scope>test</scope>
+        <scope>${mysql.connector.scope}</scope>
       </dependency>
 
       <dependency>
@@ -1375,6 +1377,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -1562,6 +1565,7 @@
               <exclude>CONTRIBUTING.md</exclude>
               <exclude>CONTRIBUTING_CN.md</exclude>
               <exclude>README.md</exclude>
+              <exclude>.gitmodules</exclude>
               <exclude>**/META-INF/**</exclude>
               <exclude>.github/**</exclude>
               <exclude>compiler/**</exclude>

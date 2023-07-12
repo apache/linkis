@@ -88,7 +88,7 @@
     </sql>
 
     <sql id="Config_Key_Value_Column">
-        k.id, k.key, k.description, k.name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k.treeName,
+        k.id, k.`key`, k.description, k.name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k.treeName,
         v.id as value_id, v.config_key_id,config_value, v.config_label_id
     </sql>
 
@@ -113,7 +113,7 @@
 
     <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
-        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName)
+        id, `key`, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName)
         VALUES (
         #{id}, #{key}, #{description}, #{name}, #{engineType}, #{defaultValue}, #{validateType}, #{validateRange}, #{isHidden}, #{isAdvanced}, #{level}, #{treeName})
     </insert>

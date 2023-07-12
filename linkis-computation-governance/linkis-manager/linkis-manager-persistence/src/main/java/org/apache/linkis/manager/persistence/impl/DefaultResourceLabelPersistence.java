@@ -180,7 +180,9 @@ public class DefaultResourceLabelPersistence implements ResourceLabelPersistence
       Map<String, Map<String, String>> keyValueMaps =
           blankIds.stream()
               .map(PersistenceUtils::entryToTunple)
-              .collect(Collectors.toMap(Tunple::getKey, Tunple::getValue));
+              .collect(
+                  Collectors.toMap(
+                      Tunple::getKey, Tunple::getValue, (existingValue, newValue) -> newValue));
       // labelManagerMapper.batchDeleteResourceByLabelKeyValuesMaps(keyValueMaps);
     }
   }

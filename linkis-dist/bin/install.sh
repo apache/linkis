@@ -20,6 +20,9 @@ shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 common_conf=$LINKIS_HOME/conf/linkis.properties
 
+#Random token switch, default value is false, random token is generated
+DEBUG_MODE=false
+
 #To be compatible with MacOS and Linux
 txt=""
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -63,10 +66,17 @@ echo "======= Step 2: Check env =========="
 sh ${workDir}/bin/checkEnv.sh
 isSuccess "check env"
 
-until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
-     echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
-     exit 1
-done
+if [[ 'postgresql' = "$dbType" ]];then
+  until PGPASSWORD=$PG_PASSWORD psql -h $PG_HOST -p $PG_PORT -U $PG_USER -tc ";" ; do
+         echo "try to connect to linkis postgresql $PG_HOST:$PG_PORT/$PG_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+         exit 1
+    done
+else
+  until mysql -h$MYSQL_HOST -P$MYSQL_PORT -u$MYSQL_USER -p$MYSQL_PASSWORD  -e ";" ; do
+       echo "try to connect to linkis mysql $MYSQL_HOST:$MYSQL_PORT/$MYSQL_DB failed, please check db configuration in:$LINKIS_DB_CONFIG_PATH"
+       exit 1
+  done
+fi
 
 
 ########################  init LINKIS related env  ################################
@@ -110,11 +120,23 @@ RANDOM_BML_TOKEN="BML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3
 RANDOM_LINKIS_CLI_TEST_TOKEN="LINKIS_CLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_WS_TOKEN="WS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
 RANDOM_DSM_TOKEN="DSM-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
-sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
-sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $common_conf
-sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $common_conf
+RANDOM_QML_TOKEN="QML-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_DSS_TOKEN="DSS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_QUALITIS_TOKEN="QUALITIS-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_VALIDATOR_TOKEN="VALIDATOR-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+RANDOM_LINKISCLI_TOKEN="LINKISCLI-`cat /proc/sys/kernel/random/uuid | awk -F- '{print $1$2$3$4$5}'`"
+if [ $DEBUG_MODE != "true" ];then
+  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/conf/linkis-cli/linkis-cli.properties
+  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#QML-AUTH#$RANDOM_QML_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#DSS-AUTH#$RANDOM_DSS_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#QUALITIS-AUTH#$RANDOM_QUALITIS_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#VALIDATOR-AUTH#$RANDOM_VALIDATOR_TOKEN#g" $common_conf
+  sed -i ${txt}  "s#LINKISCLI-AUTH#$RANDOM_LINKISCLI_TOKEN#g" $common_conf
+fi
 
 echo "======= Step 3: Create necessary directory =========="
 
@@ -199,10 +221,17 @@ dml_file_name=linkis_dml.sql
 if [[ 'postgresql' = "$dbType" ]];then
   dml_file_name=linkis_dml_pg.sql
 fi
-sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
-sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+if [ $DEBUG_MODE != "true" ];then
+  sed -i ${txt}  "s#BML-AUTH#$RANDOM_BML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#LINKIS_CLI_TEST#$RANDOM_LINKIS_CLI_TEST_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#WS-AUTH#$RANDOM_WS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#DSM-AUTH#$RANDOM_DSM_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#QML-AUTH#$RANDOM_QML_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#DSS-AUTH#$RANDOM_DSS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#QUALITIS-AUTH#$RANDOM_QUALITIS_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#VALIDATOR-AUTH#$RANDOM_VALIDATOR_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+  sed -i ${txt}  "s#LINKISCLI-AUTH#$RANDOM_LINKISCLI_TOKEN#g" $LINKIS_HOME/db/${dml_file_name}
+fi
 
 
 if [ "$YARN_RESTFUL_URL" != "" ]
@@ -407,11 +436,12 @@ sed -i ${txt}  "s#wds.linkis.server.version.*#wds.linkis.server.version=$LINKIS_
 sed -i ${txt}  "s#wds.linkis.gateway.url.*#wds.linkis.gateway.url=http://$GATEWAY_INSTALL_IP:$GATEWAY_PORT#g" $common_conf
 sed -i ${txt}  "s#linkis.discovery.server-address.*#linkis.discovery.server-address=http://$EUREKA_INSTALL_IP:$EUREKA_PORT#g" $common_conf
 if [[ 'postgresql' = "$dbType" ]];then
-  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DB}?currentSchema=${PG_SCHEMA}#g" $common_conf
+  sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:postgresql://${PG_HOST}:${PG_PORT}/${PG_DB}?currentSchema=${PG_SCHEMA}\&stringtype=unspecified#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$PG_USER#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.password.*#wds.linkis.server.mybatis.datasource.password=$PG_PASSWORD#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.driver-class-name.*#wds.linkis.server.mybatis.datasource.driver-class-name=org.postgresql.Driver#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.mapperLocations.*#wds.linkis.server.mybatis.mapperLocations=classpath*:mapper/common/*.xml,classpath*:mapper/postgresql/*.xml#g" $common_conf
+  sed -i ${txt}  "s#\#linkis.server.mybatis.pagehelper.dialect.*#linkis.server.mybatis.pagehelper.dialect=postgresql#g" $common_conf
 else
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.url.*#wds.linkis.server.mybatis.datasource.url=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?characterEncoding=UTF-8#g" $common_conf
   sed -i ${txt}  "s#wds.linkis.server.mybatis.datasource.username.*#wds.linkis.server.mybatis.datasource.username=$MYSQL_USER#g" $common_conf

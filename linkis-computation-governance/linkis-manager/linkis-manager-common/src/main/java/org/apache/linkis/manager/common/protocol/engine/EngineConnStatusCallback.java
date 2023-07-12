@@ -21,13 +21,7 @@ import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.protocol.message.RequestProtocol;
 
-/**
- * engineConn to ecm
- *
- * @param serviceInstance
- * @param status starting running
- * @param initErrorMsg
- */
+/** engineConn to LM */
 public class EngineConnStatusCallback implements RequestProtocol {
 
   private final ServiceInstance serviceInstance;

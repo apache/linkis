@@ -34,7 +34,7 @@
         parent, name, user_name, description, create_time,update_time, category
     </sql>
     <sql id="udf_Tree_List">
-        parent, name, user_name, description, create_time,update_time, category
+        id, parent, name, user_name, description, create_time,update_time, category
     </sql>
 
     <insert id="addTree" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.udf.entity.UDFTree">

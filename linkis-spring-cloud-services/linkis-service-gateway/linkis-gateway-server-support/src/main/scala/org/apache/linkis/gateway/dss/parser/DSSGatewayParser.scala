@@ -238,8 +238,10 @@ class DSSGatewayParser extends AbstractGatewayParser {
         retService
       }
     }
-    val lowerServiceId = parsedServiceId.toLowerCase(Locale.getDefault())
+    var lowerServiceId = parsedServiceId.toLowerCase(Locale.getDefault())
     val serverName = tmpServerName.toLowerCase(Locale.getDefault())
+    // 让prod的接口匹配到prod的服务
+    if (serverName.endsWith("-prod")) lowerServiceId += "/prod"
     findIt(_.toLowerCase(Locale.getDefault()) == serverName).orElse(findMostCorrect(service => {
       (service, lowerServiceId.split("/").count(word => service.contains(word)))
     }))

@@ -236,7 +236,7 @@
         <!--linkis-cli-->
         <fileSet>
             <directory>
-                ../linkis-computation-governance/linkis-client/linkis-cli/linkis-cli-application/target/out/lib
+                ../linkis-computation-governance/linkis-client/linkis-cli/target/out/lib
             </directory>
             <outputDirectory>
                 linkis-package/lib/linkis-computation-governance/linkis-client/linkis-cli

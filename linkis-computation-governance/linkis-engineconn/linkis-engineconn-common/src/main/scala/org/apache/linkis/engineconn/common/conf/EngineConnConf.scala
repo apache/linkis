@@ -37,7 +37,7 @@ object EngineConnConf {
 
   val ENGINE_CONN_ONCE_HOOKS = CommonVars(
     "linkis.engine.connector.once.hooks",
-    "org.apache.linkis.engineconn.computation.executor.hook.ComputationEngineConnHook"
+    "org.apache.linkis.engineconn.once.executor.hook.OnceEngineConnHook"
   )
 
   val ENGINE_LAUNCH_CMD_PARAMS_USER_KEY =
@@ -78,6 +78,9 @@ object EngineConnConf {
 
   val HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX =
     CommonVars("wds.linkis.hive.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
+
+  val SEATUNNEL_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX =
+    CommonVars("wds.linkis.seatunnel.engine.yarn.app.id.parse.regex", "(application_\\d{13}_\\d+)")
 
   def getWorkHome: String = System.getenv(ENGINE_CONN_LOCAL_PATH_PWD_KEY.getValue)
 

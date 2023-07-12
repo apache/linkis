@@ -22,7 +22,10 @@ import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment
 import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
+import org.apache.linkis.engineconnplugin.flink.config.{
+  FlinkEnvConfiguration,
+  FlinkExecutionTargetType
+}
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
@@ -41,6 +44,7 @@ import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
+import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
@@ -91,6 +95,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       engineCreationContext: EngineCreationContext
   ): EnvironmentContext = {
     val options = engineCreationContext.getOptions
+    val flinkExecutionTarget = FLINK_EXECUTION_TARGET.getValue(options)
+
     val defaultEnv =
       Environment.parse(this.getClass.getClassLoader.getResource("flink-sql-defaults.yaml"))
     val hadoopConfDir = EnvConfiguration.HADOOP_CONF_DIR.getValue(options)
@@ -112,7 +118,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkProvidedLibPath,
       providedLibDirsArray,
       shipDirsArray,
-      new util.ArrayList[URL]
+      new util.ArrayList[URL],
+      flinkExecutionTarget
     )
     // Step1: environment-level configurations
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
@@ -137,20 +144,24 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (flinkProvidedLibPathList != null && flinkProvidedLibPathList.size() > 0) {
       providedLibDirList.addAll(flinkProvidedLibPathList)
     }
-    // if(StringUtils.isNotBlank(flinkLibRemotePath)) providedLibDirList.add(flinkLibRemotePath)
-    flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
-    // construct jar-dependencies
-    flinkConfig.set(YarnConfigOptions.SHIP_FILES, context.getShipDirs)
+    if (
+        !FlinkExecutionTargetType
+          .isKubernetesExecutionTargetType(flinkExecutionTarget)
+    ) {
+      flinkConfig.set(YarnConfigOptions.PROVIDED_LIB_DIRS, providedLibDirList)
+      // construct jar-dependencies
+      flinkConfig.set(YarnConfigOptions.SHIP_FILES, context.getShipDirs)
+      // yarn application name
+      flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
+      // yarn queue
+      flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
+    }
     // set user classpaths
     val classpaths = FLINK_APPLICATION_CLASSPATH.getValue(options)
     if (StringUtils.isNotBlank(classpaths)) {
       logger.info(s"Add $classpaths to flink application classpath.")
       flinkConfig.set(PipelineOptions.CLASSPATHS, util.Arrays.asList(classpaths.split(","): _*))
     }
-    // yarn application name
-    flinkConfig.set(YarnConfigOptions.APPLICATION_NAME, jobName)
-    // yarn queue
-    flinkConfig.set(YarnConfigOptions.APPLICATION_QUEUE, yarnQueue)
     // Configure resource/concurrency
     flinkConfig.setInteger(CoreOptions.DEFAULT_PARALLELISM, parallelism)
     flinkConfig.set(JobManagerOptions.TOTAL_PROCESS_MEMORY, MemorySize.parse(jobManagerMemory))
@@ -194,9 +205,13 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         SavepointRestoreSettings.forPath(savePointPath, allowNonRestoredState)
       SavepointRestoreSettings.toConfiguration(savepointRestoreSettings, flinkConfig)
     }
+
     // Configure user-entrance jar. Can be HDFS file, but only support 1 jar
     val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
-    if (StringUtils.isNotBlank(flinkMainClassJar)) {
+    if (
+        StringUtils.isNotBlank(flinkMainClassJar) && FlinkExecutionTargetType
+          .isYarnExecutionTargetType(flinkExecutionTarget)
+    ) {
       val flinkMainClassJarPath =
         if (new File(flinkMainClassJar).exists()) flinkMainClassJar
         else getClass.getClassLoader.getResource(flinkMainClassJar).getPath
@@ -206,12 +221,49 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJarPath))
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.APPLICATION.getName)
       flinkConfig.setBoolean(DeploymentOptions.ATTACHED, FLINK_EXECUTION_ATTACHED.getValue(options))
-      context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION)
+      context.setDeploymentTarget(YarnDeploymentTarget.APPLICATION.getName)
       addApplicationLabels(engineCreationContext)
     } else if (isOnceEngineConn(engineCreationContext.getLabels())) {
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.PER_JOB.getName)
     } else {
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.SESSION.getName)
+    }
+
+    // set kubernetes config
+    if (
+        StringUtils.isNotBlank(flinkExecutionTarget) && FlinkExecutionTargetType
+          .isKubernetesExecutionTargetType(flinkExecutionTarget)
+    ) {
+      flinkConfig.set(DeploymentOptions.TARGET, flinkExecutionTarget)
+      context.setDeploymentTarget(flinkExecutionTarget)
+
+      val kubernetesConfigFile = FLINK_KUBERNETES_CONFIG_FILE.getValue(options)
+      if (StringUtils.isBlank(kubernetesConfigFile)) {
+        throw new FlinkInitFailedException(KUBERNETES_CONFIG_FILE_EMPTY.getErrorDesc)
+      }
+
+      flinkConfig.set(KubernetesConfigOptions.KUBE_CONFIG_FILE, kubernetesConfigFile)
+
+      flinkConfig.set(
+        KubernetesConfigOptions.NAMESPACE,
+        FLINK_KUBERNETES_NAMESPACE.getValue(options)
+      )
+      flinkConfig.set(
+        KubernetesConfigOptions.CONTAINER_IMAGE,
+        FLINK_KUBERNETES_CONTAINER_IMAGE.getValue(options)
+      )
+      val kubernetesClusterId = FLINK_KUBERNETES_CLUSTER_ID.getValue(options)
+      if (StringUtils.isNotBlank(kubernetesClusterId)) {
+        flinkConfig.set(KubernetesConfigOptions.CLUSTER_ID, kubernetesClusterId)
+      }
+
+      val serviceAccount = FLINK_KUBERNETES_SERVICE_ACCOUNT.getValue(options)
+      flinkConfig.set(KubernetesConfigOptions.KUBERNETES_SERVICE_ACCOUNT, serviceAccount)
+
+      val flinkMainClassJar = FLINK_APPLICATION_MAIN_CLASS_JAR.getValue(options)
+      if (StringUtils.isNotBlank(flinkMainClassJar)) {
+        flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJar))
+      }
     }
     context
   }
@@ -294,7 +346,9 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       environmentContext: EnvironmentContext
   ): ExecutionContext = {
     val environment = environmentContext.getDeploymentTarget match {
-      case YarnDeploymentTarget.PER_JOB | YarnDeploymentTarget.SESSION =>
+      // Otherwise, an error is generated: stable identifier required, but PER_JOB.getName found.
+      case FlinkExecutionTargetType.YARN_PER_JOB | FlinkExecutionTargetType.YARN_SESSION |
+          FlinkExecutionTargetType.KUBERNETES_SESSION =>
         val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
         if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase(Locale.getDefault))) {
           throw new FlinkInitFailedException(
@@ -340,12 +394,12 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
           )
         }
         Environment.enrich(environmentContext.getDefaultEnv, properties, Collections.emptyMap())
-      case YarnDeploymentTarget.APPLICATION => null
+      case FlinkExecutionTargetType.YARN_APPLICATION |
+          FlinkExecutionTargetType.KUBERNETES_APPLICATION =>
+        null
       case t =>
-        logger.error(s"Not supported YarnDeploymentTarget ${t.getName}.")
-        throw new FlinkInitFailedException(
-          NOT_SUPPORTED_YARNTARGET.getErrorDesc + s" ${t.getName}."
-        )
+        logger.error(s"Not supported YarnDeploymentTarget ${t}.")
+        throw new FlinkInitFailedException(NOT_SUPPORTED_YARNTARGET.getErrorDesc + s" ${t}.")
     }
     val executionContext = ExecutionContext
       .builder(

@@ -37,6 +37,9 @@ public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   PLANNER_MUST_THESE(16020, "Planner must be one of:{}(Planner 必须是以下之一)."),
   EXECUTION_MUST_THESE(16020, "Execution type must be one of:{}(Execution 类型必须是以下之一)."),
   NOT_SUPPORTED_YARNTARGET(16020, "Not supported YarnDeploymentTarget(不支持 YarnDeploymentTarget)"),
+
+  KUBERNETES_CONFIG_FILE_EMPTY(
+      16020, "The kubernetes config file is empty:{}(kubernetes config file为空)."),
   UNKNOWN_CHECKPOINT_MODE(16020, "Unknown checkpoint mode:{0}(未知的 checkpoint 模式)."),
   HUDIJARS_NOT_EXISTS(16020, "hudi jars does not exist(hudi jars 不存在)."),
   PATH_NOT_EXIST(16020, "The path:{0} is not exist or is not a directory(路径：{0}不存在或不是目录)"),
@@ -74,8 +77,8 @@ public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   INVALID_SQL_STATEMENT(16022, "Invalid SQL statement.(无效的 SQL 语句.)"),
   NO_TABLE_FOUND(16022, "No table with this name could be found.(找不到具有此名称的表.)"),
   INVALID_SQL_QUERY(16022, "Invalid SQL query.(无效的 SQL 查询.)"),
-  FAILED_SWITCH_DATABASE(16022, "Failed to switch to catalog (无法切换到目录):{0}"),
-  FAILED_SWITCH_CATALOG(16022, "Failed to switch to database (无法切换到数据库):{0}"),
+  FAILED_SWITCH_DATABASE(16022, "Failed to switch to database (无法切换到数据库):{0}"),
+  FAILED_SWITCH_CATALOG(16022, "Failed to switch to catalog (无法切换到目录):{0}"),
   SQL_EXECUTION_ID(16022, ""),
   NO_JOB_SUBMITTED(16023, "No job has been submitted. This is a bug.(未提交任何作业,这是一个错误.)"),
   NOT_SAVEPOINT_MODE(16023, "not supported savepoint operator mode(不支持保存点操作员模式)"),
@@ -99,6 +102,9 @@ public enum FlinkErrorCodeSummary implements LinkisErrorCode {
   NOT_SUPPORT_FLINK(
       20001,
       "Not support ClusterDescriptorAdapter for flink application.(不支持 flink 应用的 ClusterDescriptorAdapter.)"),
+  KUBERNETES_IS_NULL(
+      20001,
+      "The application start failed, since kubernetes kubernetesClusterID is null.(应用程序启动失败，因为 kubernetes kubernetesClusterID  为 null.)"),
   YARN_IS_NULL(
       20001,
       "The application start failed, since yarn applicationId is null.(应用程序启动失败，因为 yarn applicationId 为 null.)"),

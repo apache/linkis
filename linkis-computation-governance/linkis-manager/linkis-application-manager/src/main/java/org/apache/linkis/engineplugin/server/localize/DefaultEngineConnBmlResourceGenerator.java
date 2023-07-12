@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.server.localize;
 
 import org.apache.linkis.common.utils.ZipUtils;
 import org.apache.linkis.manager.engineplugin.common.exception.EngineConnPluginErrorException;
+import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -29,7 +30,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.CONTAINS_SPECIAL_CHARCATERS;
 import static org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary.NO_PERMISSION_FILE;
 
 public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBmlResourceGenerator {
@@ -47,12 +47,11 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
 
       File versionFile = new File(path);
       logger.info("generate, versionFile:" + path);
-      String key = versionFile.getName();
-      if (key.contains("-")) {
-        throw new EngineConnPluginErrorException(
-            CONTAINS_SPECIAL_CHARCATERS.getErrorCode(),
-            MessageFormat.format(CONTAINS_SPECIAL_CHARCATERS.getErrorDesc(), engineConnType));
+      if (!versionFile.isDirectory()) {
+        logger.warn("File is not dir {},skip to upload", path);
+        continue;
       }
+      String key = versionFile.getName();
 
       try {
         EngineConnLocalizeResource[] engineConnLocalizeResources =
@@ -75,6 +74,12 @@ public class DefaultEngineConnBmlResourceGenerator extends AbstractEngineConnBml
 
   private EngineConnLocalizeResource[] generateDir(String path) {
     File distFile = new File(path);
+    if (!distFile.isDirectory()) {
+      logger.warn("File is not dir {},skip to upload", path);
+      throw new EngineConnPluginErrorException(
+          EngineconnCoreErrorCodeSummary.DIST_IRREGULAR_EXIST.getErrorCode(),
+          path + " is not dir, to delete this file then retry");
+    }
     logger.info("generateDir, distFile:" + path);
     File[] validFiles =
         distFile.listFiles(

@@ -26,10 +26,8 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus;
 import org.apache.linkis.manager.common.entity.metrics.AMNodeMetrics;
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback;
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallbackToAM;
-import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 import org.apache.linkis.manager.persistence.NodeMetricManagerPersistence;
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter;
-import org.apache.linkis.rpc.Sender$;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,10 +40,14 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class DefaultEngineConnStatusCallbackService implements EngineConnStatusCallbackService {
-  private org.slf4j.Logger logger =
-      org.slf4j.LoggerFactory.getLogger(DefaultEngineConnStatusCallbackService.class);
+
+  private static final Logger logger =
+      LoggerFactory.getLogger(DefaultEngineConnStatusCallbackService.class);
 
   @Autowired private NodeMetricManagerPersistence nodeMetricManagerPersistence;
 
@@ -63,19 +65,6 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
         protocol.getServiceInstance(),
         protocol.getStatus());
     if (!NodeStatus.isAvailable(protocol.getStatus())) {
-      EngineStopRequest engineStopRequest = new EngineStopRequest();
-      engineStopRequest.setServiceInstance(protocol.getServiceInstance());
-      engineStopRequest.setUser("hadoop");
-      try {
-        engineStopService.stopEngine(
-            engineStopRequest, Sender$.MODULE$.getSender(Sender$.MODULE$.getThisServiceInstance()));
-      } catch (Exception e) {
-        logger.warn(
-            "DefaultEngineConnStatusCallbackService stopEngine failed, serviceInstance:{}",
-            engineStopRequest.getServiceInstance(),
-            e);
-      }
-
       dealEngineConnStatusCallbackToAM(
           new EngineConnStatusCallbackToAM(
               protocol.getServiceInstance(),
@@ -83,7 +72,6 @@ public class DefaultEngineConnStatusCallbackService implements EngineConnStatusC
               protocol.getInitErrorMsg(),
               false));
     }
-    logger.info("Finished to deal EngineConnStatusCallback: {}", protocol);
   }
 
   @Receiver

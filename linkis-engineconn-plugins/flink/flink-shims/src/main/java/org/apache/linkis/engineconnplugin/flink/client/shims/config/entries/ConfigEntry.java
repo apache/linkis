@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.FlinkInitFailedException;
 
 import org.apache.flink.table.api.ValidationException;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
 import java.util.Map;
 import java.util.Objects;
-
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.CONFIGURATION_ENTRY_INVALID;
 
 public abstract class ConfigEntry {
 
@@ -35,7 +34,8 @@ public abstract class ConfigEntry {
     try {
       validate(properties);
     } catch (ValidationException e) {
-      throw new FlinkInitFailedException(CONFIGURATION_ENTRY_INVALID.getErrorDesc(), e);
+      throw new FlinkInitFailedException(
+          FlinkErrorCodeSummary.CONFIGURATION_ENTRY_INVALID.getErrorDesc(), e);
     }
 
     this.properties = properties;

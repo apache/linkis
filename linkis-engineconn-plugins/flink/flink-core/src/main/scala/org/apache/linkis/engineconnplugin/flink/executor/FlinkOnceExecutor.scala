@@ -26,13 +26,13 @@ import org.apache.linkis.engineconnplugin.flink.client.deployment.{
   ClusterDescriptorAdapter,
   ClusterDescriptorAdapterFactory
 }
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.ExecutorInitException
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
   FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX,
   FLINK_ONCE_APP_STATUS_FETCH_INTERVAL
 }
 import org.apache.linkis.engineconnplugin.flink.config.FlinkExecutionTargetType
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.ExecutorInitException
 import org.apache.linkis.engineconnplugin.flink.executor.interceptor.FlinkJobSubmitInterceptor
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 

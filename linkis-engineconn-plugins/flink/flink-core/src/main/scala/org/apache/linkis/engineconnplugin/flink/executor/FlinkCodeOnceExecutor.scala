@@ -20,15 +20,15 @@ package org.apache.linkis.engineconnplugin.flink.executor
 import org.apache.linkis.common.utils.{ByteTimeUtils, Utils, VariableUtils}
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.deployment.YarnPerJobClusterDescriptorAdapter
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.{
+  FlinkInitFailedException,
+  SqlParseException
+}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind.SUCCESS_WITH_CONTENT
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.{SqlCommand, SqlCommandParser}
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.{
-  FlinkInitFailedException,
-  SqlParseException
-}
 import org.apache.linkis.governance.common.paser.{CodeParserFactory, CodeType}
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.scheduler.executer.ErrorExecuteResponse

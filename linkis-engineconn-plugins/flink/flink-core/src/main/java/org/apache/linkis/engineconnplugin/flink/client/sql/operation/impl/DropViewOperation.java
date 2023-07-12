@@ -17,17 +17,17 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.TableEntry;
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.ViewEntry;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.TableEntry;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.ViewEntry;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationUtil;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_EXIST_SESSION;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.NOT_EXIST_SESSION;
 
 /** Operation for DROP VIEW command. */
 public class DropViewOperation implements NonJobOperation {

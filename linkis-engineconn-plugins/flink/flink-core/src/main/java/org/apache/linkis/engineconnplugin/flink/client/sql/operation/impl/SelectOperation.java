@@ -23,11 +23,11 @@ import org.apache.linkis.engineconnplugin.flink.client.result.BatchResult;
 import org.apache.linkis.engineconnplugin.flink.client.result.ChangelogResult;
 import org.apache.linkis.engineconnplugin.flink.client.result.ResultUtil;
 import org.apache.linkis.engineconnplugin.flink.client.result.TypedResult;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.api.common.ExecutionMode;
 import org.apache.flink.api.common.JobID;
@@ -51,7 +51,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.*;
 
 /** Operation for SELECT command. */
 public class SelectOperation extends AbstractJobOperation {

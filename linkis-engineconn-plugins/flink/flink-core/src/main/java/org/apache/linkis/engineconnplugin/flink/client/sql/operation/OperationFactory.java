@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandCall;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 
 public interface OperationFactory {
 

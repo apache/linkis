@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -46,8 +46,8 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_SOCKET_RETRIEVAL;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.NOT_SOCKET_RETRIEVAL;
 
 public class ChangelogResult extends AbstractResult<ApplicationId, Tuple2<Boolean, Row>> {
 

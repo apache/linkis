@@ -18,9 +18,9 @@
 package org.apache.linkis.engineconnplugin.flink.ql
 
 import org.apache.linkis.common.utils.ClassUtils
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException
 
 import java.text.MessageFormat
 

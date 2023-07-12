@@ -17,16 +17,16 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.*;
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandCall;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
 import java.text.MessageFormat;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ONLY_RESET_ALL;
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.SUPPORTED_COMMAND_CALL;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.ONLY_RESET_ALL;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.SUPPORTED_COMMAND_CALL;
 
 public class OperationFactoryImpl implements OperationFactory {
 

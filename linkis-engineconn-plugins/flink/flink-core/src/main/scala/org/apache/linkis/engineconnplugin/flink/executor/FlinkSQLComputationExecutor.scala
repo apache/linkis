@@ -26,6 +26,11 @@ import org.apache.linkis.engineconnplugin.flink.client.deployment.{
   AbstractSessionClusterDescriptorAdapter,
   ClusterDescriptorAdapterFactory
 }
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.{
+  ExecutorInitException,
+  SqlParseException
+}
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{
   AbstractJobOperation,
   JobOperation,
@@ -39,8 +44,6 @@ import org.apache.linkis.engineconnplugin.flink.config.{
   FlinkExecutionTargetType
 }
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
 import org.apache.linkis.engineconnplugin.flink.listener.{
   FlinkStreamingResultSetListener,
   InteractiveFlinkStatusListener

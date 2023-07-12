@@ -18,10 +18,10 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.AbstractJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 
 import org.apache.flink.api.common.JobID;
@@ -41,7 +41,7 @@ import java.util.concurrent.CompletableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
 
 /** Operation for INSERT command. */
 public class InsertOperation extends AbstractJobOperation {

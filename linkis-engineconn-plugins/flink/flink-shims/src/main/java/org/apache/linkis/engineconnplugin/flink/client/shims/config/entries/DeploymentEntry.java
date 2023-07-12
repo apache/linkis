@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.ConfigUtil;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -33,7 +33,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.client.config.Environment.DEPLOYMENT_ENTRY;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment.DEPLOYMENT_ENTRY;
 
 /**
  * Configuration of a Flink cluster deployment. This class parses the `deployment` part in an

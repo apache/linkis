@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.*;
-import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.*;
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.FlinkInitFailedException;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -30,8 +31,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class Environment {
 
@@ -78,7 +77,8 @@ public class Environment {
       final ModuleEntry entry = ModuleEntry.create(config);
       if (this.modules.containsKey(entry.getName())) {
         throw new FlinkInitFailedException(
-            MessageFormat.format(CANNOT_MODULE_ALREADY.getErrorDesc(), entry.getName()));
+            MessageFormat.format(
+                FlinkErrorCodeSummary.CANNOT_MODULE_ALREADY.getErrorDesc(), entry.getName()));
       }
       this.modules.put(entry.getName(), entry);
     }
@@ -95,7 +95,8 @@ public class Environment {
       final CatalogEntry catalog = CatalogEntry.create(config);
       if (this.catalogs.containsKey(catalog.getName())) {
         throw new FlinkInitFailedException(
-            MessageFormat.format(CANNOT_CATALOG_ALREADY.getErrorDesc(), catalog.getName()));
+            MessageFormat.format(
+                FlinkErrorCodeSummary.CANNOT_CATALOG_ALREADY.getErrorDesc(), catalog.getName()));
       }
       this.catalogs.put(catalog.getName(), catalog);
     }
@@ -112,7 +113,8 @@ public class Environment {
       final TableEntry table = TableEntry.create(config);
       if (this.tables.containsKey(table.getName())) {
         throw new FlinkInitFailedException(
-            MessageFormat.format(CANNOT_TABLE_ALREADY.getErrorDesc(), table.getName()));
+            MessageFormat.format(
+                FlinkErrorCodeSummary.CANNOT_TABLE_ALREADY.getErrorDesc(), table.getName()));
       }
       this.tables.put(table.getName(), table);
     }
@@ -129,7 +131,8 @@ public class Environment {
       final FunctionEntry function = FunctionEntry.create(config);
       if (this.functions.containsKey(function.getName())) {
         throw new FlinkInitFailedException(
-            MessageFormat.format(CANNOT_FUNCTION_ALREADY.getErrorDesc(), function.getName()));
+            MessageFormat.format(
+                FlinkErrorCodeSummary.CANNOT_FUNCTION_ALREADY.getErrorDesc(), function.getName()));
       }
       this.functions.put(function.getName(), function);
     }
@@ -216,7 +219,9 @@ public class Environment {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(url, Environment.class);
     } catch (JsonMappingException e) {
       throw new FlinkInitFailedException(
-          MessageFormat.format(BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()), e);
+          MessageFormat.format(
+              FlinkErrorCodeSummary.BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()),
+          e);
     }
   }
 
@@ -226,7 +231,9 @@ public class Environment {
       return new ConfigUtil.LowerCaseYamlMapper().readValue(content, Environment.class);
     } catch (JsonMappingException e) {
       throw new FlinkInitFailedException(
-          MessageFormat.format(BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()), e);
+          MessageFormat.format(
+              FlinkErrorCodeSummary.BOT_PARSE_ENVIRONMENT.getErrorDesc(), e.getMessage()),
+          e);
     }
   }
 

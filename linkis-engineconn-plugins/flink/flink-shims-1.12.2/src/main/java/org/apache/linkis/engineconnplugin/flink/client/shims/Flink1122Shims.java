@@ -17,13 +17,15 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.*;
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
+
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.client.program.ClusterClient;
-import org.apache.flink.client.program.StreamContextEnvironment;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.core.execution.DefaultExecutorServiceLoader;
-import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.Table;
@@ -50,11 +52,7 @@ import org.apache.flink.table.module.ModuleManager;
 import org.apache.flink.table.sinks.TableSink;
 import org.apache.flink.table.sources.TableSource;
 import org.apache.flink.util.TemporaryClassLoaderContext;
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.*;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -62,8 +60,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class Flink1122Shims extends FlinkShims {
   private SessionState sessionState;
@@ -80,34 +76,41 @@ public class Flink1122Shims extends FlinkShims {
 
   private ExecutionEnvironment execEnv;
 
-
-
   public Flink1122Shims(String flinkVersion) {
     super(flinkVersion);
   }
 
-
-
   @Override
-  public CompletableFuture<String> triggerSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+  public CompletableFuture<String> triggerSavepoint(
+      Object clusterClientObject, Object jobIdObject, String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.triggerSavepoint((JobID)jobIdObject, savepoint);
+    return clusterClient.triggerSavepoint((JobID) jobIdObject, savepoint);
   }
 
   @Override
-  public CompletableFuture<String> cancelWithSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+  public CompletableFuture<String> cancelWithSavepoint(
+      Object clusterClientObject, Object jobIdObject, String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.cancelWithSavepoint((JobID)jobIdObject, savepoint);
+    return clusterClient.cancelWithSavepoint((JobID) jobIdObject, savepoint);
   }
 
   @Override
-  public CompletableFuture<String> stopWithSavepoint(Object clusterClientObject, Object jobIdObject, boolean advanceToEndOfEventTime, String savepoint) {
+  public CompletableFuture<String> stopWithSavepoint(
+      Object clusterClientObject,
+      Object jobIdObject,
+      boolean advanceToEndOfEventTime,
+      String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.stopWithSavepoint((JobID)jobIdObject,advanceToEndOfEventTime, savepoint);
+    return clusterClient.stopWithSavepoint((JobID) jobIdObject, advanceToEndOfEventTime, savepoint);
   }
 
-  private void initializeTableEnvironment(Object environmentObject,Object flinkConfigObject, Object streamExecEnvObject, Object sessionStateObject, ClassLoader classLoader)
-          throws SqlExecutionException {
+  private void initializeTableEnvironment(
+      Object environmentObject,
+      Object flinkConfigObject,
+      Object streamExecEnvObject,
+      Object sessionStateObject,
+      ClassLoader classLoader)
+      throws SqlExecutionException {
     Configuration flinkConfig = (Configuration) flinkConfigObject;
     SessionState sessionState = (SessionState) sessionStateObject;
     this.streamExecEnv = (StreamExecutionEnvironment) streamExecEnvObject;
@@ -117,9 +120,9 @@ public class Flink1122Shims extends FlinkShims {
     // Step 0.0 Initialize the table configuration.
     final TableConfig config = new TableConfig();
     environment
-            .getConfiguration()
-            .asMap()
-            .forEach((k, v) -> config.getConfiguration().setString(k, v));
+        .getConfiguration()
+        .asMap()
+        .forEach((k, v) -> config.getConfiguration().setString(k, v));
     final boolean noInheritedState = sessionState == null;
     if (noInheritedState) {
       // --------------------------------------------------------------------------------------------------------------
@@ -129,17 +132,17 @@ public class Flink1122Shims extends FlinkShims {
       final ModuleManager moduleManager = new ModuleManager();
       // Step 1.1 Initialize the CatalogManager if required.
       final CatalogManager catalogManager =
-              CatalogManager.newBuilder()
-                      .classLoader(classLoader)
-                      .config(config.getConfiguration())
-                      .defaultCatalog(
-                              settings.getBuiltInCatalogName(),
-                              new GenericInMemoryCatalog(
-                                      settings.getBuiltInCatalogName(), settings.getBuiltInDatabaseName()))
-                      .build();
+          CatalogManager.newBuilder()
+              .classLoader(classLoader)
+              .config(config.getConfiguration())
+              .defaultCatalog(
+                  settings.getBuiltInCatalogName(),
+                  new GenericInMemoryCatalog(
+                      settings.getBuiltInCatalogName(), settings.getBuiltInDatabaseName()))
+              .build();
       // Step 1.2 Initialize the FunctionCatalog if required.
       final FunctionCatalog functionCatalog =
-              new FunctionCatalog(config, catalogManager, moduleManager);
+          new FunctionCatalog(config, catalogManager, moduleManager);
       // Step 1.4 Set up session state.
       this.sessionState = SessionState.of(catalogManager, moduleManager, functionCatalog);
 
@@ -152,8 +155,8 @@ public class Flink1122Shims extends FlinkShims {
       // No need to register the modules info if already inherit from the same session.
       Map<String, Module> modules = new LinkedHashMap<>();
       environment
-              .getModules()
-              .forEach((name, entry) -> modules.put(name, createModule(entry.asMap(), classLoader)));
+          .getModules()
+          .forEach((name, entry) -> modules.put(name, createModule(entry.asMap(), classLoader)));
       if (!modules.isEmpty()) {
         // unload core module first to respect whatever users configure
         tableEnv.unloadModule(CoreModuleDescriptorValidator.MODULE_TYPE_CORE);
@@ -175,20 +178,20 @@ public class Flink1122Shims extends FlinkShims {
       // Set up session state.
       this.sessionState = sessionState;
       createTableEnvironment(
-              settings,
-              config,
-              sessionState.catalogManager,
-              sessionState.moduleManager,
-              sessionState.functionCatalog);
+          settings,
+          config,
+          sessionState.catalogManager,
+          sessionState.moduleManager,
+          sessionState.functionCatalog);
     }
   }
 
   private void createTableEnvironment(
-          EnvironmentSettings settings,
-          TableConfig config,
-          CatalogManager catalogManager,
-          ModuleManager moduleManager,
-          FunctionCatalog functionCatalog) {
+      EnvironmentSettings settings,
+      TableConfig config,
+      CatalogManager catalogManager,
+      ModuleManager moduleManager,
+      FunctionCatalog functionCatalog) {
 
     // for streaming(流式)
     if (environment.getExecution().isStreamingPlanner()) {
@@ -196,14 +199,14 @@ public class Flink1122Shims extends FlinkShims {
       final Map<String, String> executorProperties = settings.toExecutorProperties();
       executor = lookupExecutor(executorProperties, streamExecEnv);
       tableEnv =
-              createStreamTableEnvironment(
-                      streamExecEnv,
-                      settings,
-                      config,
-                      executor,
-                      catalogManager,
-                      moduleManager,
-                      functionCatalog);
+          createStreamTableEnvironment(
+              streamExecEnv,
+              settings,
+              config,
+              executor,
+              catalogManager,
+              moduleManager,
+              functionCatalog);
       return;
     }
     // default batch(默认批)
@@ -218,14 +221,14 @@ public class Flink1122Shims extends FlinkShims {
     // Step.1 Create catalogs and register them.
     // --------------------------------------------------------------------------------------------------------------
     wrapClassLoader(
-            () ->
-                    environment
-                            .getCatalogs()
-                            .forEach(
-                                    (name, entry) -> {
-                                      Catalog catalog = createCatalog(name, entry.asMap(), classLoader);
-                                      tableEnv.registerCatalog(name, catalog);
-                                    }));
+        () ->
+            environment
+                .getCatalogs()
+                .forEach(
+                    (name, entry) -> {
+                      Catalog catalog = createCatalog(name, entry.asMap(), classLoader);
+                      tableEnv.registerCatalog(name, catalog);
+                    }));
 
     // --------------------------------------------------------------------------------------------------------------
     // Step.2 create table sources & sinks, and register them.
@@ -237,11 +240,11 @@ public class Flink1122Shims extends FlinkShims {
       TableEntry entry = keyValue.getValue();
       if (entry instanceof SourceTableEntry || entry instanceof SourceSinkTableEntry) {
         tableSources.put(
-                name, createTableSource(environment.getExecution(), entry.asMap(), classLoader));
+            name, createTableSource(environment.getExecution(), entry.asMap(), classLoader));
       }
       if (entry instanceof SinkTableEntry || entry instanceof SourceSinkTableEntry) {
         tableSinks.put(
-                name, createTableSink(environment.getExecution(), entry.asMap(), classLoader));
+            name, createTableSink(environment.getExecution(), entry.asMap(), classLoader));
       }
     }
     // register table sources
@@ -292,22 +295,21 @@ public class Flink1122Shims extends FlinkShims {
     return execEnv;
   }
 
-
   private void registerFunctions() throws SqlExecutionException {
     Map<String, FunctionDefinition> functions = new LinkedHashMap<>();
     environment
-            .getFunctions()
-            .forEach(
-                    (name, entry) -> {
-                      final UserDefinedFunction function =
-                              FunctionService.createFunction(entry.getDescriptor(), classLoader, false);
-                      functions.put(name, function);
-                    });
+        .getFunctions()
+        .forEach(
+            (name, entry) -> {
+              final UserDefinedFunction function =
+                  FunctionService.createFunction(entry.getDescriptor(), classLoader, false);
+              functions.put(name, function);
+            });
     registerFunctions(functions);
   }
 
   private void registerFunctions(Map<String, FunctionDefinition> functions)
-          throws SqlExecutionException {
+      throws SqlExecutionException {
     if (tableEnv instanceof StreamTableEnvironment) {
       StreamTableEnvironment streamTableEnvironment = (StreamTableEnvironment) tableEnv;
       for (Map.Entry<String, FunctionDefinition> keyValue : functions.entrySet()) {
@@ -321,7 +323,9 @@ public class Flink1122Shims extends FlinkShims {
           streamTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
           throw new SqlExecutionException(
-                  MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
+              MessageFormat.format(
+                  FlinkErrorCodeSummary.SUPPORTED_FUNCTION_TYPE.getErrorDesc(),
+                  v.getClass().getName()));
         }
       }
     } else {
@@ -337,7 +341,9 @@ public class Flink1122Shims extends FlinkShims {
           batchTableEnvironment.registerFunction(k, (TableFunction<?>) v);
         } else {
           throw new SqlExecutionException(
-                  MessageFormat.format(SUPPORTED_FUNCTION_TYPE.getErrorDesc(), v.getClass().getName()));
+              MessageFormat.format(
+                  FlinkErrorCodeSummary.SUPPORTED_FUNCTION_TYPE.getErrorDesc(),
+                  v.getClass().getName()));
         }
       }
     }
@@ -348,23 +354,23 @@ public class Flink1122Shims extends FlinkShims {
       tableEnv.registerTable(viewEntry.getName(), tableEnv.sqlQuery(viewEntry.getQuery()));
     } catch (Exception e) {
       throw new SqlExecutionException(
-              "Invalid view '"
-                      + viewEntry.getName()
-                      + "' with query:\n"
-                      + viewEntry.getQuery()
-                      + "\nCause: "
-                      + e.getMessage());
+          "Invalid view '"
+              + viewEntry.getName()
+              + "' with query:\n"
+              + viewEntry.getQuery()
+              + "\nCause: "
+              + e.getMessage());
     }
   }
 
   private void registerTemporalTable(TemporalTableEntry temporalTableEntry)
-          throws SqlExecutionException {
+      throws SqlExecutionException {
     try {
       final Table table = tableEnv.scan(temporalTableEntry.getHistoryTable());
       final TableFunction<?> function =
-              table.createTemporalTableFunction(
-                      temporalTableEntry.getTimeAttribute(),
-                      String.join(",", temporalTableEntry.getPrimaryKeyFields()));
+          table.createTemporalTableFunction(
+              temporalTableEntry.getTimeAttribute(),
+              String.join(",", temporalTableEntry.getPrimaryKeyFields()));
       if (tableEnv instanceof StreamTableEnvironment) {
         StreamTableEnvironment streamTableEnvironment = (StreamTableEnvironment) tableEnv;
         streamTableEnvironment.registerFunction(temporalTableEntry.getName(), function);
@@ -374,104 +380,104 @@ public class Flink1122Shims extends FlinkShims {
       }
     } catch (Exception e) {
       throw new SqlExecutionException(
-              "Invalid temporal table '"
-                      + temporalTableEntry.getName()
-                      + "' over table '"
-                      + temporalTableEntry.getHistoryTable()
-                      + ".\nCause: "
-                      + e.getMessage());
+          "Invalid temporal table '"
+              + temporalTableEntry.getName()
+              + "' over table '"
+              + temporalTableEntry.getHistoryTable()
+              + ".\nCause: "
+              + e.getMessage());
     }
   }
 
   private static Executor lookupExecutor(
-          Map<String, String> executorProperties, StreamExecutionEnvironment executionEnvironment) {
+      Map<String, String> executorProperties, StreamExecutionEnvironment executionEnvironment) {
     try {
       ExecutorFactory executorFactory =
-              ComponentFactoryService.find(ExecutorFactory.class, executorProperties);
+          ComponentFactoryService.find(ExecutorFactory.class, executorProperties);
       Method createMethod =
-              executorFactory
-                      .getClass()
-                      .getMethod("create", Map.class, StreamExecutionEnvironment.class);
+          executorFactory
+              .getClass()
+              .getMethod("create", Map.class, StreamExecutionEnvironment.class);
 
       return (Executor)
-              createMethod.invoke(executorFactory, executorProperties, executionEnvironment);
+          createMethod.invoke(executorFactory, executorProperties, executionEnvironment);
     } catch (Exception e) {
       throw new TableException(
-              "Could not instantiate the executor. Make sure a planner module is on the classpath", e);
+          "Could not instantiate the executor. Make sure a planner module is on the classpath", e);
     }
   }
 
   private Module createModule(Map<String, String> moduleProperties, ClassLoader classLoader) {
     final ModuleFactory factory =
-            TableFactoryService.find(ModuleFactory.class, moduleProperties, classLoader);
+        TableFactoryService.find(ModuleFactory.class, moduleProperties, classLoader);
     return factory.createModule(moduleProperties);
   }
 
   private Catalog createCatalog(
-          String name, Map<String, String> catalogProperties, ClassLoader classLoader) {
+      String name, Map<String, String> catalogProperties, ClassLoader classLoader) {
     final CatalogFactory factory =
-            TableFactoryService.find(CatalogFactory.class, catalogProperties, classLoader);
+        TableFactoryService.find(CatalogFactory.class, catalogProperties, classLoader);
     return factory.createCatalog(name, catalogProperties);
   }
 
   private static TableSource<?> createTableSource(
-          ExecutionEntry execution, Map<String, String> sourceProperties, ClassLoader classLoader)
-          throws SqlExecutionException {
+      ExecutionEntry execution, Map<String, String> sourceProperties, ClassLoader classLoader)
+      throws SqlExecutionException {
     if (execution.isStreamingPlanner()) {
       final TableSourceFactory<?> factory =
-              (TableSourceFactory<?>)
-                      TableFactoryService.find(TableSourceFactory.class, sourceProperties, classLoader);
+          (TableSourceFactory<?>)
+              TableFactoryService.find(TableSourceFactory.class, sourceProperties, classLoader);
       return factory.createTableSource(sourceProperties);
     } else if (execution.isBatchPlanner()) {
       final BatchTableSourceFactory<?> factory =
-              (BatchTableSourceFactory<?>)
-                      TableFactoryService.find(
-                              BatchTableSourceFactory.class, sourceProperties, classLoader);
+          (BatchTableSourceFactory<?>)
+              TableFactoryService.find(
+                  BatchTableSourceFactory.class, sourceProperties, classLoader);
       return factory.createBatchTableSource(sourceProperties);
     }
-    throw new SqlExecutionException(SUPPORTED_SOURCES.getErrorDesc());
+    throw new SqlExecutionException(FlinkErrorCodeSummary.SUPPORTED_SOURCES.getErrorDesc());
   }
 
   private static TableSink<?> createTableSink(
-          ExecutionEntry execution, Map<String, String> sinkProperties, ClassLoader classLoader)
-          throws SqlExecutionException {
+      ExecutionEntry execution, Map<String, String> sinkProperties, ClassLoader classLoader)
+      throws SqlExecutionException {
     if (execution.isStreamingPlanner()) {
       final TableSinkFactory<?> factory =
-              (TableSinkFactory<?>)
-                      TableFactoryService.find(TableSinkFactory.class, sinkProperties, classLoader);
+          (TableSinkFactory<?>)
+              TableFactoryService.find(TableSinkFactory.class, sinkProperties, classLoader);
       return factory.createTableSink(sinkProperties);
     } else if (execution.isBatchPlanner()) {
       final BatchTableSinkFactory<?> factory =
-              (BatchTableSinkFactory<?>)
-                      TableFactoryService.find(BatchTableSinkFactory.class, sinkProperties, classLoader);
+          (BatchTableSinkFactory<?>)
+              TableFactoryService.find(BatchTableSinkFactory.class, sinkProperties, classLoader);
       return factory.createBatchTableSink(sinkProperties);
     }
-    throw new SqlExecutionException(SUPPORTED_SINKS.getErrorDesc());
+    throw new SqlExecutionException(FlinkErrorCodeSummary.SUPPORTED_SINKS.getErrorDesc());
   }
 
   private TableEnvironmentInternal createStreamTableEnvironment(
-          StreamExecutionEnvironment env,
-          EnvironmentSettings settings,
-          TableConfig config,
-          Executor executor,
-          CatalogManager catalogManager,
-          ModuleManager moduleManager,
-          FunctionCatalog functionCatalog) {
+      StreamExecutionEnvironment env,
+      EnvironmentSettings settings,
+      TableConfig config,
+      Executor executor,
+      CatalogManager catalogManager,
+      ModuleManager moduleManager,
+      FunctionCatalog functionCatalog) {
     final Map<String, String> plannerProperties = settings.toPlannerProperties();
     final Planner planner =
-            ComponentFactoryService.find(PlannerFactory.class, plannerProperties)
-                    .create(plannerProperties, executor, config, functionCatalog, catalogManager);
+        ComponentFactoryService.find(PlannerFactory.class, plannerProperties)
+            .create(plannerProperties, executor, config, functionCatalog, catalogManager);
 
     return new StreamTableEnvironmentImpl(
-            catalogManager,
-            moduleManager,
-            functionCatalog,
-            config,
-            env,
-            planner,
-            executor,
-            settings.isStreamingMode(),
-            classLoader);
+        catalogManager,
+        moduleManager,
+        functionCatalog,
+        config,
+        env,
+        planner,
+        executor,
+        settings.isStreamingMode(),
+        classLoader);
   }
 
   /**

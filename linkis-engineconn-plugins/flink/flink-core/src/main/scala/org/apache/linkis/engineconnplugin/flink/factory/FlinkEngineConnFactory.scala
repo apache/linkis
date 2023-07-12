@@ -17,7 +17,32 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import com.google.common.collect.{Lists, Sets}
+import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconnplugin.flink.client.config.FlinkVersionThreadLocal
+import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.ExecutionEntry
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.FlinkInitFailedException
+import org.apache.linkis.engineconnplugin.flink.config.{
+  FlinkEnvConfiguration,
+  FlinkExecutionTargetType
+}
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
+import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
+import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
+import org.apache.linkis.engineconnplugin.flink.setting.Settings
+import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
+import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
+import org.apache.linkis.manager.engineplugin.common.creation.{
+  ExecutorFactory,
+  MultiExecutorEngineConnFactory
+}
+import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.engine._
+import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.RuntimeExecutionMode
 import org.apache.flink.configuration._
@@ -26,24 +51,6 @@ import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
-import org.apache.linkis.common.utils.{ClassUtils, Logging}
-import org.apache.linkis.engineconn.common.creation.EngineCreationContext
-import org.apache.linkis.engineconnplugin.flink.client.config.{Environment, FlinkVersionThreadLocal}
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
-import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
-import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration._
-import org.apache.linkis.engineconnplugin.flink.config.{FlinkEnvConfiguration, FlinkExecutionTargetType}
-import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, FlinkEngineConnContext}
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
-import org.apache.linkis.engineconnplugin.flink.setting.Settings
-import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
-import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
-import org.apache.linkis.manager.label.entity.Label
-import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
-import org.apache.linkis.manager.label.entity.engine._
 
 import java.io.File
 import java.net.URL
@@ -51,7 +58,10 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
+
 import scala.collection.JavaConverters._
+
+import com.google.common.collect.{Lists, Sets}
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 

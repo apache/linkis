@@ -15,22 +15,31 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.exception;
+package org.apache.linkis.engineconnplugin.flink.client.shims.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.FLINK_INIT_EXCEPTION_ID;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.EXECUTORINIT_ID;
 
-public class FlinkInitFailedException extends ErrorException {
+public class ExecutorInitException extends ErrorException {
+
+  public static final int ERROR_CODE = 16021;
 
   private static final long serialVersionUID = 1L;
 
-  public FlinkInitFailedException(String msg) {
-    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
+  public ExecutorInitException(int errCode, String desc) {
+    super(errCode, desc);
   }
 
-  public FlinkInitFailedException(String msg, Throwable cause) {
-    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
-    initCause(cause);
+  public ExecutorInitException(String desc) {
+    super(EXECUTORINIT_ID.getErrorCode(), desc);
+  }
+
+  public ExecutorInitException(Exception e) {
+    super(EXECUTORINIT_ID.getErrorCode(), e.getMessage());
+  }
+
+  public ExecutorInitException() {
+    super(EXECUTORINIT_ID.getErrorCode(), "argument illegal");
   }
 }

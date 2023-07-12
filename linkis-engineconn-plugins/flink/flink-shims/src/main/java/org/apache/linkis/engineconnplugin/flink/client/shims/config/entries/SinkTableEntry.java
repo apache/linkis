@@ -15,35 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
-/** Configuration of a table view. */
-public class ViewEntry extends TableEntry {
+/** Configuration of a table sink. */
+public class SinkTableEntry extends TableEntry {
 
-  private static final String TABLES_QUERY = "query";
-
-  private final String query;
-
-  ViewEntry(String name, DescriptorProperties properties) {
+  SinkTableEntry(String name, DescriptorProperties properties) {
     super(name, properties);
-
-    query = properties.getString(TABLES_QUERY);
-  }
-
-  public String getQuery() {
-    return query;
   }
 
   @Override
   protected void validate(DescriptorProperties properties) {
-    properties.validateString(TABLES_QUERY, false, 1);
-  }
-
-  public static ViewEntry create(String name, String query) {
-    final DescriptorProperties properties = new DescriptorProperties(true);
-    properties.putString(TABLES_QUERY, query);
-    return new ViewEntry(name, properties);
+    // validation is performed by the discovered factory
   }
 }

@@ -18,7 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.deployment;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
 
 import org.apache.flink.api.common.JobID;
 import org.apache.flink.client.program.ClusterClient;

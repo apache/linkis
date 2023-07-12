@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.ConfigUtil;
 
 import org.apache.flink.table.descriptors.DescriptorProperties;
 

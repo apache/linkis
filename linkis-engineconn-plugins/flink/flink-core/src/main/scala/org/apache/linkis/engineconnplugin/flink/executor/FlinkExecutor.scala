@@ -27,12 +27,12 @@ import org.apache.linkis.engineconn.executor.entity.{
   ResourceExecutor,
   YarnExecutor
 }
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkResourceConfiguration.LINKIS_FLINK_CLIENT_CORES
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.utils.ResourceUtils

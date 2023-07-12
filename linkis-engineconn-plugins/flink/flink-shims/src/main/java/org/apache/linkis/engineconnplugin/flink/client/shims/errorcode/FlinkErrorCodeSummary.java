@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.errorcode;
+package org.apache.linkis.engineconnplugin.flink.client.shims.errorcode;
 
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 

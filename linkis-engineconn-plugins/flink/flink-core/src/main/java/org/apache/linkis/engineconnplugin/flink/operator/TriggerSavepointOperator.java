@@ -20,8 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.operator;
 import org.apache.linkis.common.exception.WarnException;
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager$;
 import org.apache.linkis.engineconnplugin.flink.client.deployment.ClusterDescriptorAdapter;
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary;
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor;
 import org.apache.linkis.manager.common.operator.Operator;
 

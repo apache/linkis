@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 public interface Operation {
 

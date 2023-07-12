@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonToken;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.io.IOContext;

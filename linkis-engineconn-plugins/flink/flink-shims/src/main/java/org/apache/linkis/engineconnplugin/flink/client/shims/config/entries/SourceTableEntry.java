@@ -15,31 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.exception;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.flink.table.descriptors.DescriptorProperties;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.EXECUTORINIT_ID;
+/** Configuration of a table source. */
+public class SourceTableEntry extends TableEntry {
 
-public class ExecutorInitException extends ErrorException {
-
-  public static final int ERROR_CODE = 16021;
-
-  private static final long serialVersionUID = 1L;
-
-  public ExecutorInitException(int errCode, String desc) {
-    super(errCode, desc);
+  SourceTableEntry(String name, DescriptorProperties properties) {
+    super(name, properties);
   }
 
-  public ExecutorInitException(String desc) {
-    super(EXECUTORINIT_ID.getErrorCode(), desc);
-  }
-
-  public ExecutorInitException(Exception e) {
-    super(EXECUTORINIT_ID.getErrorCode(), e.getMessage());
-  }
-
-  public ExecutorInitException() {
-    super(EXECUTORINIT_ID.getErrorCode(), "argument illegal");
+  @Override
+  protected void validate(DescriptorProperties properties) {
+    // validation is performed by the discovered factory
   }
 }

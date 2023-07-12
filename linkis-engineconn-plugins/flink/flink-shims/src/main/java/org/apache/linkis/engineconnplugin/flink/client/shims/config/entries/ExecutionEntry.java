@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
-import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.FlinkInitFailedException;
 
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
@@ -36,7 +36,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.client.config.Environment.EXECUTION_ENTRY;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment.EXECUTION_ENTRY;
 
 public class ExecutionEntry extends ConfigEntry {
 

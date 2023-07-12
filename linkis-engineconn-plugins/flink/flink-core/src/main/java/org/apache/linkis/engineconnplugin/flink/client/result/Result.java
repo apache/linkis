@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.table.sinks.TableSink;

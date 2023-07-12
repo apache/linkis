@@ -18,20 +18,20 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ConstantNames;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.types.logical.VarCharType;
 import org.apache.flink.types.Row;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.INVALID_SQL_STATEMENT;
 
 /** Operation for EXPLAIN command. */
 public class ExplainOperation implements NonJobOperation {

@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.parser;
 
-import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlParseException;
 
 import java.util.Optional;
 

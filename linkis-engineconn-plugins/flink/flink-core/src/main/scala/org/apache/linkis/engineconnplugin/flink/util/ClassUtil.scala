@@ -18,8 +18,8 @@
 package org.apache.linkis.engineconnplugin.flink.util
 
 import org.apache.linkis.common.utils.{ClassUtils, Utils}
-import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary._
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 
 import java.text.MessageFormat
 

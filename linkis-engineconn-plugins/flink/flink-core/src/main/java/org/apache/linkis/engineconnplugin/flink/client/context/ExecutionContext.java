@@ -17,35 +17,32 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.context;
 
-import org.apache.flink.api.common.JobID;
-import org.apache.flink.client.program.ClusterClient;
-import org.apache.flink.client.program.StreamContextEnvironment;
-import org.apache.flink.core.execution.DefaultExecutorServiceLoader;
-import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisKubernetesClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.client.shims.FlinkShims;
 import org.apache.linkis.engineconnplugin.flink.client.shims.SessionState;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.api.common.ExecutionConfig;
+import org.apache.flink.api.common.JobID;
 import org.apache.flink.api.java.ExecutionEnvironment;
 import org.apache.flink.client.ClientUtils;
+import org.apache.flink.client.program.ClusterClient;
+import org.apache.flink.client.program.StreamContextEnvironment;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.core.execution.DefaultExecutorServiceLoader;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.*;
 import org.apache.flink.table.api.internal.TableEnvironmentInternal;
 import org.apache.flink.table.catalog.Catalog;
 import org.apache.flink.table.delegation.Executor;
-import org.apache.flink.table.factories.*;
-import org.apache.flink.table.functions.*;
-import org.apache.flink.table.module.Module;
 import org.apache.flink.util.TemporaryClassLoaderContext;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
 
 import javax.annotation.Nullable;
 
@@ -175,16 +172,16 @@ public class ExecutionContext {
 
   private StreamExecutionEnvironment createStreamExecutionEnvironment() {
     StreamContextEnvironment.setAsContext(
-            new DefaultExecutorServiceLoader(), flinkConfig, classLoader, false, false);
+        new DefaultExecutorServiceLoader(), flinkConfig, classLoader, false, false);
     final StreamExecutionEnvironment env =
-            StreamExecutionEnvironment.getExecutionEnvironment(flinkConfig);
+        StreamExecutionEnvironment.getExecutionEnvironment(flinkConfig);
     env.setRestartStrategy(environment.getExecution().getRestartStrategy());
     env.setParallelism(environment.getExecution().getParallelism());
     env.setMaxParallelism(environment.getExecution().getMaxParallelism());
     env.setStreamTimeCharacteristic(environment.getExecution().getTimeCharacteristic());
     if (env.getStreamTimeCharacteristic() == TimeCharacteristic.EventTime) {
       env.getConfig()
-              .setAutoWatermarkInterval(environment.getExecution().getPeriodicWatermarksInterval());
+          .setAutoWatermarkInterval(environment.getExecution().getPeriodicWatermarksInterval());
     }
     return env;
   }
@@ -295,16 +292,22 @@ public class ExecutionContext {
     return newExecutionContext;
   }
 
-  public CompletableFuture<String> triggerSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
-    return flinkShims.triggerSavepoint(clusterClient,  jobId,  savepoint);
+  public CompletableFuture<String> triggerSavepoint(
+      ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
+    return flinkShims.triggerSavepoint(clusterClient, jobId, savepoint);
   }
 
-  public CompletableFuture<String> cancelWithSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
-    return flinkShims.cancelWithSavepoint(clusterClient,  jobId,  savepoint);
+  public CompletableFuture<String> cancelWithSavepoint(
+      ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
+    return flinkShims.cancelWithSavepoint(clusterClient, jobId, savepoint);
   }
 
-  public CompletableFuture<String> stopWithSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, boolean advanceToEndOfEventTime, String savepoint) {
-    return flinkShims.stopWithSavepoint(clusterClient,  jobId, advanceToEndOfEventTime, savepoint);
+  public CompletableFuture<String> stopWithSavepoint(
+      ClusterClient<ApplicationId> clusterClient,
+      JobID jobId,
+      boolean advanceToEndOfEventTime,
+      String savepoint) {
+    return flinkShims.stopWithSavepoint(clusterClient, jobId, advanceToEndOfEventTime, savepoint);
   }
 
   // ~ Inner Class -------------------------------------------------------------------------------

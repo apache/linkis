@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.exception;
+package org.apache.linkis.engineconnplugin.flink.client.shims.exception;
 
 import org.apache.linkis.common.exception.ErrorException;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.SQL_PARSE_ID;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.FLINK_INIT_EXCEPTION_ID;
 
-public class SqlParseException extends ErrorException {
+public class FlinkInitFailedException extends ErrorException {
 
   private static final long serialVersionUID = 1L;
 
-  public SqlParseException(String message) {
-    super(SQL_PARSE_ID.getErrorCode(), message);
+  public FlinkInitFailedException(String msg) {
+    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
   }
 
-  public SqlParseException(String message, Throwable e) {
-    super(SQL_PARSE_ID.getErrorCode(), message);
-    this.initCause(e);
+  public FlinkInitFailedException(String msg, Throwable cause) {
+    super(FLINK_INIT_EXCEPTION_ID.getErrorCode(), msg);
+    initCause(cause);
   }
 }

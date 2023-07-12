@@ -18,9 +18,9 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
 import org.apache.linkis.engineconnplugin.flink.client.deployment.AbstractSessionClusterDescriptorAdapter;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.FlinkListenerGroup;
 
 import org.apache.flink.api.common.JobID;

@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 
-import org.apache.flink.table.client.SqlClientException;
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
 import java.util.Arrays;
@@ -98,7 +98,7 @@ public abstract class TableEntry extends ConfigEntry {
       case TABLES_TYPE_VALUE_TEMPORAL_TABLE:
         return new TemporalTableEntry(name, cleanedProperties);
       default:
-        throw new SqlClientException("Unexpected table type.");
+        throw new SqlExecutionException("Unexpected table type.");
     }
   }
 }

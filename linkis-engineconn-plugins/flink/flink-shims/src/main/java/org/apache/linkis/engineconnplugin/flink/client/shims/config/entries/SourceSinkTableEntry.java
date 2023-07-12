@@ -15,22 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.exception;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.flink.table.descriptors.DescriptorProperties;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.JOB_EXECUTION_ID;
+/** Configuration of a table source and sink. */
+public class SourceSinkTableEntry extends TableEntry {
 
-public class JobExecutionException extends ErrorException {
-
-  private static final long serialVersionUID = 1L;
-
-  public JobExecutionException(String message) {
-    super(JOB_EXECUTION_ID.getErrorCode(), message);
+  SourceSinkTableEntry(String name, DescriptorProperties properties) {
+    super(name, properties);
   }
 
-  public JobExecutionException(String message, Throwable e) {
-    super(JOB_EXECUTION_ID.getErrorCode(), message);
-    this.initCause(e);
+  @Override
+  protected void validate(DescriptorProperties properties) {
+    // validation is performed by the discovered factory
   }
 }

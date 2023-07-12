@@ -106,21 +106,30 @@ public class Flink1162Shims extends FlinkShims {
   }
 
   @Override
-  public CompletableFuture<String> triggerSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+  public CompletableFuture<String> triggerSavepoint(
+      Object clusterClientObject, Object jobIdObject, String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.triggerSavepoint((JobID)jobIdObject, savepoint, SavepointFormatType.CANONICAL);
+    return clusterClient.triggerSavepoint(
+        (JobID) jobIdObject, savepoint, SavepointFormatType.CANONICAL);
   }
 
   @Override
-  public CompletableFuture<String> cancelWithSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+  public CompletableFuture<String> cancelWithSavepoint(
+      Object clusterClientObject, Object jobIdObject, String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.cancelWithSavepoint((JobID)jobIdObject, savepoint, SavepointFormatType.CANONICAL);
+    return clusterClient.cancelWithSavepoint(
+        (JobID) jobIdObject, savepoint, SavepointFormatType.CANONICAL);
   }
 
   @Override
-  public CompletableFuture<String> stopWithSavepoint(Object clusterClientObject, Object jobIdObject, boolean advanceToEndOfEventTime, String savepoint) {
+  public CompletableFuture<String> stopWithSavepoint(
+      Object clusterClientObject,
+      Object jobIdObject,
+      boolean advanceToEndOfEventTime,
+      String savepoint) {
     ClusterClient clusterClient = (ClusterClient) clusterClientObject;
-    return clusterClient.stopWithSavepoint((JobID)jobIdObject,advanceToEndOfEventTime, savepoint, SavepointFormatType.CANONICAL);
+    return clusterClient.stopWithSavepoint(
+        (JobID) jobIdObject, advanceToEndOfEventTime, savepoint, SavepointFormatType.CANONICAL);
   }
 
   private static StreamTableEnvironment createStreamTableEnvironment(

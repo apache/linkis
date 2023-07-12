@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.context
 
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment
 
 class FlinkEngineConnContext(environmentContext: EnvironmentContext) {
 

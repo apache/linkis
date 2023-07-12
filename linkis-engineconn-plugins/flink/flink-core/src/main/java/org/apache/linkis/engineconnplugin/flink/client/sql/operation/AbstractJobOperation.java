@@ -18,12 +18,12 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation;
 
 import org.apache.linkis.engineconnplugin.flink.client.deployment.AbstractSessionClusterDescriptorAdapter;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.FlinkListenerGroupImpl;
 
 import org.apache.flink.api.common.JobID;
@@ -38,7 +38,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_SUPPORT_TRANSFORM;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.NOT_SUPPORT_TRANSFORM;
 
 /** A default implementation of JobOperation. */
 public abstract class AbstractJobOperation extends FlinkListenerGroupImpl implements JobOperation {

@@ -17,18 +17,21 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.factory;
 
+import org.apache.linkis.engineconnplugin.flink.client.config.FlinkVersionThreadLocal;
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
+
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.kubernetes.KubernetesClusterClientFactory;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
-import org.apache.flink.kubernetes.kubeclient.DefaultKubeClientFactory;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
-import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
 import org.apache.flink.kubernetes.utils.Constants;
 import org.apache.flink.util.AbstractID;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +61,37 @@ public class LinkisKubernetesClusterClientFactory extends KubernetesClusterClien
       this.clusterId = generateClusterId();
       configuration.setString(KubernetesConfigOptions.CLUSTER_ID, clusterId);
     }
-    this.flinkKubeClient =
-//        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
-            DefaultKubeClientFactory.getInstance().fromConfiguration(configuration);
+    if (FlinkVersionThreadLocal.getFlinkVersion()
+        .equals(FlinkEnvConfiguration.FLINK_1_12_2_VERSION())) {
+      try {
+        Class<?> clazz =
+            Class.forName("org.apache.flink.kubernetes.kubeclient.DefaultKubeClientFactory");
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Object obj = constructor.newInstance();
+        Method method = clazz.getDeclaredMethod("fromConfiguration", Configuration.class);
+        method.setAccessible(true);
+        this.flinkKubeClient = (FlinkKubeClient) method.invoke(obj, configuration);
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    } else if (FlinkVersionThreadLocal.getFlinkVersion()
+        .equals(FlinkEnvConfiguration.FLINK_1_16_2_VERSION())) {
+      try {
+        Class<?> clazz =
+            Class.forName("org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory");
+        Constructor<?> constructor = clazz.getDeclaredConstructor();
+        Object obj = constructor.newInstance();
+        Method method =
+            clazz.getDeclaredMethod("fromConfiguration", Configuration.class, String.class);
+        method.setAccessible(true);
+        this.flinkKubeClient = (FlinkKubeClient) method.invoke(obj, configuration, "client");
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
+    //    this.flinkKubeClient =
+    //        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
+    //            DefaultKubeClientFactory.getInstance().fromConfiguration(configuration);
     return new KubernetesClusterDescriptor(configuration, flinkKubeClient);
   }
 

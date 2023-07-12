@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconnplugin.flink.client.config.entries;
+package org.apache.linkis.engineconnplugin.flink.client.shims.config.entries;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.ConfigUtil;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.ConfigUtil;
 
 import org.apache.flink.table.descriptors.DescriptorProperties;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.linkis.engineconnplugin.flink.client.config.Environment.CONFIGURATION_ENTRY;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment.CONFIGURATION_ENTRY;
 
 /** Configuration for configuring {@link org.apache.flink.table.api.TableConfig}. */
 public class ConfigurationEntry extends ConfigEntry {

@@ -58,9 +58,12 @@ public abstract class FlinkShims {
     return null;
   }
 
-    public abstract CompletableFuture<String> triggerSavepoint(Object clusterClient, Object jobId, String savepoint);
+  public abstract CompletableFuture<String> triggerSavepoint(
+      Object clusterClient, Object jobId, String savepoint);
 
-    public abstract CompletableFuture<String> cancelWithSavepoint(Object clusterClient, Object jobId, String savepoint);
+  public abstract CompletableFuture<String> cancelWithSavepoint(
+      Object clusterClient, Object jobId, String savepoint);
 
-    public abstract CompletableFuture<String> stopWithSavepoint(Object clusterClient, Object jobId, boolean advanceToEndOfEventTime,String savepoint);
+  public abstract CompletableFuture<String> stopWithSavepoint(
+      Object clusterClient, Object jobId, boolean advanceToEndOfEventTime, String savepoint);
 }

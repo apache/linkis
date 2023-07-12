@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.sql.parser;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationFactory;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlParseException;
 import org.apache.linkis.engineconnplugin.flink.util.ClassUtil;
 
 import org.apache.calcite.config.Lex;
@@ -36,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.*;
 
 public class SqlCommandParserImpl implements SqlCommandParser {
 

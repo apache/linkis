@@ -17,9 +17,9 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.DeploymentEntry;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.DeploymentEntry;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 
 import org.apache.flink.api.common.ExecutionConfig;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
@@ -35,7 +35,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.stream.Stream;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.*;
 
 public class ResultUtil {
 

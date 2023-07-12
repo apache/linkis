@@ -18,18 +18,18 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.OperationUtil;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.flink.table.api.TableEnvironment;
 import org.apache.flink.table.catalog.exceptions.CatalogException;
 
 import java.text.MessageFormat;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.FAILED_SWITCH_CATALOG;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.FAILED_SWITCH_CATALOG;
 
 /** Operation for USE CATALOG command. */
 public class UseCatalogOperation implements NonJobOperation {

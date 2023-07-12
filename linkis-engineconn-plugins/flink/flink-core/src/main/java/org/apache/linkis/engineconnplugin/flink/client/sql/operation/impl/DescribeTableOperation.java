@@ -18,13 +18,13 @@
 package org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.NonJobOperation;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ColumnInfo;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ConstantNames;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind;
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultSet;
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.table.api.DataTypes;
@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NO_TABLE_FOUND;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.NO_TABLE_FOUND;
 
 /** Operation for DESCRIBE TABLE command. */
 public class DescribeTableOperation implements NonJobOperation {

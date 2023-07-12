@@ -18,8 +18,8 @@
 package org.apache.linkis.engineconnplugin.flink.client.deployment;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.*;
 
 /** Cluster Descriptor Adapter, adaptable with datastream/sql tasks(集群交互适配器，适合datastream、sql方式作业) */
 public abstract class ClusterDescriptorAdapter implements Closeable {
@@ -113,19 +113,14 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
     Supplier<CompletableFuture<String>> function;
     switch (mode) {
       case "trigger":
-        function =
-            () -> executionContext.triggerSavepoint(clusterClient,jobId, savepoint);
+        function = () -> executionContext.triggerSavepoint(clusterClient, jobId, savepoint);
         break;
       case "cancel":
-        function =
-            () ->
-       executionContext.cancelWithSavepoint(clusterClient,jobId, savepoint);
+        function = () -> executionContext.cancelWithSavepoint(clusterClient, jobId, savepoint);
 
         break;
       case "stop":
-        function =
-            () ->
-        executionContext.stopWithSavepoint(clusterClient,jobId, false,savepoint);
+        function = () -> executionContext.stopWithSavepoint(clusterClient, jobId, false, savepoint);
         break;
       default:
         throw new JobExecutionException(NOT_SAVEPOINT_MODE.getErrorDesc() + mode);

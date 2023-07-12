@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.result;
 
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
-import org.apache.linkis.engineconnplugin.flink.exception.SqlExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException;
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
 import org.apache.linkis.engineconnplugin.flink.listener.RowsType;
 
 import org.apache.flink.api.common.ExecutionConfig;
@@ -41,8 +41,8 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.NOT_RETRIEVE_RESULT;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.ERROR_SUBMITTING_JOB;
+import static org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary.NOT_RETRIEVE_RESULT;
 
 public class BatchResult<C> extends AbstractResult<C, Row> {
 

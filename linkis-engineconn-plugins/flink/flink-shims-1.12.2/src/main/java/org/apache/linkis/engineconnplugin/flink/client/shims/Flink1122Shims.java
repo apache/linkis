@@ -104,7 +104,7 @@ public class Flink1122Shims extends FlinkShims {
     return clusterClient.stopWithSavepoint((JobID) jobIdObject, advanceToEndOfEventTime, savepoint);
   }
 
-  private void initializeTableEnvironment(
+  public Object initializeTableEnvironment(
       Object environmentObject,
       Object flinkConfigObject,
       Object streamExecEnvObject,
@@ -184,6 +184,7 @@ public class Flink1122Shims extends FlinkShims {
           sessionState.moduleManager,
           sessionState.functionCatalog);
     }
+    return tableEnv;
   }
 
   private void createTableEnvironment(

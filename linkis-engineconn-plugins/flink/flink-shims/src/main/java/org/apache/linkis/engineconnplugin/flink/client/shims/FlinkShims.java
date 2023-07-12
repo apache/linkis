@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
+
 import java.lang.reflect.Constructor;
 import java.util.concurrent.CompletableFuture;
 
@@ -55,6 +57,16 @@ public abstract class FlinkShims {
 
   public Object createTableEnvironment(
       Object flinkConfig, Object streamExecEnv, Object sessionState, ClassLoader classLoader) {
+    return null;
+  }
+
+  public Object initializeTableEnvironment(
+      Object environmentObject,
+      Object flinkConfigObject,
+      Object streamExecEnvObject,
+      Object sessionStateObject,
+      ClassLoader classLoader)
+      throws SqlExecutionException {
     return null;
   }
 

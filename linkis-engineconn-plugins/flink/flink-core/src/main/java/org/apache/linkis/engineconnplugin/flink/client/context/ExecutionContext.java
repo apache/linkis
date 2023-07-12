@@ -151,8 +151,15 @@ public class ExecutionContext {
         if (tableEnv == null) {
           if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_12_2_VERSION())) {
             // Initialize the TableEnvironment.
-            //          initializeTableEnvironment(sessionState);
             this.streamExecEnv = createStreamExecutionEnvironment();
+            try {
+              this.tableEnv =
+                  (TableEnvironment)
+                      flinkShims.initializeTableEnvironment(
+                          environment, flinkConfig, streamExecEnv, sessionState, classLoader);
+            } catch (SqlExecutionException e) {
+              throw new RuntimeException(e);
+            }
           } else if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_16_2_VERSION())) {
             this.streamExecEnv =
                 new StreamExecutionEnvironment(new Configuration(flinkConfig), classLoader);

@@ -17,6 +17,12 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.context;
 
+import org.apache.flink.api.common.JobID;
+import org.apache.flink.client.program.ClusterClient;
+import org.apache.flink.client.program.StreamContextEnvironment;
+import org.apache.flink.core.execution.DefaultExecutorServiceLoader;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment;
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisKubernetesClusterClientFactory;
 import org.apache.linkis.engineconnplugin.flink.client.factory.LinkisYarnClusterClientFactory;
@@ -45,13 +51,12 @@ import javax.annotation.Nullable;
 
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary.*;
 
 public class ExecutionContext {
 
@@ -131,20 +136,7 @@ public class ExecutionContext {
             dependencies, Collections.emptyList(), this.getClass().getClassLoader(), flinkConfig);
     this.environment = environment;
     this.flinkConfig = flinkConfig;
-
-    if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_12_2_VERSION())) {
-
-    } else if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_16_2_VERSION())) {
-      this.streamExecEnv =
-          new StreamExecutionEnvironment(new Configuration(flinkConfig), classLoader);
-      this.tableEnv =
-          (TableEnvironment)
-              flinkShims.createTableEnvironment(
-                  flinkConfig, streamExecEnv, sessionState, classLoader);
-    } else {
-      throw new RuntimeException(
-          "Unsupported flink versions, Currently  only 1.12.2 and 1.16.2 are supported");
-    }
+    this.sessionState = sessionState;
 
     // create class loader
     if (dependencies == null) {
@@ -157,7 +149,44 @@ public class ExecutionContext {
   }
 
   public TableEnvironment getTableEnvironment() {
+    if (tableEnv == null) {
+      synchronized (this) {
+        if (tableEnv == null) {
+          if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_12_2_VERSION())) {
+            // Initialize the TableEnvironment.
+            //          initializeTableEnvironment(sessionState);
+            this.streamExecEnv = createStreamExecutionEnvironment();
+          } else if (this.flinkVersion.equals(FlinkEnvConfiguration.FLINK_1_16_2_VERSION())) {
+            this.streamExecEnv =
+                new StreamExecutionEnvironment(new Configuration(flinkConfig), classLoader);
+            this.tableEnv =
+                (TableEnvironment)
+                    flinkShims.createTableEnvironment(
+                        flinkConfig, streamExecEnv, sessionState, classLoader);
+          } else {
+            throw new RuntimeException(
+                "Unsupported flink versions, Currently  only 1.12.2 and 1.16.2 are supported");
+          }
+        }
+      }
+    }
     return tableEnv;
+  }
+
+  private StreamExecutionEnvironment createStreamExecutionEnvironment() {
+    StreamContextEnvironment.setAsContext(
+            new DefaultExecutorServiceLoader(), flinkConfig, classLoader, false, false);
+    final StreamExecutionEnvironment env =
+            StreamExecutionEnvironment.getExecutionEnvironment(flinkConfig);
+    env.setRestartStrategy(environment.getExecution().getRestartStrategy());
+    env.setParallelism(environment.getExecution().getParallelism());
+    env.setMaxParallelism(environment.getExecution().getMaxParallelism());
+    env.setStreamTimeCharacteristic(environment.getExecution().getTimeCharacteristic());
+    if (env.getStreamTimeCharacteristic() == TimeCharacteristic.EventTime) {
+      env.getConfig()
+              .setAutoWatermarkInterval(environment.getExecution().getPeriodicWatermarksInterval());
+    }
+    return env;
   }
 
   public StreamExecutionEnvironment getStreamExecutionEnvironment() throws SqlExecutionException {
@@ -254,12 +283,6 @@ public class ExecutionContext {
     return new Builder(defaultEnv, sessionEnv, dependencies, configuration, flinkVersion);
   }
 
-  private Module createModule(Map<String, String> moduleProperties, ClassLoader classLoader) {
-    final ModuleFactory factory =
-        TableFactoryService.find(ModuleFactory.class, moduleProperties, classLoader);
-    return factory.createModule(moduleProperties);
-  }
-
   public ExecutionContext cloneExecutionContext(Builder builder) {
     ExecutionContext newExecutionContext =
         builder.clusterClientFactory(clusterClientFactory).build();
@@ -270,6 +293,18 @@ public class ExecutionContext {
       newExecutionContext.executor = executor;
     }
     return newExecutionContext;
+  }
+
+  public CompletableFuture<String> triggerSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
+    return flinkShims.triggerSavepoint(clusterClient,  jobId,  savepoint);
+  }
+
+  public CompletableFuture<String> cancelWithSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, String savepoint) {
+    return flinkShims.cancelWithSavepoint(clusterClient,  jobId,  savepoint);
+  }
+
+  public CompletableFuture<String> stopWithSavepoint(ClusterClient<ApplicationId> clusterClient, JobID jobId, boolean advanceToEndOfEventTime, String savepoint) {
+    return flinkShims.stopWithSavepoint(clusterClient,  jobId, advanceToEndOfEventTime, savepoint);
   }
 
   // ~ Inner Class -------------------------------------------------------------------------------

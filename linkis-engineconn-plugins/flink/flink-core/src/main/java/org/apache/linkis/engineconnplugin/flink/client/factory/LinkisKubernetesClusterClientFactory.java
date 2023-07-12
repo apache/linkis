@@ -21,6 +21,7 @@ import org.apache.flink.configuration.Configuration;
 import org.apache.flink.kubernetes.KubernetesClusterClientFactory;
 import org.apache.flink.kubernetes.KubernetesClusterDescriptor;
 import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions;
+import org.apache.flink.kubernetes.kubeclient.DefaultKubeClientFactory;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClient;
 import org.apache.flink.kubernetes.kubeclient.FlinkKubeClientFactory;
 import org.apache.flink.kubernetes.utils.Constants;
@@ -58,7 +59,8 @@ public class LinkisKubernetesClusterClientFactory extends KubernetesClusterClien
       configuration.setString(KubernetesConfigOptions.CLUSTER_ID, clusterId);
     }
     this.flinkKubeClient =
-        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
+//        FlinkKubeClientFactory.getInstance().fromConfiguration(configuration, "client");
+            DefaultKubeClientFactory.getInstance().fromConfiguration(configuration);
     return new KubernetesClusterDescriptor(configuration, flinkKubeClient);
   }
 

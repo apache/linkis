@@ -28,7 +28,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>flink-shims</module>
-    <!--    <module>flink-shims-1.12.2</module>-->
+    <module>flink-shims-1.12.2</module>
     <module>flink-shims-1.16.2</module>
     <module>flink-core</module>
   </modules>

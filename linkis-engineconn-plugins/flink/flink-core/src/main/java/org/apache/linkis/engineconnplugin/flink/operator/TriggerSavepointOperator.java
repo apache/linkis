@@ -56,7 +56,7 @@ public class TriggerSavepointOperator implements Operator {
       String writtenSavepoint = "";
       try {
         writtenSavepoint = clusterDescriptorAdapter.doSavepoint(savepoint, mode);
-      } catch (JobExecutionException e) {
+      } catch (Exception e) {
         logger.info("doSavepoint failed", e);
         throw new RuntimeException(e);
       }

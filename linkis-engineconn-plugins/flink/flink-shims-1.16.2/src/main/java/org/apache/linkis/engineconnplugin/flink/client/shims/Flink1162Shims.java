@@ -17,7 +17,10 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
+import org.apache.flink.api.common.JobID;
+import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.core.execution.SavepointFormatType;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.TableConfig;
@@ -40,6 +43,7 @@ import org.apache.flink.util.MutableURLClassLoader;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.concurrent.CompletableFuture;
 
 public class Flink1162Shims extends FlinkShims {
 
@@ -99,6 +103,24 @@ public class Flink1162Shims extends FlinkShims {
         sessionStateByFlink.resourceManager,
         sessionStateByFlink.functionCatalog,
         classLoader);
+  }
+
+  @Override
+  public CompletableFuture<String> triggerSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+    ClusterClient clusterClient = (ClusterClient) clusterClientObject;
+    return clusterClient.triggerSavepoint((JobID)jobIdObject, savepoint, SavepointFormatType.CANONICAL);
+  }
+
+  @Override
+  public CompletableFuture<String> cancelWithSavepoint(Object clusterClientObject, Object jobIdObject, String savepoint) {
+    ClusterClient clusterClient = (ClusterClient) clusterClientObject;
+    return clusterClient.cancelWithSavepoint((JobID)jobIdObject, savepoint, SavepointFormatType.CANONICAL);
+  }
+
+  @Override
+  public CompletableFuture<String> stopWithSavepoint(Object clusterClientObject, Object jobIdObject, boolean advanceToEndOfEventTime, String savepoint) {
+    ClusterClient clusterClient = (ClusterClient) clusterClientObject;
+    return clusterClient.stopWithSavepoint((JobID)jobIdObject,advanceToEndOfEventTime, savepoint, SavepointFormatType.CANONICAL);
   }
 
   private static StreamTableEnvironment createStreamTableEnvironment(

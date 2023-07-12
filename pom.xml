@@ -118,7 +118,7 @@
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
-    <flink.version>1.16.2</flink.version>
+    <flink.version>1.12.2</flink.version>
     <io_file.version>1.0</io_file.version>
     <jdbc.version>4</jdbc.version>
     <trino.version>371</trino.version>

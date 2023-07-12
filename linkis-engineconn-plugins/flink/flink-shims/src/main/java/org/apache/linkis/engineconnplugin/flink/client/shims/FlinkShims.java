@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class FlinkShims {
 
@@ -56,4 +57,10 @@ public abstract class FlinkShims {
       Object flinkConfig, Object streamExecEnv, Object sessionState, ClassLoader classLoader) {
     return null;
   }
+
+    public abstract CompletableFuture<String> triggerSavepoint(Object clusterClient, Object jobId, String savepoint);
+
+    public abstract CompletableFuture<String> cancelWithSavepoint(Object clusterClient, Object jobId, String savepoint);
+
+    public abstract CompletableFuture<String> stopWithSavepoint(Object clusterClient, Object jobId, boolean advanceToEndOfEventTime,String savepoint);
 }

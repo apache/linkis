@@ -27,6 +27,7 @@
   <artifactId>linkis-engineplugin-impala</artifactId>
 
   <properties>
+    <libthrift.version>0.15.0</libthrift.version>
     <package.impala.version>3.4.0</package.impala.version>
   </properties>
   <dependencies>
@@ -66,8 +67,7 @@
     <dependency>
       <groupId>org.apache.thrift</groupId>
       <artifactId>libthrift</artifactId>
-      <version>0.15.0</version>
-      <scope>provided</scope>
+      <version>${libthrift.version}</version>
     </dependency>
 
     <!-- impala -->

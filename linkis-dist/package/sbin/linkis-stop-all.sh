@@ -59,7 +59,6 @@ function stopEC(){
 echo "<-------------------------------->"
 echo "Begin to stop EC"
 is_ec_service=`ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2`
-echo $is_ec_service
 if [ "$is_ec_service" = "" ]; then
   echo "no ec service runniing."
 else

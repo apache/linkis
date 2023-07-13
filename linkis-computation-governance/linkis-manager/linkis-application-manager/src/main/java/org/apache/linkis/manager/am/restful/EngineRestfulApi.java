@@ -207,6 +207,9 @@ public class EngineRestfulApi {
     String userName = ModuleUserUtils.getOperationUser(req, "killEngineConn：" + serviceInstance);
     logger.info("User {} try to kill engineConn {}.", userName, serviceInstance);
     EngineNode engineNode = engineNodeManager.getEngineNode(serviceInstance);
+    if (null == engineNode) {
+      return Message.ok("EC has exited");
+    }
     if (!userName.equals(engineNode.getOwner()) && Configuration.isNotAdmin(userName)) {
       return Message.error("You have no permission to kill EngineConn " + serviceInstance);
     }

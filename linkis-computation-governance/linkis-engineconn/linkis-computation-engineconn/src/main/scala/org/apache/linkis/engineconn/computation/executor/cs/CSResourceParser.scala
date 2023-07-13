@@ -64,7 +64,7 @@ class CSResourceParser extends Logging {
       val bmlResourceOption =
         bmlResourceList.asScala.find(_.getDownloadedFileName.equals(resourceName))
       if (bmlResourceOption.isDefined) {
-        val replacementName = EngineConnConf.getWorkHome + "/tmp/" + prefixName + resourceName
+        val replacementName = EngineConnConf.getEngineTmpDir + prefixName + resourceName
         val bmlResource = bmlResourceOption.get
         val map = new util.HashMap[String, Object]()
         map.put(GovernanceConstant.TASK_RESOURCE_ID_STR, bmlResource.getResourceId)

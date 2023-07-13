@@ -50,6 +50,16 @@ object SparkConfiguration extends Logging {
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
   val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
 
+  val SPARK_K8S_MASTER_URL = CommonVars[String]("spark.k8s.master.url", "")
+  val SPARK_K8S_USERNAME = CommonVars[String]("spark.k8s.username", "")
+  val SPARK_K8S_PASSWORD = CommonVars[String]("spark.k8s.password", "")
+  val SPARK_K8S_IMAGE = CommonVars[String]("spark.k8s.image", "apache/spark:v3.2.1")
+  val SPARK_K8S_IMAGE_PULL_POLICY = CommonVars[String]("spark.k8s.imagePullPolicy", "Always")
+  val SPARK_K8S_LANGUAGE_TYPE = CommonVars[String]("spark.k8s.languageType", "Scala")
+  val SPARK_K8S_RESTART_POLICY = CommonVars[String]("spark.k8s.restartPolicy", "Never")
+  val SPARK_K8S_SPARK_VERSION = CommonVars[String]("spark.k8s.sparkVersion", "3.2.1")
+  val SPARK_K8S_NAMESPACE = CommonVars[String]("spark.k8s.namespace", "default")
+
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =

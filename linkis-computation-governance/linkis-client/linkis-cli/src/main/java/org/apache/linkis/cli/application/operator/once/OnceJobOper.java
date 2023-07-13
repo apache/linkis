@@ -38,7 +38,7 @@ import org.apache.linkis.computation.client.operator.impl.EngineConnLogs;
 import org.apache.commons.lang3.StringUtils;
 
 public class OnceJobOper implements JobOper {
-  LinkisJobStatus jobStatus = LinkisJobStatus.UNSUBMITTED;
+
   EngineConnLogOperator logOperator = null;
   private SimpleOnceJob onceJob;
   private String serverUrl;
@@ -113,7 +113,9 @@ public class OnceJobOper implements JobOper {
 
   public void kill() {
     panicIfNull(onceJob);
-    onceJob.kill();
+    if (!getStatus().isJobFinishedState()) {
+      onceJob.kill();
+    }
   }
 
   public String getJobID() {
@@ -153,6 +155,8 @@ public class OnceJobOper implements JobOper {
     for (String log : logs.logs()) {
       logBuilder.append(log).append(System.lineSeparator());
     }
+    String status = onceJob.getStatus();
+    LinkisJobStatus jobStatus = LinkisJobStatus.convertFromNodeStatusString(status);
     if ((logs.logs() == null || logs.logs().size() <= 0) && jobStatus.isJobFinishedState()) {
       isLogFin = true;
     }

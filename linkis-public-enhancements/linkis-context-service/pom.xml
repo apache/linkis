@@ -32,7 +32,6 @@
 
     <module>linkis-cs-common</module>
     <module>linkis-cs-listener</module>
-    <module>linkis-cs-client</module>
     <module>linkis-cs-server</module>
 
   </modules>

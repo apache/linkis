@@ -37,12 +37,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-bml-client</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
   </dependencies>
   <build>
     <plugins>

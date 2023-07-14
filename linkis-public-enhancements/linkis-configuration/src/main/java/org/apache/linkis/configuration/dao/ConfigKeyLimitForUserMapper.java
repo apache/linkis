@@ -34,7 +34,7 @@ public interface ConfigKeyLimitForUserMapper {
   int batchInsertOrUpdateList(List<ConfigKeyLimitForUser> list);
 
   List<ConfigKeyLimitVo> selectByLabelAndKeyIds(
-          @Param("label") String label, @Param("keyIdList") List<Long> keyIdList);
+      @Param("label") String label, @Param("keyIdList") List<Long> keyIdList);
 
   ConfigKeyLimitVo selectByLabelAndKeyId(@Param("label") String label, @Param("keyId") Long keyId);
 }

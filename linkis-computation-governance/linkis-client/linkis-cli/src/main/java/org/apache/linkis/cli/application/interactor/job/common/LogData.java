@@ -27,11 +27,13 @@ public class LogData {
   private String user;
   private String jobId;
   private String execId;
+  // log will be fetched and stored in LinkedBlockingDeque, while logRetriever consumes log in
+  // another thread
   private LinkedBlockingDeque<String> logBuffer = new LinkedBlockingDeque();
   private String logPath; // remote path for job log
-  private Integer nextLogLineIdx;
-  private Boolean hasNextLogLine;
-  private volatile Boolean logFin = false;
+  private Integer nextLogLineIdx; // index of next log line to be fetched
+  private Boolean hasNextLogLine; // if there is still log to be retrieve
+  private volatile Boolean logFin = false; // if all log is finished
 
   public LogData(String user, String jobId, String execId) {
     this.user = user;

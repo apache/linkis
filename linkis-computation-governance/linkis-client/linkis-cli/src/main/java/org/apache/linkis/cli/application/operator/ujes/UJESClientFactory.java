@@ -113,51 +113,6 @@ public class UJESClientFactory {
     }
   }
 
-  public static DWSClientConfig generateDWSClientConfigForBML(
-      VarAccess stdVarAccess, VarAccess sysVarAccess) {
-    UJESClientContext context = generateContext(stdVarAccess);
-    try {
-      AuthenticationStrategy authenticationStrategy;
-      if (StringUtils.isBlank(context.getAuthenticationStrategyStr())
-          || !LinkisConstants.AUTH_STRATEGY_TOKEN.equalsIgnoreCase(
-              context.getAuthenticationStrategyStr())) {
-        authenticationStrategy =
-            new StaticAuthenticationStrategy(); // this has to be newed here otherwise
-        // log-in fails for static
-      } else {
-        authenticationStrategy = new TokenAuthenticationStrategy();
-      }
-
-      DWSClientConfigBuilder builder = DWSClientConfigBuilder.newBuilder();
-      DWSClientConfig config =
-          ((DWSClientConfigBuilder)
-                  (builder
-                      .addServerUrl(context.getGatewayUrl())
-                      .connectionTimeout(30000)
-                      .discoveryEnabled(false)
-                      .discoveryFrequency(1, TimeUnit.MINUTES)
-                      .loadbalancerEnabled(false)
-                      .maxConnectionSize(5)
-                      .retryEnabled(false)
-                      .readTimeout(context.getReadTimeoutMills())
-                      .setAuthenticationStrategy(authenticationStrategy)
-                      .setAuthTokenKey("BML-AUTH")
-                      .setAuthTokenValue("BML-AUTH")))
-              .setDWSVersion(context.getDwsVersion())
-              .build();
-
-      logger.info("Linkis ujes client inited.");
-      return config;
-    } catch (Exception e) {
-      throw new LinkisClientExecutionException(
-          "EXE0010",
-          ErrorLevel.ERROR,
-          CommonErrMsg.ExecutionInitErr,
-          "Cannot init DWSClientConfig",
-          e);
-    }
-  }
-
   private static UJESClientContext generateContext(VarAccess stdVarAccess) {
     String gatewayUrl = stdVarAccess.getVar(String.class, CliKeys.LINKIS_COMMON_GATEWAY_URL);
     if (StringUtils.isBlank(gatewayUrl)) {

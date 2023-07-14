@@ -98,7 +98,7 @@ public class LogRetriever {
     int nextLogIdx;
     boolean hasNext = true;
     int retryCnt = 0;
-    final int MAX_RETRY = 5;
+    final int MAX_RETRY = 12; // continues fails for 90s, then exit thread
     try {
       while (hasNext) {
         curLogIdx = data.getNextLogLineIdx() == null ? 0 : data.getNextLogLineIdx();

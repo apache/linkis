@@ -36,7 +36,7 @@ public class SingleTplFitter extends AbstractFitter {
   public FitterResult fit(String[] input, CmdTemplate templateCopy)
       throws LinkisClientRuntimeException {
 
-    if (input == null || templateCopy == null) {
+    if (input == null || templateCopy == null || input.length == 0) {
       throw new CommandException(
           "CMD0009", ErrorLevel.ERROR, CommonErrMsg.TemplateFitErr, "input or template is null");
     }

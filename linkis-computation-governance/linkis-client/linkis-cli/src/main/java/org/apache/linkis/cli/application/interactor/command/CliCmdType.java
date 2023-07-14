@@ -21,7 +21,7 @@ import org.apache.linkis.cli.application.constants.CliConstants;
 import org.apache.linkis.cli.application.entity.command.CmdType;
 
 public enum CliCmdType implements CmdType {
-  UNIVERSAL(CliConstants.UNIVERSAL_CMD, 1, CliConstants.UNIVERSAL_DESC);
+  UNIVERSAL(CliConstants.UNIVERSAL_SUBCMD, 1, CliConstants.UNIVERSAL_SUBCMD_DESC);
 
   private int id;
   private String name;

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.cli.application.entity.command;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Params {
@@ -30,11 +29,6 @@ public class Params {
   private Map<String, ParamItem> paramItemMap;
 
   private Map<String, Object> extraProperties;
-
-  public Params() {
-    this.paramItemMap = new HashMap<>();
-    this.extraProperties = new HashMap<>();
-  }
 
   public Params(
       String cid,

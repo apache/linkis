@@ -78,8 +78,6 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
         SparkPodSpec.Builder()
             .cores(sparkConfig.getDriverCores())
             .memory(sparkConfig.getDriverMemory())
-            // todo serviceAccount设置
-            //            .serviceAccount("spark")
             .serviceAccount(sparkConfig.getK8sServiceAccount())
             .build();
     SparkPodSpec executor =
@@ -106,6 +104,7 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     sparkApplication.setSpec(sparkApplicationSpec);
     SparkApplication created = sparkApplicationClient.createOrReplace(sparkApplication);
 
+    // Wait three seconds to get the status
     try {
       Thread.sleep(3000);
     } catch (InterruptedException e) {
@@ -128,8 +127,6 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             status.getApplicationState().getState());
       }
     }
-
-    //    client.close();
   }
 
   public boolean initJobId() {
@@ -148,23 +145,15 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   }
 
   private SparkApplicationStatus getKubernetesOperatorState() {
-    try {
-      List<SparkApplication> sparkApplicationList =
-          getSparkApplicationClient(client).list().getItems();
-      if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
-        for (SparkApplication sparkApplication : sparkApplicationList) {
-          if (sparkApplication
-                  .getMetadata()
-                  .getNamespace()
-                  .equals(this.sparkConfig.getK8sNamespace())
-              && sparkApplication.getMetadata().getName().equals(this.sparkConfig.getAppName())) {
-            return sparkApplication.getStatus();
-          }
+    List<SparkApplication> sparkApplicationList =
+        getSparkApplicationClient(client).list().getItems();
+    if (CollectionUtils.isNotEmpty(sparkApplicationList)) {
+      for (SparkApplication sparkApplication : sparkApplicationList) {
+        if (sparkApplication.getMetadata().getNamespace().equals(this.sparkConfig.getK8sNamespace())
+            && sparkApplication.getMetadata().getName().equals(this.sparkConfig.getAppName())) {
+          return sparkApplication.getStatus();
         }
       }
-
-    } finally {
-      //      client.close();
     }
     return null;
   }

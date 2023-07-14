@@ -58,15 +58,21 @@ echo "<-------------------------------->"
 function stopEC(){
 echo "<-------------------------------->"
 echo "Begin to stop EC"
-EC_STOP_CMD="ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2 | xargs sudo kill"
-if test -z "$SERVER_IP"
-then
-  SERVER_IP=$local_host
+is_ec_service=`ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2`
+if [ "$is_ec_service" = "" ]; then
+  echo "no ec service runniing."
+else
+  EC_STOP_CMD="ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2 | xargs sudo kill"
+  if test -z "$SERVER_IP"
+  then
+    SERVER_IP=$local_host
+  fi
+  executeCMD $SERVER_IP "$EC_STOP_CMD"
 fi
-executeCMD $SERVER_IP "$EC_STOP_CMD"
 echo "server ENGINECONNs is stopped"
 echo "<-------------------------------->"
 }
+
 
 #ec
 stopEC

@@ -50,6 +50,8 @@ object SparkConfiguration extends Logging {
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
   val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
 
+  val SPARK_K8S_CONFIG_FILE = CommonVars[String]("spark.k8s.config.file", "")
+  val SPARK_K8S_SERVICE_ACCOUNT = CommonVars[String]("spark.k8s.serviceAccount", "")
   val SPARK_K8S_MASTER_URL = CommonVars[String]("spark.k8s.master.url", "")
   val SPARK_K8S_USERNAME = CommonVars[String]("spark.k8s.username", "")
   val SPARK_K8S_PASSWORD = CommonVars[String]("spark.k8s.password", "")

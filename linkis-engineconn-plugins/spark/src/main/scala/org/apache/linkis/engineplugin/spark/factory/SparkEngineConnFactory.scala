@@ -95,6 +95,8 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     sparkConfig.setJavaHome(variable(Environment.JAVA_HOME))
     sparkConfig.setSparkHome(SPARK_HOME.getValue(options))
     sparkConfig.setMaster(SPARK_MASTER.getValue(options))
+    sparkConfig.setK8sConfigFile(SPARK_K8S_CONFIG_FILE.getValue(options))
+    sparkConfig.setK8sServiceAccount(SPARK_K8S_SERVICE_ACCOUNT.getValue(options))
     sparkConfig.setK8sMasterUrl(SPARK_K8S_MASTER_URL.getValue(options))
     sparkConfig.setK8sUsername(SPARK_K8S_USERNAME.getValue(options))
     sparkConfig.setK8sPassword(SPARK_K8S_PASSWORD.getValue(options))

@@ -26,6 +26,10 @@ public class SparkConfig {
   private String sparkHome; // ("")
   private String master = "yarn"; // ("yarn")
 
+  private String k8sConfigFile;
+
+  private String k8sServiceAccount;
+
   private String k8sMasterUrl;
 
   private String k8sUsername;
@@ -111,6 +115,22 @@ public class SparkConfig {
 
   public String getK8sMasterUrl() {
     return k8sMasterUrl;
+  }
+
+  public String getK8sConfigFile() {
+    return k8sConfigFile;
+  }
+
+  public void setK8sConfigFile(String k8sConfigFile) {
+    this.k8sConfigFile = k8sConfigFile;
+  }
+
+  public String getK8sServiceAccount() {
+    return k8sServiceAccount;
+  }
+
+  public void setK8sServiceAccount(String k8sServiceAccount) {
+    this.k8sServiceAccount = k8sServiceAccount;
   }
 
   public void setK8sMasterUrl(String k8sMasterUrl) {
@@ -376,6 +396,12 @@ public class SparkConfig {
         + '\''
         + ", master='"
         + master
+        + '\''
+        + ", k8sConfigFile='"
+        + k8sConfigFile
+        + '\''
+        + ", k8sServiceAccount='"
+        + k8sServiceAccount
         + '\''
         + ", k8sMasterUrl='"
         + k8sMasterUrl

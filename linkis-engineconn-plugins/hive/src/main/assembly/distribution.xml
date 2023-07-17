@@ -66,12 +66,6 @@
                 <exclude>com.google.guava:guava:jar</exclude>
                 <exclude>com.google.protobuf:protobuf-java:jar</exclude>
                 <exclude>com.ning:async-http-client:jar</exclude>
-                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
-                <exclude>com.sun.jersey:jersey-client:jar</exclude>
-                <exclude>com.sun.jersey:jersey-core:jar</exclude>
-                <exclude>com.sun.jersey:jersey-json:jar</exclude>
-                <exclude>com.sun.jersey:jersey-server:jar</exclude>
-                <exclude>com.sun.jersey:jersey-servlet:jar</exclude>
                 <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils:jar</exclude>
                 <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>

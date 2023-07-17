@@ -22,6 +22,7 @@ import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.acessible.executor.listener.event.{
+  TaskLogUpdateEvent,
   TaskResponseErrorEvent,
   TaskStatusChangedEvent
 }
@@ -135,6 +136,12 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   override def close(): Unit = {
     if (null != lastTask) CLOSE_LOCKER.synchronized {
+      listenerBusContext.getEngineConnSyncListenerBus.postToAll(
+        TaskLogUpdateEvent(
+          lastTask.getTaskId,
+          LogUtils.generateERROR("EC exits unexpectedly and actively kills the task")
+        )
+      )
       killTask(lastTask.getTaskId)
     }
     else {

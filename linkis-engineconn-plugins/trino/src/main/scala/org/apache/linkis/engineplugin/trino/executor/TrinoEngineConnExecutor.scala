@@ -19,12 +19,14 @@ package org.apache.linkis.engineplugin.trino.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineplugin.trino.conf.TrinoConfiguration._
 import org.apache.linkis.engineplugin.trino.conf.TrinoEngineConfig
 import org.apache.linkis.engineplugin.trino.exception.{
@@ -534,6 +536,19 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def close(): Unit = {
+    val taskIds = statementClientCache.keySet().iterator()
+    val lbs = ExecutorListenerBusContext.getExecutorListenerBusContext()
+    while (taskIds.hasNext) {
+      val taskId = taskIds.next()
+      Utils.tryAndWarn(
+        lbs.getEngineConnSyncListenerBus.postToAll(
+          TaskLogUpdateEvent(
+            taskId,
+            LogUtils.generateERROR("EC exits unexpectedly and actively kills the task")
+          )
+        )
+      )
+    }
     killAll()
     super.close()
   }

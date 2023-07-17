@@ -90,7 +90,7 @@ public class ImpalaThriftSessionFactory {
     }
 
     if (sessions.isEmpty()) {
-      throw new IllegalArgumentException("invalid hosts: " + StringUtils.join(hosts, ','));
+      throw new IllegalArgumentException("Invalid hosts: " + StringUtils.join(hosts, ','));
     }
 
     this.socketFactory = socketFactory;

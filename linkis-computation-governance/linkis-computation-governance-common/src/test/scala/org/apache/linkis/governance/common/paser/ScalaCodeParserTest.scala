@@ -29,8 +29,7 @@ class ScalaCodeParserTest {
       "val codeBuffer = new ArrayBuffer[String]()\n    val statementBuffer = new ArrayBuffer[String]()"
     val scalaCodeParser = new ScalaCodeParser
     val array = scalaCodeParser.parse(scalaCode)
-    Assertions.assertTrue(array.size == 1)
-
+    Assertions.assertTrue(array.length == 2)
   }
 
   @Test
@@ -41,7 +40,7 @@ class ScalaCodeParserTest {
       "   def addInt( a:Int, b:Int )\n      var sum:Int = 0\n      sum = a + b\n      return sum\n   }"
     val scalaCodeParser = new ScalaCodeParser
     val array = scalaCodeParser.parse(abnormalCode)
-    Assertions.assertTrue(array.length == 1)
+    Assertions.assertTrue(array.length == 2)
 
   }
 
@@ -54,7 +53,7 @@ class ScalaCodeParserTest {
 
     val scalaCodeParser = new ScalaCodeParser
     val array = scalaCodeParser.parse(importCode)
-    Assertions.assertTrue(array.length == 2)
+    Assertions.assertTrue(array.length == 3)
 
   }
 
@@ -68,7 +67,7 @@ class ScalaCodeParserTest {
     val scalaCodeParser = new ScalaCodeParser
     val arrayResult1 = scalaCodeParser.parse(specialCodeExp1)
 
-    Assertions.assertTrue(arrayResult1.length == 2)
+    Assertions.assertTrue(arrayResult1.length == 3)
 
     val specialCodeExp2 =
       "  @BeanProperty\n  var id: Long = _\n  @BeanProperty\n  var status: Int = 0\n  " +
@@ -79,7 +78,7 @@ class ScalaCodeParserTest {
         ".append(data, that.data)\n      .isEquals\n  }"
 
     val arrayResult2 = scalaCodeParser.parse(specialCodeExp2)
-    Assertions.assertTrue(arrayResult2.length == 1)
+    Assertions.assertTrue(arrayResult2.length == 2)
 
   }
 

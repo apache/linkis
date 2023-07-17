@@ -20,12 +20,23 @@ package org.apache.linkis.gateway.dss.parser
 import org.apache.linkis.common.conf.CommonVars
 
 object DSSGatewayConfiguration {
-  val DSS_SPRING_NAME = CommonVars("wds.linkis.dss.name", "dss-server")
+  val DSS_SPRING_NAME: CommonVars[String] = CommonVars("wds.linkis.dss.name", "dss-server")
 
-  val DSS_URL_LABEL_PREFIX = CommonVars("wds.dss.gateway.url.prefix.name", "labels")
+  val DSS_URL_LABEL_PREFIX: CommonVars[String] =
+    CommonVars("wds.dss.gateway.url.prefix.name", "labels")
 
-  val DSS_URL_ROUTE_LABEL_PREFIX = CommonVars("wds.dss.gateway.url.prefix.name", "labelsRoute")
+  val DSS_URL_ROUTE_LABEL_PREFIX: CommonVars[String] =
+    CommonVars("wds.dss.gateway.url.prefix.name", "labelsRoute")
 
-  val DSS_URL_APPCONNS = CommonVars("wds.dss.gateway.url.appconns", "visualis")
+  val DSS_URL_APPCONNS: CommonVars[String] = CommonVars("wds.dss.gateway.url.appconns", "visualis")
+
+  val DSS_APPS_SERVER_OTHER_PREFIX: CommonVars[String] =
+    CommonVars("wds.dss.gateway.apps.server.other.prefix", "scriptis,apiservice,datapipe,guide")
+
+  val DSS_APPS_SERVER_DISTINCT_NAME: CommonVars[String] =
+    CommonVars("wds.dss.gateway.apps.server.distinct.name", "apps")
+
+  val DSS_APPS_SERVER_ISMERGE: CommonVars[Boolean] =
+    CommonVars("wds.dss.gateway.apps.server.ismerge", true)
 
 }

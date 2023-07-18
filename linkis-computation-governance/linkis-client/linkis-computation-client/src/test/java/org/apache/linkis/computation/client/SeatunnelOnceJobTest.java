@@ -34,10 +34,16 @@ public class SeatunnelOnceJobTest {
             + "}\n"
             + "\n"
             + "source {\n"
-            + "  Fake {\n"
-            + "    result_table_name = \"my_dataset\"\n"
-            + "  }\n"
-            + "\n"
+            + " FakeSource {\n"
+            + "   result_table_name = \"fake\"\n"
+            + "   row.num = 16\n"
+            + "   schema = {\n"
+            + "      fields {\n"
+            + "         name = \"string\"\n"
+            + "         age = \"int\"\n"
+            + "      }\n"
+            + "   }\n"
+            + " }\n"
             + "}\n"
             + "\n"
             + "transform {\n"
@@ -52,12 +58,12 @@ public class SeatunnelOnceJobTest {
             .builder()
             .setCreateService("seatunnel-Test")
             .setMaxSubmitTime(300000)
-            .addLabel(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY(), "seatunnel-2.1.2")
+            .addLabel(LabelKeyUtils.ENGINE_TYPE_LABEL_KEY(), "seatunnel-2.3.1")
             .addLabel(LabelKeyUtils.USER_CREATOR_LABEL_KEY(), "hadoop-seatunnel")
             .addLabel(LabelKeyUtils.ENGINE_CONN_MODE_LABEL_KEY(), "once")
             .addStartupParam(Configuration.IS_TEST_MODE().key(), true)
             .addExecuteUser("hadoop")
-            .addJobContent("runType", "spark")
+            .addJobContent("runType", "sspark")
             .addJobContent("code", code)
             .addJobContent("master", "local[4]")
             .addJobContent("deploy-mode", "client")

@@ -15,24 +15,8 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.client.deployment;
+package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+import io.fabric8.kubernetes.client.CustomResourceList;
 
-import org.apache.commons.lang3.StringUtils;
-
-public class ClusterDescriptorAdapterFactory {
-
-  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
-
-    ClusterDescriptorAdapter clusterDescriptorAdapter =
-        new YarnApplicationClusterDescriptorAdapter(executionContext);
-
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-    }
-
-    return clusterDescriptorAdapter;
-  }
-}
+public class SparkApplicationList extends CustomResourceList<SparkApplication> {}

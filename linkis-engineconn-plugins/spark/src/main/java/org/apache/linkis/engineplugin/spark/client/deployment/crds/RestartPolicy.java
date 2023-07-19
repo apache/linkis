@@ -15,24 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.client.deployment;
+package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+public class RestartPolicy {
 
-import org.apache.commons.lang3.StringUtils;
+  private String type;
 
-public class ClusterDescriptorAdapterFactory {
+  public RestartPolicy(String type) {
+    this.type = type;
+  }
 
-  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
+  public String getType() {
+    return type;
+  }
 
-    ClusterDescriptorAdapter clusterDescriptorAdapter =
-        new YarnApplicationClusterDescriptorAdapter(executionContext);
-
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-    }
-
-    return clusterDescriptorAdapter;
+  public void setType(String type) {
+    this.type = type;
   }
 }

@@ -15,24 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.client.deployment;
+package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+import io.fabric8.kubernetes.api.model.Namespaced;
+import io.fabric8.kubernetes.client.CustomResource;
+import io.fabric8.kubernetes.model.annotation.Group;
+import io.fabric8.kubernetes.model.annotation.Kind;
+import io.fabric8.kubernetes.model.annotation.Version;
 
-import org.apache.commons.lang3.StringUtils;
+@Version(SparkApplication.VERSION)
+@Group(SparkApplication.GROUP)
+@Kind(SparkApplication.Kind)
+public class SparkApplication extends CustomResource<SparkApplicationSpec, SparkApplicationStatus>
+    implements Namespaced {
+  public static final String GROUP = "sparkoperator.k8s.io";
+  public static final String VERSION = "v1beta2";
 
-public class ClusterDescriptorAdapterFactory {
-
-  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
-
-    ClusterDescriptorAdapter clusterDescriptorAdapter =
-        new YarnApplicationClusterDescriptorAdapter(executionContext);
-
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-    }
-
-    return clusterDescriptorAdapter;
-  }
+  public static final String Kind = "SparkApplication";
 }

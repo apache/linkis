@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.client.deployment;
+package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+public class HostPath {
 
-import org.apache.commons.lang3.StringUtils;
+  private String path;
 
-public class ClusterDescriptorAdapterFactory {
+  private String type;
 
-  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
+  public String getPath() {
+    return path;
+  }
 
-    ClusterDescriptorAdapter clusterDescriptorAdapter =
-        new YarnApplicationClusterDescriptorAdapter(executionContext);
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-    }
+  public String getType() {
+    return type;
+  }
 
-    return clusterDescriptorAdapter;
+  public void setType(String type) {
+    this.type = type;
   }
 }

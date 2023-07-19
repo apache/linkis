@@ -15,12 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.rm.external.kubernetes;
+package org.apache.linkis.manager.rm.external.parser;
 
 import org.apache.linkis.manager.common.entity.resource.ResourceType;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
+import org.apache.linkis.manager.rm.external.kubernetes.KubernetesResourceIdentifier;
 
-public class KubernetesResourceIdentifier implements ExternalResourceIdentifier {
+import java.util.Map;
+
+public class KubernetesResourceIdentifierParser implements ExternalResourceIdentifierParser {
+
+  @Override
+  public ExternalResourceIdentifier parse(Map<String, Object> identifierMap) {
+    return new KubernetesResourceIdentifier();
+  }
+
   @Override
   public ResourceType getResourceType() {
     return ResourceType.Kubernetes;

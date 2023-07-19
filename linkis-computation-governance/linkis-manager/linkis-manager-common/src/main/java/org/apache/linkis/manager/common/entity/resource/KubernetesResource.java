@@ -17,13 +17,14 @@
 
 package org.apache.linkis.manager.common.entity.resource;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.linkis.common.utils.ByteTimeUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KubernetesResource extends Resource {
   private final long memory;
-  private final int cores;
+  private final long cores;
 
   private KubernetesResource(Resource r) {
     if (r instanceof KubernetesResource) {
@@ -40,15 +41,15 @@ public class KubernetesResource extends Resource {
       this.cores = c.getCores();
     } else {
       this.memory = Long.MAX_VALUE;
-      this.cores = Integer.MAX_VALUE;
+      this.cores = Long.MAX_VALUE;
     }
   }
 
   public KubernetesResource() {
-    this(Long.MAX_VALUE, Integer.MAX_VALUE);
+    this(Long.MAX_VALUE, Long.MAX_VALUE);
   }
 
-  public KubernetesResource(long memory, int cores) {
+  public KubernetesResource(long memory, long cores) {
     this.memory = memory;
     this.cores = cores;
   }
@@ -122,7 +123,7 @@ public class KubernetesResource extends Resource {
     return memory;
   }
 
-  public int getCores() {
+  public long getCores() {
     return cores;
   }
 }

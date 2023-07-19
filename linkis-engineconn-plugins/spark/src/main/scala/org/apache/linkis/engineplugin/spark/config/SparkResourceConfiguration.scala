@@ -31,4 +31,19 @@ object SparkResourceConfiguration {
   val LINKIS_SPARK_EXECUTOR_INSTANCES = CommonVars[Int]("spark.executor.instances", 3)
   val LINKIS_QUEUE_NAME = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
 
+  val LINKIS_SPARK_KUBERNETES_EXECUTOR_CORES =
+    CommonVars[String]("spark.kubernetes.executor.request.cores", "1")
+
+  val LINKIS_SPARK_KUBERNETES_DRIVER_CORES =
+    CommonVars[String]("spark.kubernetes.driver.request.cores", "1")
+
+  val LINKIS_SPARK_KUBERNETES_DRIVER_POD_NAME =
+    CommonVars[String]("spark.kubernetes.driver.pod.name", "TODO")
+
+  val LINKIS_SPARK_KUBERNETES_CONTAINER_IMAGE =
+    CommonVars[String]("spark.kubernetes.container.image", "TODO")
+
+  val LINKIS_SPARK_KUBERNETES_AUTH_ACCOUNT =
+    CommonVars[String]("spark.kubernetes.authenticate.driver.serviceAccountName", "spark")
+
 }

@@ -132,6 +132,7 @@
     <sqoop.version>1.4.6</sqoop.version>
     <elasticsearch.version>7.6.2</elasticsearch.version>
 
+    <!-- This is the same as the kubernetes-client version referenced in spark3.2.1 -->
     <kubernetes-client.version>5.4.1</kubernetes-client.version>
 
     <!-- marshalling -->

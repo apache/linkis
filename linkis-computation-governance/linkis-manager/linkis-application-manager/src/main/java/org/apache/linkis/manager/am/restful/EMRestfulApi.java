@@ -451,7 +451,7 @@ public class EMRestfulApi {
       ECResourceInfoRecord ecResourceInfoRecord =
           ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
       if (Objects.isNull(ecResourceInfoRecord)) {
-        return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
+        return Message.error("EC instance: " + engineInstance + " not exist ");
       }
       ecmOperateRequest.getParameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
     }

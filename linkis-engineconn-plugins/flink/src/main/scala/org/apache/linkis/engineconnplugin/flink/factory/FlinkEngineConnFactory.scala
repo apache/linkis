@@ -469,7 +469,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)) {
       classOf[FlinkManagerExecutorFactory]
     } else {
-    classOf[FlinkCodeExecutorFactory]
+      classOf[FlinkCodeExecutorFactory]
     }
   }
 

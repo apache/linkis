@@ -72,7 +72,7 @@ class DefaultOperateService extends OperateService with Logging {
         .getOperationHooks()
         .foreach(hook => hook.doPreOperation(engineOperateRequest, engineOperateResponse))
     }
-    }
+  }
 
   private def doPostHook(
       engineOperateRequest: EngineOperateRequest,

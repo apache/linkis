@@ -92,8 +92,9 @@ class EnvironmentContext(
       this.flinkConfig.set(LinkisYarnClusterClientFactory.YARN_CONFIG_DIR, this.yarnConfDir)
       // set flink dist-jar(设置 flink dist jar)
       this.flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, distJarPath)
-    // other params
-    this.extraParams = extraParams
+      // other params
+      this.extraParams = extraParams
+    }
   }
 
   def setDeploymentTarget(deploymentTarget: String): Unit = this.deploymentTarget = deploymentTarget

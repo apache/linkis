@@ -21,7 +21,10 @@ import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.engineconn.acessible.executor.service.ExecutorHeartbeatServiceHolder
 import org.apache.linkis.engineconn.executor.service.ManagerService
 import org.apache.linkis.engineconn.once.executor.OnceExecutorExecutionContext
-import org.apache.linkis.engineconnplugin.flink.client.deployment.{AbstractApplicationClusterDescriptorAdapter, YarnApplicationClusterDescriptorAdapter}
+import org.apache.linkis.engineconnplugin.flink.client.deployment.{
+  AbstractApplicationClusterDescriptorAdapter,
+  YarnApplicationClusterDescriptorAdapter
+}
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration._
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
@@ -30,10 +33,12 @@ import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
+
 import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
+
 import scala.concurrent.duration.Duration
 
 class FlinkJarOnceExecutor(

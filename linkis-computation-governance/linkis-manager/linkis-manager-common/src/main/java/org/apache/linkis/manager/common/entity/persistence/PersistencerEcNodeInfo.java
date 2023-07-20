@@ -24,6 +24,8 @@ public class PersistencerEcNodeInfo extends PersistenceNode {
 
   private String engineType;
 
+  private String heartbeatMsg;
+
   public Integer getInstanceStatus() {
     return instanceStatus;
   }
@@ -40,6 +42,14 @@ public class PersistencerEcNodeInfo extends PersistenceNode {
     this.engineType = engineType;
   }
 
+  public String getHeartbeatMsg() {
+    return heartbeatMsg;
+  }
+
+  public void setHeartbeatMsg(String heartbeatMsg) {
+    this.heartbeatMsg = heartbeatMsg;
+  }
+
   @Override
   public String toString() {
     return "PersistencerEcNodeInfo{"
@@ -48,7 +58,10 @@ public class PersistencerEcNodeInfo extends PersistenceNode {
         + ", engineType='"
         + engineType
         + '\''
-        + "} "
+        + ", heartbeatMsg='"
+        + heartbeatMsg
+        + '\''
+        + '}'
         + super.toString();
   }
 }

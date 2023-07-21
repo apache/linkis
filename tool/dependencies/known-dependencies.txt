@@ -37,6 +37,7 @@ aws-java-sdk-core-1.11.792.jar
 aws-java-sdk-kms-1.11.792.jar
 aws-java-sdk-s3-1.11.792.jar
 aws-java-sdk-s3-1.12.261.jar
+automaton-1.11-8.jar
 bcpkix-jdk15on-1.70.jar
 bcprov-jdk15on-1.70.jar
 bcutil-jdk15on-1.70.jar
@@ -165,6 +166,7 @@ guice-4.1.0.jar
 guice-4.2.2.jar
 guice-assistedinject-3.0.jar
 guice-servlet-4.0.jar
+generex-1.0.2.jar
 hadoop-aliyun-3.3.4.jar
 hadoop-annotations-2.7.2.jar
 hadoop-annotations-3.3.4.jar
@@ -350,6 +352,27 @@ knife4j-spring-ui-2.0.9.jar
 kotlin-stdlib-1.3.72.jar
 kotlin-stdlib-common-1.3.72.jar
 kryo-2.24.0.jar
+kubernetes-client-5.4.1.jar
+kubernetes-model-admissionregistration-4.13.2.jar
+kubernetes-model-apiextensions-4.13.2.jar
+kubernetes-model-apps-4.13.2.jar
+kubernetes-model-autoscaling-4.13.2.jar
+kubernetes-model-batch-4.13.2.jar
+kubernetes-model-certificates-4.13.2.jar
+kubernetes-model-common-5.4.1.jar
+kubernetes-model-coordination-4.13.2.jar
+kubernetes-model-core-5.4.1.jar
+kubernetes-model-discovery-4.13.2.jar
+kubernetes-model-events-4.13.2.jar
+kubernetes-model-extensions-4.13.2.jar
+kubernetes-model-flowcontrol-5.4.1.jar
+kubernetes-model-metrics-4.13.2.jar
+kubernetes-model-networking-4.13.2.jar
+kubernetes-model-node-4.13.2.jar
+kubernetes-model-policy-4.13.2.jar
+kubernetes-model-rbac-4.13.2.jar
+kubernetes-model-scheduling-4.13.2.jar
+kubernetes-model-storageclass-4.13.2.jar
 libfb303-0.9.3.jar
 libthrift-0.15.0.pom
 libthrift-0.9.3.jar
@@ -363,6 +386,7 @@ log4j-jcl-2.17.2.jar
 log4j-jul-2.17.2.jar
 log4j-slf4j-impl-2.17.2.jar
 log4j-web-2.17.2.jar
+logging-interceptor-3.14.9.jar
 lz4-java-1.6.0.jar
 lz4-java-1.7.1.jar
 mapstruct-1.3.1.Final.jar
@@ -611,3 +635,4 @@ zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar
 zstd-jni-1.4.5-6.jar
+zjsonpatch-0.3.0.jar

@@ -51,9 +51,9 @@ public class StorageExcelWriter extends ExcelFsWriter {
   protected DataType[] types;
   protected int rowPoint;
   protected int columnCounter;
-  protected Map<String, CellStyle> styles;
-  private boolean isFlush;
-  private ByteArrayOutputStream os;
+  protected Map<String, CellStyle> styles = new HashMap<>();
+  private boolean isFlush = true;
+  private ByteArrayOutputStream os = new ByteArrayOutputStream();
   private ByteArrayInputStream is;
 
   public StorageExcelWriter(

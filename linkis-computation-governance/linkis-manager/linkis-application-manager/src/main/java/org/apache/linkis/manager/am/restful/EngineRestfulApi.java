@@ -184,7 +184,7 @@ public class EngineRestfulApi {
       return Message.ok("reuse engineConn ended.").data("engine", retEngineNode);
     }
 
-    String engineAskAsyncId = EngineAskEngineService$.MODULE$.getAsyncId();
+    String engineAskAsyncId = AMUtils.getAsyncId();
     Callable<Object> createECTask =
         new Callable() {
           @Override
@@ -207,7 +207,7 @@ public class EngineRestfulApi {
               EngineNode createNode = engineCreateService.createEngine(engineCreateRequest, sender);
               long timeout = 0L;
               if (engineCreateRequest.getTimeout() <= 0) {
-                timeout = AMConfiguration.ENGINE_START_MAX_TIME().getValue().toLong();
+                timeout = AMConfiguration.ENGINE_START_MAX_TIME.getValue().toLong();
               } else {
                 timeout = engineCreateRequest.getTimeout();
               }
@@ -269,7 +269,7 @@ public class EngineRestfulApi {
     retEngineNode.put(AMConstant.EC_ASYNC_START_RESULT_KEY, AMConstant.EC_ASYNC_START_RESULT_FAIL);
     retEngineNode.put(
         AMConstant.EC_ASYNC_START_FAIL_MSG_KEY,
-        "Got null response for asyId : " + askAsyncResponse.id());
+        "Got null response for asyId : " + askAsyncResponse.getId());
     retEngineNode.put(ECConstants.MANAGER_SERVICE_INSTANCE_KEY(), Sender.getThisServiceInstance());
   }
 

@@ -26,10 +26,13 @@ import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.governance.common.exception.engineconn.EngineConnExecutorErrorCode
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.operator.Operator
+import org.apache.linkis.server.toScalaMap
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.hadoop.yarn.api.records.{ApplicationId, ApplicationReport, FinalApplicationStatus}
 import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException
+
+import java.util
 
 import scala.collection.mutable
 
@@ -37,7 +40,7 @@ class StatusOperator extends Operator with Logging {
 
   override def getNames: Array[String] = Array("status")
 
-  override def apply(implicit params: Map[String, Any]): Map[String, Any] = {
+  override def apply(params: util.Map[String, Object]): util.Map[String, Object] = {
 
     val appIdStr = params.getOrElse(ECConstants.YARN_APPID_NAME_KEY, "").asInstanceOf[String]
 
@@ -58,9 +61,10 @@ class StatusOperator extends Operator with Logging {
       }
     } { case notExist: ApplicationNotFoundException =>
       logger.error(s"Application : ${appIdStr} not exists, will set the status to failed.")
-      rsMap += (ECConstants.NODE_STATUS_KEY -> NodeStatus.Failed.toString)
-      rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
-      return rsMap.toMap[String, String]
+      val map = new util.HashMap[String, Object]()
+      map.put(ECConstants.NODE_STATUS_KEY, NodeStatus.Failed.toString)
+      map.put(ECConstants.YARN_APPID_NAME_KEY, appIdStr)
+      return map
     }
 
     // Get the application status (YarnApplicationState)
@@ -75,7 +79,9 @@ class StatusOperator extends Operator with Logging {
     logger.info(s"try to get appid: ${appIdStr}, status ${nodeStatus.toString}.")
     rsMap += (ECConstants.NODE_STATUS_KEY -> nodeStatus.toString)
     rsMap += (ECConstants.YARN_APPID_NAME_KEY -> appIdStr)
-    rsMap.toMap[String, String]
+    val map = new util.HashMap[String, Object]()
+    rsMap.foreach(entry => map.put(entry._1, entry._2))
+    map
   }
 
 }

@@ -38,6 +38,8 @@ public class ClusterDescriptorAdapterFactory {
     } else if (KubernetesDeploymentTarget.APPLICATION.getName().equals(flinkDeploymentTarget)) {
       clusterDescriptorAdapter =
           new KubernetesApplicationClusterDescriptorAdapter(executionContext);
+    } else if (KubernetesDeploymentTarget.SESSION.getName().equals(flinkDeploymentTarget)) {
+      clusterDescriptorAdapter = new KubernetesSessionClusterDescriptorAdapter(executionContext);
     }
     return clusterDescriptorAdapter;
   }

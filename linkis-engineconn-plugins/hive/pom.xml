@@ -353,4 +353,48 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <!--hive 2.3.3 by default mvn validate -Dhive.version=2.3.3 -->
+    <profile>
+      <id>hive-jersey-dependencies</id>
+      <activation>
+        <property>
+          <name>hive.version</name>
+          <value>2.3.3</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>com.sun.jersey.contribs</groupId>
+          <artifactId>jersey-apache-client4</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-client</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-server</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-core</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-json</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-servlet</artifactId>
+          <version>${jersey.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

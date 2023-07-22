@@ -23,8 +23,8 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   EngineExecutionContext
 }
 import org.apache.linkis.engineconnplugin.flink.client.deployment.{
-  ClusterDescriptorAdapterFactory,
-  YarnSessionClusterDescriptorAdapter
+  AbstractSessionClusterDescriptorAdapter,
+  ClusterDescriptorAdapterFactory
 }
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{
   AbstractJobOperation,
@@ -34,7 +34,10 @@ import org.apache.linkis.engineconnplugin.flink.client.sql.operation.{
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.impl.InsertOperation
 import org.apache.linkis.engineconnplugin.flink.client.sql.operation.result.ResultKind
 import org.apache.linkis.engineconnplugin.flink.client.sql.parser.SqlCommandParser
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
+import org.apache.linkis.engineconnplugin.flink.config.{
+  FlinkEnvConfiguration,
+  FlinkExecutionTargetType
+}
 import org.apache.linkis.engineconnplugin.flink.context.FlinkEngineConnContext
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.{ExecutorInitException, SqlParseException}
@@ -54,6 +57,8 @@ import org.apache.linkis.storage.resultset.ResultSetFactory
 
 import org.apache.calcite.rel.metadata.{JaninoRelMetadataProvider, RelMetadataQueryBase}
 import org.apache.flink.api.common.JobStatus._
+import org.apache.flink.configuration.DeploymentOptions
+import org.apache.flink.kubernetes.configuration.KubernetesConfigOptions
 import org.apache.flink.table.planner.plan.metadata.FlinkDefaultRelMetadataProvider
 import org.apache.flink.yarn.configuration.YarnConfigOptions
 import org.apache.hadoop.yarn.util.ConverterUtils
@@ -72,12 +77,12 @@ class FlinkSQLComputationExecutor(
     with FlinkExecutor {
 
   private var operation: JobOperation = _
-  private var clusterDescriptor: YarnSessionClusterDescriptorAdapter = _
+  private var clusterDescriptor: AbstractSessionClusterDescriptorAdapter = _
 
   override def init(): Unit = {
     setCodeParser(new SQLCodeParser)
     ClusterDescriptorAdapterFactory.create(flinkEngineConnContext.getExecutionContext) match {
-      case adapter: YarnSessionClusterDescriptorAdapter => clusterDescriptor = adapter
+      case adapter: AbstractSessionClusterDescriptorAdapter => clusterDescriptor = adapter
       case adapter if adapter != null =>
         throw new ExecutorInitException(
           MessageFormat
@@ -88,14 +93,28 @@ class FlinkSQLComputationExecutor(
     }
     logger.info("Try to start a yarn-session application for interactive query.")
     clusterDescriptor.deployCluster()
-    val applicationId = ConverterUtils.toString(clusterDescriptor.getClusterID)
-    setApplicationId(applicationId)
-    setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
-    flinkEngineConnContext.getEnvironmentContext.getFlinkConfig
-      .setString(YarnConfigOptions.APPLICATION_ID, applicationId)
-    logger.info(
-      s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
-    )
+    val flinkDeploymentTarget =
+      flinkEngineConnContext.getExecutionContext.getFlinkConfig.get(DeploymentOptions.TARGET)
+
+    if (FlinkExecutionTargetType.isYarnExecutionTargetType(flinkDeploymentTarget)) {
+      val applicationId = ConverterUtils.toString(clusterDescriptor.getClusterID)
+      setApplicationId(applicationId)
+      setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
+      flinkEngineConnContext.getEnvironmentContext.getFlinkConfig
+        .setString(YarnConfigOptions.APPLICATION_ID, applicationId)
+      logger.info(
+        s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
+      )
+    } else if (FlinkExecutionTargetType.isKubernetesExecutionTargetType(flinkDeploymentTarget)) {
+      val kubernetesClusterID = clusterDescriptor.getKubernetesClusterID
+      setKubernetesClusterID(kubernetesClusterID)
+      setApplicationURL(clusterDescriptor.getWebInterfaceUrl)
+      flinkEngineConnContext.getEnvironmentContext.getFlinkConfig
+        .setString(KubernetesConfigOptions.CLUSTER_ID, kubernetesClusterID)
+      logger.info(
+        s"Application is started, applicationId: $getKubernetesClusterID, applicationURL: $getApplicationURL."
+      )
+    }
     super.init()
   }
 

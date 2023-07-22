@@ -25,6 +25,28 @@ public class SparkConfig {
   private String javaHome; // ("")
   private String sparkHome; // ("")
   private String master = "yarn"; // ("yarn")
+
+  private String k8sConfigFile;
+
+  private String k8sServiceAccount;
+
+  private String k8sMasterUrl;
+
+  private String k8sUsername;
+
+  private String k8sPassword;
+
+  private String k8sImage;
+
+  private String k8sImagePullPolicy;
+
+  private String k8sLanguageType;
+
+  private String k8sRestartPolicy;
+
+  private String k8sSparkVersion;
+
+  private String k8sNamespace;
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
   private String appName; // ("")
@@ -50,6 +72,94 @@ public class SparkConfig {
   private String principal; // ("--principal", "")
   private String keytab; // ("--keytab", "")
   private String queue; // ("--queue", "")
+
+  public String getK8sImagePullPolicy() {
+    return k8sImagePullPolicy;
+  }
+
+  public void setK8sImagePullPolicy(String k8sImagePullPolicy) {
+    this.k8sImagePullPolicy = k8sImagePullPolicy;
+  }
+
+  public String getK8sLanguageType() {
+    return k8sLanguageType;
+  }
+
+  public void setK8sLanguageType(String k8sLanguageType) {
+    this.k8sLanguageType = k8sLanguageType;
+  }
+
+  public String getK8sRestartPolicy() {
+    return k8sRestartPolicy;
+  }
+
+  public void setK8sRestartPolicy(String k8sRestartPolicy) {
+    this.k8sRestartPolicy = k8sRestartPolicy;
+  }
+
+  public String getK8sSparkVersion() {
+    return k8sSparkVersion;
+  }
+
+  public void setK8sSparkVersion(String k8sSparkVersion) {
+    this.k8sSparkVersion = k8sSparkVersion;
+  }
+
+  public String getK8sNamespace() {
+    return k8sNamespace;
+  }
+
+  public void setK8sNamespace(String k8sNamespace) {
+    this.k8sNamespace = k8sNamespace;
+  }
+
+  public String getK8sMasterUrl() {
+    return k8sMasterUrl;
+  }
+
+  public String getK8sConfigFile() {
+    return k8sConfigFile;
+  }
+
+  public void setK8sConfigFile(String k8sConfigFile) {
+    this.k8sConfigFile = k8sConfigFile;
+  }
+
+  public String getK8sServiceAccount() {
+    return k8sServiceAccount;
+  }
+
+  public void setK8sServiceAccount(String k8sServiceAccount) {
+    this.k8sServiceAccount = k8sServiceAccount;
+  }
+
+  public void setK8sMasterUrl(String k8sMasterUrl) {
+    this.k8sMasterUrl = k8sMasterUrl;
+  }
+
+  public String getK8sUsername() {
+    return k8sUsername;
+  }
+
+  public void setK8sUsername(String k8sUsername) {
+    this.k8sUsername = k8sUsername;
+  }
+
+  public String getK8sPassword() {
+    return k8sPassword;
+  }
+
+  public void setK8sPassword(String k8sPassword) {
+    this.k8sPassword = k8sPassword;
+  }
+
+  public String getK8sImage() {
+    return k8sImage;
+  }
+
+  public void setK8sImage(String k8sImage) {
+    this.k8sImage = k8sImage;
+  }
 
   public String getJavaHome() {
     return javaHome;
@@ -286,6 +396,33 @@ public class SparkConfig {
         + '\''
         + ", master='"
         + master
+        + '\''
+        + ", k8sConfigFile='"
+        + k8sConfigFile
+        + '\''
+        + ", k8sServiceAccount='"
+        + k8sServiceAccount
+        + '\''
+        + ", k8sMasterUrl='"
+        + k8sMasterUrl
+        + '\''
+        + ", k8sImage='"
+        + k8sImage
+        + '\''
+        + ", k8sImagePullPolicy='"
+        + k8sImagePullPolicy
+        + '\''
+        + ", k8sLanguageType='"
+        + k8sLanguageType
+        + '\''
+        + ", k8sRestartPolicy='"
+        + k8sRestartPolicy
+        + '\''
+        + ", k8sSparkVersion='"
+        + k8sSparkVersion
+        + '\''
+        + ", k8sNamespace='"
+        + k8sNamespace
         + '\''
         + ", deployMode='"
         + deployMode

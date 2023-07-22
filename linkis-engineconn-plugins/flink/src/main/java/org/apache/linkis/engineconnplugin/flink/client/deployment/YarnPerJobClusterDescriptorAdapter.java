@@ -20,9 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.client.deployment;
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
 import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.JobID;
-import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 
@@ -39,39 +37,7 @@ public class YarnPerJobClusterDescriptorAdapter extends ClusterDescriptorAdapter
 
   @Override
   public boolean isGloballyTerminalState() throws JobExecutionException {
-    boolean isGloballyTerminalState;
-    try {
-      JobStatus jobStatus = getJobStatus();
-      isGloballyTerminalState = jobStatus.isGloballyTerminalState();
-    } catch (JobExecutionException e) {
-      if (isYarnApplicationStopped(e)) {
-        isGloballyTerminalState = true;
-      } else {
-        throw e;
-      }
-    }
-
-    return isGloballyTerminalState;
-  }
-
-  /**
-   * The yarn application is not running when its final status is not UNDEFINED.
-   *
-   * <p>In this case, it will throw <code>
-   * RuntimeException("The Yarn application " + applicationId + " doesn't run anymore.")</code> from
-   * retrieve method in YarnClusterDescriptor.java
-   */
-  private boolean isYarnApplicationStopped(Throwable e) {
-    do {
-      String exceptionMessage = e.getMessage();
-      if (StringUtils.equals(
-          exceptionMessage, "The Yarn application " + clusterID + " doesn't run anymore.")) {
-        LOG.info("{} is stopped.", clusterID);
-        return true;
-      }
-      e = e.getCause();
-    } while (e != null);
-    return false;
+    return super.isGloballyTerminalStateByYarn();
   }
 
   public void deployCluster(JobID jobId, ClusterClient<ApplicationId> clusterClient)

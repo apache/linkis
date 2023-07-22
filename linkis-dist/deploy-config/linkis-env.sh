@@ -31,7 +31,7 @@ deployPwd=
 ### database type
 ### choose mysql or postgresql, default mysql
 dbType=mysql
-
+export dbType
 
 ##Linkis_SERVER_VERSION
 LINKIS_SERVER_VERSION=v1

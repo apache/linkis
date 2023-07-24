@@ -38,7 +38,7 @@ class ShellEngineConnFactory extends ComputationSingleExecutorEngineConnFactory 
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
   ): LabelExecutor = {
-    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
+    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getValue) {
       new ShellEngineConnConcurrentExecutor(
         id,
         ShellEngineConnConf.SHELL_ENGINECONN_CONCURRENT_LIMIT

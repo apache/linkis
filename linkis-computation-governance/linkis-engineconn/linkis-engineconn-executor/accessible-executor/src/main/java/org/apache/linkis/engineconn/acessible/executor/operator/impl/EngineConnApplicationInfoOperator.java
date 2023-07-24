@@ -22,6 +22,7 @@ import org.apache.linkis.engineconn.core.executor.ExecutorManager$;
 import org.apache.linkis.engineconn.core.executor.LabelExecutorManager;
 import org.apache.linkis.engineconn.executor.entity.Executor;
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor;
+import org.apache.linkis.governance.common.constant.ec.ECConstants;
 import org.apache.linkis.manager.common.operator.Operator;
 
 import java.util.HashMap;
@@ -43,10 +44,10 @@ public class EngineConnApplicationInfoOperator implements Operator {
     if (reportExecutor instanceof YarnExecutor) {
       YarnExecutor yarnExecutor = (YarnExecutor) reportExecutor;
       Map<String, Object> result = new HashMap<>();
-      result.put("applicationId", yarnExecutor.getApplicationId());
-      result.put("applicationUrl", yarnExecutor.getApplicationURL());
-      result.put("queue", yarnExecutor.getQueue());
-      result.put("yarnMode", yarnExecutor.getYarnMode());
+      result.put(ECConstants.YARN_APPID_NAME_KEY(), yarnExecutor.getApplicationId());
+      result.put(ECConstants.YARN_APP_URL_KEY(), yarnExecutor.getApplicationURL());
+      result.put(ECConstants.QUEUE(), yarnExecutor.getQueue());
+      result.put(ECConstants.YARN_MODE_KEY(), yarnExecutor.getYarnMode());
       return result;
     } else {
       throw new EngineConnException(

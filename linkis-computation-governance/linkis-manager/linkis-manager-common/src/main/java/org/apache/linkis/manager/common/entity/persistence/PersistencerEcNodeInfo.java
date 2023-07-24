@@ -58,7 +58,10 @@ public class PersistencerEcNodeInfo extends PersistenceNode {
         + ", engineType='"
         + engineType
         + '\''
-        + "} "
+        + ", heartbeatMsg='"
+        + heartbeatMsg
+        + '\''
+        + '}'
         + super.toString();
   }
 }

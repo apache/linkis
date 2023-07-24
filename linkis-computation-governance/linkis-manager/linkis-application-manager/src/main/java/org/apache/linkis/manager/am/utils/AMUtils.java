@@ -25,11 +25,13 @@ import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.entity.resource.*;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
+import org.apache.linkis.rpc.Sender;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,6 +42,9 @@ import org.slf4j.LoggerFactory;
 
 public class AMUtils {
   private static final Logger logger = LoggerFactory.getLogger(AMUtils.class);
+
+  private static final AtomicInteger idCreator = new AtomicInteger();
+  private static String idPrefix = Sender.getThisServiceInstance().getInstance();
 
   private static Gson GSON =
       new GsonBuilder()
@@ -334,5 +339,9 @@ public class AMUtils {
     } catch (Exception e) {
       return false;
     }
+  }
+
+  public static String getAsyncId() {
+    return idPrefix + "_" + idCreator.getAndIncrement();
   }
 }

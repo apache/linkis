@@ -15,23 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.entity.node;
+package org.apache.linkis.engineconnplugin.flink.util
 
-public interface EngineNode extends AMNode, RMNode, LabelNode {
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 
-  EMNode getEMNode();
+import java.util
 
-  void setEMNode(EMNode emNode);
+object ManagerUtil extends Logging {
 
-  String getLock();
+  val isManager: Boolean = {
+    val options = EngineConnServer.getEngineCreationContext.getOptions
+    FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)
+  }
 
-  void setLock(String lock);
-
-  String getTicketId();
-
-  void setTicketId(String ticketId);
-
-  String getEcMetrics();
-
-  void setEcMetrics(String metrics);
 }

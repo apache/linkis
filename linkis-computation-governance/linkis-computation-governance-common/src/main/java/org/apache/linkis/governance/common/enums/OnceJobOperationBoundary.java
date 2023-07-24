@@ -15,23 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.entity.node;
+package org.apache.linkis.governance.common.enums;
 
-public interface EngineNode extends AMNode, RMNode, LabelNode {
+public enum OnceJobOperationBoundary {
+  ECM("ecm"),
+  EC("ec");
 
-  EMNode getEMNode();
+  private String name;
 
-  void setEMNode(EMNode emNode);
+  OnceJobOperationBoundary(String name) {
+    this.name = name;
+  }
 
-  String getLock();
-
-  void setLock(String lock);
-
-  String getTicketId();
-
-  void setTicketId(String ticketId);
-
-  String getEcMetrics();
-
-  void setEcMetrics(String metrics);
+  public String getName() {
+    return name;
+  }
 }

@@ -86,6 +86,10 @@ object GovernanceCommonConf {
     CommonVars(envKey, "").getValue
   }
 
+  // value ECConstants.EC_CLIENT_TYPE_ATTACH
+  val EC_APP_MANAGE_MODE =
+    CommonVars("linkis.ec.app.manage.mode", "attach")
+
   val SCALA_PARSE_APPEND_CODE_ENABLED =
     CommonVars("linkis.scala.parse.append.code.enable", true).getValue
 

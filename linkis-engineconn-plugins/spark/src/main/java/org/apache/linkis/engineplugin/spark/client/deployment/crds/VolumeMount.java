@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.client.deployment;
+package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
-import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
+public class VolumeMount {
 
-import org.apache.commons.lang3.StringUtils;
+  private String name;
 
-public class ClusterDescriptorAdapterFactory {
+  private String mountPath;
 
-  public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
+  public String getName() {
+    return name;
+  }
 
-    ClusterDescriptorAdapter clusterDescriptorAdapter =
-        new YarnApplicationClusterDescriptorAdapter(executionContext);
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-    }
+  public String getMountPath() {
+    return mountPath;
+  }
 
-    return clusterDescriptorAdapter;
+  public void setMountPath(String mountPath) {
+    this.mountPath = mountPath;
   }
 }

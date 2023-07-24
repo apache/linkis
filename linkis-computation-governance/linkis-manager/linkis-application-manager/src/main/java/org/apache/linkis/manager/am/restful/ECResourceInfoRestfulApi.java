@@ -73,7 +73,7 @@ public class ECResourceInfoRestfulApi {
       throws AMErrorException {
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
-    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:") + ticketid;
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:" + ticketid);
     if (null != ecResourceInfoRecord
         && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
             || Configuration.isAdmin(userName))) {
@@ -87,7 +87,7 @@ public class ECResourceInfoRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "ticketid", required = true, dataType = "String", value = "ticket id")
   })
-  @RequestMapping(path = "/delete/{ticketid}}", method = RequestMethod.DELETE)
+  @RequestMapping(path = "/delete/{ticketid}", method = RequestMethod.DELETE)
   public Message deleteECInfo(HttpServletRequest req, @PathVariable("ticketid") String ticketid)
       throws AMErrorException {
     ECResourceInfoRecord ecResourceInfoRecord =

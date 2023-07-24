@@ -72,7 +72,9 @@ public abstract class AbstractFileSource implements FileSource {
     return Arrays.stream(fileSplits)
         .map(FileSplit::getParams)
         .flatMap(map -> map.entrySet().stream())
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        .collect(
+            Collectors.toMap(
+                Map.Entry::getKey, Map.Entry::getValue, (existingValue, newValue) -> newValue));
   }
 
   @Override

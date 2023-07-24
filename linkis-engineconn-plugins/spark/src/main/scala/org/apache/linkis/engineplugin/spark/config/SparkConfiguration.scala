@@ -50,6 +50,18 @@ object SparkConfiguration extends Logging {
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")
   val SPARK_APP_CONF = CommonVars[String]("spark.extconf", "")
 
+  val SPARK_K8S_CONFIG_FILE = CommonVars[String]("linkis.spark.k8s.config.file", "")
+  val SPARK_K8S_SERVICE_ACCOUNT = CommonVars[String]("linkis.spark.k8s.serviceAccount", "")
+  val SPARK_K8S_MASTER_URL = CommonVars[String]("linkis.spark.k8s.master.url", "")
+  val SPARK_K8S_USERNAME = CommonVars[String]("linkis.spark.k8s.username", "")
+  val SPARK_K8S_PASSWORD = CommonVars[String]("linkis.spark.k8s.password", "")
+  val SPARK_K8S_IMAGE = CommonVars[String]("linkis.spark.k8s.image", "apache/spark:v3.2.1")
+  val SPARK_K8S_IMAGE_PULL_POLICY = CommonVars[String]("linkis.spark.k8s.imagePullPolicy", "Always")
+  val SPARK_K8S_LANGUAGE_TYPE = CommonVars[String]("linkis.spark.k8s.languageType", "Scala")
+  val SPARK_K8S_RESTART_POLICY = CommonVars[String]("linkis.spark.k8s.restartPolicy", "Never")
+  val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
+  val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
+
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =
@@ -80,7 +92,7 @@ object SparkConfiguration extends Logging {
     "Map output compression method（map输出结果压缩方式）"
   )
 
-  val SPARK_MASTER = CommonVars[String]("spark.master", "yarn", "Default master（默认master）")
+  val SPARK_MASTER = CommonVars[String]("spark.master", "yarn", "Default yarn（默认yarn）")
 
   val SPARK_CONSOLE_OUTPUT_NUM = CommonVars[Int]("wds.linkis.spark.output.line.limit", 10)
 

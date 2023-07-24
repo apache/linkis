@@ -63,6 +63,7 @@ public class DefaultEntranceServer extends EntranceServer {
 
   private void cleanUpEntranceDirtyData() {
     if ((Boolean) EntranceConfiguration$.MODULE$.ENABLE_ENTRANCE_DIRTY_DATA_CLEAR().getValue()) {
+      logger.info("start to clean up entrance dirty data.");
       Sender sender =
           Sender.getSender(
               EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());

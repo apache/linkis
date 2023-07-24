@@ -62,6 +62,8 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
 
   private String ticketId;
 
+  private String ecMetrics;
+
   public AMEngineNode() {}
 
   public AMEngineNode(double score, ServiceInstance serviceInstance) {
@@ -208,6 +210,16 @@ public class AMEngineNode implements EngineNode, ScoreServiceInstance {
   @Override
   public void setTicketId(String ticketId) {
     this.ticketId = ticketId;
+  }
+
+  @Override
+  public String getEcMetrics() {
+    return ecMetrics;
+  }
+
+  @Override
+  public void setEcMetrics(String metrics) {
+    this.ecMetrics = metrics;
   }
 
   @Override

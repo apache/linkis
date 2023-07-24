@@ -15,23 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.entity.node;
+package org.apache.linkis.computation.client.once.result
 
-public interface EngineNode extends AMNode, RMNode, LabelNode {
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-  EMNode getEMNode();
-
-  void setEMNode(EMNode emNode);
-
-  String getLock();
-
-  void setLock(String lock);
-
-  String getTicketId();
-
-  void setTicketId(String ticketId);
-
-  String getEcMetrics();
-
-  void setEcMetrics(String metrics);
-}
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/askEngineConn")
+class AskEngineConnResult extends GetEngineConnResult

@@ -95,6 +95,10 @@ trait SimpleOnceJob extends OnceJob {
     case operator => operator
   }
 
+  def getEcServiceInstance: ServiceInstance = serviceInstance
+
+  def getEcTicketId: String = ticketId
+
 }
 
 class SubmittableSimpleOnceJob(

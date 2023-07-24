@@ -137,7 +137,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   }
 
   protected def getLabelKey(labels: Array[Label[_]]): String =
-    labels.map(_.getStringValue).mkString("&")
+    labels.filter(null != _).map(_.getStringValue).mkString("&")
 
   protected def createExecutor(
       engineCreationContext: EngineCreationContext,

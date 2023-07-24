@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.entity.node;
+package org.apache.linkis.engineconnplugin.flink.constants
 
-public interface EngineNode extends AMNode, RMNode, LabelNode {
+object FlinkECConstant {
 
-  EMNode getEMNode();
+  val FLINK_MANAGER_OPERATION_TYPE_KEY = "operationType"
 
-  void setEMNode(EMNode emNode);
+  val FLINK_OPERATION_BOUNDARY_KEY = "operationBoundary"
 
-  String getLock();
+  val EC_INSTANCE_KEY = "ecInstance"
 
-  void setLock(String lock);
+  val MSG_KEY = "msg"
 
-  String getTicketId();
+  val SNAPHOT_KEY = "snapshot"
 
-  void setTicketId(String ticketId);
+  val SAVAPOINT_PATH_KEY = "savepointPath"
 
-  String getEcMetrics();
+  val SAVEPOINT_MODE_KEY = "mode"
 
-  void setEcMetrics(String metrics);
+  val RESULT_SAVEPOINT_KEY = "writtenSavepoint"
 }

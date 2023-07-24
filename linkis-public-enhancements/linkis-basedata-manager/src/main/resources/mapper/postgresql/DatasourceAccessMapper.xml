@@ -15,36 +15,35 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeMapper">
 
-    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity">
-            <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="option" column="option" jdbcType="VARCHAR"/>
-            <result property="classifier" column="classifier" jdbcType="VARCHAR"/>
-            <result property="icon" column="icon" jdbcType="VARCHAR"/>
-            <result property="layers" column="layers" jdbcType="INTEGER"/>
+
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceAccessMapper">
+
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceAccessEntity">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="tableId" column="table_id" jdbcType="BIGINT"/>
+            <result property="visitor" column="visitor" jdbcType="VARCHAR"/>
+            <result property="fields" column="fields" jdbcType="VARCHAR"/>
+            <result property="applicationId" column="application_id" jdbcType="INTEGER"/>
+            <result property="accessTime" column="access_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        "id","name","description",
-        "option","classifier","icon",
-        "layers"
+        id,table_id,visitor,
+        fields,application_id,access_time
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
-         from linkis_ps_dm_datasource_type
+        FROM linkis_ps_datasource_access
         <if test="searchName != null and searchName!=''">
-              WHERE "name" LIKE concat('%',#{searchName}::text,'%')
-            OR "description" LIKE concat('%',#{searchName}::text,'%')
-            OR "option" LIKE concat('%',#{searchName}::text,'%')
-            OR "classifier" LIKE concat('%',#{searchName}::text,'%')
+            WHERE visitor LIKE concat('%',#{searchName}::text,'%')
+            OR fields LIKE concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

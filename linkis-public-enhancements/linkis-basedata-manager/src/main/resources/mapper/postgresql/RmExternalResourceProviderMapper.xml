@@ -18,33 +18,30 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeMapper">
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.RmExternalResourceProviderMapper">
 
-    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity">
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.RmExternalResourceProviderEntity">
             <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="resourceType" column="resource_type" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="option" column="option" jdbcType="VARCHAR"/>
-            <result property="classifier" column="classifier" jdbcType="VARCHAR"/>
-            <result property="icon" column="icon" jdbcType="VARCHAR"/>
-            <result property="layers" column="layers" jdbcType="INTEGER"/>
+            <result property="labels" column="labels" jdbcType="VARCHAR"/>
+            <result property="config" column="config" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        "id","name","description",
-        "option","classifier","icon",
-        "layers"
+        id,resource_type,name,
+        labels,config
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
-         from linkis_ps_dm_datasource_type
+        FROM linkis_cg_rm_external_resource_provider
         <if test="searchName != null and searchName!=''">
-              WHERE "name" LIKE concat('%',#{searchName}::text,'%')
-            OR "description" LIKE concat('%',#{searchName}::text,'%')
-            OR "option" LIKE concat('%',#{searchName}::text,'%')
-            OR "classifier" LIKE concat('%',#{searchName}::text,'%')
+            WHERE resource_type LIKE concat('%',#{searchName}::text,'%')
+            OR name LIKE concat('%',#{searchName}::text,'%')
+            OR labels LIKE concat('%',#{searchName}::text,'%')
+            OR config LIKE concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

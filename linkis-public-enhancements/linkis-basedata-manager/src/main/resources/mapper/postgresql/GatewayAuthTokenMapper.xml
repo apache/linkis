@@ -18,33 +18,34 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeMapper">
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.GatewayAuthTokenMapper">
 
-    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity">
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.GatewayAuthTokenEntity">
             <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="option" column="option" jdbcType="VARCHAR"/>
-            <result property="classifier" column="classifier" jdbcType="VARCHAR"/>
-            <result property="icon" column="icon" jdbcType="VARCHAR"/>
-            <result property="layers" column="layers" jdbcType="INTEGER"/>
+            <result property="tokenName" column="token_name" jdbcType="VARCHAR"/>
+            <result property="legalUsers" column="legal_users" jdbcType="VARCHAR"/>
+            <result property="legalHosts" column="legal_hosts" jdbcType="VARCHAR"/>
+            <result property="businessOwner" column="business_owner" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="DATE"/>
+            <result property="updateTime" column="update_time" jdbcType="DATE"/>
+            <result property="elapseDay" column="elapse_day" jdbcType="BIGINT"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        "id","name","description",
-        "option","classifier","icon",
-        "layers"
+        id,token_name,legal_users,
+        legal_hosts,business_owner,create_time,
+        update_time,elapse_day,update_by
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
-         from linkis_ps_dm_datasource_type
+        FROM linkis_mg_gateway_auth_token
         <if test="searchName != null and searchName!=''">
-              WHERE "name" LIKE concat('%',#{searchName}::text,'%')
-            OR "description" LIKE concat('%',#{searchName}::text,'%')
-            OR "option" LIKE concat('%',#{searchName}::text,'%')
-            OR "classifier" LIKE concat('%',#{searchName}::text,'%')
+            WHERE token_name LIKE concat('%',#{searchName}::text,'%')
+            OR legal_users LIKE concat('%',#{searchName}::text,'%')
+            OR legal_hosts LIKE concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

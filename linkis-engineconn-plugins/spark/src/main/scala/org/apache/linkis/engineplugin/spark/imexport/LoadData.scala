@@ -41,46 +41,70 @@ import scala.collection.JavaConverters._
 object LoadData {
 
   def loadDataToTable(spark: SparkSession, source: String, destination: String): Unit = {
-    create_table_from_a_file(spark, source, destination)
+    val src = BDPJettyServerHelper.jacksonJson
+      .readValue(source, classOf[java.util.HashMap[String, Object]])
+      .asScala
+      .toMap
+    val dst = BDPJettyServerHelper.jacksonJson
+      .readValue(destination, classOf[java.util.HashMap[String, Object]])
+      .asScala
+      .toMap
+    create_table_from_a_file(spark, src, dst)
   }
 
   def loadDataToTableByFile(spark: SparkSession, destinationPath: String, source: String): Unit = {
     val destination = BackGroundServiceUtils.exchangeExecutionCode(destinationPath)
-    create_table_from_a_file(spark, source, destination)
+    val src = BDPJettyServerHelper.jacksonJson
+      .readValue(source, classOf[java.util.HashMap[String, Object]])
+      .asScala
+      .toMap
+    val dst = BDPJettyServerHelper.jacksonJson
+      .readValue(destination, classOf[java.util.HashMap[String, Object]])
+      .asScala
+      .toMap
+    create_table_from_a_file(spark, src, dst)
   }
 
-  def create_table_from_a_file(spark: SparkSession, src: String, dest: String): Unit = {
-    val source = BDPJettyServerHelper.gson.fromJson(src, classOf[Map[String, Any]])
-    val destination = BDPJettyServerHelper.gson.fromJson(src, classOf[Map[String, Any]])
+  def create_table_from_a_file(
+      spark: SparkSession,
+      source: Map[String, Any],
+      destination: Map[String, Any]
+  ): Unit = {
 
-    var path = getMapValue[String](source, "path")
-    val pathType = getMapValue[String](source, "pathType", "share")
-    var hasHeader = getMapValue[Boolean](source, "hasHeader", false)
-    val sheetName = getMapValue[String](source, "sheet", "Sheet1")
-    val dateFormat = getMapValue[String](source, "dateFormat", "yyyy-MM-dd")
+    var path = source.getOrElse("path", "").toString
+    val pathType = source.getOrElse("pathType", "share").toString
+    var hasHeader = Utils.tryCatch(source.getOrElse("hasHeader", false).toString.toBoolean) {
+      case e: Exception => false
+    }
+    val sheetName = source.getOrElse("sheet", "Sheet1").toString
+    val dateFormat = source.getOrElse("dateFormat", "yyyy-MM-dd").toString
     val suffix = path.substring(path.lastIndexOf("."))
     val sheetNames = sheetName.split(",").toBuffer.asJava
+
     var fs: FileSystem = null
+    val database = destination.getOrElse("database", "").toString
+    val tableName = destination.getOrElse("tableName", "").toString
 
-    val database = getMapValue[String](destination, "database")
-    val tableName = getMapValue[String](destination, "tableName")
-
-    val importData = getMapValue[Boolean](destination, "importData", true)
+    val importData = Utils.tryCatch(destination.getOrElse("importData", true).toString.toBoolean) {
+      case e: Exception => true
+    }
     val isPartition = Utils.tryCatch {
-      getMapValue[Boolean](destination, "isPartition", true)
+      destination.getOrElse("isPartition", true).toString.toBoolean
     } { case e: Exception =>
-      val flag = getMapValue[BigInt](destination, "isPartition", 0)
+      val flag = BigInt(destination.getOrElse("isPartition", 0).toString)
       if (flag == 1) true else false
     }
-    val isOverwrite = getMapValue[Boolean](destination, "isOverwrite", false)
-    val partition = getMapValue[String](destination, "partition", "ds")
-    val partitionValue = getMapValue[String](destination, "partitionValue", "1993-01-02")
+    val isOverwrite =
+      Utils.tryCatch(destination.getOrElse("isOverwrite", false).toString.toBoolean) {
+        case e: Exception => false
+      }
+    val partition = destination.getOrElse("partition", "ds").toString
+    val partitionValue = destination.getOrElse("partitionValue", "1993-01-02").toString
 
-    val columnsJson = getMapValue[String](destination, "columns", "")
-    val columns = BDPJettyServerHelper.gson.fromJson(columnsJson, classOf[List[Map[String, Any]]])
+    val columns = destination.getOrElse("columns", "").asInstanceOf[List[Map[String, Any]]]
 
     val dateFormats =
-      columns.map(_.get("dateFormat").get.toString).map(f => if (f isEmpty) "yyyy-MM-dd" else f)
+      columns.map(_.getOrElse("dateFormat", "yyyy-MM-dd").toString)
     var isFirst = true
     val dateFormatsJson = new StringBuilder()
     dateFormats.foreach(f => {

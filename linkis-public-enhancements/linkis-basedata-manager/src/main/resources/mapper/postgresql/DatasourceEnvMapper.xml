@@ -18,33 +18,34 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceTypeMapper">
+<mapper namespace="org.apache.linkis.basedatamanager.server.dao.DatasourceEnvMapper">
 
-    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceTypeEntity">
+    <resultMap id="BaseResultMap" type="org.apache.linkis.basedatamanager.server.domain.DatasourceEnvEntity">
             <id property="id" column="id" jdbcType="INTEGER"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="option" column="option" jdbcType="VARCHAR"/>
-            <result property="classifier" column="classifier" jdbcType="VARCHAR"/>
-            <result property="icon" column="icon" jdbcType="VARCHAR"/>
-            <result property="layers" column="layers" jdbcType="INTEGER"/>
+            <result property="envName" column="env_name" jdbcType="VARCHAR"/>
+            <result property="envDesc" column="env_desc" jdbcType="VARCHAR"/>
+            <result property="datasourceTypeId" column="datasource_type_id" jdbcType="INTEGER"/>
+            <result property="parameter" column="parameter" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="modifyTime" column="modify_time" jdbcType="TIMESTAMP"/>
+            <result property="modifyUser" column="modify_user" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        "id","name","description",
-        "option","classifier","icon",
-        "layers"
+        id,env_name,env_desc,
+        datasource_type_id,parameter,create_time,
+        create_user,modify_time,modify_user
     </sql>
 
     <select id="getListByPage" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"></include>
-         from linkis_ps_dm_datasource_type
+        FROM linkis_ps_dm_datasource_env
         <if test="searchName != null and searchName!=''">
-              WHERE "name" LIKE concat('%',#{searchName}::text,'%')
-            OR "description" LIKE concat('%',#{searchName}::text,'%')
-            OR "option" LIKE concat('%',#{searchName}::text,'%')
-            OR "classifier" LIKE concat('%',#{searchName}::text,'%')
+            WHERE env_name LIKE concat('%',#{searchName}::text,'%')
+            OR env_desc LIKE concat('%',#{searchName}::text,'%')
+            OR parameter LIKE concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

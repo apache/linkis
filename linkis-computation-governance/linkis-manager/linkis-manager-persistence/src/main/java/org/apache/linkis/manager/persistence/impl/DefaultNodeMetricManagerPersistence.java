@@ -119,7 +119,7 @@ public class DefaultNodeMetricManagerPersistence implements NodeMetricManagerPer
             "ignore update ShuttingDown status node:{} to status:{}",
             instance,
             NodeStatus.values()[nodeMetrics.getStatus()].name());
-        persistenceNodeMetrics.setStatus(null);
+        persistenceNodeMetrics.setStatus(oldMetrics.getStatus());
       } else {
         persistenceNodeMetrics.setStatus(nodeMetrics.getStatus());
       }

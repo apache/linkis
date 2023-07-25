@@ -159,6 +159,9 @@ object SparkConfiguration extends Logging {
 
   val LINKIS_SPARK_ETL_SUPPORT_HUDI = CommonVars[Boolean]("linkis.spark.etl.support.hudi", false)
 
+  val SCALA_PARSE_APPEND_CODE =
+    CommonVars("linkis.scala.parse.append.code", "val linkisVar=1").getValue
+
   private def getMainJarName(): String = {
     val somePath = ClassUtils.jarOfClass(classOf[SparkEngineConnFactory])
     if (somePath.isDefined) {

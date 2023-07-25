@@ -55,7 +55,7 @@
          from linkis_ps_dm_datasource_type_key
         where 1 = 1
         <if test="searchName != null and searchName!=''">
-            and "name" like concat('%',#{searchName},'%')
+            and "name" like concat('%',#{searchName}::text,'%')
         </if>
         <if test="dataSourceTypeId != null and dataSourceTypeId!=''">
             and "data_source_type_id" = #{dataSourceTypeId}

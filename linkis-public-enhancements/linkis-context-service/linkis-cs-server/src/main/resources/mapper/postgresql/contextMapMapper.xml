@@ -64,7 +64,7 @@
     </select>
 
     <select id="getAllContextMapByKey" resultMap="PersistenceContextKeyValue">
-        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = cast(#{contextID.contextId} as int) AND "key" LIKE CONCAT('%',#{key},'%')
+        SELECT * FROM linkis_ps_cs_context_map WHERE context_id = cast(#{contextID.contextId} as int) AND "key" LIKE CONCAT('%',#{key}::text,'%')
     </select>
 
 
@@ -120,7 +120,7 @@
         <where>
             <if test="#{contextID.contextId} !=null">context_id = cast(#{contextID.contextId} as int) and </if>
             <!--<if test="#{contextType} !=null">context_type = #{contextType} and </if>-->
-            <if test="#{keyPrefix} !=null">"key" like concat(#{keyPrefix},'%')</if>
+            <if test="#{keyPrefix} !=null">"key" like concat(#{keyPrefix}::text,'%')</if>
         </where>
     </delete>
     <!--todo 和上面的合并sql-->
@@ -129,7 +129,7 @@
         <where>
             <if test="#{contextID.contextId} !=null">context_id = cast(#{contextID.contextId} as int) and </if>
             <if test="#{contextType} !=null">context_type = #{contextType} and </if>
-            <if test="#{keyPrefix} !=null">"key" like concat(#{keyPrefix},'%')</if>
+            <if test="#{keyPrefix} !=null">"key" like concat(#{keyPrefix}::text,'%')</if>
         </where>
     </delete>
 

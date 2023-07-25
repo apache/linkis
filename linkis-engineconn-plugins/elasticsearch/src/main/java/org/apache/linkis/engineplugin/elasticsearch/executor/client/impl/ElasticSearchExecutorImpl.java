@@ -123,8 +123,5 @@ public class ElasticSearchExecutorImpl implements ElasticSearchExecutor {
     if (cancelable != null) {
       cancelable.cancel();
     }
-    if (client != null) {
-      client.close();
-    }
   }
 }

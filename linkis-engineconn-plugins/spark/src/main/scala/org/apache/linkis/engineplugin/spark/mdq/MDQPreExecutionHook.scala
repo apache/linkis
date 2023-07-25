@@ -60,11 +60,10 @@ class MDQPreExecutionHook extends SparkPreExecutionHook with Logging {
       case _ =>
         ""
     }
-    val linkisVar = "val linkisVar=1"
     if (
         StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(
           runType
-        ) || (code != null && code.contains(linkisVar))
+        ) || (code != null && code.contains(SparkConfiguration.SCALA_PARSE_APPEND_CODE))
     ) {
       return code
     }

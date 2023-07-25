@@ -197,6 +197,28 @@
           }
         }
       },
+      "EnginePluginManagement": {
+        "engineConnType": "Engine Type",
+        "engineConnVersion": "Engine Version",
+        "create": "Add Engine Plugin",
+        "fileName": "File Name",
+        "fileSize": "File Size",
+        "lastModified": "File Update Time",
+        "bmlResourceId": "Material Resource Id",
+        "bmlResourceVersion": "Material Resource Version",
+        "lastUpdateTime": "Update Time",
+        "createTime": "Creation Time",
+        "Reset": "Reset",
+        "delete": "Delete the version of the selected material",
+        "update": "Update Engine Plugin",
+        "updateFileOnly": "Update",
+        "resourceVersion": "Engine Material BML Version",
+        "user": "Affiliated Person",
+        "deleteCurrentbml": "Delete",
+        "versionList": "Version List",
+        "rollback": "Roll Back ",
+        "action": "Operation"
+      },
       "modal": {
         "modalTitle": "Prompt message ",
         "modalDelete": "Confirm whether to delete the [{name} option?",
@@ -229,7 +251,7 @@
           "label": "Status"
         },
         "appType": "App Type",
-        "engineType": "Engine"
+        "engineType": "Engine Type"
       },
       "columns": {
         "taskID": "Task ID",
@@ -607,8 +629,8 @@
           "createTime": "Create Time",
           "updateTime": "Update Time",
           "searchPlaceholder": "Name",
-          "searchName": "名称",
-          "searchType": "类型",
+          "searchName": "Name",
+          "searchType": "Type",
           "all": "All"
         }
       },

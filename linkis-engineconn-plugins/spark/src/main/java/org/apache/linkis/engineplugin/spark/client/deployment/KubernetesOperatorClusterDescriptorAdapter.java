@@ -38,8 +38,12 @@ import io.fabric8.kubernetes.client.CustomResource;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescriptorAdapter {
+  private static final Logger logger =
+      LoggerFactory.getLogger(KubernetesOperatorClusterDescriptorAdapter.class);
 
   protected SparkConfig sparkConfig;
   protected KubernetesClient client;
@@ -57,6 +61,10 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
 
   public void deployCluster(String mainClass, String args, Map<String, String> confMap) {
 
+    logger.info(
+        "The spark k8s operator task start，k8sNamespace: {},appName: {}",
+        this.sparkConfig.getK8sNamespace(),
+        this.sparkConfig.getAppName());
     CustomResourceDefinitionList crds =
         client.apiextensions().v1().customResourceDefinitions().list();
 
@@ -101,8 +109,10 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             .executor(executor)
             .build();
 
+    logger.info("Spark k8s operator task parameters: {}", sparkApplicationSpec);
     sparkApplication.setSpec(sparkApplicationSpec);
     SparkApplication created = sparkApplicationClient.createOrReplace(sparkApplication);
+    logger.info("Preparing to submit the Spark k8s operator Task: {}", created);
 
     // Wait three seconds to get the status
     try {

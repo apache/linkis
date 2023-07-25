@@ -23,8 +23,11 @@ import java.io.File;
 import java.io.IOException;
 
 import io.fabric8.kubernetes.client.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KubernetesHelper {
+  private static final Logger logger = LoggerFactory.getLogger(KubernetesHelper.class);
 
   public static KubernetesClient getKubernetesClientByUrl(
       String k8sMasterUrl, String k8sUsername, String k8sPassword) {
@@ -34,16 +37,33 @@ public class KubernetesHelper {
             .withUsername(k8sUsername)
             .withPassword(k8sPassword)
             .build();
-    return new DefaultKubernetesClient(config);
+    DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
+    logger.info(
+        "KubernetesClient Create success,kubernetesClient masterUrl: {}",
+        kubernetesClient.getMasterUrl().toString());
+    return kubernetesClient;
   }
 
   public static KubernetesClient getKubernetesClientByUrl(String k8sMasterUrl) {
     Config config = new ConfigBuilder().withMasterUrl(k8sMasterUrl).build();
-    return new DefaultKubernetesClient(config);
+    DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
+    logger.info(
+        "KubernetesClient Create success,kubernetesClient masterUrl: {}",
+        kubernetesClient.getMasterUrl().toString());
+    return kubernetesClient;
   }
 
   public static KubernetesClient getKubernetesClient(
       String kubeConfigFile, String k8sMasterUrl, String k8sUsername, String k8sPassword) {
+    logger.info(
+        "Start create KubernetesClient,kubeConfigFile: {},k8sMasterUrl: {}",
+        kubeConfigFile,
+        k8sMasterUrl);
+
+    if (StringUtils.isBlank(kubeConfigFile) && StringUtils.isBlank(kubeConfigFile)) {
+      throw new KubernetesClientException(
+          "Both kubeConfigFile and k8sMasterUrl are empty. Initializing KubernetesClient failed.");
+    }
     // The ConfigFile mode is preferred
     if (StringUtils.isNotBlank(kubeConfigFile)) {
       return getKubernetesClientByKubeConfigFile(kubeConfigFile);
@@ -59,8 +79,7 @@ public class KubernetesHelper {
       return getKubernetesClientByUrl(k8sMasterUrl);
     }
 
-    throw new KubernetesClientException(
-        "Both kubeConfigFile and k8sMasterUrl are empty. Initializing KubernetesClient failed.");
+    throw new KubernetesClientException("Initializing KubernetesClient failed.");
   }
 
   public static KubernetesClient getKubernetesClientByKubeConfigFile(String kubeConfigFile) {
@@ -77,6 +96,10 @@ public class KubernetesHelper {
       config = Config.autoConfigure(null);
     }
 
-    return new DefaultKubernetesClient(config);
+    DefaultKubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
+    logger.info(
+        "KubernetesClient Create success,kubernetesClient masterUrl: {}",
+        kubernetesClient.getMasterUrl().toString());
+    return kubernetesClient;
   }
 }

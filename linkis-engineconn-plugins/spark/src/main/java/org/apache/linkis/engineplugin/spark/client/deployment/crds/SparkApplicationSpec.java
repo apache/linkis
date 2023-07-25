@@ -133,6 +133,41 @@ public class SparkApplicationSpec implements KubernetesResource {
     this.executor = executor;
   }
 
+  @Override
+  public String toString() {
+    return "SparkApplicationSpec{"
+        + "type='"
+        + type
+        + '\''
+        + ", mode='"
+        + mode
+        + '\''
+        + ", image='"
+        + image
+        + '\''
+        + ", imagePullPolicy='"
+        + imagePullPolicy
+        + '\''
+        + ", mainClass='"
+        + mainClass
+        + '\''
+        + ", mainApplicationFile='"
+        + mainApplicationFile
+        + '\''
+        + ", sparkVersion='"
+        + sparkVersion
+        + '\''
+        + ", restartPolicy="
+        + restartPolicy
+        + ", volumes="
+        + volumes
+        + ", driver="
+        + driver
+        + ", executor="
+        + executor
+        + '}';
+  }
+
   public static SparkApplicationSpecBuilder Builder() {
     return new SparkApplicationSpecBuilder();
   }

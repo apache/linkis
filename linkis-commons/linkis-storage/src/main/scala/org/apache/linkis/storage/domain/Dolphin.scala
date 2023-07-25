@@ -39,7 +39,10 @@ object Dolphin extends Logging {
   val COL_SPLIT_LEN = COL_SPLIT_BYTES.length
 
   val NULL = "NULL"
-  val NULL_BYTES = "NULL".getBytes("utf-8")
+  val NULL_BYTES = NULL.getBytes("utf-8")
+
+  val LINKIS_NULL = "LINKIS_NULL"
+  val LINKIS_NULL_BYTES = LINKIS_NULL.getBytes("utf-8")
 
   val INT_LEN = 10
 

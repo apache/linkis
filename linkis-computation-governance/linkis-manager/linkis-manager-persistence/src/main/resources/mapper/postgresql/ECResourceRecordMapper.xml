@@ -87,7 +87,7 @@
             <if test="instance != null">service_instance = #{instance}</if>
             <if test="username != null">and create_user = #{username}</if>
             <!--            label_value in db eg：`hadoop-spark,spark-3.2.1`-->
-            <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>
+            <if test="engineType !=null">and label_value like concat('%,',#{engineType}::text,'%')</if>
             <if test="startDate != null">and create_time BETWEEN #{startDate} AND #{endDate}</if>
         </where>
         ORDER BY linkis_cg_ec_resource_info_record.create_time DESC

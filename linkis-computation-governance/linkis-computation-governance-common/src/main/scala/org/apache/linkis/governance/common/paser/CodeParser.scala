@@ -111,7 +111,9 @@ class ScalaCodeParser extends SingleCodeParser with Logging {
     if (statementBuffer.nonEmpty) codeBuffer.append(statementBuffer.mkString("\n"))
 
     // Append code `val linkisVar=1` in ends to prevent bugs that do not exit tasks for a long time
-    if (GovernanceCommonConf.SCALA_PARSE_APPEND_CODE_ENABLED) codeBuffer.append("val linkisVar=1")
+    if (GovernanceCommonConf.SCALA_PARSE_APPEND_CODE_ENABLED) {
+      codeBuffer.append(GovernanceCommonConf.SCALA_PARSE_APPEND_CODE)
+    }
     codeBuffer.toArray
   }
 

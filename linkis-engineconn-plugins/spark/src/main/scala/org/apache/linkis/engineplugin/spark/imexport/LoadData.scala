@@ -101,7 +101,10 @@ object LoadData {
     val partition = destination.getOrElse("partition", "ds").toString
     val partitionValue = destination.getOrElse("partitionValue", "1993-01-02").toString
 
-    val columns = destination.getOrElse("columns", "").asInstanceOf[List[Map[String, Any]]]
+    val columnsJava = destination
+      .getOrElse("columns", "")
+      .asInstanceOf[java.util.List[java.util.LinkedHashMap[String, Any]]]
+    val columns: List[Map[String, Any]] = columnsJava.asScala.toList.map(_.asScala.toMap)
 
     val dateFormats =
       columns.map(_.getOrElse("dateFormat", "yyyy-MM-dd").toString)

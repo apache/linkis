@@ -42,9 +42,11 @@ class DefaultOperateService extends OperateService with Logging {
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
     var response: EngineOperateResponse = null
-
-    val parameters =
-      engineOperateRequest.getParameters.asScala.toMap.asInstanceOf[util.Map[String, Object]]
+    val parameters = {
+      val map = new util.HashMap[String, Object]()
+      engineOperateRequest.getParameters.asScala.foreach(entry => map.put(entry._1, entry._2))
+      map
+    }
     val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
       logger.error(s"Get operator failed, parameters is ${engineOperateRequest.getParameters}.", t)
       response = new EngineOperateResponse(

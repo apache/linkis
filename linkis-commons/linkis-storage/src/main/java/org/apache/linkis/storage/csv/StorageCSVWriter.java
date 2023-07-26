@@ -102,8 +102,8 @@ public class StorageCSVWriter extends CSVFsWriter {
       rowBuilder.append(decoratedValue).append(delimiter);
     }
     if (rowBuilder.length() > 0 && rowBuilder.toString().endsWith(delimiter)) {
-      int index = rowBuilder.lastIndexOf(separator);
-      rowBuilder.delete(index, index + separator.length());
+      int index = rowBuilder.lastIndexOf(delimiter);
+      rowBuilder.delete(index, index + delimiter.length());
     }
     rowBuilder.append("\n");
     if (logger.isDebugEnabled()) {

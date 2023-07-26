@@ -25,23 +25,28 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class KubernetesResource extends Resource {
   private final long memory;
   private final long cores;
+  private final String namespace;
 
   private KubernetesResource(Resource r) {
     if (r instanceof KubernetesResource) {
       KubernetesResource t = (KubernetesResource) r;
       this.memory = t.memory;
       this.cores = t.cores;
+      this.namespace = t.namespace;
     } else if (r instanceof MemoryResource) {
       MemoryResource m = (MemoryResource) r;
       this.memory = m.getMemory();
       this.cores = 0;
+      this.namespace = "default";
     } else if (r instanceof CPUResource) {
       CPUResource c = (CPUResource) r;
       this.memory = 0;
       this.cores = c.getCores();
+      this.namespace = "default";
     } else {
       this.memory = Long.MAX_VALUE;
       this.cores = Long.MAX_VALUE;
+      this.namespace = "default";
     }
   }
 
@@ -49,37 +54,49 @@ public class KubernetesResource extends Resource {
     this(Long.MAX_VALUE, Long.MAX_VALUE);
   }
 
+  public KubernetesResource(long memory, long cores, String namespace) {
+    this.memory = memory;
+    this.cores = cores;
+    this.namespace = namespace;
+  }
+
   public KubernetesResource(long memory, long cores) {
     this.memory = memory;
     this.cores = cores;
+    this.namespace = "default";
   }
 
   public KubernetesResource add(Resource r) {
     KubernetesResource temp = new KubernetesResource(r);
-    return new KubernetesResource(this.memory + temp.memory, this.cores + temp.cores);
+    return new KubernetesResource(
+        this.memory + temp.memory, this.cores + temp.cores, this.namespace);
   }
 
   public KubernetesResource minus(Resource r) {
     KubernetesResource temp = new KubernetesResource(r);
-    return new KubernetesResource(this.memory - temp.memory, this.cores - temp.cores);
+    return new KubernetesResource(
+        this.memory - temp.memory, this.cores - temp.cores, this.namespace);
   }
 
   public KubernetesResource multiplied(Resource r) {
     KubernetesResource temp = new KubernetesResource(r);
-    return new KubernetesResource(this.memory * temp.memory, this.cores * temp.cores);
+    return new KubernetesResource(
+        this.memory * temp.memory, this.cores * temp.cores, this.namespace);
   }
 
   public KubernetesResource multiplied(float rate) {
-    return new KubernetesResource((long) (this.memory * rate), Math.round(this.cores * rate));
+    return new KubernetesResource(
+        (long) (this.memory * rate), Math.round(this.cores * rate), this.namespace);
   }
 
   public KubernetesResource divide(Resource r) {
     KubernetesResource temp = new KubernetesResource(r);
-    return new KubernetesResource(this.memory / temp.memory, this.cores / temp.cores);
+    return new KubernetesResource(
+        this.memory / temp.memory, this.cores / temp.cores, this.namespace);
   }
 
   public KubernetesResource divide(int rate) {
-    return new KubernetesResource(this.memory / rate, this.cores / rate);
+    return new KubernetesResource(this.memory / rate, this.cores / rate, this.namespace);
   }
 
   public boolean moreThan(Resource r) {
@@ -100,7 +117,9 @@ public class KubernetesResource extends Resource {
   @Override
   public boolean notLess(Resource r) {
     KubernetesResource temp = new KubernetesResource(r);
-    return this.memory >= temp.memory && this.cores >= temp.cores;
+    return this.memory >= temp.memory
+        && this.cores >= temp.cores
+        && this.namespace.equals(temp.namespace);
   }
 
   @Override
@@ -111,7 +130,8 @@ public class KubernetesResource extends Resource {
   @Override
   public String toJson() {
     return String.format(
-        "{\"memory\":%s,\"cpu\":%d}", ByteTimeUtils.bytesToString(this.memory), this.cores);
+        "{\"namespace\":\"%s\",\"memory\":%s,\"cpu\":%d}",
+        namespace, ByteTimeUtils.bytesToString(this.memory), this.cores);
   }
 
   @Override
@@ -125,5 +145,9 @@ public class KubernetesResource extends Resource {
 
   public long getCores() {
     return cores;
+  }
+
+  public String getNamespace() {
+    return namespace;
   }
 }

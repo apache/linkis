@@ -21,6 +21,17 @@ import org.apache.linkis.manager.common.entity.resource.ResourceType;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
 
 public class KubernetesResourceIdentifier implements ExternalResourceIdentifier {
+
+  String namespace;
+
+  public KubernetesResourceIdentifier(String namespace) {
+    this.namespace = namespace;
+  }
+
+  public String getNamespace() {
+    return namespace;
+  }
+
   @Override
   public ResourceType getResourceType() {
     return ResourceType.Kubernetes;

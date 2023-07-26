@@ -127,9 +127,10 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
     ) * executorNum + ByteTimeUtils.byteStringAsBytes(driverMemoryWithUnit)
     val totalExecutorCores = executorCores * executorNum + driverCores
     // logger.info(s"总需求内存:$totalExecutorMemory, 总需求核数$totalExecutorCores")
+    val namespace = LINKIS_SPARK_KUBERNETES_NAMESPACE.getValue(properties)
     new DriverAndKubernetesResource(
       new LoadInstanceResource(0, 0, 0),
-      new KubernetesResource(totalExecutorMemory, totalExecutorCores)
+      new KubernetesResource(totalExecutorMemory, totalExecutorCores, namespace)
     )
   }
 

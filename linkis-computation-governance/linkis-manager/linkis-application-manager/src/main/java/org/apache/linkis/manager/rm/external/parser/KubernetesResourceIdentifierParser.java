@@ -24,10 +24,11 @@ import org.apache.linkis.manager.rm.external.kubernetes.KubernetesResourceIdenti
 import java.util.Map;
 
 public class KubernetesResourceIdentifierParser implements ExternalResourceIdentifierParser {
+  public static String NAMESPACE = "namespace";
 
   @Override
   public ExternalResourceIdentifier parse(Map<String, Object> identifierMap) {
-    return new KubernetesResourceIdentifier();
+    return new KubernetesResourceIdentifier((String) identifierMap.get(NAMESPACE));
   }
 
   @Override

@@ -51,7 +51,7 @@ public class KubernetesResource extends Resource {
   }
 
   public KubernetesResource() {
-    this(Long.MAX_VALUE, Long.MAX_VALUE);
+    this(Long.MAX_VALUE, Long.MAX_VALUE, "default");
   }
 
   public KubernetesResource(long memory, long cores, String namespace) {

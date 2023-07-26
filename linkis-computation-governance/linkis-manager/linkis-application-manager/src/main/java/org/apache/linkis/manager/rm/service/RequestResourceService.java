@@ -407,7 +407,7 @@ public abstract class RequestResourceService {
       KubernetesResource kubernetesResource = (KubernetesResource) requestResource;
       KubernetesResource kubernetesResourceAvailable = (KubernetesResource) availableResource;
       KubernetesResource kubernetesResourceMax = (KubernetesResource) maxResource;
-      if (kubernetesResource.getCores() > kubernetesResource.getCores()) {
+      if (kubernetesResource.getCores() > kubernetesResourceAvailable.getCores()) {
         return Pair.of(
             RMErrorCode.NAMESPACE_CPU_INSUFFICIENT.getErrorCode(),
             RMErrorCode.NAMESPACE_CPU_INSUFFICIENT.getErrorDesc()

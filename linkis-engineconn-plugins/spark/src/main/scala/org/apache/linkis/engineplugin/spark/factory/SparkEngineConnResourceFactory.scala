@@ -46,7 +46,7 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       engineResourceRequest: EngineResourceRequest
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
-    if (clusterLabel != null && clusterLabel.getClusterType == "K8S") {
+    if (clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
       getRequestResource(engineResourceRequest.properties)
@@ -57,7 +57,7 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       engineResourceRequest: EngineResourceRequest
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
-    if (clusterLabel != null && clusterLabel.getStringValue.startsWith("K8S")) {
+    if (clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
       getRequestResource(engineResourceRequest.properties)
@@ -126,8 +126,8 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       executorMemoryWithUnit
     ) * executorNum + ByteTimeUtils.byteStringAsBytes(driverMemoryWithUnit)
     val totalExecutorCores = executorCores * executorNum + driverCores
-    // logger.info(s"总需求内存:$totalExecutorMemory, 总需求核数$totalExecutorCores")
     val namespace = LINKIS_SPARK_KUBERNETES_NAMESPACE.getValue(properties)
+
     new DriverAndKubernetesResource(
       new LoadInstanceResource(0, 0, 0),
       new KubernetesResource(totalExecutorMemory, totalExecutorCores, namespace)

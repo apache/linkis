@@ -39,9 +39,11 @@ import static org.apache.linkis.ecm.errorcode.EngineconnServerErrorCodeSummary.L
 public class EngineConnYarnLogOperator extends EngineConnLogOperator {
   private static final Logger logger = LoggerFactory.getLogger(EngineConnYarnLogOperator.class);
 
+  private static final String YARN_LOG_OPERATOR_NAME = "engineConnYarnLog";
+
   @Override
   public String[] getNames() {
-    return new String[] {EngineConnYarnLogOperator.OPERATOR_NAME};
+    return new String[] {EngineConnYarnLogOperator.YARN_LOG_OPERATOR_NAME};
   }
 
   @Override

@@ -58,14 +58,14 @@ object OnceExecutorContentUtils {
 
   def mapToContent(contentMap: util.Map[String, Object]): OnceExecutorContent = {
     val onceExecutorContent = new OnceExecutorContent
-    implicit def getOrNull(key: String): util.Map[String, Object] = contentMap.get(key) match {
+    def getOrNull(key: String): util.Map[String, Object] = contentMap.get(key) match {
       case map: util.Map[String, Object] => map
       case _ => null
     }
-    onceExecutorContent.setJobContent(TaskConstant.JOB_CONTENT)
-    onceExecutorContent.setRuntimeMap(TaskConstant.PARAMS_CONFIGURATION_RUNTIME)
-    onceExecutorContent.setSourceMap(TaskConstant.SOURCE)
-    onceExecutorContent.setVariableMap(TaskConstant.PARAMS_VARIABLE)
+    onceExecutorContent.setJobContent(getOrNull(TaskConstant.JOB_CONTENT))
+    onceExecutorContent.setRuntimeMap(getOrNull(TaskConstant.PARAMS_CONFIGURATION_RUNTIME))
+    onceExecutorContent.setSourceMap(getOrNull(TaskConstant.SOURCE))
+    onceExecutorContent.setVariableMap(getOrNull(TaskConstant.PARAMS_VARIABLE))
     onceExecutorContent
   }
 

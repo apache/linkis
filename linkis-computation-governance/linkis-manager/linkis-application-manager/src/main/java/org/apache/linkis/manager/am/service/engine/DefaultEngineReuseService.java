@@ -165,7 +165,6 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
     EngineNode[] engineScoreList = getEngineNodeManager().getEngineNodes(scoreServiceInstances);
 
     List<EngineNode> engines = Lists.newArrayList();
-    int count = 1;
     long timeout =
         engineReuseRequest.getTimeOut() <= 0
             ? AMConfiguration.ENGINE_REUSE_MAX_TIME.getValue().toLong()
@@ -177,8 +176,9 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
 
     long startTime = System.currentTimeMillis();
     try {
+      MutablePair<Integer, Integer> limitPair = MutablePair.of(1, reuseLimit);
       LinkisUtils.waitUntil(
-          () -> selectEngineToReuse(MutablePair.of(count, reuseLimit), engines, engineScoreList),
+          () -> selectEngineToReuse(limitPair, engines, engineScoreList),
           Duration.ofMillis(timeout));
     } catch (TimeoutException e) {
       throw new LinkisRetryException(
@@ -226,6 +226,7 @@ public class DefaultEngineReuseService extends AbstractEngineService implements 
           AMConstant.ENGINE_ERROR_CODE,
           "Engine reuse exceeds limit: " + count2reuseLimit.getRight());
     }
+    count2reuseLimit.setLeft(count2reuseLimit.getLeft() + 1);
     Optional<Node> choseNode = nodeSelector.choseNode(engineScoreList);
     if (!choseNode.isPresent()) {
       throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, "No engine can be reused");

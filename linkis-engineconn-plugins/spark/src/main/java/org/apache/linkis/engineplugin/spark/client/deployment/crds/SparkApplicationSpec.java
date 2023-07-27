@@ -17,7 +17,9 @@
 
 package org.apache.linkis.engineplugin.spark.client.deployment.crds;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.KubernetesResource;
 
@@ -44,6 +46,16 @@ public class SparkApplicationSpec implements KubernetesResource {
   private SparkPodSpec driver;
 
   private SparkPodSpec executor;
+
+  private Map<String, String> sparkConf;
+
+  public Map<String, String> getSparkConf() {
+    return sparkConf;
+  }
+
+  public void setSparkConf(Map<String, String> sparkConf) {
+    this.sparkConf = sparkConf;
+  }
 
   public String getType() {
     return type;
@@ -165,6 +177,8 @@ public class SparkApplicationSpec implements KubernetesResource {
         + driver
         + ", executor="
         + executor
+        + ", sparkConf="
+        + sparkConf
         + '}';
   }
 
@@ -184,6 +198,8 @@ public class SparkApplicationSpec implements KubernetesResource {
     private List<Volume> volumes;
     private SparkPodSpec driver;
     private SparkPodSpec executor;
+
+    private Map<String, String> sparkConf;
 
     private SparkApplicationSpecBuilder() {}
 
@@ -242,6 +258,22 @@ public class SparkApplicationSpec implements KubernetesResource {
       return this;
     }
 
+    public SparkApplicationSpecBuilder sparkConf(Map<String, String> sparkConf) {
+      if (sparkConf == null || sparkConf.size() == 0) {
+        return this;
+      }
+
+      if (this.sparkConf == null) {
+        this.sparkConf = new HashMap<>();
+      }
+
+      for (Map.Entry<String, String> entry : sparkConf.entrySet()) {
+        this.sparkConf.put(entry.getKey(), entry.getValue());
+      }
+
+      return this;
+    }
+
     public SparkApplicationSpec build() {
       SparkApplicationSpec sparkApplicationSpec = new SparkApplicationSpec();
       sparkApplicationSpec.type = this.type;
@@ -255,6 +287,7 @@ public class SparkApplicationSpec implements KubernetesResource {
       sparkApplicationSpec.executor = this.executor;
       sparkApplicationSpec.image = this.image;
       sparkApplicationSpec.restartPolicy = this.restartPolicy;
+      sparkApplicationSpec.sparkConf = this.sparkConf;
       return sparkApplicationSpec;
     }
   }

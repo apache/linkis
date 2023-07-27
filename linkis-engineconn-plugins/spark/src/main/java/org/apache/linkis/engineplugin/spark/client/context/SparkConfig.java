@@ -47,6 +47,7 @@ public class SparkConfig {
   private String k8sSparkVersion;
 
   private String k8sNamespace;
+  private String k8sFileUploadPath;
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
   private String appName; // ("")
@@ -72,6 +73,14 @@ public class SparkConfig {
   private String principal; // ("--principal", "")
   private String keytab; // ("--keytab", "")
   private String queue; // ("--queue", "")
+
+  public String getK8sFileUploadPath() {
+    return k8sFileUploadPath;
+  }
+
+  public void setK8sFileUploadPath(String k8sFileUploadPath) {
+    this.k8sFileUploadPath = k8sFileUploadPath;
+  }
 
   public String getK8sImagePullPolicy() {
     return k8sImagePullPolicy;
@@ -420,6 +429,9 @@ public class SparkConfig {
         + '\''
         + ", k8sSparkVersion='"
         + k8sSparkVersion
+        + '\''
+        + ", k8sFileUploadPath='"
+        + k8sFileUploadPath
         + '\''
         + ", k8sNamespace='"
         + k8sNamespace

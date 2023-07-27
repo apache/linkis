@@ -27,10 +27,4 @@ class TableRecord(val row: Array[Any]) extends ResultRecord {
     new TableRecord(row)
   }
 
-  def tableRecordToString(nullValue: String = "NULL"): Array[String] = {
-    row.map { col =>
-      StorageUtils.colToString(col, nullValue)
-    }
-  }
-
 }

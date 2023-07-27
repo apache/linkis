@@ -104,6 +104,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConfig.setK8sPassword(SPARK_K8S_PASSWORD.getValue(options))
       sparkConfig.setK8sImage(SPARK_K8S_IMAGE.getValue(options))
       sparkConfig.setK8sNamespace(SPARK_K8S_NAMESPACE.getValue(options))
+      sparkConfig.setK8sFileUploadPath(SPARK_KUBERNETES_FILE_UPLOAD_PATH.getValue(options))
       sparkConfig.setK8sSparkVersion(SPARK_K8S_SPARK_VERSION.getValue(options))
       sparkConfig.setK8sRestartPolicy(SPARK_K8S_RESTART_POLICY.getValue(options))
       sparkConfig.setK8sLanguageType(SPARK_K8S_LANGUAGE_TYPE.getValue(options))

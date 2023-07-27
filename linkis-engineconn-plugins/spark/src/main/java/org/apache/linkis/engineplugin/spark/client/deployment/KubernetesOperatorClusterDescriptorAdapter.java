@@ -21,11 +21,13 @@ import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 import org.apache.linkis.engineplugin.spark.client.context.SparkConfig;
 import org.apache.linkis.engineplugin.spark.client.deployment.crds.*;
 import org.apache.linkis.engineplugin.spark.client.deployment.util.KubernetesHelper;
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.launcher.SparkAppHandle;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -79,6 +81,7 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
 
     NonNamespaceOperation<SparkApplication, SparkApplicationList, Resource<SparkApplication>>
         sparkApplicationClient = getSparkApplicationClient(client);
+
     SparkApplication sparkApplication =
         getSparkApplication(sparkConfig.getAppName(), sparkConfig.getK8sNamespace());
 
@@ -88,12 +91,19 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             .memory(sparkConfig.getDriverMemory())
             .serviceAccount(sparkConfig.getK8sServiceAccount())
             .build();
+
     SparkPodSpec executor =
         SparkPodSpec.Builder()
             .cores(sparkConfig.getExecutorCores())
             .instances(sparkConfig.getNumExecutors())
             .memory(sparkConfig.getExecutorMemory())
             .build();
+
+    Map<String, String> sparkConfMap = new HashMap<>();
+    sparkConfMap.put(
+        SparkConfiguration.SPARK_KUBERNETES_FILE_UPLOAD_PATH().key(),
+        sparkConfig.getK8sFileUploadPath());
+
     SparkApplicationSpec sparkApplicationSpec =
         SparkApplicationSpec.Builder()
             .type(sparkConfig.getK8sLanguageType())
@@ -107,10 +117,12 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
             .restartPolicy(new RestartPolicy(sparkConfig.getK8sRestartPolicy()))
             .driver(driver)
             .executor(executor)
+            .sparkConf(sparkConfMap)
             .build();
 
     logger.info("Spark k8s operator task parameters: {}", sparkApplicationSpec);
     sparkApplication.setSpec(sparkApplicationSpec);
+
     SparkApplication created = sparkApplicationClient.createOrReplace(sparkApplication);
     logger.info("Preparing to submit the Spark k8s operator Task: {}", created);
 

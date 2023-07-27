@@ -62,7 +62,6 @@ object SparkConfiguration extends Logging {
   val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
   val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
 
-//  val SPARK_K8S_NAMESPACE = CommonVars[String]("spark.kubernetes.file.upload.path", "local:///opt/spark/work-dir")
   val SPARK_KUBERNETES_FILE_UPLOAD_PATH =
     CommonVars[String]("spark.kubernetes.file.upload.path", "local:///opt/spark/tmp")
 

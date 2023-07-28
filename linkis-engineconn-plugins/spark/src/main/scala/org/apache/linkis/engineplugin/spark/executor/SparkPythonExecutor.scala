@@ -289,7 +289,8 @@ class SparkPythonExecutor(val sparkEngineSession: SparkEngineSession, val id: In
     if (process == null) {
       Utils.tryThrow(initGateway) { t =>
         {
-          val errMsg = s"initialize python executor failed, please ask administrator for help! errMsg: ${t.getMessage}"
+          val errMsg =
+            s"initialize python executor failed, please ask administrator for help! errMsg: ${t.getMessage}"
           logger.error(errMsg, t)
           Utils.tryAndWarn(close)
           throw new IllegalStateException(errMsg, t)

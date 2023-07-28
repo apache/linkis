@@ -216,8 +216,10 @@
     </select>
 
     <delete id="deleteLabelResourceByByTicketId">
-        <!-- delete from linkis_cg_manager_label_resource A, linkis_cg_manager_linkis_resources B where A.resource_id = B.id and B.ticketId=#{ticketId} -->
-        delete from linkis_cg_manager_label_resource  USING linkis_cg_manager_label_resource A join linkis_cg_manager_linkis_resources B on A.resource_id = B.id and B."ticketId"=#{ticketId}
+        DELETE FROM linkis_cg_manager_label_resource a
+        USING linkis_cg_manager_linkis_resources b
+        WHERE a.resource_id = b.id
+        AND b."ticketId" = #{ticketId}
     </delete>
 
     <delete id="deleteLabelIdsAndInstance">

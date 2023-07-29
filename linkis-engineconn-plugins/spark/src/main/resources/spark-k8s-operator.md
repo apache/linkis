@@ -82,7 +82,20 @@ POST /api/rest_j/v1/entrance/submit
 }
 ```
 
-### 7. Reference document
+### 7. Submitting tasks via Linkis-cli
+
+```text
+sh ./bin/linkis-cli  --mode once -labelMap engineConnMode=once  -engineType spark-3.2.1 -codeType jar    -submitUser hadoop -proxyUser hadoop  -jobContentMap runType=jar  -jobContentMap spark.app.main.class=org.apache.spark.examples.SparkPi   -confMap spark.app.name=spark-submit-jar-test -confMap spark.app.resource=local:///opt/spark/examples/jars/spark-examples_2.12-3.2.1.jar     -confMap spark.executor.instances=1    -confMap spark.kubernetes.file.upload.path=local:///opt/spark/tmp  -confMap spark.executor.memory=1g  -confMap spark.driver.memory=1g  -confMap spark.executor.cores=1   -confMap spark.master=k8s-operator  -confMap linkis.spark.k8s.config.file=/home/hadoop/.kube/config -confMap linkis.spark.k8s.serviceAccount=spark
+```
+
+### 8. Matters needing attention
+
+```text
+You need to check whether hosts is configured,Such as:
+k8s-master-ip  lb.kubesphere.local
+```
+
+### 9. Reference document
 ```text
 https://github.com/GoogleCloudPlatform/spark-on-k8s-operator
 

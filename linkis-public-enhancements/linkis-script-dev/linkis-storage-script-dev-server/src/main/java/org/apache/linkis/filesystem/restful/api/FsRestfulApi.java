@@ -70,6 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
+import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.FILESYSTEM_LIMIT_COLUMN_LENGTH;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 @Api(tags = "file system")
@@ -560,7 +561,10 @@ public class FsRestfulApi {
       @RequestParam(value = "path", required = false) String path,
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
-      @RequestParam(value = "charset", defaultValue = "utf-8") String charset)
+      @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
+      @RequestParam(value = "limitTotalLine", defaultValue = "0") Integer limitTotalLine,
+      @RequestParam(value = "limitBytes", defaultValue = "0") Long limitBytes,
+      @RequestParam(value = "limitColumnLength", defaultValue = "0") Integer limitColumnLength)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -583,12 +587,33 @@ public class FsRestfulApi {
       if (FileSource.isResultSet(fsPath.getPath())) {
         fileSource = fileSource.page(page, pageSize);
       }
+      if (limitTotalLine > 0) {
+        fileSource =
+            fileSource.limitTotalLine(
+                Math.min(limitTotalLine, FILESYSTEM_LIMIT_TOTAL_LINE.getValue()));
+      }
+      if (limitBytes > 0) {
+        fileSource = fileSource.limitBytes(Math.min(limitBytes, FILESYSTEM_LIMIT_BYTES.getValue()));
+      }
+      if (limitColumnLength > 0) {
+        fileSource =
+            fileSource.limitColumnLength(
+                Math.min(limitColumnLength, FILESYSTEM_LIMIT_COLUMN_LENGTH.getValue()));
+      }
       Pair<Object, List<String[]>> result = fileSource.collect()[0];
       IOUtils.closeQuietly(fileSource);
-      message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
+      message.data("metadata", result.getFirst());
+      message.data("fileContent", result.getSecond());
       message.data("type", fileSource.getFileSplits()[0].getType());
       message.data("totalLine", fileSource.getTotalLine());
-      return message.data("page", page).data("totalPage", 0);
+      message.data("totalCount", fileSource.getTotalCount());
+      message.data("page", page);
+      message.data(
+          "totalPage",
+          pageSize == 0
+              ? 1
+              : (int) Math.ceil((double) fileSource.getTotalCount() / (double) pageSize));
+      return message;
     } finally {
       IOUtils.closeQuietly(fileSource);
     }

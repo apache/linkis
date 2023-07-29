@@ -108,4 +108,28 @@ public abstract class AbstractFileSource implements FileSource {
         .map(fileSplit -> fileSplit.getFileInfo(needToCountRowNumber))
         .toArray(Pair[]::new);
   }
+
+  @Override
+  public int getTotalCount() {
+    return Arrays.stream(fileSplits).mapToInt(FileSplit::getTotalCount).sum();
+  }
+
+  @Override
+  public FileSource limitTotalLine(int limitTotalLine) {
+    Arrays.stream(fileSplits).forEach(fileSplit -> fileSplit.setLimitTotalLine(limitTotalLine));
+    return this;
+  }
+
+  @Override
+  public FileSource limitBytes(Long limitBytes) {
+    Arrays.stream(fileSplits).forEach(fileSplit -> fileSplit.setLimitBytes(limitBytes));
+    return this;
+  }
+
+  @Override
+  public FileSource limitColumnLength(int limitColumnLength) {
+    Arrays.stream(fileSplits)
+        .forEach(fileSplit -> fileSplit.setLimitColumnLength(limitColumnLength));
+    return this;
+  }
 }

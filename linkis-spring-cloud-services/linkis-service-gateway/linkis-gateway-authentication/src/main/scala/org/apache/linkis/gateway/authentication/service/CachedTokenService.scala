@@ -106,7 +106,10 @@ class CachedTokenService extends TokenService {
 
   private def loadTokenFromCache(tokenName: String): Token = {
     if (tokenName == null) {
-      throw new TokenAuthException(TOKEN_IS_NULL.getErrorCode, TOKEN_IS_NULL.getErrorDesc)
+      throw new TokenAuthException(
+        TOKEN_IS_NULL.getErrorCode,
+        MessageFormat.format(TOKEN_IS_NULL.getErrorDesc, tokenName)
+      )
     }
     Utils.tryCatch(tokenCache.get(tokenName))(t =>
       t match {
@@ -165,20 +168,27 @@ class CachedTokenService extends TokenService {
   override def doAuth(tokenName: String, userName: String, host: String): Boolean = {
     val tmpToken: Token = loadTokenFromCache(tokenName)
     var ok: Boolean = true
+    // token expired
     if (!isTokenValid(tmpToken)) {
       ok = false
       throw new TokenAuthException(
-        TOKEN_VALID_OR_STALE.getErrorCode,
-        TOKEN_VALID_OR_STALE.getErrorDesc
+        TOKEN_IS_EXPIRED.getErrorCode,
+        MessageFormat.format(TOKEN_IS_EXPIRED.getErrorDesc, tokenName)
       )
     }
     if (!isTokenAcceptableWithUser(tmpToken, userName)) {
       ok = false
-      throw new TokenAuthException(ILLEGAL_TOKENUSER.getErrorCode, ILLEGAL_TOKENUSER.getErrorDesc)
+      throw new TokenAuthException(
+        ILLEGAL_TOKENUSER.getErrorCode,
+        MessageFormat.format(ILLEGAL_TOKENUSER.getErrorDesc, userName)
+      )
     }
     if (!isTokenAcceptableWithHost(tmpToken, host)) {
       ok = false
-      throw new TokenAuthException(ILLEGAL_HOST.getErrorCode, ILLEGAL_HOST.getErrorDesc)
+      throw new TokenAuthException(
+        ILLEGAL_HOST.getErrorCode,
+        MessageFormat.format(ILLEGAL_HOST.getErrorDesc, host)
+      )
     }
     ok
   }

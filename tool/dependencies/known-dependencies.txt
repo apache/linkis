@@ -89,6 +89,7 @@ datanucleus-api-jdo-4.2.4.jar
 datanucleus-core-4.1.17.jar
 datanucleus-rdbms-4.1.19.jar
 derby-10.14.2.0.jar
+disruptor-3.4.0.jar
 disruptor-3.3.0.jar
 dropwizard-metrics-hadoop-metrics2-reporter-0.1.2.jar
 druid-1.1.22.jar
@@ -523,7 +524,8 @@ spring-jcl-5.2.22.RELEASE.jar
 spring-jdbc-5.2.22.RELEASE.jar
 spring-plugin-core-2.0.0.RELEASE.jar
 spring-plugin-metadata-2.0.0.RELEASE.jar
-spring-security-crypto-5.7.5.RELEASE.jar
+spring-security-crypto-5.3.9.RELEASE.jar
+spring-security-crypto-5.7.5.jar
 spring-security-rsa-1.0.9.RELEASE.jar
 spring-tx-5.2.22.RELEASE.jar
 spring-web-5.2.22.RELEASE.jar

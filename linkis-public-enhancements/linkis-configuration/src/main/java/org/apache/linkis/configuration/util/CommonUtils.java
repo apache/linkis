@@ -17,12 +17,13 @@
 
 package org.apache.linkis.configuration.util;
 
+import org.apache.linkis.configuration.conf.AcrossClusterConfiguration;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.linkis.configuration.conf.AcrossClusterConfiguration;
 
 public class CommonUtils {
   public static boolean ipCheck(String str) {

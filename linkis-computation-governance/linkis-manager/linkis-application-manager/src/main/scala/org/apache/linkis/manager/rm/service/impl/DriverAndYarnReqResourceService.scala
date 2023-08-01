@@ -17,8 +17,6 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
@@ -31,9 +29,10 @@ import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
 import org.apache.linkis.manager.rm.utils.{AcrossClusterRulesJudgeUtils, RMUtils}
+
+import org.apache.commons.lang3.StringUtils
+
 import org.json4s.DefaultFormats
-
-
 
 class DriverAndYarnReqResourceService(
     labelResourceService: LabelResourceService,
@@ -91,8 +90,12 @@ class DriverAndYarnReqResourceService(
         s"user: $user, creator: $creator, acrossClusterTask: $acrossClusterTask, cross cluster judge"
       )
 
-      if (acrossClusterTask == "true" && StringUtils.isNotBlank(CPUThreshold) && StringUtils.isNotBlank(MemoryThreshold)
-        && StringUtils.isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)) {
+      if (
+          acrossClusterTask == "true" && StringUtils.isNotBlank(CPUThreshold) && StringUtils
+            .isNotBlank(MemoryThreshold)
+          && StringUtils
+            .isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)
+      ) {
 
         logger.info(
           s"user: $user, creator: $creator task enter cross cluster resource judgment, " +

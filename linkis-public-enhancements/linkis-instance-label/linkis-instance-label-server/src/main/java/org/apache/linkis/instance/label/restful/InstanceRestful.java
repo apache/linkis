@@ -172,5 +172,4 @@ public class InstanceRestful {
     ModuleUserUtils.getOperationUser(request, "getServiceRegistryURL");
     return Message.ok().data("url", serviceRegistryURL);
   }
-
 }

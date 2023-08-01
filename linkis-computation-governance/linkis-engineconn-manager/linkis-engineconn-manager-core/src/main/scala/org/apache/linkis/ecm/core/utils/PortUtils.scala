@@ -70,7 +70,8 @@ object PortUtils extends Logging {
       reader = new BufferedReader(new FileReader(propertiesFile))
       properties.load(reader)
     } catch {
-      case e: Exception => logger.warn(s"loading vsersion faild with path $propertiesFile  error:$e")
+      case e: Exception =>
+        logger.warn(s"loading vsersion faild with path $propertiesFile  error:$e")
     } finally {
       try if (reader != null) reader.close
       catch {

@@ -116,18 +116,34 @@ public class AcrossClusterRule {
 
   @Override
   public String toString() {
-    return "AcrossClusterRule{" +
-            "id=" + id +
-            ", clusterName='" + clusterName + '\'' +
-            ", creator='" + creator + '\'' +
-            ", user='" + user + '\'' +
-            ", createTime=" + createTime +
-            ", createBy='" + createBy + '\'' +
-            ", updateTime=" + updateTime +
-            ", updateBy='" + updateBy + '\'' +
-            ", rules='" + rules + '\'' +
-            ", isValid='" + isValid + '\'' +
-            '}';
+    return "AcrossClusterRule{"
+        + "id="
+        + id
+        + ", clusterName='"
+        + clusterName
+        + '\''
+        + ", creator='"
+        + creator
+        + '\''
+        + ", user='"
+        + user
+        + '\''
+        + ", createTime="
+        + createTime
+        + ", createBy='"
+        + createBy
+        + '\''
+        + ", updateTime="
+        + updateTime
+        + ", updateBy='"
+        + updateBy
+        + '\''
+        + ", rules='"
+        + rules
+        + '\''
+        + ", isValid='"
+        + isValid
+        + '\''
+        + '}';
   }
-
 }

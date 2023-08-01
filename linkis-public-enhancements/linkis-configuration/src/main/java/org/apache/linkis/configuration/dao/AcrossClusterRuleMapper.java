@@ -38,5 +38,5 @@ public interface AcrossClusterRuleMapper {
       @Param("creator") String creator,
       @Param("clusterName") String clusterName);
 
-  void validAcrossClusterRule(@Param("acrossClusterRule")AcrossClusterRule acrossClusterRule);
+  void validAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 }

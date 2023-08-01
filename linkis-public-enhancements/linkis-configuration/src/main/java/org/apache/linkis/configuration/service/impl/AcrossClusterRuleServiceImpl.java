@@ -22,7 +22,6 @@ import org.apache.linkis.configuration.entity.AcrossClusterRule;
 import org.apache.linkis.configuration.service.AcrossClusterRuleService;
 import org.apache.linkis.governance.common.constant.job.JobRequestConstants;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +46,7 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   }
 
   @Override
-  public void updateAcrossClusterRule(
-      AcrossClusterRule newRule)
-      throws Exception {
+  public void updateAcrossClusterRule(AcrossClusterRule newRule) throws Exception {
     AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(newRule.getId());
     if (beforeRule == null) {
       logger.info("acrossClusterRule not exit");
@@ -67,9 +64,7 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   }
 
   @Override
-  public void insertAcrossClusterRule(
-          AcrossClusterRule acrossClusterRule)
-      throws Exception {
+  public void insertAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception {
     Date time = new Date();
     acrossClusterRule.setCreateTime(time);
     acrossClusterRule.setUpdateTime(time);
@@ -103,7 +98,7 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   }
 
   @Override
-  public void validAcrossClusterRule(Long id, String isValid, String updateBy) throws Exception{
+  public void validAcrossClusterRule(Long id, String isValid, String updateBy) throws Exception {
     AcrossClusterRule acrossClusterRule = ruleMapper.getAcrossClusterRule(id);
     if (acrossClusterRule == null) {
       logger.info("acrossClusterRule not exit");
@@ -117,6 +112,4 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     logger.info("valid acrossClusterRule success");
     return;
   }
-
-
 }

@@ -25,17 +25,13 @@ public interface AcrossClusterRuleService {
 
   void deleteAcrossClusterRule(String creator, String user) throws Exception;
 
-  void updateAcrossClusterRule(
-          AcrossClusterRule acrossClusterRule)
-      throws Exception;
+  void updateAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
-  void insertAcrossClusterRule(
-          AcrossClusterRule acrossClusterRule)
-      throws Exception;
+  void insertAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
   Map<String, Object> queryAcrossClusterRuleList(
-      String creator, String user, String clusterName, Integer pageNow, Integer pageSize) throws Exception;
+      String creator, String user, String clusterName, Integer pageNow, Integer pageSize)
+      throws Exception;
 
   void validAcrossClusterRule(Long id, String isValid, String updateBy) throws Exception;
-
 }

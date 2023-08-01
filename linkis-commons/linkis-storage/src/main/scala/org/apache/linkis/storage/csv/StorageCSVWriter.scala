@@ -17,22 +17,23 @@
 
 package org.apache.linkis.storage.csv
 
-import java.io._
-
-import org.apache.commons.io.IOUtils
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.storage.domain.DataType
 import org.apache.linkis.storage.resultset.table.{TableMetaData, TableRecord}
 
+import org.apache.commons.io.IOUtils
+import org.apache.commons.lang3.StringUtils
+
+import java.io._
+
 class StorageCSVWriter(
-                        val charset: String,
-                        val separator: String,
-                        val quoteRetouchEnable: Boolean,
-                        val outputStream: OutputStream
-                      ) extends CSVFsWriter
-  with Logging {
+    val charset: String,
+    val separator: String,
+    val quoteRetouchEnable: Boolean,
+    val outputStream: OutputStream
+) extends CSVFsWriter
+    with Logging {
 
   private val delimiter = separator match {
     // Compatible with possible missing escape characters
@@ -48,7 +49,6 @@ class StorageCSVWriter(
     val head = metaData.asInstanceOf[TableMetaData].columns.map(_.columnName)
     write(head)
   }
-
 
   private def compact(row: Array[String]): String = {
     val quotationMarks: String = "\""

@@ -99,6 +99,8 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
         val sb = new StringBuilder
         if (removed != null) sb.append(removed).append("\n")
         logs.filter(_ != null).foreach(log => sb.append(log).append("\n"))
+        // need append latest msg before fake clear
+        sb.append(msg).append("\n")
         sharedCache.cachedLogs.fakeClear()
         writeToFile(sb.toString())
         pushTime.setTime(

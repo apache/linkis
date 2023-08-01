@@ -52,7 +52,7 @@ public interface ConfigMapper {
   List<ConfigKey> selectKeyByEngineType(@Param("engineType") String engineType);
 
   List<ConfigKey> selectKeyByEngineTypeAndKeyList(
-          @Param("engineType") String engineType, @Param("keyList") List<String> keyList);
+      @Param("engineType") String engineType, @Param("keyList") List<String> keyList);
 
   List<ConfigKey> selectKeyByKeyIdList(@Param("keyIdList") List<Long> keyList);
 

@@ -39,6 +39,7 @@ import org.apache.linkis.cli.application.present.model.HelpInfoModel;
 import org.apache.linkis.cli.application.utils.LoggerManager;
 import org.apache.linkis.cli.application.utils.SchedulerManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.HashMap;
@@ -184,6 +185,9 @@ public class LinkisClientApplication {
   }
 
   private static Boolean isOnceCmd(CliCtx ctx) {
-    return false;
+    String mode =
+        ctx.getVarAccess()
+            .getVarOrDefault(String.class, CliKeys.LINKIS_CLIENT_MODE_OPT, CliConstants.UJES_MODE);
+    return StringUtils.equalsIgnoreCase(mode, CliConstants.ONCE_MODE);
   }
 }

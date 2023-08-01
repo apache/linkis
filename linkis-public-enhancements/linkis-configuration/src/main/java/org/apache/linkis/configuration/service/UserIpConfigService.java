@@ -31,7 +31,7 @@ public interface UserIpConfigService {
   void deleteUserIP(Integer id) throws ConfigurationException;
 
   Map<String, Object> queryUserIPList(
-          String user, String creator, Integer pageNow, Integer pageSize);
+      String user, String creator, Integer pageNow, Integer pageSize);
 
   boolean userExists(String user, String creator);
 

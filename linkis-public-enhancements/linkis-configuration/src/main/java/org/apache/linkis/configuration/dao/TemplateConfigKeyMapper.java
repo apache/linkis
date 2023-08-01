@@ -31,10 +31,10 @@ public interface TemplateConfigKeyMapper {
   List<TemplateConfigKey> selectListByTemplateUuid(@Param("templateUuid") String templateUuid);
 
   int deleteByTemplateUuidAndKeyIdList(
-          @Param("templateUuid") String templateUuid, @Param("keyIdList") List<Long> KeyIdList);
+      @Param("templateUuid") String templateUuid, @Param("keyIdList") List<Long> KeyIdList);
 
   int batchInsertOrUpdateList(List<TemplateConfigKey> list);
 
   List<TemplateConfigKey> selectListByTemplateUuidList(
-          @Param("templateUuidList") List<String> templateUuidList);
+      @Param("templateUuidList") List<String> templateUuidList);
 }

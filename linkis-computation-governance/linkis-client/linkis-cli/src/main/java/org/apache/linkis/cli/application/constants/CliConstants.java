@@ -20,7 +20,7 @@ package org.apache.linkis.cli.application.constants;
 public class CliConstants {
 
   public static final String DEFAULT_CONFIG_NAME = "linkis-cli.properties";
-  public static final Long JOB_QUERY_SLEEP_MILLS = 2000L;
+  public static final Long JOB_QUERY_SLEEP_MILLS = 2000l;
   public static final String RESULTSET_LOGO = "============ RESULT SET {0} ============";
 
   public static final String RESULTSET_META_BEGIN_LOGO = "----------- META DATA ------------";
@@ -44,13 +44,10 @@ public class CliConstants {
 
   public static final Integer REQUEST_MAX_RETRY_TIME = 3;
 
-  public static final String UNIVERSAL_CMD = "linkis-cli";
+  public static final String UNIVERSAL_SUBCMD = "linkis-cli";
 
-  public static final String UNIVERSAL_DESC = "command for all types of jobs supported by Linkis";
-
-  public static final String VERSION_CMD = "version";
-
-  public static final String VERSION_DESC = "display version";
+  public static final String UNIVERSAL_SUBCMD_DESC =
+      "command for all types of jobs supported by Linkis";
 
   public static final String SUCCESS_INDICATOR = "############Execute Success!!!########";
 

@@ -26,7 +26,7 @@ import java.util.List;
 public interface LabelMapper {
 
   ConfigLabel getLabelByKeyValue(
-          @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
 
   // label key:combined_userCreator_engineType
   List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);

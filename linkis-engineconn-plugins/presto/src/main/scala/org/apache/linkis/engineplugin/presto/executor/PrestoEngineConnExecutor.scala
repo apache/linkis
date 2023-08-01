@@ -19,6 +19,7 @@ package org.apache.linkis.engineplugin.presto.executor
 
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
 import org.apache.linkis.engineconn.computation.executor.execute.{
@@ -26,6 +27,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.engineplugin.presto.conf.PrestoConfiguration._
 import org.apache.linkis.engineplugin.presto.conf.PrestoEngineConf
 import org.apache.linkis.engineplugin.presto.errorcode.PrestoErrorCodeSummary
@@ -436,6 +438,19 @@ class PrestoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
   }
 
   override def close(): Unit = {
+    val taskIds = statementClientCache.keySet().iterator()
+    val lbs = ExecutorListenerBusContext.getExecutorListenerBusContext()
+    while (taskIds.hasNext) {
+      val taskId = taskIds.next()
+      Utils.tryAndWarn(
+        lbs.getEngineConnSyncListenerBus.postToAll(
+          TaskLogUpdateEvent(
+            taskId,
+            LogUtils.generateERROR("EC exits unexpectedly and actively kills the task")
+          )
+        )
+      )
+    }
     killAll()
     super.close()
   }

@@ -21,6 +21,7 @@ import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.filesystem.bml.BMLHelper;
 import org.apache.linkis.filesystem.exception.WorkSpaceException;
 import org.apache.linkis.filesystem.exception.WorkspaceExceptionManager;
+import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 import org.apache.linkis.storage.script.*;
@@ -88,7 +89,8 @@ public class BMLFsRestfulApi {
       Pair<Object, ArrayList<String[]>> collect = fileSource.collect()[0];
       Message message;
       try {
-        message = new Gson().fromJson(collect.getSecond().get(0)[0], Message.class);
+        message =
+            BDPJettyServerHelper.gson().fromJson(collect.getSecond().get(0)[0], Message.class);
         if (message == null) throw WorkspaceExceptionManager.createException(80019);
       } catch (Exception e) {
         return Message.ok()

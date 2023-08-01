@@ -37,10 +37,14 @@ public class SingleCmdParser extends AbstarctParser {
   public ParseResult parse(String[] input) {
     checkInit();
 
-    //    if (input == null || input.length == 0) {
-    //      logger.info("Nothing to parse");
-    //      return new ParseResult(template, new Params(), new String[0]);
-    //    }
+    if (input == null || input.length == 0) {
+      throw new CommandException(
+          "CMD0015",
+          ErrorLevel.ERROR,
+          CommonErrMsg.ParserParseErr,
+          template.getCmdType(),
+          "nothing to parse");
+    }
 
     FitterResult result = fitter.fit(input, template);
 

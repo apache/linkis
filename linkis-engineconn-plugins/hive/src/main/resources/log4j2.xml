@@ -15,7 +15,7 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-  
+
 <configuration status="error" monitorInterval="30">
     <appenders>
         <RollingFile name="RollingFile" append="true" fileName="${env:LOG_DIRS:-logs}/stdout"

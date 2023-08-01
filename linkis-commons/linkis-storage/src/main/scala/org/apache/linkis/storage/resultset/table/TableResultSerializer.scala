@@ -52,7 +52,7 @@ class TableResultSerializer extends ResultSerializer {
     var colByteLen = 0
     var length = 0
     line.foreach { data =>
-      val bytes = if (data == null) Dolphin.NULL_BYTES else Dolphin.getBytes(data)
+      val bytes = if (data == null) Dolphin.LINKIS_NULL_BYTES else Dolphin.getBytes(data)
       dataBytes += bytes
       val colBytes = Dolphin.getBytes(bytes.length)
       colIndex += colBytes += Dolphin.COL_SPLIT_BYTES

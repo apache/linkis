@@ -18,15 +18,15 @@
 package org.apache.linkis.storage.domain
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.storage.conf.LinkisStorageConf
 
 import java.math.{BigDecimal => JavaBigDecimal}
 import java.sql.{Date, Timestamp}
 
 object DataType extends Logging {
 
-  val NULL_VALUE = "NULL"
   val LOWCASE_NULL_VALUE = "null"
-  // TODO Change to fine-grained regular expressions(改为精细化正则表达式)
+
   val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
 
   val SHORT_REGEX = "^short.*".r.unanchored
@@ -70,39 +70,53 @@ object DataType extends Logging {
     case _ => StringType
   }
 
-  def toValue(dataType: DataType, value: String): Any = Utils.tryCatch(dataType match {
-    case NullType => null
-    case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType =>
-      value
-    case BooleanType => if (isNumberNull(value)) null else value.toBoolean
-    case ShortIntType => if (isNumberNull(value)) null else value.toShort
-    case IntType => if (isNumberNull(value)) null else value.toInt
-    case LongType | BigIntType => if (isNumberNull(value)) null else value.toLong
-    case FloatType => if (isNumberNull(value)) null else value.toFloat
-    case DoubleType => if (isNumberNull(value)) null else value.toDouble
-    case DecimalType => if (isNumberNull(value)) null else new JavaBigDecimal(value)
-    case DateType => if (isNumberNull(value)) null else Date.valueOf(value)
-    case TimestampType =>
-      if (isNumberNull(value)) null else Timestamp.valueOf(value).toString.stripSuffix(".0")
-    case BinaryType => if (isNull(value)) null else value.getBytes()
-    case _ => value
-  }) { t =>
-    logger.debug(s"Failed to  $value switch  to dataType:", t)
-    value
+  def toValue(dataType: DataType, value: String): Any = {
+    var newValue: String = value
+    if (isLinkisNull(value)) {
+      if (!LinkisStorageConf.LINKIS_RESULT_ENABLE_NULL) {
+        return null
+      } else {
+        newValue = Dolphin.NULL
+      }
+    }
+    Utils.tryCatch(dataType match {
+      case NullType => null
+      case StringType | CharType | VarcharType | StructType | ListType | ArrayType | MapType =>
+        newValue
+      case BooleanType => if (isNumberNull(newValue)) null else newValue.toBoolean
+      case ShortIntType => if (isNumberNull(newValue)) null else newValue.toShort
+      case IntType => if (isNumberNull(newValue)) null else newValue.toInt
+      case LongType | BigIntType => if (isNumberNull(newValue)) null else newValue.toLong
+      case FloatType => if (isNumberNull(newValue)) null else newValue.toFloat
+      case DoubleType => if (isNumberNull(newValue)) null else newValue.toDouble
+      case DecimalType => if (isNumberNull(newValue)) null else new JavaBigDecimal(newValue)
+      case DateType => if (isNumberNull(newValue)) null else Date.valueOf(newValue)
+      case TimestampType =>
+        if (isNumberNull(newValue)) null else Timestamp.valueOf(newValue).toString.stripSuffix(".0")
+      case BinaryType => if (isNull(newValue)) null else newValue.getBytes()
+      case _ => newValue
+    }) { t =>
+      logger.debug(s"Failed to  $newValue switch  to dataType:", t)
+      newValue
+    }
+  }
+
+  def isLinkisNull(value: String): Boolean = {
+    if (value == null || value == Dolphin.LINKIS_NULL) true else false
   }
 
   def isNull(value: String): Boolean =
-    if (value == null || value == NULL_VALUE || value.trim == "") true else false
+    if (value == null || value == Dolphin.NULL || value.trim == "") true else false
 
   def isNumberNull(value: String): Boolean =
-    if (null == value || NULL_VALUE.equalsIgnoreCase(value) || value.trim == "") {
+    if (null == value || Dolphin.NULL.equalsIgnoreCase(value) || value.trim == "") {
       true
     } else {
       false
     }
 
   def valueToString(value: Any): String = {
-    if (null == value) return LOWCASE_NULL_VALUE
+    if (null == value) return null
     value match {
       case javaDecimal: JavaBigDecimal =>
         javaDecimal.toPlainString

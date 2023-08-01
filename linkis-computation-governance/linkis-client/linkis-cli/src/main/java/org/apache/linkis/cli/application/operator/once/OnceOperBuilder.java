@@ -150,6 +150,7 @@ public class OnceOperBuilder implements JobOperBuilder {
     sourceMap.put(LinkisKeys.KEY_SCRIPT_PATH, scriptPath);
     runtimeMap.put(LinkisKeys.KEY_HIVE_RESULT_DISPLAY_TBALE, true);
 
+    desc.setVarAccess(ctx.getVarAccess());
     desc.setCreator(creator);
     desc.setParamConfMap(confMap);
     desc.setParamRunTimeMap(runtimeMap);

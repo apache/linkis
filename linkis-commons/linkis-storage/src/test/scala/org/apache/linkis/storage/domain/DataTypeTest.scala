@@ -25,7 +25,7 @@ class DataTypeTest {
   @DisplayName("constTest")
   def constTest(): Unit = {
 
-    val nullvalue = DataType.NULL_VALUE
+    val nullvalue = Dolphin.NULL
     val lowcasenullvalue = DataType.LOWCASE_NULL_VALUE
 
     Assertions.assertEquals("NULL", nullvalue)

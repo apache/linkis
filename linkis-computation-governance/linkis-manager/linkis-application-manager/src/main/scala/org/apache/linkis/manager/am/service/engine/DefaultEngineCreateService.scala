@@ -18,6 +18,7 @@
 package org.apache.linkis.manager.am.service.engine
 
 import org.apache.linkis.common.ServiceInstance
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.exception.LinkisRetryException
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineplugin.server.service.EngineConnResourceFactoryService
@@ -291,6 +292,14 @@ class DefaultEngineCreateService
         }
       })
     }
+
+    val queueRuleSuffix = props.get("queueRuleSuffix")
+    if (StringUtils.isNotBlank(queueRuleSuffix)) {
+      logger.info("Switch queues according to queueRule")
+      val queueName = props.getOrDefault("wds.linkis.rm.yarnqueue", "default")
+      props.put("wds.linkis.rm.yarnqueue", queueName + "_" + queueRuleSuffix)
+    }
+
     val timeoutEngineResourceRequest = TimeoutEngineResourceRequest(
       timeout,
       engineCreateRequest.getUser,
@@ -303,6 +312,7 @@ class DefaultEngineCreateService
     resourceManager.requestResource(
       LabelUtils.distinctLabel(labelList, emNode.getLabels),
       resource,
+      engineCreateRequest,
       timeout
     ) match {
       case AvailableResource(ticketId) =>

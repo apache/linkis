@@ -33,6 +33,7 @@ import org.apache.linkis.manager.common.entity.persistence.{
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary
 import org.apache.linkis.manager.common.exception.{RMErrorException, RMWarnException}
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
 import org.apache.linkis.manager.common.utils.{ManagerUtils, ResourceUtils}
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
@@ -247,9 +248,10 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
    */
   override def requestResource(
       labels: util.List[Label[_]],
-      resource: NodeResource
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
   ): ResultResource = {
-    requestResource(labels, resource, -1)
+    requestResource(labels, resource, engineCreateRequest, -1)
   }
 
   /**
@@ -264,6 +266,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
   override def requestResource(
       labels: util.List[Label[_]],
       resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest,
       wait: Long
   ): ResultResource = {
     val labelContainer = labelResourceService.enrichLabels(labels)
@@ -279,7 +282,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       // check ecm resource if not enough return
       Utils.tryCatch {
         labelContainer.setCurrentLabel(emInstanceLabel)
-        if (!requestResourceService.canRequest(labelContainer, resource)) {
+        if (!requestResourceService.canRequest(labelContainer, resource, engineCreateRequest)) {
           return NotEnoughResource(s"Labels:${emInstanceLabel.getStringValue} not enough resource")
         }
       } {
@@ -297,7 +300,7 @@ class DefaultResourceManager extends ResourceManager with Logging with Initializ
       )
       Utils.tryCatch {
         labelContainer.setCurrentLabel(userCreatorEngineTypeLabel)
-        if (!requestResourceService.canRequest(labelContainer, resource)) {
+        if (!requestResourceService.canRequest(labelContainer, resource, engineCreateRequest)) {
           return NotEnoughResource(
             s"Labels:${userCreatorEngineTypeLabel.getStringValue} not enough resource"
           )

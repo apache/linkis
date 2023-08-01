@@ -17,18 +17,23 @@
 
 package org.apache.linkis.manager.rm.service.impl
 
+
+import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.exception.RMWarnException
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
+import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
-import org.apache.linkis.manager.rm.utils.RMUtils
-
+import org.apache.linkis.manager.rm.utils.{AcrossClusterRulesJudgeUtils, RMUtils}
 import org.json4s.DefaultFormats
+
+
 
 class DriverAndYarnReqResourceService(
     labelResourceService: LabelResourceService,
@@ -39,10 +44,15 @@ class DriverAndYarnReqResourceService(
 
   override val resourceType: ResourceType = DriverAndYarn
 
-  override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
-    if (!super.canRequest(labelContainer, resource)) {
+  override def canRequest(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): Boolean = {
+    if (!super.canRequest(labelContainer, resource, engineCreateRequest)) {
       return false
     }
+
     val requestedDriverAndYarnResource =
       resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
     val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
@@ -65,7 +75,58 @@ class DriverAndYarnReqResourceService(
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
-    } else true
+    }
+
+    if (engineCreateRequest.getProperties != null) {
+      val user = labelContainer.getUserCreatorLabel.getUser
+      val creator = labelContainer.getUserCreatorLabel.getCreator
+      val properties = engineCreateRequest.getProperties
+      val acrossClusterTask = properties.get("acrossClusterTask")
+      val CPUThreshold = properties.get("CPUThreshold")
+      val MemoryThreshold = properties.get("MemoryThreshold")
+      val CPUPercentageThreshold = properties.get("CPUPercentageThreshold")
+      val MemoryPercentageThreshold = properties.get("MemoryPercentageThreshold")
+
+      logger.info(
+        s"user: $user, creator: $creator, acrossClusterTask: $acrossClusterTask, cross cluster judge"
+      )
+
+      if (acrossClusterTask == "true" && StringUtils.isNotBlank(CPUThreshold) && StringUtils.isNotBlank(MemoryThreshold)
+        && StringUtils.isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)) {
+
+        logger.info(
+          s"user: $user, creator: $creator task enter cross cluster resource judgment, " +
+            s"CPUThreshold: $CPUThreshold, MemoryThreshold: $MemoryThreshold," +
+            s"CPUPercentageThreshold: $CPUPercentageThreshold, MemoryPercentageThreshold: $MemoryPercentageThreshold"
+        )
+
+        val acrossClusterFlag = AcrossClusterRulesJudgeUtils.acrossClusterRuleJudge(
+          queueLeftResource.asInstanceOf[YarnResource],
+          usedCapacity.asInstanceOf[YarnResource],
+          maxCapacity.asInstanceOf[YarnResource],
+          CPUThreshold.toInt,
+          MemoryThreshold.toInt,
+          CPUPercentageThreshold.toDouble,
+          MemoryPercentageThreshold.toDouble
+        )
+
+        if (!acrossClusterFlag) {
+          logger.info(s"user: $user, creator: $creator task not meet the threshold rule")
+          logger.info(
+            s"requestedYarnResource: $requestedYarnResource, queueLeftResource: $queueLeftResource, maxCapacity: $maxCapacity"
+          )
+          val notEnoughMessage =
+            generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
+          throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
+        }
+
+        logger.info(s"user: $user, creator: $creator task meet the threshold rule")
+      } else {
+        logger.info(s"user: $user, creator: $creator task skip cross cluster resource judgment")
+      }
+    }
+
+    true
   }
 
   def generateQueueNotEnoughMessage(

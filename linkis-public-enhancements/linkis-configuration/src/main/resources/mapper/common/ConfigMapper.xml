@@ -76,6 +76,17 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="ConfigUserValueMap" type="org.apache.linkis.configuration.entity.ConfigUserValue">
+        <result column="key" property="key" jdbcType="VARCHAR"/>
+        <result column="config_key_id" property="configKeyId" jdbcType="INTEGER"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="default_value" property="defaultValue" jdbcType="VARCHAR"/>
+        <result column="engine_conn_type" property="engineType" jdbcType="VARCHAR"/>
+        <result column="config_value_id" property="configValueId" jdbcType="INTEGER"/>
+        <result column="config_value" property="configValue" jdbcType="VARCHAR"/>
+        <result column="config_label_id" property="configLabelId" jdbcType="INTEGER"/>
+        <result column="label_value" property="labelValue" jdbcType="VARCHAR"/>
+    </resultMap>
 
     <sql id="Config_Key_Column">
         `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`,`boundary_type`
@@ -111,13 +122,19 @@
 
     <insert id="insertKey" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
-        id, key, description, name, engine_conn_type, default_value, validate_type, validate_range, is_hidden, is_advanced, level, treeName, boundary_type)
+        `id`, `key`, `description`,
+        `name`, `engine_conn_type`, `default_value`,
+        `validate_type`, `validate_range`, `is_hidden`,
+        `is_advanced`, `level`, `treeName`,
+        `boundary_type`, `en_name`, `en_treeName`,
+        `en_description`)
         VALUES (
         #{id}, #{key}, #{description},
         #{name}, #{engineType}, #{defaultValue},
         #{validateType}, #{validateRange}, #{isHidden},
         #{isAdvanced}, #{level}, #{treeName},
-        #{boundaryType})
+        #{boundaryType}, #{enName}, #{enTreeName},
+        #{enDescription})
     </insert>
 
     <select id="getConfigKeyByLabelIds" resultMap="ConfigKeyValueMap">
@@ -342,5 +359,103 @@
         </set>
         WHERE id = #{categoryId}
     </update>
+
+    <delete id="deleteConfigKey" >
+        DELETE FROM linkis_ps_configuration_config_key
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getConfigBykey" resultMap="ConfigKeyMap">
+        SELECT
+        `id`, `key`, `description`, `name` ,
+        `engine_conn_type`, `default_value`, `validate_type`, `validate_range`,
+        `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`
+        FROM linkis_ps_configuration_config_key
+        <where>
+            <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
+            <if test="key != null">and `key` like concat(#{key},'%')</if>
+        </where>
+        order by engine_conn_type
+    </select>
+
+
+    <select id="getConfigEnBykey" resultMap="ConfigKeyMap">
+        SELECT
+        `id`, `key`, `en_description` as `description`, `en_name` as name ,
+        `engine_conn_type`, `default_value`, `validate_type`, `validate_range`,
+        `is_hidden`, `is_advanced`, `level`, `en_treeName` as `treeName`, `boundary_type`
+        FROM linkis_ps_configuration_config_key
+        <where>
+            <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
+            <if test="key != null">and `key` like concat('%',#{key},'%')</if>
+        </where>
+        order by engine_conn_type
+    </select>
+
+
+    <select id="getUserConfigValue" resultMap="ConfigUserValueMap">
+        SELECT
+            config.`key`,
+            config.`name`,
+            config.id AS config_key_id ,
+            config.description,
+            config.default_value,
+            config.engine_conn_type,
+            config_value.id AS config_value_id,
+            config_value.config_value,
+            label.id AS config_label_id,
+            label.label_value
+        FROM
+            linkis_ps_configuration_config_key config,
+            linkis_ps_configuration_config_value config_value,
+            linkis_cg_manager_label label
+        <where>
+        config_value.config_key_id =config.id
+        AND label.id=config_value.config_label_id
+            <if test="key != null">AND config .`key` = #{key}</if>
+            <if test="user != null">AND label.label_value like concat('%',#{user},'%')</if>
+            <if test="creator != null">AND label.label_value like concat('%',#{creator},'%')</if>
+            <if test="engineType != null">AND label.label_value like concat('%',#{engineType},'%')</if>
+        </where>
+        ORDER BY engine_conn_type
+    </select>
+
+    <insert id="insertKeyByBase" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
+        INSERT INTO linkis_ps_configuration_config_key (
+        `key`, `description`,
+        `name`, `engine_conn_type`, `default_value`,
+        `validate_type`, `validate_range`, `is_hidden`,
+        `is_advanced`, `level`, `treeName`,
+        `boundary_type`, `en_name`, `en_treeName`,
+        `en_description`)
+        VALUES (
+        #{key}, #{description},
+        #{name}, #{engineType}, #{defaultValue},
+        #{validateType}, #{validateRange}, #{isHidden},
+        #{isAdvanced}, #{level}, #{treeName},
+        #{boundaryType}, #{enName}, #{enTreeName},
+        #{enDescription})
+    </insert>
+
+    <update id="updateConfigKey"  parameterType="org.apache.linkis.configuration.entity.ConfigKey">
+        UPDATE linkis_ps_configuration_config_key
+        <trim prefix="set" suffixOverrides=",">
+            <if test="key != null">`key` = #{key},</if>
+            <if test="description != null">`description` = #{description},</if>
+            <if test="engineType != null">`engine_conn_type` = #{engineType},</if>
+            <if test="defaultValue != null">`default_value` = #{defaultValue},</if>
+            <if test="validateType != null">`validate_type` = #{validateType},</if>
+            <if test="validateRange != null">`validate_range` = #{validateRange},</if>
+            <if test="validateRange != null">`validate_range` = #{validateRange},</if>
+            <if test="treeName != null">`treeName` = #{treeName},</if>
+            <if test="boundaryType != null">`boundary_type` = #{boundaryType},</if>
+            <if test="enName != null">`en_name` = #{enName},</if>
+            <if test="enTreeName != null">`en_treeName` = #{enTreeName},</if>
+            <if test="enDescription != null">`en_description` = #{enDescription},</if>
+        </trim>
+        WHERE  id = #{id}
+    </update>
+
+
 
 </mapper>

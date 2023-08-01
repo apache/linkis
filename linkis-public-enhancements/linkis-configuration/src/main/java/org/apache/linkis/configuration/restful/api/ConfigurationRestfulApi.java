@@ -26,6 +26,7 @@ import org.apache.linkis.configuration.service.ConfigurationService;
 import org.apache.linkis.configuration.util.ConfigurationConfiguration;
 import org.apache.linkis.configuration.util.JsonNodeUtil;
 import org.apache.linkis.configuration.util.LabelEntityParser;
+import org.apache.linkis.configuration.validate.ValidatorManager;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
 import org.apache.linkis.manager.label.utils.LabelUtils;
@@ -42,13 +43,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -71,6 +71,8 @@ public class ConfigurationRestfulApi {
   @Autowired private CategoryService categoryService;
 
   @Autowired private ConfigKeyService configKeyService;
+
+  @Autowired private ValidatorManager validatorManager;
 
   ObjectMapper mapper = new ObjectMapper();
 
@@ -525,5 +527,195 @@ public class ConfigurationRestfulApi {
             username, creator, engineType, version);
     List<ConfigValue> configValues = configKeyService.deleteConfigValue(configKey, labelList);
     return Message.ok().data("configValues", configValues);
+  }
+
+  @ApiOperation(value = "getBaseKeyValue", notes = "get key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "key", required = false, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "20"),
+  })
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.GET)
+  public Message getBaseKeyValue(
+      HttpServletRequest req,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
+      throws ConfigurationException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "getBaseKeyValue"));
+    if (StringUtils.isBlank(engineType)) {
+      engineType = null;
+    }
+    if (StringUtils.isBlank(key)) {
+      key = null;
+    }
+    PageHelper.startPage(pageNow, pageSize);
+    List<ConfigKey> list = null;
+    try {
+      list = configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<ConfigKey> pageInfo = new PageInfo<>(list);
+    long total = pageInfo.getTotal();
+    return Message.ok().data("configKeyList", list).data("totalPage", total);
+  }
+
+  @ApiOperation(value = "deleteBaseKeyValue", notes = "delete key", response = Message.class)
+  @ApiImplicitParams({@ApiImplicitParam(name = "id", required = true, dataType = "Integer")})
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.DELETE)
+  public Message deleteBaseKeyValue(HttpServletRequest req, @RequestParam(value = "id") Integer id)
+      throws ConfigurationException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "deleteBaseKeyValue  ID:" + id));
+    configKeyService.deleteConfigById(id);
+    return Message.ok();
+  }
+
+  @ApiOperation(value = "saveBaseKeyValue", notes = "save key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "id", required = false, dataType = "String", value = "id"),
+    @ApiImplicitParam(name = "key", required = true, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "name", required = true, dataType = "String", value = "name"),
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "String",
+        value = "description"),
+    @ApiImplicitParam(
+        name = "defaultValue",
+        required = true,
+        dataType = "String",
+        value = "defaultValue"),
+    @ApiImplicitParam(
+        name = "validateType",
+        required = true,
+        dataType = "String",
+        value = "validateType"),
+    @ApiImplicitParam(
+        name = "validateRange",
+        required = true,
+        dataType = "String",
+        value = "validateRange"),
+    @ApiImplicitParam(
+        name = "boundaryType",
+        required = true,
+        dataType = "String",
+        value = "boundaryType"),
+    @ApiImplicitParam(name = "treeName", required = true, dataType = "String", value = "treeName"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "enName", required = false, dataType = "String", value = "enName"),
+    @ApiImplicitParam(
+        name = "enDescription",
+        required = false,
+        dataType = "String",
+        value = "enDescription"),
+    @ApiImplicitParam(
+        name = "enTreeName",
+        required = false,
+        dataType = "String",
+        value = "enTreeName")
+  })
+  @ApiOperationSupport(ignoreParameters = {"json"})
+  @RequestMapping(path = "/baseKeyValue", method = RequestMethod.POST)
+  public Message saveBaseKeyValue(HttpServletRequest req, @RequestBody ConfigKey configKey)
+      throws ConfigurationException, InstantiationException, IllegalAccessException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "saveBaseKeyValue"));
+    String key = configKey.getKey();
+    String defaultValue = configKey.getDefaultValue();
+    String validateType = configKey.getValidateType();
+    String validateRange = configKey.getValidateRange();
+    if (StringUtils.isBlank(key)) {
+      return Message.error("key cannot be empty");
+    }
+    if (StringUtils.isBlank(validateType)) {
+      return Message.error("validateType cannot be empty");
+    }
+    if (StringUtils.isBlank(validateRange)) {
+      return Message.error("validateRange cannot be empty");
+    }
+    if (StringUtils.isNotEmpty(defaultValue)
+        && !validatorManager
+            .getOrCreateValidator(validateType)
+            .validate(defaultValue, validateRange)) {
+      String msg =
+          MessageFormat.format(
+              "Parameter configValue verification failed(参数defaultValue校验失败):"
+                  + "key:{0}, ValidateType:{1}, ValidateRange:{2},ConfigValue:{3}",
+              key, validateType, validateRange, defaultValue);
+      throw new ConfigurationException(msg);
+    }
+    if (null == configKey.getId()) {
+      configKeyService.saveConfigKey(configKey);
+    } else {
+      configKey.setId(configKey.getId());
+      configKeyService.updateConfigKey(configKey);
+    }
+    return Message.ok().data("configKey", configKey);
+  }
+
+  @ApiOperation(value = "getUserkeyvalue", notes = "get key", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "key", required = false, dataType = "String", value = "key"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(name = "user", required = false, dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", defaultValue = "1"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        defaultValue = "20"),
+  })
+  @RequestMapping(path = "/userKeyValue", method = RequestMethod.GET)
+  public Message getUserKeyValue(
+      HttpServletRequest req,
+      @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "key", required = false) String key,
+      @RequestParam(value = "creator", required = false) String creator,
+      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
+      throws ConfigurationException {
+    checkAdmin(ModuleUserUtils.getOperationUser(req, "getUserKeyValue"));
+    if (StringUtils.isBlank(engineType)) {
+      engineType = null;
+    }
+    if (StringUtils.isBlank(key)) {
+      key = null;
+    }
+    if (StringUtils.isBlank(creator)) {
+      creator = null;
+    }
+    if (StringUtils.isBlank(user)) {
+      user = null;
+    }
+    PageHelper.startPage(pageNow, pageSize);
+    List<ConfigUserValue> list;
+    try {
+      list = configKeyService.getUserConfigValue(engineType, key, creator, user);
+    } finally {
+      PageHelper.clearPage();
+    }
+    PageInfo<ConfigUserValue> pageInfo = new PageInfo<>(list);
+    long total = pageInfo.getTotal();
+    return Message.ok().data("configValueList", list).data("totalPage", total);
   }
 }

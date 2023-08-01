@@ -46,7 +46,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       engineResourceRequest: EngineResourceRequest
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
-    if (clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")) {
+    if (
+        clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")
+    ) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
       getRequestResource(engineResourceRequest.properties)
@@ -57,7 +59,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       engineResourceRequest: EngineResourceRequest
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
-    if (clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")) {
+    if (
+        clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")
+    ) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
       getRequestResource(engineResourceRequest.properties)

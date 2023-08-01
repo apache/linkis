@@ -105,7 +105,7 @@
             create_By=#{acrossClusterRule.createBy},
             <choose>
                 <when test="acrossClusterRule.updateTime != null">
-                    update_time=#{acrossClusterRule.updateTime},
+                    update_time=#{acrossClusterRule.updateTime}
                 </when>
                 <otherwise>
                     update_time = now()
@@ -123,7 +123,7 @@
         SET
             <choose>
                 <when test="acrossClusterRule.updateTime != null">
-                    update_time=#{acrossClusterRule.updateTime},
+                    update_time=#{acrossClusterRule.updateTime}
                 </when>
                 <otherwise>
                     update_time = now()

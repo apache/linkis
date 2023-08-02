@@ -17,6 +17,7 @@
 
 package org.apache.linkis.storage.source
 
+import org.apache.linkis.storage.domain.Dolphin
 import org.apache.linkis.storage.resultset.table.TableRecord
 import org.apache.linkis.storage.utils.StorageUtils
 
@@ -24,11 +25,21 @@ class ResultsetFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSour
 
   shuffle({
     case t: TableRecord =>
-      new TableRecord(t.row.map {
-        case null | "NULL" => getParams.getOrDefault("nullValue", "NULL")
-        case "" => getParams.getOrDefault("nullValue", "")
-        case value: Double => StorageUtils.doubleToString(value)
-        case r => r
+      new TableRecord(t.row.map { rvalue =>
+        {
+          rvalue match {
+            case null | "NULL" =>
+              val nullValue = getParams.getOrDefault("nullValue", "NULL")
+              if (nullValue.equals(Dolphin.LINKIS_NULL)) {
+                rvalue
+              } else {
+                nullValue
+              }
+            case "" => getParams.getOrDefault("nullValue", "")
+            case value: Double => StorageUtils.doubleToString(value)
+            case _ => rvalue
+          }
+        }
       })
     case record => record
   })

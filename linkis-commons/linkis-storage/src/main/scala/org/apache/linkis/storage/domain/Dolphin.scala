@@ -62,6 +62,14 @@ object Dolphin extends Logging {
   def getString(bytes: Array[Byte], start: Int, len: Int): String =
     new String(bytes, start, len, Dolphin.CHAR_SET)
 
+  def toStringValue(value: String): String = {
+    if (LINKIS_NULL.equals(value)) {
+      null
+    } else {
+      value
+    }
+  }
+
   /**
    * Read an integer value that converts the array to a byte of length 10 bytes
    * 读取整数值，该值为将数组转换为10字节长度的byte

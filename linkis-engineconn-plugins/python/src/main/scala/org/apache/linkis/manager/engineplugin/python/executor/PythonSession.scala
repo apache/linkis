@@ -169,9 +169,11 @@ class PythonSession extends Logging {
       if (process == null) {
         Utils.tryThrow(initGateway) { t =>
           {
-            logger.error("initialize python executor failed, please ask administrator for help!", t)
+            val errMsg =
+              s"initialize python executor failed, please ask administrator for help! errMsg: ${t.getMessage}"
+            logger.error(errMsg, t)
             Utils.tryAndWarn(close)
-            throw t
+            throw new IllegalStateException(errMsg, t)
           }
         }
       }

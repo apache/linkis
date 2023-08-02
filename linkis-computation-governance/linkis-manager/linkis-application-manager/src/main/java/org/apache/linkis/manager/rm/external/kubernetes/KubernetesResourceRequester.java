@@ -24,10 +24,10 @@ import org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider;
 import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.Quantity;
@@ -40,26 +40,20 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesResourceRequester implements ExternalResourceRequester {
   private static final Logger logger = LoggerFactory.getLogger(KubernetesResourceRequester.class);
-  private ExternalResourceProvider provider = null;
-  private DefaultKubernetesClient client = null;
-  private String k8sMasterUrl;
-  private String k8sClientCertData;
-  private String k8sClientKeyData;
-  private String k8sCaCertData;
+  private final Map<String, DefaultKubernetesClient> clientMap = new ConcurrentHashMap<>();
 
   @Override
   public NodeResource requestResourceInfo(
       ExternalResourceIdentifier identifier, ExternalResourceProvider provider) {
-    this.provider = provider;
-    if (this.client == null
-        || !StringUtils.equals(
-            k8sMasterUrl, (String) provider.getConfigMap().get("k8sMasterUrl"))) {
-      reloadExternalResourceAddress(provider);
+    String k8sMasterUrl = (String) provider.getConfigMap().get("k8sMasterUrl");
+    DefaultKubernetesClient client = clientMap.get(k8sMasterUrl);
+    if (client == null) {
+      constructKubernetesClient(provider);
+      client = clientMap.get(k8sMasterUrl);
     }
-
     String namespace = ((KubernetesResourceIdentifier) identifier).getNamespace();
     Pair<KubernetesResource, KubernetesResource> kubernetesResources =
-        getResources(this.client, namespace);
+        getResources(client, namespace);
 
     CommonNodeResource nodeResource = new CommonNodeResource();
     nodeResource.setMaxResource(kubernetesResources.getKey());
@@ -159,32 +153,30 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
 
   @Override
   public Boolean reloadExternalResourceAddress(ExternalResourceProvider provider) {
-    if (null == provider) {
-      k8sMasterUrl = null;
-      k8sClientCertData = null;
-      k8sClientKeyData = null;
-      k8sCaCertData = null;
-      if (client != null) {
-        client.close();
-        client = null;
-      }
-    } else {
-      k8sMasterUrl = (String) provider.getConfigMap().get("k8sMasterUrl");
-      k8sClientCertData = (String) provider.getConfigMap().get("k8sClientCertData");
-      k8sClientKeyData = (String) provider.getConfigMap().get("k8sClientKeyData");
-      k8sCaCertData = (String) provider.getConfigMap().get("k8sCaCertData");
+    if (null != provider) {
+      DefaultKubernetesClient client =
+          clientMap.get((String) provider.getConfigMap().get("k8sMasterUrl"));
       if (client != null) {
         client.close();
       }
-      client =
-          new DefaultKubernetesClient(
-              new ConfigBuilder()
-                  .withMasterUrl(k8sMasterUrl)
-                  .withClientCertData(k8sClientCertData)
-                  .withClientKeyData(k8sClientKeyData)
-                  .withCaCertData(k8sCaCertData)
-                  .build());
+      constructKubernetesClient(provider);
     }
     return true;
+  }
+
+  private void constructKubernetesClient(ExternalResourceProvider provider) {
+    String k8sMasterUrl = (String) provider.getConfigMap().get("k8sMasterUrl");
+    String k8sClientCertData = (String) provider.getConfigMap().get("k8sClientCertData");
+    String k8sClientKeyData = (String) provider.getConfigMap().get("k8sClientKeyData");
+    String k8sCaCertData = (String) provider.getConfigMap().get("k8sCaCertData");
+    DefaultKubernetesClient client =
+        new DefaultKubernetesClient(
+            new ConfigBuilder()
+                .withMasterUrl(k8sMasterUrl)
+                .withClientCertData(k8sClientCertData)
+                .withClientKeyData(k8sClientKeyData)
+                .withCaCertData(k8sCaCertData)
+                .build());
+    clientMap.put(k8sMasterUrl, client);
   }
 }

@@ -130,7 +130,7 @@ public class KubernetesResource extends Resource {
   @Override
   public String toJson() {
     return String.format(
-        "{\"namespace\":\"%s\",\"memory\":%s,\"cpu\":%d}",
+        "{\"namespace\":\"%s\",\"memory\":\"%s\",\"cpu\":%d}",
         namespace, ByteTimeUtils.bytesToString(this.memory), this.cores);
   }
 

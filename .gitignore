@@ -32,5 +32,6 @@ target/
 **/dependency-reduced-pom.xml
 # log folder
 *.log
+!info.log
 logs/
 nohup.out

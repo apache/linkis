@@ -344,7 +344,7 @@ class HiveEngineConcurrentConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
       }
       rows += result.size
       result.clear()

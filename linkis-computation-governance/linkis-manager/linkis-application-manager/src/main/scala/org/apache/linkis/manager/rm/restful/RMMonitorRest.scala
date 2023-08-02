@@ -610,10 +610,8 @@ class RMMonitorRest extends Logging {
       ]
   ) = {
 
-    val userCreatorEngineTypeResource = new util.HashMap[String, Any]
-
-    val userResources = new util.ArrayList[Any]()
-    userCreatorEngineTypeResourceMap.map { userCreatorEntry =>
+    val userCreatorEngineTypeResources = userCreatorEngineTypeResourceMap.map { userCreatorEntry =>
+      val userCreatorEngineTypeResource = new mutable.HashMap[String, Any]
       userCreatorEngineTypeResource.put("userCreator", userCreatorEntry._1)
       var totalUsedMemory: Long = 0L
       var totalUsedCores: Int = 0
@@ -624,10 +622,8 @@ class RMMonitorRest extends Logging {
       var totalMaxMemory: Long = 0L
       var totalMaxCores: Int = 0
       var totalMaxInstances: Int = 0
-
-      val engineTypeResources = new util.ArrayList[Any]()
-      for (engineTypeEntry <- userCreatorEntry._2) {
-        val engineTypeResource = new util.HashMap[String, Any]
+      val engineTypeResources = userCreatorEntry._2.map { engineTypeEntry =>
+        val engineTypeResource = new mutable.HashMap[String, Any]
         engineTypeResource.put("engineType", engineTypeEntry._1)
         val engineResource = engineTypeEntry._2
         val usedResource = engineResource.getUsedResource.asInstanceOf[LoadInstanceResource]
@@ -660,9 +656,8 @@ class RMMonitorRest extends Logging {
           if (maxInstances > 0) (usedInstances + lockedInstances) / maxInstances.toDouble else 0
         val maxPercent = Math.max(Math.max(memoryPercent, coresPercent), instancePercent)
         engineTypeResource.put("percent", maxPercent.formatted("%.2f"))
-        engineTypeResources.add(engineTypeResource)
+        engineTypeResource
       }
-
       val totalMemoryPercent =
         if (totalMaxMemory > 0) (totalUsedMemory + totalLockedMemory) / totalMaxMemory.toDouble
         else 0
@@ -677,10 +672,9 @@ class RMMonitorRest extends Logging {
         Math.max(Math.max(totalMemoryPercent, totalCoresPercent), totalInstancePercent)
       userCreatorEngineTypeResource.put("engineTypes", engineTypeResources)
       userCreatorEngineTypeResource.put("percent", totalPercent.formatted("%.2f"))
-      userResources.add(userCreatorEngineTypeResource)
+      userCreatorEngineTypeResource
     }
-
-    userResources
+    userCreatorEngineTypeResources
   }
 
   private def getUserCreatorEngineTypeResourceMap(nodes: Array[EngineNode]) = {

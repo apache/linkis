@@ -579,6 +579,7 @@ public class FsRestfulApi {
     }
     FileSource fileSource = null;
     try {
+      fileSource = FileSource$.MODULE$.create(fsPath, fileSystem);
       if (nullValue != null && BLANK.equalsIgnoreCase(nullValue)) {
         nullValue = "";
       }

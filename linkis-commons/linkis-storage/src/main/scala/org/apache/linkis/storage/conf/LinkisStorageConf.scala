@@ -60,5 +60,5 @@ object LinkisStorageConf {
     fileTypeArr
   }
 
-  val LINKIS_RESULT_ENABLE_NULL = CommonVars("linkis.resultset.enable.null.replace", true).getValue
+  val LINKIS_RESULT_ENABLE_NULL = CommonVars("linkis.resultset.enable.null.replace", false).getValue
 }

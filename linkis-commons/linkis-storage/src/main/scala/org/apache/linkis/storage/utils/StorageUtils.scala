@@ -215,7 +215,6 @@ object StorageUtils extends Logging {
     readLen
   }
 
-
   def isIOProxy(): Boolean = {
     StorageConfiguration.ENABLE_IO_PROXY.getValue
   }

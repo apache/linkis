@@ -47,13 +47,13 @@ class TableResultDeserializer extends ResultDeserializer[TableMetaData, TableRec
     val columns = new ArrayBuffer[Column]()
     for (i <- 0 until (colArray.length, 3)) {
       var len = colArray(i).toInt
-      val colName = Dolphin.getString(bytes, index, len)
+      val colName = Dolphin.toStringValue(Dolphin.getString(bytes, index, len))
       index += len
       len = colArray(i + 1).toInt
-      val colType = Dolphin.getString(bytes, index, len)
+      val colType = Dolphin.toStringValue(Dolphin.getString(bytes, index, len))
       index += len
       len = colArray(i + 2).toInt
-      val colComment = Dolphin.getString(bytes, index, len)
+      val colComment = Dolphin.toStringValue(Dolphin.getString(bytes, index, len))
       index += len
       columns += Column(colName, colType, colComment)
     }

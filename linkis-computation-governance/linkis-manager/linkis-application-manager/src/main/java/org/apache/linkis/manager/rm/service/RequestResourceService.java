@@ -417,7 +417,7 @@ public abstract class RequestResourceService {
                     kubernetesResource.getCores(),
                     kubernetesResourceAvailable.getCores(),
                     kubernetesResourceMax.getCores()));
-      } else if (kubernetesResource.getMemory() > kubernetesResource.getMemory()) {
+      } else if (kubernetesResource.getMemory() > kubernetesResourceAvailable.getMemory()) {
         return Pair.of(
             RMErrorCode.NAMESPACE_MEMORY_INSUFFICIENT.getErrorCode(),
             RMErrorCode.NAMESPACE_MEMORY_INSUFFICIENT.getErrorDesc()

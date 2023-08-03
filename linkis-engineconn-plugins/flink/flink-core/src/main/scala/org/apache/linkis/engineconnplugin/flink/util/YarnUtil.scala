@@ -21,6 +21,7 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants

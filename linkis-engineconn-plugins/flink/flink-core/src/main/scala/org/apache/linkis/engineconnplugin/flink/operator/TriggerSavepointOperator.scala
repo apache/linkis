@@ -20,8 +20,10 @@ package org.apache.linkis.engineconnplugin.flink.operator
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
+import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.constants.FlinkECConstant
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
+import org.apache.linkis.engineconnplugin.flink.operator.clientmanager.FlinkRestClientManager
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.engineconnplugin.flink.util.YarnUtil.logAndException
 import org.apache.linkis.governance.common.constant.ec.ECConstants

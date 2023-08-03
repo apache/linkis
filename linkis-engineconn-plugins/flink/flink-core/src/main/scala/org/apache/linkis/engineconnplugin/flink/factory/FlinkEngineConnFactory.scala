@@ -17,7 +17,6 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
@@ -46,7 +45,6 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
-import org.apache.linkis.protocol.utils.TaskUtils
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.api.common.RuntimeExecutionMode
@@ -142,7 +140,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       shipDirsArray,
       new util.ArrayList[URL],
       flinkExecutionTarget,
-      flinkVersion flinkExecutionTarget,
+      flinkVersion,
       otherParams
     )
     // Step1: environment-level configurations

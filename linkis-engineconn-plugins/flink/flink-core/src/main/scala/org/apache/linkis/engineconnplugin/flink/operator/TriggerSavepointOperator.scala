@@ -20,6 +20,7 @@ package org.apache.linkis.engineconnplugin.flink.operator
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorManager
+import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.constants.FlinkECConstant
 import org.apache.linkis.engineconnplugin.flink.executor.FlinkOnceExecutor
@@ -78,9 +79,12 @@ class TriggerSavepointOperator extends Operator with Logging {
           rsMap.put(FlinkECConstant.RESULT_SAVEPOINT_KEY, writtenSavepoint)
         case executor =>
           throw new JobExecutionException(
-            NOT_SUPPORT_SAVEPOTION.getErrorDesc + executor.getClass.getSimpleName
+            FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorDesc + executor.getClass.getSimpleName
               + MessageFormat
-                .format(NOT_SUPPORT_SAVEPOTION.getErrorDesc, executor.getClass.getSimpleName)
+                .format(
+                  FlinkErrorCodeSummary.NOT_SUPPORT_SAVEPOTION.getErrorDesc,
+                  executor.getClass.getSimpleName
+                )
           )
       }
     }

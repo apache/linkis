@@ -71,8 +71,7 @@ class EnvironmentContext(
       shipDirsArray: Array[String],
       dependencies: util.List[URL],
       flinkExecutionTarget: String,
-      flinkVersion: String
-      flinkExecutionTarget: String,
+      flinkVersion: String,
       extraParams: util.Map[String, Any]
   ) {
     this(

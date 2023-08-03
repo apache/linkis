@@ -22,8 +22,6 @@ import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.launch.EngineConnServer
-import org.apache.linkis.engineconnplugin.flink.client.config.Environment
-import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
 import org.apache.linkis.engineconnplugin.flink.client.config.FlinkVersionThreadLocal
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
 import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment
@@ -144,8 +142,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       shipDirsArray,
       new util.ArrayList[URL],
       flinkExecutionTarget,
-      flinkVersion
-      flinkExecutionTarget,
+      flinkVersion flinkExecutionTarget,
       otherParams
     )
     // Step1: environment-level configurations
@@ -376,6 +373,15 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       // Otherwise, an error is generated: stable identifier required, but PER_JOB.getName found.
       case FlinkExecutionTargetType.YARN_PER_JOB | FlinkExecutionTargetType.YARN_SESSION |
           FlinkExecutionTargetType.KUBERNETES_SESSION =>
+        val planner = FlinkEnvConfiguration.FLINK_SQL_PLANNER.getValue(options)
+        if (!ExecutionEntry.AVAILABLE_PLANNERS.contains(planner.toLowerCase(Locale.getDefault))) {
+          throw new FlinkInitFailedException(
+            MessageFormat.format(
+              PLANNER_MUST_THESE.getErrorDesc,
+              String.join(", ", ExecutionEntry.AVAILABLE_PLANNERS)
+            )
+          )
+        }
         val executionType = FlinkEnvConfiguration.FLINK_SQL_EXECUTION_TYPE.getValue(options)
         if (
             !ExecutionEntry.AVAILABLE_EXECUTION_TYPES.contains(

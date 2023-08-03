@@ -35,8 +35,6 @@ import javax.annotation.PostConstruct
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import scala.collection.mutable
-
 @Service
 class EngineLoadOperationHook extends OperationHook with Logging {
 

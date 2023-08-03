@@ -21,8 +21,6 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 
-import java.util
-
 object ManagerUtil extends Logging {
 
   val isManager: Boolean = {

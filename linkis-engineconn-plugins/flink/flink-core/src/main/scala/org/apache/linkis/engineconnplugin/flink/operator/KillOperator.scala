@@ -31,7 +31,6 @@ import org.apache.hadoop.yarn.api.records.{ApplicationId, FinalApplicationStatus
 
 import java.util
 
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import scala.collection.mutable
 
 class KillOperator extends Operator with Logging {

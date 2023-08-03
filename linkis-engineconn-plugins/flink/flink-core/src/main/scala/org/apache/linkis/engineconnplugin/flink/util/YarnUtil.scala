@@ -22,7 +22,6 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
-import org.apache.linkis.engineconnplugin.flink.exception.JobExecutionException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus

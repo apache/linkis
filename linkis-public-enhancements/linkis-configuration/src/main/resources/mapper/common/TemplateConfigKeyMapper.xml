@@ -33,6 +33,13 @@
     <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+
+  <resultMap id="ResultMap" type="org.apache.linkis.configuration.entity.TemplateConfigKeyVO" extends="BaseResultMap">
+    <result column="key" jdbcType="VARCHAR" property="key" />
+  </resultMap>
+
+
   <sql id="Base_Column_List">
     id, template_name, template_uuid, key_id, config_value, max_value, min_value, validate_range, 
     is_valid, create_by, create_time, update_by, update_time
@@ -122,5 +129,13 @@
     order by id
   </select>
 
+
+  <select id="selectInfoListByTemplateUuid" resultMap="ResultMap">
+    select t.*, k.`key`
+    from linkis_ps_configuration_template_config_key t
+    JOIN linkis_ps_configuration_config_key  k
+    ON k.id=t.key_id
+    where t.template_uuid = #{templateUuid,jdbcType=VARCHAR}
+  </select>
 
 </mapper>

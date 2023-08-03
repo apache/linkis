@@ -220,6 +220,9 @@ object EntranceConfiguration {
   val CREATOR_IP_SWITCH =
     CommonVars("wds.linkis.entrance.user.creator.ip.interceptor.switch", false)
 
+  val TEMPLATE_CONF_SWITCH =
+    CommonVars("wds.linkis.entrance.template.conf.interceptor.switch", true)
+
   val ENABLE_ENTRANCE_DIRTY_DATA_CLEAR =
     CommonVars("linkis.entrance.auto.clean.dirty.data.enable", true)
 

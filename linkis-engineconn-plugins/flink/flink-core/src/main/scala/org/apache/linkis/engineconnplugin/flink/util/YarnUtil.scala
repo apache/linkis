@@ -21,6 +21,8 @@ import org.apache.linkis.common.exception.ErrorException
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineconn.core.executor.ExecutorManager
 import org.apache.linkis.engineconn.executor.entity.YarnExecutor
+import org.apache.linkis.engineconnplugin.flink.client.config.FlinkVersionThreadLocal
+import org.apache.linkis.engineconnplugin.flink.client.shims.FlinkShims
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.JobExecutionException
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
@@ -159,7 +161,12 @@ object YarnUtil extends Logging {
         val msg = s"App : ${appIdStr} got no head job, cannot do checkPoint and cancel."
         throw new JobExecutionException(msg)
       }
-      val rs = restClient.triggerSavepoint(firstJob.getJobId, checkPointPath).get()
+//      val rs = restClient.triggerSavepoint(firstJob.getJobId, checkPointPath).get()
+      // todo For compatibility with different versions of flink
+      val rs = FlinkShims
+        .getInstance(FlinkVersionThreadLocal.getFlinkVersion)
+        .triggerSavepoint(restClient, firstJob.getJobId, checkPointPath)
+        .get()
       rs
     }
   }

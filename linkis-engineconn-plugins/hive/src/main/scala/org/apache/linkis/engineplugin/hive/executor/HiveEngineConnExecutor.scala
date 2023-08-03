@@ -204,9 +204,11 @@ class HiveEngineConnExecutor(
             var compileRet = -1
             Utils.tryCatch {
               compileRet = driver.compile(realCode)
-              logger.info(s"driver compile realCode : ${realCode} finished, status : ${compileRet}")
+              logger.info(
+                s"driver compile realCode : \n ${realCode} \n finished, status : ${compileRet}"
+              )
               if (0 != compileRet) {
-                logger.warn(s"compile realCode : ${realCode} error status : ${compileRet}")
+                logger.warn(s"compile realCode : \n ${realCode} \n error status : ${compileRet}")
                 throw HiveQueryFailedException(
                   COMPILE_HIVE_QUERY_ERROR.getErrorCode,
                   COMPILE_HIVE_QUERY_ERROR.getErrorDesc

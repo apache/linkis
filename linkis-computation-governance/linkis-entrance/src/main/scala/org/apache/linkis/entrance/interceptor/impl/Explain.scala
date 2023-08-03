@@ -134,6 +134,7 @@ object SQLExplain extends Explain {
       )
     }
     var isFirstTimePrintingLimit = true
+    var isFirstTimePrintingOverLimit = true
     if (tempCode.contains("""\;""")) {
       val semicolonIndexes = findRealSemicolonIndex(tempCode)
       var oldIndex = 0
@@ -156,13 +157,13 @@ object SQLExplain extends Explain {
             fixedCode += (realCode + SQL_APPEND_LIMIT)
           } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
             val trimCode = singleCode.trim
-            if (isFirstTimePrintingLimit) {
+            if (isFirstTimePrintingOverLimit) {
               logAppender.append(
                 LogUtils.generateWarn(
                   s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
                 ) + "\n"
               )
-              isFirstTimePrintingLimit = false
+              isFirstTimePrintingOverLimit = false
             }
             fixedCode += repairSelectOverLimit(trimCode)
           } else {
@@ -190,13 +191,13 @@ object SQLExplain extends Explain {
             fixedCode += (realCode + SQL_APPEND_LIMIT)
           } else if (isSelectOverLimit(singleCode) && !isNoLimitAllowed) {
             val trimCode = singleCode.trim
-            if (isFirstTimePrintingLimit) {
+            if (isFirstTimePrintingOverLimit) {
               logAppender.append(
                 LogUtils.generateWarn(
                   s"You submitted a sql with limit exceeding 5000, it is not allowed. DSS will change your limit to 5000"
                 ) + "\n"
               )
-              isFirstTimePrintingLimit = false
+              isFirstTimePrintingOverLimit = false
             }
             fixedCode += repairSelectOverLimit(trimCode)
           } else {

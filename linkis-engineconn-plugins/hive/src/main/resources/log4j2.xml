@@ -104,7 +104,7 @@
         <logger name="org.apache.hadoop.hive.conf.HiveConf" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
-        <logger name="org.apache.hadoop.mapreduce.split.JpbSplitWriter" level="ERROR" additivity="true">
+        <logger name="org.apache.hadoop.mapreduce.split.JobSplitWriter" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
    </loggers>

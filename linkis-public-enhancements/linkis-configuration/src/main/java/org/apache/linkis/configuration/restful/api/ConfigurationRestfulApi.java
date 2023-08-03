@@ -34,6 +34,7 @@ import org.apache.linkis.server.BDPJettyServerHelper;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,6 +171,9 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     String userName =
         ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    if ("*".equals(engineType)) {
+      engineType = null;
+    }
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
     List<Map> filterResult = new ArrayList<>();
     for (ConfigKey configKey : result) {
@@ -467,16 +471,21 @@ public class ConfigurationRestfulApi {
     Message message = Message.ok();
     String username = ModuleUserUtils.getOperationUser(req, "saveKey");
     String engineType = (String) json.getOrDefault("engineType", "*");
+    String user = (String) json.getOrDefault("user", "");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
     String configKey = (String) json.get("configKey");
     String value = (String) json.get("configValue");
+
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
     if (StringUtils.isBlank(configKey) || StringUtils.isBlank(value)) {
       return Message.error("key or value cannot be empty");
+    }
+    if (StringUtils.isNotBlank(user)) {
+      username = user;
     }
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
@@ -635,17 +644,34 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException, InstantiationException, IllegalAccessException {
     checkAdmin(ModuleUserUtils.getOperationUser(req, "saveBaseKeyValue"));
     String key = configKey.getKey();
+    String name = configKey.getName();
+    String treeName = configKey.getTreeName();
+    String description = configKey.getDescription();
+    Integer boundaryType = configKey.getBoundaryType();
     String defaultValue = configKey.getDefaultValue();
     String validateType = configKey.getValidateType();
     String validateRange = configKey.getValidateRange();
+    String engineType = configKey.getEngineType();
     if (StringUtils.isBlank(key)) {
       return Message.error("key cannot be empty");
+    }
+    if (StringUtils.isBlank(name)) {
+      return Message.error("name cannot be empty");
+    }
+    if (StringUtils.isBlank(description)) {
+      return Message.error("description cannot be empty");
+    }
+    if (StringUtils.isBlank(treeName)) {
+      return Message.error("treeName cannot be empty");
     }
     if (StringUtils.isBlank(validateType)) {
       return Message.error("validateType cannot be empty");
     }
-    if (StringUtils.isBlank(validateRange)) {
+    if (!validateType.equals("None") && StringUtils.isBlank(validateRange)) {
       return Message.error("validateRange cannot be empty");
+    }
+    if (null == boundaryType) {
+      return Message.error("boundaryType cannot be empty");
     }
     if (StringUtils.isNotEmpty(defaultValue)
         && !validatorManager
@@ -659,6 +685,11 @@ public class ConfigurationRestfulApi {
       throw new ConfigurationException(msg);
     }
     if (null == configKey.getId()) {
+      List<ConfigKey> configBykey =
+          configKeyService.getConfigBykey(engineType, key, req.getHeader("Content-Language"));
+      if (CollectionUtils.isNotEmpty(configBykey)) {
+        return Message.error("The engine has the same key: " + key);
+      }
       configKeyService.saveConfigKey(configKey);
     } else {
       configKey.setId(configKey.getId());

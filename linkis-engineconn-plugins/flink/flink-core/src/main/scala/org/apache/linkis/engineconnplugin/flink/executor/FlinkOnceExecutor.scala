@@ -120,14 +120,18 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
     if (daemonThread != null) daemonThread.cancel(true)
   }
 
-  override def close(): Unit = {
-    super.close()
-    closeDaemon()
+  protected def closeYarnApp(): Unit = {
     if (clusterDescriptor != null) {
       clusterDescriptor.cancelJob()
       clusterDescriptor.close()
     }
     flinkEngineConnContext.getExecutionContext.getClusterClientFactory.close()
+  }
+
+  override def close(): Unit = {
+    super.close()
+    closeDaemon()
+    closeYarnApp()
   }
 
   override protected def waitToRunning(): Unit = {

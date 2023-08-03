@@ -57,6 +57,8 @@ class EnvironmentContext(
 
   private var deploymentTarget: String = YarnDeploymentTarget.PER_JOB.getName
 
+  private var extraParams: util.Map[String, Any] = _
+
   def this(
       defaultEnv: Environment,
       systemConfiguration: Configuration,
@@ -70,6 +72,8 @@ class EnvironmentContext(
       dependencies: util.List[URL],
       flinkExecutionTarget: String,
       flinkVersion: String
+      flinkExecutionTarget: String,
+      extraParams: util.Map[String, Any]
   ) {
     this(
       defaultEnv,
@@ -95,6 +99,8 @@ class EnvironmentContext(
       this.flinkConfig.set(LinkisYarnClusterClientFactory.YARN_CONFIG_DIR, this.yarnConfDir)
       // set flink dist-jar(设置 flink dist jar)
       this.flinkConfig.set(YarnConfigOptions.FLINK_DIST_JAR, distJarPath)
+      // other params
+      this.extraParams = extraParams
     }
     this.flinkVersion = flinkVersion
   }
@@ -122,6 +128,13 @@ class EnvironmentContext(
   def getDefaultEnv: Environment = defaultEnv
 
   def getDependencies: util.List[URL] = dependencies
+
+  def setExtraParams(params: util.Map[String, Any]): EnvironmentContext = {
+    this.extraParams = params
+    this
+  }
+
+  def getExtraParams(): util.Map[String, Any] = extraParams
 
   override def equals(o: Any): Boolean = o match {
     case context: EnvironmentContext =>

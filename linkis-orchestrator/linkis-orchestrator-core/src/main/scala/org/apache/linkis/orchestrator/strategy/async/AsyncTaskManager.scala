@@ -17,6 +17,7 @@
 
 package org.apache.linkis.orchestrator.strategy.async
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.orchestrator.execution.ExecTaskRunner
 import org.apache.linkis.orchestrator.execution.impl.DefaultTaskManager
@@ -46,6 +47,8 @@ class AsyncTaskManager
         onTaskErrorResponseEvent(taskErrorResponseEvent)
       case ExecTaskRunnerCompletedEvent(execTaskRunner) =>
         addCompletedTask(execTaskRunner)
+      case event: EngineQuitedUnexpectedlyEvent =>
+        onEngineQuitedUnexpectedly(event)
       case _ =>
     }
   }
@@ -107,6 +110,30 @@ class AsyncTaskManager
 
   override protected def execTaskToTaskRunner(execTask: ExecTask): ExecTaskRunner = {
     new AsyncExecTaskRunnerImpl(execTask)
+  }
+
+  def onEngineQuitedUnexpectedly(event: EngineQuitedUnexpectedlyEvent): Unit = {
+    logger.info(s"received EngineUnexpectedlyQuitedEvent $event")
+    findDealEventTaskRunner(event).foreach {
+      case asyncExecTaskRunner: AsyncExecTaskRunner =>
+        if (asyncExecTaskRunner.isCompleted) {
+          logger.warn(
+            s"task ${event.execTask.getIDInfo()} already complete, ignore engine ${event.serviceInstance} quited unexpectedly"
+          )
+        } else {
+          val execTask = event.execTask
+          val errLog = LogUtils.generateERROR(
+            s"Your job : ${execTask.getIDInfo()} was failed because the engine quited unexpectedly(任务${execTask.getIDInfo()}失败，原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)."
+          )
+          val logEvent = TaskLogEvent(execTask, errLog)
+          execTask.getPhysicalContext.pushLog(logEvent)
+          val errorMsg =
+            s"task ${execTask.getIDInfo()} failed，Engine ${event.serviceInstance} quited unexpectedly(任务运行失败原因是引擎意外退出,可能是复杂任务导致引擎退出，如OOM)";
+          asyncExecTaskRunner.markFailed(errorMsg, null)
+          asyncExecTaskRunner.transientStatus(ExecutionNodeStatus.Failed)
+        }
+      case _ =>
+    }
   }
 
 }

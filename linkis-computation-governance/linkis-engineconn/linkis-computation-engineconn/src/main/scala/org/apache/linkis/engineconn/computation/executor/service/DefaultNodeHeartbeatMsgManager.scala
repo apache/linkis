@@ -21,9 +21,12 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.info.NodeHeartbeatMsgManager
 import org.apache.linkis.engineconn.computation.executor.metrics.ComputationEngineConnMetrics
 import org.apache.linkis.engineconn.core.EngineConnObject
-import org.apache.linkis.engineconn.executor.entity.{Executor, SensibleExecutor}
+import org.apache.linkis.engineconn.executor.entity.{Executor, SensibleExecutor, YarnExecutor}
 import org.apache.linkis.governance.common.constant.ec.ECConstants
+import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.server.BDPJettyServerHelper
+
+import org.apache.commons.lang3.StringUtils
 
 import org.springframework.stereotype.Component
 
@@ -71,6 +74,22 @@ class DefaultNodeHeartbeatMsgManager extends NodeHeartbeatMsgManager with Loggin
         ECConstants.YARN_QUEUE_NAME_KEY,
         engineParams.get(ECConstants.YARN_QUEUE_NAME_CONFIG_KEY).asInstanceOf[Object]
       )
+    }
+    executor match {
+      case yarnExecutor: YarnExecutor =>
+        if (StringUtils.isNotBlank(yarnExecutor.getQueue)) {
+          msgMap.put(ECConstants.YARN_QUEUE_NAME_KEY, yarnExecutor.getQueue)
+        }
+        if (StringUtils.isNotBlank(yarnExecutor.getApplicationId)) {
+          msgMap.put(ECConstants.YARN_APPID_NAME_KEY, yarnExecutor.getApplicationId)
+        }
+        if (StringUtils.isNotBlank(yarnExecutor.getApplicationURL)) {
+          msgMap.put(ECConstants.YARN_APP_URL_KEY, yarnExecutor.getApplicationURL)
+        }
+        if (StringUtils.isNotBlank(yarnExecutor.getYarnMode)) {
+          msgMap.put(ECConstants.YARN_MODE_KEY, yarnExecutor.getYarnMode)
+        }
+      case _ =>
     }
     Utils.tryCatch(BDPJettyServerHelper.gson.toJson(msgMap)) { case e: Exception =>
       val msgs = msgMap.asScala

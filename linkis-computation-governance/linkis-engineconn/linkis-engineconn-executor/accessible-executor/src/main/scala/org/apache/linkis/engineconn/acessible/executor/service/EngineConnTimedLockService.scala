@@ -51,7 +51,7 @@ class EngineConnTimedLockService extends LockService with Logging {
   private var lockType: EngineLockType = EngineLockType.Timed
 
   private def isSupportParallelism: Boolean =
-    AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM
+    AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()
 
   /**
    * @param lock
@@ -161,9 +161,7 @@ class EngineConnTimedLockService extends LockService with Logging {
         .toString
     )
     if (isLockExist(lock)) {
-      logger.info(
-        s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}"
-      )
+      logger.info(s"try to unlock lockEntity : lockString=$lockString")
       engineConnLock.release()
       this.lockString = null
       true

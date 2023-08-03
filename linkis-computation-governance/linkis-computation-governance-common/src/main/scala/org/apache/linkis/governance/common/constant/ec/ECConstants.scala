@@ -35,4 +35,43 @@ object ECConstants {
 
   val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
 
+  val QUEUE = "queue"
+
+  val EC_CLIENT_TYPE_ATTACH = "attach"
+
+  val EC_CLIENT_TYPE_DETACH = "detach"
+
+  val YARN_APPID_NAME_KEY = "applicationId"
+
+  val YARN_APP_URL_KEY = "applicationUrl"
+
+  val YARN_APP_NAME_KEY = "appicationName"
+
+  val YARN_MODE_KEY = "yarnMode"
+
+  val EC_SERVICE_INSTANCE_KEY = "serviceInstance"
+
+  val ECM_SERVICE_INSTANCE_KEY = "ecmServiceInstance"
+
+  val MANAGER_SERVICE_INSTANCE_KEY = "managerServiceInstance"
+
+  val NODE_STATUS_KEY = "nodeStatus"
+
+  val EC_LAST_UNLOCK_TIMESTAMP = "lastUnlockTimestamp"
+
+  val YARN_APP_TYPE_LIST_KEY = "yarnAppTypeList"
+
+  val YARN_APP_STATE_LIST_KEY = "yarnAppStateList"
+
+  val YARN_APP_TYPE_KEY = "yarnAppType"
+
+  val YARN_APP_TYPE_SPARK = "spark"
+
+  val YARN_APP_TYPE_FLINK = "flink"
+
+  val EC_OPERATE_LIST = "list"
+
+  val EC_OPERATE_STATUS = "status"
+
+  val YARN_APP_RESULT_LIST_KEY = "yarnAppResultList"
 }

@@ -31,7 +31,7 @@ deployPwd=
 ### database type
 ### choose mysql or postgresql, default mysql
 dbType=mysql
-
+export dbType
 
 ##Linkis_SERVER_VERSION
 LINKIS_SERVER_VERSION=v1
@@ -160,7 +160,7 @@ export SERVER_HEAP_SIZE="512M"
 ##The extended lib such mysql-connector-java-*.jar
 #LINKIS_EXTENDED_LIB=/appcom/common/linkisExtendedLib
 
-LINKIS_VERSION=1.3.2
+LINKIS_VERSION=1.4.0
 
 # for install
 LINKIS_PUBLIC_MODULE=lib/linkis-commons/public-module

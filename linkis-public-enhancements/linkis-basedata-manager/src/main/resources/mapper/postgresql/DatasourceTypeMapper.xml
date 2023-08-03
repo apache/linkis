@@ -41,10 +41,10 @@
         <include refid="Base_Column_List"></include>
          from linkis_ps_dm_datasource_type
         <if test="searchName != null and searchName!=''">
-              WHERE "name" LIKE concat('%',#{searchName},'%')
-            OR "description" LIKE concat('%',#{searchName},'%')
-            OR "option" LIKE concat('%',#{searchName},'%')
-            OR "classifier" LIKE concat('%',#{searchName},'%')
+              WHERE "name" LIKE concat('%',#{searchName}::text,'%')
+            OR "description" LIKE concat('%',#{searchName}::text,'%')
+            OR "option" LIKE concat('%',#{searchName}::text,'%')
+            OR "classifier" LIKE concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

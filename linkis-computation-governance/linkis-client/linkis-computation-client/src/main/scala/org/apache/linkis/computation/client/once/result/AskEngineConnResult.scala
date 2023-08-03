@@ -15,26 +15,9 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.computation.client.once.result
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.httpclient.dws.annotation.DWSHttpMessageResult
 
-import java.util.concurrent.atomic.AtomicInteger
-
-trait EngineAskEngineService {
-
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
-
-}
-
-object EngineAskEngineService {
-  private val idCreator = new AtomicInteger()
-
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
-
-  def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
-  }
-
-}
+@DWSHttpMessageResult("/api/rest_j/v\\d+/linkisManager/askEngineConn")
+class AskEngineConnResult extends GetEngineConnResult

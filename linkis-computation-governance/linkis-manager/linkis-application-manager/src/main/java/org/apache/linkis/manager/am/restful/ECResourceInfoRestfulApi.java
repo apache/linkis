@@ -71,9 +71,10 @@ public class ECResourceInfoRestfulApi {
   public Message getECInfo(
       HttpServletRequest req, @RequestParam(value = "ticketid") String ticketid)
       throws AMErrorException {
+    logger.info("ticked: {} get ec info", ticketid);
     ECResourceInfoRecord ecResourceInfoRecord =
         ecResourceInfoService.getECResourceInfoRecord(ticketid);
-    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:") + ticketid;
+    String userName = ModuleUserUtils.getOperationUser(req, "getECInfo ticketid:" + ticketid);
     if (null != ecResourceInfoRecord
         && (userName.equalsIgnoreCase(ecResourceInfoRecord.getCreateUser())
             || Configuration.isAdmin(userName))) {

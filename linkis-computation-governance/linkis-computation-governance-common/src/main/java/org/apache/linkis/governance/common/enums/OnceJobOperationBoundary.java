@@ -15,26 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.governance.common.enums;
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+public enum OnceJobOperationBoundary {
+  ECM("ecm"),
+  EC("ec");
 
-import java.util.concurrent.atomic.AtomicInteger
+  private String name;
 
-trait EngineAskEngineService {
-
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
-
-}
-
-object EngineAskEngineService {
-  private val idCreator = new AtomicInteger()
-
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
-
-  def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
+  OnceJobOperationBoundary(String name) {
+    this.name = name;
   }
 
+  public String getName() {
+    return name;
+  }
 }

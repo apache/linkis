@@ -15,26 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.engineconnplugin.flink.util
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration
 
-import java.util.concurrent.atomic.AtomicInteger
+import java.util
 
-trait EngineAskEngineService {
+object ManagerUtil extends Logging {
 
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
-
-}
-
-object EngineAskEngineService {
-  private val idCreator = new AtomicInteger()
-
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
-
-  def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
+  val isManager: Boolean = {
+    val options = EngineConnServer.getEngineCreationContext.getOptions
+    FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)
   }
 
 }

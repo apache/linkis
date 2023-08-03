@@ -18,6 +18,7 @@
 package org.apache.linkis.governance.common.conf
 
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 
 object GovernanceCommonConf {
 
@@ -80,5 +81,9 @@ object GovernanceCommonConf {
   def getEngineEnvValue(envKey: String): String = {
     CommonVars(envKey, "").getValue
   }
+
+  // value ECConstants.EC_CLIENT_TYPE_ATTACH
+  val EC_APP_MANAGE_MODE =
+    CommonVars("linkis.ec.app.manage.mode", "attach")
 
 }

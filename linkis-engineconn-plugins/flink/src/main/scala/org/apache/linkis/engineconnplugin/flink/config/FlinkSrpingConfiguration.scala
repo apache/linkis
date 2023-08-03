@@ -15,25 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineconn.acessible.executor.conf
+package org.apache.linkis.engineconnplugin.flink.config
 
-import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.engineconn.acessible.executor.info.{
-  DefaultNodeOverLoadInfoManager,
-  NodeOverLoadInfoManager
-}
+import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.service.{
   EngineConnConcurrentLockService,
   EngineConnTimedLockService,
   LockService
 }
 import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
+import org.apache.linkis.engineconnplugin.flink.util.ManagerUtil
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
-class AccessibleExecutorSpringConfiguration extends Logging {
+class FlinkSrpingConfiguration extends Logging {
 
   private val asyncListenerBusContext =
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
@@ -43,22 +40,41 @@ class AccessibleExecutorSpringConfiguration extends Logging {
   def createLockManager(): LockService = {
 
     val lockService =
-      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()) {
-        logger.info("Engine supports parallelism.")
+      if (ManagerUtil.isManager) {
+        logger.info("Engine is manager, supports parallelism.")
         new EngineConnConcurrentLockService
       } else {
-        logger.info("Engine doesn't support parallelism.")
+        logger.info("Engine is not manager, doesn't support parallelism.")
         new EngineConnTimedLockService
       }
     asyncListenerBusContext.addListener(lockService)
+    FlinkLockerServiceHolder.registerLockService(lockService)
     lockService
   }
 
-  @Bean
-  @ConditionalOnMissingBean(Array(classOf[NodeOverLoadInfoManager]))
-  def createNodeOverLoadInfoManager(): NodeOverLoadInfoManager = {
+}
 
-    new DefaultNodeOverLoadInfoManager
+object FlinkLockerServiceHolder extends Logging {
+
+  private var lockService: LockService = _
+
+  def registerLockService(service: LockService): Unit = {
+    Utils.tryAndError {
+      if (null != service) {
+        if (null == lockService) {
+          logger.info(s"Will register lockService : ${service.getClass.getName}")
+          lockService = service
+        } else {
+          logger.warn(
+            s"Default lockService has been registered to ${lockService.getClass.getName}, will not register : ${service.getClass.getName}"
+          )
+        }
+      } else {
+        logger.warn("Cannot register null lockService")
+      }
+    }
   }
+
+  def getDefaultLockService(): LockService = lockService
 
 }

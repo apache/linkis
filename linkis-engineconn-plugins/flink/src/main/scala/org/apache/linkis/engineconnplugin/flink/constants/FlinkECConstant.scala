@@ -15,26 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.am.service.engine
+package org.apache.linkis.engineconnplugin.flink.constants
 
-import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
-import org.apache.linkis.rpc.Sender
+object FlinkECConstant {
 
-import java.util.concurrent.atomic.AtomicInteger
+  val FLINK_MANAGER_OPERATION_TYPE_KEY = "operationType"
 
-trait EngineAskEngineService {
+  val FLINK_OPERATION_BOUNDARY_KEY = "operationBoundary"
 
-  def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
+  val EC_INSTANCE_KEY = "ecInstance"
 
-}
+  val MSG_KEY = "msg"
 
-object EngineAskEngineService {
-  private val idCreator = new AtomicInteger()
+  val SNAPHOT_KEY = "snapshot"
 
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
+  val SAVAPOINT_PATH_KEY = "savepointPath"
 
-  def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
-  }
+  val SAVEPOINT_MODE_KEY = "mode"
 
+  val RESULT_SAVEPOINT_KEY = "writtenSavepoint"
 }

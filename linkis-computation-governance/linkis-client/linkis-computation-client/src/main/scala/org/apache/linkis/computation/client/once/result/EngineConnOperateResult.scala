@@ -33,9 +33,11 @@ class EngineConnOperateResult extends LinkisManagerResult {
     this.result = result
   }
 
+  def getErrorMsg(): String = errorMsg
+
   def setErrorMsg(errorMsg: String): Unit = this.errorMsg = errorMsg
 
-  def setError(isError: Boolean): Unit = this.isError = isError
+  def getIsError(): Boolean = isError
 
   def setIsError(isError: Boolean): Unit = this.isError = isError
 

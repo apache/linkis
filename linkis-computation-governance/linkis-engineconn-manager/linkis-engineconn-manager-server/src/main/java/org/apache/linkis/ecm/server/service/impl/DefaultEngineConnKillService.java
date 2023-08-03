@@ -182,6 +182,7 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
       case "sqoop":
         regex = EngineConnConf.SQOOP_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
         break;
+      case "flink":
       case "hive":
         regex = EngineConnConf.HIVE_ENGINE_CONN_YARN_APP_ID_PARSE_REGEX().getValue();
         break;

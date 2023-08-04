@@ -22,6 +22,7 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
   SPARK_DEFAULT_EXTERNAL_JARS_PATH,
+  SPARK_DEPLOY_MODE,
   SPARK_DRIVER_CLASSPATH,
   SPARK_DRIVER_EXTRA_JAVA_OPTIONS,
   SPARK_PYTHON_VERSION,
@@ -115,8 +116,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       memory
     }
 
+    val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
+
     addOpt("--master", "yarn")
-    addOpt("--deploy-mode", "client")
+    addOpt("--deploy-mode", deployMode)
     addOpt("--name", appName)
     addProxyUser()
 

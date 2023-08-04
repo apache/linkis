@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,20 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.engineplugin.spark.config
-
-import org.apache.linkis.common.conf.CommonVars
-
-/**
- */
-object SparkResourceConfiguration {
-
-  val LINKIS_SPARK_DRIVER_MEMORY = CommonVars[String]("spark.driver.memory", "2g")
-  val LINKIS_SPARK_DRIVER_CORES = CommonVars[Int]("spark.driver.cores", 1)
-
-  val LINKIS_SPARK_EXECUTOR_MEMORY = CommonVars[String]("spark.executor.memory", "4g")
-  val LINKIS_SPARK_EXECUTOR_CORES = CommonVars[Int]("spark.executor.cores", 2)
-  val LINKIS_SPARK_EXECUTOR_INSTANCES = CommonVars[Int]("spark.executor.instances", 3)
-  val LINKIS_QUEUE_NAME = CommonVars[String]("wds.linkis.rm.yarnqueue", "default")
-
-}
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL;
+ALTER TABLE `linkis_cg_manager_service_instance` ADD COLUMN `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL;
+ALTER TABLE `linkis_cg_ec_resource_info_record` MODIFY COLUMN metrics TEXT DEFAULT NULL COMMENT 'ec metrics';
+ALTER TABLE `linkis_cg_manager_label` MODIFY COLUMN label_key varchar(50);

@@ -62,6 +62,12 @@ object SparkConfiguration extends Logging {
   val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
   val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
 
+  val SPARK_K8S_EXECUTOR_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.executor.request.cores", "1")
+
+  val SPARK_K8S_DRIVER_REQUEST_CORES =
+    CommonVars[String]("linkis.spark.k8s.driver.request.cores", "1")
+
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
   val SPARK_PYTHON_TEST_MODE_ENABLE =

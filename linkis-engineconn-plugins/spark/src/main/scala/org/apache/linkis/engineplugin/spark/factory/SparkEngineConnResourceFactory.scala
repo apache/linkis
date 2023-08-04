@@ -18,7 +18,9 @@
 package org.apache.linkis.engineplugin.spark.factory
 
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging}
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration._
 import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
+import org.apache.linkis.manager.common.conf.RMConfiguration.DEFAULT_KUBERNETES_TYPE
 import org.apache.linkis.manager.common.entity.resource.{
   DriverAndKubernetesResource,
   DriverAndYarnResource,
@@ -47,7 +49,10 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
     if (
-        clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")
+        clusterLabel != null && StringUtils.equals(
+          clusterLabel.getClusterType.toUpperCase(),
+          DEFAULT_KUBERNETES_TYPE.getValue
+        )
     ) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
@@ -60,7 +65,10 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
   ): Resource = {
     val clusterLabel = LabelUtil.getLabelFromList[ClusterLabel](engineResourceRequest.labels)
     if (
-        clusterLabel != null && StringUtils.equals(clusterLabel.getClusterType.toUpperCase(), "K8S")
+        clusterLabel != null && StringUtils.equals(
+          clusterLabel.getClusterType.toUpperCase(),
+          DEFAULT_KUBERNETES_TYPE.getValue
+        )
     ) {
       getRequestKubernetesResource(engineResourceRequest.properties)
     } else {
@@ -100,9 +108,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
 
   def getRequestKubernetesResource(properties: util.Map[String, String]): Resource = {
     val executorNum = LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(properties)
-    val executorCores = if (properties.containsKey(LINKIS_SPARK_KUBERNETES_EXECUTOR_CORES)) {
+    val executorCores = if (properties.containsKey(SPARK_K8S_EXECUTOR_REQUEST_CORES.key)) {
       val executorCoresQuantity =
-        Quantity.parse(LINKIS_SPARK_KUBERNETES_EXECUTOR_CORES.getValue(properties))
+        Quantity.parse(SPARK_K8S_EXECUTOR_REQUEST_CORES.getValue(properties))
       (Quantity.getAmountInBytes(executorCoresQuantity).doubleValue() * 1000).toLong
     } else {
       LINKIS_SPARK_EXECUTOR_CORES.getValue(properties) * 1000L
@@ -113,9 +121,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
     } else {
       executorMemory
     }
-    val driverCores = if (properties.containsKey(LINKIS_SPARK_KUBERNETES_DRIVER_CORES)) {
+    val driverCores = if (properties.containsKey(SPARK_K8S_DRIVER_REQUEST_CORES.key)) {
       val executorCoresQuantity =
-        Quantity.parse(LINKIS_SPARK_KUBERNETES_DRIVER_CORES.getValue(properties))
+        Quantity.parse(SPARK_K8S_DRIVER_REQUEST_CORES.getValue(properties))
       (Quantity.getAmountInBytes(executorCoresQuantity).doubleValue() * 1000).toLong
     } else {
       LINKIS_SPARK_DRIVER_CORES.getValue(properties) * 1000L
@@ -130,7 +138,7 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
       executorMemoryWithUnit
     ) * executorNum + ByteTimeUtils.byteStringAsBytes(driverMemoryWithUnit)
     val totalExecutorCores = executorCores * executorNum + driverCores
-    val namespace = LINKIS_SPARK_KUBERNETES_NAMESPACE.getValue(properties)
+    val namespace = SPARK_K8S_NAMESPACE.getValue(properties)
 
     new DriverAndKubernetesResource(
       new LoadInstanceResource(0, 0, 0),

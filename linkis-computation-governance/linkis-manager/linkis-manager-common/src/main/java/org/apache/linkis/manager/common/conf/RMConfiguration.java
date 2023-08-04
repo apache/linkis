@@ -113,6 +113,10 @@ public class RMConfiguration {
       CommonVars.apply("wds.linkis.rm.default.yarn.cluster.name", "default");
   public static final CommonVars<String> DEFAULT_YARN_TYPE =
       CommonVars.apply("wds.linkis.rm.default.yarn.cluster.type", "Yarn");
+  public static final CommonVars<String> DEFAULT_KUBERNETES_CLUSTER_NAME =
+      CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.name", "default");
+  public static final CommonVars<String> DEFAULT_KUBERNETES_TYPE =
+      CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.type", "K8S");
   public static final CommonVars<Integer> EXTERNAL_RETRY_NUM =
       CommonVars.apply("wds.linkis.rm.external.retry.num", 3);
 

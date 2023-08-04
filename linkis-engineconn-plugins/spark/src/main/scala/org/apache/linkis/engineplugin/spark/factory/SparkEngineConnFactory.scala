@@ -162,6 +162,15 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     // when spark version is greater than or equal to 1.5.0
     if (master.contains("yarn")) sparkConf.set("spark.yarn.isPython", "true")
 
+    // Set deploy-mode with the optional values `cluster`and `client`, the default value `client`
+    val deployMode: String = SPARK_DEPLOY_MODE.getValue(options)
+    if (
+        StringUtils
+          .isNotBlank(deployMode) && (deployMode.equals("cluster") || deployMode.equals("client"))
+    ) {
+      sparkConf.set("spark.submit.deployMode", deployMode)
+    }
+
     val outputDir = createOutputDir(sparkConf)
 
     logger.info(

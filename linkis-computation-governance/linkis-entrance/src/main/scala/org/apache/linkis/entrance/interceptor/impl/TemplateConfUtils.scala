@@ -92,7 +92,7 @@ object TemplateConfUtils extends Logging {
               } else {
                 val newValue = ele.getConfigValue
                 logger.info(s"key:$key value:$newValue will add to startMap params")
-                if(TaskUtils.isWithDebugInfo(params)) {
+                if (TaskUtils.isWithDebugInfo(params)) {
                   logAppender.append(s"add $key=$newValue\n")
                 }
                 keyList.put(key, newValue)

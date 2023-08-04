@@ -98,7 +98,9 @@ object TaskUtils {
     addMap(params, labels, TaskConstant.LABELS)
 
   def isWithDebugInfo(params: util.Map[String, AnyRef]): Boolean = {
-    val debug = getConfigurationMap(params, TaskConstant.PARAMS_CONFIGURATION_STARTUP).get(TaskConstant.DEBUG_ENBALE)
+    val debug = getConfigurationMap(params, TaskConstant.PARAMS_CONFIGURATION_STARTUP).get(
+      TaskConstant.DEBUG_ENBALE
+    )
     if (debug != null && "true".equals(debug.toString)) {
       true
     } else {

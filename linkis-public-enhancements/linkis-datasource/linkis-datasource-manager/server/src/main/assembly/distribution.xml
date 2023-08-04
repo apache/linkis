@@ -183,6 +183,73 @@
             </excludes>
         </dependencySet>
     </dependencySets>
-
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/../service/elasticsearch/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/elasticsearch</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/hive/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/hive</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/kafka/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/kafka</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/jdbc/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/jdbc</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/hdfs/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/hdfs</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../service/mongodb/target/out/lib</directory>
+            <fileMode>0755</fileMode>
+            <outputDirectory>lib/service/mongodb</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+            <excludes>
+                <exclude>*-javadoc.jar</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
 </assembly>
 

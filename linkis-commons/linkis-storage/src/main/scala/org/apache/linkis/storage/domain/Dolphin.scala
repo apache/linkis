@@ -64,7 +64,7 @@ object Dolphin extends Logging {
 
   def toStringValue(value: String): String = {
     if (LINKIS_NULL.equals(value)) {
-      null
+      NULL
     } else {
       value
     }

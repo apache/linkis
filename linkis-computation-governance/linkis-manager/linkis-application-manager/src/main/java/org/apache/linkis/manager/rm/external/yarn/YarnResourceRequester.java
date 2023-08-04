@@ -200,7 +200,10 @@ public class YarnResourceRequester implements ExternalResourceRequester {
   }
 
   public Pair<YarnResource, YarnResource> getResources(
-      String rmWebAddress, String realQueueName, String queueName, ExternalResourceProvider provider) {
+      String rmWebAddress,
+      String realQueueName,
+      String queueName,
+      ExternalResourceProvider provider) {
     JsonNode resp = getResponseByUrl("scheduler", rmWebAddress, provider);
     JsonNode schedulerInfo = resp.path("scheduler").path("schedulerInfo");
     String schedulerType = schedulerInfo.path("type").asText();

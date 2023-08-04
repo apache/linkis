@@ -38,10 +38,10 @@
         <include refid="Base_Column_List"></include>
         from linkis_ps_error_code
         <if test="searchName != null and searchName!=''">
-            where error_code like concat('%',#{searchName},'%')
-            or error_desc like concat('%',#{searchName},'%')
-            or error_regex like concat('%',#{searchName},'%')
-            or error_type::text like concat('%',#{searchName},'%')
+            where error_code like concat('%',#{searchName}::text,'%')
+            or error_desc like concat('%',#{searchName}::text,'%')
+            or error_regex like concat('%',#{searchName}::text,'%')
+            or error_type::text like concat('%',#{searchName}::text,'%')
         </if>
     </select>
 </mapper>

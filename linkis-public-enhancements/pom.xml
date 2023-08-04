@@ -65,7 +65,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-server</artifactId>
+      <artifactId>linkis-datasource-manager-server</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

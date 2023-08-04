@@ -22,6 +22,7 @@ import org.apache.linkis.governance.common.utils.JobUtils;
 import org.apache.linkis.governance.common.utils.LoggerUtils;
 import org.apache.linkis.manager.am.conf.AMConfiguration;
 import org.apache.linkis.manager.am.util.LinkisUtils;
+import org.apache.linkis.manager.am.utils.AMUtils;
 import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
 import org.apache.linkis.manager.common.protocol.engine.*;
@@ -36,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.SocketTimeoutException;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import feign.RetryableException;
 import org.slf4j.Logger;
@@ -50,8 +50,6 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
 
   private EngineCreateService engineCreateService;
   private EngineReuseService engineReuseService;
-  private AtomicInteger idCreator = new AtomicInteger();
-  private String idPrefix = Sender.getThisServiceInstance().getInstance();
 
   private static final ThreadPoolExecutor EXECUTOR =
       LinkisUtils.newCachedThreadPool(
@@ -103,7 +101,7 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
       }
     }
 
-    String engineAskAsyncId = getAsyncId();
+    String engineAskAsyncId = AMUtils.getAsyncId();
     CompletableFuture<EngineNode> createNodeThread =
         CompletableFuture.supplyAsync(
             () -> {
@@ -196,9 +194,5 @@ public class DefaultEngineAskEngineService extends AbstractEngineService
         });
     LoggerUtils.removeJobIdMDC();
     return new EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance());
-  }
-
-  private String getAsyncId() {
-    return idPrefix + "_" + idCreator.getAndIncrement();
   }
 }

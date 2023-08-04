@@ -17,8 +17,11 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
+import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
+import org.apache.linkis.engineconn.launch.EngineConnServer
 import org.apache.linkis.engineconnplugin.flink.client.config.Environment
 import org.apache.linkis.engineconnplugin.flink.client.config.entries.ExecutionEntry
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext
@@ -32,7 +35,8 @@ import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, Fli
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
-import org.apache.linkis.engineconnplugin.flink.util.ClassUtil
+import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.creation.{
   ExecutorFactory,
@@ -41,6 +45,7 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.protocol.utils.TaskUtils
 
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
@@ -108,6 +113,19 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val providedLibDirsArray = FLINK_LIB_LOCAL_PATH.getValue(options).split(",")
     // Ship directories
     val shipDirsArray = getShipDirectories(options)
+    // other params
+    val flinkClientType = GovernanceCommonConf.EC_APP_MANAGE_MODE.getValue(options)
+    val otherParams = new util.HashMap[String, Any]()
+    val isManager = ManagerUtil.isManager
+    if (isManager) {
+//      logger.info(
+//        s"flink manager mode on. Will set ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.key} to true."
+//      )
+      logger.info(
+        s"support parallelism : ${AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()}"
+      )
+    }
+    otherParams.put(GovernanceCommonConf.EC_APP_MANAGE_MODE.key, flinkClientType.toLowerCase())
     val context = new EnvironmentContext(
       defaultEnv,
       new Configuration,
@@ -119,7 +137,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       providedLibDirsArray,
       shipDirsArray,
       new util.ArrayList[URL],
-      flinkExecutionTarget
+      flinkExecutionTarget,
+      otherParams
     )
     // Step1: environment-level configurations
     val jobName = options.getOrDefault("flink.app.name", "EngineConn-Flink")
@@ -445,8 +464,14 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   ): FlinkEngineConnContext =
     new FlinkEngineConnContext(environmentContext)
 
-  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] =
-    classOf[FlinkCodeExecutorFactory]
+  override protected def getDefaultExecutorFactoryClass: Class[_ <: ExecutorFactory] = {
+    val options = EngineConnServer.getEngineCreationContext.getOptions
+    if (FlinkEnvConfiguration.FLINK_MANAGER_MODE_CONFIG_KEY.getValue(options)) {
+      classOf[FlinkManagerExecutorFactory]
+    } else {
+      classOf[FlinkCodeExecutorFactory]
+    }
+  }
 
   override protected def getEngineConnType: EngineType = EngineType.FLINK
 
@@ -454,7 +479,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     ClassUtil.getInstance(classOf[FlinkSQLExecutorFactory], new FlinkSQLExecutorFactory),
     ClassUtil
       .getInstance(classOf[FlinkApplicationExecutorFactory], new FlinkApplicationExecutorFactory),
-    ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory)
+    ClassUtil.getInstance(classOf[FlinkCodeExecutorFactory], new FlinkCodeExecutorFactory),
+    ClassUtil.getInstance(classOf[FlinkManagerExecutorFactory], new FlinkManagerExecutorFactory)
   )
 
   override def getExecutorFactories: Array[ExecutorFactory] = executorFactoryArray

@@ -132,6 +132,9 @@ object FlinkEnvConfiguration {
   val FLINK_ONCE_APP_STATUS_FETCH_INTERVAL =
     CommonVars("flink.app.fetch.status.interval", new TimeType("5s"))
 
+  val FLINK_ONCE_JAR_APP_REPORT_APPLICATIONID_INTERVAL =
+    CommonVars("flink.app.report.appid.interval", new TimeType("60s"))
+
   val FLINK_ONCE_APP_STATUS_FETCH_FAILED_MAX = CommonVars("flink.app.fetch.status.failed.num", 3)
 
   val FLINK_REPORTER_ENABLE = CommonVars("linkis.flink.reporter.enable", false)
@@ -152,5 +155,19 @@ object FlinkEnvConfiguration {
 
   val FLINK_PARAMS_BLANK_PLACEHOLER =
     CommonVars("linkis.flink.params.placeholder.blank", "\u0001")
+
+  val FLINK_MANAGER_MODE_CONFIG_KEY = CommonVars("linkis.flink.manager.mode.on", false)
+
+  val FLINK_MANAGER_LOAD_TASK_MAX = CommonVars("linkis.flink.manager.load.task.max", 50)
+
+  val HADOOP_CONF_DIR = CommonVars("linkis.flink.hadoop.conf.dir", System.getenv("HADOOP_CONF_DIR"))
+
+  val FLINK_MANAGER_CLIENT_MAX_NUM = CommonVars("linkis.flink.client.num.max", 200)
+
+  val FLINK_MANAGER_CLIENT_EXPIRE_MILLS =
+    CommonVars("linkis.flink.client.expire.mills", 3600 * 1000)
+
+  val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
+    CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
 
 }

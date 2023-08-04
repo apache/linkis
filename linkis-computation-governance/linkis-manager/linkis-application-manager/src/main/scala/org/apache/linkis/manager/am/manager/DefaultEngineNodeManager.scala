@@ -47,6 +47,8 @@ import org.apache.linkis.manager.rm.service.ResourceManager
 import org.apache.linkis.manager.service.common.metrics.MetricsConverter
 import org.apache.linkis.manager.service.common.pointer.NodePointerBuilder
 
+import org.apache.commons.lang3.StringUtils
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -54,6 +56,7 @@ import java.lang.reflect.UndeclaredThrowableException
 import java.util
 
 import scala.collection.JavaConverters._
+import scala.tools.scalap.scalax.util.StringUtil
 
 @Service
 class DefaultEngineNodeManager extends EngineNodeManager with Logging {
@@ -299,12 +302,15 @@ class DefaultEngineNodeManager extends EngineNodeManager with Logging {
   override def getEngineNodeInfo(serviceInstance: ServiceInstance): EngineNode = {
     val engineNode = getEngineNode(serviceInstance)
     if (engineNode != null) {
+      val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
       if (engineNode.getNodeStatus == null) {
-        val nodeMetric = nodeMetricManagerPersistence.getNodeMetrics(engineNode)
         engineNode.setNodeStatus(
           if (Option(nodeMetric).isDefined) NodeStatus.values()(nodeMetric.getStatus)
           else NodeStatus.Starting
         )
+      }
+      if (null != nodeMetric && StringUtils.isNotBlank(nodeMetric.getHeartBeatMsg)) {
+        engineNode.setEcMetrics(nodeMetric.getHeartBeatMsg)
       }
       return engineNode
     }

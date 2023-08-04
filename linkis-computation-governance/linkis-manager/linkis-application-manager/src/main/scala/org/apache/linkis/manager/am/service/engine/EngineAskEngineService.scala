@@ -17,11 +17,24 @@
 
 package org.apache.linkis.manager.am.service.engine
 
-import org.apache.linkis.manager.common.protocol.engine.EngineAskRequest
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineAsyncResponse}
 import org.apache.linkis.rpc.Sender
+
+import java.util.concurrent.atomic.AtomicInteger
 
 trait EngineAskEngineService {
 
   def askEngine(engineAskRequest: EngineAskRequest, sender: Sender): Any
+
+}
+
+object EngineAskEngineService {
+  private val idCreator = new AtomicInteger()
+
+  private val idPrefix = Sender.getThisServiceInstance.getInstance
+
+  def getAsyncId: String = {
+    idPrefix + "_" + idCreator.getAndIncrement()
+  }
 
 }

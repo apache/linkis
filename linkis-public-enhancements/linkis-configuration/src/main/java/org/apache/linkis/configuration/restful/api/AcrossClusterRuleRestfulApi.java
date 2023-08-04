@@ -118,7 +118,8 @@ public class AcrossClusterRuleRestfulApi {
           acrossClusterRuleService.queryAcrossClusterRuleList(
               creator, user, clusterName, pageNow, pageSize);
     } catch (Exception e) {
-      return Message.error("query acrossClusterRule List failed：" + e.getMessage());
+      log.info("query acrossClusterRule List failed：" + e.getMessage());
+      return Message.error("query acrossClusterRule List failed");
     }
 
     Message msg = Message.ok();
@@ -153,7 +154,8 @@ public class AcrossClusterRuleRestfulApi {
     try {
       acrossClusterRuleService.deleteAcrossClusterRule(creator, user);
     } catch (Exception e) {
-      return Message.error("delete acrossClusterRule failed：" + e.getMessage());
+      log.info("delete acrossClusterRule failed：" + e.getMessage());
+      return Message.error("delete acrossClusterRule failed");
     }
 
     return Message.ok();
@@ -228,7 +230,7 @@ public class AcrossClusterRuleRestfulApi {
               MemoryPercentageThreshold);
       AcrossClusterRule acrossClusterRule = new AcrossClusterRule();
       acrossClusterRule.setId(id);
-      acrossClusterRule.setClusterName(clusterName);
+      acrossClusterRule.setClusterName(clusterName.toLowerCase());
       acrossClusterRule.setCreator(creator);
       acrossClusterRule.setUser(user);
       acrossClusterRule.setUpdateBy(username);
@@ -236,7 +238,8 @@ public class AcrossClusterRuleRestfulApi {
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.updateAcrossClusterRule(acrossClusterRule);
     } catch (Exception e) {
-      return Message.error("update acrossClusterRule failed：" + e.getMessage());
+      log.info("update acrossClusterRule failed：" + e.getMessage());
+      return Message.error("update acrossClusterRule failed：history already exist");
     }
     return Message.ok();
   }
@@ -306,7 +309,7 @@ public class AcrossClusterRuleRestfulApi {
               CPUPercentageThreshold,
               MemoryPercentageThreshold);
       AcrossClusterRule acrossClusterRule = new AcrossClusterRule();
-      acrossClusterRule.setClusterName(clusterName);
+      acrossClusterRule.setClusterName(clusterName.toLowerCase());
       acrossClusterRule.setCreator(creator);
       acrossClusterRule.setUser(user);
       acrossClusterRule.setCreateBy(username);
@@ -315,7 +318,8 @@ public class AcrossClusterRuleRestfulApi {
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.insertAcrossClusterRule(acrossClusterRule);
     } catch (Exception e) {
-      return Message.error("add acrossClusterRule failed：" + e.getMessage());
+      log.info("add acrossClusterRule failed：" + e.getMessage());
+      return Message.error("add acrossClusterRule failed：history already exist");
     }
 
     return Message.ok();

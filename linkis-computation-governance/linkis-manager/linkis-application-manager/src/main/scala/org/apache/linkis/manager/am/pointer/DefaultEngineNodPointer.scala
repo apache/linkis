@@ -59,7 +59,8 @@ class DefaultEngineNodPointer(val node: Node) extends AbstractNodePointer with E
   override def executeOperation(
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
-    getSender.ask(engineOperateRequest) match {
+    val rs = getSender.ask(engineOperateRequest)
+    rs match {
       case response: EngineOperateResponse => response
       case _ => throw new WarnException(-1, "Illegal response of operation.")
     }

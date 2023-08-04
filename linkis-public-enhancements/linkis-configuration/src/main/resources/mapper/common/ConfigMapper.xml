@@ -195,19 +195,22 @@
                 `default_value`, `validate_type`, `validate_range`,boundary_type
         FROM linkis_ps_configuration_config_key
 <!--        filter some unused and duplicate key-->
-        WHERE  `engine_conn_type` = #{engineType}
-            AND id  IN
-            (
-            SELECT temp.config_key_id FROM
-                ( SELECT * from linkis_ps_configuration_key_engine_relation) AS temp
+        <where>
+            <if test="engineType != null">
+                `engine_conn_type` = #{engineType}
+                AND id  IN
+                (
+                    SELECT temp.config_key_id FROM
+                    ( SELECT * from linkis_ps_configuration_key_engine_relation) AS temp
                     WHERE  temp.config_key_id IN
                     (
-                        SELECT B.id FROM
-                        (SELECT * from linkis_ps_configuration_config_key ) AS B
-                        WHERE B. `engine_conn_type` = #{engineType}
-                )
-            );
-
+                    SELECT B.id FROM
+                    (SELECT * from linkis_ps_configuration_config_key ) AS B
+                    WHERE B. `engine_conn_type` = #{engineType}
+                    )
+                );
+            </if>
+        </where>
     </select>
 
     <select id="selectKeyByEngineTypeAndKeyList" resultMap="ConfigKeyMap">
@@ -373,7 +376,7 @@
         FROM linkis_ps_configuration_config_key
         <where>
             <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
-            <if test="key != null">and `key` like concat(#{key},'%')</if>
+            <if test="key != null">and `key` like concat('%',#{key},'%')</if>
         </where>
         order by engine_conn_type
     </select>
@@ -412,9 +415,9 @@
         <where>
         config_value.config_key_id =config.id
         AND label.id=config_value.config_label_id
-            <if test="key != null">AND config .`key` = #{key}</if>
+            <if test="key != null">AND config.`key` like concat('%',#{key},'%')</if>
             <if test="user != null">AND label.label_value like concat('%',#{user},'%')</if>
-            <if test="creator != null">AND label.label_value like concat('%',#{creator},'%')</if>
+            <if test="creator != null">AND LOWER(label.label_value) like concat('LOWER(','%',#{creator},'%',')')</if>
             <if test="engineType != null">AND label.label_value like concat('%',#{engineType},'%')</if>
         </where>
         ORDER BY engine_conn_type

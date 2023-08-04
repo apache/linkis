@@ -22,18 +22,22 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.am.conf.AMConfiguration
 import org.apache.linkis.manager.am.hook.{AskEngineConnHook, AskEngineConnHookContext}
+import org.apache.linkis.manager.am.service.engine.EngineAskEngineService.getAsyncId
 import org.apache.linkis.manager.common.constant.AMConstant
 import org.apache.linkis.manager.common.protocol.engine._
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.message.annotation.Receiver
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier}
 import org.springframework.stereotype.Service
 
 import java.net.SocketTimeoutException
+import java.util
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 import scala.concurrent._
@@ -60,10 +64,6 @@ class DefaultEngineAskEngineService
   @Qualifier
   /* The implementation class of hook must be annotated with @Qualifier to take effect(hook的实现类必须加上@Qualifier注解才能生效) */
   var hooksArray: Array[AskEngineConnHook] = _
-
-  private val idCreator = new AtomicInteger()
-
-  private val idPrefix = Sender.getThisServiceInstance.getInstance
 
   private implicit val executor: ExecutionContextExecutorService =
     Utils.newCachedExecutionContext(
@@ -175,7 +175,11 @@ class DefaultEngineAskEngineService
         LoggerUtils.setJobIdMDC(taskId)
         Utils.tryFinally {
           logger.info(s"Task: $taskId Success to async($engineAskAsyncId) createEngine $engineNode")
-          sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+          if (null != sender) {
+            sender.send(EngineCreateSuccess(engineAskAsyncId, engineNode))
+          } else {
+            logger.info("Will not send async useing null sender.")
+          }
         } {
           LoggerUtils.removeJobIdMDC()
         }
@@ -214,10 +218,6 @@ class DefaultEngineAskEngineService
     }
     LoggerUtils.removeJobIdMDC()
     EngineAskAsyncResponse(engineAskAsyncId, Sender.getThisServiceInstance)
-  }
-
-  private def getAsyncId: String = {
-    idPrefix + "_" + idCreator.getAndIncrement()
   }
 
 }

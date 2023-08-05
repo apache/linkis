@@ -70,7 +70,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.*;
-import static org.apache.linkis.filesystem.conf.WorkSpaceConfiguration.FILESYSTEM_LIMIT_COLUMN_LENGTH;
 import static org.apache.linkis.filesystem.constant.WorkSpaceConstants.*;
 
 @Api(tags = "file system")
@@ -596,8 +595,7 @@ public class FsRestfulApi {
       }
       Pair<Object, List<String[]>> result = fileSource.collect()[0];
       IOUtils.closeQuietly(fileSource);
-      message.data("metadata", result.getFirst());
-      message.data("fileContent", result.getSecond());
+      message.data("metadata", result.getFirst()).data("fileContent", result.getSecond());
       message.data("type", fileSource.getFileSplits()[0].getType());
       message.data("totalLine", fileSource.getTotalLine());
       return message.data("page", page).data("totalPage", 0);

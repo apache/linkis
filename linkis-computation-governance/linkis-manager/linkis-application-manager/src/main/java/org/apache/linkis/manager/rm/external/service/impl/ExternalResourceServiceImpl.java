@@ -29,7 +29,9 @@ import org.apache.linkis.manager.rm.external.dao.ExternalResourceProviderDao;
 import org.apache.linkis.manager.rm.external.domain.ExternalAppInfo;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
 import org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider;
+import org.apache.linkis.manager.rm.external.kubernetes.KubernetesResourceRequester;
 import org.apache.linkis.manager.rm.external.parser.ExternalResourceIdentifierParser;
+import org.apache.linkis.manager.rm.external.parser.KubernetesResourceIdentifierParser;
 import org.apache.linkis.manager.rm.external.parser.YarnResourceIdentifierParser;
 import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService;
@@ -87,9 +89,15 @@ public class ExternalResourceServiceImpl implements ExternalResourceService, Ini
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    resourceRequesters = new ExternalResourceRequester[] {new YarnResourceRequester()};
+    resourceRequesters =
+        new ExternalResourceRequester[] {
+          new YarnResourceRequester(), new KubernetesResourceRequester()
+        };
 
-    identifierParsers = new ExternalResourceIdentifierParser[] {new YarnResourceIdentifierParser()};
+    identifierParsers =
+        new ExternalResourceIdentifierParser[] {
+          new YarnResourceIdentifierParser(), new KubernetesResourceIdentifierParser()
+        };
   }
 
   @Override

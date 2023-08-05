@@ -61,6 +61,20 @@ public enum RMErrorCode implements LinkisErrorCode {
 
   CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance(集群队列实例不足)"),
 
+  NAMESPACE_MEMORY_INSUFFICIENT(12100, "Insufficient cluster namespace memory(命名空间内存不足)"),
+
+  NAMESPACE_CPU_INSUFFICIENT(12101, "Insufficient cluster namespace cpu(命名空间cpu不足)"),
+
+  NAMESPACE_MISMATCHED(12102, "Mismatched namespace(命名空间不匹配，建议配置对应命名空间的资源)"),
+
+  KUBERNETES_NAMESPACE_MEMORY_INSUFFICIENT(
+      12110, "Insufficient cluster namespace memory(K8S集群命名空间内存不足)"),
+
+  KUBERNETES_NAMESPACE_CPU_INSUFFICIENT(
+      12111, "Insufficient cluster namespace cpu(K8S集群命名空间cpu不足)"),
+
+  KUBERNETES_UNKNOWN_RESOURCE_TYPE(12112, "Unsupported resource type(不支持的资源类型)"),
+
   ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
 
   ECM_MEMORY_INSUFFICIENT(11001, "ECM memory resources are insufficient(ECM 内存资源不足)"),

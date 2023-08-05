@@ -78,7 +78,7 @@ INSERT INTO linkis_cg_manager_label_user(username, label_id, update_time, create
 
 CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `label_key` varchar(32)   NOT NULL,
+  `label_key` varchar(50)   NOT NULL,
   `label_value` varchar(255)   NOT NULL,
   `label_feature` varchar(16)   NOT NULL,
   `label_value_size` int(20) NOT NULL,

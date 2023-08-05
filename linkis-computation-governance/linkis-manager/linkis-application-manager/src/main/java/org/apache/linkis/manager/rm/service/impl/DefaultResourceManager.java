@@ -112,7 +112,8 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     requestResourceServices =
         new RequestResourceService[] {
           new DefaultReqResourceService(labelResourceService),
-          new DriverAndYarnReqResourceService(labelResourceService, externalResourceService)
+          new DriverAndYarnReqResourceService(labelResourceService, externalResourceService),
+          new DriverAndKubernetesReqResourceService(labelResourceService, externalResourceService)
         };
 
     // submit force release timeout lock job

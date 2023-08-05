@@ -30,6 +30,7 @@ asm-commons-9.3.jar
 asm-tree-9.3.jar
 aspectjweaver-1.9.6.jar
 audience-annotations-0.5.0.jar
+automaton-1.11-8.jar
 avatica-1.11.0.jar
 avro-1.7.7.jar
 avro-1.8.2.jar
@@ -51,10 +52,9 @@ calcite-core-1.16.0.jar
 calcite-druid-1.16.0.jar
 calcite-linq4j-1.16.0.jar
 cglib-nodep-3.2.5.jar
+checker-qual-3.33.0.jar
 checker-qual-3.4.0.jar
 checker-qual-3.5.0.jar
-checker-qual-3.8.0.jar
-checker-qual-3.33.0.jar
 chill-java-0.7.6.jar
 chill_2.12-0.7.6.jar
 classgraph-4.1.7.jar
@@ -103,9 +103,9 @@ druid-1.2.16.jar
 elasticsearch-rest-client-6.8.15.jar
 elasticsearch-rest-client-7.6.2.jar
 elasticsearch-rest-client-sniffer-7.6.2.jar
+error_prone_annotations-2.18.0.jar
 error_prone_annotations-2.3.4.jar
 error_prone_annotations-2.4.0.jar
-error_prone_annotations-2.18.0.jar
 esri-geometry-api-2.0.0.jar
 eureka-client-1.10.14.jar
 eureka-core-1.10.14.jar
@@ -132,6 +132,7 @@ flink-file-sink-common-1.12.2.jar
 flink-hadoop-fs-1.12.2.jar
 flink-java-1.12.2.jar
 flink-json-1.12.2.jar
+flink-kubernetes_2.12-1.12.2.jar
 flink-metrics-core-1.12.2.jar
 flink-optimizer_2.12-1.12.2.jar
 flink-queryable-state-client-java-1.12.2.jar
@@ -153,9 +154,9 @@ flink-table-common-1.12.2.jar
 flink-table-planner-blink_2.12-1.12.2.jar
 flink-table-runtime-blink_2.12-1.12.2.jar
 flink-yarn_2.12-1.12.2.jar
-flink-kubernetes_2.12-1.12.2.jar
 force-shading-1.12.2.jar
 freemarker-2.3.31.jar
+generex-1.0.2.jar
 grizzled-slf4j_2.12-1.3.2.jar
 gson-2.8.9.jar
 guava-32.0.0-jre.jar
@@ -221,7 +222,6 @@ ini4j-0.5.4.jar
 ion-java-1.0.2.jar
 istack-commons-runtime-3.0.12.jar
 ivy-2.4.0.jar
-j2objc-annotations-1.3.jar
 j2objc-annotations-2.8.jar
 jackson-annotations-2.13.4.jar
 jackson-core-2.13.4.jar
@@ -229,6 +229,7 @@ jackson-core-asl-1.9.13.jar
 jackson-databind-2.13.4.2.jar
 jackson-dataformat-cbor-2.13.4.jar
 jackson-dataformat-csv-2.13.4.jar
+jackson-dataformat-properties-2.13.4.jar
 jackson-dataformat-smile-2.13.4.jar
 jackson-dataformat-xml-2.13.4.jar
 jackson-dataformat-yaml-2.13.4.jar
@@ -268,6 +269,8 @@ jaxb-api-2.3.1.jar
 jaxb-runtime-2.3.4.jar
 jboss-logging-3.4.2.Final.jar
 jcip-annotations-1.0-1.jar
+jcl-over-slf4j-1.7.30.jar
+jcommander-1.81.jar
 jdbi3-core-3.4.0.jar
 jdbi3-sqlobject-3.4.0.jar
 jdo-api-3.0.1.jar
@@ -469,7 +472,6 @@ poi-5.2.3.jar
 poi-ooxml-5.2.3.jar
 poi-ooxml-lite-5.2.3.jar
 poi-shared-strings-2.5.6.jar
-postgresql-42.3.8.jar
 presto-client-0.234.jar
 presto-client-1.5.0.jar
 presto-resource-group-managers-0.234.jar
@@ -506,9 +508,6 @@ scala-reflect-2.12.17.jar
 scala-xml_2.12-2.1.0.jar
 scalap-2.12.17.jar
 scopt_2.12-3.5.0.jar
-jackson-dataformat-properties-2.13.4.jar
-jcl-over-slf4j-1.7.30.jar
-jcommander-1.81.jar
 seatunnel-api-2.3.1.jar
 seatunnel-common-2.3.1.jar
 seatunnel-config-base-2.3.1.jar
@@ -631,6 +630,7 @@ xmlbeans-5.1.1.jar
 xmlenc-0.52.jar
 xstream-1.4.20.jar
 xz-1.5.jar
+zjsonpatch-0.3.0.jar
 zookeeper-3.5.9.jar
 zookeeper-jute-3.5.9.jar
 zstd-jni-1.4.4-7.jar

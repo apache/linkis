@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.constant;
+package org.apache.linkis.manager.rm.external.kubernetes;
 
-public class RMConstant {
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
 
-  public static final String CPU = "CPU";
+public class KubernetesResourceIdentifier implements ExternalResourceIdentifier {
 
-  public static final String MEMORY = "Memory";
+  String namespace;
 
-  public static final String APP_INSTANCE = "Instance";
+  public KubernetesResourceIdentifier(String namespace) {
+    this.namespace = namespace;
+  }
 
-  public static final String CPU_UNIT = "cores";
+  public String getNamespace() {
+    return namespace;
+  }
 
-  public static final String KUBERNETES_CPU_UNIT = "milli cores";
-  public static final String KUBERNETES_NAMESPACE = "namespace";
-  public static final String KUBERNETES_NAMESPACE_UNIT = "";
-  public static final String MEMORY_UNIT_BYTE = "bytes";
-
-  public static final String INSTANCE_UNIT = "";
+  @Override
+  public ResourceType getResourceType() {
+    return ResourceType.Kubernetes;
+  }
 }

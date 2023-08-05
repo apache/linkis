@@ -385,7 +385,6 @@ public abstract class RequestResourceService {
                     avail.getQueueInstances(),
                     max.getQueueInstances()));
       }
-
     } else if (requestResource instanceof DriverAndYarnResource) {
       DriverAndYarnResource dy = (DriverAndYarnResource) requestResource;
       DriverAndYarnResource dyAvailable = (DriverAndYarnResource) availableResource;
@@ -404,7 +403,61 @@ public abstract class RequestResourceService {
         return generateNotEnoughMessage(
             dy.getYarnResource(), dyAvailable.getYarnResource(), dyMax.getYarnResource());
       }
-
+    } else if (requestResource instanceof KubernetesResource) {
+      KubernetesResource kubernetesResource = (KubernetesResource) requestResource;
+      KubernetesResource kubernetesResourceAvailable = (KubernetesResource) availableResource;
+      KubernetesResource kubernetesResourceMax = (KubernetesResource) maxResource;
+      if (kubernetesResource.getCores() > kubernetesResourceAvailable.getCores()) {
+        return Pair.of(
+            RMErrorCode.NAMESPACE_CPU_INSUFFICIENT.getErrorCode(),
+            RMErrorCode.NAMESPACE_CPU_INSUFFICIENT.getErrorDesc()
+                + RMUtils.getResourceInfoMsg(
+                    RMConstant.CPU,
+                    RMConstant.KUBERNETES_CPU_UNIT,
+                    kubernetesResource.getCores(),
+                    kubernetesResourceAvailable.getCores(),
+                    kubernetesResourceMax.getCores()));
+      } else if (kubernetesResource.getMemory() > kubernetesResourceAvailable.getMemory()) {
+        return Pair.of(
+            RMErrorCode.NAMESPACE_MEMORY_INSUFFICIENT.getErrorCode(),
+            RMErrorCode.NAMESPACE_MEMORY_INSUFFICIENT.getErrorDesc()
+                + RMUtils.getResourceInfoMsg(
+                    RMConstant.MEMORY,
+                    RMConstant.MEMORY_UNIT_BYTE,
+                    kubernetesResource.getMemory(),
+                    kubernetesResourceAvailable.getMemory(),
+                    kubernetesResourceMax.getMemory()));
+      } else {
+        return Pair.of(
+            RMErrorCode.NAMESPACE_MISMATCHED.getErrorCode(),
+            RMErrorCode.NAMESPACE_MISMATCHED.getErrorDesc()
+                + RMUtils.getResourceInfoMsg(
+                    RMConstant.KUBERNETES_NAMESPACE,
+                    RMConstant.KUBERNETES_NAMESPACE_UNIT,
+                    kubernetesResource.getNamespace(),
+                    kubernetesResourceAvailable.getNamespace(),
+                    kubernetesResourceMax.getNamespace()));
+      }
+    } else if (requestResource instanceof DriverAndKubernetesResource) {
+      DriverAndKubernetesResource dk = (DriverAndKubernetesResource) requestResource;
+      DriverAndKubernetesResource dkAvailable = (DriverAndKubernetesResource) availableResource;
+      DriverAndKubernetesResource dkMax = (DriverAndKubernetesResource) maxResource;
+      if (dk.getLoadInstanceResource().getMemory()
+              > dkAvailable.getLoadInstanceResource().getMemory()
+          || dk.getLoadInstanceResource().getCores()
+              > dkAvailable.getLoadInstanceResource().getCores()
+          || dk.getLoadInstanceResource().getInstances()
+              > dkAvailable.getLoadInstanceResource().getInstances()) {
+        return generateNotEnoughMessage(
+            dk.getLoadInstanceResource(),
+            dkAvailable.getLoadInstanceResource(),
+            dkMax.getLoadInstanceResource());
+      } else {
+        return generateNotEnoughMessage(
+            dk.getKubernetesResource(),
+            dkAvailable.getKubernetesResource(),
+            dkMax.getKubernetesResource());
+      }
     } else if (requestResource instanceof SpecialResource) {
       throw new RMWarnException(
           NOT_RESOURCE_TYPE.getErrorCode(),

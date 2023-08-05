@@ -20,6 +20,6 @@ package org.apache.linkis.cli.application.interactor.command.fitter;
 public class FitterUtils {
 
   public static boolean isOption(final String arg) {
-    return arg.matches("-[a-zA-Z-]+");
+    return arg.matches("-[0-9a-zA-Z-]+");
   }
 }

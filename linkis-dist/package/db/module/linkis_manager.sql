@@ -87,7 +87,7 @@ DROP TABLE IF EXISTS `linkis_cg_manager_label`;
 
 CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `label_key` varchar(32) COLLATE utf8_bin NOT NULL,
+  `label_key` varchar(50) COLLATE utf8_bin NOT NULL,
   `label_value` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_feature` varchar(16) COLLATE utf8_bin NOT NULL,
   `label_value_size` int(20) NOT NULL,

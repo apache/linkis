@@ -65,6 +65,13 @@ public class RMConfiguration {
   public static final CommonVars<String> USER_AVAILABLE_CLUSTER_NAME =
       CommonVars.apply("wds.linkis.rm.cluster", "default");
 
+  public static final CommonVars<Integer> USER_AVAILABLE_KUBERNETES_INSTANCE_CPU =
+      CommonVars.apply("wds.linkis.rm.kubernetes.cores.max", 150000);
+  public static final CommonVars<ByteType> USER_AVAILABLE_KUBERNETES_INSTANCE_MEMORY =
+      CommonVars.apply("wds.linkis.rm.kubernetes.memory.max", new ByteType("450g"));
+  public static final CommonVars<String> USER_AVAILABLE_KUBERNETES_INSTANCE_NAMESPACE =
+      CommonVars.apply("wds.linkis.rm.kubernetes.namespace", "default");
+
   public static final CommonVars<Long> USER_MODULE_WAIT_USED =
       CommonVars.apply("wds.linkis.rm.user.module.wait.used", 60 * 10L);
   public static final CommonVars<Long> USER_MODULE_WAIT_RELEASE =
@@ -106,6 +113,10 @@ public class RMConfiguration {
       CommonVars.apply("wds.linkis.rm.default.yarn.cluster.name", "default");
   public static final CommonVars<String> DEFAULT_YARN_TYPE =
       CommonVars.apply("wds.linkis.rm.default.yarn.cluster.type", "Yarn");
+  public static final CommonVars<String> DEFAULT_KUBERNETES_CLUSTER_NAME =
+      CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.name", "default");
+  public static final CommonVars<String> DEFAULT_KUBERNETES_TYPE =
+      CommonVars.apply("wds.linkis.rm.default.kubernetes.cluster.type", "K8S");
   public static final CommonVars<Integer> EXTERNAL_RETRY_NUM =
       CommonVars.apply("wds.linkis.rm.external.retry.num", 3);
 

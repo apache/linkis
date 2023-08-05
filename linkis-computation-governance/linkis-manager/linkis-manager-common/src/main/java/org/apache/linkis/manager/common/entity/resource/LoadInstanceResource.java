@@ -53,6 +53,11 @@ public class LoadInstanceResource extends Resource {
       this.memory = d.getLoadInstanceResource().getMemory();
       this.cores = d.getLoadInstanceResource().getCores();
       this.instances = d.getLoadInstanceResource().getInstances();
+    } else if (r instanceof DriverAndKubernetesResource) {
+      DriverAndKubernetesResource d = (DriverAndKubernetesResource) r;
+      this.memory = d.getLoadInstanceResource().getMemory();
+      this.cores = d.getLoadInstanceResource().getCores();
+      this.instances = d.getLoadInstanceResource().getInstances();
     } else {
       this.memory = Long.MAX_VALUE;
       this.cores = Integer.MAX_VALUE;

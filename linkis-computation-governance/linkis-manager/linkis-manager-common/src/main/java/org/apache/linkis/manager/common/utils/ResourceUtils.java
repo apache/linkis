@@ -88,6 +88,10 @@ public class ResourceUtils {
           return mapper.readValue(plainResource, SpecialResource.class);
         case Yarn:
           return mapper.readValue(plainResource, YarnResource.class);
+        case DriverAndKubernetes:
+          return mapper.readValue(plainResource, DriverAndKubernetesResource.class);
+        case Kubernetes:
+          return mapper.readValue(plainResource, KubernetesResource.class);
         default:
           return mapper.readValue(plainResource, LoadResource.class);
       }
@@ -227,6 +231,10 @@ public class ResourceUtils {
       return ResourceType.DriverAndYarn;
     } else if (resource instanceof SpecialResource) {
       return ResourceType.Special;
+    } else if (resource instanceof KubernetesResource) {
+      return ResourceType.Kubernetes;
+    } else if (resource instanceof DriverAndKubernetesResource) {
+      return ResourceType.DriverAndKubernetes;
     } else {
       return ResourceType.LoadInstance;
     }

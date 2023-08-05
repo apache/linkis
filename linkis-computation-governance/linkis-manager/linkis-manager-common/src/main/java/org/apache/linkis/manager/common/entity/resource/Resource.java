@@ -43,6 +43,11 @@ public abstract class Resource {
       case DriverAndYarn:
         return new DriverAndYarnResource(
             new LoadInstanceResource(0, 0, 0), new YarnResource(0, 0, 0, "default", ""));
+      case Kubernetes:
+        return new KubernetesResource(0, 0);
+      case DriverAndKubernetes:
+        return new DriverAndKubernetesResource(
+            new LoadInstanceResource(0, 0, 0), new KubernetesResource(0, 0));
       case Special:
         return new SpecialResource(new HashMap<String, Object>());
       case Default:
@@ -77,6 +82,9 @@ public abstract class Resource {
         return new DriverAndYarnResource(
             new LoadInstanceResource(0, 0, 0), new YarnResource(0, 0, 0, "default", ""));
       }
+    } else if (resource instanceof DriverAndKubernetesResource) {
+      return new DriverAndKubernetesResource(
+          new LoadInstanceResource(0, 0, 0), new KubernetesResource(0, 0));
     } else if (resource instanceof SpecialResource) {
       return new SpecialResource(new HashMap<String, Object>());
     } else {

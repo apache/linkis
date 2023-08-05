@@ -141,7 +141,7 @@ CREATE TABLE linkis_ps_udf_tree (
 DROP TABLE IF EXISTS "linkis_cg_manager_label";
 CREATE TABLE linkis_cg_manager_label (
 	id serial NOT NULL,
-	label_key varchar(32) NOT NULL,
+	label_key varchar(50) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
 	label_value_size int4 NOT NULL,

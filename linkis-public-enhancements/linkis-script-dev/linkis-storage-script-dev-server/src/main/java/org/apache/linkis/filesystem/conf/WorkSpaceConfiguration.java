@@ -61,15 +61,12 @@ public class WorkSpaceConfiguration {
   public static final CommonVars<Boolean> ENABLE_USER_GROUP =
       CommonVars$.MODULE$.apply("linkis.os.user.group.enabled", true);
 
-  public static final CommonVars<Integer> FILESYSTEM_LIMIT_TOTAL_LINE =
-      CommonVars$.MODULE$.apply("wds.linkis.filesystem.limit.total.line", 5000);
-
   // default 63M
   public static final CommonVars<Long> FILESYSTEM_LIMIT_BYTES =
-      CommonVars$.MODULE$.apply("wds.linkis.filesystem.limit.bytes", 66060288L);
+      CommonVars$.MODULE$.apply("linkis.filesystem.limit.bytes", 66060288L);
 
   public static final CommonVars<Integer> FILESYSTEM_LIMIT_COLUMN_LENGTH =
-      CommonVars$.MODULE$.apply("wds.linkis.filesystem.limit.column.length", 2000);
+      CommonVars$.MODULE$.apply("linkis.filesystem.limit.column.length", 2000);
 
   public static final ExecutorService executorService =
       new ThreadPoolExecutor(

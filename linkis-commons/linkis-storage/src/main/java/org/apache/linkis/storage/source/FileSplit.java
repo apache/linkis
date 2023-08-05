@@ -62,7 +62,6 @@ public class FileSplit implements Closeable {
   protected Function<Record, Record> shuffler;
   private boolean pageTrigger = false;
   protected Map<String, String> params = new HashMap<>();
-  private int limitTotalLine = 0;
   private long limitBytes = 0L;
   private int limitColumnLength = 0;
 
@@ -103,14 +102,6 @@ public class FileSplit implements Closeable {
     return totalLine;
   }
 
-  public int getTotalCount() {
-    return count;
-  }
-
-  public void setLimitTotalLine(int limitTotalLine) {
-    this.limitTotalLine = limitTotalLine;
-  }
-
   public void setLimitBytes(long limitBytes) {
     this.limitBytes = limitBytes;
   }
@@ -144,10 +135,8 @@ public class FileSplit implements Closeable {
           }
         }
         if (!needRemoveFlag) {
-          if (ifContinueRecord()) {
-            recordConsumer.accept(shuffler.apply(record));
-            totalLine++;
-          }
+          recordConsumer.accept(shuffler.apply(record));
+          totalLine++;
           count++;
         }
       }
@@ -185,10 +174,8 @@ public class FileSplit implements Closeable {
           }
         }
         if (!needRemoveFlag) {
-          if (ifContinueRecord()) {
-            recordConsumer.accept(shuffler.apply(record));
-            totalLine++;
-          }
+          recordConsumer.accept(shuffler.apply(record));
+          totalLine++;
           count++;
         }
       }
@@ -323,10 +310,6 @@ public class FileSplit implements Closeable {
   }
 
   public boolean ifContinueRead() {
-    return ifContinueRecord() || (limitTotalLine > 0 && count <= limitTotalLine);
-  }
-
-  public boolean ifContinueRecord() {
     return !pageTrigger || count <= end;
   }
 

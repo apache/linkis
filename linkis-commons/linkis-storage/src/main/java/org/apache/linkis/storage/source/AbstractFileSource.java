@@ -110,17 +110,6 @@ public abstract class AbstractFileSource implements FileSource {
   }
 
   @Override
-  public int getTotalCount() {
-    return Arrays.stream(fileSplits).mapToInt(FileSplit::getTotalCount).sum();
-  }
-
-  @Override
-  public FileSource limitTotalLine(int limitTotalLine) {
-    Arrays.stream(fileSplits).forEach(fileSplit -> fileSplit.setLimitTotalLine(limitTotalLine));
-    return this;
-  }
-
-  @Override
   public FileSource limitBytes(Long limitBytes) {
     Arrays.stream(fileSplits).forEach(fileSplit -> fileSplit.setLimitBytes(limitBytes));
     return this;

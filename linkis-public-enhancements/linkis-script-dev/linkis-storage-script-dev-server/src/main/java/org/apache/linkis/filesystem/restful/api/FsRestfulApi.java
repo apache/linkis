@@ -562,7 +562,6 @@ public class FsRestfulApi {
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
       @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
-      @RequestParam(value = "limitTotalLine", defaultValue = "0") Integer limitTotalLine,
       @RequestParam(value = "limitBytes", defaultValue = "0") Long limitBytes,
       @RequestParam(value = "limitColumnLength", defaultValue = "0") Integer limitColumnLength)
       throws IOException, WorkSpaceException {
@@ -587,11 +586,6 @@ public class FsRestfulApi {
       if (FileSource.isResultSet(fsPath.getPath())) {
         fileSource = fileSource.page(page, pageSize);
       }
-      if (limitTotalLine > 0) {
-        fileSource =
-            fileSource.limitTotalLine(
-                Math.min(limitTotalLine, FILESYSTEM_LIMIT_TOTAL_LINE.getValue()));
-      }
       if (limitBytes > 0) {
         fileSource = fileSource.limitBytes(Math.min(limitBytes, FILESYSTEM_LIMIT_BYTES.getValue()));
       }
@@ -606,14 +600,7 @@ public class FsRestfulApi {
       message.data("fileContent", result.getSecond());
       message.data("type", fileSource.getFileSplits()[0].getType());
       message.data("totalLine", fileSource.getTotalLine());
-      message.data("totalCount", fileSource.getTotalCount());
-      message.data("page", page);
-      message.data(
-          "totalPage",
-          pageSize == 0
-              ? 1
-              : (int) Math.ceil((double) fileSource.getTotalCount() / (double) pageSize));
-      return message;
+      return message.data("page", page).data("totalPage", 0);
     } finally {
       IOUtils.closeQuietly(fileSource);
     }

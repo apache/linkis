@@ -15,22 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.constant;
+package org.apache.linkis.manager.rm.external.parser;
 
-public class RMConstant {
+import org.apache.linkis.manager.common.entity.resource.ResourceType;
+import org.apache.linkis.manager.rm.external.domain.ExternalResourceIdentifier;
+import org.apache.linkis.manager.rm.external.kubernetes.KubernetesResourceIdentifier;
 
-  public static final String CPU = "CPU";
+import java.util.Map;
 
-  public static final String MEMORY = "Memory";
+public class KubernetesResourceIdentifierParser implements ExternalResourceIdentifierParser {
+  public static String NAMESPACE = "namespace";
 
-  public static final String APP_INSTANCE = "Instance";
+  @Override
+  public ExternalResourceIdentifier parse(Map<String, Object> identifierMap) {
+    return new KubernetesResourceIdentifier((String) identifierMap.get(NAMESPACE));
+  }
 
-  public static final String CPU_UNIT = "cores";
-
-  public static final String KUBERNETES_CPU_UNIT = "milli cores";
-  public static final String KUBERNETES_NAMESPACE = "namespace";
-  public static final String KUBERNETES_NAMESPACE_UNIT = "";
-  public static final String MEMORY_UNIT_BYTE = "bytes";
-
-  public static final String INSTANCE_UNIT = "";
+  @Override
+  public ResourceType getResourceType() {
+    return ResourceType.Kubernetes;
+  }
 }

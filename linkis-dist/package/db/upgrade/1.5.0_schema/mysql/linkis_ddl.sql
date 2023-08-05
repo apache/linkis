@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,22 +15,4 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.manager.common.constant;
-
-public class RMConstant {
-
-  public static final String CPU = "CPU";
-
-  public static final String MEMORY = "Memory";
-
-  public static final String APP_INSTANCE = "Instance";
-
-  public static final String CPU_UNIT = "cores";
-
-  public static final String KUBERNETES_CPU_UNIT = "milli cores";
-  public static final String KUBERNETES_NAMESPACE = "namespace";
-  public static final String KUBERNETES_NAMESPACE_UNIT = "";
-  public static final String MEMORY_UNIT_BYTE = "bytes";
-
-  public static final String INSTANCE_UNIT = "";
-}
+ALTER TABLE `linkis_cg_manager_label` MODIFY COLUMN label_key varchar(50);

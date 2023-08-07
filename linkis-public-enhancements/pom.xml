@@ -30,7 +30,7 @@
   <modules>
     <module>linkis-pes-common</module>
     <module>linkis-pes-client</module>
-    <module>linkis-rpc-client</module>
+    <module>linkis-pes-rpc-client</module>
     <module>linkis-bml</module>
     <module>linkis-context-service</module>
     <module>linkis-datasource/linkis-metadata</module>

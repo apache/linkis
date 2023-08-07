@@ -24,7 +24,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-rpc-client</artifactId>
+  <artifactId>linkis-pes-rpc-client</artifactId>
 
   <dependencies>
 

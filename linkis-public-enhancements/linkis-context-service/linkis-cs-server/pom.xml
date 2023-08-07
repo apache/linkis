@@ -41,7 +41,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-rpc-client</artifactId>
+      <artifactId>linkis-pes-rpc-client</artifactId>
       <version>${project.version}</version>
     </dependency>
 

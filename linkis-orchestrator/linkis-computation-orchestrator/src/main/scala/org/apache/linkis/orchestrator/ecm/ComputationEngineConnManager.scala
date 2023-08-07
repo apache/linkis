@@ -151,9 +151,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           throw t
       }
     }
-    execTask.getPhysicalContext.pushLog(
-      TaskLogEvent(execTask, LogUtils.generateInfo(s"Request LinkisManager:${response}"))
-    )
+
     response match {
       case engineNode: EngineNode =>
         logger.debug(s"Succeed to reuse engineNode $engineNode mark ${mark.getMarkId()}")
@@ -162,6 +160,9 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
         logger.info(
           "{} received EngineAskAsyncResponse id: {} serviceInstance: {}",
           Array(mark.getMarkId(), id, serviceInstance): _*
+        )
+        execTask.getPhysicalContext.pushLog(
+          TaskLogEvent(execTask, LogUtils.generateInfo(s"Request LinkisManager:${response}"))
         )
         cacheMap.getAndRemove(
           id,

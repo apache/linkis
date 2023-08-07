@@ -476,7 +476,6 @@ public class ConfigurationRestfulApi {
     String creator = (String) json.getOrDefault("creator", "*");
     String configKey = (String) json.get("configKey");
     String value = (String) json.get("configValue");
-
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");

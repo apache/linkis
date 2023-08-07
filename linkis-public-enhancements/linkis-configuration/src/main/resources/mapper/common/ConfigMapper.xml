@@ -406,21 +406,31 @@
             config.engine_conn_type,
             config_value.id AS config_value_id,
             config_value.config_value,
-            label.id AS config_label_id,
-            label.label_value
+            label.label_value ,
+            label.username,
+            label.creator,
+            label.enginetype,
+            label.engineversion
         FROM
             linkis_ps_configuration_config_key config,
             linkis_ps_configuration_config_value config_value,
-            linkis_cg_manager_label label
+            (
+            SELECT
+                managerlabel.id, managerlabel .label_value, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-", 1) as username, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-",-1) as creator, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-", 1) as enginetype, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-",-1) as engineversion
+            FROM
+                linkis_cg_manager_label managerlabel
+            WHERE
+                managerlabel.label_key = "combined_userCreator_engineType") label
         <where>
-        config_value.config_key_id =config.id
-        AND label.id=config_value.config_label_id
+        config_value.config_key_id = config.id
+        and config_value.config_label_id = label .id
             <if test="key != null">AND config.`key` like concat('%',#{key},'%')</if>
-            <if test="user != null">AND label.label_value like concat('%',#{user},'%')</if>
-            <if test="creator != null">AND LOWER(label.label_value) like concat('LOWER(','%',#{creator},'%',')')</if>
-            <if test="engineType != null">AND label.label_value like concat('%',#{engineType},'%')</if>
+            <if test="user != null">AND label.username = #{user} </if>
+            <if test="creator != null">AND LOWER(label.creator) = LOWER(#{creator}) </if>
+            <if test="engineType != null">AND label.engineType = #{engineType} </if>
         </where>
-        ORDER BY engine_conn_type
+        ORDER BY
+        engine_conn_type
     </select>
 
     <insert id="insertKeyByBase" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
@@ -444,6 +454,7 @@
         UPDATE linkis_ps_configuration_config_key
         <trim prefix="set" suffixOverrides=",">
             <if test="key != null">`key` = #{key},</if>
+            <if test="name != null">`name` = #{name},</if>
             <if test="description != null">`description` = #{description},</if>
             <if test="engineType != null">`engine_conn_type` = #{engineType},</if>
             <if test="defaultValue != null">`default_value` = #{defaultValue},</if>

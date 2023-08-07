@@ -28,19 +28,18 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>linkis-pes-common</module>
+    <module>linkis-pes-client</module>
+    <module>linkis-pes-rpc-client</module>
     <module>linkis-bml</module>
     <module>linkis-context-service</module>
     <module>linkis-datasource/linkis-metadata</module>
     <module>linkis-datasource</module>
-    <module>linkis-udf/linkis-udf-client</module>
-    <module>linkis-udf/linkis-udf-common</module>
     <module>linkis-udf/linkis-udf-service</module>
     <module>linkis-jobhistory</module>
     <module>linkis-configuration</module>
     <module>linkis-variable</module>
-    <module>linkis-instance-label/linkis-instance-label-client</module>
     <module>linkis-instance-label/linkis-instance-label-server</module>
-    <module>linkis-script-dev/linkis-storage-script-dev-client</module>
     <module>linkis-script-dev/linkis-storage-script-dev-server</module>
     <module>linkis-basedata-manager</module>
     <module>linkis-error-code</module>
@@ -51,11 +50,6 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-cs-server</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-datasource-manager-server</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

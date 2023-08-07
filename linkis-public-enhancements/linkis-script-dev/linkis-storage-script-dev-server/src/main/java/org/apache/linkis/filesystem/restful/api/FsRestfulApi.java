@@ -17,7 +17,6 @@
 
 package org.apache.linkis.filesystem.restful.api;
 
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.common.io.FsWriter;
@@ -45,6 +44,7 @@ import org.apache.linkis.storage.source.FileSource$;
 import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.Consts;
 
@@ -955,7 +955,7 @@ public class FsRestfulApi {
         res.put("sheetName", info.get(0));
       } else {
         String[][] column = null;
-        //fix csv file with utf-8 with bom chart[&#xFEFF]
+        // fix csv file with utf-8 with bom chart[&#xFEFF]
         BOMInputStream bomIn = new BOMInputStream(in, false); // don't include the BOM
         BufferedReader reader = new BufferedReader(new InputStreamReader(bomIn, encoding));
 

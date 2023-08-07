@@ -53,11 +53,6 @@
       <artifactId>linkis-gateway-httpclient-support</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

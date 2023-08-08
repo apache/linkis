@@ -144,32 +144,37 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val master =
       sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     logger.info(s"------ Create new SparkContext {$master} -------")
-    val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
-    val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
-    var pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
-    if (pythonLibUris.length == 2) {
-      val sparkConfValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files", "").getValue)
-      val sparkConfValue2 = Utils.tryQuietly(sparkConf.get("spark.yarn.dist.files"))
-      if (StringUtils.isNotBlank(sparkConfValue2)) {
-        pythonLibUris = sparkConfValue2 +: pythonLibUris
-      }
-      if (StringUtils.isNotBlank(sparkConfValue1)) {
-        pythonLibUris = sparkConfValue1 +: pythonLibUris
-      }
-      sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
-    }
-    // Distributes needed libraries to workers
-    // when spark version is greater than or equal to 1.5.0
-    if (master.contains("yarn")) sparkConf.set("spark.yarn.isPython", "true")
 
     // Set deploy-mode with the optional values `cluster`and `client`, the default value `client`
     val deployMode: String = SPARK_DEPLOY_MODE.getValue(options)
     if (
         StringUtils
-          .isNotBlank(deployMode) && (deployMode.equals("cluster") || deployMode.equals("client"))
+          .isNotBlank(deployMode) && (deployMode
+          .equals(SPARK_YARN_CLUSTER) || deployMode.equals(SPARK_YARN_CLIENT))
     ) {
       sparkConf.set("spark.submit.deployMode", deployMode)
     }
+
+    // todo yarn cluster暂时不支持pyspark,后期对pyspark进行处理
+    if (StringUtils.isNotBlank(deployMode) && deployMode.equals(SPARK_YARN_CLIENT)) {
+      val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
+      val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
+      var pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))
+      if (pythonLibUris.length == 2) {
+        val sparkConfValue1 = Utils.tryQuietly(CommonVars("spark.yarn.dist.files", "").getValue)
+        val sparkConfValue2 = Utils.tryQuietly(sparkConf.get("spark.yarn.dist.files"))
+        if (StringUtils.isNotBlank(sparkConfValue2)) {
+          pythonLibUris = sparkConfValue2 +: pythonLibUris
+        }
+        if (StringUtils.isNotBlank(sparkConfValue1)) {
+          pythonLibUris = sparkConfValue1 +: pythonLibUris
+        }
+        sparkConf.set("spark.yarn.dist.files", pythonLibUris.mkString(","))
+      }
+    }
+    // Distributes needed libraries to workers
+    // when spark version is greater than or equal to 1.5.0
+    if (master.contains("yarn")) sparkConf.set("spark.yarn.isPython", "true")
 
     val outputDir = createOutputDir(sparkConf)
 

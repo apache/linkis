@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
@@ -26,9 +27,12 @@ import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   SPARK_DRIVER_CLASSPATH,
   SPARK_DRIVER_EXTRA_JAVA_OPTIONS,
   SPARK_PYTHON_VERSION,
-  SPARK_SUBMIT_PATH
+  SPARK_SUBMIT_PATH,
+  SPARK_YARN_CLUSTER_JARS
 }
 import org.apache.linkis.engineplugin.spark.config.SparkResourceConfiguration._
+import org.apache.linkis.engineplugin.spark.errorcode.SparkErrorCodeSummary
+import org.apache.linkis.engineplugin.spark.exception.SparkEngineException
 import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.entity.resource.DriverAndYarnResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
@@ -62,7 +66,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val executorMemory = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_MEMORY)
     val numExecutors = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_INSTANCES)
 
-    val files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
+    var files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
     val jars = new ArrayBuffer[String]()
     jars ++= getValueAndRemove(properties, "jars", "").split(",").filter(isNotBlankPath)
     jars ++= getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)
@@ -117,6 +121,26 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     }
 
     val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
+
+    // {pwd}/conf/linkis-engineconn.properties
+    if (deployMode.equals(SparkConfiguration.SPARK_YARN_CLUSTER)) {
+//      files ++ (s"${variable(PWD)}/conf/linkis-engineconn.properties")
+      files ++= Array(s"${variable(PWD)}/conf/linkis-engineconn.properties")
+
+      var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)
+
+      if (StringUtils.isNotBlank(clusterJars)) {
+        throw new SparkEngineException(
+          SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorCode,
+          SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorDesc
+        )
+      }
+
+      if (clusterJars.endsWith("/")) {
+        clusterJars = clusterJars.dropRight(1)
+      }
+      jars += s"$clusterJars/*"
+    }
 
     addOpt("--master", "yarn")
     addOpt("--deploy-mode", deployMode)

@@ -129,7 +129,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
 
       var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)
 
-      if (StringUtils.isNotBlank(clusterJars)) {
+      if (StringUtils.isBlank(clusterJars)) {
         throw new SparkEngineException(
           SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorCode,
           SparkErrorCodeSummary.LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR.getErrorDesc

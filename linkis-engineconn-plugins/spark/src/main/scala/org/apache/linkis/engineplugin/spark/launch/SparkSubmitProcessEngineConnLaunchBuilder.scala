@@ -122,9 +122,10 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
 
     val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
 
-    // {pwd}/conf/linkis-engineconn.properties
-    if (deployMode.equals(SparkConfiguration.SPARK_YARN_CLUSTER)) {
-//      files ++ (s"${variable(PWD)}/conf/linkis-engineconn.properties")
+    val isYarnCluster: Boolean =
+      if (deployMode.equals(SparkConfiguration.SPARK_YARN_CLUSTER)) true else false
+
+    if (isYarnCluster) {
       files ++= Array(s"${variable(PWD)}/conf/linkis-engineconn.properties")
 
       var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)
@@ -164,7 +165,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     addOpt("--num-executors", numExecutors.toString)
     addOpt("--queue", queue)
 
-    getConf(engineConnBuildRequest, gcLogDir, logDir).foreach { case (key, value) =>
+    getConf(engineConnBuildRequest, gcLogDir, logDir, isYarnCluster).foreach { case (key, value) =>
       addOpt("--conf", s"""$key="$value"""")
     }
 
@@ -179,7 +180,8 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
   def getConf(
       engineConnBuildRequest: EngineConnBuildRequest,
       gcLogDir: String,
-      logDir: String
+      logDir: String,
+      isYarnCluster: Boolean
   ): ArrayBuffer[(String, String)] = {
     val driverJavaSet = new StringBuilder(" -server")
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
@@ -195,7 +197,11 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       .foreach(l => {
         driverJavaSet.append(" ").append(l)
       })
-    driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))
+    if (isYarnCluster) {
+      driverJavaSet.append(" -Djava.io.tmpdir=/tmp")
+    } else {
+      driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))
+    }
     if (EnvConfiguration.ENGINE_CONN_DEBUG_ENABLE.getValue) {
       driverJavaSet.append(
         s" -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${variable(RANDOM_PORT)}"

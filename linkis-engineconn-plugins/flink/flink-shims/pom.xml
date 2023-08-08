@@ -6,9 +6,9 @@
   ~ The ASF licenses this file to You under the Apache License, Version 2.0
   ~ (the "License"); you may not use this file except in compliance with
   ~ the License.  You may obtain a copy of the License at
-  ~ 
+  ~
   ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~ 
+  ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,15 +21,46 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
-    <relativePath>../../pom.xml</relativePath>
+    <relativePath>../../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-engineconn-plugin-flink-module</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>flink-shims</module>
-    <module>flink-shims-1.12.2</module>
-    <module>flink-shims-1.16.2</module>
-    <module>flink-core</module>
-  </modules>
+  <artifactId>flink-shims</artifactId>
+
+  <properties>
+    <flink.version>1.12.2</flink.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-common</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-table-common</artifactId>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-shaded-jackson</artifactId>
+      <version>2.10.1-9.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-clients_${scala.binary.version}</artifactId>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.flink</groupId>
+      <artifactId>flink-table-api-java</artifactId>
+      <version>${flink.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
 </project>

@@ -32,7 +32,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -45,7 +45,7 @@
     <!--bml client-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-bml-client</artifactId>
+      <artifactId>linkis-pes-client</artifactId>
       <version>${project.version}</version>
     </dependency>
 

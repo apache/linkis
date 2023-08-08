@@ -132,7 +132,6 @@ flink-file-sink-common-1.12.2.jar
 flink-hadoop-fs-1.12.2.jar
 flink-java-1.12.2.jar
 flink-json-1.12.2.jar
-flink-kubernetes_2.12-1.12.2.jar
 flink-metrics-core-1.12.2.jar
 flink-optimizer_2.12-1.12.2.jar
 flink-queryable-state-client-java-1.12.2.jar

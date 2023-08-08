@@ -40,12 +40,12 @@
     <dependency>
       <groupId>org.apache.thrift</groupId>
       <artifactId>libfb303</artifactId>
-      <version>0.9.3</version>
+      <version>${libfb303.version}</version>
     </dependency>
     <dependency>
       <groupId>com.esotericsoftware</groupId>
       <artifactId>minlog</artifactId>
-      <version>1.3.0</version>
+      <version>${minlog.version}</version>
     </dependency>
 
     <dependency>

@@ -119,6 +119,8 @@
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
     <flink.version>1.16.2</flink.version>
+    <libfb303.version>0.9.3</libfb303.version>
+    <minlog.version>1.3.0</minlog.version>
     <io_file.version>1.0</io_file.version>
     <jdbc.version>4</jdbc.version>
     <trino.version>371</trino.version>

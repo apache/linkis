@@ -80,6 +80,10 @@ public interface FileSource extends Closeable {
     return isResultSet(fsPath.getPath());
   }
 
+  FileSource limitBytes(Long limitBytes);
+
+  FileSource limitColumnLength(int limitColumnLength);
+
   /**
    * Currently only supports table multi-result sets
    *

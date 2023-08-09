@@ -19,6 +19,7 @@ package org.apache.linkis.storage.resultset.table
 
 import org.apache.linkis.common.io.{MetaData, Record}
 import org.apache.linkis.common.io.resultset.ResultSerializer
+import org.apache.linkis.storage.conf.LinkisStorageConf
 import org.apache.linkis.storage.domain.Dolphin
 
 import scala.collection.mutable.ArrayBuffer
@@ -45,14 +46,20 @@ class TableResultSerializer extends ResultSerializer {
    * @param line
    */
   def lineToBytes(line: Array[Any]): Array[Byte] = {
-    // Data cache(数据缓存)
     val dataBytes = ArrayBuffer[Array[Byte]]()
-    // Column cache(列缓存)
     val colIndex = ArrayBuffer[Array[Byte]]()
     var colByteLen = 0
     var length = 0
     line.foreach { data =>
-      val bytes = if (data == null) Dolphin.LINKIS_NULL_BYTES else Dolphin.getBytes(data)
+      val bytes = if (data == null) {
+        if (!LinkisStorageConf.LINKIS_RESULT_ENABLE_NULL) {
+          Dolphin.LINKIS_NULL_BYTES
+        } else {
+          Dolphin.NULL_BYTES
+        }
+      } else {
+        Dolphin.getBytes(data)
+      }
       dataBytes += bytes
       val colBytes = Dolphin.getBytes(bytes.length)
       colIndex += colBytes += Dolphin.COL_SPLIT_BYTES

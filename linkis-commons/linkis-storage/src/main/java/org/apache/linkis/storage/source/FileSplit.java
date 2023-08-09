@@ -41,6 +41,8 @@ import org.apache.commons.math3.util.Pair;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -60,6 +62,8 @@ public class FileSplit implements Closeable {
   protected Function<Record, Record> shuffler;
   private boolean pageTrigger = false;
   protected Map<String, String> params = new HashMap<>();
+  private long limitBytes = 0L;
+  private int limitColumnLength = 0;
 
   public FileSplit(FsReader<? extends MetaData, ? extends Record> fsReader) {
     this.fsReader = fsReader;
@@ -96,6 +100,14 @@ public class FileSplit implements Closeable {
 
   public int getTotalLine() {
     return totalLine;
+  }
+
+  public void setLimitBytes(long limitBytes) {
+    this.limitBytes = limitBytes;
+  }
+
+  public void setLimitColumnLength(int limitColumnLength) {
+    this.limitColumnLength = limitColumnLength;
   }
 
   public <M> M whileLoop(Function<MetaData, M> metaDataFunction, Consumer<Record> recordConsumer) {
@@ -222,16 +234,47 @@ public class FileSplit implements Closeable {
 
   public Pair<Object, List<String[]>> collect() {
     List<String[]> recordList = new ArrayList<>();
+    final AtomicLong tmpBytes = new AtomicLong(0L);
+    final AtomicBoolean overFlag = new AtomicBoolean(false);
     Object metaData =
         whileLoop(
             collectMetaData -> collectMetaData(collectMetaData),
-            r -> recordList.add(collectRecord(r)));
+            r -> {
+              if (!overFlag.get()) {
+                String[] arr = collectRecord(r);
+                if (limitBytes > 0) {
+                  for (int i = 0; i < arr.length; i++) {
+                    tmpBytes.addAndGet(arr[i].getBytes().length);
+                    if (overFlag.get() || tmpBytes.get() > limitBytes) {
+                      overFlag.set(true);
+                      arr[i] = "";
+                    }
+                  }
+                  recordList.add(arr);
+                } else {
+                  recordList.add(arr);
+                }
+              }
+            });
     return new Pair<>(metaData, recordList);
   }
 
   public String[] collectRecord(Record record) {
     if (record instanceof TableRecord) {
       TableRecord tableRecord = (TableRecord) record;
+      if (limitColumnLength > 0) {
+        return Arrays.stream(tableRecord.row)
+            .map(
+                obj -> {
+                  String col = DataType.valueToString(obj);
+                  if (col.length() > limitColumnLength) {
+                    return col.substring(0, limitColumnLength);
+                  } else {
+                    return col;
+                  }
+                })
+            .toArray(String[]::new);
+      }
       return Arrays.stream(tableRecord.row).map(DataType::valueToString).toArray(String[]::new);
     } else if (record instanceof LineRecord) {
       LineRecord lineRecord = (LineRecord) record;

@@ -560,7 +560,9 @@ public class FsRestfulApi {
       @RequestParam(value = "path", required = false) String path,
       @RequestParam(value = "page", defaultValue = "1") Integer page,
       @RequestParam(value = "pageSize", defaultValue = "5000") Integer pageSize,
-      @RequestParam(value = "charset", defaultValue = "utf-8") String charset)
+      @RequestParam(value = "charset", defaultValue = "utf-8") String charset,
+      @RequestParam(value = "limitBytes", defaultValue = "0") Long limitBytes,
+      @RequestParam(value = "limitColumnLength", defaultValue = "0") Integer limitColumnLength)
       throws IOException, WorkSpaceException {
 
     Message message = Message.ok();
@@ -582,6 +584,14 @@ public class FsRestfulApi {
       fileSource = FileSource.create(fsPath, fileSystem);
       if (FileSource.isResultSet(fsPath.getPath())) {
         fileSource = fileSource.page(page, pageSize);
+      }
+      if (limitBytes > 0) {
+        fileSource = fileSource.limitBytes(Math.min(limitBytes, FILESYSTEM_LIMIT_BYTES.getValue()));
+      }
+      if (limitColumnLength > 0) {
+        fileSource =
+            fileSource.limitColumnLength(
+                Math.min(limitColumnLength, FILESYSTEM_LIMIT_COLUMN_LENGTH.getValue()));
       }
       Pair<Object, List<String[]>> result = fileSource.collect()[0];
       IOUtils.closeQuietly(fileSource);

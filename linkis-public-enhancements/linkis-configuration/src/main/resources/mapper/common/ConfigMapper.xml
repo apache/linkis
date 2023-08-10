@@ -378,7 +378,7 @@
             <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
             <if test="key != null">and `key` like concat('%',#{key},'%')</if>
         </where>
-        order by engine_conn_type
+        ORDER BY engine_conn_type
     </select>
 
 
@@ -392,7 +392,7 @@
             <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
             <if test="key != null">and `key` like concat('%',#{key},'%')</if>
         </where>
-        order by engine_conn_type
+        ORDER BY engine_conn_type
     </select>
 
 
@@ -415,39 +415,44 @@
             linkis_ps_configuration_config_key config,
             linkis_ps_configuration_config_value config_value,
             (
-            SELECT
-                managerlabel.id, managerlabel .label_value, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-", 1) as username, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-",-1) as creator, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-", 1) as enginetype, SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-",-1) as engineversion
-            FROM
-                linkis_cg_manager_label managerlabel
-            WHERE
-                managerlabel.label_key = "combined_userCreator_engineType") label
+                SELECT
+                    managerlabel.id,
+                    managerlabel .label_value,
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-", 1) as username,
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",", 1), "-",-1) as creator,
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-", 1) as enginetype,
+                    SUBSTRING_INDEX(SUBSTRING_INDEX(label_value, ",",-1), "-",-1) as engineversion
+                FROM
+                    linkis_cg_manager_label managerlabel
+                WHERE
+                    managerlabel.label_key = "combined_userCreator_engineType"
+            ) label
         <where>
         config_value.config_key_id = config.id
-        and config_value.config_label_id = label .id
+        AND config_value.config_label_id = label .id
             <if test="key != null">AND config.`key` like concat('%',#{key},'%')</if>
             <if test="user != null">AND label.username = #{user} </if>
             <if test="creator != null">AND LOWER(label.creator) = LOWER(#{creator}) </if>
             <if test="engineType != null">AND label.engineType = #{engineType} </if>
         </where>
-        ORDER BY
-        engine_conn_type
+        ORDER BY engine_conn_type
     </select>
 
     <insert id="insertKeyByBase" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.configuration.entity.ConfigKey">
         INSERT INTO linkis_ps_configuration_config_key (
-        `key`, `description`,
-        `name`, `engine_conn_type`, `default_value`,
-        `validate_type`, `validate_range`, `is_hidden`,
-        `is_advanced`, `level`, `treeName`,
-        `boundary_type`, `en_name`, `en_treeName`,
-        `en_description`)
+            `key`, `description`, `name`,
+            `engine_conn_type`, `default_value`, `validate_type`,
+            `validate_range`, `is_hidden`, `is_advanced`,
+            `level`, `treeName`, `boundary_type`,
+            `en_name`, `en_treeName`, `en_description`
+        )
         VALUES (
-        #{key}, #{description},
-        #{name}, #{engineType}, #{defaultValue},
-        #{validateType}, #{validateRange}, #{isHidden},
-        #{isAdvanced}, #{level}, #{treeName},
-        #{boundaryType}, #{enName}, #{enTreeName},
-        #{enDescription})
+            #{key}, #{description}, #{name},
+            #{engineType}, #{defaultValue}, #{validateType},
+            #{validateRange}, #{isHidden}, #{isAdvanced},
+            #{level}, #{treeName}, #{boundaryType},
+            #{enName}, #{enTreeName}, #{enDescription}
+        )
     </insert>
 
     <update id="updateConfigKey"  parameterType="org.apache.linkis.configuration.entity.ConfigKey">

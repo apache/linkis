@@ -22,7 +22,7 @@ public class ConfigUserValue {
   private String key;
 
   private String name;
-
+  //  linkis_ps_configuration_config_key  id
   private Integer configKeyId;
 
   private String description;
@@ -30,11 +30,11 @@ public class ConfigUserValue {
   private String defaultValue;
 
   private String engineType;
-
+  //  linkis_ps_configuration_config_value id
   private Integer configValueId;
 
   private String configValue;
-
+  //  linkis_cg_manager_label id
   private Integer configLabelId;
 
   private String labelValue;

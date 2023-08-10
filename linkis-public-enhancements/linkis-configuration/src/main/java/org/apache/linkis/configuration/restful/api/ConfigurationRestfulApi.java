@@ -171,6 +171,7 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     String userName =
         ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    // Adding * represents returning all configuration information
     if ("*".equals(engineType)) {
       engineType = null;
     }
@@ -420,7 +421,7 @@ public class ConfigurationRestfulApi {
 
   private void checkAdmin(String userName) throws ConfigurationException {
     if (!org.apache.linkis.common.conf.Configuration.isAdmin(userName)) {
-      throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
+      throw new ConfigurationException(ONLY_ADMIN_PERFORM.getErrorDesc());
     }
   }
 
@@ -477,6 +478,9 @@ public class ConfigurationRestfulApi {
     String configKey = (String) json.get("configKey");
     String value = (String) json.get("configValue");
     boolean force = Boolean.parseBoolean(json.getOrDefault("force", "false").toString());
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
+      return Message.error("Only admin can modify other user configuration data");
+    }
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -591,7 +595,7 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "saveBaseKeyValue", notes = "save key", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "id", required = false, dataType = "String", value = "id"),
+    @ApiImplicitParam(name = "id", required = false, dataType = "Integer", value = "id"),
     @ApiImplicitParam(name = "key", required = true, dataType = "String", value = "key"),
     @ApiImplicitParam(name = "name", required = true, dataType = "String", value = "name"),
     @ApiImplicitParam(

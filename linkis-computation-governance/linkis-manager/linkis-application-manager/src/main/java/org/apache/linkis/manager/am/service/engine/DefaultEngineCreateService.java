@@ -341,6 +341,11 @@ public class DefaultEngineCreateService extends AbstractEngineService
     if (null == engineNodeInfo) {
       return false;
     }
+
+    //    if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
+    //        return resourceTicketId.equals( engineNodeInfo.getServiceInstance());
+    //    }
+
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus())) {
       NodeMetrics metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo);
       Pair<String, Optional<Boolean>> errorInfo = getStartErrorInfo(metrics.getHeartBeatMsg());

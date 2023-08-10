@@ -38,9 +38,11 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineStopRequest
 }
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.label.entity.engine.YarnClusterModeLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
+import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.concurrent.ExecutionContextExecutorService
@@ -146,11 +148,19 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       throw t
     }
     LoggerUtils.removeJobIdMDC()
+    val deployMode: String =
+      request.creationDesc.properties.getOrDefault("spark.submit.deployMode", "client")
+
     val engineNode = new AMEngineNode()
     engineNode.setLabels(conn.getLabels)
     engineNode.setServiceInstance(conn.getServiceInstance)
     engineNode.setOwner(request.user)
-    engineNode.setMark(AMConstant.PROCESS_MARK)
+    if (StringUtils.isNotBlank(deployMode) && deployMode.equals("cluster")) {
+      engineNode.setMark(AMConstant.CLUSTER_PROCESS_MARK)
+      engineNode.getLabels.add(new YarnClusterModeLabel())
+    } else {
+      engineNode.setMark(AMConstant.PROCESS_MARK)
+    }
     engineNode
   }
 

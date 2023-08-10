@@ -120,7 +120,8 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       memory
     }
 
-    val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
+    //    val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
+    val deployMode: String = SPARK_DEPLOY_MODE.getValue(properties)
 
     val isYarnCluster: Boolean =
       if (deployMode.equals(SparkConfiguration.SPARK_YARN_CLUSTER)) true else false
@@ -219,6 +220,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       val keyValue = iterator.next()
       if (
           !SPARK_PYTHON_VERSION.key.equals(keyValue.getKey) &&
+          !SPARK_DEPLOY_MODE.key.equals(keyValue.getKey) &&
           keyValue.getKey.startsWith("spark.") &&
           StringUtils.isNotBlank(keyValue.getValue)
       ) {

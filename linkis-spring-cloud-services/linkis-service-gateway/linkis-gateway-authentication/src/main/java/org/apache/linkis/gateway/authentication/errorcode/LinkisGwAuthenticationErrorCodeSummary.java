@@ -26,8 +26,8 @@ public enum LinkisGwAuthenticationErrorCodeSummary implements LinkisErrorCode {
   TOKEN_IS_EXPIRED(15201, "Token is not valid or stale({0} 令牌已过期)!"),
   ILLEGAL_TOKENUSER(15202, "Illegal TokenUser for Token(Token非法用户: {0})!"),
   ILLEGAL_HOST(15203, "Illegal Host for Token(非法ip: {0})!"),
-  INVALID_TOKEN(15204, "Invalid Token(令牌无效)"),
-  TOKEN_IS_NULL(15205, "token is null({0} 令牌不存在)!"),
+  INVALID_TOKEN(15204, "Invalid Token(数据库中未配置的无效令牌)"),
+  TOKEN_IS_NULL(15205, "token is null({0} 令牌参数为空)!"),
   FAILED_TO_BAD_SQLGRAMMAR(
       15206, "Failed to query token:{0} data(Token:{0} 数据查询失败), Caused by:{1}"),
   NOT_EXIST_DB(15207, "Token:{0} does not exist in the table(Token:{0} 表中不存在)!, Caused by:{1}");

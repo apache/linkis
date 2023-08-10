@@ -37,7 +37,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`(
   `default_value` varchar(200) DEFAULT NULL COMMENT 'Adopted when user does not set key',
   `validate_type` varchar(50) DEFAULT NULL COMMENT 'Validate type, one of the following: None, NumInterval, FloatInterval, Include, Regex, OPF, Custom Rules',
   `validate_range` varchar(50) DEFAULT NULL COMMENT 'Validate range',
-  `engine_conn_type` varchar(50) DEFAULT NULL COMMENT 'engine type,such as spark,hive etc',
+  `engine_conn_type` varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc',
   `is_hidden` tinyint(1) DEFAULT NULL COMMENT 'Whether it is hidden from user. If set to 1(true), then user cannot modify, however, it could still be used in back-end',
   `is_advanced` tinyint(1) DEFAULT NULL COMMENT 'Whether it is an advanced parameter. If set to 1(true), parameters would be displayed only when user choose to do so',
   `level` tinyint(1) DEFAULT NULL COMMENT 'Basis for displaying sorting in the front-end. Higher the level is, higher the rank the parameter gets',
@@ -45,6 +45,7 @@ CREATE TABLE `linkis_ps_configuration_config_key`(
   `en_description` varchar(200) DEFAULT NULL COMMENT 'english description',
   `en_name` varchar(100) DEFAULT NULL COMMENT 'english name',
   `en_treeName` varchar(100) DEFAULT NULL COMMENT 'english treeName',
+  UNIQUE INDEX `uniq_key_ectype` (`key`,`engine_conn_type`),
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 

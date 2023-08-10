@@ -116,7 +116,6 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
           )
           retryException = t
           // add isCrossClusterRetryException flag
-          engineAskRequest.getProperties.put("isCrossClusterRetryException", "true")
         case t: Throwable =>
           val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)
           logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")

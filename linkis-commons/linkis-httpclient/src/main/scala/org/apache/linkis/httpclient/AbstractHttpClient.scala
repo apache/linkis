@@ -20,45 +20,22 @@ package org.apache.linkis.httpclient
 import org.apache.linkis.common.conf.{CommonVars, Configuration}
 import org.apache.linkis.common.io.{Fs, FsPath}
 import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
-import org.apache.linkis.httpclient.authentication.{
-  AbstractAuthenticationStrategy,
-  AuthenticationAction,
-  HttpAuthentication
-}
+import org.apache.linkis.httpclient.authentication.{AbstractAuthenticationStrategy, AuthenticationAction, HttpAuthentication}
 import org.apache.linkis.httpclient.config.{ClientConfig, HttpClientConstant}
 import org.apache.linkis.httpclient.discovery.{AbstractDiscovery, Discovery, HeartbeatAction}
-import org.apache.linkis.httpclient.exception.{
-  HttpClientResultException,
-  HttpClientRetryException,
-  HttpMessageParseException,
-  HttpMethodNotSupportException
-}
-import org.apache.linkis.httpclient.loadbalancer.{
-  AbstractLoadBalancer,
-  DefaultLoadbalancerStrategy,
-  LoadBalancer
-}
+import org.apache.linkis.httpclient.exception.{HttpClientResultException, HttpClientRetryException, HttpMessageParseException, HttpMethodNotSupportException}
+import org.apache.linkis.httpclient.loadbalancer.{AbstractLoadBalancer, DefaultLoadbalancerStrategy, LoadBalancer}
 import org.apache.linkis.httpclient.request._
 import org.apache.linkis.httpclient.response._
-
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
 import org.apache.http.{HttpResponse, _}
 import org.apache.http.client.CookieStore
 import org.apache.http.client.config.RequestConfig
-import org.apache.http.client.entity.{
-  DeflateDecompressingEntity,
-  EntityBuilder,
-  GzipDecompressingEntity,
-  UrlEncodedFormEntity
-}
+import org.apache.http.client.entity.{DeflateDecompressingEntity, EntityBuilder, GzipDecompressingEntity, UrlEncodedFormEntity}
 import org.apache.http.client.methods._
 import org.apache.http.client.utils.URIBuilder
-import org.apache.http.conn.{
-  ConnectionPoolTimeoutException,
-  ConnectTimeoutException,
-  HttpHostConnectException
-}
+import org.apache.http.conn.{ConnectTimeoutException, ConnectionPoolTimeoutException, HttpHostConnectException}
 import org.apache.http.entity.{ContentType, StringEntity}
 import org.apache.http.entity.mime.MultipartEntityBuilder
 import org.apache.http.impl.client.{BasicCookieStore, CloseableHttpClient, HttpClients}
@@ -66,9 +43,9 @@ import org.apache.http.message.BasicNameValuePair
 import org.apache.http.util.EntityUtils
 
 import java.net.URI
+import java.nio.charset.Charset
 import java.util
 import java.util.Locale
-
 import scala.collection.JavaConverters._
 
 abstract class AbstractHttpClient(clientConfig: ClientConfig, clientName: String)

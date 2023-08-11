@@ -337,14 +337,15 @@ public class DefaultEngineCreateService extends AbstractEngineService
   }
 
   private boolean ensuresIdle(EngineNode engineNode, String resourceTicketId) {
-    EngineNode engineNodeInfo = getEngineNodeManager().getEngineNodeInfoByDB(engineNode);
+    EngineNode engineNodeInfo;
+    if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
+      engineNodeInfo = getEngineNodeManager().getEngineNodeInfoByTicketId(resourceTicketId);
+    } else {
+      engineNodeInfo = getEngineNodeManager().getEngineNodeInfoByDB(engineNode);
+    }
     if (null == engineNodeInfo) {
       return false;
     }
-
-    //    if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
-    //        return resourceTicketId.equals( engineNodeInfo.getServiceInstance());
-    //    }
 
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus())) {
       NodeMetrics metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo);

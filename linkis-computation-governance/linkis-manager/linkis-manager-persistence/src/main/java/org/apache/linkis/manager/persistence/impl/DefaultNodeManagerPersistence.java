@@ -275,6 +275,38 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
+  public EngineNode getEngineNode(String ticketId) {
+    AMEngineNode amEngineNode = new AMEngineNode();
+    //        amEngineNode.setServiceInstance(serviceInstance);
+    PersistenceNode engineNode = nodeManagerMapper.getNodeInstanceByTicketId(ticketId);
+    if (null == engineNode) {
+      return null;
+    }
+    amEngineNode.setOwner(engineNode.getOwner());
+    amEngineNode.setMark(engineNode.getMark());
+    amEngineNode.setIdentifier(engineNode.getIdentifier());
+    amEngineNode.setTicketId(engineNode.getTicketId());
+    amEngineNode.setStartTime(engineNode.getCreateTime());
+    //        PersistenceNode emNode =
+    //
+    // nodeManagerMapper.getEMNodeInstanceByEngineNode(serviceInstance.getInstance());
+    //        if (emNode != null) {
+    //            String emInstance = emNode.getInstance();
+    //            String emName = emNode.getName();
+    //            ServiceInstance emServiceInstance = new ServiceInstance();
+    //            emServiceInstance.setApplicationName(emName);
+    //            emServiceInstance.setInstance(emInstance);
+    //            AMEMNode amemNode = new AMEMNode();
+    //            amemNode.setMark(emNode.getMark());
+    //            amemNode.setOwner(emNode.getOwner());
+    //            amemNode.setServiceInstance(emServiceInstance);
+    //            amemNode.setStartTime(emNode.getCreateTime());
+    //            amEngineNode.setEMNode(amemNode);
+    //        }
+    return amEngineNode;
+  }
+
+  @Override
   public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) {
     // serviceinstance for a given EM(给定EM的 serviceinstance)
     PersistenceNode emNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());

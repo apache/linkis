@@ -347,6 +347,10 @@ public class DefaultEngineCreateService extends AbstractEngineService
       return false;
     }
 
+    if (engineNodeInfo.getServiceInstance() != null) {
+      engineNode.setServiceInstance(engineNodeInfo.getServiceInstance());
+    }
+
     if (NodeStatus.isCompleted(engineNodeInfo.getNodeStatus())) {
       NodeMetrics metrics = nodeMetricManagerPersistence.getNodeMetrics(engineNodeInfo);
       Pair<String, Optional<Boolean>> errorInfo = getStartErrorInfo(metrics.getHeartBeatMsg());

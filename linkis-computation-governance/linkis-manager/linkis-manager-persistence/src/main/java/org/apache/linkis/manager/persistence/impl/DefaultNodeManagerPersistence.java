@@ -275,34 +275,24 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
-  public EngineNode getEngineNode(String ticketId) {
+  public EngineNode getEngineNodeByTicketId(String ticketId) {
     AMEngineNode amEngineNode = new AMEngineNode();
-    //        amEngineNode.setServiceInstance(serviceInstance);
     PersistenceNode engineNode = nodeManagerMapper.getNodeInstanceByTicketId(ticketId);
+
     if (null == engineNode) {
       return null;
     }
+
+    ServiceInstance serviceInstance = new ServiceInstance();
+    serviceInstance.setInstance(engineNode.getInstance());
+    serviceInstance.setApplicationName(engineNode.getName());
+    amEngineNode.setServiceInstance(serviceInstance);
+
     amEngineNode.setOwner(engineNode.getOwner());
     amEngineNode.setMark(engineNode.getMark());
     amEngineNode.setIdentifier(engineNode.getIdentifier());
     amEngineNode.setTicketId(engineNode.getTicketId());
     amEngineNode.setStartTime(engineNode.getCreateTime());
-    //        PersistenceNode emNode =
-    //
-    // nodeManagerMapper.getEMNodeInstanceByEngineNode(serviceInstance.getInstance());
-    //        if (emNode != null) {
-    //            String emInstance = emNode.getInstance();
-    //            String emName = emNode.getName();
-    //            ServiceInstance emServiceInstance = new ServiceInstance();
-    //            emServiceInstance.setApplicationName(emName);
-    //            emServiceInstance.setInstance(emInstance);
-    //            AMEMNode amemNode = new AMEMNode();
-    //            amemNode.setMark(emNode.getMark());
-    //            amemNode.setOwner(emNode.getOwner());
-    //            amemNode.setServiceInstance(emServiceInstance);
-    //            amemNode.setStartTime(emNode.getCreateTime());
-    //            amEngineNode.setEMNode(amemNode);
-    //        }
     return amEngineNode;
   }
 

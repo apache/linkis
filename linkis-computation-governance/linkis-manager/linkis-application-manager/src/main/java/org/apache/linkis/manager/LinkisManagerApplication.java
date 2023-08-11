@@ -24,6 +24,5 @@ public class LinkisManagerApplication {
 
   public static void main(String[] args) throws ReflectiveOperationException {
     LinkisBaseServerApp.main(args);
-    // DataWorkCloudApplication.main(args);
   }
 }

@@ -71,7 +71,7 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   private var thread: Thread = _
 
-  private var applicationId: String = _
+  private var applicationId: String = sc.applicationId
 
   override def getApplicationId: String = applicationId
 
@@ -103,7 +103,6 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     engineExecutorContext.appendStdout(
       LogUtils.generateInfo(s"yarn application id: ${sc.applicationId}")
     )
-    this.applicationId = sc.applicationId
     // Pre-execution hook
     var executionHook: SparkPreExecutionHook = null
     Utils.tryCatch {

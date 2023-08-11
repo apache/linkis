@@ -196,6 +196,84 @@ public class DefaultNodeLabelService implements NodeLabelService {
     }
   }
 
+  @Override
+  public void labelsFromInstanceToNewInstance(
+      ServiceInstance oldServiceInstance, ServiceInstance newServiceInstance) {
+    List<PersistenceLabel> labels =
+        labelManagerPersistence.getLabelByServiceInstance(newServiceInstance);
+    List<String> newKeyList = labels.stream().map(Label::getLabelKey).collect(Collectors.toList());
+    List<PersistenceLabel> nodeLabels =
+        labelManagerPersistence.getLabelByServiceInstance(oldServiceInstance);
+
+    List<String> oldKeyList =
+        nodeLabels.stream().map(InheritableLabel::getLabelKey).collect(Collectors.toList());
+    List<String> willBeDelete = new ArrayList<>(oldKeyList);
+    willBeDelete.removeAll(newKeyList);
+
+    List<String> willBeAdd = new ArrayList<>(newKeyList);
+    willBeAdd.removeAll(oldKeyList);
+
+    List<String> willBeUpdate = new ArrayList<>(oldKeyList);
+    willBeUpdate.removeAll(willBeDelete);
+
+    Set<String> modifiableKeyList = LabelUtils.listAllUserModifiableLabel();
+    if (!willBeDelete.isEmpty()) {
+      nodeLabels.forEach(
+          nodeLabel -> {
+            if (modifiableKeyList.contains(nodeLabel.getLabelKey())
+                && willBeDelete.contains(nodeLabel.getLabelKey())) {
+              List<Integer> labelIds = new ArrayList<>();
+              labelIds.add(nodeLabel.getId());
+              labelManagerPersistence.removeNodeLabels(oldServiceInstance, labelIds);
+            }
+          });
+    }
+
+    /**
+     * update step: 1.delete relations of old labels 2.add new relation between new labels and
+     * instance
+     */
+    if (willBeUpdate != null && !willBeUpdate.isEmpty()) {
+      labels.forEach(
+          label -> {
+            if (modifiableKeyList.contains(label.getLabelKey())
+                && willBeUpdate.contains(label.getLabelKey())) {
+              nodeLabels.stream()
+                  .filter(nodeLabel -> nodeLabel.getLabelKey().equals(label.getLabelKey()))
+                  .forEach(
+                      oldLabel -> {
+                        PersistenceLabel persistenceLabel =
+                            LabelManagerUtils.convertPersistenceLabel(label);
+                        List<Integer> labelIds = new ArrayList<>();
+                        labelIds.add(oldLabel.getId());
+                        labelManagerPersistence.removeNodeLabels(oldServiceInstance, labelIds);
+                        int newLabelId = tryToAddLabel(persistenceLabel);
+                        labelIds.remove((Integer) oldLabel.getId());
+                        labelIds.add(newLabelId);
+                        labelManagerPersistence.addLabelToNode(oldServiceInstance, labelIds);
+                      });
+            }
+          });
+    }
+    if (willBeAdd != null && !willBeAdd.isEmpty()) {
+      labels.stream()
+          .filter(label -> willBeAdd.contains(label.getLabelKey()))
+          .forEach(
+              label -> {
+                if (modifiableKeyList.contains(label.getLabelKey())) {
+                  PersistenceLabel persistenceLabel =
+                      LabelManagerUtils.convertPersistenceLabel(label);
+                  int labelId = tryToAddLabel(persistenceLabel);
+                  if (labelId > 0) {
+                    List<Integer> labelIds = new ArrayList<>();
+                    labelIds.add(labelId);
+                    labelManagerPersistence.addLabelToNode(oldServiceInstance, labelIds);
+                  }
+                }
+              });
+    }
+  }
+
   /**
    * Remove the labels related by node instance
    *

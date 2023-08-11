@@ -22,8 +22,8 @@ import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineConnModeLabel,
   EngineTypeLabel,
-  UserCreatorLabel,
-  YarnClusterModeLabel
+  EngingeConnRuntimeModeLabel,
+  UserCreatorLabel
 }
 import org.apache.linkis.manager.label.entity.entrance.{
   BindEngineLabel,
@@ -81,8 +81,8 @@ object LabelUtil {
     getLabelFromList[CodeLanguageLabel](labels)
   }
 
-  def getYarnClusterModeLabel(labels: util.List[Label[_]]): YarnClusterModeLabel = {
-    getLabelFromList[YarnClusterModeLabel](labels)
+  def getEngingeConnRuntimeModeLabel(labels: util.List[Label[_]]): EngingeConnRuntimeModeLabel = {
+    getLabelFromList[EngingeConnRuntimeModeLabel](labels)
   }
 
   def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel = {

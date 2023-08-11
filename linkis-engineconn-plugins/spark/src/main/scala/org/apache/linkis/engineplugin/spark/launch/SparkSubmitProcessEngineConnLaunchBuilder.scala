@@ -66,7 +66,11 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val executorMemory = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_MEMORY)
     val numExecutors = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_INSTANCES)
 
-    var files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
+    var files: ArrayBuffer[String] = getValueAndRemove(properties, "files", "")
+      .split(",")
+      .filter(isNotBlankPath)
+      .toBuffer
+      .asInstanceOf[ArrayBuffer[String]]
     val jars = new ArrayBuffer[String]()
     jars ++= getValueAndRemove(properties, "jars", "").split(",").filter(isNotBlankPath)
     jars ++= getValueAndRemove(properties, SPARK_DEFAULT_EXTERNAL_JARS_PATH)

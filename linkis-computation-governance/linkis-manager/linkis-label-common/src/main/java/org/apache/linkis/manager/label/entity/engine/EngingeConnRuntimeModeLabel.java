@@ -29,25 +29,26 @@ import java.util.HashMap;
 import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.CHECK_LABEL_VALUE_EMPTY;
 import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.LABEL_ERROR_CODE;
 
-public class YarnClusterModeLabel extends GenericLabel implements EngineNodeLabel, UserModifiable {
+public class EngingeConnRuntimeModeLabel extends GenericLabel
+    implements EngineNodeLabel, UserModifiable {
 
-  public YarnClusterModeLabel() {
-    setLabelKey(LabelKeyConstant.YARN_CLUSTER_MODE_KEY);
+  public EngingeConnRuntimeModeLabel() {
+    setLabelKey(LabelKeyConstant.ENGINGE_CONN_RUNTIME_MODE_KEY);
   }
 
   @ValueSerialNum(0)
-  public void setApplicationId(String applicationId) {
+  public void setModeValue(String modeValue) {
     if (getValue() == null) {
       setValue(new HashMap<>());
     }
-    getValue().put("applicationId", applicationId);
+    getValue().put("modeValue", modeValue);
   }
 
-  public String getApplicationId() {
+  public String getModeValue() {
     if (getValue() == null) {
       return null;
     }
-    return getValue().get("applicationId");
+    return getValue().get("modeValue");
   }
 
   @Override

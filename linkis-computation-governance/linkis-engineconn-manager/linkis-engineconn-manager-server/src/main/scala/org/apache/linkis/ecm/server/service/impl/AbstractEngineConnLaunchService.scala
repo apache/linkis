@@ -38,7 +38,8 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineStopRequest
 }
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
-import org.apache.linkis.manager.label.entity.engine.YarnClusterModeLabel
+import org.apache.linkis.manager.label.constant.LabelValueConstant
+import org.apache.linkis.manager.label.entity.engine.EngingeConnRuntimeModeLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
@@ -157,7 +158,9 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
     engineNode.setOwner(request.user)
     if (StringUtils.isNotBlank(deployMode) && deployMode.equals("cluster")) {
       engineNode.setMark(AMConstant.CLUSTER_PROCESS_MARK)
-      engineNode.getLabels.add(new YarnClusterModeLabel())
+      val engingeConnRuntimeModeLabel = new EngingeConnRuntimeModeLabel()
+      engingeConnRuntimeModeLabel.setModeValue(LabelValueConstant.YARN_CLUSTER_VALUE)
+      engineNode.getLabels.add(engingeConnRuntimeModeLabel)
     } else {
       engineNode.setMark(AMConstant.PROCESS_MARK)
     }

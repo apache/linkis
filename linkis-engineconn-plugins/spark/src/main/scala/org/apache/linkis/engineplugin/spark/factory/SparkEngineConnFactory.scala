@@ -39,8 +39,10 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
+import org.apache.linkis.manager.label.constant.LabelValueConstant
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.server.JMap
 
 import org.apache.commons.lang3.StringUtils
@@ -145,18 +147,17 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     logger.info(s"------ Create new SparkContext {$master} -------")
 
-    // Set deploy-mode with the optional values `cluster`and `client`, the default value `client`
-    val deployMode: String = SPARK_DEPLOY_MODE.getValue(options)
-    if (
-        StringUtils
-          .isNotBlank(deployMode) && (deployMode
-          .equals(SPARK_YARN_CLUSTER) || deployMode.equals(SPARK_YARN_CLIENT))
-    ) {
-      sparkConf.set("spark.submit.deployMode", deployMode)
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(engineCreationContext.getLabels())
+    val isYarnClusterMode: Boolean =
+      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
+      else false
+
+    if (isYarnClusterMode) {
+      sparkConf.set("spark.submit.deployMode", "cluster")
     }
 
     // todo yarn cluster暂时不支持pyspark,后期对pyspark进行处理
-    if (StringUtils.isNotBlank(deployMode) && deployMode.equals(SPARK_YARN_CLIENT)) {
+    if (!isYarnClusterMode) {
       val pysparkBasePath = SparkConfiguration.SPARK_HOME.getValue
       val pysparkPath = new File(pysparkBasePath, "python" + File.separator + "lib")
       var pythonLibUris = pysparkPath.listFiles().map(_.toURI.toString).filter(_.endsWith(".zip"))

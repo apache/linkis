@@ -67,6 +67,7 @@ public class DefaultEngineConnPidCallbackService extends AbstractEngineService
     if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
       ServiceInstance serviceInstance = protocol.serviceInstance();
       engineNode.setServiceInstance(serviceInstance);
+      getEngineNodeManager().updateEngineNode(serviceInstance, engineNode);
       nodeLabelService.labelsFromInstanceToNewInstance(
           engineNode.getServiceInstance(), serviceInstance);
     }

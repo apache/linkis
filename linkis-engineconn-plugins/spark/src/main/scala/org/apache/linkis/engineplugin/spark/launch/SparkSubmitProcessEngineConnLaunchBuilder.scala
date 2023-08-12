@@ -18,7 +18,6 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
@@ -39,7 +38,9 @@ import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment._
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder
+import org.apache.linkis.manager.label.constant.LabelValueConstant
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.UserWithCreator
 
 import org.apache.commons.lang3.StringUtils
@@ -66,7 +67,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val executorMemory = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_MEMORY)
     val numExecutors = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_INSTANCES)
 
-    var files: ArrayBuffer[String] = getValueAndRemove(properties, "files", "")
+    val files: ArrayBuffer[String] = getValueAndRemove(properties, "files", "")
       .split(",")
       .filter(isNotBlankPath)
       .toBuffer
@@ -124,13 +125,14 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       memory
     }
 
-    //    val deployMode: String = getValueAndRemove(properties, SPARK_DEPLOY_MODE)
     val deployMode: String = SPARK_DEPLOY_MODE.getValue(properties)
 
-    val isYarnCluster: Boolean =
-      if (deployMode.equals(SparkConfiguration.SPARK_YARN_CLUSTER)) true else false
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(engineConnBuildRequest.labels)
+    val isYarnClusterMode: Boolean =
+      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
+      else false
 
-    if (isYarnCluster) {
+    if (isYarnClusterMode) {
       files ++= Array(s"${variable(PWD)}/conf/linkis-engineconn.properties")
 
       var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)
@@ -170,8 +172,9 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     addOpt("--num-executors", numExecutors.toString)
     addOpt("--queue", queue)
 
-    getConf(engineConnBuildRequest, gcLogDir, logDir, isYarnCluster).foreach { case (key, value) =>
-      addOpt("--conf", s"""$key="$value"""")
+    getConf(engineConnBuildRequest, gcLogDir, logDir, isYarnClusterMode).foreach {
+      case (key, value) =>
+        addOpt("--conf", s"""$key="$value"""")
     }
 
     addOpt("--class", className)
@@ -186,7 +189,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       engineConnBuildRequest: EngineConnBuildRequest,
       gcLogDir: String,
       logDir: String,
-      isYarnCluster: Boolean
+      isYarnClusterMode: Boolean
   ): ArrayBuffer[(String, String)] = {
     val driverJavaSet = new StringBuilder(" -server")
     if (StringUtils.isNotEmpty(EnvConfiguration.ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue)) {
@@ -202,7 +205,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       .foreach(l => {
         driverJavaSet.append(" ").append(l)
       })
-    if (isYarnCluster) {
+    if (isYarnClusterMode) {
       driverJavaSet.append(" -Djava.io.tmpdir=/tmp")
     } else {
       driverJavaSet.append(" -Djava.io.tmpdir=" + variable(TEMP_DIRS))

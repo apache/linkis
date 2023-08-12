@@ -21,5 +21,5 @@ public class LabelValueConstant {
 
   public static final String OFFLINE_VALUE = "offline";
 
-  public static final String YARN_CLUSTER_VALUE = "yarn-cluster";
+  public static final String YARN_CLUSTER_VALUE = "yarnCluster";
 }

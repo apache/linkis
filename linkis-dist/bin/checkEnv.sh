@@ -35,6 +35,19 @@ function checkPythonAndJava(){
     isSuccess "execute cmd: java --version"
 }
 
+#check Mysql Server#check Mysql Server Status by zwk
+function checkMysqlService(){
+    mysql -h${MYSQL_HOST} -P${MYSQL_PORT}  -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "select version();" > /dev/null 2>&1
+    isSuccess "execute cmd: mysql -h -p "
+}
+
+#check Hive Server Status by zwk
+function checkHiveService(){
+    echo "ByPass process"
+    #beeline -u jdbc:mysql://172.16.16.10:3306 -nhivemeta -pLinkishivemeta@123 > /dev/null 2>&1
+    #beeline -u jdbc:mysql://172.16.16.10:3306/hivemeta -nhivemeta -pLinkishivemeta@123 > /dev/null 2>&1
+    #isSuccess "execute cmd: beeline jdbc:mysql"
+}
 function checkHdfs(){
     hadoopVersion="`hdfs version`"
     defaultHadoopVersion="3.3"
@@ -110,7 +123,15 @@ echo "check lsof"
 need_cmd lsof
 echo "<-----end to check used cmd---->"
 
+echo "<-----check Python and Java---->"
 checkPythonAndJava
+
+
+echo "<-----check MySQL Services----->"
+checkMysqlService
+
+echo "<-----check HIVE Services----->"
+checkHiveService
 
 SERVER_PORT=$EUREKA_PORT
 check_service_port

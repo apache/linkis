@@ -18,6 +18,7 @@
 package org.apache.linkis.engineplugin.spark.launch
 
 import org.apache.linkis.common.conf.CommonVars
+import org.apache.linkis.engineplugin.spark.config.SparkConfiguration
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
@@ -125,7 +126,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       memory
     }
 
-    val deployMode: String = SPARK_DEPLOY_MODE.getValue(properties)
+    var deployMode: String = SparkConfiguration.SPARK_YARN_CLIENT
 
     val label = LabelUtil.getEngingeConnRuntimeModeLabel(engineConnBuildRequest.labels)
     val isYarnClusterMode: Boolean =
@@ -133,6 +134,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
       else false
 
     if (isYarnClusterMode) {
+      deployMode = SparkConfiguration.SPARK_YARN_CLUSTER
       files ++= Array(s"${variable(PWD)}/conf/linkis-engineconn.properties")
 
       var clusterJars: String = getValueAndRemove(properties, SPARK_YARN_CLUSTER_JARS)

@@ -147,8 +147,6 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       throw t
     }
     LoggerUtils.removeJobIdMDC()
-    val deployMode: String =
-      request.creationDesc.properties.getOrDefault("spark.submit.deployMode", "client")
 
     val label = LabelUtil.getEngingeConnRuntimeModeLabel(request.labels)
     val isYarnClusterMode: Boolean =

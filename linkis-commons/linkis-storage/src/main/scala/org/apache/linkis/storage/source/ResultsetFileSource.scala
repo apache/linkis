@@ -35,7 +35,13 @@ class ResultsetFileSource(fileSplits: Array[FileSplit]) extends AbstractFileSour
               } else {
                 nullValue
               }
-            case "" => getParams.getOrDefault("nullValue", "")
+            case "" =>
+              val nullValue = getParams.getOrDefault("nullValue", "")
+              if (nullValue.equals(Dolphin.LINKIS_NULL)) {
+                ""
+              } else {
+                nullValue
+              }
             case value: Double => StorageUtils.doubleToString(value)
             case _ => rvalue
           }

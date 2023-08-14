@@ -105,6 +105,8 @@ public interface NodeManagerPersistence {
    */
   EngineNode getEngineNode(ServiceInstance serviceInstance);
 
+  EngineNode getEngineNodeByTicketId(String ticketId);
+
   /**
    * 通过Em的ServiceInstance 获取EM下面Engine的列表
    *

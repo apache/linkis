@@ -49,6 +49,8 @@ public interface NodeManagerMapper {
 
   PersistenceNode getNodeInstance(@Param("instance") String instance);
 
+  PersistenceNode getNodeInstanceByTicketId(@Param("ticketId") String ticketId);
+
   PersistenceNode getNodeInstanceById(@Param("id") int id);
 
   PersistenceNode getEMNodeInstanceByEngineNode(@Param("instance") String instance);

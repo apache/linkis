@@ -22,6 +22,7 @@ import org.apache.linkis.manager.label.entity.engine.{
   CodeLanguageLabel,
   EngineConnModeLabel,
   EngineTypeLabel,
+  EngingeConnRuntimeModeLabel,
   UserCreatorLabel
 }
 import org.apache.linkis.manager.label.entity.entrance.{
@@ -78,6 +79,10 @@ object LabelUtil {
 
   def getCodeTypeLabel(labels: util.List[Label[_]]): CodeLanguageLabel = {
     getLabelFromList[CodeLanguageLabel](labels)
+  }
+
+  def getEngingeConnRuntimeModeLabel(labels: util.List[Label[_]]): EngingeConnRuntimeModeLabel = {
+    getLabelFromList[EngingeConnRuntimeModeLabel](labels)
   }
 
   def getEngineConnModeLabel(labels: util.List[Label[_]]): EngineConnModeLabel = {

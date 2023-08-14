@@ -229,4 +229,26 @@
             #{id}
         </foreach>
     </update>
+    <select id="selectFailoverJobHistory" resultMap="jobHistoryMap" >
+        SELECT a.* FROM linkis_ps_job_history_group_history a
+        where (
+            a.instances = ''
+            or a.instances is null
+            or a.instances not in <foreach collection="instancesMap.keys" open="(" separator="," close=")" item="key">#{key}</foreach>
+            or EXISTS (
+                select 1 from
+                (
+                    <foreach collection="instancesMap.entrySet()" separator="union all" index="key" item="val">
+                        select #{key} as instances, #{val} as registryTime
+                    </foreach>
+                ) b
+                where a.instances = b.instances and a.created_time <![CDATA[<]]> FROM_UNIXTIME(b.registryTime/1000)
+            )
+        )
+        and
+        status in <foreach collection="statusList" open="(" separator="," close=")" item="status">#{status}</foreach>
+        <if test="startTimestamp != null and startTimestamp > 0">and a.created_time >= FROM_UNIXTIME(#{startTimestamp}/1000)</if>
+        <if test="limit != null and limit > 0">limit #{limit}</if>
+
+    </select>
 </mapper>

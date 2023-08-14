@@ -108,7 +108,8 @@ public class DefaultEntranceServer extends EntranceServer {
       if (null != allUndoneTask) {
         for (EntranceJob job : allUndoneTask) {
           job.onFailure(
-              "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)", null);
+              "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)",
+              null);
           IOUtils.closeQuietly(((EntranceExecutionJob) job).getLogWriter().get());
         }
       }

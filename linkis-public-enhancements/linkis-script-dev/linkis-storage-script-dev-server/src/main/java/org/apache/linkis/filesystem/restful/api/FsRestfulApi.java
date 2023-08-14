@@ -585,7 +585,9 @@ public class FsRestfulApi {
         nullValue = "";
       }
       if (FileSource$.MODULE$.isResultSet(fsPath.getPath())) {
-        fileSource.addParams("nullValue", nullValue);
+        if (!StringUtils.isEmpty(nullValue)) {
+          fileSource.addParams("nullValue", nullValue);
+        }
         fileSource = fileSource.page(page, pageSize);
       }
       Pair<Object, ArrayList<String[]>> result = fileSource.collect()[0];

@@ -275,6 +275,28 @@ public class DefaultNodeManagerPersistence implements NodeManagerPersistence {
   }
 
   @Override
+  public EngineNode getEngineNodeByTicketId(String ticketId) {
+    AMEngineNode amEngineNode = new AMEngineNode();
+    PersistenceNode engineNode = nodeManagerMapper.getNodeInstanceByTicketId(ticketId);
+
+    if (null == engineNode) {
+      return null;
+    }
+
+    ServiceInstance serviceInstance = new ServiceInstance();
+    serviceInstance.setInstance(engineNode.getInstance());
+    serviceInstance.setApplicationName(engineNode.getName());
+    amEngineNode.setServiceInstance(serviceInstance);
+
+    amEngineNode.setOwner(engineNode.getOwner());
+    amEngineNode.setMark(engineNode.getMark());
+    amEngineNode.setIdentifier(engineNode.getIdentifier());
+    amEngineNode.setTicketId(engineNode.getTicketId());
+    amEngineNode.setStartTime(engineNode.getCreateTime());
+    return amEngineNode;
+  }
+
+  @Override
   public List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance) {
     // serviceinstance for a given EM(给定EM的 serviceinstance)
     PersistenceNode emNode = nodeManagerMapper.getNodeInstance(serviceInstance.getInstance());

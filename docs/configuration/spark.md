@@ -3,6 +3,7 @@
 
 | Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
+|spark|linkis.spark.yarn.cluster.jars|hdfs:///spark/cluster|spark.yarn.cluster.jars|
 |spark|linkis.spark.etl.support.hudi|false|spark.etl.support.hudi|
 |spark|linkis.bgservice.store.prefix|hdfs:///tmp/bdp-ide/|bgservice.store.prefix|
 |spark|linkis.bgservice.store.suffix|  |bgservice.store.suffix|
@@ -27,6 +28,8 @@
 |spark|wds.linkis.spark.engineconn.fatal.log|error writing class;OutOfMemoryError|spark.engineconn.fatal.log|
 |spark|wds.linkis.spark.engine.scala.replace_package_header.enable| true |spark.engine.scala.replace_package_header.enable|
 
+Use spark yarn cluster mode,need to set label "engingeConnRuntimeMode": "yarnCluster",and need to upload the dependence of the spark to 'linkis.spark.yarn.cluster.jar'(the default value is 'hdfs:///spark/cluster')
+spark dependencies include jars and configuration files，For example: '/appcom/Install/linkis/lib/linkis-engineconn-plugins/spark/dist/3.2.1/lib/*.jar','/appcom/Install/linkis/conf/*''
 
 The spark-excel package may cause class conflicts,need to download separately,put it in spark lib
 wget https://repo1.maven.org/maven2/com/crealytics/spark-excel-2.12.17-3.2.2_2.12/3.2.2_0.18.1/spark-excel-2.12.17-3.2.2_2.12-3.2.2_0.18.1.jar

@@ -29,6 +29,8 @@ public class AMConstant {
 
   public static final String PROCESS_MARK = "process";
 
+  public static final String CLUSTER_PROCESS_MARK = "cluster_process";
+
   public static final String THREAD_MARK = "thread";
 
   public static final String START_REASON = "start_reason";

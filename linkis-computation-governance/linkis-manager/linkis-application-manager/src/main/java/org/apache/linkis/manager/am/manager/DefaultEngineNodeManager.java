@@ -128,6 +128,17 @@ public class DefaultEngineNodeManager implements EngineNodeManager {
   }
 
   @Override
+  public EngineNode getEngineNodeInfoByTicketId(String ticketId) {
+    EngineNode dbEngineNode = nodeManagerPersistence.getEngineNodeByTicketId(ticketId);
+    if (null == dbEngineNode) {
+      throw new LinkisRetryException(AMConstant.ENGINE_ERROR_CODE, ticketId + " not exists in db");
+    }
+    metricsConverter.fillMetricsToNode(
+        dbEngineNode, nodeMetricManagerPersistence.getNodeMetrics(dbEngineNode));
+    return dbEngineNode;
+  }
+
+  @Override
   public void updateEngineStatus(
       ServiceInstance serviceInstance, NodeStatus fromState, NodeStatus toState) {}
 

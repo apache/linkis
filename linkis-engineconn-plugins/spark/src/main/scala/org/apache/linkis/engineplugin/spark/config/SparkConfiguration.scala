@@ -30,6 +30,10 @@ object SparkConfiguration extends Logging {
   val SPARK_HOME_ENV = "SPARK_HOME"
   val SPARK_CONF_DIR_ENV = "SPARK_CONF_DIR"
 
+  val SPARK_YARN_CLIENT = "client"
+
+  val SPARK_YARN_CLUSTER = "cluster"
+
   val PROCESS_MAX_THREADS = CommonVars[Int]("wds.linkis.process.threadpool.max", 100)
 
   val SPARK_SESSION_HOOK = CommonVars[String]("wds.linkis.engine.spark.session.hook", "")
@@ -45,6 +49,9 @@ object SparkConfiguration extends Logging {
   val PROXY_USER = CommonVars[String]("spark.proxy.user", "")
 
   val SPARK_DEPLOY_MODE = CommonVars[String]("spark.submit.deployMode", "client")
+
+  val SPARK_YARN_CLUSTER_JARS =
+    CommonVars[String]("linkis.spark.yarn.cluster.jars", "hdfs:///spark/cluster")
 
   val SPARK_APP_NAME = CommonVars[String]("spark.app.name", "Linkis-EngineConn-Spark")
   val SPARK_APP_RESOURCE = CommonVars[String]("spark.app.resource", "")

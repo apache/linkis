@@ -531,6 +531,9 @@ abstract class EntranceServer extends Logging {
       .createPersistenceEngine()
       .updateIfNeeded(jobRequest)
 
+    // reset `UpdateOrderFlag`
+    jobRequest.setUpdateOrderFlag(true)
+
     logger.info(s"job ${jobRequest.getId} update JobRequest success")
 
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)

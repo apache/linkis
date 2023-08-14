@@ -46,26 +46,28 @@ class EntranceParallelConsumerManager(maxParallelismUsers: Int, schedulerName: S
     Utils.defaultScheduler.scheduleAtFixedRate(
       new Runnable {
         override def run(): Unit = {
-          logger.info("start refresh consumer group maxAllowRunningJobs")
-          // get all entrance server from eureka
-          val serviceInstances =
-            Sender.getInstances(Sender.getThisServiceInstance.getApplicationName)
-          if (null == serviceInstances || serviceInstances.isEmpty) return
+          Utils.tryAndError {
+            logger.info("start refresh consumer group maxAllowRunningJobs")
+            // get all entrance server from eureka
+            val serviceInstances =
+              Sender.getInstances(Sender.getThisServiceInstance.getApplicationName)
+            if (null == serviceInstances || serviceInstances.isEmpty) return
 
-          // get all offline label server
-          val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
-            .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
-          val labels = new util.ArrayList[Label[_]]
-          labels.add(routeLabel)
-          val labelInstances = InstanceLabelClient.getInstance.getInstanceFromLabel(labels)
+            // get all offline label server
+            val routeLabel = LabelBuilderFactoryContext.getLabelBuilderFactory
+              .createLabel[RouteLabel](LabelKeyConstant.ROUTE_KEY, LabelValueConstant.OFFLINE_VALUE)
+            val labels = new util.ArrayList[Label[_]]
+            labels.add(routeLabel)
+            val labelInstances = InstanceLabelClient.getInstance.getInstanceFromLabel(labels)
 
-          // get active entrance server
-          val allInstances = new util.ArrayList[ServiceInstance]()
-          allInstances.addAll(serviceInstances.toList.asJava)
-          allInstances.removeAll(labelInstances)
-          // refresh all group maxAllowRunningJobs
-          refreshAllGroupMaxAllowRunningJobs(allInstances.size())
-          logger.info("Finished to refresh consumer group maxAllowRunningJobs")
+            // get active entrance server
+            val allInstances = new util.ArrayList[ServiceInstance]()
+            allInstances.addAll(serviceInstances.toList.asJava)
+            allInstances.removeAll(labelInstances)
+            // refresh all group maxAllowRunningJobs
+            refreshAllGroupMaxAllowRunningJobs(allInstances.size())
+            logger.info("Finished to refresh consumer group maxAllowRunningJobs")
+          }
         }
       },
       EntranceConfiguration.ENTRANCE_GROUP_SCAN_INIT_TIME.getValue,

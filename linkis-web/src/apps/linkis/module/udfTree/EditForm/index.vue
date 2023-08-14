@@ -21,13 +21,14 @@
       :rule="rule"
       v-model="formModel"
       :option="options"
+      :value.sync="formData"
+      ref="formRef"
     />
   </div>
 </template>
 
 <script>
 import {getAll} from "../service";
-
 export default {
   props: {
     mode: String,
@@ -40,6 +41,8 @@ export default {
       options: {
         submitBtn: false,
       },
+      avoidMultiTime: new Date().getTime(),
+      formRef: null,
       rule: [
         {
           type: 'hidden',
@@ -75,6 +78,11 @@ export default {
               )} `+this.$t('message.linkis.basedataManagement.udfTree.name'),
               trigger: 'blur',
             },
+            {
+              max: 100,
+              message: this.$t('message.linkis.basedataManagement.categoryMaxLength'),
+              trigger: 'change',
+            },
           ],
         },
         {
@@ -101,6 +109,9 @@ export default {
               trigger: 'blur',
             },
           ],
+          on: {
+            'on-change': this.handleChange
+          }
         },
         {
           type: 'input',
@@ -119,6 +130,9 @@ export default {
               trigger: 'blur',
             },
           ],
+          on: {
+            'on-change': this.handleChange
+          }
         },
         {
           type: 'input',
@@ -139,15 +153,21 @@ export default {
           ],
         },
         {
-          type: 'select',
+          type: 'tree',
           title: this.$t('message.linkis.basedataManagement.udfTree.parent'),
           field: 'parent',
           info: this.$t('message.linkis.basedataManagement.udfTree.parentInfo'),
           value: "",
           props: {
             placeholder: "",
+            data: [],
           },
-          options: [],
+          nativeEmit: ['click'],
+          on: {
+            'on-select-change': (val) => {
+              this.formData.parent = val[0].id;
+            }
+          },
           validate: [
             {
               required: true,
@@ -162,14 +182,81 @@ export default {
       ]
     }
   },
-  created() {
-    getAll().then(res=>{
-      let list = res.list.map(m=>{
-        return {label: m.name,value: m.id}
-      });
-      list = [{label: "Root",value: -1},...list]
-      this.rule[this.rule.length-1].options = list
-    })
+  methods: {
+    async handleFetch(category, userName) {
+      if(!category || !userName) {
+        this.rule[this.rule.length-1].props.data = [];
+        return;
+      }
+      try {
+        await getAll({ category, searchName: userName }).then(res=>{
+          let list = res.list;
+          this.formatTree(list, this.rule[this.rule.length - 1].value)
+          this.rule[this.rule.length-1].props.data = list;
+        })
+      } catch(err) {
+        // console.warn(err);
+      }
+      
+    },
+    async handleChange() {
+      this.rule[this.rule.length-1].value = '';
+      this.rule[this.rule.length-1].props.data = [];
+      if(this.rule[3].value && this.rule[2].value) {
+        await this.handleFetch(this.rule[2].value, this.rule[3].value)
+      }
+    },
+    async parentClick () {
+      const { category, userName } = this.$refs.formRef.value
+      if(!category || !userName) {
+        if(new Date().getTime() - this.avoidMultiTime > 3000) {
+          this.$Message.warning(this.$t('message.linkis.needPre'))
+          this.avoidMultiTime = new Date().getTime()
+        } 
+      }
+    },
+    formatTree (tree, curId) {
+      let expand = false;
+      tree.forEach((item) => {
+        
+        item.title = item.name;
+        item.children = item.childrenList
+        if(item.children && item.children.length > 0) {
+          item.expand = this.formatTree(item.children, curId)
+          if(item.expand) {
+            expand = item.expand
+          }
+          
+        }
+        if(curId === item.id) {
+          item.selected = true;
+          expand = true;
+        }
+      })
+      return expand
+    }
   },
+  mounted() {
+    this.formModel.on('native-parent-click', this.parentClick)
+  },
+  watch: {
+    data: {
+      handler(newVal) {
+        this.handleFetch(newVal.category, newVal.userName)
+      },
+      deep: true,
+      immediate: true
+    },
+  }
 }
 </script>
+<style lang="scss" scoped>
+
+/deep/ .ivu-tree {
+  .ivu-tree-children {
+    li {
+      margin: 0px
+    }
+  }
+}
+</style>

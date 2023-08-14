@@ -83,7 +83,8 @@
         <Button type="text" size="large" @click="onModalCancel()">{{$t('message.linkis.basedataManagement.modal.cancel')}}</Button>
         <Button type="primary" size="large" @click="onModalOk('userConfirm')">{{$t('message.linkis.basedataManagement.modal.confirm')}}</Button>
       </div>
-      <ErrorCodeForm ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
+      <ErrorCodeForm 
+        v-if="modalShow" ref="errorCodeForm" :data="modalEditData"></ErrorCodeForm>
     </Modal>
   </div>
 </template>
@@ -91,7 +92,7 @@
 import mixin from '@/common/service/mixin';
 import ErrorCodeForm from './EditForm/index'
 import {add, del, edit, getList} from "./service";
-import {formatDate} from "iview/src/components/date-picker/util";
+// import {formatDate} from "iview/src/components/date-picker/util";
 export default {
   mixins: [mixin],
   components: {ErrorCodeForm},
@@ -151,7 +152,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.createTime),'yyyy-MM-dd hh:mm:ss')
+              new Date(params.row.createTime).toLocaleString()
             )
           }
         },
@@ -163,7 +164,7 @@ export default {
           align: 'center',
           render: (h,params)=>{
             return h('div',
-              formatDate(new Date(params.row.updateTime),'yyyy-MM-dd hh:mm:ss')
+              new Date(params.row.updateTime).toLocaleString()
             )
           }
         },
@@ -210,22 +211,30 @@ export default {
       this.page.pageNow = value
       this.load()
     },
-    onAdd(){
-      this.$refs.errorCodeForm.formModel.resetFields()
-      this.modalAddMode = 'add'
+    async onAdd(){
+      
+      this.modalEditData = {}
       this.modalShow = true
+      await this.$nextTick()
+      this.$refs.errorCodeForm.formModel.resetFields()
+      this.$refs.errorCodeForm.formModel.setValue({})
+      this.modalAddMode = 'add'
     },
-    onTableEdit(row){
+    async onTableEdit(row){
+      
+      this.modalEditData = row
+      this.modalShow = true
+      await this.$nextTick()
+      this.$refs.errorCodeForm.formModel.resetFields()
       this.$refs.errorCodeForm.formModel.setValue(row)
       this.modalAddMode = 'edit'
-      this.modalShow = true
     },
     onTableDelete(row){
 
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete'),
-        onOk: ()=>{
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.name}),
+        onOk: async ()=>{
           let params = {
             id: row.id
           }
@@ -235,6 +244,7 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
@@ -242,22 +252,22 @@ export default {
               })
             }
           })
-          this.load()
         }
       })
 
     },
     onModalOk(){
-      this.$refs.errorCodeForm.formModel.submit((formData)=>{
+      this.$refs.errorCodeForm.formModel.submit(async (formData)=>{
         this.modalLoading = true
         if(this.modalAddMode=='add') {
-          add(formData).then((data)=>{
+          await add(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load();
             }else{
               this.$Message.success({
                 duration: 3,
@@ -266,7 +276,7 @@ export default {
             }
           })
         }else {
-          edit(formData).then((data)=>{
+          await edit(formData).then((data)=>{
             window.console.log(data)
             if(data.result) {
               this.$Message.success({

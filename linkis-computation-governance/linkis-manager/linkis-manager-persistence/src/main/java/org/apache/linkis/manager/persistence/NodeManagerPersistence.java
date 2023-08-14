@@ -44,7 +44,7 @@ public interface NodeManagerPersistence {
    * @param node
    * @throws PersistenceErrorException
    */
-  void removeNodeInstance(Node node) throws PersistenceErrorException;
+  void removeNodeInstance(Node node);
 
   /**
    * 根据 owner 获取node列表
@@ -53,7 +53,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<Node> getNodes(String owner) throws PersistenceErrorException;
+  List<Node> getNodes(String owner);
 
   /**
    * 获取所有node列表
@@ -61,7 +61,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<Node> getAllNodes() throws PersistenceErrorException;
+  List<Node> getAllNodes();
 
   /**
    * 更新node信息
@@ -69,7 +69,7 @@ public interface NodeManagerPersistence {
    * @param node
    * @throws PersistenceErrorException
    */
-  void updateNodeInstance(Node node) throws PersistenceErrorException;
+  void updateNodeInstance(Node node);
 
   /**
    * 根据 servericeinstance 获取 Node
@@ -78,7 +78,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  Node getNode(ServiceInstance serviceInstance) throws PersistenceErrorException;
+  Node getNode(ServiceInstance serviceInstance);
 
   /**
    * 1. 插入Engine 2. 插入Engine和EM关系
@@ -94,7 +94,7 @@ public interface NodeManagerPersistence {
    * @param engineNode
    * @throws PersistenceErrorException
    */
-  void deleteEngineNode(EngineNode engineNode) throws PersistenceErrorException;
+  void deleteEngineNode(EngineNode engineNode);
 
   /**
    * 1. 通过Engine的ServiceInstance，获取Engine的信息和EM信息
@@ -103,7 +103,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  EngineNode getEngineNode(ServiceInstance serviceInstance) throws PersistenceErrorException;
+  EngineNode getEngineNode(ServiceInstance serviceInstance);
 
   /**
    * 通过Em的ServiceInstance 获取EM下面Engine的列表
@@ -112,8 +112,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance)
-      throws PersistenceErrorException;
+  List<EngineNode> getEngineNodeByEM(ServiceInstance serviceInstance);
 
   /**
    * Get the information of the Engine and EM information through the ServiceInstance of the Engine
@@ -123,8 +122,7 @@ public interface NodeManagerPersistence {
    * @return
    * @throws PersistenceErrorException
    */
-  List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstances)
-      throws PersistenceErrorException;
+  List<EngineNode> getEngineNodeByServiceInstance(List<ServiceInstance> serviceInstances);
 
   /**
    * Get the node list according to ownerList

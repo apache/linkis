@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.linkis.bml.dao.VersionDao">
+
+    <resultMap id="Version" type="org.apache.linkis.bml.entity.Version">
+        <result property="version" column="version"/>
+        <result property="resource" column="resource"/>
+    </resultMap>
+
+    <resultMap id="ResourceVersion" type="org.apache.linkis.bml.entity.ResourceVersion">
+        <id property="id" column="id"/>
+        <result property="resourceId" column="resource_id"/>
+        <result property="user" column="owner"/>
+        <result property="system" column="sys"/>
+        <result property="version" column="version"/>
+        <result property="resource" column="resource"/>
+        <result property="fileMd5" column="file_md5"/>
+        <result property="clientIp" column="client_ip"/>
+        <result property="updator" column="updator"/>
+        <result property="enableFlag" column="enable_flag"/>
+    </resultMap>
+
+    <select id="getVersion" resultMap="Version">
+        select version, resource from linkis_ps_bml_resources_version
+        where resource_id = #{resourceId} and version = #{version} and enable_flag = '1'
+    </select>
+
+
+    <select id="getResourcesVersions" resultMap="ResourceVersion" parameterType="java.util.Map">
+        select r.sys, r.owner, rv.resource_id, rv.version, rv.resource from linkis_ps_bml_resources_version rv
+        INNER JOIN linkis_ps_bml_resources r ON rv.resource_id = r.resource_id
+        <where>
+            rv.enable_flag = '1' and r.enable_flag = '1'
+            <if test="system != null and system != '' ">
+                and r.sys = #{system}
+            </if>
+            <if test="user != null and user != '' ">
+                and r.owner = #{user}
+            </if>
+            <if test="resourceIds != null">
+                AND rv.resource_id IN
+                <foreach collection="resourceIds" item="resourceId" index="index" separator="," open="("
+                         close=")">
+                    #{resourceId}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="deleteVersion">
+        UPDATE linkis_ps_bml_resources_version SET
+        enable_flag = '0'
+        WHERE resource_id = #{resourceId} AND version = #{version}
+    </update>
+
+    <update id="deleteVersions">
+        UPDATE linkis_ps_bml_resources_version SET
+        enable_flag = '0'
+        WHERE resource_id = #{resourceId}
+    </update>
+
+    <update id="bathDeleteVersions">
+        UPDATE linkis_ps_bml_resources_version SET
+        enable_flag = '0'
+        <where>
+            <if test="resourceIds != null">
+                AND resource_id IN
+                <foreach collection="resourceIds" item="resourceId" index="index" separator="," open="("
+                         close=")">
+                    #{resourceId}
+                </foreach>
+            </if>
+            <if test="versions != null">
+                AND version IN
+                <foreach collection="versions" item="version" index="index" separator="," open="("
+                         close=")">
+                    #{version}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+
+    <sql id="resource_version_columns">
+        "resource_id","file_md5","version","size","start_byte", "end_byte","resource","description",
+        "start_time","end_time","client_ip","updator","enable_flag"
+    </sql>
+
+
+    <insert id="insertNewVersion" useGeneratedKeys="true" keyProperty="id" keyColumn="id"
+            parameterType="org.apache.linkis.bml.entity.ResourceVersion">
+        INSERT INTO linkis_ps_bml_resources_version(<include refid="resource_version_columns"/>)
+        VALUES (#{resourceId}, #{fileMd5}, #{version}, #{size}, #{startByte}, #{endByte}, #{resource}, #{description},
+        #{startTime}, #{endTime}, #{clientIp}, #{updator}, #{enableFlag})
+    </insert>
+
+    <select id="getResourcePath" parameterType="java.lang.String" resultType="java.lang.String">
+        select resource
+        from linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId} limit 1
+    </select>
+
+    <select id="getNewestVersion" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT max(version)
+        FROM linkis_ps_bml_resources_version
+        WHERE resource_id = #{resourceId} AND enable_flag = '1'
+    </select>
+    <select id="getStartByteForResource" parameterType="java.lang.String" resultType="java.lang.Long">
+        select start_byte from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}
+    </select>
+    <select id="getEndByte" parameterType="java.lang.String" resultType="java.lang.Long">
+        select end_byte from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}
+    </select>
+    <select id="findResourceVersion" parameterType="java.lang.String" resultType="org.apache.linkis.bml.entity.ResourceVersion">
+        select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and version = #{version} and enable_flag = '1'
+    </select>
+
+    <select id="getVersions" parameterType="java.lang.String" resultMap="Version">
+        select "version","resource" from linkis_ps_bml_resources_version where "resource_id" = #{resourceId}
+    </select>
+
+
+    <select id="selectVersionByPage" parameterType="java.lang.String" resultMap="Version">
+        select "version","resource" from linkis_ps_bml_resources_version
+        where  "resource_id" = #{resourceId}
+        order by start_time desc,version desc
+    </select>
+
+
+    <select id="getAllResourcesViaSystem" parameterType="java.lang.String" resultMap="ResourceVersion">
+        select * from linkis_ps_bml_resources_version
+        where "resource_id" in (select "resource_id" from linkis_ps_bml_resources where "sys"=#{system} and "owner"=#{user})
+        order by start_time desc , version desc
+    </select>
+
+    <select id="selectResourcesViaSystemByPage" parameterType="java.lang.String" resultMap="ResourceVersion">
+        select * from linkis_ps_bml_resources_version
+        where "resource_id" in (select "resource_id" from linkis_ps_bml_resources where "sys"=#{system} and "owner"=#{user})
+        order by start_time desc , version desc
+    </select>
+    <select id="checkVersion" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT case when(select exists(select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and version=#{version} and enable_flag = '1')) then 1 else 0 END
+    </select>
+    <select id="selectResourceVersionEnbleFlag" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select case when(select enable_flag from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}) then 1 else 0 END
+    </select>
+
+
+    <update id="batchDeleteResources">
+        update linkis_ps_bml_resources_version
+        set enable_flag = '0'
+        where  enable_flag = '1' and resource_id in
+        <foreach collection="resourceIds" item="resourceId" open="(" separator="," close=")">
+            #{resourceId}
+        </foreach>
+    </update>
+    <update id="deleteResource">
+        update linkis_ps_bml_resources_version set enable_flag = '0' where resource_id = #{resourceId}
+    </update>
+
+
+    <select id="getResourceVersion" resultMap="ResourceVersion">
+        select * from linkis_ps_bml_resources_version where resource_id = #{resourceId} and version = #{version}  and enable_flag = '1'
+    </select>
+
+    <select id="getResourceVersionsByResourceId" resultType="org.apache.linkis.bml.entity.ResourceVersion">
+        select * from linkis_ps_bml_resources_version where resource_id=#{resourceId} and enable_flag = '1'
+    </select>
+
+</mapper>
+

@@ -24,7 +24,7 @@
     <appenders>
         <RollingFile name="RollingFile" append="true" fileName="${LOG_PATH}/${LOG_FILE}.log"
                      filePattern="${LOG_PATH}/$${date:yyyy-MM}/${LOG_FILE}/linkis-log-%d{yyyy-MM-dd-hh}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] - %msg%xEx%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%-40t] %c{1.} (%L) [%M] [JobId-%X{jobId}] - %msg%xEx%n"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="100MB"/>
             </Policies>

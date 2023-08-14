@@ -47,7 +47,6 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
         .setMaster(sparkConfig.getMaster())
         .setDeployMode(sparkConfig.getDeployMode())
         .setAppName(sparkConfig.getAppName())
-        // .setPropertiesFile("")
         .setVerbose(true);
     sparkLauncher.setConf("spark.app.name", sparkConfig.getAppName());
     if (confMap != null) confMap.forEach((k, v) -> sparkLauncher.setConf(k, v));
@@ -75,7 +74,6 @@ public class YarnApplicationClusterDescriptorAdapter extends ClusterDescriptorAd
     Arrays.stream(args.split("\\s+"))
         .filter(StringUtils::isNotBlank)
         .forEach(arg -> sparkLauncher.addAppArgs(arg));
-    // sparkLauncher.addAppArgs(args);
     sparkAppHandle =
         sparkLauncher.startApplication(
             new SparkAppHandle.Listener() {

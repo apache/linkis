@@ -54,6 +54,29 @@ executeCMD $SERVER_IP "$SERVER_STOP_CMD"
 echo "<-------------------------------->"
 }
 
+#ec
+function stopEC(){
+echo "<-------------------------------->"
+echo "Begin to stop EC"
+is_ec_service=`ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2`
+if [ "$is_ec_service" = "" ]; then
+  echo "no ec service runniing."
+else
+  EC_STOP_CMD="ps -ef | grep EngineConnServer | grep -v grep | tr -s ' ' | cut -d ' ' -f 2 | xargs sudo kill"
+  if test -z "$SERVER_IP"
+  then
+    SERVER_IP=$local_host
+  fi
+  executeCMD $SERVER_IP "$EC_STOP_CMD"
+fi
+echo "server ENGINECONNs is stopped"
+echo "<-------------------------------->"
+}
+
+
+#ec
+stopEC
+
 #linkis-mg-gateway
 SERVER_NAME="mg-gateway"
 SERVER_IP=$GATEWAY_INSTALL_IP

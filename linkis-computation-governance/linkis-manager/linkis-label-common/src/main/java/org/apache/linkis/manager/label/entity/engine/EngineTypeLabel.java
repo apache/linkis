@@ -17,17 +17,19 @@
 
 package org.apache.linkis.manager.label.entity.engine;
 
+import org.apache.linkis.common.utils.JsonUtils;
 import org.apache.linkis.manager.label.constant.LabelKeyConstant;
 import org.apache.linkis.manager.label.entity.EMNodeLabel;
 import org.apache.linkis.manager.label.entity.EngineNodeLabel;
 import org.apache.linkis.manager.label.entity.Feature;
 import org.apache.linkis.manager.label.entity.GenericLabel;
 import org.apache.linkis.manager.label.entity.annon.ValueSerialNum;
-import org.apache.linkis.manager.label.utils.LabelUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EMNodeLabel {
 
@@ -79,8 +81,12 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
   @Override
   protected void setStringValue(String stringValue) {
     if (StringUtils.isNotBlank(stringValue)) {
-      HashMap<String, String> valueMap = LabelUtils.Jackson.fromJson(stringValue, HashMap.class);
-      if (valueMap == null) {
+      try {
+        HashMap<String, String> valueMap =
+            JsonUtils.jackson().readValue(stringValue, HashMap.class);
+        setEngineType(valueMap.get("engineType"));
+        setVersion(valueMap.get("version"));
+      } catch (JsonProcessingException e) {
         String version;
         String engineType = stringValue.split("-")[0];
 
@@ -92,9 +98,6 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
 
         setEngineType(engineType);
         setVersion(version);
-      } else {
-        setEngineType(valueMap.get("engineType"));
-        setVersion(valueMap.get("version"));
       }
     } else {
       setEngineType("*");

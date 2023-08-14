@@ -73,7 +73,7 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val archives = getValueAndRemove(properties, "archives", "").split(",").filter(isNotBlankPath)
 
     val queue = if (null != darResource) {
-      darResource.yarnResource.queueName
+      darResource.getYarnResource.getQueueName
     } else {
       "default"
     }

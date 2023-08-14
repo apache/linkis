@@ -344,7 +344,7 @@ class HiveEngineConcurrentConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf[Array[AnyRef]]))
       }
       rows += result.size
       result.clear()
@@ -383,7 +383,11 @@ class HiveEngineConcurrentConnExecutor(
 
     val columns = results.asScala
       .map(result =>
-        Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
+        new Column(
+          result.getName,
+          DataType.toDataType(result.getType.toLowerCase()),
+          result.getComment
+        )
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)

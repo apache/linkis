@@ -31,6 +31,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * When using the h2 library for testing,some methods that do not support function(on conflict) may
+ * report errors, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
+ * conflict）部分方法会报错，pg实体库不会报错
+ */
 class BmlProjectDaoTest extends BaseDaoTest {
 
   private static final Logger logger = LoggerFactory.getLogger(BmlProjectDaoTest.class);

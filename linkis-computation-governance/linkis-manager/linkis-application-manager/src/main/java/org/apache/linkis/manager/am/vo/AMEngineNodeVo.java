@@ -34,7 +34,7 @@ public class AMEngineNodeVo {
 
   private String lock;
 
-  private List<Label> labels;
+  private List<Label<?>> labels;
 
   private String applicationName;
 
@@ -104,11 +104,11 @@ public class AMEngineNodeVo {
     this.lock = lock;
   }
 
-  public List<Label> getLabels() {
+  public List<Label<?>> getLabels() {
     return labels;
   }
 
-  public void setLabels(List<Label> labels) {
+  public void setLabels(List<Label<?>> labels) {
     this.labels = labels;
   }
 

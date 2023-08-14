@@ -24,37 +24,43 @@ class FsPathTest {
 
   @Test
   public void testGetSchemaPath() {
-    FsPath fsPath = new FsPath("hdfs://localhost:9000/tmp/data");
-    String schemaPath = fsPath.getSchemaPath();
-    Assertions.assertEquals(schemaPath, "hdfs://localhost:9000/tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      FsPath fsPath = new FsPath("hdfs://localhost:9000/tmp/data");
+      String schemaPath = fsPath.getSchemaPath();
+      Assertions.assertEquals(schemaPath, "hdfs://localhost:9000/tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
 
-    fsPath = new FsPath("hdfs:///tmp/data");
-    schemaPath = fsPath.getSchemaPath();
-    Assertions.assertEquals(schemaPath, "hdfs:///tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+      fsPath = new FsPath("hdfs:///tmp/data");
+      schemaPath = fsPath.getSchemaPath();
+      Assertions.assertEquals(schemaPath, "hdfs:///tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
 
-    fsPath = new FsPath("oss://linkis/tmp/data");
-    schemaPath = fsPath.getSchemaPath();
-    Assertions.assertEquals(schemaPath, "oss://linkis/tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+      fsPath = new FsPath("oss://linkis/tmp/data");
+      schemaPath = fsPath.getSchemaPath();
+      Assertions.assertEquals(schemaPath, "oss://linkis/tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+    }
   }
 
   @Test
   public void testGetUriString() {
-    FsPath fsPath = new FsPath("hdfs://localhost:9000/tmp/data");
-    String schemaPath = fsPath.getUriString();
-    Assertions.assertEquals(schemaPath, "hdfs://localhost:9000/tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+    // skip os: windows
+    if (!FsPath.WINDOWS) {
+      FsPath fsPath = new FsPath("hdfs://localhost:9000/tmp/data");
+      String schemaPath = fsPath.getUriString();
+      Assertions.assertEquals(schemaPath, "hdfs://localhost:9000/tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
 
-    fsPath = new FsPath("hdfs:///tmp/data");
-    schemaPath = fsPath.getUriString();
-    Assertions.assertEquals(schemaPath, "hdfs:///tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+      fsPath = new FsPath("hdfs:///tmp/data");
+      schemaPath = fsPath.getUriString();
+      Assertions.assertEquals(schemaPath, "hdfs:///tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
 
-    fsPath = new FsPath("oss://linkis/tmp/data");
-    schemaPath = fsPath.getUriString();
-    Assertions.assertEquals(schemaPath, "oss://linkis/tmp/data");
-    Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+      fsPath = new FsPath("oss://linkis/tmp/data");
+      schemaPath = fsPath.getUriString();
+      Assertions.assertEquals(schemaPath, "oss://linkis/tmp/data");
+      Assertions.assertEquals(fsPath.getPath(), "/tmp/data");
+    }
   }
 }

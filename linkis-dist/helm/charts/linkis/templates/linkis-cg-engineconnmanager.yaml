@@ -166,7 +166,7 @@ spec:
             - /bin/bash
             - -ecx
             - >-
-              RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineconnmanager
+              EUREKA_PREFER_IP=true RUN_IN_FOREGROUND=true LINKIS_EXTENDED_LIB={{.Values.linkis.locations.commonDir}}/extendlib {{ .Values.linkis.locations.homeDir }}/sbin/linkis-daemon.sh start cg-engineconnmanager
           ports:
             - name: "http"
               containerPort: {{ .Values.cgEngineConnManager.port }}

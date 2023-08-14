@@ -17,9 +17,10 @@
 
 package org.apache.linkis.manager.am.exception;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 
-public class AMErrorException extends ErrorException {
+public class AMErrorException extends LinkisRuntimeException {
 
   public AMErrorException(int errCode, String desc) {
     super(errCode, desc);
@@ -28,5 +29,10 @@ public class AMErrorException extends ErrorException {
   public AMErrorException(int errCode, String desc, Throwable t) {
     this(errCode, desc);
     this.initCause(t);
+  }
+
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

@@ -67,6 +67,14 @@ public class VariableOperationTest {
   }
 
   @Test
+  public void testJsonArrayFormat() throws VariableOperationFailedException {
+    String jsonOld = "[{\"name\":[\"&{yyyyMMdd%-1d}\"],\"address\":[\"&{yyyyMMdd%-1d}\"]}]";
+    String jsonNew = VariableOperationUtils.replaces(zonedDateTime, jsonOld);
+    System.out.println(jsonOld + "\n" + jsonNew);
+    assertEquals(jsonNew, "[{\"name\":[\"\\\"20220401\\\"\"],\"address\":[\"\\\"20220401\\\"\"]}]");
+  }
+
+  @Test
   public void testTextFormat() throws VariableOperationFailedException {
     String strOld = "abc&{yyyyMMdd%-1d}def";
     String strNew = VariableOperationUtils.replaces(zonedDateTime, strOld);

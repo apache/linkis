@@ -27,12 +27,12 @@ import java.sql.SQLException;
 
 public class CreateConnection {
 
-  private static UJESSQLConnection conn;
+  private static LinkisSQLConnection conn;
 
-  public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
+  public static LinkisSQLConnection getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
     conn =
-        (UJESSQLConnection)
+        (LinkisSQLConnection)
             DriverManager.getConnection("jdbc:linkis://hostname:port", "username", "password");
     return conn;
   }

@@ -26,6 +26,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
@@ -64,12 +65,9 @@ public class SendAppender extends AbstractAppender {
       final Filter filter,
       final Layout<? extends Serializable> layout,
       final boolean ignoreExceptions) {
-    super(name, filter, layout, ignoreExceptions);
+    super(name, filter, layout, ignoreExceptions, Property.EMPTY_ARRAY);
     this.logCache = LogHelper.logCache();
-    // SendThread thread = new SendThread();
     logger.info("SendAppender init success");
-    // TIMER.schedule(thread, 2000, (Integer)
-    // AccessibleExecutorConfiguration.ENGINECONN_LOG_SEND_TIME_INTERVAL().getValue());
   }
 
   @Override

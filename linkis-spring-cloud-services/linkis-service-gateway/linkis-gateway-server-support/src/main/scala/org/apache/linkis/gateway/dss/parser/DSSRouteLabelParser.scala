@@ -29,7 +29,30 @@ import java.util
 class DSSRouteLabelParser extends RouteLabelParser {
 
   override def parse(gatewayContext: GatewayContext): util.List[RouteLabel] = {
-    new util.ArrayList[RouteLabel]()
+    val routeLabelList = new util.ArrayList[RouteLabel]()
+    var requestLabels = gatewayContext.getRequest.getQueryParams
+      .getOrDefault(DSSGatewayConfiguration.DSS_URL_LABEL_PREFIX.getValue, null)
+    if (requestLabels == null) {
+      requestLabels = gatewayContext.getRequest.getQueryParams
+        .getOrDefault(DSSGatewayConfiguration.DSS_URL_ROUTE_LABEL_PREFIX.getValue, null)
+    }
+    if (null != requestLabels && requestLabels.size > 0) {
+      val labelNameList = requestLabels(0).replace(" ", "").split(",").toList
+      if (labelNameList.size > 0) labelNameList.foreach(labelName => {
+        val routeLabel = new RouteLabel
+        routeLabel.setRoutePath(labelName)
+      })
+    }
+    if (routeLabelList.isEmpty) {
+      val requestBody = Option(gatewayContext.getRequest.getRequestBody)
+      requestBody match {
+        case Some(body) =>
+          if (body.contains("form-data")) {} else {}
+        case _ => null
+      }
+    }
+
+    routeLabelList
   }
 
 }

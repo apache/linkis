@@ -51,7 +51,7 @@ class EngineConnTimedLockService extends LockService with Logging {
   private var lockType: EngineLockType = EngineLockType.Timed
 
   private def isSupportParallelism: Boolean =
-    AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM
+    AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()
 
   /**
    * @param lock
@@ -81,12 +81,12 @@ class EngineConnTimedLockService extends LockService with Logging {
   @throws[EngineConnExecutorErrorException]
   override def tryLock(requestEngineLock: RequestEngineLock): Option[String] = synchronized {
     if (null != engineConnLock && engineConnLock.isAcquired()) return None
-    this.lockType = requestEngineLock.lockType
+    this.lockType = requestEngineLock.getLockType
     lockType match {
       case EngineLockType.Always =>
         timedLock(-1)
       case EngineLockType.Timed =>
-        timedLock(requestEngineLock.timeout)
+        timedLock(requestEngineLock.getTimeout)
       case o: Any =>
         logger.error("Invalid lockType : " + BDPJettyServerHelper.gson.toJson(o))
         return Some(null)
@@ -161,9 +161,7 @@ class EngineConnTimedLockService extends LockService with Logging {
         .toString
     )
     if (isLockExist(lock)) {
-      logger.info(
-        s"try to unlock lockEntity : lockString=$lockString,lockedBy=${engineConnLock.lockedBy.getId}"
-      )
+      logger.info(s"try to unlock lockEntity : lockString=$lockString")
       engineConnLock.release()
       this.lockString = null
       true
@@ -174,11 +172,11 @@ class EngineConnTimedLockService extends LockService with Logging {
 
   @Receiver
   override def requestUnLock(requestEngineUnlock: RequestEngineUnlock): ResponseEngineUnlock = {
-    if (StringUtils.isBlank(requestEngineUnlock.lock)) {
+    if (StringUtils.isBlank(requestEngineUnlock.getLock)) {
       logger.error("Invalid requestEngineUnlock: ")
-      ResponseEngineUnlock(false)
+      new ResponseEngineUnlock(false)
     } else {
-      ResponseEngineUnlock(unlock(requestEngineUnlock.lock))
+      new ResponseEngineUnlock(unlock(requestEngineUnlock.getLock))
     }
   }
 
@@ -223,7 +221,7 @@ class EngineConnConcurrentLockService extends LockService {
 
   @Receiver
   override def requestUnLock(requestEngineUnlock: RequestEngineUnlock): ResponseEngineUnlock =
-    ResponseEngineUnlock(true)
+    new ResponseEngineUnlock(true)
 
   override def onAddLock(addLockEvent: ExecutorLockEvent): Unit = {}
 

@@ -17,8 +17,8 @@
 
 package org.apache.linkis.engineconn.callback.service
 
-import org.apache.linkis.common.ServiceInstance
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.common.protocol.engine.EngineConnStatusCallback
 import org.apache.linkis.protocol.message.RequestProtocol
@@ -26,31 +26,25 @@ import org.apache.linkis.rpc.Sender
 
 trait EngineConnCallback {
 
-  protected def getEMSender: Sender
-
   def callback(): Unit
 
 }
 
-abstract class AbstractEngineConnStartUpCallback(emInstance: ServiceInstance)
-    extends EngineConnCallback
-    with Logging {
-
-  override protected def getEMSender: Sender = {
-    Sender.getSender(emInstance)
-  }
+abstract class AbstractEngineConnStartUpCallback() extends EngineConnCallback with Logging {
 
   def callback(protocol: RequestProtocol): Unit = {
     protocol match {
       case protocol: EngineConnStatusCallback =>
-        if (protocol.status.equals(NodeStatus.Failed)) {
-          logger.error(s"protocol will send to em: ${protocol}")
+        if (protocol.getStatus().equals(NodeStatus.Failed)) {
+          logger.error(s"EngineConn Start Failed protocol will send to LM: ${protocol}")
         } else {
-          logger.info(s"protocol will send to em: ${protocol}")
+          logger.info(s"protocol will send to lm: ${protocol}")
         }
       case _ =>
     }
-    getEMSender.send(protocol)
+    Sender
+      .getSender(GovernanceCommonConf.ENGINE_APPLICATION_MANAGER_SPRING_NAME.getValue)
+      .send(protocol)
   }
 
 }

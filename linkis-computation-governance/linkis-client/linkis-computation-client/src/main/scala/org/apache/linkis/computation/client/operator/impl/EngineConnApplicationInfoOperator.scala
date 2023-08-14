@@ -19,6 +19,7 @@ package org.apache.linkis.computation.client.operator.impl
 
 import org.apache.linkis.computation.client.once.result.EngineConnOperateResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
+import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.ujes.client.exception.UJESJobException
 
 class EngineConnApplicationInfoOperator extends OnceJobOperator[ApplicationInfo] {
@@ -28,7 +29,7 @@ class EngineConnApplicationInfoOperator extends OnceJobOperator[ApplicationInfo]
   override protected def resultToObject(result: EngineConnOperateResult): ApplicationInfo = {
     ApplicationInfo(
       result
-        .getAsOption("applicationId")
+        .getAsOption(ECConstants.YARN_APPID_NAME_KEY)
         .getOrElse(
           throw new UJESJobException(
             20300,
@@ -36,14 +37,14 @@ class EngineConnApplicationInfoOperator extends OnceJobOperator[ApplicationInfo]
           )
         ),
       result
-        .getAsOption("applicationUrl")
+        .getAsOption(ECConstants.YARN_APP_URL_KEY)
         .getOrElse(
           throw new UJESJobException(
             20300,
             s"Cannot get applicationUrl from EngineConn $getServiceInstance."
           )
         ),
-      result.getAs("queue")
+      result.getAs(ECConstants.QUEUE)
     )
   }
 

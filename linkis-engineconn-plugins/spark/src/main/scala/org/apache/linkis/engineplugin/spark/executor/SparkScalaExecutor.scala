@@ -38,7 +38,7 @@ import org.apache.linkis.scheduler.executer.{
   IncompleteExecuteResponse,
   SuccessExecuteResponse
 }
-import org.apache.linkis.storage.resultset.ResultSetWriter
+import org.apache.linkis.storage.resultset.ResultSetWriterFactory
 
 import org.apache.commons.io.IOUtils
 import org.apache.commons.lang3.StringUtils
@@ -206,7 +206,7 @@ class SparkScalaExecutor(sparkEngineSession: SparkEngineSession, id: Long)
           val outStr = lineOutputStream.toString()
           if (outStr.length > 0) {
             val output = Utils.tryQuietly(
-              ResultSetWriter
+              ResultSetWriterFactory
                 .getRecordByRes(outStr, SparkConfiguration.SPARK_CONSOLE_OUTPUT_NUM.getValue)
             )
             val res =

@@ -47,7 +47,7 @@ CREATE TABLE linkis_ps_cs_context_listener (
 DROP TABLE IF EXISTS linkis_ps_cs_context_id CASCADE;
 CREATE TABLE linkis_ps_cs_context_id (
   id int(11)  AUTO_INCREMENT,
-  user varchar(32) DEFAULT NULL,
+  `user` varchar(32) DEFAULT NULL,
   application varchar(32) DEFAULT NULL,
   source varchar(255) DEFAULT NULL,
   expire_type varchar(32) DEFAULT NULL,
@@ -68,5 +68,21 @@ CREATE TABLE linkis_ps_cs_context_map_listener (
   update_time datetime DEFAULT CURRENT_TIMESTAMP,
   create_time datetime DEFAULT CURRENT_TIMESTAMP,
   access_time datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ;
+
+DROP TABLE IF EXISTS linkis_ps_cs_context_map CASCADE;
+CREATE TABLE linkis_ps_cs_context_map (
+  id int(11) AUTO_INCREMENT,
+  `key` varchar(128) DEFAULT NULL,
+  context_scope varchar(32) DEFAULT NULL,
+  context_type varchar(32) DEFAULT NULL,
+  props varchar(255),
+  `value` varchar(255),
+  context_id int(11) DEFAULT NULL,
+  keywords varchar(255) DEFAULT NULL,
+  update_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  access_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
 ) ;

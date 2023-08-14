@@ -17,9 +17,10 @@
 
 package org.apache.linkis.manager.exception;
 
-import org.apache.linkis.common.exception.ErrorException;
+import org.apache.linkis.common.exception.ExceptionLevel;
+import org.apache.linkis.common.exception.LinkisRuntimeException;
 
-public class PersistenceErrorException extends ErrorException {
+public class PersistenceErrorException extends LinkisRuntimeException {
   public PersistenceErrorException(int errCode, String desc) {
     super(errCode, desc);
   }
@@ -27,5 +28,10 @@ public class PersistenceErrorException extends ErrorException {
   public PersistenceErrorException(int errCode, String desc, Throwable e) {
     super(errCode, desc);
     this.initCause(e);
+  }
+
+  @Override
+  public ExceptionLevel getLevel() {
+    return ExceptionLevel.ERROR;
   }
 }

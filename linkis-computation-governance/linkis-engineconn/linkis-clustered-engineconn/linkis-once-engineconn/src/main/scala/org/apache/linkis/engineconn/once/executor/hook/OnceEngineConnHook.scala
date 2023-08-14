@@ -28,11 +28,6 @@ import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
  */
 class OnceEngineConnHook extends CallbackEngineConnHook {
 
-  override protected def getNodeStatusOfStartSuccess(
-      engineCreationContext: EngineCreationContext,
-      engineConn: EngineConn
-  ): NodeStatus = NodeStatus.Unlock
-
   override def afterEngineServerStartSuccess(
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn

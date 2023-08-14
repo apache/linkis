@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cs-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -41,13 +41,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cs-listener</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-instance-label-client</artifactId>
+      <artifactId>linkis-pes-rpc-client</artifactId>
       <version>${project.version}</version>
     </dependency>
 

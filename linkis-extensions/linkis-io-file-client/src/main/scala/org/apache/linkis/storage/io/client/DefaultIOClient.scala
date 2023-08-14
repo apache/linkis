@@ -73,7 +73,7 @@ class DefaultIOClient extends IOClient with Logging {
       retryLimit: Int = 0
   ): String = {
     val engineTypeLabel = EngineTypeLabelCreator.createEngineTypeLabel(
-      EngineType.mapFsTypeToEngineType(methodEntity.fsType)
+      EngineType.mapFsTypeToEngineType(methodEntity.getFsType)
     )
     IOClientUtils.addLabelToParams(loadBalanceLabel, params)
     IOClientUtils.addLabelToParams(engineTypeLabel, params)
@@ -153,7 +153,7 @@ class DefaultIOClient extends IOClient with Logging {
     }
     val executeTime = System.currentTimeMillis()
     logger.info(
-      s"${jobReq.getId} execute method ${methodEntity.methodName}, orchestratorTime(${orchestrationTime - startTime}ms) execute time(${executeTime - orchestrationTime}ms)"
+      s"${jobReq.getId} execute method ${methodEntity.getMethodName}, orchestratorTime(${orchestrationTime - startTime}ms) execute time(${executeTime - orchestrationTime}ms)"
     )
     result
   }

@@ -1,0 +1,6 @@
+[submodule ".github/actions/chart-testing-action"]
+	path = .github/actions/chart-testing-action
+	url = git@github.com:helm/chart-testing-action.git
+[submodule ".github/actions/kind-action"]
+	path = .github/actions/kind-action
+	url = git@github.com:helm/kind-action.git

@@ -127,6 +127,7 @@ object EngineConnServer extends Logging {
     this.engineCreationContext.setEMInstance(
       ServiceInstance(GovernanceCommonConf.ENGINE_CONN_MANAGER_SPRING_NAME.getValue, s"$host:$port")
     )
+
     val labels = new ArrayBuffer[Label[_]]
     val labelArgs = engineConf.filter(_._1.startsWith(EngineConnArgumentsParser.LABEL_PREFIX))
     if (labelArgs.nonEmpty) {

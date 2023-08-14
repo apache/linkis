@@ -23,6 +23,8 @@ import org.apache.spark.launcher.CustomSparkSubmitLauncher;
 import org.apache.spark.launcher.SparkAppHandle;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,11 @@ public abstract class ClusterDescriptorAdapter implements Closeable {
   public String toString() {
     return "ClusterDescriptorAdapter{" + "applicationId=" + sparkAppHandle.getAppId() + '}';
   }
+
+  public void deployCluster(String mainClass, String args, Map<String, String> confMap)
+      throws IOException {}
+
+  public abstract boolean initJobId();
 
   @Override
   public void close() {

@@ -43,9 +43,13 @@ class AccessibleExecutorSpringConfiguration extends Logging {
   def createLockManager(): LockService = {
 
     val lockService =
-      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
+      if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()) {
+        logger.info("Engine supports parallelism.")
         new EngineConnConcurrentLockService
-      } else new EngineConnTimedLockService
+      } else {
+        logger.info("Engine doesn't support parallelism.")
+        new EngineConnTimedLockService
+      }
     asyncListenerBusContext.addListener(lockService)
     lockService
   }

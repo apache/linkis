@@ -30,8 +30,6 @@
 
   <modules>
 
-    <module>linkis-error-code-client</module>
-    <module>linkis-error-code-common</module>
     <module>linkis-error-code-server</module>
 
   </modules>

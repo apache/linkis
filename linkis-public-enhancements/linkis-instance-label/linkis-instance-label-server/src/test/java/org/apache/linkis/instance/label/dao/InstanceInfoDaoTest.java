@@ -28,6 +28,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * When using the h2 library for testing,if the function(on conflict) is not supported,an error will
+ * be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
+ * conflict）会报错，pg实体库不会报错
+ */
 public class InstanceInfoDaoTest extends BaseDaoTest {
 
   @Autowired InstanceInfoDao instanceInfoDao;

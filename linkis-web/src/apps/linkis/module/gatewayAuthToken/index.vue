@@ -234,7 +234,7 @@ export default {
     onTableDelete(row){
       this.$Modal.confirm({
         title: this.$t('message.linkis.basedataManagement.modal.modalTitle'),
-        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {envName: row.tokenName}),
+        content: this.$t('message.linkis.basedataManagement.modal.modalDelete', {name: row.tokenName}),
         onOk: ()=>{
           let params = {
             id: row.id
@@ -245,13 +245,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalDeleteFail')
               })
             }
-            this.load()
           })
         }
       })
@@ -268,13 +268,13 @@ export default {
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddSuccess')
               })
+              this.load()
             }else{
               this.$Message.success({
                 duration: 3,
                 content: this.$t('message.linkis.basedataManagement.modal.modalAddFail')
               })
             }
-            this.load()
           })
         }else {
           edit(formData).then((data)=>{

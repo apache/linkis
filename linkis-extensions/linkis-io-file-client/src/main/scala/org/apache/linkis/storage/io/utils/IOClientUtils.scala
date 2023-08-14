@@ -123,7 +123,8 @@ object IOClientUtils {
     labels.add(conCurrentLabel)
 
     val rootUser =
-      if (methodEntity.fsType == StorageUtils.HDFS) StorageConfiguration.HDFS_ROOT_USER.getValue
+      if (methodEntity.getFsType.equals(StorageUtils.HDFS))
+        StorageConfiguration.HDFS_ROOT_USER.getValue
       else StorageConfiguration.LOCAL_ROOT_USER.getValue
     val userCreatorLabel = labelBuilderFactory.createLabel(classOf[UserCreatorLabel])
     userCreatorLabel.setCreator(creator)

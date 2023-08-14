@@ -19,7 +19,7 @@ package org.apache.linkis.ecm.server.spring
 
 import org.apache.linkis.ecm.core.listener.ECMEventListener
 import org.apache.linkis.ecm.server.context.{DefaultECMContext, ECMContext}
-import org.apache.linkis.ecm.server.service._
+import org.apache.linkis.ecm.server.service.{EngineConnKillService, _}
 import org.apache.linkis.ecm.server.service.impl._
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,14 +41,7 @@ class ECMSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  def getDefaultYarnCallbackService: YarnCallbackService = {
-    new DefaultYarnCallbackService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   def getBmlResourceLocalizationService(
-      context: ECMContext,
       localDirsHandleService: LocalDirsHandleService
   ): ResourceLocalizationService = {
     val service: BmlResourceLocalizationService = new BmlResourceLocalizationService
@@ -59,28 +52,8 @@ class ECMSpringConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  def getDefaultLogCallbackService: LogCallbackService = {
-    null
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
   def getDefaultlocalDirsHandleService: LocalDirsHandleService = {
     new DefaultLocalDirsHandleService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  def getDefaultEngineConnPidCallbackService: EngineConnPidCallbackService = {
-    new DefaultEngineConnPidCallbackService
-  }
-
-  @Bean
-  @ConditionalOnMissingBean
-  def getDefaultEngineConnListService(context: ECMContext): EngineConnListService = {
-    implicit val service: DefaultEngineConnListService = new DefaultEngineConnListService
-    registerSyncListener(context)
-    service
   }
 
   @Bean
@@ -98,38 +71,44 @@ class ECMSpringConfiguration {
   @Bean
   @ConditionalOnMissingBean
   def getDefaultECMRegisterService(context: ECMContext): ECMRegisterService = {
-    implicit val service: DefaultECMRegisterService = new DefaultECMRegisterService
-    registerSyncListener(context)
+    val service: DefaultECMRegisterService = new DefaultECMRegisterService
+    registerSyncListener(context, service)
     service
   }
 
   @Bean
   @ConditionalOnMissingBean
   def getDefaultECMHealthService(context: ECMContext): ECMHealthService = {
-    implicit val service: DefaultECMHealthService = new DefaultECMHealthService
-    registerSyncListener(context)
+    val service: DefaultECMHealthService = new DefaultECMHealthService
+    registerSyncListener(context, service)
     service
   }
 
   @Bean
   @ConditionalOnMissingBean
   def getDefaultEngineConnKillService(
-      engineConnListService: EngineConnListService
   ): EngineConnKillService = {
     val service = new DefaultEngineConnKillService
-    service.setEngineConnListService(engineConnListService)
     service
   }
 
-  private def registerSyncListener(
+  @Bean
+  @ConditionalOnMissingBean
+  def getECMListenerService(
+      engineConnKillService: EngineConnKillService,
       context: ECMContext
-  )(implicit listener: ECMEventListener): Unit = {
+  ): ECMListenerService = {
+    val service: ECMListenerService = new ECMListenerService
+    service.setEngineConnKillService(engineConnKillService)
+    registerASyncListener(context, service)
+    service
+  }
+
+  private def registerSyncListener(context: ECMContext, listener: ECMEventListener): Unit = {
     context.getECMSyncListenerBus.addListener(listener)
   }
 
-  private def registerASyncListener(
-      context: ECMContext
-  )(implicit listener: ECMEventListener): Unit = {
+  private def registerASyncListener(context: ECMContext, listener: ECMEventListener): Unit = {
     context.getECMAsyncListenerBus.addListener(listener)
   }
 

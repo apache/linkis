@@ -20,10 +20,12 @@ package org.apache.linkis.ujes.jdbc.hook.impl
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain
 import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
 
+import java.util.Locale
+
 class NoLimitExecutionHook extends JDBCDriverPreExecutionHook {
 
-  override def callPreExecutionHook(sql: String): String = {
-    if (UJESSQLDriverMain.LIMIT_ENABLED.toLowerCase.equals("false")) {
+  override def callPreExecutionHook(sql: String, skip: Boolean): String = {
+    if (UJESSQLDriverMain.LIMIT_ENABLED.equalsIgnoreCase("false")) {
       var noLimitSql = "--set ide.engine.no.limit.allow=true\n" + sql
       val lowerCaseLimitSql = noLimitSql.toLowerCase()
       if (lowerCaseLimitSql.contains("limit ") && lowerCaseLimitSql.contains("tableausql")) {

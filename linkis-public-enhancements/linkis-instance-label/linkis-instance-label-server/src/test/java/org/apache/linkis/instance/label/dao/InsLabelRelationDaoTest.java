@@ -135,6 +135,11 @@ public class InsLabelRelationDaoTest extends BaseDaoTest {
     insLabelRelationDao.dropRelationsByInstance(testInstance);
   }
 
+  /**
+   * When using the h2 library for testing,if the function(on conflict) is not supported,an error
+   * will be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
+   * conflict）会报错，pg实体库不会报错
+   */
   @Test
   public void testInsertRelations() {
     String testInstance = "testInstance";
@@ -144,6 +149,11 @@ public class InsLabelRelationDaoTest extends BaseDaoTest {
     insLabelRelationDao.insertRelations(testInstance, labelIds);
   }
 
+  /**
+   * When using the h2 library for testing,if the function(on conflict) is not supported,an error
+   * will be reported, and the pg physical library will not guarantee an error pg使用h2库测试时不支持函数（on
+   * conflict）会报错，pg实体库不会报错
+   */
   @Test
   public void testExistRelations() {
     testInsertRelations();

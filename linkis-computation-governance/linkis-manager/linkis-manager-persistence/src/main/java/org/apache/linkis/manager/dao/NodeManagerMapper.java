@@ -41,11 +41,9 @@ public interface NodeManagerMapper {
 
   List<PersistenceNode> getAllNodes();
 
-  void updateNodeInstanceOverload(@Param("persistenceNode") PersistenceNode persistenceNode);
+  void updateNodeInstanceByInstance(@Param("persistenceNode") PersistenceNode persistenceNode);
 
   Integer getNodeInstanceId(@Param("instance") String instance);
-
-  Integer getIdByInstance(@Param("instance") String instance);
 
   List<Integer> getNodeInstanceIds(@Param("instances") List<String> instances);
 

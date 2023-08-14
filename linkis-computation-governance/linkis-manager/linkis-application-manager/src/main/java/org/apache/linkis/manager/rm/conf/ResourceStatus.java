@@ -38,9 +38,9 @@ public enum ResourceStatus {
 
   public static ResourceStatus measure(Resource leftResource, Resource maxResource) {
     if (leftResource != null && maxResource != null) {
-      if (leftResource.$less$eq(maxResource.$times(warnThreshold))) {
+      if (leftResource.less(maxResource.multiplied(warnThreshold))) {
         return critical;
-      } else if (leftResource.$less$eq(maxResource.$times(normalThreshold))) {
+      } else if (leftResource.less(maxResource.multiplied(normalThreshold))) {
         return warn;
       } else {
         return normal;

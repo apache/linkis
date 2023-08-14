@@ -17,7 +17,7 @@
 
 package org.apache.linkis.common.exception;
 
-public class FatalException extends LinkisException {
+public class FatalException extends LinkisRuntimeException {
   private ExceptionLevel level = ExceptionLevel.FATAL;
 
   public FatalException(int errCode, String desc) {

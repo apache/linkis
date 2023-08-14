@@ -28,9 +28,7 @@
 
   <packaging>pom</packaging>
   <modules>
-    <module>linkis-bml-common</module>
     <module>linkis-bml-server</module>
-    <module>linkis-bml-client</module>
   </modules>
 
 </project>

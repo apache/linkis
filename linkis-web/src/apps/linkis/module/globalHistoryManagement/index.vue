@@ -393,7 +393,7 @@ export default {
         pageSize: this.pageSetting.pageSize,
         proxyUser: this.searchBar.proxyUser,
         isAdminView: this.isAdminModel,
-        instance: this.searchBar.instance
+        instance: this.searchBar.instance?.replace(/ /g, '') || ''
       }
       if (!this.isAdminModel) {
         delete params.proxyUser

@@ -31,7 +31,6 @@ class GovernanceConstantTest {
     val taskresourceversionstr = GovernanceConstant.TASK_RESOURCE_VERSION_STR
     val taskresourcefilenamestr = GovernanceConstant.TASK_RESOURCE_FILE_NAME_STR
     val requestenginestatusbatchlimit = GovernanceConstant.REQUEST_ENGINE_STATUS_BATCH_LIMIT
-    val resultsetindex = GovernanceConstant.RESULTSET_INDEX
 
     Assertions.assertEquals("source", tasksourcemapkey)
     Assertions.assertEquals("resources", taskresourcesstr)
@@ -39,7 +38,6 @@ class GovernanceConstantTest {
     Assertions.assertEquals("version", taskresourceversionstr)
     Assertions.assertEquals("fileName", taskresourcefilenamestr)
     Assertions.assertTrue(500 == requestenginestatusbatchlimit.intValue())
-    Assertions.assertEquals("resultsetIndex", resultsetindex)
 
   }
 

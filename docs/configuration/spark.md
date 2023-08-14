@@ -3,6 +3,7 @@
 
 | Module Name (Service Name) | Parameter Name | Default Value | Description |Used|
 | -------- | -------- | ----- |----- |  -----   |
+|spark|linkis.spark.etl.support.hudi|false|spark.etl.support.hudi|
 |spark|linkis.bgservice.store.prefix|hdfs:///tmp/bdp-ide/|bgservice.store.prefix|
 |spark|linkis.bgservice.store.suffix|  |bgservice.store.suffix|
 |spark|wds.linkis.dolphin.decimal.precision|32 |dolphin.decimal.precision|
@@ -25,3 +26,11 @@
 |spark|wds.linkis.spark.engine.is.viewfs.env| true | spark.engine.is.viewfs.env|
 |spark|wds.linkis.spark.engineconn.fatal.log|error writing class;OutOfMemoryError|spark.engineconn.fatal.log|
 |spark|wds.linkis.spark.engine.scala.replace_package_header.enable| true |spark.engine.scala.replace_package_header.enable|
+
+
+The spark-excel package may cause class conflicts,need to download separately,put it in spark lib
+wget https://repo1.maven.org/maven2/com/crealytics/spark-excel-2.12.17-3.2.2_2.12/3.2.2_0.18.1/spark-excel-2.12.17-3.2.2_2.12-3.2.2_0.18.1.jar
+cp spark-excel-2.12.17-3.2.2_2.12-3.2.2_0.18.1.jar {LINKIS_HOME}/lib/linkis-engineconn-plugins/spark/dist/3.2.1/lib
+
+spark3 is not supported by native rocketmq-spark, and the source code needs to be modified, which can be downloaded directly from the link below
+https://github.com/ChengJie1053/spark3-rocketmq-connector-jar

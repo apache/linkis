@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.engineplugin.server.dao.EngineConnBmlResourceDao">
+
+
+    <sql id="bml_resources">
+        engine_conn_type,version,file_name,file_size,last_modified,bml_resource_id,bml_resource_version,create_time,last_update_time
+    </sql>
+
+    <select id="getAllEngineConnBmlResource"
+            resultType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
+        SELECT * FROM linkis_cg_engine_conn_plugin_bml_resources
+        WHERE engine_conn_type=#{engineConnType} and version=#{version}
+    </select>
+
+    <select id="getTypeVersionList" resultType="java.lang.String">
+        SELECT version FROM linkis_cg_engine_conn_plugin_bml_resources where engine_conn_type = #{type} GROUP BY version
+    </select>
+
+    <select id="getTypeList" resultType="java.lang.String">
+        SELECT engine_conn_type FROM linkis_cg_engine_conn_plugin_bml_resources GROUP BY engine_conn_type
+    </select>
+
+    <select id="selectByPageVo"
+            resultType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
+        SELECT
+        *
+        FROM linkis_cg_engine_conn_plugin_bml_resources
+        <where>
+            <if test="engineConnType != null and engineConnType != ''">
+                AND engine_conn_type like concat('%', #{engineConnType}::text, '%')
+            </if>
+            <if test="engineConnVersion != null and engineConnVersion != ''">
+                AND version like concat('%', #{engineConnVersion}::text, '%')
+            </if>
+        </where>
+         ORDER BY create_time DESC
+    </select>
+
+    <delete id="delete" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
+        DELETE FROM linkis_cg_engine_conn_plugin_bml_resources
+        WHERE engine_conn_type = #{engineConnBmlResource.engineConnType}
+        AND version = #{engineConnBmlResource.version}
+        AND file_name = #{engineConnBmlResource.fileName}
+    </delete>
+
+    <update id="update" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
+        UPDATE linkis_cg_engine_conn_plugin_bml_resources
+        <set>
+            <if test="engineConnBmlResource.lastModified != null">last_modified =
+                #{engineConnBmlResource.lastModified},
+            </if>
+            <if test="engineConnBmlResource.fileSize != null">file_size = #{engineConnBmlResource.fileSize},</if>
+            <if test="engineConnBmlResource.bmlResourceVersion != null">bml_resource_version =
+                #{engineConnBmlResource.bmlResourceVersion},
+            </if>
+            <if test="engineConnBmlResource.lastUpdateTime != null">last_update_time =
+                #{engineConnBmlResource.lastUpdateTime},
+            </if>
+        </set>
+        WHERE engine_conn_type=#{engineConnBmlResource.engineConnType} and version=#{engineConnBmlResource.version}
+        AND file_name=#{engineConnBmlResource.fileName}
+    </update>
+
+    <insert id="save" parameterType="org.apache.linkis.engineplugin.server.entity.EngineConnBmlResource">
+        INSERT INTO linkis_cg_engine_conn_plugin_bml_resources(<include refid="bml_resources"/>)
+        VALUES (#{engineConnBmlResource.engineConnType}, #{engineConnBmlResource.version},
+        #{engineConnBmlResource.fileName},#{engineConnBmlResource.fileSize},
+        #{engineConnBmlResource.lastModified},#{engineConnBmlResource.bmlResourceId},
+        #{engineConnBmlResource.bmlResourceVersion},
+        #{engineConnBmlResource.createTime}, #{engineConnBmlResource.lastUpdateTime})
+    </insert>
+
+
+</mapper>

@@ -114,7 +114,7 @@ public class UDFTreeServiceImpl implements UDFTreeService {
     }
     if (first.size() > 1) {
       throw new UDFException(
-          "user(用户)" + userName + "There are two root directory directories(存在两个根目录目录)");
+          "user(用户):" + userName + ",There are two root directory directories(存在两个根目录目录)");
     }
     return first.get(0);
   }

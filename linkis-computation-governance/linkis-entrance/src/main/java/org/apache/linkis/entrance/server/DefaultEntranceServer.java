@@ -67,6 +67,7 @@ public class DefaultEntranceServer extends EntranceServer {
 
   private void cleanUpEntranceDirtyData() {
     if ((Boolean) EntranceConfiguration$.MODULE$.ENABLE_ENTRANCE_DIRTY_DATA_CLEAR().getValue()) {
+      logger.info("start to clean up entrance dirty data.");
       Sender sender =
           Sender.getSender(
               EntranceConfiguration$.MODULE$.JOBHISTORY_SPRING_APPLICATION_NAME().getValue());
@@ -107,7 +108,7 @@ public class DefaultEntranceServer extends EntranceServer {
       if (null != allUndoneTask) {
         for (EntranceJob job : allUndoneTask) {
           job.onFailure(
-              "Entrance exits the automatic cleanup task and can be rerun(服务退出自动清理任务，可以重跑)", null);
+              "Your job will be marked as canceled because the Entrance service restarted(因为Entrance服务重启，您的任务将被标记为取消)", null);
           IOUtils.closeQuietly(((EntranceExecutionJob) job).getLogWriter().get());
         }
       }

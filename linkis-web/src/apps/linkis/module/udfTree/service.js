@@ -23,8 +23,8 @@ const getList = (params)=> {
   return api.fetch(udfTreeBaseUrl, params , 'get')
 }
 
-const getAll = ()=> {
-  return api.fetch(udfTreeBaseUrl+"/all",  'get')
+const getAll = (params)=> {
+  return api.fetch(udfTreeBaseUrl+"/all", params, 'get')
 }
 
 

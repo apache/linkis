@@ -29,21 +29,21 @@ import org.junit.jupiter.api.Test;
  * */
 
 public class JDBCSpiTest {
-  private static UJESSQLConnection conn;
+  private static LinkisSQLConnection conn;
 
-  public static UJESSQLConnection getConnection() throws ClassNotFoundException, SQLException {
+  public static LinkisSQLConnection getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("org.apache.linkis.ujes.jdbc.UJESSQLDriver");
     conn =
-        (UJESSQLConnection)
-            DriverManager.getConnection("jdbc:linkis://hostname:port", "root", "123456");
+        (LinkisSQLConnection)
+            DriverManager.getConnection("jdbc:linkis://127.0.0.1:9001", "root", "123456");
     return conn;
   }
 
   @Test
   public void spiTest() {
     try {
-      UJESSQLConnection conn =
-          (UJESSQLConnection)
+      LinkisSQLConnection conn =
+          (LinkisSQLConnection)
               DriverManager.getConnection("jdbc:linkis://hostname:port", "username", "password");
       Assertions.assertNotNull(conn);
     } catch (SQLException e) {

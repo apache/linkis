@@ -44,6 +44,14 @@ public class PluginUtil {
     classMap.put("managed_jdbc", ManagedJdbcSource.class);
     classMap.put("jdbc", JdbcSource.class);
     classMap.put("file", FileSource.class);
+    classMap.put("redis", RedisSource.class);
+    classMap.put("datalake", DataLakeSource.class);
+    classMap.put("rocketmq", RocketmqSource.class);
+    classMap.put("mongo", MongoSource.class);
+    classMap.put("elasticsearch", ElasticsearchSource.class);
+    classMap.put("solr", SolrSource.class);
+    classMap.put("kafka", KafkaSource.class);
+    classMap.put("starrocks", StarrocksSource.class);
     return classMap;
   }
 
@@ -59,6 +67,14 @@ public class PluginUtil {
     classMap.put("jdbc", JdbcSink.class);
     classMap.put("hive", HiveSink.class);
     classMap.put("file", FileSink.class);
+    classMap.put("redis", RedisSink.class);
+    classMap.put("datalake", DataLakeSink.class);
+    classMap.put("rocketmq", RocketmqSink.class);
+    classMap.put("mongo", MongoSink.class);
+    classMap.put("elasticsearch", ElasticsearchSink.class);
+    classMap.put("solr", SolrSink.class);
+    classMap.put("kafka", KafkaSink.class);
+    classMap.put("starrocks", StarrocksSink.class);
     return classMap;
   }
 

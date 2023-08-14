@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.configuration.dao.UserIpMapper">
+
+    <resultMap id="UserIpMap" type="org.apache.linkis.configuration.entity.UserIpVo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user" property="user" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="ip_list" property="ipList" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="desc" property="desc" jdbcType="VARCHAR"/>
+        <result column="bussiness_user" property="bussinessUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="UserIp_Column_List">
+        id,`user`,creator,ip_list,create_time,update_time,`desc`,bussiness_user
+    </sql>
+
+    <sql id="UserIp_insert_Column_List">
+        `user`,creator,ip_list,create_time,update_time,`desc`,bussiness_user
+    </sql>
+
+    <insert id="createUserIP" parameterType="org.apache.linkis.configuration.entity.UserIpVo">
+        INSERT INTO `linkis_cg_user_ip_config`(<include refid="UserIp_insert_Column_List"/>)
+        VALUES (
+        #{user},
+        #{creator},
+        #{ipList},
+        #{createTime},
+        #{updateTime},
+        #{desc},
+        #{bussinessUser}
+        )
+    </insert>
+
+    <select id="queryUserIPList" resultMap="UserIpMap">
+        SELECT <include refid="UserIp_Column_List"/>
+        FROM linkis_cg_user_ip_config
+        <where>
+            <if test="user != null">`user` = #{user}</if>
+            <if test="creator != null">and `creator` = #{creator}</if>
+        </where>
+    </select>
+
+    <delete id="deleteUserIP">
+        DELETE FROM linkis_cg_user_ip_config
+        WHERE id =  #{id}
+    </delete>
+
+    <update id="updateUserIP" parameterType="org.apache.linkis.configuration.entity.UserIpVo">
+        UPDATE linkis_cg_user_ip_config
+        <set>
+            <if test="user != null">user = #{user},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="ipList != null">ip_list = #{ipList},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="desc != null">`desc` = #{desc},</if>
+            <if test="bussinessUser != null">bussiness_user = #{bussinessUser}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="queryUserIP" resultType="org.apache.linkis.configuration.entity.UserIpVo">
+        SELECT <include refid="UserIp_Column_List"/>
+        FROM linkis_cg_user_ip_config
+        <where>
+            <if test="user != null">`user` = #{user}</if>
+            <if test="creator != null">and `creator` = #{creator}</if>
+        </where>
+    </select>
+</mapper>

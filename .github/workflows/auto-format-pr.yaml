@@ -19,7 +19,7 @@ name: Create Code Format Apply PullRequest
 
 on:
   pull_request:
-    branches: [dev,dev-*]
+    branches: [master,dev-*]
     types: [closed]
 
 jobs:

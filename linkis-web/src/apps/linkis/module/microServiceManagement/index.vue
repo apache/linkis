@@ -253,7 +253,7 @@ export default {
       });
     },
     searchAction() {
-      this.search(this.instance, this.applicationName);
+      this.search(this.instance?.replace(/ /g, '') || '', this.applicationName);
     },
     //Jump to Microservices(跳转到微服务)
     handleTabsJump() {

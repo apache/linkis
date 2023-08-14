@@ -17,7 +17,7 @@
 
 package org.apache.linkis.common.exception;
 
-public class ErrorException extends LinkisException {
+public class ErrorException extends LinkisRuntimeException {
   private ExceptionLevel level = ExceptionLevel.ERROR;
 
   public ErrorException(int errCode, String desc) {

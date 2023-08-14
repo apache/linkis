@@ -25,7 +25,11 @@ import org.apache.linkis.storage.errorcode.LinkisIoFileErrorCodeSummary.{
   PARAMETER_CALLS
 }
 import org.apache.linkis.storage.exception.StorageErrorException
-import org.apache.linkis.storage.resultset.{ResultSetFactory, ResultSetReader, ResultSetWriter}
+import org.apache.linkis.storage.resultset.{
+  ResultSetFactory,
+  ResultSetReaderFactory,
+  ResultSetWriterFactory
+}
 import org.apache.linkis.storage.resultset.io.{IOMetaData, IORecord}
 import org.apache.linkis.storage.utils.{StorageConfiguration, StorageUtils}
 
@@ -42,36 +46,36 @@ object IOHelp {
    * @return
    */
   def read(fs: Fs, method: MethodEntity): String = {
-    if (method.params == null || method.params.isEmpty) {
+    if (method.getParams == null || method.getParams.isEmpty) {
       throw new StorageErrorException(CANNOT_BE_EMPTY.getErrorCode, CANNOT_BE_EMPTY.getErrorDesc)
     }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
-      method.params(0).asInstanceOf[String],
+      method.getParams()(0).asInstanceOf[String],
       classOf[FsPath]
     )
     val inputStream = fs.read(dest)
     val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-    val writer = ResultSetWriter.getResultSetWriter(resultSet, Long.MaxValue, null)
+    val writer = ResultSetWriterFactory.getResultSetWriter(resultSet, Long.MaxValue, null)
     Utils.tryFinally {
-      if (method.params.length == 1) {
+      if (method.getParams.length == 1) {
         val bytes = IOUtils.toByteArray(inputStream)
         val ioMetaData = new IOMetaData(0, bytes.length)
         val ioRecord = new IORecord(bytes)
         writer.addMetaData(ioMetaData)
         writer.addRecord(ioRecord)
         writer.toString()
-      } else if (method.params.length == 3) {
+      } else if (method.getParams.length == 3) {
         val position =
-          if (method.params(1).toString.toInt < 0) {
+          if (method.getParams()(1).toString.toInt < 0) {
             0
           } else {
-            method.params(1).toString.toInt
+            method.getParams()(1).toString.toInt
           }
         val fetchSize =
-          if (method.params(2).toString.toInt > maxPageSize) {
+          if (method.getParams()(2).toString.toInt > maxPageSize) {
             maxPageSize.toInt
           } else {
-            method.params(2).toString.toInt
+            method.getParams()(2).toString.toInt
           }
         if (position > 0) {
           inputStream.skip(position)
@@ -95,19 +99,19 @@ object IOHelp {
    * @param method
    */
   def write(fs: Fs, method: MethodEntity): Unit = {
-    if (method.params == null || method.params.isEmpty) {
+    if (method.getParams == null || method.getParams.isEmpty) {
       throw new StorageErrorException(PARAMETER_CALLS.getErrorCode, PARAMETER_CALLS.getErrorDesc)
     }
     val dest = MethodEntitySerializer.deserializerToJavaObject(
-      method.params(0).asInstanceOf[String],
+      method.getParams()(0).asInstanceOf[String],
       classOf[FsPath]
     )
-    val overwrite = method.params(1).asInstanceOf[Boolean]
+    val overwrite = method.getParams()(1).asInstanceOf[Boolean]
     val outputStream = fs.write(dest, overwrite)
-    val content = method.params(2).asInstanceOf[String]
+    val content = method.getParams()(2).asInstanceOf[String]
     Utils.tryFinally {
       val resultSet = ResultSetFactory.getInstance.getResultSetByType(ResultSetFactory.IO_TYPE)
-      val reader = ResultSetReader.getResultSetReader(resultSet, content)
+      val reader = ResultSetReaderFactory.getResultSetReader(resultSet, content)
       while (reader.hasNext) {
         IOUtils.write(reader.getRecord.asInstanceOf[IORecord].value, outputStream)
       }

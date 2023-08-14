@@ -76,7 +76,7 @@
               </BreadcrumbItem>
               <template v-if="$route.name === 'EngineConnList'">
                 <BreadcrumbItem>{{ $route.query.instance }}</BreadcrumbItem>
-                <BreadcrumbItem>EngineConnList</BreadcrumbItem>
+                <BreadcrumbItem>{{$t('message.linkis.sideNavList.function.children.EngineConnList')}}</BreadcrumbItem>
               </template>
             </Breadcrumb>
             <Tabs v-if="$route.name === 'resource' || $route.name === 'resourceEngineConnList'"

@@ -402,7 +402,7 @@ export default {
     // search(搜索)
     search(e) {
       let param = {
-        instance: e.instance,
+        instance: e.instance.replace(/ /g, ''),
         nodeHealthy: e.nodeHealthy,
         owner: e.owner,
         tenantLabel: e.tenant,

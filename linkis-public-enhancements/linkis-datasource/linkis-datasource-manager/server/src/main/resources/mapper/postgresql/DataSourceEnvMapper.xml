@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.datasourcemanager.core.dao.DataSourceEnvDao">
+    <resultMap id="dataSourceEnvMap" type="org.apache.linkis.datasourcemanager.common.domain.DataSourceEnv">
+        <result property="id" column="id"/>
+        <result property="envName" column="env_name"/>
+        <result property="envDesc" column="env_desc"/>
+        <result property="parameter" column="parameter"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="modifyUser" column="modify_user"/>
+        <result property="dataSourceTypeId" column="datasource_type_id"/>
+        <association property="dataSourceType" javaType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
+            <result property="icon" column="icon"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <sql id="data_source_env_insert_columns">
+        env_name, env_desc, datasource_type_id ,parameter, create_time,
+        create_user, modify_time, modify_user
+    </sql>
+
+    <sql id="data_source_env_detail">
+        id, env_name, env_desc, parameter, create_time,
+        create_user, modify_time, modify_user
+    </sql>
+
+    <select id="selectOneDetail" resultMap="dataSourceEnvMap">
+        SELECT e.id, e.env_name, e.env_desc, e.parameter, e.create_time,
+        e.create_user, e.modify_time, e.modify_user
+            FROM linkis_ps_dm_datasource_env e WHERE id = #{dataSourceEnvId};
+    </select>
+
+    <insert id="insertOne" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.datasourcemanager.common.domain.DataSourceType">
+        INSERT INTO linkis_ps_dm_datasource_env(
+        <include refid="data_source_env_insert_columns"/>
+        ) VALUES(#{envName}, #{envDesc},#{dataSourceTypeId},
+        #{parameter},
+
+        <choose>
+            <when test="createTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{createTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+
+        #{createUser},
+
+        <choose>
+            <when test="modifyTime == null">
+                now(),
+            </when>
+            <otherwise>
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </otherwise>
+        </choose>
+        #{modifyUser})
+    </insert>
+
+    <select id="listByTypeId" resultMap="dataSourceEnvMap">
+        SELECT id, env_name FROM linkis_ps_dm_datasource_env
+        WHERE datasource_type_id = #{id}
+    </select>
+
+    <select id="selectByPageVo" resultMap="dataSourceEnvMap">
+        SELECT e.id, e.env_name, e.env_desc, e.parameter, e.create_time,
+        e.create_user, e.modify_time, e.modify_user, e.datasource_type_id
+            FROM linkis_ps_dm_datasource_env e
+        <where>
+            <if test="envName != null and envName != ''">
+                e.env_name like concat('%', #{envName}::text, '%')
+            </if>
+            <if test="dataSourceTypeId != null and dataSourceTypeId > 0">
+                AND e.datasource_type_id = #{dataSourceTypeId}
+            </if>
+        </where>
+    </select>
+
+    <delete id="removeOne">
+        DELETE FROM linkis_ps_dm_datasource_env WHERE id = #{id};
+    </delete>
+
+    <update id="updateOne">
+        UPDATE linkis_ps_dm_datasource_env
+        <set>
+            env_name = #{envName},
+            env_desc = #{envDesc,jdbcType=VARCHAR},
+            parameter = #{parameter},
+<!--            modify_time = #{modifyTime,jdbcType=TIMESTAMP},-->
+            <choose>
+                <when test="modifyTime == null">
+                    modify_time = now(),
+                </when>
+                <otherwise>
+                    modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+                </otherwise>
+            </choose>
+            modify_user = #{modifyUser,jdbcType=VARCHAR}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="selectOneByName" resultMap="dataSourceEnvMap">
+        SELECT
+        <include refid="data_source_env_detail"/>
+         FROM linkis_ps_dm_datasource_env
+        <where>
+            env_name = #{envName}
+        </where>
+         LIMIT 1;
+    </select>
+</mapper>

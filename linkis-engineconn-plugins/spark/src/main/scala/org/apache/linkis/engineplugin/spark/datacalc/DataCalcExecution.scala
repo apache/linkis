@@ -52,9 +52,13 @@ object DataCalcExecution {
     val sources = mapleData.getSources.map(source =>
       PluginUtil.createSource[SR](source.getName, source.getConfig)
     )
-    val transformations = mapleData.getTransformations.map(sink =>
-      PluginUtil.createTransform[TR](sink.getName, sink.getConfig)
-    )
+    val transformations = if (mapleData.getTransformations == null) {
+      Array.empty[DataCalcTransform[TR]]
+    } else {
+      mapleData.getTransformations.map(sink =>
+        PluginUtil.createTransform[TR](sink.getName, sink.getConfig)
+      )
+    }
     val sinks =
       mapleData.getSinks.map(sink => PluginUtil.createSink[SK](sink.getName, sink.getConfig))
 

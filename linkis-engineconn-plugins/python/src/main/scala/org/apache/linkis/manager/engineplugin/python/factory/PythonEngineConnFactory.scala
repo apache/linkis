@@ -48,7 +48,7 @@ class PythonEngineConnFactory extends ComputationSingleExecutorEngineConnFactory
           PythonEngineConfiguration.PYTHON_CONSOLE_OUTPUT_LINE_LIMIT.getValue
         )
       case _ =>
-        throw PythonSessionStartFailedExeception(INVALID_PYTHON_SESSION.getErrorDesc)
+        throw new PythonSessionStartFailedExeception(INVALID_PYTHON_SESSION.getErrorDesc)
     }
   }
 

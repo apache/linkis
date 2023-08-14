@@ -47,15 +47,7 @@
         </exclusion>
         <exclusion>
           <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-annotations</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -78,7 +70,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-cs-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -100,7 +92,6 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
-
   </dependencies>
 
   <build>

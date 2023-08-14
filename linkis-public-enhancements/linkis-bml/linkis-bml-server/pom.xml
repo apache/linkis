@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-bml-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -46,10 +46,6 @@
         <exclusion>
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -34,11 +34,11 @@
     </resultMap>
 
     <sql id="job_list">
-        `id`, `job_history_id`, `result_location`, `result_array_size`, `execution_content`, `job_group_info`, `created_time`, `updated_time`, `status`, `priority`
+        id, job_history_id, result_location, result_array_size, execution_content, job_group_info, created_time, updated_time, status, priority
     </sql>
 
     <sql id="insert_job_list">
-        `job_history_id`, `result_location`, `result_array_size`, `execution_content`, `job_group_info`, `created_time`, `updated_time`, `status`, `priority`
+        job_history_id, result_location, result_array_size, execution_content, job_group_info, created_time, updated_time, status, priority
     </sql>
 
     <insert id="insertJobDetail" flushCache="true" useGeneratedKeys="true" keyProperty="id" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
@@ -49,13 +49,13 @@
 
     <select id="selectJobDetailByJobDetailId" resultMap="jobDetailMap" >
         SELECT * FROM linkis_ps_job_history_detail
-        WHERE `id` = #{jobId}
+        WHERE id = #{jobId}
     </select>
 
     <select id="selectJobDetailByJobHistoryId" resultMap="jobDetailMap" >
         SELECT * FROM linkis_ps_job_history_detail
-        WHERE `job_history_id` = #{jobId}
-        ORDER BY `created_time` ASC
+        WHERE job_history_id = #{jobId}
+        ORDER BY created_time ASC
     </select>
 
     <!--<select id="selectTask" resultMap="jobHistoryMapper" parameterType="org.apache.linkis.jobhistory.entity.QueryJobDetail">
@@ -95,7 +95,7 @@
 
     <update id="updateJobDetail" flushCache="true" parameterType="org.apache.linkis.jobhistory.entity.JobDetail">
         UPDATE linkis_ps_job_history_detail
-        <trim prefix="set" suffixOverrides=",">
+        <set>
             <if test="updatedTimeMills != null">updated_time = #{updatedTimeMills},</if>
             <if test="resultLocation != null">result_location = #{resultLocation},</if>
             <if test="resultArraySize != null">result_array_size = #{resultArraySize},</if>
@@ -104,17 +104,15 @@
             <if test="createdTime != null">created_time = #{createdTime},</if>
             <if test="status != null">status = #{status},</if>
             <if test="priority != null">priority = #{priority},</if>
-        </trim>
-        <![CDATA[
-        WHERE id =#{id} AND updated_time < #{updatedTimeMills}
-        ]]>
+        </set>
+        WHERE id =#{id} AND updated_time <![CDATA[<]]> #{updatedTimeMills}
     </update>
 
     <select id="selectJobDetailStatusForUpdateByJobDetailId" resultType="java.lang.String">
         SELECT
-        bdt.`status`
+        bdt.status
         FROM
-        `linkis_ps_job_history_detail` bdt
+        linkis_ps_job_history_detail bdt
         WHERE
         id = #{jobId} FOR UPDATE
     </select>

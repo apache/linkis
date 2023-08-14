@@ -17,6 +17,7 @@
 
 package org.apache.linkis.manager.common.utils;
 
+import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.manager.common.conf.ManagerCommonConf;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactory;
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext;
@@ -41,10 +42,10 @@ public class ManagerUtils {
 
   public static String getAdminUser() {
 
-    if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN().getValue())) {
-      return ManagerCommonConf.DEFAULT_ADMIN().getValue();
+    if (StringUtils.isNotBlank(ManagerCommonConf.DEFAULT_ADMIN.getValue())) {
+      return ManagerCommonConf.DEFAULT_ADMIN.getValue();
     }
-    return System.getProperty("user.name");
+    return Utils.getJvmUser();
   }
 
   public static Label<?> persistenceLabelToRealLabel(Label<?> label) {

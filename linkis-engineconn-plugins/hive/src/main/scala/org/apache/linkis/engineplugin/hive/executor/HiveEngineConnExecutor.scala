@@ -340,7 +340,7 @@ class HiveEngineConnExecutor(
           arr foreach arrAny.asJava.add
           for (i <- 1 to i) arrAny.asJava add ""
         }
-        resultSetWriter.addRecord(new TableRecord(arrAny.toArray))
+        resultSetWriter.addRecord(new TableRecord(arrAny.toArray.asInstanceOf[Array[AnyRef]]))
       }
       rows += result.size
       result.clear()
@@ -379,7 +379,11 @@ class HiveEngineConnExecutor(
 
     val columns = results.asScala
       .map(result =>
-        Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
+        new Column(
+          result.getName,
+          DataType.toDataType(result.getType.toLowerCase()),
+          result.getComment
+        )
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)
@@ -640,12 +644,10 @@ class HiveDriverProxy(driver: Any) extends Logging {
   }
 
   def getResults(res: util.List[_]): Boolean = {
-    Utils.tryAndWarn {
-      driver.getClass
-        .getMethod("getResults", classOf[util.List[_]])
-        .invoke(driver, res.asInstanceOf[AnyRef])
-        .asInstanceOf[Boolean]
-    }
+    driver.getClass
+      .getMethod("getResults", classOf[util.List[_]])
+      .invoke(driver, res.asInstanceOf[AnyRef])
+      .asInstanceOf[Boolean]
   }
 
   def close(): Unit = {

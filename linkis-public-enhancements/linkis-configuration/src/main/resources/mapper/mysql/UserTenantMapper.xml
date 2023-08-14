@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="org.apache.linkis.configuration.dao.UserTenantMapper">
+
+    <resultMap id="TenantMap" type="org.apache.linkis.configuration.entity.TenantVo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user" property="user" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="tenant_value" property="tenantValue" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="desc" property="desc" jdbcType="VARCHAR"/>
+        <result column="bussiness_user" property="bussinessUser" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Tenant_Column_List">
+        id,user,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
+    </sql>
+
+    <sql id="Tenant_insert_Column_List">
+        `user`,creator,tenant_value,create_time,update_time,`desc`,bussiness_user
+    </sql>
+
+    <insert id="createTenant" parameterType="org.apache.linkis.configuration.entity.TenantVo">
+        INSERT INTO linkis_cg_tenant_label_config(<include refid="Tenant_insert_Column_List"/>) VALUES (
+        #{user},
+        #{creator},
+        #{tenantValue},
+        #{createTime},
+        #{updateTime},
+        #{desc},
+        #{bussinessUser}
+        )
+    </insert>
+
+    <select id="queryTenantList" resultMap="TenantMap">
+        SELECT <include refid="Tenant_Column_List"/>
+        FROM linkis_cg_tenant_label_config
+        <where>
+            <if test="user != null">`user` = #{user}</if>
+            <if test="creator != null">and `creator` = #{creator}</if>
+            <if test="tenant_value != null">and `tenant_value` = #{tenant_value}</if>
+        </where>
+    </select>
+
+    <delete id="deleteTenant">
+        DELETE FROM linkis_cg_tenant_label_config
+        WHERE id =  #{id}
+    </delete>
+
+    <update id="updateTenant" parameterType="org.apache.linkis.configuration.entity.TenantVo">
+        UPDATE linkis_cg_tenant_label_config
+        <set>
+            <if test="user != null ">user = #{user},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="tenantValue != null">tenant_value = #{tenantValue},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="desc != null">`desc` = #{desc},</if>
+            <if test="bussinessUser != null">bussiness_user = #{bussinessUser}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+
+    <select id="queryTenant" resultMap="TenantMap">
+        SELECT <include refid="Tenant_Column_List"/>
+        FROM linkis_cg_tenant_label_config
+        <where>
+            <if test="user != null">`user` = #{user}</if>
+            <if test="creator != null">and `creator` = #{creator}</if>
+        </where>
+    </select>
+</mapper>

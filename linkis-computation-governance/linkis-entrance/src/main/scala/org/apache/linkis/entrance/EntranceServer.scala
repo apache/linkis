@@ -38,6 +38,7 @@ import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.task.RequestTaskKill
 import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest
 import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
+import org.apache.linkis.governance.common.utils.LoggerUtils
 import org.apache.linkis.protocol.constants.TaskConstant
 import org.apache.linkis.rpc.Sender
 import org.apache.linkis.rpc.conf.RPCConfiguration
@@ -95,12 +96,15 @@ abstract class EntranceServer extends Logging {
     }
     logger.info(s"received a request,convert $jobRequest")
 
+    LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
+
     val logAppender = new java.lang.StringBuilder()
     Utils.tryThrow(
       getEntranceContext
         .getOrCreateEntranceInterceptors()
         .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
     ) { t =>
+      LoggerUtils.removeJobIdMDC()
       val error = t match {
         case error: ErrorException => error
         case t1: Throwable =>
@@ -182,8 +186,10 @@ abstract class EntranceServer extends Logging {
           entranceJob.getLogListener.foreach(_.onLogUpdate(entranceJob, msg))
         case _ =>
       }
+      LoggerUtils.removeJobIdMDC()
       job
     } { t =>
+      LoggerUtils.removeJobIdMDC()
       job.onFailure("Submitting the query failed!(提交查询失败！)", t)
       val _jobRequest: JobRequest =
         getEntranceContext.getOrCreateEntranceParser().parseToJobRequest(job)

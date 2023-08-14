@@ -27,6 +27,10 @@
   <artifactId>linkis-application-manager</artifactId>
 
   <dependencies>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -43,7 +47,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-bml-client</artifactId>
+      <artifactId>linkis-pes-client</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -94,21 +98,37 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.json4s</groupId>
-      <artifactId>json4s-jackson_${scala.binary.version}</artifactId>
-      <version>${json4s.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>${gson.version}</version>
       <scope>provided</scope>
     </dependency>
-
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-client</artifactId>
+      <version>${kubernetes-client.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-model-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.fabric8</groupId>
+          <artifactId>kubernetes-model-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-model-common</artifactId>
+      <version>${kubernetes-client.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>kubernetes-model-core</artifactId>
+      <version>${kubernetes-client.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

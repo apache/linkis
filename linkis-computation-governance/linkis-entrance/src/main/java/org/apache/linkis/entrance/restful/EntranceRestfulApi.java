@@ -512,7 +512,7 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
           metricsVo.put(TaskConstant.JOB_YARNRESOURCE, resoureList);
           Optional<Integer> cores =
               resourceMap.values().stream()
-                  .map(resource -> resource.queueCores())
+                  .map(resource -> resource.getQueueCores())
                   .reduce((x, y) -> x + y);
           Optional<Long> memory =
               resourceMap.values().stream()
@@ -937,7 +937,9 @@ public class EntranceRestfulApi implements EntranceRestfulRemote {
         logger.error("kill job {} failed ", job.get().getId(), t);
         message =
             Message.error(
-                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)");
+                "An exception occurred while killing the job, kill failed(kill job的时候出现了异常，kill失败)"
+                    + "message: "
+                    + t.getMessage());
         message.setMethod("/api/entrance/" + id + "/kill");
       }
     }

@@ -567,7 +567,7 @@ export default {
       if (!args.row) return
       this.$Modal.confirm({
         title: this.$t('message.linkis.modal.modalTitle'),
-        content: this.$t('message.linkis.modal.modalDelete', {envName: args.row.udfName}),
+        content: this.$t('message.linkis.modal.modalDelete', {name: args.row.udfName}),
         onOk: ()=>{
           api.fetch(`/udf/delete/${args.row.id}`, {}, 'post')
             .then(() => {

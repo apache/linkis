@@ -55,7 +55,7 @@ public class TimingMonitorService implements InitializingBean, Runnable {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM()) {
+    if ((Boolean) AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM().getValue()) {
       Utils.defaultScheduler()
           .scheduleAtFixedRate(
               this, 3 * 60 * 1000, MONITOR_INTERVAL.getValue().toLong(), TimeUnit.MILLISECONDS);

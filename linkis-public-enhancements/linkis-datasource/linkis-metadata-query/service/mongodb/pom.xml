@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
-      <version>3.12.8</version>
+      <version>${mongodb.driver.version}</version>
     </dependency>
 
   </dependencies>

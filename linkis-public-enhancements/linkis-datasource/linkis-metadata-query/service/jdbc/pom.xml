@@ -28,13 +28,13 @@
 
   <properties>
     <postgresql.version>42.3.8</postgresql.version>
-    <clickhouse.version>0.3.2-patch11</clickhouse.version>
+    <clickhouse.version>0.4.6</clickhouse.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-metadata-query-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -65,11 +65,6 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>${postgresql.version}</version>
     </dependency>
   </dependencies>
 

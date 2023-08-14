@@ -330,7 +330,7 @@ export default {
           {
             creator: parameter[0], // Specify a first-level directory(指定一级目录)
             engineType: parameter[1], // Specify the engine (secondary directory) if there is only a first-level directory, it will be automatically undefined and no parameters will be passed(指定引擎（二级目录）如果只有一级目录则自动为undefined不会传参)
-            version: parameter[2], // The corresponding engine currently only supports the corresponding version. For example, spark will pass version-3.2.1. If there is only a first-level directory, it will be automatically undefined and no parameters will be passed.(对应的引擎目前只支持对应的版本，如spark就传version-3.2.1，如果只有一级目录则自动为undefined不会传参)
+            version: parameter[2], // The corresponding engine currently only supports the corresponding version. For example, spark will pass version-2.4.3. If there is only a first-level directory, it will be automatically undefined and no parameters will be passed.(对应的引擎目前只支持对应的版本，如spark就传version-2.4.3，如果只有一级目录则自动为undefined不会传参)
           },
           "get"
         )
@@ -565,11 +565,10 @@ export default {
       //Find the data in the menuList of the tab you clicked to delete(找到点击删除的tab 在menuList里的数据)
       let menuItem = this.menuList.find((item) => item.categoryName === name);
       //Determine whether the current active tab is the same as the tab currently clicked to delete(判断当前的活动tab是否和当前点击删除的tab一样)
-      if (this.currentTabName === name) {
-        let ItemIndex = this.menuList.findIndex(
-          (item) => item.categoryName === this.currentTabName
-        );
-        this.menuList.splice(ItemIndex, 1);
+      const activeIndex = this.menuList.findIndex((item) => item.categoryName === this.currentTabName) + 1;
+      const curIndex = this.menuList.findIndex((item) => item.categoryName === name);
+      if (curIndex === activeIndex) {
+        this.menuList.splice(curIndex, 1);
         api
           .fetch(
             "/configuration/deleteCategory",

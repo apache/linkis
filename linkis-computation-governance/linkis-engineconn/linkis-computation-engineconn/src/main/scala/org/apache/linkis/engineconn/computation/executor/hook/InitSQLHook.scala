@@ -33,6 +33,7 @@ import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util
 
 abstract class InitSQLHook extends EngineConnHook with Logging {
@@ -91,7 +92,7 @@ abstract class InitSQLHook extends EngineConnHook with Logging {
     logger.info("read file: " + path)
     val file = new File(path)
     if (file.exists()) {
-      FileUtils.readFileToString(file)
+      FileUtils.readFileToString(file, StandardCharsets.UTF_8)
     } else {
       logger.info("file: [" + path + "] doesn't exist, ignore it.")
       ""

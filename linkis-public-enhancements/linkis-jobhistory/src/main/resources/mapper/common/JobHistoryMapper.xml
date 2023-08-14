@@ -244,12 +244,12 @@
                         select #{key} as instances, #{val} as registryTime
                     </foreach>
                 ) b
-                where a.instances = b.instances and UNIX_TIMESTAMP(a.created_time) * 1000  <![CDATA[<]]> b.registryTime
+                where a.instances = b.instances and a.created_time <![CDATA[<]]> FROM_UNIXTIME(b.registryTime/1000)
             )
         )
         and
         status in <foreach collection="statusList" open="(" separator="," close=")" item="status">#{status}</foreach>
-        <if test="startTimestamp != null and startTimestamp > 0">and UNIX_TIMESTAMP(a.created_time) * 1000 >= #{startTimestamp}</if>
+        <if test="startTimestamp != null and startTimestamp > 0">and a.created_time >= FROM_UNIXTIME(#{startTimestamp}/1000)</if>
         <if test="limit != null and limit > 0">limit #{limit}</if>
 
     </select>

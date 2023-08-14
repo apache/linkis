@@ -670,6 +670,8 @@ CREATE TABLE `linkis_cg_manager_service_instance` (
   `name` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `owner` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `mark` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `identifier` varchar(32) COLLATE utf8_bin DEFAULT NULL,
+  `ticketId` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `updator` varchar(32) COLLATE utf8_bin DEFAULT NULL,
@@ -729,7 +731,7 @@ CREATE TABLE `linkis_cg_manager_engine_em` (
 DROP TABLE IF EXISTS `linkis_cg_manager_label`;
 CREATE TABLE `linkis_cg_manager_label` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `label_key` varchar(32) COLLATE utf8_bin NOT NULL,
+  `label_key` varchar(50) COLLATE utf8_bin NOT NULL,
   `label_value` varchar(255) COLLATE utf8_bin NOT NULL,
   `label_feature` varchar(16) COLLATE utf8_bin NOT NULL,
   `label_value_size` int(20) NOT NULL,
@@ -776,7 +778,7 @@ CREATE TABLE `linkis_cg_ec_resource_info_record` (
     `request_resource` VARCHAR(1020) COMMENT 'request resource',
     `used_times` INT(8) COMMENT 'resource used times',
     `used_resource` VARCHAR(1020) COMMENT 'used resource',
-    `metrics` VARCHAR(1024) DEFAULT NULL COMMENT 'ec metrics',
+    `metrics` TEXT DEFAULT NULL COMMENT 'ec metrics',
     `release_times` INT(8) COMMENT 'resource released times',
     `released_resource` VARCHAR(1020)  COMMENT 'released resource',
     `release_time` datetime DEFAULT NULL COMMENT 'released time',

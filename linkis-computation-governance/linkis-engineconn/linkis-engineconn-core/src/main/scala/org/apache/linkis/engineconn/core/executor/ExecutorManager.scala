@@ -137,7 +137,7 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   }
 
   protected def getLabelKey(labels: Array[Label[_]]): String =
-    labels.map(_.getStringValue).mkString("&")
+    labels.filter(null != _).map(_.getStringValue).mkString("&")
 
   protected def createExecutor(
       engineCreationContext: EngineCreationContext,
@@ -171,7 +171,10 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
         MessageFormat.format(CANNOT_GET_LABEL_KEY.getErrorDesc, GSON.toJson(labels))
       )
     }
-
+    if (!executors.isEmpty && factories.size <= 1) {
+      logger.info("For a single Executor EC, if an Executor exists, it will be returned directly")
+      return getReportExecutor.asInstanceOf[LabelExecutor]
+    }
     if (!executors.containsKey(labelKey)) executors synchronized {
       if (!executors.containsKey(labelKey)) {
         val executor = tryCreateExecutor(engineCreationContext, labels)
@@ -184,6 +187,12 @@ class LabelExecutorManagerImpl extends LabelExecutorManager with Logging {
   override def generateExecutorId(): Int = idCreator.getAndIncrement()
 
   override def getExecutorByLabels(labels: Array[Label[_]]): LabelExecutor = {
+
+    if (!executors.isEmpty && factories.size <= 1) {
+      logger.info("For a single Executor EC, if an Executor exists, it will be returned directly")
+      return getReportExecutor.asInstanceOf[LabelExecutor]
+    }
+
     val labelKey = getLabelKey(labels)
     if (null == labelKey) return null
     if (!executors.containsKey(labelKey)) executors synchronized {

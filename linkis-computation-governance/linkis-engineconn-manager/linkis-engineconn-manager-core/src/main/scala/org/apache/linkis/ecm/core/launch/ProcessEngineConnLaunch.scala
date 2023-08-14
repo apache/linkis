@@ -42,6 +42,7 @@ import org.apache.commons.lang3.StringUtils
 import java.io.{File, InputStream, OutputStream}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
 
@@ -101,7 +102,12 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
       case HIVE_CONF_DIR => putIfExists(HIVE_CONF_DIR)
       case JAVA_HOME => putIfExists(JAVA_HOME)
       case RANDOM_PORT =>
-        environment.put(RANDOM_PORT.toString, PortUtils.findAvailPort().toString)
+        environment.put(
+          RANDOM_PORT.toString,
+          PortUtils
+            .findAvailPortByRange(GovernanceCommonConf.ENGINE_CONN_DEBUG_PORT_RANGE.getValue)
+            .toString
+        )
       case PREFER_IP_ADDRESS =>
         environment.put(PREFER_IP_ADDRESS.toString, Configuration.PREFER_IP_ADDRESS.toString)
       case ENGINECONN_ENVKEYS =>
@@ -151,15 +157,19 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
   def getPid(): Option[String] = None
 
   protected def getCommandArgs: Array[String] = {
-    if (
-        request.creationDesc.properties.asScala.exists { case (k, v) =>
-          k.contains(" ") || (v != null && v.contains(" "))
-        }
-    ) {
+    val recordMap: mutable.Map[String, String] = mutable.Map()
+    request.creationDesc.properties.asScala.foreach { case (k, v) =>
+      if (k.contains(" ") || (v != null && v.contains(" "))) recordMap.put(k, v)
+    }
+    if (recordMap.size > 0) {
+      val keyAndValue = new StringBuilder
+      for (kv <- recordMap) {
+        keyAndValue.append(s"${kv._1}->${kv._2};")
+      }
       throw new ErrorException(
         30000,
-        "Startup parameters contain spaces!(启动参数中包含空格！)"
-      ) // TODO exception
+        s"Startup parameters contain spaces! The key and value values of all its parameters are(启动参数中包含空格！其所有参数的key和value值分别为)：${keyAndValue.toString()}"
+      )
     }
     val arguments = EngineConnArgumentsBuilder.newBuilder()
     engineConnPort = PortUtils
@@ -255,14 +265,15 @@ trait ProcessEngineConnLaunch extends EngineConnLaunch with Logging {
     }
   }
 
+  /**
+   * process exit code if process is null retur errorcode 10
+   * @return
+   */
   def processWaitFor: Int = {
     if (process != null) {
       process.waitFor
     } else {
-      throw new ECMCoreException(
-        CAN_NOT_GET_TERMINATED.getErrorCode,
-        CAN_NOT_GET_TERMINATED.getErrorDesc
-      )
+      10
     }
   }
 

@@ -50,7 +50,7 @@ help() {
     echo "-d                 print debug info (default: false)"
     echo "-m                 mirror url (default:ghcr.io , eg: ghcr.dockerproxy.com)"
     echo "-t                 tag name (default:latest)"
-    echo "-n                 install linkis with ldh (default:false)"
+    echo "-l                 install linkis with ldh (default:false)"
     echo "-r                 install linkis with ldh (default:false)"
     echo "-n                 kubernetes namespace (default:linkis)"
     echo "--helm-release     helm release name (default:linkis-demo)"
@@ -83,8 +83,8 @@ tag(){
     fi
 }
 #create an image to carry mysql
-make_linikis_image_with_mysql_jdbc(){
-    ${ROOT_DIR}/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+make_linkis_image_with_mysql_jdbc(){
+    ${ROOT_DIR}/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
     docker tag linkis:with-jdbc linkis:dev
 }
 #creating a kind cluster
@@ -98,7 +98,7 @@ install_mysql(){
 #ldh installation
 install_ldh(){
     if [ $WITH_LDH = true ]; then
-      ${ROOT_DIR}/helm/scripts/install-ldh.sh
+      ${ROOT_DIR}/helm/scripts/install-ldh.sh $USING_KIND
     fi
 }
 #linkis installation
@@ -117,7 +117,7 @@ display_pods(){
 install(){
     if [ $USING_KIND = true ]; then
       tag
-      make_linikis_image_with_mysql_jdbc
+      make_linkis_image_with_mysql_jdbc
       create_kind_cluster
     fi
     install_mysql

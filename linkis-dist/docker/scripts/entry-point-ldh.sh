@@ -22,8 +22,9 @@ WORK_DIR=`cd $(dirname $0); pwd -P`
 hdfs namenode -format
 /opt/ldh/current/hadoop/sbin/hadoop-daemon.sh start namenode
 /opt/ldh/current/hadoop/sbin/hadoop-daemon.sh start datanode
-/opt/ldh/current/hadoop/sbin/yarn-daemon.sh start resourcemanager
-/opt/ldh/current/hadoop/sbin/yarn-daemon.sh start nodemanager
+# hadoop2.7 is yarn-daemon.sh
+/opt/ldh/current/hadoop/bin/yarn --daemon  start resourcemanager
+/opt/ldh/current/hadoop/bin/yarn --daemon start nodemanager
 
 # - init dirs on hdfs
 hdfs dfs -mkdir -p /tmp

@@ -25,15 +25,27 @@ object HadoopConf {
 
   val KERBEROS_ENABLE = CommonVars("wds.linkis.keytab.enable", false)
 
+  val KERBEROS_ENABLE_MAP =
+    CommonVars("linkis.keytab.enable.map", "cluster1=false,cluster2=true")
+
   val KEYTAB_FILE = CommonVars("wds.linkis.keytab.file", "/appcom/keytab/")
 
+  val EXTERNAL_KEYTAB_FILE_PREFIX =
+    CommonVars("linkis.external.keytab.file.prefix", "/appcom/config/external-conf/keytab")
+
   val KEYTAB_HOST = CommonVars("wds.linkis.keytab.host", "127.0.0.1")
+
+  val KEYTAB_HOST_MAP =
+    CommonVars("linkis.keytab.host.map", "cluster1=127.0.0.2,cluster2=127.0.0.3")
 
   val KEYTAB_HOST_ENABLED = CommonVars("wds.linkis.keytab.host.enabled", false)
 
   val KEYTAB_PROXYUSER_ENABLED = CommonVars("wds.linkis.keytab.proxyuser.enable", false)
 
   val KEYTAB_PROXYUSER_SUPERUSER = CommonVars("wds.linkis.keytab.proxyuser.superuser", "hadoop")
+
+  val KEYTAB_PROXYUSER_SUPERUSER_MAP =
+    CommonVars("linkis.keytab.proxyuser.superuser.map", "cluster1=hadoop1,cluster2=hadoop2")
 
   val hadoopConfDir =
     CommonVars("hadoop.config.dir", CommonVars("HADOOP_CONF_DIR", "").getValue).getValue

@@ -255,14 +255,14 @@ No rows affected (1.306 seconds)
 No rows affected (0.046 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> create table t1 (id int, data string);
 No rows affected (0.709 seconds)
-0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> insert into t1 values(1, 'linikis demo');
+0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> insert into t1 values(1, 'linkis demo');
 WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
 No rows affected (5.491 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> select * from t1;
 +--------+---------------+
 | t1.id  |    t1.data    |
 +--------+---------------+
-| 1      | linikis demo  |
+| 1      | linkis demo  |
 +--------+---------------+
 1 row selected (0.39 seconds)
 0: jdbc:hive2://ldh.ldh.svc.cluster.local:100> !q
@@ -288,7 +288,7 @@ Time taken: 0.074 seconds
 22/07/31 02:58:02 INFO thriftserver.SparkSQLCLIDriver: Time taken: 0.074 seconds
 spark-sql> select * from t1;
 ...
-1       linikis demo
+1       linkis demo
 2       linkis demo spark sql
 Time taken: 3.352 seconds, Fetched 2 row(s)
 spark-sql> quit;

@@ -30,4 +30,8 @@ public interface EngineNode extends AMNode, RMNode, LabelNode {
   String getTicketId();
 
   void setTicketId(String ticketId);
+
+  String getEcMetrics();
+
+  void setEcMetrics(String metrics);
 }

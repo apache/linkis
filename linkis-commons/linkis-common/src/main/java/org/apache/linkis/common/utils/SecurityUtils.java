@@ -66,11 +66,16 @@ public abstract class SecurityUtils {
   private static final CommonVars<String> MYSQL_STRONG_SECURITY_ENABLE =
       CommonVars$.MODULE$.apply("linkis.mysql.strong.security.enable", "false");
 
+  private static final CommonVars<String> MYSQL_SECURITY_CHECK_ENABLE =
+      CommonVars$.MODULE$.apply("linkis.mysql.security.check.enable", "true");
+
   private static final CommonVars<String> MYSQL_CONNECT_URL =
       CommonVars.apply("linkis.security.mysql.url.template", "jdbc:mysql://%s:%s/%s");
 
-  private static final String JDBC_MATCH_REGEX =
-      "(?i)jdbc:(?i)(mysql)://([a-zA-Z0-9]+\\.)*[a-zA-Z0-9]+(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?";
+  private static final CommonVars<String> JDBC_MATCH_REGEX =
+      CommonVars$.MODULE$.apply(
+          "linkis.mysql.jdbc.match.regex",
+          "(?i)jdbc:(?i)(mysql)://([^:]+)(:[0-9]+)?(/[a-zA-Z0-9_-]*[\\.\\-]?)?");
 
   private static final String JDBC_MYSQL_PROTOCOL = "jdbc:mysql";
 
@@ -91,13 +96,18 @@ public abstract class SecurityUtils {
       String password,
       String database,
       Map<String, Object> extraParams) {
+
+    // check switch
+    if (!Boolean.valueOf(MYSQL_SECURITY_CHECK_ENABLE.getValue())) {
+      return;
+    }
+
     // 1. Check blank params
-    if (StringUtils.isAnyBlank(host, username, password)) {
-      logger.info(
-          "Invalid mysql connection params: host: {}, username: {}, password: {}, database: {}",
+    if (StringUtils.isAnyBlank(host, username)) {
+      logger.error(
+          "Invalid mysql connection params: host: {}, username: {}, database: {}",
           host,
           username,
-          password,
           database);
       throw new LinkisSecurityException(35000, "Invalid mysql connection params.");
     }
@@ -112,6 +122,12 @@ public abstract class SecurityUtils {
 
   /** @param url */
   public static void checkJdbcConnUrl(String url) {
+
+    // check switch
+    if (!Boolean.valueOf(MYSQL_SECURITY_CHECK_ENABLE.getValue())) {
+      return;
+    }
+
     logger.info("jdbc url: {}", url);
     if (StringUtils.isBlank(url)) {
       throw new LinkisSecurityException(35000, "Invalid jdbc connection url.");
@@ -218,7 +234,7 @@ public abstract class SecurityUtils {
     if (url != null && !url.toLowerCase().startsWith(JDBC_MYSQL_PROTOCOL)) {
       return;
     }
-    Pattern regex = Pattern.compile(JDBC_MATCH_REGEX);
+    Pattern regex = Pattern.compile(JDBC_MATCH_REGEX.getValue());
     Matcher matcher = regex.matcher(url);
     if (!matcher.matches()) {
       logger.info("Invalid mysql connection url: {}", url);

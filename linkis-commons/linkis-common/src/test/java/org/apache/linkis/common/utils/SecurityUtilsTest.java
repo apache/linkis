@@ -81,6 +81,18 @@ public class SecurityUtilsTest {
         () -> {
           SecurityUtils.checkUrl(url5);
         });
+    // true
+    String url6 = "JDBC:H2://test-example.com:10000/db_name";
+    Assertions.assertDoesNotThrow(
+        () -> {
+          SecurityUtils.checkUrl(url6);
+        });
+    // true
+    String url7 = "JDBC:H2://example.测试:10000/db_name";
+    Assertions.assertDoesNotThrow(
+        () -> {
+          SecurityUtils.checkUrl(url7);
+        });
   }
 
   @Test
@@ -142,13 +154,6 @@ public class SecurityUtilsTest {
           SecurityUtils.checkJdbcConnParams(host4, port, username, password, database, extraParams);
         });
 
-    String host5 = "localhost/test";
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          SecurityUtils.checkJdbcConnParams(host5, port, username, password, database, extraParams);
-        });
-
     // error port
     Assertions.assertThrows(
         LinkisSecurityException.class,
@@ -166,19 +171,6 @@ public class SecurityUtilsTest {
         LinkisSecurityException.class,
         () -> {
           SecurityUtils.checkJdbcConnParams(host, port, null, password, database, extraParams);
-        });
-
-    // error password
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          SecurityUtils.checkJdbcConnParams(host, port, username, "  ", database, extraParams);
-        });
-
-    Assertions.assertThrows(
-        LinkisSecurityException.class,
-        () -> {
-          SecurityUtils.checkJdbcConnParams(host, port, username, null, database, extraParams);
         });
 
     // check database, The database name can be empty

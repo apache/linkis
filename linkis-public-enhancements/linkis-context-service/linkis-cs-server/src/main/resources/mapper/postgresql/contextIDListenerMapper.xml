@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="org.apache.linkis.cs.persistence.dao.ContextIDListenerMapper">
+
+    <sql id="context_id_listener">
+        "id","listener_source","context_id","create_time","update_time","access_time"
+    </sql>
+    <sql id="context_id_listener_insert">
+        "listener_source","context_id","create_time","update_time","access_time"
+    </sql>
+
+    <insert id="createIDListener" useGeneratedKeys="true" keyProperty="id"
+            parameterType="org.apache.linkis.cs.persistence.entity.PersistenceContextIDListener">
+        INSERT INTO linkis_ps_cs_context_listener(<include refid="context_id_listener_insert"/>)
+        VALUES (#{listener.source},cast(#{listener.contextId} as int),#{listener.createTime},#{listener.updateTime},#{listener.accessTime})
+    </insert>
+
+    <delete id="remove">
+        DELETE FROM linkis_ps_cs_context_listener where context_id = cast(#{listener.contextId} as int) AND listener_source = #{listener.source}
+    </delete>
+
+    <delete id="removeAll">
+        DELETE FROM linkis_ps_cs_context_listener where context_id = cast(#{contextID.contextId} as int)
+    </delete>
+
+    <select id="getAll" resultType="org.apache.linkis.cs.persistence.entity.PersistenceContextIDListener">
+        SELECT * FROM linkis_ps_cs_context_listener where context_id = cast(#{contextID.contextId} as int)
+    </select>
+
+
+</mapper>

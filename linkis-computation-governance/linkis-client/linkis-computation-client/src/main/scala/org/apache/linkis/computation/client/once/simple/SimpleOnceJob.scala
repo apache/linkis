@@ -23,6 +23,7 @@ import org.apache.linkis.computation.client.LinkisJobMetrics
 import org.apache.linkis.computation.client.job.AbstractSubmittableLinkisJob
 import org.apache.linkis.computation.client.once.{LinkisManagerClient, OnceJob, SubmittableOnceJob}
 import org.apache.linkis.computation.client.once.action.CreateEngineConnAction
+import org.apache.linkis.computation.client.once.result.CreateEngineConnResult
 import org.apache.linkis.computation.client.operator.OnceJobOperator
 
 import java.util.Locale
@@ -94,6 +95,10 @@ trait SimpleOnceJob extends OnceJob {
     case operator => operator
   }
 
+  def getEcServiceInstance: ServiceInstance = serviceInstance
+
+  def getEcTicketId: String = ticketId
+
 }
 
 class SubmittableSimpleOnceJob(
@@ -104,13 +109,15 @@ class SubmittableSimpleOnceJob(
     with AbstractSubmittableLinkisJob {
 
   private var ecmServiceInstance: ServiceInstance = _
+  private var createEngineConnResult: CreateEngineConnResult = _
 
   def getECMServiceInstance: ServiceInstance = ecmServiceInstance
+  def getCreateEngineConnResult: CreateEngineConnResult = createEngineConnResult
 
   override protected def doSubmit(): Unit = {
     logger.info(s"Ready to create a engineConn: ${createEngineConnAction.getRequestPayload}.")
-    val nodeInfo = linkisManagerClient.createEngineConn(createEngineConnAction)
-    lastNodeInfo = nodeInfo.getNodeInfo
+    createEngineConnResult = linkisManagerClient.createEngineConn(createEngineConnAction)
+    lastNodeInfo = createEngineConnResult.getNodeInfo
     serviceInstance = getServiceInstance(lastNodeInfo)
     ticketId = getTicketId(lastNodeInfo)
     ecmServiceInstance = getECMServiceInstance(lastNodeInfo)

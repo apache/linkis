@@ -42,8 +42,8 @@ object AccessibleExecutorConfiguration {
   val ENGINECONN_LOCK_CHECK_INTERVAL =
     CommonVars("wds.linkis.engineconn.lock.free.interval", new TimeType("3m"))
 
-  val ENGINECONN_SUPPORT_PARALLELISM: Boolean =
-    CommonVars("wds.linkis.engineconn.support.parallelism", false).getValue
+  val ENGINECONN_SUPPORT_PARALLELISM =
+    CommonVars("wds.linkis.engineconn.support.parallelism", false)
 
   val ENGINECONN_HEARTBEAT_TIME =
     CommonVars("wds.linkis.engineconn.heartbeat.time", new TimeType("2m"))
@@ -54,5 +54,17 @@ object AccessibleExecutorConfiguration {
   val ENABLE_MAINTAIN = CommonVars("wds.linkis.engineconn.maintain.enable", false)
 
   val ENABLE_MAINTAIN_CREATORS = CommonVars("wds.linkis.engineconn.maintain.cretors", "IDE")
+
+  val REPORTING_DELAY_MS = CommonVars(
+    "linkis.engineconn.heartbeat.report.delay",
+    20,
+    "Heartbeat status reporting delay, default 20ms, Negative numbers do not take effect"
+  ).getValue
+
+  val REPORTING_IGNORE_MS = CommonVars(
+    "linkis.engineconn.heartbeat.report.ignore",
+    3,
+    "Heartbeat status report repeated ignore, default 3ms,Negative numbers do not take effect"
+  ).getValue
 
 }

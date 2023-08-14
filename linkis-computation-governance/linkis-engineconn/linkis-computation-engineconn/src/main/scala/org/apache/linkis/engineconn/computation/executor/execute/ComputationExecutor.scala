@@ -21,7 +21,10 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskStatusChangedEvent
+import org.apache.linkis.engineconn.acessible.executor.listener.event.{
+  TaskResponseErrorEvent,
+  TaskStatusChangedEvent
+}
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
@@ -35,6 +38,7 @@ import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.governance.common.entity.ExecutionNodeStatus
 import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
+import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 import org.apache.linkis.protocol.engine.JobProgressInfo
@@ -56,7 +60,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   private val listenerBusContext = ExecutorListenerBusContext.getExecutorListenerBusContext()
 
-  //  private val taskMap: util.Map[String, EngineConnTask] = new ConcurrentHashMap[String, EngineConnTask](8)
   private val taskCache: Cache[String, EngineConnTask] = CacheBuilder
     .newBuilder()
     .expireAfterAccess(EngineConnConf.ENGINE_TASK_EXPIRE_TIME.getValue, TimeUnit.MILLISECONDS)
@@ -70,8 +73,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
   private var codeParser: Option[CodeParser] = None
 
   protected val runningTasks: Count = new Count
-
-  protected val pendingTasks: Count = new Count
 
   protected val succeedTasks: Count = new Count
 
@@ -138,8 +139,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
     super.close()
   }
-
-  //  override def getName: String = ComputationExecutorConf.DEFAULT_COMPUTATION_NAME
 
   protected def ensureOp[A](f: => A): A = if (!isEngineInitialized) {
     f
@@ -208,7 +207,6 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         } else executeLine(engineExecutionContext, code)) { t =>
           ErrorExecuteResponse(ExceptionUtils.getRootCauseMessage(t), t)
         }
-        // info(s"Finished to execute task ${engineConnTask.getTaskId}")
         incomplete ++= code
         response match {
           case e: ErrorExecuteResponse =>
@@ -242,11 +240,9 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       response = response match {
         case _: OutputExecuteResponse =>
           succeedTasks.increase()
-          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           SuccessExecuteResponse()
         case s: SuccessExecuteResponse =>
           succeedTasks.increase()
-          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           s
         case _ => response
       }
@@ -257,20 +253,33 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     }
   }
 
-  def execute(engineConnTask: EngineConnTask): ExecuteResponse = {
+  def execute(engineConnTask: EngineConnTask): ExecuteResponse = Utils.tryFinally {
+    val jobId = JobUtils.getJobIdFromMap(engineConnTask.getProperties)
+    LoggerUtils.setJobIdMDC(jobId)
     logger.info(s"start to execute task ${engineConnTask.getTaskId}")
     updateLastActivityTime()
     beforeExecute(engineConnTask)
     taskCache.put(engineConnTask.getTaskId, engineConnTask)
     lastTask = engineConnTask
     val response = ensureOp {
-      toExecuteTask(engineConnTask)
+      val executeResponse = toExecuteTask(engineConnTask)
+      executeResponse match {
+        case successExecuteResponse: SuccessExecuteResponse =>
+          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
+        case errorExecuteResponse: ErrorExecuteResponse =>
+          listenerBusContext.getEngineConnSyncListenerBus.postToAll(
+            TaskResponseErrorEvent(engineConnTask.getTaskId, errorExecuteResponse.message)
+          )
+          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Failed)
+      }
+      executeResponse
     }
 
     Utils.tryAndWarn(afterExecute(engineConnTask, response))
     logger.info(s"Finished to execute task ${engineConnTask.getTaskId}")
-    // lastTask = null
     response
+  } {
+    LoggerUtils.removeJobIdMDC()
   }
 
   def setCodeParser(codeParser: CodeParser): Unit = this.codeParser = Some(codeParser)

@@ -43,3 +43,19 @@ CREATE TABLE `linkis_ps_variable_key`
     `value_regex`    varchar(100) DEFAULT NULL COMMENT 'Reserved word',
     PRIMARY KEY (`id`)
 );
+
+DELETE FROM linkis_ps_variable_key;
+
+insert into linkis_ps_variable_key(`id`,`key`,`application_id`) values (1,'mywork1',-1);
+insert into linkis_ps_variable_key(`id`,`key`,`application_id`) values (2,'mywork2',-1);
+insert into linkis_ps_variable_key(`id`,`key`,`application_id`) values (3,'mywork3',-1);
+insert into linkis_ps_variable_key(`id`,`key`,`application_id`) values (4,'mywork4',-1);
+insert into linkis_ps_variable_key(`id`,`key`,`application_id`) values (5,'mywork5',-1);
+
+DELETE FROM linkis_ps_variable_key_user;
+
+insert into linkis_ps_variable_key_user values (1,-1,1,'tom1','stu');
+insert into linkis_ps_variable_key_user values (2,-1,2,'tom2','tea');
+insert into linkis_ps_variable_key_user values (3,-1,3,'tom3','bob');
+insert into linkis_ps_variable_key_user values (4,-1,4,'tom4','swim');
+insert into linkis_ps_variable_key_user values (5,-1,5,'tom5','smile');

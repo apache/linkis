@@ -65,7 +65,8 @@ public class DataSourceParameterValidator implements ParameterValidator {
                       Object keyValue = parameters.get(def.getKey());
                       parameters.put(def.getKey(), keyValue);
                       return keyValue;
-                    }));
+                    },
+                    (existingValue, newValue) -> newValue));
     for (DataSourceParamKeyDefinition def : paramKeyDefinitions) {
       // Deal with cascade relation
       boolean needValidate = false;

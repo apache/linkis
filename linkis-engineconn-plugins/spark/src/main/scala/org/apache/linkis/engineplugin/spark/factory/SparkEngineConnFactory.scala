@@ -94,7 +94,22 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val sparkConfig: SparkConfig = new SparkConfig()
     sparkConfig.setJavaHome(variable(Environment.JAVA_HOME))
     sparkConfig.setSparkHome(SPARK_HOME.getValue(options))
-    sparkConfig.setMaster(SPARK_MASTER.getValue(options))
+    val master = SPARK_MASTER.getValue(options)
+    sparkConfig.setMaster(master)
+    if (master.startsWith("k8s")) {
+      sparkConfig.setK8sConfigFile(SPARK_K8S_CONFIG_FILE.getValue(options))
+      sparkConfig.setK8sServiceAccount(SPARK_K8S_SERVICE_ACCOUNT.getValue(options))
+      sparkConfig.setK8sMasterUrl(SPARK_K8S_MASTER_URL.getValue(options))
+      sparkConfig.setK8sUsername(SPARK_K8S_USERNAME.getValue(options))
+      sparkConfig.setK8sPassword(SPARK_K8S_PASSWORD.getValue(options))
+      sparkConfig.setK8sImage(SPARK_K8S_IMAGE.getValue(options))
+      sparkConfig.setK8sNamespace(SPARK_K8S_NAMESPACE.getValue(options))
+      sparkConfig.setK8sFileUploadPath(SPARK_KUBERNETES_FILE_UPLOAD_PATH.getValue(options))
+      sparkConfig.setK8sSparkVersion(SPARK_K8S_SPARK_VERSION.getValue(options))
+      sparkConfig.setK8sRestartPolicy(SPARK_K8S_RESTART_POLICY.getValue(options))
+      sparkConfig.setK8sLanguageType(SPARK_K8S_LANGUAGE_TYPE.getValue(options))
+      sparkConfig.setK8sImagePullPolicy(SPARK_K8S_IMAGE_PULL_POLICY.getValue(options))
+    }
     sparkConfig.setDeployMode(SPARK_DEPLOY_MODE.getValue(options))
     sparkConfig.setAppResource(SPARK_APP_RESOURCE.getValue(options))
     sparkConfig.setAppName(SPARK_APP_NAME.getValue(options))
@@ -207,6 +222,10 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     if (execUri != null) conf.set("spark.executor.uri", execUri)
     if (System.getenv("SPARK_HOME") != null) conf.setSparkHome(System.getenv("SPARK_HOME"))
     conf.set("spark.scheduler.mode", "FAIR")
+
+    if (SparkConfiguration.LINKIS_SPARK_ETL_SUPPORT_HUDI.getValue) {
+      conf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+    }
 
     val builder = SparkSession.builder.config(conf)
     builder.enableHiveSupport().getOrCreate()

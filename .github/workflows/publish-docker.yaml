@@ -16,22 +16,25 @@
 #
 
 name: Publish Docker
-on: 
+on:
   push:
-    branches:
-      - dev-1.3.2
+    branches: [master,dev-*]
+
+env:
+  MAVEN_OPTS: -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.http.retryHandler.class=standard -Dmaven.wagon.http.retryHandler.count=3 -Dmaven.wagon.httpconnectionManager.ttlSeconds=120
+
 jobs:
   publish-docker:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [14.17.3]
+        node-version: [16.0.0]
     timeout-minutes: 90
     env:
       TAG: ${{ github.sha }}
       SKIP_TEST: true
       HUB: ghcr.io/apache/linkis
-      LINKIS_VERSION: 1.3.2
+      LINKIS_VERSION: 1.4.0-SNAPSHOT
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -72,7 +75,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Push Docker Image
-      env: 
+      env:
         DOCKER_VERSION: ${{ github.ref_name }}-${{ github.sha }}
       run: |
         docker images

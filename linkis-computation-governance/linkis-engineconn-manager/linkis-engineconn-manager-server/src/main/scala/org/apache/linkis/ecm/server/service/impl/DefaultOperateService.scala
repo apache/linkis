@@ -27,26 +27,34 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.stereotype.Service
 
-import scala.collection.JavaConverters.mapAsScalaMapConverter
+import java.util
 
 @Service
 class DefaultOperateService extends OperateService with Logging {
 
   @Receiver
   override def executeOperation(ecmOperateRequest: ECMOperateRequest): ECMOperateResponse = {
-    val parameters = ecmOperateRequest.parameters.asScala.toMap
-    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
-      logger.error(s"Get operator failed, parameters is ${ecmOperateRequest.parameters}.", t)
-      return ECMOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    val parameters = ecmOperateRequest.getParameters()
+    val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
+      logger.error(s"Get operator failed, parameters is ${ecmOperateRequest.getParameters}.", t)
+      return new ECMOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
     }
     logger.info(
-      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${ecmOperateRequest.parameters}."
+      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${ecmOperateRequest.getParameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      return ECMOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      return new ECMOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
     }
-    ECMOperateResponse(result)
+    new ECMOperateResponse(result)
   }
 
 }

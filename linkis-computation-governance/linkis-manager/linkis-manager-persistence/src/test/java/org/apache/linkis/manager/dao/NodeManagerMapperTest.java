@@ -93,7 +93,8 @@ class NodeManagerMapperTest extends BaseDaoTest {
     persistenceNode.setMark("testmark3");
     persistenceNode.setUpdator("testupdator3");
     persistenceNode.setCreator("testcreator3");
-    nodeManagerMapper.updateNodeInstanceOverload(persistenceNode);
+    persistenceNode.setIdentifier("testIdentifier3");
+    nodeManagerMapper.updateNodeInstanceByInstance(persistenceNode);
     PersistenceNode persistenceNodes = nodeManagerMapper.getNodeInstance("instance2");
     assertTrue(persistenceNode.getName().equals(persistenceNodes.getName()));
   }

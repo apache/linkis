@@ -83,7 +83,7 @@ Linkis 自 2019 年开源发布以来，已累计积累了 700 多家试验企�
 |Hive|Apache >= 1.0.0, <br/>CDH >= 5.4.0, <br/>（默认 Apache Hive 3.1.3）|\>=1.0.3|是|Hive EngineConn， 支持 HiveQL 代码|
 |Python|Python >= 2.6, <br/>（默认 Python2*）|\>=1.0.3|是|Python EngineConn， 支持 python 代码|
 |Shell|Bash >= 2.0|\>=1.0.3|是|Shell EngineConn， 支持 Bash shell 代码|
-|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持 MySQL 和 HiveQL，可快速扩展支持其他有 JDBC Driver 包的引擎, 如 Oracle|
+|JDBC|MySQL >= 5.0, Hive >=1.2.1, <br/>(默认 Hive-jdbc 2.3.4)|\>=1.0.3|否|JDBC EngineConn， 已支持ClickHouse, DB2, DM, Greenplum, kingbase, MySQL, Oracle, PostgreSQL 和 SQLServer，可快速扩展支持其他数据库组件, 如SQLite|
 |Flink |Flink >= 1.12.2, <br/>(默认 Apache Flink 1.12.2)|\>=1.0.3|否|Flink EngineConn， 支持 FlinkSQL 代码，也支持以 Flink Jar 形式启动一个新的 Yarn 应用程序|
 |Pipeline|-|\>=1.0.3|否|Pipeline EngineConn， 支持文件的导入和导出|
 |openLooKeng|openLooKeng >= 1.5.0, <br/>(默认 openLookEng 1.5.0)|\>=1.1.1|否|openLooKeng EngineConn， 支持用 Sql 查询数据虚拟化引擎 openLooKeng|
@@ -143,7 +143,7 @@ npm run build
 
 ```shell
 $> LINKIS_IMAGE=linkis:1.3.1 
-$> ./linkis-dist/docker/scripts/make-linikis-image-with-mysql-jdbc.sh
+$> ./linkis-dist/docker/scripts/make-linkis-image-with-mysql-jdbc.sh
 ```
 
 请参考[快速安装部署 ](https://linkis.apache.org/zh-CN/docs/latest/deployment/deploy-quick/) 来部署 Linkis

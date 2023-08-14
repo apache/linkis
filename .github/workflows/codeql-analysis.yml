@@ -18,9 +18,9 @@ name: CodeQL Analysis
 
 on:
   pull_request:
-    branches: [dev,dev-*]
+    branches: [master,dev-*]
   push:
-    branches: [dev,dev-*]
+    branches: [master,dev-*]
 
 jobs:
   analyze:

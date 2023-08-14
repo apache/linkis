@@ -23,6 +23,7 @@ import org.apache.linkis.entrance.cli.heartbeat.CliHeartbeatMonitor;
 import org.apache.linkis.entrance.cs.CSEntranceHelper;
 import org.apache.linkis.entrance.execute.EntranceJob;
 import org.apache.linkis.entrance.log.FlexibleErrorCodeManager;
+import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.governance.common.entity.job.JobRequest;
 import org.apache.linkis.protocol.engine.JobProgressInfo;
 import org.apache.linkis.scheduler.executer.OutputExecuteResponse;
@@ -169,6 +170,11 @@ public class QueryPersistenceManager extends PersistenceManager {
     JobRequest jobRequest = null;
     if (job.isCompleted()) {
       job.setProgress(1);
+    } else if (job.getProgress() >= 1 && job instanceof EntranceJob) {
+      job.setProgress(GovernanceCommonConf.FAKE_PROGRESS());
+      ((EntranceJob) job)
+          .getJobRequest()
+          .setProgress(String.valueOf(GovernanceCommonConf.FAKE_PROGRESS()));
     }
     try {
       jobRequest = this.entranceContext.getOrCreateEntranceParser().parseToJobRequest(job);

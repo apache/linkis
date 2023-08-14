@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconn.acessible.executor.service
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.engineconn.acessible.executor.hook.OperationHook
 import org.apache.linkis.manager.common.operator.OperatorFactory
 import org.apache.linkis.manager.common.protocol.engine.{
   EngineOperateRequest,
@@ -29,6 +30,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.stereotype.Service
 
+import java.util
+
 import scala.collection.JavaConverters.mapAsScalaMapConverter
 
 @Service
@@ -38,19 +41,61 @@ class DefaultOperateService extends OperateService with Logging {
   override def executeOperation(
       engineOperateRequest: EngineOperateRequest
   ): EngineOperateResponse = {
-    val parameters = engineOperateRequest.parameters.asScala.toMap
-    val operator = Utils.tryCatch(OperatorFactory().getOperatorRequest(parameters)) { t =>
-      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.parameters}.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+    var response: EngineOperateResponse = null
+    val parameters = {
+      val map = new util.HashMap[String, Object]()
+      engineOperateRequest.getParameters.asScala.foreach(entry => map.put(entry._1, entry._2))
+      map
+    }
+    val operator = Utils.tryCatch(OperatorFactory.apply().getOperatorRequest(parameters)) { t =>
+      logger.error(s"Get operator failed, parameters is ${engineOperateRequest.getParameters}.", t)
+      response = new EngineOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
+      doPostHook(engineOperateRequest, response)
+      return response
     }
     logger.info(
-      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.parameters}."
+      s"Try to execute operator ${operator.getClass.getSimpleName} with parameters ${engineOperateRequest.getParameters}."
     )
     val result = Utils.tryCatch(operator(parameters)) { t =>
       logger.error(s"Execute ${operator.getClass.getSimpleName} failed.", t)
-      return EngineOperateResponse(Map.empty, true, ExceptionUtils.getRootCauseMessage(t))
+      response = new EngineOperateResponse(
+        new util.HashMap[String, Object](),
+        true,
+        ExceptionUtils.getRootCauseMessage(t)
+      )
+      doPostHook(engineOperateRequest, response)
+      return response
     }
-    EngineOperateResponse(result)
+    logger.info(s"End to execute operator ${operator.getClass.getSimpleName}.")
+    response = new EngineOperateResponse(result)
+    doPostHook(engineOperateRequest, response)
+    response
+  }
+
+  private def doPreHook(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
+    Utils.tryAndWarn {
+      OperationHook
+        .getOperationHooks()
+        .foreach(hook => hook.doPreOperation(engineOperateRequest, engineOperateResponse))
+    }
+  }
+
+  private def doPostHook(
+      engineOperateRequest: EngineOperateRequest,
+      engineOperateResponse: EngineOperateResponse
+  ): Unit = {
+    Utils.tryAndWarn {
+      OperationHook
+        .getOperationHooks()
+        .foreach(hook => hook.doPostOperation(engineOperateRequest, engineOperateResponse))
+    }
   }
 
 }

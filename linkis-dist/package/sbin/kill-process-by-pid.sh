@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -14,68 +14,59 @@
 # limitations under the License.
 #
 
-function list_descendants ()
-{
-  ppid=$1
-  local children=$(pgrep -P ${ppid})
+cd `dirname $0`
+cd ..
+INSTALL_HOME=`pwd`
+# set LINKIS_HOME
+if [ "$LINKIS_HOME" = "" ]; then
+  export LINKIS_HOME=$INSTALL_HOME
+fi
+if [ "$LINKIS_LOG_DIR" = "" ]; then
+  export LINKIS_LOG_DIR="$LINKIS_HOME/logs"
+fi
+ecmPid=`cat $LINKIS_HOME/pid/linkis_cg-engineconnmanager.pid`
+month=`date '+%Y-%m'`
+export killLogFile=$LINKIS_LOG_DIR/linkis-cg-engineconnmanager-kill-$month.log
 
-  for spid in $children
-  do
-    list_descendants "$spid"
-  done
+if [ -f '$killLogFile' ];then
+        echo "logfile exsts."
+else
+        echo "not exists"
+        echo '' >> $killLogFile
+        sudo chown hadoop:hadoop $killLogFile
+        sudo chmod 777 $killLogFile
 
-  sub_pid_list=(${sub_pid_list[@]} ${children[@]})
-}
+fi
+
 function kill_proc_by_pid() {
-    pid=$1
-    sub_pid_list=()
-
-    echo "`date '+%Y-%m-%d %H:%M:%S'` Starting to kill parent process ${pid}"
+    killProcessPID=$1
+    echo "`date '+%Y-%m-%d %H:%M:%S'` Starting to kill parent process ${killProcessPID}"
+    echo "`date '+%Y-%m-%d %H:%M:%S'` Starting to kill parent process ${killProcessPID}" >> $killLogFile
     #KILL PARENT FIRST
     cnt=0
     MAX_RETRY=6
-    while kill -0 ${pid} > /dev/null 2>&1 && [ $cnt -lt $MAX_RETRY ]
-    do
-        list_descendants ${pid}
-        kill -15 ${pid}
-        let cnt++
-        sleep 5s
-    done
-    if kill -0 ${pid} > /dev/null 2>&1; then
-        list_descendants ${pid}
-        kill -9 ${pid}
-        echo "`date '+%Y-%m-%d %H:%M:%S'` Killed parent process ${pid} with \'-9\' signal. May not be able to kill gracefully(yarn application may still be alive)" 1>&2
-    else
-        echo "`date '+%Y-%m-%d %H:%M:%S'` Finished to kill parent process ${pid}"
-    fi
-
-    #REMOVE DUPLICATE
-    sub_pid_list=($(echo ${sub_pid_list[*]} | sed 's/ /\n/g' | sort | uniq))
-    echo "sub_pid_list:${sub_pid_list[*]}"
-    #THEN KILL CHILDREN
-    for sub_pid in ${sub_pid_list[@]}; do
-        cnt=0
-        MAX_RETRY=6
-        while kill -0 ${sub_pid} > /dev/null 2>&1 && [ $cnt -lt $MAX_RETRY ]
+    if [ "${killProcessPID}" != "${ecmPid}" ]; then
+        pkill -TERM -P ${killProcessPID}
+        while ps -p ${killProcessPID} > /dev/null && [ $cnt -lt $MAX_RETRY ]
         do
-            kill -15 ${sub_pid}
-            echo "to Killed sub-process ${sub_pid}"
+            kill -15 ${killProcessPID}
             let cnt++
             sleep 5s
-            if kill -0 ${sub_pid} > /dev/null 2>&1; then
-              let 1+1
-            else
-              echo "`date '+%Y-%m-%d %H:%M:%S'` Killed sub-process ${sub_pid}"
-            fi
         done
-        if kill -0 ${sub_pid} > /dev/null 2>&1; then
-            kill -9 ${sub_pid}
-            echo "`date '+%Y-%m-%d %H:%M:%S'` Killed sub-process ${sub_pid} with \'-9\' signal. May not be able to kill gracefully(yarn application may still be alive)" 1>&2
+        if ps -p ${killProcessPID} > /dev/null; then
+            kill -9 ${killProcessPID}
+            echo "`date '+%Y-%m-%d %H:%M:%S'` Killed parent process ${killProcessPID} with \'-9\' signal. May not be able to kill gracefully(yarn application may still be alive)" 1>&2
+            echo "`date '+%Y-%m-%d %H:%M:%S'` Killed parent process ${killProcessPID} with \'-9\' signal. May not be able to kill gracefully(yarn application may still be alive)"  >> $killLogFile 2>&1
+        else
+            echo "`date '+%Y-%m-%d %H:%M:%S'` Finished to kill parent process ${killProcessPID}"
+            echo "`date '+%Y-%m-%d %H:%M:%S'` Finished to kill parent process ${killProcessPID}" >> $killLogFile 2>&1
         fi
-    done
-
-    echo "`date '+%Y-%m-%d %H:%M:%S'` Finished killing process and its sub-process ${pid}"
+    else
+      echo "ERROR: ECM killProcessPID $ecmPid cannot be kill"
+      echo "ERROR: ECM killProcessPID $ecmPid cannot be kill" >>$killLogFile 2>&1
+    fi
+    echo "`date '+%Y-%m-%d %H:%M:%S'` Finished killing process and its ecmPid ${ecmPid} sub-process ${killProcessPID}"
+    echo "`date '+%Y-%m-%d %H:%M:%S'` Finished killing process and its ecmPid ${ecmPid} sub-process ${killProcessPID}"  >> $killLogFile  2>&1
 }
-
 
 kill_proc_by_pid $@

@@ -24,13 +24,18 @@ import org.apache.commons.lang3.StringUtils;
 public class ClusterDescriptorAdapterFactory {
 
   public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
+    String master = executionContext.getSparkConfig().getMaster(); // 获取一些配置信息
 
     ClusterDescriptorAdapter clusterDescriptorAdapter =
         new YarnApplicationClusterDescriptorAdapter(executionContext);
 
-    if (StringUtils.isNotBlank(master) && master.equalsIgnoreCase("k8s-operator")) {
-      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
+    if (StringUtils.isNotBlank(master)) {
+      if (master.equalsIgnoreCase("k8s-operator")) {
+        clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
+      } else if (master.equalsIgnoreCase("k8s-jar")) {
+        clusterDescriptorAdapter =
+            new KubernetesApplicationClusterDescriptorAdapter(executionContext);
+      }
     }
 
     return clusterDescriptorAdapter;

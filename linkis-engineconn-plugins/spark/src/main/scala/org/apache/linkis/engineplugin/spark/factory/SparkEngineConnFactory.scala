@@ -109,6 +109,8 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConfig.setK8sRestartPolicy(SPARK_K8S_RESTART_POLICY.getValue(options))
       sparkConfig.setK8sLanguageType(SPARK_K8S_LANGUAGE_TYPE.getValue(options))
       sparkConfig.setK8sImagePullPolicy(SPARK_K8S_IMAGE_PULL_POLICY.getValue(options))
+      sparkConfig.setK8sDriverRequestCores(SPARK_K8S_DRIVER_REQUEST_CORES.getValue(options))
+      sparkConfig.setK8sExecutorRequestCores(SPARK_K8S_EXECUTOR_REQUEST_CORES.getValue(options))
     }
     sparkConfig.setDeployMode(SPARK_DEPLOY_MODE.getValue(options))
     sparkConfig.setAppResource(SPARK_APP_RESOURCE.getValue(options))

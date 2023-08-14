@@ -34,7 +34,7 @@ jobs:
       TAG: ${{ github.sha }}
       SKIP_TEST: true
       HUB: ghcr.io/apache/linkis
-      LINKIS_VERSION: 1.4.0-SNAPSHOT
+      LINKIS_VERSION: 1.5.0-SNAPSHOT
     steps:
     - name: Checkout
       uses: actions/checkout@v2

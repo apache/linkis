@@ -208,47 +208,30 @@ public class DefaultNodeLabelService implements NodeLabelService {
     List<String> oldKeyList =
         nodeLabels.stream().map(InheritableLabel::getLabelKey).collect(Collectors.toList());
 
-    // Gets duplicate labels based on the intersection
-    List<String> willBeDelete = new ArrayList<>(oldKeyList);
-    willBeDelete.retainAll(newKeyList);
+    List<String> willBeAdd = new ArrayList<>(oldKeyList);
+    willBeAdd.removeAll(newKeyList);
 
-    Set<String> modifiableKeyList = LabelUtils.listAllUserModifiableLabel();
-
-    // Delete duplicate labels
-    if (!willBeDelete.isEmpty()) {
+    // Assign the old association to the newServiceInstance
+    if (!CollectionUtils.isEmpty(willBeAdd)) {
       nodeLabels.forEach(
           nodeLabel -> {
-            if (modifiableKeyList.contains(nodeLabel.getLabelKey())
-                && willBeDelete.contains(nodeLabel.getLabelKey())) {
-              List<Integer> labelIds = new ArrayList<>();
-              labelIds.add(nodeLabel.getId());
-              labelManagerPersistence.removeNodeLabels(oldServiceInstance, labelIds);
+            if (willBeAdd.contains(nodeLabel.getLabelKey())) {
+              PersistenceLabel persistenceLabel =
+                  LabelManagerUtils.convertPersistenceLabel(nodeLabel);
+              int labelId = tryToAddLabel(persistenceLabel);
+              if (labelId > 0) {
+                List<Integer> labelIds = new ArrayList<>();
+                labelIds.add(labelId);
+                labelManagerPersistence.addLabelToNode(newServiceInstance, labelIds);
+              }
             }
           });
     }
 
-    // Get non-duplicate labels
-    List<String> willBeAdd = new ArrayList<>(oldKeyList);
-    willBeAdd.removeAll(willBeDelete);
-
-    // Associate the newServiceInstance with the old labels
-    if (willBeAdd != null && !willBeAdd.isEmpty()) {
-      labels.stream()
-          .filter(label -> willBeAdd.contains(label.getLabelKey()))
-          .forEach(
-              label -> {
-                if (modifiableKeyList.contains(label.getLabelKey())) {
-                  PersistenceLabel persistenceLabel =
-                      LabelManagerUtils.convertPersistenceLabel(label);
-                  int labelId = tryToAddLabel(persistenceLabel);
-                  if (labelId > 0) {
-                    List<Integer> labelIds = new ArrayList<>();
-                    labelIds.add(labelId);
-                    labelManagerPersistence.addLabelToNode(oldServiceInstance, labelIds);
-                  }
-                }
-              });
-    }
+    // Delete an old association
+    List<Integer> oldLabelId =
+        nodeLabels.stream().map(PersistenceLabel::getId).collect(Collectors.toList());
+    labelManagerPersistence.removeNodeLabels(oldServiceInstance, oldLabelId);
   }
 
   /**

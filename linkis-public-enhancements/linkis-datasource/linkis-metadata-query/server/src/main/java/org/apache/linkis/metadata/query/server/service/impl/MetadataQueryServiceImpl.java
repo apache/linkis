@@ -617,7 +617,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       } else if (dsInfoResponse
           .getDsType()
           .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
-        return getFlinkSqlByElasticsearch(table, dsInfoResponse.getParams(), columns);
+        return getFlinkSqlByElasticsearch(table, columns);
       }
     }
 
@@ -625,7 +625,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   public GenerateSqlInfo getFlinkSqlByElasticsearch(
-      String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+      String table, List<MetaColumnInfo> columns) {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
     String columnStr = "*";
@@ -641,8 +641,8 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
         String.format(FlinkSqlTemplate.ES_DDL_SQL_TEMPLATE, flinkTableName, columnAndTYpeStr);
 
     generateSqlInfo.setDdl(ddl);
-    generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
-    generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
 
     return generateSqlInfo;
   }

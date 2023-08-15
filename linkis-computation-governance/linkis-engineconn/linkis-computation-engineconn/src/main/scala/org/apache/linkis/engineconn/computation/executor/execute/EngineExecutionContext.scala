@@ -188,7 +188,6 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
     logger.info(log)
   } else {
     val listenerBus = getEngineSyncListenerBus
-    // jobId.foreach(jId => listenerBus.post(TaskLogUpdateEvent(jId, log)))
     getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, log)))
   }
 

@@ -32,7 +32,7 @@
         ></Input>
       </Col>
       <Col span="6" class="search-item">
-        <span :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.ipListManagement.appName')}}</span>
+        <span :title="$t('message.linkis.ipListManagement.appName')" :style="{minWidth: '40px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', marginRight: '5px', fontSize: '14px', lineHeight: '32px'}">{{$t('message.linkis.ipListManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
           class="input"

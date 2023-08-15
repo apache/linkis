@@ -86,6 +86,12 @@ export default {
       this.page.pageNow = val;
       this.getLogs((val - 1) * this.page.pageSize)
     },
+    clearLogs() {
+      this.logs = {
+        all: '',
+      }
+      this.tabName = 'stdout'
+    },
     async getLogs(fromLine, param) {
       if (param) {
         this.param = param

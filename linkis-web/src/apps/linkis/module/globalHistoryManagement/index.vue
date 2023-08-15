@@ -56,7 +56,7 @@
           <label class="label">{{$t('message.linkis.formItems.creator.label')}}</label>
           <Input
             :maxlength="50"
-            v-model="searchBar.creator"
+            v-model.trim="searchBar.creator"
             :placeholder="$t('message.linkis.formItems.creator.placeholder')"
             style="width:80px;"
           />

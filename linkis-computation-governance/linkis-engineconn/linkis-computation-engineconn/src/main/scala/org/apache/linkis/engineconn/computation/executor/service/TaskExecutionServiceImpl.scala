@@ -402,15 +402,7 @@ class TaskExecutionServiceImpl
     Utils.tryFinally {
       val jobId = JobUtils.getJobIdFromMap(task.getProperties)
       LoggerUtils.setJobIdMDC(jobId)
-      val response = executor.execute(task)
-      response match {
-        case ErrorExecuteResponse(message, throwable) =>
-          sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
-          logger.error(message, throwable)
-          LogHelper.pushAllRemainLogs()
-          executor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
-        case _ => logger.warn(s"task get response is $response")
-      }
+      executor.execute(task)
       clearCache(task.getTaskId)
     } {
       LoggerUtils.removeJobIdMDC()
@@ -614,7 +606,7 @@ class TaskExecutionServiceImpl
       logger.warn("Unknown event : " + BDPJettyServerHelper.gson.toJson(event))
   }
 
-  override def onLogUpdate(logUpdateEvent: TaskLogUpdateEvent): Unit = {
+  override def onLogUpdate(logUpdateEvent: TaskLogUpdateEvent): Unit = Utils.tryAndWarn {
     if (EngineConnConf.ENGINE_PUSH_LOG_TO_ENTRANCE.getValue) {
       if (null != logUpdateEvent && StringUtils.isNotBlank(logUpdateEvent.taskId)) {
         val task = getTaskByTaskId(logUpdateEvent.taskId)
@@ -671,32 +663,33 @@ class TaskExecutionServiceImpl
     }
   }
 
-  override def onProgressUpdate(taskProgressUpdateEvent: TaskProgressUpdateEvent): Unit = {
-    if (EngineConnConf.ENGINE_PUSH_LOG_TO_ENTRANCE.getValue) {
-      val task = getTaskByTaskId(taskProgressUpdateEvent.taskId)
-      if (null != task) {
-        val resourceResponse = buildResourceMap(task)
-        val extraInfoMap = buildExtraInfoMap(task)
+  override def onProgressUpdate(taskProgressUpdateEvent: TaskProgressUpdateEvent): Unit =
+    Utils.tryAndWarn {
+      if (EngineConnConf.ENGINE_PUSH_LOG_TO_ENTRANCE.getValue) {
+        val task = getTaskByTaskId(taskProgressUpdateEvent.taskId)
+        if (null != task) {
+          val resourceResponse = buildResourceMap(task)
+          val extraInfoMap = buildExtraInfoMap(task)
 
-        val resourceMap = if (null != resourceResponse) resourceResponse.resourceMap else null
+          val resourceMap = if (null != resourceResponse) resourceResponse.resourceMap else null
 
-        val respRunningInfo: ResponseTaskRunningInfo = ResponseTaskRunningInfo(
-          taskProgressUpdateEvent.taskId,
-          taskProgressUpdateEvent.progress,
-          taskProgressUpdateEvent.progressInfo,
-          resourceMap,
-          extraInfoMap
-        )
+          val respRunningInfo: ResponseTaskRunningInfo = ResponseTaskRunningInfo(
+            taskProgressUpdateEvent.taskId,
+            taskProgressUpdateEvent.progress,
+            taskProgressUpdateEvent.progressInfo,
+            resourceMap,
+            extraInfoMap
+          )
 
-        sendToEntrance(task, respRunningInfo)
-      } else {
-        logger.error(
-          "Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON
-            .toJson(taskProgressUpdateEvent)
-        )
+          sendToEntrance(task, respRunningInfo)
+        } else {
+          logger.error(
+            "Task cannot null! taskProgressUpdateEvent : " + ComputationEngineUtils.GSON
+              .toJson(taskProgressUpdateEvent)
+          )
+        }
       }
     }
-  }
 
   override def onResultSetCreated(taskResultCreateEvent: TaskResultCreateEvent): Unit = {
     logger.info(s"start to deal result event ${taskResultCreateEvent.taskId}")

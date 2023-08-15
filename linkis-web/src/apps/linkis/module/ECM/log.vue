@@ -80,6 +80,12 @@ export default {
       this.page.pageNow = val;
       this.getLogs((val - 1) * this.page.pageSize)
     },
+    clearLogs() {
+      this.logs = {
+        all: '',
+      }
+      this.tabName = 'stdout'
+    },
     async getLogs(fromLine, param) {
       if (param) {
         this.param = param
@@ -96,17 +102,22 @@ export default {
             logType: this.tabName
           }
         }
-        let res = await api.fetch('/linkisManager/openEngineLog', params, 'post') || {};
-        if (res && res.result) {
-          if (res.result.rows < 1000) { // the last page(最后一页)
-            this.page.totalSize = this.page.pageNow * 1000
-          } else {
-            this.page.totalSize = (this.page.pageNow + 1) * 1000
+        try {
+          let res = await api.fetch('/linkisManager/openEngineLog', params, 'post') || {};
+          if (res && res.result) {
+            if (res.result.rows < 1000) { // the last page(最后一页)
+              this.page.totalSize = this.page.pageNow * 1000
+            } else {
+              this.page.totalSize = (this.page.pageNow + 1) * 1000
+            }
+            this.logs = {
+              all: res.result.logs ? res.result.logs.join('\n') : ''
+            }
           }
-          this.logs = {
-            all: res.result.logs ? res.result.logs.join('\n') : ''
-          }
+        } catch (err) {
+          window.console.log(err)
         }
+        
       }
     },
     resize() {

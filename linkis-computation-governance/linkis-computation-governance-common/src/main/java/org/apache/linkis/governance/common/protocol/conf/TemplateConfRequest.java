@@ -15,28 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.ujes.jdbc.hook.impl
+package org.apache.linkis.governance.common.protocol.conf;
 
-import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain
-import org.apache.linkis.ujes.jdbc.hook.JDBCDriverPreExecutionHook
+import org.apache.linkis.protocol.message.RequestProtocol;
 
-import java.util.Locale
+public class TemplateConfRequest implements RequestProtocol {
 
-class NoLimitExecutionHook extends JDBCDriverPreExecutionHook {
+  private String templateUuid;
 
-  override def callPreExecutionHook(sql: String, skip: Boolean): String = {
-    if (UJESSQLDriverMain.LIMIT_ENABLED.equalsIgnoreCase("false")) {
-      var noLimitSql = "--set ide.engine.no.limit.allow=true\n" + sql
-      val lowerCaseLimitSql = noLimitSql.toLowerCase()
-      if (lowerCaseLimitSql.contains("limit ") && lowerCaseLimitSql.contains("tableausql")) {
-        val lastIndexOfLimit = lowerCaseLimitSql.lastIndexOf("limit ")
-        noLimitSql = noLimitSql.substring(0, lastIndexOfLimit)
-      }
-      noLimitSql
-    } else {
-      sql
-    }
-
+  public TemplateConfRequest(String templateUuid) {
+    this.templateUuid = templateUuid;
   }
 
+  public String getTemplateUuid() {
+    return templateUuid;
+  }
+
+  public void setTemplateUuid(String templateUuid) {
+    this.templateUuid = templateUuid;
+  }
 }

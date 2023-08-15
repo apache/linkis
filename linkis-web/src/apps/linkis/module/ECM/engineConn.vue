@@ -223,6 +223,7 @@ export default {
                 on: {
                   click: () => {
                     this.showviewlog = true
+                    this.$refs.logPanel.clearLogs()
                     this.$refs.logPanel.getLogs(0, {
                       emInstance: params.row.emInstance,
                       instance: params.row.instance,

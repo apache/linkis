@@ -21,12 +21,16 @@ import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.entity.resource.ResourceType.DriverAndYarn
 import org.apache.linkis.manager.common.exception.RMWarnException
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
+import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
 import org.apache.linkis.manager.rm.external.service.ExternalResourceService
 import org.apache.linkis.manager.rm.external.yarn.YarnResourceIdentifier
 import org.apache.linkis.manager.rm.service.{LabelResourceService, RequestResourceService}
-import org.apache.linkis.manager.rm.utils.RMUtils
+import org.apache.linkis.manager.rm.utils.{AcrossClusterRulesJudgeUtils, RMUtils}
+
+import org.apache.commons.lang3.StringUtils
 
 import org.json4s.DefaultFormats
 
@@ -39,10 +43,15 @@ class DriverAndYarnReqResourceService(
 
   override val resourceType: ResourceType = DriverAndYarn
 
-  override def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
-    if (!super.canRequest(labelContainer, resource)) {
+  override def canRequest(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): Boolean = {
+    if (!super.canRequest(labelContainer, resource, engineCreateRequest)) {
       return false
     }
+
     val requestedDriverAndYarnResource =
       resource.getMaxResource.asInstanceOf[DriverAndYarnResource]
     val requestedYarnResource = requestedDriverAndYarnResource.yarnResource
@@ -65,7 +74,9 @@ class DriverAndYarnReqResourceService(
       val notEnoughMessage =
         generateQueueNotEnoughMessage(requestedYarnResource, queueLeftResource, maxCapacity)
       throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
-    } else true
+    }
+
+    true
   }
 
   def generateQueueNotEnoughMessage(

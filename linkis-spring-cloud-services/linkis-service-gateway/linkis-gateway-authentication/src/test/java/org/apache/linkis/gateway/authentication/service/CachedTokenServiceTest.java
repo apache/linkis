@@ -77,5 +77,16 @@ public class CachedTokenServiceTest {
         assertThrows(
             TokenAuthException.class, () -> tokenService.doAuth(TokenName, "test", "10.10.10.10"));
     logger.info("assertThrows：{}", exception.getMessage());
+
+    exception =
+        assertThrows(
+            TokenAuthException.class, () -> tokenService.doAuth("NOT-EXIST", "test", "127.0.0.1"));
+    logger.info("assertThrows：{}", exception.getMessage());
+
+    exception =
+        assertThrows(
+            TokenAuthException.class,
+            () -> tokenService.doAuth("LINKISCLI-AUTH", "test", "127.0.0.1"));
+    logger.info("assertThrows：{}", exception.getMessage());
   }
 }

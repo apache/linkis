@@ -37,6 +37,15 @@ public class ConfigKeyLimitForUser {
   /** id of linkis_ps_configuration_config_key table field: key_id field type: bigint(19) */
   private Long keyId;
 
+  /** Configuration value table field: config_value field type: varchar(200) */
+  private String configValue;
+
+  /** Upper limit table field: max_value field type: varchar(50) */
+  private String maxValue;
+
+  /** Lower limit value (reserved) table field: min_value field type: varchar(50) */
+  private String minValue;
+
   /**
    * uuid The template id table field of the third-party record: latest_update_template_uuid Field
    * type: varchar(34)
@@ -92,6 +101,30 @@ public class ConfigKeyLimitForUser {
 
   public void setKeyId(Long keyId) {
     this.keyId = keyId;
+  }
+
+  public String getConfigValue() {
+    return configValue;
+  }
+
+  public void setConfigValue(String configValue) {
+    this.configValue = configValue;
+  }
+
+  public String getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(String maxValue) {
+    this.maxValue = maxValue;
+  }
+
+  public String getMinValue() {
+    return minValue;
+  }
+
+  public void setMinValue(String minValue) {
+    this.minValue = minValue;
   }
 
   public String getLatestUpdateTemplateUuid() {
@@ -152,6 +185,9 @@ public class ConfigKeyLimitForUser {
     sb.append(", userName=").append(userName);
     sb.append(", combinedLabelValue=").append(combinedLabelValue);
     sb.append(", keyId=").append(keyId);
+    sb.append(", configValue=").append(configValue);
+    sb.append(", maxValue=").append(maxValue);
+    sb.append(", minValue=").append(minValue);
     sb.append(", latestUpdateTemplateUuid=").append(latestUpdateTemplateUuid);
     sb.append(", isValid=").append(isValid);
     sb.append(", createBy=").append(createBy);

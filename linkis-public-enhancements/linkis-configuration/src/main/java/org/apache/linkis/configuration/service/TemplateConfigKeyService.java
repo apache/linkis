@@ -17,8 +17,10 @@
 
 package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
+import org.apache.linkis.governance.common.protocol.conf.TemplateConfRequest;
+import org.apache.linkis.governance.common.protocol.conf.TemplateConfResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ public interface TemplateConfigKeyService {
       String templateName,
       String engineType,
       String operator,
-      List<TemplateConfigKeyVo> itemList,
+      List<ConfigKeyLimitVo> itemList,
       Boolean isFullMode)
       throws ConfigurationException;
 
@@ -44,4 +46,6 @@ public interface TemplateConfigKeyService {
       String operator,
       List<String> userList)
       throws ConfigurationException;
+
+  TemplateConfResponse queryKeyInfoList(TemplateConfRequest templateConfRequest);
 }

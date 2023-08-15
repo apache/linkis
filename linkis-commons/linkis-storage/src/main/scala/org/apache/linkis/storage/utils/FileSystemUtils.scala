@@ -22,9 +22,6 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.storage.FSFactory
 import org.apache.linkis.storage.fs.FileSystem
 import org.apache.linkis.storage.fs.impl.LocalFileSystem
-import org.apache.linkis.storage.source.FileSource
-
-import org.apache.commons.io.IOUtils
 
 import java.io.IOException
 import java.util
@@ -114,22 +111,6 @@ object FileSystemUtils extends Logging {
       }
     }
     true
-  }
-
-  /**
-   * Return the total number of lines in the file
-   *
-   * @param fsPath
-   * @param fileSystem
-   * @return
-   *   TotalLine
-   */
-  def getTotalLine(fsPath: FsPath, fileSystem: FileSystem): Int = {
-    val fileSource = FileSource.create(fsPath, fileSystem)
-    try {
-      fileSource.collect()
-      fileSource.getTotalLine
-    } finally IOUtils.closeQuietly(fileSource)
   }
 
 }

@@ -25,6 +25,7 @@ import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
+import org.apache.linkis.ujes.jdbc.utils.JDBCUtils
 
 import org.apache.commons.lang3.StringUtils
 
@@ -98,6 +99,18 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
   private[jdbc] val user = props.getProperty(USER)
 
   private[jdbc] val serverURL = props.getProperty("URL")
+
+  private[jdbc] val fixedSessionEnabled =
+    if (
+        props
+          .containsKey(FIXED_SESSION) && "true".equalsIgnoreCase(props.getProperty(FIXED_SESSION))
+    ) {
+      true
+    } else {
+      false
+    }
+
+  private val connectionId = JDBCUtils.getUniqId()
 
   private val labelMap: util.Map[String, AnyRef] = new util.HashMap[String, AnyRef]
 
@@ -444,6 +457,10 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel.getStringValue)
     labelMap.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, s"$user-$creator")
     labelMap.put(LabelKeyConstant.CODE_TYPE_KEY, engineToCodeType(engineTypeLabel.getEngineType))
+    if (fixedSessionEnabled) {
+      labelMap.put(LabelKeyConstant.FIXED_EC_KEY, connectionId)
+      logger.info("Fixed session is enable session id is {}", connectionId)
+    }
 
     val jobSubmitAction = JobSubmitAction.builder
       .addExecuteCode(code)
@@ -461,5 +478,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     }
     result
   }
+
+  override def toString: String = "LinkisConnection_" + connectionId
 
 }

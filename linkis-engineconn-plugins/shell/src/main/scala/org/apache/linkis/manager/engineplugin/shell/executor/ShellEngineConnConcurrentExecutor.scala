@@ -17,12 +17,15 @@
 
 package org.apache.linkis.manager.engineplugin.shell.executor
 
+import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, OverloadUtils, Utils}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskLogUpdateEvent
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
 }
 import org.apache.linkis.engineconn.core.EngineConnObject
+import org.apache.linkis.engineconn.executor.listener.ExecutorListenerBusContext
 import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
@@ -327,8 +330,22 @@ class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
   }
 
   override def close(): Unit = {
+    val lbs = ExecutorListenerBusContext.getExecutorListenerBusContext()
     Utils.tryCatch {
-      killAll()
+      val iterator = shellECTaskInfoCache.values().iterator()
+      while (iterator.hasNext) {
+        val shellECTaskInfo = iterator.next()
+        Utils.tryAndWarn(
+          lbs.getEngineConnSyncListenerBus.postToAll(
+            TaskLogUpdateEvent(
+              shellECTaskInfo.taskId,
+              LogUtils.generateERROR("EC exits unexpectedly and actively kills the task")
+            )
+          )
+        )
+        Utils.tryAndWarn(killTask(shellECTaskInfo.taskId))
+      }
+
       logAsyncService.shutdown()
     } { t: Throwable =>
       logger.error(s"Shell ec failed to close ", t)
@@ -342,6 +359,7 @@ class ShellEngineConnConcurrentExecutor(id: Int, maxRunningNumber: Int)
       val shellECTaskInfo = iterator.next()
       Utils.tryAndWarn(killTask(shellECTaskInfo.taskId))
     }
+    shellECTaskInfoCache.clear()
   }
 
   override def getConcurrentLimit: Int = {

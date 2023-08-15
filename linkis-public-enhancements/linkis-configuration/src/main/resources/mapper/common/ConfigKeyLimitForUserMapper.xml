@@ -22,6 +22,9 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="combined_label_value" jdbcType="VARCHAR" property="combinedLabelValue" />
     <result column="key_id" jdbcType="BIGINT" property="keyId" />
+    <result column="config_value" jdbcType="VARCHAR" property="configValue" />
+    <result column="max_value" jdbcType="VARCHAR" property="maxValue" />
+    <result column="min_value" jdbcType="VARCHAR" property="minValue" />
     <result column="latest_update_template_uuid" jdbcType="VARCHAR" property="latestUpdateTemplateUuid" />
     <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
@@ -30,35 +33,27 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_name, combined_label_value, key_id, latest_update_template_uuid, is_valid, 
+    id, user_name, combined_label_value, key_id, config_value, max_value, min_value, latest_update_template_uuid, is_valid,
     create_by, create_time, update_by, update_time
   </sql>
 
   <insert id="batchInsertList" parameterType="java.util.List">
-    insert into linkis_ps_configuration_key_limit_for_user (id, user_name, combined_label_value,
-    key_id, latest_update_template_uuid,
+    insert into linkis_ps_configuration_key_limit_for_user (
+    id, user_name, combined_label_value,
+    key_id, config_value, max_value, min_value,
+    latest_update_template_uuid,
     is_valid, create_by, create_time, update_by,
     update_time)
     values
     <foreach collection="list" index="index" item="item" separator=",">
       (
       #{item.id,jdbcType=BIGINT}, #{item.userName,jdbcType=VARCHAR}, #{item.combinedLabelValue,jdbcType=VARCHAR},
-      #{item.keyId,jdbcType=BIGINT}, #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      #{item.keyId,jdbcType=BIGINT}, #{item.configValue,jdbcType=VARCHAR}, #{item.maxValue,jdbcType=VARCHAR},
+      #{item.minValue,jdbcType=VARCHAR},
+      #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
       #{item.isValid,jdbcType=VARCHAR}, #{item.createBy,jdbcType=VARCHAR}, now(), #{item.updateBy,jdbcType=VARCHAR},
       now())
     </foreach>
-  </insert>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from linkis_ps_configuration_key_limit_for_user
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
-    insert into linkis_ps_configuration_key_limit_for_user (id, user_name, combined_label_value,
-    key_id, latest_update_template_uuid, is_valid,
-    create_by, create_time, update_by, update_time)
-    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{combinedLabelValue,jdbcType=VARCHAR},
-    #{keyId,jdbcType=BIGINT}, #{latestUpdateTemplateUuid,jdbcType=VARCHAR}, #{isValid,jdbcType=VARCHAR},
-    #{createBy,jdbcType=VARCHAR}, now(), #{updateBy,jdbcType=VARCHAR}, now())
   </insert>
 
   <update id="updateByPrimaryKey" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
@@ -66,6 +61,9 @@
     set user_name = #{userName,jdbcType=VARCHAR},
       combined_label_value = #{combinedLabelValue,jdbcType=VARCHAR},
       key_id = #{keyId,jdbcType=BIGINT},
+      config_value = #{configValue,jdbcType=VARCHAR},
+      max_value = #{maxValue,jdbcType=VARCHAR},
+      min_value = #{minValue,jdbcType=VARCHAR},
       latest_update_template_uuid = #{latestUpdateTemplateUuid,jdbcType=VARCHAR},
       is_valid = #{isValid,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=VARCHAR},
@@ -78,14 +76,16 @@
 
   <insert id="batchInsertOrUpdateList" parameterType="java.util.List">
     insert into linkis_ps_configuration_key_limit_for_user (user_name, combined_label_value,
-    key_id, latest_update_template_uuid,
+    key_id, config_value, max_value, min_value,
+    latest_update_template_uuid,
     create_by, create_time, update_by,
     update_time)
     values
     <foreach collection="list" index="index" item="item" separator=",">
       (
       #{item.userName,jdbcType=VARCHAR}, #{item.combinedLabelValue,jdbcType=VARCHAR},
-      #{item.keyId,jdbcType=BIGINT}, #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      #{item.keyId,jdbcType=BIGINT}, #{item.configValue,jdbcType=VARCHAR}, #{item.maxValue,jdbcType=VARCHAR},
+      #{item.minValue,jdbcType=VARCHAR}, #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
       #{item.createBy,jdbcType=VARCHAR},
       <choose>
         <when test="item.createTime != null">
@@ -107,10 +107,39 @@
       )
     </foreach>
     on duplicate key update
+    config_value =values(config_value),
+    max_value =values(max_value),
     latest_update_template_uuid =values(latest_update_template_uuid),
     update_by =values(update_by),
     update_time= now()
   </insert>
 
+
+  <select id="selectByLabelAndKeyIds" resultType="org.apache.linkis.configuration.entity.ConfigKeyLimitVo">
+    select
+      key_user.key_id,
+      key_user.max_value,
+      key_user.config_value,
+      key_user.min_value
+    from linkis_ps_configuration_key_limit_for_user  key_user
+    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
+    and key_user.key_id  in
+    <foreach collection="keyIdList" index="index" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+
+  </select>
+
+
+  <select id="selectByLabelAndKeyId" resultType="org.apache.linkis.configuration.entity.ConfigKeyLimitVo">
+    select
+    key_user.key_id,
+    key_user.max_value,
+    key_user.config_value,
+    key_user.min_value
+    from linkis_ps_configuration_key_limit_for_user  key_user
+    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
+    and key_user.key_id =#{keyId}
+  </select>
 
 </mapper>

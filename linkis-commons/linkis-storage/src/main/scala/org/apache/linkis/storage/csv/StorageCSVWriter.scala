@@ -52,14 +52,21 @@ class StorageCSVWriter(
 
   private def compact(row: Array[String]): String = {
     val quotationMarks: String = "\""
+    val dealNewlineSymbolMarks: String = "\n"
+
     def decorateValue(v: String): String = {
       if (StringUtils.isBlank(v)) v
       else {
+        var res = v
         if (quoteRetouchEnable) {
-          s"$quotationMarks${v.replaceAll(quotationMarks, "")}$quotationMarks"
-        } else v
+          res = s"$quotationMarks${v.replaceAll(quotationMarks, "")}$quotationMarks"
+        }
+        res = res.replaceAll(dealNewlineSymbolMarks, " ")
+        logger.debug("decorateValue with input:" + v + " output:" + res)
+        res
       }
     }
+
     if (logger.isDebugEnabled()) {
       logger.debug("delimiter:" + delimiter.toString)
     }

@@ -52,21 +52,22 @@
             :key="th.key"
             :style="{'text-align': th.align}"
             class="we-table-row-cell">
-            <div
-              class="we-table-row-label"
-              :style="{'width': th.width ? th.width + 'px' : getComputedWidth(th)}"
-              :class="{'ellipsis': th.ellipsis, [th.className]: true}"
-              :title="th.ellipsis ? td[th.key] : ''">
-              <table-expand
-                v-if="th.renderType"
-                :row="td"
-                :column="th"
-                :index="index"
-                :render="renderComponent({type: th.renderType, cell: td, key: th.key, params: th.renderParams, trIndex})"></table-expand>
-              <span
-                v-else
-                :class="th.className">{{ td[th.key] }}</span>
-            </div>
+            <Tooltip :content="td[th.key]" :disabled="!th.ellipsis" placement="bottom-end">
+              <div
+                class="we-table-row-label"
+                :style="{'width': th.width ? th.width + 'px' : getComputedWidth(th)}"
+                :class="{'ellipsis': th.ellipsis, [th.className]: true}">
+                <table-expand
+                  v-if="th.renderType"
+                  :row="td"
+                  :column="th"
+                  :index="index"
+                  :render="renderComponent({type: th.renderType, cell: td, key: th.key, params: th.renderParams, trIndex})"></table-expand>
+                <span
+                  v-else
+                  :class="th.className">{{ td[th.key] }}</span>
+              </div>
+            </Tooltip>
           </td>
         </tr>
       </tbody>

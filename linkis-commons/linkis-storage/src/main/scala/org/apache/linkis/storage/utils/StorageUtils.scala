@@ -215,17 +215,6 @@ object StorageUtils extends Logging {
     readLen
   }
 
-  def colToString(col: Any, nullValue: String = "NULL"): String = {
-    if (null == col) nullValue
-    else {
-      col match {
-        case value: Double => doubleToString(value)
-        case "NULL" | "" => nullValue
-        case _ => col.toString
-      }
-    }
-  }
-
   def isIOProxy(): Boolean = {
     StorageConfiguration.ENABLE_IO_PROXY.getValue
   }

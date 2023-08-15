@@ -124,35 +124,35 @@ public class TenantConfigServiceImpl implements TenantConfigService {
   }
 
   private void dataProcessing(TenantVo tenantVo) throws ConfigurationException {
+    AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
+    // Obtain the tenant information of the ECM list
+    Map<String, Object> ecmListResult = null;
+    try {
+      ecmListResult = HttpsUtil.sendHttp(null, null);
+      logger.info("Request ecm list  response  {}:", ecmListResult);
+    } catch (IOException e) {
+      logger.warn("failed to get ecmResource data");
+    }
+    Map<String, List<Map<String, Object>>> data = MapUtils.getMap(ecmListResult, "data");
+    List<Map<String, Object>> emNodeVoList = data.get("EMs");
+    // Compare ECM list tenant labels for task
+    emNodeVoList.forEach(
+        ecmInfo -> {
+          List<Map<String, Object>> labels = (List<Map<String, Object>>) ecmInfo.get("labels");
+          labels.stream()
+              .filter(labelmap -> labelmap.containsKey("tenant"))
+              .forEach(
+                  map -> {
+                    String tenant = map.get("tenant").toString().toLowerCase();
+                    if (tenant.equals(tenantVo.getTenantValue().toLowerCase())) {
+                      tenantResult.set(true);
+                    }
+                  });
+        });
+    // Compare the value of ecm tenant
+    if (!tenantResult.get())
+      throw new ConfigurationException("The ECM with the corresponding label was not found");
     if (!tenantVo.getCreator().equals("*")) {
-      AtomicReference<Boolean> tenantResult = new AtomicReference<>(false);
-      // Obtain the tenant information of the ECM list
-      Map<String, Object> ecmListResult = null;
-      try {
-        ecmListResult = HttpsUtil.sendHttp(null, null);
-        logger.info("Request ecm list  response  {}:", ecmListResult);
-      } catch (IOException e) {
-        logger.warn("failed to get ecmResource data");
-      }
-      Map<String, List<Map<String, Object>>> data = MapUtils.getMap(ecmListResult, "data");
-      List<Map<String, Object>> emNodeVoList = data.get("EMs");
-      // Compare ECM list tenant labels for task
-      emNodeVoList.forEach(
-          ecmInfo -> {
-            List<Map<String, Object>> labels = (List<Map<String, Object>>) ecmInfo.get("labels");
-            labels.stream()
-                .filter(labelmap -> labelmap.containsKey("tenant"))
-                .forEach(
-                    map -> {
-                      String tenant = map.get("tenant").toString().toLowerCase();
-                      if (tenant.equals(tenantVo.getTenantValue().toLowerCase())) {
-                        tenantResult.set(true);
-                      }
-                    });
-          });
-      // Compare the value of ecm tenant
-      if (!tenantResult.get())
-        throw new ConfigurationException("The ECM with the corresponding label was not found");
       // The beginning of tenantValue needs to contain creator
       String creator = tenantVo.getCreator().toLowerCase();
       String[] tenantArray = tenantVo.getTenantValue().toLowerCase().split("_");

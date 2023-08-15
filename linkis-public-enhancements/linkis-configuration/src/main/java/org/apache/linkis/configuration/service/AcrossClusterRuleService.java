@@ -15,50 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.entity;
+package org.apache.linkis.configuration.service;
 
-public class TemplateConfigKeyVo {
+import org.apache.linkis.configuration.entity.AcrossClusterRule;
 
-  /** id : bigint(19) */
-  private Long keyId;
+import java.util.Map;
 
-  private String key;
+public interface AcrossClusterRuleService {
 
-  /** config_value varchar(200) */
-  private String configValue;
+  void deleteAcrossClusterRule(String creator, String user) throws Exception;
 
-  /** max_value varchar(50) */
-  private String maxValue;
+  void updateAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
-  public Long getKeyId() {
-    return keyId;
-  }
+  void insertAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
-  public void setKeyId(Long keyId) {
-    this.keyId = keyId;
-  }
+  Map<String, Object> queryAcrossClusterRuleList(
+      String creator, String user, String clusterName, Integer pageNow, Integer pageSize)
+      throws Exception;
 
-  public String getConfigValue() {
-    return configValue;
-  }
-
-  public void setConfigValue(String configValue) {
-    this.configValue = configValue;
-  }
-
-  public String getMaxValue() {
-    return maxValue;
-  }
-
-  public void setMaxValue(String maxValue) {
-    this.maxValue = maxValue;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
+  void validAcrossClusterRule(Long id, String isValid, String updateBy) throws Exception;
 }

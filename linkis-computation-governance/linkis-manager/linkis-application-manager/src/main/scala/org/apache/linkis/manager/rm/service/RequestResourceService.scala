@@ -22,6 +22,7 @@ import org.apache.linkis.manager.common.constant.RMConstant
 import org.apache.linkis.manager.common.entity.resource._
 import org.apache.linkis.manager.common.errorcode.ManagerCommonErrorCodeSummary._
 import org.apache.linkis.manager.common.exception.RMWarnException
+import org.apache.linkis.manager.common.protocol.engine.{EngineAskRequest, EngineCreateRequest}
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel
 import org.apache.linkis.manager.rm.domain.RMLabelContainer
 import org.apache.linkis.manager.rm.exception.RMErrorCode
@@ -35,7 +36,11 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
 
   val enableRequest = RMUtils.RM_REQUEST_ENABLE.getValue
 
-  def canRequest(labelContainer: RMLabelContainer, resource: NodeResource): Boolean = {
+  def canRequest(
+      labelContainer: RMLabelContainer,
+      resource: NodeResource,
+      engineCreateRequest: EngineCreateRequest
+  ): Boolean = {
 
     labelContainer.getCurrentLabel match {
       case emInstanceLabel: EMInstanceLabel =>
@@ -131,7 +136,10 @@ abstract class RequestResourceService(labelResourceService: LabelResourceService
           labelAvailableResource,
           labelResource.getMaxResource
         )
-        throw new RMWarnException(notEnoughMessage._1, notEnoughMessage._2)
+        throw new RMWarnException(
+          notEnoughMessage._1,
+          notEnoughMessage._2 + s"ECM Instance:${emInstanceLabel.getInstance()}"
+        )
       }
       logger.debug(s"Passed check: resource[${requestResource}] want to use em ${emInstanceLabel
         .getInstance()}  available resource[${labelAvailableResource}]")

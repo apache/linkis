@@ -28,19 +28,27 @@ import org.apache.linkis.configuration.service.ConfigurationService;
 import org.apache.linkis.configuration.service.TemplateConfigKeyService;
 import org.apache.linkis.configuration.util.LabelEntityParser;
 import org.apache.linkis.configuration.validate.ValidatorManager;
+import org.apache.linkis.governance.common.entity.TemplateConfKey;
+import org.apache.linkis.governance.common.protocol.conf.TemplateConfRequest;
+import org.apache.linkis.governance.common.protocol.conf.TemplateConfResponse;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
+import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -63,6 +71,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
 
   @Autowired private ConfigKeyLimitForUserMapper configKeyLimitForUserMapper;
 
+  @Autowired private PlatformTransactionManager platformTransactionManager;
+
   @Override
   @Transactional
   public Boolean updateKeyMapping(
@@ -70,7 +80,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       String templateName,
       String engineType,
       String operator,
-      List<TemplateConfigKeyVo> itemList,
+      List<ConfigKeyLimitVo> itemList,
       Boolean isFullMode)
       throws ConfigurationException {
 
@@ -96,7 +106,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
     // map k:v---> key：ConfigKey
     Map<String, ConfigKey> configKeyMap =
         configKeyList.stream().collect(Collectors.toMap(ConfigKey::getKey, item -> item));
-    for (TemplateConfigKeyVo item : itemList) {
+    for (ConfigKeyLimitVo item : itemList) {
 
       String key = item.getKey();
       ConfigKey temp = configKeyMap.get(item.getKey());
@@ -105,9 +115,10 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       String configValue = item.getConfigValue();
       String maxValue = item.getMaxValue();
 
-      if (!validatorManager
-          .getOrCreateValidator(validateType)
-          .validate(configValue, validateRange)) {
+      if (StringUtils.isNotEmpty(configValue)
+          && !validatorManager
+              .getOrCreateValidator(validateType)
+              .validate(configValue, validateRange)) {
         String msg =
             MessageFormat.format(
                 "Parameter configValue verification failed(参数configValue校验失败):"
@@ -128,7 +139,31 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
                   key, validateType, validateRange, maxValue);
           throw new ConfigurationException(msg);
         }
+
+        try {
+          Integer maxVal = Integer.valueOf(maxValue.replaceAll("[^0-9]", ""));
+          Integer configVal = Integer.valueOf(configValue.replaceAll("[^0-9]", ""));
+          if (configVal > maxVal) {
+            String msg =
+                MessageFormat.format(
+                    "Parameter key:{0},config value:{1} verification failed, "
+                        + "exceeds the specified max value: {2}:(参数校验失败，超过指定的最大值):",
+                    key, configVal, maxVal);
+            throw new ConfigurationException(msg);
+          }
+        } catch (Exception exception) {
+          if (exception instanceof ConfigurationException) {
+            throw exception;
+          } else {
+            logger.warn(
+                "Failed to check special limit setting for key:"
+                    + key
+                    + ",config value:"
+                    + configValue);
+          }
+        }
       }
+      ;
 
       Long keyId = temp.getId();
 
@@ -223,6 +258,13 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           temp.put("validateType", info.getValidateType());
           temp.put("validateRange", info.getValidateRange());
           temp.put("boundaryType", info.getBoundaryType());
+          temp.put("defaultValue", info.getDefaultValue());
+          // for front-end to judge whether input is required
+          if (StringUtils.isNotEmpty(info.getDefaultValue())) {
+            temp.put("require", "true");
+          } else {
+            temp.put("require", "false");
+          }
         }
 
         keys.add(temp);
@@ -258,6 +300,39 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
               templateUid);
       throw new ConfigurationException(msg);
     }
+    // check input engineType is same as template key engineType
+    List<Long> keyIdList =
+        templateConfigKeyList.stream()
+            .map(e -> e.getKeyId())
+            .distinct()
+            .collect(Collectors.toList());
+
+    if (keyIdList.size() == 0) {
+      String msg = "can not get any config key info from db, Please check if the keys are correct";
+      throw new ConfigurationException(msg);
+    }
+    List<ConfigKey> configKeyList = configMapper.selectKeyByKeyIdList(keyIdList);
+    // map k:v---> keyId：ConfigKey
+    Set<String> configKeyEngineTypeSet =
+        configKeyList.stream().map(ConfigKey::getEngineType).collect(Collectors.toSet());
+
+    if (configKeyEngineTypeSet == null || configKeyEngineTypeSet.size() == 0) {
+      String msg =
+          MessageFormat.format(
+              "Unable to get configuration parameter information associated with template id:{0}, please check whether the parameters are correct"
+                  + "(无法获取模板:{0} 关联的配置参数信息,请检查参数是否正确)",
+              templateUid);
+      throw new ConfigurationException(msg);
+    }
+
+    if (configKeyEngineTypeSet.size() != 1 || !configKeyEngineTypeSet.contains(engineType)) {
+      String msg =
+          MessageFormat.format(
+              "The engineType:{0} associated with the template:{1} does not match the input engineType:{2}, please check whether the parameters are correct"
+                  + "(模板关联的引擎类型：{0} 和下发的引擎类型：{2} 不匹配,请检查参数是否正确)",
+              String.join(",", configKeyEngineTypeSet), templateUid, engineType);
+      throw new ConfigurationException(msg);
+    }
     for (String user : userList) {
       // try to create combined_userCreator_engineType label for user
       Map res = new HashMap();
@@ -286,10 +361,12 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         for (TemplateConfigKey templateConfigKey : templateConfigKeyList) {
           Long keyId = templateConfigKey.getKeyId();
           String uuid = templateConfigKey.getTemplateUuid();
+          String confVal = templateConfigKey.getConfigValue();
+          String maxVal = templateConfigKey.getMaxValue();
 
           ConfigValue configValue = new ConfigValue();
           configValue.setConfigKeyId(keyId);
-          configValue.setConfigValue(templateConfigKey.getConfigValue());
+          configValue.setConfigValue(confVal);
           configValue.setConfigLabelId(configLabel.getId());
           configValues.add(configValue);
 
@@ -297,6 +374,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           configKeyLimitForUser.setUserName(user);
           configKeyLimitForUser.setCombinedLabelValue(configLabel.getStringValue());
           configKeyLimitForUser.setKeyId(keyId);
+          configKeyLimitForUser.setConfigValue(confVal);
+          configKeyLimitForUser.setMaxValue(maxVal);
           configKeyLimitForUser.setLatestUpdateTemplateUuid(uuid);
           configKeyLimitForUser.setCreateBy(operator);
           configKeyLimitForUser.setUpdateBy(operator);
@@ -307,11 +386,21 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           res.put("msg", "can not get any right key form the db");
           errorList.add(res);
         } else {
-          configMapper.batchInsertOrUpdateValueList(configValues);
 
-          // batch update user ConfigKeyLimitForUserMapper
-          configKeyLimitForUserMapper.batchInsertOrUpdateList(configKeyLimitForUsers);
+          DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
+          TransactionStatus status =
+              platformTransactionManager.getTransaction(transactionDefinition);
+          try {
+            configMapper.batchInsertOrUpdateValueList(configValues);
+            // batch update user ConfigKeyLimitForUserMapper
+            configKeyLimitForUserMapper.batchInsertOrUpdateList(configKeyLimitForUsers);
 
+            platformTransactionManager.commit(status); // commit transaction if everything's fine
+          } catch (Exception ex) {
+            platformTransactionManager.rollback(
+                status); // rollback transaction if any error occurred
+            throw ex;
+          }
           successList.add(res);
         }
 
@@ -335,6 +424,32 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
 
     result.put("success", successResult);
     result.put("error", errorResult);
+    return result;
+  }
+
+  @Receiver
+  @Override
+  public TemplateConfResponse queryKeyInfoList(TemplateConfRequest templateConfRequest) {
+    TemplateConfResponse result = new TemplateConfResponse();
+    String templateUid = templateConfRequest.getTemplateUuid();
+    if (StringUtils.isBlank(templateUid)) {
+      return result;
+    }
+    List<TemplateConfigKeyVO> voList =
+        templateConfigKeyMapper.selectInfoListByTemplateUuid(templateUid);
+
+    List<TemplateConfKey> data = new ArrayList<>();
+    if (voList != null) {
+      for (TemplateConfigKeyVO temp : voList) {
+        TemplateConfKey item = new TemplateConfKey();
+        item.setTemplateUuid(temp.getTemplateUuid());
+        item.setKey(temp.getKey());
+        item.setTemplateName(temp.getTemplateName());
+        item.setConfigValue(temp.getConfigValue());
+        data.add(item);
+      }
+    }
+    result.setList(data);
     return result;
   }
 }

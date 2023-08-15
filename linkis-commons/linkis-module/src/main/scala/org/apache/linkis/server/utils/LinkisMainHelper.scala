@@ -61,9 +61,7 @@ object LinkisMainHelper {
       }
       resArr = resArr :+ s"--prometheus.endpoint=$prometheusEndpoint"
     }
-    val version = CommonVars("version", "").getValue
-    resArr = resArr :+ s"--eureka.instance.metadata-map.linkis.app.version=$version"
-    resArr
+    return resArr
   }
 
 }

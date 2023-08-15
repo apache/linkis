@@ -18,5 +18,11 @@
 
 
 ALTER TABLE `linkis_ps_udf_user_load` ADD CONSTRAINT  `uniq_uid_uname` UNIQUE (`udf_id`, `user_name`);
-ALTER TABLE `linkis_ps_bml_resources_version` ADD CONSTRAINT  `uniq_rid_eflag` UNIQUE (`resource_id`, `enable_flag`);
+ALTER TABLE `linkis_ps_bml_resources` ADD CONSTRAINT  `uniq_rid_eflag` UNIQUE (`resource_id`, `enable_flag`);
+
+
+ALTER TABLE `linkis_ps_configuration_config_key` ADD UNIQUE `uniq_key_ectype` (`key`,`engine_conn_type`);
+
+ALTER TABLE `linkis_ps_configuration_config_key` modify column `engine_conn_type` varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc';
+
 

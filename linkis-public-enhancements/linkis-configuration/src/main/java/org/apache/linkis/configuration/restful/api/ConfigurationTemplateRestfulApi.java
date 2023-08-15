@@ -19,7 +19,7 @@ package org.apache.linkis.configuration.restful.api;
 
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.JsonUtils;
-import org.apache.linkis.configuration.entity.TemplateConfigKeyVo;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.TemplateConfigKeyService;
 import org.apache.linkis.server.Message;
@@ -122,12 +122,12 @@ public class ConfigurationTemplateRestfulApi {
 
     JsonNode itemParms = jsonNode.get("itemList");
 
-    List<TemplateConfigKeyVo> confKeyList = new ArrayList<>();
+    List<ConfigKeyLimitVo> confKeyList = new ArrayList<>();
     if (itemParms != null && !itemParms.isNull()) {
       try {
         confKeyList =
             JsonUtils.jackson()
-                .readValue(itemParms.toString(), new TypeReference<List<TemplateConfigKeyVo>>() {});
+                .readValue(itemParms.toString(), new TypeReference<List<ConfigKeyLimitVo>>() {});
       } catch (JsonProcessingException e) {
         return Message.error(
             "parameters:itemList parsing failed(请求参数【itemList】解析失败), error with:" + e.getMessage());

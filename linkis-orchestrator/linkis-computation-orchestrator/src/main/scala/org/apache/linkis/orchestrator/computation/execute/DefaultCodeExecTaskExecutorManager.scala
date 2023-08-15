@@ -132,7 +132,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
           .getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")
       )
     )
-    val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
+    val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark, execTask)
     if (null == engineConnExecutor) {
       return null
     }

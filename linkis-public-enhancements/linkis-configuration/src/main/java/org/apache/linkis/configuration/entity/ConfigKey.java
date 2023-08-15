@@ -17,6 +17,9 @@
 
 package org.apache.linkis.configuration.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigKey {
 
   private Long id;
@@ -50,6 +53,12 @@ public class ConfigKey {
   3 min and max both
    */
   private Integer boundaryType;
+
+  private String enName;
+
+  private String enDescription;
+
+  private String enTreeName;
 
   public String getEngineType() {
     return engineType;
@@ -153,6 +162,30 @@ public class ConfigKey {
 
   public void setBoundaryType(Integer boundaryType) {
     this.boundaryType = boundaryType;
+  }
+
+  public String getEnName() {
+    return enName;
+  }
+
+  public void setEnName(String enName) {
+    this.enName = enName;
+  }
+
+  public String getEnDescription() {
+    return enDescription;
+  }
+
+  public void setEnDescription(String enDescription) {
+    this.enDescription = enDescription;
+  }
+
+  public String getEnTreeName() {
+    return enTreeName;
+  }
+
+  public void setEnTreeName(String enTreeName) {
+    this.enTreeName = enTreeName;
   }
 
   @Override

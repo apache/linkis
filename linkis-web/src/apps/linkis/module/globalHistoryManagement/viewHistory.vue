@@ -21,12 +21,14 @@
       <TabPane name="log" :label="$t('message.linkis.log')"></TabPane>
       <!-- <TabPane name="detail" :label="$t('message.linkis.detail')" disabled></TabPane> -->
       <TabPane name="result" :label="$t('message.linkis.result')"></TabPane>
+      <TabPane v-if="hasEngine" name="engineLog" :label="$t('message.linkis.engineLog')"></TabPane>
     </Tabs>
     <Button v-if="!isHistoryDetail" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
     <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
     <log v-if="tabName === 'log'" :logs="logs" :from-line="fromLine" :script-view-state="scriptViewState" />
     <result
       v-if="tabName === 'result'"
+      class="result-class"
       ref="result"
       :script="script"
       :dispatch="dispatch"
@@ -38,6 +40,7 @@
       @on-analysis="openAnalysisTab"
       :visualParams="visualParams"
     />
+    <ViewLog ref="logPanel" :inHistory="true" v-show="tabName === 'engineLog' && hasEngine" @back="showviewlog = false" />
   </div>
 </template>
 <script>
@@ -46,12 +49,14 @@ import log from '@/components/consoleComponent/log.vue'
 import api from '@/common/service/api'
 import mixin from '@/common/service/mixin'
 import util from '@/common/util'
+import ViewLog from '@/apps/linkis/module/resourceManagement/log.vue'
 import { isUndefined } from 'lodash'
 export default {
   name: 'viewHistory',
   components: {
     log,
-    result
+    result,
+    ViewLog
   },
   mixins: [mixin],
   props: {},
@@ -88,9 +93,11 @@ export default {
         warning: '',
         info: ''
       },
+      engineLogs: '',
       fromLine: 1,
       isAdminModel: false,
-      jobhistoryTask: null
+      jobhistoryTask: null,
+      hasEngine: false,
     }
   },
   created() {
@@ -98,7 +105,8 @@ export default {
   },
   mounted() {
     let taskID = this.$route.query.taskID
-    this.initHistory(taskID)
+    let engineInstance = this.$route.query.engineInstance
+    this.initHistory(taskID, engineInstance);
     const node = document.getElementsByClassName('global-history')[0];
     this.scriptViewState.bottomContentHeight = node.clientHeight - 85
   },
@@ -280,9 +288,41 @@ export default {
         }
       }
     },
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    },
     // Get historical details(获取历史详情)
-    async initHistory(jobId) {
+    async initHistory(jobId, engineInstance) {
       try {
+        if(engineInstance) {
+          this.hasEngine = true;
+          let url = '/linkisManager/ecinfo/ecrHistoryList?';
+          const endDate = new Date(); 
+          const startDate = new Date();
+          startDate.setMonth(startDate.getMonth() - 3);
+          url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+          const res = await api.fetch(url,'get')
+          const param = res.engineList[0]
+          if(param) {
+            this.$refs.logPanel.getLogs(0, {
+              applicationName: "linkis-cg-engineconn",
+              emInstance: param?.ecmInstance || '',
+              instance: param?.serviceInstance || '',
+              ticketId: param?.ticketId || '',
+              engineType: param?.engineType || '',
+              logDirSuffix: param?.logDirSuffix || '',
+            })
+          } else {
+            this.hasEngine = false
+          }
+        }
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task
         this.jobhistoryTask = option
@@ -436,6 +476,9 @@ export default {
 }
 /deep/ .table-div {
   height: 100% !important;
+}
+/deep/ .log {
+    height: calc(100% - 70px)
 }
 </style>
 

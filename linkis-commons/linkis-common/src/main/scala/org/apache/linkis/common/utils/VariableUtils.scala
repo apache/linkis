@@ -143,13 +143,23 @@ object VariableUtils extends Logging {
     }
     initAllDateVars(run_date, nameAndType)
     val codeOperation = parserVar(code, nameAndType)
-    parserDate(codeOperation, run_date)
+    parserDate(codeType, codeOperation, run_date)
   }
 
+  @deprecated
   private def parserDate(code: String, run_date: CustomDateType): String = {
     if (Configuration.VARIABLE_OPERATION) {
       val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
       VariableOperationUtils.replaces(zonedDateTime, code)
+    } else {
+      code
+    }
+  }
+
+  private def parserDate(codeType: String, code: String, run_date: CustomDateType): String = {
+    if (Configuration.VARIABLE_OPERATION) {
+      val zonedDateTime: ZonedDateTime = VariableOperationUtils.toZonedDateTime(run_date.getDate)
+      VariableOperationUtils.replaces(codeType, zonedDateTime, code)
     } else {
       code
     }

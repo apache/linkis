@@ -84,6 +84,7 @@ public class VariableOperationUtils {
    * @param str
    * @return
    */
+  @Deprecated
   public static String replaces(ZonedDateTime dateTime, String str)
       throws VariableOperationFailedException {
     try {
@@ -95,6 +96,32 @@ public class VariableOperationUtils {
     } catch (Exception e) {
       return replace(dateTime, str);
     }
+    return replace(dateTime, str);
+  }
+
+  /**
+   * json support variable operation
+   *
+   * @param codeType
+   * @param dateTime
+   * @param str
+   * @return
+   */
+  public static String replaces(String codeType, ZonedDateTime dateTime, String str)
+      throws VariableOperationFailedException {
+    String languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType, "");
+    if (languageType.equals(CodeAndRunTypeUtils.LANGUAGE_TYPE_JSON())) {
+      try {
+        JsonNode rootNode = mapper.readTree(str);
+        if (rootNode.isArray() || rootNode.isObject()) {
+          replaceJson(dateTime, rootNode);
+          return rootNode.toString();
+        }
+      } catch (Exception e) {
+        return replace(dateTime, str);
+      }
+    }
+
     return replace(dateTime, str);
   }
 

@@ -23,7 +23,7 @@
       <TabPane name="gc" label="gc"></TabPane>
       <TabPane v-if="['hive', 'spark'].includes(engineType)" name="yarnApp" label="yarnApp"></TabPane>
     </Tabs>
-    <Button class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
+    <Button v-if="!inHistory" class="backButton" type="primary" @click="back">{{$t('message.linkis.back')}}</Button>
     <log :logs="logs" :scriptViewState="scriptViewState"/>
     <Page
       ref="page"
@@ -43,6 +43,12 @@ import elementResizeEvent from '@/common/helper/elementResizeEvent';
 export default {
   components: {
     log
+  },
+  props: {
+    inHistory: {
+      default: false,
+      type: Boolean,
+    }
   },
   data() {
     return {
@@ -79,6 +85,12 @@ export default {
     change(val) {
       this.page.pageNow = val;
       this.getLogs((val - 1) * this.page.pageSize)
+    },
+    clearLogs() {
+      this.logs = {
+        all: '',
+      }
+      this.tabName = 'stdout'
     },
     async getLogs(fromLine, param) {
       if (param) {

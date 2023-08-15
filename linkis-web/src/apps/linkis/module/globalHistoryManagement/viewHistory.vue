@@ -307,17 +307,21 @@ export default {
           const endDate = new Date(); 
           const startDate = new Date();
           startDate.setMonth(startDate.getMonth() - 3);
-          if (engineInstance) url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
+          url += `instance=${engineInstance}&startDate=${this.formatDate(startDate)}&endDate=${this.formatDate(endDate)}`;
           const res = await api.fetch(url,'get')
           const param = res.engineList[0]
-          this.$refs.logPanel.getLogs(0, {
-            applicationName: "linkis-cg-engineconn",
-            emInstance: param.ecmInstance,
-            instance: param.serviceInstance,
-            ticketId: param.ticketId,
-            engineType: param.engineType,
-            logDirSuffix: param.logDirSuffix,
-          })
+          if(param) {
+            this.$refs.logPanel.getLogs(0, {
+              applicationName: "linkis-cg-engineconn",
+              emInstance: param?.ecmInstance || '',
+              instance: param?.serviceInstance || '',
+              ticketId: param?.ticketId || '',
+              engineType: param?.engineType || '',
+              logDirSuffix: param?.logDirSuffix || '',
+            })
+          } else {
+            this.hasEngine = false
+          }
         }
         let jobhistory = await api.fetch(`/jobhistory/${jobId}/get`, 'get')
         const option = jobhistory.task

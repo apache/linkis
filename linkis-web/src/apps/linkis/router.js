@@ -189,6 +189,16 @@ export default [
       },
     },
     {
+      name: 'acrossClusterRule',
+      path: 'acrossClusterRule',
+      component: () =>
+        import('./module/acrossClusterRule/index.vue'),
+      meta: {
+        title: 'acrossClusterRule',
+        publicPage: true,
+      },
+    },
+    {
       name: 'gatewayAuthToken',
       path: 'gatewayAuthToken',
       component: () =>
@@ -299,6 +309,16 @@ export default [
       },
     },
     {
+      name: 'configManagement',
+      path: 'configManagement',
+      component: () =>
+        import('./module/configManagement/index.vue'),
+      meta: {
+        title: 'configManagement',
+        publicPage: true,
+      },
+    },
+    {
       name: 'codeDetail',
       path: 'codeDetail',
       component: () =>
@@ -317,6 +337,16 @@ export default [
         title: 'viewHistoryDetail',
         publicPage: true,
         noLayout: true
+      },
+    },
+    {
+      name: 'userConfig',
+      path: 'userConfig',
+      component: () =>
+        import('./module/userConfig/index.vue'),
+      meta: {
+        title: 'userConfig',
+        publicPage: true,
       },
     },
     ],

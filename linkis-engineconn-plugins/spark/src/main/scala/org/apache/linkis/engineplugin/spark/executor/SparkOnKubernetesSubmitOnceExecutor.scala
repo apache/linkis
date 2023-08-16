@@ -57,7 +57,6 @@ class SparkOnKubernetesSubmitOnceExecutor(
       onceExecutorExecutionContext: OnceExecutorExecutionContext,
       options: Map[String, String]
   ): Unit = {
-    logger.info("====================SparkOnKubernetesSubmitOnceExecutor option:{}", options)
     val args = SPARK_APPLICATION_ARGS.getValue(options)
     val mainClass = SPARK_APPLICATION_MAIN_CLASS.getValue(options)
     val extConf = SPARK_APP_CONF.getValue(options)
@@ -74,7 +73,9 @@ class SparkOnKubernetesSubmitOnceExecutor(
         }
       }
     }
-    logger.info(s"Ready to submit spark application, mainClass: $mainClass, args: $args.")
+    logger.info(
+      s"Ready to submit spark application to kubernetes, mainClass: $mainClass, args: $args."
+    )
     clusterDescriptorAdapter.deployCluster(mainClass, args, confMap)
   }
 

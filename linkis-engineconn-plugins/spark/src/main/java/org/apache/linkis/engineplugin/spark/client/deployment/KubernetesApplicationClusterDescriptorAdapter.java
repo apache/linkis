@@ -60,10 +60,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
   public void deployCluster(String mainClass, String args, Map<String, String> confMap)
       throws IOException {
     SparkConfig sparkConfig = executionContext.getSparkConfig();
-    logger.info("===========SparkConfig: {}", sparkConfig);
-    logger.info("===========configMap: {}", confMap);
     sparkLauncher = new CustomSparkSubmitLauncher();
-    // region set args
     sparkLauncher
         .setJavaHome(sparkConfig.getJavaHome())
         .setSparkHome(sparkConfig.getSparkHome())

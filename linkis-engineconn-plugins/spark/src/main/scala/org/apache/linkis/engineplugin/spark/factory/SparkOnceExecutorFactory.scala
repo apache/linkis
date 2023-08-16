@@ -42,9 +42,6 @@ class SparkOnceExecutorFactory extends OnceExecutorFactory {
       labels: Array[Label[_]]
   ): OnceExecutor = {
     val clusterLabel = LabelUtil.getLabelFromArray[ClusterLabel](labels)
-    logger.info("=========engineCreationContext:{}", engineCreationContext.getOptions)
-    logger.info("=========engineConn:{}", engineConn)
-    logger.info("=========label:{}", clusterLabel)
     engineConn.getEngineConnSession match {
       case context: SparkEngineConnContext
           if null != clusterLabel && clusterLabel.getClusterType.equalsIgnoreCase(

@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ClusterDescriptorAdapterFactory {
 
   public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster(); // 获取一些配置信息
+    String master = executionContext.getSparkConfig().getMaster();
 
     ClusterDescriptorAdapter clusterDescriptorAdapter =
         new YarnApplicationClusterDescriptorAdapter(executionContext);

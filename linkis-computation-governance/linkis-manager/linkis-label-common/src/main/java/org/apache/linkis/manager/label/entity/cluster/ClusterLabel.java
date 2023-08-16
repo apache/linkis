@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 
-import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.LABEL_ERROR_CODE;
+import static org.apache.linkis.manager.label.errorcode.LabelCommonErrorCodeSummary.CLUSTER_LABEL_VALUE_ERROR;
 
 public class ClusterLabel extends GenericLabel implements EngineNodeLabel, UserModifiable {
 
@@ -86,9 +86,9 @@ public class ClusterLabel extends GenericLabel implements EngineNodeLabel, UserM
   @Override
   public void valueCheck(String stringValue) throws LabelErrorException {
     if (!StringUtils.isEmpty(stringValue)) {
-      if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 1) {
+      if (stringValue.split(SerializableLabel.VALUE_SEPARATOR).length != 2) {
         throw new LabelErrorException(
-            LABEL_ERROR_CODE.getErrorCode(), LABEL_ERROR_CODE.getErrorDesc());
+            CLUSTER_LABEL_VALUE_ERROR.getErrorCode(), CLUSTER_LABEL_VALUE_ERROR.getErrorDesc());
       }
     }
   }

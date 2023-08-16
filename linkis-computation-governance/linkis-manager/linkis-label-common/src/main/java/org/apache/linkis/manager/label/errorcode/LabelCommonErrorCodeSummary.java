@@ -31,7 +31,9 @@ public enum LabelCommonErrorCodeSummary implements LinkisErrorCode {
   CHECK_LABEL_REMOVE_REQUEST(
       25007,
       "ServiceInstance in request is null, please check label remove request(请求中的 ServiceInstance 为空，请检查标签删除请求)"),
-  CHECK_LABEL_VALUE_EMPTY(25008, "Label value cannot be empty");
+  CHECK_LABEL_VALUE_EMPTY(25008, "Label value cannot be empty"),
+  CLUSTER_LABEL_VALUE_ERROR(
+      25009, "The value of cluster label should have a length of 2 and be separated by '-' ");
 
   /** (errorCode)错误码 */
   private final int errorCode;

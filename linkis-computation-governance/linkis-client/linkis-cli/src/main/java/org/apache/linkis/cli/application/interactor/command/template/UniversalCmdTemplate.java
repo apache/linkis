@@ -143,6 +143,15 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
           true,
           "");
 
+  protected StdOption<String> engingeConnRuntimeModeOP =
+      option(
+          CliKeys.JOB_LABEL,
+          CliKeys.JOB_LABEL_ENGINGE_CONN_RUNTIME_MODE,
+          new String[] {"-engingeConnRuntimeMode"},
+          "specify linkis yarn cluster mode for this job",
+          true,
+          "");
+
   protected StdOption<String> engineTypeOP =
       option(
           CliKeys.JOB_LABEL,

@@ -17,6 +17,8 @@
 
 package org.apache.linkis.cli.application.constants;
 
+import org.apache.linkis.manager.label.constant.LabelKeyConstant;
+
 public class CliKeys {
 
   /** User Not configurable */
@@ -77,6 +79,11 @@ public class CliKeys {
       JOB_LABEL + "." + LinkisKeys.KEY_EXECUTEONCE; // corresponds to server api.
   public static final String JOB_LABEL_CLUSTER =
       JOB_LABEL + "." + LinkisKeys.KEY_CLUSTER; // corresponds to server api.
+
+  public static final String JOB_LABEL_ENGINGE_CONN_RUNTIME_MODE =
+      JOB_LABEL
+          + "."
+          + LabelKeyConstant.ENGINGE_CONN_RUNTIME_MODE_KEY; // corresponds to server api.
 
   /*
   Job command

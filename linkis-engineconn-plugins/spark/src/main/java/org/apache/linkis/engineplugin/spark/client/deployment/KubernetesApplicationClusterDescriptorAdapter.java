@@ -30,6 +30,7 @@ import org.apache.spark.launcher.SparkLauncher;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.UUID;
 
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -68,7 +69,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
         .setDeployMode(sparkConfig.getDeployMode())
         .setAppName(sparkConfig.getAppName())
         .setVerbose(true);
-    this.driverPodName = sparkConfig.getAppName() + "-" + System.currentTimeMillis() + "-driver";
+    this.driverPodName = generateDriverPodName(sparkConfig.getAppName());
     this.namespace = sparkConfig.getK8sNamespace();
     setConf(sparkLauncher, "spark.app.name", sparkConfig.getAppName());
     setConf(sparkLauncher, "spark.kubernetes.namespace", this.namespace);
@@ -222,5 +223,9 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
       default:
         return SparkAppHandle.State.UNKNOWN;
     }
+  }
+
+  public String generateDriverPodName(String appName) {
+    return appName + "-" + UUID.randomUUID().toString().replace("-", "") + "-driver";
   }
 }

@@ -126,13 +126,6 @@ class SparkOnKubernetesSubmitOnceExecutor(
   }
 
   override def getProgress: Float = {
-    if (clusterDescriptorAdapter == null) {
-      logger.info("clusterDescriptorAdapter is null")
-    } else if (clusterDescriptorAdapter.getJobState == null) {
-      logger.info("clusterDescriptorAdapter.getJobState is null")
-    } else {
-      logger.info("clusterDescriptorAdapter/getJobState is not null")
-    }
     val jobIsFinal = clusterDescriptorAdapter != null &&
       clusterDescriptorAdapter.getJobState != null &&
       clusterDescriptorAdapter.getJobState.isFinal

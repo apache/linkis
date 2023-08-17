@@ -32,7 +32,7 @@ public class ClusterDescriptorAdapterFactory {
     if (StringUtils.isNotBlank(master)) {
       if (master.equalsIgnoreCase("k8s-operator")) {
         clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-      } else if (master.equalsIgnoreCase("k8s-jar")) {
+      } else if (master.equalsIgnoreCase("k8s-native")) {
         clusterDescriptorAdapter =
             new KubernetesApplicationClusterDescriptorAdapter(executionContext);
       }

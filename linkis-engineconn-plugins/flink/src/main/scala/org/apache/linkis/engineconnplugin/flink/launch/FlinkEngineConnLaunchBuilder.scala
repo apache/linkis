@@ -130,8 +130,11 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     Array(FLINK_HOME_ENV, FLINK_CONF_DIR_ENV) ++: super.getNecessaryEnvironment
 
   override protected def getExtractJavaOpts: String = {
-    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) super.getExtractJavaOpts
-    else super.getExtractJavaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
+    val javaOpts = super.getExtractJavaOpts
+    val defaultJavaOpts = FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
+    val mergedString = (defaultJavaOpts.format(getGcLogDir(engineConnBuildRequest)).split("\\s+") ++ javaOpts.split("\\s+")).distinct.mkString(" ")
+    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) mergedString
+    else mergedString + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
   }
 
   override protected def ifAddHiveConfigPath: Boolean = true

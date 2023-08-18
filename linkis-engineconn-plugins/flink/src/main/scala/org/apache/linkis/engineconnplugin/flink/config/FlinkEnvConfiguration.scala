@@ -137,4 +137,10 @@ object FlinkEnvConfiguration {
   val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
     CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
 
+  val FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String](
+    "wds.linkis.engineConn.javaOpts.default",
+    s"-Xloggc:%s -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=512M -XX:+PrintPromotionFailure -XX:+PrintGCCause"
+  )
+
+
 }

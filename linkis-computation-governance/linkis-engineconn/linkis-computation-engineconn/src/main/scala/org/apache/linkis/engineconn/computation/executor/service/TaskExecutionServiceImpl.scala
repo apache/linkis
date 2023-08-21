@@ -424,9 +424,9 @@ class TaskExecutionServiceImpl
   ): Future[_] = {
     val sleepInterval = ComputationExecutorConf.ENGINE_PROGRESS_FETCH_INTERVAL.getValue
     scheduler.submit(new Runnable {
-      override def run(): Unit = Utils.tryAndWarn {
+      override def run(): Unit = {
         Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
-        while (null != taskFuture && !taskFuture.isDone) {
+        while (null != taskFuture && !taskFuture.isDone) Utils.tryAndWarn {
           if (
               ExecutionNodeStatus.isCompleted(task.getStatus) || ExecutionNodeStatus
                 .isRunning(task.getStatus)
@@ -434,9 +434,7 @@ class TaskExecutionServiceImpl
             val progressResponse = taskProgress(task.getTaskId)
             val resourceResponse = buildResourceMap(task)
             val extraInfoMap = buildExtraInfoMap(task)
-            // todo add other info
             val resourceMap = if (null != resourceResponse) resourceResponse.resourceMap else null
-
             val respRunningInfo: ResponseTaskRunningInfo = ResponseTaskRunningInfo(
               progressResponse.execId,
               progressResponse.progress,

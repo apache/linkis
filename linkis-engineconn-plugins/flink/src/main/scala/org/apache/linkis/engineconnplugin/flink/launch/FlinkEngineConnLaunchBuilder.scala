@@ -24,24 +24,14 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.{
-  Environment,
-  JavaProcessEngineConnLaunchBuilder
-}
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{
-  variable,
-  PWD,
-  USER
-}
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{
-  addPathToClassPath,
-  CLASS_PATH_SEPARATOR
-}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, JavaProcessEngineConnLaunchBuilder}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{PWD, USER, variable}
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{CLASS_PATH_SEPARATOR, addPathToClassPath}
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
 
 import java.util
-
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -132,9 +122,9 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
   override protected def getExtractJavaOpts: String = {
     val javaOpts = super.getExtractJavaOpts
     val defaultJavaOpts = FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
-    val mergedString = (defaultJavaOpts.format(getGcLogDir(engineConnBuildRequest)).split("\\s+") ++ javaOpts.split("\\s+")).distinct.mkString(" ")
-    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) mergedString
-    else mergedString + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
+    val mergedJavaOpts = (defaultJavaOpts.split("[ =]+") ++ javaOpts.split("[ =]+")).distinct.mkString(" ")
+    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) mergedJavaOpts
+    else mergedJavaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
   }
 
   override protected def ifAddHiveConfigPath: Boolean = true

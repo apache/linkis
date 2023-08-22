@@ -17,4 +17,6 @@
 
 update  linkis_ps_configuration_config_key set engine_conn_type = "" where engine_conn_type is NULL;
 
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','driver最大结果集超过限制','is bigger than spark.driver.maxResultSize',0);
 
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('22009','权限不足，请联系管理员','Permission denied:.* access=EXECUTE, inode.*',0);

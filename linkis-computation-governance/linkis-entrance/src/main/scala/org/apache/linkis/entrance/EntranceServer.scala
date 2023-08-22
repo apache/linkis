@@ -669,6 +669,7 @@ abstract class EntranceServer extends Logging {
     jobRequest.setErrorDesc("")
     jobRequest.setMetrics(metricMap)
     jobRequest.getMetrics.put(TaskConstant.JOB_SUBMIT_TIME, initDate)
+    // Allow task status updates to be unordered
     jobRequest.setUpdateOrderFlag(false)
 
     logAppender.append(

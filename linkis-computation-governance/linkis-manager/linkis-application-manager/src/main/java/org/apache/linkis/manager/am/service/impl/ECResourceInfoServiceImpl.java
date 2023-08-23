@@ -97,9 +97,14 @@ public class ECResourceInfoServiceImpl implements ECResourceInfoService {
 
   @Override
   public List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType) {
+      String instance,
+      Date endDate,
+      Date startDate,
+      String username,
+      String engineType,
+      String status) {
     return ecResourceRecordMapper.getECResourceInfoHistory(
-        username, instance, endDate, startDate, engineType);
+        username, instance, endDate, startDate, engineType, status);
   }
 
   @Override

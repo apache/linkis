@@ -71,6 +71,7 @@
         select * from linkis_cg_ec_resource_info_record
         <where>
             <if test="instance != null"> service_instance = #{instance}</if>
+            <if test="status != null">and status = #{status}</if>
             <if test="username != null"> and create_user = #{username}</if>
 <!--            label_value in db eg：`hadoop-spark,spark-2.4.3`-->
             <if test="engineType !=null">and label_value like concat('%,',#{engineType},'%')</if>

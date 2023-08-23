@@ -34,7 +34,12 @@ public interface ECResourceInfoService {
   void deleteECResourceInfoRecord(Integer id);
 
   List<ECResourceInfoRecord> getECResourceInfoRecordList(
-      String instance, Date endDate, Date startDate, String username, String engineType);
+      String instance,
+      Date endDate,
+      Date startDate,
+      String username,
+      String engineType,
+      String status);
 
   /**
    * @param creatorUserList engineconn creator list

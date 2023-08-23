@@ -114,6 +114,7 @@ public class ECResourceInfoRestfulApi {
     @ApiImplicitParam(name = "startDate", dataType = "String", value = "start date"),
     @ApiImplicitParam(name = "endDate", dataType = "String", value = "end date"),
     @ApiImplicitParam(name = "engineType", dataType = "String", value = "engine type"),
+    @ApiImplicitParam(name = "status", dataType = "String", value = "engine status"),
     @ApiImplicitParam(name = "pageNow", dataType = "String", value = "page now"),
     @ApiImplicitParam(name = "pageSize", dataType = "String", value = "page size")
   })
@@ -132,6 +133,7 @@ public class ECResourceInfoRestfulApi {
               defaultValue = "#{new java.util.Date()}")
           Date endDate,
       @RequestParam(value = "engineType", required = false) String engineType,
+      @RequestParam(value = "status", required = false) String status,
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize) {
     String username = SecurityFilter.getLoginUsername(req);
@@ -139,6 +141,7 @@ public class ECResourceInfoRestfulApi {
     instance = ECResourceInfoUtils.strCheckAndDef(instance, null);
     String creatorUser = ECResourceInfoUtils.strCheckAndDef(creator, null);
     engineType = ECResourceInfoUtils.strCheckAndDef(engineType, null);
+    status = ECResourceInfoUtils.strCheckAndDef(status, null);
     if (null != creatorUser && !ECResourceInfoUtils.checkNameValid(creatorUser)) {
       return Message.error("Invalid creator : " + creatorUser);
     }
@@ -162,7 +165,7 @@ public class ECResourceInfoRestfulApi {
     try {
       queryTasks =
           ecResourceInfoService.getECResourceInfoRecordList(
-              instance, endDate, startDate, username, engineType);
+              instance, endDate, startDate, username, engineType, status);
       queryTasks.forEach(
           info -> {
             ECResourceInfoRecordVo ecrHistroryListVo = new ECResourceInfoRecordVo();

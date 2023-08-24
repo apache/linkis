@@ -476,7 +476,7 @@ class HiveEngineConnExecutor(
           val name = runningJob.getID.toString
           val _progress = Utils.tryCatch(runningJob.reduceProgress() + runningJob.mapProgress()) {
             case e: Exception =>
-              logger.info("Failed to get job({}) progress ", name, e)
+              logger.info(s"Failed to get job($name) progress ", e)
               0.2f
           }
           singleSqlProgressMap.put(name, _progress / 2)

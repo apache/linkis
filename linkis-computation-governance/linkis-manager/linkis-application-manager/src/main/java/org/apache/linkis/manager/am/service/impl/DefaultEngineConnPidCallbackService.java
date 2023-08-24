@@ -64,13 +64,12 @@ public class DefaultEngineConnPidCallbackService extends AbstractEngineService
     }
 
     engineNode.setIdentifier(protocol.pid());
-
+    ServiceInstance oldServiceInstance = engineNode.getServiceInstance();
     if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
       ServiceInstance serviceInstance = protocol.serviceInstance();
       engineNode.setServiceInstance(serviceInstance);
-      getEngineNodeManager().updateEngineNode(serviceInstance, engineNode);
-      nodeLabelService.labelsFromInstanceToNewInstance(
-          engineNode.getServiceInstance(), serviceInstance);
+      getEngineNodeManager().updateEngineNode(oldServiceInstance, engineNode);
+      nodeLabelService.labelsFromInstanceToNewInstance(oldServiceInstance, serviceInstance);
     }
     defaultEngineNodeManager.updateEngine(engineNode);
   }

@@ -54,7 +54,8 @@ public class DefaultEngineConnPidCallbackService extends AbstractEngineService
         protocol.pid(),
         protocol.ticketId());
 
-    EngineNode engineNode = defaultEngineNodeManager.getEngineNode(protocol.serviceInstance());
+    EngineNode engineNode =
+        defaultEngineNodeManager.getEngineNodeInfoByTicketId(protocol.ticketId());
     if (engineNode == null) {
       logger.error(
           "DefaultEngineConnPidCallbackService dealPid failed, engineNode is null, serviceInstance:{}",
@@ -63,13 +64,12 @@ public class DefaultEngineConnPidCallbackService extends AbstractEngineService
     }
 
     engineNode.setIdentifier(protocol.pid());
-
+    ServiceInstance oldServiceInstance = engineNode.getServiceInstance();
     if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
       ServiceInstance serviceInstance = protocol.serviceInstance();
       engineNode.setServiceInstance(serviceInstance);
-      getEngineNodeManager().updateEngineNode(serviceInstance, engineNode);
-      nodeLabelService.labelsFromInstanceToNewInstance(
-          engineNode.getServiceInstance(), serviceInstance);
+      getEngineNodeManager().updateEngineNode(oldServiceInstance, engineNode);
+      nodeLabelService.labelsFromInstanceToNewInstance(oldServiceInstance, serviceInstance);
     }
     defaultEngineNodeManager.updateEngine(engineNode);
   }

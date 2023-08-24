@@ -316,6 +316,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     engineNode.setServiceInstance(
         ServiceInstance.apply(labelContainer.getEngineServiceName(), tickedId));
     engineNode.setNodeResource(resource);
+    engineNode.setTicketId(tickedId);
 
     nodeManagerPersistence.addEngineNode(engineNode);
 

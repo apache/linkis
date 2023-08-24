@@ -61,15 +61,16 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
 
-    val engineConnIdentifierCallback = new EngineConnIdentifierCallback()
-    Utils.tryAndError(engineConnIdentifierCallback.callback())
     logger.info("<--------------------SpringBoot App init succeed-------------------->")
   }
 
   override def beforeExecutionExecute(
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
-  ): Unit = {}
+  ): Unit = {
+    val engineConnIdentifierCallback = new EngineConnIdentifierCallback()
+    Utils.tryAndError(engineConnIdentifierCallback.callback())
+  }
 
   override def afterExecutionExecute(
       engineCreationContext: EngineCreationContext,

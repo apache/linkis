@@ -195,7 +195,7 @@ class DefaultEngineStopService extends AbstractEngineService with EngineStopServ
   override def engineConnInfoClear(ecNode: EngineNode): Unit = {
     logger.info(s"Start to clear ec info $ecNode")
     // 1. to clear engine resource
-    Utils.tryAndWarn{resourceManager.resourceReleased(ecNode)}
+    Utils.tryAndWarn { resourceManager.resourceReleased(ecNode) }
     // 2. to  clear Label
     val instanceLabelRemoveRequest = new NodeLabelRemoveRequest(ecNode.getServiceInstance, true)
     nodeLabelRemoveService.removeNodeLabel(instanceLabelRemoveRequest)

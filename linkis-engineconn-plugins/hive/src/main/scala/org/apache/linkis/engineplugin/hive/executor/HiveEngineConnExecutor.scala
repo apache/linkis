@@ -474,7 +474,11 @@ class HiveEngineConnExecutor(
       HadoopJobExecHelper.runningJobs synchronized {
         HadoopJobExecHelper.runningJobs.asScala foreach { runningJob =>
           val name = runningJob.getID.toString
-          val _progress = runningJob.reduceProgress() + runningJob.mapProgress()
+          val _progress = Utils.tryCatch(runningJob.reduceProgress() + runningJob.mapProgress()) {
+            case e: Exception =>
+              logger.info("Failed to get job({}) progress ", name, e)
+              0.2f
+          }
           singleSqlProgressMap.put(name, _progress / 2)
         }
       }

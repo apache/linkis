@@ -115,7 +115,7 @@ class ComputationEngineConnManager extends AbstractEngineConnManager with Loggin
             s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken), ${t.getMessage}"
           )
           retryException = t
-          // add isCrossClusterRetryException flag
+        // add isCrossClusterRetryException flag
         case t: Throwable =>
           val taken = ByteTimeUtils.msDurationToString(System.currentTimeMillis - start)
           logger.warn(s"${mark.getMarkId()} Failed to askEngineAskRequest time taken ($taken)")

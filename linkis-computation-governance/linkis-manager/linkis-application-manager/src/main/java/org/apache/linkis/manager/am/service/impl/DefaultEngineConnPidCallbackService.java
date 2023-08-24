@@ -54,7 +54,8 @@ public class DefaultEngineConnPidCallbackService extends AbstractEngineService
         protocol.pid(),
         protocol.ticketId());
 
-    EngineNode engineNode = defaultEngineNodeManager.getEngineNode(protocol.serviceInstance());
+    EngineNode engineNode =
+        defaultEngineNodeManager.getEngineNodeInfoByTicketId(protocol.ticketId());
     if (engineNode == null) {
       logger.error(
           "DefaultEngineConnPidCallbackService dealPid failed, engineNode is null, serviceInstance:{}",

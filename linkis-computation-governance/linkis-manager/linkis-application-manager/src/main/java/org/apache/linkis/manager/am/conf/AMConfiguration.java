@@ -68,7 +68,8 @@ public class AMConfiguration {
 
   public static final CommonVars<String> MULTI_USER_ENGINE_TYPES =
       CommonVars.apply(
-          "wds.linkis.multi.user.engine.types", "jdbc,es,presto,io_file,appconn,openlookeng,trino");
+          "wds.linkis.multi.user.engine.types",
+          "jdbc,es,presto,io_file,appconn,openlookeng,trino,nebula,hbase");
 
   public static final CommonVars<String> ALLOW_BATCH_KILL_ENGINE_TYPES =
       CommonVars.apply("wds.linkis.allow.batch.kill.engine.types", "spark,hive,python");
@@ -104,8 +105,8 @@ public class AMConfiguration {
   public static String getDefaultMultiEngineUser() {
     String jvmUser = Utils.getJvmUser();
     return String.format(
-        "{jdbc:\"%s\", es: \"%s\", presto:\"%s\", appconn:\"%s\", openlookeng:\"%s\", trino:\"%s\", io_file:\"root\"}",
-        jvmUser, jvmUser, jvmUser, jvmUser, jvmUser, jvmUser);
+        "{jdbc:\"%s\", es: \"%s\", presto:\"%s\", appconn:\"%s\", openlookeng:\"%s\", trino:\"%s\", nebula:\"%s\", hbase:\"%s\",io_file:\"root\"}",
+        jvmUser, jvmUser, jvmUser, jvmUser, jvmUser, jvmUser, jvmUser, jvmUser);
   }
 
   public static boolean isMultiUserEngine(String engineType) {

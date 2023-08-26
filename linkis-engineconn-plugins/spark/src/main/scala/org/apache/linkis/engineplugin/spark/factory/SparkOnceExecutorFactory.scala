@@ -43,13 +43,16 @@ class SparkOnceExecutorFactory extends OnceExecutorFactory {
   ): OnceExecutor = {
     val clusterLabel = LabelUtil.getLabelFromArray[ClusterLabel](labels)
     engineConn.getEngineConnSession match {
-      case context: SparkEngineConnContext
-          if null != clusterLabel && clusterLabel.getClusterType.equalsIgnoreCase(
-            DEFAULT_KUBERNETES_TYPE.getValue
-          ) =>
-        new SparkOnKubernetesSubmitOnceExecutor(id, context)
       case context: SparkEngineConnContext =>
-        new SparkSubmitOnceExecutor(id, context)
+        if (
+            null != clusterLabel && clusterLabel.getClusterType.equalsIgnoreCase(
+              DEFAULT_KUBERNETES_TYPE.getValue
+            )
+        ) {
+          new SparkOnKubernetesSubmitOnceExecutor(id, context)
+        } else {
+          new SparkSubmitOnceExecutor(id, context)
+        }
     }
   }
 

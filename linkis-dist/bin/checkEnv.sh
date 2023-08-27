@@ -18,6 +18,36 @@ shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
+source ${workDir}/deploy-config/db.sh
+
+function checkTrino(){
+    TrinoDISAddress="echo $TRINO_DISCOVERY_URL|awk -F'\"' '{print $1}'|awk -F';' '{print $1}'"
+    curl $TrinoDISAddress  > /dev/null 2>&1
+    isSuccess "execute cmd: Trino service check"
+}
+
+function checkElasticSearch(){
+    ESRestfulAddress="echo $ES_RESTFUL_URL|awk -F'\"' '{print $1}'|awk -F';' '{print $1}'"
+    curl $ESRestfulAddress> /dev/null 2>&1
+    isSuccess "execute cmd: ElasticSearch service check"
+}
+
+function checkFlink(){
+    FlinkRestfulAddress="echo $Flink_RESTFUL_URL|awk -F'\"' '{print $1}'|awk -F';' '{print $1}'"
+    curl $FlinkRestfulAddress> /dev/null 2>&1
+    isSuccess "execute cmd: Flink service check"
+}
+
+if [ "$ENABLE_TRINO" == "true" ]; then
+  checkTrino
+fi
+
+if [ "$ENABLE_ES" == "true" ]; then
+  checkElasticSearch
+fi
+
+if [ "$ENABLE_FLINK" == "true" ]; then
+fi                                                        
 
 say() {
     printf 'check command fail \n %s\n' "$1"

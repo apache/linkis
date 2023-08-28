@@ -30,6 +30,8 @@
 
 Use spark yarn cluster mode,need to set label "engingeConnRuntimeMode": "yarnCluster",and need to upload the dependence of the spark to 'linkis.spark.yarn.cluster.jar'(the default value is 'hdfs:///spark/cluster')
 spark dependencies include jars and configuration files，For example: '/appcom/Install/linkis/lib/linkis-engineconn-plugins/spark/dist/3.2.1/lib/*.jar','/appcom/Install/linkis/conf/*''
+Precautions for using yarnCluster:
+Eureka url if 127.0.0.1 should be changed to the real host, such as "http://127.0.0.1:20303/eureka/" should be changed to "http://wds001:20303/eureka/"
 
 The spark-excel package may cause class conflicts,need to download separately,put it in spark lib
 wget https://repo1.maven.org/maven2/com/crealytics/spark-excel-2.12.17-3.2.2_2.12/3.2.2_0.18.1/spark-excel-2.12.17-3.2.2_2.12-3.2.2_0.18.1.jar

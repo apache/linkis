@@ -349,6 +349,7 @@ public class ConfigurationRestfulApi {
                       engineVersion);
                 }
               });
+      configurationService.clearAMCacheConf(username, creator, null, null);
     } else {
       configurationService.clearAMCacheConf(username, creator, engine, version);
     }
@@ -502,7 +503,11 @@ public class ConfigurationRestfulApi {
       configurationService.paramCheck(configKeyValue);
     } catch (Exception e) {
       if (force && e instanceof ConfigurationException) {
-        message.data("msg", e.getMessage());
+        message.data(
+            "msg",
+            "The update was successful, but the value verification failed. Please confirm if it has any impact："
+                + "（更新成功，但是值校验失败，请确认是否有影响）\n"
+                + e.getMessage());
       } else {
         return Message.error(e.getMessage());
       }

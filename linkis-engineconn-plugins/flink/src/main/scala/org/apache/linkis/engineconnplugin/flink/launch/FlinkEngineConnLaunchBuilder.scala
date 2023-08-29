@@ -24,16 +24,28 @@ import org.apache.linkis.hadoop.common.conf.HadoopConf
 import org.apache.linkis.manager.common.protocol.bml.BmlResource
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnBuildRequest
-import org.apache.linkis.manager.engineplugin.common.launch.process.{Environment, JavaProcessEngineConnLaunchBuilder}
-import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{PWD, USER, variable}
-import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{CLASS_PATH_SEPARATOR, addPathToClassPath}
+import org.apache.linkis.manager.engineplugin.common.launch.process.{
+  Environment,
+  JavaProcessEngineConnLaunchBuilder
+}
+import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.{
+  variable,
+  PWD,
+  USER
+}
+import org.apache.linkis.manager.engineplugin.common.launch.process.LaunchConstants.{
+  addPathToClassPath,
+  CLASS_PATH_SEPARATOR
+}
 import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
-import org.yaml.snakeyaml.Yaml
 
 import java.io.{File, FileInputStream}
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
+
+import org.yaml.snakeyaml.Yaml
 
 class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
 
@@ -122,12 +134,24 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     Array(FLINK_HOME_ENV, FLINK_CONF_DIR_ENV) ++: super.getNecessaryEnvironment
 
   override protected def getExtractJavaOpts: String = {
+    logger.info("FlinkEngineConnLaunchBuilder.getExtractJavaOpts+++++++++++++++++")
     var javaOpts = super.getExtractJavaOpts
-    val configFile = new File(FLINK_CONF_DIR.getValue + "flink-config.yaml")
-    val yaml = new Yaml()
-    val config = yaml.load(new FileInputStream(configFile))
-    val defaultJavaOpts = config.asInstanceOf[java.util.LinkedHashMap[String, Any]].get("env.java.opts")
-    if (defaultJavaOpts.toString.nonEmpty) javaOpts = (defaultJavaOpts.toString.split("[ =]+") ++ javaOpts.split("[ =]+")).distinct.mkString(" ")
+    var defaultJavaOpts = ""
+    val configFile = new File(FLINK_CONF_DIR.getValue + "/flink-conf.yaml")
+    if (configFile.exists()) {
+      val yaml = new Yaml()
+      val inputStream = new FileInputStream(configFile)
+      val config = yaml.load(inputStream)
+      logger.info(config)
+      if (config != null) {
+        val configMap = config.asInstanceOf[util.Map[String, Any]]
+        if (configMap.containsKey("env.java.opts")) {
+          defaultJavaOpts = configMap.get("env.java.opts").toString
+        }
+        javaOpts =
+          (defaultJavaOpts.split("[ =]+") ++ javaOpts.split("[ =]+")).distinct.mkString(" ")
+      }
+    }
     if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) javaOpts
     else javaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
   }

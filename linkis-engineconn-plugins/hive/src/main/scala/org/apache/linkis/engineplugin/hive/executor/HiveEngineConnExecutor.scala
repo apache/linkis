@@ -56,6 +56,7 @@ import org.apache.hadoop.hive.common.HiveInterruptUtils
 import org.apache.hadoop.hive.conf.HiveConf
 import org.apache.hadoop.hive.metastore.api.{FieldSchema, Schema}
 import org.apache.hadoop.hive.ql.{Driver, QueryPlan}
+import org.apache.hadoop.hive.ql.exec.Task.TaskState
 import org.apache.hadoop.hive.ql.exec.Utilities
 import org.apache.hadoop.hive.ql.exec.mr.HadoopJobExecHelper
 import org.apache.hadoop.hive.ql.exec.tez.TezJobExecHelper
@@ -381,11 +382,7 @@ class HiveEngineConnExecutor(
 
     val columns = results.asScala
       .map(result =>
-        new Column(
-          result.getName,
-          DataType.toDataType(result.getType.toLowerCase()),
-          result.getComment
-        )
+        Column(result.getName, DataType.toDataType(result.getType.toLowerCase()), result.getComment)
       )
       .toArray[Column]
     val metaData = new TableMetaData(columns)
@@ -471,21 +468,35 @@ class HiveEngineConnExecutor(
       val totalSQLs = engineExecutorContext.getTotalParagraph
       val currentSQL = engineExecutorContext.getCurrentParagraph
       val currentBegin = (currentSQL - 1) / totalSQLs.asInstanceOf[Float]
-      HadoopJobExecHelper.runningJobs synchronized {
-        HadoopJobExecHelper.runningJobs.asScala foreach { runningJob =>
-          val name = runningJob.getID.toString
-          val _progress = Utils.tryCatch(runningJob.reduceProgress() + runningJob.mapProgress()) {
-            case e: Exception =>
-              logger.info(s"Failed to get job($name) progress ", e)
-              0.2f
-          }
-          singleSqlProgressMap.put(name, _progress / 2)
+      val finishedStage =
+        if (null != driver && null != driver.getPlan() && !driver.getPlan().getRootTasks.isEmpty) {
+          Utils.tryAndWarn(
+            Utilities
+              .getMRTasks(driver.getPlan().getRootTasks)
+              .asScala
+              .count(task => task.isMapRedTask && task.getTaskState == TaskState.FINISHED)
+          )
+        } else {
+          0
+        }
+      var totalProgress: Float = 0.0f
+      if (!HadoopJobExecHelper.runningJobs.isEmpty) {
+        val runningJob = HadoopJobExecHelper.runningJobs.get(0)
+        val _progress = Utils.tryCatch(runningJob.reduceProgress() + runningJob.mapProgress()) {
+          case e: Exception =>
+            logger.info(s"Failed to get job(${runningJob.getJobName}) progress ", e)
+            0.2f
+        }
+        if (!_progress.isNaN) {
+          totalProgress = _progress / 2
         }
       }
-      var totalProgress: Float = 0.0f
+      logger.info(
+        s"Running stage  progress is $totalProgress, and finished stage is $finishedStage"
+      )
       val hiveRunJobs = if (numberOfMRJobs <= 0) 1 else numberOfMRJobs
-      singleSqlProgressMap.asScala foreach { case (_name, _progress) =>
-        totalProgress += _progress
+      if (finishedStage <= hiveRunJobs) {
+        totalProgress = totalProgress + finishedStage
       }
       try {
         totalProgress = totalProgress / (hiveRunJobs * totalSQLs)
@@ -494,10 +505,10 @@ class HiveEngineConnExecutor(
         case _ => totalProgress = 0.0f
       }
 
-      logger.debug(s"hive progress is $totalProgress")
       val newProgress =
         if (totalProgress.isNaN || totalProgress.isInfinite) currentBegin
         else totalProgress + currentBegin
+      logger.info(s"Hive progress is $newProgress, and finished stage is $finishedStage")
       val oldProgress = ProgressUtils.getOldProgress(this.engineExecutorContext)
       if (newProgress < oldProgress) oldProgress
       else {

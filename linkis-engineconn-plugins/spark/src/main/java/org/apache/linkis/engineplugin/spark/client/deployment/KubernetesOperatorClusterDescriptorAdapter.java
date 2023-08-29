@@ -230,4 +230,16 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
     sparkApplication.setMetadata(metadata);
     return sparkApplication;
   }
+
+  @Override
+  public SparkAppHandle.State getJobState() {
+    SparkApplicationStatus sparkApplicationStatus = getKubernetesOperatorState();
+    SparkAppHandle.State state = SparkAppHandle.State.UNKNOWN;
+    if (Objects.nonNull(sparkApplicationStatus)) {
+      state =
+          kubernetesOperatorStateConvertSparkState(
+              sparkApplicationStatus.getApplicationState().getState());
+    }
+    return state;
+  }
 }

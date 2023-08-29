@@ -217,8 +217,7 @@ public class InteractiveJob implements Job {
       // query progress
       try {
         jobInfoResult = oper.queryJobInfo(user, jobId);
-        oper.queryJobStatus(
-            jobInfoResult.getUser(), jobInfoResult.getJobID(), jobInfoResult.getStrongerExecId());
+        oper.queryJobStatus(user, jobId, jobInfoResult.getStrongerExecId());
       } catch (Exception e) {
         logger.warn("", e);
         retryCnt++;

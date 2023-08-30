@@ -155,7 +155,17 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
   }
 
   public boolean initJobId() {
-    getKubernetesOperatorState();
+    try {
+      getKubernetesOperatorState();
+    } catch (Exception e) {
+      try {
+        // Prevent watch interruption due to network interruption.Restart Watcher.
+        Thread.sleep(5000);
+        getKubernetesOperatorState();
+      } catch (InterruptedException interruptedException) {
+        logger.error("Use k8s watch obtain the status failed");
+      }
+    }
     // When the job is not finished, the appId is monitored; otherwise, the status is
     // monitored(当任务没结束时，监控appId，反之，则监控状态，这里主要防止任务过早结束，导致一直等待)
     return null != getApplicationId() || (jobState != null && jobState.isFinal());
@@ -177,7 +187,11 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
               }
 
               @Override
-              public void onClose(WatcherException e) {}
+              public void onClose(WatcherException e) {
+                // Invoked when the watcher closes due to an Exception.Restart Watcher.
+                logger.error("Use k8s watch obtain the status failed", e);
+                getKubernetesOperatorState();
+              }
             });
   }
 

@@ -60,7 +60,7 @@ object FlinkEnvConfiguration {
     "/appcom/Install/flink/lib",
     "The local lib path of each user in Flink EngineConn."
   )
-
+  val FLINK_YAML_MERGE_ENABLE = CommonVars("flink.yaml.merge.enable", true)
   val FLINK_SHIP_DIRECTORIES = CommonVars("flink.yarn.ship-directories", "")
   val FLINK_SHIP_REMOTE_DIRECTORIES = CommonVars("flink.yarn.remote.ship-directories", "")
 
@@ -137,9 +137,9 @@ object FlinkEnvConfiguration {
   val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
     CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
 
-  val FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars[String](
+  val FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars(
     "wds.linkis.engineConn.javaOpts.default",
-    s"-Xloggc:\\<LOG_DIR\\>/gc.log -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=512M -XX:+PrintPromotionFailure -XX:+PrintGCCause"
+    "-Xloggc:\\<LOG_DIR\\>/gc.log -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=512M -XX:+PrintPromotionFailure -XX:+PrintGCCause"
   )
 
 }

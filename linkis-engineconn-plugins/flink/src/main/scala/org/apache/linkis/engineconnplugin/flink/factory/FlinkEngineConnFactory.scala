@@ -51,7 +51,7 @@ import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
-import java.io.File
+import java.io.{File, FileInputStream}
 import java.net.URL
 import java.text.MessageFormat
 import java.time.Duration
@@ -59,8 +59,10 @@ import java.util
 import java.util.{Collections, Locale}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ArrayBuffer
 
 import com.google.common.collect.{Lists, Sets}
+import org.yaml.snakeyaml.Yaml
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -174,7 +176,12 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     flinkConfig.setInteger(TaskManagerOptions.NUM_TASK_SLOTS, numberOfTaskSlots)
     // set extra configs
     options.asScala.filter { case (key, _) => key.startsWith(FLINK_CONFIG_PREFIX) }.foreach {
-      case (key, value) => flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), value)
+      case (key, value) =>
+        var flinkConfigValue = value
+        if (FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key.equals(FLINK_CONFIG_PREFIX + "env.java.opts")) {
+          flinkConfigValue = getExtractJavaOpts(value)
+        }
+        flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), flinkConfigValue)
     }
     // set kerberos config
     if (FLINK_KERBEROS_ENABLE.getValue(options)) {
@@ -230,6 +237,49 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       flinkConfig.set(DeploymentOptions.TARGET, YarnDeploymentTarget.SESSION.getName)
     }
     context
+  }
+
+  protected def getExtractJavaOpts(envJavaOpts: String): String = {
+    val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
+    val javaOpts = envJavaOpts.split("\\s+")
+    val defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue.split("\\s+")
+    javaOpts.toStream.foreach(commandLine += _)
+    defaultJavaOpts.toStream.foreach(commandLine += _)
+//    val configFile = new File("/appcom/config/flink-config/flink-conf.yaml")
+//    if (configFile.exists()) {
+//      val yaml = new Yaml()
+//      val inputStream = new FileInputStream(configFile)
+//      val configMap = yaml.loadAs(inputStream, classOf[util.Map[String, Any]])
+//      if (configMap != null) {
+//        if (configMap.containsKey("env.java.opts")) {
+//          val defaultJavaOpts = configMap.get("env.java.opts").toString.split("\\s+")
+//          defaultJavaOpts.toStream.foreach(commandLine += _)
+//        }
+//      }
+//      inputStream.close()
+//    }
+//    if (configFile.exists()) {
+//      val yaml = new Yaml()
+//      val inputStream = new FileInputStream(configFile)
+//      val configMap = yaml.loadAs(inputStream, classOf[util.Map[String, Any]])
+//      if (configMap != null) {
+//        if (configMap.containsKey("env.java.opts")) {
+//          val defaultJavaOpts = configMap.get("env.java.opts").toString.split("\\s+")
+//          defaultJavaOpts.toStream.foreach(commandLine += _)
+//          if (javaOpts.nonEmpty && defaultJavaOpts.nonEmpty) {
+//            for (x <- defaultJavaOpts) {
+//              for (y <- javaOpts) {
+//                if (x.substring(0, 7).equals(y.substring(0, 7))) {
+//                  commandLine -= x
+//                }
+//              }
+//            }
+//          }
+//        }
+//      }
+//      inputStream.close()
+//    }
+    commandLine.mkString(" ")
   }
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {

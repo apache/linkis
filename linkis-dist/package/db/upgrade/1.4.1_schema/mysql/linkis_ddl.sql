@@ -26,3 +26,5 @@ ALTER TABLE `linkis_ps_configuration_config_key` ADD UNIQUE `uniq_key_ectype` (`
 ALTER TABLE `linkis_ps_configuration_config_key` modify column `engine_conn_type` varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc';
 
 
+ALTER TABLE `linkis_ps_configuration_config_key` ADD column `template_required` tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must'
+

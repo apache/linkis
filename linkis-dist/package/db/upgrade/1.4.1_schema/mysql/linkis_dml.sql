@@ -18,3 +18,13 @@
 update  linkis_ps_configuration_config_key set engine_conn_type = "" where engine_conn_type is NULL;
 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
+
+update  linkis_ps_configuration_config_key set template_required = 1 where `key` in (
+"wds.linkis.rm.instance",
+"spark.executor.instances",
+"spark.executor.memory",
+"spark.driver.memory",
+"wds.linkis.engineconn.java.driver.memory",
+"mapreduce.job.running.map.limit",
+"mapreduce.job.running.reduce.limit",
+)

@@ -169,16 +169,15 @@ public class ConfigurationRestfulApi {
   public Message getItemList(
       HttpServletRequest req, @RequestParam(value = "engineType") String engineType)
       throws ConfigurationException {
-    String userName =
-        ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
+    ModuleUserUtils.getOperationUser(req, "getItemList with engineType:" + engineType);
     // Adding * represents returning all configuration information
     if ("*".equals(engineType)) {
       engineType = null;
     }
     List<ConfigKey> result = configKeyService.getConfigKeyList(engineType);
-    List<Map> filterResult = new ArrayList<>();
+    List<Map<String, Object>> filterResult = new ArrayList<>();
     for (ConfigKey configKey : result) {
-      Map temp = new HashMap();
+      Map<String, Object> temp = new HashMap<>();
       temp.put("key", configKey.getKey());
       temp.put("name", configKey.getName());
       temp.put("description", configKey.getDescription());
@@ -187,13 +186,11 @@ public class ConfigurationRestfulApi {
       temp.put("validateRange", configKey.getValidateRange());
       temp.put("boundaryType", configKey.getBoundaryType());
       temp.put("defaultValue", configKey.getDefaultValue());
-      // for front-end to judge whether input is required
-      if (StringUtils.isNotEmpty(configKey.getDefaultValue())) {
-        temp.put("require", "true");
+      if (StringUtils.isNotBlank(configKey.getTemplateRequired())) {
+        temp.put("require", configKey.getTemplateRequired().equals("1"));
       } else {
         temp.put("require", "false");
       }
-
       filterResult.add(temp);
     }
 
@@ -644,7 +641,12 @@ public class ConfigurationRestfulApi {
         name = "enTreeName",
         required = false,
         dataType = "String",
-        value = "enTreeName")
+        value = "enTreeName"),
+    @ApiImplicitParam(
+        name = "templateRequired",
+        required = false,
+        dataType = "String",
+        value = "1"),
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/baseKeyValue", method = RequestMethod.POST)
@@ -680,6 +682,9 @@ public class ConfigurationRestfulApi {
     }
     if (null == boundaryType) {
       return Message.error("boundaryType cannot be empty");
+    }
+    if (null == configKey.getTemplateRequired()) {
+      configKey.setTemplateRequired("1");
     }
     if (StringUtils.isNotEmpty(defaultValue)
         && !validatorManager

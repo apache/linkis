@@ -60,6 +60,8 @@ public class ConfigKey {
 
   private String enTreeName;
 
+  private String templateRequired;
+
   public String getEngineType() {
     return engineType;
   }
@@ -186,6 +188,14 @@ public class ConfigKey {
 
   public void setEnTreeName(String enTreeName) {
     this.enTreeName = enTreeName;
+  }
+
+  public String getTemplateRequired() {
+    return templateRequired;
+  }
+
+  public void setTemplateRequired(String templateRequired) {
+    this.templateRequired = templateRequired;
   }
 
   @Override

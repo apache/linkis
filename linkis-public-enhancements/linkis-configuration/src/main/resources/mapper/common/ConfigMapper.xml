@@ -51,6 +51,7 @@
         <result column="level" property="level" jdbcType="TINYINT"/>
         <result column="treeName" property="treeName" jdbcType="VARCHAR"/>
         <result column="boundary_type" property="boundaryType" jdbcType="TINYINT"/>
+        <result column="template_required" property="templateRequired" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="ConfigValueMap" type="org.apache.linkis.configuration.entity.ConfigValue">
@@ -192,7 +193,7 @@
     <select id="selectKeyByEngineType" resultMap="ConfigKeyMap">
 
         SELECT   `key`, `description`, `name`, `engine_conn_type`,
-                `default_value`, `validate_type`, `validate_range`,boundary_type
+                `default_value`, `validate_type`, `validate_range`,boundary_type,template_required
         FROM linkis_ps_configuration_config_key
 <!--        filter some unused and duplicate key-->
         <where>
@@ -372,7 +373,7 @@
         SELECT
         `id`, `key`, `description`, `name` ,
         `engine_conn_type`, `default_value`, `validate_type`, `validate_range`,
-        `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`
+        `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `template_required`
         FROM linkis_ps_configuration_config_key
         <where>
             <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
@@ -386,7 +387,7 @@
         SELECT
         `id`, `key`, `en_description` as `description`, `en_name` as name ,
         `engine_conn_type`, `default_value`, `validate_type`, `validate_range`,
-        `is_hidden`, `is_advanced`, `level`, `en_treeName` as `treeName`, `boundary_type`
+        `is_hidden`, `is_advanced`, `level`, `en_treeName` as `treeName`, `boundary_type`, `template_required`
         FROM linkis_ps_configuration_config_key
         <where>
             <if test="engineType != null">`engine_conn_type` = #{engineType}</if>
@@ -444,7 +445,8 @@
             `engine_conn_type`, `default_value`, `validate_type`,
             `validate_range`, `is_hidden`, `is_advanced`,
             `level`, `treeName`, `boundary_type`,
-            `en_name`, `en_treeName`, `en_description`
+            `en_name`, `en_treeName`, `en_description`,
+            `template_required`
         )
         VALUES (
             #{key}, #{description}, #{name},
@@ -452,6 +454,7 @@
             #{validateRange}, #{isHidden}, #{isAdvanced},
             #{level}, #{treeName}, #{boundaryType},
             #{enName}, #{enTreeName}, #{enDescription}
+            #{templateRequired}
         )
     </insert>
 
@@ -471,6 +474,7 @@
             <if test="enName != null">`en_name` = #{enName},</if>
             <if test="enTreeName != null">`en_treeName` = #{enTreeName},</if>
             <if test="enDescription != null">`en_description` = #{enDescription},</if>
+            <if test="templateRequired != null">`template_required` = #{templateRequired},</if>
         </trim>
         WHERE  id = #{id}
     </update>

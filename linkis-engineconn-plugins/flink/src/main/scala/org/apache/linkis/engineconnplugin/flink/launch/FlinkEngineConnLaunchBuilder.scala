@@ -134,26 +134,39 @@ class FlinkEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
     Array(FLINK_HOME_ENV, FLINK_CONF_DIR_ENV) ++: super.getNecessaryEnvironment
 
   override protected def getExtractJavaOpts: String = {
-    logger.info("FlinkEngineConnLaunchBuilder.getExtractJavaOpts+++++++++++++++++")
-    var javaOpts = super.getExtractJavaOpts
-    var defaultJavaOpts = ""
-    val configFile = new File(FLINK_CONF_DIR.getValue + "/flink-conf.yaml")
-    if (configFile.exists()) {
-      val yaml = new Yaml()
-      val inputStream = new FileInputStream(configFile)
-      val config = yaml.load(inputStream)
-      logger.info(config)
-      if (config != null) {
-        val configMap = config.asInstanceOf[util.Map[String, Any]]
-        if (configMap.containsKey("env.java.opts")) {
-          defaultJavaOpts = configMap.get("env.java.opts").toString
+    //    logger.info("FlinkEngineConnLaunchBuilder.getExtractJavaOpts+++++++++++++++++")
+    //    var javaOpts = super.getExtractJavaOpts
+    //    var defaultJavaOpts = ""
+    //    val configFile = new File(FLINK_CONF_DIR.getValue + "/flink-conf.yaml")
+    //    if (configFile.exists()) {
+    //      val yaml = new Yaml()
+    //      val inputStream = new FileInputStream(configFile)
+    //      val config = yaml.load(inputStream)
+    //      logger.info(config)
+    //      if (config != null) {
+    //        val configMap = config.asInstanceOf[util.Map[String, Any]]
+    //        if (configMap.containsKey("env.java.opts")) {
+    //          defaultJavaOpts = configMap.get("env.java.opts").toString
+    //        }
+    //        javaOpts =
+    //          (defaultJavaOpts.split("[ =]+") ++ javaOpts.split("[ =]+")).distinct.mkString(" ")
+    //      }
+    //    }
+    val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
+    var javaOpts = super.getExtractJavaOpts.split("\\s+").toSet
+    var defaultJavaOpts = FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue.split("\\s+").toSet
+    javaOpts.toStream.foreach(commandLine += _)
+    defaultJavaOpts.toStream.foreach(commandLine += _)
+    for (x <- javaOpts) {
+      for (y <- defaultJavaOpts) {
+        if (x.substring(0, 7).equals(y.substring(0, 7))) {
+          commandLine -= x
         }
-        javaOpts =
-          (defaultJavaOpts.split("[ =]+") ++ javaOpts.split("[ =]+")).distinct.mkString(" ")
       }
     }
-    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) javaOpts
-    else javaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
+    val newJavaOpts = commandLine.mkString(" ")
+    if (!HadoopConf.KEYTAB_PROXYUSER_ENABLED.getValue) newJavaOpts
+    else newJavaOpts + s" -DHADOOP_PROXY_USER=${variable(USER)}".trim
   }
 
   override protected def ifAddHiveConfigPath: Boolean = true

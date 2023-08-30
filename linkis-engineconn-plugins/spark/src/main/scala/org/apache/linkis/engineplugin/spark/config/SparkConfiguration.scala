@@ -134,6 +134,7 @@ object SparkConfiguration extends Logging {
 
   val REPLACE_PACKAGE_TO_HEADER = "org.apache.linkis"
 
+  val SPARK_CONF = CommonVars[String]("spark.conf", "")
   val SPARK_APPLICATION_ARGS = CommonVars("spark.app.args", "")
   val SPARK_APPLICATION_MAIN_CLASS = CommonVars("spark.app.main.class", "")
 

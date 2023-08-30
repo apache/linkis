@@ -45,6 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -300,6 +302,7 @@ public class ConfigurationRestfulApi {
       String s = BDPJettyServerHelper.gson().toJson(o);
       ConfigTree fullTree = BDPJettyServerHelper.gson().fromJson(s, ConfigTree.class);
       List<ConfigKeyValue> settings = fullTree.getSettings();
+      sparkConfCheck(settings);
       Integer userLabelId =
           configurationService.checkAndCreateUserLabel(settings, username, creator);
       for (ConfigKeyValue setting : settings) {
@@ -351,6 +354,30 @@ public class ConfigurationRestfulApi {
       configurationService.clearAMCacheConf(username, creator, engine, version);
     }
     return Message.ok();
+  }
+
+  private void sparkConfCheck(List<ConfigKeyValue> settings) throws ConfigurationException {
+    for (ConfigKeyValue setting : settings) {
+      if (setting.getKey().equals("spark.conf")) {
+        // Check if there are any duplicates in spark. conf
+        String[] split = setting.getConfigValue().split(";");
+        Stream<String> stringStream = Arrays.stream(split).map(s -> s.split("=")[0].trim());
+        int setSize = stringStream.collect(Collectors.toSet()).size();
+        int listSize = (int) stringStream.count();
+        if (listSize != setSize) {
+          throw new ConfigurationException("Key has duplicate entries");
+        }
+        // Check if there are any duplicates in the spark.conf configuration and other individual
+        // configurations
+        for (String key : split) {
+          boolean matchResult =
+              settings.stream().anyMatch(settingKey -> key.equals(settingKey.getKey()));
+          if (matchResult) {
+            throw new ConfigurationException("Key has duplicate entries,key :" + key);
+          }
+        }
+      }
+    }
   }
 
   @ApiOperation(

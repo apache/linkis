@@ -69,8 +69,7 @@ public class InstanceRestful {
 
   @Autowired private DefaultInsLabelService insLabelService;
 
-  @Autowired
-  private DiscoveryClient discoveryClient;
+  @Autowired private DiscoveryClient discoveryClient;
 
   @ApiOperation(
       value = "listAllInstanceWithLabel",
@@ -173,22 +172,27 @@ public class InstanceRestful {
 
   @ApiOperation(value = "getServiceInstances", response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "serviceName", required = false, dataType = "String"),
-          @ApiImplicitParam(name = "ip", required = false, dataType = "ip")
+    @ApiImplicitParam(name = "serviceName", required = false, dataType = "String"),
+    @ApiImplicitParam(name = "ip", required = false, dataType = "ip")
   })
   @RequestMapping(path = "/serviceInstances", method = RequestMethod.GET)
-  public Message getServiceInstance(HttpServletRequest request,
-                                    @RequestParam(value = "serviceName", required = false) String serviceName,
-                                    @RequestParam(value = "ip", required = false) String ip){
+  public Message getServiceInstance(
+      HttpServletRequest request,
+      @RequestParam(value = "serviceName", required = false) String serviceName,
+      @RequestParam(value = "ip", required = false) String ip) {
     Stream<String> serviceStream = discoveryClient.getServices().stream();
     serviceStream = serviceStream.filter(s -> s.toUpperCase().contains("LINKIS"));
     if (StringUtils.isNotBlank(serviceName)) {
-      serviceStream = serviceStream.filter(s -> s.toUpperCase().contains(serviceName.toUpperCase()));
+      serviceStream =
+          serviceStream.filter(s -> s.toUpperCase().contains(serviceName.toUpperCase()));
     }
     List<org.springframework.cloud.client.ServiceInstance> instanceList =
-            serviceStream.flatMap(serviceId -> discoveryClient.getInstances(serviceId).stream()).collect(Collectors.toList());
+        serviceStream
+            .flatMap(serviceId -> discoveryClient.getInstances(serviceId).stream())
+            .collect(Collectors.toList());
     if (StringUtils.isNotBlank(ip)) {
-      instanceList = instanceList.stream().filter(s -> s.getHost().equals(ip)).collect(Collectors.toList());
+      instanceList =
+          instanceList.stream().filter(s -> s.getHost().equals(ip)).collect(Collectors.toList());
     }
     return Message.ok().data("list", instanceList);
   }

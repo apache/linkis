@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.engineplugin.spark.config.SparkConfiguration.{
   ENGINE_JAR,
   SPARK_APP_NAME,
+  SPARK_CONF,
   SPARK_DEFAULT_EXTERNAL_JARS_PATH,
   SPARK_DRIVER_CLASSPATH,
   SPARK_DRIVER_EXTRA_JAVA_OPTIONS,
@@ -62,6 +63,20 @@ class SparkSubmitProcessEngineConnLaunchBuilder(builder: JavaProcessEngineConnLa
     val executorCores = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_CORES)
     val executorMemory = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_MEMORY)
     val numExecutors = getValueAndRemove(properties, LINKIS_SPARK_EXECUTOR_INSTANCES)
+    val sparkcsonf = getValueAndRemove(properties, SPARK_CONF)
+    // sparkcsonf DEMO:spark.sql.shuffle.partitions=10;spark.memory.fraction=0.6
+    if (StringUtils.isNotBlank(sparkcsonf)) {
+      val strArrary = sparkcsonf.split(";").toList
+      strArrary.foreach { keyAndValue =>
+        val key = keyAndValue.split("=")(0)
+        val value = keyAndValue.split("=")(1)
+        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
+          engineConnBuildRequest.engineConnCreationDesc.properties.put(key, value)
+        } else {
+          logger.warn(s"spark conf has empty value, key:${key}, value:${value}")
+        }
+      }
+    }
 
     val files = getValueAndRemove(properties, "files", "").split(",").filter(isNotBlankPath)
     val jars = new ArrayBuffer[String]()

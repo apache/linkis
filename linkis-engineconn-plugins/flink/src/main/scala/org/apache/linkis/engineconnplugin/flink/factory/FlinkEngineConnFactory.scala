@@ -17,7 +17,6 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import org.apache.linkis.common.conf.CommonVars
 import org.apache.linkis.common.utils.{ClassUtils, Logging}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
@@ -42,27 +41,22 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
-import org.apache.linkis.protocol.utils.TaskUtils
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
-
-import java.io.{File, FileInputStream}
+import java.io.{File}
 import java.net.URL
 import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
-
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
-
 import com.google.common.collect.{Lists, Sets}
 import org.yaml.snakeyaml.Yaml
+import scala.io.Source
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -240,46 +234,43 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def getExtractJavaOpts(envJavaOpts: String): String = {
-    val commandLine: ArrayBuffer[String] = ArrayBuffer[String]()
-    val javaOpts = envJavaOpts.split("\\s+")
-    val defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue.split("\\s+")
-    javaOpts.toStream.foreach(commandLine += _)
-    defaultJavaOpts.toStream.foreach(commandLine += _)
-//    val configFile = new File("/appcom/config/flink-config/flink-conf.yaml")
-//    if (configFile.exists()) {
-//      val yaml = new Yaml()
-//      val inputStream = new FileInputStream(configFile)
-//      val configMap = yaml.loadAs(inputStream, classOf[util.Map[String, Any]])
-//      if (configMap != null) {
-//        if (configMap.containsKey("env.java.opts")) {
-//          val defaultJavaOpts = configMap.get("env.java.opts").toString.split("\\s+")
-//          defaultJavaOpts.toStream.foreach(commandLine += _)
-//        }
-//      }
-//      inputStream.close()
-//    }
-//    if (configFile.exists()) {
-//      val yaml = new Yaml()
-//      val inputStream = new FileInputStream(configFile)
-//      val configMap = yaml.loadAs(inputStream, classOf[util.Map[String, Any]])
-//      if (configMap != null) {
-//        if (configMap.containsKey("env.java.opts")) {
-//          val defaultJavaOpts = configMap.get("env.java.opts").toString.split("\\s+")
-//          defaultJavaOpts.toStream.foreach(commandLine += _)
-//          if (javaOpts.nonEmpty && defaultJavaOpts.nonEmpty) {
-//            for (x <- defaultJavaOpts) {
-//              for (y <- javaOpts) {
-//                if (x.substring(0, 7).equals(y.substring(0, 7))) {
-//                  commandLine -= x
-//                }
-//              }
-//            }
-//          }
-//        }
-//      }
-//      inputStream.close()
-//    }
-    commandLine.mkString(" ")
+    var defaultJavaOpts = ""
+    val yamlFilePath = "/appcom/config/flink-config/flink-conf.yaml"
+    val source = Source.fromFile(yamlFilePath)
+    try {
+      val yamlContent = source.mkString
+      val yaml = new Yaml()
+      val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+      if (configMap.containsKey("env.java.opts")) {
+        defaultJavaOpts = configMap.get("env.java.opts").toString
+      }
+    } finally {
+      source.close()
+    }
+    val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    merged
+  }
+  protected def mergeAndDeduplicate(str1: String, str2: String): String = {
+    // Extract values from str2
+    val pattern = """-XX:([^\s]+)=([^\s]+)""".r
+    val keyValueMap = pattern.findAllMatchIn(str2).map { matchResult =>
+      val key = matchResult.group(1)
+      val value = matchResult.group(2)
+      (key, value)
+    }.toMap
+
+    val xloggcPattern = """-Xloggc:[^\s]+""".r
+    val xloggcValue = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
+    val escapedXloggcValue = xloggcValue.replace("<", "\\<").replace(">", "\\>")
+    val mergedString = str1.replace("-Xloggc:%s", escapedXloggcValue)
+
+    val finalMergedString = keyValueMap.foldLeft(mergedString) { (result, entry) =>
+      val (key, value) = entry
+      val oldValue = s"$key=[^\\s]+"
+      val newValue = key + "=" + value
+      result.replaceAll(oldValue, newValue)
+    }
+    finalMergedString
   }
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {

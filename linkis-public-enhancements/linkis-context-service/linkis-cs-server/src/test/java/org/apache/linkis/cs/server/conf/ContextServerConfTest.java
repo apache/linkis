@@ -31,10 +31,12 @@ public class ContextServerConfTest {
     int csSchedulerMaxRunningJobs = ContextServerConf.CS_SCHEDULER_MAX_RUNNING_JOBS;
     long csSchedulerMaxAskExecutorTimes = ContextServerConf.CS_SCHEDULER_MAX_ASK_EXECUTOR_TIMES;
     long csSchedulerJobWaitMills = ContextServerConf.CS_SCHEDULER_JOB_WAIT_MILLS;
+    String confLabel = ContextServerConf.CS_LABEL_PREFIX;
 
     Assertions.assertNotNull(keywordScanPackage);
     Assertions.assertTrue(100 == csSchedulerMaxRunningJobs);
     Assertions.assertTrue(1000 == csSchedulerMaxAskExecutorTimes);
     Assertions.assertTrue(10000 == csSchedulerJobWaitMills);
+    Assertions.assertTrue("cs_1_dev" == confLabel);
   }
 }

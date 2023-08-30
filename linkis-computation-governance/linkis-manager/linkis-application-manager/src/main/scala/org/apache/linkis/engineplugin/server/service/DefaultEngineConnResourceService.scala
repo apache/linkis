@@ -34,15 +34,16 @@ import org.apache.linkis.manager.engineplugin.common.launch.process.{
   LaunchConstants
 }
 import org.apache.linkis.manager.engineplugin.errorcode.EngineconnCoreErrorCodeSummary._
+import org.apache.linkis.publicservice.common.lock.entity.CommonLock
+import org.apache.linkis.publicservice.common.lock.service.CommonLockService
 import org.apache.linkis.rpc.message.annotation.Receiver
 
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.exception.ExceptionUtils
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import javax.annotation.PostConstruct
+import javax.annotation.{PostConstruct, PreDestroy}
 
 import java.text.MessageFormat
 import java.util.Date
@@ -58,15 +59,45 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   @Autowired
   private var engineConnBmlResourceDao: EngineConnBmlResourceDao = _
 
+  @Autowired
+  private val commonLockService: CommonLockService = null
+
   private val bmlClient = BmlClientFactory.createBmlClient()
   private var isRefreshing: Boolean = false
+  private val _LOCK = "_LOAD_ENGINE_CONN_LOCK"
+  val commonLock = new CommonLock
+  private var lock = false
 
   @PostConstruct
-  override def init(): Unit =
-    if (EngineConnPluginConfiguration.ENGINE_CONN_DIST_LOAD_ENABLE.getValue) {
-      logger.info("Start to refresh all engineconn plugins when inited.")
+  override def init(): Unit = {
+    commonLock.setLockObject(_LOCK)
+    commonLock.setCreateTime(new Date)
+    commonLock.setUpdateTime(new Date)
+    commonLock.setCreator(Utils.getJvmUser)
+    commonLock.setHost(Utils.getLocalHostname)
+    commonLock.setUpdator(Utils.getJvmUser)
+    lock = commonLockService.reentrantLock(commonLock, -1)
+    if (lock) {
+      logger.info(
+        "The master LinkisManager node get lock by {}-{}. And start to refresh all engineconn plugins when inited.",
+        _LOCK,
+        commonLock.getCreator
+      )
       refreshAll(false)
     }
+  }
+
+  @PreDestroy
+  def destroy(): Unit = {
+    if (lock) {
+      logger.info(
+        "The master LinkisManager node hase released lock {}-{}.",
+        commonLock.getLockObject,
+        commonLock.getCreator
+      )
+      commonLockService.unlock(commonLock)
+    }
+  }
 
   private def uploadToBml(localizeResource: EngineConnLocalizeResource): BmlResource = {
     val response = bmlClient.uploadResource(

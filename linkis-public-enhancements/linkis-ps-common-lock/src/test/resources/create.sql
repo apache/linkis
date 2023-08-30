@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS `linkis_ps_common_lock`;
 CREATE TABLE `linkis_ps_common_lock` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lock_object` varchar(255)  DEFAULT NULL,
+  `host` varchar(512) NOT NULL,
   `time_out` longtext ,
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,

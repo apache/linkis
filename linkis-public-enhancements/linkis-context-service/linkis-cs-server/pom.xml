@@ -53,6 +53,12 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-ps-common-lock</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

@@ -139,7 +139,7 @@ object FlinkEnvConfiguration {
 
   val FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS = CommonVars(
     "wds.linkis.engineConn.javaOpts.default",
-    "-Xloggc:\\<LOG_DIR\\>/gc.log -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=512M -XX:+PrintPromotionFailure -XX:+PrintGCCause"
+    "-Xloggc:<LOG_DIR>/gc.log -XX:+PrintGCApplicationStoppedTime -XX:+PrintGCDetails  -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=20 -XX:GCLogFileSize=512M -XX:+PrintPromotionFailure -XX:+PrintGCCause"
   )
 
 }

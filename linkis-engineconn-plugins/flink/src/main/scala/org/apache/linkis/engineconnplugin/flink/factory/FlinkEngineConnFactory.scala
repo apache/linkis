@@ -169,7 +169,10 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     options.asScala.filter { case (key, _) => key.startsWith(FLINK_CONFIG_PREFIX) }.foreach {
       case (key, value) =>
         var flinkConfigValue = value
-        if (FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key.equals(FLINK_CONFIG_PREFIX + "env.java.opts")) {
+        if (
+            FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key
+              .equals(FLINK_CONFIG_PREFIX + "env.java.opts")
+        ) {
           flinkConfigValue = getExtractJavaOpts(value)
         }
         flinkConfig.setString(key.substring(FLINK_CONFIG_PREFIX.length), flinkConfigValue)
@@ -231,7 +234,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def getExtractJavaOpts(envJavaOpts: String): String = {
-    var defaultJavaOpts = ""
+    var defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
+//    var defaultJavaOpts = ""
     val yamlFilePath = "/appcom/config/flink-config/flink-conf.yaml"
     val source = Source.fromFile(yamlFilePath)
     try {
@@ -247,6 +251,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     merged
   }
+
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
     val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>

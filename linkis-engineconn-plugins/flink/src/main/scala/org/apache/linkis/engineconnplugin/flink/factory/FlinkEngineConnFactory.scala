@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import org.apache.linkis.common.utils.{ClassUtils, Logging}
+import org.apache.linkis.common.utils.{ClassUtils, Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.conf.AccessibleExecutorConfiguration
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
 import org.apache.linkis.engineconn.launch.EngineConnServer
@@ -44,7 +44,8 @@ import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
-import java.io.File
+
+import java.io.{File, FileNotFoundException}
 import java.net.URL
 import java.text.MessageFormat
 import java.time.Duration
@@ -52,7 +53,10 @@ import java.util
 import java.util.{Collections, Locale}
 import scala.collection.JavaConverters._
 import com.google.common.collect.{Lists, Sets}
+import org.apache.flink.table.api.Expressions.e
+import org.apache.flink.table.api.e
 import org.yaml.snakeyaml.Yaml
+
 import scala.io.Source
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
@@ -234,8 +238,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def getExtractJavaOpts(envJavaOpts: String): String = {
-    var defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
-//    var defaultJavaOpts = ""
+    //    var defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
+    var defaultJavaOpts = ""
     val yamlFilePath = "/appcom/config/flink-config/flink-conf.yaml"
     val source = Source.fromFile(yamlFilePath)
     try {
@@ -253,6 +257,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
+    if (str1.isEmpty) throw new FileNotFoundException("env.java.opts is empty")
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
     val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
       val key = matchResult.group(1)

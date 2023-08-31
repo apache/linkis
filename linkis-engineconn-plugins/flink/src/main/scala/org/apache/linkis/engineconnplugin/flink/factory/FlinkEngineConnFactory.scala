@@ -276,9 +276,11 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
     var escapedXloggcValue = ""
     var mergedString = ""
+    var replaceString = ""
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
       escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
       mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceString = str2.replace(xloggcValueStr2, "")
     }
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
       escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
@@ -297,7 +299,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       val newValue = key + "=" + value
       result.replaceAll(oldValue, newValue)
     }
-    val javaOpts = (MergedStringD.split("\\s+") ++ str2.split("\\s+")).distinct.mkString(" ")
+    val javaOpts = (MergedStringD.split("\\s+") ++ replaceString.split("\\s+")).distinct.mkString(" ")
     javaOpts
   }
 

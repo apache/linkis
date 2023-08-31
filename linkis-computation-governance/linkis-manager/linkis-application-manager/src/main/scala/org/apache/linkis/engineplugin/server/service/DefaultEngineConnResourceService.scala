@@ -79,9 +79,8 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
     lock = commonLockService.reentrantLock(commonLock, -1)
     if (lock) {
       logger.info(
-        "The master LinkisManager node get lock by {}-{}. And start to refresh all engineconn plugins when inited.",
-        _LOCK,
-        commonLock.getCreator
+        "The master LinkisManager node get lock by {}. And start to refresh all engineconn plugins when inited.",
+        _LOCK + "-" + commonLock.getHost
       )
       refreshAll(false)
     }
@@ -91,9 +90,9 @@ class DefaultEngineConnResourceService extends EngineConnResourceService with Lo
   def destroy(): Unit = {
     if (lock) {
       logger.info(
-        "The master LinkisManager node hase released lock {}-{}.",
-        commonLock.getLockObject,
-        commonLock.getCreator
+        "The master LinkisManager node hase released lock {}.",
+        commonLock.getLockObject + "-" +
+          commonLock.getHost
       )
       commonLockService.unlock(commonLock)
     }

@@ -69,9 +69,8 @@ class AMHeartbeatService extends HeartbeatService with Logging {
     lock = commonLockService.reentrantLock(commonLock, -1)
     if (null != managerMonitor && lock) {
       logger.info(
-        "The master am get lock by {}-{}. And start to init AMHeartbeatService monitor.",
-        _LOCK,
-        commonLock.getCreator
+        "The master am get lock by {}. And start to init AMHeartbeatService monitor.",
+        _LOCK + "-" + commonLock.getHost
       )
       Utils.defaultScheduler.scheduleAtFixedRate(
         managerMonitor,
@@ -87,9 +86,8 @@ class AMHeartbeatService extends HeartbeatService with Logging {
     if (lock) {
       commonLockService.unlock(commonLock)
       logger.info(
-        "The master am has released lock {}-{}.",
-        commonLock.getLockObject,
-        commonLock.getCreator
+        "The master am has released lock {}.",
+        commonLock.getLockObject + "-" + commonLock.getHost
       );
     }
   }

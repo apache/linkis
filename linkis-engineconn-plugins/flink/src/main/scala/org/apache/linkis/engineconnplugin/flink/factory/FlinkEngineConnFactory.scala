@@ -34,10 +34,7 @@ import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
@@ -47,7 +44,7 @@ import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
-import java.io.{File}
+import java.io.File
 import java.net.URL
 import java.text.MessageFormat
 import java.time.Duration
@@ -251,26 +248,33 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     merged
   }
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
-    // Extract values from str2
     val pattern = """-XX:([^\s]+)=([^\s]+)""".r
     val keyValueMap = pattern.findAllMatchIn(str2).map { matchResult =>
       val key = matchResult.group(1)
       val value = matchResult.group(2)
       (key, value)
     }.toMap
-
     val xloggcPattern = """-Xloggc:[^\s]+""".r
-    val xloggcValue = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
-    val escapedXloggcValue = xloggcValue.replace("<", "\\<").replace(">", "\\>")
-    val mergedString = str1.replace("-Xloggc:%s", escapedXloggcValue)
-
+    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(str1).getOrElse("").toString
+    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
+    var escapedXloggcValue = ""
+    var mergedString = ""
+    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
+      escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
+      mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
+    }
+    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
+      escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
+      mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
+    }
     val finalMergedString = keyValueMap.foldLeft(mergedString) { (result, entry) =>
       val (key, value) = entry
       val oldValue = s"$key=[^\\s]+"
       val newValue = key + "=" + value
       result.replaceAll(oldValue, newValue)
     }
-    finalMergedString
+    val javaOpts = (finalMergedString.split("\\s+") ++ str2.split("\\s+")).distinct.mkString(" ")
+    javaOpts
   }
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {

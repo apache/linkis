@@ -248,8 +248,15 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     merged
   }
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
-    val pattern = """-XX:([^\s]+)=([^\s]+)""".r
-    val keyValueMap = pattern.findAllMatchIn(str2).map { matchResult =>
+    val patternX = """-XX:([^\s]+)=([^\s]+)""".r
+    val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
+      val key = matchResult.group(1)
+      val value = matchResult.group(2)
+      (key, value)
+    }.toMap
+
+    val patternD = """-D([^\s]+)=([^\s]+)""".r
+    val keyValueMapD = patternD.findAllMatchIn(str2).map { matchResult =>
       val key = matchResult.group(1)
       val value = matchResult.group(2)
       (key, value)
@@ -267,13 +274,20 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
       mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
     }
-    val finalMergedString = keyValueMap.foldLeft(mergedString) { (result, entry) =>
+    val MergedStringX = keyValueMapX.foldLeft(mergedString) { (result, entry) =>
       val (key, value) = entry
       val oldValue = s"$key=[^\\s]+"
       val newValue = key + "=" + value
       result.replaceAll(oldValue, newValue)
     }
-    val javaOpts = (finalMergedString.split("\\s+") ++ str2.split("\\s+")).distinct.mkString(" ")
+
+    val MergedStringD = keyValueMapD.foldLeft(MergedStringX) { (result, entry) =>
+      val (key, value) = entry
+      val oldValue = s"$key=[^\\s]+"
+      val newValue = key + "=" + value
+      result.replaceAll(oldValue, newValue)
+    }
+    val javaOpts = (MergedStringD.split("\\s+") ++ str2.split("\\s+")).distinct.mkString(" ")
     javaOpts
   }
 

@@ -257,7 +257,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
-    if (str1.isEmpty) throw new FileNotFoundException("env.java.opts is empty")
+    if (str1.isEmpty) logger.warn("env.java.opts is empty")
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
     val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
       val key = matchResult.group(1)

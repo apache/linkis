@@ -359,9 +359,11 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-    String engineConnInstance = (String) parameters.get("engineConnInstance");
+
     return executeECMOperation(
-        ecmNode, engineConnInstance, new ECMOperateRequest(userName, parameters));
+        ecmNode,
+        parameters.getOrDefault("engineConnInstance", "").toString(),
+        new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(value = "openEngineLog", notes = "open Engine log", response = Message.class)

@@ -46,7 +46,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -358,22 +357,31 @@ public class ConfigurationRestfulApi {
 
   private void sparkConfCheck(List<ConfigKeyValue> settings) throws ConfigurationException {
     for (ConfigKeyValue setting : settings) {
-      if (setting.getKey().equals("spark.conf")) {
+      if (setting.getKey().equals("spark.conf")
+          && StringUtils.isNotBlank(setting.getConfigValue())) {
         // Check if there are any duplicates in spark. conf
         String[] split = setting.getConfigValue().split(";");
-        Stream<String> stringStream = Arrays.stream(split).map(s -> s.split("=")[0].trim());
-        int setSize = stringStream.collect(Collectors.toSet()).size();
-        int listSize = (int) stringStream.count();
+        int setSize =
+            Arrays.stream(split)
+                .map(s -> s.split("=")[0].trim())
+                .collect(Collectors.toSet())
+                .size();
+        int listSize =
+            Arrays.stream(split)
+                .map(s -> s.split("=")[0].trim())
+                .collect(Collectors.toList())
+                .size();
         if (listSize != setSize) {
-          throw new ConfigurationException("Key has duplicate entries");
+          throw new ConfigurationException("Spark.conf contains duplicate keys");
         }
         // Check if there are any duplicates in the spark.conf configuration and other individual
-        // configurations
-        for (String key : split) {
+        for (String keyValue : split) {
+          String key = keyValue.split("=")[0].trim();
           boolean matchResult =
               settings.stream().anyMatch(settingKey -> key.equals(settingKey.getKey()));
           if (matchResult) {
-            throw new ConfigurationException("Key has duplicate entries,key :" + key);
+            throw new ConfigurationException(
+                "Saved key is duplicated with the spark conf key , key :" + key);
           }
         }
       }

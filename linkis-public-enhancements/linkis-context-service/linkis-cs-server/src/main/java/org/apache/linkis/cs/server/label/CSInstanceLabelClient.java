@@ -65,7 +65,7 @@ public class CSInstanceLabelClient {
       commonLock.setCreateTime(new Date());
       commonLock.setUpdateTime(new Date());
       commonLock.setCreator(Utils.getJvmUser());
-      commonLock.setHost(Utils.getLocalHostname());
+      commonLock.setLocker(Utils.getLocalHostname());
       commonLock.setUpdator(Utils.getJvmUser());
       lock = commonLockService.reentrantLock(commonLock, -1L);
       String suffix = ContextServerConf.CS_LABEL_SUFFIX;
@@ -73,7 +73,7 @@ public class CSInstanceLabelClient {
 
       if (lock) {
         // master node set cs_1_xxx label
-        logger.info("The master ps-cs node get lock by {}", _LOCK + "-" + commonLock.getHost());
+        logger.info("The master ps-cs node get lock by {}", _LOCK + "-" + commonLock.getLocker());
         confLabel = "cs_1_" + suffix;
       } else {
         confLabel = "cs_2_" + suffix;
@@ -98,7 +98,7 @@ public class CSInstanceLabelClient {
       commonLockService.unlock(commonLock);
       logger.info(
           "The master ps-cs  node has released lock {}.",
-          commonLock.getLockObject() + "-" + commonLock.getHost());
+          commonLock.getLockObject() + "-" + commonLock.getLocker());
     }
   }
 }

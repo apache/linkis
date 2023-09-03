@@ -40,7 +40,7 @@ public class CommonLockMapperTest extends BaseDaoTest {
 
   public Boolean reentrantLock(CommonLock commonLock) {
     CommonLock oldLock =
-        commonLockMapper.getLockByHost(commonLock.getLockObject(), commonLock.getHost());
+        commonLockMapper.getLockByLocker(commonLock.getLockObject(), commonLock.getLocker());
     if (oldLock != null) {
       return true;
     }
@@ -59,12 +59,12 @@ public class CommonLockMapperTest extends BaseDaoTest {
     String lockObject = "hadoop-warehouse4";
     CommonLock commonLock = new CommonLock();
     commonLock.setLockObject(lockObject);
-    commonLock.setHost("test");
+    commonLock.setLocker("test");
     Boolean lock = reentrantLock(commonLock);
     Assertions.assertTrue(lock);
     lock = reentrantLock(commonLock);
     Assertions.assertTrue(lock);
-    commonLock.setHost("test1");
+    commonLock.setLocker("test1");
     lock = reentrantLock(commonLock);
     Assertions.assertFalse(lock);
   }
@@ -75,7 +75,7 @@ public class CommonLockMapperTest extends BaseDaoTest {
     String lockObject = "hadoop-warehouse";
     CommonLock commonLock = new CommonLock();
     commonLock.setLockObject(lockObject);
-    commonLock.setHost("test");
+    commonLock.setLocker("test");
     commonLockMapper.unlock(commonLock);
 
     List<CommonLock> locks = commonLockMapper.getAll();
@@ -93,7 +93,7 @@ public class CommonLockMapperTest extends BaseDaoTest {
     Assertions.assertThrows(
         RuntimeException.class, () -> commonLockMapper.lock(commonLock, timeOut));
 
-    commonLock.setHost("test");
+    commonLock.setLocker("test");
     commonLockMapper.lock(commonLock, timeOut);
     List<CommonLock> locks = commonLockMapper.getAll();
     Assertions.assertTrue(locks.size() == 2);
@@ -105,10 +105,10 @@ public class CommonLockMapperTest extends BaseDaoTest {
     String lockObject = "hadoop-warehouse3";
     CommonLock commonLock = new CommonLock();
     commonLock.setLockObject(lockObject);
-    commonLock.setHost("test");
+    commonLock.setLocker("test");
     commonLockMapper.lock(commonLock, -1L);
     CommonLock lock =
-        commonLockMapper.getLockByHost(commonLock.getLockObject(), commonLock.getHost());
+        commonLockMapper.getLockByLocker(commonLock.getLockObject(), commonLock.getLocker());
     Assertions.assertTrue(lock != null);
   }
 }

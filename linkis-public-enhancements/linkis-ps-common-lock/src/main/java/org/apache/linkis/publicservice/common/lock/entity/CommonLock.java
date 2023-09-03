@@ -28,7 +28,7 @@ public class CommonLock {
   private Date createTime;
   private String updator;
   private String creator;
-  private String host;
+  private String locker;
 
   public Integer getId() {
     return id;
@@ -86,11 +86,11 @@ public class CommonLock {
     this.creator = creator;
   }
 
-  public String getHost() {
-    return host;
+  public String getLocker() {
+    return locker;
   }
 
-  public void setHost(String host) {
-    this.host = host;
+  public void setLocker(String locker) {
+    this.locker = locker;
   }
 }

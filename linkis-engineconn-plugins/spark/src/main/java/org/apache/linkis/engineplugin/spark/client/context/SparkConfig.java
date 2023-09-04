@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineplugin.spark.client.context;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -131,6 +133,10 @@ public class SparkConfig {
   }
 
   public void setK8sConfigFile(String k8sConfigFile) {
+    if (StringUtils.isNotBlank(k8sConfigFile) && k8sConfigFile.startsWith("~")) {
+      String user = System.getProperty("user.home");
+      k8sConfigFile = k8sConfigFile.replaceFirst("~", user);
+    }
     this.k8sConfigFile = k8sConfigFile;
   }
 

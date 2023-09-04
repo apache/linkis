@@ -180,10 +180,12 @@ public class KubernetesOperatorClusterDescriptorAdapter extends ClusterDescripto
               @Override
               public void eventReceived(Action action, SparkApplication sparkApplication) {
                 // todo get status
-                applicationId = sparkApplication.getStatus().getSparkApplicationId();
-                jobState =
-                    kubernetesOperatorStateConvertSparkState(
-                        sparkApplication.getStatus().getApplicationState().getState());
+                if (Objects.nonNull(sparkApplication.getStatus())) {
+                  applicationId = sparkApplication.getStatus().getSparkApplicationId();
+                  jobState =
+                      kubernetesOperatorStateConvertSparkState(
+                          sparkApplication.getStatus().getApplicationState().getState());
+                }
               }
 
               @Override

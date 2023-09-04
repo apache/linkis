@@ -286,6 +286,11 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
       mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
     }
+
+    if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
+      mergedString = str1
+    }
+
     val MergedStringX = keyValueMapX.foldLeft(mergedString) { (result, entry) =>
       val (key, value) = entry
       val oldValue = s"$key=[^\\s]+"

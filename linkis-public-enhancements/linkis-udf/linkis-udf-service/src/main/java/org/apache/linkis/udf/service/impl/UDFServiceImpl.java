@@ -114,7 +114,7 @@ public class UDFServiceImpl implements UDFService {
     CommonLock commonLock = new CommonLock();
     commonLock.setLockObject(userName + _LOCK);
     commonLock.setCreator(userName);
-    commonLock.setHost(Utils.getLocalHostname());
+    commonLock.setLocker(Utils.getLocalHostname());
     commonLock.setCreateTime(new Date());
     commonLock.setUpdateTime(new Date());
     try {
@@ -318,7 +318,7 @@ public class UDFServiceImpl implements UDFService {
     CommonLock persistenceLock = new CommonLock();
     persistenceLock.setLockObject(userName + _LOCK);
     persistenceLock.setCreator(userName);
-    persistenceLock.setHost(Utils.getLocalHostname());
+    persistenceLock.setLocker(Utils.getLocalHostname());
     persistenceLock.setCreateTime(new Date());
     persistenceLock.setUpdateTime(new Date());
     try {

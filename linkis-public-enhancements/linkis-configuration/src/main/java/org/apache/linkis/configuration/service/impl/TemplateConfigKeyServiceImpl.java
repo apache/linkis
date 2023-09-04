@@ -259,9 +259,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
           temp.put("validateRange", info.getValidateRange());
           temp.put("boundaryType", info.getBoundaryType());
           temp.put("defaultValue", info.getDefaultValue());
-          // for front-end to judge whether input is required
-          if (StringUtils.isNotEmpty(info.getDefaultValue())) {
-            temp.put("require", "true");
+          if (StringUtils.isNotBlank(info.getTemplateRequired())) {
+            temp.put("require", info.getTemplateRequired().equals("1"));
           } else {
             temp.put("require", "false");
           }

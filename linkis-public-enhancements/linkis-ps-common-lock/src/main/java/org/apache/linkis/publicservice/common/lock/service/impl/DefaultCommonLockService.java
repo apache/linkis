@@ -60,7 +60,7 @@ public class DefaultCommonLockService implements CommonLockService {
   @Override
   public Boolean reentrantLock(CommonLock commonLock, Long timeOut) {
     CommonLock oldLock =
-        commonLockMapper.getLockByHost(commonLock.getLockObject(), commonLock.getHost());
+        commonLockMapper.getLockByLocker(commonLock.getLockObject(), commonLock.getLocker());
     if (oldLock != null) {
       return true;
     }

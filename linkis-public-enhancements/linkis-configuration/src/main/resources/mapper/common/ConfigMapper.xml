@@ -225,7 +225,7 @@
     </select>
 
     <select id="selectKeyByKeyIdList" resultMap="ConfigKeyMap">
-        SELECT    `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`,`boundary_type`
+        SELECT    `id`, `key`, `description`, `name`, `engine_conn_type`, `default_value`, `validate_type`, `validate_range`, `is_hidden`, `is_advanced`, `level`, `treeName`,`boundary_type`, `template_required`
 
         FROM linkis_ps_configuration_config_key
         WHERE `id` in

@@ -101,6 +101,10 @@ public class QueryRestfulApi {
       return Message.error(
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
+    } else if (taskVO.getStatus().equals("Running")) {
+      //  任务运行时不显示异常信息(Do not display exception information during task runtime)
+      taskVO.setErrCode(null);
+      taskVO.setErrDesc(null);
     }
 
     return Message.ok().data(TaskConstant.TASK, taskVO);

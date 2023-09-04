@@ -427,7 +427,7 @@ class TaskExecutionServiceImpl
       override def run(): Unit = {
         Utils.tryQuietly(Thread.sleep(TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS)))
         while (null != taskFuture && !taskFuture.isDone) {
-          if (ExecutionNodeStatus.isCompleted(task.getStatus)) {
+          if (!ExecutionNodeStatus.isCompleted(task.getStatus)) {
             Utils.tryAndWarn {
               val progressResponse = Utils.tryAndWarn(taskProgress(task.getTaskId))
               val resourceResponse = Utils.tryAndWarn(buildResourceMap(task))

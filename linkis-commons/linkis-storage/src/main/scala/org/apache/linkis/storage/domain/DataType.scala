@@ -27,8 +27,7 @@ object DataType extends Logging {
 
   val LOWCASE_NULL_VALUE = "null"
 
-  val DECIMAL_REGEX = "^decimal\\(\\d*\\,\\d*\\)".r.unanchored
-  val DECIMAL_REGEX_BLANK = "^decimal\\(\\s*\\d*\\s*,\\s*\\d*\\s*\\)".r.unanchored
+  val DECIMAL_REGEX = "^decimal\\(\\s*\\d*\\s*,\\s*\\d*\\s*\\)".r.unanchored
 
   val SHORT_REGEX = "^short.*".r.unanchored
   val INT_REGEX = "^int.*".r.unanchored
@@ -63,7 +62,7 @@ object DataType extends Logging {
     case "date" => DateType
     case "timestamp" => TimestampType
     case "binary" => BinaryType
-    case "decimal" | DECIMAL_REGEX() | DECIMAL_REGEX_BLANK() => DecimalType
+    case "decimal" | DECIMAL_REGEX() => DecimalType
     case ARRAY_REGEX() => ArrayType
     case MAP_REGEX() => MapType
     case LIST_REGEX() => ListType

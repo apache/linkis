@@ -22,19 +22,26 @@
         <InputNumber
           v-model="searchBar.id"
           :placeholder="$t('message.linkis.formItems.id.placeholder')"
-          style="width:60px;"
+          style="width: 60px"
           :min="1"
         ></InputNumber>
       </FormItem>
-      <FormItem prop="proxyUser" :label="$t('message.linkis.userName')" v-if="isAdminModel">
+      <FormItem
+        prop="proxyUser"
+        :label="$t('message.linkis.userName')"
+        v-if="isAdminModel"
+      >
         <Input
           :maxlength="50"
           v-model="searchBar.proxyUser"
           :placeholder="$t('message.linkis.searchName')"
-          style="width:60px;"
+          style="width: 60px"
         />
       </FormItem>
-      <FormItem prop="shortcut" :label="$t('message.linkis.formItems.date.label')">
+      <FormItem
+        prop="shortcut"
+        :label="$t('message.linkis.formItems.date.label')"
+      >
         <DatePicker
           :transfer="true"
           class="datepicker"
@@ -48,59 +55,90 @@
           :editable="false"
         />
       </FormItem>
-      <FormItem prop="instance" :label="$t('message.linkis.formItems.instance.label')">
+      <FormItem
+        prop="instance"
+        :label="$t('message.linkis.formItems.instance.label')"
+      >
         <Input
           :maxlength="50"
           v-model="searchBar.instance"
           :placeholder="$t('message.linkis.formItems.instance.placeholder')"
-          style="width:100px;"
+          style="width: 100px"
         />
       </FormItem>
-      <FormItem prop="creator" :label="$t('message.linkis.formItems.creator.label')">
+      <FormItem
+        prop="creator"
+        :label="$t('message.linkis.formItems.creator.label')"
+      >
         <Input
           :maxlength="50"
           v-model="searchBar.creator"
           :placeholder="$t('message.linkis.formItems.creator.placeholder')"
-          style="width:80px;"
+          style="width: 80px"
         />
       </FormItem>
-      <FormItem prop="engine" :label="$t('message.linkis.formItems.engine.label')">
+      <FormItem
+        prop="engine"
+        :label="$t('message.linkis.formItems.engine.label')"
+      >
         <Select v-model="searchBar.engine" style="width: 70px">
-          <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
+          <Option
+            v-for="item in getEngineTypes"
+            :label="
+              item === 'all' ? $t('message.linkis.engineTypes.all') : item
+            "
+            :value="item"
+            :key="item"
+          />
         </Select>
       </FormItem>
-      <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')">
+      <FormItem
+        prop="status"
+        :label="$t('message.linkis.formItems.status.label')"
+      >
         <Select v-model="searchBar.status" style="width: 70px">
           <Option
-            v-for="(item) in statusType"
+            v-for="item in statusType"
             :label="item.label"
             :value="item.value"
             :key="item.value"
           />
         </Select>
       </FormItem>
+      123
       <FormItem>
-        <Button
-          type="primary"
-          @click="search"
-          style="margin-right: 10px;"
-        >{{ $t('message.linkis.search') }}</Button>
-        <Button
-          type="warning"
-          @click="reset"
-          style="margin-right: 10px;"
-        >{{ $t('message.linkis.clearSearch') }}</Button>
-        <Button type="error" @click="stop" style="margin-right: 10px;">{{$t('message.linkis.stop')}}</Button>
+        <Button type="primary" @click="search" style="margin-right: 10px">{{
+          $t('message.linkis.search')
+        }}</Button>
+        <Button type="warning" @click="reset" style="margin-right: 10px">{{
+          $t('message.linkis.clearSearch')
+        }}</Button>
+        <Button type="error" @click="stop" style="margin-right: 10px">{{
+          $t('message.linkis.stop')
+        }}</Button>
         <Button
           type="primary"
           @click="switchAdmin"
           v-if="isLogAdmin || isHistoryAdmin"
-        >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
+        >{{
+          isAdminModel
+            ? $t('message.linkis.generalView')
+            : $t('message.linkis.manageView')
+        }}</Button
+        >
       </FormItem>
     </Form>
-    <div >
-      <div class="global-history-table" :style="{width: '100%', 'height': moduleHeight+'px'}">
-        <Icon v-show="isLoading" type="ios-loading" size="30" class="global-history-loading" />
+    <div>
+      <div
+        class="global-history-table"
+        :style="{ width: '100%', height: moduleHeight + 'px' }"
+      >
+        <Icon
+          v-show="isLoading"
+          type="ios-loading"
+          size="30"
+          class="global-history-loading"
+        />
         <history-table
           v-if="!isLoading"
           :columns="column"
@@ -121,7 +159,8 @@
           size="small"
           show-total
           show-elevator
-          :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
+          :prev-text="$t('message.linkis.previousPage')"
+          :next-text="$t('message.linkis.nextPage')"
           @on-change="changePage"
         />
       </div>
@@ -267,11 +306,11 @@ export default {
   },
   created() {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
+    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin
       this.isHistoryAdmin = res.historyAdmin
     })
-    api.fetch('/configuration/engineType', 'get').then(res => {
+    api.fetch('/configuration/engineType', 'get').then((res) => {
       this.getEngineTypes = ['all', ...res.engineType]
     })
   },
@@ -288,12 +327,12 @@ export default {
     window.removeEventListener('resize', this.getHeight)
   },
   beforeRouteEnter(to, from, next) {
-    if(from.name !== 'viewHistory') {
-      sessionStorage.removeItem('last-admin-model');
-      sessionStorage.removeItem('last-searchbar-status');
-      sessionStorage.removeItem('last-pageSetting-status');
+    if (from.name !== 'viewHistory') {
+      sessionStorage.removeItem('last-admin-model')
+      sessionStorage.removeItem('last-searchbar-status')
+      sessionStorage.removeItem('last-pageSetting-status')
     }
-    next();
+    next()
   },
   activated() {
     this.init()
@@ -308,7 +347,10 @@ export default {
       const lastPage = storage.get('last-pageSetting-status')
       if (lastSearch) {
         if (lastSearch.shortcut[0] && lastSearch.shortcut[1]) {
-          lastSearch.shortcut = [new Date(lastSearch.shortcut[0]), new Date(lastSearch.shortcut[1])]
+          lastSearch.shortcut = [
+            new Date(lastSearch.shortcut[0]),
+            new Date(lastSearch.shortcut[1])
+          ]
         } else {
           const today = new Date(new Date().toLocaleDateString())
           lastSearch.shortcut = [today, today]
@@ -361,7 +403,7 @@ export default {
       if (sourceJson && sourceJson.nodeName) {
         fileName = sourceJson.nodeName
       }
-      const query =  {
+      const query = {
         taskID: params.row.taskID,
         execID: params.row.strongerExecId,
         status: params.row.status,
@@ -380,8 +422,12 @@ export default {
     },
 
     getParams(page) {
-      const startDate = this.searchBar.shortcut[0] ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0)) : this.searchBar.shortcut[0]
-      const endDate = this.searchBar.shortcut[1] ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0)): this.searchBar.shortcut[1]
+      const startDate = this.searchBar.shortcut[0]
+        ? new Date(this.searchBar.shortcut[0].setHours(0, 0, 0, 0))
+        : this.searchBar.shortcut[0]
+      const endDate = this.searchBar.shortcut[1]
+        ? new Date(this.searchBar.shortcut[1].setHours(23, 59, 59, 0))
+        : this.searchBar.shortcut[1]
       const params = {
         taskID: this.searchBar.id,
         creator: this.searchBar.creator,
@@ -430,7 +476,7 @@ export default {
       this.column = this.getColumns()
       api
         .fetch('/jobhistory/list', params, 'get')
-        .then(rst => {
+        .then((rst) => {
           this.isLoading = false
           this.list = this.getList(rst.tasks)
           this.pageSetting.current = page
@@ -447,7 +493,7 @@ export default {
       this.column = this.getColumns()
       api
         .fetch('/jobhistory/list', params, 'get')
-        .then(rst => {
+        .then((rst) => {
           this.pageSetting.total = rst.totalPage
           this.isLoading = false
           this.list = this.getList(rst.tasks)
@@ -458,15 +504,18 @@ export default {
         })
     },
     getList(list) {
-      const getFailedReason = item => {
+      const getFailedReason = (item) => {
         return item.errCode && item.errDesc
           ? item.errCode + item.errDesc
           : item.errCode || item.errDesc || ''
       }
       if (!this.isAdminModel) {
-        return list.map(item => {
+        return list.map((item) => {
           return {
-            disabled: ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
+            disabled:
+              ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(
+                item.status
+              ) === -1,
             taskID: item.taskID,
             strongerExecId: item.strongerExecId,
             source: item.sourceTailor,
@@ -483,17 +532,19 @@ export default {
           }
         })
       }
-      return list.map(item => {
+      return list.map((item) => {
         return Object.assign(item, {
           disabled:
-              ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(item.status) === -1,
+            ['Submitted', 'Inited', 'Scheduled', 'Running'].indexOf(
+              item.status
+            ) === -1,
           failedReason: getFailedReason(item),
           source: item.sourceTailor
         })
       })
     },
     checkChange(v) {
-      this.list = this.list.map(it => {
+      this.list = this.list.map((it) => {
         it.checked = !it.disabled && v
         return it
       })
@@ -602,7 +653,7 @@ export default {
         }
       ]
       if (!this.isAdminModel) {
-        const index = column.findIndex(item => item.key === 'umUser')
+        const index = column.findIndex((item) => item.key === 'umUser')
         column.splice(index, 1)
       }
       return column
@@ -658,17 +709,17 @@ export default {
       }
     },
     stop() {
-      const selected = this.list.filter(it => it.checked)
+      const selected = this.list.filter((it) => it.checked)
       if (!selected.length) {
         this.$Message.warning(this.$t('message.linkis.unselect'))
-        return;
+        return
       }
       this.$Modal.confirm({
         title: this.$t('message.linkis.modal.modalTitle'),
         content: this.$t('message.linkis.modal.modalDeleteTask'),
-        onOk: ()=>{
+        onOk: () => {
           const inst = {}
-          selected.forEach(it => {
+          selected.forEach((it) => {
             if (inst[it.instance]) {
               inst[it.instance].taskIDList.push(it.taskID)
               inst[it.instance].idList.push(it.strongerExecId)
@@ -680,12 +731,22 @@ export default {
             }
           })
           const p = []
-          Object.keys(inst).forEach(instkey => {
-            if (instkey) p.push(api.fetch(`/entrance/${inst[instkey].idList[0]}/killJobs`, { idList: inst[instkey].idList, taskIDList: inst[instkey].taskIDList }, 'post'))
+          Object.keys(inst).forEach((instkey) => {
+            if (instkey)
+              p.push(
+                api.fetch(
+                  `/entrance/${inst[instkey].idList[0]}/killJobs`,
+                  {
+                    idList: inst[instkey].idList,
+                    taskIDList: inst[instkey].taskIDList
+                  },
+                  'post'
+                )
+              )
           })
 
-          Promise.all(p).then(()=> {
-            this.$Message.success(this.$t('message.linkis.udf.success'));
+          Promise.all(p).then(() => {
+            this.$Message.success(this.$t('message.linkis.udf.success'))
             this.search()
           })
         }

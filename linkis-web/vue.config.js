@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-
 // vue.config.js
 const path = require('path')
-const FileManagerPlugin = require('filemanager-webpack-plugin');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const FileManagerPlugin = require('filemanager-webpack-plugin')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 // const CspHtmlWebpackPlugin = require('csp-html-webpack-plugin');
-const VirtualModulesPlugin = require('webpack-virtual-modules');
+const VirtualModulesPlugin = require('webpack-virtual-modules')
 const apps = require('./src/config.json')
 
 const getVersion = () => {
-  return  process.env.VUE_APP_VERSION
+  return process.env.VUE_APP_VERSION
 }
 
 // 指定module打包, 不指定则打包全部子应用
@@ -33,7 +32,7 @@ const getVersion = () => {
 let modules = process.env.npm_config_module || ''
 if (modules) {
   modules = modules.split(',')
-  Object.keys(apps).forEach(m => {
+  Object.keys(apps).forEach((m) => {
     if (modules.indexOf(m) < 0) {
       delete apps[m]
     }
@@ -47,10 +46,14 @@ let appsRoutes = []
 let appsI18n = []
 let headers = []
 
-Object.entries(apps).forEach(item => {
+Object.entries(apps).forEach((item) => {
   if (item[1].module) {
-    requireComponent.push(`require.context('@/${item[1].module}',true,/([a-z|A-Z])+\\/index\.js$/)`)
-    requireComponentVue.push(`require.context('@/${item[1].module}',true,/([a-z|A-Z])+.vue$/)`)
+    requireComponent.push(
+      `require.context('@/${item[1].module}',true,/([a-z|A-Z])+\\/index\.js$/)`
+    )
+    requireComponentVue.push(
+      `require.context('@/${item[1].module}',true,/([a-z|A-Z])+.vue$/)`
+    )
   }
   // 获取个模块header
   if (item[1].header) {
@@ -63,7 +66,7 @@ Object.entries(apps).forEach(item => {
   // 处理国际化
   if (item[1].i18n) {
     appsI18n.push(`{
-      'zh-CN': require('@/${item[1].i18n["zh-CN"]}'),
+      'zh-CN': require('@/${item[1].i18n['zh-CN']}'),
       'en': require('@/${item[1].i18n['en']}')
     }`)
   }
@@ -80,14 +83,14 @@ const virtualModules = new VirtualModulesPlugin({
     appsI18n: [${appsI18n.join(',')}],
     requireComponent: [${requireComponent.join(',')}],
     requireComponentVue: [${requireComponentVue.join(',')}],
-    microModule: ${JSON.stringify(process.env.npm_config_micro_module) || false},
+    microModule: ${
+      JSON.stringify(process.env.npm_config_micro_module) || false
+    },
     headers:{${headers.join(',')}}
-  };`
-});
+  };`,
+})
 
-const plugins = [
-  virtualModules
-]
+const plugins = [virtualModules]
 
 // scriptis linkis 有使用编辑器组件, 需要Monaco Editor
 if (modules.indexOf('scriptis') > -1 || modules.indexOf('linkis') > -1) {
@@ -131,6 +134,8 @@ function resolve(dir) {
 // }
 
 module.exports = {
+  transpileDependencies: true,
+  lintOnSave: false,
   publicPath: './',
   outputDir: 'dist/dist',
   chainWebpack: (config) => {
@@ -147,73 +152,108 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: 'icon-[name]',
       })
       .end()
-    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'sandbox' || process.env.NODE_ENV === 'bdp') {
-      config.plugin('compress').use(FileManagerPlugin, [{
-        events: {
-          onEnd: {
-            copy: [
-              { source: './config.sh', destination: `./dist/config.sh`,toType: 'file'},
-              { source: './install.sh', destination: `./dist/install.sh`,toType: 'file' },
-              { source: './release-docs/LICENSE', destination: `./dist/LICENSE`,toType: 'file'},
-              { source: './release-docs/NOTICE', destination: `./dist/NOTICE`,toType: 'file'},
-              { source: './release-docs/licenses', destination: `./dist/licenses`},
-              { source: '../DISCLAIMER', destination: `./dist/DISCLAIMER`,toType: 'file'}
-            ],
-            // 先删除根目录下的zip包
-            delete: [`./apache-linkis-${getVersion()}-web-bin.tar.gz`],
-            // 将dist文件夹下的文件进行打包
-            archive: [
-              { source: './dist', destination: `./apache-linkis-${getVersion()}-web-bin.tar.gz`,format: 'tar' ,
-                options: {
-                  gzip: true,
-                  gzipOptions: {
-                    level: 1,
+    if (
+      process.env.NODE_ENV === 'production' ||
+      process.env.NODE_ENV === 'sandbox' ||
+      process.env.NODE_ENV === 'bdp'
+    ) {
+      config.plugin('compress').use(FileManagerPlugin, [
+        {
+          events: {
+            onEnd: {
+              copy: [
+                {
+                  source: './config.sh',
+                  destination: `./dist/config.sh`,
+                  toType: 'file',
+                },
+                {
+                  source: './install.sh',
+                  destination: `./dist/install.sh`,
+                  toType: 'file',
+                },
+                {
+                  source: './release-docs/LICENSE',
+                  destination: `./dist/LICENSE`,
+                  toType: 'file',
+                },
+                {
+                  source: './release-docs/NOTICE',
+                  destination: `./dist/NOTICE`,
+                  toType: 'file',
+                },
+                {
+                  source: './release-docs/licenses',
+                  destination: `./dist/licenses`,
+                },
+                {
+                  source: '../DISCLAIMER',
+                  destination: `./dist/DISCLAIMER`,
+                  toType: 'file',
+                },
+              ],
+              // 先删除根目录下的zip包
+              delete: [`./apache-linkis-${getVersion()}-web-bin.tar.gz`],
+              // 将dist文件夹下的文件进行打包
+              archive: [
+                {
+                  source: './dist',
+                  destination: `./apache-linkis-${getVersion()}-web-bin.tar.gz`,
+                  format: 'tar',
+                  options: {
+                    gzip: true,
+                    gzipOptions: {
+                      level: 1,
+                    },
+                    globOptions: {
+                      dot: true,
+                    },
                   },
-                  globOptions: {
-                    dot: true,
-                  },
-                }
-              },
-            ]
+                },
+              ],
+            },
           },
-        }
-      }])
+        },
+      ])
     }
   },
   configureWebpack: {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
-        '@component': path.resolve(__dirname, './src/components')
+        '@component': path.resolve(__dirname, './src/components'),
       },
       fallback: {
-        "path": false,
-        "fs": false
-      }
+        path: false,
+        fs: false,
+      },
     },
-    plugins
+    plugins,
   },
   // 选项...
   pluginOptions: {
     mock: {
       entry: 'mock.js',
-      power: false
-    }
+      power: false,
+    },
   },
   devServer: {
+    port: 3000,
     proxy: {
       '/api': {
         // You can set BACKEND_URL in .env.development(ignored by git) file
-        // BACKEND_URL=http://127.0.0.1:9001
         target: process.env.BACKEND_URL,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '/api'
-        }
-      }
-    }
-  }
+          '^/api': '/api',
+        },
+      },
+    },
+    client: {
+      overlay: false,
+    },
+  },
 }

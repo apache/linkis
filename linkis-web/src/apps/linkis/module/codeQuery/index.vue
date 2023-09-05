@@ -17,23 +17,48 @@
 
 <template>
   <div class="code-query">
-    <Form class="code-query-searchbar" :model="searchBar" inline label-position="left" style="width: 99%" @submit.native.prevent>
-      <FormItem prop="executionCode" :label="$t('message.linkis.codeQuery.executionCode')" :label-width="60" style="width: 100%; margin-bottom: 5px">
+    <Form
+      class="code-query-searchbar"
+      :model="searchBar"
+      inline
+      label-position="left"
+      style="width: 99%"
+      @submit.native.prevent
+    >
+      <FormItem
+        prop="executionCode"
+        :label="$t('message.linkis.codeQuery.executionCode')"
+        :label-width="60"
+        style="width: 100%; margin-bottom: 5px"
+      >
         <Input
           v-model="searchBar.executionCode"
-          :placeholder="$t('message.linkis.codeQuery.placeholder.executionCode')"
+          :placeholder="
+            $t('message.linkis.codeQuery.placeholder.executionCode')
+          "
         ></Input>
       </FormItem>
     </Form>
-    <div style="font-style: italic; color: #cccccc;">{{$t('message.linkis.codeQuery.searchRange')}}</div>
-    <Form class="code-query-searchbar" :model="searchBar" inline label-position="left">
+    <div style="font-style: italic; color: #cccccc">
+      {{ $t('message.linkis.codeQuery.searchRange') }}
+    </div>
+    <Form
+      class="code-query-searchbar"
+      :model="searchBar"
+      inline
+      label-position="left"
+    >
       <!-- <FormItem prop="executionCode" :label="$t('message.linkis.codeQuery.executionCode')" :label-width="60">
         <Input
           v-model="searchBar.executionCode"
           :placeholder="$t('message.linkis.codeQuery.placeholder.executionCode')"
         ></Input>
       </FormItem> -->
-      <FormItem prop="shortcut" :label="$t('message.linkis.codeQuery.dateRange')" :label-width="60">
+      <FormItem
+        prop="shortcut"
+        :label="$t('message.linkis.codeQuery.dateRange')"
+        :label-width="60"
+      >
         <DatePicker
           :transfer="true"
           class="datepicker"
@@ -47,10 +72,14 @@
           :editable="false"
         />
       </FormItem>
-      <FormItem prop="status" :label="$t('message.linkis.formItems.status.label')" :label-width="38">
+      <FormItem
+        prop="status"
+        :label="$t('message.linkis.formItems.status.label')"
+        :label-width="38"
+      >
         <Select v-model="searchBar.status" style="width: 90px">
           <Option
-            v-for="(item) in statusType"
+            v-for="item in statusType"
             :label="item.label"
             :value="item.value"
             :key="item.value"
@@ -61,18 +90,17 @@
         <Button
           type="primary"
           @click="confirmSearch"
-          style="margin-right: 10px;"
-        >{{ $t('message.linkis.search') }}</Button>
-        <Button
-          type="warning"
-          @click="reset"
-          style="margin-right: 10px;"
-        >{{ $t('message.linkis.clearSearch') }}</Button>
-        <Button
-          type="primary"
-          @click="switchAdmin"
-          v-if="isLogAdmin"
-        >{{ isAdminModel ? $t('message.linkis.generalView') : $t('message.linkis.manageView') }}</Button>
+          style="margin-right: 10px"
+        >{{ $t('message.linkis.search') }}</Button
+        >
+        <Button type="warning" @click="reset" style="margin-right: 10px">{{
+          $t('message.linkis.clearSearch')
+        }}</Button>
+        <Button type="primary" @click="switchAdmin" v-if="isLogAdmin">{{
+          isAdminModel
+            ? $t('message.linkis.generalView')
+            : $t('message.linkis.manageView')
+        }}</Button>
       </FormItem>
     </Form>
     <Table
@@ -83,8 +111,8 @@
       :data="tableData"
       :loading="tableLoading"
       class="table-content data-source-table"
-      :no-data-text="this.noDataText">
-
+      :no-data-text="this.noDataText"
+    >
     </Table>
     <Page
       :page-size="page.pageSize"
@@ -93,8 +121,14 @@
       @on-change="changePage"
       size="small"
       show-elevator
-      :prev-text="$t('message.linkis.previousPage')" :next-text="$t('message.linkis.nextPage')"
-      style="position: absoulute; bottom: 10px; overflow: hidden; text-align: center;"
+      :prev-text="$t('message.linkis.previousPage')"
+      :next-text="$t('message.linkis.nextPage')"
+      style="
+        position: absoulute;
+        bottom: 10px;
+        overflow: hidden;
+        text-align: center;
+      "
     ></Page>
   </div>
 </template>
@@ -108,14 +142,14 @@ export default {
       tableData: [],
       beforeSearch: true,
       searchBar: {
-        executionCode: "",
+        executionCode: '',
         shortcut: [],
-        status: "",
+        status: ''
       },
       searchParams: {
-        executionCode: "",
+        executionCode: '',
         shortcut: [],
-        status: "",
+        status: ''
       },
       tableLoading: false,
       isLogAdmin: false,
@@ -199,28 +233,32 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                // props: {
-                //   type: 'default',
-                //   size: 'small'
-                // },
-                class: {
-                  'render-btn': true,
-                },
-                on: {
-                  click: () => {
-                    this.check(params.row.id)
+              h(
+                'Button',
+                {
+                  // props: {
+                  //   type: 'default',
+                  //   size: 'small'
+                  // },
+                  class: {
+                    'render-btn': true
+                  },
+                  on: {
+                    click: () => {
+                      this.check(params.row.id)
+                    }
                   }
-                }
-              }, this.$t('message.linkis.codeQuery.check'))
-            ]);
+                },
+                this.$t('message.linkis.codeQuery.check')
+              )
+            ])
           }
         },
         {
           title: this.$t('message.linkis.codeQuery.id'),
           key: 'id',
           width: 200,
-          align: 'center',
+          align: 'center'
         },
         {
           title: this.$t('message.linkis.codeQuery.code'),
@@ -248,33 +286,39 @@ export default {
           tooltip: true,
           align: 'center',
           render: (h, params) => {
-            return h('Tag', {
-              props: {
-                color: this.colorGetter(params.row.status)
-              }
-            }, this.$t(`message.linkis.statusType.${params.row.status.toLowerCase()}`))
+            return h(
+              'Tag',
+              {
+                props: {
+                  color: this.colorGetter(params.row.status)
+                }
+              },
+              this.$t(
+                `message.linkis.statusType.${params.row.status.toLowerCase()}`
+              )
+            )
           }
-        },
+        }
       ],
       page: {
         pageSize: 10,
         pageNow: 1,
-        totalPage: 0,
+        totalPage: 0
       },
-      userName: '',
+      userName: ''
     }
   },
   computed: {
     noDataText() {
-      if(this.beforeSearch) {
+      if (this.beforeSearch) {
         return this.$t('message.linkis.noDataTextBeforeSearch')
       }
       return this.$t('message.linkis.noDataTextAfterSearch')
-    },
+    }
   },
   methods: {
     confirmSearch() {
-      if(this.tableLoading) return;
+      if (this.tableLoading) return
       this.searchParams = cloneDeep(this.searchBar)
       this.page.pageNow = 1
       this.search()
@@ -289,33 +333,33 @@ export default {
     },
     async reset() {
       this.searchBar = {
-        executionCode: "",
+        executionCode: '',
         shortcut: [],
-        status: "",
-      };
+        status: ''
+      }
       this.searchParams = {
-        executionCode: "",
+        executionCode: '',
         shortcut: [],
-        status: "",
-      };
-      this.beforeSearch = true;
-      this.tableData = [];
+        status: ''
+      }
+      this.beforeSearch = true
+      this.tableData = []
     },
     async changePage(val) {
-      this.page.pageNow = val;
-      await this.search();
+      this.page.pageNow = val
+      await this.search()
     },
     async search() {
       try {
         this.tableLoading = true
-        if(!this.searchParams.executionCode) {
+        if (!this.searchParams.executionCode) {
           this.$Message.warning(this.$t('message.linkis.codeQuery.inputCode'))
-          this.beforeSearch = true;
-          throw Error(this.$t('message.linkis.codeQuery.inputCode'));
+          this.beforeSearch = true
+          throw Error(this.$t('message.linkis.codeQuery.inputCode'))
         }
-        this.beforeSearch = false;
-        const { executionCode, shortcut, status } = this.searchParams;
-        const { pageNow, pageSize } = this.page;
+        this.beforeSearch = false
+        const { executionCode, shortcut, status } = this.searchParams
+        const { pageNow, pageSize } = this.page
         const params = {
           executionCode,
           startDate: Date.parse(shortcut[0]),
@@ -332,12 +376,12 @@ export default {
         if (!status || status === 'all') {
           delete params.status
         }
-        const res = await api.fetch(`/jobhistory/es/search`, params, 'get');
+        const res = await api.fetch(`/jobhistory/es/search`, params, 'get')
         this.tableData = res.tasks.content
         this.page.totalPage = res.tasks.totalElements
         this.tableLoading = false
       } catch (err) {
-        window.console.warn(err);
+        window.console.warn(err)
         this.tableLoading = false
       }
     },
@@ -346,10 +390,10 @@ export default {
         id
       }
       // set storage
-      sessionStorage.setItem('code-search', JSON.stringify(this.searchParams));
-      sessionStorage.setItem('code-use-cache', true);
-      sessionStorage.setItem('code-search-page', JSON.stringify(this.page));
-      sessionStorage.setItem('code-search-admin', this.isAdminModel);
+      sessionStorage.setItem('code-search', JSON.stringify(this.searchParams))
+      sessionStorage.setItem('code-use-cache', true)
+      sessionStorage.setItem('code-search-page', JSON.stringify(this.page))
+      sessionStorage.setItem('code-search-admin', this.isAdminModel)
 
       this.$router.push({
         path: '/console/codeDetail',
@@ -359,44 +403,46 @@ export default {
     colorGetter(status) {
       switch (status) {
         case 'Running':
-          return 'yellow';
+          return 'yellow'
         case 'Succeed':
-          return 'green';
+          return 'green'
         case 'Failed':
-          return 'red';
+          return 'red'
         default:
-          break;
+          break
       }
-    },
+    }
   },
   created() {
     // 获取是否是历史管理员权限
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then(res => {
+    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin
     })
   },
   beforeRouteEnter(to, from, next) {
-    if(from.name !== 'codeDetail') {
-      sessionStorage.removeItem('code-search');
-      sessionStorage.removeItem('code-search-page');
-      sessionStorage.removeItem('code-search-admin');
-      sessionStorage.setItem('code-use-cache', false);
+    if (from.name !== 'codeDetail') {
+      sessionStorage.removeItem('code-search')
+      sessionStorage.removeItem('code-search-page')
+      sessionStorage.removeItem('code-search-admin')
+      sessionStorage.setItem('code-use-cache', false)
     }
-    next();
+    next()
   },
   mounted() {
-    if(sessionStorage.getItem('code-use-cache') === 'true') {
-      this.searchParams = JSON.parse(sessionStorage.getItem('code-search'));
-      this.searchBar = JSON.parse(sessionStorage.getItem('code-search'));
-      this.page = JSON.parse(sessionStorage.getItem('code-search-page'));
-      this.isAdminModel = JSON.parse(sessionStorage.getItem('code-search-admin'));
-      if(sessionStorage.getItem('isLogAdmin') !== 'true') {
-        this.isAdminModel = false;
+    if (sessionStorage.getItem('code-use-cache') === 'true') {
+      this.searchParams = JSON.parse(sessionStorage.getItem('code-search'))
+      this.searchBar = JSON.parse(sessionStorage.getItem('code-search'))
+      this.page = JSON.parse(sessionStorage.getItem('code-search-page'))
+      this.isAdminModel = JSON.parse(
+        sessionStorage.getItem('code-search-admin')
+      )
+      if (sessionStorage.getItem('isLogAdmin') !== 'true') {
+        this.isAdminModel = false
       }
-      this.search();
+      this.search()
     }
   }
-};
+}
 </script>
 <style lang="scss" src="./index.scss" scoped></style>
 <style lang="scss" scoped>
@@ -407,7 +453,6 @@ export default {
   border-color: transparent;
 }
 .modal {
-
   .input-area {
     padding: 20px 50px;
     .item {
@@ -419,5 +464,4 @@ export default {
     }
   }
 }
-
 </style>

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.scan.core.ob
 
-
 trait Observer {
 
   /**

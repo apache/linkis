@@ -27,11 +27,11 @@ import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
+
 import scala.collection.JavaConverters._
 
-
 class JobHistoryRunTimeRule(hitObserver: Observer)
-  extends AbstractScanRule(event = new JobHistoryRunTimeHitEvent, observer = hitObserver)
+    extends AbstractScanRule(event = new JobHistoryRunTimeHitEvent, observer = hitObserver)
     with Logging {
   private val scanRuleList = CacheUtils.cacheBuilder
 
@@ -52,15 +52,28 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
         for (d <- sd.getData().asScala) {
           d match {
             case jobHistory: JobHistory =>
-              if (Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())) {
-                val parmsMap: util.Map[String, scala.AnyRef] = BDPJettyServerHelper.gson.fromJson(jobHistory.getParams, classOf[util.Map[String, scala.AnyRef]])
+              if (
+                  Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(
+                    jobHistory.getStatus.toUpperCase()
+                  )
+              ) {
+                val parmsMap: util.Map[String, scala.AnyRef] = BDPJettyServerHelper.gson.fromJson(
+                  jobHistory.getParams,
+                  classOf[util.Map[String, scala.AnyRef]]
+                )
                 val runtimeMap = TaskUtils.getRuntimeMap(parmsMap)
-                if (runtimeMap.containsKey("task.notification.conditions") &&
-                  Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(String.valueOf(runtimeMap.get("task.notification.conditions")).toUpperCase())) {
-                    alertData.add(jobHistory)
+                if (
+                    runtimeMap.containsKey("task.notification.conditions") &&
+                    Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(
+                      String.valueOf(runtimeMap.get("task.notification.conditions")).toUpperCase()
+                    )
+                ) {
+                  alertData.add(jobHistory)
                 }
               } else {
-                logger.warn("Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName)
+                logger.warn(
+                  "Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName
+                )
               }
               scanRuleList.put("jobHistoryId", jobHistory.getId)
             case _ =>
@@ -73,9 +86,9 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
     logger.info("hit " + alertData.size() + " data in one iteration")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
-       true
+      true
     } else {
-       false
+      false
     }
   }
 

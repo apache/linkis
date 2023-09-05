@@ -21,7 +21,6 @@ import org.apache.linkis.monitor.scan.app.instance.entity.InsPersistenceLabel;
 
 import java.util.List;
 
-
 public interface InstanceLabelDao {
   /**
    * Remove label

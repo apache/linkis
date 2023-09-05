@@ -30,9 +30,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-/***
- * Task: clean up linkis_cg_ec_resource_info_record data
- */
+/** * Task: clean up linkis_cg_ec_resource_info_record data */
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
 public class EcRecordClear {

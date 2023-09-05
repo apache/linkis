@@ -29,7 +29,6 @@ import java.util.*;
 
 import org.slf4j.Logger;
 
-
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
 public class BmlClear {

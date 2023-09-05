@@ -81,14 +81,14 @@ trait AnomalyScanner {
   protected def scanOneIteration(): Unit
 
   /**
-   * Returns a buffer that allows read/write simultaneously buffer is allowed to be written by
-   * other thread
+   * Returns a buffer that allows read/write simultaneously buffer is allowed to be written by other
+   * thread
    */
   protected def getBuffer(): ScanBuffer
 
   /**
-   *   1. should be a blocking call 2. read from [[ScanBuffer]] 2. see if [[ScanRule]] is matched
-   *      3. trigger [[[[org.apache.linkis.tools.core.ob.Observer]]]]
+   *   1. should be a blocking call 2. read from [[ScanBuffer]] 2. see if [[ScanRule]] is matched 3.
+   *      trigger [[[[org.apache.linkis.tools.core.ob.Observer]]]]
    */
   protected def analyzeOneIteration(): Unit
 

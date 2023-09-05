@@ -19,7 +19,6 @@ package org.apache.linkis.monitor.scan.core.pac
 
 import java.util
 
-
 trait ScannedData {
   def getOwner(): String
 

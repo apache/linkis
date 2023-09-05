@@ -20,7 +20,6 @@ package org.apache.linkis.monitor.scan.core.pac
 import java.util
 import java.util.concurrent.LinkedBlockingDeque
 
-
 class ScanBuffer {
   val buffer: LinkedBlockingDeque[ScannedData] = new LinkedBlockingDeque[ScannedData]
 

@@ -19,5 +19,4 @@ package org.apache.linkis.monitor.scan.app.jobhistory.errorcode
 
 import org.apache.linkis.monitor.scan.core.ob.SingleObserverEvent
 
-
 class JobHistoryErrCodeHitEvent extends SingleObserverEvent

@@ -21,7 +21,6 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.scan.core.ob.Observer
 
-
 abstract class AbstractScanRule(customName: String = "", event: Event, observer: Observer)
     extends ScanRule
     with Logging {

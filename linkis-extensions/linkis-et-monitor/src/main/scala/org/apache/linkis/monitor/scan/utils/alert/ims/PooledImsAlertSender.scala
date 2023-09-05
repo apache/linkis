@@ -34,15 +34,9 @@ import java.util
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
+class PooledImsAlertSender(alertUrl: String) extends PooledAlertSender with Logging {
 
-class PooledImsAlertSender(
-    subSystemId: String,
-    alertUrl: String,
-    default_Receivers: util.Set[String]
-) extends PooledAlertSender
-    with Logging {
-
-  protected val httpClient = HttpClients.createDefault // TODO: Linkis-httpclient
+  protected val httpClient = HttpClients.createDefault
 
   private val mapper =
     new ObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"))
@@ -74,7 +68,7 @@ class PooledImsAlertSender(
       return false
     }
     if (paramContent.isEmpty) {
-      logger. warn("alertParams is empty, will not send alarm")
+      logger.warn("alertParams is empty, will not send alarm")
       return false
     }
 
@@ -99,7 +93,7 @@ class PooledImsAlertSender(
       LogUtils.stdOutLogger.info("Alert: " + paramContent + "Response: " + responseInfo)
       if (response.getStatusLine.getStatusCode == 200) return true
     }
-    return false
+    false
   }
 
   override def shutdown(waitComplete: Boolean = true, timeoutMs: Long = -1): Unit = {

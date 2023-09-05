@@ -17,16 +17,16 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory
 
-import java.util
-import java.util.Date
-
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.scan.app.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.monitor.scan.app.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.scan.constants.Constants
 import org.apache.linkis.monitor.scan.core.pac.AbstractDataFetcher
 
+import org.apache.commons.lang3.StringUtils
+
+import java.util
+import java.util.Date
 
 class JobHistoryDataFetcher(args: Array[Any], mapper: JobHistoryMapper)
     extends AbstractDataFetcher
@@ -89,7 +89,11 @@ class JobHistoryDataFetcher(args: Array[Any], mapper: JobHistoryMapper)
           throw t
         }
       }
-      if (StringUtils.isNotBlank(args(3).asInstanceOf[String]) && args(3).asInstanceOf[String].equals("updated_time")) {
+      if (
+          StringUtils.isNotBlank(args(3).asInstanceOf[String]) && args(3)
+            .asInstanceOf[String]
+            .equals("updated_time")
+      ) {
         val list = new util.ArrayList[String]()
         Constants.DIRTY_DATA_FINISHED_JOB_STATUS_ARRAY.foreach(list.add(_))
         mapper

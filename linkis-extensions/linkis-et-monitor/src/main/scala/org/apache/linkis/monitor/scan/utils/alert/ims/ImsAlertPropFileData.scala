@@ -15,24 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.monitor.scan.app;
+package org.apache.linkis.monitor.scan.utils.alert.ims
 
-import org.apache.linkis.server.utils.LinkisMainHelper;
+import com.fasterxml.jackson.annotation.JsonProperty
 
-
-public class LinkisJobHistoryScanApplicationTest {
-  // @Before
-  public void before() {
-    System.getProperties().setProperty(LinkisMainHelper.SERVER_NAME_KEY(), "linkis-et-monitor");
-    System.getProperties()
-        .setProperty("log4j.configurationFile", "src/test/resources/log4j2-console.xml");
-    //        System.getProperties().setProperty("wds.linkis.server.conf",
-    // "linkis-et-monitor.properties");
-  }
-
-  // @Test
-  public void main() throws Exception {
-    LinkisJobHistoryScanApplication.main(new String[] {});
-    //        LinkisJobHistoryScanApplication.main(new String[]{"2021122919", "2021122921"});
-  }
-}
+case class ImsAlertPropFileData(
+    @JsonProperty("alert_title") alertTitle: String,
+    @JsonProperty("alert_info") alertInfo: String,
+    @JsonProperty("alert_way") alertWays: String,
+    @JsonProperty("alert_reciver") alertReceivers: String,
+    @JsonProperty("alert_level") alertLevel: String,
+    @JsonProperty("alert_obj") alertObj: String,
+    @JsonProperty("can_recover") canRecover: String
+)

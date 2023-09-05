@@ -20,68 +20,78 @@ package org.apache.linkis.monitor.scan.app.monitor.entity;
 import org.apache.linkis.monitor.scan.app.monitor.config.MonitorConfig;
 
 public class ChatbotEntity {
-    private String keyid;
-    private String content;
-    private String type;
-    private String userName;
-    private String serviceName;
+  private String keyid;
+  private String content;
+  private String type;
+  private String userName;
+  private String serviceName;
 
-    public ChatbotEntity(String content, String userName) {
-        this.keyid = MonitorConfig.CHATBOT_KEY_ID.getValue();
-        this.content = content;
-        this.type = MonitorConfig.CHATBOT_TYPE.getValue();
-        this.userName = userName;
-        this.serviceName = MonitorConfig.CHATBOT_SERVICE_NAME.getValue();
-    }
+  public ChatbotEntity(String content, String userName) {
+    this.keyid = MonitorConfig.CHATBOT_KEY_ID.getValue();
+    this.content = content;
+    this.type = MonitorConfig.CHATBOT_TYPE.getValue();
+    this.userName = userName;
+    this.serviceName = MonitorConfig.CHATBOT_SERVICE_NAME.getValue();
+  }
 
-    public String getKeyid() {
-        return keyid;
-    }
+  public String getKeyid() {
+    return keyid;
+  }
 
-    public void setKeyid(String keyid) {
-        this.keyid = keyid;
-    }
+  public void setKeyid(String keyid) {
+    this.keyid = keyid;
+  }
 
-    public String getContent() {
-        return content;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public String getUserName() {
-        return userName;
-    }
+  public String getUserName() {
+    return userName;
+  }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+  public void setUserName(String userName) {
+    this.userName = userName;
+  }
 
-    public String getServiceName() {
-        return serviceName;
-    }
+  public String getServiceName() {
+    return serviceName;
+  }
 
-    public void setServiceName(String serviceNameuserName) {
-        this.serviceName = serviceNameuserName;
-    }
+  public void setServiceName(String serviceNameuserName) {
+    this.serviceName = serviceNameuserName;
+  }
 
-    @Override
-    public String toString() {
-        return "ChatbotEntity{" +
-                "keyid='" + keyid + '\'' +
-                ", content='" + content + '\'' +
-                ", type='" + type + '\'' +
-                ", userName='" + userName + '\'' +
-                ", serviceName='" + serviceName + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ChatbotEntity{"
+        + "keyid='"
+        + keyid
+        + '\''
+        + ", content='"
+        + content
+        + '\''
+        + ", type='"
+        + type
+        + '\''
+        + ", userName='"
+        + userName
+        + '\''
+        + ", serviceName='"
+        + serviceName
+        + '\''
+        + '}';
+  }
 }

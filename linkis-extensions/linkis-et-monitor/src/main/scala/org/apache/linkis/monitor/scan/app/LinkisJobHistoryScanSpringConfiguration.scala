@@ -26,10 +26,6 @@ import org.springframework.context.annotation.{ComponentScan, Configuration}
 
 import javax.annotation.PostConstruct
 
-/**
- * Created by shangda on 2021/11/19.
- */
-
 @Configuration
 @ComponentScan(Array("org.apache.linkis.monitor.scan", "org.apache.linkis.mybatis"))
 class LinkisJobHistoryScanSpringConfiguration {

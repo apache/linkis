@@ -30,9 +30,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-/***
- * Task: clean up logs, file data of ec materials
- */
+/** * Task: clean up logs, file data of ec materials */
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
 public class TaskLogClear {

@@ -17,15 +17,14 @@
 
 package org.apache.linkis.monitor.scan.core.scanner
 
-import java.util
-import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.atomic.AtomicInteger
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.scan.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.scan.core.pac._
 
+import java.util
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicInteger
 
 abstract class AbstractScanner extends AnomalyScanner with Logging {
   private val buffer: ScanBuffer = new ScanBuffer
@@ -71,8 +70,8 @@ abstract class AbstractScanner extends AnomalyScanner with Logging {
   }
 
   /**
-   * Returns a buffer that allows read/write simultaneously buffer is allowed to be written by
-   * other thread
+   * Returns a buffer that allows read/write simultaneously buffer is allowed to be written by other
+   * thread
    */
   override def getBuffer(): ScanBuffer = buffer
 
@@ -102,10 +101,7 @@ abstract class AbstractScanner extends AnomalyScanner with Logging {
    */
   override def run(): Unit = {
     if (dataFetcherList.size() == 0) {
-      throw new AnomalyScannerException(
-        21304,
-        "attempting to run scanner with empty dataFetchers"
-      )
+      throw new AnomalyScannerException(21304, "attempting to run scanner with empty dataFetchers")
     }
     if (buffer == null) {
       throw new AnomalyScannerException(21304, "attempting to run scanner with null buffer")
@@ -138,8 +134,8 @@ abstract class AbstractScanner extends AnomalyScanner with Logging {
   }
 
   /**
-   *   1. should be a blocking call 2. read from [[ScanBuffer]] 2. see if [[ScanRule]] is matched
-   *      3. trigger [[Observer]]
+   *   1. should be a blocking call 2. read from [[ScanBuffer]] 2. see if [[ScanRule]] is matched 3.
+   *      trigger [[Observer]]
    */
   override def analyzeOneIteration(): Unit = {
     val dataToAnalyze = buffer.drain()
@@ -158,8 +154,8 @@ abstract class AbstractScanner extends AnomalyScanner with Logging {
   }
 
   /**
-   *   1. should be non-blocking 2. keeps calling scanOneIteration() and analyzeOneIteration()
-   *      utils stop() is called
+   *   1. should be non-blocking 2. keeps calling scanOneIteration() and analyzeOneIteration() utils
+   *      stop() is called
    */
   override def start(): Unit = {
     // TODO

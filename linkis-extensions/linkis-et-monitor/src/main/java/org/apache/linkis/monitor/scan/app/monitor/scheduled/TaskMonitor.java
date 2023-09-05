@@ -43,9 +43,9 @@ import com.google.gson.internal.LinkedTreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/***
- *  Entrance monitors the number of tasks for specified users and systems.
- *  If the configured threshold is exceeded, an alarm will be triggered.
+/**
+ * * Entrance monitors the number of tasks for specified users and systems. If the configured
+ * threshold is exceeded, an alarm will be triggered.
  */
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
@@ -55,7 +55,6 @@ public class TaskMonitor {
 
   private static final String ENTRANCE_RUNNING_TASK = "entrance_running_task";
   private static final String ENTRANCE_QUEUED_TASK = "entrance_queued_task";
-
 
   @Scheduled(cron = "${linkis.monitor.entranceTask.cron}")
   public void entranceTask() throws IOException {
@@ -71,7 +70,8 @@ public class TaskMonitor {
           try {
             data =
                 MapUtils.getMap(
-                    HttpsUntils.getEntranceTask(null, entranceEntity.get("username"),null), "data");
+                    HttpsUntils.getEntranceTask(null, entranceEntity.get("username"), null),
+                    "data");
             logger.info("TaskMonitor userlist response  {}:", data);
           } catch (IOException e) {
             logger.warn("failed to get EntranceTask data");
@@ -119,7 +119,7 @@ public class TaskMonitor {
         });
     Map<String, Object> likisData = null;
     try {
-      likisData = MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop",null), "data");
+      likisData = MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", null), "data");
       logger.info("TaskMonitor hadoop response  {}:", likisData);
     } catch (IOException e) {
       logger.warn("failed to get EntranceTask data");
@@ -149,35 +149,49 @@ public class TaskMonitor {
           MonitorAlertUtils.getAlerts(Constants.ALERT_RESOURCE_MONITOR(), parms);
       PooledImsAlertUtils.addAlert(ecmResourceAlerts.get("12008"));
     }
-    //指标上报
+    // 指标上报
     resourceSendToIms();
   }
 
-    public static void resourceSendToIms() {
-        //获取所有的entrance实例，逐个上送IMS
-        ServiceInstance[] instances = Sender.getInstances(Constants.DIRTY_DATA_ENTRANCE_APPLICATIONNAME());
-        if (null != instances) {
-            for (ServiceInstance instance : instances) {
-                String serviceInstance = instance.getInstance();
-                try {
-                    Map<String, Object> instanceData = MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", serviceInstance), "data");
-                    int runningNumber = 0;
-                    int queuedNumber = 0;
-                    if (instanceData.containsKey("runningNumber")) {
-                        runningNumber = (int) instanceData.get("runningNumber");
-                    }
-                    if (instanceData.containsKey("queuedNumber")) {
-                        queuedNumber = (int) instanceData.get("queuedNumber");
-                    }
-                    logger.info("ResourceMonitor send index ");
-                    List<IndexEntity> list = new ArrayList<>();
-                    list.add(new IndexEntity(serviceInstance, "entrance", ENTRANCE_RUNNING_TASK, HttpsUntils.localHost, String.valueOf(runningNumber)));
-                    list.add(new IndexEntity(serviceInstance, "entrance", ENTRANCE_QUEUED_TASK, HttpsUntils.localHost, String.valueOf(queuedNumber)));
-                    HttpsUntils.sendIndex(list);
-                } catch (IOException e) {
-                    logger.warn("failed to send EcmResource index :" + e);
-                }
-            }
+  public static void resourceSendToIms() {
+    // 获取所有的entrance实例，逐个上送IMS
+    ServiceInstance[] instances =
+        Sender.getInstances(Constants.DIRTY_DATA_ENTRANCE_APPLICATIONNAME());
+    if (null != instances) {
+      for (ServiceInstance instance : instances) {
+        String serviceInstance = instance.getInstance();
+        try {
+          Map<String, Object> instanceData =
+              MapUtils.getMap(HttpsUntils.getEntranceTask(null, "hadoop", serviceInstance), "data");
+          int runningNumber = 0;
+          int queuedNumber = 0;
+          if (instanceData.containsKey("runningNumber")) {
+            runningNumber = (int) instanceData.get("runningNumber");
+          }
+          if (instanceData.containsKey("queuedNumber")) {
+            queuedNumber = (int) instanceData.get("queuedNumber");
+          }
+          logger.info("ResourceMonitor send index ");
+          List<IndexEntity> list = new ArrayList<>();
+          list.add(
+              new IndexEntity(
+                  serviceInstance,
+                  "entrance",
+                  ENTRANCE_RUNNING_TASK,
+                  HttpsUntils.localHost,
+                  String.valueOf(runningNumber)));
+          list.add(
+              new IndexEntity(
+                  serviceInstance,
+                  "entrance",
+                  ENTRANCE_QUEUED_TASK,
+                  HttpsUntils.localHost,
+                  String.valueOf(queuedNumber)));
+          HttpsUntils.sendIndex(list);
+        } catch (IOException e) {
+          logger.warn("failed to send EcmResource index :" + e);
         }
+      }
     }
+  }
 }

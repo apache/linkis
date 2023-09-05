@@ -37,11 +37,15 @@ import java.util
 class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, user: String)
     extends LogWriter(charset) {
 
-  if (StringUtils.isBlank(logPath))
+  if (StringUtils.isBlank(logPath)) {
     throw new EntranceErrorException(LOGPATH_NOT_NULL.getErrorCode, LOGPATH_NOT_NULL.getErrorDesc)
+  }
 
-  protected var fileSystem =
+  protected var fileSystem = if (EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
+    FSFactory.getFs(new FsPath(logPath)).asInstanceOf[FileSystem]
+  } else {
     FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+  }
 
   override protected var outputStream: OutputStream = null
 

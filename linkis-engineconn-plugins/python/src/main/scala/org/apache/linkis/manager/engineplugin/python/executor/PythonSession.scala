@@ -21,6 +21,7 @@ import org.apache.linkis.common.utils.{ByteTimeUtils, Logging, Utils}
 import org.apache.linkis.engineconn.computation.executor.execute.EngineExecutionContext
 import org.apache.linkis.engineconn.computation.executor.rs.RsOutputStream
 import org.apache.linkis.engineconn.launch.EngineConnServer
+import org.apache.linkis.governance.common.utils.GovernanceUtils
 import org.apache.linkis.manager.engineplugin.python.conf.PythonEngineConfiguration
 import org.apache.linkis.manager.engineplugin.python.errorcode.LinkisPythonErrorCodeSummary._
 import org.apache.linkis.manager.engineplugin.python.exception.{
@@ -271,9 +272,15 @@ class PythonSession extends Logging {
       }
       IOUtils.closeQuietly(outputStream)
       Utils.tryAndErrorMsg {
-        pid.foreach(p => Utils.exec(Array("kill", "-9", p), 3000L))
-        process.destroy()
-        process = null
+        // invoke kill process method  to kill all tree process
+        pid.foreach(p => {
+          logger.info(s"Try to kill pyspark process with: [kill -15 ${p}]")
+          GovernanceUtils.killProcess(String.valueOf(p), s"kill pyspark process,pid: $pid", false)
+        })
+        if (pid.isEmpty) {
+          process.destroy()
+          process = null
+        }
         this.pythonScriptInitialized = false
       }("process close failed")
     }

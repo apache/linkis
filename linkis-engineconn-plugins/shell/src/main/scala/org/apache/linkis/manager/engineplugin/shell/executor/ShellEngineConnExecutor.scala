@@ -309,6 +309,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
 
   override def close(): Unit = {
     try {
+      super.close()
       process.destroy()
     } catch {
       case e: Exception =>
@@ -316,7 +317,7 @@ class ShellEngineConnExecutor(id: Int) extends ComputationExecutor with Logging 
       case t: Throwable =>
         logger.error(s"kill process ${process.toString} failed ", t)
     }
-    super.close()
+
   }
 
 }

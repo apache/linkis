@@ -219,4 +219,8 @@ object StorageUtils extends Logging {
     StorageConfiguration.ENABLE_IO_PROXY.getValue
   }
 
+  def isHDFSPath(fsPath: FsPath): Boolean = {
+    HDFS.equals(fsPath.getFsType)
+  }
+
 }

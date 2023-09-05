@@ -24,6 +24,7 @@ import org.apache.linkis.configuration.dao.TemplateConfigKeyMapper;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.enumeration.BoundaryTypeEnum;
 import org.apache.linkis.configuration.exception.ConfigurationException;
+import org.apache.linkis.configuration.service.ConfigKeyService;
 import org.apache.linkis.configuration.service.ConfigurationService;
 import org.apache.linkis.configuration.service.TemplateConfigKeyService;
 import org.apache.linkis.configuration.util.LabelEntityParser;
@@ -66,6 +67,8 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
   @Autowired private TemplateConfigKeyMapper templateConfigKeyMapper;
 
   @Autowired private ConfigurationService configurationService;
+
+  @Autowired private ConfigKeyService configKeyService;
 
   @Autowired private ValidatorManager validatorManager;
 
@@ -237,37 +240,71 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
       List<Object> keys = new ArrayList<>();
       item.put("templateUid", uuid);
 
-      List<TemplateConfigKey> group = templateConfigKeyListGroupByUuid.get(uuid);
-      for (TemplateConfigKey templateConfigKey : group) {
-        Map temp = new HashMap();
+      String engineType = "";
+      List<String> engineTypeList = templateConfigKeyMapper.selectEngineTypeByTemplateUuid(uuid);
 
-        temp.put("configValue", templateConfigKey.getConfigValue());
-        temp.put("maxValue", templateConfigKey.getMaxValue());
-        temp.put("createBy", templateConfigKey.getCreateBy());
-        temp.put("createTime", templateConfigKey.getCreateTime());
-        temp.put("updateBy", templateConfigKey.getUpdateBy());
-        temp.put("updateTime", templateConfigKey.getUpdateTime());
-        temp.put("keyId", templateConfigKey.getKeyId());
+      if (engineTypeList.size() > 1) {
+        String msg =
+            MessageFormat.format(
+                "template uuid:{0} associated with the engine type:{1} more than one! Please check if the keys are correct",
+                uuid, StringUtils.join(engineTypeList.toArray(), ","));
+        throw new ConfigurationException(msg);
+      }
 
-        ConfigKey info = configKeyMap.get(templateConfigKey.getKeyId());
-        if (info != null) {
-          temp.put("key", info.getKey());
-          temp.put("name", info.getName());
-          temp.put("description", info.getDescription());
-          temp.put("engineType", info.getEngineType());
-          temp.put("validateType", info.getValidateType());
-          temp.put("validateRange", info.getValidateRange());
-          temp.put("boundaryType", info.getBoundaryType());
-          temp.put("defaultValue", info.getDefaultValue());
-          if (StringUtils.isNotBlank(info.getTemplateRequired())) {
-            temp.put("require", info.getTemplateRequired().equals("1"));
-          } else {
-            temp.put("require", "false");
-          }
+      if (engineTypeList.size() == 0) {
+        String msg =
+            MessageFormat.format(
+                "template uuid:{0} can not associated with any engine type! Please check if the keys are correct",
+                uuid);
+        throw new ConfigurationException(msg);
+      }
+
+      engineType = engineTypeList.get(0);
+
+      Map<Long, TemplateConfigKey> templateConfigKeyMap =
+          templateConfigKeyListGroupByUuid.get(uuid).stream()
+              .collect(Collectors.toMap(TemplateConfigKey::getKeyId, elemt -> elemt));
+
+      List<ConfigKey> ecKeyList = configKeyService.getConfigKeyList(engineType);
+      for (ConfigKey configKey : ecKeyList) {
+        Map<String, Object> temp = new HashMap<>();
+        temp.put("key", configKey.getKey());
+        temp.put("name", configKey.getName());
+        temp.put("description", configKey.getDescription());
+        temp.put("engineType", configKey.getEngineType());
+        temp.put("validateType", configKey.getValidateType());
+        temp.put("validateRange", configKey.getValidateRange());
+        temp.put("boundaryType", configKey.getBoundaryType());
+        temp.put("defaultValue", configKey.getDefaultValue());
+        if (StringUtils.isNotBlank(configKey.getTemplateRequired())) {
+          temp.put("require", configKey.getTemplateRequired().equals("1"));
+        } else {
+          temp.put("require", "false");
+        }
+        temp.put("keyId", configKey.getId());
+
+        Long keyId = configKey.getId();
+        TemplateConfigKey templateConfigKey = templateConfigKeyMap.get(keyId);
+
+        if (templateConfigKey == null) {
+          temp.put("configValue", null);
+          temp.put("maxValue", null);
+          temp.put("createBy", null);
+          temp.put("createTime", null);
+          temp.put("updateBy", null);
+          temp.put("updateTime", null);
+        } else {
+          temp.put("configValue", templateConfigKey.getConfigValue());
+          temp.put("maxValue", templateConfigKey.getMaxValue());
+          temp.put("createBy", templateConfigKey.getCreateBy());
+          temp.put("createTime", templateConfigKey.getCreateTime());
+          temp.put("updateBy", templateConfigKey.getUpdateBy());
+          temp.put("updateTime", templateConfigKey.getUpdateTime());
         }
 
         keys.add(temp);
       }
+
       item.put("itemList", keys);
       result.add(item);
     }

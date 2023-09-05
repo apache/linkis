@@ -138,4 +138,14 @@
     where t.template_uuid = #{templateUuid,jdbcType=VARCHAR}
   </select>
 
+
+  <select id="selectEngineTypeByTemplateUuid" resultType="java.lang.String">
+    select distinct(k.`engine_conn_type`) from linkis_ps_configuration_config_key  k
+    where k.id in
+      (
+        select t.key_id from linkis_ps_configuration_template_config_key t
+        where t.template_uuid = #{templateUuid,jdbcType=VARCHAR}
+      )
+  </select>
+
 </mapper>

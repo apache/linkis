@@ -192,26 +192,27 @@
 
     <select id="selectKeyByEngineType" resultMap="ConfigKeyMap">
 
-        SELECT   `key`, `description`, `name`, `engine_conn_type`,
+        SELECT   `id`,  `key`, `description`, `name`, `engine_conn_type`,
                 `default_value`, `validate_type`, `validate_range`,boundary_type,template_required
         FROM linkis_ps_configuration_config_key
-<!--        filter some unused and duplicate key-->
-        <where>
-            <if test="engineType != null">
-                `engine_conn_type` = #{engineType}
-                AND id  IN
-                (
-                    SELECT temp.config_key_id FROM
-                    ( SELECT * from linkis_ps_configuration_key_engine_relation) AS temp
-                    WHERE  temp.config_key_id IN
-                    (
-                    SELECT B.id FROM
-                    (SELECT * from linkis_ps_configuration_config_key ) AS B
-                    WHERE B. `engine_conn_type` = #{engineType}
-                    )
-                );
-            </if>
-        </where>
+        WHERE `engine_conn_type` = #{engineType}
+<!--&lt;!&ndash;        filter some unused and duplicate key&ndash;&gt;-->
+<!--        <where>-->
+<!--            <if test="engineType != null">-->
+<!--                `engine_conn_type` = #{engineType}-->
+<!--                AND id  IN-->
+<!--                (-->
+<!--                    SELECT temp.config_key_id FROM-->
+<!--                    ( SELECT * from linkis_ps_configuration_key_engine_relation) AS temp-->
+<!--                    WHERE  temp.config_key_id IN-->
+<!--                    (-->
+<!--                    SELECT B.id FROM-->
+<!--                    (SELECT * from linkis_ps_configuration_config_key ) AS B-->
+<!--                    WHERE B. `engine_conn_type` = #{engineType}-->
+<!--                    )-->
+<!--                );-->
+<!--            </if>-->
+<!--        </where>-->
     </select>
 
     <select id="selectKeyByEngineTypeAndKeyList" resultMap="ConfigKeyMap">

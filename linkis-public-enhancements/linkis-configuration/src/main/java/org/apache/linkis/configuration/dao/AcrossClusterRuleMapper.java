@@ -27,7 +27,8 @@ public interface AcrossClusterRuleMapper {
 
   AcrossClusterRule getAcrossClusterRule(@Param("id") Long id);
 
-  void deleteAcrossClusterRule(@Param("creator") String creator, @Param("username") String username);
+  void deleteAcrossClusterRule(
+      @Param("creator") String creator, @Param("username") String username);
 
   void updateAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 

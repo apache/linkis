@@ -101,7 +101,8 @@ public class AcrossClusterRuleRestfulApi {
       @RequestParam(value = "clusterName", required = false) String clusterName,
       @RequestParam(value = "pageNow", required = false) Integer pageNow,
       @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-    String operationUser = ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
+    String operationUser =
+        ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
     if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to query acrossClusterRule List,msg: only administrators can configure");
@@ -142,7 +143,8 @@ public class AcrossClusterRuleRestfulApi {
       HttpServletRequest req,
       @RequestParam(value = "creator", required = false) String creator,
       @RequestParam(value = "username", required = false) String username) {
-    String operationUser = ModuleUserUtils.getOperationUser(req, "execute delete acrossClusterRule");
+    String operationUser =
+        ModuleUserUtils.getOperationUser(req, "execute delete acrossClusterRule");
     if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to delete acrossClusterRule,msg: only administrators can configure");
@@ -189,7 +191,8 @@ public class AcrossClusterRuleRestfulApi {
   @RequestMapping(path = "/update", method = RequestMethod.PUT)
   public Message updateAcrossClusterRule(
       HttpServletRequest req, @RequestBody Map<String, Object> json) {
-    String operationUser = ModuleUserUtils.getOperationUser(req, "execute update acrossClusterRule");
+    String operationUser =
+        ModuleUserUtils.getOperationUser(req, "execute update acrossClusterRule");
     if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to update acrossClusterRule,msg: only administrators can configure");

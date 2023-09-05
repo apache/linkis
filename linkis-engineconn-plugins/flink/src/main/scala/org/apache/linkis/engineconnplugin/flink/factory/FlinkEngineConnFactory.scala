@@ -34,15 +34,21 @@ import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
+import org.apache.linkis.manager.engineplugin.common.creation.{
+  ExecutorFactory,
+  MultiExecutorEngineConnFactory
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.CheckpointConfig.ExternalizedCheckpointCleanup
+import org.apache.flink.table.api.Expressions.e
+import org.apache.flink.table.api.e
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnDeploymentTarget}
 
 import java.io.{File, FileNotFoundException}
@@ -51,13 +57,12 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
-import scala.collection.JavaConverters._
-import com.google.common.collect.{Lists, Sets}
-import org.apache.flink.table.api.Expressions.e
-import org.apache.flink.table.api.e
-import org.yaml.snakeyaml.Yaml
 
+import scala.collection.JavaConverters._
 import scala.io.Source
+
+import com.google.common.collect.{Lists, Sets}
+import org.yaml.snakeyaml.Yaml
 
 class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging {
 
@@ -257,7 +262,6 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
-    if (str1.isEmpty) logger.warn("env.java.opts is empty")
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
     val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
       val key = matchResult.group(1)
@@ -275,23 +279,23 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(str1).getOrElse("").toString
     val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
     var escapedXloggcValue = ""
-    var mergedString = ""
-    var replaceString = ""
+    var replaceStr1 = ""
+    var replaceStr2 = ""
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
       escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
-      mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceString = str2.replace(xloggcValueStr2, "")
+      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = str2.replace(xloggcValueStr2, "")
     }
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
       escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
-      mergedString = str1.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = str2
     }
-
     if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
-      mergedString = str1
+      replaceStr1 = str1
+      replaceStr2 = str2
     }
-
-    val MergedStringX = keyValueMapX.foldLeft(mergedString) { (result, entry) =>
+    val MergedStringX = keyValueMapX.foldLeft(replaceStr1) { (result, entry) =>
       val (key, value) = entry
       val oldValue = s"$key=[^\\s]+"
       val newValue = key + "=" + value
@@ -304,7 +308,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       val newValue = key + "=" + value
       result.replaceAll(oldValue, newValue)
     }
-    val javaOpts = (MergedStringD.split("\\s+") ++ replaceString.split("\\s+")).distinct.mkString(" ")
+    val javaOpts = (MergedStringD.split("\\s+") ++ replaceStr2.split("\\s+")).distinct.mkString(" ")
     javaOpts
   }
 

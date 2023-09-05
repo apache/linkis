@@ -79,7 +79,7 @@ class DriverAndYarnReqResourceService(
       val user = labelContainer.getUserCreatorLabel.getUser
       val creator = labelContainer.getUserCreatorLabel.getCreator
       val properties = engineCreateRequest.getProperties
-      val acrossClusterTask = properties.get("acrossClusterTask")
+      val acrossClusterTask = properties.getOrDefault("acrossClusterTask", "false")
       val CPUThreshold = properties.get("CPUThreshold")
       val MemoryThreshold = properties.get("MemoryThreshold")
       val CPUPercentageThreshold = properties.get("CPUPercentageThreshold")
@@ -90,7 +90,7 @@ class DriverAndYarnReqResourceService(
       )
 
       if (
-          acrossClusterTask.toBoolean && StringUtils.isNotBlank(CPUThreshold) && StringUtils
+        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils.isNotBlank(CPUThreshold) && StringUtils
             .isNotBlank(MemoryThreshold)
           && StringUtils
             .isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)

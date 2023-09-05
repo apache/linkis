@@ -84,6 +84,8 @@ public class FsRestfulApi {
 
   private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+
+
   /**
    * check 权限
    *
@@ -91,7 +93,7 @@ public class FsRestfulApi {
    * @param userName
    * @return
    */
-  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+  private boolean checkIsUsersDirectory(String requestPath, String userName, Boolean withAdmin) {
     boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
     if (!ownerCheck) {
       LOGGER.debug("not check filesystem owner.");
@@ -102,11 +104,10 @@ public class FsRestfulApi {
         WorkspaceUtil.suffixTuning(HDFS_USER_ROOT_PATH_PREFIX.getValue());
     String hdfsUserRootPathSuffix = HDFS_USER_ROOT_PATH_SUFFIX.getValue();
     String localUserRootPath = WorkspaceUtil.suffixTuning(LOCAL_USER_ROOT_PATH.getValue());
-    String path;
 
     String workspacePath = hdfsUserRootPathPrefix + userName + hdfsUserRootPathSuffix;
     String enginconnPath = localUserRootPath + userName;
-    if (Configuration.isJobHistoryAdmin(userName)) {
+    if (withAdmin && Configuration.isJobHistoryAdmin(userName)) {
       workspacePath = hdfsUserRootPathPrefix;
       enginconnPath = localUserRootPath;
     }
@@ -116,6 +117,11 @@ public class FsRestfulApi {
     LOGGER.debug("adminUser:" + String.join(",", Configuration.getJobHistoryAdmin()));
     return (requestPath.contains(workspacePath)) || (requestPath.contains(enginconnPath));
   }
+
+  private boolean checkIsUsersDirectory(String requestPath, String userName) {
+    return  checkIsUsersDirectory(requestPath, userName, true);
+  }
+
 
   @ApiOperation(value = "getUserRootPath", notes = "get user root path", response = Message.class)
   @ApiImplicitParams({
@@ -233,7 +239,7 @@ public class FsRestfulApi {
       PathValidator$.MODULE$.validate(oldDest, userName);
       PathValidator$.MODULE$.validate(newDest, userName);
     }
-    if (!checkIsUsersDirectory(newDest, userName)) {
+    if (!checkIsUsersDirectory(newDest, userName, false)) {
       throw WorkspaceExceptionManager.createException(80010, userName, newDest);
     }
     if (StringUtils.isEmpty(oldDest)) {

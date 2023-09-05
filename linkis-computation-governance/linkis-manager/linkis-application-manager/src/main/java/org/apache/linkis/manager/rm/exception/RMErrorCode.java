@@ -61,6 +61,8 @@ public enum RMErrorCode implements LinkisErrorCode {
 
   CLUSTER_QUEUE_INSTANCES_INSUFFICIENT(12012, "Insufficient cluster queue instance(集群队列实例不足)"),
 
+  ACROSS_CLUSTER_RULE_FAILED(12012, "across cluster rule failed(跨集群规则失败)"),
+
   ECM_RESOURCE_INSUFFICIENT(11000, "ECM resources are insufficient(ECM 资源不足)"),
 
   ECM_MEMORY_INSUFFICIENT(11001, "ECM memory resources are insufficient(ECM 内存资源不足)"),

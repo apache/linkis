@@ -60,8 +60,8 @@ public class AcrossClusterRuleRestfulApi {
   })
   @RequestMapping(path = "/isValid", method = RequestMethod.PUT)
   public Message isValidRule(HttpServletRequest req, @RequestBody Map<String, Object> json) {
-    String username = ModuleUserUtils.getOperationUser(req, "execute valid acrossClusterRule");
-    if (!Configuration.isAdmin(username)) {
+    String operationUser = ModuleUserUtils.getOperationUser(req, "execute valid acrossClusterRule");
+    if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to valid acrossClusterRule List,msg: only administrators can configure");
     }
@@ -73,8 +73,9 @@ public class AcrossClusterRuleRestfulApi {
     if (StringUtils.isBlank(isValid)) {
       return Message.error("Failed to valid acrossClusterRule: Illegal Input Param");
     }
+
     try {
-      acrossClusterRuleService.validAcrossClusterRule(id, isValid, username);
+      acrossClusterRuleService.validAcrossClusterRule(id, isValid);
     } catch (Exception e) {
       return Message.error("valid acrossClusterRule failed：" + e.getMessage());
     }
@@ -89,24 +90,24 @@ public class AcrossClusterRuleRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "req", dataType = "HttpServletRequest", value = "req"),
     @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "user", dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "username", dataType = "String", value = "username"),
     @ApiImplicitParam(name = "clusterName", dataType = "String", value = "clusterName"),
   })
   @RequestMapping(path = "/list", method = RequestMethod.GET)
   public Message queryAcrossClusterRuleList(
       HttpServletRequest req,
       @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "user", required = false) String user,
+      @RequestParam(value = "username", required = false) String username,
       @RequestParam(value = "clusterName", required = false) String clusterName,
       @RequestParam(value = "pageNow", required = false) Integer pageNow,
       @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-    String username = ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
-    if (!Configuration.isAdmin(username)) {
+    String operationUser = ModuleUserUtils.getOperationUser(req, "execute query acrossClusterRule List");
+    if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to query acrossClusterRule List,msg: only administrators can configure");
     }
 
-    if (StringUtils.isBlank(user)) user = null;
+    if (StringUtils.isBlank(username)) username = null;
     if (StringUtils.isBlank(creator)) creator = null;
     if (StringUtils.isBlank(clusterName)) clusterName = null;
     if (null == pageNow) pageNow = 1;
@@ -116,7 +117,7 @@ public class AcrossClusterRuleRestfulApi {
     try {
       resultMap =
           acrossClusterRuleService.queryAcrossClusterRuleList(
-              creator, user, clusterName, pageNow, pageSize);
+              creator, username, clusterName, pageNow, pageSize);
     } catch (Exception e) {
       log.info("query acrossClusterRule List failed：" + e.getMessage());
       return Message.error("query acrossClusterRule List failed");
@@ -134,25 +135,25 @@ public class AcrossClusterRuleRestfulApi {
   @ApiImplicitParams({
     @ApiImplicitParam(name = "req", dataType = "HttpServletRequest", value = "req"),
     @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "user", dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "username", dataType = "String", value = "username"),
   })
   @RequestMapping(path = "/delete", method = RequestMethod.DELETE)
   public Message deleteAcrossClusterRule(
       HttpServletRequest req,
       @RequestParam(value = "creator", required = false) String creator,
-      @RequestParam(value = "user", required = false) String user) {
-    String username = ModuleUserUtils.getOperationUser(req, "execute delete acrossClusterRule");
-    if (!Configuration.isAdmin(username)) {
+      @RequestParam(value = "username", required = false) String username) {
+    String operationUser = ModuleUserUtils.getOperationUser(req, "execute delete acrossClusterRule");
+    if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to delete acrossClusterRule,msg: only administrators can configure");
     }
 
-    if (StringUtils.isBlank(creator) || StringUtils.isBlank(user)) {
+    if (StringUtils.isBlank(creator) || StringUtils.isBlank(username)) {
       return Message.error("Failed to delete acrossClusterRule: Illegal Input Param");
     }
 
     try {
-      acrossClusterRuleService.deleteAcrossClusterRule(creator, user);
+      acrossClusterRuleService.deleteAcrossClusterRule(creator, username);
     } catch (Exception e) {
       log.info("delete acrossClusterRule failed：" + e.getMessage());
       return Message.error("delete acrossClusterRule failed");
@@ -170,7 +171,7 @@ public class AcrossClusterRuleRestfulApi {
     @ApiImplicitParam(name = "id", dataType = "Integer", value = "id"),
     @ApiImplicitParam(name = "clusterName", dataType = "String", value = "clusterName"),
     @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "user", dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "username", dataType = "String", value = "username"),
     @ApiImplicitParam(name = "isValid", dataType = "String", value = "isValid"),
     @ApiImplicitParam(name = "startTime", dataType = "String", value = "startTime"),
     @ApiImplicitParam(name = "endTime", dataType = "String", value = "endTime"),
@@ -188,8 +189,8 @@ public class AcrossClusterRuleRestfulApi {
   @RequestMapping(path = "/update", method = RequestMethod.PUT)
   public Message updateAcrossClusterRule(
       HttpServletRequest req, @RequestBody Map<String, Object> json) {
-    String username = ModuleUserUtils.getOperationUser(req, "execute update acrossClusterRule");
-    if (!Configuration.isAdmin(username)) {
+    String operationUser = ModuleUserUtils.getOperationUser(req, "execute update acrossClusterRule");
+    if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to update acrossClusterRule,msg: only administrators can configure");
     }
@@ -198,7 +199,7 @@ public class AcrossClusterRuleRestfulApi {
     Long id = idInt.longValue();
     String clusterName = (String) json.get("clusterName");
     String creator = (String) json.get("creator");
-    String user = (String) json.get("user");
+    String username = (String) json.get("username");
     String isValid = (String) json.get("isValid");
     String startTime = (String) json.get("startTime");
     String endTime = (String) json.get("endTime");
@@ -208,7 +209,7 @@ public class AcrossClusterRuleRestfulApi {
     String MemoryPercentageThreshold = (String) json.get("MemoryPercentageThreshold");
     if (StringUtils.isBlank(clusterName)
         || StringUtils.isBlank(creator)
-        || StringUtils.isBlank(user)
+        || StringUtils.isBlank(username)
         || StringUtils.isBlank(isValid)
         || StringUtils.isBlank(startTime)
         || StringUtils.isBlank(endTime)
@@ -232,8 +233,8 @@ public class AcrossClusterRuleRestfulApi {
       acrossClusterRule.setId(id);
       acrossClusterRule.setClusterName(clusterName.toLowerCase());
       acrossClusterRule.setCreator(creator);
-      acrossClusterRule.setUser(user);
-      acrossClusterRule.setUpdateBy(username);
+      acrossClusterRule.setUsername(username);
+      acrossClusterRule.setUpdateBy(operationUser);
       acrossClusterRule.setRules(rules);
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.updateAcrossClusterRule(acrossClusterRule);
@@ -252,7 +253,7 @@ public class AcrossClusterRuleRestfulApi {
     @ApiImplicitParam(name = "req", dataType = "HttpServletRequest", value = "req"),
     @ApiImplicitParam(name = "clusterName", dataType = "String", value = "clusterName"),
     @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "user", dataType = "String", value = "user"),
+    @ApiImplicitParam(name = "username", dataType = "String", value = "username"),
     @ApiImplicitParam(name = "isValid", dataType = "String", value = "isValid"),
     @ApiImplicitParam(name = "startTime", dataType = "String", value = "startTime"),
     @ApiImplicitParam(name = "endTime", dataType = "String", value = "endTime"),
@@ -270,15 +271,15 @@ public class AcrossClusterRuleRestfulApi {
   @RequestMapping(path = "/add", method = RequestMethod.POST)
   public Message insertAcrossClusterRule(
       HttpServletRequest req, @RequestBody Map<String, Object> json) {
-    String username = ModuleUserUtils.getOperationUser(req, "execute add acrossClusterRule");
-    if (!Configuration.isAdmin(username)) {
+    String operationUser = ModuleUserUtils.getOperationUser(req, "execute add acrossClusterRule");
+    if (!Configuration.isAdmin(operationUser)) {
       return Message.error(
           "Failed to add acrossClusterRule,msg: only administrators can configure");
     }
 
     String clusterName = (String) json.get("clusterName");
     String creator = (String) json.get("creator");
-    String user = (String) json.get("user");
+    String username = (String) json.get("username");
     String isValid = (String) json.get("isValid");
     String startTime = (String) json.get("startTime");
     String endTime = (String) json.get("endTime");
@@ -288,7 +289,7 @@ public class AcrossClusterRuleRestfulApi {
     String MemoryPercentageThreshold = (String) json.get("MemoryPercentageThreshold");
     if (StringUtils.isBlank(clusterName)
         || StringUtils.isBlank(creator)
-        || StringUtils.isBlank(user)
+        || StringUtils.isBlank(username)
         || StringUtils.isBlank(isValid)
         || StringUtils.isBlank(startTime)
         || StringUtils.isBlank(endTime)
@@ -311,9 +312,9 @@ public class AcrossClusterRuleRestfulApi {
       AcrossClusterRule acrossClusterRule = new AcrossClusterRule();
       acrossClusterRule.setClusterName(clusterName.toLowerCase());
       acrossClusterRule.setCreator(creator);
-      acrossClusterRule.setUser(user);
-      acrossClusterRule.setCreateBy(username);
-      acrossClusterRule.setUpdateBy(username);
+      acrossClusterRule.setUsername(username);
+      acrossClusterRule.setCreateBy(operationUser);
+      acrossClusterRule.setUpdateBy(operationUser);
       acrossClusterRule.setRules(rules);
       acrossClusterRule.setIsValid(isValid);
       acrossClusterRuleService.insertAcrossClusterRule(acrossClusterRule);

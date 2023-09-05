@@ -57,12 +57,11 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
   private val HASTATE_ACTIVE = "active"
 
-  private var provider: ExternalResourceProvider = _
   private val rmAddressMap: util.Map[String, String] = new ConcurrentHashMap[String, String]()
 
-  private def getAuthorizationStr = {
-    val user = this.provider.getConfigMap.getOrDefault("user", "").asInstanceOf[String]
-    val pwd = this.provider.getConfigMap.getOrDefault("pwd", "").asInstanceOf[String]
+  private def getAuthorizationStr(provider: ExternalResourceProvider) = {
+    val user = provider.getConfigMap.getOrDefault("user", "").asInstanceOf[String]
+    val pwd = provider.getConfigMap.getOrDefault("pwd", "").asInstanceOf[String]
     val authKey = user + ":" + pwd
     Base64.getMimeEncoder.encodeToString(authKey.getBytes)
   }
@@ -71,9 +70,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       identifier: ExternalResourceIdentifier,
       provider: ExternalResourceProvider
   ): NodeResource = {
-    val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
-    this.provider = provider
-    val rmWebAddress = getAndUpdateActiveRmWebAddress(rmWebHaAddress)
+    val rmWebAddress = getAndUpdateActiveRmWebAddress(provider)
     logger.info(s"rmWebAddress: $rmWebAddress")
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
@@ -87,7 +84,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     )
 
     def maxEffectiveHandle(queueValue: Option[JValue]): Option[YarnResource] = {
-      val metrics = getResponseByUrl("metrics", rmWebAddress)
+      val metrics = getResponseByUrl("metrics", rmWebAddress, provider)
       val totalResouceInfoResponse = (
         (metrics \ "clusterMetrics" \ "totalMB").asInstanceOf[JInt].values.toLong,
         (metrics \ "clusterMetrics" \ "totalVirtualCores").asInstanceOf[JInt].values.toLong
@@ -180,7 +177,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     def getChildQueuesOfCapacity(resp: JValue) = resp \ "queues" \ "queue"
 
     def getResources() = {
-      val resp = getResponseByUrl("scheduler", rmWebAddress)
+      val resp = getResponseByUrl("scheduler", rmWebAddress, provider)
       val schedulerType =
         (resp \ "scheduler" \ "schedulerInfo" \ "type").asInstanceOf[JString].values
       if ("capacityScheduler".equals(schedulerType)) {
@@ -255,9 +252,8 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
       identifier: ExternalResourceIdentifier,
       provider: ExternalResourceProvider
   ): java.util.List[ExternalAppInfo] = {
-    val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
 
-    val rmWebAddress = getAndUpdateActiveRmWebAddress(rmWebHaAddress)
+    val rmWebAddress = getAndUpdateActiveRmWebAddress(provider)
 
     val queueName = identifier.asInstanceOf[YarnResourceIdentifier].getQueueName
 
@@ -273,7 +269,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     val realQueueName = "root." + queueName
 
     def getAppInfos(): Array[ExternalAppInfo] = {
-      val resp = getResponseByUrl("apps", rmWebAddress)
+      val resp = getResponseByUrl("apps", rmWebAddress, provider)
       resp \ "apps" \ "app" match {
         case JArray(apps) =>
           val appInfoBuffer = new ArrayBuffer[YarnAppInfo]()
@@ -307,25 +303,29 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
 
   override def getResourceType: ResourceType = ResourceType.Yarn
 
-  private def getResponseByUrl(url: String, rmWebAddress: String) = {
+  private def getResponseByUrl(
+      url: String,
+      rmWebAddress: String,
+      provider: ExternalResourceProvider
+  ) = {
     val httpGet = new HttpGet(rmWebAddress + "/ws/v1/cluster/" + url)
     httpGet.addHeader("Accept", "application/json")
-    val authorEnable: Any = this.provider.getConfigMap.get("authorEnable");
+    val authorEnable: Any = provider.getConfigMap.get("authorEnable");
     var httpResponse: HttpResponse = null
     authorEnable match {
       case flag: Boolean =>
         if (flag) {
-          httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr)
+          httpGet.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + getAuthorizationStr(provider))
         }
       case _ =>
     }
-    val kerberosEnable: Any = this.provider.getConfigMap.get("kerberosEnable");
+    val kerberosEnable: Any = provider.getConfigMap.get("kerberosEnable");
     kerberosEnable match {
       case flag: Boolean =>
         if (flag) {
-          val principalName = this.provider.getConfigMap.get("principalName").asInstanceOf[String]
-          val keytabPath = this.provider.getConfigMap.get("keytabPath").asInstanceOf[String]
-          val krb5Path = this.provider.getConfigMap.get("krb5Path").asInstanceOf[String]
+          val principalName = provider.getConfigMap.get("principalName").asInstanceOf[String]
+          val keytabPath = provider.getConfigMap.get("keytabPath").asInstanceOf[String]
+          val krb5Path = provider.getConfigMap.get("krb5Path").asInstanceOf[String]
           val requestKuu = new RequestKerberosUrlUtils(principalName, keytabPath, krb5Path, false)
           val response =
             requestKuu.callRestUrl(rmWebAddress + "/ws/v1/cluster/" + url, principalName)
@@ -341,8 +341,9 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
     parse(EntityUtils.toString(httpResponse.getEntity()))
   }
 
-  def getAndUpdateActiveRmWebAddress(haAddress: String): String = {
+  def getAndUpdateActiveRmWebAddress(provider: ExternalResourceProvider): String = {
     // todo check if it will stuck for many requests
+    val haAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
     var activeAddress = rmAddressMap.get(haAddress)
     if (StringUtils.isBlank(activeAddress)) haAddress.intern().synchronized {
       if (StringUtils.isBlank(activeAddress)) {
@@ -356,7 +357,7 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
             .split(RMConfiguration.DEFAULT_YARN_RM_WEB_ADDRESS_DELIMITER.getValue)
             .foreach(address => {
               Utils.tryCatch {
-                val response = getResponseByUrl("info", address)
+                val response = getResponseByUrl("info", address, provider)
                 response \ "clusterInfo" \ "haState" match {
                   case state: JString =>
                     if (HASTATE_ACTIVE.equalsIgnoreCase(state.s)) {
@@ -393,12 +394,10 @@ class YarnResourceRequester extends ExternalResourceRequester with Logging {
   override def reloadExternalResourceAddress(
       provider: ExternalResourceProvider
   ): java.lang.Boolean = {
-    if (null == provider) {
-      rmAddressMap.clear()
-    } else {
+    if (null != provider) {
       val rmWebHaAddress = provider.getConfigMap.get("rmWebAddress").asInstanceOf[String]
       rmAddressMap.remove(rmWebHaAddress)
-      getAndUpdateActiveRmWebAddress(rmWebHaAddress)
+      getAndUpdateActiveRmWebAddress(provider)
     }
     true
   }

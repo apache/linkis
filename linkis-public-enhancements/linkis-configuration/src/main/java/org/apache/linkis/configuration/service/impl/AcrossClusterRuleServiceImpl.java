@@ -39,8 +39,8 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   @Autowired private AcrossClusterRuleMapper ruleMapper;
 
   @Override
-  public void deleteAcrossClusterRule(String creator, String user) throws Exception {
-    ruleMapper.deleteAcrossClusterRule(creator, user);
+  public void deleteAcrossClusterRule(String creator, String username) throws Exception {
+    ruleMapper.deleteAcrossClusterRule(creator, username);
     logger.info("delete acrossClusterRule success");
     return;
   }
@@ -75,7 +75,7 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
 
   @Override
   public Map<String, Object> queryAcrossClusterRuleList(
-      String creator, String user, String clusterName, Integer pageNow, Integer pageSize) {
+      String creator, String username, String clusterName, Integer pageNow, Integer pageSize) {
     Map<String, Object> result = new HashMap<>(2);
     List<AcrossClusterRule> acrossClusterRules = null;
     if (Objects.isNull(pageNow)) {
@@ -87,7 +87,7 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     PageHelper.startPage(pageNow, pageSize);
 
     try {
-      acrossClusterRules = ruleMapper.queryAcrossClusterRuleList(user, creator, clusterName);
+      acrossClusterRules = ruleMapper.queryAcrossClusterRuleList(username, creator, clusterName);
     } finally {
       PageHelper.clearPage();
     }
@@ -98,17 +98,15 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   }
 
   @Override
-  public void validAcrossClusterRule(Long id, String isValid, String updateBy) throws Exception {
-    AcrossClusterRule acrossClusterRule = ruleMapper.getAcrossClusterRule(id);
-    if (acrossClusterRule == null) {
+  public void validAcrossClusterRule(Long id, String isValid) throws Exception {
+    AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(id);
+
+    if (beforeRule == null) {
       logger.info("acrossClusterRule not exit");
       throw new Exception("acrossClusterRule not exit");
     }
-    acrossClusterRule.setIsValid(isValid);
-    acrossClusterRule.setUpdateBy(updateBy);
-    acrossClusterRule.setUpdateTime(new Date());
-    logger.info("delete acrossClusterRule success");
-    ruleMapper.validAcrossClusterRule(acrossClusterRule);
+
+    ruleMapper.validAcrossClusterRule(isValid, id);
     logger.info("valid acrossClusterRule success");
     return;
   }

@@ -24,7 +24,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="clusterName" column="cluster_name" jdbcType="VARCHAR"/>
         <result property="creator" column="creator" jdbcType="VARCHAR"/>
-        <result property="user" column="user" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -34,17 +34,17 @@
     </resultMap>
 
     <sql id="AcrossClusterRule_Column_List">
-        id,cluster_name,creator,user,create_time,create_by,update_time,update_by,rules,is_valid
+        id,cluster_name,creator,username,create_time,create_by,update_time,update_by,rules,is_valid
     </sql>
 
     <sql id="AcrossClusterRule_insert_Column_List">
-        cluster_name,creator,user,create_time,create_by,update_time,update_by,rules,is_valid
+        cluster_name,creator,username,create_time,create_by,update_time,update_by,rules,is_valid
     </sql>
 
     <select id="getAcrossClusterRule" resultMap="acrossClusterRuleMap">
         SELECT
             acr.id, acr.cluster_name, acr.creator,
-            acr.user, acr.create_time, acr.create_by,
+            acr.username, acr.create_time, acr.create_by,
             acr.update_time, acr.update_by, acr.rules
         FROM
             `linkis_cg_lm_across_cluster_rule` acr
@@ -56,7 +56,7 @@
         SELECT <include refid="AcrossClusterRule_Column_List"/>
         FROM `linkis_cg_lm_across_cluster_rule`
         <where>
-            <if test="user != null"> user = #{user}</if>
+            <if test="username != null"> username = #{username}</if>
             <if test="creator != null">and creator = #{creator}</if>
             <if test="clusterName != null">and cluster_name = #{clusterName}</if>
         </where>
@@ -67,7 +67,7 @@
         INSERT INTO
             linkis_cg_lm_across_cluster_rule (<include refid="AcrossClusterRule_insert_Column_List"/>)
         VALUES
-            (#{acrossClusterRule.clusterName},#{acrossClusterRule.creator}, #{acrossClusterRule.user},
+            (#{acrossClusterRule.clusterName},#{acrossClusterRule.creator}, #{acrossClusterRule.username},
             <choose>
                 <when test="acrossClusterRule.createTime != null">
                     #{acrossClusterRule.createTime}
@@ -93,7 +93,7 @@
         FROM
             `linkis_cg_lm_across_cluster_rule`
         WHERE
-            creator = #{creator} AND user = #{user}
+            creator = #{creator} AND username = #{username}
     </delete>
 
     <update id="updateAcrossClusterRule" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
@@ -101,7 +101,7 @@
             `linkis_cg_lm_across_cluster_rule`
         SET
             cluster_name = #{acrossClusterRule.clusterName}, creator = #{acrossClusterRule.creator},
-            user=#{acrossClusterRule.user}, create_time=#{acrossClusterRule.createTime},
+            username=#{acrossClusterRule.username}, create_time=#{acrossClusterRule.createTime},
             create_By=#{acrossClusterRule.createBy},
             <choose>
                 <when test="acrossClusterRule.updateTime != null">
@@ -117,22 +117,13 @@
             id = #{acrossClusterRule.id}
     </update>
 
-    <update id="validAcrossClusterRule" parameterType="org.apache.linkis.configuration.entity.AcrossClusterRule">
+    <update id="validAcrossClusterRule">
         UPDATE
             `linkis_cg_lm_across_cluster_rule`
         SET
-            <choose>
-                <when test="acrossClusterRule.updateTime != null">
-                    update_time=#{acrossClusterRule.updateTime}
-                </when>
-                <otherwise>
-                    update_time = now()
-                </otherwise>
-            </choose>,
-            update_By=#{acrossClusterRule.updateBy},
-            is_valid=#{acrossClusterRule.isValid}
+            is_valid = #{isValid}
         WHERE
-            id = #{acrossClusterRule.id}
+            id = #{id}
     </update>
 
 

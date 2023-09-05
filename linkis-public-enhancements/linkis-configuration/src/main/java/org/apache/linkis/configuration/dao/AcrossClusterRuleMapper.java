@@ -27,16 +27,16 @@ public interface AcrossClusterRuleMapper {
 
   AcrossClusterRule getAcrossClusterRule(@Param("id") Long id);
 
-  void deleteAcrossClusterRule(@Param("creator") String creator, @Param("user") String user);
+  void deleteAcrossClusterRule(@Param("creator") String creator, @Param("username") String username);
 
   void updateAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
   void insertAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
   List<AcrossClusterRule> queryAcrossClusterRuleList(
-      @Param("user") String user,
+      @Param("username") String username,
       @Param("creator") String creator,
       @Param("clusterName") String clusterName);
 
-  void validAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
+  void validAcrossClusterRule(@Param("isValid") String isValid, @Param("id") Long id);
 }

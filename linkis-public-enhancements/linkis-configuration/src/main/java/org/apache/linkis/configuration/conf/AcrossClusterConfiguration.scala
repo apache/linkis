@@ -22,6 +22,6 @@ import org.apache.linkis.common.conf.CommonVars
 object AcrossClusterConfiguration {
 
   val ACROSS_CLUSTER_QUEUE_SUFFIX =
-    CommonVars.apply("linkis.configuration.across.cluster.queue.suffix", "_bdap2bdp").getValue
+    CommonVars.apply("linkis.configuration.across.cluster.queue.suffix", "bdap2bdp").getValue
 
 }

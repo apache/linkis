@@ -39,8 +39,6 @@ import org.apache.linkis.manager.engineplugin.common.creation.{
 }
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment
 import org.apache.linkis.manager.engineplugin.common.launch.process.Environment.variable
-import org.apache.linkis.manager.label.constant.LabelValueConstant
-import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.EngineType
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.utils.LabelUtil
@@ -88,18 +86,9 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val sparkHome = SPARK_HOME.getValue(options)
     val sparkConfDir = SPARK_CONF_DIR.getValue(options)
     val sparkConfig: SparkConfig =
-      getSparkConfig(options, isYarnClusterMode(engineCreationContext.getLabels()))
+      getSparkConfig(options, LabelUtil.isYarnClusterMode(engineCreationContext.getLabels()))
     val context = new EnvironmentContext(sparkConfig, hadoopConfDir, sparkConfDir, sparkHome, null)
     context
-  }
-
-  def isYarnClusterMode(labels: util.List[Label[_]]): Boolean = {
-    val label = LabelUtil.getEngingeConnRuntimeModeLabel(labels)
-    val isYarnClusterMode: Boolean = {
-      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
-      else false
-    }
-    isYarnClusterMode
   }
 
   def getSparkConfig(options: util.Map[String, String], isYarnClusterMode: Boolean): SparkConfig = {
@@ -165,10 +154,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     logger.info(s"------ Create new SparkContext {$master} -------")
 
-    val label = LabelUtil.getEngingeConnRuntimeModeLabel(engineCreationContext.getLabels())
-    val isYarnClusterMode: Boolean =
-      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
-      else false
+    val isYarnClusterMode: Boolean = LabelUtil.isYarnClusterMode(engineCreationContext.getLabels())
 
     if (isYarnClusterMode) {
       sparkConf.set("spark.submit.deployMode", "cluster")

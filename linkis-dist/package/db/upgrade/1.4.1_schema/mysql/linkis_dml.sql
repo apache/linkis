@@ -20,7 +20,6 @@ update  linkis_ps_configuration_config_key set engine_conn_type = "" where engin
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
 
 update  linkis_ps_configuration_config_key set template_required = 1 where `key` in (
-"wds.linkis.rm.instance",
 "spark.executor.instances",
 "spark.executor.memory",
 "spark.driver.memory",
@@ -28,6 +27,7 @@ update  linkis_ps_configuration_config_key set template_required = 1 where `key`
 "mapreduce.job.running.map.limit",
 "mapreduce.job.running.reduce.limit",
 )
+update  linkis_ps_configuration_config_key set template_required = 1 where `key` = "wds.linkis.rm.instance" and  engine_conn_type ="spark";
 -- spark.conf
 INSERT INTO linkis_ps_configuration_config_key
 (`key`, description, name,
@@ -39,8 +39,8 @@ VALUES(
 'spark.conf', '多个参数使用分号[;]分隔 例如spark.sql.shuffle.partitions=10;', 'spark自定义配置参数',
 null, 'None', NULL, 'spark',
 0, 1, 1,
-'spark资源设置', 0, 'Spark resource settings',
-'Multiple parameters are separated by semicolons [;] For example, spark.sql.shuffle.partitions=10;', 'Spark custom configuration parameters');
+'spark资源设置', 0, 'Spark Resource Settings',
+'Multiple parameters are separated by semicolons [;] For example, spark.sql.shuffle.partitions=10;', 'Spark Custom Configuration Parameters');
 
 INSERT INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
 (
@@ -68,7 +68,7 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 INSERT INTO `linkis_ps_configuration_config_key`
 (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`)
 VALUES
-('spark.locality.wait', '范围：0-3000，单位：毫秒', '任务调度本地等待时间', '3000', 'OFT', '[\"0\",\"1000\",\"2000\",\"3000\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark resource settings', 'Range: 0-3000, Unit: millisecond', 'Task scheduling local waiting time');
+('spark.locality.wait', '范围：0-3000，单位：毫秒', '任务调度本地等待时间', '3000', 'OFT', '[\"0\",\"1000\",\"2000\",\"3000\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0-3000, Unit: millisecond', 'Task Scheduling Local Waiting Time');
 
 
 -- all 默认
@@ -97,7 +97,7 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 INSERT INTO `linkis_ps_configuration_config_key`
 (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`)
 VALUES
-('spark.memory.fraction', '范围：0.4,0.5,0.6，单位：百分比', '执行内存和存储内存的百分比', '0.6', 'OFT', '[\"0.4\",\"0.5\",\"0.6\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark resource settings', 'Range: 0.4, 0.5, 0.6, in percentage', 'Percentage of execution memory and storage memory');
+('spark.memory.fraction', '范围：0.4,0.5,0.6，单位：百分比', '执行内存和存储内存的百分比', '0.6', 'OFT', '[\"0.4\",\"0.5\",\"0.6\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0.4, 0.5, 0.6, in percentage', 'Percentage Of Execution Memory And Storage Memory');
 
 
 -- all 默认

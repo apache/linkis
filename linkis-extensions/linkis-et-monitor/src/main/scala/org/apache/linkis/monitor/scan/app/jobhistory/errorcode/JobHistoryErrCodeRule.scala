@@ -17,19 +17,21 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.errorcode
 
-import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.app.monitor.until.CacheUtils
 import org.apache.linkis.monitor.scan.core.ob.Observer
 import org.apache.linkis.monitor.scan.core.pac.{AbstractScanRule, ScannedData}
+
+import java.util
+
 import scala.collection.JavaConverters._
 
-
 /**
- * 针对执行任务返回的错误码进行监控，执行脚本任务时，会记录执行的错误码在数据库中，
- * 服务会根据数据库中记录的错误码，来进行告警，如果错误码中包含（11001，11002）即可触发告警
+ * Monitor the error codes returned by executing tasks. When executing script tasks, the executed
+ * error codes will be recorded in the database. The service will generate an alarm based on the
+ * error code recorded in the database. If the error code contains (11001, 11002), the alarm will be
+ * triggered.
  */
 class JobHistoryErrCodeRule(errorCodes: util.Set[String], hitObserver: Observer)
     extends AbstractScanRule(event = new JobHistoryErrCodeHitEvent, observer = hitObserver)
@@ -60,7 +62,9 @@ class JobHistoryErrCodeRule(errorCodes: util.Set[String], hitObserver: Observer)
               }
               scanRuleList.put("jobHistoryId", history.getId)
             case _ =>
-              logger.warn("Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName)
+              logger.warn(
+                "Ignored wrong input data Type : " + d + ", " + d.getClass.getCanonicalName
+              )
           }
         }
       } else {
@@ -71,9 +75,9 @@ class JobHistoryErrCodeRule(errorCodes: util.Set[String], hitObserver: Observer)
     logger.info("hit " + alertData.size() + " data in one iteration")
     if (alertData.size() > 0) {
       getHitEvent().notifyObserver(getHitEvent(), alertData)
-       true
+      true
     } else {
-       false
+      false
     }
   }
 

@@ -33,15 +33,10 @@ import scala.collection.JavaConverters._
 
 import ImsAlertWay.ImsAlertWay
 
-
 object PooledImsAlertUtils extends Logging {
 
   private val sender: PooledImsAlertSender = {
-    val ret = new PooledImsAlertSender(
-      Constants.ALERT_SUB_SYSTEM_ID,
-      Constants.ALERT_IMS_URL,
-      Constants.ALERT_DEFAULT_RECEIVERS.asJava
-    )
+    val ret = new PooledImsAlertSender(Constants.ALERT_IMS_URL)
     ret.start()
     ret
   }
@@ -70,11 +65,11 @@ object PooledImsAlertUtils extends Logging {
       if (CollectionUtils.isNotEmpty(alertWays)) alertWays else new HashSet[ImsAlertWay]()
     val (alertInfo, alertLevel) = if (t != null) {
       _alertWays.add(ImsAlertWay.Email)
-      _alertWays.add(ImsAlertWay.RTX)
+      _alertWays.add(ImsAlertWay.WXWork)
       _alertWays.add(ImsAlertWay.WeChat)
       (ExceptionUtils.getRootCauseMessage(t), ImsAlertLevel.MAJOR)
     } else {
-      _alertWays.add(ImsAlertWay.RTX)
+      _alertWays.add(ImsAlertWay.WXWork)
       (message, ImsAlertLevel.WARN)
     }
     val alertDesc = new ImsAlertDesc(

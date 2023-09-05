@@ -79,4 +79,20 @@ public class InsPersistenceLabel {
   public void setCreateTime(Date createTime) {
     this.createTime = createTime;
   }
+
+  public String getLabelKey() {
+    return labelKey;
+  }
+
+  public void setLabelKey(String labelKey) {
+    this.labelKey = labelKey;
+  }
+
+  public String getFeature() {
+    return feature;
+  }
+
+  public void setFeature(String feature) {
+    this.feature = feature;
+  }
 }

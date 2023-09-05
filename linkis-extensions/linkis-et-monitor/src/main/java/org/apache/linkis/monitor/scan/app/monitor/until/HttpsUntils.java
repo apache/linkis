@@ -32,6 +32,7 @@ import org.apache.linkis.monitor.scan.request.EmsListAction;
 import org.apache.linkis.monitor.scan.request.EntranceTaskAction;
 import org.apache.linkis.monitor.scan.response.EntranceTaskResult;
 import org.apache.linkis.server.BDPJettyServerHelper;
+import org.apache.linkis.ujes.client.response.EmsListResult;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +45,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import org.apache.linkis.ujes.client.response.EmsListResult;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -132,14 +132,16 @@ public class HttpsUntils {
     return clientConfig;
   }
 
-  public static Map<String, Object> getEntranceTask(String url, String user,String Instance) throws IOException {
+  public static Map<String, Object> getEntranceTask(String url, String user, String Instance)
+      throws IOException {
     if (null == dwsClientConfig) {
       dwsClientConfig = createClientConfig(null, null);
     }
     if (null == client) {
       client = new MonitorHTTPClientClientImpl(dwsClientConfig);
     }
-    EntranceTaskAction build = EntranceTaskAction.newBuilder().setUser(user).setInstance(Instance).build();
+    EntranceTaskAction build =
+        EntranceTaskAction.newBuilder().setUser(user).setInstance(Instance).build();
     EntranceTaskResult result = client.entranList(build);
     return result.getResultMap();
   }
@@ -170,7 +172,9 @@ public class HttpsUntils {
 
   public static void sendChatbot(ChatbotEntity chatbotEntity) throws IOException {
     String json = BDPJettyServerHelper.gson().toJson(chatbotEntity);
-    StringEntity entity = new StringEntity(json, ContentType.create(ContentType.APPLICATION_JSON.getMimeType(), "UTF-8"));
+    StringEntity entity =
+        new StringEntity(
+            json, ContentType.create(ContentType.APPLICATION_JSON.getMimeType(), "UTF-8"));
     entity.setContentEncoding("UTF-8");
     HttpPost httpPost = new HttpPost(MonitorConfig.CHATBOT_URL.getValue());
     httpPost.setConfig(RequestConfig.DEFAULT);
@@ -179,5 +183,4 @@ public class HttpsUntils {
     String responseStr = EntityUtils.toString(execute.getEntity(), "UTF-8");
     Map<String, String> map = BDPJettyServerHelper.gson().fromJson(responseStr, Map.class);
   }
-
 }

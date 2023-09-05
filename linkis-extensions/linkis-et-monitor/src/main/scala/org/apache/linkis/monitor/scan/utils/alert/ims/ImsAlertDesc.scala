@@ -32,7 +32,6 @@ import scala.collection.JavaConverters._
 import ImsAlertLevel.ImsAlertLevel
 import ImsAlertWay.ImsAlertWay
 
-
 case class ImsAlertDesc(
     var subSystemId: String,
     var alertTitle: String,
@@ -149,7 +148,7 @@ case class ImsAlertDesc(
         alertReceivers
       }
 
-     Array(subSystemId, newAlertTitle, newAlertObj, newAlertInfo, newAlertReceivers)
+    Array(subSystemId, newAlertTitle, newAlertObj, newAlertInfo, newAlertReceivers)
   }
 
 }

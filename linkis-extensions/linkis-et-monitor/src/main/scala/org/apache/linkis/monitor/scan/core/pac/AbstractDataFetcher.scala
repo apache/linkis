@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.scan.core.pac
 
-
 abstract class AbstractDataFetcher(customName: String = "") extends DataFetcher {
 
   private val name: String = if (!customName.isEmpty) {

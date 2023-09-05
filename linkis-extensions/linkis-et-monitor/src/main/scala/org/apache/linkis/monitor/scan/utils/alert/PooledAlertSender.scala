@@ -23,9 +23,8 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import java.util.concurrent.{Future, LinkedBlockingQueue}
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
 
-
 abstract class PooledAlertSender extends AlertSender with Logging {
-  private val THREAD_POOL_SIZE = CommonVars[Int]("wds.linkis.alert.pool.size", 5).getValue
+  private val THREAD_POOL_SIZE = CommonVars[Int]("linkis.alert.pool.size", 5).getValue
 
   private val alertDescQ: LinkedBlockingQueue[AlertDesc] =
     new LinkedBlockingQueue[AlertDesc](1000)
@@ -58,15 +57,15 @@ abstract class PooledAlertSender extends AlertSender with Logging {
   def start(): Unit = {
     future = Utils.defaultScheduler.submit(new Runnable() {
       override def run() {
-        info("Pooled alert thread started!")
+        logger.info("Pooled alert thread started!")
         while (!stopped.get) {
           executors synchronized {
             while (!stopped.get && runningNumber.get >= THREAD_POOL_SIZE) {
-              info("Pooled alert thread is full, start waiting")
+              logger.info("Pooled alert thread is full, start waiting")
               executors.wait()
             }
           }
-          info("Pooled alert thread continue processing")
+          logger.info("Pooled alert thread continue processing")
 
           if (stopped.get && alertDescQ.size() == 0) return
           val alertDesc = Utils.tryQuietly(alertDescQ.take)
@@ -75,12 +74,12 @@ abstract class PooledAlertSender extends AlertSender with Logging {
             override def run() {
               runningNumber.addAndGet(1)
               Utils.tryAndWarn {
-                info("sending alert , information: " + alertDesc)
+                logger.info("sending alert , information: " + alertDesc)
                 val ok = doSendAlert(alertDesc)
                 if (!ok) {
                   warn("Failed to send alert: " + alertDesc)
                 } else {
-                  info("successfully send alert: " + alertDesc)
+                  logger.info("successfully send alert: " + alertDesc)
                 }
                 runningNumber.decrementAndGet
                 executors synchronized executors.notify
@@ -93,7 +92,7 @@ abstract class PooledAlertSender extends AlertSender with Logging {
   }
 
   def shutdown(waitComplete: Boolean = true, timeoutMs: Long = -1): Unit = {
-    info("stopping the Pooled alert thread...")
+    logger.info("stopping the Pooled alert thread...")
     if (waitComplete) {
       val startTime = System.currentTimeMillis()
       while (
@@ -106,7 +105,7 @@ abstract class PooledAlertSender extends AlertSender with Logging {
     executors.shutdown
     stopped.set(true)
     future.cancel(true)
-    info("Pooled alert thread is stopped")
+    logger.info("Pooled alert thread is stopped")
   }
 
 }

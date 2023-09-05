@@ -19,7 +19,6 @@ package org.apache.linkis.monitor.scan.core.pac
 
 import java.util
 
-
 class BaseScannedData(owner: String, data: util.List[scala.Any]) extends ScannedData {
   override def getOwner(): String = this.owner
 

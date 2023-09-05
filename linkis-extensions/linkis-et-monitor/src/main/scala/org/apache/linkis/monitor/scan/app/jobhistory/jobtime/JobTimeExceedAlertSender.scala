@@ -17,9 +17,6 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.jobtime
 
-import java.text.MessageFormat
-import java.util
-
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.app.jobhistory.exception.AnomalyScannerException
@@ -28,13 +25,13 @@ import org.apache.linkis.monitor.scan.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.scan.utils.alert.AlertDesc
 import org.apache.linkis.monitor.scan.utils.alert.ims.{ImsAlertDesc, PooledImsAlertUtils}
 
+import java.text.MessageFormat
+import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 
-
-class JobTimeExceedAlertSender(alerts: util.Map[String, AlertDesc])
-    extends Observer
-    with Logging {
+class JobTimeExceedAlertSender(alerts: util.Map[String, AlertDesc]) extends Observer with Logging {
 
   private val orderedThresholds: Array[Long] = {
     val ret = new ArrayBuffer[Long]()
@@ -79,34 +76,36 @@ class JobTimeExceedAlertSender(alerts: util.Map[String, AlertDesc])
         for (t <- orderedThresholds) { // search max threshold that is smaller than elapse
           if (elapse >= t) {
             ts = t
-          } else {
-
-          }
+          } else {}
         }
         val name = ts.toString
         val alert = if (!toSend.containsKey(name)) {
           alerts
             .get(name)
-            .asInstanceOf[
-              ImsAlertDesc
-            ]
+            .asInstanceOf[ImsAlertDesc]
         } else {
           toSend.get(name)
         }
-        
-        val newInfo = MessageFormat.format("[Linkis任务信息]您好，您在Linkis/DSS提交的任务(任务ID:{0})，已经运行超过{1}h，" +
-          "请关注是否任务正常，如果不正常您可以到Linkis/DSS管理台进行任务的kill，集群信息为BDAP({2})。详细解决方案见Q47：{3} "
-          , jobHistory.getId, (elapse / 1000 / 60 / 60).toString, jobHistory.getInstances, MonitorConfig.SOLUTION_URL.getValue)
+
+        val newInfo = MessageFormat.format(
+          MonitorConfig.TASK_RUNTIME_TIMEOUT_DESC.getValue,
+          jobHistory.getId,
+          (elapse / 1000 / 60 / 60).toString,
+          jobHistory.getInstances,
+          MonitorConfig.SOLUTION_URL.getValue
+        )
 
         val newNumHit = alert.numHit + 1
         val receiver = new util.HashSet[String]()
         receiver.add(jobHistory.getSubmitUser)
         receiver.add(jobHistory.getExecuteUser)
         receiver.addAll(alert.alertReceivers)
-        val ImsAlertDesc = alert.copy(alertInfo = newInfo, alertReceivers = receiver, numHit = newNumHit)
+        val ImsAlertDesc =
+          alert.copy(alertInfo = newInfo, alertReceivers = receiver, numHit = newNumHit)
         PooledImsAlertUtils.addAlert(ImsAlertDesc)
 
       }
     }
   }
+
 }

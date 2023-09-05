@@ -22,12 +22,9 @@ import org.apache.linkis.monitor.scan.app.instance.dao.{
   InstanceInfoDao,
   InstanceLabelDao
 }
-import org.apache.linkis.monitor.scan.app.instance.dao.InstanceInfoDao
 import org.apache.linkis.monitor.scan.app.jobhistory.dao.JobHistoryMapper
 
-
 object MapperFactory {
-  //  val bmlVersionCleanScanOper = new BmlVersionCleanScanOper
 
   private var jobHistoryMapper: JobHistoryMapper = _
 
@@ -37,27 +34,27 @@ object MapperFactory {
 
   private var instanceLabelRelationMapper: InsLabelRelationDao = _
 
-  def getJobHistoryMapper() = jobHistoryMapper
+  def getJobHistoryMapper(): JobHistoryMapper = jobHistoryMapper
 
-  def setJobHistoryMapper(jobHistoryMapper: JobHistoryMapper) = {
+  def setJobHistoryMapper(jobHistoryMapper: JobHistoryMapper): Unit = {
     MapperFactory.jobHistoryMapper = jobHistoryMapper
   }
 
-  def getInstanceInfoMapper() = instanceInfoMapper
+  def getInstanceInfoMapper(): InstanceInfoDao = instanceInfoMapper
 
-  def setInstanceInfoMapper(instanceInfoMapper: InstanceInfoDao) = {
+  def setInstanceInfoMapper(instanceInfoMapper: InstanceInfoDao): Unit = {
     MapperFactory.instanceInfoMapper = instanceInfoMapper
   }
 
-  def getInstanceLabelMapper() = instanceLabelMapper
+  def getInstanceLabelMapper(): InstanceLabelDao = instanceLabelMapper
 
-  def setInstanceLabelMapper(instanceLabelMapper: InstanceLabelDao) = {
+  def setInstanceLabelMapper(instanceLabelMapper: InstanceLabelDao): Unit = {
     MapperFactory.instanceLabelMapper = instanceLabelMapper
   }
 
-  def getInsLabelRelationMapper() = instanceLabelRelationMapper
+  def getInsLabelRelationMapper(): InsLabelRelationDao = instanceLabelRelationMapper
 
-  def setInsLabelRelationMapper(instanceLabelRelationMapper: InsLabelRelationDao) = {
+  def setInsLabelRelationMapper(instanceLabelRelationMapper: InsLabelRelationDao): Unit = {
     MapperFactory.instanceLabelRelationMapper = instanceLabelRelationMapper
   }
 

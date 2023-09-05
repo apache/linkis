@@ -17,9 +17,6 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.jobtime
 
-import java.util
-import java.util.Locale
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.app.jobhistory.exception.AnomalyScannerException
@@ -28,11 +25,15 @@ import org.apache.linkis.monitor.scan.constants.Constants
 import org.apache.linkis.monitor.scan.core.ob.Observer
 import org.apache.linkis.monitor.scan.core.pac.{AbstractScanRule, ScannedData}
 
+import java.util
+import java.util.Locale
+
 import scala.collection.JavaConverters._
 
 /**
- * 针对执行任务状态进行监控，扫描12小时之外，24小时之内的的数据，
- * 如果规则范围内，有数据状态是（Inited,WaitForRetry,Scheduled,Running）其中之一，则触发告警
+ * Monitor the execution status of tasks, scan data outside 12 hours and within 24 hours, If within
+ * the scope of the rule, there is data whose status is one of (Inited, WaitForRetry, Scheduled,
+ * Running), an alarm will be triggered.
  */
 class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
     extends AbstractScanRule(event = new JobTimeExceedHitEvent, observer = hitObserver)
@@ -94,9 +95,9 @@ class JobTimeExceedRule(thresholds: util.Set[String], hitObserver: Observer)
     logger.info("hit " + alertData.size() + " data in one iteration")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
-       true
+      true
     } else {
-       false
+      false
     }
   }
 

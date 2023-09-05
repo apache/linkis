@@ -19,5 +19,4 @@ package org.apache.linkis.monitor.scan.app.jobhistory.jobtime
 
 import org.apache.linkis.monitor.scan.core.ob.SingleObserverEvent
 
-
 class JobTimeExceedHitEvent extends SingleObserverEvent

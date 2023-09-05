@@ -57,7 +57,8 @@ object EntranceTaskAction {
     def build(): EntranceTaskAction = {
       val entranceTaskAction = new EntranceTaskAction
       if (StringUtils.isNotBlank(creator)) entranceTaskAction.setParameter("creator", creator)
-      if (StringUtils.isNotBlank(engineTypeLabel)) entranceTaskAction.setParameter("engineTypeLabel", engineTypeLabel)
+      if (StringUtils.isNotBlank(engineTypeLabel))
+        entranceTaskAction.setParameter("engineTypeLabel", engineTypeLabel)
       if (StringUtils.isNotBlank(instance)) entranceTaskAction.setParameter("instance", instance)
       if (StringUtils.isNotBlank(user)) {
         // hadoop用户应该获取全部用户entrance信息，则无需传user，即可获取全部entrance信息

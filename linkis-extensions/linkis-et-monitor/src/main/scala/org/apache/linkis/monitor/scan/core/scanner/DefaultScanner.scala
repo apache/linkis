@@ -19,7 +19,6 @@ package org.apache.linkis.monitor.scan.core.scanner
 
 import org.apache.linkis.monitor.scan.utils.alert.ims.PooledImsAlertUtils
 
-
 class DefaultScanner extends AbstractScanner {
 
   override def shutdown(): Unit = {

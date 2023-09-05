@@ -30,9 +30,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-/***
- * Task: clean up linkis_ps_job_history_group_history data
- */
+/** * Task: clean up linkis_ps_job_history_group_history data */
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
 public class JobHistoryClear {

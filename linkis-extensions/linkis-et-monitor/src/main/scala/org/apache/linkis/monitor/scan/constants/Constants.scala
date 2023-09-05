@@ -19,76 +19,58 @@ package org.apache.linkis.monitor.scan.constants
 
 import org.apache.linkis.common.conf.CommonVars
 
-
 object Constants {
-
-  val ALERT_IMS_URL = CommonVars.properties.getProperty(
-    "wds.linkis.alert.url",
-    "http://127.0.0.1:10812/ims_data_access/send_alarm.do"
-  )
-
-  val ALERT_PROPS_FILE_PATH = CommonVars.properties.getProperty(
-    "wds.linkis.alert.ims.file.path",
-    "linkis-et-monitor-ims.properties"
-  )
-
-  val ALERT_IMS_MAX_LINES = CommonVars[Int]("wds.linkis.alert.ims.max.lines", 8).getValue
-
-  val SCAN_INTERVALS_SECONDS =
-    CommonVars[Long]("wds.linkis.errorcode.scanner.interval.seconds", 1 * 60 * 60).getValue
-
-  val MAX_INTERVALS_SECONDS =
-    CommonVars[Long]("wds.linkis.errorcode.scanner.max.interval.seconds", 1 * 60 * 60).getValue
-
-  val ALERT_SUB_SYSTEM_ID =
-    CommonVars.properties.getProperty("wds.linkis.alert.ims.sub_system_id", "5435")
-
-  val ALERT_DEFAULT_RECEIVERS = CommonVars.properties
-    .getProperty("wds.linkis.alert.receiver.default", "")
-    .split(",")
-    .toSet[String]
 
   val SCAN_PREFIX_ERRORCODE = "jobhistory.errorcode."
   val SCAN_PREFIX_UNFINISHED_JOBTIME_EXCEED_SEC = "jobhistory.unfinished.time.exceed.sec."
+  val ALERT_RESOURCE_MONITOR = "ecm.resource.monitor.im."
+
+  val ALERT_PROPS_FILE_PATH = CommonVars.properties.getProperty(
+    "linkis.alert.conf.file.path",
+    "linkis-et-monitor-file.properties"
+  )
+
+  val ALERT_IMS_URL = CommonVars.properties.getProperty(
+    "linkis.alert.url",
+    "http://127.0.0.1:10812/ims_data_access/send_alarm.do"
+  )
+
+  val ALERT_SUB_SYSTEM_ID =
+    CommonVars.properties.getProperty("linkis.alert.sub_system_id", "10001")
+
+  val ALERT_DEFAULT_RECEIVERS = CommonVars.properties
+    .getProperty("linkis.alert.receiver.default", "")
+    .split(",")
+    .toSet[String]
+
+  val ALERT_IMS_MAX_LINES = CommonVars[Int]("linkis.alert.content.max.lines", 8).getValue
+
+  val ERRORCODE_SCAN_INTERVALS_SECONDS =
+    CommonVars[Long]("linkis.errorcode.scanner.interval.seconds", 1 * 60 * 60).getValue
+
+  val ERRORCODE_MAX_INTERVALS_SECONDS =
+    CommonVars[Long]("linkis.errorcode.scanner.max.interval.seconds", 1 * 60 * 60).getValue
 
   val SCAN_RULE_UNFINISHED_JOB_STATUS =
     "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
 
-  val DIRTY_DATA_EUREKA_DELETE_INSTANCE_URL =
-    CommonVars.apply("wds.linkis.eureka.defaultZone", "http://localhost:20303").getValue
-
-  val DIRTY_DATA_EUREKA_DELETE_PATH = CommonVars
-    .apply("wds.linkis.dirty.data.eureka.delete.path", "/apps/{springName}/{instance}")
-    .getValue
-
-  val DIRTY_DATA_UNFINISHED_JOB_STATUS =
-    "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
-
-  val DIRTY_DATA_JOB_TARGET_STATUS = "Cancelled"
-
-  val DIRTY_DATA_ENTRANCE_APPLICATIONNAME =
-    CommonVars("wds.linkis.entrance.spring.name", "linkis-cg-entrance").getValue
-
-  val MODIFY_DB_DATA_DAYS = CommonVars("wds.linkis.dirty.data.modify.db.days", 1).getValue
-  val ALERT_RESOURCE_MONITOR = "ecm.resource.monitor.im."
-
   val LINKIS_API_VERSION: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.api.version", "v1")
+    CommonVars[String]("linkis.bml.api.version", "v1")
 
   val AUTH_TOKEN_KEY: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.key", "Validation-Code")
+    CommonVars[String]("linkis.bml.auth.token.key", "Validation-Code")
 
   val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("wds.linkis.bml.auth.token.value", "BML-AUTH")
+    CommonVars[String]("linkis.bml.auth.token.value", "BML-AUTH")
 
   val CONNECTION_MAX_SIZE: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.max.size", 10)
+    CommonVars[Int]("linkis.bml.connection.max.size", 10)
 
   val CONNECTION_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.timeout", 5 * 60 * 1000)
+    CommonVars[Int]("linkis.bml.connection.timeout", 5 * 60 * 1000)
 
   val CONNECTION_READ_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("wds.linkis.bml.connection.read.timeout", 10 * 60 * 1000)
+    CommonVars[Int]("linkis.bml.connection.read.timeout", 10 * 60 * 1000)
 
   val AUTH_TOKEN_KEY_SHORT_NAME = "tokenKey"
   val AUTH_TOKEN_VALUE_SHORT_NAME = "tokenValue"
@@ -105,9 +87,5 @@ object Constants {
   val BML_CLEAR_IM = "bml.clear.monitor.im."
   val THREAD_TIME_OUT_IM = "thread.monitor.timeout.im."
   val JOB_RESULT_IM = "jobhistory.result.monitor.im."
-
-  val DIRTY_DATA_FINISHED_JOB_STATUS =
-    "Succeed,Failed,Cancelled,Timeout,ALL".split(",").map(s => s.toUpperCase())
-  val DIRTY_DATA_FINISHED_JOB_STATUS_ARRAY = "Succeed,Failed,Cancelled,Timeout".split(",")
 
 }

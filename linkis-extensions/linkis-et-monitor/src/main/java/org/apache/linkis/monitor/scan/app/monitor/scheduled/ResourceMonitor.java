@@ -41,9 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/***
- *  Monitor the usage of ECM resources for monitoring and metrics reporting
- */
+/** * Monitor the usage of ECM resources for monitoring and metrics reporting */
 @Component
 @PropertySource(value = "classpath:linkis-et-monitor.properties", encoding = "UTF-8")
 public class ResourceMonitor {
@@ -68,7 +66,7 @@ public class ResourceMonitor {
     List<Map<String, Object>> emNodeVoList = data.getOrDefault("EMs", new ArrayList<>());
     StringJoiner minor = new StringJoiner(",");
     StringJoiner major = new StringJoiner(",");
-        // deal ecm resource
+    // deal ecm resource
     emNodeVoList.forEach(
         emNodeVo -> {
           Map<String, Object> leftResource = MapUtils.getMap(emNodeVo, "leftResource");
@@ -78,8 +76,10 @@ public class ResourceMonitor {
           labels.stream()
               .filter(labelmap -> labelmap.containsKey("tenant"))
               .forEach(map -> tenant.set("租户标签：" + map.get("stringValue").toString()));
-          String leftmemory = ByteTimeUtils.bytesToString((long) leftResource.getOrDefault("memory",0));
-          String maxmemory = ByteTimeUtils.bytesToString((long) maxResource.getOrDefault("memory",0));
+          String leftmemory =
+              ByteTimeUtils.bytesToString((long) leftResource.getOrDefault("memory", 0));
+          String maxmemory =
+              ByteTimeUtils.bytesToString((long) maxResource.getOrDefault("memory", 0));
 
           String leftmemoryStr = leftmemory.split(" ")[0];
           String maxmemoryStr = maxmemory.split(" ")[0];
@@ -94,9 +94,12 @@ public class ResourceMonitor {
           BigDecimal maxMemory = new BigDecimal(maxmemoryStr);
           BigDecimal maxCores = new BigDecimal((int) maxResource.get("cores"));
           BigDecimal maxInstance = new BigDecimal((int) maxResource.get("instance"));
-          double memorydouble = leftMemory.divide(maxMemory,2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
-          double coresdouble = leftCores.divide(maxCores,2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
-          double instancedouble = leftInstance.divide(maxInstance,2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
+          double memorydouble =
+              leftMemory.divide(maxMemory, 2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
+          double coresdouble =
+              leftCores.divide(maxCores, 2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
+          double instancedouble =
+              leftInstance.divide(maxInstance, 2, BigDecimal.ROUND_HALF_DOWN).doubleValue();
           Double majorValue = MonitorConfig.ECM_TASK_MAJOR.getValue();
           Double minorValue = MonitorConfig.ECM_TASK_MINOR.getValue();
           if (((memorydouble) <= majorValue)
@@ -126,26 +129,38 @@ public class ResourceMonitor {
                 MonitorAlertUtils.getAlerts(Constants.ALERT_RESOURCE_MONITOR(), replaceParm);
             PooledImsAlertUtils.addAlert(ecmResourceAlerts.get("12003"));
           }
-            // ECM资源占比上报
-            resourceSendToIms(coresdouble, memorydouble, instancedouble, HttpsUntils.localHost,"USED");
-                });
-        //ECM 剩余资源总数上报
-        resourceSendToIms(totalCores.get(), totalMemory.get(), totalInstance.get(), HttpsUntils.localHost,"TOTAL");
-    }
+          // ECM资源占比上报
+          resourceSendToIms(
+              coresdouble, memorydouble, instancedouble, HttpsUntils.localHost, "USED");
+        });
+    // ECM 剩余资源总数上报
+    resourceSendToIms(
+        totalCores.get(), totalMemory.get(), totalInstance.get(), HttpsUntils.localHost, "TOTAL");
+  }
 
-    private void resourceSendToIms(Double coresdouble, Double memorydouble, Double instancedouble, String loaclhost, String name) {
-        List<IndexEntity> list = new ArrayList<>();
-        logger.info("ResourceMonitor  send  index ");
-        String core  ="ECM_CPU_";
-        String memory  ="ECM_MEMORY_";
-        String instance  ="ECM_INSTANCE_";
-        list.add(new IndexEntity(core.concat(name), "CPU", "INDEX", loaclhost, String.valueOf(coresdouble)));
-        list.add(new IndexEntity(memory.concat(name), "MEMORY", "INDEX", loaclhost, String.valueOf(memorydouble)));
-        list.add(new IndexEntity(instance.concat(name), "INSTANCE", "INDEX", loaclhost, String.valueOf(instancedouble)));
-        try {
-            HttpsUntils.sendIndex(list);
-        } catch (IOException e) {
-            logger.warn("failed to send EcmResource index");
-        }
+  private void resourceSendToIms(
+      Double coresdouble,
+      Double memorydouble,
+      Double instancedouble,
+      String loaclhost,
+      String name) {
+    List<IndexEntity> list = new ArrayList<>();
+    logger.info("ResourceMonitor  send  index ");
+    String core = "ECM_CPU_";
+    String memory = "ECM_MEMORY_";
+    String instance = "ECM_INSTANCE_";
+    list.add(
+        new IndexEntity(core.concat(name), "CPU", "INDEX", loaclhost, String.valueOf(coresdouble)));
+    list.add(
+        new IndexEntity(
+            memory.concat(name), "MEMORY", "INDEX", loaclhost, String.valueOf(memorydouble)));
+    list.add(
+        new IndexEntity(
+            instance.concat(name), "INSTANCE", "INDEX", loaclhost, String.valueOf(instancedouble)));
+    try {
+      HttpsUntils.sendIndex(list);
+    } catch (IOException e) {
+      logger.warn("failed to send EcmResource index");
     }
+  }
 }

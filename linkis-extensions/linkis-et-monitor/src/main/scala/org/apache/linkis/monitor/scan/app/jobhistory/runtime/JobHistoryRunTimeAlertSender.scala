@@ -17,8 +17,6 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.runtime
 
-import java.util
-
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.app.jobhistory.exception.AnomalyScannerException
@@ -26,18 +24,18 @@ import org.apache.linkis.monitor.scan.constants.Constants
 import org.apache.linkis.monitor.scan.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.scan.utils.alert.ims.{MonitorAlertUtils, PooledImsAlertUtils}
 
+import java.util
+
 import scala.collection.JavaConverters._
 
 /**
- * 对前20分钟内的执行数据进行扫描，对已结束的任务进行判断，
- * 1.jobhistory中的parm字段中包含（task.notification.conditions）
- * 2.执行任务的结果是（Succeed,Failed,Cancelled,Timeout,ALL）其中任意一个，则触发告警
- * 3.job的结果是已经结束
- * 同时满足上述三个条件即可触发告警
+ * Scan the execution data within the first 20 minutes, judge the completed tasks,
+ *   1. The parm field in jobhistory contains (task.notification.conditions) 2. If the result of
+ *      executing the task is any one of (Succeed, Failed, Canceled, Timeout, ALL), an alarm will be
+ *      triggered 3.The result of the job is that it has ended The alarm can be triggered if the
+ *      above three conditions are met at the same time
  */
-class JobHistoryRunTimeAlertSender()
-  extends Observer
-    with Logging {
+class JobHistoryRunTimeAlertSender() extends Observer with Logging {
 
   override def update(e: Event, jobHistroyList: scala.Any): Unit = {
     if (!e.isInstanceOf[JobHistoryRunTimeHitEvent]) {
@@ -70,4 +68,5 @@ class JobHistoryRunTimeAlertSender()
       }
     }
   }
+
 }

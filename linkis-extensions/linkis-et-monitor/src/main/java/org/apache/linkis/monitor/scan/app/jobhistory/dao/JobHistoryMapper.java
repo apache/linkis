@@ -24,7 +24,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Date;
 import java.util.List;
 
-
 public interface JobHistoryMapper {
 
   List<JobHistory> selectJobHistory(JobHistory jobReq);

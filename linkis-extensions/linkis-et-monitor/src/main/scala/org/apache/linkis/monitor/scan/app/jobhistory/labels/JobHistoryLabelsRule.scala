@@ -17,10 +17,6 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.labels
 
-import java.util
-
-import com.google.common.collect.HashBiMap
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.app.monitor.until.CacheUtils
@@ -29,11 +25,17 @@ import org.apache.linkis.monitor.scan.core.ob.Observer
 import org.apache.linkis.monitor.scan.core.pac.{AbstractScanRule, ScannedData}
 import org.apache.linkis.server.BDPJettyServerHelper
 
+import org.apache.commons.lang3.StringUtils
+
+import java.util
+
 import scala.collection.JavaConverters._
 
+import com.google.common.collect.HashBiMap
+
 /**
- * 对前20分钟内的执行数据进行扫描，对数据的labels字段进行判断,
- * 判断依据monitor配置（linkis.monitor.jobhistory.userLabel.tenant）
+ * Scan the execution data within the previous 20 minutes and judge the labels field of the data.
+ * Judgment based on monitor configuration (linkis.monitor.jobhistory.userLabel.tenant)
  */
 class JobHistoryLabelsRule(hitObserver: Observer)
     extends AbstractScanRule(event = new JobHistoryLabelsHitEvent, observer = hitObserver)
@@ -69,7 +71,6 @@ class JobHistoryLabelsRule(hitObserver: Observer)
                 Constants.USER_LABEL_TENANT.getValue,
                 classOf[java.util.Map[String, String]]
               )
-              // 当任务的creator是qualitis（或dops）时，tenant不是qualitis发出告警
               val listIterator = configMap.keySet.iterator
               while ({
                 listIterator.hasNext
@@ -82,7 +83,6 @@ class JobHistoryLabelsRule(hitObserver: Observer)
                   }
                 }
               }
-              // 当任务代理tenant:Qualitis标签，但是creator不是qualitis标签也进行告警
               if (configMap.values().contains(tenant)) {
                 val bimap: HashBiMap[String, String] = HashBiMap.create(configMap)
                 val key = bimap.inverse().get(tenant)
@@ -103,9 +103,9 @@ class JobHistoryLabelsRule(hitObserver: Observer)
     logger.info("hit " + alertData.size() + " data in one iteration")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
-       true
+      true
     } else {
-       false
+      false
     }
   }
 

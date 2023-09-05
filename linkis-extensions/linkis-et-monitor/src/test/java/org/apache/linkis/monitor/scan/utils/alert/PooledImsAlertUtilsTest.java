@@ -18,7 +18,7 @@
 package org.apache.linkis.monitor.scan.utils.alert;
 
 import org.apache.linkis.monitor.scan.constants.Constants;
-import org.apache.linkis.monitor.scan.utils.alert.ims.JobHistoryScanImsAlertPropFileParserUtils;
+import org.apache.linkis.monitor.scan.utils.alert.ims.MonitorAlertUtils;
 import org.apache.linkis.monitor.scan.utils.alert.ims.PooledImsAlertUtils;
 import org.apache.linkis.server.utils.LinkisMainHelper;
 
@@ -38,7 +38,7 @@ public class PooledImsAlertUtilsTest {
   public void addAlert() throws Exception {
     PooledImsAlertUtils.addAlert("1st test");
     Map<String, AlertDesc> alerts =
-        JobHistoryScanImsAlertPropFileParserUtils.getAlerts(Constants.SCAN_PREFIX_ERRORCODE());
+        MonitorAlertUtils.getAlerts((Constants.SCAN_PREFIX_ERRORCODE()), null);
     for (Map.Entry<String, AlertDesc> kv : alerts.entrySet()) {
       System.out.println(kv.getKey() + ": " + kv.getValue().toString());
       PooledImsAlertUtils.addAlert(kv.getValue());

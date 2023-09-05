@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.scan.utils.alert.ims
 
-
 object ImsAlertLevel extends Enumeration {
   type ImsAlertLevel = Value
   val INFO = Value("5")

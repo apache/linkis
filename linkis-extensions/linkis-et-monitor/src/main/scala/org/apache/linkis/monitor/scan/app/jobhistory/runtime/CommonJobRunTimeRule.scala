@@ -17,24 +17,26 @@
 
 package org.apache.linkis.monitor.scan.app.jobhistory.runtime
 
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.scan.constants.Constants
 import org.apache.linkis.monitor.scan.core.ob.Observer
 import org.apache.linkis.monitor.scan.core.pac.{AbstractScanRule, ScannedData}
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
+
 import scala.collection.JavaConverters._
 
 /**
- * 对前20分钟内的执行数据进行扫描，
- * 1.数据的ObserveInfo字段进行判断是否为空，
- * 2.任务状态已经完成（Succeed,Failed,Cancelled,Timeout,ALL）
- * 满足条件即可触发告警
+ * Scan the execution data within the first 20 minutes,
+ *   1. The ObserveInfo field of the data is judged whether it is empty, 2. The task status has been
+ *      completed (Succeed, Failed, Cancelled, Timeout, ALL) Alarms can be triggered when conditions
+ *      are met
  */
 class CommonJobRunTimeRule(hitObserver: Observer)
-  extends AbstractScanRule(event = new JobHistoryRunTimeHitEvent, observer = hitObserver)
+    extends AbstractScanRule(event = new JobHistoryRunTimeHitEvent, observer = hitObserver)
     with Logging {
 
   /**
@@ -54,8 +56,12 @@ class CommonJobRunTimeRule(hitObserver: Observer)
         for (d <- sd.getData().asScala) {
           d match {
             case jobHistory: JobHistory =>
-              if (Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())
-                &&StringUtils.isNotBlank(jobHistory.getObserveInfo)) {
+              if (
+                  Constants.DIRTY_DATA_FINISHED_JOB_STATUS.contains(
+                    jobHistory.getStatus.toUpperCase()
+                  )
+                  && StringUtils.isNotBlank(jobHistory.getObserveInfo)
+              ) {
                 alertData.add(jobHistory)
               } else {
                 logger.warn("jobHistory is not completely  ， taskid :" + d)
@@ -70,9 +76,9 @@ class CommonJobRunTimeRule(hitObserver: Observer)
     logger.info("hit " + alertData.size() + " data in one iteration")
     if (alertData.size() > 0) {
       getHitEvent.notifyObserver(getHitEvent, alertData)
-       true
+      true
     } else {
-       false
+      false
     }
   }
 

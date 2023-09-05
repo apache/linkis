@@ -19,7 +19,6 @@ package org.apache.linkis.monitor.scan.utils.log
 
 import org.slf4j.LoggerFactory
 
-
 object LogUtils {
   val stdOutLogger = LoggerFactory.getLogger("PlaintTextConsoleLogger")
 }

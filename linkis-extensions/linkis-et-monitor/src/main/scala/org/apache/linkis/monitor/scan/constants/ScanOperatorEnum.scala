@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.scan.constants
 
-
 object ScanOperatorEnum extends Enumeration {
   type ScanOperatorEnum = Value
   val BML_VERSION, JOB_HISTORY = Value

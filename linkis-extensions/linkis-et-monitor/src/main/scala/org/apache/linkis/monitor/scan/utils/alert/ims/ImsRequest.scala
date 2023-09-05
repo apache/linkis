@@ -21,7 +21,6 @@ import java.util
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
-
 case class ImsRequest(@JsonProperty("alertList") alertList: util.List[AlertEntity])
 
 case class AlertEntity(

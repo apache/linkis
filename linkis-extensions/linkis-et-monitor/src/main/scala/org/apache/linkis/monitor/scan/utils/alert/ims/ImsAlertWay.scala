@@ -17,11 +17,10 @@
 
 package org.apache.linkis.monitor.scan.utils.alert.ims
 
-
 object ImsAlertWay extends Enumeration {
   type ImsAlertWay = Value
   val NoAlert = Value("0")
-  val RTX = Value("1")
+  val WXWork = Value("1")
   val Email = Value("2")
   val WeChat = Value("3")
 }

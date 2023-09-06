@@ -1,0 +1,259 @@
+<template>
+    <div class="wrapper">
+        <Count></Count>
+        <!-- <div @click="test">test</div> -->
+        <Filter ref="filterRef" :checkedKeys="checkedKeys"></Filter>
+        <f-table
+            :data="data"
+            class="table"
+            v-model:checkedKeys="checkedKeys"
+            :rowKey="
+                (row: Record<string, number|string>) => {
+                    return row.taskId;
+                }
+            "
+        >
+            <f-table-column
+                v-if="filterRef?.isCheckingTaskToStop"
+                type="selection"
+                :width="32"
+                fixed="left"
+            ></f-table-column>
+            <template v-for="col in tableColumns" :key="col.label">
+                <f-table-column
+                    v-if="col.formatter"
+                    :prop="col.prop"
+                    :label="col.label"
+                    :action="col.action"
+                    :formatter="col.formatter"
+                >
+                </f-table-column>
+                <f-table-column
+                    v-else
+                    :prop="col.prop"
+                    :label="col.label"
+                    :action="col.action"
+                >
+                </f-table-column>
+            </template>
+        </f-table>
+
+        <FPagination
+            class="pagination"
+            show-size-changer
+            :pageSizeOption="pageSizeOption"
+            :total-count="1000"
+            @change="handleChange"
+        ></FPagination>
+
+        <Drawer
+            ref="drawerRef"
+            :isShow="isShowDrawer"
+            @closeDrawer="setIsShowDrawer"
+        ></Drawer>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { reactive, ref, h, Ref } from 'vue';
+import Drawer from './drawer.vue';
+import Filter from './filter.vue';
+import Count from './count.vue';
+import TooltipText from './tooltipText.vue';
+
+const filterRef = ref<Ref<{ isCheckingTaskToStop: boolean }> | null>(null);
+
+const drawerRef = ref<Ref<{
+    // eslint-disable-next-line no-unused-vars
+    open: (rawData: Record<string, string | number>) => void;
+        }> | null>(null);
+const isShowDrawer = ref(false);
+const checkedKeys = reactive<Array<string>>([]);
+const pageSizeOption = reactive([10, 20, 30, 50, 100]);
+
+// TODO: subsequent adjustments to standard enumeration values
+const statusEnum: Record<string | number, Record<string, string>> = {
+    1: {
+        text: '排队中',
+        color: '#F29360',
+    },
+    2: {
+        text: '运行中',
+        color: '#F29360',
+    },
+    3: {
+        text: '运行成功',
+        color: '#00CB91',
+    },
+    4: {
+        text: '失败',
+        color: '#F75F56',
+    },
+    5: {
+        text: '取消',
+        color: '#93949B',
+    },
+    6: {
+        text: '资源申请中',
+        color: '#F29360',
+    },
+    7: {
+        text: '超时',
+        color: '#F75F56',
+    },
+};
+
+const setIsShowDrawer = (flag: boolean) => {
+    isShowDrawer.value = flag;
+};
+
+const tableColumns = [
+    {
+        prop: 'taskId',
+        label: '任务ID',
+    },
+    {
+        prop: 'taskName',
+        label: '任务名',
+    },
+    {
+        prop: 'status',
+        label: '状态',
+        formatter: ({ row }: { row: Record<string, number | string> }) => {
+            const attr = statusEnum[row.status];
+            return h('div', { style: `color:${attr.color}` }, attr.text);
+        },
+    },
+    {
+        prop: 'time',
+        label: '已耗时',
+    },
+    {
+        prop: 'query',
+        label: '查询语句',
+        formatter: ({ row }: { row: Record<string, number | string> }) =>
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            h(TooltipText, {
+                text: row.query,
+                tipTitle: '这是标题',
+                tipContent: '这是内容',
+            }),
+    },
+    {
+        label: '关键信息',
+        action: [
+            {
+                label: '查看',
+                func: (row: any) => {
+                    console.log('[table.action] [action.编辑] row:', row);
+                },
+            },
+        ],
+    },
+    {
+        prop: 'application',
+        label: '应用',
+    },
+    {
+        prop: 'engine',
+        label: '引擎',
+    },
+    {
+        prop: 'creator',
+        label: '创建人',
+    },
+    {
+        prop: 'creatingTime',
+        label: '创建时间',
+    },
+    {
+        label: '操作',
+        action: [
+            {
+                label: '查看',
+                func: (rawData: Record<string, string | number>) => {
+                    drawerRef.value?.open?.(rawData);
+                    // setIsShowDrawer(true);
+                },
+            },
+        ],
+    },
+];
+
+// TODO: replace mock data with the real
+const data = reactive([
+    {
+        taskId: '1',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },
+    {
+        taskId: '2',
+        taskName: '任务',
+        status: '3',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },
+    {
+        taskId: '3',
+        taskName: '任务',
+        status: '4',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },
+    {
+        taskId: '4',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },
+]);
+
+const handleChange = (currentPage: string, pageSize: string) => {
+    console.log(
+        '[pagination.sizes] [handleChange] currentPage:',
+        currentPage,
+        ' pageSize:',
+        pageSize,
+    );
+};
+</script>
+
+<style scoped src="./index.less"></style>
+<style scoped>
+.wrapper {
+    position: relative;
+    height: 100%;
+    .table {
+        right: 0;
+        top: 0;
+        /* height:
+        calc(100% - 32px); */
+    }
+    .pagination {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+}
+</style>

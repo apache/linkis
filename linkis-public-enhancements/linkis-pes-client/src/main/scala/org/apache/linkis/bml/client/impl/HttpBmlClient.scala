@@ -137,15 +137,6 @@ class HttpBmlClient(
     if (version != null) bmlDownloadAction.getParameters.asScala += "version" -> version
     bmlDownloadAction.setUser(user)
     val downloadResult = dwsClient.execute(bmlDownloadAction)
-    //    val retIs = new ByteArrayInputStream(IOUtils.toString(bmlDownloadAction.getInputStream).getBytes("UTF-8"))
-    //    if (downloadResult != null) {
-    //      bmlDownloadAction.getResponse match {
-    //        case r: CloseableHttpResponse =>
-    //          Utils.tryAndWarn(r.close())
-    //        case o: Any =>
-    //          info(s"Download response : ${o.getClass.getName} cannot close.")
-    //      }
-    //    }
     BmlDownloadResponse(
       isSuccess = true,
       bmlDownloadAction.getInputStream,

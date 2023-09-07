@@ -60,7 +60,7 @@ public class ConfigKey {
 
   private String enTreeName;
 
-  private String templateRequired;
+  private Boolean templateRequired;
 
   public String getEngineType() {
     return engineType;
@@ -190,11 +190,11 @@ public class ConfigKey {
     this.enTreeName = enTreeName;
   }
 
-  public String getTemplateRequired() {
+  public Boolean getTemplateRequired() {
     return templateRequired;
   }
 
-  public void setTemplateRequired(String templateRequired) {
+  public void setTemplateRequired(Boolean templateRequired) {
     this.templateRequired = templateRequired;
   }
 

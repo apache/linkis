@@ -25,11 +25,11 @@ import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.junit.jupiter.api.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.jupiter.api.*;
 
 /** StdLabelBuilderFactory Tester */
 @SpringBootTest(classes = {StdLabelBuilderFactory.class})
@@ -80,13 +80,12 @@ public class StdLabelBuilderFactoryTest {
   }
 
   @Test
-  public void test(){
-    Map input= new HashMap<String,String>();
-    input.put("userCreator","username-IDE");
-    input.put("yarnCluster","bdp-test");
-    input.put("executeOnce","true");
-    List<Label> res= stdLabelBuilderFactory.getLabels(input);
+  public void test() {
+    Map input = new HashMap<String, String>();
+    input.put("userCreator", "username-IDE");
+    input.put("yarnCluster", "bdp-test");
+    input.put("executeOnce", "true");
+    List<Label> res = stdLabelBuilderFactory.getLabels(input);
     System.out.println(res);
   }
-
 }

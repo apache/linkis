@@ -18,6 +18,7 @@
 update  linkis_ps_configuration_config_key set engine_conn_type = "" where engine_conn_type is NULL;
 
 INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13008','任务产生的序列化结果总大小超过了配置的spark.driver.maxResultSize限制。请检查您的任务，看看是否有可能减小任务产生的结果大小，或则可以考虑压缩或合并结果，以减少传输的数据量','is bigger than spark.driver.maxResultSize',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('13009','您的任务因为引擎退出（退出可能是引擎进程OOM或者主动kill引擎）导致失败','ERROR EC exits unexpectedly and actively kills the task',0);
 
 update  linkis_ps_configuration_config_key set template_required = 1 where `key` in (
 "spark.executor.instances",
@@ -36,11 +37,11 @@ is_hidden, is_advanced, `level`,
 treeName, boundary_type, en_treeName,
 en_description, en_name)
 VALUES(
-'spark.conf', '多个参数使用分号[;]分隔 例如spark.sql.shuffle.partitions=10;', 'spark自定义配置参数',
+'spark.conf', '多个参数使用分号[;]分隔 例如spark.shuffle.spill=true;', 'spark自定义配置参数',
 null, 'None', NULL, 'spark',
 0, 1, 1,
 'spark资源设置', 0, 'Spark Resource Settings',
-'Multiple parameters are separated by semicolons [;] For example, spark.sql.shuffle.partitions=10;', 'Spark Custom Configuration Parameters');
+'Multiple parameters are separated by semicolons [;] For example, spark.shuffle.compress=ture;', 'Spark Custom Configuration Parameters');
 
 INSERT INTO `linkis_ps_configuration_key_engine_relation` (`config_key_id`, `engine_type_label_id`)
 (

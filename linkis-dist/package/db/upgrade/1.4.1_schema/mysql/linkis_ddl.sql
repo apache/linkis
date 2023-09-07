@@ -17,16 +17,16 @@
 
 
 
-ALTER TABLE `linkis_ps_udf_user_load` ADD CONSTRAINT  `uniq_uid_uname` UNIQUE (`udf_id`, `user_name`);
-ALTER TABLE `linkis_ps_bml_resources` ADD CONSTRAINT  `uniq_rid_eflag` UNIQUE (`resource_id`, `enable_flag`);
+ALTER TABLE linkis_ps_udf_user_load ADD CONSTRAINT  uniq_uid_uname UNIQUE (`udf_id`, `user_name`);
+ALTER TABLE linkis_ps_bml_resources ADD CONSTRAINT  uniq_rid_eflag UNIQUE (`resource_id`, `enable_flag`);
 
 
-ALTER TABLE `linkis_ps_configuration_config_key` ADD UNIQUE `uniq_key_ectype` (`key`,`engine_conn_type`);
+ALTER TABLE linkis_ps_configuration_config_key ADD UNIQUE uniq_key_ectype (`key`,`engine_conn_type`);
 
-ALTER TABLE `linkis_ps_configuration_config_key` modify column `engine_conn_type` varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc';
+ALTER TABLE linkis_ps_configuration_config_key modify column engine_conn_type varchar(50) DEFAULT '' COMMENT 'engine type,such as spark,hive etc';
 
 ALTER TABLE linkis_ps_common_lock ADD COLUMN locker VARCHAR(255) NOT NULL COMMENT 'locker';
 
-ALTER TABLE `linkis_ps_configuration_config_key` ADD column `template_required` tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must'
+ALTER TABLE linkis_ps_configuration_config_key ADD column template_required tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must'
 
-ALTER TABLE  linkis_ps_configuration_config_value modify COLUMN  config_value varchar(500);
+ALTER TABLE linkis_ps_configuration_config_value modify COLUMN  config_value varchar(500);

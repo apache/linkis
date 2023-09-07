@@ -90,7 +90,8 @@ class DriverAndYarnReqResourceService(
       )
 
       if (
-        StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils.isNotBlank(CPUThreshold) && StringUtils
+          StringUtils.isNotBlank(acrossClusterTask) && acrossClusterTask.toBoolean && StringUtils
+            .isNotBlank(CPUThreshold) && StringUtils
             .isNotBlank(MemoryThreshold)
           && StringUtils
             .isNotBlank(CPUPercentageThreshold) && StringUtils.isNotBlank(MemoryPercentageThreshold)
@@ -115,7 +116,10 @@ class DriverAndYarnReqResourceService(
         if (!acrossClusterFlag) {
           logger.info(s"user: $user, creator: $creator task not meet the threshold rule")
 
-          throw new RMWarnException(RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode, RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorDesc)
+          throw new RMWarnException(
+            RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+            RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorDesc
+          )
         }
 
         logger.info(s"user: $user, creator: $creator task meet the threshold rule")

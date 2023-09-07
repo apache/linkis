@@ -51,7 +51,7 @@
         <result column="level" property="level" jdbcType="TINYINT"/>
         <result column="treeName" property="treeName" jdbcType="VARCHAR"/>
         <result column="boundary_type" property="boundaryType" jdbcType="TINYINT"/>
-        <result column="template_required" property="templateRequired" jdbcType="VARCHAR"/>
+        <result column="template_required" property="templateRequired" jdbcType="TINYINT"/>
     </resultMap>
 
     <resultMap id="ConfigValueMap" type="org.apache.linkis.configuration.entity.ConfigValue">

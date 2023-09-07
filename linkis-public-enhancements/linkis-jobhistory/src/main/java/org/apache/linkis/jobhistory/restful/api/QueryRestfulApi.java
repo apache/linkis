@@ -25,6 +25,7 @@ import org.apache.linkis.jobhistory.conf.JobhistoryConfiguration;
 import org.apache.linkis.jobhistory.conversions.TaskConversions;
 import org.apache.linkis.jobhistory.entity.*;
 import org.apache.linkis.jobhistory.service.JobHistoryQueryService;
+import org.apache.linkis.jobhistory.transitional.TaskStatus;
 import org.apache.linkis.jobhistory.util.QueryUtils;
 import org.apache.linkis.protocol.constants.TaskConstant;
 import org.apache.linkis.server.Message;
@@ -101,7 +102,7 @@ public class QueryRestfulApi {
       return Message.error(
           "The corresponding job was not found, or there may be no permission to view the job"
               + "(没有找到对应的job，也可能是没有查看该job的权限)");
-    } else if (taskVO.getStatus().equals("Running")) {
+    } else if (taskVO.getStatus().equals(TaskStatus.Running.toString())) {
       //  任务运行时不显示异常信息(Do not display exception information during task runtime)
       taskVO.setErrCode(null);
       taskVO.setErrDesc(null);

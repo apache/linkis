@@ -298,7 +298,9 @@ class DefaultEngineCreateService
       val queueName = props.getOrDefault("wds.linkis.rm.yarnqueue", "default")
       val newQueueName = queueName + "_" + queueRuleSuffix
       props.put("wds.linkis.rm.yarnqueue", newQueueName)
-      logger.info(s"Switch queues according to queueRule with queue name : $queueName to $newQueueName")
+      logger.info(
+        s"Switch queues according to queueRule with queue name : $queueName to $newQueueName"
+      )
     }
 
     val timeoutEngineResourceRequest = TimeoutEngineResourceRequest(

@@ -276,11 +276,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         temp.put("validateRange", configKey.getValidateRange());
         temp.put("boundaryType", configKey.getBoundaryType());
         temp.put("defaultValue", configKey.getDefaultValue());
-        if (StringUtils.isNotBlank(configKey.getTemplateRequired())) {
-          temp.put("require", configKey.getTemplateRequired().equals("1"));
-        } else {
-          temp.put("require", "false");
-        }
+        temp.put("require", configKey.getTemplateRequired());
         temp.put("keyId", configKey.getId());
 
         Long keyId = configKey.getId();

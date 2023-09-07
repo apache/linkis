@@ -187,11 +187,7 @@ public class ConfigurationRestfulApi {
       temp.put("validateRange", configKey.getValidateRange());
       temp.put("boundaryType", configKey.getBoundaryType());
       temp.put("defaultValue", configKey.getDefaultValue());
-      if (StringUtils.isNotBlank(configKey.getTemplateRequired())) {
-        temp.put("require", configKey.getTemplateRequired().equals("1"));
-      } else {
-        temp.put("require", "false");
-      }
+      temp.put("require", configKey.getTemplateRequired());
       filterResult.add(temp);
     }
 
@@ -371,6 +367,7 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     if (StringUtils.isNotBlank(sparkConf)) {
       // Check if there are any duplicates in spark. conf
+      // spark.conf : spark.shuffle.compress=ture;spark.executor.memory=4g
       String[] split = sparkConf.split(";");
       int setSize =
           Arrays.stream(split).map(s -> s.split("=")[0].trim()).collect(Collectors.toSet()).size();
@@ -721,9 +718,6 @@ public class ConfigurationRestfulApi {
     }
     if (null == boundaryType) {
       return Message.error("boundaryType cannot be empty");
-    }
-    if (null == configKey.getTemplateRequired()) {
-      configKey.setTemplateRequired("1");
     }
     if (StringUtils.isNotEmpty(defaultValue)
         && !validatorManager

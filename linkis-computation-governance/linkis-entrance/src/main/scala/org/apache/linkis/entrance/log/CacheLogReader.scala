@@ -49,11 +49,13 @@ class CacheLogReader(logPath: String, charset: String, sharedCache: Cache, user:
     if (fileSystem == null) lock synchronized {
       if (fileSystem == null) {
 
-        if (StorageUtils.isHDFSPath(fsPath) && EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
-          FSFactory.getFs(fsPath).asInstanceOf[FileSystem]
-        } else {
-          fileSystem = FSFactory.getFsByProxyUser(fsPath, user)
-        }
+        fileSystem =
+          if (StorageUtils.isHDFSPath(fsPath) && EntranceConfiguration.ENABLE_HDFS_JVM_USER) {
+            FSFactory.getFs(new FsPath(logPath)).asInstanceOf[FileSystem]
+          } else {
+            FSFactory.getFsByProxyUser(new FsPath(logPath), user).asInstanceOf[FileSystem]
+          }
+
         fileSystem.init(new util.HashMap[String, String]())
       }
     }

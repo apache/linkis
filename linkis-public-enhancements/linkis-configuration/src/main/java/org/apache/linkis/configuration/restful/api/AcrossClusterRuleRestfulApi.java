@@ -77,7 +77,8 @@ public class AcrossClusterRuleRestfulApi {
     try {
       acrossClusterRuleService.validAcrossClusterRule(id, isValid);
     } catch (Exception e) {
-      return Message.error("valid acrossClusterRule failed：" + e.getMessage());
+      log.info("valid acrossClusterRule failed：" + e.getMessage());
+      return Message.error("valid acrossClusterRule failed");
     }
 
     return Message.ok();

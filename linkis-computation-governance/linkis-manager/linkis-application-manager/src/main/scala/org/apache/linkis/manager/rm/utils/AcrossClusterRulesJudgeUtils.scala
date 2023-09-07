@@ -19,47 +19,49 @@ package org.apache.linkis.manager.rm.utils
 
 import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.common.entity.resource.YarnResource
+import org.apache.linkis.manager.common.exception.RMWarnException
+import org.apache.linkis.manager.rm.exception.RMErrorCode
 
 object AcrossClusterRulesJudgeUtils extends Logging {
 
-  def acrossClusterRuleJudge(
+  def acrossClusterRuleCheck(
       leftResource: YarnResource,
       usedResource: YarnResource,
       maxResource: YarnResource,
       leftCPUThreshold: Int,
       leftMemoryThreshold: Int,
-      UsedCPUPercentageThreshold: Double,
-      UsedMemoryPercentageThreshold: Double
-  ): Boolean = {
+      CPUPercentageThreshold: Double,
+      MemoryPercentageThreshold: Double
+  ): Unit = {
     if (leftResource != null && usedResource != null && maxResource != null) {
       val leftQueueMemory = leftResource.queueMemory / Math.pow(1024, 3).toLong
-      logger.info(
-        s"leftResource.queueCores: ${leftResource.queueCores}, leftCPUThreshold: $leftCPUThreshold," +
-          s"leftQueueMemory: $leftQueueMemory, leftMemoryThreshold: $leftMemoryThreshold"
-      )
 
       if (leftResource.queueCores > leftCPUThreshold && leftQueueMemory > leftMemoryThreshold) {
-
         val usedCPUPercentage =
           usedResource.queueCores.asInstanceOf[Double] / maxResource.queueCores
             .asInstanceOf[Double]
         val usedMemoryPercentage = usedResource.queueMemory
           .asInstanceOf[Double] / maxResource.queueMemory.asInstanceOf[Double]
 
-        logger.info(
-          s"usedCPUPercentage: $usedCPUPercentage, UsedCPUPercentageThreshold: $UsedCPUPercentageThreshold" +
-            s"usedMemoryPercentage: $usedMemoryPercentage, UsedMemoryPercentageThreshold: $UsedMemoryPercentageThreshold"
-        )
-
         if (
-            usedCPUPercentage < UsedCPUPercentageThreshold && usedMemoryPercentage < UsedMemoryPercentageThreshold
+            usedCPUPercentage < CPUPercentageThreshold && usedMemoryPercentage < MemoryPercentageThreshold
         ) {
-          return true
+          return
+        } else {
+          throw new RMWarnException(
+            RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+              s"usedCPUPercentage: $usedCPUPercentage, CPUPercentageThreshold: $CPUPercentageThreshold" +
+                s"usedMemoryPercentage: $usedMemoryPercentage, MemoryPercentageThreshold: $MemoryPercentageThreshold"
+          )
         }
+      } else {
+        throw new RMWarnException(
+          RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+          s"leftResource.queueCores: ${leftResource.queueCores}, leftCPUThreshold: $leftCPUThreshold," +
+            s"leftQueueMemory: $leftQueueMemory, leftMemoryThreshold: $leftMemoryThreshold"
+        )
       }
     }
-
-    false
   }
 
 }

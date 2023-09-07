@@ -23,6 +23,20 @@ import org.apache.linkis.manager.common.entity.enumeration.MaintainType
 
 object AMConfiguration {
 
+  val YARN_QUEUE_NAME_CONFIG_KEY = "wds.linkis.rm.yarnqueue"
+
+  val ACROSS_CLUSTER_QUEUE_SUFFIX = "queueRuleSuffix"
+
+  val ACROSS_CLUSTER_TASK = "acrossClusterTask"
+
+  val ACROSS_CLUSTER_CPU_THRESHOLD = "CPUThreshold"
+
+  val ACROSS_CLUSTER_MEMORY_THRESHOLD = "MemoryThreshold"
+
+  val ACROSS_CLUSTER_CPU_PERCENTAGE_THRESHOLD = "CPUPercentageThreshold"
+
+  val ACROSS_CLUSTER_MEMORY_PERCENTAGE_THRESHOLD = "MemoryPercentageThreshold"
+
   val ECM_ADMIN_OPERATIONS = CommonVars("wds.linkis.governance.admin.operations", "")
 
   val ENGINE_START_MAX_TIME =

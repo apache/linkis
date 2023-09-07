@@ -17,13 +17,15 @@
 
 package org.apache.linkis.configuration.util;
 
-import org.apache.linkis.configuration.conf.AcrossClusterConfiguration;
+import org.apache.linkis.server.BDPJettyServerHelper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import static org.apache.linkis.configuration.conf.AcrossClusterRuleKeys.*;
 
 public class CommonUtils {
   public static boolean ipCheck(String str) {
@@ -49,17 +51,17 @@ public class CommonUtils {
     Map<String, String> timeRuleMap = new HashMap<>();
     Map<String, String> thresholdRuleMap = new HashMap<>();
     Map<String, Object> ruleMap = new HashMap<>();
-    queueRuleMap.put("suffix", AcrossClusterConfiguration.ACROSS_CLUSTER_QUEUE_SUFFIX());
-    timeRuleMap.put("startTime", startTime);
-    timeRuleMap.put("endTime", endTime);
-    thresholdRuleMap.put("CPUThreshold", CPUThreshold);
-    thresholdRuleMap.put("MemoryThreshold", MemoryThreshold);
-    thresholdRuleMap.put("CPUPercentageThreshold", CPUPercentageThreshold);
-    thresholdRuleMap.put("MemoryPercentageThreshold", MemoryPercentageThreshold);
-    ruleMap.put("queueRule", queueRuleMap);
-    ruleMap.put("timeRule", timeRuleMap);
-    ruleMap.put("thresholdRule", thresholdRuleMap);
-    ObjectMapper map2Json = new ObjectMapper();
+    queueRuleMap.put(KEY_QUEUE_SUFFIX, KEY_ACROSS_CLUSTER_QUEUE_SUFFIX);
+    timeRuleMap.put(KEY_START_TIME, startTime);
+    timeRuleMap.put(KEY_END_TIME, endTime);
+    thresholdRuleMap.put(KEY_CPU_THRESHOLD, CPUThreshold);
+    thresholdRuleMap.put(KEY_MEMORY_THRESHOLD, MemoryThreshold);
+    thresholdRuleMap.put(KEY_CPU_PERCENTAGE_THRESHOLD, CPUPercentageThreshold);
+    thresholdRuleMap.put(KEY_MEMORY_PERCENTAGE_THRESHOLD, MemoryPercentageThreshold);
+    ruleMap.put(KEY_QUEUE_RULE, queueRuleMap);
+    ruleMap.put(KEY_TIME_RULE, timeRuleMap);
+    ruleMap.put(KEY_THRESHOLD_RULE, thresholdRuleMap);
+    ObjectMapper map2Json = BDPJettyServerHelper.jacksonJson();
     String rules = map2Json.writeValueAsString(ruleMap);
 
     return rules;

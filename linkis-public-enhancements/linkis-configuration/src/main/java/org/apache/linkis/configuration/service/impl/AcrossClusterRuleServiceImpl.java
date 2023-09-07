@@ -41,15 +41,12 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
   @Override
   public void deleteAcrossClusterRule(String creator, String username) throws Exception {
     ruleMapper.deleteAcrossClusterRule(creator, username);
-    logger.info("delete acrossClusterRule success");
-    return;
   }
 
   @Override
   public void updateAcrossClusterRule(AcrossClusterRule newRule) throws Exception {
     AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(newRule.getId());
     if (beforeRule == null) {
-      logger.info("acrossClusterRule not exit");
       throw new Exception("acrossClusterRule not exit");
     }
 
@@ -59,8 +56,6 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     newRule.setUpdateTime(time);
 
     ruleMapper.updateAcrossClusterRule(newRule);
-    logger.info("update acrossClusterRule success");
-    return;
   }
 
   @Override
@@ -69,8 +64,6 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     acrossClusterRule.setCreateTime(time);
     acrossClusterRule.setUpdateTime(time);
     ruleMapper.insertAcrossClusterRule(acrossClusterRule);
-    logger.info("insert acrossClusterRule success");
-    return;
   }
 
   @Override
@@ -102,12 +95,9 @@ public class AcrossClusterRuleServiceImpl implements AcrossClusterRuleService {
     AcrossClusterRule beforeRule = ruleMapper.getAcrossClusterRule(id);
 
     if (beforeRule == null) {
-      logger.info("acrossClusterRule not exit");
       throw new Exception("acrossClusterRule not exit");
     }
 
     ruleMapper.validAcrossClusterRule(isValid, id);
-    logger.info("valid acrossClusterRule success");
-    return;
   }
 }

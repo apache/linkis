@@ -293,11 +293,11 @@ class DefaultEngineCreateService
       })
     }
 
-    val queueRuleSuffix = props.get("queueRuleSuffix")
+    val queueRuleSuffix = props.get(AMConfiguration.ACROSS_CLUSTER_QUEUE_SUFFIX)
     if (StringUtils.isNotBlank(queueRuleSuffix)) {
-      val queueName = props.getOrDefault("wds.linkis.rm.yarnqueue", "default")
+      val queueName = props.getOrDefault(AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY, "default")
       val newQueueName = queueName + "_" + queueRuleSuffix
-      props.put("wds.linkis.rm.yarnqueue", newQueueName)
+      props.put(AMConfiguration.YARN_QUEUE_NAME_CONFIG_KEY, newQueueName)
       logger.info(
         s"Switch queues according to queueRule with queue name : $queueName to $newQueueName"
       )

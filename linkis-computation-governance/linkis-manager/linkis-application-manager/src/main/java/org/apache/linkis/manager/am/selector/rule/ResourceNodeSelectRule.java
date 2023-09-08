@@ -67,9 +67,9 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
                 .getNodeResource()
                 .getLeftResource()
                 .moreThan(nodeBRm.getNodeResource().getLeftResource())) {
-              return 1;
-            } else {
               return -1;
+            } else {
+              return 1;
             }
           }
         } catch (Throwable t) {

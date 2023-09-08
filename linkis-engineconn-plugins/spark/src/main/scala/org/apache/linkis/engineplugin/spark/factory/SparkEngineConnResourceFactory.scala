@@ -113,7 +113,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
         Quantity.parse(SPARK_K8S_EXECUTOR_REQUEST_CORES.getValue(properties))
       (Quantity.getAmountInBytes(executorCoresQuantity).doubleValue() * 1000).toLong
     } else {
-      LINKIS_SPARK_EXECUTOR_CORES.getValue(properties) * 1000L
+      val sparkDefaultExecutorCores: Int = LINKIS_SPARK_EXECUTOR_CORES.getValue(properties)
+      properties.put(SPARK_K8S_EXECUTOR_REQUEST_CORES.key, sparkDefaultExecutorCores.toString)
+      sparkDefaultExecutorCores * 1000L
     }
     val executorMemory = LINKIS_SPARK_EXECUTOR_MEMORY.getValue(properties)
     val executorMemoryWithUnit = if (StringUtils.isNumeric(executorMemory)) {
@@ -126,7 +128,9 @@ class SparkEngineConnResourceFactory extends AbstractEngineResourceFactory with 
         Quantity.parse(SPARK_K8S_DRIVER_REQUEST_CORES.getValue(properties))
       (Quantity.getAmountInBytes(executorCoresQuantity).doubleValue() * 1000).toLong
     } else {
-      LINKIS_SPARK_DRIVER_CORES.getValue(properties) * 1000L
+      val sparkDefaultDriverCores: Int = LINKIS_SPARK_DRIVER_CORES.getValue(properties)
+      properties.put(SPARK_K8S_DRIVER_REQUEST_CORES.key, sparkDefaultDriverCores.toString)
+      sparkDefaultDriverCores * 1000L
     }
     val driverMemory = LINKIS_SPARK_DRIVER_MEMORY.getValue(properties)
     val driverMemoryWithUnit = if (StringUtils.isNumeric(driverMemory)) {

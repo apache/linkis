@@ -27,11 +27,15 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.util.EntityUtils
 
+import java.util
+
 object SparkJobProgressUtil extends Logging {
 
-  def getProgress(applicationId: String): Float = {
+  def getProgress(applicationId: String, podIP: String = ""): Float = {
     if (StringUtils.isBlank(applicationId)) return 0f
-    val sparkJobsResult = getSparkJobInfo(applicationId)
+    val sparkJobsResult =
+      if (StringUtils.isBlank(podIP)) getSparkJobInfo(applicationId)
+      else getKubernetesSparkJobInfo(applicationId, podIP)
     if (sparkJobsResult.isEmpty) return 0f
     val tuple = sparkJobsResult
       .filter(sparkJobResult => {
@@ -48,8 +52,10 @@ object SparkJobProgressUtil extends Logging {
     tuple._2.toFloat / tuple._1
   }
 
-  def getSparkJobProgressInfo(applicationId: String): Array[JobProgressInfo] = {
-    val sparkJobsResult = getSparkJobInfo(applicationId)
+  def getSparkJobProgressInfo(applicationId: String, podIP: String = ""): Array[JobProgressInfo] = {
+    val sparkJobsResult =
+      if (StringUtils.isBlank(podIP)) getSparkJobInfo(applicationId)
+      else getKubernetesSparkJobInfo(applicationId, podIP)
     if (sparkJobsResult.isEmpty) {
       Array.empty
     } else {
@@ -92,6 +98,37 @@ object SparkJobProgressUtil extends Logging {
       }
       JsonUtils.jackson.readValue(
         get(getSparkJobsUrl),
+        classOf[Array[java.util.Map[String, Object]]]
+      )
+    }
+
+  def getKubernetesSparkJobInfo(
+      applicationId: String,
+      podIP: String
+  ): Array[java.util.Map[String, Object]] =
+    if (StringUtils.isBlank(applicationId) || StringUtils.isBlank(podIP)) Array.empty
+    else {
+      val getSparkJobsStateUrl = s"http://$podIP:4040/api/v1/applications/$applicationId"
+      logger.info(s"get spark job state from kubernetes spark ui, url: $getSparkJobsStateUrl")
+      val appStateResult =
+        JsonUtils.jackson.readValue(
+          get(getSparkJobsStateUrl),
+          classOf[java.util.Map[String, Object]]
+        )
+      val appAttemptList = appStateResult.get("attempts").asInstanceOf[java.util.List[Object]]
+      if (appAttemptList == null || appAttemptList.size() == 0) return Array.empty
+      val appLastAttempt =
+        appAttemptList.get(appAttemptList.size() - 1).asInstanceOf[util.Map[String, Object]]
+      val isLastAttemptCompleted = appLastAttempt.get("completed").asInstanceOf[Boolean]
+      if (isLastAttemptCompleted) return Array.empty
+      val getSparkJobsInfoUrl = s"http://$podIP:4040/api/v1/applications/$applicationId/jobs"
+      logger.info(s"get spark job info from kubernetes spark ui: $getSparkJobsInfoUrl")
+      val jobs = get(getSparkJobsInfoUrl)
+      if (StringUtils.isBlank(jobs)) {
+        return Array.empty
+      }
+      JsonUtils.jackson.readValue(
+        get(getSparkJobsInfoUrl),
         classOf[Array[java.util.Map[String, Object]]]
       )
     }

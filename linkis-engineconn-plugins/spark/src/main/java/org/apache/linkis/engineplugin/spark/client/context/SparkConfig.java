@@ -50,6 +50,9 @@ public class SparkConfig {
 
   private String k8sNamespace;
   private String k8sFileUploadPath;
+
+  private String k8sDriverRequestCores;
+  private String k8sExecutorRequestCores;
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
   private String appName; // ("")
@@ -174,6 +177,22 @@ public class SparkConfig {
 
   public void setK8sImage(String k8sImage) {
     this.k8sImage = k8sImage;
+  }
+
+  public String getK8sDriverRequestCores() {
+    return k8sDriverRequestCores;
+  }
+
+  public void setK8sDriverRequestCores(String k8sDriverRequestCores) {
+    this.k8sDriverRequestCores = k8sDriverRequestCores;
+  }
+
+  public String getK8sExecutorRequestCores() {
+    return k8sExecutorRequestCores;
+  }
+
+  public void setK8sExecutorRequestCores(String k8sExecutorRequestCores) {
+    this.k8sExecutorRequestCores = k8sExecutorRequestCores;
   }
 
   public String getJavaHome() {
@@ -441,6 +460,12 @@ public class SparkConfig {
         + '\''
         + ", k8sNamespace='"
         + k8sNamespace
+        + '\''
+        + ", k8sDriverRequestCores='"
+        + k8sDriverRequestCores
+        + '\''
+        + ", k8sExecutorRequestCores='"
+        + k8sExecutorRequestCores
         + '\''
         + ", deployMode='"
         + deployMode

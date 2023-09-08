@@ -22,10 +22,16 @@ import org.apache.linkis.engineconn.common.engineconn.EngineConn
 import org.apache.linkis.engineconn.once.executor.OnceExecutor
 import org.apache.linkis.engineconn.once.executor.creation.OnceExecutorFactory
 import org.apache.linkis.engineplugin.spark.context.SparkEngineConnContext
-import org.apache.linkis.engineplugin.spark.executor.SparkSubmitOnceExecutor
+import org.apache.linkis.engineplugin.spark.executor.{
+  SparkOnKubernetesSubmitOnceExecutor,
+  SparkSubmitOnceExecutor
+}
+import org.apache.linkis.manager.common.conf.RMConfiguration.DEFAULT_KUBERNETES_TYPE
 import org.apache.linkis.manager.label.entity.Label
+import org.apache.linkis.manager.label.entity.cluster.ClusterLabel
 import org.apache.linkis.manager.label.entity.engine.RunType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
+import org.apache.linkis.manager.label.utils.LabelUtil
 
 class SparkOnceExecutorFactory extends OnceExecutorFactory {
 
@@ -34,11 +40,21 @@ class SparkOnceExecutorFactory extends OnceExecutorFactory {
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn,
       labels: Array[Label[_]]
-  ): OnceExecutor =
+  ): OnceExecutor = {
+    val clusterLabel = LabelUtil.getLabelFromArray[ClusterLabel](labels)
     engineConn.getEngineConnSession match {
       case context: SparkEngineConnContext =>
-        new SparkSubmitOnceExecutor(id, context)
+        if (
+            null != clusterLabel && clusterLabel.getClusterType.equalsIgnoreCase(
+              DEFAULT_KUBERNETES_TYPE.getValue
+            )
+        ) {
+          new SparkOnKubernetesSubmitOnceExecutor(id, context)
+        } else {
+          new SparkSubmitOnceExecutor(id, context)
+        }
     }
+  }
 
   override protected def getRunType: RunType = RunType.JAR
 }

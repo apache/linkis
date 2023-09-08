@@ -61,7 +61,7 @@ public class PooledImsAlertSenderTest {
     System.out.println(desc);
     String url = "http://172.21.0.130:10812/ims_data_access/send_alarm_by_json.do";
 
-    PooledImsAlertSender sender = new PooledImsAlertSender("5136", url, receivers);
+    PooledImsAlertSender sender = new PooledImsAlertSender(url);
     sender.doSendAlert(desc);
   }
 }

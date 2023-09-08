@@ -17,7 +17,7 @@
 
 package org.apache.linkis.monitor.scan.app.monitor.scheduled;
 
-import org.apache.linkis.bml.cleaner.service.CleanerService;
+import org.apache.linkis.monitor.scan.app.bml.cleaner.service.CleanerService;
 import org.apache.linkis.monitor.scan.utils.log.LogUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;

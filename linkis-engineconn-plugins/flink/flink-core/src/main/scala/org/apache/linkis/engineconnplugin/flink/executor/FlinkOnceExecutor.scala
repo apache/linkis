@@ -85,7 +85,9 @@ trait FlinkOnceExecutor[T <: ClusterDescriptorAdapter]
       logger.info(
         s"Application is started, applicationId: $getApplicationId, applicationURL: $getApplicationURL."
       )
-    } else if (FlinkExecutionTargetType.isKubernetesExecutionTargetType(flinkDeploymentTarget)) {
+    } else if (
+        FlinkExecutionTargetType.isNativeKubernetesExecutionTargetType(flinkDeploymentTarget)
+    ) {
       if (null == clusterDescriptor.getKubernetesClusterID) {
         throw new ExecutorInitException(KUBERNETES_IS_NULL.getErrorDesc)
       }

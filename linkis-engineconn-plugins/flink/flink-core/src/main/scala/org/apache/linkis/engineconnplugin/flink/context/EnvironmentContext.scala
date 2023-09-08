@@ -57,7 +57,7 @@ class EnvironmentContext(
 
   private var deploymentTarget: String = YarnDeploymentTarget.PER_JOB.getName
 
-  private var extraParams: util.Map[String, Any] = _
+  private var extraParams: util.Map[String, Any] = new util.HashMap[String, Any]()
 
   def this(
       defaultEnv: Environment,

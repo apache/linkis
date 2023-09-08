@@ -317,6 +317,10 @@ public class ExecutionContext {
     return flinkShims.stopWithSavepoint(clusterClient, jobId, advanceToEndOfEventTime, savepoint);
   }
 
+  public FlinkShims getFlinkShims() {
+    return flinkShims;
+  }
+
   // ~ Inner Class -------------------------------------------------------------------------------
 
   /** Builder for {@link ExecutionContext}. */

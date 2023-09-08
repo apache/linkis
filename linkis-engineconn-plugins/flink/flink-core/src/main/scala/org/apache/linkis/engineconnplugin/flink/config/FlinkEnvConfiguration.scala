@@ -28,6 +28,8 @@ object FlinkEnvConfiguration {
   val FLINK_1_16_2_VERSION = "1.16.2"
   val FLINK_VERSION = CommonVars("flink.version", FLINK_1_16_2_VERSION)
 
+  val FLINK_APP_NAME = CommonVars[String]("flink.app.name", "Linkis-EngineConn-Flink")
+
   val FLINK_HOME =
     CommonVars("flink.home", CommonVars(FLINK_HOME_ENV, "/appcom/Install/flink").getValue)
 
@@ -113,7 +115,7 @@ object FlinkEnvConfiguration {
   val FLINK_KUBERNETES_CONTAINER_IMAGE =
     CommonVars(
       "linkis.flink.kubernetes.container.image",
-      "apache/flink:1.12.2-scala_2.12-java8",
+      "flink:1.16-scala_2.12-java8",
       "Image to use for Flink containers."
     )
 

@@ -17,7 +17,11 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.FlinkKubernetesOperatorConfig;
+import org.apache.linkis.engineconnplugin.flink.client.shims.deployment.FlinkDeploymentOperatorClusterDescriptorAdapter;
+
 import org.apache.flink.api.common.JobID;
+import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.client.program.ClusterClient;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.core.execution.SavepointFormatType;
@@ -46,6 +50,9 @@ import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 
 public class Flink1162Shims extends FlinkShims {
+
+  private FlinkDeploymentOperatorClusterDescriptorAdapter
+      flinkDeploymentOperatorClusterDescriptorAdapter;
 
   public Flink1162Shims(String flinkVersion) {
     super(flinkVersion);
@@ -176,5 +183,36 @@ public class Flink1162Shims extends FlinkShims {
       throw new TableException(
           "Could not instantiate the executor. Make sure a planner module is on the classpath", e);
     }
+  }
+
+  @Override
+  public void deployKubernetesOperator(
+      String[] programArguments,
+      String applicationClassName,
+      FlinkKubernetesOperatorConfig config) {
+    flinkDeploymentOperatorClusterDescriptorAdapter =
+        new FlinkDeploymentOperatorClusterDescriptorAdapter(config);
+    flinkDeploymentOperatorClusterDescriptorAdapter.deployCluster(
+        programArguments, applicationClassName);
+  }
+
+  @Override
+  public void close() {
+    flinkDeploymentOperatorClusterDescriptorAdapter.close();
+  }
+
+  @Override
+  public JobID getJobId() {
+    return flinkDeploymentOperatorClusterDescriptorAdapter.getJobId();
+  }
+
+  @Override
+  public JobStatus getJobStatus() {
+    return flinkDeploymentOperatorClusterDescriptorAdapter.getJobStatus();
+  }
+
+  @Override
+  public void startFlinkKubernetesOperatorWatcher() {
+    flinkDeploymentOperatorClusterDescriptorAdapter.startFlinkKubernetesOperatorWatcher();
   }
 }

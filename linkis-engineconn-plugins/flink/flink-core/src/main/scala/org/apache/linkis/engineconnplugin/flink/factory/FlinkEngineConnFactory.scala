@@ -286,6 +286,24 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       if (StringUtils.isNotBlank(flinkMainClassJar)) {
         flinkConfig.set(PipelineOptions.JARS, Collections.singletonList(flinkMainClassJar))
       }
+
+      val jobmanagerCpu = LINKIS_FLINK_CLIENT_CORES
+      val taskmanagerCpu = LINKIS_FLINK_TASK_MANAGER_CPU_CORES.getValue(options)
+
+      flinkConfig.set(
+        KubernetesConfigOptions.JOB_MANAGER_CPU,
+        java.lang.Double.valueOf(jobmanagerCpu)
+      )
+      flinkConfig.set(
+        KubernetesConfigOptions.TASK_MANAGER_CPU,
+        java.lang.Double.valueOf(taskmanagerCpu)
+      )
+
+      if (FlinkExecutionTargetType.KUBERNETES_OPERATOR.equals(flinkExecutionTarget)) {
+        val flinkAppName = FLINK_APP_NAME.getValue(options)
+        flinkConfig.setString(FLINK_APP_NAME.key, flinkAppName);
+      }
+
     }
     context
   }
@@ -425,7 +443,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         }
         Environment.enrich(environmentContext.getDefaultEnv, properties, Collections.emptyMap())
       case FlinkExecutionTargetType.YARN_APPLICATION |
-          FlinkExecutionTargetType.KUBERNETES_APPLICATION =>
+          FlinkExecutionTargetType.KUBERNETES_APPLICATION |
+          FlinkExecutionTargetType.KUBERNETES_OPERATOR =>
         null
       case t =>
         logger.error(s"Not supported YarnDeploymentTarget ${t}.")

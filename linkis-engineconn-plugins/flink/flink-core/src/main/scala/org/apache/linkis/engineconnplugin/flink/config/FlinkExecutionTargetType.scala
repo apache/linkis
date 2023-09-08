@@ -39,4 +39,10 @@ object FlinkExecutionTargetType {
     ) || targetType.equalsIgnoreCase(KUBERNETES_OPERATOR)
   }
 
+  def isNativeKubernetesExecutionTargetType(targetType: String): Boolean = {
+    targetType.equalsIgnoreCase(KUBERNETES_APPLICATION) || targetType.equalsIgnoreCase(
+      KUBERNETES_SESSION
+    )
+  }
+
 }

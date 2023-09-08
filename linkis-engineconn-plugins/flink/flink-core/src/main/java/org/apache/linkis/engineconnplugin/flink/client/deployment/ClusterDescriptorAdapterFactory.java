@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.deployment;
 
 import org.apache.linkis.engineconnplugin.flink.client.context.ExecutionContext;
+import org.apache.linkis.engineconnplugin.flink.config.FlinkExecutionTargetType;
 
 import org.apache.flink.configuration.DeploymentOptions;
 import org.apache.flink.kubernetes.configuration.KubernetesDeploymentTarget;
@@ -40,6 +41,8 @@ public class ClusterDescriptorAdapterFactory {
           new KubernetesApplicationClusterDescriptorAdapter(executionContext);
     } else if (KubernetesDeploymentTarget.SESSION.getName().equals(flinkDeploymentTarget)) {
       clusterDescriptorAdapter = new KubernetesSessionClusterDescriptorAdapter(executionContext);
+    } else if (FlinkExecutionTargetType.KUBERNETES_OPERATOR().equals(flinkDeploymentTarget)) {
+      clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
     }
     return clusterDescriptorAdapter;
   }

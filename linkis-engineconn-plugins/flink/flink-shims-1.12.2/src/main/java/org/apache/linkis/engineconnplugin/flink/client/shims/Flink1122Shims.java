@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.client.shims;
 
 import org.apache.linkis.engineconnplugin.flink.client.shims.config.Environment;
+import org.apache.linkis.engineconnplugin.flink.client.shims.config.FlinkKubernetesOperatorConfig;
 import org.apache.linkis.engineconnplugin.flink.client.shims.config.entries.*;
 import org.apache.linkis.engineconnplugin.flink.client.shims.errorcode.FlinkErrorCodeSummary;
 import org.apache.linkis.engineconnplugin.flink.client.shims.exception.SqlExecutionException;
@@ -488,5 +489,14 @@ public class Flink1122Shims extends FlinkShims {
     try (TemporaryClassLoaderContext ignored = TemporaryClassLoaderContext.of(classLoader)) {
       runnable.run();
     }
+  }
+
+  @Override
+  public void deployKubernetesOperator(
+      String[] programArguments,
+      String applicationClassName,
+      FlinkKubernetesOperatorConfig config) {
+    throw new UnsupportedOperationException(
+        "Flink-1.12.2 does not support operations related to flink kubernetes operator");
   }
 }

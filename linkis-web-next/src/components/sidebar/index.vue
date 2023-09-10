@@ -51,8 +51,8 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const menuItemsConfig = [
     { title: '任务概览', icon: '', path: '/console/globalHistoryManagement' },
-    { title: '资源管理', icon: '', path: '/console/resource/manage' },
-    { title: '参数配置', icon: '', path: '' },
+    { title: '资源管理', icon: '', path: '/console/resource' },
+    { title: '参数配置', icon: '', path: '/console/parameterConfig' },
     { title: '全局变量', path: '' },
     { title: 'ECM管理', path: '' },
     { title: '微服务管理', path: '' },

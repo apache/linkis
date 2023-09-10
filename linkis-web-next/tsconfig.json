@@ -5,16 +5,17 @@
         "module": "ES2020",
         "lib": ["ES2020", "DOM", "DOM.Iterable"],
         "skipLibCheck": true,
+        "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"]
         },
 
         /* Bundler mode */
         "moduleResolution": "node",
+        "noEmit": true,
         "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "noEmit": true,
         "jsx": "preserve",
 
         /* Linting */

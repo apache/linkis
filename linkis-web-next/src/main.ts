@@ -27,7 +27,9 @@ import {
     FEllipsis,
     FMenu,
     FLayout,
-    FTimePicker
+    FTimePicker,
+    FCard,
+    FDivider,
 } from '@fesjs/fes-design';
 import App from '@/App.vue';
 import router from '@/router/index.ts';
@@ -61,3 +63,5 @@ app.use(FRadio);
 app.use(FLayout);
 app.use(FMenu);
 app.use(FTimePicker);
+app.use(FCard);
+app.use(FDivider);

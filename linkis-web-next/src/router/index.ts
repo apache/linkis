@@ -54,6 +54,51 @@ const routes: Array<RouteRecordRaw> = [
                     },
                 ],
             },
+
+            {
+                name: 'parameterConfig',
+                path: '/console/parameterConfig',
+                redirect: '/console/parameterConfig/ide',
+                component: () => import('@/pages/parameterConfig/index.vue'),
+                meta: {
+                    title: 'parameterConfig',
+                    publicPage: true,
+                },
+                children: [
+                    {
+                        name: 'ide',
+                        path: '/console/parameterConfig/ide',
+                        component: () =>
+                            import('@/pages/parameterConfig/ide/index.vue'),
+                        meta: {
+                            title: 'setting ide',
+                            publicPage: true,
+                        },
+                    },
+                    {
+                        name: 'scripts',
+                        path: '/console/parameterConfig/scripts',
+                        component: () =>
+                            import('@/pages/parameterConfig/scripts/index.vue'),
+                        meta: {
+                            title: 'setting scripts',
+                            publicPage: true,
+                        },
+                    },
+                    {
+                        name: 'tableauServer',
+                        path: '/console/parameterConfig/tableauServer',
+                        component: () =>
+                            import(
+                                '@/pages/parameterConfig/tableauServer/index.vue'
+                            ),
+                        meta: {
+                            title: 'setting tableau server',
+                            publicPage: true,
+                        },
+                    },
+                ],
+            },
         ],
     },
 ];

@@ -16,24 +16,24 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.apache.linkis.monitor.scan.app.instance.dao.InsLabelRelationDao">
-    <resultMap id="instanceInfoMap" type="org.apache.linkis.monitor.scan.app.instance.entity.InstanceInfo">
+<mapper namespace="org.apache.linkis.monitor.instance.dao.InsLabelRelationDao">
+    <resultMap id="instanceInfoMap" type="org.apache.linkis.monitor.instance.entity.InstanceInfo">
         <result property="id" column="id"/>
         <result property="instance" column="instance"/>
         <result property="applicationName" column="name"/>
         <result property="updateTime" column="update_time"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
-    <resultMap id="instanceInfoCascadeMap" type="org.apache.linkis.monitor.scan.app.instance.entity.InstanceInfo">
+    <resultMap id="instanceInfoCascadeMap" type="org.apache.linkis.monitor.instance.entity.InstanceInfo">
         <result property="id" column="id"/>
         <result property="instance" column="instance"/>
         <result property="applicationName" column="name"/>
         <result property="updateTime" column="update_time"/>
         <result property="createTime" column="create_time"/>
-        <collection property="labels" column="instance" select="selectLabelsByIns" ofType="org.apache.linkis.monitor.scan.app.instance.entity.InsPersistenceLabel"/>
+        <collection property="labels" column="instance" select="selectLabelsByIns" ofType="org.apache.linkis.monitor.instance.entity.InsPersistenceLabel"/>
     </resultMap>
 
-    <resultMap id="insPersistenceLabelMap" type="org.apache.linkis.monitor.scan.app.instance.entity.InsPersistenceLabel">
+    <resultMap id="insPersistenceLabelMap" type="org.apache.linkis.monitor.instance.entity.InsPersistenceLabel">
         <result property="id" column="id"/>
         <result property="labelKey" column="label_key"/>
         <result property="stringValue" column="label_value"/>

@@ -154,6 +154,7 @@ flink-table-planner-blink_2.12-1.12.2.jar
 flink-table-runtime-blink_2.12-1.12.2.jar
 flink-yarn_2.12-1.12.2.jar
 flink-kubernetes_2.12-1.12.2.jar
+flink-kubernetes-shaded-1.2.0.jar
 flink-annotations-1.16.2.jar
 flink-cep-1.16.2.jar
 flink-clients-1.16.2.jar

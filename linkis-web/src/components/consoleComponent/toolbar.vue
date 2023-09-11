@@ -405,10 +405,12 @@ export default {
       let flag = null;
       if (this.isAll && !this.isExcel && this.allDownload) {
         let count = 0
-        for(let path of this.allPath) {
+        for(let [index, path] of this.allPath.sort((a, b) => {
+          return +(a.split('.')[0].substring(1)) - +(b.split('.')[0].substring(1))
+        }).entries()) {
           let temUrl = url;
           temUrl += `&path=${path}`
-          const name = `ResultSet${Number(path.substring(temPath.lastIndexOf('/')).split('.')[0].split('_')[1]) + 1}`
+          const name = `ResultSet${index + 1}`
           temUrl += '&outputFileName=' + name
           const event = this.downloadFromHref(temUrl)
           eventList.push(event);

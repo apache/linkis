@@ -269,13 +269,13 @@ export default {
             ),
             path: '/console/ipListManagement',
           },
-          // {
-          //   key: '1-10-7',
-          //   name: this.$t(
-          //     'message.linkis.sideNavList.function.children.acrossClusterRule'
-          //   ),
-          //   path: '/console/acrossClusterRule',
-          // },
+          {
+            key: '1-10-7',
+            name: this.$t(
+              'message.linkis.sideNavList.function.children.acrossClusterRule'
+            ),
+            path: '/console/acrossClusterRule',
+          },
           {
             key: '1-10-8',
             name: this.$t(

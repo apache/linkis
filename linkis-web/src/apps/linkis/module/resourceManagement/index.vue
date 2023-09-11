@@ -460,7 +460,6 @@ export default {
         if(enginesList.length) await this.expandChange(enginesList[0])
         this.loading = false;
       } catch (err) {
-        window.console.log(err)
         this.loading = false;
       }
     },

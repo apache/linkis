@@ -362,7 +362,6 @@ export default {
         this.page.totalPage = res.tasks.totalElements
         this.tableLoading = false
       } catch (err) {
-        window.console.warn(err);
         this.tableLoading = false
       }
     },

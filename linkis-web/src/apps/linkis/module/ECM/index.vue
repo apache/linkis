@@ -318,7 +318,6 @@ export default {
         this.page.totalSize = this.tableData.length;
         this.loading = false;
       } catch (err) {
-        window.console.log(err)
         this.loading = false;
       }
     },
@@ -342,7 +341,7 @@ export default {
         let list = healthyStatusList.nodeHealthy || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -352,7 +351,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // add tag(添加tag)
@@ -444,7 +443,6 @@ export default {
         // 传回的是Byte
         this.$Message.success(this.$t('message.linkis.killFinishedInfo', { killEngineNum, memory: memory / 1024 / 1024 / 1024, cores }))
       } catch (err) {
-        window.console.warn(err);
         this.killInfo = {
           curInstance: '',
           all: 0,

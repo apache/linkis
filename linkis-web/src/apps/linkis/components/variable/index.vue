@@ -54,6 +54,13 @@
               :key="i"
               :value="validateItem">{{ validateItem }}</Option>
           </Select>
+          <textarea
+            v-model="item.configValue"
+            :placeholder="item.defaultValue ? `${$t('message.linkis.defaultValue')}:${item.defaultValue}` : $t('message.linkis.noDefaultValue')"
+            class="two-lines we-variable-content-input"
+            :class="{'un-valid': unValid && unValid.key === item.key}"
+            v-else-if="item.key === 'spark.conf'">
+         </textarea>
           <input
             v-model="item.configValue"
             :placeholder="item.defaultValue ? `${$t('message.linkis.defaultValue')}:${item.defaultValue}` : $t('message.linkis.noDefaultValue')"
@@ -138,5 +145,4 @@ export default {
 };
 </script>
 <style lang="scss" src="./index.scss">
-
 </style>

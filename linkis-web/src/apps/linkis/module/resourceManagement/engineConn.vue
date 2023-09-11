@@ -141,6 +141,12 @@ export default {
           className: 'table-project-column'
         },
         {
+          title: this.$t('message.linkis.tableColumns.status'),
+          key: 'status',
+          minWidth: 100,
+          className: 'table-project-column'
+        },
+        {
           title: this.$t('message.linkis.tableColumns.label'),
           key: 'labelValue',
           minWidth: 300,
@@ -254,7 +260,6 @@ export default {
         this.engineTypes = data && data.engineType ? data.engineType : []
         this.loading = false;
       } catch (err) {
-        window.console.log(err)
         this.loading = false;
       }
     },
@@ -277,7 +282,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -287,7 +292,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // add tag(添加tag)
@@ -343,6 +348,7 @@ export default {
         }
       }
       if (e.engineType) url += `engineType=${e.engineType}&`
+      if (e.status) url += `status=${e.status}&`
       if (this.page.pageNow) url += `pageNow=${this.page.pageNow}&`
       if (this.page.pageSize) url += `pageSize=${this.page.pageSize}`
       api.fetch(url,'get').then((res)=>{

@@ -109,6 +109,12 @@
               <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
             </Select>
           </FormItem>
+          <FormItem :label="$t('message.linkis.ipListManagement.templateRequired')" prop="templateRequired">
+            <RadioGroup v-model="modalData.templateRequired">
+              <Radio label="1">{{$t('message.linkis.ipListManagement.yes')}}</Radio>
+              <Radio label="0">{{$t('message.linkis.ipListManagement.no')}}</Radio>
+            </RadioGroup>
+          </FormItem>
           <FormItem v-if="mode !== 'edit'" :label="$t('message.linkis.ipListManagement.enName')" prop="enName">
             <Input class="input" v-model="modalData.enName"></Input>
           </FormItem>
@@ -223,6 +229,18 @@ export default {
           align: 'center',
         },
         {
+          title: this.$t('message.linkis.ipListManagement.templateRequired'),
+          key: 'templateRequired',
+          width: 200,
+          tooltip: true,
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('span', params.row.templateRequired === '1' ? this.$t('message.linkis.ipListManagement.yes') : this.$t('message.linkis.ipListManagement.no'))
+            ]);
+          }
+        },
+        {
           title: this.$t('message.linkis.ipListManagement.action'),
           key: 'action',
           width: 200,
@@ -272,7 +290,8 @@ export default {
         treeName: '',
         enName: '',
         enDescription: '',
-        enTreeName: ''
+        enTreeName: '',
+        templateRequired: '0',
       },
       modalDataRule: {
         key: [
@@ -357,7 +376,6 @@ export default {
         this.page.totalPage = res.totalPage;
         this.tableLoading = false;
       } catch(err) {
-        window.console.log(err);
         this.tableLoading = false;
       }
 
@@ -423,7 +441,6 @@ export default {
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false
-            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
@@ -445,7 +462,8 @@ export default {
         enName,
         enDescription,
         enTreeName,
-        engineType
+        engineType,
+        templateRequired
       } = data
       this.modalData = {
         id,
@@ -460,7 +478,8 @@ export default {
         enName,
         enDescription,
         enTreeName,
-        engineType
+        engineType,
+        templateRequired
       };
       this.showCreateModal = true;
       this.modalTitle = this.$t('message.linkis.ipListManagement.editRules')
@@ -475,16 +494,13 @@ export default {
           await this.confirmDelete(data);
           await this.getTableData();
         },
-        onCancel: () => {
-          window.console.log('cancel');
-        }
       })
     },
     async confirmDelete(data) {
       try {
         await api.fetch('/configuration/baseKeyValue', {id: data.id}, 'delete');
       } catch(err) {
-        window.console.log(err);
+        return;
       }
     },
     async changePage(val) {

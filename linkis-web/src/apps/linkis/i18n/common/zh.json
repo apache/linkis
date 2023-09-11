@@ -148,8 +148,8 @@
               "engineRemain": "引擎剩余资源",
               "engineUsed": "引擎已用资源",
               "engineTop": "引擎上限资源",
-            "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
-            "applicationRole": "应用方"
+              "versioTips": "如果没有对应的版本，请确认是否已安装对应的版本引擎物料",
+              "applicationRole": "应用方"
           },
           "logLoading": "日志请求中，请稍后",
           "title": "Linkis管理台",
@@ -308,7 +308,7 @@
               "show": "显示",
               "advancedSetting": "高级设置",
               "dataDev": "数据开发",
-              "maxLimit": "(被指定最大限制为{limit})"
+              "maxLimit": "(资源模板指定上限值为{limit})"
           },
           "globalValiable": "全局变量",
           "rules": {
@@ -446,8 +446,8 @@
               "rules": "规则",
               "startTime": "开始时间",
               "endTime": "结束时间",
-              "CPUThreshold": "CPU阈值",
-              "MemoryThreshold": "内存阈值",
+              "CPUThreshold": "CPU阈值(核)",
+              "MemoryThreshold": "内存阈值(G)",
               "CPUPercentageThreshold": "CPU百分比阈值",
               "MemoryPercentageThreshold": "内存百分比阈值",
               "view": "查看",
@@ -481,7 +481,14 @@
               "customLen": "长度不能超过{length}",
               "timeError": "时间格式应为XX:XX，请输入正确的时间",
               "thresholdError": "请输入0-10000的整数",
-              "percentageThresholdError": "请输入0-1的数字"
+              "percentageThresholdError": "请输入0-1的数字",
+              "enable": "启用",
+              "disable": "停用",
+              "confirmEnable": "确认是否启用[{name}]该规则?",
+              "confirmDisable": "确认是否停用[{name}]该规则?",
+              "enableSuccessfully": "启用成功",
+              "disableSuccessfully": "停用成功",
+              "templateRequired": "是否必填"
           },
           "basedataManagement": {
             "add": "新增",

@@ -321,7 +321,6 @@ export default {
         this.page.totalPage = res.totalPage;
         this.tableLoading = false;
       } catch(err) {
-        window.console.log(err);
         this.tableLoading = false;
       }
 
@@ -339,7 +338,7 @@ export default {
             this.allEngineTypeOptions.unshift({label: this.$t('message.linkis.all'),value: '*'});
           })
       } catch(err) {
-        window.console.log(err);
+        return;
       }
     },
     async init() {
@@ -394,7 +393,6 @@ export default {
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false
-            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));

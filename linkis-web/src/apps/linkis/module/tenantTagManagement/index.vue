@@ -281,7 +281,6 @@ export default {
           })
         this.tableLoading = false;
       } catch(err) {
-        window.console.log(err);
         this.tableLoading = false;
       }
 
@@ -332,7 +331,6 @@ export default {
             })
             this.isRequesting = false
           } catch (err) {
-            window.console.log(err);
             this.isRequesting = false
           }
         }
@@ -380,7 +378,6 @@ export default {
             this.isRequesting = false;
           } catch(err) {
             this.isRequesting = false;
-            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
@@ -410,16 +407,13 @@ export default {
           await this.confirmDelete(data);
           await this.getTableData();
         },
-        onCancel: () => {
-          window.console.log('cancel');
-        }
       })
     },
     async confirmDelete(data) {
       try {
         await api.fetch('configuration/tenant-mapping/delete-tenant', {id: data.id}, 'get');
       } catch(err) {
-        window.console.log(err);
+        return;
       }
     },
     async handleChange() {

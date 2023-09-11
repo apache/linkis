@@ -330,7 +330,7 @@
         "show": "Show",
         "advancedSetting": "Advanced Settings",
         "dataDev": "Data Development",
-        "maxLimit": "(The maximum limit specified is {limit})"
+        "maxLimit": "(The resource template specifies an upper limit value of {limit})"
       },
       "globalValiable": "Global Variables",
       "rules": {
@@ -471,8 +471,8 @@
         "rules": "Rules",
         "startTime": "Start Time",
         "endTime": "End Time",
-        "CPUThreshold": "CPU Threshold",
-        "MemoryThreshold": "Memory Threshold",
+        "CPUThreshold": "CPU Threshold(Core)",
+        "MemoryThreshold": "Memory Threshold(G)",
         "CPUPercentageThreshold": "CPU Percentage Threshold",
         "MemoryPercentageThreshold": "Memory Percentage Threshold",
         "timeError": "The time format should be XX:XX, please enter the correct time",
@@ -506,7 +506,14 @@
         "enTreeName": "Tree Name(EN)",
         "treeName": "Tree Name",
         "noZH": "Chinese input not allowed",
-        "customLen": "The length cannot exceed {length}"
+        "customLen": "The length cannot exceed {length}",
+        "enable": "Enable",
+        "disable": "Disable",
+        "confirmEnable": "Confirm whether to enable the [{name}] option?",
+        "confirmDisable": "Confirm whether to disable the [{name}] option?",
+        "enableSuccessfully": "Enable Successfully",
+        "disableSuccessfully": "Disable Successfully",
+        "templateRequired": "Required"
       },
       "codeQuery": {
         "executionCode": "Execution Code",

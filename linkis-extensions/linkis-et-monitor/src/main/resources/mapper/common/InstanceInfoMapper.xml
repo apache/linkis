@@ -16,9 +16,9 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.apache.linkis.monitor.scan.app.instance.dao.InstanceInfoDao">
+<mapper namespace="org.apache.linkis.monitor.instance.dao.InstanceInfoDao">
 
-    <resultMap id="instanceInfoMap" type="org.apache.linkis.monitor.scan.app.instance.entity.InstanceInfo">
+    <resultMap id="instanceInfoMap" type="org.apache.linkis.monitor.instance.entity.InstanceInfo">
         <result property="id" column="id"/>
         <result property="instance" column="instance"/>
         <result property="applicationName" column="name"/>

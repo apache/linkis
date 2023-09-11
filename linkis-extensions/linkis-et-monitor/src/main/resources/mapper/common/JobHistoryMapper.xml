@@ -18,9 +18,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 
-<mapper namespace="org.apache.linkis.monitor.scan.app.jobhistory.dao.JobHistoryMapper">
+<mapper namespace="org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper">
 
-    <resultMap id="jobHistoryMap" type="org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory"
+    <resultMap id="jobHistoryMap" type="org.apache.linkis.monitor.jobhistory.entity.JobHistory"
                autoMapping="false">
         <id property="id" column="id"/>
         <result property="jobReqId" column="job_req_id"/>
@@ -49,7 +49,7 @@
     </sql>
 
     <select id="selectJobHistory" useCache="false" resultMap="jobHistoryMap"
-            parameterType="org.apache.linkis.monitor.scan.app.jobhistory.entity.JobHistory">
+            parameterType="org.apache.linkis.monitor.jobhistory.entity.JobHistory">
         SELECT * FROM linkis_ps_job_history_group_history
         <where>
             <if test="id != null">id = #{id}</if>

@@ -16,9 +16,9 @@
   -->
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.apache.linkis.monitor.scan.app.instance.dao.InstanceLabelDao">
+<mapper namespace="org.apache.linkis.monitor.instance.dao.InstanceLabelDao">
 
-    <resultMap id="insPersistenceLabelMap" type="org.apache.linkis.monitor.scan.app.instance.entity.InsPersistenceLabel">
+    <resultMap id="insPersistenceLabelMap" type="org.apache.linkis.monitor.instance.entity.InsPersistenceLabel">
         <result property="id" column="id"/>
         <result property="labelKey" column="label_key"/>
         <result property="stringValue" column="label_value"/>

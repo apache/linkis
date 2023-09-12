@@ -28,7 +28,7 @@ update  linkis_ps_configuration_config_key set template_required = 1 where `key`
 "mapreduce.job.running.map.limit",
 "mapreduce.job.running.reduce.limit",
 )
-update  linkis_ps_configuration_config_key set template_required = 1 where `key` = "wds.linkis.rm.instance" and  engine_conn_type ="spark";
+update  linkis_ps_configuration_config_key set template_required = 1 where `key` = "wds.linkis.rm.instance" and  engine_conn_type in ("spark","hive");
 -- spark.conf
 INSERT INTO linkis_ps_configuration_config_key
 (`key`, description, name,

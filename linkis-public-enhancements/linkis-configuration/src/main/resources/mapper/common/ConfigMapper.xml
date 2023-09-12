@@ -454,7 +454,7 @@
             #{engineType}, #{defaultValue}, #{validateType},
             #{validateRange}, #{isHidden}, #{isAdvanced},
             #{level}, #{treeName}, #{boundaryType},
-            #{enName}, #{enTreeName}, #{enDescription}
+            #{enName}, #{enTreeName}, #{enDescription},
             #{templateRequired}
         )
     </insert>

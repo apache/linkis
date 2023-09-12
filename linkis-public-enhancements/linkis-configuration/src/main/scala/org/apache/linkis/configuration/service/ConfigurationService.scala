@@ -224,31 +224,35 @@ class ConfigurationService extends Logging {
   }
 
   def paramCheck(setting: ConfigKeyValue): Unit = {
-    if (!StringUtils.isEmpty(setting.getConfigValue)) {
-      var key: ConfigKey = null
-      if (setting.getId != null) {
-        key = configMapper.selectKeyByKeyID(setting.getId)
-      } else {
-        val keys = configMapper.selectKeyByKeyName(setting.getKey)
-        if (null != keys && !keys.isEmpty) {
-          key = keys.get(0)
-        }
+    var key: ConfigKey = null
+    if (setting.getId != null) {
+      key = configMapper.selectKeyByKeyID(setting.getId)
+    } else {
+      val keys = configMapper.selectKeyByKeyName(setting.getKey)
+      if (null != keys && !keys.isEmpty) {
+        key = keys.get(0)
       }
-      if (key == null) {
-        throw new ConfigurationException(
-          "config key is null, please check again!(配置信息为空，请重新检查key值)"
+    }
+    if (key == null) {
+      throw new ConfigurationException("config key is null, please check again!(配置信息为空，请重新检查key值)")
+    }
+    if (StringUtils.isNotBlank(key.getDefaultValue)) {
+      if (StringUtils.isNotBlank(setting.getConfigValue)) {
+        logger.info(
+          s"parameter ${key.getKey} value ${setting.getConfigValue} is not empty, enter checksum...(参数${key.getKey} 值${setting.getConfigValue}不为空，进入校验...)"
         )
-      }
-      logger.info(
-        s"parameter ${key.getKey} value ${setting.getConfigValue} is not empty, enter checksum...(参数${key.getKey} 值${setting.getConfigValue}不为空，进入校验...)"
-      )
-      if (
-          !validatorManager
-            .getOrCreateValidator(key.getValidateType)
-            .validate(setting.getConfigValue, key.getValidateRange)
-      ) {
+        if (
+            !validatorManager
+              .getOrCreateValidator(key.getValidateType)
+              .validate(setting.getConfigValue, key.getValidateRange)
+        ) {
+          throw new ConfigurationException(
+            s"Parameter verification failed(参数校验失败):${key.getKey}--${key.getValidateType}--${key.getValidateRange}--${setting.getConfigValue}"
+          )
+        }
+      } else {
         throw new ConfigurationException(
-          s"Parameter verification failed(参数校验失败):${key.getKey}--${key.getValidateType}--${key.getValidateRange}--${setting.getConfigValue}"
+          "config value is null, please check again!(配置信息为空，请重新检查value值)"
         )
       }
     }

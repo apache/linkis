@@ -17,12 +17,10 @@
 
 package org.apache.linkis.monitor.bml.cleaner.service.impl;
 
-import org.apache.linkis.monitor.bml.cleaner.dao.VersionDao;
-import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
+import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.monitor.bml.cleaner.dao.VersionDao;
 import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
 import org.apache.linkis.monitor.bml.cleaner.service.VersionService;
-import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.storage.fs.FileSystem;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +32,7 @@ import java.io.IOException;
 @Service
 public class VersionServiceImpl implements VersionService {
 
-  @Autowired
-  VersionDao versionDao;
+  @Autowired VersionDao versionDao;
 
   public void setVersionDao(VersionDao versionDao) {
     this.versionDao = versionDao;

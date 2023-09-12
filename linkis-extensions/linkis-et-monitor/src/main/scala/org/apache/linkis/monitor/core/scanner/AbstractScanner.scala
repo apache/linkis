@@ -18,9 +18,9 @@
 package org.apache.linkis.monitor.core.scanner
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.core.pac._
+import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 
 import java.util
 import java.util.concurrent.CopyOnWriteArrayList
@@ -159,8 +159,6 @@ abstract class AbstractScanner extends AnomalyScanner with Logging {
    *   1. should be non-blocking 2. keeps calling scanOneIteration() and analyzeOneIteration() utils
    *      stop() is called
    */
-  override def start(): Unit = {
-
-  }
+  override def start(): Unit = {}
 
 }

@@ -17,7 +17,6 @@
 
 package org.apache.linkis.monitor.bml.cleaner.dao;
 
-import org.apache.linkis.monitor.bml.cleaner.vo.CleanResourceVo;
 import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
 import org.apache.linkis.monitor.bml.cleaner.entity.ResourceVersion;
 import org.apache.linkis.monitor.bml.cleaner.vo.CleanResourceVo;

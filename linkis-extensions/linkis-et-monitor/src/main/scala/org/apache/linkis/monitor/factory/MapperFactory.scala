@@ -17,9 +17,12 @@
 
 package org.apache.linkis.monitor.factory
 
-import org.apache.linkis.monitor.instance.dao.{InsLabelRelationDao, InstanceInfoDao, InstanceLabelDao}
+import org.apache.linkis.monitor.instance.dao.{
+  InsLabelRelationDao,
+  InstanceInfoDao,
+  InstanceLabelDao
+}
 import org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper
-import org.apache.linkis.monitor.scan.app.instance.dao.{InsLabelRelationDao, InstanceInfoDao, InstanceLabelDao}
 
 object MapperFactory {
 

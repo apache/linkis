@@ -21,14 +21,17 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.until.CacheUtils
 import org.apache.linkis.server.BDPJettyServerHelper
+
 import org.apache.commons.lang3.StringUtils
 
 import java.util
+
 import scala.collection.JavaConverters._
+
 import com.google.common.collect.HashBiMap
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory
-import org.apache.linkis.monitor.until.CacheUtils
 
 /**
  * Scan the execution data within the previous 20 minutes and judge the labels field of the data.

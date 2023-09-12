@@ -18,12 +18,13 @@
 package org.apache.linkis.monitor.jobhistory.errorcode
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory
-import org.apache.linkis.monitor.until.CacheUtils
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.until.CacheUtils
 
 import java.util
+
 import scala.collection.JavaConverters._
 
 /**

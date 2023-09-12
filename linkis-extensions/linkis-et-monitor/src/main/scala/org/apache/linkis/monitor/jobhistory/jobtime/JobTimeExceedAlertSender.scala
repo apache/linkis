@@ -18,15 +18,16 @@
 package org.apache.linkis.monitor.jobhistory.jobtime
 
 import org.apache.linkis.common.utils.{Logging, Utils}
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory
-import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.config.MonitorConfig
 import org.apache.linkis.monitor.core.ob.{Event, Observer}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.utils.alert.AlertDesc
 import org.apache.linkis.monitor.utils.alert.ims.{ImsAlertDesc, PooledImsAlertUtils}
 
 import java.text.MessageFormat
 import java.util
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ArrayBuffer
 

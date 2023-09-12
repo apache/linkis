@@ -18,7 +18,6 @@
 package org.apache.linkis.monitor.jobhistory.entity;
 
 import org.apache.linkis.monitor.jobhistory.QueryUtils;
-import org.apache.linkis.monitor.jobhistory.QueryUtils;
 
 import java.util.Date;
 

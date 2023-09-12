@@ -19,7 +19,6 @@ package org.apache.linkis.monitor.instance.dao;
 
 import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.monitor.instance.entity.InstanceInfo;
-import org.apache.linkis.monitor.instance.entity.InstanceInfo;
 
 import org.apache.ibatis.annotations.Param;
 

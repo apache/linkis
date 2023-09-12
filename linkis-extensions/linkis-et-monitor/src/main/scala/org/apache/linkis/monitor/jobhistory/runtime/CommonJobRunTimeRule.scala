@@ -21,10 +21,12 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory
 
+import org.apache.commons.lang3.StringUtils
+
 import java.util
+
 import scala.collection.JavaConverters._
 
 /**
@@ -55,9 +57,7 @@ class CommonJobRunTimeRule(hitObserver: Observer)
           d match {
             case jobHistory: JobHistory =>
               if (
-                  Constants.FINISHED_JOB_STATUS.contains(
-                    jobHistory.getStatus.toUpperCase()
-                  )
+                  Constants.FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())
                   && StringUtils.isNotBlank(jobHistory.getObserveInfo)
               ) {
                 alertData.add(jobHistory)

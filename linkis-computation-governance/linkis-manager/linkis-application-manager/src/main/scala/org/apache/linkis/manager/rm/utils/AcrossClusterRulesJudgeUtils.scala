@@ -50,8 +50,8 @@ object AcrossClusterRulesJudgeUtils extends Logging {
         } else {
           throw new RMWarnException(
             RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-              s"usedCPUPercentage: $usedCPUPercentage, CPUPercentageThreshold: $CPUPercentageThreshold" +
-                s"usedMemoryPercentage: $usedMemoryPercentage, MemoryPercentageThreshold: $MemoryPercentageThreshold"
+            s"usedCPUPercentage: $usedCPUPercentage, CPUPercentageThreshold: $CPUPercentageThreshold" +
+              s"usedMemoryPercentage: $usedMemoryPercentage, MemoryPercentageThreshold: $MemoryPercentageThreshold"
           )
         }
       } else {

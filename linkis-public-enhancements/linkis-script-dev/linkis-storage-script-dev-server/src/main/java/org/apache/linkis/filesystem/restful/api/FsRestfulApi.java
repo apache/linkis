@@ -93,7 +93,8 @@ public class FsRestfulApi {
    */
   private boolean checkIsUsersDirectory(String requestPath, String userName, Boolean withAdmin) {
     // 配置文件默认关闭检查，withadmin默认true，特殊情况传false 开启权限检查（
-    // The configuration file defaults to disable checking, with admin defaulting to true, and in special cases, false is passed to enable permission checking）
+    // The configuration file defaults to disable checking, with admin defaulting to true, and in
+    // special cases, false is passed to enable permission checking）
     boolean ownerCheck = WorkSpaceConfiguration.FILESYSTEM_PATH_CHECK_OWNER.getValue();
     if (!ownerCheck && withAdmin) {
       LOGGER.debug("not check filesystem owner.");

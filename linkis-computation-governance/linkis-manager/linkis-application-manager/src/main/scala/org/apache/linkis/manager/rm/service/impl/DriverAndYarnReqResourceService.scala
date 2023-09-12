@@ -114,9 +114,9 @@ class DriverAndYarnReqResourceService(
         } catch {
           case ex: Exception =>
             throw new RMWarnException(
-            RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
-            ex.getMessage
-          )
+              RMErrorCode.ACROSS_CLUSTER_RULE_FAILED.getErrorCode,
+              ex.getMessage
+            )
         }
 
         logger.info(s"user: $user, creator: $creator task meet the threshold rule")

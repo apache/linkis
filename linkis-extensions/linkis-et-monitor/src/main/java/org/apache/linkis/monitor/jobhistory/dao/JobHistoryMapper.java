@@ -18,7 +18,6 @@
 package org.apache.linkis.monitor.jobhistory.dao;
 
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory;
 
 import org.apache.ibatis.annotations.Param;
 

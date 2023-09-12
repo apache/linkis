@@ -17,9 +17,8 @@
 
 package org.apache.linkis.monitor.bml.cleaner.service;
 
-import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
-import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
 import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
 import org.apache.linkis.storage.fs.FileSystem;
 
 import java.io.IOException;

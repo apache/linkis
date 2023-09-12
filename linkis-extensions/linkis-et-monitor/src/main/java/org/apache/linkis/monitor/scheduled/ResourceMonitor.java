@@ -19,9 +19,9 @@ package org.apache.linkis.monitor.scheduled;
 
 import org.apache.linkis.common.utils.ByteTimeUtils;
 import org.apache.linkis.monitor.config.MonitorConfig;
+import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.entity.IndexEntity;
 import org.apache.linkis.monitor.until.HttpsUntils;
-import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
 import org.apache.linkis.monitor.utils.alert.ims.PooledImsAlertUtils;

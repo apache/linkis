@@ -18,7 +18,6 @@
 package org.apache.linkis.monitor.instance.dao;
 
 import org.apache.linkis.monitor.instance.entity.InsPersistenceLabel;
-import org.apache.linkis.monitor.instance.entity.InsPersistenceLabel;
 
 import java.util.List;
 

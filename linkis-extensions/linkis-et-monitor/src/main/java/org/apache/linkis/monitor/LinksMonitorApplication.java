@@ -24,7 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication
-public class LinksMonitorResourceApplication {
+public class LinksMonitorApplication {
 
   public static void main(String[] args) throws ReflectiveOperationException {
     LinkisBaseServerApp.main(args);

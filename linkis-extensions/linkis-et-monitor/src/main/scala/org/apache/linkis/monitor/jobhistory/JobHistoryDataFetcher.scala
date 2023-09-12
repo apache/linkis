@@ -20,9 +20,10 @@ package org.apache.linkis.monitor.jobhistory
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.pac.AbstractDataFetcher
-import org.apache.commons.lang3.StringUtils
 import org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper
 import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
+
+import org.apache.commons.lang3.StringUtils
 
 import java.util
 import java.util.Date

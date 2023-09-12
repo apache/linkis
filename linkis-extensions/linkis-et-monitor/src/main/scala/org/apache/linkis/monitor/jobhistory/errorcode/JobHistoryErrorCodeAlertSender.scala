@@ -18,13 +18,14 @@
 package org.apache.linkis.monitor.jobhistory.errorcode
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.monitor.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.jobhistory.entity.JobHistory
 import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
-import org.apache.linkis.monitor.core.ob.{Event, Observer}
 import org.apache.linkis.monitor.utils.alert.AlertDesc
 import org.apache.linkis.monitor.utils.alert.ims.{ImsAlertDesc, PooledImsAlertUtils}
 
 import java.util
+
 import scala.collection.JavaConverters._
 
 class JobHistoryErrorCodeAlertSender(alerts: util.Map[String, AlertDesc])

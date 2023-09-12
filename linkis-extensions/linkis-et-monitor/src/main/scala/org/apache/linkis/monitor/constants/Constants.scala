@@ -99,7 +99,6 @@ object Constants {
   val THREAD_TIME_OUT_IM = "thread.monitor.timeout.im."
   val JOB_RESULT_IM = "jobhistory.result.monitor.im."
 
-
   val BML_VERSION_MAX_NUM: CommonVars[Int] =
     CommonVars[Int]("linkis.monitor.bml.cleaner.version.max.num", 50)
 
@@ -112,10 +111,7 @@ object Constants {
   val BML_CLEAN_ONCE_RESOURCE_LIMIT_NUM: CommonVars[Int] =
     CommonVars[Int]("linkis.monitor.bml.cleaner.once.limit.num", 100)
 
-  val BML_TRASH_PATH_PREFIX: CommonVars[String] = CommonVars[String](
-    "linkis.monitor.bml.trash.prefix.path",
-    "hdfs:///tmp/linkis/trash/bml_trash"
-  )
-
+  val BML_TRASH_PATH_PREFIX: CommonVars[String] =
+    CommonVars[String]("linkis.monitor.bml.trash.prefix.path", "hdfs:///tmp/linkis/trash/bml_trash")
 
 }

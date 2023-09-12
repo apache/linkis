@@ -17,10 +17,13 @@
 
 package org.apache.linkis.monitor.scheduled;
 
-import org.apache.linkis.monitor.jobhistory.JobHistoryDataFetcher;
 import org.apache.linkis.monitor.config.MonitorConfig;
-import org.apache.linkis.monitor.until.CacheUtils;
-import org.apache.linkis.monitor.scan.app.factory.MapperFactory;
+import org.apache.linkis.monitor.constants.Constants;
+import org.apache.linkis.monitor.core.pac.DataFetcher;
+import org.apache.linkis.monitor.core.scanner.AnomalyScanner;
+import org.apache.linkis.monitor.core.scanner.DefaultScanner;
+import org.apache.linkis.monitor.factory.MapperFactory;
+import org.apache.linkis.monitor.jobhistory.JobHistoryDataFetcher;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrCodeRule;
 import org.apache.linkis.monitor.jobhistory.errorcode.JobHistoryErrorCodeAlertSender;
 import org.apache.linkis.monitor.jobhistory.jobtime.JobTimeExceedAlertSender;
@@ -31,10 +34,7 @@ import org.apache.linkis.monitor.jobhistory.runtime.CommonJobRunTimeRule;
 import org.apache.linkis.monitor.jobhistory.runtime.CommonRunTimeAlertSender;
 import org.apache.linkis.monitor.jobhistory.runtime.JobHistoryRunTimeAlertSender;
 import org.apache.linkis.monitor.jobhistory.runtime.JobHistoryRunTimeRule;
-import org.apache.linkis.monitor.constants.Constants;
-import org.apache.linkis.monitor.core.pac.DataFetcher;
-import org.apache.linkis.monitor.core.scanner.AnomalyScanner;
-import org.apache.linkis.monitor.core.scanner.DefaultScanner;
+import org.apache.linkis.monitor.until.CacheUtils;
 import org.apache.linkis.monitor.utils.alert.AlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.ImsAlertDesc;
 import org.apache.linkis.monitor.utils.alert.ims.MonitorAlertUtils;
@@ -50,19 +50,19 @@ import java.util.*;
 import org.slf4j.Logger;
 
 /**
- * * jobHistory monitor
- * 1.errorCode: Monitor the error code
- * 2.userLabel: tenant label monitoring,scan the execution data within the first 20 minutes, and judge the labels field of the data
+ * * jobHistory monitor 1.errorCode: Monitor the error code 2.userLabel: tenant label
+ * monitoring,scan the execution data within the first 20 minutes, and judge the labels field of the
+ * data
  *
- * 3.jobResultRunTime: Scan the execution data within the first 20 minutes, and judge the completed
- * tasks. If the parm field in the jobhistory contains (task.notification.conditions) and the result
- * of executing the task is (Succeed, Failed, Canceled, Timeout, ALL) any one of them, an alarm is
- * triggered and the result of the job is that it has ended. All three are indispensable
+ * <p>3.jobResultRunTime: Scan the execution data within the first 20 minutes, and judge the
+ * completed tasks. If the parm field in the jobhistory contains (task.notification.conditions) and
+ * the result of executing the task is (Succeed, Failed, Canceled, Timeout, ALL) any one of them, an
+ * alarm is triggered and the result of the job is that it has ended. All three are indispensable
  *
- * 4.jobResultRunTimeForDSS: Scan the execution data within the first 20 minutes, scan the tasks
+ * <p>4.jobResultRunTimeForDSS: Scan the execution data within the first 20 minutes, scan the tasks
  * that have been marked for notification, if the task has ended, a notification will be initiated
  *
- * 5.jobHistoryUnfinishedScan: monitor the status of the execution task, scan the data outside 12
+ * <p>5.jobHistoryUnfinishedScan: monitor the status of the execution task, scan the data outside 12
  * hours and within 24 hours
  */
 @Component
@@ -231,10 +231,7 @@ public class JobHistoryMonitor {
           new String[] {String.valueOf(ps), String.valueOf(pe), String.valueOf(id), timeType};
       ret.add(new JobHistoryDataFetcher(fetcherArgs, MapperFactory.getJobHistoryMapper()));
       logger.info(
-          "Generated dataFetcher for startTime: "
-              + new Date(ps)
-              + ". EndTime: "
-              + new Date(pe));
+          "Generated dataFetcher for startTime: " + new Date(ps) + ". EndTime: " + new Date(pe));
       pe = pe - maxIntervalMs;
     }
     return ret;

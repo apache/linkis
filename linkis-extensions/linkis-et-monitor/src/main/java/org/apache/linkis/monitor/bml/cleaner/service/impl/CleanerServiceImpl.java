@@ -17,13 +17,13 @@
 
 package org.apache.linkis.monitor.bml.cleaner.service.impl;
 
+import org.apache.linkis.common.io.FsPath;
 import org.apache.linkis.monitor.bml.cleaner.dao.VersionDao;
 import org.apache.linkis.monitor.bml.cleaner.entity.CleanedResourceVersion;
 import org.apache.linkis.monitor.bml.cleaner.entity.ResourceVersion;
 import org.apache.linkis.monitor.bml.cleaner.service.CleanerService;
-import org.apache.linkis.monitor.bml.cleaner.vo.CleanResourceVo;
 import org.apache.linkis.monitor.bml.cleaner.service.VersionService;
-import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.monitor.bml.cleaner.vo.CleanResourceVo;
 import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.storage.FSFactory;
 import org.apache.linkis.storage.fs.FileSystem;
@@ -74,10 +74,8 @@ public class CleanerServiceImpl implements CleanerService {
   public void clean() {
     previous =
         new Date(
-                System.currentTimeMillis()
-                - (Long) Constants.BML_PREVIOUS_INTERVAL_TIME_DAYS().getValue()
-                    * 86400
-                    * 1000);
+            System.currentTimeMillis()
+                - (Long) Constants.BML_PREVIOUS_INTERVAL_TIME_DAYS().getValue() * 86400 * 1000);
 
     if ((Integer) Constants.BML_VERSION_MAX_NUM().getValue()
             - (Integer) Constants.BML_VERSION_KEEP_NUM().getValue()
@@ -90,8 +88,7 @@ public class CleanerServiceImpl implements CleanerService {
       logger.info("need cleaned resource count:{}", needCleanResources.size());
       fs =
           (FileSystem)
-              FSFactory.getFs(
-                  StorageUtils.HDFS, StorageConfiguration.HDFS_ROOT_USER.getValue());
+              FSFactory.getFs(StorageUtils.HDFS, StorageConfiguration.HDFS_ROOT_USER.getValue());
       for (CleanResourceVo resourceVo : needCleanResources) {
         String minVersion =
             versionDao.getMinKeepVersion(

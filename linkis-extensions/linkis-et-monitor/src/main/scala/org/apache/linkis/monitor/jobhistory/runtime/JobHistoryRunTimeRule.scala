@@ -18,15 +18,16 @@
 package org.apache.linkis.monitor.jobhistory.runtime
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory
-import org.apache.linkis.monitor.until.CacheUtils
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.Observer
 import org.apache.linkis.monitor.core.pac.{AbstractScanRule, ScannedData}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.until.CacheUtils
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.server.BDPJettyServerHelper
 
 import java.util
+
 import scala.collection.JavaConverters._
 
 class JobHistoryRunTimeRule(hitObserver: Observer)
@@ -51,11 +52,7 @@ class JobHistoryRunTimeRule(hitObserver: Observer)
         for (d <- sd.getData().asScala) {
           d match {
             case jobHistory: JobHistory =>
-              if (
-                  Constants.FINISHED_JOB_STATUS.contains(
-                    jobHistory.getStatus.toUpperCase()
-                  )
-              ) {
+              if (Constants.FINISHED_JOB_STATUS.contains(jobHistory.getStatus.toUpperCase())) {
                 val parmsMap: util.Map[String, scala.AnyRef] = BDPJettyServerHelper.gson.fromJson(
                   jobHistory.getParams,
                   classOf[util.Map[String, scala.AnyRef]]

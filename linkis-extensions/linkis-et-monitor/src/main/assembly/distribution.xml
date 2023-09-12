@@ -23,6 +23,7 @@
         <format>dir</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>linkis-et-monitor</baseDirectory>
 
     <dependencySets>
         <dependencySet>

@@ -20,6 +20,7 @@ package org.apache.linkis.monitor
 import org.apache.linkis.monitor.factory.MapperFactory
 import org.apache.linkis.monitor.instance.dao.InstanceInfoDao
 import org.apache.linkis.monitor.jobhistory.dao.JobHistoryMapper
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.{ComponentScan, Configuration}
 

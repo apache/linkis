@@ -18,13 +18,14 @@
 package org.apache.linkis.monitor.jobhistory.runtime
 
 import org.apache.linkis.common.utils.Logging
-import org.apache.linkis.monitor.jobhistory.entity.JobHistory
-import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.constants.Constants
 import org.apache.linkis.monitor.core.ob.{Event, Observer}
+import org.apache.linkis.monitor.jobhistory.entity.JobHistory
+import org.apache.linkis.monitor.jobhistory.exception.AnomalyScannerException
 import org.apache.linkis.monitor.utils.alert.ims.{MonitorAlertUtils, PooledImsAlertUtils}
 
 import java.util
+
 import scala.collection.JavaConverters._
 
 /**

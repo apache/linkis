@@ -18,13 +18,5 @@
 package org.apache.linkis.engineplugin.nebula.builder;
 
 import org.apache.linkis.manager.engineplugin.common.launch.process.JavaProcessEngineConnLaunchBuilder;
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel;
-import org.apache.linkis.storage.utils.StorageConfiguration;
 
-public class NebulaProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {
-
-  @Override
-  public String getEngineStartUser(UserCreatorLabel label) {
-    return StorageConfiguration.HDFS_ROOT_USER.getValue();
-  }
-}
+public class NebulaProcessEngineConnLaunchBuilder extends JavaProcessEngineConnLaunchBuilder {}

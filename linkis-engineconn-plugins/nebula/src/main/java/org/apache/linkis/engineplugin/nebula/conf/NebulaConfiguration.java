@@ -24,40 +24,27 @@ public class NebulaConfiguration {
   public static final CommonVars<Integer> ENGINE_CONCURRENT_LIMIT =
       CommonVars.apply("wds.linkis.engineconn.concurrent.limit", 100);
 
-  // unit in seconds
-  public static final CommonVars<Long> PRESTO_HTTP_CONNECT_TIME_OUT =
-      CommonVars.apply("wds.linkis.presto.http.connectTimeout", 60L);
-
-  public static final CommonVars<Long> PRESTO_HTTP_READ_TIME_OUT =
-      CommonVars.apply("wds.linkis.presto.http.readTimeout", 60L);
-
   public static final CommonVars<Integer> ENGINE_DEFAULT_LIMIT =
-      CommonVars.apply("wds.linkis.presto.default.limit", 5000);
+      CommonVars.apply("wds.linkis.nebula.default.limit", 5000);
 
-  public static final CommonVars<String> PRESTO_URL =
-      CommonVars.apply("wds.linkis.presto.url", "http://127.0.0.1:8080");
+  public static final CommonVars<String> NEBULA_HOST =
+      CommonVars.apply("wds.linkis.nebula.host", "127.0.0.1");
 
-  public static final CommonVars<String> PRESTO_RESOURCE_CONFIG_PATH =
-      CommonVars.apply("wds.linkis.presto.resource.config", "");
+  public static final CommonVars<Integer> NEBULA_PORT =
+      CommonVars.apply("wds.linkis.nebula.port", 9669);
 
-  public static final CommonVars<String> PRESTO_USER_NAME =
-      CommonVars.apply("wds.linkis.presto.username", "default");
+  public static final CommonVars<Integer> NEBULA_MAX_CONN_SIZE =
+      CommonVars.apply("wds.linkis.nebula.max.conn.size", 100);
 
-  public static final CommonVars<String> PRESTO_PASSWORD =
-      CommonVars.apply("wds.linkis.presto.password", "");
+  public static final CommonVars<String> NEBULA_USER_NAME =
+      CommonVars.apply("wds.linkis.nebula.username", "root");
 
-  public static final CommonVars<String> PRESTO_CATALOG =
-      CommonVars.apply("wds.linkis.presto.catalog", "system");
+  public static final CommonVars<String> NEBULA_PASSWORD =
+      CommonVars.apply("wds.linkis.nebula.password", "nebula");
 
-  public static final CommonVars<String> PRESTO_SCHEMA =
-      CommonVars.apply("wds.linkis.presto.schema", "");
-
-  public static final CommonVars<String> PRESTO_SOURCE =
-      CommonVars.apply("wds.linkis.presto.source", "global");
-
-  public static final CommonVars<String> PRESTO_REQUEST_MEMORY =
-      CommonVars.apply("presto.session.query_max_total_memory", "8GB");
-
-  public static final CommonVars<Boolean> PRESTO_SQL_HOOK_ENABLED =
-      CommonVars.apply("linkis.presto.sql.hook.enabled", true, "presto sql hook");
+  public static final CommonVars<Boolean> NEBULA_RECONNECT_ENABLED =
+      CommonVars.apply(
+          "linkis.nebula.reconnect.enabled",
+          false,
+          "whether to retry after the connection is disconnected");
 }

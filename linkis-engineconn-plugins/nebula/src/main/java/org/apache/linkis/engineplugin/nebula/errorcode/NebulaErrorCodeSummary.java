@@ -21,9 +21,9 @@ import org.apache.linkis.common.errorcode.ErrorCodeUtils;
 import org.apache.linkis.common.errorcode.LinkisErrorCode;
 
 public enum NebulaErrorCodeSummary implements LinkisErrorCode {
-  PRESTO_STATE_INVALID(
-      26001, "Presto status error,statement is not finished(Presto服务状态异常, 查询语句没有执行结束)"),
-  PRESTO_CLIENT_ERROR(26002, "Presto client error(Presto客户端异常)");
+  NEBULA_CLIENT_INITIALIZATION_FAILED(28001, "Nebula client initialization failed(Nebula客户端初始化失败)"),
+  NEBULA_EXECUTOR_ERROR(28002, "Nebula executor error(Nebula执行异常)"),
+  NEBULA_CLIENT_ERROR(28003, "Nebula client error(Nebula客户端异常)");
 
   private final int errorCode;
 

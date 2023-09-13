@@ -31,9 +31,7 @@ import org.apache.linkis.engineplugin.nebula.conf.NebulaConfiguration;
 import org.apache.linkis.engineplugin.nebula.conf.NebulaEngineConf;
 import org.apache.linkis.engineplugin.nebula.errorcode.NebulaErrorCodeSummary;
 import org.apache.linkis.engineplugin.nebula.exception.NebulaClientException;
-import org.apache.linkis.engineplugin.nebula.exception.NebulaStateInvalidException;
-import org.apache.linkis.engineplugin.nebula.utils.NebulaSQLHook;
-import org.apache.linkis.governance.common.paser.SQLCodeParser;
+import org.apache.linkis.engineplugin.nebula.exception.NebulaExecuteError;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.LoadResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
@@ -54,11 +52,9 @@ import org.apache.linkis.storage.resultset.table.TableRecord;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import org.springframework.util.CollectionUtils;
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -66,29 +62,27 @@ import java.util.stream.Collectors;
 
 import scala.Tuple2;
 
-import com.facebook.presto.client.*;
-import com.facebook.presto.spi.security.SelectedRole;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import okhttp3.OkHttpClient;
+import com.vesoft.nebula.ErrorCode;
+import com.vesoft.nebula.client.graph.NebulaPoolConfig;
+import com.vesoft.nebula.client.graph.data.HostAddress;
+import com.vesoft.nebula.client.graph.data.ResultSet;
+import com.vesoft.nebula.client.graph.net.NebulaPool;
+import com.vesoft.nebula.client.graph.net.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   private static final Logger logger = LoggerFactory.getLogger(NebulaEngineConnExecutor.class);
-
-  private static OkHttpClient okHttpClient =
-      new OkHttpClient.Builder()
-          .socketFactory(new SocketChannelSocketFactory())
-          .connectTimeout(
-              NebulaConfiguration.PRESTO_HTTP_CONNECT_TIME_OUT.getValue(), TimeUnit.SECONDS)
-          .readTimeout(NebulaConfiguration.PRESTO_HTTP_READ_TIME_OUT.getValue(), TimeUnit.SECONDS)
-          .build();
   private int id;
   private List<Label<?>> executorLabels = new ArrayList<>(2);
-  private Map<String, StatementClient> statementClientCache = new ConcurrentHashMap<>();
-  private Cache<String, ClientSession> clientSessionCache =
+  private Map<String, Session> sessionCache = new ConcurrentHashMap<>();
+
+  private Map<String, String> configMap = new HashMap<>();
+
+  private Cache<String, NebulaPool> nebulaPoolCache =
       CacheBuilder.newBuilder()
           .expireAfterAccess(
               Long.valueOf(EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue().toString()),
@@ -103,13 +97,11 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public void init() {
-    setCodeParser(new SQLCodeParser());
     super.init();
   }
 
   @Override
   public ExecuteResponse execute(EngineConnTask engineConnTask) {
-    String user = getUserCreatorLabel(engineConnTask.getLables()).getUser();
     Optional<Label<?>> userCreatorLabelOp =
         Arrays.stream(engineConnTask.getLables())
             .filter(label -> label instanceof UserCreatorLabel)
@@ -128,52 +120,55 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
           new NebulaEngineConf().getCacheMap(new Tuple2<>(userCreatorLabel, engineTypeLabel));
     }
 
-    clientSessionCache.put(
-        engineConnTask.getTaskId(),
-        getClientSession(user, engineConnTask.getProperties(), configMap));
+    nebulaPoolCache.put(
+        engineConnTask.getTaskId(), getNebulaPool(engineConnTask.getProperties(), configMap));
     return super.execute(engineConnTask);
   }
 
   @Override
   public ExecuteResponse executeLine(EngineExecutionContext engineExecutorContext, String code) {
-    boolean enableSqlHook = NebulaConfiguration.PRESTO_SQL_HOOK_ENABLED.getValue();
     String realCode;
     if (StringUtils.isBlank(code)) {
-      realCode = "SELECT 1";
-    } else if (enableSqlHook) {
-      realCode = NebulaSQLHook.preExecuteHook(code.trim());
+      realCode = "SHOW SPACES";
     } else {
       realCode = code.trim();
     }
-    logger.info("presto client begins to run psql code:\n {}", realCode);
+    logger.info("Nebula client begins to run ngql code:\n {}", realCode);
 
     String taskId = engineExecutorContext.getJobId().get();
-    ClientSession clientSession = clientSessionCache.getIfPresent(taskId);
-    StatementClient statement =
-        StatementClientFactory.newStatementClient(okHttpClient, clientSession, realCode);
-    statementClientCache.put(taskId, statement);
+    NebulaPool nebulaPool = nebulaPoolCache.getIfPresent(taskId);
+    Session session = getSession(nebulaPool);
+    sessionCache.put(taskId, session);
 
     try {
-      initialStatusUpdates(taskId, engineExecutorContext, statement);
-      if (statement.isRunning()
-          || (statement.isFinished() && statement.finalStatusInfo().getError() == null)) {
-        queryOutput(taskId, engineExecutorContext, statement);
+      initialStatusUpdates(taskId, engineExecutorContext, session);
+      ResultSet resultSet = null;
+
+      try {
+        resultSet = session.execute(code);
+      } catch (Exception e) {
+        logger.error("Nebula executor error.");
+        throw new NebulaExecuteError(
+            NebulaErrorCodeSummary.NEBULA_EXECUTOR_ERROR.getErrorCode(),
+            NebulaErrorCodeSummary.NEBULA_EXECUTOR_ERROR.getErrorDesc());
+      }
+
+      if (resultSet.isSucceeded() && !resultSet.isEmpty()) {
+        queryOutput(taskId, engineExecutorContext, resultSet);
       }
       ErrorExecuteResponse errorResponse = null;
       try {
-        errorResponse = verifyServerError(taskId, engineExecutorContext, statement);
+        errorResponse = verifyServerError(taskId, engineExecutorContext, resultSet);
       } catch (ErrorException e) {
-        logger.error("Presto execute failed (#{}): {}", e.getErrCode(), e.getMessage());
+        logger.error("Nebula execute failed (#{}): {}", e.getErrCode(), e.getMessage());
       }
       if (errorResponse == null) {
-        // update session
-        clientSessionCache.put(taskId, updateSession(clientSession, statement));
         return new SuccessExecuteResponse();
       } else {
         return errorResponse;
       }
     } finally {
-      statementClientCache.remove(taskId);
+      sessionCache.remove(taskId);
     }
   }
 
@@ -183,7 +178,6 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
     return null;
   }
 
-  // todo
   @Override
   public float progress(String taskID) {
     return 0.0f;
@@ -196,9 +190,9 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public void killTask(String taskId) {
-    StatementClient statement = statementClientCache.remove(taskId);
-    if (null != statement) {
-      statement.cancelLeafStage();
+    Session session = sessionCache.remove(taskId);
+    if (null != session) {
+      session.release();
     }
     super.killTask(taskId);
   }
@@ -247,11 +241,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
     return NebulaConfiguration.ENGINE_CONCURRENT_LIMIT.getValue();
   }
 
-  private ClientSession getClientSession(
-      String user, Map<String, Object> taskParams, Map<String, String> cacheMap) {
-    Map<String, String> configMap = new HashMap<>();
-    // The parameter priority specified at runtime is higher than the configuration priority of the
-    // management console
+  private NebulaPool getNebulaPool(Map<String, Object> taskParams, Map<String, String> cacheMap) {
     if (!CollectionUtils.isEmpty(cacheMap)) {
       configMap.putAll(cacheMap);
     }
@@ -259,205 +249,131 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
         .filter(entry -> entry.getValue() != null)
         .forEach(entry -> configMap.put(entry.getKey(), String.valueOf(entry.getValue())));
 
-    URI httpUri = URI.create(NebulaConfiguration.PRESTO_URL.getValue(configMap));
-    String source = NebulaConfiguration.PRESTO_SOURCE.getValue(configMap);
-    String catalog = NebulaConfiguration.PRESTO_CATALOG.getValue(configMap);
-    String schema = NebulaConfiguration.PRESTO_SCHEMA.getValue(configMap);
+    String host = NebulaConfiguration.NEBULA_HOST.getValue(configMap);
+    Integer port = NebulaConfiguration.NEBULA_PORT.getValue(configMap);
+    Integer maxConnSize = NebulaConfiguration.NEBULA_MAX_CONN_SIZE.getValue(configMap);
 
-    Map<String, String> properties =
-        configMap.entrySet().stream()
-            .filter(entry -> entry.getKey().startsWith("presto.session."))
-            .collect(
-                Collectors.toMap(
-                    entry -> entry.getKey().substring("presto.session.".length()),
-                    Map.Entry::getValue));
+    NebulaPool nebulaPool = new NebulaPool();
+    Boolean initResult = false;
+    try {
 
-    String clientInfo = "Linkis";
-    String transactionId = null;
-    Optional<String> traceToken = Optional.empty();
-    Set<String> clientTags = Collections.emptySet();
-    String timeZonId = TimeZone.getDefault().getID();
-    Locale locale = Locale.getDefault();
-    Map<String, String> resourceEstimates = Collections.emptyMap();
-    Map<String, String> preparedStatements = Collections.emptyMap();
-    Map<String, SelectedRole> roles = Collections.emptyMap();
-    Map<String, String> extraCredentials = Collections.emptyMap();
-    io.airlift.units.Duration clientRequestTimeout =
-        new io.airlift.units.Duration(0, TimeUnit.MILLISECONDS);
-
-    return new ClientSession(
-        httpUri,
-        user,
-        source,
-        traceToken,
-        clientTags,
-        clientInfo,
-        catalog,
-        schema,
-        timeZonId,
-        locale,
-        resourceEstimates,
-        properties,
-        preparedStatements,
-        roles,
-        extraCredentials,
-        transactionId,
-        clientRequestTimeout);
+      NebulaPoolConfig nebulaPoolConfig = new NebulaPoolConfig();
+      nebulaPoolConfig.setMaxConnSize(maxConnSize);
+      List<HostAddress> addresses = Arrays.asList(new HostAddress(host, port));
+      initResult = nebulaPool.init(addresses, nebulaPoolConfig);
+    } catch (Exception e) {
+      logger.error("NebulaPool initialization failed.");
+      throw new NebulaClientException(
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorCode(),
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorDesc());
+    }
+    if (!initResult) {
+      logger.error("NebulaPool initialization failed.");
+      throw new NebulaClientException(
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorCode(),
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorDesc());
+    }
+    return nebulaPool;
   }
 
-  private UserCreatorLabel getUserCreatorLabel(Label<?>[] labels) {
-    return (UserCreatorLabel)
-        Arrays.stream(labels).filter(label -> label instanceof UserCreatorLabel).findFirst().get();
+  private Session getSession(NebulaPool nebulaPool) {
+    Session session;
+    String username = NebulaConfiguration.NEBULA_USER_NAME.getValue(configMap);
+    String password = NebulaConfiguration.NEBULA_PASSWORD.getValue(configMap);
+    Boolean reconnect = NebulaConfiguration.NEBULA_RECONNECT_ENABLED.getValue(configMap);
+
+    try {
+      session = nebulaPool.getSession(username, password, reconnect);
+    } catch (Exception e) {
+      logger.error("Nebula Session initialization failed.");
+      throw new NebulaClientException(
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorCode(),
+          NebulaErrorCodeSummary.NEBULA_CLIENT_INITIALIZATION_FAILED.getErrorDesc());
+    }
+
+    return session;
   }
 
   private void initialStatusUpdates(
-      String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement) {
-    while (statement.isRunning()
-        && (statement.currentData().getData() == null
-            || statement.currentStatusInfo().getUpdateType() != null)) {
+      String taskId, EngineExecutionContext engineExecutorContext, Session session) {
+    if (session.ping()) {
       engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId));
-      statement.advance();
     }
   }
 
   private void queryOutput(
-      String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement) {
+      String taskId, EngineExecutionContext engineExecutorContext, ResultSet resultSet) {
     int columnCount = 0;
-    int rows = 0;
     ResultSetWriter resultSetWriter =
         engineExecutorContext.createResultSetWriter(ResultSetFactory.TABLE_TYPE);
+
     try {
-      QueryStatusInfo results = null;
-      if (statement.isRunning()) {
-        results = statement.currentStatusInfo();
-      } else {
-        results = statement.finalStatusInfo();
+      List<String> colNames = resultSet.keys();
+
+      if (CollectionUtils.isEmpty(colNames)) {
+        throw new RuntimeException("Nebula columns is null.");
       }
-      if (results.getColumns() == null) {
-        throw new RuntimeException("presto columns is null.");
-      }
+
       List<Column> columns =
-          results.getColumns().stream()
-              .map(
-                  column -> new Column(column.getName(), DataType.toDataType(column.getType()), ""))
+          colNames.stream()
+              .map(column -> new Column(column, DataType.toDataType("string"), ""))
               .collect(Collectors.toList());
       columnCount = columns.size();
       resultSetWriter.addMetaData(new TableMetaData(columns.toArray(new Column[0])));
-      while (statement.isRunning()) {
-        Iterable<List<Object>> data = statement.currentData().getData();
-        if (data != null) {
-          for (List<Object> row : data) {
-            String[] rowArray = row.stream().map(r -> String.valueOf(r)).toArray(String[]::new);
+      if (!resultSet.isEmpty()) {
+        for (int i = 0; i < resultSet.rowsSize(); i++) {
+          ResultSet.Record record = resultSet.rowValues(i);
+          if (record != null) {
+            String[] rowArray =
+                record.values().stream()
+                    .map(
+                        x -> {
+                          try {
+                            return x.asString();
+                          } catch (Exception e) {
+                            return "";
+                          }
+                        })
+                    .toArray(String[]::new);
             resultSetWriter.addRecord(new TableRecord(rowArray));
-            rows += 1;
           }
         }
         engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId));
-        statement.advance();
       }
     } catch (Exception e) {
       IOUtils.closeQuietly(resultSetWriter);
     }
-    String message = String.format("Fetched %d col(s) : %d row(s) in presto", columnCount, rows);
+    String message =
+        String.format("Fetched %d col(s) : %d row(s) in Nebula", columnCount, resultSet.rowsSize());
     logger.info(message);
     engineExecutorContext.appendStdout(LogUtils.generateInfo(message));
     engineExecutorContext.sendResultSet(resultSetWriter);
   }
 
   private ErrorExecuteResponse verifyServerError(
-      String taskId, EngineExecutionContext engineExecutorContext, StatementClient statement)
+      String taskId, EngineExecutionContext engineExecutorContext, ResultSet resultSet)
       throws ErrorException {
     engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId));
-    if (statement.isFinished()) {
-      QueryStatusInfo info = statement.finalStatusInfo();
-      if (info.getError() != null) {
-        QueryError error = Objects.requireNonNull(info.getError());
-        logger.error("Presto execute failed (#{}): {}", info.getId(), error.getMessage());
-        Throwable cause = null;
-        if (error.getFailureInfo() != null) {
-          cause = error.getFailureInfo().toException();
-        }
-        engineExecutorContext.appendStdout(
-            LogUtils.generateERROR(ExceptionUtils.getStackTrace(cause)));
-        return new ErrorExecuteResponse(ExceptionUtils.getMessage(cause), cause);
-      } else {
-        return null;
-      }
-    } else if (statement.isClientAborted()) {
-      logger.warn("Presto statement is killed.");
-      return null;
-    } else if (statement.isClientError()) {
-      throw new NebulaClientException(
-          NebulaErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorCode(),
-          NebulaErrorCodeSummary.PRESTO_CLIENT_ERROR.getErrorDesc());
-    } else {
-      throw new NebulaStateInvalidException(
-          NebulaErrorCodeSummary.PRESTO_STATE_INVALID.getErrorCode(),
-          NebulaErrorCodeSummary.PRESTO_STATE_INVALID.getErrorDesc());
+
+    if (!resultSet.isSucceeded() || resultSet.getErrorCode() != ErrorCode.SUCCEEDED.getValue()) {
+      logger.error(
+          "Nebula execute failed (#{}): {}", resultSet.getErrorCode(), resultSet.getErrorMessage());
+      engineExecutorContext.appendStdout(LogUtils.generateERROR(resultSet.getErrorMessage()));
+      return new ErrorExecuteResponse(resultSet.getErrorMessage(), null);
     }
-  }
-
-  private ClientSession updateSession(ClientSession clientSession, StatementClient statement) {
-    ClientSession newSession = clientSession;
-
-    // update catalog and schema if present
-    if (statement.getSetCatalog().isPresent() || statement.getSetSchema().isPresent()) {
-      newSession =
-          ClientSession.builder(newSession)
-              .withCatalog(statement.getSetCatalog().orElse(newSession.getCatalog()))
-              .withSchema(statement.getSetSchema().orElse(newSession.getSchema()))
-              .build();
-    }
-
-    // update transaction ID if necessary
-    if (statement.isClearTransactionId()) {
-      newSession = ClientSession.stripTransactionId(newSession);
-    }
-
-    ClientSession.Builder builder = ClientSession.builder(newSession);
-
-    if (statement.getStartedTransactionId() != null) {
-      builder = builder.withTransactionId(statement.getStartedTransactionId());
-    }
-
-    // update session properties if present
-    if (!statement.getSetSessionProperties().isEmpty()
-        || !statement.getResetSessionProperties().isEmpty()) {
-      Map<String, String> sessionProperties = new HashMap<>(newSession.getProperties());
-      sessionProperties.putAll(statement.getSetSessionProperties());
-      sessionProperties.keySet().removeAll(statement.getResetSessionProperties());
-      builder = builder.withProperties(sessionProperties);
-    }
-
-    // update session roles
-    if (!statement.getSetRoles().isEmpty()) {
-      Map<String, SelectedRole> roles = new HashMap<>(newSession.getRoles());
-      roles.putAll(statement.getSetRoles());
-      builder = builder.withRoles(roles);
-    }
-
-    // update prepared statements if present
-    if (!statement.getAddedPreparedStatements().isEmpty()
-        || !statement.getDeallocatedPreparedStatements().isEmpty()) {
-      Map<String, String> preparedStatements = new HashMap<>(newSession.getPreparedStatements());
-      preparedStatements.putAll(statement.getAddedPreparedStatements());
-      preparedStatements.keySet().removeAll(statement.getDeallocatedPreparedStatements());
-      builder = builder.withPreparedStatements(preparedStatements);
-    }
-
-    return builder.build();
+    return null;
   }
 
   @Override
   public void killAll() {
-    Iterator<StatementClient> iterator = statementClientCache.values().iterator();
+    Iterator<Session> iterator = sessionCache.values().iterator();
     while (iterator.hasNext()) {
-      StatementClient statement = iterator.next();
-      if (statement != null) {
-        statement.cancelLeafStage();
+      Session session = iterator.next();
+      if (session != null) {
+        session.release();
       }
     }
-    statementClientCache.clear();
+    sessionCache.clear();
   }
 
   @Override

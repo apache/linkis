@@ -62,12 +62,11 @@
 
     <!-- nebula -->
     <dependency>
-        <groupId>com.vesoft</groupId>
-        <artifactId>client</artifactId>
-        <version>${nebula.version}</version>
+      <groupId>com.vesoft</groupId>
+      <artifactId>client</artifactId>
+      <version>${nebula.version}</version>
     </dependency>
   </dependencies>
-
 
   <build>
 

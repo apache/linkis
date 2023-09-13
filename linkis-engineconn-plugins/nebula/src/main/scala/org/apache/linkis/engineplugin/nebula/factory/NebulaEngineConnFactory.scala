@@ -23,9 +23,9 @@ import org.apache.linkis.engineconn.computation.executor.creation.ComputationSin
 import org.apache.linkis.engineconn.executor.entity.LabelExecutor
 import org.apache.linkis.engineplugin.nebula.conf.NebulaConfiguration
 import org.apache.linkis.engineplugin.nebula.executor.NebulaEngineConnExecutor
+import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
 import org.apache.linkis.manager.label.entity.engine.RunType.RunType
-import org.apache.linkis.manager.label.entity.engine.{EngineType, RunType}
 
 class NebulaEngineConnFactory extends ComputationSingleExecutorEngineConnFactory {
 
@@ -37,8 +37,8 @@ class NebulaEngineConnFactory extends ComputationSingleExecutorEngineConnFactory
     new NebulaEngineConnExecutor(NebulaConfiguration.ENGINE_DEFAULT_LIMIT.getValue, id)
   }
 
-  override protected def getEngineConnType: EngineType = EngineType.PRESTO
+  override protected def getEngineConnType: EngineType = EngineType.NEBULA
 
-  override protected def getRunType: RunType = RunType.PRESTO_SQL
+  override protected def getRunType: RunType = RunType.NEBULA_SQL
 
 }

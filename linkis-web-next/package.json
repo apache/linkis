@@ -10,7 +10,7 @@
         "prepare": "husky install"
     },
     "dependencies": {
-        "@fesjs/fes-design": "^0.7.31",
+        "@fesjs/fes-design": "^0.7.32",
         "vue": "^3.2.47",
         "vue-router": "^4.2.2"
     },

@@ -130,8 +130,6 @@ class DefaultGatewayParser(gatewayParsers: Array[GatewayParser]) extends Abstrac
             // In order to be compatible with metadata module name refactoring,this logic will be removed in subsequent versions
           } else if (RPCConfiguration.LINKIS_DATASOURCE_SERVICE_LIST.contains(serviceId)) {
             RPCConfiguration.LINKIS_DATASOURCE_SERVICE_NAME.getValue
-          } else if (RPCConfiguration.METADATAQUERY_SERVICE_LIST.contains(serviceId)) {
-            RPCConfiguration.METADATAQUERY_SERVICE_APPLICATION_NAME.getValue
           } else if (RPCConfiguration.LINKIS_MANAGER_SERVICE_LIST.contains(serviceId)) {
             RPCConfiguration.LINKIS_MANAGER_SERVICE_NAME.getValue
             // After the complete merge is completed, it needs to be removed

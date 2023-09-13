@@ -60,9 +60,8 @@ public class ConfigKeyServiceImpl implements ConfigKeyService {
   public ConfigValue saveConfigValue(ConfigKeyValue configKeyValue, List<Label<?>> labelList)
       throws ConfigurationException {
 
-    if (StringUtils.isBlank(configKeyValue.getConfigValue())
-        || StringUtils.isBlank(configKeyValue.getKey())) {
-      throw new ConfigurationException(KEY_OR_VALUE_CANNOT.getErrorDesc());
+    if (StringUtils.isBlank(configKeyValue.getKey())) {
+      throw new ConfigurationException(KEY_CANNOT_EMPTY.getErrorDesc());
     }
 
     LabelParameterParser.labelCheck(labelList);

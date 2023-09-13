@@ -474,7 +474,7 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "creator", required = false, defaultValue = "*") String creator,
       @RequestParam(value = "configKey") String configKey)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "getKeyValue");
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -561,7 +561,7 @@ public class ConfigurationRestfulApi {
   @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
   public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "deleteKeyValue");
     String engineType = (String) json.getOrDefault("engineType", "*");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
@@ -771,7 +771,7 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
       throws ConfigurationException {
-    checkAdmin(ModuleUserUtils.getOperationUser(req, "getUserKeyValue"));
+    String username = ModuleUserUtils.getOperationUser(req, "getUserKeyValue");
     if (StringUtils.isBlank(engineType)) {
       engineType = null;
     }
@@ -784,6 +784,11 @@ public class ConfigurationRestfulApi {
     if (StringUtils.isBlank(user)) {
       user = null;
     }
+
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
+      return Message.error("Only admin can query other user configuration data");
+    }
+
     PageHelper.startPage(pageNow, pageSize);
     List<ConfigUserValue> list;
     try {

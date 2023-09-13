@@ -30,7 +30,7 @@ public enum LinkisConfigurationErrorCodeSummary implements LinkisErrorCode {
   CONFIGKEY_CANNOT_BE_NULL(14100, "ConfigKey cannot be null(configKey 不能为空)"),
   CONFIG_KEY_NOT_EXISTS(14100, "Config key not exists:{0}(配置键不存在：{0})"),
   LABEL_NOT_EXISTS(14100, "Label not exists:{0}(标签不存在{0})"),
-  KEY_OR_VALUE_CANNOT(14100, "Key or value cannot be null(键或值不能为空)"),
+  KEY_CANNOT_EMPTY(14100, "Key cannot be null(Key 不能为空)"),
   PARAMS_CANNOT_BE_EMPTY(14100, "Params cannot be empty!(参数不能为空！)"),
   TOKEN_IS_ERROR(14100, "Token is error(令牌是错误的)"),
   IS_NULL_CANNOT_BE_ADDED(14100, "CategoryName is null, cannot be added(categoryName 为空，无法添加)"),

@@ -62,9 +62,9 @@ public class RMLabelContainer {
     try {
       if (getUserCreatorLabel() != null && getEngineTypeLabel() != null) {
         List<Label> combinedLabel = Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel());
-        ClusterLabel tempClusterLabel = getClusterLabel();
-        if (shouldCombinedClusterLabel(tempClusterLabel)) {
-          combinedLabel.add(tempClusterLabel);
+        ClusterLabel clusterLabel = getClusterLabel();
+        if (shouldCombinedClusterLabel(clusterLabel)) {
+          combinedLabel.add(clusterLabel);
         }
         this.combinedResourceLabel = (CombinedLabel) combinedLabelBuilder.build("", combinedLabel);
         this.labels.add(combinedResourceLabel);

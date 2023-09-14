@@ -7,19 +7,57 @@
             @ok="show = false"
         >
             <template #title>
-                <slot name="title"></slot>
+                <div>全局配置</div>
             </template>
-            <template #default>
-                <slot name="default"></slot>
-            </template>
+
+            <div class="list-wrapper">
+                <template
+                    v-for="(dataItem, index) in dataList"
+                    :key="dataItem.name"
+                >
+                    <div class="line">
+                        <div class="text">
+                            <div class="title">{{ dataItem.name }}</div>
+                            <div class="description">
+                                {{ dataItem.description }}
+                            </div>
+                        </div>
+
+                        <div class="value">
+                            <FSpace>
+                                <div>
+                                    <FInput
+                                        style="width: 120px"
+                                        ref="inputRef"
+                                        v-model="dataItem.value"
+                                        placeholder="请输入"
+                                    />
+                                </div>
+                            </FSpace>
+                        </div>
+                    </div>
+                    <template v-if="index !== dataList.length - 1">
+                        <FDivider></FDivider>
+                    </template>
+                </template>
+            </div>
         </FModal>
     </FSpace>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 
 const show = ref(false);
+
+const dataList = reactive([
+    { name: 'yarn队列名', description: '{wds.linkis.yarnqueue}', value: '1' },
+    { name: '队列CPU使用上限', description: '2', value: '2' },
+    { name: '队列内存使用上限', description: '3', value: '3' },
+    { name: '全局各个引擎内存使用上限', description: '3', value: '3' },
+    { name: '全局各个引擎核心个数上限', description: '3', value: '3' },
+    { name: '全局各个引擎最大并发数', description: '3', value: '3' },
+]);
 
 const open = () => {
     show.value = true;
@@ -29,3 +67,4 @@ defineExpose({
     open,
 });
 </script>
+<style src="./index.less" scoped></style>

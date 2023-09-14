@@ -26,7 +26,7 @@
                 <FButton type="link" @click="openModal">全局配置</FButton>
                 <Drawer ref="drawerRef"></Drawer>
                 <Modal ref="modalRef">
-                    <List :data="listData"></List>
+                    <!-- <List :dataList="listData" :isEditing="false"></List> -->
                 </Modal>
             </div>
         </f-header>
@@ -36,17 +36,10 @@
     </f-layout>
 </template>
 <script setup lang="ts">
-import { Ref, ref, reactive } from 'vue';
+import { Ref, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Drawer from './drawer.vue';
 import Modal from './modal.vue';
-import List from './list.vue';
-
-const listData = reactive([
-    { name: '这是标题1', description: '1', value: '1' },
-    { name: '这是标题2', description: '2', value: '2' },
-    { name: '这是标题3', description: '3', value: '3' },
-]);
 
 const router = useRouter();
 const drawerRef = ref<Ref<{ open: () => void }> | null>(null);

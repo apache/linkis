@@ -243,23 +243,43 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
   protected def getExtractJavaOpts(envJavaOpts: String): String = {
-    //    var defaultJavaOpts = FlinkEnvConfiguration.FLINK_ENGINE_CONN_DEFAULT_JAVA_OPTS.getValue
     var defaultJavaOpts = ""
-    val yamlFilePath = "/appcom/config/flink-config/flink-conf.yaml"
-    val source = Source.fromFile(yamlFilePath)
-    try {
-      val yamlContent = source.mkString
-      val yaml = new Yaml()
-      val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
-      if (configMap.containsKey("env.java.opts")) {
-        defaultJavaOpts = configMap.get("env.java.opts").toString
+    val yamlFilePath = FLINK_CONF_DIR.getValue
+    val yamlFile = yamlFilePath + FLINK_CONF_YAML.getHotValue()
+    if (new File(yamlFile).exists()) {
+      val source = Source.fromFile(yamlFile)
+      try {
+        val yamlContent = source.mkString
+        val yaml = new Yaml()
+        val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+        if (configMap.containsKey("env.java.opts")) {
+          defaultJavaOpts = configMap.get("env.java.opts").toString
+        }
+      } finally {
+        source.close()
       }
-    } finally {
-      source.close()
+    } else {
+      val inputStream = getClass.getResourceAsStream(yamlFile)
+      if (inputStream != null) {
+        val source = Source.fromInputStream(inputStream)
+        try {
+          val yamlContent = source.mkString
+          val yaml = new Yaml()
+          val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+          if (configMap.containsKey("env.java.opts")) {
+            defaultJavaOpts = configMap.get("env.java.opts").toString
+          }
+        } finally {
+          source.close()
+        }
+      } else {
+        throw new FileNotFoundException("YAML file not found in both file system and classpath.")
+      }
     }
     val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     merged
   }
+
 
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r

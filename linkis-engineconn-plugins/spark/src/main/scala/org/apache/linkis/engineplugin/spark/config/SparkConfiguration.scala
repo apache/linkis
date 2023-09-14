@@ -80,6 +80,8 @@ object SparkConfiguration extends Logging {
 
   val SPARK_PYTHON_VERSION = CommonVars[String]("spark.python.version", "python")
 
+  val SPARK_PYTHON_FILES = CommonVars[String]("spark.submit.pyFiles", "")
+
   val SPARK_PYTHON_TEST_MODE_ENABLE =
     CommonVars[Boolean]("linkis.spark.python.test.mode.enable", false)
 

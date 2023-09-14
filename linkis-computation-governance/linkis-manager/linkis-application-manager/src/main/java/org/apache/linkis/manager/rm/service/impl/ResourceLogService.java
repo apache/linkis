@@ -150,8 +150,7 @@ public class ResourceLogService {
     if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue()) {
       LinkisUtils.tryAndWarn(
           () -> {
-            CombinedLabel userCreatorEngineType =
-                labelContainer.getCombinedUserCreatorEngineTypeLabel();
+            CombinedLabel userCreatorEngineType = labelContainer.getCombinedResourceLabel();
             EngineInstanceLabel engineInstanceLabel = labelContainer.getEngineInstanceLabel();
             EMInstanceLabel eMInstanceLabel = labelContainer.getEMInstanceLabel();
             if (userCreatorEngineType == null) {

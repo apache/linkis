@@ -247,8 +247,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     List<PersistenceLock> persistenceLocks = new ArrayList<>();
     EMInstanceLabel emInstanceLabel = labelContainer.getEMInstanceLabel();
-    CombinedLabel userCreatorEngineTypeLabel =
-        labelContainer.getCombinedUserCreatorEngineTypeLabel();
+    CombinedLabel userCreatorEngineTypeLabel = labelContainer.getCombinedResourceLabel();
 
     try {
       // check ecm resource if not enough return
@@ -294,9 +293,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
           labelResource.setLockedResource(
               labelResource.getLockedResource().add(resource.getLockedResource()));
           labelResourceService.setLabelResource(
-              label,
-              labelResource,
-              labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
+              label, labelResource, labelContainer.getCombinedResourceLabel().getStringValue());
           logger.info(
               String.format(
                   "ResourceChanged:%s --> %s", label.getStringValue(), labelResource.toString()));
@@ -330,9 +327,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     // add ec resource
     labelResourceService.setEngineConnLabelResource(
-        engineInstanceLabel,
-        resource,
-        labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
+        engineInstanceLabel, resource, labelContainer.getCombinedResourceLabel().getStringValue());
     // record engine locked resource
     labelContainer.getLabels().add(engineInstanceLabel);
     resourceLogService.recordUserResourceAction(
@@ -441,7 +436,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
       labelResourceService.setLabelResource(
           engineInstanceLabel,
           lockedResource,
-          labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
+          labelContainer.getCombinedResourceLabel().getStringValue());
       resourceLogService.success(
           ChangeType.ENGINE_INIT, lockedResource.getLockedResource(), engineInstanceLabel, null);
     } catch (Exception exception) {
@@ -481,7 +476,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                 labelResourceService.setLabelResource(
                     label,
                     labelResource,
-                    labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
+                    labelContainer.getCombinedResourceLabel().getStringValue());
                 labelResourceSet.add(
                     new LabelResourceMapping(label, addedResource, ResourceOperationType.USED));
                 resourceCheck(label, labelResource);
@@ -493,7 +488,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
         if (label
             .getClass()
-            .isAssignableFrom(labelContainer.getCombinedUserCreatorEngineTypeLabel().getClass())) {
+            .isAssignableFrom(labelContainer.getCombinedResourceLabel().getClass())) {
           resourceLogService.recordUserResourceAction(
               labelContainer,
               persistenceResource.getTicketId(),
@@ -704,9 +699,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
                         labelResourceService.setLabelResource(
                             label,
                             labelResource,
-                            labelContainer
-                                .getCombinedUserCreatorEngineTypeLabel()
-                                .getStringValue());
+                            labelContainer.getCombinedResourceLabel().getStringValue());
                         resourceCheck(label, labelResource);
                       }
                     },
@@ -725,8 +718,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
                 if (label
                     .getClass()
-                    .isAssignableFrom(
-                        labelContainer.getCombinedUserCreatorEngineTypeLabel().getClass())) {
+                    .isAssignableFrom(labelContainer.getCombinedResourceLabel().getClass())) {
                   resourceLogService.recordUserResourceAction(
                       labelContainer,
                       persistenceResource.getTicketId(),

@@ -111,6 +111,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     addSparkArg(sparkLauncher, "--num-executors", sparkConfig.getNumExecutors().toString());
     addSparkArg(sparkLauncher, "--principal", sparkConfig.getPrincipal());
     addSparkArg(sparkLauncher, "--keytab", sparkConfig.getKeytab());
+    addSparkArg(sparkLauncher, "--py-files", sparkConfig.getPyFiles());
     sparkLauncher.setAppResource(sparkConfig.getAppResource());
     sparkLauncher.setMainClass(mainClass);
     Arrays.stream(args.split("\\s+"))

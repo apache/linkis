@@ -127,6 +127,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     sparkConfig.setExecutorCores(LINKIS_SPARK_EXECUTOR_CORES.getValue(options))
     sparkConfig.setNumExecutors(LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(options))
     sparkConfig.setQueue(LINKIS_QUEUE_NAME.getValue(options))
+    sparkConfig.setPyFiles(SPARK_PYTHON_FILES.getValue(options))
 
     logger.info(s"spark_info: ${sparkConfig}")
     sparkConfig

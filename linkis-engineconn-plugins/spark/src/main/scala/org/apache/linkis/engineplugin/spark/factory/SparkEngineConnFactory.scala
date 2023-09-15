@@ -154,7 +154,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConf.getOption("spark.master").getOrElse(CommonVars("spark.master", "yarn").getValue)
     logger.info(s"------ Create new SparkContext {$master} -------")
 
-    val isYarnClusterMode: Boolean = LabelUtil.isYarnClusterMode(engineCreationContext.getLabels())
+    val isYarnClusterMode = LabelUtil.isYarnClusterMode(engineCreationContext.getLabels())
 
     if (isYarnClusterMode) {
       sparkConf.set("spark.submit.deployMode", "cluster")

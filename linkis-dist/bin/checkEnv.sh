@@ -18,6 +18,7 @@ shellDir=`dirname $0`
 workDir=`cd ${shellDir}/..;pwd`
 source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
+source ${workDir}/deploy-config/db.sh
 
 say() {
     printf 'check command fail \n %s\n' "$1"
@@ -108,6 +109,16 @@ echo "check sed"
 need_cmd sed
 echo "check lsof"
 need_cmd lsof
+
+echo "check hdfs"
+need_cmd hdfs
+
+echo "check shell"
+need_cmd $SHELL
+
+echo "check spark-sql"
+need_cmd spark-sql
+
 echo "<-----end to check used cmd---->"
 
 checkPythonAndJava
@@ -130,6 +141,7 @@ check_service_port
 SERVER_PORT=$PUBLICSERVICE_PORT
 check_service_port
 
+
 if [ "$portIsOccupy" = true ];then
   echo "The port is already in use, please check before installing"
   exit 1
@@ -139,11 +151,9 @@ if [ "$ENABLE_SPARK" == "true" ]; then
   checkSpark
 fi
 
-
 if [ "$ENABLE_HDFS" == "true" ]; then
   checkHdfs
 fi
-
 
 if [ "$ENABLE_HIVE" == "true" ]; then
   checkHive

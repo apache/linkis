@@ -20,141 +20,205 @@ source ${workDir}/bin/common.sh
 source ${workDir}/deploy-config/linkis-env.sh
 source ${workDir}/deploy-config/db.sh
 
-say() {
-    printf 'check command fail \n %s\n' "$1"
+function print_usage(){
+  echo "Usage: checkAdd [EngineName]"
+  echo " EngineName : The Engine name that you want to check"
+  echo " Engine list as bellow: JDBC Flink openLooKeng Pipeline Presto Sqoop Elasticsearch "
 }
 
-err() {
-    say "$1" >&2
-    exit 1
-}
+if [ $# -gt 1 ]; then
+  print_usage
+  exit 2
+fi
 
-function checkPythonAndJava(){
-    python --version > /dev/null 2>&1
-    isSuccess "execute cmd: python --version"
+# --- Begin Check service function 
+
+function checkJDBC(){
+
+# --- 1. check command
     java -version > /dev/null 2>&1
-    isSuccess "execute cmd: java --version"
+    isSuccess "execute cmd: java -version"
+
+# --- 2. check parameters
+     if [ -z "${MYSQL_HOST}" ] || [ -z "${MYSQL_PORT}" ] || [ -z "${MYSQL_DB}" ] || [ -z "${MYSQL_USER}" ] || [ -z "${MYSQL_PASSWORD}" ];then
+       echo "MYSQL_HOST/MYSQL_PORT/MYSQL_USER/MYSQL_PASSWORD] are  Invalid,Pls check parameter define"
+       exit 2
+     fi
+ 
+# --- 3. check server status
+# 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
+CLASSPATH=$CLASSPATH:/data/test/bin/mysql-connector-java-8.0.28.jar
+
+# 编写Java代码，尝试建立JDBC连接并验证
+echo "import java.sql.*;
+
+public class JdbcTest {
+    public static void main(String[] args) {
+        // 定义连接信息
+        String url = \"jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}\";
+        String username = \"${MYSQL_USER}\";
+        String password = \"${MYSQL_PASSWORD}\";
+
+        // 尝试建立连接
+        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+            System.out.println(\"jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT} 连接成功！\");
+        } catch (SQLException e) {
+            System.out.println(\"连接失败：\");
+            e.printStackTrace();
+        }
+    }
+}" > JdbcTest.java
+
+# 编译Java源文件
+    javac -cp "$CLASSPATH" JdbcTest.java
+
+# 运行Java程序
+    java -cp "$CLASSPATH":. JdbcTest
+    isSuccess "execute cmd: java -cp CLASSPATH:. JdbcTest"
+
+#clear files
+    rm JdbcTest.*
+
 }
 
-function checkHdfs(){
-    hadoopVersion="`hdfs version`"
-    defaultHadoopVersion="3.3"
-    checkversion "$hadoopVersion" $defaultHadoopVersion hadoop
+function checkFlink(){
+
+# --- 1. check command
+    flink --version > /dev/null 2>&1
+    isSuccess "execute cmd: flink--version"
+
+# --- 2. check parameters
+      if [ -z ${YARN_RESTFUL_URL} ];then
+         echo "Parameter YARN_RESTFUL_URL is Invalid:" ${YARN_RESTFUL_URL}
+         exit 2
+      fi
+ 
+# --- 3. check server status
+    YanRMAddress=`echo ${YARN_RESTFUL_URL}|awk -F';' '{print $1}'`
+    curl $YanRMAddress > /dev/null 2>&1
+    isSuccess "execute cmd: Flink yarn service check "
+
 }
 
-function checkHive(){
-    checkversion "$(whereis hive)" "3.1" hive
+function checkopenLooKeng(){
+
+# --- 2. check parameters
+     if [ -z "${OLK_HOST}" ] || [ -z "${OLK_PORT}" ] || [ -z "${OLK_CATALOG}" ]|| [ -z "${OLK_SCHEMA}" ] || [ -z "${OLK_USER}" ] || [ -z "${OLK_PASSWORD}" ];then
+       echo "OLK_HOST/OLK_PORT/OLK_USER/OLK_PASSWORD] are  Invalid,Pls check parameter define"
+       exit 2
+     fi
+ 
+# --- 3. check server status
+# 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
+CLASSPATH=$CLASSPATH:/data/test/bin/hetu-jdbc-1.10.0.jar
+
+# 编写Java代码，尝试建立JDBC连接并验证
+echo "import java.sql.*;
+
+public class openLooKengTest{
+    public static void main(String[] args) {
+        // 定义连接信息
+        String url = \"jdbc:lk://${OLK_HOST}:${OLK_PORT}/${OLK_CATALOG}/${OLK_SCHEMA}\";
+        String username = \"${OLK_USER}\";
+        String password = \"${OLK_PASSWORD}\";
+
+        // 尝试建立连接
+        //try (Connection connection = DriverManager.getConnection(url, username, password)) {
+	try (Connection connection = DriverManager.getConnection(url, username,null)) {
+            System.out.println(\"连接成功！\");
+        } catch (SQLException e) {
+            System.out.println(\"连接失败：\");
+            e.printStackTrace();
+        }
+    }
+}" > openLooKengTest.java
+
+# 编译Java源文件
+javac -cp "$CLASSPATH" openLooKengTest.java
+
+# 运行Java程序
+java -cp "$CLASSPATH":. openLooKengTest
+isSuccess "execute cmd: java -cp CLASSPATH:. openLooKengTest"
+
+# 清理临时文件
+rm openLooKengTest.*
+
 }
 
-function checkversion(){
-versionStr=$1
-defaultVersion=$2
-module=$3
+function checkPresto(){
 
-result=$(echo $versionStr | grep "$defaultVersion")
-if [ -n "$result" ]; then
-    echo -e "Your [$module] version may match default support version: $defaultVersion\n"
-else
-   echo "WARN: Your [$module] version is not match default support version: $defaultVersion, there may be compatibility issues:"
-   echo " 1: Continue installation, there may be compatibility issues"
-   echo " 2: Exit installation"
-   echo -e " other: exit\n"
+# --- 1. check command
+    presto --version > /dev/null 2>&1
+    isSuccess "execute cmd: presto --version"
 
-   read -p "[Please input your choice]:"  idx
-   if [[ '1' != "$idx" ]];then
-    echo -e "You chose  Exit installation\n"
-    exit 1
-   fi
-   echo ""
-fi
+# --- 2. check parameters
+      if [ -z "${PRESTO_HOST}" ] || [ -z "${PRESTO_PORT}" ] || [ -z "${PRESTO_CATALOG}" ]|| [ -z "${PRESTO_SCHEMA}"  ];then
+       echo "PRESTO_HOST/PRESTO_PORT/PRESTO_CATALOG/PRESTO_SCHEMA] are  Invalid,Pls check parameters definition"
+         exit 2
+      fi
+
+# --- 3. check server status
+    presto --server ${PRESTO_HOST}:${PRESTO_PORT} --catalog ${PRESTO_CATALOG} --schema ${PRESTO_SCHEMA} --execute "show catalogs" >/dev/null 2>&1
+    isSuccess "execute cmd: presto --server ${PRESTO_HOST}:${PRESTO_PORT}"
 }
 
-function checkSpark(){
- spark-submit --version > /dev/null 2>&1
- isSuccess "execute cmd: spark-submit --version "
+function checkSqoop(){
+
+# --- 1. check command
+    sqoop version > /dev/null 2>&1
+    isSuccess "execute cmd: sqoop version"
+
+# --- 2. check parameters
+      if [ -z "${HIVE_META_URL}" ] || [ -z "${HIVE_META_USER}" ] || [ -z "${HIVE_META_PASSWORD}" ];then
+       echo "[HIVE_META_URL/HIVE_META_USER/HIVE_META_PASSWORD] are  Invalid,Pls check parameters definition"
+         exit 2
+      fi
+
+# --- 3. check server status
+    sqoop list-databases --connect ${HIVE_META_URL} --username ${HIVE_META_USER} --password ${HIVE_META_PASSWORD} >/dev/null 2>&1
+    isSuccess "execute cmd: sqoop list-databases --connect ${HIVE_META_URL}"
+    }
+
+function checkElasticsearch(){
+
+# --- 2. check parameters
+      if [ -z "${ES_RESTFUL_URL}" ]; then
+         echo "Parameter ES_RESTFUL_URL is Invalid:" ${ES_RESTFUL_URL}
+         exit 2
+      fi
+
+# --- 3. check server status
+    curl ${ES_RESTFUL_URL} > /dev/null 2>&1
+    isSuccess "execute cmd: curl ElasticSearch address ${ES_RESTFUL_URL}"
 }
 
-portIsOccupy=false
-function check_service_port() {
-    pid=`lsof -i TCP:$SERVER_PORT | fgrep LISTEN`
-    if [ "$pid" != "" ];then
-      echo "$SERVER_PORT already used"
-      portIsOccupy=true
-    fi
-}
+# --- Begin check addtional engine parameters
+echo "======== Begin to check Engine: ${1} ======== "
 
-check_cmd() {
-    command -v "$1" > /dev/null 2>&1
-}
+EngineName=$1
+case $EngineName in
+    "JDBC")
+        checkJDBC
+        ;;
+    "Flink")
+        checkFlink
+        ;;
+    "openLooKeng")
+        checkopenLooKeng
+        ;;
+    "Presto")
+        checkPresto
+        ;;
+    "Sqoop")
+        checkSqoop
+        ;;
+    "Elasticsearch")
+        checkElasticsearch
+        ;;
+    *)
+        print_usage
+        exit 2
+        ;;
+esac
 
-need_cmd() {
-    if ! check_cmd "$1"; then
-        err "need '$1' (your linux command not found)"
-    fi
-}
-
-
-echo "<-----start to check used cmd---->"
-echo "check yum"
-need_cmd yum
-echo "check java"
-need_cmd java
-echo "check mysql"
-need_cmd mysql
-echo "check telnet"
-need_cmd telnet
-echo "check tar"
-need_cmd tar
-echo "check sed"
-need_cmd sed
-echo "check lsof"
-need_cmd lsof
-
-echo "check hdfs"
-need_cmd hdfs
-
-echo "check shell"
-need_cmd $SHELL
-
-echo "check spark-sql"
-need_cmd spark-sql
-
-echo "<-----end to check used cmd---->"
-
-checkPythonAndJava
-
-SERVER_PORT=$EUREKA_PORT
-check_service_port
-
-SERVER_PORT=$GATEWAY_PORT
-check_service_port
-
-SERVER_PORT=$MANAGER_PORT
-check_service_port
-
-SERVER_PORT=$ENGINECONNMANAGER_PORT
-check_service_port
-
-SERVER_PORT=$ENTRANCE_PORT
-check_service_port
-
-SERVER_PORT=$PUBLICSERVICE_PORT
-check_service_port
-
-
-if [ "$portIsOccupy" = true ];then
-  echo "The port is already in use, please check before installing"
-  exit 1
-fi
-
-if [ "$ENABLE_SPARK" == "true" ]; then
-  checkSpark
-fi
-
-if [ "$ENABLE_HDFS" == "true" ]; then
-  checkHdfs
-fi
-
-if [ "$ENABLE_HIVE" == "true" ]; then
-  checkHive
-fi
+echo "======== End checking Engine: ${1} ========== "

@@ -3,49 +3,55 @@
         <Count></Count>
         <!-- <div @click="test">test</div> -->
         <Filter ref="filterRef" :checkedKeys="checkedKeys"></Filter>
-        <f-table
-            :data="data"
-            class="table"
-            v-model:checkedKeys="checkedKeys"
-            :rowKey="
-                (row: Record<string, number|string>) => {
-                    return row.taskId;
-                }
-            "
-        >
-            <f-table-column
-                v-if="filterRef?.isCheckingTaskToStop"
-                type="selection"
-                :width="32"
-                fixed="left"
-            ></f-table-column>
-            <template v-for="col in tableColumns" :key="col.label">
+        <FSpace vertical>
+            <FScrollbar>
+                <f-table
+                :data="currentData"
+                class="table"
+                v-model:checkedKeys="checkedKeys"
+                :rowKey="
+                    (row: Record<string, number|string>) => {
+                        return row.taskId;
+                    }
+                "
+            >
                 <f-table-column
-                    v-if="col.formatter"
-                    :prop="col.prop"
-                    :label="col.label"
-                    :action="col.action"
-                    :formatter="col.formatter"
-                >
-                </f-table-column>
-                <f-table-column
-                    v-else
-                    :prop="col.prop"
-                    :label="col.label"
-                    :action="col.action"
-                >
-                </f-table-column>
-            </template>
-        </f-table>
-
+                    v-if="filterRef?.isCheckingTaskToStop"
+                    type="selection"
+                    :width="32"
+                    fixed="left"
+                ></f-table-column>
+                <template v-for="col in tableColumns" :key="col.label">
+                    <f-table-column
+                        v-if="col.formatter"
+                        :prop="col.prop"
+                        :label="col.label"
+                        :action="col.action"
+                        :formatter="col.formatter"
+                    >
+                    </f-table-column>
+                    <f-table-column
+                        v-else
+                        :prop="col.prop"
+                        :label="col.label"
+                        :action="col.action"
+                    >
+                    </f-table-column>
+                </template>
+            </f-table>
+            
+            </FScrollbar>
+        </FSpace>
         <FPagination
-            class="pagination"
-            show-size-changer
-            :pageSizeOption="pageSizeOption"
-            :total-count="1000"
-            @change="handleChange"
-        ></FPagination>
-
+                class="pagination"
+                show-size-changer
+                :pageSizeOption="pageSizeOption"
+                :total-count="data.length"
+                @change="handleChange"
+                v-model:pageSize="pageSize"
+                v-model:currentPage="currentPage"
+            ></FPagination>
+            
         <Drawer
             ref="drawerRef"
             :isShow="isShowDrawer"
@@ -226,24 +232,103 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
+    },{
+        taskId: '5',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },{
+        taskId: '6',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },{
+        taskId: '7',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },{
+        taskId: '8',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },{
+        taskId: '9',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },
+    {
+        taskId: '10',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
+    },{
+        taskId: '11',
+        taskName: '任务',
+        status: '1',
+        time: '1',
+        query: '哈哈哈',
+        application: '应用',
+        engine: '引擎',
+        creator: '张小明',
+        creatingTime: '1204',
     },
 ]);
 
-const handleChange = (currentPage: string, pageSize: string) => {
-    console.log(
-        '[pagination.sizes] [handleChange] currentPage:',
-        currentPage,
-        ' pageSize:',
-        pageSize,
-    );
+// 需要展示的数据
+const currentData = ref([]);
+
+const currentPage = ref(1);
+const pageSize = ref(10);
+
+// eslint-disable-next-line no-shadow
+const handleChange = (currenPage:number,pageSize:number) =>{
+    const temp = data.slice((currenPage - 1) * pageSize, currenPage * pageSize);
+   currentData.value = reactive([...temp]);
 };
+handleChange(currentPage.value, pageSize.value);
+
 </script>
 
 <style scoped src="./index.less"></style>
 <style scoped>
+
 .wrapper {
     position: relative;
-    height: 100%;
+    height: 100vh;
+    overflow: auto;
+    
     .table {
         right: 0;
         top: 0;
@@ -251,9 +336,12 @@ const handleChange = (currentPage: string, pageSize: string) => {
         calc(100% - 32px); */
     }
     .pagination {
-        position: absolute;
-        bottom: 0;
-        right: 0;
+        /* position: absolute;
+        bottom: 5%;
+        right: 0%; */
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 16px;
     }
 }
 </style>

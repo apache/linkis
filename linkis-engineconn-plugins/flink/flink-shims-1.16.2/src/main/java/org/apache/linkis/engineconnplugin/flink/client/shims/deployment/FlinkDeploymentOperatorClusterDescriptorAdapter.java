@@ -68,10 +68,10 @@ public class FlinkDeploymentOperatorClusterDescriptorAdapter implements Closeabl
     CustomResourceDefinitionList crds =
         client.apiextensions().v1().customResourceDefinitions().list();
 
-    String FlinkDeploymentCRDName = CustomResource.getCRDName(FlinkDeployment.class);
+    String flinkDeploymentCRDName = CustomResource.getCRDName(FlinkDeployment.class);
     List<CustomResourceDefinition> flinkCRDList =
         crds.getItems().stream()
-            .filter(crd -> crd.getMetadata().getName().equals(FlinkDeploymentCRDName))
+            .filter(crd -> crd.getMetadata().getName().equals(flinkDeploymentCRDName))
             .collect(Collectors.toList());
     if (CollectionUtils.isEmpty(flinkCRDList)) {
       throw new RuntimeException("The flink operator crd does not exist");
@@ -206,11 +206,11 @@ public class FlinkDeploymentOperatorClusterDescriptorAdapter implements Closeabl
   }
 
   public FlinkDeployment getFlinkDeployment(String name, String namespace) {
-    FlinkDeployment FlinkDeployment = new FlinkDeployment();
+    FlinkDeployment flinkDeployment = new FlinkDeployment();
     ObjectMeta metadata = new ObjectMeta();
     metadata.setName(name);
     metadata.setNamespace(namespace);
-    FlinkDeployment.setMetadata(metadata);
-    return FlinkDeployment;
+    flinkDeployment.setMetadata(metadata);
+    return flinkDeployment;
   }
 }

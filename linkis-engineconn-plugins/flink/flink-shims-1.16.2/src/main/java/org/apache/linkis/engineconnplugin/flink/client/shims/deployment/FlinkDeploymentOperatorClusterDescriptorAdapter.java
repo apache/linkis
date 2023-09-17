@@ -38,7 +38,9 @@ import org.apache.flink.kubernetes.shaded.io.fabric8.kubernetes.client.dsl.Mixed
 import org.apache.flink.kubernetes.shaded.io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 
 import java.io.Closeable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -210,6 +212,9 @@ public class FlinkDeploymentOperatorClusterDescriptorAdapter implements Closeabl
     ObjectMeta metadata = new ObjectMeta();
     metadata.setName(name);
     metadata.setNamespace(namespace);
+    Map<String, String> labels = new HashMap<>();
+    labels.put("from-app", "linkis");
+    metadata.setLabels(labels);
     flinkDeployment.setMetadata(metadata);
     return flinkDeployment;
   }

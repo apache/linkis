@@ -32,6 +32,7 @@ import org.apache.linkis.engineplugin.nebula.conf.NebulaEngineConf;
 import org.apache.linkis.engineplugin.nebula.errorcode.NebulaErrorCodeSummary;
 import org.apache.linkis.engineplugin.nebula.exception.NebulaClientException;
 import org.apache.linkis.engineplugin.nebula.exception.NebulaExecuteError;
+import org.apache.linkis.governance.common.paser.SQLCodeParser;
 import org.apache.linkis.manager.common.entity.resource.CommonNodeResource;
 import org.apache.linkis.manager.common.entity.resource.LoadResource;
 import org.apache.linkis.manager.common.entity.resource.NodeResource;
@@ -78,11 +79,11 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
   private static final Logger logger = LoggerFactory.getLogger(NebulaEngineConnExecutor.class);
   private int id;
   private List<Label<?>> executorLabels = new ArrayList<>(2);
-  private Map<String, Session> sessionCache = new ConcurrentHashMap<>();
+  private Map<String, ResultSet> resultSetCache = new ConcurrentHashMap<>();
 
   private Map<String, String> configMap = new HashMap<>();
 
-  private Cache<String, NebulaPool> nebulaPoolCache =
+  private Cache<String, Session> sessionCache =
       CacheBuilder.newBuilder()
           .expireAfterAccess(
               Long.valueOf(EngineConnConf.ENGINE_TASK_EXPIRE_TIME().getValue().toString()),
@@ -97,6 +98,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public void init() {
+    setCodeParser(new SQLCodeParser());
     super.init();
   }
 
@@ -120,8 +122,8 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
           new NebulaEngineConf().getCacheMap(new Tuple2<>(userCreatorLabel, engineTypeLabel));
     }
 
-    nebulaPoolCache.put(
-        engineConnTask.getTaskId(), getNebulaPool(engineConnTask.getProperties(), configMap));
+    sessionCache.put(
+        engineConnTask.getTaskId(), getSession(engineConnTask.getProperties(), configMap));
     return super.execute(engineConnTask);
   }
 
@@ -136,9 +138,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
     logger.info("Nebula client begins to run ngql code:\n {}", realCode);
 
     String taskId = engineExecutorContext.getJobId().get();
-    NebulaPool nebulaPool = nebulaPoolCache.getIfPresent(taskId);
-    Session session = getSession(nebulaPool);
-    sessionCache.put(taskId, session);
+    Session session = sessionCache.getIfPresent(taskId);
 
     try {
       initialStatusUpdates(taskId, engineExecutorContext, session);
@@ -146,6 +146,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
       try {
         resultSet = session.execute(code);
+        resultSetCache.put(taskId, resultSet);
       } catch (Exception e) {
         logger.error("Nebula executor error.");
         throw new NebulaExecuteError(
@@ -168,7 +169,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
         return errorResponse;
       }
     } finally {
-      sessionCache.remove(taskId);
+      resultSetCache.remove(taskId);
     }
   }
 
@@ -190,10 +191,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public void killTask(String taskId) {
-    Session session = sessionCache.remove(taskId);
-    if (null != session) {
-      session.release();
-    }
+    resultSetCache.remove(taskId);
     super.killTask(taskId);
   }
 
@@ -276,7 +274,9 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
     return nebulaPool;
   }
 
-  private Session getSession(NebulaPool nebulaPool) {
+  private Session getSession(Map<String, Object> taskParams, Map<String, String> cacheMap) {
+    NebulaPool nebulaPool = getNebulaPool(taskParams, cacheMap);
+
     Session session;
     String username = NebulaConfiguration.NEBULA_USER_NAME.getValue(configMap);
     String password = NebulaConfiguration.NEBULA_PASSWORD.getValue(configMap);
@@ -366,14 +366,7 @@ public class NebulaEngineConnExecutor extends ConcurrentComputationExecutor {
 
   @Override
   public void killAll() {
-    Iterator<Session> iterator = sessionCache.values().iterator();
-    while (iterator.hasNext()) {
-      Session session = iterator.next();
-      if (session != null) {
-        session.release();
-      }
-    }
-    sessionCache.clear();
+    resultSetCache.clear();
   }
 
   @Override

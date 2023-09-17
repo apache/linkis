@@ -22,34 +22,37 @@
       size="large"
       fix/>
     <Row class="search-bar">
-      <Col span="4" class="search-item">
-        <span class="search-label">{{$t('message.linkis.ipListManagement.userName')}}</span>
+      <Col span="6" class="search-item">
+        <span :title="$t('message.linkis.ipListManagement.userName')" class="search-label">{{$t('message.linkis.ipListManagement.userName')}}</span>
         <Input
           v-model="queryData.username"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputUser')"
           @on-enter="search"
+          style="width: 290px"
         ></Input>
       </Col>
-      <Col span="4" class="search-item">
+      <Col span="6" class="search-item">
         <span :title="$t('message.linkis.ipListManagement.appName')" class="search-label">{{$t('message.linkis.ipListManagement.appName')}}</span>
         <Input
           v-model="queryData.creator"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputApp')"
           @on-enter="search"
+          style="width: 290px"
         ></Input>
       </Col>
-      <Col span="4" class="search-item">
-        <span class="search-label">{{$t('message.linkis.ipListManagement.cluster')}}</span>
+      <Col span="6" class="search-item">
+        <span :title="$t('message.linkis.ipListManagement.cluster')" class="search-label">{{$t('message.linkis.ipListManagement.cluster')}}</span>
         <Input
           v-model="queryData.clusterName"
           class="input"
           :placeholder="$t('message.linkis.ipListManagement.inputCluster')"
           @on-enter="search"
+          style="width: 290px"
         ></Input>
       </Col>
-      <Col span="9">
+      <Col span="6">
         <Button type="primary" class="button" @click="search">{{
           $t('message.linkis.ipListManagement.search')
         }}</Button>

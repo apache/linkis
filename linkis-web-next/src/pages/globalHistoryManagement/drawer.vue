@@ -6,6 +6,7 @@
         @ok="show = false"
         :closable="false"
         :resizable="true"
+        contentClass="drawer-content"
     >
         <template #title>
             <div class="drawer-title">
@@ -46,12 +47,17 @@
                 </div>
             </div>
         </template>
-        <template #default> 123 </template>
+        <template #default>
+            <div class="editor-wrapper">
+                <WeEditor ref="logEditor" type="log"></WeEditor>
+            </div>
+        </template>
     </FDrawer>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import WeEditor from '@/components/editor/editorNext2.vue';
 
 enum TAB_PANE_VALUE {
     'TASK_LOG' = 1,
@@ -107,8 +113,7 @@ const content = ref<string>('');
 
 const open = (rawData: Record<string, string | number>) => {
     tableRawData.value = rawData;
-    // TODO:
-    content.value = '<div>123</div>';
+    // TODO: editor value
     show.value = true;
 };
 
@@ -121,27 +126,52 @@ defineExpose({
 });
 </script>
 
+<style>
+.drawer-content {
+    .fes-scrollbar-container {
+        padding: 0;
+    }
+    .fes-drawer-header {
+        padding: 0;
+    }
+    .fes-tabs-nav-wrapper {
+        padding-left: 20px;
+    }
+    .fes-tabs.fes-tabs-top.tabs {
+        background-color: #f7f7f8;
+        padding-left: 0px;
+    }
+    .margin-view-overlays {
+        background-color: #f7f7f8;
+    }
+}
+</style>
 <style scoped>
 :deep(.fes-tabs-tab-pane-wrapper) {
     display: none;
 }
 :deep(.fes-drawer-header) {
     border-bottom: none;
-    padding: 0;
     display: block;
+    :deep(.fes-tabs) {
+        background-color: #f7f7f8;
+    }
 }
+
 :deep(.tabs) {
     transform: translateX(-16px);
 }
+
 .drawer-title {
-    transform: translateX(-4px);
     width: 100%;
     position: relative;
+    background-color: #f7f7f8;
     .buttons {
         position: absolute;
+        right: 16px;
+        top: 5px;
         display: flex;
         gap: 12px;
-        right: 0;
         font-family: PingFangSC-Regular;
         font-size: 14px;
         color: #63656f;
@@ -160,15 +190,24 @@ defineExpose({
     }
     .title-text {
         height: 32px;
+        padding: 6px 20px;
         font-family: PingFangSC-Medium;
         font-size: 14px;
         color: #0f1222;
         font-weight: 500;
+        background-color: #fff;
     }
     .sub-tabs {
         display: flex;
+        outline: none;
+        box-shadow: none;
+        border: none;
+        background-color: #f7f7f8;
         .tabs {
             transform: translateX(-4px);
+        }
+        :deep(.fes-tabs-tab-active) {
+            background-color: #fff;
         }
         :deep(.fes-input-inner) {
             margin-left: 95px;

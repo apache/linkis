@@ -17,7 +17,6 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "jsx": "preserve",
-
         /* Linting */
         "strict": true,
         "noUnusedLocals": false,

@@ -26,7 +26,6 @@
                 <FButton type="link" @click="openModal">全局配置</FButton>
                 <Drawer ref="drawerRef"></Drawer>
                 <Modal ref="modalRef">
-                    <!-- <List :dataList="listData" :isEditing="false"></List> -->
                 </Modal>
             </div>
         </f-header>

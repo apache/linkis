@@ -4,6 +4,7 @@
         placement="right"
         width="960"
         @ok="show = false"
+        :footer="true"
     >
         <template #title>
             <div class="title">
@@ -11,12 +12,14 @@
                     <span
                         class="back-icon"
                         @click="isAddingApplicationAndEngine = false"
-                        >&lt;</span
                     >
+                        &lt;
+                    </span>
                 </template>
                 应用及引擎管理
             </div>
         </template>
+
         <template v-if="!isAddingApplicationAndEngine">
             <FButton
                 type="primary"
@@ -121,11 +124,25 @@
                                     </FFormItem>
                                 </div>
                             </template>
+                            <FButton
+                                type="link"
+                                class="engine-adding-btn"
+                                @click="addEngine"
+                            >
+                                添加引擎
+                            </FButton>
                         </div>
                     </div>
                 </FForm>
             </template>
         </div>
+
+        <template #footer>
+            <FSpace>
+                <FButton type="primary" @click="confirmEditing">确定</FButton>
+                <FButton @click="show = false">取消</FButton>
+            </FSpace>
+        </template>
     </FDrawer>
 </template>
 
@@ -185,23 +202,13 @@ const tableColumns = [
     },
 ];
 
-const engineConfigList = [
+const engineConfigList = reactive([
     {
         type: '引擎类型',
         version: '版本',
         description: '描述',
     },
-    {
-        type: '引擎类型',
-        version: '版本',
-        description: '描述',
-    },
-    {
-        type: '引擎类型',
-        version: '版本',
-        description: '描述',
-    },
-];
+]);
 
 // TODO: replace mock data with the real
 
@@ -364,6 +371,20 @@ const open = () => {
     show.value = true;
 };
 
+const addEngine = () => {
+    engineConfigList.push({
+        type: '',
+        version: '',
+        description: '',
+    });
+};
+
+const confirmEditing = () => {
+    // TODO: send a request to save the config
+    console.log('confirm!');
+    show.value = false;
+};
+
 defineExpose({
     open,
 });
@@ -433,6 +454,9 @@ defineExpose({
                     font-weight: 500;
                     margin-bottom: 16px;
                 }
+            }
+            .engine-adding-btn {
+                transform: translateY(-5px);
             }
         }
     }

@@ -1,7 +1,7 @@
 <template>
     <FSpace class="wrapper">
         <FTooltip mode="popover">
-            <div>{{ props.text }}</div>
+            <div :style="props.textStyle">{{ props.text }}</div>
             <template #title>
                 <div class="title">
                     {{ props.tipTitle }}
@@ -11,6 +11,7 @@
                 <div style="max-width: 640px">
                     {{ props.tipContent }}
                 </div>
+                <slot name="default"></slot>
             </template>
         </FTooltip>
     </FSpace>
@@ -19,8 +20,9 @@
 <script setup lang="ts">
 const props = defineProps<{
     text: string;
-    tipTitle: string;
-    tipContent: string;
+    textStyle?: Record<string, number | string>;
+    tipTitle?: string;
+    tipContent?: string;
 }>();
 </script>
 

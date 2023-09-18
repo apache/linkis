@@ -40,23 +40,45 @@ public class EntranceFIFOUserConsumer extends FIFOUserConsumer {
   public boolean runScheduleIntercept() {
     Consumer[] consumers = getSchedulerContext().getOrCreateConsumerManager().listConsumers();
     int creatorRunningJobNum = 0;
-    String[] groupNames = getGroup().getGroupName().split("_");
-    if (groupNames.length < 3) {
+
+    // APP_TEST_hadoop_hive or IDE_hadoop_hive
+    String groupNameStr = getGroup().getGroupName();
+    String[] groupNames = groupNameStr.split("_");
+    int length = groupNames.length;
+    if (length < 3) {
       return true;
     }
-    String creatorName = groupNames[0];
-    String ecType = groupNames[2];
+
+    // APP_TEST
+    int lastIndex = groupNameStr.lastIndexOf("_");
+    int secondLastIndex = groupNameStr.lastIndexOf("_", lastIndex - 1);
+    String creatorName = groupNameStr.substring(0, secondLastIndex);
+
+    // hive
+    String ecType = groupNames[length - 1];
+
     for (Consumer consumer : consumers) {
       String groupName = consumer.getGroup().getGroupName();
       if (groupName.startsWith(creatorName) && groupName.endsWith(ecType)) {
         creatorRunningJobNum += consumer.getRunningEvents().length;
       }
     }
+
     int creatorECTypeMaxRunningJobs =
         CreatorECTypeDefaultConf.getCreatorECTypeMaxRunningJobs(creatorName, ecType);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug(
+          "Creator: {} EC: {} there are currently:{} jobs running and maximum limit: {}",
+          creatorName,
+          ecType,
+          creatorRunningJobNum,
+          creatorECTypeMaxRunningJobs);
+    }
+
     if (creatorRunningJobNum > creatorECTypeMaxRunningJobs) {
       logger.error(
-          "Creator: {} EC: {} there are currently {} jobs running that exceed the maximum limit: {}",
+          "Creator: {} EC: {} there are currently:{} jobs running that exceed the maximum limit: {}",
           creatorName,
           ecType,
           creatorRunningJobNum,

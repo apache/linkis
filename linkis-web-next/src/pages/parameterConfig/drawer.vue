@@ -40,12 +40,10 @@
                                 return row.taskId;
                             }
                         "
-                    
                 >
                     <template v-for="col in tableColumns" :key="col.label">
-                        
                         <f-table-column
-                            v-if="col.formatter && col.label!=='操作'"
+                            v-if="col.formatter && col.label !== '操作'"
                             :prop="col.prop"
                             :label="col.label"
                             :formatter="col.formatter"
@@ -57,7 +55,7 @@
                             :label="col.label"
                         >
                         </f-table-column>
-                        
+
                         <!-- 单独渲染操作这一栏 -->
                         <f-table-column
                             v-if="col.label === '操作'"
@@ -68,7 +66,6 @@
                             fixed="right"
                         ></f-table-column>
                     </template>
-                    
                 </f-table>
                 <FPagination
                     show-size-changer
@@ -97,12 +94,15 @@
                                 :key="`${config.type}-${index}`"
                             >
                                 <div class="config-card">
-                                    <div class="title">
-                                        引擎{{
-                                            (index + 1)
-                                                .toString()
-                                                .padStart(2, '0')
-                                        }}
+                                    <div class="header">
+                                        <div class="title">
+                                            引擎{{
+                                                (index + 1)
+                                                    .toString()
+                                                    .padStart(2, '0')
+                                            }}
+                                        </div>
+                                        <div class="delete_btn">删除</div>
                                     </div>
                                     <FFormItem label="引擎类型">
                                         <FInput
@@ -147,9 +147,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, h } from 'vue';
 import { FButton } from '@fesjs/fes-design';
-
 
 const isAddingApplicationAndEngine = ref(false);
 const tableColumns = [
@@ -179,7 +178,7 @@ const tableColumns = [
         prop: 'creatingTime',
         label: '创建时间',
     },
-    
+
     {
         label: '操作',
         action: [
@@ -188,17 +187,22 @@ const tableColumns = [
                 func: () => {
                     // console.log('[table.action] [action.编辑] row:', row);
                 },
-                
             },
             {
-                label: '删除',
+                label: h(
+                    'div',
+                    {
+                        style: {
+                            color: '#F75F56',
+                        },
+                    },
+                    '删除',
+                ),
                 func: () => {
                     // console.log('[table.action] [action.删除] row:', row);
-                    
                 },
-                
             },
-        ]
+        ],
     },
 ];
 
@@ -211,7 +215,6 @@ const engineConfigList = reactive([
 ]);
 
 // TODO: replace mock data with the real
-
 const data = reactive([
     {
         taskId: '1',
@@ -223,7 +226,7 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
+        engineNumber: 0,
     },
     {
         taskId: '2',
@@ -235,7 +238,7 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明222',
         creatingTime: '1204',
-        engineNumber:0
+        engineNumber: 0,
     },
     {
         taskId: '3',
@@ -247,7 +250,7 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
+        engineNumber: 0,
     },
     {
         taskId: '41',
@@ -259,8 +262,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '42',
         taskName: '任务',
         status: '1',
@@ -270,8 +274,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '43',
         taskName: '任务',
         status: '1',
@@ -281,8 +286,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '44',
         taskName: '任务',
         status: '1',
@@ -292,8 +298,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '45',
         taskName: '任务',
         status: '1',
@@ -303,8 +310,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '46',
         taskName: '任务',
         status: '1',
@@ -314,8 +322,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '47',
         taskName: '任务',
         status: '1',
@@ -325,8 +334,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '48',
         taskName: '任务',
         status: '1',
@@ -336,8 +346,9 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
-    },{
+        engineNumber: 0,
+    },
+    {
         taskId: '12',
         taskName: '任务',
         status: '1',
@@ -347,24 +358,24 @@ const data = reactive([
         engine: '引擎',
         creator: '张小明',
         creatingTime: '1204',
-        engineNumber:0
+        engineNumber: 0,
     },
 ]);
 
 const pageSizeOption = reactive([10, 20, 30, 50, 100]);
 
-const currentData= ref([]);
+const currentData = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 // eslint-disable-next-line no-shadow
-const handleChange = (currentPage:number, pageSize:number) => {
-    console.log('???', currentPage, pageSize);
-    const temp = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+const handleChange = (currentPage: number, pageSize: number) => {
+    const temp = data.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize,
+    );
     currentData.value = [...temp];
-    console.log(temp)
 };
 handleChange(currentPage.value, 10);
-
 
 const show = ref(false);
 const open = () => {
@@ -381,7 +392,6 @@ const addEngine = () => {
 
 const confirmEditing = () => {
     // TODO: send a request to save the config
-    console.log('confirm!');
     show.value = false;
 };
 
@@ -392,30 +402,42 @@ defineExpose({
 // const pageSize = 10;
 // let currentPage = 1;
 // let currentItems = [];
-// function getDataSubset() {  
-//     // 根据当前页码和每页数据个数，从数据源中获取对应的数据子集  
-//     // 这里使用简单的模拟数据，实际情况需要根据具体数据源进行适配  
-//     const start = (currentPage - 1) * pageSize;  
-//     const end = start + pageSize;  
-    
-// }
-// function handleChange(newPage:number) {  
-//     currentPage = newPage;  
-//     // 根据当前页码获取对应的数据子集  
-//     currentItems = getDataSubset();  
-// }
+// function getDataSubset() {
+//     // 根据当前页码和每页数据个数，从数据源中获取对应的数据子集
+//     // 这里使用简单的模拟数据，实际情况需要根据具体数据源进行适配
+//     const start = (currentPage - 1) * pageSize;
+//     const end = start + pageSize;
 
-
+// }
+// function handleChange(newPage:number) {
+//     currentPage = newPage;
+//     // 根据当前页码获取对应的数据子集
+//     currentItems = getDataSubset();
+// }
 </script>
 
 <style scoped>
-.title {
+.header {
     font-family: PingFangSC-Medium;
     font-size: 16px;
-    color: #000000;
-    letter-spacing: 0;
-    line-height: 24px;
-    font-weight: 500;
+
+    display: flex;
+    justify-content: space-between;
+    font-family: PingFangSC-Regular;
+
+    .title {
+        color: #000000;
+        letter-spacing: 0;
+        line-height: 24px;
+        font-weight: 500;
+    }
+    .delete_btn {
+        font-size: 14px;
+        color: #63656f;
+        line-height: 22px;
+        font-weight: 400;
+        cursor: pointer;
+    }
 }
 .back-icon {
     color: #93949b;
@@ -461,7 +483,7 @@ defineExpose({
         }
     }
 }
-:deep(.fes-pagination){
+:deep(.fes-pagination) {
     display: flex;
     justify-content: flex-end;
     margin-top: 16px;

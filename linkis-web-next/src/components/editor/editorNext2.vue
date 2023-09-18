@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { merge, debounce } from 'lodash';
 import storage from '@/common/helper/storage';
 import useMonaco from './util2';
@@ -557,22 +557,22 @@ export default defineComponent({
             // this.monaco = monaco;
             // this.editorModel = this.editor.getModel();
 
-            const monacoEditor = this.createEditor(
+            this.editor = this.createEditor(
                 this.$el,
                 this.$props.editorOptions,
             );
             this.updateMonacoVal();
-            monacoEditor!.onDidChangeModelContent(() => {
+            this.editor!.onDidChangeModelContent(() => {
                 this.$emit('update:modelValue', monacoEditor!.getValue());
             });
-            monacoEditor!.onDidBlurEditorText(() => {
+            this.editor!.onDidBlurEditorText(() => {
                 this.$emit('blur');
             });
         }
     },
     beforeUnmount() {
         // 销毁 editor，进行gc(销毁 editor，进行gc)
-        this.editor.dispose();
+        this.editor!.dispose();
     },
 });
 </script>

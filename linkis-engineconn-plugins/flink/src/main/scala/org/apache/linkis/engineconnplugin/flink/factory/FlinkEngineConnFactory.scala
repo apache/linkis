@@ -245,7 +245,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   protected def getExtractJavaOpts(envJavaOpts: String): String = {
     var defaultJavaOpts = ""
     val yamlFilePath = FLINK_CONF_DIR.getValue
-    val yamlFile = yamlFilePath + FLINK_CONF_YAML.getHotValue()
+    val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
     if (new File(yamlFile).exists()) {
       val source = Source.fromFile(yamlFile)
       try {

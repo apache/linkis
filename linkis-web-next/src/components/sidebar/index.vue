@@ -5,7 +5,9 @@
                 <template v-if="menuItem.items">
                     <f-sub-menu :value="menuItem.title">
                         <template #label>
-                            <div class="title-text">{{ menuItem.title }}\</div>
+                            <div class="title-text">
+                                {{ $t(menuItem.title) }}
+                            </div>
                         </template>
                         <f-menu-group>
                             <template
@@ -20,7 +22,7 @@
                                 >
                                     <template #label>
                                         <div class="title-text">
-                                            {{ subMenuItem.title }}
+                                            {{ $t(subMenuItem.title) }}
                                         </div>
                                     </template>
                                 </f-menu-item>
@@ -35,7 +37,7 @@
                     >
                         <template #label>
                             <div class="title-text">
-                                {{ menuItem.title }}
+                                {{ $t(menuItem.title) }}
                             </div>
                         </template>
                     </f-menu-item>
@@ -46,20 +48,56 @@
 </template>
 
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+
+const { t } = useI18n();
 
 const router = useRouter();
 const menuItemsConfig = [
-    { title: '任务概览', icon: '', path: '/console/globalHistoryManagement' },
-    { title: '资源管理', icon: '', path: '/console/resource' },
-    { title: '参数配置', icon: '', path: '/console/parameterConfig' },
-    { title: '全局变量', path: '' },
-    { title: 'ECM管理', path: '' },
-    { title: '微服务管理', path: '' },
-    { title: '数据源管理', items: [{ title: 'xxx', path: '' }] },
-    { title: 'UDF函数', items: [{ title: 'xxx', path: '' }] },
-    { title: '基础数据管理', items: [{ title: 'xxx', path: '' }] },
-    { title: '代码检索', path: '' },
+    {
+        title: 'message.linkis.sideNavList.function.children.globalHistory',
+        icon: '',
+        path: '/console/globalHistoryManagement',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.resource',
+        icon: '',
+        path: '/console/resource',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.setting',
+        icon: '',
+        path: '/console/parameterConfig',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.dateReport',
+        path: '',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.ECMManage',
+        path: '',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.microserviceManage',
+        path: '',
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.dataSourceManage',
+        items: [{ title: 'xxx', path: '' }],
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.udfFunctionTitle',
+        items: [{ title: 'xxx', path: '' }],
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.basedataManagement',
+        items: [{ title: 'xxx', path: '' }],
+    },
+    {
+        title: 'message.linkis.sideNavList.function.children.codeQuery',
+        path: '',
+    },
 ];
 
 const handleClick = (path: string) => {

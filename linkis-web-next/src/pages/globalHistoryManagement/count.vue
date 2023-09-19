@@ -1,6 +1,6 @@
 <template>
     <div class="label">
-        <span>统计日期: </span>
+        <span>{{ $t('message.common.statisticsTime') }}: </span>
         <FDatePicker
             type="daterange"
             style="width: 320px"
@@ -12,7 +12,7 @@
     <div class="count-data-list">
         <template v-for="item in countDataList" :key="item.title">
             <div class="count-card">
-                <div class="title">{{ item.title }}</div>
+                <div class="title">{{ $t(item.title) }}</div>
                 <div class="num" :style="`color:${item.color}`">
                     {{ item.number }}
                 </div>
@@ -25,12 +25,36 @@
 import { reactive } from 'vue';
 
 const countDataList = reactive([
-    { title: '任务总数', number: 2000, color: '#5384FF' },
-    { title: '成功', number: 2000, color: '#00CB91' },
-    { title: '排队中', number: 2000, color: '#FF9540' },
-    { title: '运行中', number: 2000, color: '#F29360' },
-    { title: '失败', number: 2000, color: '#F75F56' },
-    { title: '其他', number: 2000, color: '#0F1222' },
+    {
+        title: 'message.linkis.countList.all',
+        number: 2000,
+        color: '#5384FF',
+    },
+    {
+        title: 'message.linkis.countList.succeed',
+        number: 2000,
+        color: '#00CB91',
+    },
+    {
+        title: 'message.linkis.countList.inited',
+        number: 2000,
+        color: '#FF9540',
+    },
+    {
+        title: 'message.linkis.countList.running',
+        number: 2000,
+        color: '#F29360',
+    },
+    {
+        title: 'message.linkis.countList.failed',
+        number: 2000,
+        color: '#F75F56',
+    },
+    {
+        title: 'message.linkis.countList.others',
+        number: 2000,
+        color: '#0F1222',
+    },
 ]);
 </script>
 

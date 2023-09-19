@@ -1,5 +1,5 @@
 <template>
-    <div class="label">全局任务查询</div>
+    <div class="label">{{ $t('message.linkis.globalTaskQuery') }}</div>
     <div class="filter">
         <FForm class="form" v-show="!isCheckingTaskToStop">
             <FFormItem label="任务ID">
@@ -72,13 +72,13 @@
                     class="confirm-stop-button"
                     @click="confirmStop"
                 >
-                    确定停止
+                    {{ $t('message.linkis.confirmToStop') }}
                 </FButton>
                 <FButton
                     class="confirm-stop-button"
                     @click="isCheckingTaskToStop = false"
                 >
-                    取消
+                    {{ $t('message.linkis.cancel') }}
                 </FButton>
             </div>
         </template>

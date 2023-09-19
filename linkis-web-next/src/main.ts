@@ -39,6 +39,7 @@ import messages from '@/locales';
 const i18n = createI18n({
     locale: 'zh',
     fallbackLocale: 'en',
+    legacy: false,
     messages,
 });
 

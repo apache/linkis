@@ -1,6 +1,8 @@
 export default {
     message: {
         common: {
+            statisticsTime: 'Time Range',
+            fullScreen: 'FullScreen',
             log: 'Log',
             diagnosis: 'Intelligent Diagnosis',
             watermaskText:
@@ -360,6 +362,14 @@ export default {
                 retry: 'Retry',
                 unknown: 'Unknown',
             },
+            countList: {
+                all: 'Total',
+                succeed: 'Succeed',
+                inited: 'Inited',
+                running: 'Running',
+                failed: 'Failed',
+                others: 'Others',
+            },
             time: {
                 MIN: 'MIN',
                 HOUR: 'HOUR',
@@ -390,6 +400,8 @@ export default {
         },
         linkis: {
             refresh: 'Refresh',
+            globalTaskQuery: 'GlobalTaskQuery',
+            confirmToStop: 'Confirm',
             noDescription: 'No description',
             placeholderZip:
                 'Please enter the workspace Python package path (only zip is supported)!',
@@ -525,7 +537,7 @@ export default {
                 startTime: 'Start Time',
                 costTime: 'Time Elapsed',
                 executeApplicationName: 'Execution Engine',
-                requestApplicationName: 'Created From',
+                creator: 'Created From',
                 user: 'User',
                 createdTime: 'Created at',
                 updateTime: 'Update Time',

@@ -11,17 +11,21 @@
         <template #title>
             <div class="drawer-title">
                 <div class="buttons">
-                    <div class="full-screen-button">全屏</div>
+                    <div class="full-screen-button">
+                        {{ $t('message.common.fullScreen') }}
+                    </div>
                     <div class="delimiter"></div>
                     <div class="close-button" @click="show = false">
                         {{ $t('message.linkis.close') }}
                     </div>
                 </div>
-                <div class="title-text">任务ID：{{ tableRawData?.taskId }}</div>
+                <div class="title-text">
+                    {{ $t('message.linkis.jobId') }}：{{ tableRawData?.taskID }}
+                </div>
                 <FTabs @change="onTabChange" class="tabs">
                     <template v-for="tab in tabs" :key="tab.name">
                         <FTabPane
-                            :name="tab.name"
+                            :name="t(tab.name)"
                             :value="tab.value"
                         ></FTabPane>
                     </template>
@@ -41,11 +45,7 @@
                             </FTabPane>
                         </template>
                     </FTabs>
-                    <FInput
-                        class="search-input"
-                        placeholder="搜索
-                    "
-                    />
+                    <FInput class="search-input" placeholder="搜索" />
                 </div>
             </div>
         </template>
@@ -59,7 +59,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import WeEditor from '@/components/editor/editorNext2.vue';
+
+const { t } = useI18n();
 
 enum TAB_PANE_VALUE {
     'TASK_LOG' = 1,
@@ -75,9 +78,9 @@ enum LOG_CLASS_PANE_VALUE {
 }
 
 const tabs = [
-    { name: '任务日志', value: TAB_PANE_VALUE.TASK_LOG },
-    { name: '任务结果', value: TAB_PANE_VALUE.TASK_RESULT },
-    { name: '引擎日志', value: TAB_PANE_VALUE.ENGINE_LOG },
+    { name: 'message.linkis.log', value: TAB_PANE_VALUE.TASK_LOG },
+    { name: 'message.linkis.result', value: TAB_PANE_VALUE.TASK_RESULT },
+    { name: 'message.linkis.detail', value: TAB_PANE_VALUE.ENGINE_LOG },
 ];
 
 const logClassTabs = [

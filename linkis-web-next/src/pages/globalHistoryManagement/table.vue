@@ -9,7 +9,7 @@
             v-model:checkedKeys="checkedKeys"
             :rowKey="
                     (row: Record<string, number|string>) => {
-                        return row.taskId;
+                        return row.taskID;
                     }
                 "
         >
@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, h, Ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import Drawer from './drawer.vue';
 import Filter from './filter.vue';
 import Count from './count.vue';
@@ -71,35 +72,36 @@ const drawerRef = ref<Ref<{
 const isShowDrawer = ref(false);
 const checkedKeys = reactive<Array<string>>([]);
 const pageSizeOption = reactive([10, 20, 30, 50, 100]);
+const { t } = useI18n();
 
 // TODO: subsequent adjustments to standard enumeration values
 const statusEnum: Record<string | number, Record<string, string>> = {
     1: {
-        text: '排队中',
+        text: t('message.linkis.statusType.inited'),
         color: '#F29360',
     },
     2: {
-        text: '运行中',
+        text: t('message.linkis.statusType.running'),
         color: '#F29360',
     },
     3: {
-        text: '运行成功',
+        text: t('message.linkis.statusType.succeed'),
         color: '#00CB91',
     },
     4: {
-        text: '失败',
+        text: t('message.linkis.statusType.failed'),
         color: '#F75F56',
     },
     5: {
-        text: '取消',
+        text: t('message.linkis.statusType.cancelled'),
         color: '#93949B',
     },
     6: {
-        text: '资源申请中',
+        text: t('message.linkis.statusType.scheduled'),
         color: '#F29360',
     },
     7: {
-        text: '超时',
+        text: t('message.linkis.statusType.timeout'),
         color: '#F75F56',
     },
 };
@@ -110,28 +112,28 @@ const setIsShowDrawer = (flag: boolean) => {
 
 const tableColumns = [
     {
-        prop: 'taskId',
-        label: '任务ID',
+        prop: 'taskID',
+        label: t('message.linkis.tableColumns.taskID'),
     },
     {
         prop: 'taskName',
-        label: '任务名',
+        label: t('message.linkis.tableColumns.taskName'),
     },
     {
         prop: 'status',
-        label: '状态',
+        label: t('message.linkis.tableColumns.status'),
         formatter: ({ row }: { row: Record<string, number | string> }) => {
             const attr = statusEnum[row.status];
             return h('div', { style: `color:${attr.color}` }, attr.text);
         },
     },
     {
-        prop: 'time',
-        label: '已耗时',
+        prop: 'costTime',
+        label: t('message.linkis.tableColumns.costTime'),
     },
     {
         prop: 'query',
-        label: '查询语句',
+        label: t('message.linkis.tableColumns.executionCode'),
         formatter: ({ row }: { row: Record<string, number | string> }) =>
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -142,7 +144,7 @@ const tableColumns = [
             }),
     },
     {
-        label: '关键信息',
+        label: t('message.linkis.tableColumns.failedReason'),
         prop: 'query',
         formatter: ({ row }: { row: Record<string, number | string> }) =>
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -156,25 +158,25 @@ const tableColumns = [
     },
     {
         prop: 'application',
-        label: '应用',
+        label: t('message.linkis.tableColumns.application'),
     },
     {
         prop: 'engine',
-        label: '引擎',
+        label: t('message.linkis.tableColumns.engine'),
     },
     {
         prop: 'creator',
-        label: '创建人',
+        label: t('message.linkis.tableColumns.creator'),
     },
     {
-        prop: 'creatingTime',
-        label: '创建时间',
+        prop: 'createdTime',
+        label: t('message.linkis.tableColumns.createdTime'),
     },
     {
-        label: '操作',
+        label: t('message.linkis.tableColumns.control.title'),
         action: [
             {
-                label: '查看',
+                label: t('message.linkis.tableColumns.control.label'),
                 func: (rawData: Record<string, string | number>) => {
                     drawerRef.value?.open?.(rawData);
                     // setIsShowDrawer(true);
@@ -187,126 +189,126 @@ const tableColumns = [
 // TODO: replace mock data with the real
 const data = reactive([
     {
-        taskId: '1',
+        taskID: '1',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         keyInfo: '1',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '2',
+        taskID: '2',
         taskName: '任务',
         status: '3',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '3',
+        taskID: '3',
         taskName: '任务',
         status: '4',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '4',
+        taskID: '4',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '5',
+        taskID: '5',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '6',
+        taskID: '6',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '7',
+        taskID: '7',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '8',
+        taskID: '8',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '9',
+        taskID: '9',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '10',
+        taskID: '10',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
     {
-        taskId: '11',
+        taskID: '11',
         taskName: '任务',
         status: '1',
-        time: '1',
+        costTime: '1',
         query: '哈哈哈',
         application: '应用',
         engine: '引擎',
         creator: '张小明',
-        creatingTime: '1204',
+        createdTime: '1204',
     },
 ]);
 

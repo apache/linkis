@@ -13,16 +13,16 @@
                     </div>
                     <template v-if="isEditing === false">
                         <FButton type="link" @click="options.edit">
-                            操作
+                            {{ $t('message.common.action') }}
                         </FButton>
                     </template>
                     <template v-else>
                         <div>
                             <FButton type="link" @click="options.confirm">
-                                确定
+                                {{ $t('message.common.submit') }}
                             </FButton>
                             <FButton type="link" @click="options.cancel">
-                                取消
+                                {{ $t('message.common.cancel') }}
                             </FButton>
                         </div>
                     </template>

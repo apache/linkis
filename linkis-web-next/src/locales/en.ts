@@ -400,6 +400,11 @@ export default {
         },
         linkis: {
             refresh: 'Refresh',
+            engineConfig: 'Engines',
+            applicationDesc: 'Desc',
+            applicationName: 'Name',
+            addApplicationAndEngine: 'ADD',
+            applicationAndEngine: 'Manage',
             globalTaskQuery: 'GlobalTaskQuery',
             confirmToStop: 'Confirm',
             noDescription: 'No description',

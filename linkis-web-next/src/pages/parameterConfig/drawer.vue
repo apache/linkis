@@ -16,7 +16,7 @@
                         &lt;
                     </span>
                 </template>
-                应用及引擎管理
+                {{ $t('message.linkis.applicationAndEngine') }}
             </div>
         </template>
 
@@ -26,7 +26,7 @@
                 style="margin: 8px 0 24px"
                 @click="isAddingApplicationAndEngine = true"
             >
-                添加应用及引擎
+                {{ $t('message.linkis.addApplicationAndEngine') }}
             </FButton>
         </template>
 
@@ -43,28 +43,22 @@
                 >
                     <template v-for="col in tableColumns" :key="col.label">
                         <f-table-column
-                            v-if="col.formatter && col.label !== '操作'"
+                            v-if="col.formatter"
                             :prop="col.prop"
                             :label="col.label"
                             :formatter="col.formatter"
+                            :width="col?.width"
                         >
                         </f-table-column>
                         <f-table-column
-                            v-else-if="col.label !== '操作'"
+                            v-else
                             :prop="col.prop"
                             :label="col.label"
+                            :width="col?.width"
+                            :action="col.action"
+                            :fixed="col?.fixed ?? false"
                         >
                         </f-table-column>
-
-                        <!-- 单独渲染操作这一栏 -->
-                        <f-table-column
-                            v-if="col.label === '操作'"
-                            :label="'操作'"
-                            :align="'center'"
-                            :width="200"
-                            :action="col.action"
-                            fixed="right"
-                        ></f-table-column>
                     </template>
                 </f-table>
                 <FPagination
@@ -79,15 +73,17 @@
 
             <template v-else>
                 <FForm :labelWidth="60">
-                    <FFormItem label="应用名称">
+                    <FFormItem :label="$t('message.linkis.applicationName')">
                         <FInput placeholder="请输入"></FInput>
                     </FFormItem>
-                    <FFormItem label="应用描述">
+                    <FFormItem :label="$t('message.linkis.applicationDesc')">
                         <FInput placeholder="请输入"></FInput>
                     </FFormItem>
 
                     <div class="engine-config">
-                        <div class="label">引擎配置</div>
+                        <div class="label">
+                            {{ $t('message.linkis.engineConfig') }}
+                        </div>
                         <div class="configs">
                             <template
                                 v-for="(config, index) in engineConfigList"
@@ -139,8 +135,12 @@
 
         <template #footer>
             <FSpace>
-                <FButton type="primary" @click="confirmEditing">确定</FButton>
-                <FButton @click="show = false">取消</FButton>
+                <FButton type="primary" @click="confirmEditing">{{
+                    $t('message.common.submit')
+                }}</FButton>
+                <FButton @click="show = false">{{
+                    $t('message.common.cancel')
+                }}</FButton>
             </FSpace>
         </template>
     </FDrawer>
@@ -155,32 +155,40 @@ const tableColumns = [
     {
         prop: 'taskId',
         label: '序号',
+        width: 60,
     },
     {
         prop: 'application',
         label: '应用名称',
+        width: 140,
     },
     {
         prop: 'statement',
         label: '描述',
+        width: 160,
         formatter: () => '1',
     },
     {
         prop: 'engineNumber',
         label: '引擎个数',
+        width: 160,
         formatter: () => 0,
     },
     {
         prop: 'creator',
+        width: 140,
         label: '创建人',
     },
     {
         prop: 'creatingTime',
+        width: 180,
         label: '创建时间',
     },
 
     {
         label: '操作',
+        width: 160,
+        fixed: 'right',
         action: [
             {
                 label: '编辑',
@@ -190,7 +198,7 @@ const tableColumns = [
             },
             {
                 label: h(
-                    'div',
+                    'span',
                     {
                         style: {
                             color: '#F75F56',
@@ -373,7 +381,7 @@ const handleChange = (currentPage: number, pageSize: number) => {
         (currentPage - 1) * pageSize,
         currentPage * pageSize,
     );
-    currentData.value = [...temp];
+    currentData.value = [...temp] as any;
 };
 handleChange(currentPage.value, 10);
 
@@ -398,22 +406,6 @@ const confirmEditing = () => {
 defineExpose({
     open,
 });
-// const totalItems = data.length;
-// const pageSize = 10;
-// let currentPage = 1;
-// let currentItems = [];
-// function getDataSubset() {
-//     // 根据当前页码和每页数据个数，从数据源中获取对应的数据子集
-//     // 这里使用简单的模拟数据，实际情况需要根据具体数据源进行适配
-//     const start = (currentPage - 1) * pageSize;
-//     const end = start + pageSize;
-
-// }
-// function handleChange(newPage:number) {
-//     currentPage = newPage;
-//     // 根据当前页码获取对应的数据子集
-//     currentItems = getDataSubset();
-// }
 </script>
 
 <style scoped>
@@ -444,9 +436,13 @@ defineExpose({
     font-weight: 800;
     cursor: pointer;
 }
+
+.table {
+    overflow: auto;
+    max-height: calc(78vh - 100px);
+}
 .content-wrapper {
     width: 960px;
-
     .engine-config {
         display: flex;
         .label {

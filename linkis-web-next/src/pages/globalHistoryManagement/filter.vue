@@ -2,11 +2,11 @@
     <div class="label">{{ $t('message.linkis.globalTaskQuery') }}</div>
     <div class="filter">
         <FForm class="form" v-show="!isCheckingTaskToStop">
-            <FFormItem label="任务ID">
+            <FFormItem :label="$t('message.linkis.jobId')">
                 <FInput placeholder="请输入" class="short-form-item"></FInput>
             </FFormItem>
 
-            <FFormItem label="状态">
+            <FFormItem :label="$t('message.linkis.codeQuery.status')">
                 <FSelect clearable placeholder="请选择" class="short-form-item">
                     <FOption
                         v-for="(item, index) in optionList"
@@ -18,7 +18,7 @@
                 </FSelect>
             </FFormItem>
 
-            <FFormItem label="引擎">
+            <FFormItem :label="$t('message.common.resourceSimple.YQ')">
                 <FSelect clearable placeholder="请选择" class="short-form-item">
                     <FOption
                         v-for="(item, index) in optionList"
@@ -29,7 +29,11 @@
                 </FSelect>
             </FFormItem>
 
-            <FFormItem label="创建时间" prop="time" class="long-form-item">
+            <FFormItem
+                :label="$t('message.linkis.codeQuery.createdTime')"
+                prop="time"
+                class="long-form-item"
+            >
                 <FDatePicker
                     type="daterange"
                     :modelValue="[
@@ -41,7 +45,7 @@
                 </FDatePicker>
             </FFormItem>
 
-            <FFormItem label="创建人">
+            <FFormItem :label="$t('message.linkis.datasource.creator')">
                 <FSelect clearable placeholder="请选择" class="short-form-item">
                     <FOption
                         v-for="(item, index) in optionList"
@@ -54,13 +58,17 @@
 
             <div class="buttons">
                 <template v-if="!isCheckingTaskToStop">
-                    <FButton type="primary">查询</FButton>
-                    <FButton>重置</FButton>
+                    <FButton type="primary">{{
+                        $t('message.linkis.find')
+                    }}</FButton>
+                    <FButton>{{
+                        $t('message.linkis.EnginePluginManagement.Reset')
+                    }}</FButton>
                     <FButton
                         class="stop-button"
                         @click="isCheckingTaskToStop = true"
                     >
-                        批量停止
+                        {{ $t('message.linkis.batchStopping') }}
                     </FButton>
                 </template>
             </div>

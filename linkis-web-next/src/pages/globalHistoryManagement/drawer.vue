@@ -13,7 +13,9 @@
                 <div class="buttons">
                     <div class="full-screen-button">全屏</div>
                     <div class="delimiter"></div>
-                    <div class="close-button" @click="show = false">关闭</div>
+                    <div class="close-button" @click="show = false">
+                        {{ $t('message.linkis.close') }}
+                    </div>
                 </div>
                 <div class="title-text">任务ID：{{ tableRawData?.taskId }}</div>
                 <FTabs @change="onTabChange" class="tabs">

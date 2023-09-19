@@ -21,7 +21,6 @@
 <script lang="ts">
 import { merge, debounce } from 'lodash';
 import { defineComponent, ref } from 'vue';
-import storage from '@/common/helper/storage';
 import monaco from './monaco-loader';
 import highRiskGrammar from './highRiskGrammar';
 

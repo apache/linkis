@@ -16,7 +16,6 @@
  */
 
 import { partition, map, filter, isFunction } from 'lodash';
-import globalcache from '@/common/scriptis/service/db/globalcache.js';
 import storage from '@/common/helper/storage';
 // import debug_log from '@/common/util/debug.js';
 

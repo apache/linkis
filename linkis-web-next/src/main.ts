@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createI18n } from 'vue-i18n';
 import '@/style/style.less';
 import {
     FTabs,
@@ -32,9 +33,17 @@ import {
     FDivider,
 } from '@fesjs/fes-design';
 import App from '@/App.vue';
-import router from '@/router/index.ts';
+import router from '@/router/index';
+import messages from '@/locales';
+
+const i18n = createI18n({
+    locale: 'zh',
+    fallbackLocale: 'en',
+    messages,
+});
 
 const app = createApp(App);
+app.use(i18n);
 app.use(router).mount('#app');
 app.use(FButton);
 app.use(FTabs);

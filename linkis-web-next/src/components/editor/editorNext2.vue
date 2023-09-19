@@ -5,10 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { merge, debounce } from 'lodash';
-import storage from '@/common/helper/storage';
 import useMonaco from './util2';
-import monaco from './monaco-loader';
-import highRiskGrammar from './highRiskGrammar';
 
 const types = {
     code: {
@@ -585,15 +582,6 @@ export default defineComponent({
     background-color: #fff;
     box-sizing: border-box;
 
-    // &.full {
-    //     position: fixed;
-    //     left: calc(10vw / 2);
-    //     top: calc(10vh / 2);
-    //     box-shadow: 0 0 22px 10px rgba(0, 0, 0, 0.3);
-    //     width: 90vw !important;
-    //     height: 90vh !important;
-    //     z-index: 9999;
-    // }
     .tools {
         z-index: 888;
         position: absolute;

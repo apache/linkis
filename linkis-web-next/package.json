@@ -12,9 +12,9 @@
     "dependencies": {
         "@fesjs/fes-design": "^0.7.31",
         "@types/lodash": "^4.14.198",
-        "dexie": "^3.2.4",
         "monaco-editor": "^0.43.0",
         "vue": "^3.2.47",
+        "vue-i18n": "^9.4.1",
         "vue-router": "^4.2.2"
     },
     "devDependencies": {

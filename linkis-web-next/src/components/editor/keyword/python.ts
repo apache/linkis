@@ -17,7 +17,6 @@
 
 import { isEmpty } from 'lodash';
 import { getHiveList, getReturnList, getFormatProposalsList } from '../util';
-import storage from '@/common/helper/storage';
 
 const pyKeywordInfoProposals = [
     {

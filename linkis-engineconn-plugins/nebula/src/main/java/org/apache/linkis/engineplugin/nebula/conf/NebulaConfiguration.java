@@ -22,25 +22,25 @@ import org.apache.linkis.common.conf.CommonVars;
 public class NebulaConfiguration {
 
   public static final CommonVars<Integer> ENGINE_CONCURRENT_LIMIT =
-      CommonVars.apply("wds.linkis.engineconn.concurrent.limit", 100);
+      CommonVars.apply("linkis.engineconn.concurrent.limit", 100);
 
   public static final CommonVars<Integer> ENGINE_DEFAULT_LIMIT =
-      CommonVars.apply("wds.linkis.nebula.default.limit", 5000);
+      CommonVars.apply("linkis.nebula.default.limit", 5000);
 
   public static final CommonVars<String> NEBULA_HOST =
-      CommonVars.apply("wds.linkis.nebula.host", "127.0.0.1");
+      CommonVars.apply("linkis.nebula.host", "127.0.0.1");
 
   public static final CommonVars<Integer> NEBULA_PORT =
-      CommonVars.apply("wds.linkis.nebula.port", 9669);
+      CommonVars.apply("linkis.nebula.port", 9669);
 
   public static final CommonVars<Integer> NEBULA_MAX_CONN_SIZE =
-      CommonVars.apply("wds.linkis.nebula.max.conn.size", 100);
+      CommonVars.apply("linkis.nebula.max.conn.size", 100);
 
   public static final CommonVars<String> NEBULA_USER_NAME =
-      CommonVars.apply("wds.linkis.nebula.username", "root");
+      CommonVars.apply("linkis.nebula.username", "root");
 
   public static final CommonVars<String> NEBULA_PASSWORD =
-      CommonVars.apply("wds.linkis.nebula.password", "nebula");
+      CommonVars.apply("linkis.nebula.password", "nebula");
 
   public static final CommonVars<Boolean> NEBULA_RECONNECT_ENABLED =
       CommonVars.apply(

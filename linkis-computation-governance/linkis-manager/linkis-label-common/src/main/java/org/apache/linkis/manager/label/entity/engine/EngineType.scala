@@ -45,6 +45,8 @@ object EngineType extends Enumeration with Logging {
 
   val PRESTO = Value("presto")
 
+  val NEBULA = Value("nebula")
+
   val FLINK = Value("flink")
 
   val APPCONN = Value("appconn")
@@ -89,6 +91,7 @@ object EngineType extends Enumeration with Logging {
     case _ if IO_ENGINE_HDFS.toString.equalsIgnoreCase(str) => IO_ENGINE_HDFS
     case _ if PIPELINE.toString.equalsIgnoreCase(str) => PIPELINE
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
+    case _ if NEBULA.toString.equalsIgnoreCase(str) => NEBULA
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
     case _ if APPCONN.toString.equals(str) => APPCONN
     case _ if SQOOP.toString.equalsIgnoreCase(str) => SQOOP

@@ -53,6 +53,7 @@ public class SparkConfig {
 
   private String k8sDriverRequestCores;
   private String k8sExecutorRequestCores;
+  private String k8sSparkUIPort;
   private String deployMode = "client"; // ("client") // todo cluster
   private String appResource; // ("")
   private String appName; // ("")
@@ -194,6 +195,14 @@ public class SparkConfig {
 
   public void setK8sExecutorRequestCores(String k8sExecutorRequestCores) {
     this.k8sExecutorRequestCores = k8sExecutorRequestCores;
+  }
+
+  public String getK8sSparkUIPort() {
+    return k8sSparkUIPort;
+  }
+
+  public void setK8sSparkUIPort(String k8sSparkUIPort) {
+    this.k8sSparkUIPort = k8sSparkUIPort;
   }
 
   public String getJavaHome() {
@@ -475,6 +484,9 @@ public class SparkConfig {
         + '\''
         + ", k8sExecutorRequestCores='"
         + k8sExecutorRequestCores
+        + '\''
+        + ", k8sSparkUIPort='"
+        + k8sSparkUIPort
         + '\''
         + ", deployMode='"
         + deployMode

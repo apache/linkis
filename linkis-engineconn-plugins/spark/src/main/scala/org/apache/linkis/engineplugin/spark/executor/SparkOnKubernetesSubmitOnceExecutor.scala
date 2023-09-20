@@ -133,8 +133,10 @@ class SparkOnKubernetesSubmitOnceExecutor(
       1
     } else {
       val sparkDriverPodIP = this.clusterDescriptorAdapter.getSparkDriverPodIP
+      val sparkUIPort = this.clusterDescriptorAdapter.getSparkUIPort
       if (StringUtils.isNotBlank(sparkDriverPodIP)) {
-        val newProgress = SparkJobProgressUtil.getProgress(this.getApplicationId, sparkDriverPodIP)
+        val newProgress =
+          SparkJobProgressUtil.getProgress(this.getApplicationId, sparkDriverPodIP, sparkUIPort)
         if (newProgress > oldProgress) {
           oldProgress = newProgress
         }

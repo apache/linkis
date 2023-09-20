@@ -68,6 +68,7 @@ object SparkConfiguration extends Logging {
   val SPARK_K8S_RESTART_POLICY = CommonVars[String]("linkis.spark.k8s.restartPolicy", "Never")
   val SPARK_K8S_SPARK_VERSION = CommonVars[String]("linkis.spark.k8s.sparkVersion", "3.2.1")
   val SPARK_K8S_NAMESPACE = CommonVars[String]("linkis.spark.k8s.namespace", "default")
+  val SPARK_K8S_UI_PORT = CommonVars[String]("linkis.spark.k8s.ui.port", "4040")
 
   val SPARK_K8S_EXECUTOR_REQUEST_CORES =
     CommonVars[String]("linkis.spark.k8s.executor.request.cores", "1")

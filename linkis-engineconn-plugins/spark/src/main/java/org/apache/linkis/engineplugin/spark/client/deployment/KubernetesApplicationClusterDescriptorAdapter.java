@@ -72,6 +72,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     this.driverPodName = generateDriverPodName(sparkConfig.getAppName());
     this.namespace = sparkConfig.getK8sNamespace();
     setConf(sparkLauncher, "spark.app.name", sparkConfig.getAppName());
+    setConf(sparkLauncher, "spark.ui.port", sparkConfig.getK8sSparkUIPort());
     setConf(sparkLauncher, "spark.kubernetes.namespace", this.namespace);
     setConf(sparkLauncher, "spark.kubernetes.container.image", sparkConfig.getK8sImage());
     setConf(sparkLauncher, "spark.kubernetes.driver.pod.name", this.driverPodName);
@@ -178,6 +179,10 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
       logger.info("spark driver pod is not exist");
     }
     return "";
+  }
+
+  public String getSparkUIPort() {
+    return this.sparkConfig.getK8sSparkUIPort();
   }
 
   @Override

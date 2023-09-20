@@ -247,7 +247,7 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
     List<PersistenceLock> persistenceLocks = new ArrayList<>();
     EMInstanceLabel emInstanceLabel = labelContainer.getEMInstanceLabel();
-    CombinedLabel userCreatorEngineTypeLabel = labelContainer.getCombinedResourceLabel();
+    CombinedLabel combinedLabel = labelContainer.getCombinedResourceLabel();
 
     try {
       // check ecm resource if not enough return
@@ -265,14 +265,12 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
 
       // lock userCreatorEngineTypeLabel
       persistenceLocks.add(
-          tryLockOneLabel(
-              userCreatorEngineTypeLabel, wait, labelContainer.getUserCreatorLabel().getUser()));
+          tryLockOneLabel(combinedLabel, wait, labelContainer.getUserCreatorLabel().getUser()));
       try {
-        labelContainer.setCurrentLabel(userCreatorEngineTypeLabel);
+        labelContainer.setCurrentLabel(combinedLabel);
         if (!requestResourceService.canRequest(labelContainer, resource)) {
           return new NotEnoughResource(
-              String.format(
-                  "Labels:%s not enough resource", userCreatorEngineTypeLabel.getStringValue()));
+              String.format("Labels:%s not enough resource", combinedLabel.getStringValue()));
         }
       } catch (RMWarnException exception) {
         return new NotEnoughResource(exception.getMessage());

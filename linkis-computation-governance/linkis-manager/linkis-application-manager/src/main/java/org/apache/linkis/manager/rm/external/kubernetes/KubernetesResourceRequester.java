@@ -171,7 +171,7 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
   private String getK8sMasterUrl(ExternalResourceProvider provider) {
     Map<String, Object> configMap = provider.getConfigMap();
     String k8sMasterUrl = (String) configMap.get("k8sMasterUrl");
-    if (StringUtils.isEmpty(k8sMasterUrl)) {
+    if (StringUtils.isBlank(k8sMasterUrl)) {
       throw new IllegalArgumentException("k8sMasterUrl is empty, please check the configuration.");
     }
     return k8sMasterUrl;
@@ -183,7 +183,7 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
     String k8sMasterUrl = getK8sMasterUrl(provider);
     try {
       String k8sConfig = (String) configMap.get("k8sConfig");
-      if (StringUtils.isNotEmpty(k8sConfig)) {
+      if (StringUtils.isNotBlank(k8sConfig)) {
         Config kubeConfig =
             Config.fromKubeconfig(
                 null, FileUtils.readFileToString(new File(k8sConfig), "UTF-8"), null);

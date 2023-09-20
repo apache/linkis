@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import WeEditor from '@/components/editor/editorNext2.vue';
+import WeEditor from '@/components/editor/editor.vue';
 
 const { t } = useI18n();
 

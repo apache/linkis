@@ -1,28 +1,11 @@
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one or more
-  ~ contributor license agreements.  See the NOTICE file distributed with
-  ~ this work for additional information regarding copyright ownership.
-  ~ The ASF licenses this file to You under the Apache License, Version 2.0
-  ~ (the "License"); you may not use this file except in compliance with
-  ~ the License.  You may obtain a copy of the License at
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
 <template>
-    <div :class="editorName" class="we-editor" />
+    <div class="editor-area" :style="{ width, height }"></div>
 </template>
-<script>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { merge, debounce } from 'lodash';
-import storage from '@/common/helper/storage';
-import monaco from './monaco-loader';
-import highRiskGrammar from './highRiskGrammar';
+import useMonaco from './util2';
 
 const types = {
     code: {
@@ -37,44 +20,39 @@ const types = {
         wordWrap: 'on',
     },
 };
-export default {
-    name: 'WeEditor',
+
+export default defineComponent({
     props: {
-        id: {
+        width: {
             type: String,
-            required: false,
+            default: '100%',
         },
-        type: {
+        height: {
             type: String,
-            default: 'code',
+            default: '90vh',
         },
-        theme: String,
-        language: String,
-        value: String,
-        readOnly: {
-            type: Boolean,
-            default: false,
+        language: {
+            type: String,
+            default: 'json',
         },
-        options: Object,
-        executable: {
-            type: Boolean,
-            default: true,
+        preComment: {
+            type: String,
+            default: '',
         },
-        scriptType: String,
-        application: String,
+        modelValue: {
+            type: String,
+            default: '',
+        },
+        editorOptions: {
+            type: Object,
+            default: () => ({}),
+        },
     },
-    data() {
-        return {
-            editor: null,
-            editorModel: null,
-            decorations: null,
-            isParserClose: true, // Syntax validation is turned off by default(默认关闭语法验证)
-            closeParser: null,
-            openParser: null,
-            sqlParser: null,
-        };
-    },
-    computed: {
+    watch: {
+        modelValue(val) {
+            val !== this.getEditor()?.getValue() && this.updateMonacoVal(val);
+        },
+
         editorName() {
             return `we-editor-${this.type}`;
         },
@@ -101,58 +79,34 @@ export default {
             return config;
         },
     },
-    watch: {
-        'currentConfig.readOnly': function (val) {
-            this.editor.updateOptions({ readOnly: val });
-        },
-        value(newValue) {
-            if (this.editor) {
-                this.$emit('on-operator');
-                this.deltaDecorations(newValue);
-                if (newValue == this.getValue()) {
-                    return;
-                }
-                const { readOnly } = this.currentConfig;
-                if (readOnly) {
-                    // Both editor.setValue and model.setValue lose the undo stack(editor.setValue 和 model.setValue 都会丢失撤销栈)
-                    // this.editorModel.setValue(newValue);
-                    const range = this.editor.getModel().getFullModelRange();
-                    const text = newValue;
-                    const op = {
-                        range,
-                        text,
-                        forceMoveMarkers: true,
-                    };
-                    this.editorModel.pushEditOperations('insertValue', [op]);
-                } else {
-                    // With undo stack(有撤销栈)
-                    const range = this.editor.getModel().getFullModelRange();
-                    const text = newValue;
-                    const op = {
-                        identifier: {
-                            major: 1,
-                            minor: 1,
-                        },
-                        range,
-                        text,
-                        forceMoveMarkers: true,
-                    };
-                    this.editor.executeEdits('insertValue', [op]);
-                }
-            }
-        },
-        language() {
-            this.initParser();
-        },
-    },
-    mounted() {
-        this.initMonaco();
-    },
-    beforeUnmount() {
-        // 销毁 editor，进行gc(销毁 editor，进行gc)
-        this.editor && this.editor.dispose();
+    setup(props) {
+        const { updateVal, getEditor, createEditor, onFormatDoc } = useMonaco(
+            props.language,
+        );
+        return {
+            updateVal,
+            getEditor,
+            createEditor,
+            onFormatDoc,
+
+            editor: null,
+            editorModel: null,
+            decorations: null,
+            isParserClose: true, // Syntax validation is turned off by default(默认关闭语法验证)
+            closeParser: null,
+            openParser: null,
+            sqlParser: null,
+        };
     },
     methods: {
+        updateMonacoVal(_val?: string) {
+            const { modelValue, preComment } = this.$props;
+            const val = preComment
+                ? `${preComment}\n${_val || modelValue}`
+                : _val || modelValue;
+            this.updateVal(val);
+        },
+
         // initialization(初始化)
         initMonaco() {
             this.editor = monaco.editor.create(this.$el, this.currentConfig);
@@ -215,21 +169,6 @@ export default {
             }
         },
         // Saved edit state ViewState(保存的编辑状态 ViewState)
-        /**
-     *  Yes, editor.saveViewState stores:
-        cursor position
-        scroll location
-        folded sections
-        for a certain model when it is connected to an editor instance.
-        Once the same model is connected to the same or a different editor instance, editor.restoreViewState can be used to restore the above listed state.
-
-        There are very many things that influence how rendering occurs:
-        the current theme
-        the current wrapping settings set on the editor
-        the enablement of a minimap, etc.
-        the current language configured for a model
-        etc.
-      */
         saveViewState() {
             if (this.editorModel) {
                 this.editorModel.viewState = this.editor.saveViewState();
@@ -602,14 +541,63 @@ export default {
                 this.editorModel,
                 this.language,
             );
-            if (this.language === 'hql' && !this.sqlParser) {
-                this.sqlParser = await import('dt-sql-parser');
-            }
+            // if (this.language === 'hql' && !this.sqlParser) {
+            //     this.sqlParser = await import('dt-sql-parser');
+            // }
             this.deltaDecorations(this.value);
         },
     },
-};
-</script>
-<script lang="ts" setup></script>
+    mounted() {
+        console.log(this.$el, this.$props);
+        if (this.$el) {
+            // this.editor = monaco.editor.create(this.$el, this.currentConfig);
+            // this.monaco = monaco;
+            // this.editorModel = this.editor.getModel();
 
-<style lang="scss" src="./index.scss"></style>
+            this.editor = this.createEditor(
+                this.$el,
+                this.$props.editorOptions,
+            );
+            this.updateMonacoVal();
+            this.editor!.onDidChangeModelContent(() => {
+                this.$emit('update:modelValue', monacoEditor!.getValue());
+            });
+            this.editor!.onDidBlurEditorText(() => {
+                this.$emit('blur');
+            });
+        }
+    },
+    beforeUnmount() {
+        // 销毁 editor，进行gc(销毁 editor，进行gc)
+        this.editor!.dispose();
+    },
+});
+</script>
+
+<style lang="less" scoped>
+.editor-area {
+    position: relative;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    background-color: #fff;
+    box-sizing: border-box;
+
+    .tools {
+        z-index: 888;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: 0 2px;
+        border-right: 1px solid rgba(0, 0, 0, 0.1);
+        left: 0;
+        bottom: 0px;
+        top: 0;
+        .expand {
+            cursor: pointer;
+            line-height: 0;
+            margin-top: 5px;
+        }
+    }
+}
+</style>

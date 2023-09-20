@@ -166,12 +166,12 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     return client.pods().inNamespace(namespace).withName(driverPodName).get();
   }
 
-  public String getSparkDriverPodIP() {
+  public String getSparkUIUrl() {
     Pod sparkDriverPod = getSparkDriverPod();
     if (null != sparkDriverPod) {
       String sparkDriverPodIP = sparkDriverPod.getStatus().getPodIP();
       if (StringUtils.isNotBlank(sparkDriverPodIP)) {
-        return sparkDriverPodIP;
+        return sparkDriverPodIP + ":" + this.sparkConfig.getK8sSparkUIPort();
       } else {
         logger.info("spark driver pod IP is null, the application may be pending");
       }
@@ -179,10 +179,6 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
       logger.info("spark driver pod is not exist");
     }
     return "";
-  }
-
-  public String getSparkUIPort() {
-    return this.sparkConfig.getK8sSparkUIPort();
   }
 
   @Override

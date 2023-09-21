@@ -438,7 +438,9 @@ public class EMRestfulApi {
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
     if (Objects.isNull(ecmNode)) {
       return Message.error(
-          "ECM node :" + engineInstance + " does not exist, Unable to open engine log");
+          "ECM node :"
+              + engineInstance.split(":")[0]
+              + " does not exist, Unable to open engine log");
     }
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     String userName = ecmOperateRequest.user();

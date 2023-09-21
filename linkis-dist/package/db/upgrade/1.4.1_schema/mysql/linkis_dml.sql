@@ -69,7 +69,7 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 INSERT INTO `linkis_ps_configuration_config_key`
 (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`)
 VALUES
-('spark.locality.wait', '范围：0-3000，单位：毫秒', '任务调度本地等待时间', '3000', 'OFT', '[\"0\",\"1000\",\"2000\",\"3000\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0-3000, Unit: millisecond', 'Task Scheduling Local Waiting Time');
+('spark.locality.wait', '范围：0-3，单位：秒', '任务调度本地等待时间', '3s', 'OFT', '[\"0s\",\"1s\",\"2s\",\"3s\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0-3, Unit: second', 'Task Scheduling Local Waiting Time');
 
 
 -- all 默认

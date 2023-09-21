@@ -113,11 +113,11 @@
             </Select>
           </FormItem>
           <FormItem :label="$t('message.linkis.userConfig.configVKey')" prop="configKey">
-            <Select v-model="modalData.configKey" :disabled="noSelectConfig || isEdit" filterable clearable @on-open-change="fetchConfigOption" style="width: 319px;">
-              <Option v-for="item in configOption" :value="item" :key="item" >{{item}}</Option>
+            <Select v-model="modalData.configKey" :disabled="noSelectConfig || isEdit" filterable clearable @on-open-change="fetchConfigOption" @on-select="onSelect" style="width: 319px;">
+              <Option v-for="item in configOption" :key="item.value" :value="item.value" >{{item.label}}</Option>
             </Select>
           </FormItem>
-          <FormItem :label="$t('message.linkis.userConfig.configValue')" prop="configValue">
+          <FormItem :label="$t('message.linkis.userConfig.configValue')" :rules="{required: !!defaultValue , message: $t('message.linkis.ipListManagement.notEmpty'), trigger: 'blur'}" prop="configValue">
             <Input class="input" v-model="modalData.configValue" clearable  style="width: 319px" :placeholder="$t('message.linkis.userConfig.configValuePro')"></Input>
           </FormItem>
         </Form>
@@ -259,9 +259,6 @@ export default {
         ],
         configKey: [
           {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'}
-        ],
-        configValue: [
-          {required: true, message: this.$t('message.linkis.tenantTagManagement.notEmpty'), trigger: 'blur'}
         ]
       },
       btnDisabled: false,
@@ -276,7 +273,8 @@ export default {
       engineTypeOptions: [],
       allEngineTypeOptions: [],
       configOption: [],
-      versionOption: []
+      versionOption: [],
+      defaultValue: '',
     }
   },
   computed: {
@@ -329,7 +327,6 @@ export default {
       try {
         api.fetch("/configuration/engineType", {}, "get")
           .then((res) => {
-            window.console.log(res);
             res.engineType = res.engineType.map((item) => {
               return {label: item, value: item};
             });
@@ -360,7 +357,7 @@ export default {
     },
     async createTenant () {
       this.showCreateModal = true;
-      this.mode = 'create'
+      this.mode = 'create';
     },
     cancel() {
       this.showCreateModal = false;
@@ -402,11 +399,12 @@ export default {
     },
     edit(data) {
       const {
-        user, creator, engineType, version, key, configValue
+        user, creator, engineType, version, key, configValue, defaultValue
       } = data;
-      this.configOption.push(key);
+      this.configOption.push({value: key, label: key});
+      this.defaultValue = defaultValue
       this.modalData = {
-        user, creator, engineType, version, configKey: key, configValue
+        user, creator, engineType, version, configKey: key, configValue,
       };
       this.versionOption = [{label: version, value: version}];
       this.showCreateModal = true;
@@ -473,11 +471,16 @@ export default {
         let keyArr = [];
         res.itemList.forEach((item) => {
           if (!keyArr.includes(item.key)) {
-            keyArr.push(item.key);
+            keyArr.push({label: item.key, value: item.key, defaultValue: item.defaultValue});
           }
         });
         this.configOption = keyArr;
       })
+    },
+    onSelect(val) {
+      this.defaultValue = this.configOption.find((item) => {
+        return item.value === val
+      })?.defaultValue
     }
   },
   created() {

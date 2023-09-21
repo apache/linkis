@@ -119,6 +119,9 @@ need_cmd $SHELL
 echo "check spark-sql"
 need_cmd spark-sql
 
+echo "check hadoop"
+need_cmd hadoop
+
 echo "<-----end to check used cmd---->"
 
 checkPythonAndJava

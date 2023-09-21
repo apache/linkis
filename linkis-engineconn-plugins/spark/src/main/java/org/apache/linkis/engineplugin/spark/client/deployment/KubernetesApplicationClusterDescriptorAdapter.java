@@ -72,6 +72,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     this.driverPodName = generateDriverPodName(sparkConfig.getAppName());
     this.namespace = sparkConfig.getK8sNamespace();
     setConf(sparkLauncher, "spark.app.name", sparkConfig.getAppName());
+    setConf(sparkLauncher, "spark.ui.port", sparkConfig.getK8sSparkUIPort());
     setConf(sparkLauncher, "spark.kubernetes.namespace", this.namespace);
     setConf(sparkLauncher, "spark.kubernetes.container.image", sparkConfig.getK8sImage());
     setConf(sparkLauncher, "spark.kubernetes.driver.pod.name", this.driverPodName);
@@ -111,6 +112,7 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     addSparkArg(sparkLauncher, "--num-executors", sparkConfig.getNumExecutors().toString());
     addSparkArg(sparkLauncher, "--principal", sparkConfig.getPrincipal());
     addSparkArg(sparkLauncher, "--keytab", sparkConfig.getKeytab());
+    addSparkArg(sparkLauncher, "--py-files", sparkConfig.getPyFiles());
     sparkLauncher.setAppResource(sparkConfig.getAppResource());
     sparkLauncher.setMainClass(mainClass);
     Arrays.stream(args.split("\\s+"))
@@ -164,12 +166,12 @@ public class KubernetesApplicationClusterDescriptorAdapter extends ClusterDescri
     return client.pods().inNamespace(namespace).withName(driverPodName).get();
   }
 
-  public String getSparkDriverPodIP() {
+  public String getSparkUIUrl() {
     Pod sparkDriverPod = getSparkDriverPod();
     if (null != sparkDriverPod) {
       String sparkDriverPodIP = sparkDriverPod.getStatus().getPodIP();
       if (StringUtils.isNotBlank(sparkDriverPodIP)) {
-        return sparkDriverPodIP;
+        return sparkDriverPodIP + ":" + this.sparkConfig.getK8sSparkUIPort();
       } else {
         logger.info("spark driver pod IP is null, the application may be pending");
       }

@@ -56,5 +56,8 @@ class SparkOnceExecutorFactory extends OnceExecutorFactory {
     }
   }
 
+  override protected def getSupportRunTypes: Array[String] =
+    Array(RunType.JAR.toString, RunType.PYSPARK.toString)
+
   override protected def getRunType: RunType = RunType.JAR
 }

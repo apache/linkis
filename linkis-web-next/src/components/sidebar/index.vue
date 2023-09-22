@@ -11,16 +11,10 @@
                             </div>
                         </template>
                         <f-menu-group>
-                            <template
-                                v-for="subMenuItem in menuItem.items"
-                                :key="subMenuItem.title"
-                            >
-                                <f-menu-item
-                                    :value="menuItem.title + subMenuItem.title"
-                                    @click="
-                                        handleClick(subMenuItem?.path ?? '/')
-                                    "
-                                >
+                            <template v-for="subMenuItem in menuItem.items" :key="subMenuItem.title">
+                                <f-menu-item :value="menuItem.title + subMenuItem.title" @click="
+                                    handleClick(subMenuItem?.path ?? '/')
+                                    ">
                                     <template #label>
                                         <div class="submenu-item">
                                             {{ $t(subMenuItem.title) }}123
@@ -32,10 +26,7 @@
                     </f-sub-menu>
                 </template>
                 <template v-else>
-                    <f-menu-item
-                        :value="menuItem.title"
-                        @click="handleClick(menuItem?.path ?? '/')"
-                    >
+                    <f-menu-item :value="menuItem.title" @click="handleClick(menuItem?.path ?? '/')">
                         <template #label>
                             <img :src="menuItem.icon" />
                             <div class="title-text">
@@ -56,52 +47,52 @@ const router = useRouter();
 const menuItemsConfig = [
     {
         title: 'message.linkis.sideNavList.function.children.globalHistory',
-        icon: '../../../public/任务概览-常规.svg',
+        icon: '/任务概览-常规.svg',
         path: '/console/globalHistoryManagement',
     },
     {
         title: 'message.linkis.sideNavList.function.children.resource',
-        icon: '../../../public/资源管理-常规.svg',
+        icon: '/资源管理-常规.svg',
         path: '/console/resource',
     },
     {
         title: 'message.linkis.sideNavList.function.children.setting',
-        icon: '../../../public/参数配置-常规.svg',
+        icon: '/参数配置-常规.svg',
         path: '/console/parameterConfig',
     },
     {
         title: 'message.linkis.sideNavList.function.children.dateReport',
-        icon: '../../../public/全局变量-常规.svg',
+        icon: '/全局变量-常规.svg',
         path: '',
     },
     {
         title: 'message.linkis.sideNavList.function.children.ECMManage',
-        icon: '../../../public/ECM管理-常规.svg',
+        icon: '/ECM管理-常规.svg',
         path: '',
     },
     {
         title: 'message.linkis.sideNavList.function.children.microserviceManage',
-        icon: '../../../public/微服务管理-常规.svg',
+        icon: '/微服务管理-常规.svg',
         path: '',
     },
     {
         title: 'message.linkis.sideNavList.function.children.dataSourceManage',
-        icon: '../../../public/数据源管理-常规.svg',
+        icon: '/数据源管理-常规.svg',
         items: [{ title: 'xxx', path: '' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.udfFunctionTitle',
-        icon: '../../../public/UDF函数-常规.svg',
+        icon: '/UDF函数-常规.svg',
         items: [{ title: 'xxx', path: '' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.basedataManagement',
-        icon: '../../../public/基础数据管理-常规.svg',
+        icon: '/基础数据管理-常规.svg',
         items: [{ title: 'xxx', path: '' }],
     },
     {
         title: 'message.linkis.sideNavList.function.children.codeQuery',
-        icon: '../../../public/代码检索-常规.svg',
+        icon: '/代码检索-常规.svg',
         path: '',
     },
 ];

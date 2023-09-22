@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -15,200 +16,54 @@
  * limitations under the License.
  */
 
-import { partition, map, filter, isFunction } from 'lodash';
-import storage from '@/common/helper/storage';
-// import debug_log from '@/common/util/debug.js';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-/**
- * Go to indexDb to get the hive list and udf function list(去indexDb中获取hive的列表和udf函数列表)
- * @param {*} monaco
- * @param {*} lang
- */
-const getHiveList = async (monaco, lang) => {
-    const userInfoName = storage.get('baseInfo', 'local')
-        ? storage.get('baseInfo', 'local').username
-        : null;
-    let dbInfoProposals = [];
-    let tableInfoProposals = [];
-    let udfProposals = [];
-    let variableProposals = [];
-    if (userInfoName) {
-        const userName = userInfoName;
-        const globalCache = await globalcache.getCache(userName);
-        if (globalCache) {
-            [dbInfoProposals, tableInfoProposals] = partition(
-                map(globalCache.hiveList, (item) => ({
-                    caption: item.caption,
-                    label: item.value,
-                    kind: monaco.languages.CompletionItemKind.Unit,
-                    insertText: item.value,
-                    detail: item.meta,
-                    documentation: item.documentation,
-                })),
-                ['detail', 'dbname'],
-            );
-
-            udfProposals = getFormatProposalsList(
-                monaco,
-                globalCache.fnList,
-                lang,
-                'Function',
-                true,
-            );
-            variableProposals = getFormatProposalsList(
-                monaco,
-                globalCache.variableList,
-                lang,
-                'Variable',
-                true,
-            );
-        }
-    }
-    return {
-        dbInfoProposals,
-        tableInfoProposals,
-        udfProposals,
-        variableProposals,
+export const useMonaco = (language = 'json') => {
+    let monacoEditor: monaco.editor.IStandaloneCodeEditor | null = null;
+    let initReadOnly = false;
+    const updateVal = async (val: string) => {
+        monacoEditor?.setValue(val);
+        setTimeout(async () => {
+            if (initReadOnly) monacoEditor?.updateOptions({ readOnly: false });
+            await monacoEditor
+                ?.getAction?.('editor.action.formatDocument')
+                ?.run();
+            if (initReadOnly) monacoEditor?.updateOptions({ readOnly: true });
+        }, 100);
     };
-};
 
-/**
- *
- * @param {*} match matched text(匹配到的文本)
- * @param {*} proposals list to filter(需要过滤的列表)
- * @param {*} fieldString Field name in filter condition(过滤条件中的字段名)
- * @param {*} attachMatch Additional filters(附加的过滤条件)
- * @param {*} needSplit Whether to intercept insertText(是否需要对insertText进行截取)
- * @return {*}
- */
-const getReturnList = (
-    { match, proposals, fieldString, attachMatch, needSplit, position },
-    monaco,
-) => {
-    // debug_log(
-    //     'log',
-    //     'getReturnList:',
-    //     match,
-    //     proposals,
-    //     fieldString,
-    //     attachMatch,
-    //     needSplit,
-    // );
-    if (!match || isFunction(match)) {
-        return;
-    }
-    let replacedStr = '';
-    for (let i of match) {
-        const reg = /[~'!@#￥$%^&*()-+_=:]/g;
-        if (reg.test(i)) {
-            replacedStr += `\\${i}`;
-        } else {
-            replacedStr += i;
+    const createEditor = (
+        el: HTMLElement | null,
+        editorOption: monaco.editor.IStandaloneEditorConstructionOptions = {},
+    ) => {
+        if (monacoEditor) {
+            return;
         }
-    }
-    const regexp = new RegExp(`\w*${replacedStr}\w*`, 'i');
-    let items = [];
-    if (attachMatch && !needSplit) {
-        items = filter(
-            proposals,
-            (it) =>
-                it[fieldString].startsWith(attachMatch) &&
-                regexp.test(it[fieldString]),
-        );
-    } else if (attachMatch && needSplit) {
-        // Here is the processing of situations such as create table and drop table(这里是对例如create table和drop table的情况进行处理)
-        proposals.forEach((it) => {
-            if (
-                regexp.test(it[fieldString]) &&
-                it.label.indexOf(attachMatch[1]) === 0
-            ) {
-                const text = it.insertText;
-                items.push({
-                    label: it.label,
-                    documentation: it.documentation,
-                    insertText: text.slice(
-                        text.indexOf(' ') + 1,
-                        text.length - 1,
-                    ),
-                    detail: it.detail,
-                });
-            }
-        });
-    } else {
-        items = filter(proposals, (it) => regexp.test(it[fieldString]));
-    }
-    // debug_log('log', position);
-    if (position && monaco) {
-        items.forEach(
-            (it) =>
-                (it.range = new monaco.Range(
-                    position.lineNumber,
-                    position.column - match.length,
-                    position.lineNumber,
-                    position.column,
-                )),
-        );
-    }
-    // debug_log('log', 'suggestions', proposals.length, items, regexp);
-    return {
-        isIncomplete: true,
-        suggestions: items,
-    };
-};
-
-/**
- * Format the obtained data into completionList format(对拿到的数据格式化成completionList格式)
- * @param {*} monaco editor(编辑器)
- * @param {*} list formatted list(格式化列表)
- * @param {*} lang script type(脚本类型)
- * @param {*} type Type (function or global variable)(类型（函数或者全局变量）)
- * @param {*} isDiy 需要对输入进行定制化(需要对输入进行定制化)
- * @return {*} formatted list(格式化后的列表)
- */
-const getFormatProposalsList = (monaco, list, lang, type, isDiy, isSnippet) => {
-    let formatList = [];
-    if (!list) return formatList;
-    const kind = monaco.languages.CompletionItemKind[type];
-    list.forEach((item) => {
-        if (isDiy) {
-            if (type === 'Function') {
-                if (
-                    lang === 'hql' ||
-                    item.udfType === 1 ||
-                    item.udfType === 3
-                ) {
-                    formatList.push({
-                        label: item.udfName + '()',
-                        kind,
-                        insertText: item.udfName + '()',
-                        detail: item.udfType > 2 ? '方法函数' : 'UDF函数',
-                        documentation: item.description,
-                    });
-                }
-            } else if (type === 'Variable') {
-                formatList.push({
-                    label: item.key,
-                    kind,
-                    insertText: item.key,
-                    detail: '用户自定义的全局变量',
-                    documentation: `{"${item.key}":"${item.value}"}`,
-                });
-            }
-        } else {
-            formatList.push({
-                label: item.label.toLowerCase(),
-                insertText: item.insertText.toLowerCase(),
-                detail: item.detail,
-                insertTextRules: isSnippet
-                    ? monaco.languages.CompletionItemInsertTextRule
-                          .InsertAsSnippet
-                    : null,
-                documentation: item.documentation,
-                kind,
+        initReadOnly = !!editorOption.readOnly;
+        monacoEditor =
+            el &&
+            monaco.editor.create(el, {
+                language,
+                minimap: { enabled: false },
+                theme: 'vs-light',
+                multiCursorModifier: 'ctrlCmd',
+                scrollbar: {
+                    verticalScrollbarSize: 8,
+                    horizontalScrollbarSize: 8,
+                },
+                tabSize: 2,
+                automaticLayout: true, // 自适应宽高
+                ...editorOption,
             });
-        }
-    });
-    return formatList;
+        return monacoEditor;
+    };
+    const onFormatDoc = () => {
+        monacoEditor?.getAction?.('editor.action.formatDocument')?.run();
+    };
+    return {
+        updateVal,
+        getEditor: () => monacoEditor,
+        createEditor,
+        onFormatDoc,
+    };
 };
-
-export { getHiveList, getReturnList, getFormatProposalsList };

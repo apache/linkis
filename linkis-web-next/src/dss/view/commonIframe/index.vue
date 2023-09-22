@@ -17,21 +17,18 @@
 
 <template>
   <div class="iframeClass">
-    <iframe
-      class="iframeClass"
-      v-if="isRefresh"
-      id="iframe"
-      :src="visualSrc"
-      frameborder="0"
-      width="100%"
-      :height="height"/>
+    <iframe class="iframeClass" v-if="isRefresh" id="iframe" :src="visualSrc" frameborder="0" width="100%"
+      :height="height" />
   </div>
 </template>
-<script>
-import util from '@/common/util/index';
-import api from "@/common/service/api";
-export default {
-  data() {
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+// import util from '@/common/util/index';
+// import api from "@/common/service/api";
+
+export default defineComponent({
+  setup() {
     return {
       height: 0,
       visualSrc: '',
@@ -55,40 +52,42 @@ export default {
     // Set width and height when creating(创建的时候设置宽高)
     this.resize(window.innerHeight);
     // Monitor window changes and get browser width and height(监听窗口变化，获取浏览器宽高)
-    window.addEventListener('resize', this.resize(window.innerHeight));
+    window.addEventListener('resize', () => { this.resize(window.innerHeight) });
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.resize(window.innerHeight));
+    window.removeEventListener('resize', () => { this.resize(window.innerHeight) });
   },
   methods: {
     getCommonProjectId(type, query) {
-      return api.fetch(`/dss/getAppjointProjectIDByApplicationName`, {
-        projectID: query.projectID,
-        applicationName: type
-      }, 'get').then((res) => {
-        localStorage.setItem('appJointProjectId', res.appJointProjectID);
-      })
+      // return api.fetch(`/dss/getAppjointProjectIDByApplicationName`, {
+      //   projectID: query.projectID,
+      //   applicationName: type
+      // }, 'get').then((res) => {
+      //   localStorage.setItem('appJointProjectId', res.appJointProjectID);
+      // })
     },
-    resize(height) {
+    resize(height: number) {
       this.height = height;
     },
     getUrl() {
       const url = this.$route.query.url;
+      console.log('url', url)
       const appJointProjectId = localStorage.getItem('appJointProjectId');
-      this.visualSrc = util.replaceHolder(url, {
-        projectId: appJointProjectId,
-        projectName: this.$route.query.projectName,
-      });
+      // this.visualSrc = util.replaceHolder(url, {
+      //   projectId: appJointProjectId,
+      //   projectName: this.$route.query.projectName,
+      // });
     },
     reload() {
       this.isRefresh = false;
       this.$nextTick(() => this.isRefresh = true);
     }
   },
-};
+
+})
 </script>
 <style>
-.iframeClass{
-    height: 100%;
+.iframeClass {
+  height: 100%;
 }
 </style>

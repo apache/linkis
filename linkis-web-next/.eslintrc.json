@@ -28,12 +28,14 @@
         }
     },
     "plugins": ["vue", "@typescript-eslint"],
+    "import/prefer-default-export": "off",
     "rules": {
         "indent": ["error", 4],
         "linebreak-style": ["error", "unix"],
         "semi": ["error", "always"],
         "vue/multi-word-component-names": 0,
         "quotes": ["error", "single"],
-        "vue/html-quotes": ["error", "double"]
+        "vue/html-quotes": ["error", "double"],
+        "import/extensions": "off"
     }
 }

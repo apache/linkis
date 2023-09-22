@@ -1,18 +1,9 @@
 <template>
-    <FDrawer
-        v-model:show="show"
-        placement="right"
-        width="960"
-        @ok="show = false"
-        :footer="true"
-    >
+    <FDrawer v-model:show="show" placement="right" width="960" @ok="show = false" :footer="true">
         <template #title>
             <div class="title">
                 <template v-if="isAddingApplicationAndEngine">
-                    <span
-                        class="back-icon"
-                        @click="isAddingApplicationAndEngine = false"
-                    >
+                    <span class="back-icon" @click="isAddingApplicationAndEngine = false">
                         &lt;
                     </span>
                 </template>
@@ -21,54 +12,28 @@
         </template>
 
         <template v-if="!isAddingApplicationAndEngine">
-            <FButton
-                type="primary"
-                style="margin: 8px 0 24px"
-                @click="isAddingApplicationAndEngine = true"
-            >
+            <FButton type="primary" style="margin: 8px 0 24px" @click="isAddingApplicationAndEngine = true">
                 {{ $t('message.linkis.addApplicationAndEngine') }}
             </FButton>
         </template>
 
         <div class="content-wrapper">
             <template v-if="!isAddingApplicationAndEngine">
-                <f-table
-                    :data="currentData"
-                    class="table"
-                    :rowKey="
-                            (row: Record<string, number|string>) => {
-                                return row.taskId;
-                            }
-                        "
-                >
+                <f-table :data="currentData" class="table" :rowKey="(row: Record<string, number | string>) => {
+                    return row.taskId;
+                }
+                    ">
                     <template v-for="col in tableColumns" :key="col.label">
-                        <f-table-column
-                            v-if="col.formatter"
-                            :prop="col.prop"
-                            :label="col.label"
-                            :formatter="col.formatter"
-                            :width="col?.width"
-                        >
+                        <f-table-column v-if="col.formatter" :prop="col.prop" :label="col.label" :formatter="col.formatter"
+                            :width="col?.width">
                         </f-table-column>
-                        <f-table-column
-                            v-else
-                            :prop="col.prop"
-                            :label="col.label"
-                            :width="col?.width"
-                            :action="col.action"
-                            :fixed="col?.fixed ?? false"
-                        >
+                        <f-table-column v-else :prop="col.prop" :label="col.label" :width="col?.width" :action="col.action"
+                            :fixed="col?.fixed ?? false">
                         </f-table-column>
                     </template>
                 </f-table>
-                <FPagination
-                    show-size-changer
-                    :total-count="data.length"
-                    v-model:currentPage="currentPage"
-                    @change="handleChange"
-                    :pageSizeOption="pageSizeOption"
-                    v-model:pageSize="pageSize"
-                ></FPagination>
+                <FPagination show-size-changer :total-count="data.length" v-model:currentPage="currentPage"
+                    @change="handleChange" :pageSizeOption="pageSizeOption" v-model:pageSize="pageSize"></FPagination>
             </template>
 
             <template v-else>
@@ -85,10 +50,7 @@
                             {{ $t('message.linkis.engineConfig') }}
                         </div>
                         <div class="configs">
-                            <template
-                                v-for="(config, index) in engineConfigList"
-                                :key="`${config.type}-${index}`"
-                            >
+                            <template v-for="(config, index) in engineConfigList" :key="`${config.type}-${index}`">
                                 <div class="config-card">
                                     <div class="header">
                                         <div class="title">
@@ -101,30 +63,17 @@
                                         <div class="delete_btn">删除</div>
                                     </div>
                                     <FFormItem label="引擎类型">
-                                        <FInput
-                                            placeholder="请输入"
-                                            v-model="config.type"
-                                        ></FInput>
+                                        <FInput placeholder="请输入" v-model="config.type"></FInput>
                                     </FFormItem>
                                     <FFormItem label="引擎版本">
-                                        <FInput
-                                            placeholder="请输入"
-                                            v-model="config.version"
-                                        ></FInput>
+                                        <FInput placeholder="请输入" v-model="config.version"></FInput>
                                     </FFormItem>
                                     <FFormItem label="引擎描述">
-                                        <FInput
-                                            placeholder="请输入"
-                                            v-model="config.description"
-                                        ></FInput>
+                                        <FInput placeholder="请输入" v-model="config.description"></FInput>
                                     </FFormItem>
                                 </div>
                             </template>
-                            <FButton
-                                type="link"
-                                class="engine-adding-btn"
-                                @click="addEngine"
-                            >
+                            <FButton type="link" class="engine-adding-btn" @click="addEngine">
                                 添加引擎
                             </FButton>
                         </div>
@@ -423,6 +372,7 @@ defineExpose({
         line-height: 24px;
         font-weight: 500;
     }
+
     .delete_btn {
         font-size: 14px;
         color: #63656f;
@@ -431,6 +381,7 @@ defineExpose({
         cursor: pointer;
     }
 }
+
 .back-icon {
     color: #93949b;
     font-weight: 800;
@@ -441,10 +392,13 @@ defineExpose({
     overflow: auto;
     max-height: calc(78vh - 100px);
 }
+
 .content-wrapper {
     width: 960px;
+
     .engine-config {
         display: flex;
+
         .label {
             min-width: 56px;
             font-size: 14px;
@@ -453,9 +407,11 @@ defineExpose({
             line-height: 22px;
             font-weight: 400;
         }
+
         .configs {
             margin-left: 22px;
             width: 100%;
+
             .config-card {
                 width: 100%;
                 background: #ffffff;
@@ -473,12 +429,14 @@ defineExpose({
                     margin-bottom: 16px;
                 }
             }
+
             .engine-adding-btn {
                 transform: translateY(-5px);
             }
         }
     }
 }
+
 :deep(.fes-pagination) {
     display: flex;
     justify-content: flex-end;

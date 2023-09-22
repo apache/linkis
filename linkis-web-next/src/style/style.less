@@ -1,4 +1,4 @@
-@import '@/style/variable.less';
+@import './variable.less';
 * {
     box-sizing: border-box;
 }
@@ -26,7 +26,7 @@ p {
 
 a {
     text-decoration: none;
-    color: @blue-color;
+    color: var(--blue-color);
 }
 
 ul {
@@ -46,12 +46,12 @@ ul {
     .btn-item {
         margin-right: 16px;
         cursor: pointer;
-        color: @blue-color;
+        color: var(--blue-color);
         &:last-of-type {
             margin-right: 0;
         }
         &.red {
-            color: @red-color;
+            color: var(--red-color);
         }
         &.disabled {
             color: #b7b7bc;
@@ -140,7 +140,7 @@ ul {
             .wd-body-menu-item {
                 display: flex;
                 align-items: center;
-                color: @blue-color;
+                color: var(--blue-color);
                 line-height: 22px;
                 padding-left: 16px;
                 cursor: pointer;
@@ -466,7 +466,7 @@ ul {
 .table-container {
     margin-top: 24px;
     .btn-delete {
-        color: @red-color;
+        color: var(red-color);
     }
 }
 
@@ -577,7 +577,7 @@ ul {
 }
 .fes-ellipsis {
     .a-link {
-        color: @blue-color;
+        color: var(--blue-color);
     }
 }
 .project-template-style {

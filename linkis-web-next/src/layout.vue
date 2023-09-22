@@ -1,28 +1,5 @@
 <template>
     <div class="wd-page" @click="changeMenusDisplay">
-        <!-- <BHorizontalLayout
-            v-model:curPath="curPath"
-            :menus="menus"
-            @menuChange="onMenuClick"
-        >
-            <template v-slot:top>
-                <div class="wd-logo">linkis</div>
-            </template>
-            <template v-slot:container>
-                <div style="margin: -16px -16px -32px">
-                    <router-view></router-view>
-                </div>
-            </template>
-        </BHorizontalLayout> -->
-
-        <!-- <template v-for="(rt, index) in menus" :key="index">
-            <span
-                @click="myRouteHandler(rt.value)"
-                style="border: 1px solid black"
-                >{{ rt.label }}</span
-            >
-        </template> -->
-
         <div class="wrapper">
             <f-layout style="margin-top: 20px">
                 <!-- <f-header></f-header> -->
@@ -30,13 +7,11 @@
                     <f-aside style="margin-right: 16px">
                         <Sidebar></Sidebar>
                     </f-aside>
-                    <f-main
-                        style="
+                    <f-main style="
                             margin-top: 16px;
                             padding: 24px;
                             background-color: #fff;
-                        "
-                    >
+                        ">
                         <router-view></router-view>
                     </f-main>
                 </f-layout>
@@ -45,95 +20,10 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, h, computed } from 'vue';
-import type { VNode } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { AppstoreOutlined, SettingOutlined } from '@fesjs/fes-design/icon';
-// import { BHorizontalLayout } from '@webank/bdp-design';
 import Sidebar from '@/components/sidebar/index.vue';
-
-const myRouteHandler = (rt: string) => {
-    console.log(rt);
-};
 
 const changeMenusDisplay = () => {
     console.log(1);
-};
-
-const route = useRoute();
-const router = useRouter();
-interface menuItem {
-    label: string;
-    value: string;
-    icon: () => VNode;
-    children?: menuItem[];
-}
-const path = computed(() => route.path);
-// 用于反显
-const curPath = computed(() => {
-    // eslint-disable-next-line no-use-before-define
-    const curMenuItem: menuItem | undefined = menus.value.find(
-        (item: menuItem) =>
-            path.value.includes(item.value) &&
-            path.value.length > item.value.length,
-    );
-
-    return curMenuItem?.value || '';
-});
-const menus = ref<menuItem[]>([
-    {
-        label: '全局历史',
-        value: '/console/globalHistoryManagement',
-        icon: () => h(AppstoreOutlined),
-    },
-    {
-        label: '资源管理',
-        value: '/console/resource',
-        icon: () => h(SettingOutlined),
-    },
-    // {
-    //     label: '任务查询1',
-    //     value: '/tasks1',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // {
-    //     label: '任务查询2',
-    //     value: '/tasks2',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // {
-    //     label: '任务查询3',
-    //     value: '/tasks3',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // {
-    //     label: '任务查询4',
-    //     value: '/tasks4',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // {
-    //     label: '任务查询5',
-    //     value: '/tasks5',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // {
-    //     label: '任务查询6',
-    //     value: '/tasks6',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-    // { label: '任务查询7', value: '/tasks7', icon: () => h(AppstoreOutlined) },
-    // { label: '任务查询8', value: '/tasks8', icon: () => h(AppstoreOutlined) },
-    // { label: '任务查询9', value: '/tasks9', icon: () => h(AppstoreOutlined) },
-    // {
-    //     label: '任务查询10',
-    //     value: '/tasks10',
-    //     icon: () => h(AppstoreOutlined),
-    // },
-]);
-const currentPath = ref<string>('');
-const onMenuClick = (v: { value: string }) => {
-    currentPath.value = v.value;
-    router.push(v.value);
 };
 </script>
 <style lang="less" scoped>
@@ -142,6 +32,7 @@ const onMenuClick = (v: { value: string }) => {
 * {
     overflow: hidden;
 }
+
 .wrapper {
     width: 100%;
     height: 100vh;
@@ -288,8 +179,7 @@ const onMenuClick = (v: { value: string }) => {
             background: rgba(83, 132, 255, 0.06);
 
             .wd-menu-icon {
-                filter: invert(45%) sepia(13%) saturate(4258%)
-                    hue-rotate(197deg) brightness(108%) contrast(100%);
+                filter: invert(45%) sepia(13%) saturate(4258%) hue-rotate(197deg) brightness(108%) contrast(100%);
             }
 
             &::after {
@@ -312,7 +202,7 @@ const onMenuClick = (v: { value: string }) => {
                 top: 0;
                 right: 0;
                 padding: 0 8px;
-                color: @blue-color;
+                // color: @blue-color;
             }
         }
     }

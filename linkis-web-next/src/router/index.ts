@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import dssRouter from '@/dss/dssRouter';
 
 // 设置路由规则
 const routes: Array<RouteRecordRaw> = [
@@ -101,6 +102,7 @@ const routes: Array<RouteRecordRaw> = [
             },
         ],
     },
+    ...dssRouter,
 ];
 
 // 设置路由

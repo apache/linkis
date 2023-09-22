@@ -69,6 +69,7 @@ public interface TaskConstant {
   String TICKET_ID = "ticketId";
   String ENGINE_CONN_TASK_ID = "engineConnTaskId";
   String ENGINE_CONN_SUBMIT_TIME = "engineConnSubmitTime";
+  String DEBUG_ENBALE = "debug.enable";
 
   String PARAMS_DATA_SOURCE = "dataSources";
 

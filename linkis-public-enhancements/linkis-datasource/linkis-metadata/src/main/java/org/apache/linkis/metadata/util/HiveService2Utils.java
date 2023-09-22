@@ -102,10 +102,9 @@ public class HiveService2Utils {
         tableNames.add(tableName);
       }
 
-      //  获取每个表的详细信息
+      //  Get detailed information about each table
       for (String tableName : tableNames) {
         ObjectNode tableNode = jsonMapper.createObjectNode();
-        // 获取表详细信息
         ResultSet describeRs = stat.executeQuery("DESCRIBE FORMATTED " + tableName);
         while (describeRs.next()) {
           String columnName = describeRs.getString(1);
@@ -180,7 +179,7 @@ public class HiveService2Utils {
           dataType = dataType.trim();
         }
 
-        // 判断获取分区字段
+        // Judgment Get partition field
         if (columnName.contains("# Partition Information")) {
           partition = true;
           parColName = false;

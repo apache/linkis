@@ -179,6 +179,7 @@ public class HiveService2Utils {
           dataType = dataType.trim();
         }
 
+        // Partition field judgment
         if (columnName.contains("# Partition Information")) {
           partition = true;
           parColName = false;

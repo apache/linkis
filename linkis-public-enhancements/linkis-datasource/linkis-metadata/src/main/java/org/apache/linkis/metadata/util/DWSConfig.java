@@ -53,12 +53,6 @@ public class DWSConfig {
   public static CommonVars<String> HIVE_SERVER2_URL =
       CommonVars$.MODULE$.apply("linkis.hive.server2.address", "jdbc:hive2://127.0.0.1:10000/");
 
-  public static CommonVars<String> HIVE_SERVER2_USERNAME =
-      CommonVars$.MODULE$.apply("linkis.hive.server2.username", "");
-
-  public static CommonVars<String> HIVE_SERVER2_PASSWORD =
-      CommonVars$.MODULE$.apply("linkis.hive.server2.password", "");
-
   public static CommonVars<Boolean> HIVE_SERVER2_ENABLE =
       CommonVars$.MODULE$.apply("linkis.hive.server2.enable", false);
 }

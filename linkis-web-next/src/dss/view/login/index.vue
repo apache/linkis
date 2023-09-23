@@ -19,43 +19,55 @@
   <div class="login">
     <i class="login-bg" />
     <div class="login-main">
-      <Form ref="loginForm" :model="loginForm" :rules="ruleInline">
-        <FormItem>
-          <span class="login-title">
-            {{ $t('message.common.login.loginTitle') }}
-          </span>
-        </FormItem>
-        <FormItem prop="user">
-          <div class="label">{{ $t('message.linkis.userName') }}</div>
+      <FForm ref="loginFormRef" :model="loginForm" :rules="ruleInline" labelPosition="top">
+        <span class="login-title">
+          {{ $t('message.common.login.loginTitle') }}
+        </span>
+
+        <FFormItem prop="user" :rules="[{ required: true, message: $t('message.common.login.userName') }]">
+          <template #label>
+            <div class="label">{{ $t('message.linkis.userName') }}</div>
+          </template>
           <FInput class="login-input" v-model="loginForm.user" type="text"
             :placeholder="$t('message.common.login.userName')" size="large" />
-        </FormItem>
-        <FormItem prop="password">
-          <div class="label password">{{ $t('message.linkis.password') }}</div>
+        </FFormItem>
+
+        <FFormItem prop="password" :rules="[{ required: true, message: $t('message.common.login.passwordHint') }]">
+          <template #label>
+            <div class=" label password">{{ $t('message.linkis.password') }}
+            </div>
+          </template>
           <FInput class="login-input" v-model="loginForm.password" type="password"
             :placeholder="$t('message.common.login.passwordHint')" size="large" />
-          <FCheckbox v-model="rememberUserNameAndPass" class="remember-user-name">
-            {{ $t('message.common.login.remenber') }}
-          </FCheckbox>
-        </FormItem>
-        <FormItem>
-          <FButton class="login-btn" :loading="loading" type="primary" long size="large">
-            {{ $t('message.common.login.login') }}
-          </FButton>
-        </FormItem>
-      </Form>
+        </FFormItem>
+        <FCheckbox v-model="rememberUserNameAndPass" class="remember-user-name">
+          {{ $t('message.common.login.remenber') }}
+        </FCheckbox>
+
+        <FButton @click="handleSubmit('loginForm')" class="login-btn" :loading="loading" type="primary" long size="large">
+          {{ $t('message.common.login.login') }}
+        </FButton>
+      </FForm>
     </div>
   </div>
 </template>
 <script lang="ts">
 import api from '@/service/api';
 import { FMessage } from '@fesjs/fes-design';
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import storage from '@/helper/storage'
+import JSEncrypt from 'jsencrypt';
+import tab from '@/scriptis/service/db/tab';
+import { db } from '@/service/db';
+import { config } from '@/config/db';
 
 export default defineComponent({
   setup() {
+    const loginFormRef = ref(null)
+
     return {
+      userName: '',
+      loginFormRef,
       loading: false,
       loginForm: {
         user: '',
@@ -80,12 +92,15 @@ export default defineComponent({
         ]
       },
       rememberUserNameAndPass: false,
-      publicKeyData: null
+      publicKeyData: {
+        enableLoginEncrypt: null,
+        publicKey: null
+      }
     }
 
   },
   created() {
-    let userNameAndPass = null
+    let userNameAndPass = ''
     storage.get('saveUserNameAndPass', 'local')
     if (userNameAndPass) {
       this.rememberUserNameAndPass = true
@@ -102,88 +117,92 @@ export default defineComponent({
       })
     },
     handleSubmit(name: string) {
-      this.$refs[name].validate(async (valid: boolean) => {
-        if (valid) {
-          this.loading = true
-          if (!this.rememberUserNameAndPass) {
-            storage.remove('saveUserNameAndPass', 'local')
-          }
-          this.loginForm.user = this.loginForm.user.toLocaleLowerCase()
-          // Need to determine whether the password needs to be encrypted(需要判断是否需要给密码加密)
-          let password = this.loginForm.password
-          let params = {}
-          if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
-            const key = `-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`
-            const encryptor = new JSEncrypt()
-            encryptor.setPublicKey(key)
-            password = encryptor.encrypt(this.loginForm.password)
-            params = {
-              userName: this.loginForm.user,
-              password
-            }
-          } else {
-            params = {
-              userName: this.loginForm.user,
-              password
-            }
-          }
-          // Log in to clear the local cache(登录清掉本地缓存)
-          // After logging out twice in a row, data will be lost, so it is necessary to judge whether it has been saved and not used.(连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用)
-          let tabs = (await tab.get()) || []
-          const tablist = storage.get(this.loginForm.user + 'tabs', 'local')
-          if (!tablist || tablist.length <= 0) {
-            storage.set(this.loginForm.user + 'tabs', tabs, 'local')
-          }
-          Object.keys(config.stores).map((key) => {
-            db.db[key].clear()
-          })
-          api
-            .fetch(`/user/login`, params)
-            .then((rst) => {
-              this.loading = false
-              storage.set('userName', rst.userName, 'session')
-              storage.set(
-                'enableWatermark',
-                rst.enableWatermark ? true : false,
-                'session'
-              )
-              // save username(保存用户名)
-              if (this.rememberUserNameAndPass) {
-                // storage.set(
-                //   'saveUserNameAndPass',
-                //   `${this.loginForm.user}&${this.loginForm.password}`,
-                //   'local'
-                // )
-              }
-              if (rst) {
-                // this.userName = rst.userName
-                this.$router.push({ path: '/console' })
-                FMessage.success(
-                  this.$t('message.common.login.loginSuccess')
-                )
-              }
-            })
-            .catch((err) => {
-              if (this.rememberUserNameAndPass) {
-                storage.set(
-                  'saveUserNameAndPass',
-                  `${this.loginForm.user}&${this.loginForm.password}`,
-                  'local'
-                )
-              }
-              if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
-                this.getPageHomeUrl().then(() => {
-                  this.$router.push({ path: '/' })
-                })
-              }
-              this.loading = false
-            })
-        } else {
-          FMessage.error(this.$t('message.common.login.vaildFaild'))
+      console.log(this.loginForm.user, name)
+      // this.loginFormRef.validate((valid: boolean) => {
+      // if (valid) {
+      this.loading = true
+      if (!this.rememberUserNameAndPass) {
+        storage.remove('saveUserNameAndPass', 'local')
+      }
+      this.loginForm.user = this.loginForm.user.toLocaleLowerCase()
+      // Need to determine whether the password needs to be encrypted(需要判断是否需要给密码加密)
+      let password = this.loginForm.password
+      let params = {}
+      if (this.publicKeyData && this.publicKeyData.enableLoginEncrypt) {
+        const key = `-----BEGIN PUBLIC KEY-----${this.publicKeyData.publicKey}-----END PUBLIC KEY-----`
+        const encryptor = new JSEncrypt()
+        encryptor.setPublicKey(key)
+        password = encryptor.encrypt(this.loginForm.password) as string
+        params = {
+          userName: this.loginForm.user,
+          password
         }
+      } else {
+        params = {
+          userName: this.loginForm.user,
+          password
+        }
+      }
+      // Log in to clear the local cache(登录清掉本地缓存)
+      // After logging out twice in a row, data will be lost, so it is necessary to judge whether it has been saved and not used.(连续两次退出登录后，会导致数据丢失，所以得判断是否已存切没有使用)
+      tab.get().then((tabs: any) => {
+        const tablist = storage.get(this.loginForm.user + 'tabs', 'local')
+        if (!tablist || tablist.length <= 0) {
+          storage.set(this.loginForm.user + 'tabs', tabs, 'local')
+        }
+        Object.keys(config.stores).map((key) => {
+          db.db?.[key]?.clear()
+        })
+        api
+          .fetch(`/user/login`, params)
+          .then((rst: any) => {
+            this.loading = false
+            storage.set('userName', rst.userName, 'session')
+            storage.set(
+              'enableWatermark',
+              rst.enableWatermark,
+              'session'
+            )
+            // save username(保存用户名)
+            if (this.rememberUserNameAndPass) {
+              storage.set(
+                'saveUserNameAndPass',
+                `${this.loginForm.user}&${this.loginForm.password}`,
+                'local'
+              )
+            }
+            if (rst) {
+              this.userName = rst.userName
+              this.$router.push({ path: '/console' })
+              FMessage.success(
+                this.$t('message.common.login.loginSuccess')
+              )
+            }
+          })
+          .catch((err: any) => {
+            if (this.rememberUserNameAndPass) {
+              storage.set(
+                'saveUserNameAndPass',
+                `${this.loginForm.user}&${this.loginForm.password}`,
+                'local'
+              )
+            }
+            if (err.message.indexOf('已经登录，请先退出再进行登录') !== -1) {
+              // this.getPageHomeUrl().then(() => {
+              this.$router.push({ path: '/' })
+              // })
+            }
+            this.loading = false
+          })
       })
+      // }
+      //  else {
+      //   console.error(this.$t('message.common.login.vaildFaild'))
+      //   FMessage.error(this.$t('message.common.login.vaildFaild'))
+      // }
+      // })
     },
-    // clear local cache(清楚本地缓存)
+    // clear local cache
     clearSession() {
       storage.clear()
     }
@@ -238,7 +257,7 @@ export default defineComponent({
 
     .label {
       font-size: 14px;
-      line-height: 32px;
+      line-height: 22px;
       margin-top: 20px;
     }
 
@@ -271,12 +290,17 @@ export default defineComponent({
     }
 
     .remember-user-name {
-      margin: 5px 0 0 10px;
+      position: absolute;
+      bottom: 106px;
     }
 
     .ivu-form-item {
       margin-bottom: 20px;
     }
+  }
+
+  :deep(.fes-form-item-label::before) {
+    display: none;
   }
 
   .radioGroup {

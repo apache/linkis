@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-
-import DB from '@/common/helper/db.js';
-import { config } from '@/common/config/db.js';
+import DB from '@/helper/db';
+import { config } from '@/config/db';
 // To update the schema please use db.updateVersion(stores, version)(更新schema请用db.updateVersion(stores, version))
 const db = new DB('bdp-ide', config.stores, config.version);
 // To change the primary key, you must delete the original store before it can be updated. For other non-primary key modifications, call updateVersion directly.(更改主键要先删掉原来的store才能更新，其他非主键修改直接调用updateVersion)
@@ -26,75 +25,72 @@ const db = new DB('bdp-ide', config.stores, config.version);
  * @class basic
  */
 class Basic {
-  /**
+    table: any;
+    /**
      *Creates an instance of basic.
      * @memberof basic
      * @param {*} table
      */
-  constructor(table) {
-    this.table = table;
-  }
+    constructor(table: any) {
+        this.table = table;
+    }
 
-  /**
+    /**
      * @param {Tab} tab
      * @param {*} id
      * @memberof Tab
      * @return {promise}
      */
-  add(tab) {
-    return db.put(this.table, tab);
-  }
-  /**
+    add(tab: any) {
+        return db.put(this.table, tab);
+    }
+    /**
      * @param {string}key
      * @return {promise} tabList or query tab by key
      * @memberof Tab
      */
-  get(key) {
-    if (key) {
-      return db.get(this.table, key);
+    get(key?: any) {
+        if (key) {
+            return db.get(this.table, key);
+        }
+        return db.toArray(this.table);
     }
-    return db.toArray(this.table);
-  }
-  /**
+    /**
      *
      *
      * @param {*} key
      * @return {promise}
      * @memberof basic
      */
-  remove(key) {
-    return db.delete(this.table, key);
-  }
-  /**
+    remove(key: any) {
+        return db.delete(this.table, key);
+    }
+    /**
      * @param {*} key
      * @param {*} changes
      * @return {*}
      */
-  update(key, changes) {
-    return db.update(this.table, key, changes);
-  }
-  /**
+    update(key: any, changes: any) {
+        return db.update(this.table, key, changes);
+    }
+    /**
      *
      * @param {*} oldKey
      * @param {*} newKey
      */
-  async modifyPrimaryKey(oldKey, newKey) {
-    let object = await db.get(this.table, oldKey);
-    if (object && object[0]) {
-      await db.delete(this.table, oldKey);
-      if (this.table === 'tab') {
-        object[0].id = newKey;
-        object = Object.assign(object, { id: newKey });
-      } else {
-        object[0].tabId = newKey;
-        object = Object.assign(object, { tabId: newKey });
-      }
-      return db.put(this.table, object);
+    async modifyPrimaryKey(oldKey: string, newKey: string) {
+        let object = await db.get(this.table, oldKey);
+        if (object && object[0]) {
+            await db.delete(this.table, oldKey);
+            if (this.table === 'tab') {
+                object[0].id = newKey;
+                object = Object.assign(object, { id: newKey });
+            } else {
+                object[0].tabId = newKey;
+                object = Object.assign(object, { tabId: newKey });
+            }
+            return db.put(this.table, object);
+        }
     }
-  }
 }
-export {
-  db,
-  Basic,
-}
-;
+export { db, Basic };

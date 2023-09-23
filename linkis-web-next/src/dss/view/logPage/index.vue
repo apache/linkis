@@ -18,21 +18,13 @@
 <template>
   <div class="log-content">
     <div class="header-bar">
-      <Button
-        type="primary"
-        @click="back"
-        style="margin-right: 10px;">{{$t('message.linkis.back')}}</Button>
-      <Button
-        type="warning"
-        @click="logRefresh"
-        style="margin-right: 10px;">{{$t('message.linkis.refresh')}}</Button>
+      <Button type="primary" @click="back" style="margin-right: 10px;">{{ $t('message.linkis.back') }}</Button>
+      <Button type="warning" @click="logRefresh" style="margin-right: 10px;">{{ $t('message.linkis.refresh') }}</Button>
     </div>
-    <log
-      :logs="logs"
-      :from-line="fromLine"/>
+    <log :logs="logs" :from-line="fromLine" />
   </div>
 </template>
-<script>
+<!-- <script>
 import api from '@/common/service/api';
 import log from '@/components/log/index.vue';
 import util from '@/common/util';
@@ -130,4 +122,4 @@ export default {
     padding-bottom: 10px;
   }
 }
-</style>
+</style> -->

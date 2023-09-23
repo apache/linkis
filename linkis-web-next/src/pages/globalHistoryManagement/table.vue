@@ -3,71 +3,42 @@
         <Count></Count>
         <!-- <div @click="test">test</div> -->
         <Filter ref="filterRef" :checkedKeys="checkedKeys"></Filter>
-        <f-table
-            :data="currentData"
-            class="table"
-            v-model:checkedKeys="checkedKeys"
-            :rowKey="
-                    (row: Record<string, number|string>) => {
-                        return row.taskID;
-                    }
-                "
-        >
-            <f-table-column
-                v-if="filterRef?.isCheckingTaskToStop"
-                type="selection"
-                :width="32"
-                fixed="left"
-            ></f-table-column>
+        <f-table :data="currentData" class="table" v-model:checkedKeys="checkedKeys" :height="450" :rowKey="(row: Record<string, number | string>) => {
+            return row.taskID;
+        }
+            ">
+            <f-table-column v-if="filterRef?.isCheckingTaskToStop" type="selection" :width="32"
+                fixed="left"></f-table-column>
             <template v-for="col in tableColumns" :key="col.label">
-                <f-table-column
-                    v-if="col.formatter"
-                    :prop="col.prop"
-                    :label="col.label"
-                    :action="col.action"
-                    :formatter="col.formatter"
-                >
+                <f-table-column v-if="col.formatter" :prop="col.prop" :label="col.label" :action="col.action"
+                    :formatter="col.formatter">
                 </f-table-column>
-                <f-table-column
-                    v-else
-                    :prop="col.prop"
-                    :label="col.label"
-                    :action="col.action"
-                >
+                <f-table-column v-else :prop="col.prop" :label="col.label" :action="col.action">
                 </f-table-column>
             </template>
         </f-table>
-        <FPagination
-            class="pagination"
-            show-size-changer
-            :pageSizeOption="pageSizeOption"
-            :total-count="data.length"
-            @change="handleChange"
-            v-model:pageSize="pageSize"
-            v-model:currentPage="currentPage"
-        ></FPagination>
-        <Drawer
-            ref="drawerRef"
-            :isShow="isShowDrawer"
-            @closeDrawer="setIsShowDrawer"
-        ></Drawer>
+        <FPagination class="pagination" show-size-changer :pageSizeOption="pageSizeOption" :total-count="data.length"
+            @change="handleChange" v-model:pageSize="pageSize" v-model:currentPage="currentPage"></FPagination>
+        <Drawer ref="drawerRef" :isShow="isShowDrawer" @closeDrawer="setIsShowDrawer"></Drawer>
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, h, Ref } from 'vue';
+import { reactive, ref, h, Ref, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Drawer from './drawer.vue';
 import Filter from './filter.vue';
 import Count from './count.vue';
 import TooltipText from './tooltipText.vue';
+import api from '@/service/api';
+import { FMessage } from '@fesjs/fes-design';
 
 const filterRef = ref<Ref<{ isCheckingTaskToStop: boolean }> | null>(null);
 
 const drawerRef = ref<Ref<{
     // eslint-disable-next-line no-unused-vars
     open: (rawData: Record<string, string | number>) => void;
-        }> | null>(null);
+}> | null>(null);
 
 const isShowDrawer = ref(false);
 const checkedKeys = reactive<Array<string>>([]);
@@ -321,7 +292,43 @@ const handleChange = (currenPage: number, size: number) => {
     const temp = data.slice((currenPage - 1) * size, currenPage * size);
     (currentData.value as typeof temp) = reactive([...temp]);
 };
-handleChange(currentPage.value, pageSize.value);
+// handleChange(currentPage.value, pageSize.value);
+
+// TODO: 
+const getParams = (page) => {
+    return {}
+}
+
+const search = () => {
+    //   this.isLoading = true
+    const params = getParams(0)
+    //   this.column = this.getColumns()
+    api
+        .fetch('/jobhistory/list', params, 'get')
+        .then((rst: unknown) => {
+            console.log('rst', rst)
+            //   this.pageSetting.total = rst.totalPage
+            //   this.isLoading = false
+            //   this.list = this.getList(rst.tasks)
+        })
+        .catch(() => {
+            FMessage.error('Something Wrong!')
+        })
+}
+
+onMounted(() => {
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
+    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+        // this.isLogAdmin = res.admin;
+        // this.isHistoryAdmin = res.historyAdmin;
+
+    });
+    api.fetch('/configuration/engineType', 'get').then((res) => {
+        // engine config selector list
+        console.log('selector list', res)
+        // this.getEngineTypes = ['all', ...res.engineType];
+    });
+}) 
 </script>
 
 <style scoped src="./index.less"></style>
@@ -332,13 +339,15 @@ handleChange(currentPage.value, pageSize.value);
     overflow: auto;
 
     .table {
-        height: calc(100% - 350px);
-        overflow-y: auto;
+        /* height: calc(100% - 350px); */
+        /* overflow-y: auto; */
     }
+
     :deep(.fes-btn) {
         padding-left: 0;
         transform: translateX(-8px);
     }
+
     .pagination {
         /* position: absolute;
         bottom: 5%;
@@ -347,6 +356,7 @@ handleChange(currentPage.value, pageSize.value);
         justify-content: flex-end;
         margin-top: 16px;
     }
+
     .tooltip-text {
         background-color: red;
     }

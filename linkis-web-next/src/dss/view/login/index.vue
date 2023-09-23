@@ -292,6 +292,7 @@ export default defineComponent({
     .remember-user-name {
       position: absolute;
       bottom: 106px;
+      font-size: 12px;
     }
 
     .ivu-form-item {

@@ -77,7 +77,7 @@
     <!-- instance label -->
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-pes-publicservice</artifactId>
+      <artifactId>linkis-instance-label-server</artifactId>
       <version>${project.version}</version>
     </dependency>
 

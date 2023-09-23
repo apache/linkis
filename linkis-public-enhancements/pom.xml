@@ -39,6 +39,7 @@
     <module>linkis-udf/linkis-udf-service</module>
     <module>linkis-jobhistory</module>
     <module>linkis-configuration</module>
+    <module>linkis-instance-label/linkis-instance-label-server</module>
     <module>linkis-ps-common-lock</module>
   </modules>
 
@@ -66,6 +67,11 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-configuration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-instance-label-server</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

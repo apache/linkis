@@ -3,22 +3,24 @@
 </template>
 
 <script lang="ts">
+// import { debounce } from 'lodash';
 import { defineComponent } from 'vue';
+// import monaco from './monaco-loader';
 import { useMonaco } from './util';
 
-const types = {
-    code: {
-        theme: 'defaultView',
-    },
-    log: {
-        language: 'log',
-        theme: 'logview',
-        readOnly: true,
-        glyphMargin: false,
-        selectOnLineNumbers: false,
-        wordWrap: 'on',
-    },
-};
+// const types = {
+//     code: {
+//         theme: 'defaultView',
+//     },
+//     log: {
+//         language: 'log',
+//         theme: 'logview',
+//         readOnly: true,
+//         glyphMargin: false,
+//         selectOnLineNumbers: false,
+//         wordWrap: 'on',
+//     },
+// };
 
 export default defineComponent({
     props: {
@@ -48,35 +50,35 @@ export default defineComponent({
         },
     },
     watch: {
-        modelValue(val) {
-            val !== this.getEditor()?.getValue() && this.updateMonacoVal(val);
-        },
+        // modelValue(val) {
+        //     val !== this.getEditor()?.getValue() && this.updateMonacoVal(val);
+        // },
 
-        editorName() {
-            return `we-editor-${this.type}`;
-        },
-        currentConfig() {
-            const typeConfig = types[this.type];
-            const config = merge(
-                {
-                    automaticLayout: false,
-                    scrollBeyondLastLine: false,
-                    minimap: {
-                        enabled: false,
-                    },
-                    readOnly: this.readOnly,
-                    glyphMargin: true,
-                },
-                typeConfig,
-                this.options,
-                {
-                    value: this.value,
-                    theme: this.theme,
-                    language: this.language,
-                },
-            );
-            return config;
-        },
+        // editorName() {
+        //     return `we-editor-${this.type}`;
+        // },
+        // currentConfig() {
+        //     const typeConfig = types[this.type];
+        //     const config = merge(
+        //         {
+        //             automaticLayout: false,
+        //             scrollBeyondLastLine: false,
+        //             minimap: {
+        //                 enabled: false,
+        //             },
+        //             readOnly: this.readOnly,
+        //             glyphMargin: true,
+        //         },
+        //         typeConfig,
+        //         this.options,
+        //         {
+        //             value: this.value,
+        //             theme: this.theme,
+        //             language: this.language,
+        //         },
+        //     );
+        //     return config;
+        // },
     },
     setup(props) {
         const { updateVal, getEditor, createEditor, onFormatDoc } = useMonaco(
@@ -95,6 +97,7 @@ export default defineComponent({
             closeParser: null,
             openParser: null,
             sqlParser: null,
+            monaco: null,
         };
     },
     methods: {
@@ -106,56 +109,55 @@ export default defineComponent({
             this.updateVal(val);
         },
         // initialization(初始化)
-        initMonaco() {
-            this.editor = monaco.editor.create(this.$el, this.currentConfig);
-            this.monaco = monaco;
-            this.editorModel = this.editor.getModel();
-            if (this.type !== 'log') {
-                if (this.scriptType !== 'hdfsScript' && !this.readOnly) {
-                    this.addCommands();
-                    this.addActions();
-                }
-                if (this.language === 'hql') {
-                    this.initParser();
-                } else {
-                    this.deltaDecorations(this.value);
-                }
-            }
-            this.$emit('onload');
-            this.editor.onDidChangeModelContent(
-                debounce(() => {
-                    this.$emit('input', this.getValue());
-                }),
-                100,
-            );
-            this.editor.onContextMenu(
-                debounce(() => {
-                    // The right-click menu function that needs to change the text(需要调换文字的右键菜单功能)
-                    const selectList = [
-                        {
-                            label: 'Change All Occurrences',
-                            text: '改变所有出现',
-                        },
-                        { label: 'Format Document', text: '格式化' },
-                        { label: 'Command Palette', text: '命令面板' },
-                        { label: 'Cut', text: '剪切' },
-                        { label: 'Copy', text: '复制' },
-                    ];
-                    if (localStorage.getItem('locale') === 'zh-CN') {
-                        selectList.forEach((item) => {
-                            const elmentList = document.querySelectorAll(
-                                `.actions-container .action-label[aria-label="${item.label}"]`,
-                            );
-                            this.changeInnerText(elmentList, item.text);
-                        });
-                    }
-                }),
-                100,
-            );
-        },
+        // initMonaco() {
+        //     this.editor = monaco.editor.create(this.$el, this.currentConfig) as any;
+        //     this.monaco = monaco as any;
+        //     this.editorModel = this.editor.getModel();
+        //     if (this.type !== 'log') {
+        //         if (this.scriptType !== 'hdfsScript' && !this.readOnly) {
+        //             this.addCommands();
+        //             this.addActions();
+        //         }
+        //         if (this.language === 'hql') {
+        //             this.initParser();
+        //         } else {
+        //             this.deltaDecorations(this.value);
+        //         }
+        //     }
+        //     this.$emit('onload');
+        //     this.editor.onDidChangeModelContent(
+        //         debounce(() => {
+        //             this.$emit('input', this.getValue());
+        //         }),
+        //         100,
+        //     );
+        //     this.editor.onContextMenu(
+        //         debounce(() => {
+        //             // The right-click menu function that needs to change the text(需要调换文字的右键菜单功能)
+        //             const selectList = [
+        //                 {
+        //                     label: 'Change All Occurrences',
+        //                     text: '改变所有出现',
+        //                 },
+        //                 { label: 'Format Document', text: '格式化' },
+        //                 { label: 'Command Palette', text: '命令面板' },
+        //                 { label: 'Cut', text: '剪切' },
+        //                 { label: 'Copy', text: '复制' },
+        //             ];
+        //             if (localStorage.getItem('locale') === 'zh-CN') {
+        //                 selectList.forEach((item) => {
+        //                     const elmentList = document.querySelectorAll(
+        //                         `.actions-container .action-label[aria-label="${item.label}"]`,
+        //                     );
+        //                     this.changeInnerText(elmentList, item.text);
+        //                 });
+        //             }
+        //         }),
+        //         100,
+        //     );
+        // },
     },
     mounted() {
-        console.log(this.$el, this.$props);
         if (this.$el) {
             // this.editor = monaco.editor.create(this.$el, this.currentConfig);
             // this.monaco = monaco;
@@ -163,19 +165,19 @@ export default defineComponent({
             this.editor = this.createEditor(
                 this.$el,
                 this.$props.editorOptions,
-            );
+            ) as any;
             this.updateMonacoVal();
-            this.editor!.onDidChangeModelContent(() => {
-                this.$emit('update:modelValue', monacoEditor!.getValue());
-            });
-            this.editor!.onDidBlurEditorText(() => {
-                this.$emit('blur');
-            });
+            // this.editor!.onDidChangeModelContent(() => {
+            //     this.$emit('update:modelValue', monacoEditor!.getValue());
+            // });
+            // this.editor!.onDidBlurEditorText(() => {
+            //     this.$emit('blur');
+            // });
         }
     },
     beforeUnmount() {
         // 销毁 editor，进行gc(销毁 editor，进行gc)
-        this.editor!.dispose();
+        (this.editor as any)?.dispose();
     },
 });
 </script>

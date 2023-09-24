@@ -23,7 +23,6 @@
 import Sidebar from '@/components/sidebar/index.vue';
 
 const changeMenusDisplay = () => {
-    console.log(1);
 };
 </script>
 <style lang="less" scoped>

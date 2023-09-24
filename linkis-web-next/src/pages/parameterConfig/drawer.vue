@@ -331,8 +331,8 @@ const handleChange = (currentPage: number, pageSize: number) => {
         currentPage * pageSize,
     );
     currentData.value = [...temp] as any;
+    console.log('!!!!', currentData.value)
 };
-handleChange(currentPage.value, 10);
 
 const show = ref(false);
 const open = () => {

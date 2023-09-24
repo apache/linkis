@@ -2,7 +2,7 @@
     <div class="wrapper">
         <Count></Count>
         <!-- <div @click="test">test</div> -->
-        <Filter ref="filterRef" :checkedKeys="checkedKeys"></Filter>
+        <Filter ref="filterRef" :checkedKeys="checkedKeys" :search="search"></Filter>
         <f-table :data="currentData" class="table" v-model:checkedKeys="checkedKeys" :height="450" :rowKey="(row: Record<string, number | string>) => {
             return row.taskID;
         }
@@ -292,43 +292,35 @@ const handleChange = (currenPage: number, size: number) => {
     const temp = data.slice((currenPage - 1) * size, currenPage * size);
     (currentData.value as typeof temp) = reactive([...temp]);
 };
-// handleChange(currentPage.value, pageSize.value);
+handleChange(currentPage.value, pageSize.value);
 
 // TODO: 
-const getParams = (page) => {
-    return {}
-}
+const getParams = () => {
+    console.log(1);
+    return {};
+};
 
 const search = () => {
     //   this.isLoading = true
-    const params = getParams(0)
+    const params = getParams();
     //   this.column = this.getColumns()
-    api
-        .fetch('/jobhistory/list', params, 'get')
-        .then((rst: unknown) => {
-            console.log('rst', rst)
-            //   this.pageSetting.total = rst.totalPage
-            //   this.isLoading = false
-            //   this.list = this.getList(rst.tasks)
-        })
-        .catch(() => {
-            FMessage.error('Something Wrong!')
-        })
-}
+    api.fetch('/jobhistory/list', params, 'get').then((rst: unknown) => {
+        console.log('rst', rst);
+        //   this.pageSetting.total = rst.totalPage
+        //   this.isLoading = false
+        //   this.list = this.getList(rst.tasks)
+    }).catch(() => {
+        FMessage.error('Something Wrong!');
+    });
+};
+
 
 onMounted(() => {
-    // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
+    api.fetch('/jobhistory/governanceStationAdmin', 'get').then(() => {
         // this.isLogAdmin = res.admin;
         // this.isHistoryAdmin = res.historyAdmin;
-
     });
-    api.fetch('/configuration/engineType', 'get').then((res) => {
-        // engine config selector list
-        console.log('selector list', res)
-        // this.getEngineTypes = ['all', ...res.engineType];
-    });
-}) 
+});
 </script>
 
 <style scoped src="./index.less"></style>

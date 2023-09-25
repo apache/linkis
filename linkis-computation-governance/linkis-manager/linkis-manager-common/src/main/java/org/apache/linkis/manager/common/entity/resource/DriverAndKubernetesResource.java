@@ -200,6 +200,42 @@ public class DriverAndKubernetesResource extends Resource {
     return !notLess(r);
   }
 
+  @Override
+  public int compare(Resource resource) {
+    DriverAndKubernetesResource r = new DriverAndKubernetesResource(resource);
+    if (isModuleOperate(r)) {
+      return loadInstanceResource.compare(r.loadInstanceResource);
+    } else {
+      if (loadInstanceResource.getMemory() > r.loadInstanceResource.getMemory()) {
+        return 1;
+      } else if (loadInstanceResource.getMemory() < r.loadInstanceResource.getMemory()) {
+        return -1;
+      } else {
+        // If memory is equal, compare cores
+        if (loadInstanceResource.getCores() > r.loadInstanceResource.getCores()) {
+          return 1;
+        } else if (loadInstanceResource.getCores() < r.loadInstanceResource.getCores()) {
+          return -1;
+        } else {
+          // If cores are equal, compare instances
+          if (loadInstanceResource.getInstances() > r.loadInstanceResource.getInstances()) {
+            return 1;
+          } else if (loadInstanceResource.getInstances() < r.loadInstanceResource.getInstances()) {
+            return -1;
+          } else {
+            if (kubernetesResource.getMemory() > r.kubernetesResource.getMemory()) {
+              return 1;
+            } else if (kubernetesResource.getMemory() < r.kubernetesResource.getMemory()) {
+              return -1;
+            } else {
+              return Long.compare(kubernetesResource.getCores(), r.kubernetesResource.getCores());
+            }
+          }
+        }
+      }
+    }
+  }
+
   public String toJson() {
     String load = "null";
     String kubernetes = "null";

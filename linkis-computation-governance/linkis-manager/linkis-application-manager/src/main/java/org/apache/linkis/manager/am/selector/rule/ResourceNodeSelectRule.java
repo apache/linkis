@@ -93,10 +93,10 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
           RMNode nodeBRm = (RMNode) nodeB;
           if (nodeARm.getNodeResource() == null
               || nodeARm.getNodeResource().getLeftResource() == null) {
-            return -1;
+            return 1;
           } else if (nodeBRm.getNodeResource() == null
               || nodeBRm.getNodeResource().getLeftResource() == null) {
-            return 1;
+            return -1;
           } else {
             float aRate =
                 ResourceUtils.getLoadInstanceResourceRate(
@@ -106,7 +106,7 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
                 ResourceUtils.getLoadInstanceResourceRate(
                     nodeBRm.getNodeResource().getLeftResource(),
                     nodeBRm.getNodeResource().getMaxResource());
-            return Float.compare(aRate, bRate);
+            return -Float.compare(aRate, bRate);
           }
         } catch (Throwable t) {
           logger.warn("Failed to Compare resource " + t.getMessage());

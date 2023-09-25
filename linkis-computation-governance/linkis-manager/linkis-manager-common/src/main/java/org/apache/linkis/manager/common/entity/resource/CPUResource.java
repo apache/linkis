@@ -121,6 +121,12 @@ public class CPUResource extends Resource {
   }
 
   @Override
+  public int compare(Resource r) {
+    CPUResource cpuResource = toCPUResource(r);
+    return Integer.compare(this.getCores(), cpuResource.getCores());
+  }
+
+  @Override
   public String toJson() {
     return String.format(" \"cpu\":%s ", cores);
   }

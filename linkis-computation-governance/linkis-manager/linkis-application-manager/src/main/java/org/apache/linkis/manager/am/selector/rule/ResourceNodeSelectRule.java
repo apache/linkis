@@ -53,10 +53,10 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
           RMNode nodeBRm = (RMNode) nodeB;
           if (nodeARm.getNodeResource() == null
               || nodeARm.getNodeResource().getLeftResource() == null) {
-            return -1;
+            return 1;
           } else if (nodeBRm.getNodeResource() == null
               || nodeBRm.getNodeResource().getLeftResource() == null) {
-            return 1;
+            return -1;
           } else {
             if (nodeARm
                 .getNodeResource()

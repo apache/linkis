@@ -128,6 +128,19 @@ public class KubernetesResource extends Resource {
   }
 
   @Override
+  public int compare(Resource r) {
+    KubernetesResource temp = new KubernetesResource(r);
+    if (this.getMemory() > temp.getMemory()) {
+      return 1;
+    } else if (this.getMemory() < temp.getMemory()) {
+      return -1;
+    } else {
+      // If memory is equal, compare cores
+      return Long.compare(this.getCores(), temp.getCores());
+    }
+  }
+
+  @Override
   public String toJson() {
     return String.format(
         "{\"namespace\":\"%s\",\"memory\":\"%s\",\"cpu\":%d}",

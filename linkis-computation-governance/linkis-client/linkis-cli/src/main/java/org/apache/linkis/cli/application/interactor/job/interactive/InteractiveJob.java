@@ -88,17 +88,17 @@ public class InteractiveJob implements Job {
     LinkisOperResultAdapter jobInfoResult =
         oper.queryJobInfo(submitResult.getUser(), submitResult.getJobID());
     oper.queryJobStatus(
-        jobInfoResult.getUser(), jobInfoResult.getJobID(), jobInfoResult.getStrongerExecId());
+        submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
     infoBuilder.setLength(0);
     infoBuilder
         .append("JobId:")
-        .append(jobInfoResult.getJobID())
+        .append(submitResult.getJobID())
         .append(System.lineSeparator())
         .append("TaskId:")
-        .append(jobInfoResult.getJobID())
+        .append(submitResult.getJobID())
         .append(System.lineSeparator())
         .append("ExecId:")
-        .append(jobInfoResult.getStrongerExecId());
+        .append(submitResult.getStrongerExecId());
     LoggerManager.getPlaintTextLogger().info(infoBuilder.toString());
     infoBuilder.setLength(0);
 
@@ -137,7 +137,9 @@ public class InteractiveJob implements Job {
     logRetriever.retrieveLogAsync();
 
     // wait complete
-    jobInfoResult = waitJobComplete(submitResult.getUser(), submitResult.getJobID());
+    jobInfoResult =
+        waitJobComplete(
+            submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
     logRetriever.waitIncLogComplete();
 
     // get result-set
@@ -205,19 +207,19 @@ public class InteractiveJob implements Job {
     return result;
   }
 
-  private LinkisOperResultAdapter waitJobComplete(String user, String jobId)
+  private LinkisOperResultAdapter waitJobComplete(String user, String jobId, String execId)
       throws LinkisClientRuntimeException {
     int retryCnt = 0;
     final int MAX_RETRY = 30;
 
     LinkisOperResultAdapter jobInfoResult = oper.queryJobInfo(user, jobId);
-    oper.queryJobStatus(user, jobId, jobInfoResult.getStrongerExecId());
+    oper.queryJobStatus(user, jobId, execId);
 
     while (!jobInfoResult.getJobStatus().isJobFinishedState()) {
       // query progress
       try {
         jobInfoResult = oper.queryJobInfo(user, jobId);
-        oper.queryJobStatus(user, jobId, jobInfoResult.getStrongerExecId());
+        oper.queryJobStatus(user, jobId, execId);
       } catch (Exception e) {
         logger.warn("", e);
         retryCnt++;

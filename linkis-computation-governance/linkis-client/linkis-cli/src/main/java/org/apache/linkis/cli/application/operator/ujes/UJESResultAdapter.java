@@ -162,6 +162,10 @@ public class UJESResultAdapter implements LinkisOperResultAdapter {
       return null;
     }
     String execId = null;
+
+    if (result instanceof JobSubmitResult) {
+      execId = ((JobSubmitResult) result).getExecID();
+    }
     if (result instanceof JobInfoResult) {
       if (result != null
           && ((JobInfoResult) result).getTask() != null

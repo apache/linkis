@@ -113,6 +113,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
       sparkConfig.setK8sImagePullPolicy(SPARK_K8S_IMAGE_PULL_POLICY.getValue(options))
       sparkConfig.setK8sDriverRequestCores(SPARK_K8S_DRIVER_REQUEST_CORES.getValue(options))
       sparkConfig.setK8sExecutorRequestCores(SPARK_K8S_EXECUTOR_REQUEST_CORES.getValue(options))
+      sparkConfig.setK8sSparkUIPort(SPARK_K8S_UI_PORT.getValue(options))
     }
 
     if (master.startsWith("yarn")) {
@@ -134,6 +135,7 @@ class SparkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     sparkConfig.setExecutorCores(LINKIS_SPARK_EXECUTOR_CORES.getValue(options))
     sparkConfig.setNumExecutors(LINKIS_SPARK_EXECUTOR_INSTANCES.getValue(options))
     sparkConfig.setQueue(LINKIS_QUEUE_NAME.getValue(options))
+    sparkConfig.setPyFiles(SPARK_PYTHON_FILES.getValue(options))
 
     logger.info(s"spark_info: ${sparkConfig}")
     sparkConfig

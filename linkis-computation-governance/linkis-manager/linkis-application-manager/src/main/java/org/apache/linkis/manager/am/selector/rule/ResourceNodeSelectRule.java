@@ -53,10 +53,10 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
           RMNode nodeBRm = (RMNode) nodeB;
           if (nodeARm.getNodeResource() == null
               || nodeARm.getNodeResource().getLeftResource() == null) {
-            return -1;
+            return 1;
           } else if (nodeBRm.getNodeResource() == null
               || nodeBRm.getNodeResource().getLeftResource() == null) {
-            return 1;
+            return -1;
           } else {
             if (nodeARm
                 .getNodeResource()
@@ -69,7 +69,11 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
                 .moreThan(nodeBRm.getNodeResource().getLeftResource())) {
               return -1;
             } else {
-              return 1;
+              // 从大到小排序 (Sort from large to small)
+              return -(nodeARm
+                  .getNodeResource()
+                  .getLeftResource()
+                  .compare(nodeBRm.getNodeResource().getLeftResource()));
             }
           }
         } catch (Throwable t) {
@@ -93,10 +97,10 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
           RMNode nodeBRm = (RMNode) nodeB;
           if (nodeARm.getNodeResource() == null
               || nodeARm.getNodeResource().getLeftResource() == null) {
-            return -1;
+            return 1;
           } else if (nodeBRm.getNodeResource() == null
               || nodeBRm.getNodeResource().getLeftResource() == null) {
-            return 1;
+            return -1;
           } else {
             float aRate =
                 ResourceUtils.getLoadInstanceResourceRate(
@@ -106,7 +110,7 @@ public class ResourceNodeSelectRule implements NodeSelectRule {
                 ResourceUtils.getLoadInstanceResourceRate(
                     nodeBRm.getNodeResource().getLeftResource(),
                     nodeBRm.getNodeResource().getMaxResource());
-            return Float.compare(aRate, bRate);
+            return -Float.compare(aRate, bRate);
           }
         } catch (Throwable t) {
           logger.warn("Failed to Compare resource " + t.getMessage());

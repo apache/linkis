@@ -48,8 +48,6 @@ POST /api/rest_j/v1/entrance/submit
 ```json
 {
   "executionContent": {
-    "spark.app.main.class": "org.apache.spark.examples.SparkPi",
-    "spark.app.args": "spark.app.args",
     "runType": "jar",
     "code": "show databases"
   },
@@ -61,13 +59,13 @@ POST /api/rest_j/v1/entrance/submit
         "spark.executor.memory": "1g",
         "spark.driver.memory": "1g",
         "spark.executor.cores": "1",
+        "spark.app.main.class": "org.apache.spark.examples.SparkPi",
         "spark.app.name": "spark-submit-jar-cjtest",
         "spark.app.resource": "local:///opt/spark/examples/jars/spark-examples_2.12-3.2.1.jar",
         "spark.executor.instances": 1,
-        "spark.master": "k8soperator",
-        "spark.k8s.master.url": "http://ip:port",
-        "spark.k8s.username": "username",
-        "spark.k8s.password": "password"
+        "spark.master":"k8s-operator",
+        "linkis.spark.k8s.config.file":"~/.kube/config",
+        "linkis.spark.k8s.serviceAccount":"spark"
       }
     }
   },

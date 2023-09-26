@@ -24,8 +24,11 @@ import org.apache.linkis.manager.rm.external.domain.ExternalResourceProvider;
 import org.apache.linkis.manager.rm.external.request.ExternalResourceRequester;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,8 +36,10 @@ import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.Quantity;
 import io.fabric8.kubernetes.api.model.ResourceQuota;
 import io.fabric8.kubernetes.api.model.metrics.v1beta1.NodeMetrics;
+import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +50,7 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
   @Override
   public NodeResource requestResourceInfo(
       ExternalResourceIdentifier identifier, ExternalResourceProvider provider) {
-    String k8sMasterUrl = (String) provider.getConfigMap().get("k8sMasterUrl");
+    String k8sMasterUrl = getK8sMasterUrl(provider);
     DefaultKubernetesClient client = clientMap.get(k8sMasterUrl);
     if (client == null) {
       constructKubernetesClient(provider);
@@ -154,8 +159,7 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
   @Override
   public Boolean reloadExternalResourceAddress(ExternalResourceProvider provider) {
     if (null != provider) {
-      DefaultKubernetesClient client =
-          clientMap.get((String) provider.getConfigMap().get("k8sMasterUrl"));
+      DefaultKubernetesClient client = clientMap.get(getK8sMasterUrl(provider));
       if (client != null) {
         client.close();
       }
@@ -164,19 +168,42 @@ public class KubernetesResourceRequester implements ExternalResourceRequester {
     return true;
   }
 
+  private String getK8sMasterUrl(ExternalResourceProvider provider) {
+    Map<String, Object> configMap = provider.getConfigMap();
+    String k8sMasterUrl = (String) configMap.get("k8sMasterUrl");
+    if (StringUtils.isBlank(k8sMasterUrl)) {
+      throw new IllegalArgumentException("k8sMasterUrl is empty, please check the configuration.");
+    }
+    return k8sMasterUrl;
+  }
+
   private void constructKubernetesClient(ExternalResourceProvider provider) {
-    String k8sMasterUrl = (String) provider.getConfigMap().get("k8sMasterUrl");
-    String k8sClientCertData = (String) provider.getConfigMap().get("k8sClientCertData");
-    String k8sClientKeyData = (String) provider.getConfigMap().get("k8sClientKeyData");
-    String k8sCaCertData = (String) provider.getConfigMap().get("k8sCaCertData");
-    DefaultKubernetesClient client =
-        new DefaultKubernetesClient(
-            new ConfigBuilder()
-                .withMasterUrl(k8sMasterUrl)
-                .withClientCertData(k8sClientCertData)
-                .withClientKeyData(k8sClientKeyData)
-                .withCaCertData(k8sCaCertData)
-                .build());
+    DefaultKubernetesClient client;
+    Map<String, Object> configMap = provider.getConfigMap();
+    String k8sMasterUrl = getK8sMasterUrl(provider);
+    try {
+      String k8sConfig = (String) configMap.get("k8sConfig");
+      if (StringUtils.isNotBlank(k8sConfig)) {
+        Config kubeConfig =
+            Config.fromKubeconfig(
+                null, FileUtils.readFileToString(new File(k8sConfig), "UTF-8"), null);
+        client = new DefaultKubernetesClient(kubeConfig);
+      } else {
+        String k8sClientCertData = (String) configMap.get("k8sClientCertData");
+        String k8sClientKeyData = (String) configMap.get("k8sClientKeyData");
+        String k8sCaCertData = (String) configMap.get("k8sCaCertData");
+        client =
+            new DefaultKubernetesClient(
+                new ConfigBuilder()
+                    .withMasterUrl(k8sMasterUrl)
+                    .withClientCertData(k8sClientCertData)
+                    .withClientKeyData(k8sClientKeyData)
+                    .withCaCertData(k8sCaCertData)
+                    .build());
+      }
+    } catch (Exception e) {
+      throw new KubernetesClientException("Fail to build k8s client. ", e);
+    }
     clientMap.put(k8sMasterUrl, client);
   }
 }

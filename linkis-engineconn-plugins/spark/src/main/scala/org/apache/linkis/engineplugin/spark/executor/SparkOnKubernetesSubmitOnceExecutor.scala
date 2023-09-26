@@ -132,9 +132,10 @@ class SparkOnKubernetesSubmitOnceExecutor(
     if (oldProgress >= 1 || jobIsFinal) {
       1
     } else {
-      val sparkDriverPodIP = this.clusterDescriptorAdapter.getSparkDriverPodIP
-      if (StringUtils.isNotBlank(sparkDriverPodIP)) {
-        val newProgress = SparkJobProgressUtil.getProgress(this.getApplicationId, sparkDriverPodIP)
+      val sparkUIUrl = this.clusterDescriptorAdapter.getSparkUIUrl
+      if (StringUtils.isNotBlank(sparkUIUrl)) {
+        val newProgress =
+          SparkJobProgressUtil.getProgress(this.getApplicationId, sparkUIUrl)
         if (newProgress > oldProgress) {
           oldProgress = newProgress
         }
@@ -144,9 +145,9 @@ class SparkOnKubernetesSubmitOnceExecutor(
   }
 
   override def getProgressInfo: Array[JobProgressInfo] = {
-    val sparkDriverPodIP = this.clusterDescriptorAdapter.getSparkDriverPodIP
-    if (StringUtils.isNotBlank(sparkDriverPodIP)) {
-      SparkJobProgressUtil.getSparkJobProgressInfo(this.getApplicationId, sparkDriverPodIP)
+    val sparkUIUrl = this.clusterDescriptorAdapter.getSparkUIUrl
+    if (StringUtils.isNotBlank(sparkUIUrl)) {
+      SparkJobProgressUtil.getSparkJobProgressInfo(this.getApplicationId, sparkUIUrl)
     } else {
       Array.empty
     }

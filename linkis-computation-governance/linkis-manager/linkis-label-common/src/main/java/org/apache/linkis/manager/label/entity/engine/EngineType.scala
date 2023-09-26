@@ -29,6 +29,8 @@ object EngineType extends Enumeration with Logging {
 
   val HIVE = Value("hive")
 
+  val HBASE = Value("hbase")
+
   val PYTHON = Value("python")
 
   val SHELL = Value("shell")
@@ -84,6 +86,7 @@ object EngineType extends Enumeration with Logging {
     case _ if null == str || "".equals(str) => null
     case _ if SPARK.toString.equalsIgnoreCase(str) => SPARK
     case _ if HIVE.toString.equalsIgnoreCase(str) => HIVE
+    case _ if HBASE.toString.equalsIgnoreCase(str) => HBASE
     case _ if PYTHON.toString.equalsIgnoreCase(str) => PYTHON
     case _ if SHELL.toString.equalsIgnoreCase(str) => SHELL
     case _ if JDBC.toString.equalsIgnoreCase(str) => JDBC

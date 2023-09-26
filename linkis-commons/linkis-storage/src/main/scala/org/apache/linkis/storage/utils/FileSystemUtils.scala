@@ -57,10 +57,11 @@ object FileSystemUtils extends Logging {
     val fileSystem = FSFactory.getFsByProxyUser(filePath, user).asInstanceOf[FileSystem]
     Utils.tryFinally {
       fileSystem.init(null)
-      createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists)
+      createFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists)
     }(Utils.tryQuietly(fileSystem.close()))
   }
 
+  @deprecated("please use createFileWithFileSystem")
   def createNewFileWithFileSystem(
       fileSystem: FileSystem,
       filePath: FsPath,
@@ -82,6 +83,24 @@ object FileSystemUtils extends Logging {
     }
   }
 
+  def createFileWithFileSystem(
+      fileSystem: FileSystem,
+      filePath: FsPath,
+      user: String,
+      createParentWhenNotExists: Boolean
+  ): Unit = {
+    if (!fileSystem.exists(filePath)) {
+      if (!fileSystem.exists(filePath.getParent)) {
+        if (!createParentWhenNotExists) {
+          throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
+        }
+        mkdirsNew(fileSystem, filePath.getParent, user)
+      }
+      fileSystem.createNewFile(filePath)
+      fileSystem.setOwner(filePath, user)
+    }
+  }
+
   /**
    * Recursively create a directory(递归创建目录)
    * @param fileSystem
@@ -91,6 +110,7 @@ object FileSystemUtils extends Logging {
    * @return
    */
   @throws[IOException]
+  @deprecated("please use mkdirsNew")
   def mkdirs(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
@@ -109,6 +129,34 @@ object FileSystemUtils extends Logging {
         case l: LocalFileSystem => fileSystem.setOwner(path, user)
         case _ => logger.info(s"doesn't need to call setOwner")
       }
+    }
+    true
+  }
+
+  /**
+   * Recursively create a directory(递归创建目录) 默认添加setOwner
+   * @param fileSystem
+   * @param dest
+   * @param user
+   * @throws
+   * @return
+   */
+  @throws[IOException]
+  def mkdirsNew(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
+    var parentPath = dest.getParent
+    val dirsToMake = new util.Stack[FsPath]()
+    dirsToMake.push(dest)
+    while (!fileSystem.exists(parentPath)) {
+      dirsToMake.push(parentPath)
+      parentPath = parentPath.getParent
+    }
+    if (!fileSystem.canExecute(parentPath)) {
+      throw new IOException("You have not permission to access path " + dest.getPath)
+    }
+    while (!dirsToMake.empty()) {
+      val path = dirsToMake.pop()
+      fileSystem.mkdir(path)
+      fileSystem.setOwner(path, user)
     }
     true
   }

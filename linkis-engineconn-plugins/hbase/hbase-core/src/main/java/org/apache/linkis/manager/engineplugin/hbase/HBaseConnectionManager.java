@@ -219,7 +219,7 @@ public class HBaseConnectionManager {
 
                   while (times < KERBEROS_RE_LOGIN_MAX_RETRY) {
                     if (runKerberosLogin()) {
-                      LOG.info("Ran kerberos re login command successfully.");
+                      LOG.info("Run kerberos re login command successfully.");
                       break;
                     } else {
                       times++;

@@ -1791,7 +1791,7 @@
       <activation>
         <property>
           <name>hbase.profile</name>
-          <value>2.5</value>
+          <value>1.2</value>
         </property>
       </activation>
       <properties>

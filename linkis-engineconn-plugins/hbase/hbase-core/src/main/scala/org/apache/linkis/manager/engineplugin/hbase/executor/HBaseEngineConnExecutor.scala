@@ -19,6 +19,7 @@ package org.apache.linkis.manager.engineplugin.hbase.executor
 
 import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.utils.{OverloadUtils, Utils}
+import org.apache.linkis.engineconn.common.conf.EngineConnConstant
 import org.apache.linkis.engineconn.computation.executor.execute.{
   ConcurrentComputationExecutor,
   EngineExecutionContext
@@ -47,20 +48,34 @@ import org.apache.linkis.protocol.CacheableProtocol
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.rpc.{RPCMapCache, Sender}
 import org.apache.linkis.scheduler.executer.{
+  AliasOutputExecuteResponse,
   ErrorExecuteResponse,
-  ExecuteResponse,
-  SuccessExecuteResponse
+  ExecuteResponse
 }
+import org.apache.linkis.storage.{LineMetaData, LineRecord}
+import org.apache.linkis.storage.resultset.ResultSetFactory
 
 import org.apache.commons.collections.CollectionUtils
+import org.apache.commons.io.IOUtils
 
 import java.util
 import java.util.Collections
 
 import scala.collection.JavaConverters._
 
+import com.google.common.cache.{Cache, CacheBuilder}
+
 class HBaseEngineConnExecutor(val id: Int) extends ConcurrentComputationExecutor {
-  private val shellSessionManager = HBaseShellSessionManager.getInstance();
+  private val shellSessionManager = HBaseShellSessionManager.getInstance()
+
+  private val hbaseShellTaskRunningContainer: Cache[String, String] =
+    CacheBuilder.newBuilder.maximumSize(EngineConnConstant.MAX_TASK_NUM).build[String, String]
+
+  private val hbaseShellSessionCache: Cache[String, HBaseShellSession] =
+    CacheBuilder.newBuilder
+      .maximumSize(EngineConnConstant.MAX_TASK_NUM)
+      .build[String, HBaseShellSession]
+
   private val executorLabels: util.List[Label[_]] = new util.ArrayList[Label[_]](2)
 
   override def init(): Unit = {
@@ -73,6 +88,7 @@ class HBaseEngineConnExecutor(val id: Int) extends ConcurrentComputationExecutor
       code: String
   ): ExecuteResponse = {
     val realCode = code.trim()
+    val taskId = engineExecutorContext.getJobId.get
     var properties: util.Map[String, String] = Collections.emptyMap()
     Utils.tryCatch({
       properties = getHBaseRuntimeParams(engineExecutorContext)
@@ -84,16 +100,29 @@ class HBaseEngineConnExecutor(val id: Int) extends ConcurrentComputationExecutor
     var shellSession: HBaseShellSession = null
     Utils.tryCatch({
       shellSession = shellSessionManager.getHBaseShellSession(properties)
+      hbaseShellSessionCache.put(taskId, shellSession)
     }) { e: Throwable =>
       logger.error(s"created hbase shell session error! $e")
       return ErrorExecuteResponse("created hbase shell session error!", e)
     }
+
+    hbaseShellTaskRunningContainer.put(taskId, "1")
     val result: Result = shellSession.execute(realCode)
+    hbaseShellTaskRunningContainer.invalidate(taskId)
     if (!result.isSuccess) {
       return ErrorExecuteResponse(result.getResult, result.getThrowable)
     }
-    engineExecutorContext.appendStdout(result.getResult)
-    SuccessExecuteResponse()
+    val resultSetWriter =
+      engineExecutorContext.createResultSetWriter(ResultSetFactory.TEXT_TYPE)
+    resultSetWriter.addMetaData(new LineMetaData())
+    resultSetWriter.addRecord(new LineRecord(result.getResult))
+
+    val output = if (resultSetWriter != null) resultSetWriter.toString else null
+    Utils.tryQuietly {
+      IOUtils.closeQuietly(resultSetWriter)
+    }
+    logger.info("HBase shell command executed completed.")
+    AliasOutputExecuteResponse(null, output)
   }
 
   private def getHBaseRuntimeParams(
@@ -169,13 +198,24 @@ class HBaseEngineConnExecutor(val id: Int) extends ConcurrentComputationExecutor
 
   override def killAll(): Unit = {
     logger.info("Killing all query task.")
-
+    val concurrentMap = hbaseShellTaskRunningContainer.asMap()
+    if (concurrentMap.isEmpty) {
+      return
+    }
+    val taskIdSet = concurrentMap.keySet().asScala
+    for (taskId <- taskIdSet) {
+      killTask(taskId)
+    }
     logger.info("All query task has killed successfully.")
   }
 
   override def killTask(taskId: String): Unit = {
     logger.info(s"Killing hbase query task $taskId")
-    super.killTask(taskId)
+    val hbaseShellSession: HBaseShellSession = hbaseShellSessionCache.getIfPresent(taskId)
+    if (hbaseShellSession == null) {
+      logger.info(s"Can not get hbase shell session by taskId $taskId")
+    }
+    hbaseShellSession.destroy()
     logger.info(s"The query task $taskId has killed successfully.")
   }
 

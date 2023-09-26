@@ -23,7 +23,7 @@ source ${workDir}/deploy-config/db.sh
 function print_usage(){
   echo "Usage: checkAdd [EngineName]"
   echo " EngineName : The Engine name that you want to check"
-  echo " Engine list as bellow: JDBC Flink openLooKeng Pipeline Presto Sqoop Elasticsearch "
+  echo " Engine list as bellow: JDBC Flink openLooKeng Pipeline Presto Sqoop Elasticsearch Impala Trino Seatunnel"
 }
 
 if [ $# -gt 1 ]; then
@@ -31,7 +31,7 @@ if [ $# -gt 1 ]; then
   exit 2
 fi
 
-# --- Begin Check service function 
+# --- Define verification functions for addtional engines: 1,check command;2,check parameters;3,check server status.
 
 function checkJDBC(){
 
@@ -44,10 +44,15 @@ function checkJDBC(){
        echo "MYSQL_HOST/MYSQL_PORT/MYSQL_USER/MYSQL_PASSWORD] are  Invalid,Pls check parameter define"
        exit 2
      fi
- 
+
+     if [ ! -f ${MYSQL_CONNECT_JAVA_PATH} ];then
+       echo "MysQl connector_java_path is not exist" ${MYSQL_CONNECT_JAVA_PATH}
+       exit 2
+     fi
+
 # --- 3. check server status
 # 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
-CLASSPATH=$CLASSPATH:/data/test/bin/mysql-connector-java-8.0.28.jar
+CLASSPATH=$CLASSPATH:${MYSQL_CONNECT_JAVA_PATH}
 
 # 编写Java代码，尝试建立JDBC连接并验证
 echo "import java.sql.*;
@@ -88,15 +93,15 @@ function checkFlink(){
     isSuccess "execute cmd: flink--version"
 
 # --- 2. check parameters
-      if [ -z ${YARN_RESTFUL_URL} ];then
-         echo "Parameter YARN_RESTFUL_URL is Invalid:" ${YARN_RESTFUL_URL}
+      if [ -z ${FLINK_HOME} ];then
+         echo "Parameter FLINK_HOME is Invalid,Pls check"
          exit 2
       fi
- 
+
 # --- 3. check server status
-    YanRMAddress=`echo ${YARN_RESTFUL_URL}|awk -F';' '{print $1}'`
-    curl $YanRMAddress > /dev/null 2>&1
-    isSuccess "execute cmd: Flink yarn service check "
+    cd ${FLINK_HOME}
+    ./bin/flink run -m yarn-cluster ./examples/batch/WordCount.jar > /dev/null 2>&1
+    isSuccess "execute cmd: Flink run -m yarn-cluster "
 
 }
 
@@ -107,7 +112,7 @@ function checkopenLooKeng(){
        echo "OLK_HOST/OLK_PORT/OLK_USER/OLK_PASSWORD] are  Invalid,Pls check parameter define"
        exit 2
      fi
- 
+
 # --- 3. check server status
 # 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
 CLASSPATH=$CLASSPATH:/data/test/bin/hetu-jdbc-1.10.0.jar
@@ -124,7 +129,7 @@ public class openLooKengTest{
 
         // 尝试建立连接
         //try (Connection connection = DriverManager.getConnection(url, username, password)) {
-	try (Connection connection = DriverManager.getConnection(url, username,null)) {
+        try (Connection connection = DriverManager.getConnection(url, username,null)) {
             System.out.println(\"连接成功！\");
         } catch (SQLException e) {
             System.out.println(\"连接失败：\");
@@ -192,6 +197,54 @@ function checkElasticsearch(){
     isSuccess "execute cmd: curl ElasticSearch address ${ES_RESTFUL_URL}"
 }
 
+function checkImpala(){
+
+# --- 1. check command
+    impala-shell --version > /dev/null 2>&1
+    isSuccess "execute cmd: impala-shell --version"
+
+# --- 2. check parameters
+      if [ -z "${IMPALA_HOST}" ] || [ -z "${IMPALA_PORT}" ];then
+         echo "Parameter [IMPALA_HOST/IMPALA_PORT] are Invalid ,Pls check parameters definition"
+         exit 2
+      fi
+
+# --- 3. check server status
+    impala-shell -i ${IMPALA_HOST}:${IMPALA_PORT} > /dev/null 2>&1
+    isSuccess "execute cmd: impala-shell -i ${IMPALA_HOST}:${IMPALA_PORT}"
+
+}
+
+function checkTrino(){
+# --- 1. check command
+    trino-cli --version > /dev/null 2>&1
+    isSuccess "execute cmd: trino-shell --version"
+
+# --- 2. check parameters
+      if [ -z "${TRINO_COORDINATOR_HOST}" ] || [ -z "${TRINO_COORDINATOR_PORT}" ];then
+         echo "Parameter [TRINO_COORDINATOR_HOST/TRINO_COORDINATOR_PORT] are Invalid ,Pls check parameters definition"
+         exit 2
+      fi
+
+# -- 3. check server status
+    trino-cli --server ${TRINO_COORDINATOR_HOST}:${TRINO_COORDINATOR_PORT} --catalog ${TRINO_COORDINATOR_CATALOG} --schema ${TRINO_COORDINATOR_SCHEMA} --execute "show catalogs" > /dev/null 2>&1
+    isSuccess "trino-cli --server ${TRINO_COORDINATOR_HOST}:${TRINO_COORDINATOR_PORT}"
+}
+
+function checkSeatunnel(){
+
+# --- 2. check parameters
+      if [ -z "${SEATUNNEL_HOST}" ] || [ -z "${SEATUNNEL_PORT}" ];then
+         echo "Parameter [SEATUNNEL_HOST/SEATUNNEL_PORT] are Invalid ,Pls check parameters definition"
+         exit 2
+      fi
+
+# --- 3. check server status
+    curl http://${SEATUNNEL_HOST}:${SEATUNNEL_PORT} > /dev/null 2>&1
+    isSuccess "execute cmd: curl http://${SEATUNNEL_HOST}:${SEATUNNEL_PORT}"
+}
+
+
 # --- Begin check addtional engine parameters
 echo "======== Begin to check Engine: ${1} ======== "
 
@@ -214,6 +267,15 @@ case $EngineName in
         ;;
     "Elasticsearch")
         checkElasticsearch
+        ;;
+    "Impala")
+        checkImpala
+        ;;
+    "Trino")
+        checkTrino
+        ;;
+    "Seatunnel")
+        checkSeatunnel
         ;;
     *)
         print_usage

@@ -69,6 +69,9 @@ public class EngineTypeLabelCreator {
               EngineType.FLINK().toString(), LabelCommonConfig.FLINK_ENGINE_VERSION.getValue());
           defaultVersion.put(
               EngineType.PRESTO().toString(), LabelCommonConfig.PRESTO_ENGINE_VERSION.getValue());
+
+          defaultVersion.put(
+              EngineType.HBASE().toString(), LabelCommonConfig.HBASE_ENGINE_VERSION.getValue());
           defaultVersion.put(
               EngineType.NEBULA().toString(), LabelCommonConfig.NEBULA_ENGINE_VERSION.getValue());
           defaultVersion.put(

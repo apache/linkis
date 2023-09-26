@@ -250,19 +250,6 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
     CombinedLabel combinedLabel = labelContainer.getCombinedResourceLabel();
 
     try {
-      // check ecm resource if not enough return
-      try {
-        labelContainer.setCurrentLabel(emInstanceLabel);
-        if (!requestResourceService.canRequest(labelContainer, resource)) {
-          return new NotEnoughResource(
-              String.format("Labels:%s not enough resource", emInstanceLabel.getStringValue()));
-        }
-      } catch (RMWarnException exception) {
-        return new NotEnoughResource(exception.getMessage());
-      } catch (Exception exception) {
-        throw exception;
-      }
-
       // lock userCreatorEngineTypeLabel
       persistenceLocks.add(
           tryLockOneLabel(combinedLabel, wait, labelContainer.getUserCreatorLabel().getUser()));
@@ -281,6 +268,19 @@ public class DefaultResourceManager extends ResourceManager implements Initializ
       // lock ecmLabel
       persistenceLocks.add(
           tryLockOneLabel(emInstanceLabel, wait, labelContainer.getUserCreatorLabel().getUser()));
+
+      // check ecm resource if not enough return
+      try {
+        labelContainer.setCurrentLabel(emInstanceLabel);
+        if (!requestResourceService.canRequest(labelContainer, resource)) {
+          return new NotEnoughResource(
+              String.format("Labels:%s not enough resource", emInstanceLabel.getStringValue()));
+        }
+      } catch (RMWarnException exception) {
+        return new NotEnoughResource(exception.getMessage());
+      } catch (Exception exception) {
+        throw exception;
+      }
 
       for (Label<?> label : resourceLabels) {
         labelContainer.setCurrentLabel(label);

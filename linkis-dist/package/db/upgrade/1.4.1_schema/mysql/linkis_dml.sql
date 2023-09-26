@@ -121,3 +121,5 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 );
 
 
+UPDATE linkis_ps_error_code SET error_regex = "User (\\S+) cannot submit applications to queue (\\S+?)(?=\\))" WHERE  error_code =  "21001";
+

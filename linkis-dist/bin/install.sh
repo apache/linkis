@@ -78,27 +78,6 @@ else
   done
 fi
 
-echo "======= Step 2.5: Check additional engines=========="
-## check additional engines 
-
-export EngineList="TRINO ES FLINK"
-
- echo "Additional engines list for check:" $EngineList
- read -p "[Please input your choice]:"  idx
-
-if [[ ${EngineList} =~ (^|[[:space:]])"${idx}"($|[[:space:]]) ]]; then
-
-    export ENABLE_${idx}=true
-
-else
-    echo "输入名称不在列表中"
-    exit
-fi
-
-sh ${workDir}/bin/checkAdd.sh
-
-isSuccess "check additional engines succesful!"
-
 ########################  init LINKIS related env  ################################
 if [ "$LINKIS_HOME" = "" ]
 then

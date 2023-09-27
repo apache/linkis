@@ -48,8 +48,8 @@ function checkJDBC(){
        exit 2
      fi
 
-     if [ ! -f ${MYSQL_CONNECT_JAVA_PATH} ];then
-       echo "Mysql connector ${MYSQL_CONNECT_JAVA_PATH} is not exist"
+     if [ -z "${MYSQL_CONNECT_JAVA_PATH}" ] || [ ! -f ${MYSQL_CONNECT_JAVA_PATH} ];then
+       echo "openLooKeng connector ${MYSQL_CONNECT_JAVA_PATH} is not exist,Pls check parameters in ${LinkisParDir} "
        exit 2
      fi
 
@@ -116,10 +116,11 @@ function checkopenLooKeng(){
        exit 2
      fi
 
-     if [ ! -f ${OLK_JDBC_PATH} ];then
-       echo "openLooKeng connector ${OLK_JDBC_PATH} is not exist"
+     if [ -z "${OLK_JDBC_PATH}" ] || [ ! -f ${OLK_JDBC_PATH} ];then
+       echo "openLooKeng connector ${OLK_JDBC_PATH} is not exist,Pls check parameters in ${LinkisParDir} "
        exit 2
      fi
+
 # 3. check server status
 # 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
 CLASSPATH=$CLASSPATH:${OLK_JDBC_PATH}

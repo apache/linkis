@@ -57,7 +57,7 @@ object FileSystemUtils extends Logging {
     val fileSystem = FSFactory.getFsByProxyUser(filePath, user).asInstanceOf[FileSystem]
     Utils.tryFinally {
       fileSystem.init(null)
-      createFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists)
+      createNewFileWithFileSystem(fileSystem, filePath, user, createParentWhenNotExists)
     }(Utils.tryQuietly(fileSystem.close()))
   }
 
@@ -83,7 +83,14 @@ object FileSystemUtils extends Logging {
     }
   }
 
-  def createFileWithFileSystem(
+  /**
+   * create new file and set file owner by FileSystem
+   * @param fileSystem
+   * @param filePath
+   * @param user
+   * @param createParentWhenNotExists
+   */
+  def createNewFileAndSetOwnerWithFileSystem(
       fileSystem: FileSystem,
       filePath: FsPath,
       user: String,

@@ -123,3 +123,6 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 
 UPDATE linkis_ps_error_code SET error_regex = "User (\\S+) cannot submit applications to queue (\\S+?)(?=\\))" WHERE  error_code =  "21001";
 
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43016','模块 %s 没有属性 %s ，请确认代码引用是否正常','AttributeError: '(\\S+)' object has no attribute '(\\S+)'',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43017','方法参数错误，请检查代码是否正确','KeyError: \\(+.*\\)',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43018','文件地址错误，文件地址：%s','FileNotFountError.*No such file or directory\\:\\s'(\\S+)'',0);

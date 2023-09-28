@@ -34,13 +34,15 @@ HIVE_META_URL=""
 HIVE_META_USER=""
 HIVE_META_PASSWORD=""
 
-LK_HOST=
+### define openLookeng  parameters for connection.
+OLK_HOST=
 OLK_PORT=
 OLK_CATALOG=
 OLK_SCHEMA=
 OLK_USER=
 OLK_PASSWORD=
 
+### define Presto parameters for connection.
 PRESTO_HOST=
 PRESTO_PORT=
 PRESTO_CATALOG=

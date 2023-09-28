@@ -54,33 +54,33 @@ function checkJDBC(){
      fi
 
 # 3. check server status
-# 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
+# set java path and other independency
 CLASSPATH=$CLASSPATH:${MYSQL_CONNECT_JAVA_PATH}
 
-# 编写Java代码，尝试建立JDBC连接并验证
+# prepare java code to connect with JDBC dirver
 echo "import java.sql.*;
 
 public class JdbcTest {
     public static void main(String[] args) {
-        // 定义连接信息
+        // define connection variables
         String url = \"jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}\";
         String username = \"${MYSQL_USER}\";
         String password = \"${MYSQL_PASSWORD}\";
 
-        // 尝试建立连接
+        // Try to connect use JDBC Driver
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
-            System.out.println(\"jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT} 连接成功！\");
+            System.out.println(\"jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT} connection successful！\");
         } catch (SQLException e) {
-            System.out.println(\"连接失败：\");
+            System.out.println(\"connection failed：\");
             e.printStackTrace();
         }
     }
 }" > JdbcTest.java
 
-# 编译Java源文件
+# compile java source
     javac -cp "$CLASSPATH" JdbcTest.java
 
-# 运行Java程序
+# execute java program
     java -cp "$CLASSPATH":. JdbcTest
     isSuccess "execute cmd: java -cp CLASSPATH:. JdbcTest"
 
@@ -122,38 +122,38 @@ function checkopenLooKeng(){
      fi
 
 # 3. check server status
-# 设置Java类路径，指向你所下载的MySQL JDBC驱动程序的JAR文件和其他依赖项
+# set java path and other independency
 CLASSPATH=$CLASSPATH:${OLK_JDBC_PATH}
 
-# 编写Java代码，尝试建立JDBC连接并验证
+# prepare java code to connect with JDBC dirver
 echo "import java.sql.*;
 
 public class openLooKengTest{
     public static void main(String[] args) {
-        // 定义连接信息
+        // define connection variables
         String url = \"jdbc:lk://${OLK_HOST}:${OLK_PORT}/${OLK_CATALOG}/${OLK_SCHEMA}\";
         String username = \"${OLK_USER}\";
         String password = \"${OLK_PASSWORD}\";
 
-        // 尝试建立连接
+        // try to connect
         //try (Connection connection = DriverManager.getConnection(url, username, password)) {
         try (Connection connection = DriverManager.getConnection(url, username,null)) {
-            System.out.println(\"连接成功！\");
+            System.out.println(\"connection successfully！\");
         } catch (SQLException e) {
-            System.out.println(\"连接失败：\");
+            System.out.println(\"connection failed：\");
             e.printStackTrace();
         }
     }
 }" > openLooKengTest.java
 
-# 编译Java源文件
+# compile java source code
 javac -cp "$CLASSPATH" openLooKengTest.java
 
-# 运行Java程序
+# execute java program
 java -cp "$CLASSPATH":. openLooKengTest
 isSuccess "execute cmd: java -cp CLASSPATH:. openLooKengTest"
 
-# 清理临时文件
+# clear temple files
 rm openLooKengTest.*
 
 }

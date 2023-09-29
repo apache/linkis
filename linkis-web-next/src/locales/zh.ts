@@ -370,6 +370,7 @@ export default {
             },
         },
         linkis: {
+            sourceInfo: '来源信息',
             refresh: '刷新',
             engineConfig: '引擎配置',
             applicationDesc: '应用描述',
@@ -1016,6 +1017,11 @@ export default {
                 submitUser: '提交用户',
                 createdTime: '创建时间',
                 searchRange: '仅可查询T-1的历史代码',
+            },
+            task: {
+                projectName: '项目名称',
+                workflowName: '工作流名称',
+                workflowIp: '工作流IP',
             },
         },
     },

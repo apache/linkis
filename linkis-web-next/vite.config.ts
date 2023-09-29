@@ -4,6 +4,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd());
+
     return {
         envPrefix: 'VITE_',
         plugins: [vue()],
@@ -13,13 +14,13 @@ export default defineConfig(({ mode }) => {
             },
         },
         server: {
-            port: 3000,
-            host: '127.0.0.1',
+            // port: 3000,
+            host: 'localhost',
             proxy: {
                 '/api': {
-                    target: env.BACKEND_URL,
+                    target: env.VITE_BACKEND_URL,
                     changeOrigin: true,
-                    rewrite: (pth) => pth.replace(/^\/api/, ''),
+                    rewrite: (pth) => pth.replace(/^\/api/, '/api'),
                 },
             },
         },

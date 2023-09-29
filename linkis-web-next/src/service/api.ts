@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,31 +19,31 @@
 /**
  * Manipulate APIs(操作Api)
  */
-import util from '@/util';
 import { FMessage } from '@fesjs/fes-design';
 import axios from 'axios';
 import { h } from 'vue';
+import util from '@/util';
 import cache from './apiCache';
 
 // what an array is used to store the cancel function and id for each request(一个用于存储每个请求的取消函数和标识的数组数组)
-let pending: Array<{ u: string; f: (message?: string) => unknown }> = [];
+const pending: Array<{ u: string; f: (message?: string) => unknown }> = [];
 let cancelConfig: any = null;
-let CancelToken = axios.CancelToken;
-let removePending = (config: Record<string, any>) => {
+const { CancelToken } = axios;
+const removePending = (config: Record<string, any>) => {
     for (let p = 0; p < pending.length; p++) {
         const params = JSON.stringify(config.params);
         // Cancel if it exists(如果存在则执行取消操作)
-        if (pending[p].u === config.url + '&' + config.method + '&' + params) {
+        if (pending[p].u === `${config.url}&${config.method}&${params}`) {
             // pending[p].f();// perform cancellation(执行取消操作)
             pending.splice(p, 1); // remove record(移除记录)
         }
     }
 };
 
-let cutReq = (config: Record<string, any>) => {
+const cutReq = (config: Record<string, any>) => {
     for (let p = 0; p < pending.length; p++) {
         const params = JSON.stringify(config.params);
-        if (pending[p].u === config.url + '&' + config.method + '&' + params) {
+        if (pending[p].u === `${config.url}&${config.method}&${params}`) {
             return true;
         }
     }
@@ -62,7 +63,7 @@ instance.interceptors.request.use(
         // Add internationalization parameters(增加国际化参数)
         config.headers['Content-language'] =
             localStorage.getItem('locale') || 'zh-CN';
-        let flag = cutReq(config);
+        const flag = cutReq(config);
         // The second same request cannot be made when the last same request is not completed(当上一次相同请求未完成时，无法进行第二次相同请求)
         if (flag === true) {
             removePending(config);
@@ -74,7 +75,7 @@ instance.interceptors.request.use(
             config.cancelToken = new CancelToken((c) => {
                 // Add identity and cancel functions(添加标识和取消函数)
                 pending.push({
-                    u: config.url + '&' + config.method + '&' + params,
+                    u: `${config.url}&${config.method}&${params}`,
                     f: c,
                 });
             });
@@ -98,14 +99,12 @@ instance.interceptors.response.use(
             (error.message && error.message.indexOf('timeout') >= 0) ||
             (error.request && error.request.status !== 200)
         ) {
-            for (let p in pending) {
+            for (const p in pending) {
                 if (
                     pending[p].u ===
-                    cancelConfig.url +
-                        '&' +
-                        cancelConfig.method +
-                        '&' +
-                        JSON.stringify(cancelConfig.params)
+                    `${cancelConfig.url}&${
+                        cancelConfig.method
+                    }&${JSON.stringify(cancelConfig.params)}`
                 ) {
                     pending.splice(p, 1); // remove record(移除记录)
                 }
@@ -160,7 +159,7 @@ const api: API = {
                 return window.location.replace(res.data.SSOURL);
             }
 
-            const isLoginPath = window.location.hash == '#/login';
+            const isLoginPath = window.location.hash === '#/login';
             if (!isLoginPath) {
                 window.location.hash = '#/login';
                 throw new Error('您尚未登录，请先登录!');
@@ -176,10 +175,10 @@ const api: API = {
 };
 
 const getData = function (data: any) {
-    let _arr = ['codePath', 'messagePath', 'resultPath'];
-    let res = {};
+    const _arr = ['codePath', 'messagePath', 'resultPath'];
+    const res = {};
     _arr.forEach((item) => {
-        let pathArray = api.constructionOfResponse[item].split('.');
+        const pathArray = api.constructionOfResponse[item].split('.');
         let result =
             pathArray.length === 1 && pathArray[0] === '*'
                 ? data
@@ -226,11 +225,11 @@ const success = function (response: any) {
                 linkis_errorMsgTip || tt('message.common.exceptionTips'),
             );
         }
-        let res: any = getData(data);
-        let code = res.codePath;
-        let message = res.messagePath;
-        let result = res.resultPath;
-        let errorMsgTip = result ? result.errorMsgTip : '';
+        const res: any = getData(data);
+        const code = res.codePath;
+        const message = res.messagePath;
+        const result = res.resultPath;
+        const errorMsgTip = result ? result.errorMsgTip : '';
         if (errorMsgTip) {
             sessionStorage.setItem('linkis.errorMsgTip', errorMsgTip);
         }
@@ -248,7 +247,7 @@ const success = function (response: any) {
         }
         if (result) {
             let len = 0;
-            let hasBigData = Object.values(result).some((item) => {
+            const hasBigData = Object.values(result).some((item) => {
                 if (Array.isArray(item)) {
                     len = item.length > len ? item.length : len;
                     return len > 200;
@@ -265,7 +264,7 @@ const success = function (response: any) {
 
 const fail = function (error: any, t: (str: string) => string) {
     let _message = '';
-    let response = error.response;
+    const { response } = error;
     if (response && api.error[response.status]) {
         api.error[response.status].forEach((fn) => fn(response));
     } else {
@@ -284,7 +283,7 @@ const fail = function (error: any, t: (str: string) => string) {
                 data = response.data;
             }
             if (data) {
-                let res = getData(data);
+                const res = getData(data);
                 _message = res.messagePath;
             }
         }
@@ -294,16 +293,16 @@ const fail = function (error: any, t: (str: string) => string) {
 };
 
 const param = function (url, data, option) {
-    let method = 'post';
+    const method = 'post';
     if (util.isNull(url)) {
         return window.console.error('请传入URL');
     } else if (!util.isNull(url) && util.isNull(data) && util.isNull(option)) {
         option = {
-            method: method,
+            method,
         };
     } else if (!util.isNull(url) && !util.isNull(data) && util.isNull(option)) {
         option = {
-            method: method,
+            method,
         };
         if (util.isString(data)) {
             option.method = data;
@@ -326,21 +325,21 @@ const param = function (url, data, option) {
             option.method = option.method || method;
         } else {
             option = {
-                method: method,
+                method,
             };
         }
         if (
-            option.method == 'get' ||
-            option.method == 'delete' ||
-            option.method == 'head' ||
-            option.method == 'options'
+            option.method === 'get' ||
+            option.method === 'delete' ||
+            option.method === 'head' ||
+            option.method === 'options'
         ) {
             option.params = data;
         }
         if (
-            option.method == 'post' ||
-            option.method == 'put' ||
-            option.method == 'patch'
+            option.method === 'post' ||
+            option.method === 'put' ||
+            option.method === 'patch'
         ) {
             option.data = data;
         }
@@ -357,18 +356,16 @@ const param = function (url, data, option) {
 const action = function (url: string | URL, data, option) {
     return param(url, data, option)
         .then(success, fail)
-        .then(function (response: unknown) {
-            return response;
-        })
-        .catch(function (error: Error) {
+        .then((response: unknown) => response)
+        .catch((error: Error) => {
             if (error.message) {
-                let urlReg =
+                const urlReg =
                     /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/g;
-                let result = error.message.match(urlReg);
+                const result = error.message.match(urlReg);
                 result
                     ? FMessage.error({
                           content: () => {
-                              let context = error.message.split(result[0]);
+                              const context = error.message.split(result[0]);
                               return h('span', [
                                   context[0],
                                   h(
@@ -404,7 +401,7 @@ api.option = function (option: Record<string, any>) {
         instance.defaults.timeout = option.timeout;
     }
     if (option.config && util.isObject(option.config)) {
-        Object.keys(option.config).forEach(function (key) {
+        Object.keys(option.config).forEach((key) => {
             instance.defaults[key] = option.config[key];
         });
     }

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -220,7 +221,7 @@ export default {
             cookieManager.remove(key);
         }
     },
-    _map: function (category: string) {
+    _map(category: string) {
         let isWebStorage = true;
         let storage;
 

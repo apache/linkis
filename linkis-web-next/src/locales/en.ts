@@ -399,6 +399,7 @@ export default {
             },
         },
         linkis: {
+            sourceInfo: 'Source Info',
             refresh: 'Refresh',
             engineConfig: 'Engines',
             applicationDesc: 'Desc',
@@ -1058,6 +1059,11 @@ export default {
                 checkEngineConnTypeAndVersion:
                     'Please select the engine type and version',
                 upload: 'Please click the button to upload the engine plugin',
+            },
+            task: {
+                projectName: 'Project Name',
+                workflowName: 'Workflow Name',
+                workflowIp: 'Workflow IP',
             },
         },
     },

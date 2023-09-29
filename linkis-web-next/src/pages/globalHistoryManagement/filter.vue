@@ -2,57 +2,126 @@
     <div class="label">{{ $t('message.linkis.globalTaskQuery') }}</div>
     <div class="filter">
         <FForm ref="formRef" class="form" v-show="!isCheckingTaskToStop">
-            <FFormItem :label="$t('message.linkis.jobId')" :props="$t('message.linkis.jobId')">
-                <FInput v-model="formData.id" placeholder="请输入" class="short-form-item"></FInput>
+            <FFormItem
+                :label="$t('message.linkis.jobId')"
+                :props="$t('message.linkis.jobId')"
+            >
+                <FInput
+                    v-model="formData.id"
+                    placeholder="请输入"
+                    class="short-form-item"
+                ></FInput>
             </FFormItem>
 
-            <FFormItem :label="$t('message.linkis.codeQuery.status')" :props="$t('message.linkis.codeQuery.status')">
-                <FSelect v-model="formData.status" clearable placeholder="请选择" class="short-form-item">
-                    <FOption v-for="(item, index) in statusList" :key="index" :value="item.value" :label="$t(item.label)">
+            <FFormItem
+                :label="$t('message.linkis.codeQuery.status')"
+                :props="$t('message.linkis.codeQuery.status')"
+            >
+                <FSelect
+                    v-model="formData.status"
+                    clearable
+                    placeholder="请选择"
+                    class="short-form-item"
+                >
+                    <FOption
+                        v-for="(item, index) in statusList"
+                        :key="index"
+                        :value="item.value"
+                        :label="$t(item.label)"
+                    >
                     </FOption>
                 </FSelect>
             </FFormItem>
 
-            <FFormItem :label="$t('message.common.resourceSimple.YQ')" :props="$t('message.common.resourceSimple.YQ')">
-                <FSelect v-model="formData.engine" clearable placeholder="请选择" class="short-form-item">
-                    <FOption v-for="(item, index) in optionList" :key="index" :value="item.value" :label="$t(item.label)">
+            <FFormItem
+                :label="$t('message.common.resourceSimple.YQ')"
+                :props="$t('message.common.resourceSimple.YQ')"
+            >
+                <FSelect
+                    v-model="formData.engine"
+                    clearable
+                    placeholder="请选择"
+                    class="short-form-item"
+                >
+                    <FOption
+                        v-for="(item, index) in engineList"
+                        :key="index"
+                        :value="item.value"
+                        :label="$t(item.label)"
+                    >
                     </FOption>
                 </FSelect>
             </FFormItem>
 
-            <FFormItem :label="$t('message.linkis.codeQuery.createdTime')"
-                :prop="$t('message.linkis.codeQuery.createdTime')" class="long-form-item">
-                <FDatePicker v-model="formData.dateRange" type="daterange" :modelValue="[
-                    Date.now(),
-                    Date.now() + 7 * 24 * 60 * 60 * 1000,
-                ]">
+            <FFormItem
+                :label="$t('message.linkis.codeQuery.createdTime')"
+                :prop="$t('message.linkis.codeQuery.createdTime')"
+                class="long-form-item"
+            >
+                <FDatePicker
+                    v-model="formData.dateRange"
+                    type="daterange"
+                    :modelValue="[
+                        Date.now(),
+                        Date.now() + 7 * 24 * 60 * 60 * 1000,
+                    ]"
+                >
                     <template #separator> - </template>
                 </FDatePicker>
             </FFormItem>
 
-            <FFormItem :label="$t('message.linkis.datasource.creator')" :props="$t('message.linkis.datasource.creator')">
-                <FSelect v-model="formData.creator" clearable placeholder="请选择" class="short-form-item">
-                    <FOption v-for="(item, index) in optionList" :key="index" :value="item.value" :label="$t(item.label)">
+            <!-- TODO:  -->
+            <!-- <FFormItem
+                :label="$t('message.linkis.datasource.creator')"
+                :props="$t('message.linkis.datasource.creator')"
+            >
+                <FSelect
+                    v-model="formData.creator"
+                    clearable
+                    placeholder="请选择"
+                    class="short-form-item"
+                >
+                    <FOption
+                        v-for="(item, index) in optionList"
+                        :key="index"
+                        :value="item.value"
+                        :label="$t(item.label)"
+                    >
                     </FOption>
                 </FSelect>
-            </FFormItem>
+            </FFormItem> -->
 
             <div class="buttons">
                 <template v-if="!isCheckingTaskToStop">
-                    <FButton type="primary" @click="search">{{ $t('message.linkis.find') }}</FButton>
-                    <FButton>{{ $t('message.linkis.EnginePluginManagement.Reset') }}</FButton>
-                    <FButton class="stop-button" @click="isCheckingTaskToStop = true">
+                    <FButton type="primary" @click="search">
+                        {{ $t('message.linkis.find') }}
+                    </FButton>
+                    <FButton @click="reset">
+                        {{ $t('message.linkis.EnginePluginManagement.Reset') }}
+                    </FButton>
+                    <FButton
+                        class="stop-button"
+                        @click="isCheckingTaskToStop = true"
+                    >
                         {{ $t('message.linkis.batchStopping') }}
                     </FButton>
                 </template>
             </div>
         </FForm>
+
         <template v-if="isCheckingTaskToStop">
             <div class="buttons">
-                <FButton type="primary" class="confirm-stop-button" @click="confirmStop">
+                <FButton
+                    type="primary"
+                    class="confirm-stop-button"
+                    @click="confirmStop"
+                >
                     {{ $t('message.linkis.confirmToStop') }}
                 </FButton>
-                <FButton class="confirm-stop-button" @click="isCheckingTaskToStop = false">
+                <FButton
+                    class="confirm-stop-button"
+                    @click="isCheckingTaskToStop = false"
+                >
                     {{ $t('message.linkis.cancel') }}
                 </FButton>
             </div>
@@ -61,93 +130,122 @@
 </template>
 
 <script lang="ts" setup>
-import api from '@/service/api';
 import { FForm } from '@fesjs/fes-design';
 import { ref, onMounted, reactive } from 'vue';
-const emits = defineEmits(['search']);
+import api from '@/service/api';
+
+const emit = defineEmits(['search']);
+const props = defineProps<{
+    pageSize: number;
+    currenPage: number;
+    checkedKeys: Array<string | number>;
+}>();
 const isCheckingTaskToStop = ref(false);
 const formRef = ref<null | typeof FForm>(null);
+
+/**
+ * TODO:
+ * 1. 获取数据接口（搜索）
+ * 2. 获取引擎接口
+ * 3. 时间
+ * 4. 字段和后端对齐
+ * 5. 重置按钮
+ * 6. 批量停止接口
+ * 7. 查看（可能需要单独的接口）
+ * 8. 任务数量分类统计接口（可能需要单独的接口）
+ */
 
 const formData = reactive({
     id: '',
     status: '',
     engine: '',
     dateRange: '',
-    creator: ''
+    creator: '',
 });
 
-const optionList = ref([
-    {
-        value: 'xxx',
-        label: 'xxx',
-    },
-    {
-        value: 'yyy',
-        label: 'yyy',
-    },
-    {
-        value: 'zzz',
-        label: 'zzz',
-    },
-]);
+const engineList = ref<Array<{ label: string; value: string }>>([]);
+
 const statusList = ref([
     {
         label: 'message.linkis.statusType.all',
-        value: 'all'
+        value: 'all',
     },
     {
         label: 'message.linkis.statusType.inited',
-        value: 'Inited'
+        value: 'Inited',
     },
     {
         label: 'message.linkis.statusType.running',
-        value: 'Running'
+        value: 'Running',
     },
     {
         label: 'message.linkis.statusType.succeed',
-        value: 'Succeed'
+        value: 'Succeed',
     },
     {
         label: 'message.linkis.statusType.cancelled',
-        value: 'Cancelled'
+        value: 'Cancelled',
     },
     {
         label: 'message.linkis.statusType.failed',
-        value: 'Failed'
+        value: 'Failed',
     },
     {
         label: 'message.linkis.statusType.scheduled',
-        value: 'Scheduled'
+        value: 'Scheduled',
     },
     {
         label: 'message.linkis.statusType.timeout',
-        value: 'Timeout'
-    }
+        value: 'Timeout',
+    },
 ]);
 
-// const props = defineProps<{
-//     checkedKeys: Array<string>;
-// }>();
+const getParams = () => {
+    const params = {
+        taskID: formData.id,
+        creator: formData.creator,
+        executeApplicationName: formData.engine,
+        status: formData.status,
+        startDate: formData.dateRange?.[0],
+        endDate: formData.dateRange?.[1],
+        pageNow: props?.currenPage,
+        pageSize: props?.pageSize,
+        // proxyUser: this.searchBar.proxyUser,
+        // isAdminView: this.isAdminModel,
+        // instance: this.searchBar.instance?.replace(/ /g, '') || '',
+    };
+    return params;
+};
 
 const search = async () => {
-    // const formData = await formRef?.value?.validate()
-    console.log('formData', formData);
-    emits('search');
+    const params = getParams();
+    emit('search', params);
+};
+
+const reset = () => {
+    formData.id = '';
+    formData.status = '';
+    formData.engine = '';
+    formData.dateRange = '';
+    formData.creator = '';
 };
 
 const confirmStop = () => {
     console.log(1);
 };
 
-
 onMounted(() => {
     // Get whether it is a historical administrator(获取是否是历史管理员权限)
-    api.fetch('/configuration/engineType', 'get').then(() => {
-        // engine config selector list
-        // this.getEngineTypes = ['all', ...res.engineType];
-    });
+    api.fetch('/configuration/engineType', 'get').then(
+        (res: { engineType: Array<string> }) => {
+            // engine config selector list
+            engineList.value = ['all', ...res.engineType].map((item) => ({
+                label: item,
+                value: item,
+            }));
+        },
+    );
 });
-
 
 defineExpose({
     isCheckingTaskToStop,
@@ -165,15 +263,16 @@ defineExpose({
         gap: 22px;
 
         .short-form-item {
-            width: 120px;
+            width: 100px;
         }
 
         .long-form-item {
-            width: 314px;
+            width: 300px;
         }
     }
 
     .buttons {
+        margin-left: 10px;
         flex: 1;
         display: flex;
         justify-content: flex-start;
@@ -181,7 +280,11 @@ defineExpose({
 
         .stop-button {
             margin-left: auto;
+            text-align: center;
         }
+    }
+    :deep(button) {
+        padding-left: 16px;
     }
 }
 </style>

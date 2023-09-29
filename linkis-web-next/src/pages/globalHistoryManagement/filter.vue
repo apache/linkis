@@ -137,17 +137,16 @@ import api from '@/service/api';
 const emit = defineEmits(['search']);
 const props = defineProps<{
     pageSize: number;
-    currenPage: number;
+    currentPage: number;
     checkedKeys: Array<string | number>;
 }>();
+
 const isCheckingTaskToStop = ref(false);
 const formRef = ref<null | typeof FForm>(null);
 
 /**
  * TODO:
  * 1. 获取数据接口（搜索）
- * 2. 获取引擎接口
- * 3. 时间
  * 4. 字段和后端对齐
  * 5. 重置按钮
  * 6. 批量停止接口
@@ -208,7 +207,7 @@ const getParams = () => {
         status: formData.status,
         startDate: formData.dateRange?.[0],
         endDate: formData.dateRange?.[1],
-        pageNow: props?.currenPage,
+        pageNow: props?.currentPage,
         pageSize: props?.pageSize,
         // proxyUser: this.searchBar.proxyUser,
         // isAdminView: this.isAdminModel,
@@ -249,6 +248,7 @@ onMounted(() => {
 
 defineExpose({
     isCheckingTaskToStop,
+    handleSearch: search,
 });
 </script>
 

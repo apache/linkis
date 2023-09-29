@@ -4,8 +4,8 @@
         <!-- <div @click="test">test</div> -->
         <Filter
             ref="filterRef"
-            :checkedKeys="checkedKeys"
             @search="search"
+            :checkedKeys="checkedKeys"
             :currentPage="currentPage"
             :pageSize="pageSize"
         ></Filter>
@@ -77,7 +77,8 @@ const drawerRef = ref<Ref<{
     open: (rawData: Record<string, string | number>) => void;
         }> | null>(null);
 const isLoading = ref<boolean>(false);
-
+const currentPage = ref(1);
+const pageSize = ref(10);
 const isShowDrawer = ref(false);
 const checkedKeys = reactive<Array<string>>([]);
 const pageSizeOption = reactive([10, 20, 30, 50, 100]);
@@ -85,7 +86,7 @@ const listTotalLen = ref<number>(0);
 const tableColumns: Ref<Array<Record<string, any>>> = ref([]);
 const dataList = ref([]);
 const { t } = useI18n();
-// TODO: subsequent adjustments to standard enumeration values
+
 const statusEnum: Record<string | number, Record<string, string>> = {
     inited: {
         text: t('message.linkis.statusType.inited'),
@@ -120,13 +121,11 @@ const statusEnum: Record<string | number, Record<string, string>> = {
         text: t('message.linkis.statusType.unknown'),
     },
 };
-const currentPage = ref(1);
-const pageSize = ref(10);
 
 const setIsShowDrawer = (flag: boolean) => {
     isShowDrawer.value = flag;
 };
-// TODO: replace mock data with the real
+
 const getColumns = () => {
     const columns = [
         {
@@ -154,7 +153,6 @@ const getColumns = () => {
                 row: { costTime: number; sourceInfo: Record<string, string> };
             }) => {
                 const { costTime, sourceInfo } = data.row;
-                console.log('sourceInfo', sourceInfo);
                 let formattedTime;
                 if (costTime > 60000) {
                     formattedTime = `m${t('message.common.time.MIN')}s${t(
@@ -200,17 +198,15 @@ const getColumns = () => {
         {
             label: t('message.linkis.tableColumns.failedReason'),
             prop: 'query',
-            formatter: ({ row }: { row: Record<string, number | string> }) => {
-                console.log('row', row.errDesc);
+            formatter: ({ row }: { row: Record<string, number | string> }) =>
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
-                return h(TooltipText, {
+                h(TooltipText, {
                     text: t('message.linkis.codeQuery.check'),
                     textStyle: { color: '#5384FF' },
                     tipTitle: t('message.linkis.tableColumns.failedReason'),
                     tipContent: row.errDesc || 'null',
-                });
-            },
+                }),
         },
         {
             prop: 'application',
@@ -250,18 +246,11 @@ const getColumns = () => {
     return columns;
 };
 
-const handleChange = (currenPage: number, size: number) => {
-    // data.value = data.slice((currenPage - 1) * size, currenPage * size);
-    // (currentData.value as typeof temp) = reactive([...temp]);
-};
-
-const search = (filterFormData: any) => {
+const search = (params: Record<string, string | number>) => {
     isLoading.value = true;
-    tableColumns.value = getColumns();
-    api.fetch('/jobhistory/list', filterFormData, 'get')
+    api.fetch('/jobhistory/list', params, 'get')
         .then((rst: any) => {
             listTotalLen.value = rst.totalPage;
-            isLoading.value = false;
             dataList.value = rst.tasks?.map((task: any) => ({
                 taskID: task.taskID ?? '',
                 taskName: task.execId ?? '',
@@ -278,17 +267,23 @@ const search = (filterFormData: any) => {
                 },
                 errDesc: task.errDesc,
             }));
+            isLoading.value = false;
         })
         .catch(() => {
             FMessage.error('Something Wrong!');
+            isLoading.value = false;
         });
+};
+
+const handleChange = () => {
+    (filterRef.value as any).handleSearch?.();
 };
 
 onMounted(() => {
     // handleChange(currentPage.value, pageSize.value);
+    tableColumns.value = getColumns();
     search({});
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then(() => {
-        // console.log('admin', res);
         // this.isLogAdmin = res.admin;
         // this.isHistoryAdmin = res.historyAdmin;
     });

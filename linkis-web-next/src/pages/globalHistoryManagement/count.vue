@@ -22,7 +22,10 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { FMessage } from '@fesjs/fes-design';
+import { onMounted, reactive } from 'vue';
+
+const emit = defineEmits(['find']);
 
 const countDataList = reactive([
     {
@@ -56,6 +59,33 @@ const countDataList = reactive([
         color: '#0F1222',
     },
 ]);
+
+const handleFind = (status: string, callback: (v: any) => void) => {
+    emit('find', { status }, callback);
+};
+
+onMounted(() => {
+    Promise.all(
+        ['', 'Succeed', 'Inited', 'Running', 'Failed'].map(
+            (status) =>
+                new Promise((resolve) => {
+                    handleFind(status, resolve);
+                }),
+        ),
+    )
+        .then((res) => {
+            let sum = 0;
+            (res as Array<{ totalPage: number }>).forEach((item, index) => {
+                countDataList[index].number = item.totalPage;
+                if (index > 0) sum += item.totalPage;
+            });
+            countDataList[countDataList.length - 1].number =
+                countDataList[0].number - sum;
+        })
+        .catch((err) => {
+            FMessage.error(err);
+        });
+});
 </script>
 
 <style scoped src="./index.less"></style>

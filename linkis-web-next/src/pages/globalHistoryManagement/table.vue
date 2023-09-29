@@ -1,23 +1,21 @@
 <template>
     <div class="wrapper">
-        <Count></Count>
-        <!-- <div @click="test">test</div> -->
+        <Count @find="find"></Count>
         <Filter
             ref="filterRef"
             @search="search"
             :checkedKeys="checkedKeys"
+            :checkedRows="checkedRows"
             :currentPage="currentPage"
             :pageSize="pageSize"
         ></Filter>
         <f-table
+            @select="handleSelection"
             :data="dataList"
             class="table"
             v-model:checkedKeys="checkedKeys"
             :height="450"
-            :rowKey="(row: Record<string, number | string>) => {
-            return row.taskID;
-        }
-            "
+            :rowKey="(row: Record<string, number | string>) => row"
         >
             <f-table-column
                 v-if="filterRef?.isCheckingTaskToStop"
@@ -25,6 +23,7 @@
                 :width="32"
                 fixed="left"
             ></f-table-column>
+
             <template v-for="col in tableColumns" :key="col.label">
                 <f-table-column
                     v-if="col.formatter"
@@ -48,7 +47,7 @@
             show-size-changer
             :pageSizeOption="pageSizeOption"
             :total-count="listTotalLen"
-            @change="handleChange"
+            @change="handlePageChange"
             v-model:pageSize="pageSize"
             v-model:currentPage="currentPage"
         ></FPagination>
@@ -70,8 +69,12 @@ import Filter from './filter.vue';
 import Count from './count.vue';
 import TooltipText from './tooltipText.vue';
 import api from '@/service/api';
+import { CheckedRows } from './type';
 
-const filterRef = ref<Ref<{ isCheckingTaskToStop: boolean }> | null>(null);
+const filterRef = ref<Ref<{
+    isCheckingTaskToStop: boolean;
+    handleSearch: () => void;
+        }> | null>(null);
 const drawerRef = ref<Ref<{
     // eslint-disable-next-line no-unused-vars
     open: (rawData: Record<string, string | number>) => void;
@@ -80,7 +83,8 @@ const isLoading = ref<boolean>(false);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const isShowDrawer = ref(false);
-const checkedKeys = reactive<Array<string>>([]);
+const checkedRows = ref<CheckedRows>([]);
+const checkedKeys = ref<Array<string>>([]);
 const pageSizeOption = reactive([10, 20, 30, 50, 100]);
 const listTotalLen = ref<number>(0);
 const tableColumns: Ref<Array<Record<string, any>>> = ref([]);
@@ -174,9 +178,9 @@ const getColumns = () => {
                           <div>${t('message.linkis.task.workflowIp')}</div>
                         </div>
                         <div class="right">
-                          <div>${sourceInfo.projectName}</div>   
+                          <div>${sourceInfo.projectName}</div>
                           <div>${sourceInfo.scriptPath}</div>
-                          <div>${sourceInfo.requestIP}</div>                 
+                          <div>${sourceInfo.requestIP}</div>
                         </div>
                       </div>
                     `,
@@ -246,41 +250,66 @@ const getColumns = () => {
     return columns;
 };
 
-const search = (params: Record<string, string | number>) => {
+// eslint-disable-next-line consistent-return
+const find = async (
+    params: Record<string, string | number>,
+    callback?: (v: any) => void,
+) => {
     isLoading.value = true;
-    api.fetch('/jobhistory/list', params, 'get')
-        .then((rst: any) => {
-            listTotalLen.value = rst.totalPage;
-            dataList.value = rst.tasks?.map((task: any) => ({
-                taskID: task.taskID ?? '',
-                taskName: task.execId ?? '',
-                status: task.status ?? '',
-                costTime: task.costTime ?? '',
-                query: task.executionCode ?? '',
-                application: task.executeApplicationName ?? '',
-                engine: task.engineInstance ?? '',
-                creator: task.umUser ?? '',
-                createdTime: task.createdTime ?? '',
-                sourceInfo: {
-                    ...JSON.parse(task.sourceJson ?? ''),
-                    projectName: task.sourceTailor,
-                },
-                errDesc: task.errDesc,
-            }));
-            isLoading.value = false;
-        })
-        .catch(() => {
-            FMessage.error('Something Wrong!');
-            isLoading.value = false;
-        });
+    try {
+        const rst = await api.fetch('/jobhistory/list', params, 'get');
+        listTotalLen.value = rst.totalPage;
+
+        const res = rst.tasks?.map((task: any) => ({
+            taskID: task.taskID ?? '',
+            taskName: task.execId ?? '',
+            status: task.status ?? '',
+            costTime: task.costTime ?? '',
+            query: task.executionCode ?? '',
+            application: task.executeApplicationName ?? '',
+            engine: task.engineInstance ?? '',
+            creator: task.umUser ?? '',
+            createdTime: task.createdTime ?? '',
+            sourceInfo: {
+                ...JSON.parse(task.sourceJson ?? ''),
+                projectName: task.sourceTailor,
+            },
+            errDesc: task.errDesc,
+            strongerExecId: task.strongerExecId,
+            instance: task.instance,
+        }));
+
+        isLoading.value = false;
+        callback?.(rst);
+        return res;
+    } catch (err) {
+        FMessage.error('Something Wrong!');
+        isLoading.value = false;
+    }
 };
 
-const handleChange = () => {
-    (filterRef.value as any).handleSearch?.();
+const search = async (params: Record<string, string | number>) => {
+    isLoading.value = true;
+    const res = await find(params);
+    dataList.value = res;
+};
+
+const handlePageChange = () => {
+    filterRef.value?.handleSearch();
+};
+
+const handleSelection = (selectedData: {
+    selection: Array<Record<string, string | number>>;
+}) => {
+    checkedRows.value = selectedData.selection.map((row) => ({
+        taskID: row.taskID,
+        strongerExecId: row.strongerExecId,
+        instance: row.instance,
+    }));
 };
 
 onMounted(() => {
-    // handleChange(currentPage.value, pageSize.value);
+    // handlePageChange(currentPage.value, pageSize.value);
     tableColumns.value = getColumns();
     search({});
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then(() => {

@@ -1,17 +1,17 @@
 <template>
     <FDrawer
+        ref="drawerRef"
         v-model:show="show"
         placement="bottom"
-        hight="700px"
         @ok="show = false"
         :closable="false"
-        :resizable="true"
+        resizable
         contentClass="drawer-content"
     >
         <template #title>
             <div class="drawer-title">
                 <div class="buttons">
-                    <div class="full-screen-button">
+                    <div class="full-screen-button" @click="expandDrawer">
                         {{ $t('message.common.fullScreen') }}
                     </div>
                     <div class="delimiter"></div>
@@ -115,11 +115,17 @@ const activeTabPane = ref(TAB_PANE_VALUE.TASK_LOG);
 const show = ref(false);
 const tableRawData = ref<Record<string, string | number>>();
 const content = ref<string>('');
+const drawerHeight = ref(520);
+const drawerRef = ref<any>();
 
 const open = (rawData: Record<string, string | number>) => {
     tableRawData.value = rawData;
     // TODO: editor value
     show.value = true;
+};
+
+const expandDrawer = () => {
+    drawerRef.value.height = document.body.clientHeight;
 };
 
 const onTabChange = (value: TAB_PANE_VALUE) => {

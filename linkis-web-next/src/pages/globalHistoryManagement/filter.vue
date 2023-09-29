@@ -108,7 +108,6 @@
                 </template>
             </div>
         </FForm>
-
         <template v-if="isCheckingTaskToStop">
             <div class="buttons">
                 <FButton
@@ -130,29 +129,23 @@
 </template>
 
 <script lang="ts" setup>
-import { FForm } from '@fesjs/fes-design';
+import { FForm, FMessage } from '@fesjs/fes-design';
 import { ref, onMounted, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
 import api from '@/service/api';
+import { CheckedRow, CheckedRows } from './type';
+
+const { t } = useI18n();
 
 const emit = defineEmits(['search']);
 const props = defineProps<{
     pageSize: number;
     currentPage: number;
-    checkedKeys: Array<string | number>;
+    checkedRows: CheckedRows;
 }>();
 
 const isCheckingTaskToStop = ref(false);
 const formRef = ref<null | typeof FForm>(null);
-
-/**
- * TODO:
- * 1. 获取数据接口（搜索）
- * 4. 字段和后端对齐
- * 5. 重置按钮
- * 6. 批量停止接口
- * 7. 查看（可能需要单独的接口）
- * 8. 任务数量分类统计接口（可能需要单独的接口）
- */
 
 const formData = reactive({
     id: '',
@@ -167,7 +160,7 @@ const engineList = ref<Array<{ label: string; value: string }>>([]);
 const statusList = ref([
     {
         label: 'message.linkis.statusType.all',
-        value: 'all',
+        value: '',
     },
     {
         label: 'message.linkis.statusType.inited',
@@ -227,10 +220,49 @@ const reset = () => {
     formData.engine = '';
     formData.dateRange = '';
     formData.creator = '';
+
+    search();
 };
 
 const confirmStop = () => {
-    console.log(1);
+    // instance, taskID, strongerExecId
+    const selected = props.checkedRows;
+
+    if (!selected.length) {
+        FMessage.warning(t('message.linkis.unselect'));
+        return;
+    }
+    const inst: Record<string, any> = {};
+    selected.forEach((it: CheckedRow) => {
+        if (inst[it.instance]) {
+            inst[it.instance].taskIDList.push(it.taskID);
+            inst[it.instance].idList.push(it.strongerExecId);
+        } else {
+            inst[it.instance] = {
+                taskIDList: [it.taskID],
+                idList: [it.strongerExecId],
+            };
+        }
+    });
+    const p: any[] = [];
+    Object.keys(inst).forEach((instkey) => {
+        if (instkey)
+            p.push(
+                api.fetch(
+                    `/entrance/${inst[instkey].idList[0]}/killJobs`,
+                    {
+                        idList: inst[instkey].idList,
+                        taskIDList: inst[instkey].taskIDList,
+                    },
+                    'post',
+                ),
+            );
+    });
+
+    Promise.all(p).then(() => {
+        FMessage.success(t('message.common.notice.kill.desc'));
+        search();
+    });
 };
 
 onMounted(() => {

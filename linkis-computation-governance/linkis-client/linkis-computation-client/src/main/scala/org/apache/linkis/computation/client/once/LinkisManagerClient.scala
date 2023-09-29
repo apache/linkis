@@ -17,9 +17,7 @@
 
 package org.apache.linkis.computation.client.once
 
-import org.apache.linkis.common.utils.Utils
 import org.apache.linkis.computation.client.once.action.{
-  AskEngineConnAction,
   CreateEngineConnAction,
   EngineConnOperateAction,
   GetEngineConnAction,
@@ -27,7 +25,6 @@ import org.apache.linkis.computation.client.once.action.{
   LinkisManagerAction
 }
 import org.apache.linkis.computation.client.once.result.{
-  AskEngineConnResult,
   CreateEngineConnResult,
   EngineConnOperateResult,
   GetEngineConnResult,
@@ -41,8 +38,6 @@ import org.apache.linkis.ujes.client.{UJESClient, UJESClientImpl}
 import java.io.Closeable
 
 trait LinkisManagerClient extends Closeable {
-
-  def askEngineConn(askEngineConnAction: AskEngineConnAction): AskEngineConnResult
 
   def createEngineConn(createEngineConnAction: CreateEngineConnAction): CreateEngineConnResult
 
@@ -87,21 +82,7 @@ class LinkisManagerClientImpl(ujesClient: UJESClient) extends LinkisManagerClien
 
   override def executeEngineConnOperation(
       engineConnOperateAction: EngineConnOperateAction
-  ): EngineConnOperateResult = {
-    Utils.tryCatch {
-      val rs = execute[EngineConnOperateResult](engineConnOperateAction)
-      rs
-    } { case e: Exception =>
-      val rs = new EngineConnOperateResult
-      rs.setIsError(true)
-      rs.setErrorMsg(e.getMessage)
-      rs
-    }
-  }
+  ): EngineConnOperateResult = execute(engineConnOperateAction)
 
   override def close(): Unit = ujesClient.close()
-
-  override def askEngineConn(askEngineConnAction: AskEngineConnAction): AskEngineConnResult =
-    execute(askEngineConnAction)
-
 }

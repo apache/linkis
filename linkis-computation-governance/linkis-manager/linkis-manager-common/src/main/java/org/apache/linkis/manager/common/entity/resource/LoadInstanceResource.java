@@ -53,11 +53,6 @@ public class LoadInstanceResource extends Resource {
       this.memory = d.getLoadInstanceResource().getMemory();
       this.cores = d.getLoadInstanceResource().getCores();
       this.instances = d.getLoadInstanceResource().getInstances();
-    } else if (r instanceof DriverAndKubernetesResource) {
-      DriverAndKubernetesResource d = (DriverAndKubernetesResource) r;
-      this.memory = d.getLoadInstanceResource().getMemory();
-      this.cores = d.getLoadInstanceResource().getCores();
-      this.instances = d.getLoadInstanceResource().getInstances();
     } else {
       this.memory = Long.MAX_VALUE;
       this.cores = Integer.MAX_VALUE;
@@ -170,7 +165,7 @@ public class LoadInstanceResource extends Resource {
   public String toString() {
     return String.format(
         "Number of instances(实例数)：%d，(RAM)内存：%s ,cpu: %s",
-        this.getInstances(), this.getMemory(), this.getCores());
+        this.getInstances(), this.getCores(), this.getMemory());
   }
 
   public long getMemory() {

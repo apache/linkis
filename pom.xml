@@ -102,7 +102,7 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.5.0-SNAPSHOT</revision>
+    <revision>1.4.0-SNAPSHOT</revision>
 
     <zookeeper.version>3.5.9</zookeeper.version>
     <curator.version>4.2.0</curator.version>
@@ -121,9 +121,7 @@
     <spark.hadoop.version>${hadoop.version}</spark.hadoop.version>
     <spark.hadoop.scope>provided</spark.hadoop.scope>
 
-    <flink.version>1.16.2</flink.version>
-    <libfb303.version>0.9.3</libfb303.version>
-    <minlog.version>1.3.0</minlog.version>
+    <flink.version>1.12.2</flink.version>
     <io_file.version>1.0</io_file.version>
     <jdbc.version>4</jdbc.version>
     <trino.version>371</trino.version>
@@ -131,15 +129,11 @@
     <openlookeng.version>1.5.0</openlookeng.version>
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
-    <nebula.version>3.0.0</nebula.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>
     <shell.version>1</shell.version>
     <sqoop.version>1.4.6</sqoop.version>
     <elasticsearch.version>7.6.2</elasticsearch.version>
-
-    <!-- This is the same as the kubernetes-client version referenced in spark3.2.1 -->
-    <kubernetes-client.version>5.4.1</kubernetes-client.version>
 
     <!-- marshalling -->
     <gson.version>2.8.9</gson.version>
@@ -208,7 +202,7 @@
     <junit5.version>5.7.2</junit5.version>
     <mockito-bom.version>4.3.1</mockito-bom.version>
     <assertj.version>3.17.2</assertj.version>
-    <h2.version>2.2.220</h2.version>
+    <h2.version>2.1.214</h2.version>
 
     <!-- spring -->
     <spring-framework.version>5.2.23.RELEASE</spring-framework.version>

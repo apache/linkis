@@ -31,7 +31,7 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-pes-client</artifactId>
+      <artifactId>linkis-bml-client</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>

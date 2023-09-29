@@ -63,8 +63,4 @@ public class LabelKeyConstant {
   public static final String TENANT_KEY = "tenant";
 
   public static final String FIXED_EC_KEY = "fixedEngineConn";
-
-  public static final String ENGINGE_CONN_RUNTIME_MODE_KEY = "engingeConnRuntimeMode";
-
-  public static final String MANAGER_KEY = "manager";
 }

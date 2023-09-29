@@ -43,10 +43,12 @@ class EngineConnTimedLock(private var timeout: Long)
   val releaseScheduler = new ScheduledThreadPoolExecutor(1)
   var releaseTask: ScheduledFuture[_] = null
   var lastLockTime: Long = 0
+  var lockedBy: AccessibleExecutor = null
 
   override def acquire(executor: AccessibleExecutor): Unit = {
     lock.acquire()
     lastLockTime = System.currentTimeMillis()
+    lockedBy = executor
     scheduleTimeout
   }
 
@@ -56,6 +58,8 @@ class EngineConnTimedLock(private var timeout: Long)
     logger.debug("try to lock for succeed is  " + succeed.toString)
     if (succeed) {
       lastLockTime = System.currentTimeMillis()
+      lockedBy = executor
+      logger.debug("try to lock for add time out task ! Locked by thread : " + lockedBy.getId)
       scheduleTimeout
     }
     succeed
@@ -64,13 +68,18 @@ class EngineConnTimedLock(private var timeout: Long)
   // Unlock callback is not called in release method, because release method is called actively
   override def release(): Unit = {
     logger.debug(
-      s"try to release for lock: ${lock.toString}, current thread " + Thread.currentThread().getName
+      "try to release for lock," + lockedBy + ",current thread " + Thread.currentThread().getName
     )
-    if (releaseTask != null) {
-      releaseTask.cancel(true)
-      releaseTask = null
+    if (lockedBy != null) {
+      // && lockedBy == Thread.currentThread()   Inconsistent thread(线程不一致)
+      logger.debug("try to release for lockedBy and thread ")
+      if (releaseTask != null) {
+        releaseTask.cancel(true)
+        releaseTask = null
+      }
+      logger.debug("try to release for lock release success")
+      lockedBy = null
     }
-    logger.debug("try to release for lock release success")
     unlockCallback(lock.toString)
     resetLock()
   }
@@ -88,6 +97,7 @@ class EngineConnTimedLock(private var timeout: Long)
         releaseScheduler.purge()
       }
       lock.release()
+      lockedBy = null
     }
     resetLock()
   }
@@ -99,18 +109,13 @@ class EngineConnTimedLock(private var timeout: Long)
           new Runnable {
             override def run(): Unit = {
               synchronized {
-                ExecutorManager.getInstance.getReportExecutor match {
-                  case reportExecutor: AccessibleExecutor =>
-                    if (
-                        isAcquired() && NodeStatus.Idle == reportExecutor.getStatus && isExpired()
-                    ) {
-                      // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
-                      logger.info(s"Lock : [${lock.toString} was released due to timeout.")
-                      release()
-                    } else if (isAcquired() && NodeStatus.Busy == reportExecutor.getStatus) {
-                      lastLockTime = System.currentTimeMillis()
-                      logger.info("Update lastLockTime because executor is busy.")
-                    }
+                if (isAcquired() && NodeStatus.Idle == lockedBy.getStatus && isExpired()) {
+                  // unlockCallback depends on lockedBy, so lockedBy cannot be set null before unlockCallback
+                  logger.info(s"Lock : [${lock.toString} was released due to timeout.")
+                  release()
+                } else if (isAcquired() && NodeStatus.Busy == lockedBy.getStatus) {
+                  lastLockTime = System.currentTimeMillis()
+                  logger.info("Update lastLockTime because executor is busy.")
                 }
               }
             }
@@ -139,12 +144,14 @@ class EngineConnTimedLock(private var timeout: Long)
   }
 
   override def renew(): Boolean = {
-    if (isAcquired && releaseTask != null) {
-      if (releaseTask.cancel(false)) {
-        releaseScheduler.purge()
-        scheduleTimeout
-        lastLockTime = System.currentTimeMillis()
-        return true
+    if (lockedBy != null) {
+      if (isAcquired && releaseTask != null) {
+        if (releaseTask.cancel(false)) {
+          releaseScheduler.purge()
+          scheduleTimeout
+          lastLockTime = System.currentTimeMillis()
+          return true
+        }
       }
     }
     false
@@ -188,7 +195,7 @@ class EngineConnTimedLock(private var timeout: Long)
     ExecutorListenerBusContext
       .getExecutorListenerBusContext()
       .getEngineConnAsyncListenerBus
-      .post(ExecutorUnLockEvent(null, lockStr))
+      .post(ExecutorUnLockEvent(null, lockStr.toString))
   }
 
   override def onExecutorCreated(executorCreateEvent: ExecutorCreateEvent): Unit = {}

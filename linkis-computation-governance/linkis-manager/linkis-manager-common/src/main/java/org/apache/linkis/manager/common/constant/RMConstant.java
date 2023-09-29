@@ -27,9 +27,6 @@ public class RMConstant {
 
   public static final String CPU_UNIT = "cores";
 
-  public static final String KUBERNETES_CPU_UNIT = "milli cores";
-  public static final String KUBERNETES_NAMESPACE = "namespace";
-  public static final String KUBERNETES_NAMESPACE_UNIT = "";
   public static final String MEMORY_UNIT_BYTE = "bytes";
 
   public static final String INSTANCE_UNIT = "";

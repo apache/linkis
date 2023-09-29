@@ -359,11 +359,9 @@ public class EMRestfulApi {
           "Fail to process the operation parameters, cased by "
               + ExceptionUtils.getRootCauseMessage(e));
     }
-
+    String engineConnInstance = (String) parameters.get("engineConnInstance");
     return executeECMOperation(
-        ecmNode,
-        parameters.getOrDefault("engineConnInstance", "").toString(),
-        new ECMOperateRequest(userName, parameters));
+        ecmNode, engineConnInstance, new ECMOperateRequest(userName, parameters));
   }
 
   @ApiOperation(value = "openEngineLog", notes = "open Engine log", response = Message.class)
@@ -453,7 +451,7 @@ public class EMRestfulApi {
       ECResourceInfoRecord ecResourceInfoRecord =
           ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
       if (Objects.isNull(ecResourceInfoRecord)) {
-        return Message.error("EC instance: " + engineInstance + " not exist ");
+        return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
       }
       ecmOperateRequest.getParameters().put("logDirSuffix", ecResourceInfoRecord.getLogDirSuffix());
     }

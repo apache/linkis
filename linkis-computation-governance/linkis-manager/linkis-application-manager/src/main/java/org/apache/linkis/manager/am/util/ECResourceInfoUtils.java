@@ -125,7 +125,6 @@ public class ECResourceInfoUtils {
     engineNode.setTicketId(ecInfo.getTicketId());
     engineNode.setStartTime(ecInfo.getCreateTime());
     engineNode.setUpdateTime(ecInfo.getReleaseTime());
-    engineNode.setEcMetrics(ecInfo.getMetrics());
     return engineNode;
   }
 

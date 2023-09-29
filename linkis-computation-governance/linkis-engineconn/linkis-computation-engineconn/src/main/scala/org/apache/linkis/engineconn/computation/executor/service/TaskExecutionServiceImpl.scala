@@ -400,7 +400,15 @@ class TaskExecutionServiceImpl
     Utils.tryFinally {
       val jobId = JobUtils.getJobIdFromMap(task.getProperties)
       LoggerUtils.setJobIdMDC(jobId)
-      executor.execute(task)
+      val response = executor.execute(task)
+      response match {
+        case ErrorExecuteResponse(message, throwable) =>
+          sendToEntrance(task, ResponseTaskError(task.getTaskId, message))
+          logger.error(message, throwable)
+          LogHelper.pushAllRemainLogs()
+          executor.transformTaskStatus(task, ExecutionNodeStatus.Failed)
+        case _ => logger.warn(s"task get response is $response")
+      }
       clearCache(task.getTaskId)
     } {
       LoggerUtils.removeJobIdMDC()

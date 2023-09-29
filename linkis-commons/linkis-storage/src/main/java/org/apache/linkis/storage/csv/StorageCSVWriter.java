@@ -52,18 +52,7 @@ public class StorageCSVWriter extends CSVFsWriter {
     this.quoteRetouchEnable = quoteRetouchEnable;
     this.outputStream = outputStream;
 
-    if (StringUtils.isBlank(separator)) {
-      this.delimiter = "\t";
-    } else {
-      switch (separator) {
-        case "t":
-          this.delimiter = "\t";
-          break;
-        default:
-          this.delimiter = separator;
-          break;
-      }
-    }
+    this.delimiter = StringUtils.isNotEmpty(separator) ? separator : "\t";
     this.buffer = new StringBuilder(50000);
   }
 
@@ -100,10 +89,6 @@ public class StorageCSVWriter extends CSVFsWriter {
                   ? quotationMarks + value.replaceAll(quotationMarks, "") + quotationMarks
                   : value;
       rowBuilder.append(decoratedValue).append(delimiter);
-    }
-    if (rowBuilder.length() > 0 && rowBuilder.toString().endsWith(delimiter)) {
-      int index = rowBuilder.lastIndexOf(delimiter);
-      rowBuilder.delete(index, index + delimiter.length());
     }
     rowBuilder.append("\n");
     if (logger.isDebugEnabled()) {

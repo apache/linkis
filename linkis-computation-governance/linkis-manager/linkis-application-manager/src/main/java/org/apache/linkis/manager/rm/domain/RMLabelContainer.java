@@ -18,13 +18,10 @@
 package org.apache.linkis.manager.rm.domain;
 
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
-import org.apache.linkis.manager.common.conf.RMConfiguration;
 import org.apache.linkis.manager.label.builder.CombinedLabelBuilder;
-import org.apache.linkis.manager.label.conf.LabelManagerConf;
 import org.apache.linkis.manager.label.entity.CombinedLabel;
 import org.apache.linkis.manager.label.entity.Label;
 import org.apache.linkis.manager.label.entity.ResourceLabel;
-import org.apache.linkis.manager.label.entity.cluster.ClusterLabel;
 import org.apache.linkis.manager.label.entity.em.EMInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineInstanceLabel;
 import org.apache.linkis.manager.label.entity.engine.EngineTypeLabel;
@@ -52,8 +49,7 @@ public class RMLabelContainer {
   private EngineTypeLabel engineTypeLabel;
   private UserCreatorLabel userCreatorLabel;
   private EngineInstanceLabel engineInstanceLabel;
-  private ClusterLabel clusterLabel;
-  private CombinedLabel combinedResourceLabel;
+  private CombinedLabel combinedUserCreatorEngineTypeLabel;
   private Label currentLabel;
 
   public RMLabelContainer(List<Label<?>> labels) {
@@ -61,16 +57,14 @@ public class RMLabelContainer {
     this.lockedLabels = Lists.newArrayList();
     try {
       if (getUserCreatorLabel() != null && getEngineTypeLabel() != null) {
-        List<Label> combinedLabel = Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel());
-        ClusterLabel clusterLabel = getClusterLabel();
-        if (shouldCombinedClusterLabel(clusterLabel)) {
-          combinedLabel.add(clusterLabel);
-        }
-        this.combinedResourceLabel = (CombinedLabel) combinedLabelBuilder.build("", combinedLabel);
-        this.labels.add(combinedResourceLabel);
+        this.combinedUserCreatorEngineTypeLabel =
+            (CombinedLabel)
+                combinedLabelBuilder.build(
+                    "", Lists.newArrayList(getUserCreatorLabel(), getEngineTypeLabel()));
+        this.labels.add(combinedUserCreatorEngineTypeLabel);
       }
     } catch (Exception e) {
-      logger.warn("failed to get combinedResourceLabel", e);
+      logger.warn("failed to get combinedUserCreatorEngineTypeLabel", e);
     }
     this.labels = LabelUtils.distinctLabel(this.labels, labels);
   }
@@ -162,31 +156,8 @@ public class RMLabelContainer {
     return null;
   }
 
-  public ClusterLabel getClusterLabel() {
-    if (clusterLabel == null) {
-      for (Label label : labels) {
-        if (label instanceof ClusterLabel) {
-          return (ClusterLabel) label;
-        }
-      }
-    } else {
-      return clusterLabel;
-    }
-    logger.warn("ClusterLabel not found");
-    return null;
-  }
-
-  private boolean shouldCombinedClusterLabel(ClusterLabel clusterLabel) {
-    return !(clusterLabel == null
-        || (LabelManagerConf.COMBINED_WITHOUT_YARN_DEFAULT
-            && clusterLabel
-                .getClusterName()
-                .equals(RMConfiguration.DEFAULT_YARN_CLUSTER_NAME.getValue())
-            && clusterLabel.getClusterType().equals(RMConfiguration.DEFAULT_YARN_TYPE.getValue())));
-  }
-
-  public CombinedLabel getCombinedResourceLabel() {
-    return combinedResourceLabel;
+  public CombinedLabel getCombinedUserCreatorEngineTypeLabel() {
+    return combinedUserCreatorEngineTypeLabel;
   }
 
   public Label getCurrentLabel() {
@@ -224,8 +195,6 @@ public class RMLabelContainer {
         + userCreatorLabel
         + ", engineInstanceLabel="
         + engineInstanceLabel
-        + ", clusterLabel="
-        + clusterLabel
         + ", currentLabel="
         + currentLabel
         + '}';

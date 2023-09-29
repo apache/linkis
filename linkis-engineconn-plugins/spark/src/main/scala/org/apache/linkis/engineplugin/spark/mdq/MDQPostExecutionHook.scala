@@ -56,11 +56,7 @@ class MDQPostExecutionHook extends SparkPostExecutionHook with Logging {
       case l: CodeLanguageLabel => l.getCodeType
       case _ => ""
     }
-    if (
-        StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(
-          runType
-        ) || (code != null && code.contains(SparkConfiguration.SCALA_PARSE_APPEND_CODE))
-    ) {
+    if (StringUtils.isEmpty(runType) || !SparkKind.FUNCTION_MDQ_TYPE.equalsIgnoreCase(runType)) {
       return
     }
     val sender = Sender.getSender(SparkConfiguration.MDQ_APPLICATION_NAME.getValue)

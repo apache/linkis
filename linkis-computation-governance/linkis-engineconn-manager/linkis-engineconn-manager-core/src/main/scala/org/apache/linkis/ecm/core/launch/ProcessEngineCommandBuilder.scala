@@ -77,7 +77,7 @@ class UnixProcessEngineCommandBuilder extends ShellProcessEngineCommandBuilder {
     newLine("linkis_engineconn_errorcode=$?")
     newLine("if [ $linkis_engineconn_errorcode -ne 0 ]")
     newLine("then")
-    newLine("  timeout 10 tail -1000 ${LOG_DIRS}/stderr")
+    newLine("  tail -1000 ${LOG_DIRS}/stderr")
     newLine("  exit $linkis_engineconn_errorcode")
     newLine("fi")
   }

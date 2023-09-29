@@ -47,9 +47,6 @@ public interface NodeLabelService {
 
   void updateLabelsToNode(ServiceInstance instance, List<Label<?>> labels);
 
-  void labelsFromInstanceToNewInstance(
-      ServiceInstance oldServiceInstance, ServiceInstance newServiceInstance);
-
   /**
    * Remove the labels related by node instance
    *

@@ -72,9 +72,7 @@ public abstract class AbstractFileSource implements FileSource {
     return Arrays.stream(fileSplits)
         .map(FileSplit::getParams)
         .flatMap(map -> map.entrySet().stream())
-        .collect(
-            Collectors.toMap(
-                Map.Entry::getKey, Map.Entry::getValue, (existingValue, newValue) -> newValue));
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   @Override
@@ -107,18 +105,5 @@ public abstract class AbstractFileSource implements FileSource {
     return Arrays.stream(fileSplits)
         .map(fileSplit -> fileSplit.getFileInfo(needToCountRowNumber))
         .toArray(Pair[]::new);
-  }
-
-  @Override
-  public FileSource limitBytes(Long limitBytes) {
-    Arrays.stream(fileSplits).forEach(fileSplit -> fileSplit.setLimitBytes(limitBytes));
-    return this;
-  }
-
-  @Override
-  public FileSource limitColumnLength(int limitColumnLength) {
-    Arrays.stream(fileSplits)
-        .forEach(fileSplit -> fileSplit.setLimitColumnLength(limitColumnLength));
-    return this;
   }
 }

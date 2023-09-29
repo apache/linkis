@@ -21,10 +21,7 @@ import org.apache.linkis.DataWorkCloudApplication
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
-import org.apache.linkis.engineconn.acessible.executor.listener.event.{
-  TaskResponseErrorEvent,
-  TaskStatusChangedEvent
-}
+import org.apache.linkis.engineconn.acessible.executor.listener.event.TaskStatusChangedEvent
 import org.apache.linkis.engineconn.common.conf.{EngineConnConf, EngineConnConstant}
 import org.apache.linkis.engineconn.computation.executor.conf.ComputationExecutorConf
 import org.apache.linkis.engineconn.computation.executor.entity.EngineConnTask
@@ -240,9 +237,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       response = response match {
         case _: OutputExecuteResponse =>
           succeedTasks.increase()
+          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           SuccessExecuteResponse()
         case s: SuccessExecuteResponse =>
           succeedTasks.increase()
+          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
           s
         case _ => response
       }
@@ -262,17 +261,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     taskCache.put(engineConnTask.getTaskId, engineConnTask)
     lastTask = engineConnTask
     val response = ensureOp {
-      val executeResponse = toExecuteTask(engineConnTask)
-      executeResponse match {
-        case successExecuteResponse: SuccessExecuteResponse =>
-          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Succeed)
-        case errorExecuteResponse: ErrorExecuteResponse =>
-          listenerBusContext.getEngineConnSyncListenerBus.postToAll(
-            TaskResponseErrorEvent(engineConnTask.getTaskId, errorExecuteResponse.message)
-          )
-          transformTaskStatus(engineConnTask, ExecutionNodeStatus.Failed)
-      }
-      executeResponse
+      toExecuteTask(engineConnTask)
     }
 
     Utils.tryAndWarn(afterExecute(engineConnTask, response))

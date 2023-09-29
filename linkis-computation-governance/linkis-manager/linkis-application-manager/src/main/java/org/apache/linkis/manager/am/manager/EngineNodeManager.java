@@ -38,8 +38,6 @@ public interface EngineNodeManager {
 
   EngineNode getEngineNodeInfoByDB(EngineNode engineNode);
 
-  EngineNode getEngineNodeInfoByTicketId(String ticketId);
-
   /**
    * Get detailed engine information from the persistence
    *

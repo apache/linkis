@@ -810,7 +810,7 @@ CREATE TABLE linkis_cg_manager_engine_em (
 DROP TABLE IF EXISTS "linkis_cg_manager_label";
 CREATE TABLE linkis_cg_manager_label (
 	id serial4 NOT NULL,
-	label_key varchar(50) NOT NULL,
+	label_key varchar(32) NOT NULL,
 	label_value varchar(255) NOT NULL,
 	label_feature varchar(16) NOT NULL,
 	label_value_size int4 NOT NULL,
@@ -854,7 +854,7 @@ CREATE TABLE linkis_cg_ec_resource_info_record (
 	service_instance varchar(128) NULL,
 	ecm_instance varchar(128) NULL,
 	ticket_id varchar(100) NOT NULL,
-	status varchar(50) DEFAULT NULL,
+	status varchar(50) NOT NULL,
 	log_dir_suffix varchar(128) NULL,
 	request_times int4 NULL,
 	request_resource varchar(1020) NULL,

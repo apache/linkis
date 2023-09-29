@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-pes-common</artifactId>
+      <artifactId>linkis-metadata-query-common</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

@@ -97,8 +97,5 @@
         <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
-        <logger name="org.apache.tez.client.TezClient" level="INFO" additivity="true">
-            <appender-ref ref="YarnAppIdOutputFile"/>
-        </logger>
    </loggers>
 </configuration>

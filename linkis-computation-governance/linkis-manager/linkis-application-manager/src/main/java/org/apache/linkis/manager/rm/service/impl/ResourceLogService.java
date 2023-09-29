@@ -150,10 +150,11 @@ public class ResourceLogService {
     if (RMUtils.RM_RESOURCE_ACTION_RECORD.getValue()) {
       LinkisUtils.tryAndWarn(
           () -> {
-            CombinedLabel combinedLabel = labelContainer.getCombinedResourceLabel();
+            CombinedLabel userCreatorEngineType =
+                labelContainer.getCombinedUserCreatorEngineTypeLabel();
             EngineInstanceLabel engineInstanceLabel = labelContainer.getEngineInstanceLabel();
             EMInstanceLabel eMInstanceLabel = labelContainer.getEMInstanceLabel();
-            if (combinedLabel == null) {
+            if (userCreatorEngineType == null) {
               return;
             }
             ECResourceInfoRecord ecResourceInfoRecord =
@@ -170,7 +171,11 @@ public class ResourceLogService {
                       : "";
               ecResourceInfoRecord =
                   new ECResourceInfoRecord(
-                      combinedLabel.getStringValue(), user, ticketId, resource, logDirSuffix);
+                      userCreatorEngineType.getStringValue(),
+                      user,
+                      ticketId,
+                      resource,
+                      logDirSuffix);
               ecResourceRecordMapper.insertECResourceInfoRecord(ecResourceInfoRecord);
             }
             if (engineInstanceLabel != null) {

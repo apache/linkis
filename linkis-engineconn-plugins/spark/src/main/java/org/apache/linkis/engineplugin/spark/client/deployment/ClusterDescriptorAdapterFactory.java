@@ -19,25 +19,11 @@ package org.apache.linkis.engineplugin.spark.client.deployment;
 
 import org.apache.linkis.engineplugin.spark.client.context.ExecutionContext;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class ClusterDescriptorAdapterFactory {
 
   public static ClusterDescriptorAdapter create(ExecutionContext executionContext) {
-    String master = executionContext.getSparkConfig().getMaster();
-
     ClusterDescriptorAdapter clusterDescriptorAdapter =
         new YarnApplicationClusterDescriptorAdapter(executionContext);
-
-    if (StringUtils.isNotBlank(master)) {
-      if (master.equalsIgnoreCase("k8s-operator")) {
-        clusterDescriptorAdapter = new KubernetesOperatorClusterDescriptorAdapter(executionContext);
-      } else if (master.equalsIgnoreCase("k8s-native")) {
-        clusterDescriptorAdapter =
-            new KubernetesApplicationClusterDescriptorAdapter(executionContext);
-      }
-    }
-
     return clusterDescriptorAdapter;
   }
 }

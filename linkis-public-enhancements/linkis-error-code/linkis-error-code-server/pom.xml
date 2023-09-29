@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-pes-common</artifactId>
+      <artifactId>linkis-error-code-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 

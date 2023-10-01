@@ -99,6 +99,7 @@ public class ResultSetReaderFactory {
       }
 
       Fs fs = FSFactory.getFs(resPath);
+      logger.info("Try to init Fs with path:{}", resPath.getPath());
       try {
         fs.init(null);
         InputStream read = fs.read(resPath);

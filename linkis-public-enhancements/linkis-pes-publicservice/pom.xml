@@ -21,12 +21,14 @@
     <groupId>org.apache.linkis</groupId>
     <artifactId>linkis</artifactId>
     <version>${revision}</version>
-    <relativePath>../../../../pom.xml</relativePath>
+    <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>linkis-datasource-manager-server</artifactId>
+  <artifactId>linkis-pes-publicservice</artifactId>
+  <packaging>jar</packaging>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-module</artifactId>
@@ -38,58 +40,64 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- data source manager common dependency-->
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-mybatis</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-pes-common</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>5.1.2.Final</version>
     </dependency>
 
-    <!--bml client-->
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-pes-client</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
+          <groupId>org.apache.linkis</groupId>
+          <artifactId>linkis-storage</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-storage</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-quartz</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-logging</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-mybatis</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-beans</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!--rpc-->
-    <dependency>
-      <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-io_file-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.oshi</groupId>
+      <artifactId>oshi-core</artifactId>
+      <version>6.2.1</version>
     </dependency>
   </dependencies>
 
@@ -99,6 +107,7 @@
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -127,6 +136,8 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
+
 </project>

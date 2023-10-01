@@ -127,7 +127,7 @@ public class LinkisJobOper implements JobOper {
       //      jobExecuteResult = client.execute(jobExecuteAction);
 
       jobSubmitResult = client.submit(jobSubmitAction);
-      logger.info("Response info from Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitAction));
+      logger.info("Response info from Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitResult));
 
     } catch (Exception e) {
       // must throw if exception

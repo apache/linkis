@@ -135,6 +135,7 @@ public interface FileSource extends Closeable {
   }
 
   static FileSplit createResultSetFileSplit(FsPath fsPath, InputStream is) {
+    logger.info("try create result set file split with path:{}", fsPath.getPath());
     ResultSet resultset = ResultSetFactory.getInstance().getResultSetByPath(fsPath);
     ResultSetReader resultsetReader = ResultSetReaderFactory.getResultSetReader(resultset, is);
     return new FileSplit(resultsetReader, resultset.resultSetType());

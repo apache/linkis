@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~ 
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~ 
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
+    <id>linkis-pes-publicservice</id>
+    <formats>
+        <format>dir</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>linkis-pes-publicservice</baseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <!-- Enable access to all projects in the current multimodule build! <useAllReactorProjects>true</useAllReactorProjects> -->
+            <!-- Now, select which projects to include in this module-set. -->
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <unpack>false</unpack>
+            <useStrictFiltering>false</useStrictFiltering>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
+            <excludes> <!-- 不包括 -->
+                <exclude>antlr:antlr:jar</exclude>
+                <exclude>aopalliance:aopalliance:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-annotations:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-core:jar</exclude>
+                <exclude>com.fasterxml.jackson.core:jackson-databind:jar</exclude>
+                <exclude>com.fasterxml.jackson.module:jackson-module-paranamer:jar</exclude>
+                <exclude>com.fasterxml.jackson.module:jackson-module-scala_2.11:jar</exclude>
+                <exclude>com.google.code.gson:gson:jar</exclude>
+                <exclude>com.google.guava:guava:jar</exclude>
+                <exclude>com.google.protobuf:protobuf-java:jar</exclude>
+                <exclude>com.netflix.archaius:archaius-core:jar</exclude>
+                <exclude>com.netflix.hystrix:hystrix-core:jar</exclude>
+                <exclude>com.netflix.netflix-commons:netflix-commons-util:jar</exclude>
+                <exclude>com.netflix.netflix-commons:netflix-statistics:jar</exclude>
+                <exclude>com.netflix.ribbon:ribbon:jar</exclude>
+                <exclude>com.netflix.ribbon:ribbon-core:jar</exclude>
+                <exclude>com.netflix.ribbon:ribbon-httpclient:jar</exclude>
+                <exclude>com.netflix.ribbon:ribbon-loadbalancer:jar</exclude>
+                <exclude>com.netflix.ribbon:ribbon-transport:jar</exclude>
+                <exclude>com.netflix.servo:servo-core:jar</exclude>
+                <exclude>com.ning:async-http-client:jar</exclude>
+                <exclude>com.sun.jersey.contribs:jersey-apache-client4:jar</exclude>
+                <exclude>com.sun.jersey:jersey-client:jar</exclude>
+                <exclude>com.sun.jersey:jersey-core:jar</exclude>
+                <exclude>com.sun.jersey:jersey-server:jar</exclude>
+                <exclude>com.sun.xml.bind:jaxb-impl:jar</exclude>
+                <exclude>org.apache.linkis:linkis-common:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils:jar</exclude>
+                <exclude>commons-beanutils:commons-beanutils-core:jar</exclude>
+                <exclude>commons-cli:commons-cli:jar</exclude>
+                <exclude>commons-collections:commons-collections:jar</exclude>
+                <exclude>commons-configuration:commons-configuration:jar</exclude>
+                <exclude>commons-daemon:commons-daemon:jar</exclude>
+                <exclude>commons-dbcp:commons-dbcp:jar</exclude>
+                <exclude>commons-digester:commons-digester:jar</exclude>
+                <exclude>commons-io:commons-io:jar</exclude>
+                <exclude>commons-lang:commons-lang:jar</exclude>
+                <exclude>commons-net:commons-net:jar</exclude>
+                <exclude>commons-pool:commons-pool:jar</exclude>
+                <exclude>io.netty:netty:jar</exclude>
+                <exclude>io.netty:netty-all:jar</exclude>
+                <exclude>io.netty:netty-buffer:jar</exclude>
+                <exclude>io.netty:netty-codec:jar</exclude>
+                <exclude>io.netty:netty-codec-http:jar</exclude>
+                <exclude>io.netty:netty-common:jar</exclude>
+                <exclude>io.netty:netty-handler:jar</exclude>
+                <exclude>io.netty:netty-transport:jar</exclude>
+                <exclude>io.netty:netty-transport-native-epoll:jar</exclude>
+                <exclude>io.reactivex:rxjava:jar</exclude>
+                <exclude>io.reactivex:rxnetty:jar</exclude>
+                <exclude>io.reactivex:rxnetty-contexts:jar</exclude>
+                <exclude>io.reactivex:rxnetty-servo:jar</exclude>
+                <exclude>javax.activation:activation:jar</exclude>
+                <exclude>javax.annotation:javax.annotation-api:jar</exclude>
+                <exclude>javax.inject:javax.inject:jar</exclude>
+                <exclude>javax.servlet:javax.servlet-api:jar</exclude>
+                <exclude>javax.servlet.jsp:jsp-api:jar</exclude>
+                <exclude>javax.xml.bind:jaxb-api:jar</exclude>
+                <exclude>javax.xml.stream:stax-api:jar</exclude>
+                <exclude>net.databinder.dispatch:dispatch-core_2.11:jar</exclude>
+                <exclude>net.databinder.dispatch:dispatch-json4s-jackson_2.11:jar</exclude>
+                <exclude>org.antlr:antlr-runtime:jar</exclude>
+                <exclude>org.antlr:stringtemplate:jar</exclude>
+                <exclude>org.apache.commons:commons-compress:jar</exclude>
+                <exclude>org.apache.commons:commons-math3:jar</exclude>
+                <exclude>org.apache.curator:curator-framework:jar</exclude>
+                <exclude>org.apache.curator:curator-recipes:jar</exclude>
+                <exclude>org.apache.directory.api:api-asn1-api:jar</exclude>
+                <exclude>org.apache.directory.api:api-util:jar</exclude>
+                <exclude>org.apache.directory.server:apacheds-i18n:jar</exclude>
+                <exclude>org.apache.directory.server:apacheds-kerberos-codec:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-annotations:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-auth:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-common:jar</exclude>
+                <exclude>org.apache.hadoop:hadoop-hdfs:jar</exclude>
+                <exclude>org.apache.htrace:htrace-core:jar</exclude>
+                <exclude>org.apache.logging.log4j:log4j-api:jar</exclude>
+                <exclude>org.apache.zookeeper:zookeeper:jar</exclude>
+                <exclude>org.aspectj:aspectjweaver:jar</exclude>
+                <exclude>org.bouncycastle:bcpkix-jdk15on:jar</exclude>
+                <exclude>org.bouncycastle:bcprov-jdk15on:jar</exclude>
+                <exclude>org.codehaus.jettison:jettison:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-continuation:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-http:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-io:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-jndi:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-plus:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-security:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-server:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-servlet:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-util:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-webapp:jar</exclude>
+                <exclude>org.eclipse.jetty:jetty-xml:jar</exclude>
+                <exclude>org.fusesource.leveldbjni:leveldbjni-all:jar</exclude>
+                <exclude>org.hdrhistogram:HdrHistogram:jar</exclude>
+                <exclude>org.json4s:json4s-ast_2.11:jar</exclude>
+                <exclude>org.json4s:json4s-core_2.11:jar</exclude>
+                <exclude>org.json4s:json4s-jackson_2.11:jar</exclude>
+                <exclude>org.jsoup:jsoup:jar</exclude>
+                <exclude>org.mortbay.jetty:jetty:jar</exclude>
+                <exclude>org.mortbay.jetty:jetty-util:jar</exclude>
+                <exclude>org.scala-lang.modules:scala-parser-combinators_2.11:jar</exclude>
+                <exclude>org.scala-lang.modules:scala-xml_2.11:jar</exclude>
+                <exclude>org.scala-lang:scala-compiler:jar</exclude>
+                <exclude>org.scala-lang:scala-library:jar</exclude>
+                <exclude>org.scala-lang:scala-reflect:jar</exclude>
+                <exclude>org.scala-lang:scalap:jar</exclude>
+                <exclude>org.slf4j:jul-to-slf4j:jar</exclude>
+                <exclude>org.slf4j:slf4j-api:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-autoconfigure:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter:jar</exclude>
+                <exclude>org.springframework.boot:spring-boot-starter-aop:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-commons:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-context:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-archaius:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-netflix-ribbon:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-archaius:jar</exclude>
+                <exclude>org.springframework.cloud:spring-cloud-starter-netflix-ribbon:jar</exclude>
+                <exclude>org.springframework.security:spring-security-crypto:jar</exclude>
+                <exclude>org.springframework.security:spring-security-rsa:jar</exclude>
+                <exclude>org.springframework:spring-aop:jar</exclude>
+                <exclude>org.springframework:spring-beans:jar</exclude>
+                <exclude>org.springframework:spring-context:jar</exclude>
+                <exclude>org.springframework:spring-core:jar</exclude>
+                <exclude>org.springframework:spring-expression:jar</exclude>
+                <!--<exclude>org.springframework:spring-jcl:jar</exclude>-->
+                <exclude>org.springframework:spring-web:jar</exclude>
+                <exclude>org.tukaani:xz:jar</exclude>
+                <exclude>org.yaml:snakeyaml:jar</exclude>
+                <exclude>xerces:xercesImpl:jar</exclude>
+                <exclude>xml-apis:xml-apis:jar</exclude>
+                <exclude>xmlenc:xmlenc:jar</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>
+

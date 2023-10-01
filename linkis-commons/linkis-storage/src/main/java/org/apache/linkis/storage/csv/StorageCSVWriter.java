@@ -91,14 +91,17 @@ public class StorageCSVWriter extends CSVFsWriter {
 
   private String compact(String[] row) {
     String quotationMarks = "\"";
+    String dealNewlineSymbolMarks = "\n";
     StringBuilder rowBuilder = new StringBuilder();
     for (String value : row) {
-      String decoratedValue =
-          StringUtils.isBlank(value)
-              ? value
-              : quoteRetouchEnable
-                  ? quotationMarks + value.replaceAll(quotationMarks, "") + quotationMarks
-                  : value;
+      String decoratedValue = value;
+      if (StringUtils.isNotBlank(value)) {
+        if (quoteRetouchEnable) {
+          decoratedValue = quotationMarks + value.replaceAll(quotationMarks, "") + quotationMarks;
+        }
+        decoratedValue = decoratedValue.replaceAll(dealNewlineSymbolMarks, " ");
+        logger.debug("decorateValue with input: {} output: {} ", value, decoratedValue);
+      }
       rowBuilder.append(decoratedValue).append(delimiter);
     }
     if (rowBuilder.length() > 0 && rowBuilder.toString().endsWith(delimiter)) {

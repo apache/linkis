@@ -20,7 +20,10 @@ package org.apache.linkis.storage.exception;
 public enum StorageErrorCode {
 
   /** */
-  FS_NOT_INIT(53001, "please init first(请先初始化)");
+  FS_NOT_INIT(53001, "please init first"),
+
+  INCONSISTENT_DATA(53001, "Inconsistent row data read,read %s,need rowLen %s"),
+  FS_OOM(53002, "OOM occurred while reading the file");
 
   StorageErrorCode(int errorCode, String message) {
     this.code = errorCode;

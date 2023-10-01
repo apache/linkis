@@ -61,7 +61,7 @@ public class TableResultSerializer extends ResultSerializer {
     int colByteLen = 0;
     int length = 0;
     for (Object data : line) {
-      byte[] bytes = data == null ? Dolphin.NULL_BYTES : Dolphin.getBytes(data);
+      byte[] bytes = data == null ? Dolphin.LINKIS_NULL_BYTES : Dolphin.getBytes(data);
       dataBytes.add(bytes);
       byte[] colBytes = Dolphin.getBytes(bytes.length);
       colIndex.add(colBytes);

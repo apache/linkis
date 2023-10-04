@@ -271,6 +271,15 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
           "specify jobContent map. Input format: -jobContentMap key1=value1 -jobContentMap key2=value2",
           true);
 
+  protected Flag versionFlag =
+      flag(
+          CliKeys.VERSION,
+          CliKeys.VERSION,
+          new String[] {"--version"},
+          "show version",
+          true,
+          false);
+
   protected Parameter<String[]> argumentsParas =
       parameter(
           CliKeys.LINKIS_CLIENT_COMMON,
@@ -286,6 +295,9 @@ public class UniversalCmdTemplate extends AbstractCmdTemplate implements Cloneab
 
   @Override
   public void checkParams() throws CommandException {
+    if (versionFlag.hasVal()) {
+      return;
+    }
     int cnt = 0;
     if (statusOpt.hasVal()) {
       cnt++;

@@ -35,6 +35,9 @@ object ResultSetAction {
     private var pageSize: Int = _
     private var charset: String = Configuration.BDP_ENCODING.getValue
 
+    // default value is :org.apache.linkis.storage.domain.Dolphin.LINKIS_NULL
+    private var nullValue: String = "LINKIS_NULL"
+
     def setUser(user: String): Builder = {
       this.user = user
       this
@@ -60,6 +63,11 @@ object ResultSetAction {
       this
     }
 
+    def setNullValue(nullValue: String): Builder = {
+      this.nullValue = nullValue
+      this
+    }
+
     def build(): ResultSetAction = {
       if (user == null) throw new UJESClientBuilderException("user is needed!")
       if (path == null) throw new UJESClientBuilderException("path is needed!")
@@ -68,6 +76,7 @@ object ResultSetAction {
       if (page > 0) resultSetAction.setParameter("page", page)
       if (pageSize > 0) resultSetAction.setParameter("pageSize", pageSize)
       resultSetAction.setParameter("charset", charset)
+      resultSetAction.setParameter("nullValue", nullValue)
       resultSetAction.setUser(user)
       resultSetAction
     }

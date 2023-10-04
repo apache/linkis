@@ -86,7 +86,7 @@ public class StorageResultSetReader<K extends MetaData, V extends Record>
     byte[] rowBuffer = null;
     try {
       rowBuffer = new byte[rowLen];
-      len = StorageUtils.readBytes(inputStream, rowBuffer, READ_CACHE);
+      len = StorageUtils.readBytes(inputStream, rowBuffer, rowLen);
     } catch (OutOfMemoryError error) {
       logger.error("Result set read oom, read size {} Byte", rowLen);
       throw new RuntimeException(error);

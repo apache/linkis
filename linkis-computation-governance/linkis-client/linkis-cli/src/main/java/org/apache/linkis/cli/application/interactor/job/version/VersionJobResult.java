@@ -15,6 +15,35 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.cli.application.entity.version;
+package org.apache.linkis.cli.application.interactor.job.version;
 
-public interface Version {}
+import org.apache.linkis.cli.application.entity.job.JobResult;
+
+import java.util.Map;
+
+public class VersionJobResult implements JobResult {
+  private Boolean success;
+  private String message;
+  private Map<String, String> extraMsg;
+
+  public VersionJobResult(Boolean success, String message, Map<String, String> extraMsg) {
+    this.success = success;
+    this.message = message;
+    this.extraMsg = extraMsg;
+  }
+
+  @Override
+  public Boolean isSuccess() {
+    return success;
+  }
+
+  @Override
+  public String getMessage() {
+    return message;
+  }
+
+  @Override
+  public Map<String, String> getExtraMessage() {
+    return extraMsg;
+  }
+}

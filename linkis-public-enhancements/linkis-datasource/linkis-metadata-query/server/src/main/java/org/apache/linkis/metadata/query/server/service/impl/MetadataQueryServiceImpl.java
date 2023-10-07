@@ -624,8 +624,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     return new GenerateSqlInfo();
   }
 
-  public GenerateSqlInfo getFlinkSqlByElasticsearch(
-      String table, List<MetaColumnInfo> columns) {
+  public GenerateSqlInfo getFlinkSqlByElasticsearch(String table, List<MetaColumnInfo> columns) {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
     String columnStr = "*";

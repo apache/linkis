@@ -464,12 +464,19 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
   public TemplateConfResponse queryKeyInfoList(TemplateConfRequest templateConfRequest) {
     TemplateConfResponse result = new TemplateConfResponse();
     String templateUid = templateConfRequest.getTemplateUuid();
-    if (StringUtils.isBlank(templateUid)) {
+    String templateName = templateConfRequest.getTemplateName();
+    if (StringUtils.isBlank(templateUid) && StringUtils.isBlank(templateName)) {
       return result;
     }
-    List<TemplateConfigKeyVO> voList =
-        templateConfigKeyMapper.selectInfoListByTemplateUuid(templateUid);
 
+    List<TemplateConfigKeyVO> voList = new ArrayList<>();
+
+    if (StringUtils.isNotBlank(templateUid)) {
+      voList = templateConfigKeyMapper.selectInfoListByTemplateUuid(templateUid);
+
+    } else {
+      voList = templateConfigKeyMapper.selectInfoListByTemplateName(templateName);
+    }
     List<TemplateConfKey> data = new ArrayList<>();
     if (voList != null) {
       for (TemplateConfigKeyVO temp : voList) {
@@ -481,7 +488,7 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         data.add(item);
       }
     }
-    result.setList(data);
+
     return result;
   }
 }

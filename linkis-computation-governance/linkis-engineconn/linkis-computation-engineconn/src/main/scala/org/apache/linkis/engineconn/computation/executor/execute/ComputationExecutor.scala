@@ -51,6 +51,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
+import scala.collection.JavaConverters._
+
 import com.google.common.cache.{Cache, CacheBuilder}
 
 abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
@@ -352,6 +354,25 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
         transformTaskStatus(task, ExecutionNodeStatus.Cancelled)
       }
     }
+  }
+
+  /**
+   * job task log print task params info
+   *
+   * @param engineExecutorContext
+   * @return
+   *   Unit
+   */
+
+  def printTaskParamsLog(engineExecutorContext: EngineExecutionContext): Unit = {
+    val sb = new StringBuilder
+    engineExecutorContext.getProperties.asScala.foreach { keyAndValue =>
+      sb.append(s"${keyAndValue._1}=${keyAndValue._2.toString}\n")
+    }
+    sb.append("\n")
+    engineExecutorContext.appendStdout(
+      LogUtils.generateInfo(s" Your job exec with configs:\n${sb.toString()}")
+    )
   }
 
   def transformTaskStatus(task: EngineConnTask, newStatus: ExecutionNodeStatus): Unit = {

@@ -139,6 +139,16 @@
   </select>
 
 
+  <select id="selectInfoListByTemplateName" resultMap="ResultMap">
+    select t.*, k.`key`
+    from linkis_ps_configuration_template_config_key t
+    JOIN linkis_ps_configuration_config_key  k
+    ON k.id=t.key_id
+    where t.template_name = #{templateName,jdbcType=VARCHAR}
+  </select>
+
+
+
   <select id="selectEngineTypeByTemplateUuid" resultType="java.lang.String">
     select distinct(k.`engine_conn_type`) from linkis_ps_configuration_config_key  k
     where k.id in

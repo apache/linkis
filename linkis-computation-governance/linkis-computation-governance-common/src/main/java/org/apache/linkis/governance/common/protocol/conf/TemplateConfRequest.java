@@ -23,6 +23,13 @@ public class TemplateConfRequest implements RequestProtocol {
 
   private String templateUuid;
 
+  private String templateName;
+
+  public TemplateConfRequest(String templateUuid, String templateName) {
+    this.templateUuid = templateUuid;
+    this.templateName = templateName;
+  }
+
   public TemplateConfRequest(String templateUuid) {
     this.templateUuid = templateUuid;
   }
@@ -33,5 +40,13 @@ public class TemplateConfRequest implements RequestProtocol {
 
   public void setTemplateUuid(String templateUuid) {
     this.templateUuid = templateUuid;
+  }
+
+  public String getTemplateName() {
+    return templateName;
+  }
+
+  public void setTemplateName(String templateName) {
+    this.templateName = templateName;
   }
 }

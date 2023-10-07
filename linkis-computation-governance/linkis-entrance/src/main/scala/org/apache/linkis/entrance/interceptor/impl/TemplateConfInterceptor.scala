@@ -27,7 +27,7 @@ class TemplateConfInterceptor extends EntranceInterceptor {
 
   override def apply(jobRequest: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
     if (EntranceConfiguration.TEMPLATE_CONF_SWITCH.getValue) {
-      TemplateConfUtils.dealWithStartParams(jobRequest, logAppender)
+      TemplateConfUtils.dealWithTemplateConf(jobRequest, logAppender)
     } else {
       jobRequest
     }

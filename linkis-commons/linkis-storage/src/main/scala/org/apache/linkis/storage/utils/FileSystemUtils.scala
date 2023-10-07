@@ -101,7 +101,7 @@ object FileSystemUtils extends Logging {
         if (!createParentWhenNotExists) {
           throw new IOException("parent dir " + filePath.getParent.getPath + " dose not exists.")
         }
-        mkdirsNew(fileSystem, filePath.getParent, user)
+        mkdirsAndSetOwner(fileSystem, filePath.getParent, user)
       }
       fileSystem.createNewFile(filePath)
       fileSystem.setOwner(filePath, user)
@@ -141,7 +141,7 @@ object FileSystemUtils extends Logging {
   }
 
   /**
-   * Recursively create a directory(递归创建目录) 默认添加setOwner
+   * Recursively create a directory(递归创建目录) 默认添加 Owner 信息
    * @param fileSystem
    * @param dest
    * @param user
@@ -149,7 +149,7 @@ object FileSystemUtils extends Logging {
    * @return
    */
   @throws[IOException]
-  def mkdirsNew(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
+  def mkdirsAndSetOwner(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()
     dirsToMake.push(dest)

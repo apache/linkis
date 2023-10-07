@@ -41,6 +41,7 @@ import org.apache.linkis.engineplugin.trino.password.{
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
 import org.apache.linkis.engineplugin.trino.utils.{TrinoCode, TrinoSQLHook}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
   LoadResource,
@@ -80,7 +81,6 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{Cache, CacheBuilder}
 import io.trino.client._
 import okhttp3.OkHttpClient
-import org.apache.linkis.governance.common.utils.JobUtils
 
 class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     extends ConcurrentComputationExecutor(outputPrintLimit) {

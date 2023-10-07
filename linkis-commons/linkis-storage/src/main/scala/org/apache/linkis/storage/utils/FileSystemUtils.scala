@@ -61,7 +61,7 @@ object FileSystemUtils extends Logging {
     }(Utils.tryQuietly(fileSystem.close()))
   }
 
-  @deprecated("please use createFileWithFileSystem")
+  @deprecated("please use createNewFileAndSetOwnerWithFileSystem")
   def createNewFileWithFileSystem(
       fileSystem: FileSystem,
       filePath: FsPath,
@@ -117,7 +117,7 @@ object FileSystemUtils extends Logging {
    * @return
    */
   @throws[IOException]
-  @deprecated("please use mkdirsNew")
+  @deprecated("please use mkdirsAndSetOwner")
   def mkdirs(fileSystem: FileSystem, dest: FsPath, user: String): Boolean = {
     var parentPath = dest.getParent
     val dirsToMake = new util.Stack[FsPath]()

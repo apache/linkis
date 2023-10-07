@@ -59,7 +59,12 @@ class HDFSCacheLogWriter(logPath: String, charset: String, sharedCache: Cache, u
 
   private def init(): Unit = {
     fileSystem.init(new util.HashMap[String, String]())
-    FileSystemUtils.createNewFileWithFileSystem(fileSystem, new FsPath(logPath), user, true)
+    FileSystemUtils.createNewFileAndSetOwnerWithFileSystem(
+      fileSystem,
+      new FsPath(logPath),
+      user,
+      true
+    )
   }
 
   @throws[IOException]

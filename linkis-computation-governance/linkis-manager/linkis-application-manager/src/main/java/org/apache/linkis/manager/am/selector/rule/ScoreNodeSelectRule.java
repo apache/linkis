@@ -55,13 +55,13 @@ public class ScoreNodeSelectRule implements NodeSelectRule {
         ScoreServiceInstance instanceB = (ScoreServiceInstance) nodeB;
         try {
           if (instanceA.getScore() > instanceB.getScore()) {
-            return 1;
+            return -1;
           }
         } catch (Exception e) {
           logger.warn("Failed to Compare resource ", e);
           return -1;
         }
-        return -1;
+        return 1;
       } else {
         return -1;
       }

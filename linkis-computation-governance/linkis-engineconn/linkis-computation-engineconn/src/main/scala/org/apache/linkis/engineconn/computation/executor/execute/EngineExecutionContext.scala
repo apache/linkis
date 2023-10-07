@@ -193,8 +193,16 @@ class EngineExecutionContext(executor: ComputationExecutor, executorUser: String
   def appendStdout(log: String): Unit = if (executor.isInternalExecute) {
     logger.info(log)
   } else {
+    var taskLog = log
+    if (
+        ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_ENABLED.getValue &&
+        log.length > ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue
+    ) {
+      taskLog =
+        s"${log.substring(0, ComputationExecutorConf.ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH.getValue)}..."
+    }
     val listenerBus = getEngineSyncListenerBus
-    getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, log)))
+    getJobId.foreach(jId => listenerBus.postToAll(TaskLogUpdateEvent(jId, taskLog)))
   }
 
   override def close(): Unit = {

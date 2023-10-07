@@ -23,7 +23,7 @@ import org.apache.linkis.common.utils.{Logging, Utils}
 import org.apache.linkis.engineconn.acessible.executor.entity.AccessibleExecutor
 import org.apache.linkis.engineconn.callback.service.{
   EngineConnAfterStartCallback,
-  EngineConnPidCallback
+  EngineConnIdentifierCallback
 }
 import org.apache.linkis.engineconn.common.conf.EngineConnConf
 import org.apache.linkis.engineconn.common.creation.EngineCreationContext
@@ -61,15 +61,16 @@ class CallbackEngineConnHook extends EngineConnHook with Logging {
     newMap.put("spring.mvc.servlet.path", ServerConfiguration.BDP_SERVER_RESTFUL_URI.getValue)
     DataWorkCloudApplication.main(DWCArgumentsParser.formatSpringOptions(newMap.toMap))
 
-    val engineConnPidCallBack = new EngineConnPidCallback()
-    Utils.tryAndError(engineConnPidCallBack.callback())
     logger.info("<--------------------SpringBoot App init succeed-------------------->")
   }
 
   override def beforeExecutionExecute(
       engineCreationContext: EngineCreationContext,
       engineConn: EngineConn
-  ): Unit = {}
+  ): Unit = {
+    val engineConnIdentifierCallback = new EngineConnIdentifierCallback()
+    Utils.tryAndError(engineConnIdentifierCallback.callback())
+  }
 
   override def afterExecutionExecute(
       engineCreationContext: EngineCreationContext,

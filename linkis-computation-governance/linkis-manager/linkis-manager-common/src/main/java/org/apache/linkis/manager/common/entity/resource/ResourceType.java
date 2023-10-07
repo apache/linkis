@@ -26,5 +26,7 @@ public enum ResourceType {
   LoadInstance,
   Yarn,
   DriverAndYarn,
+  Kubernetes,
+  DriverAndKubernetes,
   Special
 }

@@ -25,7 +25,7 @@ import org.apache.linkis.engineconn.computation.executor.execute.{
 }
 import org.apache.linkis.engineconn.computation.executor.utlis.ProgressUtils
 import org.apache.linkis.engineconn.core.exception.ExecutorHookFatalException
-import org.apache.linkis.engineconn.executor.entity.ResourceFetchExecutor
+import org.apache.linkis.engineconn.executor.entity.{ResourceFetchExecutor, YarnExecutor}
 import org.apache.linkis.engineplugin.spark.common.{Kind, SparkDataCalc}
 import org.apache.linkis.engineplugin.spark.cs.CSSparkHelper
 import org.apache.linkis.engineplugin.spark.extension.{
@@ -56,6 +56,7 @@ import scala.collection.mutable.ArrayBuffer
 abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
     extends ComputationExecutor
     with Logging
+    with YarnExecutor
     with ResourceFetchExecutor {
 
   private var initialized: Boolean = false
@@ -70,9 +71,17 @@ abstract class SparkEngineConnExecutor(val sc: SparkContext, id: Long)
 
   private var thread: Thread = _
 
+  private var applicationId: String = sc.applicationId
+
+  override def getApplicationId: String = applicationId
+
+  override def getApplicationURL: String = ""
+  override def getYarnMode: String = ""
+  override def getQueue: String = ""
+
   override def init(): Unit = {
     logger.info(s"Ready to change engine state!")
-//    setCodeParser()  // todo check
+    //    setCodeParser()  // todo check
     super.init()
   }
 

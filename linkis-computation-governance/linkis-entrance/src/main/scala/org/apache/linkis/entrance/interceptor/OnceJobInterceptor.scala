@@ -94,8 +94,8 @@ class OnceJobInterceptor extends EntranceInterceptor {
     s"/tmp/${task.getExecuteUser}/${task.getId}"
 
   protected def getJobContent(task: JobRequest): util.Map[String, AnyRef] = {
-    // TODO Wait for optimizing since the class `JobRequest` is waiting for optimizing .
     val jobContent = new util.HashMap[String, AnyRef]
+    jobContent.putAll(TaskUtils.getStartupMap(task.getParams))
     jobContent.put(TaskConstant.CODE, task.getExecutionCode)
     task.getLabels.foreach {
       case label: CodeLanguageLabel =>

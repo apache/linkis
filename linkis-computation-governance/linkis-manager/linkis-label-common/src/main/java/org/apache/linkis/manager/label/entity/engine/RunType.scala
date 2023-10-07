@@ -35,6 +35,7 @@ object RunType extends Enumeration {
   val PIPELINE = Value("pipeline")
   val JDBC = Value("jdbc")
   val PRESTO_SQL = Value("psql")
+  val NEBULA_SQL = Value("ngql")
   val JAR = Value("jar")
   val APPCONN = Value("appconn")
   val FUNCTION_MDQ_TYPE = Value("function.mdq")
@@ -42,6 +43,7 @@ object RunType extends Enumeration {
   val ES_JSON = Value("esjson")
 
   val TRINO_SQL = Value("tsql")
+  val JSON = Value("json")
 
 
   val SEATUNNEL_ZETA = Value("szeta")

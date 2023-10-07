@@ -35,7 +35,12 @@
 
     <dependency>
       <groupId>org.apache.linkis</groupId>
-      <artifactId>linkis-udf-common</artifactId>
+      <artifactId>linkis-pes-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.linkis</groupId>
+      <artifactId>linkis-pes-client</artifactId>
       <version>${project.version}</version>
     </dependency>
 

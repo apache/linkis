@@ -227,7 +227,7 @@
         linkis_ps_udf_baseinfo b
         on a.udf_id=b.id
         where udf_type=0
-        and b.path like CONCAT('%',#{arg1})
+        and b.path like CONCAT('%',#{arg1}::text)
     </select>
 
     <select id="getSameNameCountByUser" resultType="java.lang.Long" >
@@ -344,7 +344,7 @@
         <where>
             <if test="1 == 1">1 = 1</if>
             <if test="createUser != null">and pu.create_user = #{createUser}</if>
-            <if test="udfName != null">and pu.udf_name like CONCAT('%',#{udfName},'%')</if>
+            <if test="udfName != null">and pu.udf_name like CONCAT('%',#{udfName}::text,'%')</if>
             <if test="udfTypes != null">and pu.udf_type in
                 <foreach collection="udfTypes" open="(" close=")" item="item" separator=",">
                     #{item}

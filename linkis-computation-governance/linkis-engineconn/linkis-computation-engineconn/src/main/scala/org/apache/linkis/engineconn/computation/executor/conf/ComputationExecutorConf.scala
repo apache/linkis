@@ -118,4 +118,10 @@ object ComputationExecutorConf {
   val TASK_SUBMIT_WAIT_TIME_MS =
     CommonVars("linkis.ec.task.submit.wait.time.ms", 2L, "Task submit wait time(ms)").getValue
 
+  val ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_ENABLED =
+    CommonVars("linkis.ec.send.log.entrance.limit.enabled", true)
+
+  val ENGINE_SEND_LOG_TO_ENTRANCE_LIMIT_LENGTH =
+    CommonVars("linkis.ec.send.log.entrance.limit.length", 2000)
+
 }

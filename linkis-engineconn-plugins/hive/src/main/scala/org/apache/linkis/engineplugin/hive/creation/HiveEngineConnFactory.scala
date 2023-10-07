@@ -97,7 +97,7 @@ class HiveEngineConnFactory extends ComputationSingleExecutorEngineConnFactory w
       engineCreationContext: EngineCreationContext
   ): AbstractHiveSession = {
     // if hive engine support concurrent, return HiveConcurrentSession
-    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM) {
+    if (AccessibleExecutorConfiguration.ENGINECONN_SUPPORT_PARALLELISM.getHotValue()) {
       return doCreateHiveConcurrentSession(engineCreationContext.getOptions)
     }
 

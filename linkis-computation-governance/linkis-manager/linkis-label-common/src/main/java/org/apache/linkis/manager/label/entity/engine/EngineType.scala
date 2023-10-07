@@ -29,6 +29,8 @@ object EngineType extends Enumeration with Logging {
 
   val HIVE = Value("hive")
 
+  val HBASE = Value("hbase")
+
   val PYTHON = Value("python")
 
   val SHELL = Value("shell")
@@ -44,6 +46,8 @@ object EngineType extends Enumeration with Logging {
   val PIPELINE = Value("pipeline")
 
   val PRESTO = Value("presto")
+
+  val NEBULA = Value("nebula")
 
   val FLINK = Value("flink")
 
@@ -82,6 +86,7 @@ object EngineType extends Enumeration with Logging {
     case _ if null == str || "".equals(str) => null
     case _ if SPARK.toString.equalsIgnoreCase(str) => SPARK
     case _ if HIVE.toString.equalsIgnoreCase(str) => HIVE
+    case _ if HBASE.toString.equalsIgnoreCase(str) => HBASE
     case _ if PYTHON.toString.equalsIgnoreCase(str) => PYTHON
     case _ if SHELL.toString.equalsIgnoreCase(str) => SHELL
     case _ if JDBC.toString.equalsIgnoreCase(str) => JDBC
@@ -89,6 +94,7 @@ object EngineType extends Enumeration with Logging {
     case _ if IO_ENGINE_HDFS.toString.equalsIgnoreCase(str) => IO_ENGINE_HDFS
     case _ if PIPELINE.toString.equalsIgnoreCase(str) => PIPELINE
     case _ if PRESTO.toString.equalsIgnoreCase(str) => PRESTO
+    case _ if NEBULA.toString.equalsIgnoreCase(str) => NEBULA
     case _ if FLINK.toString.equalsIgnoreCase(str) => FLINK
     case _ if APPCONN.toString.equals(str) => APPCONN
     case _ if SQOOP.toString.equalsIgnoreCase(str) => SQOOP

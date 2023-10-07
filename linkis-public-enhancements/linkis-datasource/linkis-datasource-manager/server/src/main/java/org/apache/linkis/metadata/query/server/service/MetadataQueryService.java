@@ -281,4 +281,12 @@ public interface MetadataQueryService {
       String userName,
       String envId)
       throws ErrorException;
+
+  GenerateSqlInfo getFlinkSqlByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId);
 }

@@ -30,6 +30,7 @@ import org.apache.linkis.metadata.query.common.domain.DataSourceTypeEnum;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadata.query.common.domain.FlinkSqlTemplate;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
@@ -565,6 +566,155 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
           GenerateSqlInfo.class);
     }
     return new GenerateSqlInfo();
+  }
+
+  @Override
+  public GenerateSqlInfo getFlinkSqlByDsNameAndEnvId(
+      String dataSourceName,
+      String database,
+      String table,
+      String system,
+      String userName,
+      String envId) {
+    DsInfoResponse dsInfoResponse =
+        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+
+    if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
+      List<MetaColumnInfo> columns = new ArrayList<>();
+      try {
+        columns =
+            invokeMetaMethod(
+                dsInfoResponse.getDsType(),
+                "getColumns",
+                new Object[] {
+                  dsInfoResponse.getCreator(),
+                  dsInfoResponse.getParams(),
+                  database,
+                  dsInfoResponse
+                          .getDsType()
+                          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())
+                      ? "_doc"
+                      : table
+                },
+                List.class);
+      } catch (Exception e) {
+        logger.warn("Fail to get Sql columns(获取字段列表失败)");
+      }
+      if (CacheConfiguration.MYSQL_RELATIONSHIP_LIST
+          .getValue()
+          .contains(dsInfoResponse.getDsType())) {
+        String sqlConnectUrl =
+            invokeMetaMethod(
+                dsInfoResponse.getDsType(),
+                "getSqlConnectUrl",
+                new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+                String.class);
+
+        return getFlinkSqlByJdbc(
+            database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase(DataSourceTypeEnum.KAFKA.getValue())) {
+        return getFlinkSqlByKafka(table, dsInfoResponse.getParams(), columns);
+      } else if (dsInfoResponse
+          .getDsType()
+          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
+        return getFlinkSqlByElasticsearch(table, columns);
+      }
+    }
+
+    return new GenerateSqlInfo();
+  }
+
+  public GenerateSqlInfo getFlinkSqlByElasticsearch(String table, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+          columns.stream()
+              .map(column -> column.getName() + " " + column.getType())
+              .collect(Collectors.joining(","));
+    }
+    String ddl =
+        String.format(FlinkSqlTemplate.ES_DDL_SQL_TEMPLATE, flinkTableName, columnAndTYpeStr);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
+  }
+
+  private GenerateSqlInfo getFlinkSqlByKafka(
+      String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+          columns.stream()
+              .map(column -> column.getName() + " " + column.getType())
+              .collect(Collectors.joining(","));
+    }
+    String kafkaServers = String.valueOf(params.getOrDefault("uris", "localhost:9092"));
+    String ddl =
+        String.format(
+            FlinkSqlTemplate.KAFKA_DDL_SQL_TEMPLATE,
+            flinkTableName,
+            columnAndTYpeStr,
+            kafkaServers);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
+  }
+
+  private GenerateSqlInfo getFlinkSqlByJdbc(
+      String database,
+      String table,
+      Map<String, Object> params,
+      List<MetaColumnInfo> columns,
+      String sqlConnectUrl) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+          columns.stream()
+              .map(column -> column.getName() + " " + column.getType())
+              .collect(Collectors.joining(","));
+    }
+
+    String url =
+        String.format(
+            sqlConnectUrl,
+            params.getOrDefault("host", ""),
+            params.getOrDefault("port", ""),
+            database);
+    String ddl =
+        String.format(
+            FlinkSqlTemplate.JDBC_DDL_SQL_TEMPLATE,
+            flinkTableName,
+            columnAndTYpeStr,
+            url,
+            params.getOrDefault("username", ""),
+            params.getOrDefault("password", ""),
+            table);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
   }
 
   /**

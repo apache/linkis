@@ -30,6 +30,7 @@ import org.apache.linkis.metadata.query.common.domain.DataSourceTypeEnum;
 import org.apache.linkis.metadata.query.common.domain.GenerateSqlInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaColumnInfo;
 import org.apache.linkis.metadata.query.common.domain.MetaPartitionInfo;
+import org.apache.linkis.metadata.query.common.domain.FlinkSqlTemplate;
 import org.apache.linkis.metadata.query.common.exception.MetaMethodInvokeException;
 import org.apache.linkis.metadata.query.common.exception.MetaRuntimeException;
 import org.apache.linkis.metadata.query.common.service.GenerateSqlTemplate;
@@ -72,16 +73,16 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @PostConstruct
   public void init() {
     dataSourceRpcSender =
-        Sender.getSender(MdmConfiguration.DATA_SOURCE_SERVICE_APPLICATION.getValue());
+            Sender.getSender(MdmConfiguration.DATA_SOURCE_SERVICE_APPLICATION.getValue());
     metaClassLoaderManager = new MetaClassLoaderManager();
   }
 
   @Override
   public void getConnection(String dataSourceType, String operator, Map<String, Object> params)
-      throws Exception {
+          throws Exception {
     MetadataConnection<Closeable> metadataConnection =
-        invokeMetaMethod(
-            dataSourceType, "getConnection", new Object[] {operator, params}, Map.class);
+            invokeMetaMethod(
+                    dataSourceType, "getConnection", new Object[] {operator, params}, Map.class);
     if (Objects.nonNull(metadataConnection)) {
       Closeable connection = metadataConnection.getConnection();
       try {
@@ -95,14 +96,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public List<String> getDatabasesByDsId(String dataSourceId, String system, String userName)
-      throws ErrorException {
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getDatabases",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getDatabases",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+              List.class);
     }
     return new ArrayList<>();
   }
@@ -110,14 +111,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public List<String> getTablesByDsId(
-      String dataSourceId, String database, String system, String userName) throws ErrorException {
+          String dataSourceId, String database, String system, String userName) throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getTables",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getTables",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
+              List.class);
     }
     return new ArrayList<>();
   }
@@ -125,22 +126,22 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public Map<String, String> getPartitionPropsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException {
+          String dataSourceId,
+          String database,
+          String table,
+          String partition,
+          String system,
+          String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getPartitionProps",
-          new Object[] {
-            dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, partition
-          },
-          Map.class);
+              dsInfoResponse.getDsType(),
+              "getPartitionProps",
+              new Object[] {
+                      dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, partition
+              },
+              Map.class);
     }
     return new HashMap<>();
   }
@@ -148,15 +149,15 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public Map<String, String> getTablePropsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException {
+          String dataSourceId, String database, String table, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getTableProps",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          Map.class);
+              dsInfoResponse.getDsType(),
+              "getTableProps",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              Map.class);
     }
     return new HashMap<>();
   }
@@ -164,22 +165,22 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public MetaPartitionInfo getPartitionsByDsId(
-      String dataSourceId,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException {
+          String dataSourceId,
+          String database,
+          String table,
+          String system,
+          Boolean traverse,
+          String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getPartitions",
-          new Object[] {
-            dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, traverse
-          },
-          MetaPartitionInfo.class);
+              dsInfoResponse.getDsType(),
+              "getPartitions",
+              new Object[] {
+                      dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, traverse
+              },
+              MetaPartitionInfo.class);
     }
     return new MetaPartitionInfo();
   }
@@ -187,243 +188,243 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   @Override
   @Deprecated
   public List<MetaColumnInfo> getColumnsByDsId(
-      String dataSourceId, String database, String table, String system, String userName)
-      throws ErrorException {
+          String dataSourceId, String database, String table, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = reqToGetDataSourceInfo(dataSourceId, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getColumns",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getColumns",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public List<String> getDatabasesByDsName(String dataSourceName, String system, String userName)
-      throws ErrorException {
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getDatabases",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getDatabases",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public List<String> getDatabasesByDsNameAndEnvId(
-      String dataSourceName, String system, String userName, String envId) throws ErrorException {
+          String dataSourceName, String system, String userName, String envId) throws ErrorException {
     DsInfoResponse dsInfoResponse =
-        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getDatabases",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getDatabases",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public Map<String, String> getConnectionInfoByDsName(
-      String dataSourceName, Map<String, String> queryParams, String system, String userName)
-      throws ErrorException {
+          String dataSourceName, Map<String, String> queryParams, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getConnectionInfo",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), queryParams},
-          Map.class);
+              dsInfoResponse.getDsType(),
+              "getConnectionInfo",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), queryParams},
+              Map.class);
     }
     return new HashMap<>();
   }
 
   @Override
   public List<String> getTablesByDsName(
-      String dataSourceName, String database, String system, String userName)
-      throws ErrorException {
+          String dataSourceName, String database, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getTables",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getTables",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public List<String> getTablesByDsNameAndEnvId(
-      String dataSourceName, String database, String system, String userName, String envId)
-      throws ErrorException {
+          String dataSourceName, String database, String system, String userName, String envId)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse =
-        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getTables",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getTables",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public Map<String, String> getPartitionPropsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String partition,
-      String system,
-      String userName)
-      throws ErrorException {
+          String dataSourceName,
+          String database,
+          String table,
+          String partition,
+          String system,
+          String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getPartitionProps",
-          new Object[] {
-            dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, partition
-          },
-          Map.class);
+              dsInfoResponse.getDsType(),
+              "getPartitionProps",
+              new Object[] {
+                      dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, partition
+              },
+              Map.class);
     }
     return new HashMap<>();
   }
 
   @Override
   public Map<String, String> getTablePropsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException {
+          String dataSourceName, String database, String table, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getTableProps",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          Map.class);
+              dsInfoResponse.getDsType(),
+              "getTableProps",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              Map.class);
     }
     return new HashMap<>();
   }
 
   @Override
   public MetaPartitionInfo getPartitionsByDsName(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      Boolean traverse,
-      String userName)
-      throws ErrorException {
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          Boolean traverse,
+          String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getPartitions",
-          new Object[] {
-            dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, traverse
-          },
-          MetaPartitionInfo.class);
+              dsInfoResponse.getDsType(),
+              "getPartitions",
+              new Object[] {
+                      dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table, traverse
+              },
+              MetaPartitionInfo.class);
     }
     return new MetaPartitionInfo();
   }
 
   @Override
   public List<MetaColumnInfo> getColumnsByDsName(
-      String dataSourceName, String database, String table, String system, String userName)
-      throws ErrorException {
+          String dataSourceName, String database, String table, String system, String userName)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse = queryDataSourceInfoByName(dataSourceName, system, userName);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getColumns",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getColumns",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public List<MetaColumnInfo> getColumnsByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException {
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse =
-        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getColumns",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          List.class);
+              dsInfoResponse.getDsType(),
+              "getColumns",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              List.class);
     }
     return new ArrayList<>();
   }
 
   @Override
   public GenerateSqlInfo getSparkSqlByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException {
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse =
-        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
 
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       List<MetaColumnInfo> columns = new ArrayList<>();
       try {
         columns =
-            invokeMetaMethod(
-                dsInfoResponse.getDsType(),
-                "getColumns",
-                new Object[] {
-                  dsInfoResponse.getCreator(),
-                  dsInfoResponse.getParams(),
-                  database,
-                  dsInfoResponse
-                          .getDsType()
-                          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())
-                      ? "_doc"
-                      : table
-                },
-                List.class);
+                invokeMetaMethod(
+                        dsInfoResponse.getDsType(),
+                        "getColumns",
+                        new Object[] {
+                                dsInfoResponse.getCreator(),
+                                dsInfoResponse.getParams(),
+                                database,
+                                dsInfoResponse
+                                        .getDsType()
+                                        .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())
+                                        ? "_doc"
+                                        : table
+                        },
+                        List.class);
       } catch (Exception e) {
         logger.warn("Fail to get Sql columns(获取字段列表失败)");
       }
       if (CacheConfiguration.MYSQL_RELATIONSHIP_LIST
-          .getValue()
-          .contains(dsInfoResponse.getDsType())) {
+              .getValue()
+              .contains(dsInfoResponse.getDsType())) {
         String sqlConnectUrl =
-            invokeMetaMethod(
-                dsInfoResponse.getDsType(),
-                "getSqlConnectUrl",
-                new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
-                String.class);
+                invokeMetaMethod(
+                        dsInfoResponse.getDsType(),
+                        "getSqlConnectUrl",
+                        new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+                        String.class);
 
         return getSparkSqlByJdbc(
-            database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
+                database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
       } else if (dsInfoResponse.getDsType().equalsIgnoreCase(DataSourceTypeEnum.KAFKA.getValue())) {
         return getSparkSqlByKafka(table, dsInfoResponse.getParams());
       } else if (dsInfoResponse
-          .getDsType()
-          .equalsIgnoreCase(DataSourceTypeEnum.MONGODB.getValue())) {
+              .getDsType()
+              .equalsIgnoreCase(DataSourceTypeEnum.MONGODB.getValue())) {
         return getSparkSqlByMongo(database, table, dsInfoResponse.getParams(), columns);
       } else if (dsInfoResponse
-          .getDsType()
-          .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
+              .getDsType()
+              .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
         return getSparkSqlByElasticsearch(table, dsInfoResponse.getParams(), columns);
       }
     }
@@ -432,7 +433,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   public GenerateSqlInfo getSparkSqlByElasticsearch(
-      String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+          String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
 
     String[] endPoints = new String[] {};
@@ -451,12 +452,12 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
 
     HttpHost httpHost = HttpHost.create(endPoints[0]);
     String ddl =
-        String.format(
-            GenerateSqlTemplate.ES_DDL_SQL_TEMPLATE,
-            table,
-            httpHost.getHostName(),
-            httpHost.getPort(),
-            table);
+            String.format(
+                    GenerateSqlTemplate.ES_DDL_SQL_TEMPLATE,
+                    table,
+                    httpHost.getHostName(),
+                    httpHost.getPort(),
+                    table);
     generateSqlInfo.setDdl(ddl);
 
     generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
@@ -471,15 +472,15 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   public GenerateSqlInfo getSparkSqlByMongo(
-      String database, String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+          String database, String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String url =
-        String.format(
-            "mongodb://%s:%s/%s",
-            params.getOrDefault("host", ""), params.getOrDefault("port", ""), database);
+            String.format(
+                    "mongodb://%s:%s/%s",
+                    params.getOrDefault("host", ""), params.getOrDefault("port", ""), database);
 
     String ddl =
-        String.format(GenerateSqlTemplate.MONGO_DDL_SQL_TEMPLATE, table, url, database, table);
+            String.format(GenerateSqlTemplate.MONGO_DDL_SQL_TEMPLATE, table, url, database, table);
     generateSqlInfo.setDdl(ddl);
 
     generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
@@ -487,10 +488,10 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     String columnStr = "*";
     if (CollectionUtils.isNotEmpty(columns)) {
       columnStr =
-          columns.stream()
-              .filter(column -> !column.getName().equals("_id"))
-              .map(MetaColumnInfo::getName)
-              .collect(Collectors.joining(","));
+              columns.stream()
+                      .filter(column -> !column.getName().equals("_id"))
+                      .map(MetaColumnInfo::getName)
+                      .collect(Collectors.joining(","));
     }
 
     generateSqlInfo.setDql(GenerateSqlTemplate.generateDqlSql(columnStr, table));
@@ -501,7 +502,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String kafkaServers = String.valueOf(params.getOrDefault("uris", "localhost:9092"));
     String ddl =
-        String.format(GenerateSqlTemplate.KAFKA_DDL_SQL_TEMPLATE, table, kafkaServers, table);
+            String.format(GenerateSqlTemplate.KAFKA_DDL_SQL_TEMPLATE, table, kafkaServers, table);
     generateSqlInfo.setDdl(ddl);
 
     generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
@@ -511,28 +512,28 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   }
 
   public GenerateSqlInfo getSparkSqlByJdbc(
-      String database,
-      String table,
-      Map<String, Object> params,
-      List<MetaColumnInfo> columns,
-      String sqlConnectUrl) {
+          String database,
+          String table,
+          Map<String, Object> params,
+          List<MetaColumnInfo> columns,
+          String sqlConnectUrl) {
     GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
     String sparkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
 
     String url =
-        String.format(
-            sqlConnectUrl,
-            params.getOrDefault("host", ""),
-            params.getOrDefault("port", ""),
-            database);
+            String.format(
+                    sqlConnectUrl,
+                    params.getOrDefault("host", ""),
+                    params.getOrDefault("port", ""),
+                    database);
     String ddl =
-        String.format(
-            GenerateSqlTemplate.JDBC_DDL_SQL_TEMPLATE,
-            sparkTableName,
-            url,
-            table,
-            params.getOrDefault("username", ""),
-            params.getOrDefault("password", ""));
+            String.format(
+                    GenerateSqlTemplate.JDBC_DDL_SQL_TEMPLATE,
+                    sparkTableName,
+                    url,
+                    table,
+                    params.getOrDefault("username", ""),
+                    params.getOrDefault("password", ""));
     generateSqlInfo.setDdl(ddl);
 
     generateSqlInfo.setDml(GenerateSqlTemplate.generateDmlSql(table));
@@ -548,23 +549,172 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
 
   @Override
   public GenerateSqlInfo getJdbcSqlByDsNameAndEnvId(
-      String dataSourceName,
-      String database,
-      String table,
-      String system,
-      String userName,
-      String envId)
-      throws ErrorException {
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId)
+          throws ErrorException {
     DsInfoResponse dsInfoResponse =
-        queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
     if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
       return invokeMetaMethod(
-          dsInfoResponse.getDsType(),
-          "getJdbcSql",
-          new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
-          GenerateSqlInfo.class);
+              dsInfoResponse.getDsType(),
+              "getJdbcSql",
+              new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams(), database, table},
+              GenerateSqlInfo.class);
     }
     return new GenerateSqlInfo();
+  }
+
+  @Override
+  public GenerateSqlInfo getFlinkSqlByDsNameAndEnvId(
+          String dataSourceName,
+          String database,
+          String table,
+          String system,
+          String userName,
+          String envId) {
+    DsInfoResponse dsInfoResponse =
+            queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, envId);
+
+    if (StringUtils.isNotBlank(dsInfoResponse.getDsType())) {
+      List<MetaColumnInfo> columns = new ArrayList<>();
+      try {
+        columns =
+                invokeMetaMethod(
+                        dsInfoResponse.getDsType(),
+                        "getColumns",
+                        new Object[] {
+                                dsInfoResponse.getCreator(),
+                                dsInfoResponse.getParams(),
+                                database,
+                                dsInfoResponse
+                                        .getDsType()
+                                        .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())
+                                        ? "_doc"
+                                        : table
+                        },
+                        List.class);
+      } catch (Exception e) {
+        logger.warn("Fail to get Sql columns(获取字段列表失败)");
+      }
+      if (CacheConfiguration.MYSQL_RELATIONSHIP_LIST
+              .getValue()
+              .contains(dsInfoResponse.getDsType())) {
+        String sqlConnectUrl =
+                invokeMetaMethod(
+                        dsInfoResponse.getDsType(),
+                        "getSqlConnectUrl",
+                        new Object[] {dsInfoResponse.getCreator(), dsInfoResponse.getParams()},
+                        String.class);
+
+        return getFlinkSqlByJdbc(
+                database, table, dsInfoResponse.getParams(), columns, sqlConnectUrl);
+      } else if (dsInfoResponse.getDsType().equalsIgnoreCase(DataSourceTypeEnum.KAFKA.getValue())) {
+        return getFlinkSqlByKafka(table, dsInfoResponse.getParams(), columns);
+      } else if (dsInfoResponse
+              .getDsType()
+              .equalsIgnoreCase(DataSourceTypeEnum.ELASTICSEARCH.getValue())) {
+        return getFlinkSqlByElasticsearch(table, columns);
+      }
+    }
+
+    return new GenerateSqlInfo();
+  }
+
+  public GenerateSqlInfo getFlinkSqlByElasticsearch(String table, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+              columns.stream()
+                      .map(column -> column.getName() + " " + column.getType())
+                      .collect(Collectors.joining(","));
+    }
+    String ddl =
+            String.format(FlinkSqlTemplate.ES_DDL_SQL_TEMPLATE, flinkTableName, columnAndTYpeStr);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
+  }
+
+  private GenerateSqlInfo getFlinkSqlByKafka(
+          String table, Map<String, Object> params, List<MetaColumnInfo> columns) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+              columns.stream()
+                      .map(column -> column.getName() + " " + column.getType())
+                      .collect(Collectors.joining(","));
+    }
+    String kafkaServers = String.valueOf(params.getOrDefault("uris", "localhost:9092"));
+    String ddl =
+            String.format(
+                    FlinkSqlTemplate.KAFKA_DDL_SQL_TEMPLATE,
+                    flinkTableName,
+                    columnAndTYpeStr,
+                    kafkaServers);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
+  }
+
+  private GenerateSqlInfo getFlinkSqlByJdbc(
+          String database,
+          String table,
+          Map<String, Object> params,
+          List<MetaColumnInfo> columns,
+          String sqlConnectUrl) {
+    GenerateSqlInfo generateSqlInfo = new GenerateSqlInfo();
+    String flinkTableName = table.contains(".") ? table.substring(table.indexOf(".") + 1) : table;
+
+    String columnStr = "*";
+    String columnAndTYpeStr = "*";
+    if (CollectionUtils.isNotEmpty(columns)) {
+      columnStr = columns.stream().map(column -> column.getName()).collect(Collectors.joining(","));
+      columnAndTYpeStr =
+              columns.stream()
+                      .map(column -> column.getName() + " " + column.getType())
+                      .collect(Collectors.joining(","));
+    }
+
+    String url =
+            String.format(
+                    sqlConnectUrl,
+                    params.getOrDefault("host", ""),
+                    params.getOrDefault("port", ""),
+                    database);
+    String ddl =
+            String.format(
+                    FlinkSqlTemplate.JDBC_DDL_SQL_TEMPLATE,
+                    flinkTableName,
+                    columnAndTYpeStr,
+                    url,
+                    params.getOrDefault("username", ""),
+                    params.getOrDefault("password", ""),
+                    table);
+
+    generateSqlInfo.setDdl(ddl);
+    generateSqlInfo.setDml(FlinkSqlTemplate.generateDmlSql(table));
+    generateSqlInfo.setDql(FlinkSqlTemplate.generateDqlSql(columnStr, table));
+
+    return generateSqlInfo;
   }
 
   /**
@@ -577,7 +727,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    */
   @Deprecated
   public DsInfoResponse reqToGetDataSourceInfo(String dataSourceId, String system, String userName)
-      throws ErrorException {
+          throws ErrorException {
     Object rpcResult = null;
     try {
       rpcResult = dataSourceRpcSender.ask(new DsInfoQueryRequest(dataSourceId, null, system));
@@ -588,12 +738,12 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       DsInfoResponse response = (DsInfoResponse) rpcResult;
       if (!response.getStatus()) {
         throw new ErrorException(
-            -1, "Error in Data Source Manager Server[数据源服务出错]: " + response.getErrorMsg());
+                -1, "Error in Data Source Manager Server[数据源服务出错]: " + response.getErrorMsg());
       }
       boolean hasPermission =
-          (AuthContext.isAdministrator(userName)
-              || (StringUtils.isNotBlank(response.getCreator())
-                  && userName.equals(response.getCreator())));
+              (AuthContext.isAdministrator(userName)
+                      || (StringUtils.isNotBlank(response.getCreator())
+                      && userName.equals(response.getCreator())));
       if (!hasPermission) {
         throw new ErrorException(-1, "Don't have query permission for data source [没有数据源的查询权限]");
       } else if (response.getParams().isEmpty()) {
@@ -614,7 +764,7 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    * @throws ErrorException
    */
   public DsInfoResponse queryDataSourceInfoByName(
-      String dataSourceName, String system, String userName) throws ErrorException {
+          String dataSourceName, String system, String userName) throws ErrorException {
     return queryDataSourceInfoByNameAndEnvId(dataSourceName, system, userName, null);
   }
 
@@ -629,14 +779,14 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    * @throws ErrorException
    */
   public DsInfoResponse queryDataSourceInfoByNameAndEnvId(
-      String dataSourceName, String system, String userName, String envId) throws ErrorException {
+          String dataSourceName, String system, String userName, String envId) throws ErrorException {
     Object rpcResult = null;
     boolean useDefault = false;
     try {
       rpcResult = reqGetDefaultDataSource(dataSourceName);
       if (Objects.isNull(rpcResult)) {
         rpcResult =
-            dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system, envId));
+                dataSourceRpcSender.ask(new DsInfoQueryRequest(null, dataSourceName, system, envId));
       } else {
         useDefault = true;
       }
@@ -647,12 +797,12 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
       DsInfoResponse response = (DsInfoResponse) rpcResult;
       if (!response.getStatus()) {
         throw new ErrorException(
-            -1, "Error in Data Source Manager Server[数据源服务出错]: " + response.getErrorMsg());
+                -1, "Error in Data Source Manager Server[数据源服务出错]: " + response.getErrorMsg());
       }
       boolean hasPermission =
-          (AuthContext.isAdministrator(userName)
-              || (StringUtils.isNotBlank(response.getCreator())
-                  && userName.equals(response.getCreator())));
+              (AuthContext.isAdministrator(userName)
+                      || (StringUtils.isNotBlank(response.getCreator())
+                      && userName.equals(response.getCreator())));
       if (!hasPermission) {
         throw new ErrorException(-1, "Don't have query permission for data source [没有数据源的查询权限]");
       } else if (!useDefault && response.getParams().isEmpty()) {
@@ -673,13 +823,13 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
   private DsInfoResponse reqGetDefaultDataSource(String dataSourceName) {
     DataSource dataSource = DataSources.getDefault(dataSourceName);
     return (Objects.nonNull(dataSource))
-        ? new DsInfoResponse(
+            ? new DsInfoResponse(
             true,
             dataSource.getDataSourceType().getName(),
             dataSource.getConnectParams(),
             dataSource.getCreateUser(),
             "")
-        : null;
+            : null;
   }
 
   /**
@@ -690,17 +840,17 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
    */
   @SuppressWarnings("unchecked")
   private <T> T invokeMetaMethod(
-      String dsType, String method, Object[] methodArgs, Class<?> returnType)
-      throws MetaMethodInvokeException {
+          String dsType, String method, Object[] methodArgs, Class<?> returnType)
+          throws MetaMethodInvokeException {
     BiFunction<String, Object[], Object> invoker;
     try {
       invoker = metaClassLoaderManager.getInvoker(dsType);
     } catch (Exception e) {
       // TODO ERROR CODE
       throw new MetaMethodInvokeException(
-          FAILED_METADATA_SERVICE.getErrorCode(),
-          "Load meta service for " + dsType + " fail 加载 [" + dsType + "] 元数据服务失败",
-          e);
+              FAILED_METADATA_SERVICE.getErrorCode(),
+              "Load meta service for " + dsType + " fail 加载 [" + dsType + "] 元数据服务失败",
+              e);
     }
     if (Objects.nonNull(invoker)) {
       try {
@@ -714,11 +864,11 @@ public class MetadataQueryServiceImpl implements MetadataQueryService {
         }
         // TODO ERROR CODE
         throw new MetaMethodInvokeException(
-            method,
-            methodArgs,
-            INVOKE_METHOD_FAIL.getErrorCode(),
-            MessageFormat.format(INVOKE_METHOD_FAIL.getErrorDesc(), method, e.getMessage()),
-            e);
+                method,
+                methodArgs,
+                INVOKE_METHOD_FAIL.getErrorCode(),
+                MessageFormat.format(INVOKE_METHOD_FAIL.getErrorDesc(), method, e.getMessage()),
+                e);
       }
     }
     return null;

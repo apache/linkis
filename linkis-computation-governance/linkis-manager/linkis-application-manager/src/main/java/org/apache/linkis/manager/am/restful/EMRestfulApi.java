@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -438,11 +439,9 @@ public class EMRestfulApi {
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
     if (Objects.isNull(ecmNode)) {
       return Message.error(
-          "ECM node :["
-              + engineInstance
-              + "] does not exist, Unable to open engine log(ECM节点:["
-              + engineInstance
-              + "] 异常，无法打开日志，可能是该节点服务重启或则服务异常导致)");
+          MessageFormat.format(
+              "ECM node :[{0}]  does not exist, Unable to open engine log(ECM节点:[{1}] 异常，无法打开日志，可能是该节点服务重启或则服务异常导致)",
+              engineInstance, engineInstance));
     }
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     String userName = ecmOperateRequest.user();

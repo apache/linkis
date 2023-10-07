@@ -54,5 +54,4 @@ object LogUtils {
 
   val ERROR_STR = "ERROR"
 
-
 }

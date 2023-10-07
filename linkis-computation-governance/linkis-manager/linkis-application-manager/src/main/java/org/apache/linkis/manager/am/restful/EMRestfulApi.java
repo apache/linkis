@@ -440,7 +440,7 @@ public class EMRestfulApi {
     if (Objects.isNull(ecmNode)) {
       return Message.error(
           MessageFormat.format(
-              "ECM node :[{0}]  does not exist, Unable to open engine log(ECM节点:[{1}] 异常，无法打开日志，可能是该节点服务重启或则服务异常导致)",
+              "ECM node :[{0}]  does not exist, Unable to open engine log(ECM节点:[{1}] 异常，无法打开日志，可能是该节点服务重启或者服务异常导致)",
               engineInstance, engineInstance));
     }
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());

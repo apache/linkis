@@ -18,6 +18,7 @@
 package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
@@ -25,13 +26,28 @@ import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
+
 import org.apache.commons.lang3.StringUtils
+
 import java.{sql, util}
-import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, ResultSet, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
+import java.sql.{
+  Blob,
+  CallableStatement,
+  Clob,
+  Connection,
+  DatabaseMetaData,
+  NClob,
+  PreparedStatement,
+  ResultSet,
+  Savepoint,
+  SQLException,
+  SQLWarning,
+  SQLXML,
+  Statement,
+  Struct
+}
 import java.util.Properties
 import java.util.concurrent.Executor
-
-import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 
 import scala.collection.JavaConverters._
 

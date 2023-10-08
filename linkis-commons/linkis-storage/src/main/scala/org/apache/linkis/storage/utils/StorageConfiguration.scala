@@ -73,7 +73,7 @@ object StorageConfiguration {
   val DOUBLE_FRACTION_LEN = CommonVars[Int]("wds.linkis.double.fraction.length", 30)
 
   val HDFS_PATH_PREFIX_CHECK_ON =
-    CommonVars[Boolean]("wds.linkis.storage.hdfs.prefix_check.enable", false)
+    CommonVars[Boolean]("wds.linkis.storage.hdfs.prefix_check.enable", true)
 
   val HDFS_PATH_PREFIX_REMOVE = CommonVars[Boolean]("wds.linkis.storage.hdfs.prefxi.remove", true)
 

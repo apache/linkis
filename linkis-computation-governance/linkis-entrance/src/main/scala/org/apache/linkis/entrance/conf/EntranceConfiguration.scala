@@ -243,6 +243,6 @@ object EntranceConfiguration {
     CommonVars("wds.linkis.entrance.task.timeout.scan", new TimeType("12h"))
 
   val ENABLE_HDFS_JVM_USER =
-    CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", false).getValue
+    CommonVars[Boolean]("linkis.entrance.enable.hdfs.jvm.user", true).getValue
 
 }

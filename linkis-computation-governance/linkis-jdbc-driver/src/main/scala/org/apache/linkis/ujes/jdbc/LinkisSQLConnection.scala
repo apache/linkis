@@ -25,28 +25,13 @@ import org.apache.linkis.ujes.client.UJESClient
 import org.apache.linkis.ujes.client.request.JobSubmitAction
 import org.apache.linkis.ujes.client.response.JobExecuteResult
 import org.apache.linkis.ujes.jdbc.UJESSQLDriverMain._
-
 import org.apache.commons.lang3.StringUtils
-
 import java.{sql, util}
-import java.sql.{
-  Blob,
-  CallableStatement,
-  Clob,
-  Connection,
-  DatabaseMetaData,
-  NClob,
-  PreparedStatement,
-  ResultSet,
-  Savepoint,
-  SQLException,
-  SQLWarning,
-  SQLXML,
-  Statement,
-  Struct
-}
+import java.sql.{Blob, CallableStatement, Clob, Connection, DatabaseMetaData, NClob, PreparedStatement, ResultSet, SQLException, SQLWarning, SQLXML, Savepoint, Statement, Struct}
 import java.util.Properties
 import java.util.concurrent.Executor
+
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 
 import scala.collection.JavaConverters._
 
@@ -113,7 +98,17 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       if (params != null & params.length() > 0) {
         params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
           case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) =>
-            return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            if (v.contains('-')) {
+              val factory = LabelBuilderFactoryContext.getLabelBuilderFactory
+              val label = factory.createLabel(classOf[EngineTypeLabel])
+              val engineType = v.split("-").head
+              val version = v.replaceFirst(engineType + "-", "")
+              label.setEngineType(engineType)
+              label.setVersion(version)
+              return label
+            } else {
+              return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            }
           case _ =>
         }
       }
@@ -442,7 +437,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
 
   private[jdbc] def toSubmit(code: String): JobExecuteResult = {
     val engineTypeLabel = getEngineType
-    labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel.getStringValue)
+    labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
     labelMap.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, s"$user-$creator")
     labelMap.put(LabelKeyConstant.CODE_TYPE_KEY, engineToCodeType(engineTypeLabel.getEngineType))
 

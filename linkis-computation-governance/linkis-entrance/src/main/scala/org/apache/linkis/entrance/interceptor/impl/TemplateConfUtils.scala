@@ -24,7 +24,9 @@ import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
 import org.apache.linkis.governance.common.entity.TemplateConfKey
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
+import org.apache.linkis.manager.label.entity.entrance.ExecuteOnceLabel
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.utils.TaskUtils
 import org.apache.linkis.rpc.Sender
@@ -39,6 +41,8 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 
 object TemplateConfUtils extends Logging {
+
+  val confTemplateNameKey = "ec.resource.name"
 
   private val templateCache: LoadingCache[String, util.List[TemplateConfKey]] = CacheBuilder
     .newBuilder()
@@ -96,6 +100,7 @@ object TemplateConfUtils extends Logging {
           }
           res
         }
+
         if (templateList.size() == 0) {
           logger.warn(s"template configuration data loading failed, plaese check warn log")
         }
@@ -122,16 +127,16 @@ object TemplateConfUtils extends Logging {
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
-        varString = """\s*---@set\s*.+\s*"""
-        rightVarString = """^\s*---@set\s*.+\s*"""
+        varString = s"""\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        rightVarString = s"""^\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*---@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
-        varString = """\s*##@set\s*.+\s*"""
-        rightVarString = """^\s*##@set\s*.+\s*"""
+        varString = s"""\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        rightVarString = s"""^\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*##@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
-        varString = """\s*///@set\s*.+\s*"""
-        rightVarString = """^\s*///@set\s*.+\s*"""
+        varString = s"""\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
+        rightVarString = s"""^\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*///@.+"""
       case _ =>
         return templateConfName
@@ -206,17 +211,39 @@ object TemplateConfUtils extends Logging {
             logger.info("try to get template conf list with template uid:{} ", templateUuid)
             logAppender.append(
               LogUtils
-                .generateInfo(s"try to get template conf list with template uid:$templateUuid")
+                .generateInfo(s"try to get template conf data with template uid:$templateUuid\nn")
             )
             templateConflist = templateCache.get(templateUuid)
+            if (templateConflist == null || templateConflist.size() == 0) {
+              logAppender.append(
+                LogUtils.generateWarn(
+                  s"can not get any template conf data with template uid:$templateUuid\n"
+                )
+              )
+            } else {
+              val onceLabel =
+                LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                  classOf[ExecuteOnceLabel]
+                )
+              logger.info("add once label for task id:{}", requestPersistTask.getId.toString)
+              requestPersistTask.getLabels.add(onceLabel)
+            }
           }
 
         } else {
           logger.info("try to get template conf list with template name:{} ", templateName)
           logAppender.append(
-            LogUtils.generateInfo(s"try to get template conf list with template name:$templateName")
+            LogUtils
+              .generateInfo(s"try to get template conf data with template name:$templateName\n")
           )
           templateConflist = templateCacheName.get(templateName)
+          if (templateConflist == null || templateConflist.size() == 0) {
+            logAppender.append(
+              LogUtils.generateWarn(
+                s"can not get any template conf data with template name:$templateName\n"
+              )
+            )
+          }
         }
 
         if (templateConflist != null && templateConflist.size() > 0) {

@@ -465,6 +465,9 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
     TemplateConfResponse result = new TemplateConfResponse();
     String templateUid = templateConfRequest.getTemplateUuid();
     String templateName = templateConfRequest.getTemplateName();
+    if (logger.isDebugEnabled()) {
+      logger.debug("query conf list with uid:{},name:{}", templateUid, templateName);
+    }
     if (StringUtils.isBlank(templateUid) && StringUtils.isBlank(templateName)) {
       return result;
     }
@@ -486,9 +489,12 @@ public class TemplateConfigKeyServiceImpl implements TemplateConfigKeyService {
         item.setTemplateName(temp.getTemplateName());
         item.setConfigValue(temp.getConfigValue());
         data.add(item);
+        if (logger.isDebugEnabled()) {
+          logger.debug("query conf item={}", item);
+        }
       }
     }
-
+    result.setList(data);
     return result;
   }
 }

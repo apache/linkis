@@ -366,12 +366,14 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
   def printTaskParamsLog(engineExecutorContext: EngineExecutionContext): Unit = {
     val sb = new StringBuilder
-    engineExecutorContext.getProperties.asScala.foreach { keyAndValue =>
-      sb.append(s"${keyAndValue._1}=${keyAndValue._2.toString}\n")
-    }
+
+    EngineConnObject.getEngineCreationContext.getOptions.asScala.foreach({ case (key, value) =>
+      sb.append(s"${key}=${value.toString}\n")
+    })
+
     sb.append("\n")
     engineExecutorContext.appendStdout(
-      LogUtils.generateInfo(s" Your job exec with configs:\n${sb.toString()}")
+      LogUtils.generateInfo(s" Your job exec with configs:\n${sb.toString()}\n")
     )
   }
 

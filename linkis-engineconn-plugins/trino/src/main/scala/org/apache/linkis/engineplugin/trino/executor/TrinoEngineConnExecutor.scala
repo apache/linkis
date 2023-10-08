@@ -41,12 +41,12 @@ import org.apache.linkis.engineplugin.trino.password.{
 import org.apache.linkis.engineplugin.trino.socket.SocketChannelSocketFactory
 import org.apache.linkis.engineplugin.trino.utils.{TrinoCode, TrinoSQLHook}
 import org.apache.linkis.governance.common.paser.SQLCodeParser
+import org.apache.linkis.governance.common.utils.JobUtils
 import org.apache.linkis.manager.common.entity.resource.{
   CommonNodeResource,
   LoadResource,
   NodeResource
 }
-import org.apache.linkis.manager.engineplugin.common.conf.EngineConnPluginConf
 import org.apache.linkis.manager.engineplugin.common.util.NodeResourceUtils
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine.{EngineTypeLabel, UserCreatorLabel}
@@ -80,7 +80,6 @@ import scala.collection.JavaConverters._
 import com.google.common.cache.{Cache, CacheBuilder}
 import io.trino.client._
 import okhttp3.OkHttpClient
-import org.apache.linkis.governance.common.utils.JobUtils
 
 class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
     extends ConcurrentComputationExecutor(outputPrintLimit) {
@@ -160,10 +159,12 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       code.trim
     }
 
+    printTaskParamsLog(engineExecutorContext)
+
     TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)
-    // 在第一行加taskid，trino接收后做定制化处理
+    // Add task id in the first line, and trino will customize it after receiving it.(在第一行加taskid，trino接收后做定制化处理)
     realCode = s"--linkis_task_id=$jobId" + "\n" + realCode
     val currentUser = getCurrentUser(engineExecutorContext.getLabels)
     val trinoUser = Optional
@@ -379,12 +380,18 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       engineExecutorContext: EngineExecutionContext,
       statement: StatementClient
   ): Unit = {
+    var isFirstTime = true
     while (
         statement.isRunning
         && (statement.currentData().getData == null || statement
           .currentStatusInfo()
           .getUpdateType != null)
     ) {
+      val info = statement.currentStatusInfo()
+      if (info != null && isFirstTime) {
+        isFirstTime = false
+        engineExecutorContext.appendStdout(LogUtils.generateInfo(s"Trino query id:[${info.getId}]"))
+      }
       engineExecutorContext.pushProgress(progress(taskId), getProgressInfo(taskId))
       statement.advance()
     }

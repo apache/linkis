@@ -232,14 +232,30 @@ public class QueryRestfulApi {
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "listundonetasks", notes = "list undone tasks", response = Message.class)
   @ApiImplicitParams({
-          @ApiImplicitParam(name = "startDate", required = false, dataType = "Long", value = "start date"),
-          @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
-          @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
-          @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-          @ApiImplicitParam(name = "pageSize", required = false, dataType = "Integer", value = "page size"),
-          @ApiImplicitParam(name = "startTaskID", required = false, dataType = "Long", value = "start task id"),
-          @ApiImplicitParam(name = "engineType", required = false, dataType = "String", value = "engine type"),
-          @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "Long",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
+    @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
+    @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "Long",
+        value = "start task id"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
   public Message listundonetasks(

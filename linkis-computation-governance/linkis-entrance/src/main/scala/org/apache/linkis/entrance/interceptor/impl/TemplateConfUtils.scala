@@ -114,16 +114,19 @@ object TemplateConfUtils extends Logging {
    *
    * @param code
    *   :code
-   * @param languageType
-   *   :SQL,PYTHON
+   * @param codeType
+   *   :sql,hql,scala
    * @return
+   *   String the last one of template conf name
    */
-  def getCustomTemplateConfName(code: String, languageType: String): String = {
+  def getCustomTemplateConfName(code: String, codeType: String): String = {
     var templateConfName = "";
 
     var varString: String = null
     var errString: String = null
     var rightVarString: String = null
+
+    val languageType = CodeAndRunTypeUtils.getLanguageTypeByCodeType(codeType)
 
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
@@ -211,13 +214,13 @@ object TemplateConfUtils extends Logging {
             logger.info("try to get template conf list with template uid:{} ", templateUuid)
             logAppender.append(
               LogUtils
-                .generateInfo(s"try to get template conf data with template uid:$templateUuid\nn")
+                .generateInfo(s"Try to get template conf data with template uid:$templateUuid\nn")
             )
             templateConflist = templateCache.get(templateUuid)
             if (templateConflist == null || templateConflist.size() == 0) {
               logAppender.append(
                 LogUtils.generateWarn(
-                  s"can not get any template conf data with template uid:$templateUuid\n"
+                  s"Can not get any template conf data with template uid:$templateUuid\n"
                 )
               )
             } else {
@@ -225,22 +228,22 @@ object TemplateConfUtils extends Logging {
                 LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
                   classOf[ExecuteOnceLabel]
                 )
-              logger.info("add once label for task id:{}", requestPersistTask.getId.toString)
+              logger.info("Add once label for task id:{}", requestPersistTask.getId.toString)
               requestPersistTask.getLabels.add(onceLabel)
             }
           }
 
         } else {
-          logger.info("try to get template conf list with template name:{} ", templateName)
+          logger.info("Try to get template conf list with template name:{} ", templateName)
           logAppender.append(
             LogUtils
-              .generateInfo(s"try to get template conf data with template name:$templateName\n")
+              .generateInfo(s"Try to get template conf data with template name:$templateName\n")
           )
           templateConflist = templateCacheName.get(templateName)
           if (templateConflist == null || templateConflist.size() == 0) {
             logAppender.append(
               LogUtils.generateWarn(
-                s"can not get any template conf data with template name:$templateName\n"
+                s"Can not get any template conf data with template name:$templateName\n"
               )
             )
           }

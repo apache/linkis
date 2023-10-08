@@ -373,7 +373,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
 
     sb.append("\n")
     engineExecutorContext.appendStdout(
-      LogUtils.generateInfo(s" Your job exec with configs:\n${sb.toString()}\n")
+      LogUtils.generateInfo(s"Your job exec with configs:\n${sb.toString()}\n")
     )
   }
 

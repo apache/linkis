@@ -17,15 +17,62 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_CONF_DIR, FLINK_CONF_YAML}
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.yaml.snakeyaml.Yaml
+
+import java.io.{File, FileNotFoundException}
+import java.util
+import scala.io.Source
 
 class TestFlinkEngineConnFactory {
+
+  @Test
+  private  def getExtractJavaOpts(envJavaOpts: String): String = {
+    var defaultJavaOpts = ""
+    val yamlFilePath = FLINK_CONF_DIR.getValue
+    val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
+    if (new File(yamlFile).exists()) {
+      val source = Source.fromFile(yamlFile)
+      try {
+        val yamlContent = source.mkString
+        val yaml = new Yaml()
+        val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+        if (configMap.containsKey("env.java.opts")) {
+          defaultJavaOpts = configMap.get("env.java.opts").toString
+        }
+      } finally {
+        source.close()
+      }
+    } else {
+      val inputStream = getClass.getResourceAsStream(yamlFile)
+      if (inputStream != null) {
+        val source = Source.fromInputStream(inputStream)
+        try {
+          val yamlContent = source.mkString
+          val yaml = new Yaml()
+          val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+          if (configMap.containsKey("env.java.opts")) {
+            defaultJavaOpts = configMap.get("env.java.opts").toString
+          }
+        } finally {
+          source.close()
+        }
+      } else {
+        throw new FileNotFoundException("YAML file not found in both file system and classpath.")
+      }
+    }
+    val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    merged
+  }
 
   @Test
   def testMergeAndDeduplicate: Unit = {
     var defaultJavaOpts = "-Da=3 -Db=4 -XXc=5 -Dk=a1=b";
     var envJavaOpts = "-DjobName=0607_1 -Dlog4j.configuration=./log4j.properties -Da=1 -Dk=a1=c";
     val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    assertEquals("-Da=1 -Db=4 -XXc=5 -Dk=a1=c -DjobName=0607_1 -Dlog4j.configuration=./log4j.properties", merged)
   }
 
   protected def mergeAndDeduplicate(str1: String, str2: String): String = {

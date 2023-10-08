@@ -180,7 +180,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         var flinkConfigValue = value
         if (
             FlinkEnvConfiguration.FLINK_YAML_MERGE_ENABLE.getValue && key
-              .equals(FLINK_CONFIG_PREFIX + "env.java.opts")
+              .equals(FLINK_CONFIG_PREFIX + FLINK_ENV_JAVA_OPTS.getValue)
         ) {
           flinkConfigValue = getExtractJavaOpts(value)
         }
@@ -242,7 +242,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     context
   }
 
-  protected def getExtractJavaOpts(envJavaOpts: String): String = {
+  private  def getExtractJavaOpts(envJavaOpts: String): String = {
     var defaultJavaOpts = ""
     val yamlFilePath = FLINK_CONF_DIR.getValue
     val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
@@ -252,8 +252,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         val yamlContent = source.mkString
         val yaml = new Yaml()
         val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
-        if (configMap.containsKey("env.java.opts")) {
-          defaultJavaOpts = configMap.get("env.java.opts").toString
+        if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+          defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
         }
       } finally {
         source.close()
@@ -266,8 +266,8 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
           val yamlContent = source.mkString
           val yaml = new Yaml()
           val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
-          if (configMap.containsKey("env.java.opts")) {
-            defaultJavaOpts = configMap.get("env.java.opts").toString
+          if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+            defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
           }
         } finally {
           source.close()
@@ -281,39 +281,39 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
   }
 
 
-  protected def mergeAndDeduplicate(str1: String, str2: String): String = {
+  private def mergeAndDeduplicate(defaultJavaOpts: String, envJavaOpts: String): String = {
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
-    val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
+    val keyValueMapX = patternX.findAllMatchIn(envJavaOpts).map { matchResult =>
       val key = matchResult.group(1)
       val value = matchResult.group(2)
       (key, value)
     }.toMap
 
     val patternD = """-D([^\s]+)=([^\s]+)""".r
-    val keyValueMapD = patternD.findAllMatchIn(str2).map { matchResult =>
+    val keyValueMapD = patternD.findAllMatchIn(envJavaOpts).map { matchResult =>
       val key = matchResult.group(1)
       val value = matchResult.group(2)
       (key, value)
     }.toMap
     val xloggcPattern = """-Xloggc:[^\s]+""".r
-    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(str1).getOrElse("").toString
-    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
+    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(defaultJavaOpts).getOrElse("").toString
+    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(envJavaOpts).getOrElse("").toString
     var escapedXloggcValue = ""
     var replaceStr1 = ""
     var replaceStr2 = ""
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
       escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = str2.replace(xloggcValueStr2, "")
+      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = envJavaOpts.replace(xloggcValueStr2, "")
     }
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
       escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = str2
+      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
+      replaceStr2 = envJavaOpts
     }
     if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
-      replaceStr1 = str1
-      replaceStr2 = str2
+      replaceStr1 = defaultJavaOpts
+      replaceStr2 = envJavaOpts
     }
     val MergedStringX = keyValueMapX.foldLeft(replaceStr1) { (result, entry) =>
       val (key, value) = entry

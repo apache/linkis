@@ -26,7 +26,7 @@ source ${workDir}/deploy-config/db.sh
 function print_usage(){
   echo "Usage: checkAdd [EngineName]"
   echo " EngineName : The Engine name that you want to check"
-  echo " Engine list as bellow: JDBC Flink openLooKeng  Presto Sqoop Elasticsearch Impala Trino Seatunnel"
+  echo " Engine list as bellow: JDBC Flink openLooKeng Presto Sqoop Elasticsearch Impala Trino Seatunnel"
 }
 
 if [ $# -gt 1 ]; then
@@ -49,7 +49,7 @@ function checkJDBC(){
      fi
 
      if [ -z "${MYSQL_CONNECT_JAVA_PATH}" ] || [ ! -f ${MYSQL_CONNECT_JAVA_PATH} ];then
-       echo "openLooKeng connector ${MYSQL_CONNECT_JAVA_PATH} is not exist,Pls check parameters in ${LinkisParDir} "
+       echo "MySQL connector ${MYSQL_CONNECT_JAVA_PATH} is not exist,Pls check parameters in ${LinkisParDir} "
        exit 2
      fi
 

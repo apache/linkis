@@ -18,6 +18,7 @@
 package org.apache.linkis.monitor.scheduled;
 
 import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf;
 import org.apache.linkis.monitor.config.MonitorConfig;
 import org.apache.linkis.monitor.constants.Constants;
@@ -93,7 +94,7 @@ public class EntranceTaskMonitor {
           HashMap<String, String> parms = new HashMap<>();
           parms.put("$username", entranceEntity.get("username"));
           parms.put("$alteruser", entranceEntity.get("alteruser"));
-          parms.put("$url", MonitorConfig.GATEWAY_URL.getValue());
+          parms.put("$url", Configuration.GATEWAY_URL().getValue());
           // 获取标准阈值
           if (runningtotal.intValue() > runningNumber) {
             // 触发告警 用户运行任务满
@@ -130,7 +131,7 @@ public class EntranceTaskMonitor {
     BigDecimal total = runningNumber.add(queuedNumber);
 
     HashMap<String, String> parms = new HashMap<>();
-    parms.put("$url", MonitorConfig.GATEWAY_URL.getValue());
+    parms.put("$url", Configuration.GATEWAY_URL().getValue());
     int linkisTotalMajor = MonitorConfig.ENTRANCE_TASK_TOTAL_MAJOR.getValue();
     int linkisTotalMinor = MonitorConfig.ENTRANCE_TASK_TOTAL_MINOR.getValue();
     if (total.intValue() >= linkisTotalMajor) {

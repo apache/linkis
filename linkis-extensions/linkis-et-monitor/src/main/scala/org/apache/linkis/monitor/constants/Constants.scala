@@ -65,30 +65,6 @@ object Constants {
   val SCAN_RULE_UNFINISHED_JOB_STATUS =
     "Inited,WaitForRetry,Scheduled,Running".split(",").map(s => s.toUpperCase())
 
-  val LINKIS_API_VERSION: CommonVars[String] =
-    CommonVars[String]("linkis.monitor.bml.api.version", "v1")
-
-  val AUTH_TOKEN_KEY: CommonVars[String] =
-    CommonVars[String]("linkis.monitor.bml.auth.token.key", "Validation-Code")
-
-  val AUTH_TOKEN_VALUE: CommonVars[String] =
-    CommonVars[String]("linkis.monitor.bml.auth.token.value", "BML-AUTH")
-
-  val CONNECTION_MAX_SIZE: CommonVars[Int] =
-    CommonVars[Int]("linkis.monitor.bml.connection.max.size", 10)
-
-  val CONNECTION_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("linkis.monitor.bml.connection.timeout", 5 * 60 * 1000)
-
-  val CONNECTION_READ_TIMEOUT: CommonVars[Int] =
-    CommonVars[Int]("linkis.monitor.bml.connection.read.timeout", 10 * 60 * 1000)
-
-  val AUTH_TOKEN_KEY_SHORT_NAME = "tokenKey"
-  val AUTH_TOKEN_VALUE_SHORT_NAME = "tokenValue"
-  val CONNECTION_MAX_SIZE_SHORT_NAME = "maxConnection"
-  val CONNECTION_TIMEOUT_SHORT_NAME = "connectTimeout"
-  val CONNECTION_READ_TIMEOUT_SHORT_NAME = "readTimeout"
-  val CLIENT_NAME_SHORT_NAME = "clientName"
   val USER_LABEL_MONITOR = "jobhistory.label.monitor.im."
 
   val USER_LABEL_TENANT: CommonVars[String] =

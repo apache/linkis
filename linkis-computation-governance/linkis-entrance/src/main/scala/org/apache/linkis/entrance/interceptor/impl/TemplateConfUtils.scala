@@ -223,16 +223,8 @@ object TemplateConfUtils extends Logging {
                   s"Can not get any template conf data with template uid:$templateUuid\n"
                 )
               )
-            } else {
-              val onceLabel =
-                LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
-                  classOf[ExecuteOnceLabel]
-                )
-              logger.info("Add once label for task id:{}", requestPersistTask.getId.toString)
-              requestPersistTask.getLabels.add(onceLabel)
             }
           }
-
         } else {
           logger.info("Try to get template conf list with template name:{} ", templateName)
           logAppender.append(
@@ -246,6 +238,16 @@ object TemplateConfUtils extends Logging {
                 s"Can not get any template conf data with template name:$templateName\n"
               )
             )
+          } else {
+            // to remove metedata start param
+            TaskUtils.clearStartupMap(params)
+
+            val onceLabel =
+              LabelBuilderFactoryContext.getLabelBuilderFactory.createLabel(
+                classOf[ExecuteOnceLabel]
+              )
+            logger.info("Add once label for task id:{}", requestPersistTask.getId.toString)
+            requestPersistTask.getLabels.add(onceLabel)
           }
         }
 

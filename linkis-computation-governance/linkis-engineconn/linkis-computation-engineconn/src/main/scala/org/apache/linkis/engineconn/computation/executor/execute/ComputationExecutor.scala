@@ -41,7 +41,13 @@ import org.apache.linkis.governance.common.paser.CodeParser
 import org.apache.linkis.governance.common.protocol.task.{EngineConcurrentInfo, RequestTask}
 import org.apache.linkis.governance.common.utils.{JobUtils, LoggerUtils}
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-import org.apache.linkis.manager.label.entity.engine.UserCreatorLabel
+import org.apache.linkis.manager.label.entity.engine.{
+  CodeLanguageLabel,
+  EngineType,
+  EngineTypeLabel,
+  RunType,
+  UserCreatorLabel
+}
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 
@@ -183,9 +189,11 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
     Utils.tryFinally {
       transformTaskStatus(engineConnTask, ExecutionNodeStatus.Running)
       val engineExecutionContext = createEngineExecutionContext(engineConnTask)
+
+      val engineCreationContext = EngineConnObject.getEngineCreationContext
+
       var hookedCode = engineConnTask.getCode
       Utils.tryCatch {
-        val engineCreationContext = EngineConnObject.getEngineCreationContext
         ComputationExecutorHook.getComputationExecutorHooks.foreach(hook => {
           hookedCode =
             hook.beforeExecutorExecute(engineExecutionContext, engineCreationContext, hookedCode)
@@ -196,12 +204,28 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       } else {
         logger.info(s"hooked after code: $hookedCode ")
       }
+
+      // task params log
+      // spark engine: at org.apache.linkis.engineplugin.spark.executor.SparkEngineConnExecutor.executeLine log special conf
+      Utils.tryAndWarn {
+        var engineType = ""
+        engineCreationContext.getLabels().asScala.find(_.isInstanceOf[EngineTypeLabel]) match {
+          case Some(engineTypeLabel) =>
+            engineType = engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType
+        }
+        EngineType.mapStringToEngineType(engineType) match {
+          case EngineType.HIVE | EngineType.TRINO => printTaskParamsLog(engineExecutionContext)
+          case _ =>
+        }
+      }
+
       val localPath = EngineConnConf.getLogDir
       engineExecutionContext.appendStdout(
         LogUtils.generateInfo(
           s"EngineConn local log path: ${DataWorkCloudApplication.getServiceInstance.toString} $localPath"
         )
       )
+
       var response: ExecuteResponse = null
       val incomplete = new StringBuilder
       val codes =

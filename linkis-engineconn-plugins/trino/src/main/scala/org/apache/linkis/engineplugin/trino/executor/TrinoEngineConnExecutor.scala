@@ -159,8 +159,6 @@ class TrinoEngineConnExecutor(override val outputPrintLimit: Int, val id: Int)
       code.trim
     }
 
-    printTaskParamsLog(engineExecutorContext)
-
     TrinoCode.checkCode(realCode)
     logger.info(s"trino client begins to run psql code:\n $realCode")
     val jobId = JobUtils.getJobIdFromMap(engineExecutorContext.getProperties)

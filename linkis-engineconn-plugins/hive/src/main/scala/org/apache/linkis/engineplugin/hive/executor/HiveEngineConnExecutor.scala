@@ -149,8 +149,6 @@ class HiveEngineConnExecutor(
       hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
     }
 
-    printTaskParamsLog(engineExecutorContext)
-
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim}")

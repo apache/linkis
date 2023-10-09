@@ -24,12 +24,8 @@ public class MonitorConfig {
 
   public static final String shellPath = Configuration.getLinkisHome() + "/admin/";
 
-  public static final CommonVars<String> GATEWAY_URL = CommonVars.apply("wds.linkis.gateway.url");
-
   public static final CommonVars<Integer> USER_MODE_TIMEOUT =
       CommonVars.apply("linkis.monitor.user.timeOut", 300);
-  public static final CommonVars<String> USER_MODE_AUTHTOKEN =
-      CommonVars.apply("linkis.monitor.user.authToken", "BML-AUTH");
   public static final CommonVars<String> USER_MODE_ENGINE =
       CommonVars.apply("linkis.monitor.user.enginelist", "[]");
 

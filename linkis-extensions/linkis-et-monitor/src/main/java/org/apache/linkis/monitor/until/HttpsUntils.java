@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor.until;
 
+import org.apache.linkis.bml.conf.BmlConfiguration;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.httpclient.dws.authentication.TokenAuthenticationStrategy;
@@ -25,7 +26,6 @@ import org.apache.linkis.httpclient.dws.config.DWSClientConfigBuilder;
 import org.apache.linkis.monitor.client.MonitorHTTPClient;
 import org.apache.linkis.monitor.client.MonitorHTTPClientClientImpl;
 import org.apache.linkis.monitor.config.MonitorConfig;
-import org.apache.linkis.monitor.constants.Constants;
 import org.apache.linkis.monitor.entity.IndexEntity;
 import org.apache.linkis.monitor.request.EmsListAction;
 import org.apache.linkis.monitor.request.EntranceTaskAction;
@@ -90,26 +90,28 @@ public class HttpsUntils {
     int maxConnection =
         (int)
             parms.getOrDefault(
-                Constants.CONNECTION_MAX_SIZE_SHORT_NAME(),
-                Constants.CONNECTION_MAX_SIZE().getValue());
+                BmlConfiguration.CONNECTION_MAX_SIZE_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_MAX_SIZE().getValue());
     int connectTimeout =
         (int)
             parms.getOrDefault(
-                Constants.CONNECTION_TIMEOUT_SHORT_NAME(),
-                Constants.CONNECTION_TIMEOUT().getValue());
+                BmlConfiguration.CONNECTION_TIMEOUT_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_TIMEOUT().getValue());
     int readTimeout =
         (int)
             parms.getOrDefault(
-                Constants.CONNECTION_READ_TIMEOUT_SHORT_NAME(),
-                Constants.CONNECTION_READ_TIMEOUT().getValue());
+                BmlConfiguration.CONNECTION_READ_TIMEOUT_SHORT_NAME(),
+                BmlConfiguration.CONNECTION_READ_TIMEOUT().getValue());
     String tokenKey =
         (String)
             parms.getOrDefault(
-                Constants.AUTH_TOKEN_KEY_SHORT_NAME(), Constants.AUTH_TOKEN_KEY().getValue());
+                BmlConfiguration.AUTH_TOKEN_KEY_SHORT_NAME(),
+                BmlConfiguration.AUTH_TOKEN_KEY().getValue());
     String tokenValue =
         (String)
             parms.getOrDefault(
-                Constants.AUTH_TOKEN_VALUE_SHORT_NAME(), Constants.AUTH_TOKEN_VALUE().getValue());
+                BmlConfiguration.AUTH_TOKEN_VALUE_SHORT_NAME(),
+                BmlConfiguration.AUTH_TOKEN_VALUE().getValue());
 
     DWSClientConfig clientConfig =
         ((DWSClientConfigBuilder)

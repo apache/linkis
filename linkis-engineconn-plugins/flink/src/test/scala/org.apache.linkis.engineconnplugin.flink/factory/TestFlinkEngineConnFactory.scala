@@ -18,6 +18,7 @@
 package org.apache.linkis.engineconnplugin.flink.factory
 
 import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_CONF_DIR, FLINK_CONF_YAML}
+import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
@@ -63,67 +64,15 @@ class TestFlinkEngineConnFactory {
         throw new FileNotFoundException("YAML file not found in both file system and classpath.")
       }
     }
-    val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     merged
   }
 
   @Test
   def testMergeAndDeduplicate: Unit = {
-    var defaultJavaOpts = "-Da=3 -Db=4 -XXc=5 -Dk=a1=b";
-    var envJavaOpts = "-DjobName=0607_1 -Dlog4j.configuration=./log4j.properties -Da=1 -Dk=a1=c";
-    val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    val defaultJavaOpts = "-Da=3 -Db=4 -XXc=5 -Dk=a1=b";
+    val envJavaOpts = "-DjobName=0607_1 -Dlog4j.configuration=./log4j.properties -Da=1 -Dk=a1=c";
+    val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     assertEquals("-Da=1 -Db=4 -XXc=5 -Dk=a1=c -DjobName=0607_1 -Dlog4j.configuration=./log4j.properties", merged)
   }
-
-  protected def mergeAndDeduplicate(str1: String, str2: String): String = {
-    val patternX = """-XX:([^\s]+)=([^\s]+)""".r
-    val keyValueMapX = patternX.findAllMatchIn(str2).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
-
-    val patternD = """-D([^\s]+)=([^\s]+)""".r
-    val keyValueMapD = patternD.findAllMatchIn(str2).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
-    val xloggcPattern = """-Xloggc:[^\s]+""".r
-    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(str1).getOrElse("").toString
-    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(str2).getOrElse("").toString
-    var escapedXloggcValue = ""
-    var replaceStr1 = ""
-    var replaceStr2 = ""
-    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
-      escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = str2.replace(xloggcValueStr2, "")
-    }
-    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
-      escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = str1.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = str2
-    }
-    if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
-      replaceStr1 = str1
-      replaceStr2 = str2
-    }
-    val MergedStringX = keyValueMapX.foldLeft(replaceStr1) { (result, entry) =>
-      val (key, value) = entry
-      val oldValue = s"$key=[^\\s]+"
-      val newValue = key + "=" + value
-      result.replaceAll(oldValue, newValue)
-    }
-
-    val MergedStringD = keyValueMapD.foldLeft(MergedStringX) { (result, entry) =>
-      val (key, value) = entry
-      val oldValue = s"$key=[^\\s]+"
-      val newValue = key + "=" + value
-      result.replaceAll(oldValue, newValue)
-    }
-    val javaOpts = (MergedStringD.split("\\s+") ++ replaceStr2.split("\\s+")).distinct.mkString(" ")
-    javaOpts
-  }
-
 }

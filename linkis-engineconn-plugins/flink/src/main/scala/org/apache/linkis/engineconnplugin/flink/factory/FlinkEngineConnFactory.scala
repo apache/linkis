@@ -31,17 +31,13 @@ import org.apache.linkis.engineconnplugin.flink.context.{EnvironmentContext, Fli
 import org.apache.linkis.engineconnplugin.flink.errorcode.FlinkErrorCodeSummary._
 import org.apache.linkis.engineconnplugin.flink.exception.FlinkInitFailedException
 import org.apache.linkis.engineconnplugin.flink.setting.Settings
-import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, ManagerUtil}
+import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, FlinkValueFormatUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{
-  ExecutorFactory,
-  MultiExecutorEngineConnFactory
-}
+import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
-
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
@@ -57,10 +53,8 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
-
 import scala.collection.JavaConverters._
 import scala.io.Source
-
 import com.google.common.collect.{Lists, Sets}
 import org.yaml.snakeyaml.Yaml
 
@@ -276,61 +270,11 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
         throw new FileNotFoundException("YAML file not found in both file system and classpath.")
       }
     }
-    val merged = mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
+    val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     merged
   }
 
 
-  private def mergeAndDeduplicate(defaultJavaOpts: String, envJavaOpts: String): String = {
-    val patternX = """-XX:([^\s]+)=([^\s]+)""".r
-    val keyValueMapX = patternX.findAllMatchIn(envJavaOpts).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
-
-    val patternD = """-D([^\s]+)=([^\s]+)""".r
-    val keyValueMapD = patternD.findAllMatchIn(envJavaOpts).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
-    val xloggcPattern = """-Xloggc:[^\s]+""".r
-    val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(defaultJavaOpts).getOrElse("").toString
-    val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(envJavaOpts).getOrElse("").toString
-    var escapedXloggcValue = ""
-    var replaceStr1 = ""
-    var replaceStr2 = ""
-    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
-      escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = envJavaOpts.replace(xloggcValueStr2, "")
-    }
-    if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
-      escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
-      replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
-      replaceStr2 = envJavaOpts
-    }
-    if (xloggcValueStr1.isEmpty && xloggcValueStr2.isEmpty) {
-      replaceStr1 = defaultJavaOpts
-      replaceStr2 = envJavaOpts
-    }
-    val MergedStringX = keyValueMapX.foldLeft(replaceStr1) { (result, entry) =>
-      val (key, value) = entry
-      val oldValue = s"$key=[^\\s]+"
-      val newValue = key + "=" + value
-      result.replaceAll(oldValue, newValue)
-    }
-
-    val MergedStringD = keyValueMapD.foldLeft(MergedStringX) { (result, entry) =>
-      val (key, value) = entry
-      val oldValue = s"$key=[^\\s]+"
-      val newValue = key + "=" + value
-      result.replaceAll(oldValue, newValue)
-    }
-    val javaOpts = (MergedStringD.split("\\s+") ++ replaceStr2.split("\\s+")).distinct.mkString(" ")
-    javaOpts
-  }
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {
     val engineConnModeLabel = getEngineConnModeLabel(labels)

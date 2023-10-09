@@ -17,6 +17,7 @@
 
 package org.apache.linkis.monitor.scheduled;
 
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.governance.common.entity.task.RequestPersistTask;
 import org.apache.linkis.httpclient.dws.config.DWSClientConfig;
@@ -77,7 +78,7 @@ public class UserModeMonitor {
                         jobExecuteResult.taskID());
                     HashMap<String, String> parms = new HashMap<>();
                     parms.put("$engineType", engine.get("engineType"));
-                    parms.put("$url", MonitorConfig.GATEWAY_URL.getValue());
+                    parms.put("$url", Configuration.GATEWAY_URL().getValue());
                     parms.put("$jobId", jobExecuteResult.taskID());
                     Utils.sleepQuietly(MonitorConfig.USER_MODE_TIMEOUT.getValue() * 1000);
                     JobInfoResult jobInfo = client.getJobInfo(jobExecuteResult);

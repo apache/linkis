@@ -84,7 +84,8 @@ class GatewayWebSocketSessionConnection(
     }
   }
 
-  def getAddress: InetSocketAddress = webSocketSession.getHandshakeInfo.getRemoteAddress;
+  // todo
+  def getAddress: InetSocketAddress = null
 
   def getProxyWebSocketSession(
       serviceInstance: ServiceInstance
@@ -191,7 +192,8 @@ class GatewayWebSocketSession private (
 
   protected var webSocketConnection: WebSocketConnection = _
 
-  def isAlive: Boolean = !webSocketConnection.getInbound.receiveCloseStatus().subscribe().isDisposed
+  // todo
+  def isAlive: Boolean = true
 
   override def receive(): Flux[WebSocketMessage] = webSocketConnection.getInbound
     .aggregateFrames(ServerConfiguration.BDP_SERVER_SOCKET_TEXT_MESSAGE_SIZE_MAX.getValue.toInt)

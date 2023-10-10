@@ -41,7 +41,6 @@ import org.apache.commons.lang3.StringUtils
 import java.util
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.concurrent.duration.Duration
 
 class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager with Logging {
@@ -132,7 +131,7 @@ class DefaultCodeExecTaskExecutorManager extends CodeExecTaskExecutorManager wit
           .getIDInfo()} mark id is ${mark.getMarkId()}, it may take several seconds, please wait")
       )
     )
-    val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark)
+    val engineConnExecutor = engineConnManager.getAvailableEngineConnExecutor(mark, execTask)
     if (null == engineConnExecutor) {
       return null
     }

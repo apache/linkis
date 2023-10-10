@@ -22,6 +22,7 @@ import org.apache.linkis.common.utils.Logging
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.ReuseExclusionLabel
 import org.apache.linkis.manager.label.entity.entrance.{BindEngineLabel, LoadBalanceLabel}
+import org.apache.linkis.orchestrator.computation.physical.CodeLogicalUnitExecTask
 import org.apache.linkis.orchestrator.ecm.conf.ECMPluginConf
 import org.apache.linkis.orchestrator.ecm.entity._
 import org.apache.linkis.orchestrator.ecm.exception.ECMPluginErrorException
@@ -153,8 +154,10 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
     }
   }
 
-  override def getAvailableEngineConnExecutor(mark: Mark): EngineConnExecutor = {
-
+  override def getAvailableEngineConnExecutor(
+      mark: Mark,
+      execTask: CodeLogicalUnitExecTask
+  ): EngineConnExecutor = {
     if (null != mark && getMarkCache().containsKey(mark)) {
       tryReuseEngineConnExecutor(mark) match {
         case Some(engineConnExecutor) =>
@@ -174,7 +177,7 @@ class LoadBalanceLabelEngineConnManager extends ComputationEngineConnManager wit
           reuseExclusionLabel.getValue
         )
       }
-      val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark)
+      val engineConnExecutor = askEngineConnExecutor(engineConnAskReq, mark, execTask)
       saveToMarkCache(mark, engineConnExecutor)
       logger.debug(
         s"mark ${mark.getMarkId()} Finished to  getAvailableEngineConnExecutor by create"

@@ -7,11 +7,13 @@
                     <f-aside style="margin-right: 16px">
                         <Sidebar></Sidebar>
                     </f-aside>
-                    <f-main style="
+                    <f-main
+                        style="
                             margin-top: 16px;
                             padding: 24px;
                             background-color: #fff;
-                        ">
+                        "
+                    >
                         <router-view></router-view>
                     </f-main>
                 </f-layout>
@@ -22,8 +24,7 @@
 <script setup lang="ts">
 import Sidebar from '@/components/sidebar/index.vue';
 
-const changeMenusDisplay = () => {
-};
+const changeMenusDisplay = () => {};
 </script>
 <style lang="less" scoped>
 @import '@/style/variable.less';
@@ -178,7 +179,8 @@ const changeMenusDisplay = () => {
             background: rgba(83, 132, 255, 0.06);
 
             .wd-menu-icon {
-                filter: invert(45%) sepia(13%) saturate(4258%) hue-rotate(197deg) brightness(108%) contrast(100%);
+                filter: invert(45%) sepia(13%) saturate(4258%)
+                    hue-rotate(197deg) brightness(108%) contrast(100%);
             }
 
             &::after {

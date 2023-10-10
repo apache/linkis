@@ -25,8 +25,7 @@
                 <div class="delimiter"></div>
                 <FButton type="link" @click="openModal">全局配置</FButton>
                 <Drawer ref="drawerRef"></Drawer>
-                <Modal ref="modalRef">
-                </Modal>
+                <Modal ref="modalRef"> </Modal>
             </div>
         </f-header>
         <f-main>

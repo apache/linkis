@@ -53,7 +53,6 @@ export default defineComponent({
         // modelValue(val) {
         //     val !== this.getEditor()?.getValue() && this.updateMonacoVal(val);
         // },
-
         // editorName() {
         //     return `we-editor-${this.type}`;
         // },

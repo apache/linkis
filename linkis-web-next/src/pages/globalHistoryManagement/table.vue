@@ -323,7 +323,6 @@ onMounted(() => {
     position: relative;
     height: 100vh;
     overflow: auto;
-
     .table {
         /* height: calc(100% - 350px); */
         /* overflow-y: auto; */

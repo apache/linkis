@@ -22,6 +22,8 @@ import org.apache.linkis.common.variable.DateTypeUtils.{getCurHour, getToday}
 
 import java.util
 
+import scala.collection.mutable
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -61,6 +63,21 @@ class VariableUtilsTest {
     val varMap = new util.HashMap[String, String]()
     varMap.put("run_date", run_date_str)
     assertEquals(VariableUtils.replace(sql, "sql", varMap), resSql)
+  }
+
+  @Test
+  def testGetCustomVar: Unit = {
+    var scalaCode = "" +
+      "-------@set globalpara=60--------\n" +
+      "--@set globalpara2=66\n" +
+      "select ${globalpara} as globalpara,\n" +
+      "-- ${globalpara1} as globalpara1, \n" +
+      "${globalpara2} as globalpara2;\n"
+    var pythonCode = ""
+
+    val nameAndValue: mutable.Map[String, String] =
+      VariableUtils.getCustomVar(scalaCode, CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL);
+    assertEquals(nameAndValue.size, 2)
   }
 
 }

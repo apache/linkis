@@ -11,10 +11,16 @@
                             </div>
                         </template>
                         <f-menu-group>
-                            <template v-for="subMenuItem in menuItem.items" :key="subMenuItem.title">
-                                <f-menu-item :value="menuItem.title + subMenuItem.title" @click="
-                                    handleClick(subMenuItem?.path ?? '/')
-                                    ">
+                            <template
+                                v-for="subMenuItem in menuItem.items"
+                                :key="subMenuItem.title"
+                            >
+                                <f-menu-item
+                                    :value="menuItem.title + subMenuItem.title"
+                                    @click="
+                                        handleClick(subMenuItem?.path ?? '/')
+                                    "
+                                >
                                     <template #label>
                                         <div class="submenu-item">
                                             {{ $t(subMenuItem.title) }}123
@@ -26,7 +32,10 @@
                     </f-sub-menu>
                 </template>
                 <template v-else>
-                    <f-menu-item :value="menuItem.title" @click="handleClick(menuItem?.path ?? '/')">
+                    <f-menu-item
+                        :value="menuItem.title"
+                        @click="handleClick(menuItem?.path ?? '/')"
+                    >
                         <template #label>
                             <img :src="menuItem.icon" />
                             <div class="title-text">

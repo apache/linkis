@@ -18,15 +18,15 @@
 package org.apache.linkis.cli.application.operator.ujes;
 
 import org.apache.linkis.cli.application.constants.LinkisKeys;
-import org.apache.linkis.cli.application.interactor.job.desc.LinkisSubmitDesc;
+import org.apache.linkis.cli.application.entity.operator.JobOper;
+import org.apache.linkis.cli.application.exception.LinkisClientExecutionException;
+import org.apache.linkis.cli.application.exception.LinkisClientRuntimeException;
+import org.apache.linkis.cli.application.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.application.exception.error.ErrorLevel;
+import org.apache.linkis.cli.application.interactor.job.interactive.InteractiveJobDesc;
 import org.apache.linkis.cli.application.operator.ujes.result.OpenLogResult2;
 import org.apache.linkis.cli.application.operator.ujes.result.ResultSetResult2;
-import org.apache.linkis.cli.application.utils.Utils;
-import org.apache.linkis.cli.common.entity.operator.JobOperator;
-import org.apache.linkis.cli.common.exception.LinkisClientRuntimeException;
-import org.apache.linkis.cli.common.exception.error.ErrorLevel;
-import org.apache.linkis.cli.core.exception.LinkisClientExecutionException;
-import org.apache.linkis.cli.core.exception.error.CommonErrMsg;
+import org.apache.linkis.cli.application.utils.CliUtils;
 import org.apache.linkis.common.exception.LinkisException;
 import org.apache.linkis.ujes.client.UJESClient;
 import org.apache.linkis.ujes.client.request.JobSubmitAction;
@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /** Based on UjesClient */
-public class LinkisJobOperator implements JobOperator {
+public class LinkisJobOper implements JobOper {
   protected UJESClient client;
-  private Logger logger = LoggerFactory.getLogger(LinkisJobOperator.class);
+  private Logger logger = LoggerFactory.getLogger(LinkisJobOper.class);
   private String serverUrl;
 
   public UJESClient getUJESClient() {
@@ -87,7 +87,7 @@ public class LinkisJobOperator implements JobOperator {
    * @param
    * @return
    */
-  public LinkisOperResultAdapter submit(LinkisSubmitDesc jobDesc)
+  public LinkisOperResultAdapter submit(InteractiveJobDesc jobDesc)
       throws LinkisClientRuntimeException {
     checkInit();
     JobSubmitResult jobSubmitResult;
@@ -104,7 +104,7 @@ public class LinkisJobOperator implements JobOperator {
               .setLabels(jobDesc.getLabelMap())
               .setSource(jobDesc.getSourceMap())
               .build();
-      logger.info("Request info to Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
+      logger.info("Request info to Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitAction));
 
       /* Old API */
       //      JobExecuteAction jobExecuteAction = JobExecuteAction.builder()
@@ -127,7 +127,7 @@ public class LinkisJobOperator implements JobOperator {
       //      jobExecuteResult = client.execute(jobExecuteAction);
 
       jobSubmitResult = client.submit(jobSubmitAction);
-      logger.info("Response info from Linkis: \n{}", Utils.GSON.toJson(jobSubmitAction));
+      logger.info("Response info from Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitResult));
 
     } catch (Exception e) {
       // must throw if exception
@@ -142,7 +142,8 @@ public class LinkisJobOperator implements JobOperator {
       if (jobSubmitResult == null) {
         reason = "JobSubmitResult is null";
       } else if (0 != jobSubmitResult.getStatus()) {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += jobSubmitResult.getMessage();
       } else {
         reason = "server returns blank TaskId";
       }
@@ -191,13 +192,14 @@ public class LinkisJobOperator implements JobOperator {
     while (retryTime++ < MAX_RETRY_TIME) {
       try {
         jobStatusResult = client.status(executeResult);
-        logger.debug("job-status: " + Utils.GSON.toJson(jobStatusResult));
+        logger.debug("job-status: " + CliUtils.GSON.toJson(jobStatusResult));
         if (jobStatusResult == null || 0 != jobStatusResult.getStatus()) {
           String reason;
           if (jobStatusResult == null) {
             reason = "jobStatusResult is null";
           } else {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += jobStatusResult.getMessage();
           }
           String msg =
               MessageFormat.format(
@@ -224,14 +226,15 @@ public class LinkisJobOperator implements JobOperator {
               "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (jobStatusResult == null || 0 != jobStatusResult.getStatus()) {
       String reason;
       if (jobStatusResult == null) {
         reason = "jobStatusResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += jobStatusResult.getMessage();
       }
       String msg =
           MessageFormat.format(
@@ -255,17 +258,18 @@ public class LinkisJobOperator implements JobOperator {
     while (retryTime++ < MAX_RETRY_TIME) {
       try {
         jobInfoResult = client.getJobInfo(executeResult);
-        logger.debug("job-info: " + Utils.GSON.toJson(jobInfoResult));
+        logger.debug("job-info: " + CliUtils.GSON.toJson(jobInfoResult));
         if (jobInfoResult == null || 0 != jobInfoResult.getStatus()) {
           String reason;
           if (jobInfoResult == null) {
             reason = "JobInfoResult is null";
           } else {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += jobInfoResult.getMessage();
           }
           String msg =
               MessageFormat.format(
-                  "Get job info failed. retry time : {0}/{1}. taskID={0}, Reason: {1}",
+                  "Get job info failed. retry time : {0}/{1}. taskID={2}, Reason: {3}",
                   retryTime, MAX_RETRY_TIME, taskID, reason);
 
           logger.debug(
@@ -288,14 +292,15 @@ public class LinkisJobOperator implements JobOperator {
               "EXE0013", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (jobInfoResult == null || 0 != jobInfoResult.getStatus()) {
       String reason;
       if (jobInfoResult == null) {
         reason = "JobInfoResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += jobInfoResult.getMessage();
       }
       String msg =
           MessageFormat.format(
@@ -321,13 +326,14 @@ public class LinkisJobOperator implements JobOperator {
     while (retryTime++ < MAX_RETRY_TIME) {
       try {
         logResult = client.log(jobExecuteResult, fromLine, UJESConstants.MAX_LOG_SIZE);
-        logger.debug("runtime-log-result:" + Utils.GSON.toJson(logResult));
+        logger.debug("runtime-log-result:" + CliUtils.GSON.toJson(logResult));
         if (logResult == null || 0 != logResult.getStatus()) {
           String reason;
           if (logResult == null) {
             reason = "JobLogResult is null";
           } else {
             reason = "server returns non-zero status-code";
+            reason += logResult.getMessage();
           }
           String msg =
               MessageFormat.format(
@@ -350,14 +356,15 @@ public class LinkisJobOperator implements JobOperator {
               "EXE0016", ErrorLevel.ERROR, CommonErrMsg.ExecutionErr, msg, e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (logResult == null || 0 != logResult.getStatus()) {
       String reason;
       if (logResult == null) {
         reason = "JobLogResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += logResult.getMessage();
       }
       String msg =
           MessageFormat.format(
@@ -388,7 +395,7 @@ public class LinkisJobOperator implements JobOperator {
         openLogResult =
             client.openLog(
                 OpenLogAction.newBuilder().setLogPath(logPath).setProxyUser(user).build());
-        logger.debug("persisted-log-result:" + Utils.GSON.toJson(openLogResult));
+        logger.debug("persisted-log-result:" + CliUtils.GSON.toJson(openLogResult));
         if (openLogResult == null
             || 0 != openLogResult.getStatus()
             || StringUtils.isBlank(openLogResult.getLog()[UJESConstants.IDX_FOR_LOG_TYPE_ALL])) {
@@ -396,7 +403,8 @@ public class LinkisJobOperator implements JobOperator {
           if (openLogResult == null) {
             reason = "OpenLogResult is null";
           } else if (0 != openLogResult.getStatus()) {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += openLogResult.getMessage();
           } else {
             reason = "server returns empty log";
           }
@@ -425,7 +433,7 @@ public class LinkisJobOperator implements JobOperator {
               e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (openLogResult == null
         || 0 != openLogResult.getStatus()
@@ -475,7 +483,8 @@ public class LinkisJobOperator implements JobOperator {
           if (jobProgressResult == null) {
             reason = "JobProgressResult is null";
           } else {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += jobProgressResult.getMessage();
           }
           String msg =
               MessageFormat.format(
@@ -502,7 +511,7 @@ public class LinkisJobOperator implements JobOperator {
               e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
 
     if (jobProgressResult == null || 0 != jobProgressResult.getStatus()) {
@@ -510,7 +519,8 @@ public class LinkisJobOperator implements JobOperator {
       if (jobProgressResult == null) {
         reason = "JobProgressResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += jobProgressResult.getMessage();
       }
       String msg =
           MessageFormat.format(
@@ -588,7 +598,7 @@ public class LinkisJobOperator implements JobOperator {
               e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (resultSetArray == null || 0 == resultSetArray.length) {
       String reason;
@@ -623,13 +633,14 @@ public class LinkisJobOperator implements JobOperator {
                 .setPageSize(pageSize)
                 .build();
         result = client.resultSet(action);
-        logger.debug("resultset-result:" + Utils.GSON.toJson(result));
+        logger.debug("resultset-result:" + CliUtils.GSON.toJson(result));
         if (result == null || 0 != result.getStatus()) {
           String reason;
           if (result == null) {
             reason = "array is null";
           } else {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += result.getMessage();
           }
           String msg =
               MessageFormat.format(
@@ -656,14 +667,15 @@ public class LinkisJobOperator implements JobOperator {
               e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (result == null || 0 != result.getStatus()) {
       String reason;
       if (result == null) {
         reason = "ResultSetResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += result.getMessage();
       }
       String msg =
           MessageFormat.format(
@@ -691,13 +703,14 @@ public class LinkisJobOperator implements JobOperator {
         killRequest.setTaskID(taskId);
         killRequest.setExecID(execId);
         result = client.kill(killRequest);
-        logger.debug("job-kill-result:" + Utils.GSON.toJson(result));
+        logger.debug("job-kill-result:" + CliUtils.GSON.toJson(result));
         if (result == null || 0 != result.getStatus()) {
           String reason;
           if (result == null) {
             reason = "result is null";
           } else {
-            reason = "server returns non-zero status-code";
+            reason = "server returns non-zero status-code. ";
+            reason += result.getMessage();
           }
           String msg =
               MessageFormat.format(
@@ -725,14 +738,15 @@ public class LinkisJobOperator implements JobOperator {
               e);
         }
       }
-      Utils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
+      CliUtils.doSleepQuietly(UJESConstants.DRIVER_QUERY_SLEEP_MILLS);
     }
     if (result == null || 0 != result.getStatus()) {
       String reason;
       if (result == null) {
         reason = "result is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
+        reason += result.getMessage();
       }
       String msg =
           MessageFormat.format(

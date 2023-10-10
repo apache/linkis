@@ -65,14 +65,6 @@ object RPCConfiguration {
     "cs,contextservice,data-source-manager,metadataQuery,metadatamanager,query,jobhistory,application,configuration,filesystem,udf,variable,microservice,errorcode,bml,datasource,basedata-manager"
   ).getValue.split(",")
 
-  val METADATAQUERY_SERVICE_APPLICATION_NAME: CommonVars[String] =
-    CommonVars("wds.linkis.gateway.conf.publicservice.name", "linkis-ps-metadataquery")
-
-  val METADATAQUERY_SERVICE_LIST: Array[String] = CommonVars(
-    "wds.linkis.gateway.conf.metadataquery.list",
-    "metadatamanager,metadataquery"
-  ).getValue.split(",")
-
   val LINKIS_MANAGER_SERVICE_NAME: CommonVars[String] =
     CommonVars("wds.linkis.gateway.conf.linkismanager.name", "linkis-cg-linkismanager")
 

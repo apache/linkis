@@ -30,13 +30,16 @@ import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.governance.common.constant.ec.ECConstants
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
-
 import org.apache.commons.lang3.StringUtils
+import org.apache.flink.yarn.configuration.YarnConfigOptionsInternal
+import org.apache.linkis.common.exception.ErrorException
+import org.yaml.snakeyaml.Yaml
 
+import java.io.{File, FileNotFoundException}
 import java.util
 import java.util.concurrent.{Future, TimeUnit}
-
 import scala.concurrent.duration.Duration
+import scala.io.Source
 
 class FlinkJarOnceExecutor(
     override val id: Long,
@@ -56,7 +59,32 @@ class FlinkJarOnceExecutor(
       if (StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
     val mainClass = FLINK_APPLICATION_MAIN_CLASS.getValue(options)
     logger.info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
-    clusterDescriptor.deployCluster(programArguments, mainClass)
+    val internalYarnLogConfigFile = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.getValue(YarnConfigOptionsInternal.APPLICATION_LOG_CONFIG_FILE)
+    if (new File(internalYarnLogConfigFile).exists()) {
+      val source = Source.fromFile(internalYarnLogConfigFile)
+      try {
+        val yamlContent = source.mkString
+        val yaml = new Yaml()
+        val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
+        var appenderName = ""
+        var appenderType = ""
+        if (configMap.containsKey("appender.stream.name")) {
+          appenderName = configMap.get("appender.stream.name").toString
+        }
+        if (configMap.containsKey("appender.eventmeshAppender.type")) {
+          appenderType = configMap.get("appender.eventmeshAppender.type").toString
+        }
+        if (appenderName.equals("StreamRpcLog") && appenderType.equals("EventMeshLog4j2Appender")) {
+          clusterDescriptor.deployCluster(programArguments, mainClass)
+        } else {
+          throw new ErrorException(30000, s"log4j.properties 不符合规范，请检测内容")
+        }
+      } finally {
+        source.close()
+      }
+    } else {
+      throw new FileNotFoundException("log4j.properties file not found in both file system .")
+    }
   }
 
   override protected def waitToRunning(): Unit = {

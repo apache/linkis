@@ -17,6 +17,8 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.factory;
 
+import org.apache.flink.configuration.ConfigOptions;
+import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.linkis.engineconnplugin.flink.client.utils.YarnConfLoader;
 
 import org.apache.flink.configuration.ConfigOption;
@@ -33,8 +35,9 @@ import org.apache.hadoop.yarn.exceptions.YarnException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +54,11 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
               "**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
 
   public static final ConfigOption<String> YARN_SHIP_FILES =
-          key("yarn.ship-files")
-                  .stringType()
-                  .noDefaultValue()
-                  .withDescription("**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
+          ConfigOptions.key("yarn.ship-files")
+          .stringType()
+          .noDefaultValue()
+          .withDescription("**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
+
   private YarnConfiguration yarnConfiguration;
   private YarnClient yarnClient;
 
@@ -65,8 +69,8 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
   private void initYarnClient(Configuration configuration) {
     checkNotNull(configuration);
     String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
-    String [] paths = configuration.get(YARN_SHIP_FILES).split(";");
-    Optional<String> firstLog4jPath = Arrays.stream(paths)
+    List<String> paths = configuration.get(YarnConfigOptions.SHIP_FILES);
+    Optional<String> firstLog4jPath = paths.stream()
             .filter(path -> path.contains("log4j.properties"))
             .findFirst();
     if (firstLog4jPath.isPresent()) {

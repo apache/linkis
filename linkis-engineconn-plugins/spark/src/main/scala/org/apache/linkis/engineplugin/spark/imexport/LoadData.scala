@@ -81,8 +81,8 @@ object LoadData {
       if (flag == 1) true else false
     }
     val isOverwrite =
-      Utils.tryCatch(getMapValue[Boolean](destination, "isOverwrite", false)) {
-        case e: Exception => false
+      Utils.tryCatch(getMapValue[Boolean](destination, "isOverwrite", false)) { case e: Exception =>
+        false
       }
     val partition = getMapValue[String](destination, "partition", "ds")
     val partitionValue = getMapValue[String](destination, "partitionValue", "1993-01-02")

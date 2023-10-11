@@ -253,7 +253,9 @@ export default {
       };
       if (this.script.resultList && this.script.resultSet !== undefined) {
         res = this.script.resultList[this.script.resultSet].result
-        res.allPath = this.script.resultList.map(result => result.path);
+        if(res) {
+          res.allPath = this.script.resultList.map(result => result.path);
+        }
       }
       if(!res && this.script.result){
         res = this.script.result

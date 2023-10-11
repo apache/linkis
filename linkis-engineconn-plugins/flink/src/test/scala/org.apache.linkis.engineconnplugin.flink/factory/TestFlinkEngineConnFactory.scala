@@ -17,7 +17,7 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_CONF_DIR, FLINK_CONF_YAML}
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_CONF_DIR, FLINK_CONF_YAML, FLINK_ENV_JAVA_OPTS}
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -40,8 +40,8 @@ class TestFlinkEngineConnFactory {
         val yamlContent = source.mkString
         val yaml = new Yaml()
         val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
-        if (configMap.containsKey("env.java.opts")) {
-          defaultJavaOpts = configMap.get("env.java.opts").toString
+        if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+          defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
         }
       } finally {
         source.close()
@@ -54,8 +54,8 @@ class TestFlinkEngineConnFactory {
           val yamlContent = source.mkString
           val yaml = new Yaml()
           val configMap = yaml.loadAs(yamlContent, classOf[util.LinkedHashMap[String, Object]])
-          if (configMap.containsKey("env.java.opts")) {
-            defaultJavaOpts = configMap.get("env.java.opts").toString
+          if (configMap.containsKey(FLINK_ENV_JAVA_OPTS.getValue)) {
+            defaultJavaOpts = configMap.get(FLINK_ENV_JAVA_OPTS.getValue).toString
           }
         } finally {
           source.close()

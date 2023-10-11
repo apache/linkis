@@ -132,11 +132,15 @@
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
     <nebula.version>3.0.0</nebula.version>
+    <repl.version>1</repl.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>
     <shell.version>1</shell.version>
     <sqoop.version>1.4.6</sqoop.version>
     <elasticsearch.version>7.6.2</elasticsearch.version>
+
+    <!-- javassist -->
+    <javassist.version>3.28.0-GA</javassist.version>
 
     <!-- This is the same as the kubernetes-client version referenced in spark3.2.1 -->
     <kubernetes-client.version>5.4.1</kubernetes-client.version>

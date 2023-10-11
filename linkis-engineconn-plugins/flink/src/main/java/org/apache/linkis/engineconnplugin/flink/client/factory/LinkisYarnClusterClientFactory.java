@@ -17,8 +17,6 @@
 
 package org.apache.linkis.engineconnplugin.flink.client.factory;
 
-import org.apache.flink.configuration.ConfigOptions;
-import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.linkis.engineconnplugin.flink.client.utils.YarnConfLoader;
 
 import org.apache.flink.configuration.ConfigOption;
@@ -27,6 +25,7 @@ import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.yarn.YarnClientYarnClusterInformationRetriever;
 import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.YarnClusterDescriptor;
+import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnLogConfigUtil;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.client.api.YarnClient;
@@ -35,6 +34,8 @@ import org.apache.hadoop.yarn.exceptions.YarnException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,12 +54,6 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
           .withDescription(
               "**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
 
-  public static final ConfigOption<String> YARN_SHIP_FILES =
-          ConfigOptions.key("yarn.ship-files")
-          .stringType()
-          .noDefaultValue()
-          .withDescription("**DO NOT USE** The location of the log config file, e.g. the path to your log4j.properties for log4j.");
-
   private YarnConfiguration yarnConfiguration;
   private YarnClient yarnClient;
 
@@ -70,14 +65,14 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
     checkNotNull(configuration);
     String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
     List<String> paths = configuration.get(YarnConfigOptions.SHIP_FILES);
-    Optional<String> firstLog4jPath = paths.stream()
-            .filter(path -> path.contains("log4j.properties"))
-            .findFirst();
+    Optional<String> firstLog4jPath =
+        paths.stream().filter(path -> path.contains("log4j.properties")).findFirst();
     if (firstLog4jPath.isPresent()) {
-      configurationDirectory = firstLog4jPath.get();
+      Path parentAbsolutePath = Paths.get(firstLog4jPath.get()).toAbsolutePath().getParent();
+      configurationDirectory = parentAbsolutePath.toString();
       LOG.info("log4j.properties路径：" + configurationDirectory);
     } else {
-      LOG.info("未找到匹配的路径使用系统默认路径：" +configurationDirectory);
+      LOG.info("未找到匹配的路径使用系统默认路径：" + configurationDirectory);
     }
     YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
     String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);

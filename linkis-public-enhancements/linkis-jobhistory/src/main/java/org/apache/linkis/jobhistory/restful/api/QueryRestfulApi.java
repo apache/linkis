@@ -232,14 +232,30 @@ public class QueryRestfulApi {
   /** Method list should not contain subjob, which may cause performance problems. */
   @ApiOperation(value = "listundonetasks", notes = "list undone tasks", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
-    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "Long",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
     @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "pageSize", dataType = "Integer"),
-    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "Long",
+        value = "start task id"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   @RequestMapping(path = "/listundonetasks", method = RequestMethod.GET)
   public Message listundonetasks(
@@ -326,13 +342,29 @@ public class QueryRestfulApi {
 
   @ApiOperation(value = "listundone", notes = "list undone", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "startDate", dataType = "long"),
-    @ApiImplicitParam(name = "endDate", required = false, dataType = "long", value = "end date"),
-    @ApiImplicitParam(name = "status", required = false, dataType = "String", value = "status"),
+    @ApiImplicitParam(
+        name = "startDate",
+        required = false,
+        dataType = "Long",
+        value = "start date"),
+    @ApiImplicitParam(name = "endDate", required = false, dataType = "Long", value = "end date"),
     @ApiImplicitParam(name = "pageNow", required = false, dataType = "Integer", value = "page now"),
-    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "startTaskID", dataType = "long"),
+    @ApiImplicitParam(
+        name = "pageSize",
+        required = false,
+        dataType = "Integer",
+        value = "page size"),
+    @ApiImplicitParam(
+        name = "startTaskID",
+        required = false,
+        dataType = "Long",
+        value = "startTaskID"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engineType"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   /** Method list should not contain subjob, which may cause performance problems. */
   @RequestMapping(path = "/listundone", method = RequestMethod.GET)
@@ -355,17 +387,13 @@ public class QueryRestfulApi {
     }
     if (StringUtils.isEmpty(creator)) {
       creator = null;
-    } else {
-      if (!QueryUtils.checkNameValid(creator)) {
-        return Message.error("Invalid creator : " + creator);
-      }
+    } else if (!QueryUtils.checkNameValid(creator)) {
+      return Message.error("Invalid creator : " + creator);
     }
     if (StringUtils.isEmpty(engineType)) {
       engineType = null;
-    } else {
-      if (!QueryUtils.checkNameValid(engineType)) {
-        return Message.error("Invalid engienType: " + engineType);
-      }
+    } else if (!QueryUtils.checkNameValid(engineType)) {
+      return Message.error("Invalid engienType: " + engineType);
     }
     Date sDate = new Date(startDate);
     Date eDate = new Date(endDate);

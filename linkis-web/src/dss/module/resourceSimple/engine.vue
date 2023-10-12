@@ -248,6 +248,8 @@ export default {
           return 'Openlookeng';
         case 'elasticsearch':
           return 'Elasticsearch';
+        case 'trino':
+          return 'Trino';
         case 'Unlock':
           return this.$t('message.common.resourceSimple.KX')
         case 'Idle':

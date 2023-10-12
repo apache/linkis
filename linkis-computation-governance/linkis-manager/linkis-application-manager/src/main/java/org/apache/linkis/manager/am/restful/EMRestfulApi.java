@@ -59,6 +59,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -436,6 +437,12 @@ public class EMRestfulApi {
 
   private Message executeECMOperation(
       EMNode ecmNode, String engineInstance, ECMOperateRequest ecmOperateRequest) {
+    if (Objects.isNull(ecmNode)) {
+      return Message.error(
+          MessageFormat.format(
+              "ECM node :[{0}]  does not exist, Unable to open engine log(ECM节点:[{1}] 异常，无法打开日志，可能是该节点服务重启或者服务异常导致)",
+              engineInstance, engineInstance));
+    }
     String operationName = OperateRequest$.MODULE$.getOperationName(ecmOperateRequest.parameters());
     String userName = ecmOperateRequest.user();
     if (ArrayUtils.contains(adminOperations, operationName) && Configuration.isNotAdmin(userName)) {
@@ -457,7 +464,7 @@ public class EMRestfulApi {
       ECResourceInfoRecord ecResourceInfoRecord =
           ecResourceInfoService.getECResourceInfoRecordByInstance(engineInstance);
       if (Objects.isNull(ecResourceInfoRecord)) {
-        return Message.error("ECM instance: " + ecmNode.getServiceInstance() + " not exist ");
+        return Message.error("EC instance: " + engineInstance + " not exist ");
       }
       // eg logDirSuffix -> root/20230705/io_file/6d48068a-0e1e-44b5-8eb2-835034db5b30/logs
       String logDirSuffix = ecResourceInfoRecord.getLogDirSuffix();

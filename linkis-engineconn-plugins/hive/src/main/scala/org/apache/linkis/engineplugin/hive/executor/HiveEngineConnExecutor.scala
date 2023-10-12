@@ -148,6 +148,7 @@ class HiveEngineConnExecutor(
       LOG.info(s"set mapreduce.job.tags=LINKIS_$jobId")
       hiveConf.set("mapreduce.job.tags", s"LINKIS_$jobId")
     }
+
     if (realCode.trim.length > 500) {
       engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim.substring(0, 500)} ...")
     } else engineExecutorContext.appendStdout(s"$getId >> ${realCode.trim}")
@@ -470,7 +471,7 @@ class HiveEngineConnExecutor(
       val currentBegin = (currentSQL - 1) / totalSQLs.asInstanceOf[Float]
       val finishedStage =
         if (null != driver && null != driver.getPlan() && !driver.getPlan().getRootTasks.isEmpty) {
-          Utils.tryAndWarn(
+          Utils.tryQuietly(
             Utilities
               .getMRTasks(driver.getPlan().getRootTasks)
               .asScala

@@ -69,7 +69,7 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 INSERT INTO `linkis_ps_configuration_config_key`
 (`key`, `description`, `name`, `default_value`, `validate_type`, `validate_range`, `engine_conn_type`, `is_hidden`, `is_advanced`, `level`, `treeName`, `boundary_type`, `en_treeName`, `en_description`, `en_name`)
 VALUES
-('spark.locality.wait', '范围：0-3000，单位：毫秒', '任务调度本地等待时间', '3000', 'OFT', '[\"0\",\"1000\",\"2000\",\"3000\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0-3000, Unit: millisecond', 'Task Scheduling Local Waiting Time');
+('spark.locality.wait', '范围：0-3，单位：秒', '任务调度本地等待时间', '3s', 'OFT', '[\"0s\",\"1s\",\"2s\",\"3s\"]', 'spark', 0, 1, 1, 'spark资源设置', 0, 'Spark Resource Settings', 'Range: 0-3, Unit: second', 'Task Scheduling Local Waiting Time');
 
 
 -- all 默认
@@ -121,3 +121,8 @@ INSERT INTO `linkis_ps_configuration_config_value` (`config_key_id`, `config_val
 );
 
 
+UPDATE linkis_ps_error_code SET error_regex = "User (\\S+) cannot submit applications to queue ([A-Za-z._0-9]+)" WHERE  error_code =  "21001";
+
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43016','模块 %s 没有属性 %s ，请确认代码引用是否正常','AttributeError: \'(\\S+)\' object has no attribute \'(\\S+)\'',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43017','存在参数无效或拼写错误，请确认 %s 参数正确性','KeyError: (\\(.+\\))',0);
+INSERT INTO linkis_ps_error_code (error_code,error_desc,error_regex,error_type) VALUES ('43018','文件未找到，请确认该路径( %s )是否存在','FileNotFoundError.*No such file or directory\\:\\s\'(\\S+)\'',0);

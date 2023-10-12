@@ -23,13 +23,13 @@
       fix/>
     <Row class="search-bar">
       <Col span="6" class="search-item">
-        <span class="search-label">{{$t('message.linkis.ipListManagement.engineType')}}</span>
+        <span :title="$t('message.linkis.ipListManagement.engineType')" class="search-label">{{$t('message.linkis.ipListManagement.engineType')}}</span>
         <Select v-model="queryData.engineType" style="width: 290px">
           <Option v-for="(item) in getEngineTypes" :label="item === 'all' ? $t('message.linkis.engineTypes.all'): item" :value="item" :key="item" />
         </Select>
       </Col>
       <Col span="6" class="search-item">
-        <span class="search-label">{{$t('message.linkis.ipListManagement.key')}}</span>
+        <span :title="$t('message.linkis.ipListManagement.key')" class="search-label">{{$t('message.linkis.ipListManagement.key')}}</span>
         <Input
           v-model="queryData.key"
           style="width: 290px"
@@ -370,7 +370,8 @@ export default {
           
         this.datalist = res.configKeyList.map((item) => {
           item.formatBoundaryType = this.boundaryTypeMap[item.boundaryType]
-          item.formatValidateType = this.validateTypeList.find(p => p.value === item.validateType).label
+          item.formatValidateType = this.validateTypeList.find(p => p.value === item.validateType)?.label || ''
+          item.templateRequired = item.templateRequired ? '1' : '0'
           return item
         });
         this.page.totalPage = res.totalPage;
@@ -425,7 +426,7 @@ export default {
       const target = '/configuration/baseKeyValue'
       this.$refs.createTenantForm.validate(async (valid) => {
         if(valid) {
-          this.clearSearch();
+          
           try {
             if(this.mode !== 'edit') {
               this.page.pageNow = 1;
@@ -433,8 +434,9 @@ export default {
             this.isRequesting = true
             const body = cloneDeep(this.modalData);
             if(!body.engineType || body.engineType === 'all') delete body.engineType
+            body.templateRequired = body.templateRequired === '1'
             await api.fetch(target, body, "post")
-            await this.getTableData();
+            await this.clearSearch();
             this.cancel();
             this.$Message.success(this.$t('message.linkis.udf.success'));
            

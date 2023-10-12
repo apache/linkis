@@ -42,5 +42,8 @@ public interface TemplateConfigKeyMapper {
   List<TemplateConfigKeyVO> selectInfoListByTemplateUuid(
       @Param("templateUuid") String templateUuid);
 
+  List<TemplateConfigKeyVO> selectInfoListByTemplateName(
+      @Param("templateName") String templateName);
+
   List<String> selectEngineTypeByTemplateUuid(@Param("templateUuid") String templateUuid);
 }

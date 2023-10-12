@@ -36,7 +36,6 @@
             <Filters>
                 <RegexFilter regex=".*Hive-on-MR is deprecated in Hive \d+ and may not be available in the future versions\..*" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <RegexFilter regex=".*Hadoop command-line option parsing not.*" onMatch="DENY" onMismatch="NEUTRAL"/>
-                <RegexFilter regex=".*org.apache.hadoop.ipc.RemoteException.*File does not exist.*" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <RegexFilter regex="Group.*is deprecated. Use.*instead" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <RegexFilter regex="Failed to get files with ID; using regular API.*" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
@@ -106,6 +105,9 @@
             <appender-ref ref="Send"/>
         </logger>
         <logger name="org.apache.hadoop.mapreduce.split.JobSplitWriter" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.hdfs.server.namenode.ha.RequestHedgingProxyProvider" level="ERROR" additivity="true">
             <appender-ref ref="Send"/>
         </logger>
    </loggers>

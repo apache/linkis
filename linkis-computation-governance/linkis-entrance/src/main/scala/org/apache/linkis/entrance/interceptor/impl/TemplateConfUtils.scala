@@ -21,6 +21,7 @@ import org.apache.linkis.common.conf.Configuration
 import org.apache.linkis.common.exception.LinkisCommonErrorException
 import org.apache.linkis.common.log.LogUtils
 import org.apache.linkis.common.utils.{CodeAndRunTypeUtils, Logging, Utils}
+import org.apache.linkis.entrance.conf.EntranceConfiguration
 import org.apache.linkis.governance.common.entity.TemplateConfKey
 import org.apache.linkis.governance.common.entity.job.JobRequest
 import org.apache.linkis.governance.common.protocol.conf.{TemplateConfRequest, TemplateConfResponse}
@@ -131,55 +132,49 @@ object TemplateConfUtils extends Logging {
     languageType match {
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SQL =>
         varString = s"""\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
-        rightVarString = s"""^\\s*---@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*---@.*"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_PYTHON | CodeAndRunTypeUtils.LANGUAGE_TYPE_SHELL =>
         varString = s"""\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
-        rightVarString = s"""^\\s*##@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*##@"""
       case CodeAndRunTypeUtils.LANGUAGE_TYPE_SCALA =>
         varString = s"""\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
-        rightVarString = s"""^\\s*///@set ${confTemplateNameKey}=\\s*.+\\s*"""
         errString = """\s*///@.+"""
       case _ =>
         return templateConfName
     }
 
     val customRegex = varString.r.unanchored
-    val customRightRegex = rightVarString.r.unanchored
     val errRegex = errString.r.unanchored
-    code.split("\n").foreach { str =>
-      {
-
-        if (customRightRegex.unapplySeq(str).size < customRegex.unapplySeq(str).size) {
-          logger.warn(s"code:$str is wrong custom template conf name variable format!!!")
-        }
-        str match {
-          case customRegex() =>
-            val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
-            val res: Array[String] = clearStr.split("=")
-            if (res != null && res.length == 2) {
-              templateConfName = res(1).trim
-              logger.info(s"get template conf name $templateConfName")
+    var codeRes = code.replaceAll("\r\n", "\n")
+    // only allow set at fisrt line
+    val res = codeRes.split("\n")
+    if (res.size > 0) {
+      val str = res(0)
+      str match {
+        case customRegex() =>
+          val clearStr = if (str.endsWith(";")) str.substring(0, str.length - 1) else str
+          val res: Array[String] = clearStr.split("=")
+          if (res != null && res.length == 2) {
+            templateConfName = res(1).trim
+            logger.info(s"get template conf name $templateConfName")
+          } else {
+            if (res.length > 2) {
+              throw new LinkisCommonErrorException(
+                20044,
+                s"$str template conf name var defined uncorrectly"
+              )
             } else {
-              if (res.length > 2) {
-                throw new LinkisCommonErrorException(
-                  20044,
-                  s"$str template conf name var defined uncorrectly"
-                )
-              } else {
-                throw new LinkisCommonErrorException(
-                  20045,
-                  s"template conf name var  was defined uncorrectly:$str"
-                )
-              }
+              throw new LinkisCommonErrorException(
+                20045,
+                s"template conf name var  was defined uncorrectly:$str"
+              )
             }
-          case errRegex() =>
-            logger.warn(
-              s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
-            )
-          case _ =>
-        }
+          }
+        case errRegex() =>
+          logger.warn(
+            s"The template conf name var definition is incorrect:$str,if it is not used, it will not run the error, but it is recommended to use the correct specification to define"
+          )
+        case _ =>
       }
     }
     templateConfName
@@ -195,7 +190,7 @@ object TemplateConfUtils extends Logging {
         var templateName: String = ""
         // only for Creator:IDE, try to get template conf name from code string. eg:---@set ec.resource.name=xxxx
         val (user, creator) = LabelUtil.getUserCreator(jobRequest.getLabels)
-        if ("IDE".equals(creator)) {
+        if (EntranceConfiguration.DEFAULT_REQUEST_APPLICATION_NAME.getValue.equals(creator)) {
           val codeType = LabelUtil.getCodeType(jobRequest.getLabels)
           templateName =
             TemplateConfUtils.getCustomTemplateConfName(jobRequest.getExecutionCode, codeType)
@@ -226,10 +221,10 @@ object TemplateConfUtils extends Logging {
             }
           }
         } else {
-          logger.info("Try to get template conf list with template name:{} ", templateName)
+          logger.info("Try to get template conf list with template name:[{}]", templateName)
           logAppender.append(
             LogUtils
-              .generateInfo(s"Try to get template conf data with template name:$templateName\n")
+              .generateInfo(s"Try to get template conf data with template name:[$templateName]\n")
           )
           templateConflist = templateCacheName.get(templateName)
           if (templateConflist == null || templateConflist.size() == 0) {

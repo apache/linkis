@@ -48,6 +48,7 @@ import org.apache.linkis.manager.label.entity.engine.{
   RunType,
   UserCreatorLabel
 }
+import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.protocol.engine.JobProgressInfo
 import org.apache.linkis.scheduler.executer._
 
@@ -208,11 +209,7 @@ abstract class ComputationExecutor(val outputPrintLimit: Int = 1000)
       // task params log
       // spark engine: at org.apache.linkis.engineplugin.spark.executor.SparkEngineConnExecutor.executeLine log special conf
       Utils.tryAndWarn {
-        var engineType = ""
-        engineCreationContext.getLabels().asScala.find(_.isInstanceOf[EngineTypeLabel]) match {
-          case Some(engineTypeLabel) =>
-            engineType = engineTypeLabel.asInstanceOf[EngineTypeLabel].getEngineType
-        }
+        val engineType = LabelUtil.getEngineType(engineCreationContext.getLabels())
         EngineType.mapStringToEngineType(engineType) match {
           case EngineType.HIVE | EngineType.TRINO => printTaskParamsLog(engineExecutionContext)
           case _ =>

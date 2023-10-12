@@ -235,7 +235,7 @@ private[conf] object BDPConfiguration extends Logging {
     val trimValue = value.map(_.trim)
     val formattedValue = defaultValue match {
       case _: String => trimValue
-      case _: Byte => trimValue.map(_.trim).map(_.toByte)
+      case _: Byte => trimValue.map(_.toByte)
       case _: Short => trimValue.map(_.toShort)
       case _: Char => trimValue.map(_.toCharArray.apply(0))
       case _: Int => trimValue.map(_.toInt)

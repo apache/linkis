@@ -60,33 +60,16 @@ class FlinkJarOnceExecutor(
       if (StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
     val mainClass = FLINK_APPLICATION_MAIN_CLASS.getValue(options)
     logger.info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
-    val internalYarnLogConfigFile = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig
-      .getValue(YarnConfigOptions.SHIP_FILES)
+    val internalYarnLogConfigFile = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.getValue(YarnConfigOptions.SHIP_FILES)
     logger.info(internalYarnLogConfigFile)
     val paths = internalYarnLogConfigFile.stripPrefix("[").stripSuffix("]").split(",").toList
     val firstLog4jPath: Option[String] = paths.find(path => path.contains("log4j.properties"))
+    val configMap = new Properties()
     firstLog4jPath match {
       case Some(log4jPath) =>
         if (new File(log4jPath).exists()) {
           try {
-            val configMap = new Properties()
             configMap.load(Files.newBufferedReader(Paths.get(log4jPath)))
-            var appenderName = ""
-            var appenderType = ""
-            if (configMap.containsKey("appender.stream.name")) {
-              appenderName = configMap.get("appender.stream.name").toString
-            }
-            if (configMap.containsKey("appender.eventmeshAppender.type")) {
-              appenderType = configMap.get("appender.eventmeshAppender.type").toString
-            }
-            if (
-                appenderName
-                  .equals("StreamRpcLog") && appenderType.equals("EventMeshLog4j2Appender")
-            ) {
-              clusterDescriptor.deployCluster(programArguments, mainClass)
-            } else {
-              throw new ErrorException(30000, s"log4j.properties 不符合规范，请检测内容")
-            }
           } catch {
             case e: Exception =>
               logger.error("读取或解析文件时出现错误: " + e.getMessage)
@@ -95,9 +78,20 @@ class FlinkJarOnceExecutor(
           logger.info(log4jPath)
           throw new FileNotFoundException("log4j.properties file not found in both file system")
         }
+        var appenderName = ""
+        var appenderType = ""
+        if (configMap.containsKey("appender.stream.name")) {
+          appenderName = configMap.get("appender.stream.name").toString
+        }
+        if (configMap.containsKey("appender.eventmeshAppender.type")) {
+          appenderType = configMap.get("appender.eventmeshAppender.type").toString
+        }
+        if (!appenderName.equals("StreamRpcLog") && !appenderType.equals("EventMeshLog4j2Appender")) {
+          throw new ErrorException(30000, s"log4j.properties 不符合规范，请检测内容")
+        }
       case None =>
-        throw new FileNotFoundException("log4j.properties path not found .")
     }
+    clusterDescriptor.deployCluster(programArguments, mainClass)
   }
 
   override protected def waitToRunning(): Unit = {

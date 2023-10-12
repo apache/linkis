@@ -391,7 +391,7 @@ export default {
         if (rst.dirFileTrees) {
           // The order of the result set in the background is sorted by string according to the name of the result set. When displaying, there will be a problem that the result set cannot be matched, so add sorting(后台的结果集顺序是根据结果集名称按字符串排序的，展示时会出现结果集对应不上的问题，所以加上排序)
           let scriptResultList = rst.dirFileTrees.children.sort(
-            (a, b) => parseInt(a.name, 10) - parseInt(b.name, 10)
+            (a, b) => parseInt(a.name.split('_')[1].split('.')[0], 10) - parseInt(b.name.split('_')[1].split('.')[0], 10)
           )
           if (scriptResultList.length) {
             const currentResultPath = rst.dirFileTrees.children[0].path

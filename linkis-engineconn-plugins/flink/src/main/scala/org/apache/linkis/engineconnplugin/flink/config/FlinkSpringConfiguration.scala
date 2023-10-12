@@ -30,7 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.{Bean, Configuration}
 
 @Configuration
-class FlinkSrpingConfiguration extends Logging {
+class FlinkSpringConfiguration extends Logging {
 
   private val asyncListenerBusContext =
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus

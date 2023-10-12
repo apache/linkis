@@ -59,7 +59,7 @@ object ECMConfiguration {
 
   val ECM_PROTECTED_MEMORY: Long = CommonVars[Long](
     "wds.linkis.ecm.protected.memory",
-    ByteTimeUtils.byteStringAsBytes("4g")
+    ByteTimeUtils.byteStringAsBytes("10g")
   ).getValue
 
   val ECM_PROTECTED_CPU_LOAD: Double =

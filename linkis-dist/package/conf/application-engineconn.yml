@@ -20,6 +20,8 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
       file-size-threshold: 50MB
+  main:
+    allow-bean-definition-overriding: true
 eureka:
   instance:
     # prefer-ip-address: true

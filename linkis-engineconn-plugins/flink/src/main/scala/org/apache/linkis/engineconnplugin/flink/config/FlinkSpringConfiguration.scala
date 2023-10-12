@@ -36,7 +36,6 @@ class FlinkSrpingConfiguration extends Logging {
     ExecutorListenerBusContext.getExecutorListenerBusContext().getEngineConnAsyncListenerBus
 
   @Bean(Array("lockService"))
-  @ConditionalOnMissingBean
   def createLockManager(): LockService = {
 
     val lockService =

@@ -17,20 +17,26 @@
 
 package org.apache.linkis.engineconnplugin.flink.factory
 
-import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{FLINK_CONF_DIR, FLINK_CONF_YAML, FLINK_ENV_JAVA_OPTS}
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration.{
+  FLINK_CONF_DIR,
+  FLINK_CONF_YAML,
+  FLINK_ENV_JAVA_OPTS
+}
 import org.apache.linkis.engineconnplugin.flink.util.FlinkValueFormatUtil
+
+import java.io.{File, FileNotFoundException}
+import java.util
+
+import scala.io.Source
+
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
 
-import java.io.{File, FileNotFoundException}
-import java.util
-import scala.io.Source
-
 class TestFlinkEngineConnFactory {
 
   @Test
-  private  def getExtractJavaOpts(envJavaOpts: String): String = {
+  private def getExtractJavaOpts(envJavaOpts: String): String = {
     var defaultJavaOpts = ""
     val yamlFilePath = FLINK_CONF_DIR.getValue
     val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
@@ -73,6 +79,10 @@ class TestFlinkEngineConnFactory {
     val defaultJavaOpts = "-Da=3 -Db=4 -XXc=5 -Dk=a1=b";
     val envJavaOpts = "-DjobName=0607_1 -Dlog4j.configuration=./log4j.properties -Da=1 -Dk=a1=c";
     val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
-    assertEquals("-Da=1 -Db=4 -XXc=5 -Dk=a1=c -DjobName=0607_1 -Dlog4j.configuration=./log4j.properties", merged)
+    assertEquals(
+      "-Da=1 -Db=4 -XXc=5 -Dk=a1=c -DjobName=0607_1 -Dlog4j.configuration=./log4j.properties",
+      merged
+    )
   }
+
 }

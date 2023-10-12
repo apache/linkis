@@ -34,10 +34,14 @@ import org.apache.linkis.engineconnplugin.flink.setting.Settings
 import org.apache.linkis.engineconnplugin.flink.util.{ClassUtil, FlinkValueFormatUtil, ManagerUtil}
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.engineplugin.common.conf.EnvConfiguration
-import org.apache.linkis.manager.engineplugin.common.creation.{ExecutorFactory, MultiExecutorEngineConnFactory}
+import org.apache.linkis.manager.engineplugin.common.creation.{
+  ExecutorFactory,
+  MultiExecutorEngineConnFactory
+}
 import org.apache.linkis.manager.label.entity.Label
 import org.apache.linkis.manager.label.entity.engine._
 import org.apache.linkis.manager.label.entity.engine.EngineType.EngineType
+
 import org.apache.commons.lang3.StringUtils
 import org.apache.flink.configuration._
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings
@@ -53,8 +57,10 @@ import java.text.MessageFormat
 import java.time.Duration
 import java.util
 import java.util.{Collections, Locale}
+
 import scala.collection.JavaConverters._
 import scala.io.Source
+
 import com.google.common.collect.{Lists, Sets}
 import org.yaml.snakeyaml.Yaml
 
@@ -236,7 +242,7 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     context
   }
 
-  private  def getExtractJavaOpts(envJavaOpts: String): String = {
+  private def getExtractJavaOpts(envJavaOpts: String): String = {
     var defaultJavaOpts = ""
     val yamlFilePath = FLINK_CONF_DIR.getValue
     val yamlFile = yamlFilePath + "/" + FLINK_CONF_YAML.getHotValue()
@@ -273,8 +279,6 @@ class FlinkEngineConnFactory extends MultiExecutorEngineConnFactory with Logging
     val merged = FlinkValueFormatUtil.mergeAndDeduplicate(defaultJavaOpts, envJavaOpts)
     merged
   }
-
-
 
   protected def isOnceEngineConn(labels: util.List[Label[_]]): Boolean = {
     val engineConnModeLabel = getEngineConnModeLabel(labels)

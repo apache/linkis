@@ -38,18 +38,24 @@ object FlinkValueFormatUtil {
 
   def mergeAndDeduplicate(defaultJavaOpts: String, envJavaOpts: String): String = {
     val patternX = """-XX:([^\s]+)=([^\s]+)""".r
-    val keyValueMapX = patternX.findAllMatchIn(envJavaOpts).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
+    val keyValueMapX = patternX
+      .findAllMatchIn(envJavaOpts)
+      .map { matchResult =>
+        val key = matchResult.group(1)
+        val value = matchResult.group(2)
+        (key, value)
+      }
+      .toMap
 
     val patternD = """-D([^\s]+)=([^\s]+)""".r
-    val keyValueMapD = patternD.findAllMatchIn(envJavaOpts).map { matchResult =>
-      val key = matchResult.group(1)
-      val value = matchResult.group(2)
-      (key, value)
-    }.toMap
+    val keyValueMapD = patternD
+      .findAllMatchIn(envJavaOpts)
+      .map { matchResult =>
+        val key = matchResult.group(1)
+        val value = matchResult.group(2)
+        (key, value)
+      }
+      .toMap
     val xloggcPattern = """-Xloggc:[^\s]+""".r
     val xloggcValueStr1 = xloggcPattern.findFirstMatchIn(defaultJavaOpts).getOrElse("").toString
     val xloggcValueStr2 = xloggcPattern.findFirstMatchIn(envJavaOpts).getOrElse("").toString

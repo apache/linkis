@@ -44,6 +44,8 @@ object FlinkEnvConfiguration {
     FLINK_HOME.getValue + s"/lib/flink-dist_2.11-${FLINK_VERSION.getValue}.jar"
   )
 
+  val FLINK_CONF_YAML = CommonVars("flink.conf.yaml.dir", "flink-conf.yaml")
+
   val FLINK_PROVIDED_LIB_PATH = CommonVars("flink.lib.path", "")
 
   val FLINK_PROVIDED_USER_LIB_PATH =
@@ -61,6 +63,7 @@ object FlinkEnvConfiguration {
     "The local lib path of each user in Flink EngineConn."
   )
 
+  val FLINK_YAML_MERGE_ENABLE = CommonVars("flink.yaml.merge.enable", true)
   val FLINK_SHIP_DIRECTORIES = CommonVars("flink.yarn.ship-directories", "")
   val FLINK_SHIP_REMOTE_DIRECTORIES = CommonVars("flink.yarn.remote.ship-directories", "")
 
@@ -88,6 +91,8 @@ object FlinkEnvConfiguration {
   val FLINK_SQL_DEV_RESULT_MAX_WAIT_TIME =
     CommonVars("flink.dev.sql.result.wait.time.max", new TimeType("1m"))
 
+  val LINKIS_FLINK_LOG4J_CHECK_ENABLE = CommonVars("linkis.flink.log4j.check.enable", true)
+  val LINKIS_FLINK_LOG4J_CHECK_KEYWORDS = CommonVars("linkis.flink.log4j.check.keywords", "")
   val FLINK_APPLICATION_ARGS = CommonVars("flink.app.args", "")
   val FLINK_APPLICATION_MAIN_CLASS = CommonVars("flink.app.main.class", "")
   val FLINK_APPLICATION_MAIN_CLASS_JAR = CommonVars("flink.app.main.class.jar", "")
@@ -136,5 +141,8 @@ object FlinkEnvConfiguration {
 
   val FLINK_HANDSHAKE_WAIT_TIME_MILLS =
     CommonVars("linkis.flink.handshake.wait.time.mills", 60 * 1000)
+
+  val FLINK_ENV_JAVA_OPTS =
+    CommonVars("flink.env.java.opts", "env.java.opts")
 
 }

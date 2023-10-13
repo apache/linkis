@@ -31,6 +31,7 @@ import org.apache.linkis.engineconnplugin.flink.util.YarnUtil
 import org.apache.linkis.manager.common.entity.enumeration.NodeStatus
 
 import org.apache.commons.lang3.StringUtils
+import org.apache.flink.configuration.ConfigOption
 import org.apache.flink.yarn.configuration.{YarnConfigOptions, YarnConfigOptionsInternal}
 
 import java.io.{File, FileNotFoundException}
@@ -60,38 +61,48 @@ class FlinkJarOnceExecutor(
       if (StringUtils.isNotEmpty(args)) args.split(" ") else Array.empty[String]
     val mainClass = FLINK_APPLICATION_MAIN_CLASS.getValue(options)
     logger.info(s"Ready to submit flink application, mainClass: $mainClass, args: $args.")
-    val internalYarnLogConfigFile = flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.getValue(YarnConfigOptions.SHIP_FILES)
-    logger.info(internalYarnLogConfigFile)
-    val paths = internalYarnLogConfigFile.stripPrefix("[").stripSuffix("]").split(",").toList
-    val firstLog4jPath: Option[String] = paths.find(path => path.contains("log4j.properties"))
-    val configMap = new Properties()
-    firstLog4jPath match {
-      case Some(log4jPath) =>
-        if (new File(log4jPath).exists()) {
+    if (LINKIS_FLINK_LOG4J_CHECK_ENABLE.getHotValue()) {
+      val yarnShipLog4jPath = getLog4jPath(YarnConfigOptions.SHIP_FILES)
+      var firstLog4jPath: Option[String] = yarnShipLog4jPath
+      if (null == firstLog4jPath && firstLog4jPath.isEmpty) {
+        val internalYarnLog4jPath = getLog4jPath(
+          YarnConfigOptionsInternal.APPLICATION_LOG_CONFIG_FILE
+        )
+        firstLog4jPath = internalYarnLog4jPath
+      }
+      val configMap = new Properties()
+      firstLog4jPath match {
+        case Some(log4jPath) =>
           try {
             configMap.load(Files.newBufferedReader(Paths.get(log4jPath)))
           } catch {
             case e: Exception =>
               logger.error("读取或解析文件时出现错误: " + e.getMessage)
           }
-        } else {
-          logger.info(log4jPath)
-          throw new FileNotFoundException("log4j.properties file not found in both file system")
-        }
-        var appenderName = ""
-        var appenderType = ""
-        if (configMap.containsKey("appender.stream.name")) {
-          appenderName = configMap.get("appender.stream.name").toString
-        }
-        if (configMap.containsKey("appender.eventmeshAppender.type")) {
-          appenderType = configMap.get("appender.eventmeshAppender.type").toString
-        }
-        if (!appenderName.equals("StreamRpcLog") && !appenderType.equals("EventMeshLog4j2Appender")) {
-          throw new ErrorException(30000, s"log4j.properties 不符合规范，请检测内容")
-        }
-      case None =>
+          val ecOptions = onceExecutorExecutionContext.getEngineCreationContext.getOptions
+          LINKIS_FLINK_LOG4J_CHECK_KEYWORDS.getValue(ecOptions).split(",").foreach {
+            appenderConfig =>
+              if (null != appenderConfig && appenderConfig.nonEmpty) {
+                if (!configMap.values().contains(appenderConfig)) {
+                  throw new ErrorException(30000, s"log4j.properties 不符合规范，请检测内容")
+                }
+              } else {
+                logger.info("log4j.properties does not need check")
+              }
+          }
+        case None =>
+      }
     }
     clusterDescriptor.deployCluster(programArguments, mainClass)
+  }
+
+  def getLog4jPath(configOption: ConfigOption[_]): Option[String] = {
+    val internalYarnLogConfigFile =
+      flinkEngineConnContext.getEnvironmentContext.getFlinkConfig.getValue(configOption)
+    logger.info(internalYarnLogConfigFile)
+    val paths = internalYarnLogConfigFile.stripPrefix("[").stripSuffix("]").split(",").toList
+    val option = paths.find(path => path.contains("log4j.properties"))
+    option
   }
 
   override protected def waitToRunning(): Unit = {

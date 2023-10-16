@@ -63,7 +63,7 @@ abstract class LogManager extends LogListener with Logging {
           var writeLog = log
           errorCodeManager.foreach(_.errorMatchAndGetContent(log).foreach {
             case (code, errorMsg, targetMsg) =>
-              if (!targetMsg.contains(LogUtils.ERROR_STR)) {
+              if (!targetMsg.contains(LogUtils.ERROR_STR) && log.contains(LogUtils.ERROR_STR)) {
                 writeLog = LogUtils.generateERROR(
                   s"error code: $code, errorMsg: $errorMsg, errorLine: $targetMsg \n" + log
                 )

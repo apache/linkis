@@ -1,0 +1,12 @@
+.DS_Store
+.vscode
+.cache
+.idea/
+
+node_modules/
+dist/
+
+package-lock.json
+apache-linkis-*.tar.gz
+./cn.json
+.env.*

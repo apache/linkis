@@ -518,8 +518,8 @@ public class ConfigurationRestfulApi {
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
-    if (StringUtils.isBlank(configKey) || StringUtils.isBlank(value)) {
-      return Message.error("key or value cannot be empty");
+    if (StringUtils.isBlank(configKey)) {
+      return Message.error("key cannot be empty");
     }
     if (StringUtils.isNotBlank(user)) {
       username = user;

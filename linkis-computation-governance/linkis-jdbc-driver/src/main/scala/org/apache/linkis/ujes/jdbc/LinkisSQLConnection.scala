@@ -117,10 +117,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
             if (v.contains('-')) {
               val factory = LabelBuilderFactoryContext.getLabelBuilderFactory
               val label = factory.createLabel(classOf[EngineTypeLabel])
-              val engineType = v.split("-").head
-              val version = v.replaceFirst(engineType + "-", "")
-              label.setEngineType(engineType)
-              label.setVersion(version)
+              label.setStringValue(v)
               return label
             } else {
               return EngineTypeLabelCreator.createEngineTypeLabel(v)
@@ -453,7 +450,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
 
   private[jdbc] def toSubmit(code: String): JobExecuteResult = {
     val engineTypeLabel = getEngineType
-    labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel)
+    labelMap.put(LabelKeyConstant.ENGINE_TYPE_KEY, engineTypeLabel.getStringValue)
     labelMap.put(LabelKeyConstant.USER_CREATOR_TYPE_KEY, s"$user-$creator")
     labelMap.put(LabelKeyConstant.CODE_TYPE_KEY, engineToCodeType(engineTypeLabel.getEngineType))
 

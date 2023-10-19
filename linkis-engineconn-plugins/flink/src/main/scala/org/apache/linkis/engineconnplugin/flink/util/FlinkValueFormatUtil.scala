@@ -63,12 +63,12 @@ object FlinkValueFormatUtil {
     var replaceStr1 = ""
     var replaceStr2 = ""
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.nonEmpty) {
-      escapedXloggcValue = xloggcValueStr2.replace("<", "\\<").replace(">", "\\>")
+      escapedXloggcValue = xloggcValueStr2.replace("\\<", "<").replace("\\>", ">")
       replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
       replaceStr2 = envJavaOpts.replace(xloggcValueStr2, "")
     }
     if (xloggcValueStr1.nonEmpty && xloggcValueStr2.isEmpty) {
-      escapedXloggcValue = xloggcValueStr1.replace("<", "\\<").replace(">", "\\>")
+      escapedXloggcValue = xloggcValueStr1.replace("\\<", "<").replace("\\>", ">")
       replaceStr1 = defaultJavaOpts.replace(xloggcValueStr1, escapedXloggcValue)
       replaceStr2 = envJavaOpts
     }

@@ -77,7 +77,7 @@ class FlinkJarOnceExecutor(
             configMap.load(Files.newBufferedReader(Paths.get(log4jPath)))
           } catch {
             case e: Exception =>
-              logger.error("读取或解析文件时出现错误: " + e.getMessage)
+              logger.error("error occurred while reading or parsing the file: " + e.getMessage)
           }
           val ecOptions = onceExecutorExecutionContext.getEngineCreationContext.getOptions
           LINKIS_FLINK_LOG4J_CHECK_KEYWORDS.getValue(ecOptions).split(",").foreach {

@@ -39,6 +39,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.linkis.engineconnplugin.flink.config.FlinkEnvConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,13 +67,13 @@ public class LinkisYarnClusterClientFactory extends YarnClusterClientFactory imp
     String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
     List<String> paths = configuration.get(YarnConfigOptions.SHIP_FILES);
     Optional<String> firstLog4jPath =
-        paths.stream().filter(path -> path.contains("log4j.properties")).findFirst();
+        paths.stream().filter(path -> path.contains(FlinkEnvConfiguration.FLINK_CONSTANT_CONFIGURATION().getValue())).findFirst();
     if (firstLog4jPath.isPresent()) {
       Path parentAbsolutePath = Paths.get(firstLog4jPath.get()).toAbsolutePath().getParent();
       configurationDirectory = parentAbsolutePath.toString();
-      LOG.info("log4j.properties路径：" + configurationDirectory);
+      LOG.info(FlinkEnvConfiguration.FLINK_CONSTANT_CONFIGURATION().getValue()+ "path：" + configurationDirectory);
     } else {
-      LOG.info("未找到匹配的路径使用系统默认路径：" + configurationDirectory);
+      LOG.info("No matching path found,Use system default path ：" + configurationDirectory);
     }
     YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
     String yarnConfDir = configuration.getString(YARN_CONFIG_DIR);

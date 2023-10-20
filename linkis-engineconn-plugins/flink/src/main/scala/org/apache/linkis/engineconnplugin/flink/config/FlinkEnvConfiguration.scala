@@ -145,4 +145,8 @@ object FlinkEnvConfiguration {
   val FLINK_ENV_JAVA_OPTS =
     CommonVars("flink.env.java.opts", "env.java.opts")
 
+
+  val FLINK_CONSTANT_CONFIGURATION =
+    CommonVars("flink.constant.configuration", "log4j.properties")
+
 }

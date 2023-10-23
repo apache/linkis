@@ -18,6 +18,7 @@
 package org.apache.linkis.ujes.jdbc
 
 import org.apache.linkis.common.utils.{Logging, Utils}
+import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
 import org.apache.linkis.manager.label.constant.LabelKeyConstant
 import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabel, RunType}
 import org.apache.linkis.manager.label.utils.EngineTypeLabelCreator
@@ -126,7 +127,14 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
       if (params != null & params.length() > 0) {
         params.split(PARAM_SPLIT).map(_.split(KV_SPLIT)).foreach {
           case Array(k, v) if k.equals(UJESSQLDriver.ENGINE_TYPE) =>
-            return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            if (v.contains('-')) {
+              val factory = LabelBuilderFactoryContext.getLabelBuilderFactory
+              val label = factory.createLabel(classOf[EngineTypeLabel])
+              label.setStringValue(v)
+              return label
+            } else {
+              return EngineTypeLabelCreator.createEngineTypeLabel(v)
+            }
           case _ =>
         }
       }

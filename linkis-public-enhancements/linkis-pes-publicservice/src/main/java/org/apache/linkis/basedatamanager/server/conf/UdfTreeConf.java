@@ -15,23 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.basedatamanager.server.conf;
 
-import org.apache.linkis.configuration.entity.UserIpVo;
+import org.apache.linkis.common.conf.CommonVars;
 
-import org.apache.ibatis.annotations.Param;
+public class UdfTreeConf {
 
-import java.util.List;
-
-public interface UserIpMapper {
-
-  List<UserIpVo> queryUserIPList(@Param("user") String user, @Param("creator") String creator);
-
-  void deleteUserIP(Integer id);
-
-  void updateUserIP(UserIpVo userIpVo);
-
-  void createUserIP(UserIpVo userIpVo);
-
-  UserIpVo queryUserIP(@Param("user") String user, @Param("creator") String creator);
+  public static final CommonVars<String> UDF_FUN_SYSTEM_CATEGORY =
+      CommonVars.apply("linkis.udf.fun.system.category", "user_name,sys,expire,share,bdp");
 }

@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.service;
+package org.apache.linkis.basedatamanager.server.dao;
 
-import org.apache.linkis.governance.common.protocol.conf.TenantRequest;
-import org.apache.linkis.governance.common.protocol.conf.TenantResponse;
-import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
 
-public interface TenantService {
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-  TenantResponse getTenantData(TenantRequest request, Sender sender);
-}
+/**
+ * @description Database operation Mapper for the linkis_PS_UDF_tree table
+ * @createDate 2022-08-13 15:13:27 @Entity
+ *     org.apache.linkis.basedatamanager.server.domain.LinkisPsUdfTree
+ */
+public interface UdfBaseInfoMapper extends BaseMapper<UdfBaseInfoEntity> {}

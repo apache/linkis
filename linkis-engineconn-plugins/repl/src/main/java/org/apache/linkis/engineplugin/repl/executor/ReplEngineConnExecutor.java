@@ -130,20 +130,16 @@ public class ReplEngineConnExecutor extends ConcurrentComputationExecutor {
 
     String methodName = ReplConfiguration.METHOD_NAME.getValue(configMap);
 
-    Thread thread =
-        new Thread(
-            () -> {
-              try {
-                replAdapter.executorCode(realCode, classpathDir, methodName);
-              } catch (Exception e) {
-                String errorMessage = ExceptionUtils.getStackTrace(e);
-                logger.error("Repl engine execute failed : {}", errorMessage);
-                engineExecutorContext.appendStdout(LogUtils.generateERROR(errorMessage));
-              }
-            });
+    threadCache.put(taskId, Thread.currentThread());
 
-    thread.start();
-    threadCache.put(taskId, thread);
+    try {
+      replAdapter.executorCode(realCode, classpathDir, methodName);
+    } catch (Exception e) {
+      String errorMessage = ExceptionUtils.getStackTrace(e);
+      logger.error("Repl engine execute failed : {}", errorMessage);
+      engineExecutorContext.appendStdout(LogUtils.generateERROR(errorMessage));
+    }
+
     return new SuccessExecuteResponse();
   }
 

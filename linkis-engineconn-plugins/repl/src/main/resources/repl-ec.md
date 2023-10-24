@@ -11,10 +11,6 @@ package com.linkis.javassist;
 
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @Author linkis
- * @Date 2023/10/9
- */
 public class Test {
     public void sayHello() {
         System.out.println("hello");
@@ -27,7 +23,7 @@ public class Test {
 ```json
 {
   "executionContent":{
-    "code":"package com.linkis.javassist;\n\nimport org.apache.commons.lang3.StringUtils;\n\n/**\n * @Author linkis\n * @Date 2023/10/9\n */\npublic class Test {\n    public void sayHello() {\n        System.out.println(\"hello\");\n        System.out.println(StringUtils.isEmpty(\"hello\"));\n    }\n}\n",
+    "code":"package com.linkis.javassist;\n\nimport org.apache.commons.lang3.StringUtils;\n\npublic class Test {\n    public void sayHello() {\n        System.out.println(\"hello\");\n        System.out.println(StringUtils.isEmpty(\"hello\"));\n    }\n}\n",
     "runType":"repl"
   },
   "params":{
@@ -113,5 +109,7 @@ http://www.javassist.org/tutorial/tutorial.html
 https://github.com/jboss-javassist/javassist
 
 https://github.com/apache/dubbo
+
+https://docs.scala-lang.org/overviews/scala-book/scala-repl.html
 ```
 

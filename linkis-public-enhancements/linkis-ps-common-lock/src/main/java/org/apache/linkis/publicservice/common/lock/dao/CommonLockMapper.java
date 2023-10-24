@@ -26,9 +26,11 @@ import java.util.List;
 @Mapper
 public interface CommonLockMapper {
 
-  void lock(@Param("jsonObject") String jsonObject, @Param("timeOut") Long timeOut);
+  void lock(@Param("commonLock") CommonLock commonLock, @Param("timeOut") Long timeOut);
 
-  void unlock(@Param("jsonObject") String jsonObject);
+  void unlock(@Param("commonLock") CommonLock commonLock);
 
   List<CommonLock> getAll();
+
+  CommonLock getLockByLocker(@Param("lockObject") String lockObject, @Param("locker") String host);
 }

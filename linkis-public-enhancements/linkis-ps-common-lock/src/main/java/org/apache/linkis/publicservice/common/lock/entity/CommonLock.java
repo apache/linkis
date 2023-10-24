@@ -28,6 +28,7 @@ public class CommonLock {
   private Date createTime;
   private String updator;
   private String creator;
+  private String locker;
 
   public Integer getId() {
     return id;
@@ -83,5 +84,13 @@ public class CommonLock {
 
   public void setCreator(String creator) {
     this.creator = creator;
+  }
+
+  public String getLocker() {
+    return locker;
+  }
+
+  public void setLocker(String locker) {
+    this.locker = locker;
   }
 }

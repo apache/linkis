@@ -62,7 +62,7 @@ public class LabelEntityParser {
     if (!StringUtils.isEmpty(version)) {
       engineTypeLabel.setVersion(version);
     }
-    ArrayList labelList = new ArrayList<Label>();
+    ArrayList<Label> labelList = new ArrayList<>();
     labelList.add(userCreatorLabel);
     labelList.add(engineTypeLabel);
     return labelList;
@@ -75,13 +75,13 @@ public class LabelEntityParser {
     ArrayList<Label> labelList = new ArrayList<>();
     for (int i = 1, j = 1; i < labelKeyList.length; i++, j--) {
       String innerKey = labelKeyList[i];
-      if (innerKey.toLowerCase().equals("usercreator")) {
+      if (innerKey.equalsIgnoreCase("usercreator")) {
         UserCreatorLabel userCreatorLabel = labelBuilderFactory.createLabel(UserCreatorLabel.class);
         String[] innerString = stringValueList[j].split("-");
         userCreatorLabel.setUser(innerString[0]);
         userCreatorLabel.setCreator(innerString[1]);
         labelList.add(userCreatorLabel);
-      } else if (innerKey.toLowerCase().equals("enginetype")) {
+      } else if (innerKey.equalsIgnoreCase("enginetype")) {
         EngineTypeLabel engineTypeLabel = labelBuilderFactory.createLabel(EngineTypeLabel.class);
         String[] innerString = stringValueList[j].split("-");
         engineTypeLabel.setEngineType(innerString[0]);

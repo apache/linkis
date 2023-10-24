@@ -17,25 +17,21 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.UserIpVo;
 
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface LabelMapper {
+public interface UserIpMapper {
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  List<UserIpVo> queryUserIPList(@Param("user") String user, @Param("creator") String creator);
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void deleteUserIP(Integer id);
 
-  void insertLabel(ConfigLabel label);
+  void updateUserIP(UserIpVo userIpVo);
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  void createUserIP(UserIpVo userIpVo);
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  UserIpVo queryUserIP(@Param("user") String user, @Param("creator") String creator);
 }

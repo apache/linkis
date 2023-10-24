@@ -108,4 +108,6 @@ object GatewayConfiguration {
 
   val IS_DOWNLOAD = CommonVars("linkis.web.result.set.export.enable", true)
 
+  val LINKIS_CLUSTER_NAME = CommonVars("linkis.cluster.name", "")
+
 }

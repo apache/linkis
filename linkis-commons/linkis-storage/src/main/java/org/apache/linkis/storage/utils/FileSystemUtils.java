@@ -97,6 +97,30 @@ public class FileSystemUtils {
   }
 
   /**
+   * create new file and set file owner by FileSystem
+   *
+   * @param fileSystem
+   * @param filePath
+   * @param user
+   * @param createParentWhenNotExists
+   */
+  public static void createNewFileAndSetOwnerWithFileSystem(
+      FileSystem fileSystem, FsPath filePath, String user, boolean createParentWhenNotExists)
+      throws Exception {
+    if (!fileSystem.exists(filePath)) {
+      if (!fileSystem.exists(filePath.getParent())) {
+        if (!createParentWhenNotExists) {
+          throw new IOException(
+              "parent dir " + filePath.getParent().getPath() + " dose not exists.");
+        }
+        mkdirs(fileSystem, filePath.getParent(), user);
+      }
+      fileSystem.createNewFile(filePath);
+      fileSystem.setOwner(filePath, user);
+    }
+  }
+
+  /**
    * Recursively create a directory
    *
    * @param fileSystem
@@ -130,6 +154,41 @@ public class FileSystemUtils {
       } else {
         logger.info("doesn't need to call setOwner");
       }
+    }
+    return true;
+  }
+
+  /**
+   * Recursively create a directory(递归创建目录) add owner info
+   *
+   * @param fileSystem
+   * @param dest
+   * @param user
+   * @throws IOException
+   * @return
+   */
+  public static boolean mkdirsAndSetOwner(FileSystem fileSystem, FsPath dest, String user)
+      throws IOException {
+    FsPath parentPath = dest.getParent();
+    Stack<FsPath> dirsToMake = new Stack<>();
+    dirsToMake.push(dest);
+    while (!fileSystem.exists(parentPath)) {
+      dirsToMake.push(parentPath);
+
+      if (Objects.isNull(parentPath.getParent())) {
+        // parent path of root is null
+        break;
+      }
+
+      parentPath = parentPath.getParent();
+    }
+    if (!fileSystem.canExecute(parentPath)) {
+      throw new IOException("You have not permission to access path " + dest.getPath());
+    }
+    while (!dirsToMake.empty()) {
+      FsPath path = dirsToMake.pop();
+      fileSystem.mkdir(path);
+      fileSystem.setOwner(path, user);
     }
     return true;
   }

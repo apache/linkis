@@ -17,7 +17,7 @@
 
 package org.apache.linkis.configuration.restful.api;
 
-import org.apache.linkis.configuration.conf.Configuration;
+import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.configuration.entity.*;
 import org.apache.linkis.configuration.exception.ConfigurationException;
 import org.apache.linkis.configuration.service.CategoryService;
@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +54,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.*;
 
 @Api(tags = "parameter configuration")
 @RestController
@@ -77,7 +74,11 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "addKeyForEngine", notes = "add key for engine", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
     @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
     @ApiImplicitParam(name = "token, required = false", dataType = "String", value = "token"),
     @ApiImplicitParam(name = "keyJson", required = false, dataType = "String", value = "key json")
@@ -93,15 +94,11 @@ public class ConfigurationRestfulApi {
     if (StringUtils.isBlank(engineType)
         || StringUtils.isBlank(version)
         || StringUtils.isBlank(token)) {
-      throw new ConfigurationException(PARAMS_CANNOT_BE_EMPTY.getErrorDesc());
+      throw new ConfigurationException("params cannot be empty!");
     }
-    ModuleUserUtils.getOperationUser(
-        req,
-        MessageFormat.format(
-            "addKeyForEngine,engineType:{0},version:{1},token:{2}", engineType, version, token));
     // todo 检验token
     if (!token.equals(ConfigurationConfiguration.COPYKEYTOKEN)) {
-      throw new ConfigurationException(TOKEN_IS_ERROR.getErrorDesc());
+      throw new ConfigurationException("token is error");
     }
     ConfigKey configKey = BDPJettyServerHelper.gson().fromJson(keyJson, ConfigKey.class);
     configurationService.addKeyForEngine(engineType, version, configKey);
@@ -114,9 +111,13 @@ public class ConfigurationRestfulApi {
       notes = "get full trees by app name",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "version", dataType = "String", value = "version"),
-    @ApiImplicitParam(name = "creator", dataType = "String", value = "creator")
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator")
   })
   @RequestMapping(path = "/getFullTreesByAppName", method = RequestMethod.GET)
   public Message getFullTreesByAppName(
@@ -125,33 +126,24 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "version", required = false) String version,
       @RequestParam(value = "creator", required = false) String creator)
       throws ConfigurationException {
-    if (creator != null
-        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
+    String username = ModuleUserUtils.getOperationUser(req, "getFullTreesByAppName");
+    if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
       engineType = "*";
       version = "*";
       creator = "*";
     }
-    String username =
-        ModuleUserUtils.getOperationUser(
-            req,
-            MessageFormat.format(
-                "ConfigurationException,engineType:{0},version:{1}", engineType, version));
     List labelList =
         LabelEntityParser.generateUserCreatorEngineTypeLabelList(
             username, creator, engineType, version);
     ArrayList<ConfigTree> configTrees =
-        configurationService.getFullTreeByLabelList(
-            labelList, true, req.getHeader("Content-Language"));
+        configurationService.getFullTreeByLabelList(labelList, true);
     return Message.ok().data("fullTree", configTrees);
   }
 
   @ApiOperation(value = "getCategory", notes = "get category", response = Message.class)
   @RequestMapping(path = "/getCategory", method = RequestMethod.GET)
   public Message getCategory(HttpServletRequest req) {
-    List<CategoryLabelVo> categoryLabelList =
-        categoryService.getAllCategory(req.getHeader("Content-Language"));
+    List<CategoryLabelVo> categoryLabelList = categoryService.getAllCategory();
     return Message.ok().data("Category", categoryLabelList);
   }
 
@@ -160,8 +152,18 @@ public class ConfigurationRestfulApi {
       notes = "create first category",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "categoryName", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "description", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "categoryName",
+        required = true,
+        dataType = "String",
+        value = "category name",
+        example = "name"),
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "STring",
+        value = "description",
+        example = "description"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/createFirstCategory", method = RequestMethod.POST)
@@ -172,10 +174,10 @@ public class ConfigurationRestfulApi {
     String categoryName = jsonNode.get("categoryName").asText();
     String description = jsonNode.get("description").asText();
     if (StringUtils.isEmpty(categoryName) || categoryName.equals(NULL)) {
-      throw new ConfigurationException(IS_NULL_CANNOT_BE_ADDED.getErrorDesc());
+      throw new ConfigurationException("categoryName is null, cannot be added");
     }
     if (StringUtils.isEmpty(categoryName) || categoryName.contains("-")) {
-      throw new ConfigurationException(CANNOT_BE_INCLUDED.getErrorDesc());
+      throw new ConfigurationException("categoryName cannot be included '-'");
     }
     categoryService.createFirstCategory(categoryName, description);
     return Message.ok();
@@ -183,7 +185,12 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "deleteCategory", notes = "delete category", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "categoryId", required = true, dataType = "String", example = "54")
+    @ApiImplicitParam(
+        name = "categoryId",
+        required = true,
+        dataType = "String",
+        value = "category id",
+        example = "54")
   })
   @ApiOperationSupport(ignoreParameters = "jsonNode")
   @RequestMapping(path = "/deleteCategory", method = RequestMethod.POST)
@@ -201,10 +208,29 @@ public class ConfigurationRestfulApi {
       notes = "create second category",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "categoryId", required = true, dataType = "String", example = "39"),
-    @ApiImplicitParam(name = "engineType", required = true, dataType = "String", example = "hive"),
-    @ApiImplicitParam(name = "version", required = true, dataType = "String", example = "1.2.0"),
-    @ApiImplicitParam(name = "description", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "categoryId",
+        required = true,
+        dataType = "String",
+        value = "category id",
+        example = "39"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engine type",
+        example = "hive"),
+    @ApiImplicitParam(
+        name = "version",
+        required = true,
+        dataType = "String",
+        value = "Version",
+        example = "1.2.0"),
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "String",
+        value = "description"),
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/createSecondCategory", method = RequestMethod.POST)
@@ -217,10 +243,10 @@ public class ConfigurationRestfulApi {
     String version = jsonNode.get("version").asText();
     String description = jsonNode.get("description").asText();
     if (categoryId <= 0) {
-      throw new ConfigurationException(CREATOR_IS_NULL_CANNOT_BE_ADDED.getErrorDesc());
+      throw new ConfigurationException("creator is null, cannot be added");
     }
     if (StringUtils.isEmpty(engineType) || engineType.toLowerCase().equals(NULL)) {
-      throw new ConfigurationException(ENGINE_TYPE_IS_NULL.getErrorDesc());
+      throw new ConfigurationException("engine type is null, cannot be added");
     }
     if (StringUtils.isEmpty(version) || version.toLowerCase().equals(NULL)) {
       version = LabelUtils.COMMON_VALUE;
@@ -231,11 +257,25 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "saveFullTree", notes = "save full tree", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "creator", required = true, dataType = "String", example = "xwzTest"),
-    @ApiImplicitParam(name = "engineType", required = true, dataType = "String", example = "hive"),
+    @ApiImplicitParam(
+        name = "creator",
+        required = true,
+        dataType = "String",
+        value = "creator",
+        example = "xwzTest"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engine type",
+        example = "python-ss"),
     @ApiImplicitParam(name = "fullTree", required = true, dataType = "List", value = "full tree"),
     @ApiImplicitParam(name = "name", required = true, dataType = "String", value = "name"),
-    @ApiImplicitParam(name = "description", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "String",
+        value = "description"),
     @ApiImplicitParam(name = "settings", required = true, dataType = "List", value = "settings")
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
@@ -245,10 +285,7 @@ public class ConfigurationRestfulApi {
     List fullTrees = mapper.treeToValue(json.get("fullTree"), List.class);
     String creator = JsonNodeUtil.getStringValue(json.get("creator"));
     String engineType = JsonNodeUtil.getStringValue(json.get("engineType"));
-    if (creator != null
-        && (creator.equals(Configuration.GLOBAL_CONF_CHN_NAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_OLDNAME())
-            || creator.equals(Configuration.GLOBAL_CONF_CHN_EN_NAME()))) {
+    if (creator != null && (creator.equals("通用设置") || creator.equals("全局设置"))) {
       creator = "*";
     }
     String username = ModuleUserUtils.getOperationUser(req, "saveFullTree");
@@ -269,45 +306,16 @@ public class ConfigurationRestfulApi {
     if (engineType != null) {
       String[] tmpString = engineType.split("-");
       if (tmpString.length != 2) {
-        throw new ConfigurationException(INCORRECT_FIXED_SUCH.getErrorDesc());
+        throw new ConfigurationException(
+            "The saved engine type parameter is incorrect, please send it in a fixed format, such as spark-2.4.3(保存的引擎类型参数有误，请按照固定格式传送，例如spark-2.4.3)");
       }
       engine = tmpString[0];
       version = tmpString[1];
     }
     configurationService.updateUserValue(createList, updateList);
-    // TODO: Add a refresh cache interface later
-    if (StringUtils.isNotBlank(creator) && creator.equals("*")) {
-      List<CategoryLabelVo> allCategory = categoryService.getAllCategory(null);
-      List<CategoryLabelVo> categoryLabelVos =
-          allCategory.stream()
-              .filter(s -> s.getCategoryName().equals(Configuration.REMOVE_APPLICATION_CACHE()))
-              .map(CategoryLabelVo::getChildCategory)
-              .findFirst()
-              .get();
-      categoryLabelVos.stream()
-          .map(CategoryLabelVo::getCategoryName)
-          .filter(StringUtils::isNotBlank)
-          .forEach(
-              info -> {
-                String[] tmpString = info.split("-");
-                if (tmpString.length == 2) {
-                  String engineName = tmpString[0];
-                  String engineVersion = tmpString[1];
-                  logger.info(
-                      "Config remove engine cache:engineName:{},engineVersion:{}",
-                      engineName,
-                      engineVersion);
-                  configurationService.clearAMCacheConf(
-                      username,
-                      Configuration.REMOVE_APPLICATION_CACHE(),
-                      engineName,
-                      engineVersion);
-                }
-              });
-    } else {
-      configurationService.clearAMCacheConf(username, creator, engine, version);
-    }
-    return Message.ok();
+    configurationService.clearAMCacheConf(username, creator, engine, version);
+    Message message = Message.ok();
+    return message;
   }
 
   @ApiOperation(
@@ -325,8 +333,16 @@ public class ConfigurationRestfulApi {
       notes = "update category info",
       response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "description", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "categoryId", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "description",
+        required = true,
+        dataType = "String",
+        value = "description"),
+    @ApiImplicitParam(
+        name = "categoryId",
+        required = true,
+        dataType = "String",
+        value = "category id")
   })
   @ApiOperationSupport(ignoreParameters = {"jsonNode"})
   @RequestMapping(path = "/updateCategoryInfo", method = RequestMethod.POST)
@@ -340,7 +356,7 @@ public class ConfigurationRestfulApi {
       description = jsonNode.get("description").asText();
       categoryId = jsonNode.get("categoryId").asInt();
     } catch (Exception e) {
-      throw new ConfigurationException(INCOMPLETE_RECONFIRM.getErrorDesc());
+      throw new ConfigurationException("请求参数不完整，请重新确认");
     }
     if (description != null) {
       categoryService.updateCategory(categoryId, description);
@@ -350,9 +366,17 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "rpcTest", notes = "rpc test", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "creator", dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "username", dataType = "String"),
+    @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(
+        name = "username",
+        required = false,
+        dataType = "String",
+        value = "user name"),
     @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version")
   })
   @RequestMapping(path = "/rpcTest", method = RequestMethod.GET)
@@ -375,16 +399,24 @@ public class ConfigurationRestfulApi {
   }
 
   private void checkAdmin(String userName) throws ConfigurationException {
-    if (!org.apache.linkis.common.conf.Configuration.isAdmin(userName)) {
-      throw new ConfigurationException(ONLY_ADMIN_CAN_MODIFY.getErrorDesc());
+    if (!Configuration.isAdmin(userName)) {
+      throw new ConfigurationException("only admin can modify category(只有管理员才能修改目录)");
     }
   }
 
   @ApiOperation(value = "getKeyValue", notes = "get key value", response = Message.class)
   @ApiImplicitParams({
     @ApiImplicitParam(name = "creator", required = false, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "engineType", dataType = "String"),
-    @ApiImplicitParam(name = "configKey", dataType = "String"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = false,
+        dataType = "String",
+        value = "engine type"),
+    @ApiImplicitParam(
+        name = "configKey",
+        required = false,
+        dataType = "String",
+        value = "config key"),
     @ApiImplicitParam(name = "version", required = false, dataType = "String", value = "version")
   })
   @RequestMapping(path = "/keyvalue", method = RequestMethod.GET)
@@ -414,11 +446,23 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "saveKeyValue", notes = "save key value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "engineType", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engine type"),
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version"),
     @ApiImplicitParam(name = "creator", required = true, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "configKey", required = true, dataType = "String"),
-    @ApiImplicitParam(name = "configValue", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "configKey",
+        required = true,
+        dataType = "String",
+        value = "config key"),
+    @ApiImplicitParam(
+        name = "configValue",
+        required = true,
+        dataType = "String",
+        value = "config value")
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/keyvalue", method = RequestMethod.POST)
@@ -451,10 +495,18 @@ public class ConfigurationRestfulApi {
 
   @ApiOperation(value = "deleteKeyValue", notes = "delete key value", response = Message.class)
   @ApiImplicitParams({
-    @ApiImplicitParam(name = "engineType", required = true, dataType = "String"),
+    @ApiImplicitParam(
+        name = "engineType",
+        required = true,
+        dataType = "String",
+        value = "engine type"),
     @ApiImplicitParam(name = "version", required = true, dataType = "String", value = "version"),
     @ApiImplicitParam(name = "creator", required = true, dataType = "String", value = "creator"),
-    @ApiImplicitParam(name = "configKey", required = true, dataType = "String")
+    @ApiImplicitParam(
+        name = "configKey",
+        required = true,
+        dataType = "String",
+        value = "config key")
   })
   @ApiOperationSupport(ignoreParameters = {"json"})
   @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)

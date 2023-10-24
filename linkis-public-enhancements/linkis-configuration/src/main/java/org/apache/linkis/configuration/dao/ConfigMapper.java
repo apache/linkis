@@ -55,7 +55,7 @@ public interface ConfigMapper {
 
   ConfigKey selectKeyByKeyID(@Param("id") Long keyID);
 
-  List<ConfigKey> selectKeyByKeyName(@Param("keyName") String keyName);
+  List<ConfigKey> seleteKeyByKeyName(@Param("keyName") String keyName);
 
   List<ConfigKey> listKeyByStringValue(@Param("stringValue") String stringValue);
 
@@ -72,6 +72,4 @@ public interface ConfigMapper {
   void updateCategory(CategoryLabel categoryLabel);
 
   void insertKey(ConfigKey key);
-
-  List<ConfigKeyValue> getConfigEnKeyValueByLabelId(@Param("labelId") Integer labelId);
 }

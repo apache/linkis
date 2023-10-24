@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements.  See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.apache.linkis.configuration.dao.ConfigKeyLimitForUserMapper">
+  <resultMap id="BaseResultMap" type="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="combined_label_value" jdbcType="VARCHAR" property="combinedLabelValue" />
+    <result column="key_id" jdbcType="BIGINT" property="keyId" />
+    <result column="config_value" jdbcType="VARCHAR" property="configValue" />
+    <result column="max_value" jdbcType="VARCHAR" property="maxValue" />
+    <result column="min_value" jdbcType="VARCHAR" property="minValue" />
+    <result column="latest_update_template_uuid" jdbcType="VARCHAR" property="latestUpdateTemplateUuid" />
+    <result column="is_valid" jdbcType="VARCHAR" property="isValid" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, combined_label_value, key_id, config_value, max_value, min_value, latest_update_template_uuid, is_valid,
+    create_by, create_time, update_by, update_time
+  </sql>
+
+  <insert id="batchInsertList" parameterType="java.util.List">
+    insert into linkis_ps_configuration_key_limit_for_user (
+    id, user_name, combined_label_value,
+    key_id, config_value, max_value, min_value,
+    latest_update_template_uuid,
+    is_valid, create_by, create_time, update_by,
+    update_time)
+    values
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+      #{item.id,jdbcType=BIGINT}, #{item.userName,jdbcType=VARCHAR}, #{item.combinedLabelValue,jdbcType=VARCHAR},
+      #{item.keyId,jdbcType=BIGINT}, #{item.configValue,jdbcType=VARCHAR}, #{item.maxValue,jdbcType=VARCHAR},
+      #{item.minValue,jdbcType=VARCHAR},
+      #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      #{item.isValid,jdbcType=VARCHAR}, #{item.createBy,jdbcType=VARCHAR}, now(), #{item.updateBy,jdbcType=VARCHAR},
+      now())
+    </foreach>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="org.apache.linkis.configuration.entity.ConfigKeyLimitForUser">
+    update linkis_ps_configuration_key_limit_for_user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      combined_label_value = #{combinedLabelValue,jdbcType=VARCHAR},
+      key_id = #{keyId,jdbcType=BIGINT},
+      config_value = #{configValue,jdbcType=VARCHAR},
+      max_value = #{maxValue,jdbcType=VARCHAR},
+      min_value = #{minValue,jdbcType=VARCHAR},
+      latest_update_template_uuid = #{latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      is_valid = #{isValid,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=VARCHAR},
+      update_time = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- === 下方为用户自定义模块,下次生成会保留 === -->
+
+  <insert id="batchInsertOrUpdateList" parameterType="java.util.List">
+    insert into linkis_ps_configuration_key_limit_for_user (user_name, combined_label_value,
+    key_id, config_value, max_value, min_value,
+    latest_update_template_uuid,
+    create_by, create_time, update_by,
+    update_time)
+    values
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+      #{item.userName,jdbcType=VARCHAR}, #{item.combinedLabelValue,jdbcType=VARCHAR},
+      #{item.keyId,jdbcType=BIGINT}, #{item.configValue,jdbcType=VARCHAR}, #{item.maxValue,jdbcType=VARCHAR},
+      #{item.minValue,jdbcType=VARCHAR}, #{item.latestUpdateTemplateUuid,jdbcType=VARCHAR},
+      #{item.createBy,jdbcType=VARCHAR},
+      <choose>
+        <when test="item.createTime != null">
+          #{item.createTime},
+        </when>
+        <otherwise>
+          now(),
+        </otherwise>
+      </choose>
+      #{item.updateBy,jdbcType=VARCHAR},
+      <choose>
+        <when test="item.updateTime != null">
+          #{item.updateTime}
+        </when>
+        <otherwise>
+          now()
+        </otherwise>
+      </choose>
+      )
+    </foreach>
+    on duplicate key update
+    config_value =values(config_value),
+    max_value =values(max_value),
+    latest_update_template_uuid =values(latest_update_template_uuid),
+    update_by =values(update_by),
+    update_time= now()
+  </insert>
+
+
+  <select id="selectByLabelAndKeyIds" resultType="org.apache.linkis.configuration.entity.ConfigKeyLimitVo">
+    select
+      key_user.key_id,
+      key_user.max_value,
+      key_user.config_value,
+      key_user.min_value
+    from linkis_ps_configuration_key_limit_for_user  key_user
+    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
+    and key_user.key_id  in
+    <foreach collection="keyIdList" index="index" item="item" separator="," open="(" close=")">
+      #{item}
+    </foreach>
+
+  </select>
+
+
+  <select id="selectByLabelAndKeyId" resultType="org.apache.linkis.configuration.entity.ConfigKeyLimitVo">
+    select
+    key_user.key_id,
+    key_user.max_value,
+    key_user.config_value,
+    key_user.min_value
+    from linkis_ps_configuration_key_limit_for_user  key_user
+    where key_user.combined_label_value =#{label,jdbcType=VARCHAR}
+    and key_user.key_id =#{keyId}
+  </select>
+
+</mapper>

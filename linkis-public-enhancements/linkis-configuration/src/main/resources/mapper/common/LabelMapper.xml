@@ -47,7 +47,17 @@
     <select id="getLabelByKeyValue" resultMap="LabelMap">
         SELECT <include refid="Label_Column_List"/>
         FROM linkis_cg_manager_label
-        WHERE label_key = #{labelKey} AND label_value = #{stringValue}
+        WHERE label_key = #{labelKey} and label_value = #{stringValue}
+    </select>
+
+    <select id="selectUserCreatorEngineTypeLabelList" resultMap="LabelMap">
+        SELECT <include refid="Label_Column_List"/>
+        FROM linkis_cg_manager_label
+        WHERE label_key ="combined_userCreator_engineType"
+        and label_value  in
+        <foreach collection="itemList" index="index" item="item" separator="," open="(" close=")">
+            #{item}
+        </foreach>
     </select>
 
     <insert id="insertLabel" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="org.apache.linkis.configuration.entity.ConfigLabel">
@@ -56,6 +66,17 @@
         VALUES (
         #{labelKey}, #{stringValue}, #{feature}, #{labelValueSize}, now(), now())
     </insert>
+
+
+    <insert id="batchInsertLabel" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="java.util.List">
+        INSERT IGNORE INTO linkis_cg_manager_label(
+        label_key, label_value,label_feature, label_value_size, update_time, create_time)
+        VALUES
+        <foreach collection='labelList' item='item' open='(' separator='),(' close=')'>
+            #{item.labelKey}, #{item.stringValue}, #{item.feature}, #{item.labelValueSize}, now(), now()
+        </foreach>
+    </insert>
+
 
     <delete id="deleteLabel">
         DELETE FROM linkis_cg_manager_label

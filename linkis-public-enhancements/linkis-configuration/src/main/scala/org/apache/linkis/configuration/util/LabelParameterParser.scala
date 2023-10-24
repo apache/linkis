@@ -18,8 +18,6 @@
 package org.apache.linkis.configuration.util
 
 import org.apache.linkis.common.conf.CommonVars
-import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary._
-import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.THE_LABEL_PARAMETER_IS_EMPTY
 import org.apache.linkis.configuration.exception.ConfigurationException
 import org.apache.linkis.governance.common.conf.GovernanceCommonConf
 import org.apache.linkis.manager.label.builder.factory.LabelBuilderFactoryContext
@@ -28,7 +26,6 @@ import org.apache.linkis.manager.label.entity.engine.{EngineType, EngineTypeLabe
 
 import org.springframework.util.CollectionUtils
 
-import java.text.MessageFormat
 import java.util
 import java.util.Locale
 
@@ -47,14 +44,14 @@ object LabelParameterParser {
           case "python" => GovernanceCommonConf.PYTHON_ENGINE_VERSION
           case _ =>
             throw new ConfigurationException(
-              MessageFormat.format(CONFIGURATION_NOT_TYPE.getErrorDesc(), engineType)
+              s"Configuration does not support engine type:${engineType}(配置暂不支持${engineType}引擎类型)"
             )
         }
       }
     })
     if (returnType == null) {
       throw new ConfigurationException(
-        MessageFormat.format(CORRESPONDING_ENGINE_TYPE.getErrorDesc(), engineType)
+        s"The corresponding engine type is not matched:${engineType}(没有匹配到对应的引擎类型:${engineType})"
       )
     }
 
@@ -88,13 +85,11 @@ object LabelParameterParser {
         case a: UserCreatorLabel => Unit
         case a: EngineTypeLabel => Unit
         case label =>
-          throw new ConfigurationException(
-            MessageFormat.format(TYPE_OF_LABEL_NOT_SUPPORTED.getErrorDesc(), label.getClass)
-          )
+          throw new ConfigurationException(s"this type of label is not supported:${label.getClass}")
       }
       true
     } else {
-      throw new ConfigurationException(THE_LABEL_PARAMETER_IS_EMPTY.getErrorDesc())
+      throw new ConfigurationException("The label parameter is empty")
     }
   }
 

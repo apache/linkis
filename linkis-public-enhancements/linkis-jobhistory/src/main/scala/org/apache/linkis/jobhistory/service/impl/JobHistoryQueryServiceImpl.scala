@@ -353,10 +353,9 @@ class JobHistoryQueryServiceImpl extends JobHistoryQueryService with Logging {
       startJobId: lang.Long
   ): Integer = {
     val cacheKey =
-      if (StringUtils.isNoneBlank(username, creator, engineType)) ""
-      else {
+      if (StringUtils.isNoneBlank(username, creator, engineType)) {
         s"${username}_${creator}_${engineType}"
-      }
+      } else ""
     if (StringUtils.isBlank(cacheKey)) {
       getCountUndoneTasks(username, creator, sDate, eDate, engineType, startJobId)
     } else {

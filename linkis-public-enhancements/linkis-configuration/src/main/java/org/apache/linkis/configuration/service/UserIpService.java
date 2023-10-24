@@ -15,27 +15,13 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.governance.common.protocol.conf.UserIpRequest;
+import org.apache.linkis.governance.common.protocol.conf.UserIpResponse;
+import org.apache.linkis.rpc.Sender;
 
-import org.apache.ibatis.annotations.Param;
+public interface UserIpService {
 
-import java.util.List;
-
-public interface LabelMapper {
-
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
-
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
-
-  void insertLabel(ConfigLabel label);
-
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
-
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  UserIpResponse getUserIpData(UserIpRequest request, Sender sender);
 }

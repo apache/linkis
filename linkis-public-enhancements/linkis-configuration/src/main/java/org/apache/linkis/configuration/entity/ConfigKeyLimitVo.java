@@ -15,27 +15,50 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.entity;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+public class ConfigKeyLimitVo {
 
-import org.apache.ibatis.annotations.Param;
+  /** id : bigint(19) */
+  private Long keyId;
 
-import java.util.List;
+  private String key;
 
-public interface LabelMapper {
+  /** config_value varchar(200) */
+  private String configValue;
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  /** max_value varchar(50) */
+  private String maxValue;
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  public Long getKeyId() {
+    return keyId;
+  }
 
-  void insertLabel(ConfigLabel label);
+  public void setKeyId(Long keyId) {
+    this.keyId = keyId;
+  }
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  public String getConfigValue() {
+    return configValue;
+  }
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
+  public void setConfigValue(String configValue) {
+    this.configValue = configValue;
+  }
 
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  public String getMaxValue() {
+    return maxValue;
+  }
+
+  public void setMaxValue(String maxValue) {
+    this.maxValue = maxValue;
+  }
+
+  public String getKey() {
+    return key;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
+  }
 }

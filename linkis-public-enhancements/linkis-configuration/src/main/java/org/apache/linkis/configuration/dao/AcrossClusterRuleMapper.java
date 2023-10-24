@@ -17,25 +17,27 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.AcrossClusterRule;
 
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface LabelMapper {
+public interface AcrossClusterRuleMapper {
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  AcrossClusterRule getAcrossClusterRule(@Param("id") Long id);
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void deleteAcrossClusterRule(
+      @Param("creator") String creator, @Param("username") String username);
 
-  void insertLabel(ConfigLabel label);
+  void updateAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  void insertAcrossClusterRule(@Param("acrossClusterRule") AcrossClusterRule acrossClusterRule);
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
+  List<AcrossClusterRule> queryAcrossClusterRuleList(
+      @Param("username") String username,
+      @Param("creator") String creator,
+      @Param("clusterName") String clusterName);
 
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  void validAcrossClusterRule(@Param("isValid") String isValid, @Param("id") Long id);
 }

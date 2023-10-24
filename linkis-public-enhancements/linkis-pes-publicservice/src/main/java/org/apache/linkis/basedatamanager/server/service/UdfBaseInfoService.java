@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.service;
+package org.apache.linkis.basedatamanager.server.service;
 
-import org.apache.linkis.governance.common.protocol.conf.UserIpRequest;
-import org.apache.linkis.governance.common.protocol.conf.UserIpResponse;
-import org.apache.linkis.rpc.Sender;
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
 
-public interface UserIpService {
+import com.baomidou.mybatisplus.extension.service.IService;
 
-  UserIpResponse getUserIpData(UserIpRequest request, Sender sender);
-}
+/**
+ * @description Database operation Service for the [linkis_ps_udf_baseinfo] table
+ * @createDate 2022-08-13 15:13:27
+ */
+public interface UdfBaseInfoService extends IService<UdfBaseInfoEntity> {}

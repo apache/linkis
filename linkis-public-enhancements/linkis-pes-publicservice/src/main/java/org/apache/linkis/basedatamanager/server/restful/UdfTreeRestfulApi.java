@@ -17,11 +17,17 @@
 
 package org.apache.linkis.basedatamanager.server.restful;
 
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
 import org.apache.linkis.basedatamanager.server.domain.UdfTreeEntity;
+import org.apache.linkis.basedatamanager.server.service.UdfBaseInfoService;
 import org.apache.linkis.basedatamanager.server.service.UdfTreeService;
+import org.apache.linkis.basedatamanager.server.utils.UdfTreeUtils;
 import org.apache.linkis.common.conf.Configuration;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +38,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -46,6 +54,8 @@ import io.swagger.annotations.ApiOperation;
 public class UdfTreeRestfulApi {
 
   @Autowired UdfTreeService udfTreeService;
+
+  @Autowired UdfBaseInfoService udfBaseinfoService;
 
   @ApiImplicitParams({
     @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName"),
@@ -62,12 +72,26 @@ public class UdfTreeRestfulApi {
     return Message.ok("").data("list", pageList);
   }
 
+  @ApiImplicitParams({
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "searchName"),
+    @ApiImplicitParam(paramType = "query", dataType = "string", name = "category")
+  })
   @ApiOperation(value = "all", notes = "Query all data of UDF Tree", httpMethod = "GET")
   @RequestMapping(path = "/all", method = RequestMethod.GET)
-  public Message all(HttpServletRequest request, String searchName) {
+  public Message all(HttpServletRequest request, String searchName, String category) {
     ModuleUserUtils.getOperationUser(
         request, "Query all data of UDF Tree,search name:" + searchName);
-    List<UdfTreeEntity> udfTreeEntityList = udfTreeService.list();
+    List<UdfTreeEntity> udfTreeEntityList = new ArrayList<>();
+    if (StringUtils.isNotBlank(searchName) && StringUtils.isNotBlank(category)) {
+      UdfTreeEntity entity = new UdfTreeEntity();
+      entity.setCategory(category);
+      entity.setUserName(searchName);
+      QueryWrapper<UdfTreeEntity> queryWrapper =
+          new QueryWrapper<>(entity)
+              .eq("user_name", entity.getUserName())
+              .eq("category", entity.getCategory());
+      udfTreeEntityList = new UdfTreeUtils(udfTreeService.list(queryWrapper)).buildTree();
+    }
     return Message.ok("").data("list", udfTreeEntityList);
   }
 
@@ -100,9 +124,27 @@ public class UdfTreeRestfulApi {
   @ApiOperation(value = "remove", notes = "Remove a UDF Tree Record by id", httpMethod = "DELETE")
   @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
   public Message remove(HttpServletRequest request, @PathVariable("id") Long id) {
-    ModuleUserUtils.getOperationUser(request, "Remove a UDF Tree Record,id:" + id.toString());
-    boolean result = udfTreeService.removeById(id);
-    return Message.ok("").data("result", result);
+    String username =
+        ModuleUserUtils.getOperationUser(request, "Remove a UDF Tree Record,id:" + id.toString());
+    if (!Configuration.isAdmin(username)) {
+      return Message.error("User '" + username + "' is not admin user[非管理员用户]");
+    }
+    UdfTreeEntity entity = udfTreeService.getById(id);
+    if (null != entity && entity.getParent() == -1) {
+      return Message.error("The root directory is forbidden to delete[\"根目录禁止删除\"]");
+    }
+    QueryWrapper<UdfTreeEntity> queryWrapper =
+        new QueryWrapper<>(new UdfTreeEntity()).eq("parent", id);
+    List<UdfTreeEntity> folderList = udfTreeService.list(queryWrapper);
+    QueryWrapper<UdfBaseInfoEntity> udfQueryWrapper =
+        new QueryWrapper<>(new UdfBaseInfoEntity()).eq("tree_id", id);
+    List<UdfBaseInfoEntity> functoinList = udfBaseinfoService.list(udfQueryWrapper);
+    if (CollectionUtils.isEmpty(folderList) && CollectionUtils.isEmpty(functoinList)) {
+      boolean result = udfTreeService.removeById(id);
+      return Message.ok("").data("result", result);
+    } else {
+      return Message.error("Please delete the subdirectory first[请先删除子目录]");
+    }
   }
 
   @ApiImplicitParams({

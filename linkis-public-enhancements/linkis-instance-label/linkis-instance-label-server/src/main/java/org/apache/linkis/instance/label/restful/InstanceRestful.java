@@ -37,19 +37,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -73,6 +68,8 @@ public class InstanceRestful {
       LabelBuilderFactoryContext.getLabelBuilderFactory();
 
   @Autowired private DefaultInsLabelService insLabelService;
+
+  @Autowired private DiscoveryClient discoveryClient;
 
   @ApiOperation(
       value = "listAllInstanceWithLabel",
@@ -171,5 +168,32 @@ public class InstanceRestful {
     String serviceRegistryURL = insLabelService.getServiceRegistryURL();
     ModuleUserUtils.getOperationUser(request, "getServiceRegistryURL");
     return Message.ok().data("url", serviceRegistryURL);
+  }
+
+  @ApiOperation(value = "getServiceInstances", response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "serviceName", required = false, dataType = "String"),
+    @ApiImplicitParam(name = "ip", required = false, dataType = "ip")
+  })
+  @RequestMapping(path = "/serviceInstances", method = RequestMethod.GET)
+  public Message getServiceInstance(
+      HttpServletRequest request,
+      @RequestParam(value = "serviceName", required = false) String serviceName,
+      @RequestParam(value = "ip", required = false) String ip) {
+    Stream<String> serviceStream = discoveryClient.getServices().stream();
+    serviceStream = serviceStream.filter(s -> s.toUpperCase().contains("LINKIS"));
+    if (StringUtils.isNotBlank(serviceName)) {
+      serviceStream =
+          serviceStream.filter(s -> s.toUpperCase().contains(serviceName.toUpperCase()));
+    }
+    List<org.springframework.cloud.client.ServiceInstance> instanceList =
+        serviceStream
+            .flatMap(serviceId -> discoveryClient.getInstances(serviceId).stream())
+            .collect(Collectors.toList());
+    if (StringUtils.isNotBlank(ip)) {
+      instanceList =
+          instanceList.stream().filter(s -> s.getHost().equals(ip)).collect(Collectors.toList());
+    }
+    return Message.ok().data("list", instanceList);
   }
 }

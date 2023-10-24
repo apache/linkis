@@ -140,12 +140,6 @@ public class DefaultInsLabelService implements InsLabelAccessService {
       List<? extends Label<?>> labels, ServiceInstance serviceInstance)
       throws InstanceErrorException {
     List<InsPersistenceLabel> insLabels = toInsPersistenceLabels(labels);
-    // Label candidate to be removed
-    List<InsPersistenceLabel> labelsCandidateRemoved =
-        insLabelRelationDao.searchLabelsByInstance(serviceInstance.getInstance());
-    if (!labelsCandidateRemoved.isEmpty()) {
-      labelsCandidateRemoved.removeAll(insLabels);
-    }
     LOG.info("Drop relationships related by instance: [" + serviceInstance.getInstance() + "]");
     insLabelRelationDao.dropRelationsByInstance(serviceInstance.getInstance());
     // Attach labels to instance

@@ -197,6 +197,9 @@
     </select>
 
     <select id="getInstancesByNames" resultMap="instanceInfoCascadeMap">
-        SELECT * FROM "linkis_ps_instance_info" WHERE "name"= #{appName}
+        SELECT s.* FROM "linkis_ps_instance_info" s
+        INNER JOIN "linkis_ps_instance_label_relation" l
+        ON s."instance" = l."service_instance"
+        WHERE s."name"= #{appName}
     </select>
 </mapper>

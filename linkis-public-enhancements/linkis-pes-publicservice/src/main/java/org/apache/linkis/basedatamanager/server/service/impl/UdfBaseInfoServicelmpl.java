@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.util;
+package org.apache.linkis.basedatamanager.server.service.impl;
 
-public class CommonUtils {
-  public static boolean ipCheck(String str) {
-    if (str != null && !str.isEmpty()) {
-      String pattern = ConfigurationConfiguration.IPCHECK;
-      if (str.matches(pattern)) {
-        return true;
-      }
-      return false;
-    }
-    return false;
-  }
-}
+import org.apache.linkis.basedatamanager.server.dao.UdfBaseInfoMapper;
+import org.apache.linkis.basedatamanager.server.domain.UdfBaseInfoEntity;
+import org.apache.linkis.basedatamanager.server.service.UdfBaseInfoService;
+
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+@Service
+public class UdfBaseInfoServicelmpl extends ServiceImpl<UdfBaseInfoMapper, UdfBaseInfoEntity>
+    implements UdfBaseInfoService {}

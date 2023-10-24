@@ -34,4 +34,7 @@ public class ContextServerConf {
 
   public static final long CS_SCHEDULER_JOB_WAIT_MILLS =
       CommonVars.apply("wds.linkis.cs.job.wait.mills", 10000).getValue();
+
+  public static final String CS_LABEL_SUFFIX =
+      CommonVars.apply("wds.linkis.cs.label.suffix", "").getValue();
 }

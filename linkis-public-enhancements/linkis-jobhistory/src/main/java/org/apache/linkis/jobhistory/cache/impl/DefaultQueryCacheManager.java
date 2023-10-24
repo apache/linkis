@@ -195,12 +195,7 @@ public class DefaultQueryCacheManager implements QueryCacheManager, Initializing
       Date sDate = DateUtils.addDays(eDate, -1);
       queryTasks =
           jobHistoryMapper.searchWithIdOrderAsc(
-              undoneTaskMinId,
-              null,
-              Arrays.asList("Running", "Inited", "Scheduled"),
-              sDate,
-              eDate,
-              null);
+              sDate, eDate, undoneTaskMinId, Arrays.asList("Running", "Inited", "Scheduled"));
     } finally {
       PageHelper.clearPage();
     }

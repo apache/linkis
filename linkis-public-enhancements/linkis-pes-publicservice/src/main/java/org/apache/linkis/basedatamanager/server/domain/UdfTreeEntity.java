@@ -19,6 +19,7 @@ package org.apache.linkis.basedatamanager.server.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -57,6 +58,9 @@ public class UdfTreeEntity implements Serializable {
 
   @TableField(exist = false)
   private static final long serialVersionUID = 1L;
+
+  @TableField(exist = false)
+  private List<UdfTreeEntity> childrenList;
 
   /** */
   public Long getId() {
@@ -136,6 +140,14 @@ public class UdfTreeEntity implements Serializable {
   /** Used to distinguish between udf and function */
   public void setCategory(String category) {
     this.category = category;
+  }
+
+  public List<UdfTreeEntity> getChildrenList() {
+    return childrenList;
+  }
+
+  public void setChildrenList(List<UdfTreeEntity> childrenList) {
+    this.childrenList = childrenList;
   }
 
   @Override

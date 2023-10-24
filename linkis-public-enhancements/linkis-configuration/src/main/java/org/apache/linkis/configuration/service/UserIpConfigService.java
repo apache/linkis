@@ -15,27 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.UserIpVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 
-import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
-import java.util.List;
+public interface UserIpConfigService {
 
-public interface LabelMapper {
+  void createUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  void updateUserIP(UserIpVo userIpVo) throws ConfigurationException;
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void deleteUserIP(Integer id) throws ConfigurationException;
 
-  void insertLabel(ConfigLabel label);
+  Map<String, Object> queryUserIPList(
+      String user, String creator, Integer pageNow, Integer pageSize);
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  boolean userExists(String user, String creator);
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  UserIpVo queryUserIP(String user, String creator);
 }

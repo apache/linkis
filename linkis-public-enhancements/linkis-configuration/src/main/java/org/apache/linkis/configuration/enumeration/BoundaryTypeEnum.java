@@ -15,27 +15,27 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.enumeration;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+public enum BoundaryTypeEnum {
+  /*
+  0  none
+  1 with mix
+  2 with max
+  3 min and max both
+   */
+  NONE(0),
+  WITH_MIX(1),
+  WITH_MAX(2),
+  WITH_BOTH(3);
 
-import org.apache.ibatis.annotations.Param;
+  private Integer id;
 
-import java.util.List;
+  BoundaryTypeEnum(Integer id) {
+    this.id = id;
+  }
 
-public interface LabelMapper {
-
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
-
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
-
-  void insertLabel(ConfigLabel label);
-
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
-
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  public Integer getId() {
+    return this.id;
+  }
 }

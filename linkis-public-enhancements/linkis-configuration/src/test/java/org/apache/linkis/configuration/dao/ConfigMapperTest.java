@@ -123,10 +123,10 @@ public class ConfigMapperTest extends BaseDaoTest {
   }
 
   @Test
-  void testSeleteKeyByKeyName() {
+  void testSelectKeyByKeyName() {
     // TODO 查询结果转换异常
     //                ConfigKey configKey =
-    // configMapper.seleteKeyByKeyName("wds.linkis.rm.yarnqueue");
+    // configMapper.selectKeyByKeyName("wds.linkis.rm.yarnqueue");
     //                assertEquals("ide", configKey.getDefaultValue());
     //                System.out.println(configKey.getDefaultValue());
   }
@@ -135,12 +135,6 @@ public class ConfigMapperTest extends BaseDaoTest {
   void testListKeyByStringValue() {
     //        List<ConfigKey> configKeyList = configMapper.listKeyByStringValue("*-*,*-*");
     //        assertEquals(7, configKeyList.size());
-  }
-
-  @Test
-  void testInsertCreator() {
-    // mapper方法没有对应的实现类
-    //        configMapper.insertCreator("tom");
   }
 
   @Test
@@ -186,6 +180,7 @@ public class ConfigMapperTest extends BaseDaoTest {
   void testInsertKey() {
     ConfigKey configKey = new ConfigKey();
     configKey.setKey("wds.linkis.rm.instance.max.max");
+    configKey.setBoundaryType(3);
     configMapper.insertKey(configKey);
     ConfigKey result = configMapper.selectKeyByKeyID(8L);
     //        assertEquals("wds.linkis.rm.instance.max.max", result.getKey());

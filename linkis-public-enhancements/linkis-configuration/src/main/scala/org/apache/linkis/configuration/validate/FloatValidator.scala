@@ -18,6 +18,7 @@
 package org.apache.linkis.configuration.validate
 
 import org.apache.linkis.common.utils.Logging
+import org.apache.linkis.configuration.errorcode.LinkisConfigurationErrorCodeSummary.ERROR_VALIDATOR_RANGE
 import org.apache.linkis.configuration.exception.ConfigurationException
 
 import com.google.gson.GsonBuilder
@@ -28,7 +29,7 @@ class FloatValidator extends Validator with Logging {
     try {
       val rangArray = new GsonBuilder().create().fromJson(range, classOf[Array[Double]])
       if (rangArray.size != 2) {
-        throw new ConfigurationException("error validator range！")
+        throw new ConfigurationException(ERROR_VALIDATOR_RANGE.getErrorDesc)
       }
       value.toDouble >= rangArray.sorted.apply(0) && value.toDouble <= rangArray.sorted.apply(1)
     } catch {

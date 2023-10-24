@@ -73,7 +73,7 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
         Utils.tryCatch {
           val loginUser = GatewaySSOUtils.getLoginUsername(gatewayContext)
           Message
-            .ok(loginUser + "Already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
+            .ok(loginUser + " already logged in, please log out before signing in(已经登录，请先退出再进行登录)！")
             .data("userName", loginUser)
         }(_ => login(gatewayContext))
       case "token-login" =>
@@ -146,6 +146,8 @@ abstract class AbstractUserRestful extends UserRestful with Logging {
     Message
       .ok("get baseinfo success(获取成功)！")
       .data("resultSetExportEnable", GatewayConfiguration.IS_DOWNLOAD.getValue)
+      .data("linkisClusterName", GatewayConfiguration.LINKIS_CLUSTER_NAME.getValue)
+
   }
 
   def publicKey(gatewayContext: GatewayContext): Message = {

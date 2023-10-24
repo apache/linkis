@@ -232,19 +232,20 @@ private[conf] object BDPConfiguration extends Logging {
 
   private[common] def formatValue[T](defaultValue: T, value: Option[String]): Option[T] = {
     if (value.isEmpty || value.exists(StringUtils.isEmpty)) return Option(defaultValue)
+    val trimValue = value.map(_.trim)
     val formattedValue = defaultValue match {
-      case _: String => value
-      case _: Byte => value.map(_.toByte)
-      case _: Short => value.map(_.toShort)
-      case _: Char => value.map(_.toCharArray.apply(0))
-      case _: Int => value.map(_.toInt)
-      case _: Long => value.map(_.toLong)
-      case _: Float => value.map(_.toFloat)
-      case _: Double => value.map(_.toDouble)
-      case _: Boolean => value.map(_.toBoolean)
-      case _: TimeType => value.map(new TimeType(_))
-      case _: ByteType => value.map(new ByteType(_))
-      case null => value
+      case _: String => trimValue
+      case _: Byte => trimValue.map(_.toByte)
+      case _: Short => trimValue.map(_.toShort)
+      case _: Char => trimValue.map(_.toCharArray.apply(0))
+      case _: Int => trimValue.map(_.toInt)
+      case _: Long => trimValue.map(_.toLong)
+      case _: Float => trimValue.map(_.toFloat)
+      case _: Double => trimValue.map(_.toDouble)
+      case _: Boolean => trimValue.map(_.toBoolean)
+      case _: TimeType => trimValue.map(new TimeType(_))
+      case _: ByteType => trimValue.map(new ByteType(_))
+      case null => trimValue
     }
     formattedValue.asInstanceOf[Option[T]]
   }

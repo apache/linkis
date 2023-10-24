@@ -17,25 +17,24 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitForUser;
+import org.apache.linkis.configuration.entity.ConfigKeyLimitVo;
 
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface LabelMapper {
+/** for table linkis_ps_configuration_key_limit_for_user @Description */
+public interface ConfigKeyLimitForUserMapper {
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  int batchInsertList(List<ConfigKeyLimitForUser> list);
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  int updateByPrimaryKey(ConfigKeyLimitForUser configKeyLimitForUser);
 
-  void insertLabel(ConfigLabel label);
+  int batchInsertOrUpdateList(List<ConfigKeyLimitForUser> list);
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  List<ConfigKeyLimitVo> selectByLabelAndKeyIds(
+      @Param("label") String label, @Param("keyIdList") List<Long> keyIdList);
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  ConfigKeyLimitVo selectByLabelAndKeyId(@Param("label") String label, @Param("keyId") Long keyId);
 }

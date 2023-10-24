@@ -17,6 +17,8 @@
 
 package org.apache.linkis.configuration.entity;
 
+import java.util.Map;
+
 public class ConfigKeyValue {
 
   private Long id;
@@ -52,6 +54,16 @@ public class ConfigKeyValue {
   private String unit;
 
   private Boolean isUserDefined;
+
+  private Map specialLimit;
+
+  public Map getSpecialLimit() {
+    return specialLimit;
+  }
+
+  public void setSpecialLimit(Map specialLimit) {
+    this.specialLimit = specialLimit;
+  }
 
   public Boolean getIsUserDefined() {
     return isUserDefined;

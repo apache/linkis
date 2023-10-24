@@ -15,27 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.AcrossClusterRule;
 
-import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
-import java.util.List;
+public interface AcrossClusterRuleService {
 
-public interface LabelMapper {
+  void deleteAcrossClusterRule(String creator, String username) throws Exception;
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  void updateAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void insertAcrossClusterRule(AcrossClusterRule acrossClusterRule) throws Exception;
 
-  void insertLabel(ConfigLabel label);
+  Map<String, Object> queryAcrossClusterRuleList(
+      String creator, String username, String clusterName, Integer pageNow, Integer pageSize)
+      throws Exception;
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
-
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  void validAcrossClusterRule(Long id, String isValid) throws Exception;
 }

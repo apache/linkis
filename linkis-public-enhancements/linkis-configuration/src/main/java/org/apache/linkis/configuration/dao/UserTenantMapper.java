@@ -17,25 +17,24 @@
 
 package org.apache.linkis.configuration.dao;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.TenantVo;
 
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface LabelMapper {
+public interface UserTenantMapper {
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  List<TenantVo> queryTenantList(
+      @Param("user") String user,
+      @Param("creator") String creator,
+      @Param("tenant_value") String tenant);
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void deleteTenant(@Param("id") Integer id);
 
-  void insertLabel(ConfigLabel label);
+  void updateTenant(TenantVo tenantVo);
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  void createTenant(TenantVo tenantVo);
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  TenantVo queryTenant(@Param("user") String user, @Param("creator") String creator);
 }

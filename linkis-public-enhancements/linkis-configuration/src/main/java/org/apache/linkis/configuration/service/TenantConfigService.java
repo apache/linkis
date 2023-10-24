@@ -15,27 +15,25 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.configuration.dao;
+package org.apache.linkis.configuration.service;
 
-import org.apache.linkis.configuration.entity.ConfigLabel;
+import org.apache.linkis.configuration.entity.TenantVo;
+import org.apache.linkis.configuration.exception.ConfigurationException;
 
-import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
-import java.util.List;
+public interface TenantConfigService {
 
-public interface LabelMapper {
+  Map<String, Object> queryTenantList(
+      String user, String creator, String tenantValue, Integer pageNow, Integer pageSize);
 
-  ConfigLabel getLabelByKeyValue(
-      @Param("labelKey") String labelKey, @Param("stringValue") String stringValue);
+  void deleteTenant(Integer id) throws ConfigurationException;
 
-  // label key:combined_userCreator_engineType
-  List<ConfigLabel> selectUserCreatorEngineTypeLabelList(@Param("itemList") List<String> itemList);
+  void updateTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  void insertLabel(ConfigLabel label);
+  void createTenant(TenantVo tenantVo) throws ConfigurationException;
 
-  void batchInsertLabel(@Param("labelList") List<ConfigLabel> labelList);
+  Boolean isExist(String user, String creator) throws ConfigurationException;
 
-  void deleteLabel(@Param("ids") List<Integer> ids);
-
-  ConfigLabel getLabelById(@Param("id") Integer id);
+  TenantVo queryTenant(String user, String creator);
 }

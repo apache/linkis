@@ -25,6 +25,8 @@ DROP TABLE IF EXISTS `linkis_ps_udf_manager`;
 CREATE TABLE `linkis_ps_udf_manager` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(20) DEFAULT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -73,9 +75,12 @@ CREATE TABLE `linkis_ps_udf_tree` (
 DROP TABLE IF EXISTS `linkis_ps_udf_user_load`;
 CREATE TABLE `linkis_ps_udf_user_load` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `udf_id` int(11) NOT NULL,
+  `udf_id` bigint(20) NOT NULL,
   `user_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_uid_uname` (`udf_id`, `user_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `linkis_ps_udf_baseinfo`;

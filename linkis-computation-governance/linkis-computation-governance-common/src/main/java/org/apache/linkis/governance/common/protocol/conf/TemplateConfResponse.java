@@ -15,17 +15,22 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.exception
+package org.apache.linkis.governance.common.protocol.conf;
 
-import org.apache.linkis.common.exception.{ExceptionLevel, LinkisRuntimeException}
+import org.apache.linkis.governance.common.entity.TemplateConfKey;
 
-class GovernanceErrorException(errorCode: Int, errorMsg: String)
-    extends LinkisRuntimeException(errorCode, errorMsg) {
+import java.util.ArrayList;
+import java.util.List;
 
-  def this(errorCode: Int, errorMsg: String, cause: Throwable) = {
-    this(errorCode, errorMsg)
-    initCause(cause)
+public class TemplateConfResponse {
+
+  private List<TemplateConfKey> list = new ArrayList<>();
+
+  public List<TemplateConfKey> getList() {
+    return list;
   }
 
-  override def getLevel: ExceptionLevel = ExceptionLevel.ERROR
+  public void setList(List<TemplateConfKey> list) {
+    this.list = list;
+  }
 }

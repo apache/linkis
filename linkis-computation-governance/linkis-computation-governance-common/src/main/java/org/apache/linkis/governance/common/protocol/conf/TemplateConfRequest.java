@@ -15,17 +15,38 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.governance.common.exception
+package org.apache.linkis.governance.common.protocol.conf;
 
-import org.apache.linkis.common.exception.{ExceptionLevel, LinkisRuntimeException}
+import org.apache.linkis.protocol.message.RequestProtocol;
 
-class GovernanceErrorException(errorCode: Int, errorMsg: String)
-    extends LinkisRuntimeException(errorCode, errorMsg) {
+public class TemplateConfRequest implements RequestProtocol {
 
-  def this(errorCode: Int, errorMsg: String, cause: Throwable) = {
-    this(errorCode, errorMsg)
-    initCause(cause)
+  private String templateUuid;
+
+  private String templateName;
+
+  public TemplateConfRequest(String templateUuid, String templateName) {
+    this.templateUuid = templateUuid;
+    this.templateName = templateName;
   }
 
-  override def getLevel: ExceptionLevel = ExceptionLevel.ERROR
+  public TemplateConfRequest(String templateUuid) {
+    this.templateUuid = templateUuid;
+  }
+
+  public String getTemplateUuid() {
+    return templateUuid;
+  }
+
+  public void setTemplateUuid(String templateUuid) {
+    this.templateUuid = templateUuid;
+  }
+
+  public String getTemplateName() {
+    return templateName;
+  }
+
+  public void setTemplateName(String templateName) {
+    this.templateName = templateName;
+  }
 }

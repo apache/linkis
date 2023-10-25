@@ -132,6 +132,7 @@ public class SqlConnection implements Closeable {
     ResultSet rs = null;
     ResultSetMetaData meta = null;
     try {
+      List<String> primaryKeys = getPrimaryKeys(getDBConnection(connectMessage, database), table);
       ps = conn.prepareStatement(columnSql);
       ps.setString(1, database);
       ps.setString(2, table);
@@ -143,6 +144,9 @@ public class SqlConnection implements Closeable {
         info.setIndex(i);
         info.setName(meta.getColumnName(i));
         info.setType(meta.getColumnTypeName(i));
+        if (primaryKeys.contains(meta.getColumnName(i))) {
+          info.setPrimaryKey(true);
+        }
         columns.add(info);
       }
     } finally {

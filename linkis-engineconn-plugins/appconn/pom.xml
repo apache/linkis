@@ -14,12 +14,12 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-engineconn-plugin-core</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-computation-engineconn</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.reflections</groupId>
@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-rpc</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.hibernate.validator</groupId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-storage</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.webank.wedatasphere.dss</groupId>
@@ -94,7 +94,7 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-mybatis</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -106,7 +106,7 @@
     <dependency>
       <groupId>org.apache.linkis</groupId>
       <artifactId>linkis-common</artifactId>
-      <version>${version}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

@@ -41,6 +41,7 @@
     <module>trino</module>
     <module>elasticsearch</module>
     <module>seatunnel</module>
+    <module>appconn</module>
   </modules>
 
 </project>

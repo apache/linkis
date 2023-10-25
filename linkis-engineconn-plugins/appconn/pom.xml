@@ -9,7 +9,9 @@
   </parent>
 
   <artifactId>linkis-engineplugin-appconn</artifactId>
-
+  <properties>
+  <dss.revision>1.1.0.17-SNAPSHOT</dss.revision>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.linkis</groupId>
@@ -64,7 +66,7 @@
     <dependency>
       <groupId>com.webank.wedatasphere.dss</groupId>
       <artifactId>dss-scheduler-appconn</artifactId>
-      <version>1.1.1</version>
+      <version>${dss.revision}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -76,19 +78,19 @@
     <dependency>
       <groupId>com.webank.wedatasphere.dss</groupId>
       <artifactId>dss-appconn-manager-client</artifactId>
-      <version>1.1.1</version>
+      <version>${dss.revision}</version>
     </dependency>
 
     <dependency>
       <groupId>com.webank.wedatasphere.dss</groupId>
       <artifactId>dss-development-process-standard-execution</artifactId>
-      <version>1.1.1</version>
+      <version>${dss.revision}</version>
     </dependency>
 
     <dependency>
       <groupId>com.webank.wedatasphere.dss</groupId>
       <artifactId>dss-common</artifactId>
-      <version>1.1.1</version>
+      <version>${dss.revision}</version>
     </dependency>
 
     <dependency>

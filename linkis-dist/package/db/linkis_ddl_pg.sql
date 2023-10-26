@@ -40,10 +40,12 @@ CREATE TABLE linkis_ps_configuration_config_key (
 	is_hidden bool NULL,
 	is_advanced bool NULL,
 	"level" int2 NULL,
+    boundary_type int2 null,
 	"treeName" varchar(20) NULL,
 	en_description varchar(200) NULL,
 	en_name varchar(100) NULL,
 	"en_treeName" varchar(100) NULL,
+    `boundary_type`     int2 NOT NULL,
 	CONSTRAINT linkis_configuration_config_key_pkey PRIMARY KEY (id)
 );
 COMMENT ON COLUMN "linkis_ps_configuration_config_key"."key" IS 'Set key, e.g. spark.executor.instances';

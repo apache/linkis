@@ -20,11 +20,13 @@ SET REFERENTIAL_INTEGRITY FALSE;
 
 DROP TABLE IF EXISTS linkis_ps_udf_user_load CASCADE;
 CREATE TABLE IF NOT EXISTS linkis_ps_udf_user_load (
-  id bigint(20) NOT NULL AUTO_INCREMENT,
-  udf_id bigint(20) NOT NULL,
-  user_name varchar(50) NOT NULL,
-  PRIMARY KEY (id)
-) ;
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `udf_id` bigint(20) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS linkis_ps_udf_baseinfo CASCADE;
 CREATE TABLE IF NOT EXISTS linkis_ps_udf_baseinfo (
@@ -67,6 +69,7 @@ CREATE TABLE IF NOT EXISTS linkis_ps_udf_version (
   use_format varchar(255) DEFAULT NULL,
   description varchar(255) NOT NULL COMMENT 'version desc',
   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   md5 varchar(100) DEFAULT NULL,
   PRIMARY KEY (id)
 ) ;
@@ -82,10 +85,12 @@ CREATE TABLE IF NOT EXISTS linkis_ps_udf_shared_info (
 
 DROP TABLE IF EXISTS linkis_ps_udf_manager CASCADE;
 CREATE TABLE IF NOT EXISTS linkis_ps_udf_manager (
-  id bigint(20) NOT NULL AUTO_INCREMENT,
-  user_name varchar(20) DEFAULT NULL,
-  PRIMARY KEY (id)
-) ;
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `user_name` varchar(20) DEFAULT NULL,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 DELETE FROM linkis_ps_udf_user_load;
 -- ----------------------------

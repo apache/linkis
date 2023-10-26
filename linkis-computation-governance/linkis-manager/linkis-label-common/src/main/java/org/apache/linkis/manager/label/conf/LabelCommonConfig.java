@@ -42,6 +42,9 @@ public class LabelCommonConfig {
   public static final CommonVars<String> PYTHON_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.python.engine.version", "python2");
 
+  public static final CommonVars<String> REPL_ENGINE_VERSION =
+      CommonVars.apply("linkis.repl.engine.version", "1");
+
   public static final CommonVars<String> FILE_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.file.engine.version", "1.0");
 

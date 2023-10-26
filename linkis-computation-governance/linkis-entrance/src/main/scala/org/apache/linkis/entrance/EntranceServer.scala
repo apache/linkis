@@ -99,52 +99,7 @@ abstract class EntranceServer extends Logging {
     LoggerUtils.setJobIdMDC(jobRequest.getId.toString)
 
     val logAppender = new java.lang.StringBuilder()
-    Utils.tryThrow(
-      getEntranceContext
-        .getOrCreateEntranceInterceptors()
-        .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
-    ) { t =>
-      LoggerUtils.removeJobIdMDC()
-      val error = t match {
-        case error: ErrorException => error
-        case t1: Throwable =>
-          val exception = new EntranceErrorException(
-            FAILED_ANALYSIS_TASK.getErrorCode,
-            MessageFormat.format(
-              FAILED_ANALYSIS_TASK.getErrorDesc,
-              ExceptionUtils.getRootCauseMessage(t)
-            )
-          )
-          exception.initCause(t1)
-          exception
-        case _ =>
-          new EntranceErrorException(
-            FAILED_ANALYSIS_TASK.getErrorCode,
-            MessageFormat.format(
-              FAILED_ANALYSIS_TASK.getErrorDesc,
-              ExceptionUtils.getRootCauseMessage(t)
-            )
-          )
-      }
-      jobRequest match {
-        case t: JobRequest =>
-          t.setErrorCode(error.getErrCode)
-          t.setErrorDesc(error.getDesc)
-          t.setStatus(SchedulerEventState.Failed.toString)
-          t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-          val infoMap = new util.HashMap[String, AnyRef]
-          infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
-          infoMap.put(TaskConstant.TICKET_ID, "")
-          infoMap.put("message", "Task interception failed and cannot be retried")
-          JobHistoryHelper.updateJobRequestMetrics(jobRequest, null, infoMap)
-        case _ =>
-      }
-      getEntranceContext
-        .getOrCreatePersistenceManager()
-        .createPersistenceEngine()
-        .updateIfNeeded(jobRequest)
-      error
-    }
+    jobRequest = dealInitedJobRequest(jobRequest, logAppender)
 
     val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
     Utils.tryThrow {
@@ -419,12 +374,14 @@ abstract class EntranceServer extends Logging {
     }
   }
 
-  def dealInitedJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
+  def dealInitedJobRequest(jobReq: JobRequest, logAppender: lang.StringBuilder): JobRequest = {
+    var jobRequest = jobReq
     Utils.tryThrow(
       getEntranceContext
         .getOrCreateEntranceInterceptors()
-        .foreach(int => int.apply(jobRequest, logAppender))
+        .foreach(int => jobRequest = int.apply(jobRequest, logAppender))
     ) { t =>
+      LoggerUtils.removeJobIdMDC()
       val error = t match {
         case error: ErrorException => error
         case t1: Throwable =>
@@ -452,7 +409,7 @@ abstract class EntranceServer extends Logging {
           t.setErrorDesc(error.getDesc)
           t.setStatus(SchedulerEventState.Failed.toString)
           t.setProgress(EntranceJob.JOB_COMPLETED_PROGRESS.toString)
-          val infoMap = new util.HashMap[String, Object]
+          val infoMap = new util.HashMap[String, AnyRef]
           infoMap.put(TaskConstant.ENGINE_INSTANCE, "NULL")
           infoMap.put(TaskConstant.TICKET_ID, "")
           infoMap.put("message", "Task interception failed and cannot be retried")
@@ -465,6 +422,7 @@ abstract class EntranceServer extends Logging {
         .updateIfNeeded(jobRequest)
       error
     }
+    jobRequest
   }
 
   def dealRunningJobRequest(jobRequest: JobRequest, logAppender: lang.StringBuilder): Unit = {
@@ -497,23 +455,8 @@ abstract class EntranceServer extends Logging {
           LogUtils.generateInfo(s"job ${jobRequest.getId} generate new logPath $logPath \n")
         )
       }
-      val fsLogPath = new FsPath(logPath)
-      val cache = Cache(EntranceConfiguration.DEFAULT_CACHE_MAX.getHotValue())
-      val logWriter = if (StorageUtils.HDFS == fsLogPath.getFsType) {
-        new HDFSCacheLogWriter(
-          logPath,
-          EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
-          cache,
-          jobRequest.getExecuteUser
-        )
-      } else {
-        new CacheLogWriter(
-          logPath,
-          EntranceConfiguration.DEFAULT_LOG_CHARSET.getValue,
-          cache,
-          jobRequest.getExecuteUser
-        )
-      }
+      val job = getEntranceContext.getOrCreateEntranceParser().parseToJob(jobRequest)
+      val logWriter = getEntranceContext.getOrCreateLogManager().createLogWriter(job)
       if (logAppender.length() > 0) {
         logWriter.write(logAppender.toString.trim)
       }

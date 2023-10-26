@@ -37,6 +37,9 @@ class EntranceFIFOUserConsumer(
 ) extends FIFOUserConsumer(schedulerContext, executeService, group) {
 
   override def loop(): Unit = {
+    // When offlineFlag=true, the unsubmitted tasks will be failover, and the running tasks will wait for completion.
+    // In this case,super.loop only submits the retry task, but the retry task can failover and speed up the entrance offline
+    // (当offlineFlag=true时，未提交任务会被故障转移，运行中任务会等待完成.此时super.loop只会提交重试任务，但是重试任务完全可以故障转移，加快entrance下线)
     schedulerContext match {
       case entranceSchedulerContext: EntranceSchedulerContext =>
         if (

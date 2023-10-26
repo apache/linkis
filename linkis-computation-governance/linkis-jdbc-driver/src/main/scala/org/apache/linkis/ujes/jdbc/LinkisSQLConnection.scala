@@ -450,6 +450,7 @@ class LinkisSQLConnection(private[jdbc] val ujesClient: UJESClient, props: Prope
     val runType = EngineType.mapStringToEngineType(engine) match {
       case EngineType.SPARK => RunType.SQL
       case EngineType.HIVE => RunType.HIVE
+      case EngineType.REPL => RunType.REPL
       case EngineType.TRINO => RunType.TRINO_SQL
       case EngineType.PRESTO => RunType.PRESTO_SQL
       case EngineType.NEBULA => RunType.NEBULA_SQL

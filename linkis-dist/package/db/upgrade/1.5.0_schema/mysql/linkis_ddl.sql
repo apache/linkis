@@ -27,7 +27,7 @@ ALTER TABLE linkis_ps_configuration_config_key modify column engine_conn_type va
 ALTER TABLE linkis_ps_common_lock ADD COLUMN locker VARCHAR(255) NOT NULL COMMENT 'locker';
 
 ALTER TABLE linkis_ps_configuration_config_key ADD column template_required tinyint(1) DEFAULT 0 COMMENT 'template required 0 none / 1 must';
-
+ALTER TABLE linkis_ps_configuration_config_key ADD column `boundary_type`   int(2) NOT NULL  COMMENT '0  none/ 1 with mix /2 with max / 3 min and max both';
 ALTER TABLE linkis_ps_configuration_config_value modify COLUMN  config_value varchar(500);
 
 DROP  TABLE IF EXISTS `linkis_ps_configuration_template_config_key`;
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS `linkis_ps_configuration_key_limit_for_user` (
 
 DROP  TABLE IF EXISTS `linkis_ps_configutation_lm_across_cluster_rule`;
 CREATE TABLE IF NOT EXISTS linkis_ps_configutation_lm_across_cluster_rule (
-                                                                              id INT AUTO_INCREMENT COMMENT 'Rule ID, auto-increment primary key',
-                                                                              cluster_name char(32) NOT NULL COMMENT 'Cluster name, cannot be empty',
+    id INT AUTO_INCREMENT COMMENT 'Rule ID, auto-increment primary key',
+    cluster_name char(32) NOT NULL COMMENT 'Cluster name, cannot be empty',
     creator char(32) NOT NULL COMMENT 'Creator, cannot be empty',
     username char(32) NOT NULL COMMENT 'User, cannot be empty',
     create_time datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation time, cannot be empty',

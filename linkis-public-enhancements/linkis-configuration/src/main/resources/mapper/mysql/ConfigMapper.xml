@@ -98,12 +98,12 @@
     </sql>
 
     <sql id="Config_Key_Value_Column">
-        k.id, k.key, k.description, k.name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k.treeName,
+        k.id, k.`key`, k.description, k.name, k.engine_conn_type, k.default_value, k.validate_type, k.validate_range, k.is_hidden, k.is_advanced, k.level, k.treeName,
         v.id as value_id, v.config_key_id,config_value, v.config_label_id
     </sql>
 
     <sql id="Config_En_Key_Value_Column">
-        k.id, k.key,COALESCE(k.en_description, k.description) as description,
+        k.id, k.`key`,COALESCE(k.en_description, k.description) as description,
         COALESCE(k.en_name, k.name) as name, k.engine_conn_type, k.default_value,
         k.validate_type, k.validate_range, k.is_hidden,
         k.is_advanced, k.level,COALESCE(k.en_treeName, k.treeName) as treeName,

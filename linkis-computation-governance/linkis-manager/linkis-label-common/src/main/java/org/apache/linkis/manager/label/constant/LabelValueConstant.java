@@ -20,4 +20,6 @@ package org.apache.linkis.manager.label.constant;
 public class LabelValueConstant {
 
   public static final String OFFLINE_VALUE = "offline";
+
+  public static final String YARN_CLUSTER_VALUE = "yarnCluster";
 }

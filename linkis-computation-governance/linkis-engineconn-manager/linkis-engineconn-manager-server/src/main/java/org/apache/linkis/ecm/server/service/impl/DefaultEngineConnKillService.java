@@ -94,6 +94,13 @@ public class DefaultEngineConnKillService implements EngineConnKillService {
       killYarnAppIdOfOneEc(engineStopRequest);
     }
 
+    if (AMConstant.CLUSTER_PROCESS_MARK.equals(engineStopRequest.getIdentifierType())
+        && engineStopRequest.getIdentifier() != null) {
+      List<String> appIds = new ArrayList<>();
+      appIds.add(engineStopRequest.getIdentifier());
+      GovernanceUtils.killYarnJobApp(appIds);
+    }
+
     if (!response.getStopStatus()) {
       EngineSuicideRequest request =
           new EngineSuicideRequest(

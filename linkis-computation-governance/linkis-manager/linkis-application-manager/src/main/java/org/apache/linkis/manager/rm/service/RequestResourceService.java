@@ -59,9 +59,7 @@ public abstract class RequestResourceService {
     NodeResource labelResource =
         labelResourceService.getLabelResource(labelContainer.getCurrentLabel());
     Resource requestResource = resource.getMinResource();
-    if (labelContainer
-        .getCombinedUserCreatorEngineTypeLabel()
-        .equals(labelContainer.getCurrentLabel())) {
+    if (labelContainer.getCombinedResourceLabel().equals(labelContainer.getCurrentLabel())) {
       if (labelResource == null) {
         labelResource = new CommonNodeResource();
         labelResource.setResourceType(resource.getResourceType());
@@ -92,7 +90,7 @@ public abstract class RequestResourceService {
       labelResourceService.setLabelResource(
           labelContainer.getCurrentLabel(),
           labelResource,
-          labelContainer.getCombinedUserCreatorEngineTypeLabel().getStringValue());
+          labelContainer.getCombinedResourceLabel().getStringValue());
       logger.debug(
           labelContainer.getCurrentLabel()
               + " to request ["

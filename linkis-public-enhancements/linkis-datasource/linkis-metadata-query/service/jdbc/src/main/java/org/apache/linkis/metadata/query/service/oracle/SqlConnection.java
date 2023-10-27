@@ -182,7 +182,7 @@ public class SqlConnection extends AbstractSqlConnection {
               SQL_CONNECT_SERVICE_URL.getValue(),
               connectMessage.host,
               connectMessage.port,
-              database);
+              serviceName);
     }
 
     if (MapUtils.isNotEmpty(connectMessage.extraParams)) {

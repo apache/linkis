@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,17 +88,17 @@ public class InteractiveJob implements Job {
     LinkisOperResultAdapter jobInfoResult =
         oper.queryJobInfo(submitResult.getUser(), submitResult.getJobID());
     oper.queryJobStatus(
-        jobInfoResult.getUser(), jobInfoResult.getJobID(), jobInfoResult.getStrongerExecId());
+        submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
     infoBuilder.setLength(0);
     infoBuilder
         .append("JobId:")
-        .append(jobInfoResult.getJobID())
+        .append(submitResult.getJobID())
         .append(System.lineSeparator())
         .append("TaskId:")
-        .append(jobInfoResult.getJobID())
+        .append(submitResult.getJobID())
         .append(System.lineSeparator())
         .append("ExecId:")
-        .append(jobInfoResult.getStrongerExecId());
+        .append(submitResult.getStrongerExecId());
     LoggerManager.getPlaintTextLogger().info(infoBuilder.toString());
     infoBuilder.setLength(0);
 
@@ -116,7 +117,7 @@ public class InteractiveJob implements Job {
     // async job, return
     if (isAsync) {
       return new InteractiveJobResult(
-          submitResult.getJobStatus().isJobSubmitted(),
+          jobInfoResult.getJobStatus().isJobSubmitted(),
           "Async Submission Success",
           new HashMap<>());
     }
@@ -136,7 +137,9 @@ public class InteractiveJob implements Job {
     logRetriever.retrieveLogAsync();
 
     // wait complete
-    jobInfoResult = waitJobComplete(submitResult.getUser(), submitResult.getJobID());
+    jobInfoResult =
+        waitJobComplete(
+            submitResult.getUser(), submitResult.getJobID(), submitResult.getStrongerExecId());
     logRetriever.waitIncLogComplete();
 
     // get result-set
@@ -171,7 +174,14 @@ public class InteractiveJob implements Job {
               "Job status is not success but \'"
                   + jobInfoResult.getJobStatus()
                   + "\'. Will not try to retrieve any Result");
-      return new InteractiveJobResult(false, "Execute Error!!!", new HashMap<>());
+      Map<String, String> extraMap = new HashMap<>();
+      if (jobInfoResult.getErrCode() != null) {
+        extraMap.put("errorCode", String.valueOf(jobInfoResult.getErrCode()));
+      }
+      if (StringUtils.isNotBlank(jobInfoResult.getErrDesc())) {
+        extraMap.put("errorDesc", jobInfoResult.getErrDesc());
+      }
+      return new InteractiveJobResult(false, "Execute Error!!!", extraMap);
     }
     InteractiveJobResult result =
         new InteractiveJobResult(true, "Execute Success!!!", new HashMap<>());
@@ -197,19 +207,19 @@ public class InteractiveJob implements Job {
     return result;
   }
 
-  private LinkisOperResultAdapter waitJobComplete(String user, String jobId)
+  private LinkisOperResultAdapter waitJobComplete(String user, String jobId, String execId)
       throws LinkisClientRuntimeException {
     int retryCnt = 0;
     final int MAX_RETRY = 30;
 
     LinkisOperResultAdapter jobInfoResult = oper.queryJobInfo(user, jobId);
-    oper.queryJobStatus(user, jobId, jobInfoResult.getStrongerExecId());
+    oper.queryJobStatus(user, jobId, execId);
 
     while (!jobInfoResult.getJobStatus().isJobFinishedState()) {
       // query progress
       try {
         jobInfoResult = oper.queryJobInfo(user, jobId);
-        oper.queryJobStatus(user, jobId, jobInfoResult.getStrongerExecId());
+        oper.queryJobStatus(user, jobId, execId);
       } catch (Exception e) {
         logger.warn("", e);
         retryCnt++;
@@ -244,6 +254,9 @@ public class InteractiveJob implements Job {
   public void onDestroy() {
     if (StringUtils.isBlank(username) || StringUtils.isBlank(jobId)) {
       logger.warn("Failed to kill job username or jobId is blank");
+      return;
+    }
+    if (isAsync) {
       return;
     }
     try {

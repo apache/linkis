@@ -78,7 +78,6 @@ else
   done
 fi
 
-
 ########################  init LINKIS related env  ################################
 if [ "$LINKIS_HOME" = "" ]
 then

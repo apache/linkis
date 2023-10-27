@@ -38,6 +38,7 @@ import org.apache.linkis.manager.common.protocol.engine.{
   EngineStopRequest
 }
 import org.apache.linkis.manager.engineplugin.common.launch.entity.EngineConnLaunchRequest
+import org.apache.linkis.manager.label.constant.LabelValueConstant
 import org.apache.linkis.manager.label.utils.LabelUtil
 import org.apache.linkis.rpc.Sender
 
@@ -146,11 +147,21 @@ abstract class AbstractEngineConnLaunchService extends EngineConnLaunchService w
       throw t
     }
     LoggerUtils.removeJobIdMDC()
+
+    val label = LabelUtil.getEngingeConnRuntimeModeLabel(request.labels)
+    val isYarnClusterMode: Boolean =
+      if (null != label && label.getModeValue.equals(LabelValueConstant.YARN_CLUSTER_VALUE)) true
+      else false
+
     val engineNode = new AMEngineNode()
     engineNode.setLabels(conn.getLabels)
     engineNode.setServiceInstance(conn.getServiceInstance)
     engineNode.setOwner(request.user)
-    engineNode.setMark(AMConstant.PROCESS_MARK)
+    if (isYarnClusterMode) {
+      engineNode.setMark(AMConstant.CLUSTER_PROCESS_MARK)
+    } else {
+      engineNode.setMark(AMConstant.PROCESS_MARK)
+    }
     engineNode
   }
 

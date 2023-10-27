@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.linkis.storage.domain.Dolphin.LINKIS_NULL;
+
 public enum DataType {
   NullType("void", 0),
   StringType("string", 12),
@@ -63,7 +65,8 @@ public enum DataType {
   public static final String LOWCASE_NULL_VALUE = "null";
 
   // TODO Change to fine-grained regular expressions(改为精细化正则表达式)
-  public static final Pattern DECIMAL_REGEX = Pattern.compile("^decimal\\(\\d*\\,\\d*\\)");
+  public static final Pattern DECIMAL_REGEX =
+      Pattern.compile("^decimal\\(\\s*\\d*\\s*,\\s*\\d*\\s*\\)");
 
   public static final Pattern SHORT_REGEX = Pattern.compile("^short.*");
   public static final Pattern INT_REGEX = Pattern.compile("^int.*");
@@ -130,7 +133,11 @@ public enum DataType {
   }
 
   public static Object toValue(DataType dataType, String value) {
+
     Object result = null;
+    if (isLinkisNull(value)) {
+      return result;
+    }
     try {
       switch (dataType) {
         case NullType:
@@ -187,10 +194,14 @@ public enum DataType {
           result = value;
       }
     } catch (Exception e) {
-      logger.debug("Failed to " + value + " switch to dataType:", e);
+      logger.debug("Failed to {} switch to dataType:", value, e);
       result = value;
     }
     return result;
+  }
+
+  public static boolean isLinkisNull(String value) {
+    return value == null || value.equals(LINKIS_NULL);
   }
 
   public static boolean isNull(String value) {

@@ -193,7 +193,7 @@ class UJESSQLResultSet(
     if (metaData == null) init()
     currentRowCursor += 1
     if (null == resultSetRow || currentRowCursor > resultSetRow.size() - 1) {
-      if (UJESSQLDriverMain.LIMIT_ENABLED.equals("false") && !isCompleted) {
+      if (!isCompleted) {
         updateResultSet()
         if (isCompleted) {
           return false
@@ -242,7 +242,7 @@ class UJESSQLResultSet(
     } else {
       dataType.toLowerCase(Locale.getDefault) match {
         case null => throw new LinkisSQLException(LinkisSQLErrorCode.METADATA_EMPTY)
-        case "string" => value.toString
+        case "char" | "varchar" | "nvarchar" | "string" => value
         case "short" => value.toShort
         case "int" => value.toInt
         case "long" => value.toLong
@@ -250,11 +250,8 @@ class UJESSQLResultSet(
         case "double" => value.toDouble
         case "boolean" => value.toBoolean
         case "byte" => value.toByte
-        case "char" => value.toString
-        case "timestamp" => value.toString
-        case "varchar" => value.toString
-        case "nvarchar" => value.toString
-        case "date" => value.toString
+        case "timestamp" => value
+        case "date" => value
         case "bigint" => value.toLong
         case "decimal" => value.toDouble
         case "array" => value.toArray
@@ -974,8 +971,9 @@ class UJESSQLResultSet(
     logger.info(s"the value of value is $value and the value of localTimeZone is $localTimeZone")
     if (wasNull()) {
       null
-    } else
+    } else {
       new Timestamp(TIMESTAMP_FORMATTER.withZone(localTimeZone).parseMillis(String.valueOf(value)))
+    }
   }
 
   override def getTimestamp(columnIndex: Int, cal: Calendar): Timestamp = {

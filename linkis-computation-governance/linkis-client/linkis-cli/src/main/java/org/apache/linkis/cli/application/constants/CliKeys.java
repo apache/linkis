@@ -38,6 +38,8 @@ public class CliKeys {
   public static final String DEFAULT_CONFIG_FILE_NAME_KEY = "conf.file";
   public static final String LINUX_USER_KEY = "user.name";
 
+  public static final String VERSION = "cli.version";
+
   /** Configurable */
   /*
   execution type

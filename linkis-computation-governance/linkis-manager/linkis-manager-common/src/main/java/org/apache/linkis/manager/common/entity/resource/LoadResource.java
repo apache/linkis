@@ -109,6 +109,20 @@ public class LoadResource extends Resource {
   }
 
   @Override
+  public int compare(Resource r) {
+    LoadResource temp = new LoadResource(r);
+
+    if (this.getMemory() > temp.getMemory()) {
+      return 1;
+    } else if (this.getMemory() < temp.getMemory()) {
+      return -1;
+    } else {
+      // If memory is equal, compare cores
+      return Integer.compare(this.getCores(), temp.getCores());
+    }
+  }
+
+  @Override
   public String toJson() {
     return String.format(
         "{\"memory\":%s,\"cpu\":%d}", ByteTimeUtils.bytesToString(this.memory), this.cores);

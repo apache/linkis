@@ -17,10 +17,14 @@
 
 package org.apache.linkis.manager.am.service.impl;
 
+import org.apache.linkis.common.ServiceInstance;
 import org.apache.linkis.governance.common.protocol.task.ResponseEngineConnPid;
 import org.apache.linkis.manager.am.manager.DefaultEngineNodeManager;
 import org.apache.linkis.manager.am.service.EngineConnPidCallbackService;
+import org.apache.linkis.manager.am.service.engine.AbstractEngineService;
+import org.apache.linkis.manager.common.constant.AMConstant;
 import org.apache.linkis.manager.common.entity.node.EngineNode;
+import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.rpc.message.annotation.Receiver;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
-public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbackService {
+public class DefaultEngineConnPidCallbackService extends AbstractEngineService
+    implements EngineConnPidCallbackService {
   private static final Logger logger =
       LoggerFactory.getLogger(DefaultEngineConnPidCallbackService.class);
 
   @Autowired private DefaultEngineNodeManager defaultEngineNodeManager;
+
+  @Autowired private NodeLabelService nodeLabelService;
 
   @Receiver
   @Override
@@ -47,7 +54,8 @@ public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbac
         protocol.pid(),
         protocol.ticketId());
 
-    EngineNode engineNode = defaultEngineNodeManager.getEngineNode(protocol.serviceInstance());
+    EngineNode engineNode =
+        defaultEngineNodeManager.getEngineNodeInfoByTicketId(protocol.ticketId());
     if (engineNode == null) {
       logger.error(
           "DefaultEngineConnPidCallbackService dealPid failed, engineNode is null, serviceInstance:{}",
@@ -56,6 +64,13 @@ public class DefaultEngineConnPidCallbackService implements EngineConnPidCallbac
     }
 
     engineNode.setIdentifier(protocol.pid());
+    ServiceInstance oldServiceInstance = engineNode.getServiceInstance();
+    if (engineNode.getMark().equals(AMConstant.CLUSTER_PROCESS_MARK)) {
+      ServiceInstance serviceInstance = protocol.serviceInstance();
+      engineNode.setServiceInstance(serviceInstance);
+      getEngineNodeManager().updateEngineNode(oldServiceInstance, engineNode);
+      nodeLabelService.labelsFromInstanceToNewInstance(oldServiceInstance, serviceInstance);
+    }
     defaultEngineNodeManager.updateEngine(engineNode);
   }
 }

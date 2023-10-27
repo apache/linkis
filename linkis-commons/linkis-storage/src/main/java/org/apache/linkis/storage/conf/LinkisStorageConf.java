@@ -39,7 +39,7 @@ public class LinkisStorageConf {
   public static final String FILE_TYPE =
       CommonVars.apply(
               "wds.linkis.storage.file.type",
-              "dolphin,sql,scala,py,hql,python,out,log,text,sh,jdbc,ngql,psql,fql,tsql")
+              "dolphin,sql,scala,py,hql,python,out,log,text,txt,sh,jdbc,ngql,psql,fql,tsql")
           .getValue();
 
   private static volatile String[] fileTypeArr = null;

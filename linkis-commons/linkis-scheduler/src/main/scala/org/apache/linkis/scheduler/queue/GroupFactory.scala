@@ -19,6 +19,11 @@ package org.apache.linkis.scheduler.queue
 
 abstract class GroupFactory {
 
+  /**
+   * Create a Group and set the concurrency limit of the group
+   * @param event
+   * @return
+   */
   def getOrCreateGroup(event: SchedulerEvent): Group
 
   def getGroup(groupName: String): Group

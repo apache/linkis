@@ -102,13 +102,16 @@
     </snapshotRepository>
   </distributionManagement>
   <properties>
-    <revision>1.4.0-SNAPSHOT</revision>
+    <revision>1.5.0-SNAPSHOT</revision>
 
     <zookeeper.version>3.5.9</zookeeper.version>
     <curator.version>4.2.0</curator.version>
     <hadoop.version>3.3.4</hadoop.version>
     <hadoop-hdfs-client.artifact>hadoop-hdfs-client</hadoop-hdfs-client.artifact>
     <hbase.version>2.5.3</hbase.version>
+    <jruby.verison>9.3.4.0</jruby.verison>
+    <jcodings.version>1.0.56</jcodings.version>
+    <joni.version>2.1.42</joni.version>
     <hive.version>3.1.3</hive.version>
     <spark.version>3.2.1</spark.version>
     <hadoop-hdfs-client-shade.version>2.7.2</hadoop-hdfs-client-shade.version>
@@ -128,6 +131,8 @@
     <openlookeng.version>1.5.0</openlookeng.version>
     <pipeline.version>1</pipeline.version>
     <presto.version>0.234</presto.version>
+    <nebula.version>3.0.0</nebula.version>
+    <repl.version>1</repl.version>
     <python.version>python2</python.version>
     <seatunnel.version>2.1.2</seatunnel.version>
     <shell.version>1</shell.version>
@@ -1767,6 +1772,61 @@
         <spark.version>2.4.3</spark.version>
         <scala.version>2.11.12</scala.version>
         <scala.binary.version>2.11</scala.binary.version>
+      </properties>
+    </profile>
+    <!-- hbase -->
+    <profile>
+      <id>hbase-2.5</id>
+      <activation>
+        <property>
+          <name>!hbase.profile</name>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-2.5</profiles.active>
+        <hbase.version>2.5.3</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-1.2</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>1.2</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-1.2</profiles.active>
+        <hbase.version>1.2.0</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-1.4</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>1.4</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-1.4</profiles.active>
+        <hbase.version>1.4.3</hbase.version>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>hbase-2.2</id>
+      <activation>
+        <property>
+          <name>hbase.profile</name>
+          <value>2.2</value>
+        </property>
+      </activation>
+      <properties>
+        <profiles.active>hbase-2.2</profiles.active>
+        <hbase.version>2.2.6</hbase.version>
       </properties>
     </profile>
     <!-- jacoco: mvn validate -Pjacoco  -->

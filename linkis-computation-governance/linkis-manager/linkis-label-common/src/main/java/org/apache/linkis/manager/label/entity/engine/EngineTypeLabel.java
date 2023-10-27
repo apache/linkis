@@ -79,7 +79,7 @@ public class EngineTypeLabel extends GenericLabel implements EngineNodeLabel, EM
   }
 
   @Override
-  protected void setStringValue(String stringValue) {
+  public void setStringValue(String stringValue) {
     if (StringUtils.isNotBlank(stringValue)) {
       try {
         HashMap<String, String> valueMap =

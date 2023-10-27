@@ -127,7 +127,7 @@ public class LinkisJobOper implements JobOper {
       //      jobExecuteResult = client.execute(jobExecuteAction);
 
       jobSubmitResult = client.submit(jobSubmitAction);
-      logger.info("Response info from Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitAction));
+      logger.info("Response info from Linkis: \n{}", CliUtils.GSON.toJson(jobSubmitResult));
 
     } catch (Exception e) {
       // must throw if exception
@@ -269,7 +269,7 @@ public class LinkisJobOper implements JobOper {
           }
           String msg =
               MessageFormat.format(
-                  "Get job info failed. retry time : {0}/{1}. taskID={0}, Reason: {1}",
+                  "Get job info failed. retry time : {0}/{1}. taskID={2}, Reason: {3}",
                   retryTime, MAX_RETRY_TIME, taskID, reason);
 
           logger.debug(
@@ -299,7 +299,7 @@ public class LinkisJobOper implements JobOper {
       if (jobInfoResult == null) {
         reason = "JobInfoResult is null";
       } else {
-        reason = "server returns non-zero status-code";
+        reason = "server returns non-zero status-code. ";
         reason += jobInfoResult.getMessage();
       }
       String msg =

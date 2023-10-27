@@ -42,6 +42,9 @@ public class LabelCommonConfig {
   public static final CommonVars<String> PYTHON_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.python.engine.version", "python2");
 
+  public static final CommonVars<String> REPL_ENGINE_VERSION =
+      CommonVars.apply("linkis.repl.engine.version", "1");
+
   public static final CommonVars<String> FILE_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.file.engine.version", "1.0");
 
@@ -69,8 +72,14 @@ public class LabelCommonConfig {
   public static final CommonVars<String> DATAX_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.datax.engine.version", "3.0.0");
 
+  public static final CommonVars<String> NEBULA_ENGINE_VERSION =
+      CommonVars.apply("wds.linkis.nebula.engine.version", "3.0.0");
+
   public static final CommonVars<String> PRESTO_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.presto.engine.version", "0.234");
+
+  public static final CommonVars<String> HBASE_ENGINE_VERSION =
+      CommonVars.apply("wds.linkis.hbase.engine.version", "2.5.3");
 
   public static final CommonVars<String> OPENLOOKENG_ENGINE_VERSION =
       CommonVars.apply("wds.linkis.openlookeng.engine.version", "1.5.0");

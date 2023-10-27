@@ -51,6 +51,8 @@ public class EngineTypeLabelCreator {
           defaultVersion.put(
               EngineType.PYTHON().toString(), LabelCommonConfig.PYTHON_ENGINE_VERSION.getValue());
           defaultVersion.put(
+              EngineType.REPL().toString(), LabelCommonConfig.REPL_ENGINE_VERSION.getValue());
+          defaultVersion.put(
               EngineType.IO_ENGINE_FILE().toString(),
               LabelCommonConfig.FILE_ENGINE_VERSION.getValue());
           defaultVersion.put(
@@ -69,6 +71,11 @@ public class EngineTypeLabelCreator {
               EngineType.FLINK().toString(), LabelCommonConfig.FLINK_ENGINE_VERSION.getValue());
           defaultVersion.put(
               EngineType.PRESTO().toString(), LabelCommonConfig.PRESTO_ENGINE_VERSION.getValue());
+
+          defaultVersion.put(
+              EngineType.HBASE().toString(), LabelCommonConfig.HBASE_ENGINE_VERSION.getValue());
+          defaultVersion.put(
+              EngineType.NEBULA().toString(), LabelCommonConfig.NEBULA_ENGINE_VERSION.getValue());
           defaultVersion.put(
               EngineType.SQOOP().toString(), LabelCommonConfig.SQOOP_ENGINE_VERSION.getValue());
           defaultVersion.put(

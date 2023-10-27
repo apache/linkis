@@ -59,6 +59,9 @@ public class Dolphin {
   public static final String NULL = "NULL";
   public static final byte[] NULL_BYTES = "NULL".getBytes(Charset.forName("utf-8"));
 
+  public static final String LINKIS_NULL = "LINKIS_NULL";
+  public static final byte[] LINKIS_NULL_BYTES = LINKIS_NULL.getBytes(Charset.forName("utf-8"));
+
   public static final int INT_LEN = 10;
 
   public static final int FILE_EMPTY = 31;
@@ -77,6 +80,14 @@ public class Dolphin {
    */
   public static String getString(byte[] bytes, int start, int len) {
     return new String(bytes, start, len, Dolphin.CHAR_SET);
+  }
+
+  public static String toStringValue(String value) {
+    if (LINKIS_NULL.equals(value)) {
+      return NULL;
+    } else {
+      return value;
+    }
   }
 
   /**

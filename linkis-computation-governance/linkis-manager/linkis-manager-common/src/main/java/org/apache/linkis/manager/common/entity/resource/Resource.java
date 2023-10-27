@@ -122,6 +122,8 @@ public abstract class Resource {
 
   public abstract boolean less(Resource r);
 
+  public abstract int compare(Resource r);
+
   public Resource add(Resource r, float rate) {
     return this.add(r.multiplied(rate));
   }

@@ -34,6 +34,10 @@
 
         <Send name="Send" >
             <Filters>
+                <RegexFilter regex=".*Hive-on-MR is deprecated in Hive \d+ and may not be available in the future versions\..*" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex=".*Hadoop command-line option parsing not.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="Group.*is deprecated. Use.*instead" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <RegexFilter regex="Failed to get files with ID; using regular API.*" onMatch="DENY" onMismatch="NEUTRAL"/>
                 <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
             </Filters>
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%t] %logger{36} %L %M [JobId-%X{jobId}] - %msg%xEx%n"/>
@@ -97,8 +101,11 @@
         <logger name="org.apache.hadoop.mapreduce.Job" level="INFO" additivity="true">
             <appender-ref ref="YarnAppIdOutputFile"/>
         </logger>
-        <logger name="org.apache.tez.client.TezClient" level="INFO" additivity="true">
-            <appender-ref ref="YarnAppIdOutputFile"/>
+        <logger name="org.apache.hadoop.hive.conf.HiveConf" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
+        </logger>
+        <logger name="org.apache.hadoop.mapreduce.split.JobSplitWriter" level="ERROR" additivity="true">
+            <appender-ref ref="Send"/>
         </logger>
    </loggers>
 </configuration>

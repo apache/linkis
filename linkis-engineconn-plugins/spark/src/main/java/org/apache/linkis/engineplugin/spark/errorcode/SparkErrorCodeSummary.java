@@ -66,6 +66,10 @@ public enum SparkErrorCodeSummary implements LinkisErrorCode {
       43032, "The application start failed, since yarn applicationId is null."),
 
   NOT_SUPPORT_METHOD(43040, "Not support method for requestExpectedResource."),
+
+  LINKIS_SPARK_YARN_CLUSTER_JARS_ERROR(
+      43042,
+      "linkis.spark.yarn.cluster.jars parameters configuration errors(linkis.spark.yarn.cluster.jars 参数配置错误)."),
   ;
 
   /** (errorCode)错误码 */

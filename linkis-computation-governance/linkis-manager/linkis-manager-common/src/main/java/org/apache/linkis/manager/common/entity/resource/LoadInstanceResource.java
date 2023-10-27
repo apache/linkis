@@ -139,6 +139,27 @@ public class LoadInstanceResource extends Resource {
   }
 
   @Override
+  public int compare(Resource r) {
+    LoadInstanceResource temp = new LoadInstanceResource(r);
+
+    if (this.getMemory() > temp.getMemory()) {
+      return 1;
+    } else if (this.getMemory() < temp.getMemory()) {
+      return -1;
+    } else {
+      // If memory is equal, compare cores
+      if (this.getCores() > temp.getCores()) {
+        return 1;
+      } else if (this.getCores() < temp.getCores()) {
+        return -1;
+      } else {
+        // If cores are equal, compare instances
+        return Integer.compare(this.getInstances(), temp.getInstances());
+      }
+    }
+  }
+
+  @Override
   public String toJson() {
     return String.format(
         "{\"instance\":%d,\"memory\":\"%s\",\"cpu\":%d}",
@@ -149,7 +170,7 @@ public class LoadInstanceResource extends Resource {
   public String toString() {
     return String.format(
         "Number of instances(实例数)：%d，(RAM)内存：%s ,cpu: %s",
-        this.getInstances(), this.getCores(), this.getMemory());
+        this.getInstances(), this.getMemory(), this.getCores());
   }
 
   public long getMemory() {

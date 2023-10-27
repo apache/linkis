@@ -37,7 +37,6 @@ class RPCConfigurationTest {
     val enablepublicservice = RPCConfiguration.ENABLE_PUBLIC_SERVICE.getValue
     val publicserviceapplicationname = RPCConfiguration.PUBLIC_SERVICE_APPLICATION_NAME.getValue
     val publicservicelist = RPCConfiguration.PUBLIC_SERVICE_LIST
-    val metadataqueryservicelist = RPCConfiguration.METADATAQUERY_SERVICE_LIST
 
     Assertions.assertTrue(25 == bdprpcbroadcastthreadsize.intValue())
     Assertions.assertTrue(400 == bdprpcreceiverasynconsumerthreadmax.intValue())
@@ -48,7 +47,6 @@ class RPCConfigurationTest {
     Assertions.assertTrue(enablepublicservice)
     Assertions.assertEquals("linkis-ps-publicservice", publicserviceapplicationname)
     Assertions.assertTrue(publicservicelist.size > 0)
-    Assertions.assertTrue(metadataqueryservicelist.size > 0)
 
   }
 
